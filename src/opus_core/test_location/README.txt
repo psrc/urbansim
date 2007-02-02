@@ -1,1 +1,0 @@
-This directory contains Opus variables for use by unit tests.
