@@ -22,91 +22,217 @@
 
 \begin{document}
 
-\section{Tool Manager}
+\section{Nouns and Verbs}
+
+Following are lists of the nouns and verbs identified by reading Appendix G.  (We are still assembling this.)  We expect that each of these nouns will correspond to a class in our object-oriented system, so understanding the nouns and verbs is important for understanding what we are building.  In general, a noun corresponds to a class, and a verb corresponds to a method of that class.  Classes generally have additional methods and properties for internal use in the system.
+
+\subsection{Nouns from Appendix G}
+
+\begin{itemize}
+  \item Meta-data.  Every noun has meta-data that covers its who, what, when, where, and why.  In addition, a user may enter arbitrary key, value pairs?
+  \item Project.  A project defines the geographical scope, set of issues of concern, time-frame desired, etc. for a specific investigation into some set of issues.
+  \item Scenario.  A scenario is a particular configuration of input data, assumptions, and models to run to test a particular alternative future.  Every project will eventually have at least one scenario.  You can only 'run' scenarios.
+  \item Scenario run.  Information about the running of a scenario.  This includes meta-data and simulation results.  Simulation results may be viewed by indicators.
+  \item Indicator definition.  Specification of how to compute a particular indicator.  
+  \begin{itemize}
+	  \item Map indicator definition.
+	  \item Table indicator definition.
+	  \item Chart indicator definition.
+	  \item Report indicator definition.  This may consist of meta-data as well as a collection of other indicators (maps, tables, charts, etc.).
+  \end{itemize}
+  \item Indicator result.  Result of running an indicator or a scenario run.  Synonym: prediction?
+  \begin{itemize}
+	  \item Map indicator results.
+	  \item Table indicator results.
+	  \item Chart indicator results.
+	  \item Report indicator results.  
+  \end{itemize}
+  \item Indicator set.  Multiple indicators.  Allows multiple indicators to be operated on as a unit (e.g. create all of these).
+  \item Data-flow diagram.  This is a ``model'' in ModelBuilder.  It is a visual representation of a data flow from a set of data sources, through a set of actions, to a set of data outputs.  Includes conditionals and loops.
+  \item Scenario subset.  What is this?
+  \item Model. 
+  \item Development.
+  \item Custom procedure.  For instance, a script, or a data-flow diagram.
+  \item Tool.  A software component that has a user interface.
+  \item Software component.
+  \item Data input.
+  \item Data output.
+  \item \ldots
+\end{itemize}
+
+\subsection{Verbs from Appendix G}
+
+\begin{itemize}
+  \item New.  Synonym: create.
+  \item Save.
+  \item Edit.
+  \item Open/View.
+  \item Delete.
+  \item Copy.
+  \item Run.  Synonym: project.
+  \item Manage.  What does this mean?
+  \item Analyze.
+  \item \ldots
+\end{itemize}
+
+\subsection{Combining Nouns and Verbs}
+
+These nouns and verbs could suggest the following menu items or tools that correspond to features or feature categories:
+
+\begin{itemize}
+  \item Project
+  \begin{itemize}
+	  \item New project.
+	  \item Open project.
+	  \item Save project.
+	  \item Modify project.
+	  \item Copy project.
+	  \item Delete project.
+	\end{itemize}
+	
+  \item Scenario 
+  \begin{itemize}
+	  \item New scenario.  Linked to a particular project.
+	  \item Open scenario.
+	  \item Save scenario.
+	  \item Modify scenario.
+	  \item Copy scenario.
+	  \item Run scenario.  Produces a scenario run.
+	  \item Delete scenario.
+	\end{itemize}
+	
+  \item Scenario Run 
+  \begin{itemize}
+	  \item Open scenario run (read only?).
+	  \item Delete all or part of a scenario run.  For instance, to prepare to re-run starting in 2020.
+	  \item Copy all or part of a scenario run.  For instance, to send to a colleague.
+	\end{itemize}
+	
+  \item Indicator Definition 
+  \begin{itemize}
+	  \item New indicator definition.  Defines how to compute an indicator results.
+	  \item Open indicator definition.
+	  \item Save indicator definition.
+	  \item Delete indicator definition.
+	\end{itemize}
+	
+  \item Indicator Results 
+  \begin{itemize}
+	  \item New indicator results.  Compute an indicator results from an indicator definition.
+	  \item Open/View indicator results.
+	  \item \ldots
+	\end{itemize}
+	
+  \item Indicator Set 
+  \begin{itemize}
+	  \item Create an indicator set.
+	  \item View/edit/save an indicator set.
+  \end{itemize}
+  
+  \item Data-flow Diagram.  
+  \begin{itemize}
+    \item New data-flow diagram.
+    \item \ldots
+    \item Edit component from diagram.  A componet may be a node or an edge.  For instance, right-click on a data-source to set its properties.
+    \item Run data-flow diagram.  
+    \item Validate data-flow diagram.
+    \item Step-over data-flow diagram.  Runs next step in diagram.
+    \item Step-into current node.  During simulation.
+    \item Set breakpoint.  Execution will stop just before executing the component that has the breakpoint.
+    \item Open selected node.  Opens editor for the node, which may be a data-flow diagram itself.
+    \item Open selected edge.  Opens property editor for the edge.
+    \item Select node.  To edit, open, move, delete, etc.
+  \end{itemize}
+\end{itemize}
+
+\section{RFQ Appendix G text, notes, and questions}
+The next 3 sub-sections contain text compiled directly from RFQ Appendix G in black with comments and questions from Jesse.  The purpose of this is to begin to reconcile the design, implementation, and feature ideas presented in Appendix G with existing or future Opus functionality.
+
+\subsection{Tool Manager}
 Overview
 \begin{itemize}
 	\item Enhancements to ESRI ToolBox and ESRI ModelBuilder
-		\textcolor{red}{Jesse says: Will we literally extend ESRI's ArcToolBox and ModelBuilder framework, or will this be very similar in functionality but built within Envisage?  If it is an Envisage application, how does it interact with ArcGIS?}
+		\textcolor{red}{\textit{Jesse says: Will we literally extend ESRI's ArcToolBox and ModelBuilder framework, or will this be very similar in functionality but built within Envisage?  If it is an Envisage application, how does it interact with ArcGIS?}}
 		\begin{itemize}
 			\item At minimum, maintain current functionality of both
-				\textcolor{red}{Jesse says: This is easy if we do this in Envisage, but what about 'interoperability' of tools between ArcGIS and AZ-SMART?}
+				\textcolor{red}{\textit{Jesse says: This is easy if we do this in Envisage, but what about 'interoperability' of tools between ArcGIS and AZ-SMART?}}
 		\end{itemize}
 	\item Will have an indexing system by which end-users can find appropriate tools relevant to their needs
-		\textcolor{red}{Jesse says: I am not precisely sure what this means. A search for tools function maybe?}
+		\textcolor{red}{\textit{Jesse says: I am not precisely sure what this means. A search for tools function maybe?}}
 	\item Accesses Script Editor to code/implement tools
-		\textcolor{red}{Jesse says: This should not be a problem, script editor could be built into an Envisage application easily, or an editor can be easily accessed from within ArcGIS (e.g. PythonWin).}
+		\textcolor{red}{\textit{Jesse says: This should not be a problem, script editor could be built into an Envisage application easily, or an editor can be easily accessed from within ArcGIS (e.g. PythonWin).}}
 	\item Uses ModelBuilder for computer-aided programming (i.e., data flow chart graphical interface)
 	\item Manage scripts: open, create, copy, delete, edit tools and their properties
-		\textcolor{red}{Jesse says: This should not be a problem, but there are security issues here (not sure what they are yet, see comments below).}
+		\textcolor{red}{\textit{Jesse says: This should not be a problem, but there are security issues here (not sure what they are yet, see comments below).}}
 	\item Multiple security levels
-		\textcolor{red}{Jesse says: What security levels specifically?  This needs to be addressed early in the project.}
+		\textcolor{red}{\textit{Jesse says: What security levels specifically?  This needs to be addressed early in the project.}}
 	\item Multi-user system
-		\textcolor{red}{Jesse says: Multi-user in what sense?  Multiple installs of AZ-SMART?  Do they need to be aware of each other?  Are models stored centrally and shared between users?}
+		\textcolor{red}{\textit{Jesse says: Multi-user in what sense?  Multiple installs of AZ-SMART?  Do they need to be aware of each other?  Are models stored centrally and shared between users?}}
 	\item Ability to share tool based on properties assigned
-		\textcolor{red}{Jesse says: I think this means that if a user logs on and creates a new tool, that they have the ability to share it (or not) with other users.}
+		\textcolor{red}{\textit{Jesse says: I think this means that if a user logs on and creates a new tool, that they have the ability to share it (or not) with other users.}}
 	\item Will perform conditionals and loops
-		\textcolor{red}{Jesse says: This should not be a problem.}
+		\textcolor{red}{\textit{Jesse says: This should not be a problem.}}
 	\item Unless specified, all tools should be capable of accepting input from user, script, output from other tools, or a database
-		\textcolor{red}{Jesse says: I take this to mean that any tool can be run as a stand alone script, or used as a 'link in a chain' of other tools.}
+		\textcolor{red}{\textit{Jesse says: I take this to mean that any tool can be run as a stand alone script, or used as a 'link in a chain' of other tools.}}
 	\item Consultant to recommend and ultimately create:
 		\begin{itemize}
 			\item Tool archiving procedures
 			\item Definition and management of production and development versions
 			\item Prevention of the inadvertent modification and/or deletion of tools referenced elsewhere in the system
-				\textcolor{red}{Jesse says: Hmmmm, this sounds like a tool should 'be aware' of where it is being used so that it cannot be deleted or modified and thereby messing up some other part of the system.  This sounds great, but how does it get done?}
+				\textcolor{red}{\textit{Jesse says: Hmmmm, this sounds like a tool should 'be aware' of where it is being used so that it cannot be deleted or modified and thereby messing up some other part of the system.  This sounds great, but how does it get done?}}
 		\end{itemize}
 \end{itemize}
 Example Tools from MAG
 
-\subsection{Land Use Editor}
-\textcolor{red}{Jesse says: Is the Land Use Editor a 'tool' that (from MAG above) 'should be capable of accepting input from user, script, output from other tools, or a database'?  The Land Use Editor sounds like something quite a bit larger and more involved than the conceptualization of a tool above.}
+\subsubsection{Land Use Editor}
+\textcolor{red}{\textit{Jesse says: Is the Land Use Editor a 'tool' that (from MAG above) 'should be capable of accepting input from user, script, output from other tools, or a database'?  The Land Use Editor sounds like something quite a bit larger and more involved than the conceptualization of a tool above.}}
 Overview
 \begin{itemize}
 	\item An ArcGIS application toolbar that provides controls specifically suited for editing and managing land use databases
 	\item Maintains planar polygon topology/grid; Data model aware; Performs validation and domain checking
-		\textcolor{red}{Jesse says: This sounds like the sort of thing that is enforced through the geodatabase and data model, does this belong in the Data Manager?}
+		\textcolor{red}{\textit{Jesse says: This sounds like the sort of thing that is enforced through the geodatabase and data model, does this belong in the Data Manager?}}
 	\item Advanced wizards for manipulating, validating, and assembling land use themes using interactive input and configurable rules
 	\item Aggregation of parcels based on predefined rules (e.g. eliminate minor roads)
-		\textcolor{red}{Jesse says: I am not sure what predefined rules means, even with the example given.}
+		\textcolor{red}{\textit{Jesse says: I am not sure what predefined rules means, even with the example given.}}
 	\item Subdivision of parcels or polygons based on predefined rules
-		\textcolor{red}{Jesse says: Subdivision of parcels in an automated fashion?}
+		\textcolor{red}{\textit{Jesse says: Subdivision of parcels in an automated fashion?}}
 	\item Variable sized grids with associated attribute data (e.g. areas with high vs. low resolution for modeling and analysis)
-		\textcolor{red}{Jesse says: Does this mean the ability to create different sized grids from polygonal data, or is there more to this?}
+		\textcolor{red}{\textit{Jesse says: Does this mean the ability to create different sized grids from polygonal data, or is there more to this?}}
 	\item Can access data in Data Manager or Project Manager
-		\textcolor{red}{Jesse says: I think data in 'Data Manager' will technically reside in a (geo)database, or Opus cache.  Is there a need for something more than that here?}
+		\textcolor{red}{\textit{Jesse says: I think data in 'Data Manager' will technically reside in a (geo)database, or Opus cache.  Is there a need for something more than that here?}}
 	\item Consistency checking across multiple themes
-		\textcolor{red}{Jesse says: Checking for consistency of what exactly?}
+		\textcolor{red}{\textit{Jesse says: Checking for consistency of what exactly?}}
 	\item Summary and indicator statistics
-		\textcolor{red}{Jesse says: I am not sure what this means.}
+		\textcolor{red}{\textit{Jesse says: I am not sure what this means.}}
 	\item Completely configurable to suit any land use data model, coding scheme, and installation
-		\textcolor{red}{Jesse says: Are different 'configurations' of a Land Use Editor envisioned?  I am not sure I see what would need to be configured here.}
+		\textcolor{red}{\textit{Jesse says: Are different 'configurations' of a Land Use Editor envisioned?  I am not sure I see what would need to be configured here.}}
 	\item Similar to current editing capabilities in SAM-IM
 \end{itemize}
 
-\subsection{Land Use and Socioeconomic Synthesizer}
-\textcolor{red}{Jesse says: This sounds like a collection of tools to assist in creating a base year database.  Is this envisioned as a signle tool?  If so, I have the same comment about it as I did about the Land Use Editor above.}
+\subsubsection{Land Use and Socioeconomic Synthesizer}
+\textcolor{red}{\textit{Jesse says: This sounds like a collection of tools to assist in creating a base year database.  Is this envisioned as a signle tool?  If so, I have the same comment about it as I did about the Land Use Editor above.}}
 \begin{itemize}
 	\item For creating and populating the base year (e.g., 2000) land use database by assembling multiple sources.
 	\item For creating projected land use and socioeconomic datasets based on configurable rules. 
 \end{itemize}
 
-\subsection{Calibration and Validation}
-\textcolor{red}{Jesse says: I am not terribly clear on what this tool/collection of tools actually does.  Is this for model estimation?}
+\subsubsection{Calibration and Validation}
+\textcolor{red}{\textit{Jesse says: I am not terribly clear on what this tool/collection of tools actually does.  Is this for model estimation?}}
 \begin{itemize}
 	\item Utilities for creating calibration data sets based on user supplied specifications
 	\item Use 3rd party programs to perform regression analysis (e.g., ALOGIT, SPSS)
 	\item Utilities for validating calibrated model data against observed data
 \end{itemize}
 
-\subsection{Analysis, Visualization, and Reporting}
-\textcolor{red}{Jesse says: Most of this sounds like a farily straightforward collection of tools, with a few exceptions noted below.}
+\subsubsection{Analysis, Visualization, and Reporting}
+\textcolor{red}{\textit{Jesse says: Most of this sounds like a farily straightforward collection of tools, with a few exceptions noted below.}}
 \begin{itemize}
 	\item A spatial calculator to perform computations on socioeconomic databases, examples:
 		\begin{itemize}
 			\item Incorporate data from external sources;
-				\textcolor{red}{Jesse says: Data external to what: the project/scenario, the database, or other?  What role does this have in the system?}
+				\textcolor{red}{\textit{Jesse says: Data external to what: the project/scenario, the database, or other?  What role does this have in the system?}}
 			\item Prorate projections to polygons based on a demographic property;
-				\textcolor{red}{Jesse says: I am not sure what this means.  This sounds like a model to me.}
+				\textcolor{red}{\textit{Jesse says: I am not sure what this means.  This sounds like a model to me.}}
 			\item Drop point data into polygons (TAZ or land use polygons);
 			\item Perform row and column normalization and matrix balancing
 			\item Automatically summarize land use themes according to other polygon geographies (e.g., TAZs)
@@ -114,20 +240,20 @@ Overview
 			\item Compute indicators and measures on land use or other polygon geographies (e.g., job-housing balance).
 		\end{itemize}
 	\item Capability to export tables to any file format, including custom format text files needed by travel models as well as ArcIMS; Users can define and save various file formats into a library of templates, and recall them for later exports.
-		\textcolor{red}{Jesse says: Which formats specifically?  We need a list.  The mention of ArcIMS here is curious, what role will ArcIMS have in this?  This statement also implies that users should be able to define and save their own file formats beyond standard ones.  We need more information about this.}
+		\textcolor{red}{\textit{Jesse says: Which formats specifically?  We need a list.  The mention of ArcIMS here is curious, what role will ArcIMS have in this?  This statement also implies that users should be able to define and save their own file formats beyond standard ones.  We need more information about this.}}
 	\item Provides methods by which end-users can define series of thematic maps to be generated automatically
 	\item Provides methods by which end-users can define statistical tables and reports to be generated automatically
 \end{itemize}
 
-\subsection{Data Manipulation and Conversion Utilities}
-\textcolor{red}{Jesse says: There is definitely some overlap here between the Analysis, Visualization, and Reporting tools and the Data Manager.}
+\subsubsection{Data Manipulation and Conversion Utilities}
+\textcolor{red}{\textit{Jesse says: There is definitely some overlap here between the Analysis, Visualization, and Reporting tools and the Data Manager.}}
 \begin{itemize}
 	\item Data available in a number of different file/DBMS formats: MS Excel spreadsheets, MS Access, Formatted ASCII files, Geodatabases, MySQL, etc.
 	\item A library of utilities for accessing/converting data from one form to another so that it can be accessed directly by tools implementing models
 \end{itemize}
 
-\subsection{Accessibility}
-\textcolor{red}{Jesse says: It sounds like they simply want us to recommend a travel model system for them to use.  This has a curious location under the 'Tool Manager' though, does that imply something more?}
+\subsubsection{Accessibility}
+\textcolor{red}{\textit{Jesse says: It sounds like they simply want us to recommend a travel model system for them to use.  This has a curious location under the 'Tool Manager' though, does that imply something more?}}
 \begin{itemize}
 	\item Consultant to recommend and implement methodology or methodologies for travel times from geography to geography. Examples include:
 		\begin{itemize}
@@ -137,22 +263,22 @@ Overview
 		\end{itemize}
 \end{itemize}
 
-\subsection{Submodels}
-\textcolor{red}{Jesse says: This needs expansion and explanation.}
+\subsubsection{Submodels}
+\textcolor{red}{\textit{Jesse says: This needs expansion and explanation.  There are a number of 'submodels' in a table in Appendix G that need attention from us.}}
 
-\subsection{Site Suitability Tools}
-\textcolor{red}{Jesse says: To some extent this sounds like what Opus does automatically through its models, but perhaps MAG is looking for something more interactive than what we are used to.}
+\subsubsection{Site Suitability Tools}
+\textcolor{red}{\textit{Jesse says: To some extent this sounds like what Opus does automatically through its models, but perhaps MAG is looking for something more interactive than what we are used to.}}
 \begin{itemize}
 	\item Characterizes potential development sites throughout a region with respect to its suitability for development;
 	\item A toolbox for portraying site characteristics from other GIS users (e.g., age and condition of structure, land value, proximity to highways, distance to developed land, residential market within 3 miles, etc.)
-		\textcolor{red}{Jesse says: This sounds a lot like what a GIS already does: symbolize the characteristics of spatial data, is there more to this?}
+		\textcolor{red}{\textit{Jesse says: This sounds a lot like what a GIS already does: symbolize the characteristics of spatial data, is there more to this?}}
 	\item Creates input datasets used in calibration
-		\textcolor{red}{Jesse says: I do not understand what exactly this would create.}
+		\textcolor{red}{\textit{Jesse says: I do not understand what exactly this would create.}}
 	\item An important component of allocation of lands during a projection, using calibrated factors
 \end{itemize}
 
-\subsection{Allocation Tool}
-	\textcolor{red}{Jesse says: This is the key simulation 'tool' (although I am not sure this is a tool as it is defined it the Tool Manager above).  Many of these things are done by Opus during a simulation run.  What I think is missing from Opus, and what MAG expects to see, is the ability to run the simulation in an interactive manner.  Below I have inserted comments where I have a question on whether or not Opus does this.}
+\subsubsection{Allocation Tool}
+	\textcolor{red}{\textit{Jesse says: This is the key simulation 'tool' (although I am not sure this is a tool as it is defined it the Tool Manager above).  Many of these things are done by Opus during a simulation run.  What I think is missing from Opus, and what MAG expects to see, is the ability to run the simulation in an interactive manner.  Below I have inserted comments where I have a question on whether or not Opus does this.}}
 \begin{itemize}
 	\item A key tool for projecting growth in a region
 	\item At minimum, maintain current functionality of SAM-IM
@@ -163,41 +289,41 @@ Overview
 			\item Observes general plan layers that designate acceptable conforming land uses and densities
 			\item Accepts any land use coding scheme that the user defines
 			\item Allocation sectors (variables of interest for projections) are user-defined
-				\textcolor{red}{Jesse says: This is a little different than Opus, not sure how to reconcile Opus and SAM-IM here.}
+				\textcolor{red}{\textit{Jesse says: This is a little different than Opus, not sure how to reconcile Opus and SAM-IM here.}}
 			\item Sectors are allocated in a user-defined sequence.
-				\textcolor{red}{Jesse says: I think this is  different than Opus too.}
+				\textcolor{red}{\textit{Jesse says: I think this is  different than Opus too.}}
 			\item Mechanism by which large development tracts are subdivided into parcels appropriate in size for the development considered
-				\textcolor{red}{Jesse says: There is a lot of work here to subdivide and aggregate polygonal parcels}
+				\textcolor{red}{\textit{Jesse says: There is a lot of work here to subdivide and aggregate polygonal parcels}}
 			\item Ability to observe adopted land use plans and densities on a polygon/grid basis
 			\item Development Velocity Curve dictates the pace at which developments are built
-				\textcolor{red}{Jesse says: We need to implement the 'Velocity Curve' idea into Opus.}
+				\textcolor{red}{\textit{Jesse says: We need to implement the 'Velocity Curve' idea into Opus.}}
 			\item Observes regional control totals of growth, or growth forecasts for subareas, as defined
-				\textcolor{red}{Jesse says: I am ignorant as to how this differs from densities allowed in the plan.  I am not sure if Opus does this or not.}
+				\textcolor{red}{\textit{Jesse says: I am ignorant as to how this differs from densities allowed in the plan.  I am not sure if Opus does this or not.}}
 			\item Address "mixed use" polygons
 			\item Address redevelopment and demolition
-				\textcolor{red}{Jesse says: Does Opus do this?}
+				\textcolor{red}{\textit{Jesse says: Does Opus do this?}}
 		\end{itemize}
 	\item Same process can be used, with different inputs, for vacating lands due to demolition and redevelopment
-		\textcolor{red}{Jesse says: This sounds like a 'negative growth' idea.}
+		\textcolor{red}{\textit{Jesse says: This sounds like a 'negative growth' idea.}}
 	\item Controlled by a number of different switches and rules supplied by the user that control how the allocation process specifically works
-		\textcolor{red}{Jesse says: Exactly what switches and rules?}
+		\textcolor{red}{\textit{Jesse says: Exactly what switches and rules?}}
 	\item Driven by a set of projected control totals of population and employment change that apply to the entire region or subareas of it
-		\textcolor{red}{Jesse says: Again, is this fundamentally different than Opus?}
+		\textcolor{red}{\textit{Jesse says: Again, is this fundamentally different than Opus?}}
 	\item Can control subarea growth at different geographic levels
-		\textcolor{red}{Jesse says: I am unsure what this means.}
+		\textcolor{red}{\textit{Jesse says: I am unsure what this means.}}
 	\item Capability for  "gravity effects" model projection mechanisms reacting to measures of accessibility, land use constraints and opportunities, growth trends, and other socioeconomic attributes
 	\item Provides specific treatment of known developments scheduled to be underway
-		\textcolor{red}{Jesse says: This combined with the Velocity Curve represents new Opus functionality.}
+		\textcolor{red}{\textit{Jesse says: This combined with the Velocity Curve represents new Opus functionality.}}
 	\item Provides support for analysis of scenarios:
 		\begin{itemize}
 			\item Generates alternative scenarios of land use and socioeconomic projections
 			\item Ability to work on complete area or revision-areas (sub-parts of complete modeling area)
 			\item Interactive designation of  "revision areas"; Capability to manipulate both polygon and grid
 			\item Migrates changes in downstream years; that is, changes made to a 2010 forecast migrated automatically to subsequent years;
-				\textcolor{red}{Jesse says: Does this mean that the user should have the ability to observe some prediction in 2010, decide that it is wrong, modify it manually, then restart the model from there?  Or are changes to 2010 expected to automatically 'propagate' to subsequent years *without* re-running the model?  This sounds complicated whatever it is.}
+				\textcolor{red}{\textit{Jesse says: Does this mean that the user should have the ability to observe some prediction in 2010, decide that it is wrong, modify it manually, then restart the model from there?  Or are changes to 2010 expected to automatically 'propagate' to subsequent years *without* re-running the model?  This sounds complicated whatever it is.}}
 		\end{itemize}
 	\item Provides different ways to react:
-		\textcolor{red}{Jesse says: This again implies mid-simulation run interactivity.  How are we going to handle this? What should a user be able to change in the middle of a simulation run?}
+		\textcolor{red}{\textit{Jesse says: This again implies mid-simulation run interactivity.  How are we going to handle this? What should a user be able to change in the middle of a simulation run?}}
 		\begin{itemize}
 			\item When build-out conditions are reached in individual subareas
 			\item How active developments are treated
@@ -205,7 +331,7 @@ Overview
 			\item To demolition and redevelopment 
 		\end{itemize}
 	\item Different applications of the Allocation procedure in the projection model stream:
-		\textcolor{red}{Jesse says: I am fairly confused by this description of functionality.}
+		\textcolor{red}{\textit{Jesse says: I am fairly confused by this description of functionality.}}
 		\begin{itemize}
 			\item Regular production projections
 			\item "Min-Max" procedure to create set of floors and ceilings to estimate reasonable growth potential
@@ -213,20 +339,20 @@ Overview
 		\end{itemize}
 \end{itemize}
 
-\section{Data Manager}
+\subsection{Data Manager}
 Overview
 \begin{itemize}
 	\item Enhancements to ESRI ArcCatalog
-		\textcolor{red}{Jesse says: An extension to ArcCatalog makes sense to me here, sort of.  This raises the question of how are 'tools' accessible in and out of the ArcGIS environment, and specifically where do they reside?}
+		\textcolor{red}{\textit{Jesse says: An extension to ArcCatalog makes sense to me here, sort of.  This raises the question of how are 'tools' accessible in and out of the ArcGIS environment, and specifically where do they reside?}}
 	\item At minimum, maintain current functionality
 	\item Access to, development, and maintenance of all data
-		\textcolor{red}{Jesse says: All data including Opus cache?}
+		\textcolor{red}{\textit{Jesse says: All data including Opus cache?}}
 	\item Create and track relationships (spatial and rule based) between datasets
-		\textcolor{red}{Jesse says: ArcCatalog and the geodatabase framework have a lot of functionality built in for this sort of thing.  I am not exactly sure what it means to 'track' a relationship though, perhaps just document it?}
+		\textcolor{red}{\textit{Jesse says: ArcCatalog and the geodatabase framework have a lot of functionality built in for this sort of thing.  I am not exactly sure what it means to 'track' a relationship though, perhaps just document it?}}
 	\item Uses tools from Tool Manager
-		\textcolor{red}{Jesse says: Exactly how this is accomplished I do not know, see comment above.}
+		\textcolor{red}{\textit{Jesse says: Exactly how this is accomplished I do not know, see comment above.}}
 	\item All data potentially used by more than one project. Examples include:
-		\textcolor{red}{Jesse says: Data being used across projects/scenarios makes sense, but is it the same data, copies of data, or just changes to data that are being used in different projects/scenarios?}
+		\textcolor{red}{\textit{Jesse says: Data being used across projects/scenarios makes sense, but is it the same data, copies of data, or just changes to data that are being used in different projects/scenarios?}}
 		\begin{itemize}
 			\item Land Use Codes
 			\item Base Year
@@ -235,40 +361,51 @@ Overview
 			\item Symbol table associated with global variables
 		\end{itemize}
 	\item Metadata must be maintained for all datasets
-		\textcolor{red}{Jesse says: What kind of metadata and in what format?}
+		\textcolor{red}{\textit{Jesse says: What kind of metadata and in what format?}}
 	\item Security
-		\textcolor{red}{Jesse says: This is a big issue that needs consideration up front and outside of simply the 'Data Manager' framework.  What types of users are there and what can the do and not do?}
+		\textcolor{red}{\textit{Jesse says: This is a big issue that needs consideration up front and outside of simply the 'Data Manager' framework.  What types of users are there and what can the do and not do?}}
 	\item Consultant to recommend directory structure
-		\textcolor{red}{Jesse says: This should not be difficult once some other details are worked out.}
+		\textcolor{red}{\textit{Jesse says: This should not be difficult once some other details are worked out.}}
 	\item Consultant to recommend and ultimately create data archiving procedures
-		\textcolor{red}{Jesse says: Does archiving mean a database backup strategy?  AZ-SMART will undoubtedly produce copious amounts of data in different formats.}
+		\textcolor{red}{\textit{Jesse says: Does archiving mean a database backup strategy?  AZ-SMART will undoubtedly produce copious amounts of data in different formats.}}
 \end{itemize}
 
-\section{Project Manager}
+
+\subsection{Project Manager}
+
 Overview
+
 \begin{itemize}
 	\item Create new projects and scenarios, or open projects and scenarios that have been created previously for further analysis
-		\textcolor{red}{Jesse says: I am a little unclear about the difference between projects and scenarios.  Do you 'run' a project, or do you 'run' a scenario?}
+		\textcolor{red}{\textit{Jesse says: I am a little unclear about the difference between projects and scenarios.  Do you 'run' a project, or do you 'run' a scenario?  David and Jesse said: Here is a proposal: A project defines the geographical scope, set of issues of concern, time-frame desired, granularity, etc. for a specific investigation into some set of issues.  A scenario is a particular configuration of input data, assumptions, and models to run to test a particular alternative future.  Every project will eventually have at least one scenario.  You can only 'run' scenarios.}}
 	\item Links tools from Tool Manager with data from Data Manager using ESRI ModelBuilder concepts
-		\textcolor{red}{Jesse says: This sounds like a version of ESRI's model builder that allows functions (tools) and data (tables, feature classes, etc.) to be linked in a flowchart fashion to compose a project/scenario.}
+		\textcolor{red}{\textit{Jesse says: This sounds like a version of ESRI's model builder that allows functions (tools) and data (tables, feature classes, etc.) to be linked in a flowchart fashion to compose a project/scenario.}}
 	\item Selects required components and limits execution of model to tools necessary for the scenario subset.
-		\textcolor{red}{Jesse says: I think that the model builder type interface above implicitly limits projects/scenarios to running only tools that were included within them.  Is there more to this feature that I am missing?} 
+		\textcolor{red}{\textit{Jesse says: I think that the model builder type interface above implicitly limits projects/scenarios to running only tools that were included within them.  Is there more to this feature that I am missing?}}
 	\item Accesses all data relevant to potentially more than one project via the Data Manager
-		\textcolor{red}{Jesse says: I am not sure I understand this.}
+		\textcolor{red}{\textit{Jesse says: I am not sure I understand this.}}
 	\item Stores all data relevant to only that one project within a project. Examples include:
 		\begin{itemize}
 			\item Projection Years
 			\item Switches utilized in the project
 			\item Status of the project
 			\item File and database names etc.
-				\textcolor{red}{Jesse says: So do projects/scenarios 'store' data, copies of data, or references to data?}
+				\textcolor{red}{\textit{Jesse says: So do projects/scenarios 'store' data, copies of data, or references to data?}}
 		\end{itemize}
 	\item Controls model execution: start, stop, and restart model execution
-		\textcolor{red}{Jesse says: This makes sense to me.}
+		\textcolor{red}{\textit{Jesse says: This makes sense to me.}}
 	\item Access the status of a model while executing
-		\textcolor{red}{Jesse says: This makes sense to me.}
+		\textcolor{red}{\textit{Jesse says: This makes sense to me.}}
 	\item Access various execution logs and error logs associated with a model run
-		\textcolor{red}{Jesse says: This makes sense to me.}
+		\textcolor{red}{\textit{Jesse says: This makes sense to me.}}
+\end{itemize}
+
+\section{Overall open-ended questions and comments}
+
+\begin{itemize}
+	\item \textcolor{red}{\textit{Jesse says: My biggest question is this: What is the user going to see when they double-click 'AZ-SMART.exe' on their desktop?  Does it bring up one of the above 'managers' (project, data, tool) or perhaps some wrapper application that incorporates those 'managers'?}}
+	\item \textcolor{red}{\textit{Jesse says: Are the managers as listed above the appropriate framework for AZ-SMART, or is there an alternative way of conceptualizing it?  Unless we have a better way of splitting up the functionality I say we stick closely to this.}}
+	\item \textcolor{red}{\textit{Jesse says: I think we need some sort of 'security model' for AZ-SMART.  Sprinkled throughout there is a desire for locking down certain parts of the system depending on what type of user you are.  This is an issue we should address as we design and build the system. Adding security levels later could be a problem.}}
 \end{itemize}
 
 
