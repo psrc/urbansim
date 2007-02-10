@@ -9,7 +9,7 @@
 
 \pagestyle{plain}
 \usepackage{color}
-%\title{AZ-SMART Architecture Document}
+%\title{AZ-SMART Architecture Document Draft}
 %\author{Jesse Ayers\\
 %Paul Waddell\\
 %David Socha}
@@ -21,6 +21,301 @@
 %\end{abstract}
 
 \begin{document}
+
+
+\section{Core Modules in AZ-SMART}
+The next 3 sub-sections synthesize narrative from RFG Appendix G with CUSPA's design recommendations for AZ-SMART core modules.  The purpose of this is to begin to reconcile the design, implementation, and feature ideas presented in Appendix G with existing or future Opus functionality.
+
+\subsection{Tool Manager}
+Overview
+\begin{itemize}
+	\item Enhancements to ESRI ToolBox and ESRI ModelBuilder
+	\\\\
+	ESRI ArcToolbox and ModelBuilder will be used as the basis for the majority of the GUI for AZ-SMART.  It will be enhanced by adding tools that leveredge OPUS and UrbanSim functionality, generally through added tools within ArcToolbox that can be used interoperably within ModelBuilder (to be verified by CUSPA).
+	\item Will have an indexing system by which end-users can find appropriate tools relevant to their needs
+	\\\\
+	The built-in ArcToolbox indexing system will be used for this purpose.
+	\item Accesses Script Editor to code/implement tools
+	\\\\
+	The built-in editing functionality for Python will be used for this purpose.
+	\item Uses ModelBuilder for computer-aided programming (i.e., data flow chart graphical interface)
+	\\\\
+	The built-in ModelBuilder functionality will be used for this purpose.
+	\item Manage scripts: open, create, copy, delete, edit tools and their properties
+	\\\\
+	The built-in ArcToolbox functionality for managing scripts will be utilized here.  This is accessible via context-menu selections at the toolset and tool level in ArcToolbox.
+	\item Multiple security levels
+	\\\\
+	Question for MAG: Please identify user groups and security levels that are desired throughout the system and the scope of permissions for each user group.
+	\item Multi-user system
+	\\\\
+	The system will be designed to use the ArcSDE multi-user environment with Microsoft SQL Server, which provides multi-user capabilities.
+	\item Ability to share tool based on properties assigned
+	\\\\
+	Question for MAG: This functionality needs further clarification about what is needed.  It may be possible to store tools in the Geodatabase, providing security and sharing capabilities within.
+	\item Will perform conditionals and loops
+	\\\\
+	The built-in ArcToolbox and ModelBuilder functionality will be used to perform conditionals and loops.
+	\item Unless specified, all tools should be capable of accepting input from user, script, output from other tools, or a database
+	\\\\
+	Tools will be constructed to meet this qualification.
+	\item Consultant to recommend and ultimately create:
+		\begin{itemize}
+			\item Tool archiving procedures
+			\\\\
+			This may require the use of a version control system such as Subversion (e.g. open-source and free software application).  A Subversion repository has been set up for this project at CUSPA.
+			\item Definition and management of production and development versions
+			\\\\
+			This could be accomplised by having two branches in the Subversion repostitory, one for production code, one for development code.
+			\item Prevention of the inadvertent modification and/or deletion of tools referenced elsewhere in the system
+			\\\\
+			This could be accomplished by placing relevant Toolboxes and Toolsets in a 'read-only' location.
+		\end{itemize}
+\end{itemize}
+Example Tools from MAG
+
+\subsubsection{Land Use Editor}
+Overview
+\begin{itemize}
+	\item An ArcGIS application toolbar that provides controls specifically suited for editing and managing land use databases
+	\\\\
+	CUSPA proposes to use ArcGIS built-in editing functionality for editing of spatial features (e.g. existing land use, development projects), augmented by a toolset.  If there is remaining functionality in SAM-IM that is not already addressed by built-in ArcGIS editing, then an ArcMap toolbar would be created to meet these needs.
+	\item Maintains planar polygon topology/grid; Data model aware; Performs validation and domain checking
+	\\\\
+	CUSPA proposes to utilize built-in geodatabase functionality for maintaining topology, domain checking, etc.  There are existing tools (e.g. Geodatabase designer 2) that can address these requirements.
+	\item Advanced wizards for manipulating, validating, and assembling land use themes using interactive input and configurable rules
+	\\\\
+	CUSPA proposes to focus on developing tools and ModelBuilder models to meet these needs.
+	\item Aggregation of parcels based on predefined rules (e.g. eliminate minor roads)
+	\item Subdivision of parcels or polygons based on predefined rules
+	\\\\
+	CUSPA suggests that these two items are a complex research task that requires further discussion with MAG.
+	\item Variable sized grids with associated attribute data (e.g. areas with high vs. low resolution for modeling and analysis)
+	\\\\
+	CUSPA understands the potential benefits of variable sized grids for preserving small polygons in dense core of the urban area and avoiding wasted storage using small gridcells to represent large polygons in the urban periphery.  However, implementing variable resolution grids is potentially a research project with considerable risk.  Further discussion of the objectives, alternative strategies, and risks associated with these is needed.
+	\item Can access data in Data Manager or Project Manager
+	\\\\
+	CUSPA proposes that all data in the geodatabase will be directly accessible in Data Manager and/or Project Manager as appropriate.  Data generated during a simulation would be accessible in Data Manager and/or Project Manager through the use of tools to copy the data into the geodatabase or other tabular formats.
+	\item Consistency checking across multiple themes
+	\\\\
+	Tools would be developed to check for consistency within and across themes as needed.
+	\item Summary and indicator statistics
+	\\\\
+	This would be built using the Opus indicator framework.
+	\item Completely configurable to suit any land use data model, coding scheme, and installation
+	\\\\
+	AZ-SMART will be designed to be highly modular and configurable and will use the flexibility inherent in the Opus sytesm.
+	\item Similar to current editing capabilities in SAM-IM
+	\\\\
+	Existing ArcMap functionality will be utilized to provide this functionality.
+\end{itemize}
+
+\subsubsection{Land Use and Socioeconomic Synthesizer}
+\\\\
+CUSPA proposes to develop tools for creating, manipulating, and synthesizing a base year database in the ArcToolbox/ModelBuilder environment.
+\begin{itemize}
+	\item For creating and populating the base year (e.g., 2000) land use database by assembling multiple sources.
+	\item For creating projected land use and socioeconomic datasets based on configurable rules.
+	\\\\
+	This would be done by implementing models in Opus and allowing them to be configured and run within ArcGIS. 
+\end{itemize}
+
+\subsubsection{Calibration and Validation}
+\begin{itemize}
+	\item Utilities for creating calibration data sets based on user supplied specifications
+	\item Use 3rd party programs to perform regression analysis (e.g., ALOGIT, SPSS)
+	\item Utilities for validating calibrated model data against observed data
+	\\\\
+	Opus includes tools for creating estimation datasets, estimating parameters of multiple regression and discrete choice models.  These tools would be used for specifying and estimating models in AZ-SMART.  Model validation will be supported by tools to compare predicted and observed data and visualize patterns of error in the results.
+\end{itemize}
+
+\subsubsection{Analysis, Visualization, and Reporting}
+\begin{itemize}
+	\item A spatial calculator to perform computations on socioeconomic databases, examples:
+		\begin{itemize}
+			\item Incorporate data from external sources;
+			\item Prorate projections to polygons based on a demographic property;
+			\item Drop point data into polygons (TAZ or land use polygons);
+			\item Perform row and column normalization and matrix balancing
+			\item Automatically summarize land use themes according to other polygon geographies (e.g., TAZs)
+			\item Calculate socioeconomic and land use statistics (population, employment, acres by type) for user defined areas based on geospatial rules.
+			\item Compute indicators and measures on land use or other polygon geographies (e.g., job-housing balance).
+			\\\\
+			Question to MAG: The needs detailed in this section warrant further discussion.  CUSPA anticipates that some of this functionality will be handled by ArcGIS and Opus functionality.
+		\end{itemize}
+	\item Capability to export tables to any file format, including custom format text files needed by travel models as well as ArcIMS; Users can define and save various file formats into a library of templates, and recall them for later exports.
+	\\\\
+	The system will provide a capacity for the user to define the particular data to be exported, variables, their sequence, the file format, and location.  Export formats would include dbase, SQL server, ASCII (tab delimited, comma delimited, and fixed format).
+	\\\\
+	Question for MAG: Does this address the needs for ArcIMS?
+	\item Provides methods by which end-users can define series of thematic maps to be generated automatically
+	\item Provides methods by which end-users can define statistical tables and reports to be generated automatically
+	\\\\
+	The process of generating indicators and displaying them on a user configured base map will be automated.
+\end{itemize}
+
+\subsubsection{Data Manipulation and Conversion Utilities}
+\begin{itemize}
+	\item Data available in a number of different file/DBMS formats: MS Excel spreadsheets, MS Access, Formatted ASCII files, Geodatabases, MySQL, etc.
+	\item A library of utilities for accessing/converting data from one form to another so that it can be accessed directly by tools implementing models
+	\\\\
+	The system will support accessing and converting data among various data formats including but not limited to those formats listed above.
+\end{itemize}
+
+\subsubsection{Accessibility}
+\begin{itemize}
+	\item Consultant to recommend and implement methodology or methodologies for travel times from geography to geography. Examples include:
+		\begin{itemize}
+			\item Accesses travel times directly from third party systems used by MPOs (e.g., EMME/2, Cube)
+			\item Accesses travel times directly from modified third party systems using larger levels of geography
+			\item Creates travel times within AZ-SMART without using 3rd party systems
+		\end{itemize}
+		\\\\
+		CUSPA proposes to develop an interface to the forthcoming MAG TransCAD travel model if it is availabe within the timeframe of the AZ-SMART phase 1 project.
+\end{itemize}
+
+\subsubsection{Submodels}
+\\\\
+CUSPA will need to work with MAG staff to develop clear specifications for sub models to be developed.  CUSPA will then implement them as mutually agreed upon.
+
+
+\subsubsection{Site Suitability Tools}
+what we are used to.}}
+\begin{itemize}
+	\item Characterizes potential development sites throughout a region with respect to its suitability for development;
+	\item A toolbox for portraying site characteristics from other GIS users (e.g., age and condition of structure, land value, proximity to highways, distance to developed land, residential market within 3 miles, etc.)
+	\item Creates input datasets used in calibration
+	\item An important component of allocation of lands during a projection, using calibrated factors
+	\\\\
+	CUSPA proposes to develop a set of tools organized within a Site Suitability Toolset to use themes for planned land use and various environmental or other features that would be used in determining suitability for each land use sector.  These would be used to determine the capacity for development of each corresponding building type, such as Single Family units, Multi-family units, Office Sqft, etc, and could account for planning constraints such as minimum or maximum floor-area ratio (FAR) regulations.
+\end{itemize}
+
+\subsubsection{Allocation Tool}
+	\textcolor{red}{\textit{Jesse says: This is the key simulation 'tool' (although I am not sure this is a tool as it is defined it the Tool Manager above).  Many of these things are done by Opus during a simulation run.  What I think is missing from Opus, and what MAG expects to see, is the ability to run the simulation in an interactive manner.  Below I have inserted comments where I have a question on whether or not Opus does this.}}
+\begin{itemize}
+	\item A key tool for projecting growth in a region
+	\item At minimum, maintain current functionality of SAM-IM
+	\item Process works by selecting lands, among candidates, to be built in order to absorb growth based on an evaluation of their inherent site suitability characteristics
+	\item Features include but are not limited to:
+		\begin{itemize}
+			\item Observes constraint layers that prohibit development due to environmental or policy factors
+			\item Observes general plan layers that designate acceptable conforming land uses and densities
+			\item Accepts any land use coding scheme that the user defines
+			\item Allocation sectors (variables of interest for projections) are user-defined
+				\textcolor{red}{\textit{Jesse says: This is a little different than Opus, not sure how to reconcile Opus and SAM-IM here.}}
+			\item Sectors are allocated in a user-defined sequence.
+				\textcolor{red}{\textit{Jesse says: I think this is  different than Opus too.}}
+			\item Mechanism by which large development tracts are subdivided into parcels appropriate in size for the development considered
+				\textcolor{red}{\textit{Jesse says: There is a lot of work here to subdivide and aggregate polygonal parcels}}
+			\item Ability to observe adopted land use plans and densities on a polygon/grid basis
+			\item Development Velocity Curve dictates the pace at which developments are built
+				\textcolor{red}{\textit{Jesse says: We need to implement the 'Velocity Curve' idea into Opus.}}
+			\item Observes regional control totals of growth, or growth forecasts for subareas, as defined
+				\textcolor{red}{\textit{Jesse says: I am ignorant as to how this differs from densities allowed in the plan.  I am not sure if Opus does this or not.}}
+			\item Address "mixed use" polygons
+			\item Address redevelopment and demolition
+				\textcolor{red}{\textit{Jesse says: Does Opus do this?}}
+		\end{itemize}
+	\item Same process can be used, with different inputs, for vacating lands due to demolition and redevelopment
+		\textcolor{red}{\textit{Jesse says: This sounds like a 'negative growth' idea.}}
+	\item Controlled by a number of different switches and rules supplied by the user that control how the allocation process specifically works
+		\textcolor{red}{\textit{Jesse says: Exactly what switches and rules?}}
+	\item Driven by a set of projected control totals of population and employment change that apply to the entire region or subareas of it
+		\textcolor{red}{\textit{Jesse says: Again, is this fundamentally different than Opus?}}
+	\item Can control subarea growth at different geographic levels
+		\textcolor{red}{\textit{Jesse says: I am unsure what this means.}}
+	\item Capability for  "gravity effects" model projection mechanisms reacting to measures of accessibility, land use constraints and opportunities, growth trends, and other socioeconomic attributes
+	\item Provides specific treatment of known developments scheduled to be underway
+		\textcolor{red}{\textit{Jesse says: This combined with the Velocity Curve represents new Opus functionality.}}
+	\item Provides support for analysis of scenarios:
+		\begin{itemize}
+			\item Generates alternative scenarios of land use and socioeconomic projections
+			\item Ability to work on complete area or revision-areas (sub-parts of complete modeling area)
+			\item Interactive designation of  "revision areas"; Capability to manipulate both polygon and grid
+			\item Migrates changes in downstream years; that is, changes made to a 2010 forecast migrated automatically to subsequent years;
+				\textcolor{red}{\textit{Jesse says: Does this mean that the user should have the ability to observe some prediction in 2010, decide that it is wrong, modify it manually, then restart the model from there?  Or are changes to 2010 expected to automatically 'propagate' to subsequent years *without* re-running the model?  This sounds complicated whatever it is.}}
+		\end{itemize}
+	\item Provides different ways to react:
+		\textcolor{red}{\textit{Jesse says: This again implies mid-simulation run interactivity.  How are we going to handle this? What should a user be able to change in the middle of a simulation run?}}
+		\begin{itemize}
+			\item When build-out conditions are reached in individual subareas
+			\item How active developments are treated
+			\item With respect to policy initiatives
+			\item To demolition and redevelopment 
+		\end{itemize}
+	\item Different applications of the Allocation procedure in the projection model stream:
+		\textcolor{red}{\textit{Jesse says: I am fairly confused by this description of functionality.}}
+		\begin{itemize}
+			\item Regular production projections
+			\item "Min-Max" procedure to create set of floors and ceilings to estimate reasonable growth potential
+			\item "Scenario Builder" enabling analysis of changes to land use and other policy variables. 
+		\end{itemize}
+\end{itemize}
+
+\subsection{Data Manager}
+Overview
+\begin{itemize}
+	\item Enhancements to ESRI ArcCatalog
+	\item At minimum, maintain current functionality
+	\\\\ ArcCatalog will be used as the basis for the AZ-SMART Data Manager.  An AZ-SMART directory structure would organize these data, scripts, configurations and other components.
+
+	\item Access to, development, and maintenance of all data
+	\item Create and track relationships (spatial and rule based) between datasets
+	\item Uses tools from Tool Manager
+	\item All data potentially used by more than one project. Examples include:
+		\begin{itemize}
+			\item Land Use Codes
+			\item Base Year
+			\item Allocation Sector Names
+			\item Legends
+			\item Symbol table associated with global variables
+		\end{itemize}
+	\\\\ CUSPA proposes to create a custom AZ-SMART ArcCatalog Tree structure, that would be a dockable window containing and organizing the data and tools used in AZ-SMART. 
+
+
+	\item Metadata must be maintained for all datasets
+	\\\\ Question for MAG: Need to jointly define the Metadata requirements and then devise a suitable design to address this need.
+	\item Security
+	\\\\
+	Question for MAG: Please identify user groups and security levels that are desired throughout the system and the scope of permissions for each user group.
+
+	\item Consultant to recommend directory structure
+	\\\\ A directory structure will be recommended and implemented in the AZ-SMART ArcCatalog Tree.
+	\item Consultant to recommend and ultimately create data archiving procedures
+	\\\\ Archiving procedures will be recommended once the database and all items needing to be archived are identified.
+\end{itemize}
+
+
+\subsection{Project Manager}
+
+Overview
+
+\begin{itemize}
+	\item Create new projects and scenarios, or open projects and scenarios that have been created previously for further analysis
+	\\\\ Projects are defined as the database and model configuration used to support running a variety of scenarios that would share data and model specifications and parameters.  Scenarios are defined as a set of input data, assumptions, and run configuration parameters used for a specific run of the model system.  The Project Manager would be organized as a set of tools and configurations within the AZ-SMART ArcCatalog Tree.
+	\item Links tools from Tool Manager with data from Data Manager using ESRI ModelBuilder concepts
+	\item Selects required components and limits execution of model to tools necessary for the scenario subset.
+ 	\item Accesses all data relevant to potentially more than one project via the Data Manager
+	\item Stores all data relevant to only that one project within a project. Examples include:
+		\begin{itemize}
+			\item Projection Years
+			\item Switches utilized in the project
+			\item Status of the project
+			\item File and database names etc.
+		\end{itemize}
+	\item Controls model execution: start, stop, and restart model execution
+	\item Access the status of a model while executing
+	\item Access various execution logs and error logs associated with a model run
+\end{itemize}
+
+\section{Overall open-ended questions and comments}
+
+\begin{itemize}
+	\item \textcolor{red}{\textit{Jesse says: My biggest question is this: What is the user going to see when they double-click 'AZ-SMART.exe' on their desktop?  Does it bring up one of the above 'managers' (project, data, tool) or perhaps some wrapper application that incorporates those 'managers'?}}
+	\item \textcolor{red}{\textit{Jesse says: Are the managers as listed above the appropriate framework for AZ-SMART, or is there an alternative way of conceptualizing it?  Unless we have a better way of splitting up the functionality I say we stick closely to this.}}
+	\item \textcolor{red}{\textit{Jesse says: I think we need some sort of 'security model' for AZ-SMART.  Sprinkled throughout there is a desire for locking down certain parts of the system depending on what type of user you are.  This is an issue we should address as we design and build the system. Adding security levels later could be a problem.}}
+\end{itemize}
+
 
 \section{Nouns and Verbs}
 
@@ -144,269 +439,5 @@ These nouns and verbs could suggest the following menu items or tools that corre
     \item Select node.  To edit, open, move, delete, etc.
   \end{itemize}
 \end{itemize}
-
-\section{RFQ Appendix G text, notes, and questions}
-The next 3 sub-sections contain text compiled directly from RFQ Appendix G in black with comments and questions from Jesse.  The purpose of this is to begin to reconcile the design, implementation, and feature ideas presented in Appendix G with existing or future Opus functionality.
-
-\subsection{Tool Manager}
-Overview
-\begin{itemize}
-	\item Enhancements to ESRI ToolBox and ESRI ModelBuilder
-		\textcolor{red}{\textit{Jesse says: Will we literally extend ESRI's ArcToolBox and ModelBuilder framework, or will this be very similar in functionality but built within Envisage?  If it is an Envisage application, how does it interact with ArcGIS?}}
-		\begin{itemize}
-			\item At minimum, maintain current functionality of both
-				\textcolor{red}{\textit{Jesse says: This is easy if we do this in Envisage, but what about 'interoperability' of tools between ArcGIS and AZ-SMART?}}
-		\end{itemize}
-	\item Will have an indexing system by which end-users can find appropriate tools relevant to their needs
-		\textcolor{red}{\textit{Jesse says: I am not precisely sure what this means. A search for tools function maybe?}}
-	\item Accesses Script Editor to code/implement tools
-		\textcolor{red}{\textit{Jesse says: This should not be a problem, script editor could be built into an Envisage application easily, or an editor can be easily accessed from within ArcGIS (e.g. PythonWin).}}
-	\item Uses ModelBuilder for computer-aided programming (i.e., data flow chart graphical interface)
-	\item Manage scripts: open, create, copy, delete, edit tools and their properties
-		\textcolor{red}{\textit{Jesse says: This should not be a problem, but there are security issues here (not sure what they are yet, see comments below).}}
-	\item Multiple security levels
-		\textcolor{red}{\textit{Jesse says: What security levels specifically?  This needs to be addressed early in the project.}}
-	\item Multi-user system
-		\textcolor{red}{\textit{Jesse says: Multi-user in what sense?  Multiple installs of AZ-SMART?  Do they need to be aware of each other?  Are models stored centrally and shared between users?}}
-	\item Ability to share tool based on properties assigned
-		\textcolor{red}{\textit{Jesse says: I think this means that if a user logs on and creates a new tool, that they have the ability to share it (or not) with other users.}}
-	\item Will perform conditionals and loops
-		\textcolor{red}{\textit{Jesse says: This should not be a problem.}}
-	\item Unless specified, all tools should be capable of accepting input from user, script, output from other tools, or a database
-		\textcolor{red}{\textit{Jesse says: I take this to mean that any tool can be run as a stand alone script, or used as a 'link in a chain' of other tools.}}
-	\item Consultant to recommend and ultimately create:
-		\begin{itemize}
-			\item Tool archiving procedures
-			\item Definition and management of production and development versions
-			\item Prevention of the inadvertent modification and/or deletion of tools referenced elsewhere in the system
-				\textcolor{red}{\textit{Jesse says: Hmmmm, this sounds like a tool should 'be aware' of where it is being used so that it cannot be deleted or modified and thereby messing up some other part of the system.  This sounds great, but how does it get done?}}
-		\end{itemize}
-\end{itemize}
-Example Tools from MAG
-
-\subsubsection{Land Use Editor}
-\textcolor{red}{\textit{Jesse says: Is the Land Use Editor a 'tool' that (from MAG above) 'should be capable of accepting input from user, script, output from other tools, or a database'?  The Land Use Editor sounds like something quite a bit larger and more involved than the conceptualization of a tool above.}}
-Overview
-\begin{itemize}
-	\item An ArcGIS application toolbar that provides controls specifically suited for editing and managing land use databases
-	\item Maintains planar polygon topology/grid; Data model aware; Performs validation and domain checking
-		\textcolor{red}{\textit{Jesse says: This sounds like the sort of thing that is enforced through the geodatabase and data model, does this belong in the Data Manager?}}
-	\item Advanced wizards for manipulating, validating, and assembling land use themes using interactive input and configurable rules
-	\item Aggregation of parcels based on predefined rules (e.g. eliminate minor roads)
-		\textcolor{red}{\textit{Jesse says: I am not sure what predefined rules means, even with the example given.}}
-	\item Subdivision of parcels or polygons based on predefined rules
-		\textcolor{red}{\textit{Jesse says: Subdivision of parcels in an automated fashion?}}
-	\item Variable sized grids with associated attribute data (e.g. areas with high vs. low resolution for modeling and analysis)
-		\textcolor{red}{\textit{Jesse says: Does this mean the ability to create different sized grids from polygonal data, or is there more to this?}}
-	\item Can access data in Data Manager or Project Manager
-		\textcolor{red}{\textit{Jesse says: I think data in 'Data Manager' will technically reside in a (geo)database, or Opus cache.  Is there a need for something more than that here?}}
-	\item Consistency checking across multiple themes
-		\textcolor{red}{\textit{Jesse says: Checking for consistency of what exactly?}}
-	\item Summary and indicator statistics
-		\textcolor{red}{\textit{Jesse says: I am not sure what this means.}}
-	\item Completely configurable to suit any land use data model, coding scheme, and installation
-		\textcolor{red}{\textit{Jesse says: Are different 'configurations' of a Land Use Editor envisioned?  I am not sure I see what would need to be configured here.}}
-	\item Similar to current editing capabilities in SAM-IM
-\end{itemize}
-
-\subsubsection{Land Use and Socioeconomic Synthesizer}
-\textcolor{red}{\textit{Jesse says: This sounds like a collection of tools to assist in creating a base year database.  Is this envisioned as a signle tool?  If so, I have the same comment about it as I did about the Land Use Editor above.}}
-\begin{itemize}
-	\item For creating and populating the base year (e.g., 2000) land use database by assembling multiple sources.
-	\item For creating projected land use and socioeconomic datasets based on configurable rules. 
-\end{itemize}
-
-\subsubsection{Calibration and Validation}
-\textcolor{red}{\textit{Jesse says: I am not terribly clear on what this tool/collection of tools actually does.  Is this for model estimation?}}
-\begin{itemize}
-	\item Utilities for creating calibration data sets based on user supplied specifications
-	\item Use 3rd party programs to perform regression analysis (e.g., ALOGIT, SPSS)
-	\item Utilities for validating calibrated model data against observed data
-\end{itemize}
-
-\subsubsection{Analysis, Visualization, and Reporting}
-\textcolor{red}{\textit{Jesse says: Most of this sounds like a farily straightforward collection of tools, with a few exceptions noted below.}}
-\begin{itemize}
-	\item A spatial calculator to perform computations on socioeconomic databases, examples:
-		\begin{itemize}
-			\item Incorporate data from external sources;
-				\textcolor{red}{\textit{Jesse says: Data external to what: the project/scenario, the database, or other?  What role does this have in the system?}}
-			\item Prorate projections to polygons based on a demographic property;
-				\textcolor{red}{\textit{Jesse says: I am not sure what this means.  This sounds like a model to me.}}
-			\item Drop point data into polygons (TAZ or land use polygons);
-			\item Perform row and column normalization and matrix balancing
-			\item Automatically summarize land use themes according to other polygon geographies (e.g., TAZs)
-			\item Calculate socioeconomic and land use statistics (population, employment, acres by type) for user defined areas based on geospatial rules.
-			\item Compute indicators and measures on land use or other polygon geographies (e.g., job-housing balance).
-		\end{itemize}
-	\item Capability to export tables to any file format, including custom format text files needed by travel models as well as ArcIMS; Users can define and save various file formats into a library of templates, and recall them for later exports.
-		\textcolor{red}{\textit{Jesse says: Which formats specifically?  We need a list.  The mention of ArcIMS here is curious, what role will ArcIMS have in this?  This statement also implies that users should be able to define and save their own file formats beyond standard ones.  We need more information about this.}}
-	\item Provides methods by which end-users can define series of thematic maps to be generated automatically
-	\item Provides methods by which end-users can define statistical tables and reports to be generated automatically
-\end{itemize}
-
-\subsubsection{Data Manipulation and Conversion Utilities}
-\textcolor{red}{\textit{Jesse says: There is definitely some overlap here between the Analysis, Visualization, and Reporting tools and the Data Manager.}}
-\begin{itemize}
-	\item Data available in a number of different file/DBMS formats: MS Excel spreadsheets, MS Access, Formatted ASCII files, Geodatabases, MySQL, etc.
-	\item A library of utilities for accessing/converting data from one form to another so that it can be accessed directly by tools implementing models
-\end{itemize}
-
-\subsubsection{Accessibility}
-\textcolor{red}{\textit{Jesse says: It sounds like they simply want us to recommend a travel model system for them to use.  This has a curious location under the 'Tool Manager' though, does that imply something more?}}
-\begin{itemize}
-	\item Consultant to recommend and implement methodology or methodologies for travel times from geography to geography. Examples include:
-		\begin{itemize}
-			\item Accesses travel times directly from third party systems used by MPOs (e.g., EMME/2, Cube)
-			\item Accesses travel times directly from modified third party systems using larger levels of geography
-			\item Creates travel times within AZ-SMART without using 3rd party systems
-		\end{itemize}
-\end{itemize}
-
-\subsubsection{Submodels}
-\textcolor{red}{\textit{Jesse says: This needs expansion and explanation.  There are a number of 'submodels' in a table in Appendix G that need attention from us.}}
-
-\subsubsection{Site Suitability Tools}
-\textcolor{red}{\textit{Jesse says: To some extent this sounds like what Opus does automatically through its models, but perhaps MAG is looking for something more interactive than what we are used to.}}
-\begin{itemize}
-	\item Characterizes potential development sites throughout a region with respect to its suitability for development;
-	\item A toolbox for portraying site characteristics from other GIS users (e.g., age and condition of structure, land value, proximity to highways, distance to developed land, residential market within 3 miles, etc.)
-		\textcolor{red}{\textit{Jesse says: This sounds a lot like what a GIS already does: symbolize the characteristics of spatial data, is there more to this?}}
-	\item Creates input datasets used in calibration
-		\textcolor{red}{\textit{Jesse says: I do not understand what exactly this would create.}}
-	\item An important component of allocation of lands during a projection, using calibrated factors
-\end{itemize}
-
-\subsubsection{Allocation Tool}
-	\textcolor{red}{\textit{Jesse says: This is the key simulation 'tool' (although I am not sure this is a tool as it is defined it the Tool Manager above).  Many of these things are done by Opus during a simulation run.  What I think is missing from Opus, and what MAG expects to see, is the ability to run the simulation in an interactive manner.  Below I have inserted comments where I have a question on whether or not Opus does this.}}
-\begin{itemize}
-	\item A key tool for projecting growth in a region
-	\item At minimum, maintain current functionality of SAM-IM
-	\item Process works by selecting lands, among candidates, to be built in order to absorb growth based on an evaluation of their inherent site suitability characteristics
-	\item Features include but are not limited to:
-		\begin{itemize}
-			\item Observes constraint layers that prohibit development due to environmental or policy factors
-			\item Observes general plan layers that designate acceptable conforming land uses and densities
-			\item Accepts any land use coding scheme that the user defines
-			\item Allocation sectors (variables of interest for projections) are user-defined
-				\textcolor{red}{\textit{Jesse says: This is a little different than Opus, not sure how to reconcile Opus and SAM-IM here.}}
-			\item Sectors are allocated in a user-defined sequence.
-				\textcolor{red}{\textit{Jesse says: I think this is  different than Opus too.}}
-			\item Mechanism by which large development tracts are subdivided into parcels appropriate in size for the development considered
-				\textcolor{red}{\textit{Jesse says: There is a lot of work here to subdivide and aggregate polygonal parcels}}
-			\item Ability to observe adopted land use plans and densities on a polygon/grid basis
-			\item Development Velocity Curve dictates the pace at which developments are built
-				\textcolor{red}{\textit{Jesse says: We need to implement the 'Velocity Curve' idea into Opus.}}
-			\item Observes regional control totals of growth, or growth forecasts for subareas, as defined
-				\textcolor{red}{\textit{Jesse says: I am ignorant as to how this differs from densities allowed in the plan.  I am not sure if Opus does this or not.}}
-			\item Address "mixed use" polygons
-			\item Address redevelopment and demolition
-				\textcolor{red}{\textit{Jesse says: Does Opus do this?}}
-		\end{itemize}
-	\item Same process can be used, with different inputs, for vacating lands due to demolition and redevelopment
-		\textcolor{red}{\textit{Jesse says: This sounds like a 'negative growth' idea.}}
-	\item Controlled by a number of different switches and rules supplied by the user that control how the allocation process specifically works
-		\textcolor{red}{\textit{Jesse says: Exactly what switches and rules?}}
-	\item Driven by a set of projected control totals of population and employment change that apply to the entire region or subareas of it
-		\textcolor{red}{\textit{Jesse says: Again, is this fundamentally different than Opus?}}
-	\item Can control subarea growth at different geographic levels
-		\textcolor{red}{\textit{Jesse says: I am unsure what this means.}}
-	\item Capability for  "gravity effects" model projection mechanisms reacting to measures of accessibility, land use constraints and opportunities, growth trends, and other socioeconomic attributes
-	\item Provides specific treatment of known developments scheduled to be underway
-		\textcolor{red}{\textit{Jesse says: This combined with the Velocity Curve represents new Opus functionality.}}
-	\item Provides support for analysis of scenarios:
-		\begin{itemize}
-			\item Generates alternative scenarios of land use and socioeconomic projections
-			\item Ability to work on complete area or revision-areas (sub-parts of complete modeling area)
-			\item Interactive designation of  "revision areas"; Capability to manipulate both polygon and grid
-			\item Migrates changes in downstream years; that is, changes made to a 2010 forecast migrated automatically to subsequent years;
-				\textcolor{red}{\textit{Jesse says: Does this mean that the user should have the ability to observe some prediction in 2010, decide that it is wrong, modify it manually, then restart the model from there?  Or are changes to 2010 expected to automatically 'propagate' to subsequent years *without* re-running the model?  This sounds complicated whatever it is.}}
-		\end{itemize}
-	\item Provides different ways to react:
-		\textcolor{red}{\textit{Jesse says: This again implies mid-simulation run interactivity.  How are we going to handle this? What should a user be able to change in the middle of a simulation run?}}
-		\begin{itemize}
-			\item When build-out conditions are reached in individual subareas
-			\item How active developments are treated
-			\item With respect to policy initiatives
-			\item To demolition and redevelopment 
-		\end{itemize}
-	\item Different applications of the Allocation procedure in the projection model stream:
-		\textcolor{red}{\textit{Jesse says: I am fairly confused by this description of functionality.}}
-		\begin{itemize}
-			\item Regular production projections
-			\item "Min-Max" procedure to create set of floors and ceilings to estimate reasonable growth potential
-			\item "Scenario Builder" enabling analysis of changes to land use and other policy variables. 
-		\end{itemize}
-\end{itemize}
-
-\subsection{Data Manager}
-Overview
-\begin{itemize}
-	\item Enhancements to ESRI ArcCatalog
-		\textcolor{red}{\textit{Jesse says: An extension to ArcCatalog makes sense to me here, sort of.  This raises the question of how are 'tools' accessible in and out of the ArcGIS environment, and specifically where do they reside?}}
-	\item At minimum, maintain current functionality
-	\item Access to, development, and maintenance of all data
-		\textcolor{red}{\textit{Jesse says: All data including Opus cache?}}
-	\item Create and track relationships (spatial and rule based) between datasets
-		\textcolor{red}{\textit{Jesse says: ArcCatalog and the geodatabase framework have a lot of functionality built in for this sort of thing.  I am not exactly sure what it means to 'track' a relationship though, perhaps just document it?}}
-	\item Uses tools from Tool Manager
-		\textcolor{red}{\textit{Jesse says: Exactly how this is accomplished I do not know, see comment above.}}
-	\item All data potentially used by more than one project. Examples include:
-		\textcolor{red}{\textit{Jesse says: Data being used across projects/scenarios makes sense, but is it the same data, copies of data, or just changes to data that are being used in different projects/scenarios?}}
-		\begin{itemize}
-			\item Land Use Codes
-			\item Base Year
-			\item Allocation Sector Names
-			\item Legends
-			\item Symbol table associated with global variables
-		\end{itemize}
-	\item Metadata must be maintained for all datasets
-		\textcolor{red}{\textit{Jesse says: What kind of metadata and in what format?}}
-	\item Security
-		\textcolor{red}{\textit{Jesse says: This is a big issue that needs consideration up front and outside of simply the 'Data Manager' framework.  What types of users are there and what can the do and not do?}}
-	\item Consultant to recommend directory structure
-		\textcolor{red}{\textit{Jesse says: This should not be difficult once some other details are worked out.}}
-	\item Consultant to recommend and ultimately create data archiving procedures
-		\textcolor{red}{\textit{Jesse says: Does archiving mean a database backup strategy?  AZ-SMART will undoubtedly produce copious amounts of data in different formats.}}
-\end{itemize}
-
-
-\subsection{Project Manager}
-
-Overview
-
-\begin{itemize}
-	\item Create new projects and scenarios, or open projects and scenarios that have been created previously for further analysis
-		\textcolor{red}{\textit{Jesse says: I am a little unclear about the difference between projects and scenarios.  Do you 'run' a project, or do you 'run' a scenario?  David and Jesse said: Here is a proposal: A project defines the geographical scope, set of issues of concern, time-frame desired, granularity, etc. for a specific investigation into some set of issues.  A scenario is a particular configuration of input data, assumptions, and models to run to test a particular alternative future.  Every project will eventually have at least one scenario.  You can only 'run' scenarios.}}
-	\item Links tools from Tool Manager with data from Data Manager using ESRI ModelBuilder concepts
-		\textcolor{red}{\textit{Jesse says: This sounds like a version of ESRI's model builder that allows functions (tools) and data (tables, feature classes, etc.) to be linked in a flowchart fashion to compose a project/scenario.}}
-	\item Selects required components and limits execution of model to tools necessary for the scenario subset.
-		\textcolor{red}{\textit{Jesse says: I think that the model builder type interface above implicitly limits projects/scenarios to running only tools that were included within them.  Is there more to this feature that I am missing?}}
-	\item Accesses all data relevant to potentially more than one project via the Data Manager
-		\textcolor{red}{\textit{Jesse says: I am not sure I understand this.}}
-	\item Stores all data relevant to only that one project within a project. Examples include:
-		\begin{itemize}
-			\item Projection Years
-			\item Switches utilized in the project
-			\item Status of the project
-			\item File and database names etc.
-				\textcolor{red}{\textit{Jesse says: So do projects/scenarios 'store' data, copies of data, or references to data?}}
-		\end{itemize}
-	\item Controls model execution: start, stop, and restart model execution
-		\textcolor{red}{\textit{Jesse says: This makes sense to me.}}
-	\item Access the status of a model while executing
-		\textcolor{red}{\textit{Jesse says: This makes sense to me.}}
-	\item Access various execution logs and error logs associated with a model run
-		\textcolor{red}{\textit{Jesse says: This makes sense to me.}}
-\end{itemize}
-
-\section{Overall open-ended questions and comments}
-
-\begin{itemize}
-	\item \textcolor{red}{\textit{Jesse says: My biggest question is this: What is the user going to see when they double-click 'AZ-SMART.exe' on their desktop?  Does it bring up one of the above 'managers' (project, data, tool) or perhaps some wrapper application that incorporates those 'managers'?}}
-	\item \textcolor{red}{\textit{Jesse says: Are the managers as listed above the appropriate framework for AZ-SMART, or is there an alternative way of conceptualizing it?  Unless we have a better way of splitting up the functionality I say we stick closely to this.}}
-	\item \textcolor{red}{\textit{Jesse says: I think we need some sort of 'security model' for AZ-SMART.  Sprinkled throughout there is a desire for locking down certain parts of the system depending on what type of user you are.  This is an issue we should address as we design and build the system. Adding security levels later could be a problem.}}
-\end{itemize}
-
 
 \end{document}
