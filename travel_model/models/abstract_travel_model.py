@@ -35,7 +35,8 @@ class AbstractTravelModel(Model):
             return drive
             
     def run_travel_model_macro(self):
-        pass
+        raise NotImplementedError, "subclass responsibility"
+        
     
     def prepare_for_run(self, config, year):
-        pass
+        raise NotImplementedError, "subclass responsibility"

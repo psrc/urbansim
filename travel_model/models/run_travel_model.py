@@ -40,7 +40,7 @@ class RunTravelModel(AbstractTravelModel):
             raise StandardError(error_msg)
 
     def prepare_for_run(self, config, year):
-        pass
+        raise NotImplementedError, "subclass responsibility"
     
     def create_travel_model_command_batch(self, *args, **kwargs):
         """"""
