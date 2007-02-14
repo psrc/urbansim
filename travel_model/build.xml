@@ -1,0 +1,26 @@
+<project default="unit-tests" basedir=".">
+
+	<property name="project_name" value="opus_emme2" />
+	<property name="webdir" value="/projects/urbansim5/www.urbansim.org/opus/${project_name}" />
+	<property name="pythonpathdir" value="${basedir}/.." />
+		
+	<target name="unit-tests">
+		<echo message="Running UnitTests."/>
+		<exec executable="python">
+			<env key="PYTHONPATH" path="${pythonpathdir}" />
+			<arg line="tests/all_tests.py"/>
+		</exec>  	
+	</target>
+
+	<target name="release" description="Release module to the incremental website">
+        <delete includeemptydirs="true">
+            <fileset dir="${webdir}" includes="**/*"/>
+        </delete>
+		<copy todir="${webdir}">
+			<fileset dir="${basedir}">
+				<exclude name="**/*.pyc" />
+			</fileset>
+		</copy>
+	</target>
+
+</project>
