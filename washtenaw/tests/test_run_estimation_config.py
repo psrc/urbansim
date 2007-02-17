@@ -26,7 +26,7 @@ class TestRunEstimationConfig(Configuration):
     def __init__(self):
         Configuration.__init__(self, data = {
             'input_configuration':DatabaseConfiguration(
-                host_name = os.environ.get('MYSQLHOSTNAME','localhost'),
+                host_name = 'trondheim.cs.washington.edu',
                 user_name = os.environ.get('MYSQLUSERNAME',''),
                 password = os.environ.get('MYSQLPASSWORD',''),
                 database_name = "washtenaw_estimation",
