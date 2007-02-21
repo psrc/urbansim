@@ -21,7 +21,7 @@ path = os.path.join(basepath, "docs", "latex")
 cwd = os.getcwd()
 os.chdir(path)    
 
-modules = ["userguide"]
+modules = ["az_smart_architecture"]
 for module in modules:
     # hack - make a fake index file to prime the pump, so that latex doesn't give an error the first time it is run
     # (There's probaby a better way to do this, but this works.)
