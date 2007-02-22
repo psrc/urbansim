@@ -1,0 +1,4 @@
+average_income_in_zone bus_travel_time_weighted_access_to_employment employment_within_20_minutes_bus_travel_time
+0.999999880791 -0.446106284857 -0.437600970268
+-0.446106284857 1.00000011921 0.896204769611
+-0.437600970268 0.896204769611 1.0
