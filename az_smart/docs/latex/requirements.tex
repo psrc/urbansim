@@ -1,0 +1,357 @@
+\section{AZ-SMART Architecture Functional Requirements: Core Modules}
+\emph{This section includes content from Appendix G of the AZ-SMART RFQ, along with with CUSPA's design recommendations for AZ-SMART core modules and including some questions that remain.  The purpose of this section is to begin to reconcile the design, implementation, and feature ideas presented in Appendix G with functionality within ArcGIS and Opus, and to identify the nature of new development needed.}
+
+\subsection{Data Manager}
+Overview
+\begin{itemize}
+\item Enhancements to ESRI ArcCatalog
+\item At minimum, maintain current functionality
+
+\emph{ArcCatalog will be used as the basis for the AZ-SMART Data Manager.  An AZ-SMART directory structure would organize these data, scripts, configurations and other components.}
+
+\item Access to, development, and maintenance of all data
+\item Create and track relationships (spatial and rule based) between datasets
+\item Uses tools from Tool Manager
+\item All data potentially used by more than one project. Examples include:
+\begin{itemize}
+\item Land Use Codes
+\item Base Year
+\item Allocation Sector Names
+\item Legends
+\item Symbol table associated with global variables
+\end{itemize}
+
+\emph{CUSPA proposes to create a custom AZ-SMART ArcCatalog Tree structure, that would be a dockable window containing and organizing the data and tools used in AZ-SMART.}
+
+
+\item Metadata must be maintained for all datasets
+
+\emph{Question for MAG: Need to jointly define the Metadata requirements and then devise a suitable design to address this need.}
+
+\item Security
+
+\emph{Question for MAG: Please identify user groups and security levels that are desired throughout the system and the scope of permissions for each user group.}
+
+\item Consultant to recommend directory structure
+
+\emph{A directory structure will be recommended and implemented in the AZ-SMART ArcCatalog Tree.}
+
+\item Consultant to recommend and ultimately create data archiving procedures
+
+\emph{Archiving procedures will be recommended once the database and all items needing to be archived are identified.}
+
+\end{itemize}
+
+%\begin{center}
+%\includegraphics[scale=0.4]{AZ-SMART_DataManager_in_ArcCatalog.jpg}
+%\includegraphics[scale=0.4]{AZ-SMART_DataManager_in_ArcMap.jpg}
+%\end{center}
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.3]{figures/AZ-SMART_DataManager_in_ArcCatalog.jpg}
+\caption{AZ-SMART Data Manager in ArcCatalog}
+\label{figDataManagerArcCatlog}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.3]{figures/AZ-SMART_DataManager_in_ArcMap.jpg}
+\caption{AZ-SMART Data Manager in ArcMap}
+\label{figDataManagerArcMap}
+\end{center}
+\end{figure}
+
+
+\subsection{Project Manager}
+
+Overview
+
+\emph{Projects are defined as the database and model configuration used to support running a variety of scenarios that would share data and model specifications and parameters.  Scenarios are defined as a set of input data, assumptions, and run configuration parameters used for a specific run of the model system.}  
+
+\emph{CUSPA proposes to implement the Project Manager user interface as an OPUS GUI (developed using Envisage) that could be launched from an AZ-SMART Tool within ArcGIS.  Compared to an approach of using only native ArcGIS GUI tools, this approach will make it more feasible to implement several of the requirements listed below, particularly the last three items, which are very focused on control of model operations -- including during a simulation.  It would need to be implemented in a way that could inter-operate transparently with other tools in the Tool Manager and Data Manager components, as noted in the first requirement below. Some initial tests of this approach should be developed early in the project to flesh out this aspect of the user interface.}
+
+
+\begin{itemize}
+\item Create new projects and scenarios, or open projects and scenarios that have been created previously for further analysis
+\item Links tools from Tool Manager with data from Data Manager using ESRI ModelBuilder concepts
+\item Selects required components and limits execution of model to tools necessary for the scenario subset.
+\item Accesses all data relevant to potentially more than one project via the Data Manager
+\item Stores all data relevant to only that one project within a project. Examples include:
+\begin{itemize}
+\item Projection Years
+\item Switches utilized in the project
+\item Status of the project
+\item File and database names etc.
+\end{itemize}
+\item Controls model execution: start, stop, and restart model execution
+\item Access the status of a model while executing
+\item Access various execution logs and error logs associated with a model run
+\end{itemize}
+
+
+\subsection{Tool Manager}
+Overview
+\begin{itemize}
+
+\item Enhancements to ESRI ToolBox and ESRI ModelBuilder
+
+\emph{ESRI ArcToolbox and ModelBuilder will be used as the basis for the majority of the GUI for AZ-SMART.  It will be enhanced by adding tools that leverage OPUS and UrbanSim functionality, generally through the OPUS GUI).}
+
+\item Will have an indexing system by which end-users can find appropriate tools relevant to their needs
+
+\emph{The built-in ArcToolbox indexing system will be used for this purpose.}
+
+\item Accesses Script Editor to code/implement tools
+
+\emph{The built-in editing functionality for Python will be used for this purpose.}
+
+\item Uses ModelBuilder for computer-aided programming (i.e., data flow chart graphical interface)
+
+\emph{The built-in ModelBuilder functionality will be used for this purpose.}
+
+\item Manage scripts: open, create, copy, delete, edit tools and their properties
+
+\emph{The built-in ArcToolbox functionality for managing scripts will be utilized here.  This is accessible via context-menu selections at the toolset and tool level in ArcToolbox.}
+
+\item Multiple security levels
+
+\emph{Question for MAG: Please identify user groups and security levels that are desired throughout the system and the scope of permissions for each user group.}
+
+\item Multi-user system
+
+\emph{The system will be designed to use the ArcSDE multi-user environment with Microsoft SQL Server, which provides multi-user capabilities.}
+
+\item Ability to share tool based on properties assigned
+
+\emph{Question for MAG: This functionality needs further clarification about what is needed.  It may be possible to store tools in the Geodatabase, providing security and sharing capabilities within.}
+
+\item Will perform conditionals and loops
+
+\emph{The built-in ArcToolbox and ModelBuilder functionality will be used to perform conditionals and loops, augmented by Python and OPUS capabilities.}
+
+\item Unless specified, all tools should be capable of accepting input from user, script, output from other tools, or a database
+
+\emph{Tools will be constructed to meet this qualification.}
+
+\item Consultant to recommend and ultimately create:
+\begin{itemize}
+\item Tool archiving procedures
+
+\emph{This will require the use of a version control system such as Subversion. A Subversion repository has been set up for this project at CUSPA. An existing tool for accessing Subversion from Python could be linked from the user interface (www.pysvn.tigris.org). }
+
+\item Definition and management of production and development versions
+
+\emph{This could be accomplised by having two branches in the Subversion repostitory, one for production code, one for development code.}
+
+\item Prevention of the inadvertent modification and/or deletion of tools referenced elsewhere in the system
+
+\emph{This could be accomplished by placing relevant Toolboxes and Toolsets in a 'read-only' location.}
+
+\end{itemize}
+\end{itemize}
+
+Example Tools from MAG
+
+\subsubsection{Land Use Editor}
+
+Overview
+
+\begin{itemize}
+
+\item An ArcGIS application toolbar that provides controls specifically suited for editing and managing land use databases
+
+\emph{CUSPA proposes to use ArcGIS built-in editing functionality for editing of spatial features (e.g. existing land use, development projects), augmented by a toolset.  If there is remaining functionality in SAM-IM that is not already addressed by built-in ArcGIS editing, then an ArcMap toolbar would be created to meet these needs.}
+
+\item Maintains planar polygon topology/grid; Data model aware; Performs validation and domain checking
+
+\emph{CUSPA proposes to utilize built-in geodatabase functionality for maintaining topology, domain checking, etc.  There are existing tools (e.g. Geodatabase designer 2) that can address these requirements.}
+
+\item Advanced wizards for manipulating, validating, and assembling land use themes using interactive input and configurable rules
+
+\emph{CUSPA proposes to focus on developing tools and ModelBuilder models to meet these needs.}
+
+\item Aggregation of parcels based on predefined rules (e.g. eliminate minor roads)
+
+\item Subdivision of parcels or polygons based on predefined rules
+
+\emph{The aggregation and subdivision of parcels or polygons are two complex tasks that need further design work and an assessment of alternative approaches.}
+
+\item Variable sized grids with associated attribute data (e.g. areas with high vs. low resolution for modeling and analysis)
+
+\emph{CUSPA understands the potential benefits of variable sized grids for preserving small polygons in dense core of the urban area and avoiding wasted storage using small gridcells to represent large polygons in the urban periphery.  However, implementing variable resolution grids is potentially a research project with considerable risk.  Further discussion of the objectives, alternative strategies, and risks associated with these is needed.}
+
+\item Can access data in Data Manager or Project Manager
+
+\emph{CUSPA proposes that all data in the geodatabase will be directly accessible in Data Manager and/or Project Manager as appropriate.  Data generated during a simulation would be accessible in Data Manager and/or Project Manager through the use of tools to copy the data into the geodatabase or other tabular formats.}
+
+\item Consistency checking across multiple themes
+
+\emph{Tools would be developed to check for consistency within and across themes as needed.}
+
+\item Summary and indicator statistics
+
+\emph{This would be built using the Opus indicator framework.}
+
+\item Completely configurable to suit any land use data model, coding scheme, and installation
+
+\emph{AZ-SMART will be designed to be highly modular and configurable and will use the flexibility inherent in the Opus sytesm.}
+
+\item Similar to current editing capabilities in SAM-IM
+
+\emph{Existing ArcMap functionality will be utilized to provide this functionality.}
+
+\end{itemize}
+
+\subsubsection{Land Use and Socioeconomic Synthesizer}
+
+CUSPA proposes to develop tools for creating, manipulating, and synthesizing a base year database in the ArcToolbox/ModelBuilder environment.
+
+\begin{itemize}
+
+\item For creating and populating the base year (e.g., 2000) land use database by assembling multiple sources.
+
+\item For creating projected land use and socioeconomic datasets based on configurable rules.
+
+\emph{This would be done by implementing models in Opus and allowing them to be configured and run within ArcGIS. }
+
+\end{itemize}
+
+\subsubsection{Calibration and Validation}
+
+\begin{itemize}
+
+\item Utilities for creating calibration data sets based on user supplied specifications
+\item Use 3rd party programs to perform regression analysis (e.g., ALOGIT, SPSS)
+\item Utilities for validating calibrated model data against observed data
+
+\emph{Opus includes tools for creating estimation datasets, estimating parameters of multiple regression and discrete choice models.  These tools would be used for specifying and estimating models in AZ-SMART.  Model validation will be supported by tools to compare predicted and observed data and visualize patterns of error in the results.}
+
+\end{itemize}
+
+\subsubsection{Analysis, Visualization, and Reporting}
+
+\begin{itemize}
+\item A spatial calculator to perform computations on socioeconomic databases, examples:
+\begin{itemize}
+\item Incorporate data from external sources;
+\item Prorate projections to polygons based on a demographic property;
+\item Drop point data into polygons (TAZ or land use polygons);
+\item Perform row and column normalization and matrix balancing
+\item Automatically summarize land use themes according to other polygon geographies (e.g., TAZs)
+\item Calculate socioeconomic and land use statistics (population, employment, acres by type) for user defined areas based on geospatial rules.
+\item Compute indicators and measures on land use or other polygon geographies (e.g., job-housing balance).
+
+\emph{Question to MAG: The needs detailed in this section warrant further discussion.  CUSPA anticipates that some of this functionality will be handled by ArcGIS and Opus functionality.}
+
+\end{itemize}
+
+\item Capability to export tables to any file format, including custom format text files needed by travel models as well as ArcIMS; Users can define and save various file formats into a library of templates, and recall them for later exports.
+
+\emph{The system will provide a capacity for the user to define the particular data to be exported, variables, their sequence, the file format, and location.  Export formats would include dbase, SQL server, ASCII (tab delimited, comma delimited, and fixed format). Question for MAG: Does this address the needs for ArcIMS?}
+
+\item Provides methods by which end-users can define series of thematic maps to be generated automatically
+\item Provides methods by which end-users can define statistical tables and reports to be generated automatically
+
+\emph{The process of generating indicators and displaying them on a user configured base map will be automated.}
+
+\end{itemize}
+
+\subsubsection{Data Manipulation and Conversion Utilities}
+
+\begin{itemize}
+
+\item Data available in a number of different file/DBMS formats: MS Excel spreadsheets, MS Access, Formatted ASCII files, Geodatabases, MySQL, etc.
+\item A library of utilities for accessing/converting data from one form to another so that it can be accessed directly by tools implementing models
+
+\emph{The system will support accessing and converting data among various data formats including but not limited to those formats listed above.}
+
+\end{itemize}
+
+\subsubsection{Accessibility}
+
+\begin{itemize}
+
+\item Consultant to recommend and implement methodology or methodologies for travel times from geography to geography. Examples include:
+\begin{itemize}
+\item Accesses travel times directly from third party systems used by MPOs (e.g., EMME/2, Cube)
+\item Accesses travel times directly from modified third party systems using larger levels of geography
+\item Creates travel times within AZ-SMART without using 3rd party systems
+\end{itemize}
+
+\emph{CUSPA proposes to develop an interface to the forthcoming MAG TransCAD travel model if it is availabe within the timeframe of the AZ-SMART phase 1 project.  It may be desirable to develop a sketch-level (fast running) travel model in later phases.}
+
+\end{itemize}
+
+\subsubsection{Submodels}
+
+\emph{CUSPA will need to work with MAG staff to develop clear specifications for sub models to be developed.}
+
+
+\subsubsection{Site Suitability Tools}
+\begin{itemize}
+\item Characterizes potential development sites throughout a region with respect to its suitability for development;
+\item A toolbox for portraying site characteristics from other GIS users (e.g., age and condition of structure, land value, proximity to highways, distance to developed land, residential market within 3 miles, etc.)
+\item Creates input datasets used in calibration
+\item An important component of allocation of lands during a projection, using calibrated factors
+
+\emph{CUSPA proposes to develop a set of tools organized within a Site Suitability Toolset to use themes for planned land use and various environmental or other features that would be used in determining suitability for each land use sector.  These would be used to determine the capacity for development of each corresponding building type, such as Single Family units, Multi-family units, Office Sqft, etc, and could account for planning constraints such as minimum or maximum floor-area ratio (FAR) regulations.}
+
+\end{itemize}
+
+\subsubsection{Allocation Tool}
+
+\emph{This section describes functional requirements for a model system used to allocate land uses.  CUSPA proposes to use existing functionality in OPUS to implement these models.  The models and their specification would be configurable using dialog boxes or forms, and connected using a Model Builder style interface within the proposed OPUS GUI.  Features described below will be incorporated into these tools.  Comments inserted below are for clarification of the functional requirements.  A more complete description of the design of the Allocation Models is provided in a subsequent section.}
+
+\begin{itemize}
+\item A key tool for projecting growth in a region
+\item At minimum, maintain current functionality of SAM-IM
+
+\emph{The intent is to provide at least comparable functionality, though not using exactly the same approach.}
+
+\item Process works by selecting lands, among candidates, to be built in order to absorb growth based on an evaluation of their inherent site suitability characteristics
+\item Features include but are not limited to:
+\begin{itemize}
+\item Observes constraint layers that prohibit development due to environmental or policy factors
+\item Observes general plan layers that designate acceptable conforming land uses and densities
+\item Accepts any land use coding scheme that the user defines
+\item Allocation sectors (variables of interest for projections) are user-defined
+\item Sectors are allocated in a user-defined sequence.
+\item Mechanism by which large development tracts are subdivided into parcels appropriate in size for the development considered
+
+\emph{Note earlier comments that aggregation and subdivision will require substantial design work and further discussion.}
+
+\item Ability to observe adopted land use plans and densities on a polygon/grid basis
+\item Development Velocity Curve dictates the pace at which developments are built
+\item Observes regional control totals of growth, or growth forecasts for subareas, as defined
+\item Address "mixed use" polygons
+\item Address redevelopment and demolition
+\end{itemize}
+\item Same process can be used, with different inputs, for vacating lands due to demolition and redevelopment
+\item Controlled by a number of different switches and rules supplied by the user that control how the allocation process specifically works
+\item Driven by a set of projected control totals of population and employment change that apply to the entire region or subareas of it
+\item Can control subarea growth at different geographic levels
+\item Capability for  "gravity effects" model projection mechanisms reacting to measures of accessibility, land use constraints and opportunities, growth trends, and other socioeconomic attributes
+\item Provides specific treatment of known developments scheduled to be underway
+\item Provides support for analysis of scenarios:
+\begin{itemize}
+\item Generates alternative scenarios of land use and socioeconomic projections
+\item Ability to work on complete area or revision-areas (sub-parts of complete modeling area)
+\item Interactive designation of  "revision areas"; Capability to manipulate both polygon and grid
+\item Migrates changes in downstream years; that is, changes made to a 2010 forecast migrated automatically to subsequent years;
+\end{itemize}
+\item Provides different ways to react:
+\begin{itemize}
+\item When build-out conditions are reached in individual subareas
+\item How active developments are treated
+\item With respect to policy initiatives
+\item To demolition and redevelopment 
+\end{itemize}
+\item Different applications of the Allocation procedure in the projection model stream:
+\begin{itemize}
+\item Regular production projections
+\item "Min-Max" procedure to create set of floors and ceilings to estimate reasonable growth potential
+\item "Scenario Builder" enabling analysis of changes to land use and other policy variables. 
+\end{itemize}
+\end{itemize}
