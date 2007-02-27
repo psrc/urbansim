@@ -16,90 +16,113 @@
 # this illustrates using traits-based configurations programatically
 
 
-from urbansim.indicators.indicator_configuration import IndicatorConfiguration
-from opus_core.configurations.dataset_description import DatasetDescription
-from urbansim.indicators.indicator_configuration_handler_batch_mode import generate_indicators
+from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
+from opus_core.indicator_framework.source_data import SourceData
+from opus_core.indicator_framework.image_types.matplotlib_map import Map
+from opus_core.indicator_framework.image_types.matplotlib_chart import Chart
+from opus_core.indicator_framework.image_types.table import Table
+from opus_core.indicator_framework.image_types.geotiff_map import GeotiffMap
+from opus_core.indicator_framework.image_types.arcgeotiff_map import ArcGeotiffMap
+from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
 
-config = IndicatorConfiguration()
+#cache_directory = r'C:\urbansim_cache\workshop\2006_08_28_16_58'
+cache_directory = '/Users/borning/urbansim_cache/workshop/2006_08_28_16_58'
+run_description = '(baseline run without travel model)'
 
-# *** Set up database ***
-# use the defaults for mysql hostname, username, and password 
-# (the defaults are to get these from environment variables)
-config.database_configuration.database_name = 'washtenaw_estimation'
-#    config.cache_directory = r'C:\urbansim_cache\workshop\2006_08_28_16_58'
-config.cache_directory = '/Users/borning/urbansim_cache/workshop/2006_08_28_16_58'
-config.run_description = '(baseline run without travel model)'
-config.use_cache_directory_for_output = True
-#
-#config.datasets_to_preload = [
-#    DatasetDescription(dataset_name='gridcell', package_name='urbansim'),
-#    DatasetDescription(dataset_name='household', package_name='urbansim'), 
-#    DatasetDescription(dataset_name='job', package_name='urbansim'),
-#    DatasetDescription(dataset_name='zone', package_name='urbansim'),
-#    DatasetDescription(dataset_name='travel_data', package_name='urbansim')
-#    ]
+source_data = SourceData(
+    cache_directory = cache_directory,
+    run_description = run_description,
+    years = [2000],
+    dataset_pool_configuration = DatasetPoolConfiguration(
+        package_order=['washtenaw','urbansim','opus_core'],
+        package_order_exceptions={},
+        ),       
+)
 
-# single_year_requests are indicators that are computed for a particular year.
-# We give a list of years in single_year_years (is there a better name??)
-# The idea is that we'll get a map of psrc.large_area.population, for example,
-# for 2000 and another map for 2010.
-#
-# Note the syntax for specifying the indicators when the indicator name includes the year
-# (the substring %(year)s will be replaced by the year)
-config.single_year_years = [2000]
-config.single_year_requests = [
-            {'dataset':'gridcell',
-             'image_type':'map',
-             'attribute':{'indicator_name':'urbansim.gridcell.population', 
-             'scale':[0, 800]}
-             }
+single_year_requests = [
+    Map(
+        source_data = source_data,
+        dataset_name = 'gridcell',
+        attribute = 'urbansim.gridcell.population',
+        scale = [0,800])
+]
+
+source_data = SourceData(
+    cache_directory = cache_directory,
+    run_description = run_description,
+    years = [2000],
+    dataset_pool_configuration = DatasetPoolConfiguration(
+        package_order=['washtenaw','urbansim','opus_core'],
+        package_order_exceptions={},
+        ),       
+)
+
+multi_year_requests = [
+    Table(
+        source_data = source_data,
+        dataset_name = 'alldata',
+        attribute = 'opus_core.func.aggregate_all(urbansim.gridcell.residential_units,sum)',
+        name = 'Residential_Units',  
+    ),
+    Table(
+        source_data = source_data,
+        dataset_name = 'alldata',
+        attribute = 'opus_core.func.aggregate_all(urbansim.gridcell.commercial_sqft,sum)',
+        name = 'Commercial_SQFT',  
+    ),        
+    Table(
+        source_data = source_data,
+        dataset_name = 'alldata',
+        attribute = 'opus_core.func.aggregate_all(urbansim.gridcell.industrial_sqft,sum)',
+        name = 'Industrial_SQFT',  
+    ),        
+    Table(
+        source_data = source_data,
+        dataset_name = 'alldata',
+        attribute = 'opus_core.func.aggregate_all(urbansim.gridcell.is_developed,sum)',
+        name = 'Developed_Cells',  
+    ),        
+    Table(
+        source_data = source_data,
+        dataset_name = 'alldata',
+        name = 'residential_vacancy_rate',  
+        expression = {
+           'operation':'divide',
+           'operands':['opus_core.func.aggregate_all(urbansim.gridcell.vacant_residential_units,sum)',
+                       'opus_core.func.aggregate_all(urbansim.gridcell.residential_units,sum)']
+        }
+    ),            
+    Table(
+        source_data = source_data,
+        dataset_name = 'alldata',
+        name = 'commercial_vacancy_rate',  
+        expression = {
+           'operation':'divide',
+           'operands':['opus_core.func.aggregate_all(urbansim.gridcell.vacant_commercial_sqft,sum)',
+                       'opus_core.func.aggregate_all(urbansim.gridcell.commercial_sqft,sum)']
+        }
+    ),      
+    Table(
+        source_data = source_data,
+        dataset_name = 'alldata',
+        name = 'industrial_vacancy_rate',  
+        expression = {
+           'operation':'divide',
+           'operands':['opus_core.func.aggregate_all(urbansim.gridcell.vacant_industrial_sqft,sum)',
+                       'opus_core.func.aggregate_all(urbansim.gridcell.industrial_sqft,sum)']
+        }
+    ),              
     ]
 
-# multi-year requests are for indicators that can be computed for multiple years.  Here, for example,
-# we'll have a single chart of psrc.county.population that includes all the years betweeen 2000 and 2009
-config.multi_year_years = [2000]
-config.multi_year_requests = [
-             {'dataset':'alldata',
-              'image_type':'table',
-              'attribute':'opus_core.func.aggregate_all(urbansim.gridcell.residential_units,sum) as Residential_Units'
-              }, 
-             {'dataset':'alldata',
-              'image_type':'table',
-              'attribute':'opus_core.func.aggregate_all(urbansim.gridcell.commercial_sqft,sum) as Commercial_SQFT'
-              }, 
-             {'dataset':'alldata',
-              'image_type':'table',
-              'attribute':'opus_core.func.aggregate_all(urbansim.gridcell.industrial_sqft,sum) as Industrial_SQFT'
-              }, 
-             {'dataset':'alldata',
-              'image_type':'table',
-              'attribute':'opus_core.func.aggregate_all(urbansim.gridcell.is_developed,sum) as Developed_Cells'
-              }, 
-             {'dataset':'alldata',
-              'image_type':'table',
-              'attribute':{'indicator_name':'residential_vacancy_rate',
-                           'operation':'divide',
-                           'arguments':['opus_core.func.aggregate_all(urbansim.gridcell.vacant_residential_units,sum)',
-                                        'opus_core.func.aggregate_all(urbansim.gridcell.residential_units,sum)']
-                           }
-              },             
-             {'dataset':'alldata',
-              'image_type':'table',
-              'attribute':{'indicator_name':'commercial_vacancy_rate',
-                           'operation':'divide',
-                           'arguments':['opus_core.func.aggregate_all(urbansim.gridcell.vacant_commercial_sqft,sum)',
-                                        'opus_core.func.aggregate_all(urbansim.gridcell.commercial_sqft,sum)']
-                           }
-              },             
-             {'dataset':'alldata',
-              'image_type':'table',
-              'attribute':{'indicator_name':'industrial_vacancy_rate',
-                           'operation':'divide',
-                           'arguments':['opus_core.func.aggregate_all(urbansim.gridcell.vacant_industrial_sqft,sum)',
-                                        'opus_core.func.aggregate_all(urbansim.gridcell.industrial_sqft,sum)']
-                           }
-              }        
-    ]
 
-# finally, run the requests
-generate_indicators(config)
+if __name__ == '__main__':
+    from opus_core.indicator_framework.indicator_factory import IndicatorFactory
+
+    IndicatorFactory().create_indicators(
+        indicators = single_year_requests,
+        display_error_box = False, 
+        show_results = True)   
+    IndicatorFactory().create_indicators(
+        indicators = multi_year_requests,
+        display_error_box = False, 
+        show_results = True)   
