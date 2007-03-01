@@ -12,7 +12,7 @@
 # other acknowledgments.
 # 
 
-from opus_core.variable import Variable
+from opus_core.variables.variable import Variable
 
 
 class double_area(Variable):
