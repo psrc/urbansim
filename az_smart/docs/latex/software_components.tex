@@ -1,2 +1,25 @@
 \subsection{Software Components}
-Insert stuff about ArcGIS (ArcCatalog, ArcMap, ArcToolbox/ModelBuilder, dockable windows and toolbars), OPUS classes and methods, and how the two interact.
+
+In this section we describe the software implementation of the AZ-SMART system.  AZ-SMART will include three modules (Project Manager, Data Manager, and Tool Manager) which are largely based on the requirements in AZ-SMART RFQ Appendix G. Each module's organization and implementation are described in turn in the following subsections.
+
+\subsubsection{Project Manager}
+
+The Project Manager will be the heart of the modeling system. CUSPA proposes to implement the Project Manager user interface as an OPUS GUI (developed using Envisage) that could be launched from an AZ-SMART Tool within ArcGIS.  See below for a screen capture of a very basic Envisage GUI application.  The Project Manager will be the central application where simulation runs are configured, managed, started and stopped.  Projects are defined as the database and model configuration used to support running a variety of scenarios that would share data and model specifications and parameters.  Scenarios are defined as a set of input data, assumptions, and run configuration parameters used for a specific run of the model system.
+
+Several of the items listed in the Project Manager requirements in AZ-SMART RFQ Appendix G are very focused on control of model operations: controlling model execution, accessing the status of a model while executing, and accessing execution logs and error logs associated with a model run.  Compared to an approach of using only native ArcGIS GUI tools to code the Project Manager, the approach of coding a native OPUS GUI will make it more feasible to implement these requirements.  It would need to be implemented in a way that could inter-operate transparently with other tools in the Tool Manager and Data Manager components, as noted in the first requirement below. Some initial tests of this approach should be developed early in the project to flesh out this aspect of the user interface.
+
+\subsubsection{Data Manager}
+
+The Data Manager will be the central location for the management of data within AZ-SMART.  We propose that the Data Manager be implemented within the ArcGIS framework as a dockable window, coded in VB.NET and ArcObjects, that organizes the necessary data management tools in a 'tree-view' framework.  The Data Manager dockable window would be accessible within both ArcMap and ArcCatalog to provide flexibility in use, although in regular production operation it would probably make the most sense to utilize the Data Manager primarily within ArcCatalog.  See below for example screen captures of this type of dockable window implementation in both ArcCatalog and ArcMap.
+
+The Data Manager will focus on metadata maintenance and management, management of security levels and users, data archiving, and the movement of data between the OPUS cache and the geodatabase.  To the greatest extent possible, existing ArcCatalog functionality will be utilized to manage the geodatabase, including managing and maintaining geographic datasets and creating and tracking relationships.
+
+\emph{There is a need to define requirements for metadata, security levels, and data archiving in the AZ-SMART system.  Once these requirements are identified we can proceed with devising suitable designs to address these requirements.}
+
+\subsubsection{Tool Manager}
+
+The Tool Manager will be the central location for the management and execution of the wide variety of tools to be developed for AZ-SMART.  CUSPA proposes to utilize the ArcToolbox/ModelBuilder framework for the organization, management, indexing, and execution of tools.  Specifically, a new AZ-SMART toolbox will be populated with the required tools, which will then be organized into toolsets based on common functionality.  To the greatest extent possible new functionality for AZ-SMART will be developed as Python geoprocessing tools within these toolsets, while minimizing custom GUI development within the ArcMap and ArcCatalog applications.  If the required functionality cannot be implemented in Python through the existing ESRI geoprocessing object and/or other add-on Python libraries, CUSPA will develop custom geoprocessing tools using VB.NET and ArcObjects.
+
+\subsubsection{Other ArcGIS AZ-SMART Components}
+
+\emph{Note from Jesse:  we may need other customizations within ArcGIS to accomplish what they want in App G.  For instance, they desribe a land use editor that may require some custom GUI development.  Should we attempt to describe those here? }
