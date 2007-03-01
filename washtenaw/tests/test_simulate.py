@@ -19,7 +19,7 @@ from shutil import rmtree
 from opus_core.logger import logger
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.misc import get_distinct_list
-from opus_core.variable_name import VariableName
+from opus_core.variables.variable_name import VariableName
 from opus_core.simulation_state import SimulationState
 from opus_core.dataset_factory import DatasetFactory
 from urbansim.simulation.run_simulation_from_mysql import RunSimulationFromMysql
