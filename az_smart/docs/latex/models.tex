@@ -23,20 +23,20 @@ The full model system proposed for AZ-SMART involves some hybridization and exte
 \item \emph{Models and Interface}: A set of models will be interfaced through a common data store, and managed by a Model Coordinator that controls their execution and implements events (changes to the data) proposed by models.  The individual models would be the following:
 
 \begin{itemize}
-\item Demographic Transition (Region)
-\item Employment Transition (Region)
-\item Development Project Transition (Region)
-\item Household Relocation (Region)
-\item Business Relocation (Region)
-\item Household Location (TAZ and Parcel)
-\item Business Location (TAZ and Parcel)
-\item Parcel Subdivision (Parcel)
-\item Parcel Aggregation (Parcel)
-\item Demolition (Building)
-\item Development Project Location (Development Site)
-\item Building Development Model (Parcel)
-\item Real Estate Price Model (Building)
-\item Simplified Travel Model (TAZ)
+\item Demographic Transition (Region): Reconciles the control totals of population (by household type) with the database - adding households to the database or removing them if a household type is declining.
+\item Employment Transition (Region): Reconciles the control totals of employment (by sector) with the database - adding businesses (jobs) to the database or removing them if a sector is declining.
+\item Development Project Transition (Region): Reconciles the total demand for real estate by type, including the results of the Demographic and Employment Transition models, with the existing stock of real estate, by generating proposed Development Projects until vacancy rates reach long-term structural levels.
+\item Household Relocation (Region): Predicts whether a household will move from their existing residence during the next time step.
+\item Business Relocation (Region): Predicts whether a business  (job) will move from their existing location during the next time step.
+\item Household Location (TAZ and Parcel): Predicts the building that a new or moving household will choose from among the set of buildings with a vacanct unit.
+\item Business Location (TAZ and Parcel): Predicts the building that a new or moving business (job) will choose from among the set of buildings with sufficient vacanct space.
+\item Parcel Subdivision (Parcel): Predicts the number and size of parcels to create from a large parcel that is to be subdivided to create a development project. Depending on whether the project is known or predicted this will use information provided in the development project description or drawn from a development template.
+\item Parcel Aggregation (Parcel): Combines adjacent parcels to create a \emph{development site} suitable to place a development project.
+\item Demolition (Building): Removes existing buildings based on age and other characteristics that would indicate a high probability to convert to another use or be abandoned.
+\item Development Project Location (Development Site): Predicts the development site chosen to locate a development project.
+\item Building Development Model (Parcel): This would be based on the Development Velocity Model, and predicts the construction of individual buildings on parcels within a development project.
+\item Real Estate Price Model (Building): This will predict the price per unit (or sqft) for each type of real estate at each location (parcel).
+\item Simplified Travel Model (TAZ): An abbreviated travel model with just a.m. peak, and other simplifications to provide a relatively high-speed regional travel model to use in intermediate years preceding the target year for the regional transportation plan.
 \end{itemize}
 \end{itemize}
 
