@@ -20,7 +20,7 @@ specification = {
              -2:  # submodel id
     [
     "constant",
-#            "opus_core.func.ln(urbansim.gridcell.housing_cost)",
+#            "ln(urbansim.gridcell.housing_cost)",
             "urbansim.gridcell.travel_time_to_CBD",
             "urbansim.gridcell.acres_open_space_within_walking_distance",
 #            "urbansim.gridcell.ln_residential_units",
@@ -40,7 +40,7 @@ specification = {
 #             "psrc.gridcell.trip_weighted_average_time_hbw_from_home_am_transit_walk",
 #             "psrc.gridcell.trip_weighted_average_time_hbw_from_home_am_drive_alone",
 #             "psrc.household_x_gridcell.trip_weighted_average_time_hbw_from_home_am_transit_walk_if_has_less_cars_than_workers",
-#             "opus_core.func.squared(psrc.gridcell.trip_weighted_average_time_hbw_from_home_am_transit_walk)",
-#             "opus_core.func.squared(psrc.gridcell.trip_weighted_average_time_hbw_from_home_am_drive_alone)"
+#             "psrc.gridcell.trip_weighted_average_time_hbw_from_home_am_transit_walk**2",
+#             "psrc.gridcell.trip_weighted_average_time_hbw_from_home_am_drive_alone**2"
     ]
 }

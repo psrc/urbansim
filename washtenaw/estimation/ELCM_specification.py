@@ -27,7 +27,7 @@ specification['industrial'] = { #industrial
     #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
     #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
     #('ln_total_improvement_value', 'BLIMP'),
-    #('opus_core.func.ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
+    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
     
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
@@ -72,7 +72,7 @@ specification['industrial'] = { #industrial
     #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
     #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
     #('ln_total_improvement_value', 'BLIMP'),
-    #('opus_core.func.ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
+    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
     
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
@@ -117,7 +117,7 @@ specification['industrial'] = { #industrial
     #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
     #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
     #('ln_total_improvement_value', 'BLIMP'),
-    #('opus_core.func.ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
+    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
     
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
@@ -162,7 +162,7 @@ specification['industrial'] = { #industrial
     #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
     #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
     #('ln_total_improvement_value', 'BLIMP'),
-    #('opus_core.func.ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
+    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
     
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
@@ -207,7 +207,7 @@ specification['industrial'] = { #industrial
     #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
     #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
     #('ln_total_improvement_value', 'BLIMP'),
-    #('opus_core.func.ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
+    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
     
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
@@ -252,7 +252,7 @@ specification['industrial'] = { #industrial
     #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
     #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
     #('ln_total_improvement_value', 'BLIMP'),
-    #('opus_core.func.ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
+    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
     
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
@@ -297,7 +297,7 @@ specification['industrial'] = { #industrial
     #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
     #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
     #('ln_total_improvement_value', 'BLIMP'),
-    #('opus_core.func.ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
+    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
     
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
@@ -344,7 +344,7 @@ specification['commercial'] = {  #commercial
     #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
     #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
     #('ln_total_improvement_value', 'BLIMP'),
-    #('opus_core.func.ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
+    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
     
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
@@ -390,7 +390,7 @@ specification['commercial'] = {  #commercial
     #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
     #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
     #('ln_total_improvement_value', 'BLIMP'),
-    #('opus_core.func.ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
+    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
     
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
@@ -435,7 +435,7 @@ specification['commercial'] = {  #commercial
     #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
     #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
     #('ln_total_improvement_value', 'BLIMP'),
-    #('opus_core.func.ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
+    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
     
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
@@ -480,7 +480,7 @@ specification['commercial'] = {  #commercial
     #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
     #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
     #('ln_total_improvement_value', 'BLIMP'),
-    #('opus_core.func.ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
+    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
     
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
@@ -525,7 +525,7 @@ specification['commercial'] = {  #commercial
     #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
     #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
     #('ln_total_improvement_value', 'BLIMP'),
-    #('opus_core.func.ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
+    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
     
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
@@ -570,7 +570,7 @@ specification['commercial'] = {  #commercial
     #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
     #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
     #('ln_total_improvement_value', 'BLIMP'),
-    #('opus_core.func.ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
+    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
     
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
@@ -615,7 +615,7 @@ specification['commercial'] = {  #commercial
     #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
     #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
     #('ln_total_improvement_value', 'BLIMP'),
-    #('opus_core.func.ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
+    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     ('urbansim.gridcell.ln_total_value', 'BLTV'),
     
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
@@ -661,7 +661,7 @@ specification['commercial'] = {  #commercial
     #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
     #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
     #('ln_total_improvement_value', 'BLIMP'),
-    #('opus_core.func.ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
+    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
     #('urbansim.gridcell.ln_total_value', 'BLTV'),
     
     #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),

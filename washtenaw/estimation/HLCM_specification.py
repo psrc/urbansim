@@ -19,7 +19,7 @@ specification = {}
 specification = {
         -2:   #submodel_id
             [
-            "opus_core.func.ln(urbansim.gridcell.housing_cost) as lhousing_cost",
+            "ln(urbansim.gridcell.housing_cost) as lhousing_cost",
 #            "urbansim.household_x_gridcell.cost_to_income_ratio",
              "urbansim.household_x_gridcell.housing_affordability",
              "urbansim.household_x_gridcell.income_and_year_built",
@@ -31,12 +31,12 @@ specification = {
             "urbansim.household_x_gridcell.young_household_in_mixed_use",
            "urbansim.gridcell.is_near_highway",
 #            "urbansim.gridcell.is_near_arterial",
-#            "opus_core.func.ln_bounded(urbansim.household_x_gridcell.income_less_housing_cost)",
+#            "ln_bounded(urbansim.household_x_gridcell.income_less_housing_cost)",
 #            "urbansim.gridcell.travel_time_to_CBD",
 #            "urbansim.gridcell.acres_open_space_within_walking_distance",
             "urbansim.household_x_gridcell.income_and_ln_improvement_value_per_unit",
-            "opus_core.func.ln(urbansim.gridcell.total_residential_value_per_residential_unit_within_walking_distance) as ltotal_resvalue_per_ru_wwd",
-             "opus_core.func.ln(urbansim.gridcell.total_improvement_value_per_residential_unit_within_walking_distance) as ltotal_impvalue_per_ru_wwd",
+            "ln(urbansim.gridcell.total_residential_value_per_residential_unit_within_walking_distance) as ltotal_resvalue_per_ru_wwd",
+             "ln(urbansim.gridcell.total_improvement_value_per_residential_unit_within_walking_distance) as ltotal_impvalue_per_ru_wwd",
 #            "urbansim.gridcell.ln_residential_units",
             "urbansim.gridcell.ln_residential_units_within_walking_distance",\
 #            "urbansim.gridcell.ln_service_sector_employment_within_walking_distance",\
@@ -62,7 +62,7 @@ specification = {
 #             "psrc.gridcell.trip_weighted_average_time_hbw_from_home_am_transit_walk",
 #             "psrc.gridcell.trip_weighted_average_time_hbw_from_home_am_drive_alone",
 #             "psrc.household_x_gridcell.trip_weighted_average_time_hbw_from_home_am_transit_walk_if_has_less_cars_than_workers",
-#             "opus_core.func.squared(psrc.gridcell.trip_weighted_average_time_hbw_from_home_am_transit_walk)",
-#             "opus_core.func.squared(psrc.gridcell.trip_weighted_average_time_hbw_from_home_am_drive_alone)"
+#             "psrc.gridcell.trip_weighted_average_time_hbw_from_home_am_transit_walk**2",
+#             "psrc.gridcell.trip_weighted_average_time_hbw_from_home_am_drive_alone**2"
             ]
     }

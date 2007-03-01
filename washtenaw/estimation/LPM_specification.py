@@ -17,7 +17,7 @@ specification={
 [
  ('constant', 'constant'),
 #
- ('opus_core.func.ln(urbansim.gridcell.total_residential_value_per_residential_unit_within_walking_distance)', 'LVU_RW'),
+ ('ln(urbansim.gridcell.total_residential_value_per_residential_unit_within_walking_distance)', 'LVU_RW'),
 # ('urbansim.gridcell.gridcell_year_built', 'YRBLT'),
  ('urbansim.gridcell.is_outside_urban_growth_boundary', 'O_UGB'),
  ('urbansim.gridcell.is_near_arterial', 'ART'),

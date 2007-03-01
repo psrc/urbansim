@@ -61,25 +61,25 @@ multi_year_requests = [
     Table(
         source_data = source_data,
         dataset_name = 'alldata',
-        attribute = 'opus_core.func.aggregate_all(urbansim.gridcell.residential_units,sum)',
+        attribute = 'aggregate_all(urbansim.gridcell.residential_units,sum)',
         name = 'Residential_Units',  
     ),
     Table(
         source_data = source_data,
         dataset_name = 'alldata',
-        attribute = 'opus_core.func.aggregate_all(urbansim.gridcell.commercial_sqft,sum)',
+        attribute = 'aggregate_all(urbansim.gridcell.commercial_sqft,sum)',
         name = 'Commercial_SQFT',  
     ),        
     Table(
         source_data = source_data,
         dataset_name = 'alldata',
-        attribute = 'opus_core.func.aggregate_all(urbansim.gridcell.industrial_sqft,sum)',
+        attribute = 'aggregate_all(urbansim.gridcell.industrial_sqft,sum)',
         name = 'Industrial_SQFT',  
     ),        
     Table(
         source_data = source_data,
         dataset_name = 'alldata',
-        attribute = 'opus_core.func.aggregate_all(urbansim.gridcell.is_developed,sum)',
+        attribute = 'aggregate_all(urbansim.gridcell.is_developed,sum)',
         name = 'Developed_Cells',  
     ),        
     Table(
@@ -88,8 +88,8 @@ multi_year_requests = [
         name = 'residential_vacancy_rate',  
         expression = {
            'operation':'divide',
-           'operands':['opus_core.func.aggregate_all(urbansim.gridcell.vacant_residential_units,sum)',
-                       'opus_core.func.aggregate_all(urbansim.gridcell.residential_units,sum)']
+           'operands':['aggregate_all(urbansim.gridcell.vacant_residential_units,sum)',
+                       'aggregate_all(urbansim.gridcell.residential_units,sum)']
         }
     ),            
     Table(
@@ -98,8 +98,8 @@ multi_year_requests = [
         name = 'commercial_vacancy_rate',  
         expression = {
            'operation':'divide',
-           'operands':['opus_core.func.aggregate_all(urbansim.gridcell.vacant_commercial_sqft,sum)',
-                       'opus_core.func.aggregate_all(urbansim.gridcell.commercial_sqft,sum)']
+           'operands':['aggregate_all(urbansim.gridcell.vacant_commercial_sqft,sum)',
+                       'aggregate_all(urbansim.gridcell.commercial_sqft,sum)']
         }
     ),      
     Table(
@@ -108,8 +108,8 @@ multi_year_requests = [
         name = 'industrial_vacancy_rate',  
         expression = {
            'operation':'divide',
-           'operands':['opus_core.func.aggregate_all(urbansim.gridcell.vacant_industrial_sqft,sum)',
-                       'opus_core.func.aggregate_all(urbansim.gridcell.industrial_sqft,sum)']
+           'operands':['aggregate_all(urbansim.gridcell.vacant_industrial_sqft,sum)',
+                       'aggregate_all(urbansim.gridcell.industrial_sqft,sum)']
         }
     ),              
     ]

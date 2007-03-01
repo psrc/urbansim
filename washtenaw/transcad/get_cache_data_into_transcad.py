@@ -55,7 +55,7 @@ class GetCacheDataIntoTranscad(GetCacheDataIntoTravelModel):
             column_name.append(transcad_var)
 
         zone_set.compute_variables(variable_list, dataset_pool=dataset_pool)
-        variable_short_name = [VariableName(x).alias() for x in variable_list]
+        variable_short_name = [VariableName(x).get_alias() for x in variable_list]
         
         tm_input_data_dir = os.path.join(tm_config['directory'], tm_config[year])
         if not os.path.exists(tm_input_data_dir):

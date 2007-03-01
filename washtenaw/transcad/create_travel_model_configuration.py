@@ -40,8 +40,8 @@ def create_travel_model_configuration(scenario_dir_name,
         ('urbansim.zone.population', 'Population'),
         ('urbansim.zone.number_of_households', 'Households'),
         ('urbansim.zone.number_of_jobs', 'Total_Emp'),
-        ('opus_core.func.aggregate(urbansim.gridcell.number_of_jobs_of_group_basic)', 'Basic'),
-        ('opus_core.func.aggregate(urbansim.gridcell.number_of_jobs_of_group_nonbasic)', 'NonBasic'),
+        ('aggregate(urbansim.gridcell.number_of_jobs_of_group_basic)', 'Basic'),
+        ('aggregate(urbansim.gridcell.number_of_jobs_of_group_nonbasic)', 'NonBasic'),
         ('urbansim.zone.number_of_jobs_of_sector_4', 'WholeSale'),
         ('urbansim.zone.number_of_jobs_of_sector_5', 'Retail')
         ]
