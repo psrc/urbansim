@@ -19,7 +19,7 @@ specification = {}
 specification = {
         -2:   #submodel_id
             [
-            "ln(urbansim.gridcell.housing_cost) as lhousing_cost",
+            "lhousing_cost = ln(urbansim.gridcell.housing_cost)",
 #            "urbansim.household_x_gridcell.cost_to_income_ratio",
              "urbansim.household_x_gridcell.housing_affordability",
              "urbansim.household_x_gridcell.income_and_year_built",
@@ -35,8 +35,8 @@ specification = {
 #            "urbansim.gridcell.travel_time_to_CBD",
 #            "urbansim.gridcell.acres_open_space_within_walking_distance",
             "urbansim.household_x_gridcell.income_and_ln_improvement_value_per_unit",
-            "ln(urbansim.gridcell.total_residential_value_per_residential_unit_within_walking_distance) as ltotal_resvalue_per_ru_wwd",
-             "ln(urbansim.gridcell.total_improvement_value_per_residential_unit_within_walking_distance) as ltotal_impvalue_per_ru_wwd",
+            "ltotal_resvalue_per_ru_wwd = ln(urbansim.gridcell.total_residential_value_per_residential_unit_within_walking_distance)",
+             "ltotal_impvalue_per_ru_wwd = ln(urbansim.gridcell.total_improvement_value_per_residential_unit_within_walking_distance)",
 #            "urbansim.gridcell.ln_residential_units",
             "urbansim.gridcell.ln_residential_units_within_walking_distance",\
 #            "urbansim.gridcell.ln_service_sector_employment_within_walking_distance",\
