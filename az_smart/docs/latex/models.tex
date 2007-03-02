@@ -1,9 +1,9 @@
-\subsection{Models}
+\section{Models}
 The model architecture is adapted from the functional design of SAM, and also informed by the development of OPUS and UrbanSim. The functionality in SAM focuses on the allocation of land use by sector to grid cells, from aggregate information at a mid-level geography such as MPAs.  By reference to the UrbanSim model system, this functionality is approximately equivalent in purpose to the real estate development model component of UrbanSim, with some key differences.  UrbanSim attempts to include a complete representation of the real estate market, with occupants (consumers: households and jobs), buildings and land (suppliers: developers and property owners), and prices (markets: hedonic regressions representing the interaction of suppliers and consumers).
 
 The architecture for the model system proposed for AZ-SMART is based on a 3-year plan, and incorporates the complete market representation as in UrbanSim, and a multi-level geography and model system.  We describe this in the Full Model System subsection below, and then focus on a Phase 1 Model System in the subsequent section.
 
-\subsubsection{Full Model System}
+\subsection{Full Model System}
 The full model system proposed for AZ-SMART involves some hybridization and extension of elements of UrbanSim and SAM-IM. Below we itemize the core elements of the full model system architecture.
 
 \begin{itemize}
@@ -18,7 +18,7 @@ The full model system proposed for AZ-SMART involves some hybridization and exte
 
 \item \emph{Microsimulation}: The proposed architecture is based on explicit representation of the agents and objects being modeled at a microscopic level.  Parcels, buildings, businesses (or jobs), households, and eventually, persons (for supporting activity-based travel models and workplace choice models and individual-level accessibility calculations).
 
-\item \emph{Temoral Dynamics}: The model system would be able to use a specified time interval, such as 5-year or 1-year steps, between which it would simulate changes to the state of each object and agent in the system (construction of new buildings or conversion of existing ones, movement of households and businesses from one location to another, creation of new households or businesses).
+\item \emph{Temporal Dynamics}: The model system would be able to use a specified time interval, such as 5-year or 1-year steps, between which it would simulate changes to the state of each object and agent in the system (construction of new buildings or conversion of existing ones, movement of households and businesses from one location to another, creation of new households or businesses).
 
 \item \emph{Models and Interface}: A set of models will be interfaced through a common data store, and managed by a Model Coordinator that controls their execution and implements events (changes to the data) proposed by models.  The individual models would be the following:
 
@@ -40,8 +40,40 @@ The full model system proposed for AZ-SMART involves some hybridization and exte
 \end{itemize}
 \end{itemize}
 
+The models proposed for implementation in Phase 1 of this project are described in greater detail in the following section.
 
-\subsubsection{Phase 1 Model System}
-In the draft below, we develop the architecture for the general allocation model that would apply to each land use sector, with some differences in the configuration of the model for each sector.  As an example we discuss the single family residential land use sector.  This might not be the preferred sector to test initially in implementation, but provides some useful features for describing the model architecture.
+\subsection{Phase 1 Model System}
+Phase 1 of the AZ-SMART project focuses on the allocation of land use sectors, essentially the real estate development process.  The plan for Phase 1 is to focus on the real estate development components of the full model system described in the preceding section, and to suppress or use only simple 'stub' models for the remaining models in the full system.  The objective is to provide the functionality that is provided now by SAM, but in an implementation that is a very big step towards a fully integrated market simulation model system such as UrbanSim, and incorporating valuable innovations such as the management of known development projects, and the use of an intermediate level geography such as RAZ as the basis for control totals for allocation to parcels (or land use polygons).
+
+The following models would be the focus of model development in Phase 1:
+
+\begin{itemize}
+\item Parcel Subdivision (Parcel)
+\item Parcel Aggregation (Parcel)
+\item Development Project Location (Development Site)
+\item Building Development Model (Parcel)
+\end{itemize}
+
+The following models would be implemented for completeness, but would use only the simplest specification, to allow completeness.  For example, the household location choice model could use an empty specification, which would randomly allocate the household control total for a RAZ to the housing units that have been developed on parcels in the RAZ.
+
+\begin{itemize}
+\item Demographic Transition (RAZ)
+\item Employment Transition (RAZ)
+\item Development Project Transition (RAZ)
+\item Household Location (Parcel)
+\item Business Location (Parcel)
+\end{itemize}
+
+The components of the full model system would be deferred until after Phase 1:
+
+\begin{itemize}
+\item Demolition (Building)
+\item Real Estate Price Model (Building)
+\item Simplified Travel Model (TAZ)
+\end{itemize}
+
+
+
+
 
 The model architecture has the following steps, using a 5-year time interval:=== Determine Quantity of Development Needed ===* Translate mid-level model predictions of population and employment by RAZ (or other mid-level geography) into predicted demands for housing units and land area of non-residential uses by type.** This would be done using average density and occupancy assumptions.=== Determine Development from Active Projects ===* Compute the quantity of development expected in a RAZ (or other mid-level geography) for each land use sector, based on the velocity within Active Development projects.* Assign the development generated by Active Development Projects to the cells within those developments.  === Determine Eligible Development Sites ===* Evaluate cells with vacant land to determine what kinds of development would be permitted on them according to the development constraints represented by Planned Land Use and other constraints (slopes, etc).  This applies development constraints in order to produce Eligible Vacant Lands for development.* Evaluate potential availability of Redevelopment Districts for new development.* Generate 'Development Sites' from 'patches' of available land suitable for development.  These are areas formed by contiguous cells eligible for development for a particular land use sector, and would serve as a counterpart to the polygons digitized by users for planned and active development projects.  They would allow the comparable representation of Development Sites from all sources.=== Assign Development Projects to Development Sites ===* Use 'Development Sites' as the candidate set of locations for new development within the RAZ.* Generate a set of proposed 'Development Projects' that would fill the gap in the RAZ between the development that is generated by evaluating the velocity of Active Development Projects and the quantity required to meet the RAZ control totals.* Compute logit model probability that a Development Project in a RAZ will choose one of the available candidate Development Sites.** Compute variables used in utility (scoring function)** Multiply variables by their coefficients** Compute utility** Compute probability* 'Choose' a Development Site for each Development Project to be located based on the logit probabilites.  Specifically, draw a random number and compare it to the cumulative probability distribution across the alternative Development Sites.  Choose the site that the random number falls within (the choice pattern will be proportional to the logit probabilities).  Ensure that the capacities of the sites are respected: if a Development Project is too big for a site, exclude it from consideration.* Once a Development Site is chosen for a Development Project, assign the Development Project to the Development Site, and set the Development Project status to 'Active', so it becomes part of the set of Active Development Projects that will be used to generate development at the beginning of each period.* Generate initial development of the newly selected project sites for the current time period based on the predicted or stored development velocity.* Compare generated development to that required to meet control totals.  Add more development if necessary.=== Iterate over RAZs (or other geography) and Allocate Unplaced Development Projects ===* Once allocation of all development in a RAZ or other mid-level geography is completed, process the next RAZ.  * If not all development could be allocated in a RAZ, accumulate unmet demand within a higher level geography to be processed in a final iteration.* If needed, allocate unmet demand from higher level (MPA for example), to Development Sites as above.=== Process Submodels and Interface to Other Models ===* Once the core allocation model is finished,** Run any needed 'Sub-models' for post-processing to create inputs to Travel Model** Launch Travel Model run if this is configured for a scenario** Resume model at next time step if this is configured for a scenario.=== Generate Indicators and DataSets ===As needed, once the model is completed on a Scenario:* Configure indicators to produce from results, and the format for them:** Tables** Maps** Charts(Petya says:)'' Can we use the indicators to generate or edit feature classes and then use ArcMap to see the results? I would like whenever possible to organize the indicators in appropriate feature classes instead of keeping them in non-spatial columns of tables''''''

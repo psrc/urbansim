@@ -1,4 +1,4 @@
-\subsection{Functional Overview}
+\section{Functional Overview}
 The functional overview of the AZ-SMART system is depicted in Figure \ref{figWorkflow}, showing multiple activities connected in a sequential but also bi-directional workflow.  One can begin with the top-right of the diagram and work counter-clockwise to understand the intended workflow pattern.  An AZ-SMART user will begin with the GIS tasks of compiling a database in the Geodatabase that will contain all the needed information for the AZ-SMART system, with the exception of the travel model and a mid-level model that will be interfaced to AZ-SMART (in a later phase, the mid-level model is likely to become a component of AZ-SMART rather than an external process). 
 
 As the database is assembled in the gepdatabase, including all land use layers, environmental, planning and political boundaries, development projects, and other related inputs, the AZ-SMART user will employ a suite of diagnostic tests to examine the database for missing, erroneous, and inconsistent data, and will use editing and validation tools to repair problems, and impute values for missing and erroneous data.  During this process, there would be considerable iteration between the data assembly step and the data diagnostic step, as some input data might be replaced or updated.  This step would also involve the assembly of metadata concerning the data sources, vintage, and any information developed on data quality.
@@ -10,6 +10,9 @@ Once the models are estimated and the system calibrated to the users' satisfacti
 The next step in the workflow is to run one or more scenarios over a forecast period defined by the scenarios.  This may be done in a batch mode that automates the entire modeling process from the loading of initial data for the base year, through multiple time steps and exchanges with the travel model, and possibly the mid-level model, until completion of the entire modeling period of 30 or more years (for example).  In other cases, the user may wish to run a scenario only for a portion of the intended forecast period, then stop the simulation to examine results, and possibly to make changes in the scenario assumptions that will shape the simulation in the next section of the forecast period.  Yet another possibility is that the user will see patterns in the results that are not desired, and decide to back up to the scenario specification stage, or even to the model specification stage, to make refinements and resume the process.
 
 Typically the process of examining simulation results will involve creating indicators and extracts (or summaries) of the detailed simulation results.  We shall refer broadly to these as indicators.  The indicators may be simple aggregation of results, such as housing units or acres of each land use sector by zone, or RAZ.  Or they may involve computations that are more complex, such as estimating the remaining development capacity within each city.  The indicators may be produced as maps, or charts, or tables.  They may be of three types: snapshots (looking at an indicator for a single scenario and year), changes (usually from the base year to some forecast year), and differences (usually between a specific scenario and a baseline scenario for a selected year).  it is likely that many of these would be map indicators and be viewed in the GIS environment.
+
+
+\clearpage
 
 Simulation results may also be stored to the Geodatabase.  A user may wish to store either the full set of simulation results with all of the intermediate calculations needed to understand or even re-start a simulation from an intermediate year, or alternatively only a subset of specified results can be written to the Geodatabase for archiving and further visual examination.  The system will provide tools for both use cases.
 
@@ -23,4 +26,3 @@ This brings the workflow full circle to the top-right, where the data used as in
 \end{center}
 \end{figure}
 
-%\clearpage
