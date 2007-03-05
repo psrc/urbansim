@@ -205,9 +205,10 @@ The components of the full model system would be deferred until after Phase 1:
 
 
 \subsection{Anatomy of the Development Project Location Model}
-As the core model of the phase 1 model effort, the Development Project Location Model warrants
-further detailing here.  The proposed model architecture has the following steps, using a 5-year time interval \footnote{Note: this is a modification of the approach proposed in the first meeting,
-incorporating feedback from the first meeting}.
+As the core model of the phase 1 model effort, the Development
+Project Location Model warrants further detailing here.  The
+proposed model architecture has the following steps, using a 5-year
+time interval.
 
 \subsubsection{Determine Quantity of Development Needed}
 
@@ -309,3 +310,36 @@ Once allocation of all development in a RAZ or other mid-level geography is comp
 next RAZ. If not all development could be allocated in a RAZ, accumulate unmet demand within a higher
 level geography to be processed in a final iteration. If needed, allocate unmet demand from higher
 level (MPA for example), to Development Sites as above.
+
+\subsection{Parcel Subdivision}
+One of the new models that will be needed in Phase 1 is a parcel
+subdivision model.  Details of how this model will be implemented
+have not yet been determined.  As an initial approach, we propose to
+avoid the problem of operating on the topology of the parcel
+polygon, and instead just create new parcel records that become
+children of the original parcel, containing all the relevant
+attributes including area, and respecting the total area of the
+original parcel, but not being depicted by polygons.  This approach
+would manage risk and avoid spending too much of the development
+effort on this one aspect.  We can also explore options for
+algorithms to cartographically subdivide parcels.
+
+\subsection{Parcel Aggregation}
+A parcel aggregation model will also be needed in Phase 1.  We
+propose to initially develop this model using user-specified
+redevelopment area polygons, that can be treated as development
+sites.  We will define the spatial relationship of parcels within
+each redevelopment area to the development area polygon, and assign
+the polygon to the set of development sites.  At this point, the
+cost of development on one of these sites would include the cost of
+acquiring the parcels contained in the site and demolishing any
+existing development on them.  This will reduce their expected
+profit as compared to greenfield development, but is economically
+realistic.
+
+In a later phase, we may be able to generate redevelopment districts
+through an algorithm that finds parcels meeting certain conditions,
+and then attempts to 'grow' the development site by finding
+neighboring parcels that when combined, would generate a profitable
+development site.  Our assessment is that this would be beyond the
+scope of Phase 1, however.
