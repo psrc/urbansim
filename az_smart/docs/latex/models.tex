@@ -13,18 +13,31 @@ and jobs), buildings and land (suppliers: developers and property
 owners), and prices (markets: hedonic regressions representing the
 interaction of suppliers and consumers).
 
-The architecture for the model system proposed for AZ-SMART is
-based on a 3-year plan, and incorporates the complete market
-representation as in UrbanSim, and a multi-level geography and
-model system.  We describe this in the Full Model System subsection
- below, and then focus on a Phase 1 Model System in the subsequent
+The architecture for the model system proposed for AZ-SMART is based
+on a 3-year plan, and incorporates the complete market
+representation as in UrbanSim, and a multi-level geography and model
+system.  We describe this in the Full Model System subsection below,
+and then focus on a Phase 1 Model System in the subsequent
+
  section.
 
 \subsection{Full Model System}
 The full model system proposed for AZ-SMART involves some
 hybridization and extension of elements of UrbanSim and SAM-IM.
 Below we itemize the core elements of the full model system
-architecture.
+architecture.  These are depicted in Figure \ref{figFlow}, which
+shows the model components, their sequence of operation, and the
+data objects on which the models operate.  Note that the data are
+hierarchically organized in the center of the figure, with
+aggregation relationships moving from bottom to top.
+
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.8]{figures/flow.png}
+\caption{AZ-SMART Full Model Architecture} \label{figFlow}
+\end{center}
+\end{figure}
 
 \begin{itemize}
 
@@ -192,7 +205,7 @@ The components of the full model system would be deferred until after Phase 1:
 
 \subsection{Anatomy of the Development Project Location Model}
 As the core model of the phase 1 model effort, the Development Project Location Model warrants
-further detailing here.  The proposed model architecture has the following steps, using a 5-year time interval \footnote{Note: this is a modification of the approach proposed in the first meeting, 
+further detailing here.  The proposed model architecture has the following steps, using a 5-year time interval \footnote{Note: this is a modification of the approach proposed in the first meeting,
 incorporating feedback from the first meeting}.
 
 \subsubsection{Determine Quantity of Development Needed}
@@ -204,21 +217,21 @@ uses by type. This would be done using average density and occupancy assumptions
 \subsubsection{Determine Development from Active Projects}
 
 Compute the quantity of development expected in a RAZ (or other mid-level geography) for each land use
-sector based on the velocity within Active Development projects. Assign the development generated 
+sector based on the velocity within Active Development projects. Assign the development generated
 by Active Development Projects to the parcels (or polygons) within those developments.
 
 \subsubsection{Determine Eligible Development Sites}
 
-Evaluate parcels (polygons) with vacant land to determine what kinds of development would be 
+Evaluate parcels (polygons) with vacant land to determine what kinds of development would be
 permitted on them
 according to the development constraints represented by Planned Land Use and other constraints
 (slopes, etc).  This applies development constraints in order to produce Eligible Vacant Lands for
 development. Evaluate potential availability of Redevelopment Districts for new development.
 
-Generate \emph{development sites} from 'patches' of available land suitable for development.  
+Generate \emph{development sites} from 'patches' of available land suitable for development.
 These are
 areas formed by contiguous parcels or polygons eligible for development for a particular land use
-sector, and would serve as a counterpart to the polygons digitized by users for planned and active 
+sector, and would serve as a counterpart to the polygons digitized by users for planned and active
 development projects.  They would allow the comparable representation of Development Sites from all
 sources.
 
@@ -226,9 +239,9 @@ sources.
 Here we propose to generate a set of somewhat standardized templates to apply to new development
 projects simulated by the model (not the known development projects), which specify the land area,
 land use, number of residential units, number of building square feet, development velocity function,
-and development cost.  Other characteristics could be added to templates, but these would be enough 
+and development cost.  Other characteristics could be added to templates, but these would be enough
 to begin.  The number of templates could be extended over time.  Values of the template could also
-be given as a range, or with some degree of flexibility, to allow their adaptation to existing parcels 
+be given as a range, or with some degree of flexibility, to allow their adaptation to existing parcels
 or land use polygons that do not conform to the shape of existing available polygons.
 
 \subsubsection{Generate Development Projects}
@@ -236,7 +249,7 @@ or land use polygons that do not conform to the shape of existing available poly
 Next, we would evaluate for each development site the applicable development constraints, and
 generate a set of proposed \emph{development projects}, from the set of \emph{development templates}
 that could be developed on each \emph{development site} according to the current \emph{development
-constraints}.  Note that there may be more than one project that would be allowed on a site, and 
+constraints}.  Note that there may be more than one project that would be allowed on a site, and
 there may be sites that would not allow any projects to be developed.  The result of this step
 would be a list of potential development projects, from which the most likely projects should be
 selected, while imposing the constraint that once a project is selected for a site, the site is
@@ -264,7 +277,7 @@ approach is already well supported in OPUS and UrbanSim, and allows the specific
 of models with price as the dependent variable (or log price), and a set of structural and locational
 attributes on the right hand side of the model.  It essentially 'decomposes' the sales transaction
 price (or assessed value if sales data are not readily available) into component marginal prices for
-each attribute, such as bedrooms, square footage, age, accessibility and other locational 
+each attribute, such as bedrooms, square footage, age, accessibility and other locational
 and structural characteristics.
 
 Using hedonic price models for each property type, we can estimate the resulting final value of any
@@ -276,7 +289,7 @@ we have a working estimate of the expected profit from the development.
 \subsubsection{Predict Development Project Proposal Probabilities}
 Once the development project proposals have been evaluated and the expected profit from each has been
 estimated, we can use a simple multinomial logit model to generate the probabilities of each being
-developed.  The only term in the utility function is the expected profit, and the probability of 
+developed.  The only term in the utility function is the expected profit, and the probability of
 development will be proportional to the relative profit of the proposed project.
 
 \subsubsection{Sample Development Projects Until Demand Met}

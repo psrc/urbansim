@@ -1,10 +1,15 @@
  \section{Functional Overview}
-The functional overview of the AZ-SMART system is depicted in Figure \ref{figWorkflow}, showing multiple activities connected in a
-sequential but also bi-directional workflow.  One can begin with the top-right of the diagram and work counter-clockwise to
-understand the intended workflow pattern.  An AZ-SMART user will begin with the GIS tasks of compiling a database in the Geodatabase
-that will contain all the needed information for the AZ-SMART system, with the exception of the travel model and a mid-level model
-that will be interfaced to AZ-SMART (in a later phase, the mid-level model is likely to become a component of AZ-SMART rather than
-an external process).
+The functional overview of the AZ-SMART system is depicted in Figure
+\ref{figWorkflow}, showing multiple activities connected in a
+sequential but also bi-directional workflow.  One can begin with the
+top-right of the diagram and work counter-clockwise to understand
+the intended workflow pattern.  An AZ-SMART user will begin with the
+GIS tasks of compiling a database in the geodatabase that will
+contain all the needed information for the AZ-SMART system, with the
+exception of the travel model and a mid-level model that will be
+interfaced to AZ-SMART (in a later phase, the mid-level model is
+likely to become a component of AZ-SMART rather than an external
+process).
 
 As the database is assembled in the gepdatabase, including all land use layers, environmental, planning and political boundaries,
 development projects, and other related inputs, the AZ-SMART user will employ a suite of diagnostic tests to examine the database
@@ -42,20 +47,32 @@ in the next section of the forecast period.  Yet another possibility is that the
 desired, and decide to back up to the scenario specification stage, or even to the model specification stage, to make refinements
 and resume the process.
 
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.6]{figures/functional_diagram.png}
+\caption{AZ-SMART Workflow Diagram} \label{figWorkflow}
+\end{center}
+\end{figure}
+
+
+\clearpage
+
 Typically the process of examining simulation results will involve creating indicators and extracts (or summaries) of the detailed
 simulation results.  We shall refer broadly to these as indicators.  The indicators may be simple aggregation of results, such as
 housing units or acres of each land use sector by zone, or RAZ.  Or they may involve computations that are more complex, such as
 estimating the remaining development capacity within each city.  The indicators may be produced as maps, or charts, or tables.
 They may be of three types: snapshots (looking at an indicator for a single scenario and year), changes (usually from the base year
-to some forecast year), and differences (usually between a specific scenario and a baseline scenario for a selected year).  It is
+to some forecast year), and differences (usually between a specific scenario and a baseline scenario for a selected year).  it is
 likely that many of these would be map indicators and be viewed in the GIS environment.
 
 
-\clearpage
 
-Simulation results may also be stored to the Geodatabase.  A user may wish to store either the full set of simulation results with
-all of the intermediate calculations needed to understand or even re-start a simulation from an intermediate year, or alternatively
-only a subset of specified results can be written to the Geodatabase for archiving and further visual examination.  The system will
+Simulation results may also be stored to the geodatabase.  A user
+may wish to store either the full set of simulation results with all
+of the intermediate calculations needed to understand or even
+re-start a simulation from an intermediate year, or alternatively
+only a subset of specified results can be written to the geodatabase
+for archiving and further visual examination.  The system will
 provide tools for both use cases.
 
 This brings the workflow full circle to the top-right, where the data used as inputs and the data produced by the simulation may all
@@ -63,11 +80,3 @@ be visually examined and edited.  Refinement of forecast results would be done a
 variants on this workflow description, and theoretically one could draw connections among almost any pair of these task components,
 and the AZ-SMART system will support this kind of flexibility (but the diagram would be quite hard to interpret at that point).  The
 next section moves to the system architecture perspective.
-
-\begin{figure}[h]
-\begin{center}
-\includegraphics[scale=0.6]{figures/functional_diagram.png}
-\caption{AZ-SMART Workflow Diagram}
-\label{figWorkflow}
-\end{center}
-\end{figure}
