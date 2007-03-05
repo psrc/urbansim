@@ -16,17 +16,16 @@ implementation are described in turn in the following subsections.
 \subsection{Data Manager}
 
 The Data Manager will focus on the management and visualization of
-data within AZ-SMART.  The Data Manager be implemented within the
-ArcGIS framework as a dockable window, coded in VB.NET within ArcObjects,
-that organizes the necessary data management tools in a
+data within AZ-SMART.  The Data Manager will be implemented within
+the ArcGIS framework as a dockable window, coded in VB.NET within
+ArcObjects, that organizes the necessary data management tools in a
 'tree-view' framework.  The Data Manager dockable window would be
 accessible within both ArcMap and ArcCatalog to provide flexibility
 in use, although in regular production operation it would probably
 make the most sense to utilize the Data Manager primarily within
-ArcCatalog.  See Figures \ref{figCatalog} and \ref{figMap} for example
-screen captures
-of this type of dockable window implementation in both ArcCatalog
-and ArcMap.
+ArcCatalog.  See Figures \ref{figCatalog} and \ref{figMap} for
+example screen captures of this type of dockable window
+implementation in both ArcCatalog and ArcMap.
 
 %\emph{Paul said:...change the reference in the preceding sentence
 %to the Latex reference... Jesse says: I am having trouble getting
@@ -117,15 +116,16 @@ be the central application where simulation runs are configured, managed,
 started and stopped, and will interoperate seamlessly with the Data Manager
 and Tool Manager components of AZ-SMART.
 
-Several of the items listed in the Project Manager requirements in AZ-SMART
-RFQ Appendix G are very focused on control of model operations: controlling
-model execution, accessing the status of a model while executing, and
-accessing execution logs and error logs associated with a model run.
-Compared to an approach of using only native ArcGIS GUI tools to code
-the Project Manager, the approach of coding a native OPUS GUI will make
-it more feasible to implement these requirements.  It would need to be
-implemented in a way that could inter-operate transparently with other
-tools in the Tool Manager and Data Manager components, as noted in the
-first requirement below. Some initial tests of this approach should be
-developed early in the project to flesh out this aspect of the user
-interface.
+Several of the items listed in the Project Manager requirements in
+AZ-SMART RFQ Appendix G are very focused on control of model
+operations: controlling model execution, accessing the status of a
+model while executing, and accessing execution logs and error logs
+associated with a model run. Compared to an approach of using only
+native ArcGIS GUI tools to code the Project Manager, the approach of
+coding a native OPUS GUI will make it more feasible to implement
+these requirements.  It would need to be implemented in a way that
+this component of the user interface inter-operates transparently
+with other tools in the Tool Manager and Data Manager components,
+and can be launched from within ArcGIS. Some initial tests of this
+approach should be developed early in the project to flesh out this
+aspect of the user interface.
