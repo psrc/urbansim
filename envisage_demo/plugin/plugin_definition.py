@@ -207,6 +207,13 @@ resource_manager = ResourceManager(
                 'enthought.envisage.resource.folder_resource_type.FolderResourceType',
                 ]
             ),
+        ResourceType(
+            class_name = ID + '.resource_types.family_resource_type.FamilyResourceType',
+            precedes   = [
+                'enthought.envisage.resource.instance_resource_type.InstanceResourceType',
+                'enthought.envisage.resource.folder_resource_type.FolderResourceType',
+                ]
+            ),
         ],
     )
 

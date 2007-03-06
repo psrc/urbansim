@@ -21,7 +21,6 @@ class NewFamilyAction(Action):
         subcontext = event.node.obj
         
         name = subcontext.get_unique_name('New Family')
-        print event.application.__dict__.keys()
         family = Family(name=name, context=event.node.context.adaptee)
         family.configure_traits()
         
