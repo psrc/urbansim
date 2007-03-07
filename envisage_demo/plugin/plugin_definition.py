@@ -13,15 +13,28 @@
 # 
 
 from enthought.envisage import PluginDefinition
-from enthought.envisage.single_project.plugin_definition import FactoryDefinition, SyncProjectSelection
-from enthought.envisage.resource.resource_plugin_definition import \
-    ResourceManager, ResourceType
-from enthought.envisage.action.action_plugin_definition import \
-    Action, ActionSet, Group, Location, Menu
+
 from envisage_demo.plugin.actions.default_action import DefaultAction
-from enthought.envisage.workbench.workbench_plugin_definition import \
-    Perspective, View, Workbench
-from enthought.envisage.repository.repository_extensions import RepositoryRootFactory, ExportableObject
+
+from enthought.envisage.action.action_plugin_definition import Menu
+from enthought.envisage.action.action_plugin_definition import Group
+from enthought.envisage.action.action_plugin_definition import Action
+from enthought.envisage.action.action_plugin_definition import Location
+from enthought.envisage.action.action_plugin_definition import ActionSet
+
+from enthought.envisage.workbench.workbench_plugin_definition import View
+from enthought.envisage.workbench.workbench_plugin_definition import Workbench
+from enthought.envisage.workbench.workbench_plugin_definition import Perspective
+
+from enthought.envisage.resource.resource_plugin_definition import ResourceType
+from enthought.envisage.resource.resource_plugin_definition import ResourceManager
+
+from enthought.envisage.single_project.plugin_definition import FactoryDefinition
+from enthought.envisage.single_project.plugin_definition import SyncProjectSelection
+
+from enthought.envisage.repository.repository_extensions import ExportableObject
+from enthought.envisage.repository.repository_extensions import RepositoryRootFactory
+
 ##############################################################################
 # Constants
 ##############################################################################
@@ -37,7 +50,6 @@ ID = 'envisage_demo.plugin'
 class EnvisageDemoActionSet(ActionSet):
     """
     Action and menu definitions for the project view.
-
     """
 
     # A mapping from human-readable root names to globally unique Ids.
@@ -45,6 +57,7 @@ class EnvisageDemoActionSet(ActionSet):
         'PersonsMenu' : ID + '.persons_menu',
         'PersonMenu' : ID + '.person_menu',
         'FamiliesMenu' : ID + '.families_menu',
+        'FamilyMenu' : ID + '.family_menu',
         }
 
 class NewPersonAction(DefaultAction):
@@ -71,6 +84,11 @@ class NewFamilyAction(DefaultAction):
     name = 'New family...'    
     tooltip = 'Create a new family.'
     description = 'Create a new family.'
+    
+class EditFamilyAction(DefaultAction):
+    name = 'Edit family...'    
+    tooltip = 'Edit this family.'
+    description = 'Edit this family.'
 
 envisage_demo_action_set = EnvisageDemoActionSet(
     id = ID + '.envisage_demo_action_set',
@@ -88,6 +106,10 @@ envisage_demo_action_set = EnvisageDemoActionSet(
         Group(
             id = 'FamiliesMenuGroup',
             location = Location(path='FamiliesMenu')
+            ),
+        Group(
+            id = 'FamilyMenuGroup',
+            location = Location(path='FamilyMenu')
             ),
         ],
 
@@ -119,6 +141,11 @@ envisage_demo_action_set = EnvisageDemoActionSet(
         NewFamilyAction(
             locations = [
                 Location(path='FamiliesMenu/FamiliesMenuGroup'),
+                ],
+            ),
+        EditFamilyAction(
+            locations = [
+                Location(path='FamilyMenu/FamilyMenuGroup'),
                 ],
             ),
         ],
@@ -156,7 +183,7 @@ workbench = Workbench(
 #        View(
 #            id         = ID + '.views.selected_traits_view.SelectedTraitsView',
 #            class_name = ID + '.views.selected_traits_view.SelectedTraitsView',
-##            image      = 'images/view.png',
+#            image      = 'images/view.png',
 #            name       = 'Selected Traits View',
 #            position   = 'right',
 #            ),
@@ -256,4 +283,4 @@ class ProjectPluginDefinition(PluginDefinition):
         ]
 
 
-#### EOF #####################################################################
+#### EOF #######################################################################

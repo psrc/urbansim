@@ -16,10 +16,10 @@ from enthought.pyface.action.api import Action
 from enthought.envisage.workbench.api import IWORKBENCH
 
 
-class EditPersonAction(Action):
+class EditFamilyAction(Action):
     def perform(self, event):
-        person = event.node.obj
+        family = event.node.obj
         
         workbench = event.application.get_service(IWORKBENCH)
         
-        workbench.edit(person)
+        workbench.edit(family)

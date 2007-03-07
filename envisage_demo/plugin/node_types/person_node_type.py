@@ -32,6 +32,7 @@ logger = logging.getLogger(__name__)
 
 from envisage_demo.plugin.monitors.person_monitor import PersonMonitor
 
+
 class PersonNodeType(ResourceNodeType):
     """
     The node type associated with our project resources.

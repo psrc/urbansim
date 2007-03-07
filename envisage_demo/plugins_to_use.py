@@ -52,8 +52,8 @@ PLUGIN_DEFINITIONS = [
     join(enthought, 'logger/plugin/logger_plugin_definition.py'),
           
     # Debugging.
-    join(enthought, 'developer/fbi_plugin_definition.py'),
-    join(enthought, 'developer/plugin_definition.py'),
+    #join(enthought, 'developer/fbi_plugin_definition.py'),
+    #join(enthought, 'developer/plugin_definition.py'),
     #join(enthought, 'envisage/internal/internal_plugin_definition.py'),
 
     # Opus Application Plugins

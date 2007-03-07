@@ -51,7 +51,7 @@ class FamilyNodeType(ResourceNodeType):
     # If set, then we build our context menu by querying for actions, groups,
     # and menus, within ActionSets, which are configured for locations starting
     # with this path.
-#    action_location_root = 'envisage_demo.plugin.family_menu'
+    action_location_root = 'envisage_demo.plugin.family_menu'
 
 
     #### public 'NodeType' interface #########################################
@@ -73,24 +73,24 @@ class FamilyNodeType(ResourceNodeType):
 
     #### protected interface #################################################
 
-#    def _get_action_sets(self):
-#        """
-#        Returns all action set contributions.
-#
-#        """
-#
-#        from envisage_demo.plugin.plugin_definition import EnvisageDemoActionSet
-#        
-#        action_sets = get_application().load_extensions(EnvisageDemoActionSet)
-#        logger.debug('Found contribution action sets:')
-#        for set in action_sets:
-#            logger.debug('  Name: [%s]', set.name)
-#
-#        return action_sets
+    def _get_action_sets(self):
+        """
+        Returns all action set contributions.
 
-#    def _default_action_default(self):
-#        from envisage_demo.plugin.actions.edit_person_action import EditFamilyAction
-#        return EditFamilyAction()
+        """
+
+        from envisage_demo.plugin.plugin_definition import EnvisageDemoActionSet
+        
+        action_sets = get_application().load_extensions(EnvisageDemoActionSet)
+        logger.debug('Found contribution action sets:')
+        for set in action_sets:
+            logger.debug('  Name: [%s]', set.name)
+
+        return action_sets
+
+    def _default_action_default(self):
+        from envisage_demo.plugin.actions.edit_family_action import EditFamilyAction
+        return EditFamilyAction()
 
     def allows_children(self, node):
         return False
