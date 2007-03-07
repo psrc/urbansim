@@ -12,12 +12,13 @@
 # other acknowledgments.
 # 
 
-
-from enthought.traits import List
-from enthought.envisage.single_project.api import Project as EnvisageProject
-
-from opus_gui.model.model_specifications import ModelSpecifications
+from enthought.traits.api import HasTraits, Any
+from enthought.envisage.resource.api import ResourceReference
 
 
-class Project(EnvisageProject):
-    model_specifications = ModelSpecifications(name='Model Specifications')
+class ProjectReference(ResourceReference):    
+    type = Any
+    obj = Any
+    
+    def create_resource(self):
+        return

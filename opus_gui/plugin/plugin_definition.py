@@ -115,13 +115,13 @@ resource_manager = ResourceManager(
                 'enthought.envisage.single_project.project_resource_type.ProjectResourceType',
                 ]
             ),
-#        ResourceType(
-#            class_name = ID + '.resource_types.persons_subcontext_resource_type.PersonsSubcontextResourceType',
-#            precedes   = [
-#                'enthought.envisage.resource.instance_resource_type.InstanceResourceType',
-#                'enthought.envisage.resource.folder_resource_type.FolderResourceType',
-#                ]
-#            ),
+        ResourceType(
+            class_name = ID + '.resource_types.model_specifications_resource_type.ModelSpecificationsResourceType',
+            precedes   = [
+                'enthought.envisage.resource.instance_resource_type.InstanceResourceType',
+                'enthought.envisage.resource.folder_resource_type.FolderResourceType',
+                ]
+            ),
         ],
     )
 

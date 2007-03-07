@@ -12,12 +12,16 @@
 # other acknowledgments.
 # 
 
-
-from enthought.traits import List
-from enthought.envisage.single_project.api import Project as EnvisageProject
+from enthought.traits.api import Instance
+from enthought.envisage.workbench.api import TraitsUIEditor
 
 from opus_gui.model.model_specifications import ModelSpecifications
 
-
-class Project(EnvisageProject):
-    model_specifications = ModelSpecifications(name='Model Specifications')
+class ModelSpecificationsEditor(TraitsUIEditor):
+    resource = Instance(ModelSpecifications)
+    
+    def _resource_changed(self):
+        self.name = self.resource.name
+        
+    def _name_changed_for_resource(self, old, new):
+        self.name = self.resource.name

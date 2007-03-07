@@ -12,21 +12,14 @@
 # other acknowledgments.
 # 
 
-from enthought.naming.api import Context
 from enthought.envisage.resource import ResourceContextAdapter
-from enthought.traits.api import Instance, View
 
-from opus_gui.model.project import Project
-from opus_gui.model.family import Family
-from opus_gui.model.person import Person
 
 class ProjectContextAdapter(ResourceContextAdapter):
-    ###########################################################################
-    # Protected 'Context' interface.
-    ###########################################################################
     def _lookup(self, name):
         """ Looks up a name in this context. """
-        
+        if name == self.adaptee.model_specifications.name:
+            return self.adaptee.model_specifications
             
         return None
     
@@ -36,16 +29,14 @@ class ProjectContextAdapter(ResourceContextAdapter):
     def _bind(self, name, obj):
         """ Binds a name to an object in this context. """
         # Used for drag & drop, etc.
-        
 
     def _unbind(self, name):
         """ Unbinds a name from this context. """
-
-        
+        # If ModelSpecification, add to model_specifications, etc.
 
     def _rename(self, old_name, new_name):
         """ Renames an object in this context. """
-
+        return
 
     def _create_subcontext(self, name):
         """ Creates a sub-context of this context. """
@@ -57,10 +48,11 @@ class ProjectContextAdapter(ResourceContextAdapter):
 
     def _list_names(self):
         """ Lists the names bound in this context. """
-
+        
         return [
+            self.adaptee.model_specifications.name,
             ]
 
     def _is_context(self, name):
         """ Returns True if a name is bound to a context. """
-        return True
+        return name in self._list_names() # True?

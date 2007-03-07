@@ -12,47 +12,25 @@
 # other acknowledgments.
 # 
 
-""" The entry point for an Envisage application. """
-
-
-# Standard library imports.
 import sys
 
-# Enthought library imports.
 from enthought.envisage.workbench.api import WorkbenchApplication
 
-# Local imports.
 from opus_gui.plugins_to_use import INCLUDE, PLUGIN_DEFINITIONS
 
 
-# fixme: We need to put this inside a function 'cos there is some wierdness by
-# which 'gui' becomes a module after calling 'application.start'! It is to do
-# with how we load plugin definitions (by calling 'execfile'). It seems that it
-# effects the global namespace. This needs looking into! Most applications
-# don't notice this 'cos they set 'requires_gui' to be True and let Envisage
-# create the 'GUI' instance, but this is an experiment into how it really
-# should be!
 def run(argv):
     """ Runs the application. """
 
-    # Create the application.
     application = WorkbenchApplication(
         argv = argv,
         id = 'opus_gui',
         include = INCLUDE,
-        plugin_definitions = PLUGIN_DEFINITIONS
-    )
+        plugin_definitions = PLUGIN_DEFINITIONS,
+        )
 
-    # Run the application (this starts the application, starts the GUI event
-    # loop, and when that terminates, stops the application).
     application.run()
 
-    return
 
-
-# Application entry point.
 if __name__ == '__main__':
     run(sys.argv)
-
-
-#### EOF ######################################################################
