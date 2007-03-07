@@ -19,7 +19,7 @@ from enthought.envisage.single_project.api import IPROJECT_MODEL
 import logging
 logger = logging.getLogger(__name__)
 
-from envisage_demo.model.person import Person
+from opus_gui.model.person import Person
 
 class ProjectReference(HasTraits):    
     type = Any

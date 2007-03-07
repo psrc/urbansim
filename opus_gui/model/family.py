@@ -15,14 +15,14 @@
 from enthought.traits.api import HasTraits, List, Str, Instance, Property, \
     View, Item, Group, EnumEditor
 
-from envisage_demo.model.person import Person
+from opus_gui.model.person import Person
 
 class Family(HasTraits):
     name = Str
     husband = Instance(Person)
     wife = Instance(Person)
     children = List
-    context = Instance('envisage_demo.model.project.Project')
+    context = Instance('opus_gui.model.project.Project')
     
     persons = Property
     

@@ -22,11 +22,11 @@ The resource type for our project resources.
 from enthought.envisage.resource import ResourceType
 from enthought.traits.api import Instance
 
-from envisage_demo.plugin.node_types.family_node_type import FamilyNodeType
-from envisage_demo.plugin.editors.family_editor import FamilyEditor
-from envisage_demo.plugin.references.project_reference import ProjectReference
+from opus_gui.plugin.node_types.family_node_type import FamilyNodeType
+from opus_gui.plugin.editors.family_editor import FamilyEditor
+from opus_gui.plugin.references.project_reference import ProjectReference
 
-from envisage_demo.model.family import Family
+from opus_gui.model.family import Family
 
 
 class FamilyResourceType(ResourceType):

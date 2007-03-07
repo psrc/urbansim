@@ -14,7 +14,7 @@
 
 from enthought.envisage.single_project.api import ProjectFactory as EnvisageProjectFactory
 
-from envisage_demo.model.project import Project
+from opus_gui.model.project import Project
 
 
 class ProjectFactory(EnvisageProjectFactory):

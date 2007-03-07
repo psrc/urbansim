@@ -14,7 +14,7 @@
 
 from enthought.envisage import PluginDefinition
 
-from envisage_demo.plugin.actions.default_action import DefaultAction
+from opus_gui.plugin.actions.default_action import DefaultAction
 
 from enthought.envisage.action.action_plugin_definition import Menu
 from enthought.envisage.action.action_plugin_definition import Group
@@ -41,7 +41,7 @@ from enthought.envisage.repository.repository_extensions import RepositoryRootFa
 
 # The plugin's globally unique identifier (also used as the prefix for all
 # identifiers defined in this module).
-ID = 'envisage_demo.plugin'
+ID = 'opus_gui.plugin'
 
 ##############################################################################
 # Extension points.
@@ -90,8 +90,8 @@ class EditFamilyAction(DefaultAction):
     tooltip = 'Edit this family.'
     description = 'Edit this family.'
 
-envisage_demo_action_set = EnvisageDemoActionSet(
-    id = ID + '.envisage_demo_action_set',
+opus_gui_action_set = EnvisageDemoActionSet(
+    id = ID + '.opus_gui_action_set',
     name = 'EnvisageDemoActionSet',
 
     groups = [
@@ -152,8 +152,8 @@ envisage_demo_action_set = EnvisageDemoActionSet(
     )
 
 exportable_person = ExportableObject(
-    class_name = 'envisage_demo.model.person.Person',
-    id = 'envisage_demo.model.person.Person',
+    class_name = 'opus_gui.model.person.Person',
+    id = 'opus_gui.model.person.Person',
     label = 'Person Template',
     )
 
@@ -188,7 +188,7 @@ workbench = Workbench(
 #            position   = 'right',
 #            ),
         View(
-            uol = 'import://envisage_demo.plugin.views.selected_traits_view.selected_traits_view',
+            uol = 'import://opus_gui.plugin.views.selected_traits_view.selected_traits_view',
             id = ID + '.selected_traits_view',
             name = 'Selected Traits View',
             ),
@@ -275,10 +275,10 @@ class ProjectPluginDefinition(PluginDefinition):
     extensions = [
         resource_manager,
         factory_definition,
-        envisage_demo_action_set,
+        opus_gui_action_set,
         workbench,
-        SyncProjectSelection(name='selection', uol='import://envisage_demo.plugin.views.selected_traits_view.selected_traits_view'),
-        RepositoryRootFactory(class_name='envisage_demo.plugin.root_factories.BuiltInRootFactory'),
+        SyncProjectSelection(name='selection', uol='import://opus_gui.plugin.views.selected_traits_view.selected_traits_view'),
+        RepositoryRootFactory(class_name='opus_gui.plugin.root_factories.BuiltInRootFactory'),
         exportable_person,
         ]
 

@@ -22,11 +22,11 @@ The resource type for our project resources.
 from enthought.envisage.resource import ResourceType
 from enthought.traits.api import Instance
 
-from envisage_demo.plugin.node_types.person_node_type import PersonNodeType
-from envisage_demo.plugin.editors.person_editor import PersonEditor
-from envisage_demo.plugin.references.project_reference import ProjectReference
+from opus_gui.plugin.node_types.person_node_type import PersonNodeType
+from opus_gui.plugin.editors.person_editor import PersonEditor
+from opus_gui.plugin.references.project_reference import ProjectReference
 
-from envisage_demo.model.person import Person
+from opus_gui.model.person import Person
 
 
 class PersonResourceType(ResourceType):

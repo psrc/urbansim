@@ -14,7 +14,7 @@
 
 from enthought.pyface.action.api import Action
 
-from envisage_demo.model.person import Person
+from opus_gui.model.person import Person
 
 class NewPersonAction(Action):
     def perform(self, event):

@@ -19,7 +19,7 @@ class BuiltInRootFactory(TemplateRepositoryRootFactory):
     
     path = './data'
     
-    class_name = 'envisage_demo.plugin.root_factories.BuiltInRootFactory'
+    class_name = 'opus_gui.plugin.root_factories.BuiltInRootFactory'
     
     def roots(self):        
         ret = super(BuiltInRootFactory, self).roots()

@@ -13,7 +13,7 @@
 # 
 
 from enthought.traits.api import Instance
-from envisage_demo.model.person import Person
+from opus_gui.model.person import Person
 
 from enthought.envisage.workbench.api import TraitsUIEditor
 

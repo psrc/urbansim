@@ -12,8 +12,8 @@
 # other acknowledgments.
 # 
 
-from envisage_demo.model.project import Project
-from envisage_demo.plugin.project_context_adapter import ProjectContextAdapter
+from opus_gui.model.project import Project
+from opus_gui.plugin.project_context_adapter import ProjectContextAdapter
 
 from enthought.envisage.resource import ResourceContextAdapterFactory
 from enthought.envisage.single_project.api import ProjectResourceType as EnvisageProjectResourceType

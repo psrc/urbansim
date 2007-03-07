@@ -16,9 +16,9 @@ from enthought.naming.api import Context
 from enthought.envisage.resource import ResourceContextAdapter
 from enthought.traits.api import Instance, View
 
-from envisage_demo.model.project import Project
-from envisage_demo.model.family import Family
-from envisage_demo.model.person import Person
+from opus_gui.model.project import Project
+from opus_gui.model.family import Family
+from opus_gui.model.person import Person
 
 class PersonsSubcontext(Context):
     project = Instance(Project)

@@ -28,7 +28,7 @@ from enthought.envisage import join
 import enthought
 
 # Application imports
-import envisage_demo.plugin
+import opus_gui.plugin
 
 
 # The plugin definitions that make up the application.
@@ -58,7 +58,7 @@ PLUGIN_DEFINITIONS = [
 
     # Opus Application Plugins
     #join(XXX,'YYYY/plugin_definition.py'),
-    join(envisage_demo.plugin, 'plugin_definition.py'),
+    join(opus_gui.plugin, 'plugin_definition.py'),
     ]
 
 

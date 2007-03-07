@@ -16,8 +16,8 @@
 from enthought.traits import List
 from enthought.envisage.single_project.api import Project as EnvisageProject
 
-from envisage_demo.model.person import Person
-from envisage_demo.model.family import Family
+from opus_gui.model.person import Person
+from opus_gui.model.family import Family
 
 
 class Project(EnvisageProject):

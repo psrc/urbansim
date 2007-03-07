@@ -13,7 +13,7 @@
 # 
 
 """
-A monitor for envisage_demo nodes.
+A monitor for opus_gui nodes.
 
 """
 

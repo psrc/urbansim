@@ -30,7 +30,7 @@ from enthought.pyface.api import ImageResource
 logger = logging.getLogger(__name__)
 
 
-from envisage_demo.plugin.monitors.family_monitor import FamilyMonitor
+from opus_gui.plugin.monitors.family_monitor import FamilyMonitor
 
 
 class FamilyNodeType(ResourceNodeType):
@@ -51,7 +51,7 @@ class FamilyNodeType(ResourceNodeType):
     # If set, then we build our context menu by querying for actions, groups,
     # and menus, within ActionSets, which are configured for locations starting
     # with this path.
-    action_location_root = 'envisage_demo.plugin.family_menu'
+    action_location_root = 'opus_gui.plugin.family_menu'
 
 
     #### public 'NodeType' interface #########################################
@@ -79,7 +79,7 @@ class FamilyNodeType(ResourceNodeType):
 
         """
 
-        from envisage_demo.plugin.plugin_definition import EnvisageDemoActionSet
+        from opus_gui.plugin.plugin_definition import EnvisageDemoActionSet
         
         action_sets = get_application().load_extensions(EnvisageDemoActionSet)
         logger.debug('Found contribution action sets:')
@@ -89,7 +89,7 @@ class FamilyNodeType(ResourceNodeType):
         return action_sets
 
     def _default_action_default(self):
-        from envisage_demo.plugin.actions.edit_family_action import EditFamilyAction
+        from opus_gui.plugin.actions.edit_family_action import EditFamilyAction
         return EditFamilyAction()
 
     def allows_children(self, node):

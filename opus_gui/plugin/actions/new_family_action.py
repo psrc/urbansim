@@ -14,7 +14,7 @@
 
 from enthought.pyface.action.api import Action
 
-from envisage_demo.model.family import Family
+from opus_gui.model.family import Family
 
 class NewFamilyAction(Action):
     def perform(self, event):

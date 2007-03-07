@@ -15,14 +15,14 @@
 from enthought.pyface.action.api import Action
 from enthought.envisage.repository.api import IREPOSITORY
 
-from envisage_demo.model.person import Person
+from opus_gui.model.person import Person
 
 
 class ImportPersonAction(Action):
     def perform(self, event):
         service = get_application().get_service(IREPOSITORY)
         
-        person = service.import_object('envisage_demo.plugin.resource_types.person_resource_type.PersonResourceType')
+        person = service.import_object('opus_gui.plugin.resource_types.person_resource_type.PersonResourceType')
         
         subcontext = event.node.obj
         

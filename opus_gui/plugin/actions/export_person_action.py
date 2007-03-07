@@ -15,7 +15,7 @@
 from enthought.pyface.action.api import Action
 from enthought.envisage.repository.api import IREPOSITORY
 
-from envisage_demo.model.person import Person
+from opus_gui.model.person import Person
 
 
 class ImportPersonAction(Action):

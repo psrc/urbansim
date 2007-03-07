@@ -23,9 +23,9 @@ from enthought.envisage.resource import ResourceType
 from enthought.traits.api import Instance
 
 # Local imports.
-from envisage_demo.plugin.node_types.persons_subcontext_node_type import PersonsSubcontextNodeType
+from opus_gui.plugin.node_types.persons_subcontext_node_type import PersonsSubcontextNodeType
 
-from envisage_demo.plugin.project_context_adapter import PersonsSubcontext
+from opus_gui.plugin.project_context_adapter import PersonsSubcontext
 
 class PersonsSubcontextResourceType(ResourceType):
     """

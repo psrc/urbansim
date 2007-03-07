@@ -22,7 +22,7 @@ import sys
 from enthought.envisage.workbench.api import WorkbenchApplication
 
 # Local imports.
-from envisage_demo.plugins_to_use import INCLUDE, PLUGIN_DEFINITIONS
+from opus_gui.plugins_to_use import INCLUDE, PLUGIN_DEFINITIONS
 
 
 # fixme: We need to put this inside a function 'cos there is some wierdness by
@@ -38,7 +38,7 @@ def run(argv):
     # Create the application.
     application = WorkbenchApplication(
         argv = argv,
-        id = 'envisage_demo',
+        id = 'opus_gui',
         include = INCLUDE,
         plugin_definitions = PLUGIN_DEFINITIONS
     )
