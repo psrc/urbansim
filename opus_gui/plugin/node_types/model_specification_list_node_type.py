@@ -92,7 +92,19 @@ class ModelSpecificationListNodeType(ResourceNodeType):
 #        from envisage_demo.plugin.actions.edit_person_action import EditPersonAction
 #        return EditPersonAction()
 
+    def has_children(self, node):
+        model_specification_list = node.obj
+        
+        return len(model_specification_list.list) > 0
+
     def allows_children(self, node):
         return True
+        
+    def get_children(self, node):
+        model_specification_list = node.obj
+        
+        print model_specification_list.list
+        
+        return model_specification_list.list
 
 #### EOF #####################################################################
