@@ -18,8 +18,8 @@ from enthought.envisage.resource import ResourceContextAdapter
 class ProjectContextAdapter(ResourceContextAdapter):
     def _lookup(self, name):
         """ Looks up a name in this context. """
-        if name == self.adaptee.model_specifications.name:
-            return self.adaptee.model_specifications
+        if name == self.adaptee.model_specification_list.name:
+            return self.adaptee.model_specification_list
             
         return None
     
@@ -32,7 +32,7 @@ class ProjectContextAdapter(ResourceContextAdapter):
 
     def _unbind(self, name):
         """ Unbinds a name from this context. """
-        # If ModelSpecification, add to model_specifications, etc.
+        # If ModelSpecification, add to model_specification_list, etc.
 
     def _rename(self, old_name, new_name):
         """ Renames an object in this context. """
@@ -50,7 +50,7 @@ class ProjectContextAdapter(ResourceContextAdapter):
         """ Lists the names bound in this context. """
         
         return [
-            self.adaptee.model_specifications.name,
+            self.adaptee.model_specification_list.name,
             ]
 
     def _is_context(self, name):

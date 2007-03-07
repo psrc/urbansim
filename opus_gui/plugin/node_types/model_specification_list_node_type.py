@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 #from opus_gui.plugin.monitors.person_monitor import PersonMonitor
 
 
-class ModelSpecificationsNodeType(ResourceNodeType):
+class ModelSpecificationListNodeType(ResourceNodeType):
     """
     The node type associated with our project resources.
 

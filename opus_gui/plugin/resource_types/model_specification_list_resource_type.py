@@ -22,26 +22,26 @@ The resource type for our project resources.
 from enthought.envisage.resource import ResourceType
 from enthought.traits.api import Instance
 
-from opus_gui.model.model_specifications import ModelSpecifications
+from opus_gui.model.model_specification_list import ModelSpecificationList
 
 from opus_gui.plugin.references.project_reference import ProjectReference
-from opus_gui.plugin.editors.model_specifications_editor import ModelSpecificationsEditor
-from opus_gui.plugin.node_types.model_specifications_node_type import ModelSpecificationsNodeType
+from opus_gui.plugin.editors.model_specification_list_editor import ModelSpecificationListEditor
+from opus_gui.plugin.node_types.model_specification_list_node_type import ModelSpecificationListNodeType
 
 
-class ModelSpecificationsResourceType(ResourceType):
+class ModelSpecificationListResourceType(ResourceType):
     """
     The resource type for our project resources.
     """
 
-    type = Instance(ModelSpecifications)
-    editor = ModelSpecificationsEditor
+    type = Instance(ModelSpecificationList)
+    editor = ModelSpecificationListEditor
 
     def _node_type_default(self):
         """
         Initializes the node type.
         """
-        return ModelSpecificationsNodeType(resource_type=self)
+        return ModelSpecificationListNodeType(resource_type=self)
 
     def get_reference(self, obj):
-        return ProjectReference(type=ModelSpecifications, obj=obj)
+        return ProjectReference(type=ModelSpecificationList, obj=obj)

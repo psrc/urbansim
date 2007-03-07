@@ -12,16 +12,18 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import Instance
-from enthought.envisage.workbench.api import TraitsUIEditor
+from enthought.traits import HasTraits, Instance, Str, List
+from enthought.traits.ui import View, Item, Group
 
-from opus_gui.model.model_specifications import ModelSpecifications
+from opus_gui.model.model_specification import ModelSpecification
 
-class ModelSpecificationsEditor(TraitsUIEditor):
-    resource = Instance(ModelSpecifications)
+
+class ModelSpecificationList(HasTraits):
+    name = Str
+    list = List(Instance(ModelSpecification))
     
-    def _resource_changed(self):
-        self.name = self.resource.name
-        
-    def _name_changed_for_resource(self, old, new):
-        self.name = self.resource.name
+    my_view = View(
+        Item('name', width=300),
+        Item('model_specification_list', width=300, height=300),
+        )
+    

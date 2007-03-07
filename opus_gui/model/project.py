@@ -16,8 +16,8 @@
 from enthought.traits import List
 from enthought.envisage.single_project.api import Project as EnvisageProject
 
-from opus_gui.model.model_specifications import ModelSpecifications
+from opus_gui.model.model_specification_list import ModelSpecificationList
 
 
 class Project(EnvisageProject):
-    model_specifications = ModelSpecifications(name='Model Specifications')
+    model_specification_list = ModelSpecificationList(name='Model Specifications')

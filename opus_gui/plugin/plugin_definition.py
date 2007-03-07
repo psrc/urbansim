@@ -116,7 +116,7 @@ resource_manager = ResourceManager(
                 ]
             ),
         ResourceType(
-            class_name = ID + '.resource_types.model_specifications_resource_type.ModelSpecificationsResourceType',
+            class_name = ID + '.resource_types.model_specification_list_resource_type.ModelSpecificationListResourceType',
             precedes   = [
                 'enthought.envisage.resource.instance_resource_type.InstanceResourceType',
                 'enthought.envisage.resource.folder_resource_type.FolderResourceType',
