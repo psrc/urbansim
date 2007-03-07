@@ -16,10 +16,8 @@
 from enthought.traits import List
 from enthought.envisage.single_project.api import Project as EnvisageProject
 
-from opus_gui.model.person import Person
-from opus_gui.model.family import Family
+from opus_gui.model.model_specifications import ModelSpecifications
 
 
 class Project(EnvisageProject):
-    persons = List(Person)
-    families = List(Family)
+    model_specifications = ModelSpecifications

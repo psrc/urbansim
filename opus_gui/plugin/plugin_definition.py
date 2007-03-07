@@ -14,7 +14,7 @@
 
 from enthought.envisage import PluginDefinition
 
-from opus_gui.plugin.actions.default_action import DefaultAction
+#from opus_gui.plugin.actions.default_action import DefaultAction
 
 from enthought.envisage.action.action_plugin_definition import Menu
 from enthought.envisage.action.action_plugin_definition import Group
@@ -54,144 +54,46 @@ class EnvisageDemoActionSet(ActionSet):
 
     # A mapping from human-readable root names to globally unique Ids.
     aliases = {
-        'PersonsMenu' : ID + '.persons_menu',
-        'PersonMenu' : ID + '.person_menu',
-        'FamiliesMenu' : ID + '.families_menu',
-        'FamilyMenu' : ID + '.family_menu',
+#        'FamilyMenu' : ID + '.family_menu',
         }
-
-class NewPersonAction(DefaultAction):
-    name = 'New person...'    
-    tooltip = 'Create a new person.'
-    description = 'Create a new person.'
     
-class ImportPersonAction(DefaultAction):
-    name = 'Import person...'    
-    tooltip = 'Import a person.'
-    description = 'Import a person.'
-    
-class ExportPersonAction(DefaultAction):
-    name = 'Export person...'    
-    tooltip = 'Export a person.'
-    description = 'Export a person.'
-    
-class EditPersonAction(DefaultAction):
-    name = 'Edit person...'    
-    tooltip = 'Edit this person.'
-    description = 'Edit this person.'
-    
-class NewFamilyAction(DefaultAction):
-    name = 'New family...'    
-    tooltip = 'Create a new family.'
-    description = 'Create a new family.'
-    
-class EditFamilyAction(DefaultAction):
-    name = 'Edit family...'    
-    tooltip = 'Edit this family.'
-    description = 'Edit this family.'
+#class EditFamilyAction(DefaultAction):
+#    name = 'Edit family...'    
+#    tooltip = 'Edit this family.'
+#    description = 'Edit this family.'
 
 opus_gui_action_set = EnvisageDemoActionSet(
     id = ID + '.opus_gui_action_set',
     name = 'EnvisageDemoActionSet',
 
     groups = [
-        Group(
-            id = 'PersonsMenuGroup',
-            location = Location(path='PersonsMenu')
-            ),
-        Group(
-            id = 'PersonMenuGroup',
-            location = Location(path='PersonMenu')
-            ),
-        Group(
-            id = 'FamiliesMenuGroup',
-            location = Location(path='FamiliesMenu')
-            ),
-        Group(
-            id = 'FamilyMenuGroup',
-            location = Location(path='FamilyMenu')
-            ),
+#        Group(
+#            id = 'PersonsMenuGroup',
+#            location = Location(path='PersonsMenu')
+#            ),
         ],
 
     actions = [
-        NewPersonAction(
-            locations = [
-                Location(path='PersonsMenu/PersonsMenuGroup'),
-                ],
-            ),
-        EditPersonAction(
-            locations = [
-                Location(path='PersonMenu/PersonMenuGroup'),
-                ],
-            ),
-        Action( # Export person
-            class_name="enthought.envisage.repository.action.export_selection.ExportSelection",
-            description='Export person...',
-            name = 'Export Person',
-            id = 'ExportPerson',
-            locations = [
-                Location(path='PersonMenu/PersonMenuGroup', after='EditPerson'),
-                ],
-            ),
-        ImportPersonAction(
-            locations = [
-                Location(path='PersonsMenu/PersonsMenuGroup', after='NewPerson'),
-                ],
-            ),
-        NewFamilyAction(
-            locations = [
-                Location(path='FamiliesMenu/FamiliesMenuGroup'),
-                ],
-            ),
-        EditFamilyAction(
-            locations = [
-                Location(path='FamilyMenu/FamilyMenuGroup'),
-                ],
-            ),
+#        NewPersonAction(
+#            locations = [
+#                Location(path='PersonsMenu/PersonsMenuGroup'),
+#                ],
+#            ),
         ],
-    )
-
-exportable_person = ExportableObject(
-    class_name = 'opus_gui.model.person.Person',
-    id = 'opus_gui.model.person.Person',
-    label = 'Person Template',
     )
 
 #### Workbench Perspectives and Views ########################################
 
 workbench = Workbench(
     perspectives = [
-#        Perspective(
-#            id = ID + '.perspective.project',
-#            name = 'Project',
-#            contents = [
-#                Perspective.Item(
-#                    id = ID + '.view.project_view.ProjectView',
-#                    position = 'left',
-#                    width = 0.25,
-#                    ),
-#                Perspective.Item(
-#                    id = 'enthought.plugins.python_shell.view.PythonShellView',
-#                    position = 'bottom',
-#                    width = 0.75,
-#                    ),
-#                ]
-#            ),
         ],
 
     views = [
 #        View(
-#            id         = ID + '.views.selected_traits_view.SelectedTraitsView',
-#            class_name = ID + '.views.selected_traits_view.SelectedTraitsView',
-#            image      = 'images/view.png',
-#            name       = 'Selected Traits View',
-#            position   = 'right',
+#            uol = 'import://opus_gui.plugin.views.selected_traits_view.selected_traits_view',
+#            id = ID + '.selected_traits_view',
+#            name = 'Selected Traits View',
 #            ),
-        View(
-            uol = 'import://opus_gui.plugin.views.selected_traits_view.selected_traits_view',
-            id = ID + '.selected_traits_view',
-            name = 'Selected Traits View',
-            ),
         ],
     )
 
@@ -208,39 +110,18 @@ factory_definition = FactoryDefinition(
 resource_manager = ResourceManager(
     resource_types = [
         ResourceType(
-            class_name = ID + '.project_resource_type.ProjectResourceType',
+            class_name = ID + '.resource_types.project_resource_type.ProjectResourceType',
             precedes   = [
                 'enthought.envisage.single_project.project_resource_type.ProjectResourceType',
                 ]
             ),
-        ResourceType(
-            class_name = ID + '.resource_types.persons_subcontext_resource_type.PersonsSubcontextResourceType',
-            precedes   = [
-                'enthought.envisage.resource.instance_resource_type.InstanceResourceType',
-                'enthought.envisage.resource.folder_resource_type.FolderResourceType',
-                ]
-            ),
-        ResourceType(
-            class_name = ID + '.resource_types.person_resource_type.PersonResourceType',
-            precedes   = [
-                'enthought.envisage.resource.instance_resource_type.InstanceResourceType',
-                'enthought.envisage.resource.folder_resource_type.FolderResourceType',
-                ]
-            ),
-        ResourceType(
-            class_name = ID + '.resource_types.families_subcontext_resource_type.FamiliesSubcontextResourceType',
-            precedes   = [
-                'enthought.envisage.resource.instance_resource_type.InstanceResourceType',
-                'enthought.envisage.resource.folder_resource_type.FolderResourceType',
-                ]
-            ),
-        ResourceType(
-            class_name = ID + '.resource_types.family_resource_type.FamilyResourceType',
-            precedes   = [
-                'enthought.envisage.resource.instance_resource_type.InstanceResourceType',
-                'enthought.envisage.resource.folder_resource_type.FolderResourceType',
-                ]
-            ),
+#        ResourceType(
+#            class_name = ID + '.resource_types.persons_subcontext_resource_type.PersonsSubcontextResourceType',
+#            precedes   = [
+#                'enthought.envisage.resource.instance_resource_type.InstanceResourceType',
+#                'enthought.envisage.resource.folder_resource_type.FolderResourceType',
+#                ]
+#            ),
         ],
     )
 
@@ -256,7 +137,7 @@ class ProjectPluginDefinition(PluginDefinition):
 
     # General information about the plugin.
     name = 'Opus Gui Project Plugin'
-    version = '1.0.0'
+    version = '0.0.1'
     provider_name = 'CUSPA'
     provider_url = 'www.urbansim.org'
     autostart = True
@@ -277,9 +158,7 @@ class ProjectPluginDefinition(PluginDefinition):
         factory_definition,
         opus_gui_action_set,
         workbench,
-        SyncProjectSelection(name='selection', uol='import://opus_gui.plugin.views.selected_traits_view.selected_traits_view'),
-        RepositoryRootFactory(class_name='opus_gui.plugin.root_factories.BuiltInRootFactory'),
-        exportable_person,
+#        SyncProjectSelection(name='selection', uol='import://opus_gui.plugin.views.selected_traits_view.selected_traits_view'),
         ]
 
 

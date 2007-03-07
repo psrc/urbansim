@@ -12,16 +12,13 @@
 # other acknowledgments.
 # 
 
-from enthought.pyface.action.api import Action
-
-from opus_gui.model.family import Family
-
-class NewFamilyAction(Action):
-    def perform(self, event):
-        subcontext = event.node.obj
-        
-        name = subcontext.get_unique_name('New Family')
-        family = Family(name=name, context=event.node.context.adaptee)
-        family.configure_traits()
-        
-        subcontext.project.families.append(family)
+from enthought.traits import HasTraits, Str, Int
+from enthought.traits.ui import View, Item, Group
+    
+class ModelSpecifications(HasTraits):
+    name = Str
+    
+    my_view = View(
+        Item('name', width=300),
+        )
+    
