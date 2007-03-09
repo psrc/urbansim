@@ -1,0 +1,58 @@
+\documentclass{article}
+\usepackage[dvips]{graphicx}
+\usepackage{enumerate}
+%\usepackage{setspace}
+\usepackage{fullpage}
+\usepackage{url}
+\usepackage[dcucite]{harvard}
+\usepackage{amsmath}
+
+\title{Proposal for a New Parcel-based Developer Model}
+
+\begin{document}
+
+\maketitle
+\section{Data preparation}
+
+\begin{itemize}
+\item development template table: defines a set of possible developments (for example, lower and upper bound of residential units and non-residential (commercial and industrial) sqft SQ), and per unit cost C for each ``type'' of development;  incorporate Song's work (how?)
+\item development constraints: define units per acre and min and max non-residential sqft per acre (or FAR) for any meaningful combination of parcel plan type and physical (slope, wetland, stream buffer) and policy (UGB, city) variable, which will be similar to current development constraints.  We'll need to parse zoning code (detailed, require more work) or regflu (only having units per acre) to create plan types and assign plan type to parcel
+\item buildings table: fields including building id, residential units, (non-residential) sqft, parcel id, building use type, year built,
+\item parcels table: fields including parcel id, lot sqft, plan type id, property value (land value + building cost), grid id;
+optional fields(?): land use id, zone id, distance to arterial, distance to highway, percent slope, percent stream buffer, percent floodplain, percent wetland
+
+(Can we phase out development type id? What to use to define submodel in hedonic price regression?)
+
+\end{itemize}
+
+\section{Algorithm}
+Problem: how to reconcile two aspects in development process: project looking for the most profitable location and land seeking the most profitable project?
+
+This algorithm simulates investors choosing from all possible developments created from the combination of location (parcel) and types of development, and maximizing the profit by chooseing the ``right'' combination of both dimensions (alternatively he or she can maximize the rate of return on investment).
+
+\begin{enumerate}
+\item Define choice set as developable parcels joint with every type of possible development (it can be flattened to a 1d array);
+\item Compute expected profit ($V$) for each element in the array:
+For parcel $i$ the expected profit of development type $t$ is:
+\begin{equation}
+    V_{it} = f(P_{it}, C_t, L_i+S_i),
+\end{equation}
+where $P_{it}$ is the expected price for proposed development, $C_t$ is the construction cost for development type $t$, and $L_i+S_i$ is the cost to acquire the land and existing structure in the parcel.
+\item \label{step:loop} One featureless agent is going to choose 1 project (element) from the choice set to invest with utility from development $it$
+\begin{equation}
+    U_{it} = V_{it} + \epsilon_{it},
+\end{equation}
+where $V_{it}$ is the expected profit (we could instead use a linear-in-parameters function including $V_{it}$ as a parameter) and $\epsilon_{it}$ is an unobserved random term. Assuming $\epsilon_{it}$ to be distributed with a Gumbel distribution leads to a multinomial logit model with probability of choosing $it$
+\begin{equation}
+Pr_{it} = \frac{\mathrm{e}^{V_{it}}}{\sum_{jk} {\mathrm{e}^{V_{jk}}}}.
+\end{equation}
+(We would probably need to do a weighted sampling first, because the array is large and thus the probability of choosing each project is tiny - as an investor may filter a small set of projects to consider.)
+\item For sampled project $i^{\prime}t^{\prime}$, remove it from choice set;  check if vacancy rate for type $t^{\prime}$ is smaller than target vacancy rate. If it is, go to next step; else record the proposed development as a scheduled event and re-compute the vacancy rate;
+
+(If the expected profit/price could clear the market, there is no need for target vacancy rates -- investors can choose to build any project that is profitable.)
+\item Check if vacancy rates for all types are less or equal to target vacancy rates. If they are, exit; else go to step \ref{step:loop}.
+\end{enumerate}
+
+\section{Coding}
+This model will be based on Choice Model, with no model coefficents. It merges the development transition model with the development project location choice model. 
+\end{document}
