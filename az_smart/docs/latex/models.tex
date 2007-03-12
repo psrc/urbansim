@@ -313,16 +313,15 @@ level (MPA for example), to Development Sites as above.
 
 \subsection{Parcel Subdivision}
 One of the new models that will be needed in Phase 1 is a parcel
-subdivision model.  Details of how this model will be implemented
-have not yet been determined.  As an initial approach, we propose to
-avoid the problem of operating on the topology of the parcel
-polygon, and instead just create new parcel records that become
-children of the original parcel, containing all the relevant
-attributes including area, and respecting the total area of the
-original parcel, but not being depicted by polygons.  This approach
-would manage risk and avoid spending too much of the development
-effort on this one aspect.  We can also explore options for
-algorithms to cartographically subdivide parcels.
+subdivision model.  As an initial approach, we propose to avoid the
+problem of operating on the topology of the parcel polygon, and
+instead just create new parcel records that become children of the
+original parcel, containing all the relevant attributes including
+area, and respecting the total area of the original parcel, but not
+being depicted by polygons.  This approach would manage risk and
+avoid spending too much of the development effort on this one
+aspect.  We can also explore options for algorithms to
+cartographically subdivide parcels.
 
 \subsection{Parcel Aggregation}
 A parcel aggregation model will also be needed in Phase 1.  We
