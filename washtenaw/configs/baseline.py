@@ -44,7 +44,7 @@ class Baseline(GeneralConfiguration):
                     hostname = os.environ.get('MYSQLHOSTNAME','localhost'),
                     username = os.environ.get('MYSQLUSERNAME',''),
                     password = os.environ.get('MYSQLPASSWORD',''),
-                    database_name = 'washtenaw_estimation',
+                    database_name = 'washtenaw_class',
                     )
                 ),
             'models': [

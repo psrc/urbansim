@@ -92,7 +92,7 @@ all_multi_year_requests = [
     ]
 
 config = IndicatorConfiguration()
-config.database_configuration.database_name = 'washtenaw_estimation'
+config.database_configuration.database_name = 'washtenaw_class'
 config.cache_directory = r'C:\urbansim_cache\workshop\2006_08_28_16_58'
 config.run_description = '(baseline run without travel model)'
 config.use_cache_directory_for_output = True
