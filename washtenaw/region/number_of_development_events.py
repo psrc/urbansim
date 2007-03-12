@@ -49,11 +49,15 @@ class Tests(opus_unittest.OpusTestCase):
         num_of_dev_events = array([21,22,27,42]) 
         grid_id = array([1,2,3,4])
         
-        values = VariableTestToolbox().compute_variable(self.variable_name, 
-                {"region":RegionDataset(), 
-            "gridcell":{ 
-                "number_of_development_events":num_of_dev_events,
-                "grid_id":grid_id}}, 
+        values = VariableTestToolbox().compute_variable(
+            self.variable_name, 
+            {
+                "region":RegionDataset(), 
+                "gridcell":{ 
+                    "number_of_development_events":num_of_dev_events,
+                    "grid_id":grid_id
+                    }
+                }, 
             dataset = "region")
 
         should_be = array([112])

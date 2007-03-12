@@ -12,32 +12,39 @@
 # other acknowledgments.
 #
 
+
+from opus_core.logger import logger
+
 from urbansim.estimation.estimation_runner import EstimationRunner as UrbansimEstimationRunner
 
+
 class EstimationRunner(object):
-    def run_estimation(self, estimation_config, model, save_estimation_results=False):
-        estimator = UrbansimEstimationRunner(
-            model, 
-            specification_from_module=True, 
-            package="washtenaw",
-            configuration=estimation_config,
-            save_estimation_results=save_estimation_results
-            )
-        estimator.estimate()
-        #estimator.reestimate("HLCM_specification")
-        #estimator.reestimate("ELCM_specification", type="commercial")
+    def run_estimation(self, estimation_config, model_name, save_estimation_results=False):
+        logger.start_block('Estimating %s' % model_name)
+        try:
+            estimator = UrbansimEstimationRunner(
+                model_name, 
+                specification_from_module=True, 
+                package="washtenaw",
+                configuration=estimation_config,
+                save_estimation_results=save_estimation_results
+                )
+            estimator.estimate()
+            
+        finally:
+            logger.end_block()
         
 if __name__ == '__main__':
-    #model = 'hlcm'
-    #model = 'elcm-industrial'
-    #model = 'elcm-commercial'
-    #model = 'elcm-home_based'
-    #model = dplcm-industrial'
-    #model = 'dplcm-commercial'
-    #model ='dplcm-residential'
-    model = 'lpm'
-    #model = 'rlsm'
+    model_name = 'lpm'
+    #model_name = 'hlcm'
+    #model_name = 'elcm-industrial'
+    #model_name = 'elcm-commercial'
+    ###model_name = 'elcm-home_based'
+    #model_name = 'dplcm-industrial'
+    #model_name = 'dplcm-commercial'
+    #model_name = 'dplcm-residential'
+    #model_name = 'rlsm'
 
     from washtenaw.estimation.my_estimation_config import my_configuration
     
-    EstimationRunner().run_estimation(my_configuration, model)
+    EstimationRunner().run_estimation(my_configuration, model_name)

@@ -60,7 +60,8 @@ class TestRunEstimation(opus_unittest.TestCase):
             failed = []
             succeeded = []
             
-            for model in [
+            for model_name in [
+                    'lpm',
                     'hlcm', 
                     'elcm-industrial',
                     'elcm-commercial',
@@ -68,16 +69,15 @@ class TestRunEstimation(opus_unittest.TestCase):
                     'dplcm-industrial',
                     'dplcm-commercial',
                     'dplcm-residential',
-                    'lpm',
                     'rlsm',
                     ]:
                     
                 try:
-                    self.estimation_runner.run_estimation(estimation_config, model, save_estimation_results=False)
-                    succeeded.append(model)
+                    self.estimation_runner.run_estimation(estimation_config, model_name, save_estimation_results=False)
+                    succeeded.append(model_name)
                 except:
                     logger.log_stack_trace()
-                    failed.append(model)
+                    failed.append(model_name)
 
             if len(succeeded) > 0:
                 print 'Succeeded in estimating the following models: %s.' % ', '.join(succeeded)

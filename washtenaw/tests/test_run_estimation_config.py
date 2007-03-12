@@ -29,7 +29,7 @@ class TestRunEstimationConfig(Configuration):
                 host_name = 'trondheim.cs.washington.edu',
                 user_name = os.environ.get('MYSQLUSERNAME',''),
                 password = os.environ.get('MYSQLPASSWORD',''),
-                database_name = "washtenaw_estimation",
+                database_name = "washtenaw_class",
                 ),
             'datasets_to_cache_after_each_model':[],
             'low_memory_mode':False,

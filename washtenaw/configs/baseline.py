@@ -33,6 +33,12 @@ class Baseline(GeneralConfiguration):
         
         config_changes = {
             'description':'Washtenaw baseline',
+            'input_configuration': DatabaseConfiguration(
+                host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
+                user_name     = os.environ.get('MYSQLUSERNAME',''),
+                password      = os.environ.get('MYSQLPASSWORD',''),
+                database_name = 'washtenaw_class',
+                ),
             'in_storage':StorageFactory().get_storage('mysql_storage',
                 storage_location = ScenarioDatabase(
                     hostname = os.environ.get('MYSQLHOSTNAME','localhost'),
@@ -58,7 +64,7 @@ class Baseline(GeneralConfiguration):
                 'household_relocation_model',
                 'household_location_choice_model',
                 'employment_relocation_model',
-                {'employment_location_choice_model': {'group_members': '_all_'}},
+                {'employment_location_choice_model': {'group_members': ['industrial','commercial']}},
                 'distribute_unplaced_jobs_model'
                 ],
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
@@ -147,12 +153,6 @@ class Baseline(GeneralConfiguration):
                 'target_vacancy': {},
                 'zone': {}
                 },
-            'input_configuration': DatabaseConfiguration(
-                host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
-                user_name     = os.environ.get('MYSQLUSERNAME',''),
-                password      = os.environ.get('MYSQLPASSWORD',''),
-                database_name = 'washtenaw_estimation',
-                ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['washtenaw', 'urbansim', 'opus_core'],
                 package_order_exceptions={},
