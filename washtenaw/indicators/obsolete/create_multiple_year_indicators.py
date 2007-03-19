@@ -16,42 +16,42 @@ def get_multiple_year_indicators(config):
     indicators = [
              {'dataset':'alldata',
               'image_type':'table',
-              'attribute':'Residential_Units = aggregate_all(urbansim.gridcell.residential_units,sum)'
+              'attribute':'Residential_Units = alldata.aggregate_all(urbansim.gridcell.residential_units,function=sum)'
               }, 
              {'dataset':'alldata',
               'image_type':'table',
-              'attribute':'Commercial_SQFT = aggregate_all(urbansim.gridcell.commercial_sqft,sum)'
+              'attribute':'Commercial_SQFT = alldata.aggregate_all(urbansim.gridcell.commercial_sqft,function=sum)'
               }, 
              {'dataset':'alldata',
               'image_type':'table',
-              'attribute':'Industrial_SQFT = aggregate_all(urbansim.gridcell.industrial_sqft,sum)'
+              'attribute':'Industrial_SQFT = alldata.aggregate_all(urbansim.gridcell.industrial_sqft,function=sum)'
               }, 
              {'dataset':'alldata',
               'image_type':'table',
-              'attribute':'Developed_Cells = aggregate_all(urbansim.gridcell.is_developed,sum)'
+              'attribute':'Developed_Cells = alldata.aggregate_all(urbansim.gridcell.is_developed,function=sum)'
               }, 
              {'dataset':'alldata',
               'image_type':'table',
               'attribute':{'indicator_name':'residential_vacancy_rate',
                            'operation':'divide',
-                           'arguments':['aggregate_all(urbansim.gridcell.vacant_residential_units,sum)',
-                                        'aggregate_all(urbansim.gridcell.residential_units,sum)']
+                           'arguments':['alldata.aggregate_all(urbansim.gridcell.vacant_residential_units,function=sum)',
+                                        'alldata.aggregate_all(urbansim.gridcell.residential_units,function=sum)']
                            }
               },             
              {'dataset':'alldata',
               'image_type':'table',
               'attribute':{'indicator_name':'commercial_vacancy_rate',
                            'operation':'divide',
-                           'arguments':['aggregate_all(urbansim.gridcell.vacant_commercial_sqft,sum)',
-                                        'aggregate_all(urbansim.gridcell.commercial_sqft,sum)']
+                           'arguments':['alldata.aggregate_all(urbansim.gridcell.vacant_commercial_sqft,function=sum)',
+                                        'alldata.aggregate_all(urbansim.gridcell.commercial_sqft,function=sum)']
                            }
               },             
              {'dataset':'alldata',
               'image_type':'table',
               'attribute':{'indicator_name':'industrial_vacancy_rate',
                            'operation':'divide',
-                           'arguments':['aggregate_all(urbansim.gridcell.vacant_industrial_sqft,sum)',
-                                        'aggregate_all(urbansim.gridcell.industrial_sqft,sum)']
+                           'arguments':['alldata.aggregate_all(urbansim.gridcell.vacant_industrial_sqft,function=sum)',
+                                        'alldata.aggregate_all(urbansim.gridcell.industrial_sqft,function=sum)']
                            }
               },             
              #{'dataset':'alldata',
