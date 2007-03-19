@@ -13,7 +13,7 @@
 # 
 
 from opus_core.logger import logger
-from opus_core.variable import Variable
+from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
 from numarray import where, zeros, Float32
 

@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from opus_core.variable import Variable
+from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 from opus_core.misc import clip_to_zero_if_needed
 

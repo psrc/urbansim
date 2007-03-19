@@ -14,7 +14,7 @@
 
 from numarray import where, zeros
 import re
-from opus_core.variable import Variable
+from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
 from variable_functions import my_attribute_label
 
