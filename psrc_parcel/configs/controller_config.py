@@ -302,8 +302,59 @@ my_controller_configuration = {
                               "storage": "base_cache_storage"},
                 "output": "scheduled_development_events"
                 }
-         }
-            
+         },
+
+# configuration for parcel-based developer model
+ 'expected_sale_price_model': {
+    "import": {"psrc_parcel.models.proposed_development_project_expected_sale_price_model":
+                                        "ProposedDevelopmentProjectSalePriceModel"},
+    "init": { 
+        "name": "ProposedDevelopmentProjectSalePriceModel",
+        "arguments": {"submodel_string": "'template_id'",
+                      "filter_attribute": None},
+        },
+    "prepare_for_run": {
+        "name": "prepare_for_run",
+        "arguments": {"specification_storage": "base_cache_storage",
+                      "specification_table": "'real_estate_price_model_specification'",
+                       "coefficients_storage": "base_cache_storage",
+                       "coefficients_table": "'real_estate_price_model_coefficients'"},
+        "output": "(specification, coefficients)"
+        },
+    "run": {                 
+        "arguments": {
+                      "specification": "specification",
+                      "coefficients":"coefficients",
+                      "dataset": None,  # have the model create the data on the fly
+                      "data_objects": "datasets" },
+        "output":"development_project_proposal"  #get the development project proposal back
+            },
+  },
+  
+ 'construction_cost_model': {
+    "import": {"psrc_parcel.models.proposed_development_project_cost_model":
+                                        "ProposedDevelopmentProjectCostModel"},
+    "init": { 
+        "name": "ProposedDevelopmentProjectCostModel",
+        "arguments": {"submodel_string": "'template_id'",
+                      "filter_attribute": None},
+        },
+    "prepare_for_run": {
+        "name": "prepare_for_run",
+        "arguments": {"specification_storage": "base_cache_storage",
+                      "specification_table": "'development_project_construction_cost_model_specification'",
+                       "coefficients_storage": "base_cache_storage",
+                       "coefficients_table": "'development_project_construction_cost_model_coefficients'"},
+        "output": "(specification, coefficients)"
+        },
+    "run": {                 
+        "arguments": {
+                      "specification": "specification",
+                      "coefficients":"coefficients",
+                      "dataset": "development_project_proposal",  # have the model create the data on the fly
+                      "data_objects": "datasets" }
+            },
+  },            
           
 }
 
