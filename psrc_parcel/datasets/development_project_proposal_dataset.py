@@ -15,9 +15,11 @@
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 from opus_core.datasets.interaction_dataset import InteractionDataset
 from opus_core.datasets.dataset import Dataset
+from opus_core.datasets.interaction_dataset import InteractionDataset
 from opus_core.storage_factory import StorageFactory
 from opus_core.resources import Resources
 from opus_core.variables.variable_name import VariableName
+from numarray import arange
 
 class DevelopmentProjectProposalDataset(UrbansimDataset):
     """ contains the proposed development projects, which is created from interaction of parcels with development template;
@@ -34,11 +36,11 @@ class DevelopmentProjectProposalDataset(UrbansimDataset):
             It's similar to InteractionSet, but flattend to 1d, thus regression model can use this dataset without changes
         """ 
         UrbansimDataset.__init__(self, resources=resources, **kwargs)
-        if 'dataset1' is not None:
+        if dataset1 is not None:
             self.dataset1 = dataset1
-        if 'dataset2' is not None:
+        if dataset2 is not None:
             self.dataset2 = dataset2
-        if 'index1' is not None:
+        if index1 is not None:
             self.index1 = index1
 
     def _compute_if_needed(self, name, dataset_pool, resources=None, quiet=False, version=None):
@@ -67,25 +69,30 @@ class DevelopmentProjectProposalDataset(UrbansimDataset):
                 self._raise_error(StandardError, "Cannot find variable '%s'\nin either dataset or in the interaction set." % 
                                 variable_name.get_full_name())
             new_version =  self.compute_variables_return_versions_and_final_value("%s = %s.disaggregate(%s)" % \
-                                   (short_name, self.get_dataset_name(), 
-                                    variable_name.get_full_name()
-                                    ) )[0]
+                                   ( short_name, self.get_dataset_name(), variable_name.get_expression() ), 
+                                   dataset_pool=dataset_pool, resources=resources, quiet=quiet )[0]
         return new_version
+
+    def _check_dataset_name(self, name):
+        """check that name is the name of this dataset or one of its components"""
+        if name!=self.get_dataset_name() and name!=self.dataset1.get_dataset_name() and name!=self.dataset2.get_dataset_name():
+            raise ValueError, 'different dataset names for variable and dataset or a component'
+    
     
 def create_from_parcel_and_development_template(parcel_dataset,
                                                 development_template_dataset, 
-                                                index=None, filter = None,                                                
+                                                index=None, 
+                                                filter=None,
                                                 resources=None):
     """create development project proposals from parcel and development_template_dataset,
     index1 - 1D array, indices of parcel_dataset
     """
 
-    interactionset = InteractionSet(dataset1=parcel_dataset, 
+    interactionset = InteractionDataset(dataset1=parcel_dataset, 
                                     dataset2=development_template_dataset, 
                                     index1=index)
-        
-    parcel_ids = interactionset.get_2d_dataset_attribute("parcel_id").flat
-    template_ids = interactionset.get_2d_dataset_attribute("template_id").flat
+    parcel_ids = interactionset.get_attribute("parcel_id").flat
+    template_ids = interactionset.get_attribute("template_id").flat
         
     storage = StorageFactory().get_storage('dict_storage')        
     storage._write_dataset(out_table_name='development_project_proposals',
@@ -107,3 +114,70 @@ def create_from_parcel_and_development_template(parcel_dataset,
             development_project_proposals.subset_by_index(filter_index, flush_attributes_if_not_loaded=False)
 
     return development_project_proposals
+
+from opus_core.tests import opus_unittest
+from opus_core.dataset_pool import DatasetPool
+from opus_core.storage_factory import StorageFactory
+from numarray import array
+from numarray.ma import allequal
+
+class Tests(opus_unittest.OpusTestCase):
+    def setUp(self):
+        storage = StorageFactory().get_storage('dict_storage')
+        
+        storage._write_dataset(
+            'development_templates',
+            {
+                'template_id': array([1,2,3,4]),
+                'project_size': array([0, 1999, 2000, 10]),
+            }
+        )
+        storage._write_dataset(
+            'parcels',
+            {
+                "parcel_id": array([1,   2,    3]),
+                "lot_size":  array([0,   2005, 23])
+            }
+        )
+        storage._write_dataset(
+            'development_project_proposals',
+            {
+                "proposal_id":array([1,  2, 3,  4, 5,  6, 7, 8, 9, 10, 11, 12]),
+                "parcel_id":  array([1,  1,  1,  1, 2, 2,  2, 2, 3, 3, 3, 3 ]),
+                "template_id":array([1,  2, 3, 4,  1, 2,  3, 4, 1,  2, 3, 4])
+            }
+        )
+        
+        self.dataset_pool = DatasetPool(package_order=['psrc_parcel'],
+                                   storage=storage)
+        parcels = self.dataset_pool.get_dataset('parcel')
+        templates = self.dataset_pool.get_dataset('development_template')        
+        self.dataset = create_from_parcel_and_development_template(parcels, templates, resources=None)
+        
+    def test_create(self):
+        proposals = self.dataset_pool.get_dataset("development_project_proposal")
+        
+        self.assert_(allequal(self.dataset.get_id_attribute(), proposals.get_id_attribute()))
+        self.assert_(allequal(self.dataset.get_attribute("parcel_id"), proposals.get_attribute("parcel_id")))
+        self.assert_(allequal(self.dataset.get_attribute("template_id"), proposals.get_attribute("template_id")))
+        
+        
+    def test_compute(self):
+
+        self.dataset.compute_variables("development_template.project_size", 
+                              dataset_pool=self.dataset_pool)
+        values = self.dataset.get_attribute("project_size")        
+        should_be = array([0, 1999, 2000, 10, 0, 1999, 2000, 10, 0, 1999, 2000, 10])
+        self.assert_(allequal( values, should_be), 
+                     msg = "Error in " + "development_template.project_size")
+
+        self.dataset.compute_variables("parcel.lot_size", 
+                              dataset_pool=self.dataset_pool)
+        values = self.dataset.get_attribute("lot_size")        
+        should_be = array([0, 0,  0, 0,  2005, 2005,2005,2005, 23, 23, 23, 23])
+        self.assert_(allequal( values, should_be), 
+                     msg = "Error in " + "parcel.lot_size")
+
+
+if __name__=='__main__':
+    opus_unittest.main()

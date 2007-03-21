@@ -17,7 +17,7 @@ from urbansim.datasets.dataset import Dataset as UrbansimDataset
 class DevelopmentTemplateDataset(UrbansimDataset):
     """development template.
     """
-    in_table_name_default = "development_template"
-    out_table_name_default = "development_template"
+    in_table_name_default = "development_templates"
+    out_table_name_default = "development_templates"
     dataset_name = "development_template"
     id_name_default = "template_id"
