@@ -28,15 +28,14 @@ class expected_rate_of_return_on_investment(Variable):
                 "total_revenue = development_project_proposal.units_proposed * development_project_proposal.expected_sale_price",
                 "land_price = development_project_proposal.disaggregate(parcel.land_price)",
                 "land_cost = development_project_proposal.land_price * development_project_proposal.land_area_occupied",
-                "construction_related_cost = psrc_parcel.development_project_proposal.demolition_cost+psrc_parcel.development_project_proposal.construction_cost",
-#                "total_investment = development_project_proposal.land_cost + development_project_proposal.construction_related_cost",
-#                "profit = development_project_proposal.total_revenue - development_project_proposal.total_investment",
+                "total_investment = development_project_proposal.land_cost + psrc_parcel.development_project_proposal.demolition_cost + psrc_parcel.development_project_proposal.construction_cost",
+                "profit = development_project_proposal.total_revenue - development_project_proposal.total_investment",
             ]
 
     def compute(self, dataset_pool):
         proposals = self.get_dataset()
-        total_investment = proposals.get_attribute("land_cost") + proposals.get_attribute("construction_related_cost")
-        profit = proposals.get_attribute("total_revenue") - total_investment
+        total_investment = proposals.get_attribute("total_investment")
+        profit = proposals.get_attribute("profit")
         return filled( profit / masked_where(total_investment==0, total_investment.astype(Float32)), 0.0)
  
     def post_check(self, values, dataset_pool):

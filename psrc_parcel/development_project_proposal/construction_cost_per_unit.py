@@ -23,11 +23,11 @@ class construction_cost_per_unit(Variable):
     """
 
     def dependencies(self):
-        return ["construction_cost_per_unit = development_project_proposal.disaggregate(development_template.construction_cost_per_unit)",
+        return ["return_values = development_project_proposal.disaggregate(development_template.construction_cost_per_unit)",
                  ]
 
     def compute(self, dataset_pool):
-        return self.get_dataset().get_attribute("construction_cost_per_unit")
+        return self.get_dataset().get_attribute("return_values")
 
     def post_check(self, values, dataset_pool):
         self.do_check("x >= 0", values)
