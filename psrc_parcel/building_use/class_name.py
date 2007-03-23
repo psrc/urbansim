@@ -12,7 +12,7 @@
 # other acknowledgments.
 # 
 
-from opus_core.variables.variable import Variable
+from from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
 
