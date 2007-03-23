@@ -62,23 +62,21 @@ class is_allowed_by_constraint(Variable):
 
     def post_check(self, values, dataset_pool):
         self.do_check("x >= 0", values)
-
-
+    
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 from numarray import array
 import numarray.strings as strarray
-from numarray.ma import allequal
+from opus_core.tests.utils.variable_tester import VariableTester
 
 class Tests(opus_unittest.OpusTestCase):
-    variable_name = "psrc_parcel.development_project_proposal.is_allowed_by_constraint"
-
     def test_my_inputs(self):
-        storage = StorageFactory().get_storage('dict_storage')
-        
-        storage._write_dataset(
-            'development_templates',
+        tester = VariableTester(
+            __file__,
+            package_order=['psrc_parcel','urbansim'],
+            test_data={
+            'development_template':
             {
                 'template_id': array([1,2,3,4]),
                 "building_type_id":array([1, 1, 2, 2]),
@@ -86,58 +84,41 @@ class Tests(opus_unittest.OpusTestCase):
                 'constraint_name':strarray.array(['units_per_acre', 'units_per_acre', 'far', 'far']),
                 'units_per_acre': array([0.2, 2, 0, 0]),
                 'far':array([0, 0, 25, 7])
-            }
-        )
-        storage._write_dataset(
-            'building_types',
+            },
+            'building_type':
             {
                 "building_type_id":array([1, 2]),
                 'density_name':   strarray.array(['units_per_acre','far']),
                 'constraint_name':strarray.array(['units_per_acre','far']),
-            }
-        )
-        
-        storage._write_dataset(
-            'development_constraints',
+            },
+            'development_constraint':
             {
                 'constraint_id': array([1,2,3,4]),
                 'is_constrained': array([0, 1, 1, 0]),
                 'building_type_id': array([1, 1, 2, 2]),
                 'min_constraint': array([0,  0,   0,  0]),
                 'max_constraint': array([3, 0.2, 10, 100]),                
-            }
-        )
-        storage._write_dataset(
-            'parcels',
+            },
+            'parcel':
             {
                 "parcel_id":        array([1,   2,    3]),
                 "is_constrained":   array([1,   0,    1]),
-            }
-        )
-        storage._write_dataset(
-            'development_project_proposals',
+            },
+            'development_project_proposal':
             {
                 "proposal_id":array([1,  2, 3,  4, 5,  6, 7, 8, 9, 10, 11]),
                 "parcel_id":  array([1,  1,  1,  1, 2,  2, 2, 3, 3, 3, 3 ]),
                 "template_id":array([1,  2, 3, 4,  2,  3, 4, 1,  2, 3, 4])
             }
+            }
         )
-        
-        dataset_pool = DatasetPool(package_order=['psrc_parcel','urbansim'],
-                                   storage=storage)
-
-        proposals = dataset_pool.get_dataset('development_project_proposal')
-        proposals.compute_variables(self.variable_name, 
-                                   dataset_pool=dataset_pool)
-        values = proposals.get_attribute(self.variable_name)
         
         should_be = array([1, 0,  0, 1,  
                              1, 1, 1, 
                              1, 0, 0, 1])
         
-        self.assert_(allequal( values, should_be), 
-                     msg = "Error in " + self.variable_name)
-
+        tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 
 if __name__=='__main__':
     opus_unittest.main()
+    

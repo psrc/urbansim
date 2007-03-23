@@ -42,62 +42,38 @@ class development_project_proposal_id(Variable):
 
     def post_check(self,  values, dataset_pool=None):
         self.do_check("x >= 0", values)
+            
+from opus_core.tests import opus_unittest
+from opus_core.dataset_pool import DatasetPool
+from opus_core.storage_factory import StorageFactory
+from numarray import array
+import numarray.strings as strarray
+from opus_core.tests.utils.variable_tester import VariableTester
+
+class Tests(opus_unittest.OpusTestCase):
+    def test_my_inputs(self):
+        tester = VariableTester(
+            __file__,
+            package_order=['psrc_parcel','urbansim'],
+            test_data={
+            'development_project_proposal':
+            {
+                'proposal_id': array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                'parcel_id':   array([1, 1, 1, 1, 2, 2, 2, 3, 3, 3]),
+                'template_id': array([1, 2, 3, 4, 2, 3, 4, 1, 2, 4])
+                },           
+            "building":{
+                'building_id': array([1, 2, 3, 4, 5]),
+                'parcel_id':   array([1, 2, 3, 2, 1]),
+                'development_template_id': array([1, 3, 4, 4, 3])
+            },        
+        }
+        )
         
+        should_be = array([1, 6, 10, 7, 3])
+        
+        tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
+
 if __name__=='__main__':
-    import unittest
-    from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numarray import array
-    from numarray.ma import allclose
-    from opus_core.resources import Resources    
-    from psrc_parcel.datasets.building_dataset import BuildingDataset
-    from psrc_parcel.datasets.development_project_proposal_dataset import DevelopmentProjectProposalDataset
-    from opus_core.storage_factory import StorageFactory
+    opus_unittest.main()
     
-    class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.building.development_project_proposal_id"
-
-        def test_my_inputs(self):
-#            storage1 = StorageFactory().get_storage('dict_storage')
-#            table_name1 = 'buildings'            
-#            storage1.write_dataset(
-#                Resources({
-#                    'out_table_name':table_name1,
-#                    'values':{
-#                        'building_id': array([1, 2, 3, 4, 5]),
-#                        'parcel_id':   array([1, 2, 3, 2, 1]),
-#                        'development_template_id': array([1, 3, 4, 4, 3])
-#                        },
-#                    })
-#                )
-#            building = BuildingDataset(in_storage=storage1, in_table_name=table_name1)
-
-            storage2 = StorageFactory().get_storage('dict_storage')
-            table_name2 = 'development_project_proposals'            
-            storage2.write_dataset(
-                Resources({
-                    'out_table_name':table_name2,
-                    'values':{
-                        'proposal_id': array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                        'parcel_id':   array([1, 1, 1, 1, 2, 2, 2, 3, 3, 3]),
-                        'template_id': array([1, 2, 3, 4, 2, 3, 4, 1, 2, 4])
-                        },
-                    })
-                )
-            proposals = DevelopmentProjectProposalDataset(in_storage=storage2, in_table_name=table_name2)
-
-
-            values = VariableTestToolbox().compute_variable(self.variable_name, \
-                {"building":{
-                        'building_id': array([1, 2, 3, 4, 5]),
-                        'parcel_id':   array([1, 2, 3, 2, 1]),
-                        'development_template_id': array([1, 3, 4, 4, 3])
-                        },
-                 "development_project_proposal":proposals,
-                 }, 
-                dataset = "building")
-            should_be = array([1, 6, 10, 7, 3])
-            
-            self.assertEqual(allclose(values, should_be), \
-                             True, msg = "Error in " + self.variable_name)
-            
-    unittest.main()

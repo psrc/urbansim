@@ -40,7 +40,7 @@ my_controller_configuration = {
                                         "RealEstatePriceModel"},
     "init": { 
         "name": "RealEstatePriceModel",
-        "arguments": {"submodel_string": "'building_use_id'",
+        "arguments": {"submodel_string": "'building_type_id'",
                       "filter_attribute": None},
         },
     "prepare_for_run": {
@@ -70,7 +70,7 @@ my_controller_configuration = {
     "estimate": {
         "arguments": {
                       "specification": "specification",
-                      "outcome_attribute": "'opus_core.func.ln_bounded(building.unit_price)'",
+                      "outcome_attribute": "'building.unit_price'",
                       "dataset": "building",
                       "index": "index",
                       "data_objects": "datasets",
@@ -192,83 +192,84 @@ my_controller_configuration = {
         },
    },
    
-   'building_transition_model': {
-            "import": {"psrc_parcel.models.building_transition_model": "BuildingTransitionModel"},
-            "init": {"name": "BuildingTransitionModel"},
-            "run": {"arguments": {
-                          "building_set": "building",
-#                          "building_types_table": "building_type",
-                          "building_use_classification_table":"building_use_classification",
-                          "vacancy_table": "target_vacancy",
-                          "history_table": "development_event_history",
-                          "year": "year",
-                          "location_set": "parcel",
-                          "resources": "model_resources"
-                    },
-                    "output": "new_building_index",
-            }
-          },
+   #'building_transition_model': {
+            #"import": {"psrc_parcel.models.building_transition_model": "BuildingTransitionModel"},
+            #"init": {"name": "BuildingTransitionModel"},
+            #"run": {"arguments": {
+                          #"building_set": "building",
+##                          "building_types_table": "building_type",
+                          #"building_use_classification_table":"building_use_classification",
+                          #"vacancy_table": "target_vacancy",
+                          #"history_table": "development_event_history",
+                          #"year": "year",
+                          #"location_set": "parcel",
+                          #"resources": "model_resources"
+                    #},
+                    #"output": "new_building_index",
+            #}
+          #},
           
-   'building_location_choice_model':{
-                "group_by_attribute": ("building_use_classification", "name"),
-                "import": {"psrc_parcel.models.building_location_choice_model":
-                                    "BuildingLocationChoiceModel",
-                            },
-                "init": {
-                    "name": "BuildingLocationChoiceModel",
-                    "arguments": {
-                        "location_set" : "parcel",
-                        "submodel_string" : "'building.building_use_id'",
-                        "capacity_string" : "'UNITS_capacity'",
-                        "filter" : None,
-                        "developable_maximum_unit_variable" : "'UNITS_capacity'", #"developable_maximum_UNITS",
-                        "developable_minimum_unit_variable" : None, # None means don't consider any minimum. For default, set it to empty string
-                        "agents_grouping_attribute":"'psrc_parcel.building.building_class_id'",
-                        "estimate_config" : {'weights_for_estimation_string':"'psrc_parcel.parcel.uniform_capacity'"},
-                        "run_config":{"agent_units_string" : "psrc_parcel.building.building_size"}
-                        }
-                    },
-                "prepare_for_run": {
-                    "name": "prepare_for_run",
-                "arguments": {"specification_storage": "base_cache_storage",
-                              "specification_table": "'building_location_choice_model_specification'",
-                              "coefficients_storage": "base_cache_storage",
-                              "coefficients_table": "'building_location_choice_model_coefficients'",
-                              },
-                    "output": "(specification, coefficients)"
-                    },
-                "run": {
-                    "arguments": {"specification": "specification",
-                                  "coefficients":"coefficients",
-                                  "agent_set": "building",
-                                  "agents_index": "new_building_index",  #?
-                                  "data_objects": "datasets" ,
-                                  "chunk_specification":"{'records_per_chunk':500}"}
-                    },
+   #'building_location_choice_model':{
+                #"group_by_attribute": ("building_use_classification", "name"),
+                #"import": {"psrc_parcel.models.building_location_choice_model":
+                                    #"BuildingLocationChoiceModel",
+                            #},
+                #"init": {
+                    #"name": "BuildingLocationChoiceModel",
+                    #"arguments": {
+                        #"location_set" : "parcel",
+                        #"submodel_string" : "'building.building_use_id'",
+                        #"capacity_string" : "'UNITS_capacity'",
+                        #"filter" : None,
+                        #"developable_maximum_unit_variable" : "'UNITS_capacity'", #"developable_maximum_UNITS",
+                        #"developable_minimum_unit_variable" : None, # None means don't consider any minimum. For default, set it to empty string
+                        #"agents_grouping_attribute":"'psrc_parcel.building.building_class_id'",
+                        #"estimate_config" : {'weights_for_estimation_string':"'psrc_parcel.parcel.uniform_capacity'"},
+                        #"run_config":{"agent_units_string" : "psrc_parcel.building.building_size"}
+                        #}
+                    #},
+                #"prepare_for_run": {
+                    #"name": "prepare_for_run",
+                #"arguments": {"specification_storage": "base_cache_storage",
+                              #"specification_table": "'building_location_choice_model_specification'",
+                              #"coefficients_storage": "base_cache_storage",
+                              #"coefficients_table": "'building_location_choice_model_coefficients'",
+                              #},
+                    #"output": "(specification, coefficients)"
+                    #},
+                #"run": {
+                    #"arguments": {"specification": "specification",
+                                  #"coefficients":"coefficients",
+                                  #"agent_set": "building",
+                                  #"agents_index": "new_building_index",  #?
+                                  #"data_objects": "datasets" ,
+                                  #"chunk_specification":"{'records_per_chunk':500}"}
+                    #},
                     
-                "prepare_for_estimate": {
-                    "name": "prepare_for_estimate",
-                    "arguments": {"specification_storage": "base_cache_storage",
-                                  "specification_table": "'development_location_choice_model_specification'",
-                                  "building_set":"building",
-                                  "buildings_for_estimation_storage": "base_cache_storage",
-                                  "buildings_for_estimation_table": "'development_event_history'",
-                                  "constants": "urbansim_constant",
-                                  "base_year":"resources['base_year']",
-#                                 "building_categories":None, #"{'residential': array([1,2,3,5,10,20]), 'commercial': 1000*array([1, 2, 5, 10]), 'industrial': 1000*array([1,2,5,10])}",
-#                                 "id_name":"['building_id','scheduled_year']",
-                                  "data_objects": "datasets",
-                                       },
-                    "output": "(specification, index)"
-                        },
-                "estimate": {
-                        "arguments": {"specification": "specification",
-                                      "agent_set": "building",
-                                      "agents_index":"index",
-                                      "data_objects": "datasets"},
-                         "output": "(coefficients, dummy)"
-                   }
-         },       
+                #"prepare_for_estimate": {
+                    #"name": "prepare_for_estimate",
+                    #"arguments": {"specification_storage": "base_cache_storage",
+                                  #"specification_table": "'development_location_choice_model_specification'",
+                                  #"building_set":"building",
+                                  #"buildings_for_estimation_storage": "base_cache_storage",
+                                  #"buildings_for_estimation_table": "'development_event_history'",
+                                  #"constants": "urbansim_constant",
+                                  #"base_year":"resources['base_year']",
+##                                 "building_categories":None, #"{'residential': array([1,2,3,5,10,20]), 'commercial': 1000*array([1, 2, 5, 10]), 'industrial': 1000*array([1,2,5,10])}",
+##                                 "id_name":"['building_id','scheduled_year']",
+                                  #"data_objects": "datasets",
+                                       #},
+                    #"output": "(specification, index)"
+                        #},
+                #"estimate": {
+                        #"arguments": {"specification": "specification",
+                                      #"agent_set": "building",
+                                      #"agents_index":"index",
+                                      #"data_objects": "datasets"},
+                         #"output": "(coefficients, dummy)"
+                   #}
+         #},       
+
         "household_relocation_model" : {
             "import": {"urbansim.models.household_relocation_model_creator":
                             "HouseholdRelocationModelCreator"
@@ -307,11 +308,11 @@ my_controller_configuration = {
 # configuration for parcel-based developer model
  'expected_sale_price_model': {
     "import": {"psrc_parcel.models.proposed_development_project_expected_sale_price_model":
-                                        "ProposedDevelopmentProjectSalePriceModel"},
+               "ProposedDevelopmentProjectSalePriceModel"},
     "init": { 
         "name": "ProposedDevelopmentProjectSalePriceModel",
-        "arguments": {"submodel_string": "'template_id'",
-                      "filter_attribute": None},
+        "arguments": {"submodel_string": "'psrc_parcel.development_project_proposal.building_type_id'",
+                      "filter_attribute": "'psrc_parcel.development_project_proposal.is_viable'"},
         },
     "prepare_for_run": {
         "name": "prepare_for_run",
@@ -351,7 +352,7 @@ my_controller_configuration = {
         "arguments": {
                       "specification": "specification",
                       "coefficients":"coefficients",
-                      "dataset": "development_project_proposal",  # have the model create the data on the fly
+                      "dataset": "development_project_proposal",  # use the dataset created by expected sale price model
                       "data_objects": "datasets" }
             },
   },            

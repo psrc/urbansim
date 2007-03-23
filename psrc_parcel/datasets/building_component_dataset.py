@@ -17,7 +17,7 @@ from urbansim.datasets.dataset import Dataset as UrbansimDataset
 class BuildingComponentDataset(UrbansimDataset):
     """building components is part of the building of a single use constructed in a given year
     """
-    in_table_name_default = "building_conponents"
-    out_table_name_default = "building_conponents"
-    dataset_name = "building_conponent"
+    in_table_name_default = "building_components"
+    out_table_name_default = "building_components"
+    dataset_name = "building_component"
     id_name_default = "component_id"

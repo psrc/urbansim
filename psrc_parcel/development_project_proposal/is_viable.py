@@ -13,74 +13,79 @@
 #
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
-from numarray.ma import masked_where
+#from variable_functions import my_attribute_label
+from numarray import Bool, zeros, Bool, logical_and
 
 class is_viable(Variable):
     """whether the proposed development template is viable for a given parcel and its constraints
     """
 
     def dependencies(self):
-        return ["parcel_far = parcel:diaggregate(psrc_parcel.parcel.lot_size)",
-                "lot_size = diaggregate(psrc_parcel.parcel.lot_size)",
-                "far = diaggregate(psrc_parcel.development_template.far)",
-                "min_units = diaggregate(psrc_parcel.development_template.far * psrc_parcel.development_template.land_area_min)",
-                "max_units = diaggregate(psrc_parcel.development_template.far * psrc_parcel.development_template.land_area_max)",
-                "proposed_units = lot_size * far",
+        return ["vacant_land_area=development_project_proposal.disaggregate(psrc_parcel.parcel.vacant_land_area)",
+                "land_area_min=development_project_proposal.disaggregate(psrc_parcel.development_template.land_area_min)",
+                "land_area_max=development_project_proposal.disaggregate(psrc_parcel.development_template.land_area_max)",
                  ]
 
     def compute(self, dataset_pool):
         dp = self.get_dataset()
-        proposed_units = dp.get_attribute("proposed_units")
-        results = proposed_units
-        results[where(proposed_unit>max_units)] = max_units[where(proposed_unit>max_units)]
-        results[where(proposed_unit<min_units)] = min_units[where(proposed_unit<min_units)]
+        results = zeros(dp.size(), type=Bool)
+        results[logical_and(dp.get_attribute("vacant_land_area") >= dp.get_attribute("land_area_min"),
+                              dp.get_attribute("vacant_land_area") <= dp.get_attribute("land_area_max") )] = 1
         return results
 
     def post_check(self, values, dataset_pool):
         self.do_check("x >= 0", values)
 
-#
-#from opus_core.tests import opus_unittest
-#from opus_core.dataset_pool import DatasetPool
-#from opus_core.storage_factory import StorageFactory
-#from numarray import array
-#from numarray.ma import allequal
-#
-#class Tests(opus_unittest.OpusTestCase):
-#    variable_name = "urbansim.building.building_age"
-#
-#    def test_my_inputs(self):
-#        storage = StorageFactory().get_storage('dict_storage')        
-#        
-#        storage._write_dataset(
-#            'buildings',
-#            {
-#                'building_id': array([1,2,3,4]),
-#                'year_built': array([1995, 2000, 2005, 0])
-#            }
-#        )
-#        storage._write_dataset(
-#            'urbansim_constants',
-#            {
-#                "absolute_min_year": array([1800]),
-#            }
-#        )
-#        
-#        SimulationState().set_current_time(2005)
-#        dataset_pool = DatasetPool(package_order=['urbansim'],
-#                                   storage=storage)
-#
-#        buildings = dataset_pool.get_dataset('building')
-#        buildings.compute_variables(self.variable_name, 
-#                                   dataset_pool=dataset_pool)
-#        values = buildings.get_attribute(self.variable_name)
-#        
-#        should_be = array([10, 5, 0, 5])
-#        
-#        self.assert_(allequal( values, should_be), 
-#                     msg = "Error in " + self.variable_name)
-#
-#
-#if __name__=='__main__':
-#    opus_unittest.main()
+
+from opus_core.tests import opus_unittest
+from opus_core.dataset_pool import DatasetPool
+from opus_core.storage_factory import StorageFactory
+from numarray import array
+from numarray.ma import allequal
+
+class Tests(opus_unittest.OpusTestCase):
+    variable_name = "psrc_parcel.development_project_proposal.is_viable"
+
+    def test_my_inputs(self):
+        storage = StorageFactory().get_storage('dict_storage')
+        
+        storage._write_dataset(
+            'development_templates',
+            {
+                'template_id': array([1,2,3,4]),
+                'land_area_min': array([0, 10, 1000, 0]),
+                'land_area_max': array([0, 1999, 2000, 10]),                
+            }
+        )
+        storage._write_dataset(
+            'parcels',
+            {
+                "parcel_id":        array([1,   2,    3]),
+                "vacant_land_area":array([10, 1000,  2000]),
+            }
+        )
+        storage._write_dataset(
+            'development_project_proposals',
+            {
+                "proposal_id":array([1,  2, 3,  4, 5,  6, 7, 8, 9, 10, 11]),
+                "parcel_id":  array([1,  1,  1,  1, 2,  2, 2, 3, 3, 3, 3 ]),
+                "template_id":array([1,  2, 3, 4,  2,  3, 4, 1,  2, 3, 4])
+            }
+        )
+        
+        dataset_pool = DatasetPool(package_order=['psrc_parcel'],
+                                   storage=storage)
+
+        proposals = dataset_pool.get_dataset('development_project_proposal')
+        proposals.compute_variables(self.variable_name, 
+                                   dataset_pool=dataset_pool)
+        values = proposals.get_attribute(self.variable_name)
+        
+        should_be = array([0, 1,  0, 1,  1, 1, 0, 0, 0, 1, 0])
+        
+        self.assert_(allequal( values, should_be), 
+                     msg = "Error in " + self.variable_name)
+
+
+if __name__=='__main__':
+    opus_unittest.main()
