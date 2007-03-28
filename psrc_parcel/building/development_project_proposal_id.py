@@ -14,7 +14,7 @@
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
-from numpy import Float32, concatenate, array
+from numpy import float32, concatenate, array
 from opus_core.misc import do_id_mapping_dict_from_array
 
 class development_project_proposal_id(Variable):

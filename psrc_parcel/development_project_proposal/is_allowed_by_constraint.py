@@ -14,7 +14,7 @@
 
 from opus_core.variables.variable import Variable
 #from variable_functions import my_attribute_label
-from numpy import Bool, zeros, Bool, logical_and, where
+from numpy import bool8, zeros, bool8, logical_and, where
 
 class is_allowed_by_constraint(Variable):
     """whether the proposed development template is viable for a given parcel and its constraints,
@@ -41,7 +41,7 @@ class is_allowed_by_constraint(Variable):
         #template_index = templates.get_id_index(proposals.get_attribute("template_id"))
         parcel_index = parcels.get_id_index(proposals.get_attribute("parcel_id"))
 
-        results = zeros(proposals.size(), type=Bool)
+        results = zeros(proposals.size(), type=bool8)
         for i_template in range(templates.size()):
             this_template_id = templates.get_attribute("template_id")[i_template]
             building_type_id = templates.get_attribute("building_type_id")[i_template]

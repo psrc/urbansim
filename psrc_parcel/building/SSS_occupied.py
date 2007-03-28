@@ -18,7 +18,7 @@ from variable_functions import my_attribute_label
 class SSS_occupied(Variable):
     """units occupied by consumers for building_type name SSS"""
 
-    _return_type="Int32"
+    _return_type="int32"
     def __init__(self, sector):
         self.type_name = building_type.lower()
         Variable.__init__(self)

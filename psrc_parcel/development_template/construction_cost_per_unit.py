@@ -39,7 +39,7 @@ class construction_cost_per_unit(Variable):
 #from opus_core.tests import opus_unittest
 #from opus_core.dataset_pool import DatasetPool
 #from opus_core.storage_factory import StorageFactory
-#from numarray import array, Int32
+#from numarray import array, int32
 #from numpy import ma
 #import numarray.strings as strarray
 

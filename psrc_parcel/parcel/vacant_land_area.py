@@ -21,7 +21,7 @@ class vacant_land_area(Variable):
     it's land area that is available for future development
     """
 
-    _return_type="Int32"
+    _return_type="int32"
     
     def dependencies(self):
         return ["used_land_area = parcel.aggregate(building.land_area_sqft, function=sum)",

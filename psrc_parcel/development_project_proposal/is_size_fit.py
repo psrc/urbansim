@@ -14,7 +14,7 @@
 
 from opus_core.variables.variable import Variable
 #from variable_functions import my_attribute_label
-from numpy import Bool, zeros, Bool, logical_and
+from numpy import bool8, zeros, bool8, logical_and
 
 class is_size_fit(Variable):
     """whether the proposed development template is viable for a given parcel and its constraints
@@ -28,7 +28,7 @@ class is_size_fit(Variable):
 
     def compute(self, dataset_pool):
         dp = self.get_dataset()
-        results = zeros(dp.size(), type=Bool)
+        results = zeros(dp.size(), type=bool8)
         results[logical_and(dp.get_attribute("vacant_land_area") >= dp.get_attribute("land_area_min"),
                               dp.get_attribute("vacant_land_area") <= dp.get_attribute("land_area_max") )] = 1
         return results

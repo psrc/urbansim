@@ -14,7 +14,7 @@
 
 from urbansim.models.building_location_choice_model import BuildingLocationChoiceModel as UrbansimBuildingLocationChoiceModel
 from urbansim.models.agent_location_choice_model_member import AgentLocationChoiceModelMember
-from numpy import where, arange, concatenate, array, NumArray, ones, zeros, Int8
+from numpy import where, arange, concatenate, array, NumArray, ones, zeros, int8
 from numpy import logical_or, logical_not
 from opus_core.variable_name import VariableName
 from opus_core.resources import Resources
@@ -24,7 +24,7 @@ class BuildingLocationChoiceModel(UrbansimBuildingLocationChoiceModel):
 
 #    def get_weights_for_sampling_locations(self, agent_set, agents_index, data_objects=None):
 #        where_developable = where(self.apply_filter(self.filter, None, agent_set, agents_index, data_objects=data_objects))[0]
-#        weight_array = ones((where_developable.size()), type=Int8) #.astype(Bool)
+#        weight_array = ones((where_developable.size()), type=int8) #.astype(bool8)
 #        return (weight_array, where_developable)
 
     def get_weights_for_sampling_locations_for_estimation(self, agent_set, agents_index, data_objects=None):

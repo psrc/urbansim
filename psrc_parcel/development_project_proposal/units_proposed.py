@@ -21,7 +21,7 @@ class units_proposed(Variable):
     depending on whether the proposed projects will be prorated or not, part or all of the 
     units will be available
     """
-    _return_type = "Int32"
+    _return_type = "int32"
 
     def dependencies(self):
         return ["vacant_land_area = development_project_proposal.disaggregate(psrc_parcel.parcel.vacant_land_area)",
@@ -67,7 +67,7 @@ class units_proposed(Variable):
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
-from numpy import array, Int32
+from numpy import array, int32
 import numpy.strings as strarray
 from opus_core.tests.utils.variable_tester import VariableTester
 
@@ -84,13 +84,13 @@ class Tests(opus_unittest.OpusTestCase):
                 'building_type_id': array([1, 1, 2, 3]),
                 'density':array([0.6, 2, 10, 5]),
                 'percent_land_overhead':array([0, 10, 0, 20]),
-                'land_area_min': array([0, 10, 4, 30],type=Int32) * self.ACRE,
-                'land_area_max': array([2, 20, 8, 100],type=Int32) * self.ACRE
+                'land_area_min': array([0, 10, 4, 30],type=int32) * self.ACRE,
+                'land_area_max': array([2, 20, 8, 100],type=int32) * self.ACRE
             },
             'parcel':
             {
                 "parcel_id":        array([1,   2,    3]),
-                "vacant_land_area": array([1, 50,  200],type=Int32)* self.ACRE,
+                "vacant_land_area": array([1, 50,  200],type=int32)* self.ACRE,
             },
             'building_type':
             {

@@ -13,7 +13,7 @@
 # 
 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
-from numpy import arange, Bool, Float, logical_and, logical_or
+from numpy import arange, bool8, Float, logical_and, logical_or
 from numpy import reshape, repeat, ones, zeros, where
 from numpy import ma
 from opus_core.misc import remove_elements_with_matched_prefix_from_list, remove_all
@@ -50,7 +50,7 @@ class ParcelDataset(UrbansimDataset):
         self.compute_variables(attributes_with_prefix, dataset_pool=dataset_pool)
         if index == None:
             index = arange(self.size())
-        development_constraints_array = ones((constraints.size(),index.size()), type=Bool)
+        development_constraints_array = ones((constraints.size(),index.size()), type=bool8)
         for attr in attributes:
             values = self.get_attribute_by_index(attr, index)
             constr = reshape(constraints.get_attribute(attr), shape=(constraints.size(),1))

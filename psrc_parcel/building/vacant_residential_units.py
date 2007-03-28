@@ -19,7 +19,7 @@ from opus_core.misc import clip_to_zero_if_needed
 class vacant_residential_units(Variable):
     """"""
 
-    _return_type="Int32"
+    _return_type="int32"
     
     def dependencies(self):
         return ["psrc_parcel.building.residential_units", 

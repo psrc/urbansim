@@ -18,7 +18,7 @@ from variable_functions import my_attribute_label
 class average_income(Variable):
     """average income in a given zone"""
 
-    _return_type="Int32"
+    _return_type="int32"
     
     def dependencies(self):
         return ["psrc_parcel.household.zone_id", 

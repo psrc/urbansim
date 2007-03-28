@@ -13,7 +13,7 @@
 # 
 
 import os
-from numpy import Float32, Float64, searchsorted, array, zeros, where
+from numpy import float32, float64, searchsorted, array, zeros, where
 from numpy.random_array import random
 from opus_core.misc import ncumsum
 from opus_core.simulation_state import SimulationState
@@ -87,7 +87,7 @@ class HouseholdSynthesizer(object):
                 print "WARNING: zone %s has %s households but only %s units" % (zone_id, is_household_in_this_zone.sum(), capacity)
                 continue
             
-            prob = datasets['building'].get_attribute(capacity_attribute_name) * is_building_in_this_zone / array(capacity, type=Float64)
+            prob = datasets['building'].get_attribute(capacity_attribute_name) * is_building_in_this_zone / array(capacity, type=float64)
 
             r = random(sum(is_household_in_this_zone * is_household_unplace))
             prob_cumsum = ncumsum(prob)

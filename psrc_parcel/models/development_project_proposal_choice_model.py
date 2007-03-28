@@ -27,8 +27,8 @@ from opus_core.misc import unique_values
 from opus_core.variable_name import VariableName
 from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
 from opus_core.opusnumpy import sum
-from numpy import zeros, arange, where, ones, logical_or, logical_and, logical_not, Int32, Float32, sometrue
-from numpy import compress, take, alltrue, argsort, array, Int8, Bool, ceil, sort, minimum, reshape, concatenate
+from numpy import zeros, arange, where, ones, logical_or, logical_and, logical_not, int32, float32, sometrue
+from numpy import compress, take, alltrue, argsort, array, int8, bool8, ceil, sort, minimum, reshape, concatenate
 from numpy.random_array import randint
 from gc import collect
 from opus_core.logger import logger
@@ -176,7 +176,7 @@ class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
     def consider_proposals(self, proposals, target_vacancy_rates, data_objects):
         building_site = buildings.get_attribute("parcel_id")  #self.choice_set.dataset1.get_dataset_name()
         proposal_indexes = self.choice_set.get_id_index(proposals)
-        is_proposal_rejected = zeros(proposals.size(), type=Bool)
+        is_proposal_rejected = zeros(proposals.size(), type=bool8)
         proposal_site = self.choice_set.get_attribute_by_index("parcel_id", proposal_indexes)
         #proposal_type = self.choice_set.get_attribute_by_index("unit_type", proposal_indexes)
         pro_rated = self.choice_set.get_attribute_by_index("pro_rated", proposal_indexes)

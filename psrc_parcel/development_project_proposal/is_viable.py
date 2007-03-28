@@ -14,7 +14,7 @@
 
 from opus_core.variables.variable import Variable
 #from variable_functions import my_attribute_label
-from numpy import Bool, zeros, Bool, logical_and
+from numpy import bool8, zeros, bool8, logical_and
 
 class is_viable(Variable):
     """whether the proposed development template is viable for a given parcel and its constraints

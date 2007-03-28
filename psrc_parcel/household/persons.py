@@ -18,7 +18,7 @@ from variable_functions import my_attribute_label
 class persons(Variable):
     """number of persons in a given household"""
 
-    _return_type="Int32"
+    _return_type="int32"
     
     def dependencies(self):
         return ["person.household_id", 

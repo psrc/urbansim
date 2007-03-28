@@ -18,7 +18,7 @@ from variable_functions import my_attribute_label
 class employment_of_sector_SSS(Variable):
     """Number of businesses of_sector_SSS in a given parcel"""
 
-    _return_type="Int32"
+    _return_type="int32"
     def __init__(self, sector):
         self.sector = sector.lower()
         Variable.__init__(self)

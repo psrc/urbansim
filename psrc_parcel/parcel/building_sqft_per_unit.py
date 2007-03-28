@@ -15,7 +15,7 @@
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 from numpy import ma
-from numpy import Float32
+from numpy import float32
 
 class building_sqft_per_unit(Variable):
     """ (building_sqft) / residential_units."""
@@ -31,7 +31,7 @@ class building_sqft_per_unit(Variable):
         buildings = self.get_dataset()
         residential_units = buildings.get_attribute(self.residential_units)
         return ma.filled(buildings.get_attribute(self.building_sqft) / \
-                      ma.masked_where(residential_units==0, residential_units.astype(Float32)), 0.0)
+                      ma.masked_where(residential_units==0, residential_units.astype(float32)), 0.0)
 
     def post_check(self,  values, dataset_pool=None):
         self.do_check("x >= 0", values)

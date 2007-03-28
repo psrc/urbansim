@@ -16,7 +16,7 @@ from opus_core.logger import logger
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
 from variable_functions import my_attribute_label
-from numpy import where, zeros, Float32, array
+from numpy import where, zeros, float32, array
 from numpy.nd_image import sum as nd_image_sum
 
 class employment_within_DDD_minutes_SSS_travel_time(Variable):

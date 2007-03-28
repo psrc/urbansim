@@ -19,7 +19,7 @@ from variable_functions import my_attribute_label
 class number_of_households(Variable):
     """Number of households in a given building"""
 
-    _return_type="Int32"
+    _return_type="int32"
     
     def dependencies(self):
         return [attribute_label("household", "building_id"), \

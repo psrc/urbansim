@@ -19,7 +19,7 @@ from opus_core.model import Model
 from numpy.random_array import randint
 from opus_core.opusnumpy import cumsum
 from opus_core.logger import logger
-from numpy import arange, array, where, zeros, ones, Float32, Int32, Int8
+from numpy import arange, array, where, zeros, ones, float32, int32, int8
 
 class BuildingTransitionModel( Model ):
     """
@@ -61,11 +61,11 @@ class BuildingTransitionModel( Model ):
         building_id_name = building_set.get_id_name()[0]
         location_id_name = location_set.get_id_name()[0]
         new_buildings = {building_id_name: array([]), 
-                         "building_use_id":array([], type=Int8),
+                         "building_use_id":array([], type=int8),
                          "year_built": array([]),
 #                         "building_sqft": array([]),
 #                         "residential_units": array([]),
-                         "unit_price": array([], type = Float32),
+                         "unit_price": array([], type = float32),
                          location_id_name: array([])}
         for attribute in unit_attributes:
             new_buildings[attribute] = array([])

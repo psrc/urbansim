@@ -20,7 +20,7 @@ class land_area_occupied(Variable):
     """land area taken up by the proposal
     
     """
-    _return_type = "Int32"
+    _return_type = "int32"
     mol = 0.1  #more or less, in this range use all vacant_land_area
 
     def dependencies(self):

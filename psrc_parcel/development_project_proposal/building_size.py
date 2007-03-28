@@ -23,7 +23,7 @@ class building_size(Variable):
     If the value in column 'units' of the building_types table contains a substring 'sqft', it will take 
     the 'sqft' of the buildings table as a measure of size, otherwise 'residential_units'.
     """
-    _return_type="Int32"
+    _return_type="int32"
     
     def dependencies(self):
         return [attribute_label("building_type", "name"), attribute_label("building_type", "units"),
