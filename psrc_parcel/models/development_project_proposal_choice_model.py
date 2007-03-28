@@ -35,6 +35,7 @@ from gc import collect
 from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
 from psrc_parcel.datasets.proposed_development_project_dataset import create_from_parcel_and_development_template
+from opus_core.simulation_state import SimulationState
 
 class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
     
@@ -66,8 +67,9 @@ class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
                                      debuglevel=debuglevel, 
                                      dataset_pool=dataset_pool)
 
-        if 'sampling_weight' in self.run_config["sampling_weight"]:  #rate of return
-            sampling_weight = self.run_config["sampling_weight"]
+        #if 'sampling_weight' in self.run_config["sampling_weight"]:  #rate of return
+            #sampling_weight = self.run_config["sampling_weight"]
+        if weight_string is not None:
             if weight_string not in choice_set.get_known_attribute_names():
                 choice_set.compute_variables(weight_string)
             self.weight = self.choice_set.get_attribute(weight_string)
@@ -78,14 +80,14 @@ class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
         #if self.location_id_string is not None:
             #self.location_id_string = VariableName(self.location_id_string)
             #self.location_id_string.set_alias(location_set.get_id_name()[0])
-        #self.probability_for_correcting_bias = None
+        self.probability_for_correcting_bias = None
         
     def run(self, specification, coefficients, agent_set, 
             agents_index=None, chunk_specification=None, 
             data_objects=None, run_config=None, debuglevel=0):
         """
-        Model the choice of proposed development project made by virtual finance agents
-        if agent_set if None, create an agent set with no attribute except for id
+        Model the choice of development project proposal made by virtual finance agents
+        if agent_set is not an instance of Dataset, create an agent set with no attribute except for id
         """
         if not isinstance(agent_set, Dataset):
             storage = StorageFactory().get_storage('dict_storage')
@@ -118,20 +120,23 @@ class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
             #agent_set.compute_variables(self.location_id_string, dataset_pool=self.dataset_pool, resources=Resources(data_objects))
         #if self.run_config.get("agent_units_string", None): # used when agents take different amount of capacity from the total capacity
             #agent_set.compute_variables([self.run_config["agent_units_string"]], dataset_pool=self.dataset_pool)
-
+        current_year = SimulationState().get_current_time()
+        target_vacancy = data_objects['target_vacancy'] 
+        current_target_vacancy = DatasetSubset(target_vacancy, index=where(target_vacancy.get_attribute("year")==current_year)[0])
+        
         self.existing_units = {}   #total existing units by building type
         self.occupied_units = {}   #total occupied units by building type
         self.proposed_units = {}   #total proposed units by building type
-        self.demolished_units = {} #total demolished units by building type
-
-        self.accepting_proposals = {}  #whether accepting new proposals, for each building type
-        self.check_vacancy_rates(target_vacancy_rates, data_objects)
+        self.demolished_units = {} #total (to be) demolished units by building type
+        self.demolished_buildings = array([])
         
-        proposals = None  # proposals to be considered
+        self.accepting_proposals = {}  #whether accepting new proposals, for each building type
+        self.check_vacancy_rates(current_target_vacancy, data_objects)  #initialize self.accepting_proposal based on current vacancy rate
+        
         self.accepted_proposals = None # proposals accepted
-        self.consider_proposals(proposals,
-                                target_vacancy_rates,
-                                data_objects)
+        #self.consider_proposals(proposals,
+                                #current_target_vacancy,
+                                #data_objects)
         while self.accepting_proposal:
             proposals = LocationChoiceModel.run(self,specification, 
                                                 coefficients, 
@@ -147,75 +152,105 @@ class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
                                     data_objects
                                    )
         
-        schedule_development_projects = self.schedule_accepted_proposal()
+        schedule_development_projects = self.schedule_accepted_proposals()
         return schedule_development_projects
 
-    def check_vacancy_rates(self, target_vacancy_rates, data_objects):
-        for index in arange(target_vacancy_rates.size()):
-            type = target_vacancy_rates.get_attribute_by_index("type", index)
-            target = target_vacancy_rates.get_attribute_by_index("target", index)
+    def check_vacancy_rates(self, target_vacancy, data_objects):
+        for index in arange(target_vacancy.size()):
+            #type_id = target_vacancy_rates.get_attribute_by_index("building_type_id", index)
+            type_name = target_vacancy.get_attribute_by_index("type_name", index)
+            target = target_vacancy.get_attribute_by_index("target_vacancy_rate", index)
 
-            existing_units = buildings.get_attribute(type)            
-            occupied_units = buildings.get_attribute("occupied_%s" % type)
-            self.existing_units[type] = existing_units.sum()
-            self.occupied_units[type] = occupied_units.sum()
-            self.proposed_units[type] = 0
-            self.demolished_units[type] = 0
+            existing_units = buildings.get_attribute(type_name)
+            occupied_units = buildings.get_attribute("%s_occupied" % type_name)
+            
+            self.existing_units[type_name] = existing_units.sum()
+            self.occupied_units[type_name] = occupied_units.sum()
+            self.proposed_units[type_name] = 0
+            self.demolished_units[type_name] = 0
             vr = (existing_units.sum() - occupied_units.sum()) / float(existing_units.sum())
             if vr <= target:
-                self.accepting_proposals[type] = True
+                self.accepting_proposals[type_name] = True
             else:
-                self.accepting_proposals[type] = False
+                self.accepting_proposals[type_name] = False
     
     def consider_proposals(self, proposals, target_vacancy_rates, data_objects):
-        building_site = buildings.get_attribute("parcel_id")
+        building_site = buildings.get_attribute("parcel_id")  #self.choice_set.dataset1.get_dataset_name()
         proposal_indexes = self.choice_set.get_id_index(proposals)
-        rejected_proposals = zeros(proposal_indexes.size())
+        is_proposal_rejected = zeros(proposals.size(), type=Bool)
         proposal_site = self.choice_set.get_attribute_by_index("parcel_id", proposal_indexes)
-        proposal_type = self.choice_set.get_attribute_by_index("type", proposal_indexes)
+        #proposal_type = self.choice_set.get_attribute_by_index("unit_type", proposal_indexes)
         pro_rated = self.choice_set.get_attribute_by_index("pro_rated", proposal_indexes)
-        years = self.choice_set.get_attribute_by_index("years", proposal_indexes)        
+        years = self.choice_set.get_attribute_by_index("years", proposal_indexes)
         proposal_construction_type = self.choice_set.get_attribute_by_index("construction_type", proposal_indexes)  #redevelopment or addition
         
-        for type in target_vacancy_rates.types:
+        existing_units = {}
+        proposal_units = {}
+        for type_name in target_vacancy_rates.get_attribute("type_name"):  #iterate all unit types, not necessary from vacancy_rates table
             #occupied_units[type] = buildings.get_attribute("occupied_%s" % type)
-            existing_units[type] = buildings.get_attribute(type)
-            proposal_units[type] = self.choice_set.get_attribute_by_index(type, proposal_indexes)
+            existing_units[type] = buildings.get_attribute(type_name)
+            proposal_units[type] = self.choice_set.get_attribute_by_index(type_name, proposal_indexes)
 
         for proposal_index in proposal_indexes:  # consider 1 proposed project at a time
-            this_site = proposal_site[proposal_index]
-            this_type = proposal_type[proposal_index]
-            if not sometrue(array(self.accepted_proposals.values())):
+            if not sometrue(array(self.accepting_proposals.values())):
                 # if none of the types is accepting_proposals, exit
+                # this is put in the loop to check if the last accepted proposal has sufficed 
+                # the target vacancy rates for all types
                 return
-            if self.accepting_proposals[this_type] and not rejected_proposals[proposal_index]:
-                if proposal_construction_type[proposal_index] == 'R':  #if it's a redevelopment project, demolish buildings
-                    affected_building = where(building_site==this_site)[0]
-                    self.demolished_buildings = concatenate((self.demolished_buildings, affected_building))
-                    for type in existing_units.keys():
-                        self.demolished_units[type] += existing_units[type][affected_building].sum() #demolish affected buildings
+            
+            sum_units = 0
+            for this_type in self.accepting_proposals.keys():
+                # if this_type is not accepting proposal, but this proposal have non-zero units of this_type
+                # reject this proposal
+                sum_units += proposal_units[this_type]
+                if not self.accepting_proposals[this_type] and proposal_units[this_type] > 0:
+                    is_proposal_rejected[proposal_index] = 1
+
+            if sum_units == 0:
+                # if there aren't any meaningful units, reject this project
+                is_proposal_rejected[proposal_index] = 1
+                
+            # try next if this proposal has been rejected 
+            # (because another proposal on this site has been chosen)
+            if is_proposal_rejected[proposal_index]:
+                continue
+
+            this_site = proposal_site[proposal_index]
+            #this_type = proposal_type[proposal_index]
+            if proposal_construction_type[proposal_index] == 'R':  #if it's a redevelopment project,demolish existing buildings of this site
+                affected_building = where(building_site==this_site)[0]
+                self.demolished_buildings = concatenate((self.demolished_buildings, affected_building))
+                for type in existing_units.keys():
+                    self.demolished_units[type] += existing_units[type][affected_building].sum() #demolish affected buildings
                     #existing_units[affected_building] = 0
                     #moving_agents += occupied_units[affected_building].sum()
                     #occupied_units[affected_building] = 0
-                for type in target_vacancy_rates.types: #
-                    if pro_rate[proposal_index]:
-                        self.proposed_units[type] += round(proposal_units[type][proposal_index] / years[proposal_index]) #TODO: handle pro-rated projects
-                    else:
-                        self.proposed_units[type] += proposal_units[type][proposal_index]
-                    units_stock = self.existing_units[type] - self.demolished_units[type] + self.proposed_units[type]
-                    vr = (units_stock - self.occupied_units[type]) / float(units_stock)
-                    if vr >= target_vacancy_rates[target_vacancy_rates.types==type]:
-                        self.accepting_proposals[type] = False
-                # proposal accepted
-                self.accepted_proposals.append(proposal_index)
-                # reject all pending proposals for this site
-                rejected_proposals[proposal_site == this_site] = 1
-                # don't consider proposed projects for this site in the future
-                self.weight[self.choice_set.get_attribute("parcel_id")==this_site] = 0.0
-
+            for type in target_vacancy_rates.get_attribute("type_name"): #
+                if pro_rate[proposal_index]:
+                    self.proposed_units[type] += round(proposal_units[type][proposal_index] / years[proposal_index]) 
+                    #TODO: handle pro-rated projects
+                else:
+                    self.proposed_units[type] += proposal_units[type][proposal_index]
+                units_stock = self.existing_units[type] - self.demolished_units[type] + self.proposed_units[type]
+                vr = (units_stock - self.occupied_units[type]) / float(units_stock)
+                if vr >= target_vacancy_rates[target_vacancy_rates.types==type]:
+                    self.accepting_proposals[type] = False
+                else:
+                    self.accepting_proposals[type] = True
+                    
+            # proposal accepted
+            self.accepted_proposals.append(proposal_index)
+            # reject all pending proposals for this site
+            is_proposal_rejected[proposal_site == this_site] = 1
+            # don't consider proposed projects for this site in the future
+            self.weight[self.choice_set.get_attribute("parcel_id")==this_site] = 0.0
+        
+        ## TODO: because of demolition, this won't work
+        ## a type reaching target vacancy rates may become less than target 
         for type, accepting_proposal in self.accepting_proposals.iteritems():
-            if not accepting_proposal: # if a type isn't accepting proposal, don't propose any projects of this type in the future
-                self.weight[self.choice_set.get_attribute("type")==type] = 0.0
+            if not accepting_proposal: 
+                # if a type isn't accepting proposal, don't propose any projects of this type in the future
+                self.weight[self.choice_set.get_attribute(type_name)>0] = 0.0
                         
     def schedule_accepted_proposals(self):
         ##TODO: handle demolished buildings in self.demolished_buildings
@@ -238,18 +273,15 @@ class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
             ## append other building attributes
             
         storage = StorageFactory().get_storage('dict_storage')
-        storage_table_name = 'buildings_exogeneous'
-        storage.write_dataset(
-            Resources({
-                'out_table_name':storage_table_name,
-                'values':{
+        storage._write_dataset(
+            {'buildings_exogeneous':{
                     'building_id':max_building_id + arange(1, scheduled_year.size()+1, 1),
                     'type': types,
+                    'template_id': self.choice_set.get_attribute("template_id")[self.accepted_proposals],
                     'units': units,
                     'scheduled_year': scheduled_year
                     },
                 })
-            )
         
         scheduled_buildings = BuildingDataset(
             in_storage = storage, 

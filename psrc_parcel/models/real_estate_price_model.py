@@ -17,7 +17,7 @@ from opus_core.regression_model import RegressionModel
 from numarray import exp, arange, logical_and, zeros, where, NumArray, array
 
 class RealEstatePriceModel(RegressionModel):
-    """Updates gridcell attributes 'real_estate_price'
+    """Updates building attribute 'unit_price'
     computed via a regression equation.
     """
 
@@ -26,7 +26,7 @@ class RealEstatePriceModel(RegressionModel):
                 
     def __init__(self, regression_procedure="opus_core.linear_regression", 
                  filter_attribute=None,
-                 submodel_string="building_use_id", 
+                 submodel_string="building_type_id", 
                  run_config=None, 
                  estimate_config=None, 
                  debuglevel=0):

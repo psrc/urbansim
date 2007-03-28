@@ -25,14 +25,18 @@ class ProposedDevelopmentProjectCostModel(RegressionModel):
 
     model_name = "Proposed Development Project Cost Model"
     model_short_name = "PDPCM"
+    dependent_variable_name = "construction_cost_per_unit"
                 
     def __init__(self, regression_procedure="opus_core.linear_regression", 
                  filter_attribute=None,
                  submodel_string="template_id", 
+                 dependent_variable_name=None,
                  run_config=None, 
                  estimate_config=None, 
                  debuglevel=0):
         self.filter_attribute = filter_attribute
+        if dependent_variable_name is not None:
+            self.dependent_variable_name = dependent_variable_name
         RegressionModel.__init__(self, 
                                  regression_procedure=regression_procedure, 
                                  submodel_string=submodel_string, 
@@ -54,13 +58,14 @@ class ProposedDevelopmentProjectCostModel(RegressionModel):
             templates = data_objects['development_template']
             dataset = create_from_parcel_and_development_template(parcels, templates, index=index)
             
-        costs = RegressionModel.run(self, specification, coefficients, dataset, 
+        return_values = RegressionModel.run(self, specification, coefficients, dataset, 
                                     chunk_specification, data_objects, 
                                     run_config, debuglevel)
-        if (costs == None) or (costs.size() <=0):
-            return costs
-        if index == None:
-             index = arange(dataset.size())
-        dataset.set_values_of_one_attribute("costs", sale_price)
+        if (construction_cost_per_unit == None) or (construction_cost_per_unit.size() <=0):
+            return None
+        if "construction_cost_per_unit" not in dataset.get_known_attribute_names():
+            dataset.add_attribute(zeros(dataset.size()), "construction_cost_per_unit")
+        
+        dataset.set_values_of_one_attribute("construction_cost_per_unit", construction_cost_per_unit, index=index)
         
         return dataset

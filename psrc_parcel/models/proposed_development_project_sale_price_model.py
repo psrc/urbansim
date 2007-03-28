@@ -60,13 +60,13 @@ class ProposedDevelopmentProjectSalePriceModel(RegressionModel):
                                                                   filter=self.filter_attribute,
                                                                   resources=res)
             index = None
-        sale_price = RegressionModel.run(self, specification, coefficients, dataset, 
+        unit_price = RegressionModel.run(self, specification, coefficients, dataset, 
                                          index, chunk_specification, data_objects,
                                          run_config, debuglevel)
-        if (sale_price == None) or (sale_price.size() <=0):
-            return sale_price
+        if (unit_price == None) or (unit_price.size() <=0):
+            return None
         if index == None:
              index = arange(dataset.size())
-        dataset.set_values_of_one_attribute("sale_price", sale_price, index)
+        dataset.set_values_of_one_attribute("unit_price", sale_price, index)
         
         return dataset

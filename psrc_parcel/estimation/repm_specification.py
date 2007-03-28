@@ -12,27 +12,6 @@
 # other acknowledgments.
 # 
 
-#number of observation with valid price
-##+-----------------+--------------+----------+
-##| building_use_id | building_use | count(*) |
-##+-----------------+--------------+----------+
-##|               1 | APTS         |     2544 |
-##|               2 | CONDO        |     3103 |
-##|               3 | FLATS        |     1982 |
-##|               4 | LIVEWORK     |      242 |
-##|               5 | SINGLE       |    12819 |
-##|               6 | SRO          |       47 |
-##|               7 | CIE          |       31 |
-##|               8 | MIPS         |      469 |
-##|               9 | MIXED        |      563 |
-##|              10 | MIXRES       |     2011 |
-##|              11 | OPENSPACE    |        3 |
-##|              13 | PDR          |      211 |
-##|              14 | RETAIL/ENT   |      279 |
-##|              16 | VACANT       |       20 |
-##|              17 | VISITOR      |       12 |
-##+-----------------+--------------+----------+
-
 specification ={}
 specification = {  
         1:   #APT

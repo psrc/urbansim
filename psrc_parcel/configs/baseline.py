@@ -51,8 +51,7 @@ class Baseline(GeneralConfiguration):
                     "travel_data",
                     "annual_relocation_rates_for_business",
 #                    "buildings_for_estimation",
-                    "building_use",
-                    "building_use_classification",
+                    "building_types",
                     'urbansim_constants',
                     "target_vacancies",
                     "business_location_choice_model_coefficients",
@@ -74,9 +73,6 @@ class Baseline(GeneralConfiguration):
                     "annual_relocation_rates_for_business",
                     'development_event_history',
                     "development_events_exogenous",
-                    "district24",
-                    "district14",
-                    "tracts"
                     ],  
                 tables_to_cache_nchunks={'parcels': 1},
                 unroll_gridcells = False

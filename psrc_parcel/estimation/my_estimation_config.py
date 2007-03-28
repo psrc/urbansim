@@ -1,5 +1,5 @@
 #
-# UrbanSim software. Copyright (C) 1998-2004 University of Washington
+# UrbanSim software. Copyright (C) 1998-2007 University of Washington
 # 
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
@@ -13,76 +13,28 @@
 # 
 
 import os
+
 from opus_core.configurations.database_configuration import DatabaseConfiguration
-from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
-from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
+from opus_core.services.run_server.generic_option_group import GenericOptionGroup
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
+from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
+
+from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 
 my_configuration = {
-     'cache_directory':r'/urbansim_cache/psrc_parcel/estimation', ### TODO: Set this cache_directory to something useful.
-     'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-#           cache_directory_root = 'd:/urbansim_cache/psrc_parcel',
-        cache_from_mysql = False,
-        baseyear_cache = BaseyearCacheConfiguration(
-            existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/cache_source',
-            ),                
-        cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
-        unroll_gridcells = False,
-        tables_to_cache = [
-            'business',
-            'households',
-            'buildings',
-            'parcels',
-            'zones',
-            "households_for_estimation",
-            "business_for_estimation",
-            "persons",
-            "travel_data",
-            "annual_relocation_rates_for_business",
-            "buildings_for_estimation",
-            "building_use",
-            "building_use_classification",
-            'urbansim_constants'
-        ],  
-        ),
-    'input_configuration': DatabaseConfiguration(
-        host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
-        user_name     = os.environ.get('MYSQLUSERNAME',''),
-        password      = os.environ.get('MYSQLPASSWORD',''),
-        database_name = "san_francisco_baseyear_change_20061214",
-        ),
-
-    'dataset_pool_configuration': DatasetPoolConfiguration(
-        package_order=['psrc_parcel', 'urbansim', 'opus_core'],
-        package_order_exceptions={},
-        ),                          
+    'cache_directory' : 'C:/urbansim_cache/psrc_parcel/estimation', # change or leave out
     'output_configuration': DatabaseConfiguration(
         host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
         user_name     = os.environ.get('MYSQLUSERNAME',''),
         password      = os.environ.get('MYSQLPASSWORD',''),
-        database_name = "san_francisco_baseyear_change_20061228",
+        database_name = 'GSPSRC_2000_baseyear_change_20070102',
         ),
     'dataset_pool_configuration': DatasetPoolConfiguration(
-        package_order=['psrc_parcel', 'urbansim', 'opus_core'],
+        package_order=['psrc', 'urbansim', 'opus_core'],
         package_order_exceptions={},
-        ),     
-    'datasets_to_cache_after_each_model':[],
-    'base_year': 2001,
-    'years': (2001,2001), 
+        ),
     'datasets_to_cache_after_each_model':[],
     'low_memory_mode':False,
-    "datasets_to_preload" : {
-        'zone':{},
-        'household':{},
-        'building':{},        
-        'parcel':{'package_name':'psrc_parcel'},
-        'business':{'package_name':'psrc_parcel'},
-        'person':{'package_name':'psrc_parcel'},        
-        "building_use":{'package_name':'psrc_parcel'},
-        "building_use_classification":{'package_name':'psrc_parcel'},
-        'travel_data':{},
-        'urbansim_constant':{}
-        }
-}
-
-    
+    'base_year': 2000,
+    'years': (2000,2000),                    
+    }

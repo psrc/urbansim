@@ -18,14 +18,14 @@ from numarray import Float32
 
 class expected_rate_of_return_on_investment(Variable):
     """
-    results = (expected_sale_price - land_and_existing_building_price - demolishing_cost if any - construction_cost) 
+    results = (sale_price_expected - land_and_existing_building_price - demolishing_cost if any - construction_cost) 
     divided by (land_and_existing_building_price + demolishing_cost if any + construction_cost)
     """ 
 
     def dependencies(self):
-        return ["psrc_parcel.development_project_proposal.expected_sale_price",
+        return ["psrc_parcel.development_project_proposal.unit_price_expected",
                 "psrc_parcel.development_project_proposal.units_proposed",
-                "total_revenue = development_project_proposal.units_proposed * development_project_proposal.expected_sale_price",
+                "total_revenue = development_project_proposal.units_proposed * development_project_proposal.unit_price_expected",
                 "land_price = development_project_proposal.disaggregate(parcel.land_price)",
                 "land_cost = development_project_proposal.land_price * development_project_proposal.land_area_occupied",
                 "total_investment = development_project_proposal.land_cost + psrc_parcel.development_project_proposal.demolition_cost + psrc_parcel.development_project_proposal.construction_cost",
@@ -69,7 +69,7 @@ class Tests(opus_unittest.OpusTestCase):
                 "proposal_id":array([1,  2, 3,  4, 5,  6, 7, 8, 9, 10, 11]),
                 "parcel_id":  array([1,  1,  1,  1, 2,  2, 2, 3, 3, 3, 3 ]),
                 "template_id":array([1,  2, 3, 4,  2,  3, 4, 1,  2, 3, 4]),
-                "expected_sale_price":array([360000, 400000/1500, 400000/2000, 200000/8, 330000/1000, 420000/4000, 
+                "unit_price_expected":array([360000, 400000/1500, 400000/2000, 200000/8, 330000/1000, 420000/4000, 
                                                 480000/3, 1400000/2, 4600000/8000, 200000000/1000000, 1000000/4]),
                 "land_area_occupied":array([100, 50, 20, 200, 200, 80, 600, 1, 2, 70, 0.5]),
                 "units_proposed":array([1, 1500, 2000, 8, 1000, 4000, 3, 2, 8000, 1000000, 4]),
