@@ -15,8 +15,8 @@
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
-from numarray.nd_image import correlate
-from numarray.ma import filled
+from numpy.nd_image import correlate
+from numpy.ma import filled
 from opus_core.logger import logger
 
 class travel_time_to_cbd(Variable):
@@ -40,8 +40,8 @@ if __name__=='__main__':
     logger.log_status("running test")
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numarray import array
-    from numarray.ma import allclose
+    from numpy import array
+    from numpy.ma import allclose
     from opus_core.resources import Resources
     from sanfrancisco.datasets.parcels import ParcelSet
     class Tests(unittest.TestCase):

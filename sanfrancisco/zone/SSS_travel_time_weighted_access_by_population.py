@@ -16,8 +16,8 @@ from opus_core.logger import logger
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
 from variable_functions import my_attribute_label
-from numarray import where, power, Float32, array
-from numarray.nd_image import sum as nd_image_sum
+from numpy import where, power, Float32, array
+from numpy.nd_image import sum as nd_image_sum
 
 class SSS_travel_time_weighted_access_by_population(Variable):
     """sum of number of jobs in zone j divided by generalized cost from zone i to j,
@@ -50,8 +50,8 @@ class SSS_travel_time_weighted_access_by_population(Variable):
 if __name__=='__main__':
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numarray import array
-    from numarray.ma import allclose
+    from numpy import array
+    from numpy.ma import allclose
     from sanfrancisco.opus_package_info import package
     
     class Tests(unittest.TestCase):

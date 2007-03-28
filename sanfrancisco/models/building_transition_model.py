@@ -16,10 +16,10 @@ from opus_core.resources import Resources
 from opus_core.misc import DebugPrinter, concatenate
 from opus_core.variables.variable_name import VariableName
 from opus_core.model import Model
-from numarray.random_array import randint
-from opus_core.opusnumarray import cumsum
+from numpy.random_array import randint
+from opus_core.opusnumpy import cumsum
 from opus_core.logger import logger
-from numarray import arange, array, where, zeros, ones, Float32, Int32, Int8
+from numpy import arange, array, where, zeros, ones, Float32, Int32, Int8
 
 class BuildingTransitionModel( Model ):
     """

@@ -12,7 +12,7 @@
 # other acknowledgments.
 # 
 
-from numarray import where, zeros
+from numpy import where, zeros
 import re
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
@@ -52,9 +52,9 @@ import unittest
 from sanfrancisco.datasets.building_use_classification_dataset import BuildingUseClassificationDataset
 from urbansim.datasets.building_dataset import BuildingDataset
 from opus_core.resources import Resources
-from numarray import array, strings, arange
+from numpy import array, strings, arange
 from opus_core.storage_factory import StorageFactory
-from numarray.ma import allequal
+from numpy.ma import allequal
 class Tests(unittest.TestCase):
     variable_name = "sanfrancisco.building.building_size"
 

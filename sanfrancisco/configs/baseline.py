@@ -21,7 +21,7 @@ from urbansim.configurations.creating_baseyear_cache_configuration import Creati
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.resources import merge_resources_with_defaults
-from numarray import array
+from numpy import array
 import os
 
 class Baseline(GeneralConfiguration):

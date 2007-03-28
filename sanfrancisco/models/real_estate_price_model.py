@@ -14,7 +14,7 @@
 
 from opus_core.resources import Resources
 from opus_core.regression_model import RegressionModel
-from numarray import exp, arange, logical_and, zeros, where, NumArray, array
+from numpy import exp, arange, logical_and, zeros, where, NumArray, array
 
 class RealEstatePriceModel(RegressionModel):
     """Updates gridcell attributes 'real_estate_price'

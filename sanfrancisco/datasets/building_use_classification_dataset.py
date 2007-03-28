@@ -12,7 +12,7 @@
 # other acknowledgments.
 # 
 
-from numarray import where
+from numpy import where
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 
 class BuildingUseClassificationDataset(UrbansimDataset):

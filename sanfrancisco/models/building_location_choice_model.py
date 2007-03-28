@@ -14,8 +14,8 @@
 
 from urbansim.models.building_location_choice_model import BuildingLocationChoiceModel as UrbansimBuildingLocationChoiceModel
 from urbansim.models.agent_location_choice_model_member import AgentLocationChoiceModelMember
-from numarray import where, arange, concatenate, array, NumArray, ones, zeros, Int8
-from numarray import logical_or, logical_not
+from numpy import where, arange, concatenate, array, NumArray, ones, zeros, Int8
+from numpy import logical_or, logical_not
 from opus_core.variables.variable_name import VariableName
 from opus_core.resources import Resources
 from opus_core.datasets.dataset import Dataset

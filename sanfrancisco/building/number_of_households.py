@@ -36,8 +36,8 @@ class number_of_households(Variable):
 if __name__=='__main__':
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numarray import array, arange
-    from numarray.ma import allclose
+    from numpy import array, arange
+    from numpy.ma import allclose
     from opus_core.resources import Resources
     from urbansim.datasets.building_dataset import BuildingDataset
     from urbansim.datasets.household_dataset import HouseholdDataset

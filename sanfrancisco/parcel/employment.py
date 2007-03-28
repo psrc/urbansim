@@ -36,8 +36,8 @@ class employment(Variable):
 if __name__=='__main__':
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numarray import array, arange
-    from numarray.ma import allclose
+    from numpy import array, arange
+    from numpy.ma import allclose
     from opus_core.resources import Resources
     from sanfrancisco.datasets.parcels import ParcelSet
     from sanfrancisco.datasets.businesses import BusinessSet

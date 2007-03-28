@@ -14,7 +14,7 @@
 
 from urbansim.datasets.rate_dataset import RateDataset
 from opus_core.probabilities import Probabilities
-from numarray import array, reshape, Int32
+from numpy import array, reshape, Int32
 
 
 class business_relocation_probabilities(Probabilities):

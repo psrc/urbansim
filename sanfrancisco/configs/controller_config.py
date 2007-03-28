@@ -15,7 +15,7 @@
 #from urbansim.estimation.config import config
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from opus_core.configuration import Configuration
-from numarray import array
+from numpy import array
 import os
 
 config = AbstractUrbansimConfiguration()

@@ -15,7 +15,7 @@
 from opus_core.model import Model
 from opus_core.logger import logger
 from urbansim.datasets.development_event_dataset import DevelopmentEventDataset
-from numarray import where, arange, ones
+from numpy import where, arange, ones
 
 class ProcessPipelineEvents(Model):
     """Process any pre-scheduled development events.
