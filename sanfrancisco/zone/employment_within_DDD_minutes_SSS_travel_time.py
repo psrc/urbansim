@@ -49,7 +49,7 @@ if __name__=='__main__':
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
     from numpy import array
-    from numpy.ma import allclose
+    from numpy import ma
     from sanfrancisco.opus_package_info import package
     
     class Tests(unittest.TestCase):
@@ -69,11 +69,11 @@ if __name__=='__main__':
         def test_to_2(self):
             values = self.get_values(2, 'hwy')
             should_be = array([0, 10])
-            self.assert_(allclose(values, should_be, rtol=1e-4), "Error in employment_within_2_minutes_hwy_travel_time")
+            self.assert_(ma.allclose(values, should_be, rtol=1e-4), "Error in employment_within_2_minutes_hwy_travel_time")
 
         def test_to_4(self):
             values = self.get_values(4, 'bart')
             should_be = array([10, 11])
-            self.assert_(allclose(values, should_be, rtol=1e-4), "Error in employment_within_4_minutes_bart_travel_time")
+            self.assert_(ma.allclose(values, should_be, rtol=1e-4), "Error in employment_within_4_minutes_bart_travel_time")
 
     unittest.main()

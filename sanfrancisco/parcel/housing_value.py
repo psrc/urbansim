@@ -14,7 +14,7 @@
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
-from numpy.ma import masked_where, filled
+from numpy import ma
 from numpy import Float32
 
 class housing_value(Variable):
@@ -32,9 +32,9 @@ class housing_value(Variable):
     def compute(self,  dataset_pool):
         parcels = self.get_dataset()
         residential_units = parcels.get_attribute(self.residential_units)
-        return filled((parcels.get_attribute(self.land_value) + \
+        return ma.filled((parcels.get_attribute(self.land_value) + \
                        parcels.get_attribute(self.improvement_value)) /\
-                      masked_where(residential_units==0, residential_units.astype(Float32)), 0.0)
+                      ma.masked_where(residential_units==0, residential_units.astype(Float32)), 0.0)
 
     def post_check(self,  values, dataset_pool=None):
         self.do_check("x >= 0", values)
@@ -43,7 +43,6 @@ if __name__=='__main__':
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
     from numpy import array
-    from numpy.ma import allclose
     from opus_core.resources import Resources    
     from sanfrancisco.datasets.parcels import ParcelSet
 
@@ -66,7 +65,7 @@ if __name__=='__main__':
                 dataset = "parcel")
             should_be = array([60, 0, 37, 10, 15.28571415])
             
-            self.assertEqual(allclose(values, should_be), \
+            self.assertEqual(ma.allclose(values, should_be), \
                              True, msg = "Error in " + self.variable_name)
             
     unittest.main()

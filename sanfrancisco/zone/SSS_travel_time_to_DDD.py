@@ -47,7 +47,7 @@ if __name__=='__main__':
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
     from numpy import array
-    from numpy.ma import allclose
+    from numpy import ma
     from psrc.opus_package_info import package
     
     class Tests(unittest.TestCase):
@@ -66,11 +66,11 @@ if __name__=='__main__':
         def test_to_1(self):
             values = self.get_values(1)
             should_be = array([3.3, 1.1])
-            self.assert_(allclose(values, should_be, rtol=1e-4), "Error in hwy_travel_time_to_1")
+            self.assert_(ma.allclose(values, should_be, rtol=1e-4), "Error in hwy_travel_time_to_1")
 
         def test_to_3(self):
             values = self.get_values(3)
             should_be = array([4.4, 2.2])
-            self.assert_(allclose(values, should_be, rtol=1e-4), "Error in hwy_travel_time_to_3")
+            self.assert_(ma.allclose(values, should_be, rtol=1e-4), "Error in hwy_travel_time_to_3")
 
     unittest.main()
