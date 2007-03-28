@@ -27,15 +27,15 @@ specification['nonresidential'] = {
     "parcel.area",
     "parcel.land_value",    
 #    
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.number_of_households,[parcel]) as households_in_zone",
-#    "parcel:opus_core.func.disaggregate(parcel.area) as lot_area",             
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,[parcel]) as bus_travel_time_weighted_access_to_employment",             
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,[parcel]) as employment_within_20_minutes_bus_travel_time",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.employment_of_sector_mips,[parcel]) as employment_of_sector_mips_in_zone",             
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.number_of_businesses_of_sector_mips,[parcel]) as businesses_of_sector_mips_in_zone",             
+    "households_in_zone=parcel.disaggregate(sanfrancisco.zone.number_of_households,intermediates=[parcel])",
+#    "lot_area=parcel.disaggregate(parcel.area)",             
+    "bus_travel_time_weighted_access_by_population=parcel.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",             
+    "bus_travel_time_weighted_access_to_employment=parcel.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])",             
+    "employment_within_20_minutes_bus_travel_time=parcel.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,intermediates=[parcel])",             
+#    "employment_of_sector_mips_in_zone=parcel.disaggregate(sanfrancisco.zone.employment_of_sector_mips,intermediates=[parcel])",             
+    "businesses_of_sector_mips_in_zone=parcel.disaggregate(sanfrancisco.zone.number_of_businesses_of_sector_mips,intermediates=[parcel])",             
     
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.average_income, [parcel]) as average_income_in_zone",
+    "average_income_in_zone=parcel.disaggregate(sanfrancisco.zone.average_income, intermediates=[parcel])",
     ],
     9:   #RETAIL/ENT
             [
@@ -43,15 +43,15 @@ specification['nonresidential'] = {
     "parcel.area",
     "parcel.land_value",    
 #    
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.number_of_households,[parcel]) as households_in_zone",
-#    "parcel:opus_core.func.disaggregate(parcel.area) as lot_area",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,[parcel]) as bus_travel_time_weighted_access_to_employment",             
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,[parcel]) as employment_within_20_minutes_bus_travel_time",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.employment_of_sector_retailent,[parcel]) as employment_of_sector_retailent_in_zone",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.number_of_businesses_of_sector_retailent,[parcel]) as businesses_of_sector_retailent_in_zone",             
+    "households_in_zone=parcel.disaggregate(sanfrancisco.zone.number_of_households,intermediates=[parcel])",
+#    "lot_area=parcel.disaggregate(parcel.area)",             
+#    "bus_travel_time_weighted_access_by_population=parcel.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",             
+    "bus_travel_time_weighted_access_to_employment=parcel.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])",             
+    "employment_within_20_minutes_bus_travel_time=parcel.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,intermediates=[parcel])",             
+#    "employment_of_sector_retailent_in_zone=parcel.disaggregate(sanfrancisco.zone.employment_of_sector_retailent,intermediates=[parcel])",             
+#    "businesses_of_sector_retailent_in_zone=parcel.disaggregate(sanfrancisco.zone.number_of_businesses_of_sector_retailent,intermediates=[parcel])",             
     
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.average_income, [parcel]) as average_income_in_zone",
+    "average_income_in_zone=parcel.disaggregate(sanfrancisco.zone.average_income, intermediates=[parcel])",
     ],
 }            
 
@@ -62,18 +62,18 @@ specification['residential'] = {
 #    "parcel.area",
 #    "parcel.land_value",    
 #    
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.number_of_households,[parcel]) as households_in_zone",
-#    "parcel:opus_core.func.disaggregate(parcel.area) as lot_area",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,[parcel]) as bus_travel_time_weighted_access_to_employment",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.hwy_travel_time_weighted_access_by_population,[parcel]) as hwy_travel_time_weighted_access_by_population",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.hwy_travel_time_weighted_access_to_employment,[parcel]) as hwy_travel_time_weighted_access_to_employment",             
+#    "households_in_zone=parcel.disaggregate(sanfrancisco.zone.number_of_households,intermediates=[parcel])",
+#    "lot_area=parcel.disaggregate(parcel.area)",             
+#    "bus_travel_time_weighted_access_by_population=parcel.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",             
+    "bus_travel_time_weighted_access_to_employment=parcel.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])",             
+#    "hwy_travel_time_weighted_access_by_population=parcel.disaggregate(sanfrancisco.zone.hwy_travel_time_weighted_access_by_population,intermediates=[parcel])",             
+#    "hwy_travel_time_weighted_access_to_employment=parcel.disaggregate(sanfrancisco.zone.hwy_travel_time_weighted_access_to_employment,intermediates=[parcel])",             
 
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,[parcel]) as employment_within_20_minutes_bus_travel_time",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.employment_of_sector_retailent,[parcel]) as employment_of_sector_retailent_in_zone",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.number_of_businesses_of_sector_retailent,[parcel]) as businesses_of_sector_retailent_in_zone",             
+    "employment_within_20_minutes_bus_travel_time=parcel.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,intermediates=[parcel])",             
+#    "employment_of_sector_retailent_in_zone=parcel.disaggregate(sanfrancisco.zone.employment_of_sector_retailent,intermediates=[parcel])",             
+#    "businesses_of_sector_retailent_in_zone=parcel.disaggregate(sanfrancisco.zone.number_of_businesses_of_sector_retailent,intermediates=[parcel])",             
     
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.average_income, [parcel]) as average_income_in_zone",
+    "average_income_in_zone=parcel.disaggregate(sanfrancisco.zone.average_income, intermediates=[parcel])",
     ],
 
     2:   #CONDO
@@ -82,17 +82,17 @@ specification['residential'] = {
 #    "parcel.area",
     "parcel.land_value",    
 #    
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.number_of_households,[parcel]) as households_in_zone",
-#    "parcel:opus_core.func.disaggregate(parcel.area) as lot_area",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,[parcel]) as bus_travel_time_weighted_access_to_employment",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.hwy_travel_time_weighted_access_by_population,[parcel]) as hwy_travel_time_weighted_access_by_population",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.hwy_travel_time_weighted_access_to_employment,[parcel]) as hwy_travel_time_weighted_access_to_employment",             
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,[parcel]) as employment_within_20_minutes_bus_travel_time",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.employment_of_sector_retailent,[parcel]) as employment_of_sector_retailent_in_zone",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.number_of_businesses_of_sector_retailent,[parcel]) as businesses_of_sector_retailent_in_zone",             
+    "households_in_zone=parcel.disaggregate(sanfrancisco.zone.number_of_households,intermediates=[parcel])",
+#    "lot_area=parcel.disaggregate(parcel.area)",             
+#    "bus_travel_time_weighted_access_by_population=parcel.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",             
+    "bus_travel_time_weighted_access_to_employment=parcel.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])",             
+#    "hwy_travel_time_weighted_access_by_population=parcel.disaggregate(sanfrancisco.zone.hwy_travel_time_weighted_access_by_population,intermediates=[parcel])",             
+#    "hwy_travel_time_weighted_access_to_employment=parcel.disaggregate(sanfrancisco.zone.hwy_travel_time_weighted_access_to_employment,intermediates=[parcel])",             
+    "employment_within_20_minutes_bus_travel_time=parcel.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,intermediates=[parcel])",             
+#    "employment_of_sector_retailent_in_zone=parcel.disaggregate(sanfrancisco.zone.employment_of_sector_retailent,intermediates=[parcel])",             
+#    "businesses_of_sector_retailent_in_zone=parcel.disaggregate(sanfrancisco.zone.number_of_businesses_of_sector_retailent,intermediates=[parcel])",             
     
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.average_income, [parcel]) as average_income_in_zone",
+    "average_income_in_zone=parcel.disaggregate(sanfrancisco.zone.average_income, intermediates=[parcel])",
     ],
 
     3:   #FLATS
@@ -101,15 +101,15 @@ specification['residential'] = {
     "parcel.area",
 #    "parcel.land_value",    
 #    
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.number_of_households,[parcel]) as households_in_zone",
-#    "parcel:opus_core.func.disaggregate(parcel.area) as lot_area",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,[parcel]) as bus_travel_time_weighted_access_to_employment",             
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.employment_within_60_minutes_bus_travel_time,[parcel]) as employment_within_60_minutes_bus_travel_time",             
-##    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.employment_of_sector_retailent,[parcel]) as employment_of_sector_retailent_in_zone",             
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.number_of_businesses_of_sector_retailent,[parcel]) as businesses_of_sector_retailent_in_zone",             
+    "households_in_zone=parcel.disaggregate(sanfrancisco.zone.number_of_households,intermediates=[parcel])",
+#    "lot_area=parcel.disaggregate(parcel.area)",             
+#    "bus_travel_time_weighted_access_by_population=parcel.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",             
+#    "bus_travel_time_weighted_access_to_employment=parcel.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])",             
+    "employment_within_60_minutes_bus_travel_time=parcel.disaggregate(sanfrancisco.zone.employment_within_60_minutes_bus_travel_time,intermediates=[parcel])",             
+##    "employment_of_sector_retailent_in_zone=parcel.disaggregate(sanfrancisco.zone.employment_of_sector_retailent,intermediates=[parcel])",             
+    "businesses_of_sector_retailent_in_zone=parcel.disaggregate(sanfrancisco.zone.number_of_businesses_of_sector_retailent,intermediates=[parcel])",             
     
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.average_income, [parcel]) as average_income_in_zone",
+    "average_income_in_zone=parcel.disaggregate(sanfrancisco.zone.average_income, intermediates=[parcel])",
     ],
     5:   #SINGLE
             [
@@ -117,15 +117,15 @@ specification['residential'] = {
 #    "parcel.area",
 #    "parcel.land_value",    
 #    
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.number_of_households,[parcel]) as households_in_zone",
-#    "parcel:opus_core.func.disaggregate(parcel.area) as lot_area",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,[parcel]) as bus_travel_time_weighted_access_to_employment",             
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,[parcel]) as employment_within_20_minutes_bus_travel_time",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.employment_of_sector_retailent,[parcel]) as employment_of_sector_retailent_in_zone",             
-#    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.number_of_businesses_of_sector_retailent,[parcel]) as businesses_of_sector_retailent_in_zone",             
+    "households_in_zone=parcel.disaggregate(sanfrancisco.zone.number_of_households,intermediates=[parcel])",
+#    "lot_area=parcel.disaggregate(parcel.area)",             
+#    "bus_travel_time_weighted_access_by_population=parcel.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",             
+#    "bus_travel_time_weighted_access_to_employment=parcel.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])",             
+    "employment_within_20_minutes_bus_travel_time=parcel.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,intermediates=[parcel])",             
+#    "employment_of_sector_retailent_in_zone=parcel.disaggregate(sanfrancisco.zone.employment_of_sector_retailent,intermediates=[parcel])",             
+#    "businesses_of_sector_retailent_in_zone=parcel.disaggregate(sanfrancisco.zone.number_of_businesses_of_sector_retailent,intermediates=[parcel])",             
     
-    "parcel:opus_core.func.disaggregate(sanfrancisco.zone.average_income, [parcel]) as average_income_in_zone",
+    "average_income_in_zone=parcel.disaggregate(sanfrancisco.zone.average_income, intermediates=[parcel])",
     ],
 
 }

@@ -40,6 +40,7 @@ my_controller_configuration = {
                                         "RealEstatePriceModel"},
     "init": { 
         "name": "RealEstatePriceModel",
+        "outcome_attribute":"'ln_unit_price'",
         "arguments": {"submodel_string": "'building_use_id'",
                       "filter_attribute": None},
         },
@@ -62,7 +63,7 @@ my_controller_configuration = {
         "name": "prepare_for_estimate",
         "arguments": {"specification_storage": "base_cache_storage",
                       "specification_table": "'real_estate_price_model_specification'",
-                      "filter_variable":"'opus_core.func.ln_bounded(building.unit_price)'",
+                      "filter_variable":"'unit_price'",
                       "dataset": "building", 
                       "threshold": 1},
         "output": "(specification, index)"
@@ -70,7 +71,7 @@ my_controller_configuration = {
     "estimate": {
         "arguments": {
                       "specification": "specification",
-                      "outcome_attribute": "'opus_core.func.ln_bounded(building.unit_price)'",
+                      "outcome_attribute": "'ln_unit_price=ln(building.unit_price)'",
                       "dataset": "building",
                       "index": "index",
                       "data_objects": "datasets",
@@ -142,7 +143,7 @@ my_controller_configuration = {
                       "short_name":"'BLCM'",
                       "choices":"'urbansim.lottery_choices'",
                       "submodel_string":"'business.building_use_id'",
-                      "filter": "'building.building_sqft'",
+                      "filter": None, #"'building.building_sqft'",
                       "location_id_string":"'building_id'",
                       "run_config":"models_configuration['business_location_choice_model']",
                       "estimate_config":"models_configuration['business_location_choice_model']"

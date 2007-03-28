@@ -16,7 +16,7 @@ from urbansim.datasets.dataset import Dataset as UrbansimDataset
 from opus_core.misc import unique_values
 from numarray import array, zeros, Int16, where, Int8, ones, take, arange
 from opus_core.resources import Resources
-from opus_core.variable_name import VariableName
+from opus_core.variables.variable_name import VariableName
 
 class Tract2000Dataset(UrbansimDataset):
     

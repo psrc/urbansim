@@ -12,7 +12,7 @@
 # other acknowledgments.
 # 
 
-from opus_core.variable import Variable
+from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 from numarray.ma import masked_where, filled
 from numarray import Float32

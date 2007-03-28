@@ -14,7 +14,7 @@
 
 from opus_core.resources import Resources
 from opus_core.misc import DebugPrinter, concatenate
-from opus_core.variable_name import VariableName
+from opus_core.variables.variable_name import VariableName
 from opus_core.model import Model
 from numarray.random_array import randint
 from opus_core.opusnumarray import cumsum

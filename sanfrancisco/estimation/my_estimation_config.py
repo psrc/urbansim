@@ -19,12 +19,12 @@ from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheC
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 
 my_configuration = {
-     'cache_directory':r'/urbansim_cache/sanfrancisco/estimation', ### TODO: Set this cache_directory to something useful.
+     'cache_directory':r'/workspace/urbansim_cache/sanfrancisco/estimation', ### TODO: Set this cache_directory to something useful.
      'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
 #           cache_directory_root = 'd:/urbansim_cache/sanfrancisco',
         cache_from_mysql = False,
         baseyear_cache = BaseyearCacheConfiguration(
-            existing_cache_to_copy = r'/urbansim_cache/sanfrancisco/cache_source',
+            existing_cache_to_copy = r"/media/sda2/urbansim_cache/sanfrancisco/cache_source20070204" #'/urbansim_cache/sanfrancisco/cache_source',
             ),                
         cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
         unroll_gridcells = False,
