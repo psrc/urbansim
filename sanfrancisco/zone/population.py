@@ -18,7 +18,7 @@ from variable_functions import my_attribute_label
 class population(Variable):
     """population in a given zone"""
 
-    _return_type="Int32"
+    _return_type="int32"
     
     def dependencies(self):
         return ["sanfrancisco.parcel.zone_id", 

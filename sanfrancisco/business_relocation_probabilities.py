@@ -14,7 +14,7 @@
 
 from urbansim.datasets.rate_dataset import RateDataset
 from opus_core.probabilities import Probabilities
-from numpy import array, reshape, Int32
+from numpy import array, reshape, int32
 
 
 class business_relocation_probabilities(Probabilities):
@@ -34,7 +34,7 @@ class business_relocation_probabilities(Probabilities):
             return None
 #        rates.make_rates_array_if_not_made()
         probability = array(map(lambda x: sector_prob[rates.get_id_index(x)], \
-            business.get_attribute("building_use_id").astype(Int32)))
+            business.get_attribute("building_use_id").astype(int32)))
         return probability
                    
     def get_dependent_datasets(self):

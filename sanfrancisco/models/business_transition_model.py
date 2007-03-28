@@ -16,7 +16,7 @@ from opus_core.resources import Resources
 from opus_core.misc import DebugPrinter, unique_values
 from opus_core.misc import concatenate
 from opus_core.model import Model
-from numpy import arange, array, where, Int8, zeros, ones, compress, strings, Int32
+from numpy import arange, array, where, int8, zeros, ones, compress, strings, int32
 from numpy import logical_not
 import numpy.objects as objects
 from numpy.nd_image import sum as nd_image_sum
@@ -46,8 +46,8 @@ class BusinessTransitionModel(Model):
         new_businesses = {self.location_id_name:array([]), 
                           "building_use_id":array([]),
                           business_id_name:array([]), 
-                          "sqft":array([], type=Int32),
-                          "employees":array([], type=Int32),}
+                          "sqft":array([], type=int32),
+                          "employees":array([], type=int32),}
         compute_resources = Resources(data_objects)
 #        compute_resources.merge({job_building_types.get_dataset_name():job_building_types, "debug":self.debug})
         business_set.compute_variables(
@@ -60,7 +60,7 @@ class BusinessTransitionModel(Model):
         for sector in sectors:
             total_businesses = control_totals.get_data_element_by_id((year,sector)).total_number_of_businesses
             is_in_sector = business_set.get_attribute("is_sector_%s" % sector)
-            diff = int(total_businesses - is_in_sector.astype(Int8).sum())
+            diff = int(total_businesses - is_in_sector.astype(int8).sum())
 
             if diff < 0: #
                 w = where(is_in_sector == 1)[0]

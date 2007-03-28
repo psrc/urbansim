@@ -18,7 +18,7 @@ from variable_functions import my_attribute_label
 class number_of_households_with_DDD_workers(Variable):
     """Number of households with DDD workers in a given parcel"""
 
-    _return_type="Int32"
+    _return_type="int32"
     def __init__(self, nworkers):
         self.variable = "number_of_households_with_%s_workers" % nworkers
         Variable.__init__(self)

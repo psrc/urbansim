@@ -60,7 +60,7 @@ class RealEstatePriceModel(RegressionModel):
             self.outcome_attribute = self.outcome_attribute[3:len(self.outcome_attribute)]
             outcome = exp(outcome)
         if self.outcome_attribute not in dataset.get_known_attribute_names():
-            dataset.add_primary_attribute(name=self.outcome_attribute, data=zeros(dataset.size(), Float32)) 
+            dataset.add_primary_attribute(name=self.outcome_attribute, data=zeros(dataset.size(), float32)) 
              
         dataset.set_values_of_one_attribute(self.outcome_attribute, outcome, index)
         return outcome

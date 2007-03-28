@@ -14,7 +14,7 @@
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
-from numpy import where, zeros, Bool
+from numpy import where, zeros, bool8
 
 class is_pre_DDD(Variable):
     """Returns a boolean indicating if the parcel was built before 1940"""
@@ -28,7 +28,7 @@ class is_pre_DDD(Variable):
 
     def compute(self,  dataset_pool):
         year_built = self.get_dataset().get_attribute("year_built")
-        results = zeros(year_built.size(), type=Bool)
+        results = zeros(year_built.size(), type=bool8)
         results[where(year_built<self.year)] = 1
         return results
 

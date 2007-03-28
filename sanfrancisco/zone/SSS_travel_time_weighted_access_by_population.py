@@ -16,7 +16,7 @@ from opus_core.logger import logger
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
 from variable_functions import my_attribute_label
-from numpy import where, power, Float32, array
+from numpy import where, power, float32, array
 from numpy.nd_image import sum as nd_image_sum
 
 class SSS_travel_time_weighted_access_by_population(Variable):
@@ -43,7 +43,7 @@ class SSS_travel_time_weighted_access_by_population(Variable):
         population = self.get_dataset().get_attribute('population')[zone_index]
 
         to_zone_id = travel_data.get_attribute("to_zone_id")        
-        results = array(nd_image_sum(population / time.astype(Float32), labels = to_zone_id, index=zone_ids))
+        results = array(nd_image_sum(population / time.astype(float32), labels = to_zone_id, index=zone_ids))
         
         return results
 

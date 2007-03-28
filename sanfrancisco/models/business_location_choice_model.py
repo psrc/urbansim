@@ -17,8 +17,8 @@ from urbansim.models.location_choice_model import LocationChoiceModel
 from opus_core.misc import remove_elements_with_matched_prefix_from_list, remove_all
 from opus_core.variables.variable_name import VariableName
 from opus_core.opusnumpy import sum
-from numpy import zeros, arange, where, ones, logical_or, logical_and, logical_not, Int32, Float32
-from numpy import compress, take, alltrue, argsort, array, Int8, Bool
+from numpy import zeros, arange, where, ones, logical_or, logical_and, logical_not, int32, float32
+from numpy import compress, take, alltrue, argsort, array, int8, bool8
 from opus_core.sampling_toolbox import probsample_noreplace, sample_noreplace
 from gc import collect
 from opus_core.logger import logger
@@ -48,7 +48,7 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
         
     def get_weights_for_sampling_locations(self, agent_set, agents_index, data_objects=None):
         where_available = where(self.capacity)[0]
-        weight_array = (ones((agents_index.size(), where_available.size()), type=Int8)).astype(Bool)
+        weight_array = (ones((agents_index.size(), where_available.size()), type=int8)).astype(bool8)
         
         building_sqft = self.choice_set.get_attribute_by_index('building_sqft', where_available)
         building_use_id = self.choice_set.get_attribute_by_index('building_use_id', where_available)
@@ -66,7 +66,7 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
                 
         # for memory reasons, discard columns that have only zeros
         logger.log_status("shape of weight_array: ", weight_array.getshape())
-        keep = where(sum(weight_array, axis=0, type=Int32))[0]
+        keep = where(sum(weight_array, axis=0, type=int32))[0]
         where_available = where_available[keep]
 
         weight_array = take(weight_array, keep, axis=1)

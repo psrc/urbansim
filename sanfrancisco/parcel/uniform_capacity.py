@@ -15,7 +15,7 @@
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
-from numpy import ones, Int8
+from numpy import ones, int8
 
 class uniform_capacity(Variable):
     """always 1"""
@@ -25,5 +25,5 @@ class uniform_capacity(Variable):
         
     def compute(self,  dataset_pool):
         parcels = self.get_dataset()
-        return ones(parcels.size(), type=Int8)
+        return ones(parcels.size(), type=int8)
     
