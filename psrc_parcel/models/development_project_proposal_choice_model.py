@@ -29,7 +29,6 @@ from opus_core.resources import merge_resources_if_not_None, merge_resources_wit
 from opus_core.opusnumpy import sum
 from numpy import zeros, arange, where, ones, logical_or, logical_and, logical_not, Int32, Float32, sometrue
 from numpy import compress, take, alltrue, argsort, array, Int8, Bool, ceil, sort, minimum, reshape, concatenate
-from numpy.ma import filled
 from numpy.random_array import randint
 from gc import collect
 from opus_core.logger import logger

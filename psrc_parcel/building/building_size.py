@@ -54,7 +54,7 @@ from urbansim.datasets.building_dataset import BuildingDataset
 from opus_core.resources import Resources
 from numpy import array, strings, arange
 from opus_core.storage_factory import StorageFactory
-from numpy.ma import allequal
+from numpy import ma
 class Tests(unittest.TestCase):
     variable_name = "psrc_parcel.building.building_size"
 
@@ -96,7 +96,7 @@ class Tests(unittest.TestCase):
 
         should_be = array([300, 350, 100, 0, 1000, 600])
         values = buildings.get_attribute(self.variable_name)
-        self.assertEqual(allequal(values, should_be), \
+        self.assertEqual(ma.allequal(values, should_be), \
                          True, msg = "Error in " + self.variable_name)
 
 if __name__=='__main__':

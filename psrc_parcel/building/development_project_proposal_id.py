@@ -14,7 +14,6 @@
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
-from numpy.ma import masked_where, filled
 from numpy import Float32, concatenate, array
 from opus_core.misc import do_id_mapping_dict_from_array
 

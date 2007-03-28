@@ -50,7 +50,7 @@ from urbansim.datasets.building_type_dataset import BuildingTypeDataset
 from urbansim.datasets.building_dataset import BuildingDataset
 from opus_core.resources import Resources
 from numpy import array, strings, arange
-from numpy.ma import allequal
+from numpy import ma
 from opus_core.storage_factory import StorageFactory
 
 
@@ -93,7 +93,7 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array([300, 350, 100, 0, 1000, 600])
         values = buildings.get_attribute(self.variable_name)
         
-        self.assert_(allequal(values, should_be),
+        self.assert_(ma.allequal(values, should_be),
             'Error in ' + self.variable_name)
 
 if __name__=='__main__':

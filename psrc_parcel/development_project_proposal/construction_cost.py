@@ -13,7 +13,6 @@
 #
 
 from opus_core.variables.variable import Variable
-from numpy.ma import masked_where
 
 class construction_cost(Variable):
     """construction cost of the developmentt project proposal

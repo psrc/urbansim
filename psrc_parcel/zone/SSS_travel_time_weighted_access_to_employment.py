@@ -49,7 +49,7 @@ if __name__=='__main__':
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
     from numpy import array
-    from numpy.ma import allclose
+    from numpy import ma
     from psrc_parcel.opus_package_info import package
     
     class Tests(unittest.TestCase):
@@ -67,6 +67,6 @@ if __name__=='__main__':
                 dataset = "zone", package=package())
 
             should_be = array([1.17361, 10.25])
-            self.assert_(allclose(values, should_be, rtol=1e-3), "Error in travel_time_weighted_access_to_employment_hbw_am_drive_alone")
+            self.assert_(ma.allclose(values, should_be, rtol=1e-3), "Error in travel_time_weighted_access_to_employment_hbw_am_drive_alone")
 
     unittest.main()

@@ -15,7 +15,7 @@
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 from numpy import arange, Bool, Float, logical_and, logical_or
 from numpy import reshape, repeat, ones, zeros, where
-from numpy.ma import masked_where, minimum, filled, maximum
+from numpy import ma
 from opus_core.misc import remove_elements_with_matched_prefix_from_list, remove_all
 
 class ParcelDataset(UrbansimDataset):
@@ -73,10 +73,10 @@ class ParcelDataset(UrbansimDataset):
             w = where(development_constraints_array[iconstr,:])[0]
             if w.size() > 0:
                 self.development_constraints[type_id][w,0] = \
-                    maximum(self.development_constraints[type_id][w,0],
+                    ma.maximum(self.development_constraints[type_id][w,0],
                         constraints.get_attribute_by_index("min_constraint", iconstr))
                 self.development_constraints[type_id][w,1] = \
-                    minimum(self.development_constraints[type_id][w,1],
+                    ma.minimum(self.development_constraints[type_id][w,1],
                         constraints.get_attribute_by_index("max_constraint", iconstr))
 
         return self.development_constraints       
@@ -86,7 +86,7 @@ from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 from numpy import array
 import numpy.strings as strarray
-from numpy.ma import allequal, allclose
+from numpy import ma
 
 class Tests(opus_unittest.OpusTestCase):
     def test_get_development_constraints(self):
@@ -136,7 +136,7 @@ class Tests(opus_unittest.OpusTestCase):
                           }
         for key, should_be_value in should_be.iteritems():
             self.assert_(key in values)
-            self.assert_(allclose(values[key], should_be_value), 
+            self.assert_(ma.allclose(values[key], should_be_value), 
                          msg = "Error in parcel get_development_constraints")
 
 

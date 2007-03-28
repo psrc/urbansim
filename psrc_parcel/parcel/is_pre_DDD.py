@@ -39,7 +39,7 @@ if __name__=='__main__':
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
     from numpy import array
-    from numpy.ma import allequal
+    from numpy import ma
     from opus_core.resources import Resources    
     from psrc_parcel.datasets.parcels import ParcelSet
     import numpy.strings as strarray
@@ -60,7 +60,7 @@ if __name__=='__main__':
                   dataset = "parcel" )
             should_be = array([False, False, True, False, True])
 
-            self.assertEqual(allequal(values, should_be), \
+            self.assertEqual(ma.allequal(values, should_be), \
                              True, msg = "Error in " + self.variable_name)
 
     unittest.main()

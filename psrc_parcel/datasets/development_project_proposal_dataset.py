@@ -119,7 +119,7 @@ from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 from numpy import array
-from numpy.ma import allequal
+from numpy import ma
 
 class Tests(opus_unittest.OpusTestCase):
     def setUp(self):
@@ -157,9 +157,9 @@ class Tests(opus_unittest.OpusTestCase):
     def test_create(self):
         proposals = self.dataset_pool.get_dataset("development_project_proposal")
         
-        self.assert_(allequal(self.dataset.get_id_attribute(), proposals.get_id_attribute()))
-        self.assert_(allequal(self.dataset.get_attribute("parcel_id"), proposals.get_attribute("parcel_id")))
-        self.assert_(allequal(self.dataset.get_attribute("template_id"), proposals.get_attribute("template_id")))
+        self.assert_(ma.allequal(self.dataset.get_id_attribute(), proposals.get_id_attribute()))
+        self.assert_(ma.allequal(self.dataset.get_attribute("parcel_id"), proposals.get_attribute("parcel_id")))
+        self.assert_(ma.allequal(self.dataset.get_attribute("template_id"), proposals.get_attribute("template_id")))
         
         
     def test_compute(self):
@@ -168,14 +168,14 @@ class Tests(opus_unittest.OpusTestCase):
                               dataset_pool=self.dataset_pool)
         values = self.dataset.get_attribute("project_size")        
         should_be = array([0, 1999, 2000, 10, 0, 1999, 2000, 10, 0, 1999, 2000, 10])
-        self.assert_(allequal( values, should_be), 
+        self.assert_(ma.allequal( values, should_be), 
                      msg = "Error in " + "development_template.project_size")
 
         self.dataset.compute_variables("parcel.lot_size", 
                               dataset_pool=self.dataset_pool)
         values = self.dataset.get_attribute("lot_size")        
         should_be = array([0, 0,  0, 0,  2005, 2005,2005,2005, 23, 23, 23, 23])
-        self.assert_(allequal( values, should_be), 
+        self.assert_(ma.allequal( values, should_be), 
                      msg = "Error in " + "parcel.lot_size")
 
 

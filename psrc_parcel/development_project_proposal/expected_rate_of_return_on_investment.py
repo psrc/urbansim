@@ -13,7 +13,7 @@
 #
 
 from opus_core.variables.variable import Variable
-from numpy.ma import masked_where, filled
+from numpy import ma
 from numpy import Float32
 
 class expected_rate_of_return_on_investment(Variable):
@@ -36,7 +36,7 @@ class expected_rate_of_return_on_investment(Variable):
         proposals = self.get_dataset()
         total_investment = proposals.get_attribute("total_investment")
         profit = proposals.get_attribute("profit")
-        return filled( profit / masked_where(total_investment==0, total_investment.astype(Float32)), 0.0)
+        return ma.filled( profit / ma.masked_where(total_investment==0, total_investment.astype(Float32)), 0.0)
  
     def post_check(self, values, dataset_pool):
         self.do_check("x >= 0", values)

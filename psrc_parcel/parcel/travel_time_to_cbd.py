@@ -16,7 +16,7 @@ from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
 from numpy.nd_image import correlate
-from numpy.ma import filled
+from numpy import ma
 from opus_core.logger import logger
 
 class travel_time_to_cbd(Variable):
@@ -34,14 +34,14 @@ class travel_time_to_cbd(Variable):
 
     def post_check(self,  values, dataset_pool):
         units_max = dataset_pool.get_dataset('gridcell').get_attribute("travel_time_to_CBD").max()
-        self.do_check("0 <= x and x <= " + str(units_max), filled(values,0))
+        self.do_check("0 <= x and x <= " + str(units_max), ma.filled(values,0))
 
 if __name__=='__main__':
     logger.log_status("running test")
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
     from numpy import array
-    from numpy.ma import allclose
+    from numpy import ma
     from opus_core.resources import Resources
     from psrc_parcel.datasets.parcels import ParcelSet
     class Tests(unittest.TestCase):
@@ -65,7 +65,7 @@ if __name__=='__main__':
                   dataset = "parcel" )
             should_be = array([100.0, 100.0, 1500.0, 1000.0, 1500.0])
 
-            self.assertEqual(allclose(values, should_be, rtol=1e-7), \
+            self.assertEqual(ma.allclose(values, should_be, rtol=1e-7), \
                              True, msg = "Error in " + self.variable_name)
 
     unittest.main()

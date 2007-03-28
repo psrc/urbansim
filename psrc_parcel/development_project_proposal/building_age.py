@@ -14,7 +14,7 @@
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
-from numpy.ma import masked_where
+from numpy import ma
 from opus_core.simulation_state import SimulationState
 
 class building_age(Variable):
@@ -37,7 +37,7 @@ class building_age(Variable):
         building_age = current_year - self.get_dataset().get_attribute(self.year_built)
         #idx = where(self.get_dataset().get_attribute(self.year_built) > urbansim_constant["absolute_min_year"])
         #avg_age = building_age[idx].mean()
-        return masked_where(self.get_dataset().get_attribute(self.year_built) <= urbansim_constant["absolute_min_year"],
+        return ma.masked_where(self.get_dataset().get_attribute(self.year_built) <= urbansim_constant["absolute_min_year"],
                              building_age)
 
     def post_check(self, values, dataset_pool):
@@ -48,7 +48,7 @@ from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 from numpy import array
-from numpy.ma import allequal
+from numpy import ma
 
 class Tests(opus_unittest.OpusTestCase):
     variable_name = "urbansim.building.building_age"
@@ -81,7 +81,7 @@ class Tests(opus_unittest.OpusTestCase):
         
         should_be = array([10, 5, 0, 5])
         
-        self.assert_(allequal( values, should_be), 
+        self.assert_(ma.allequal( values, should_be), 
                      msg = "Error in " + self.variable_name)
 
 

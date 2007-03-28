@@ -40,7 +40,7 @@ class construction_cost_per_unit(Variable):
 #from opus_core.dataset_pool import DatasetPool
 #from opus_core.storage_factory import StorageFactory
 #from numarray import array, Int32
-#from numpy.ma import allequal
+#from numpy import ma
 #import numarray.strings as strarray
 
 #class Tests(opus_unittest.OpusTestCase):
@@ -81,7 +81,7 @@ class construction_cost_per_unit(Variable):
         
         #should_be = array([62.5, 200, 150, 70])
         
-        #self.assert_(allequal( values, should_be), 
+        #self.assert_(ma.allequal( values, should_be), 
                      #msg = "Error in " + self.variable_name)
 
 

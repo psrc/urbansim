@@ -36,7 +36,7 @@ if __name__=='__main__':
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
     from numpy import array
-    from numpy.ma import allclose
+    from numpy import ma
     from opus_core.resources import Resources        
     from psrc_parcel.datasets.businesses import BusinessDataset
         
@@ -60,7 +60,7 @@ if __name__=='__main__':
                 dataset = "business")
             should_be = array([1, 0, 1, 0, 1])
 
-            self.assertEqual(allclose(values, should_be, rtol=1e-7), \
+            self.assertEqual(ma.allclose(values, should_be, rtol=1e-7), \
                              True, msg = "Error in " + self.variable_name)
 
     unittest.main()
