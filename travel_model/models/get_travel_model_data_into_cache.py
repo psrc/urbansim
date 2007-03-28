@@ -18,7 +18,7 @@ from opus_core.store.mysql_storage import mysql_storage
 from opus_core.store.flt_storage import flt_storage
 from urbansim.datasets.zone_dataset import ZoneDataset
 from opus_core.resources import Resources
-from numpy import array, Float32, ones
+from numpy import array, float32, ones
 from os.path import join
 import os
 from opus_core.logger import logger
