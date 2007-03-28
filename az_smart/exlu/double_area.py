@@ -19,7 +19,7 @@ class double_area(Variable):
     """
     Double the area, double the fun.
     """ 
-    _return_type="Float32"
+    _return_type="float32"
         
     def dependencies(self):
         return ['az_smart.exlu.area']
