@@ -19,7 +19,7 @@ import time
 import urbansim
 import shutil
 from opus_core.logger import logger
-from numarray import logical_or, logical_and, array, where, zeros
+from numpy import logical_or, logical_and, array, where, zeros
 from opus_core.variables.variable_name import VariableName
 from opus_core.resources import Resources
 from travel_model.models.get_cache_data_into_travel_model import GetCacheDataIntoTravelModel

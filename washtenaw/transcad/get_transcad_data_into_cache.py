@@ -15,8 +15,8 @@
 from opus_core.resources import Resources
 from opus_core.logger import logger
 from urbansim.datasets.travel_data_dataset import TravelDataDataset
-from numarray import array, where, zeros, Float32, indices, logical_and
-import numarray.objects as obj
+from numpy import array, where, zeros, Float32, indices, logical_and
+import numpy.objects as obj
 from sets import Set
 from os.path import join
 import os, sets, shutil,re, csv

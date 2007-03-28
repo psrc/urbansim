@@ -14,7 +14,7 @@
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
-from numarray import where, Float32, zeros, logical_and
+from numpy import where, Float32, zeros, logical_and
 
 class developable_maximum_SSS_in_undeveloped_cell(Variable):
     """How many commercial sqft are at most developable for undeveloped gridcell after applying 

@@ -39,8 +39,8 @@ class number_of_development_events(Variable):
 from opus_core.tests import opus_unittest
 from urbansim.variable_test_toolbox import VariableTestToolbox
 from urbansim.datasets.region_dataset import RegionDataset
-from numarray import array
-from numarray.ma import allclose
+from numpy import array
+from numpy.ma import allclose
 
 class Tests(opus_unittest.OpusTestCase):
     variable_name = "washtenaw.region.number_of_development_events"
