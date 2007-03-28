@@ -40,7 +40,7 @@ from opus_core.tests import opus_unittest
 from urbansim.variable_test_toolbox import VariableTestToolbox
 from urbansim.datasets.region_dataset import RegionDataset
 from numpy import array
-from numpy.ma import allclose
+from numpy import ma
 
 class Tests(opus_unittest.OpusTestCase):
     variable_name = "washtenaw.region.number_of_development_events"
@@ -62,7 +62,7 @@ class Tests(opus_unittest.OpusTestCase):
 
         should_be = array([112])
         
-        self.assertEqual(allclose(values, should_be, rtol=1e-2), 
+        self.assertEqual(ma.allclose(values, should_be, rtol=1e-2), 
                          True, msg = "Error in " + self.variable_name)
 
 
