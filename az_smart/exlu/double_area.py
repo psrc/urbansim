@@ -29,7 +29,7 @@ class double_area(Variable):
         return values
         
 
-from numarray import array
+from numpy import array
 
 from opus_core.tests import opus_unittest
 from opus_core.tests.utils.variable_tester import VariableTester

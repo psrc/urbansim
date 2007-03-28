@@ -20,7 +20,7 @@ class ExluDataset(Dataset):
 
 from opus_core.tests import opus_unittest
 
-from numarray import array
+from numpy import array
 
 from opus_core.storage_factory import StorageFactory
 
