@@ -13,7 +13,7 @@
 # 
 
 from opus_core.resources import Resources
-from numarray import array, Float32, ones
+from numpy import array, Float32, ones
 from os.path import join
 import os
 from opus_core.logger import logger
