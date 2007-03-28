@@ -14,7 +14,7 @@
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
-from numarray import where, zeros, Bool
+from numpy import where, zeros, Bool
 
 class is_pre_DDD(Variable):
     """Returns a boolean indicating if the parcel was built before 1940"""
@@ -38,11 +38,11 @@ class is_pre_DDD(Variable):
 if __name__=='__main__':
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numarray import array
-    from numarray.ma import allequal
+    from numpy import array
+    from numpy.ma import allequal
     from opus_core.resources import Resources    
     from psrc_parcel.datasets.parcels import ParcelSet
-    import numarray.strings as strarray
+    import numpy.strings as strarray
     
     class Tests(unittest.TestCase):
         variable_name = "psrc_parcel.parcel.is_pre_1940"

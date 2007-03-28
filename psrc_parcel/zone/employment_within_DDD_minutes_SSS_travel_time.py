@@ -16,8 +16,8 @@ from opus_core.logger import logger
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
 from variable_functions import my_attribute_label
-from numarray import where, zeros, Float32, array
-from numarray.nd_image import sum as nd_image_sum
+from numpy import where, zeros, Float32, array
+from numpy.nd_image import sum as nd_image_sum
 
 class employment_within_DDD_minutes_SSS_travel_time(Variable):
     """total number of jobs for zones within DDD minutes SSS (mode) travel time,
@@ -48,8 +48,8 @@ class employment_within_DDD_minutes_SSS_travel_time(Variable):
 if __name__=='__main__':
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numarray import array
-    from numarray.ma import allclose
+    from numpy import array
+    from numpy.ma import allclose
     from psrc_parcel.opus_package_info import package
     
     class Tests(unittest.TestCase):

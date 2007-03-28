@@ -35,8 +35,8 @@ class persons(Variable):
 if __name__=='__main__':
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numarray import array
-    from numarray.ma import allclose
+    from numpy import array
+    from numpy.ma import allclose
     from opus_core.resources import Resources
     from psrc_parcel.datasets.persons import PersonSet
     

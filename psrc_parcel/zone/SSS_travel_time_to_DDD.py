@@ -15,7 +15,7 @@
 from opus_core.logger import logger
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
-from numarray import where, zeros, Float32
+from numpy import where, zeros, Float32
 
 class SSS_travel_time_to_DDD(Variable):
     """Travel time by mode SSS to the zone whose ID is the DDD.
@@ -46,8 +46,8 @@ class SSS_travel_time_to_DDD(Variable):
 if __name__=='__main__':
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numarray import array
-    from numarray.ma import allclose
+    from numpy import array
+    from numpy.ma import allclose
     from psrc.opus_package_info import package
     
     class Tests(unittest.TestCase):

@@ -14,8 +14,8 @@
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
-from numarray.ma import masked_where, filled
-from numarray import Float32, concatenate, array
+from numpy.ma import masked_where, filled
+from numpy import Float32, concatenate, array
 from opus_core.misc import do_id_mapping_dict_from_array
 
 class development_project_proposal_id(Variable):
@@ -46,8 +46,8 @@ class development_project_proposal_id(Variable):
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
-from numarray import array
-import numarray.strings as strarray
+from numpy import array
+import numpy.strings as strarray
 from opus_core.tests.utils.variable_tester import VariableTester
 
 class Tests(opus_unittest.OpusTestCase):

@@ -14,7 +14,7 @@
 
 from opus_core.variables.variable import Variable
 #from variable_functions import my_attribute_label
-from numarray import where
+from numpy import where
 
 class construction_cost_per_unit(Variable):
     """ 
@@ -35,8 +35,8 @@ class construction_cost_per_unit(Variable):
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
-from numarray import array
-import numarray.strings as strarray
+from numpy import array
+import numpy.strings as strarray
 from opus_core.tests.utils.variable_tester import VariableTester
 
 class Tests(opus_unittest.OpusTestCase):

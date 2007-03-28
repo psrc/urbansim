@@ -34,8 +34,8 @@ class building_class_name(Variable):
 #if __name__=='__main__':
 #    import unittest
 #    from urbansim.variable_test_toolbox import VariableTestToolbox
-#    from numarray import array
-#    from numarray.ma import allequal
+#    from numpy import array
+#    from numpy.ma import allequal
 #    from opus_core.resources import Resources    
 #    from psrc_parcel.datasets.parcels import ParcelSet    
 #    

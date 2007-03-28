@@ -12,7 +12,7 @@
 # other acknowledgments.
 # 
 
-from numarray import where, zeros
+from numpy import where, zeros
 import re
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
@@ -49,8 +49,8 @@ from opus_core.tests import opus_unittest
 from urbansim.datasets.building_type_dataset import BuildingTypeDataset
 from urbansim.datasets.building_dataset import BuildingDataset
 from opus_core.resources import Resources
-from numarray import array, strings, arange
-from numarray.ma import allequal
+from numpy import array, strings, arange
+from numpy.ma import allequal
 from opus_core.storage_factory import StorageFactory
 
 

@@ -16,7 +16,7 @@ from opus_core.resources import Resources
 from opus_core.regression_model import RegressionModel
 from psrc_parcel.datasets.development_project_proposal_dataset import DevelopmentProjectProposalDataset
 from psrc_parcel.datasets.development_project_proposal_dataset import create_from_parcel_and_development_template
-from numarray import exp, arange, logical_and, zeros, where, NumArray, array
+from numpy import exp, arange, logical_and, zeros, where, NumArray, array
 
 class ProposedDevelopmentProjectSalePriceModel(RegressionModel):
     """calculate the expected sale price for proposed development projects

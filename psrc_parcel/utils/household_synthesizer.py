@@ -13,8 +13,8 @@
 # 
 
 import os
-from numarray import Float32, Float64, searchsorted, array, zeros, where
-from numarray.random_array import random
+from numpy import Float32, Float64, searchsorted, array, zeros, where
+from numpy.random_array import random
 from opus_core.misc import ncumsum
 from opus_core.simulation_state import SimulationState
 from urbansim.session_configuration import SessionConfiguration

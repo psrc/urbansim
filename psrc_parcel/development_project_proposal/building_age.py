@@ -14,7 +14,7 @@
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
-from numarray.ma import masked_where
+from numpy.ma import masked_where
 from opus_core.simulation_state import SimulationState
 
 class building_age(Variable):
@@ -47,8 +47,8 @@ class building_age(Variable):
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
-from numarray import array
-from numarray.ma import allequal
+from numpy import array
+from numpy.ma import allequal
 
 class Tests(opus_unittest.OpusTestCase):
     variable_name = "urbansim.building.building_age"

@@ -14,8 +14,8 @@
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
-from numarray.ma import masked_where, filled
-from numarray import Float32
+from numpy.ma import masked_where, filled
+from numpy import Float32
 
 class building_sqft_per_unit(Variable):
     """ (building_sqft) / residential_units."""
@@ -39,8 +39,8 @@ class building_sqft_per_unit(Variable):
 if __name__=='__main__':
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numarray import array
-    from numarray.ma import allclose
+    from numpy import array
+    from numpy.ma import allclose
     from opus_core.resources import Resources    
     from psrc_parcel.datasets.building_dataset import BuildingDataset
     from opus_core.storage_factory import StorageFactory

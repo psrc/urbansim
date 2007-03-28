@@ -18,7 +18,7 @@ from opus_core.choice_model import ChoiceModel
 from opus_core.chunk_specification import ChunkSpecification
 from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.datasets.dataset import Dataset
-from opus_core.opusnumarray import cumsum
+from opus_core.opusnumpy import cumsum
 from urbansim.models.agent_location_choice_model_member import AgentLocationChoiceModelMember
 from urbansim.models.location_choice_model import LocationChoiceModel
 from urbansim.datasets.development_event_dataset import DevelopmentEventDataset
@@ -27,11 +27,11 @@ from opus_core.misc import remove_elements_with_matched_prefix_from_list, remove
 from opus_core.misc import unique_values
 from opus_core.variable_name import VariableName
 from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
-from opus_core.opusnumarray import sum
-from numarray import zeros, arange, where, ones, logical_or, logical_and, logical_not, Int32, Float32, sometrue
-from numarray import compress, take, alltrue, argsort, array, Int8, Bool, ceil, sort, minimum, reshape, concatenate
-from numarray.ma import filled
-from numarray.random_array import randint
+from opus_core.opusnumpy import sum
+from numpy import zeros, arange, where, ones, logical_or, logical_and, logical_not, Int32, Float32, sometrue
+from numpy import compress, take, alltrue, argsort, array, Int8, Bool, ceil, sort, minimum, reshape, concatenate
+from numpy.ma import filled
+from numpy.random_array import randint
 from gc import collect
 from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory

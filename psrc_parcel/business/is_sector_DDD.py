@@ -15,7 +15,7 @@
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
-import numarray.strings as strarray
+import numpy.strings as strarray
     
 class is_sector_DDD(Variable):
     """is business of sector SSS (cie, med, mips, pdr, retail_ent, visitor)."""
@@ -35,8 +35,8 @@ class is_sector_DDD(Variable):
 if __name__=='__main__':
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numarray import array
-    from numarray.ma import allclose
+    from numpy import array
+    from numpy.ma import allclose
     from opus_core.resources import Resources        
     from psrc_parcel.datasets.businesses import BusinessDataset
         

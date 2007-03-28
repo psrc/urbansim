@@ -13,8 +13,8 @@
 #
 
 from opus_core.variables.variable import Variable
-from numarray.ma import masked_where, filled
-from numarray import Float32
+from numpy.ma import masked_where, filled
+from numpy import Float32
 
 class expected_rate_of_return_on_investment(Variable):
     """
@@ -44,8 +44,8 @@ class expected_rate_of_return_on_investment(Variable):
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
-from numarray import array
-import numarray.strings as strarray
+from numpy import array
+import numpy.strings as strarray
 from opus_core.tests.utils.variable_tester import VariableTester
 
 class Tests(opus_unittest.OpusTestCase):

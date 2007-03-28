@@ -15,7 +15,7 @@
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
-from numarray import zeros, where
+from numpy import zeros, where
 
 class nonresidential_building_sqft(Variable):
     """total building_sqft in nonresidential class. """
@@ -41,13 +41,13 @@ class nonresidential_building_sqft(Variable):
 if __name__=='__main__':
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numarray import array, arange
-    from numarray.ma import allclose
+    from numpy import array, arange
+    from numpy.ma import allclose
     from opus_core.resources import Resources
     from urbansim.datasets.building_dataset import BuildingDataset
     from psrc_parcel.datasets.building_use_classification_dataset import BuildingUseClassificationDataset
     from opus_core.storage_factory import StorageFactory
-    import numarray.strings as strarray
+    import numpy.strings as strarray
     
     class Tests(unittest.TestCase):
         variable_name = "psrc_parcel.building.nonresidential_building_sqft"

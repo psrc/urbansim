@@ -13,7 +13,7 @@
 #
 
 from opus_core.variables.variable import Variable
-from numarray.ma import masked_where
+from numpy.ma import masked_where
 
 class construction_cost(Variable):
     """construction cost of the developmentt project proposal
@@ -34,8 +34,8 @@ class construction_cost(Variable):
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
-from numarray import array
-import numarray.strings as strarray
+from numpy import array
+import numpy.strings as strarray
 from opus_core.tests.utils.variable_tester import VariableTester
 
 class Tests(opus_unittest.OpusTestCase):

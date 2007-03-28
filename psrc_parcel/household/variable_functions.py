@@ -12,7 +12,7 @@
 # other acknowledgments.
 # 
 
-from numarray import where, zeros
+from numpy import where, zeros
 from urbansim.functions import attribute_label
   
 def my_attribute_label(attribute_name):

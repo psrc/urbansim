@@ -13,9 +13,9 @@
 # 
 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
-from numarray import arange, Bool, Float, logical_and, logical_or
-from numarray import reshape, repeat, ones, zeros, where
-from numarray.ma import masked_where, minimum, filled, maximum
+from numpy import arange, Bool, Float, logical_and, logical_or
+from numpy import reshape, repeat, ones, zeros, where
+from numpy.ma import masked_where, minimum, filled, maximum
 from opus_core.misc import remove_elements_with_matched_prefix_from_list, remove_all
 
 class ParcelDataset(UrbansimDataset):
@@ -84,9 +84,9 @@ class ParcelDataset(UrbansimDataset):
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
-from numarray import array
-import numarray.strings as strarray
-from numarray.ma import allequal, allclose
+from numpy import array
+import numpy.strings as strarray
+from numpy.ma import allequal, allclose
 
 class Tests(opus_unittest.OpusTestCase):
     def test_get_development_constraints(self):

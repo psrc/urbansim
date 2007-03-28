@@ -16,10 +16,10 @@ from opus_core.resources import Resources
 from opus_core.misc import DebugPrinter, unique_values
 from opus_core.misc import concatenate
 from opus_core.model import Model
-from numarray import arange, array, where, Int8, zeros, ones, compress, strings, Int32
-from numarray import logical_not
-import numarray.objects as objects
-from numarray.nd_image import sum as nd_image_sum
+from numpy import arange, array, where, Int8, zeros, ones, compress, strings, Int32
+from numpy import logical_not
+import numpy.objects as objects
+from numpy.nd_image import sum as nd_image_sum
 from opus_core.sampling_toolbox import sample_noreplace, probsample_replace
 from opus_core.logger import logger
 

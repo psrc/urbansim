@@ -13,7 +13,7 @@
 #
 
 from opus_core.variables.variable import Variable
-from numarray import zeros
+from numpy import zeros
 
 class demolition_cost(Variable):
     """return a dummy demolition cost (0s).

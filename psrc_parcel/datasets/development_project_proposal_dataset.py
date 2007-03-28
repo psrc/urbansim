@@ -19,7 +19,7 @@ from opus_core.datasets.interaction_dataset import InteractionDataset
 from opus_core.storage_factory import StorageFactory
 from opus_core.resources import Resources
 from opus_core.variables.variable_name import VariableName
-from numarray import arange
+from numpy import arange
 
 class DevelopmentProjectProposalDataset(UrbansimDataset):
     """ contains the proposed development projects, which is created from interaction of parcels with development template;
@@ -118,8 +118,8 @@ def create_from_parcel_and_development_template(parcel_dataset,
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
-from numarray import array
-from numarray.ma import allequal
+from numpy import array
+from numpy.ma import allequal
 
 class Tests(opus_unittest.OpusTestCase):
     def setUp(self):

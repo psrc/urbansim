@@ -16,9 +16,9 @@ from opus_core.resources import Resources
 from urbansim.models.location_choice_model import LocationChoiceModel
 from opus_core.misc import remove_elements_with_matched_prefix_from_list, remove_all
 from opus_core.variable_name import VariableName
-from opus_core.opusnumarray import sum
-from numarray import zeros, arange, where, ones, logical_or, logical_and, logical_not, Int32, Float32
-from numarray import compress, take, alltrue, argsort, array, Int8, Bool
+from opus_core.opusnumpy import sum
+from numpy import zeros, arange, where, ones, logical_or, logical_and, logical_not, Int32, Float32
+from numpy import compress, take, alltrue, argsort, array, Int8, Bool
 from opus_core.sampling_toolbox import probsample_noreplace, sample_noreplace
 from gc import collect
 from opus_core.logger import logger

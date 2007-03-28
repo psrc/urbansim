@@ -14,7 +14,7 @@
 
 from opus_core.variables.variable import Variable
 #from variable_functions import my_attribute_label
-from numarray import Bool, zeros, Bool, logical_and
+from numpy import Bool, zeros, Bool, logical_and
 
 class is_size_fit(Variable):
     """whether the proposed development template is viable for a given parcel and its constraints
@@ -40,7 +40,7 @@ class is_size_fit(Variable):
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
-from numarray import array
+from numpy import array
 from opus_core.tests.utils.variable_tester import VariableTester
 
 class Tests(opus_unittest.OpusTestCase):
