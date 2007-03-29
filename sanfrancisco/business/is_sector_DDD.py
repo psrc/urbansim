@@ -15,7 +15,6 @@
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
-import numpy.strings as strarray
     
 class is_sector_DDD(Variable):
     """is business of sector SSS (cie, med, mips, pdr, retail_ent, visitor)."""
@@ -48,7 +47,7 @@ if __name__=='__main__':
 
             resources = Resources({'data':
                                    {"business_id":array([1,2,3,4,5]),
-                                    "sector":  strarray.array(["CIE", "mips", "cie", "pdr", "cie"]),
+                                    "sector":  array(["CIE", "mips", "cie", "pdr", "cie"]),
                                     "building_use_id": array([14, 1, 14, 2, 14])
                                     },
                                   })

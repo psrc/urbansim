@@ -15,7 +15,7 @@
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
-import numpy.strings as strarray
+from numpy import array
     
 class is_sector_SSS(Variable):
     """is business of sector SSS (cie, med, mips, pdr, retail_ent, visitor)."""
@@ -34,12 +34,11 @@ class is_sector_SSS(Variable):
         name = self.get_dataset().get_join_data(building_use, "building_use",
                                                 join_attribute="building_use_id")
         name = name.amap(lambda x: x.lower())
-        return  strarray.array(name) == self.sector
+        return  array(name) == self.sector
     
 if __name__=='__main__':
     import unittest
     from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numpy import array
     from numpy import ma
     from opus_core.resources import Resources        
     from sanfrancisco.datasets.businesses import BusinessSet
@@ -52,7 +51,7 @@ if __name__=='__main__':
 
             resources = Resources({'data':
                                    {"business_id":array([1,2,3,4,5]),
-                                    "sector":  strarray.array(["CIE", "mips", "cie", "pdr", "cie"]),
+                                    "sector":  array(["CIE", "mips", "cie", "pdr", "cie"]),
                                     },
                                   })
             businesses = BusinessSet(resources=resources, in_storage_type="RAM")

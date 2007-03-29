@@ -52,7 +52,7 @@ import unittest
 from sanfrancisco.datasets.building_use_classification_dataset import BuildingUseClassificationDataset
 from urbansim.datasets.building_dataset import BuildingDataset
 from opus_core.resources import Resources
-from numpy import array, strings, arange
+from numpy import array, arange
 from opus_core.storage_factory import StorageFactory
 from numpy import ma
 class Tests(unittest.TestCase):
@@ -66,8 +66,8 @@ class Tests(unittest.TestCase):
             Resources({
                 'out_table_name':bu_table_name,
                 'values': {"class_id":array([1,2]), 
-                           "name": strings.array(["residential", "nonresidential"]),
-                           "units": strings.array(["residential_units", "building_sqft"])
+                           "name": array(["residential", "nonresidential"]),
+                           "units": array(["residential_units", "building_sqft"])
                            },
                 })
             )
