@@ -68,7 +68,6 @@ from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 from numpy import array, int32
-import numpy.strings as strarray
 from opus_core.tests.utils.variable_tester import VariableTester
 
 class Tests(opus_unittest.OpusTestCase):
@@ -95,7 +94,7 @@ class Tests(opus_unittest.OpusTestCase):
             'building_type':
             {
                 "building_type_id":array([1,  2, 3]),
-                "density_name":  strarray.array(['units_per_acre',  'far',  'units_per_acre']),
+                "density_name":  array(['units_per_acre',  'far',  'units_per_acre']),
                 "density_convertor": array([self.ACRE, 1, self.ACRE])
             },
             'development_project_proposal':

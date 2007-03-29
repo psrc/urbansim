@@ -47,7 +47,6 @@ if __name__=='__main__':
     from urbansim.datasets.building_dataset import BuildingDataset
     from psrc_parcel.datasets.building_use_classification_dataset import BuildingUseClassificationDataset
     from opus_core.storage_factory import StorageFactory
-    import numpy.strings as strarray
     
     class Tests(unittest.TestCase):
         variable_name = "psrc_parcel.building.nonresidential_building_sqft"
@@ -61,7 +60,7 @@ if __name__=='__main__':
                 Resources({
                     'out_table_name':table1,
                     'values': {"class_id":array([1,2]), 
-                               "class_name": strarray.array(["nonresidential","residential"])
+                               "class_name": array(["nonresidential","residential"])
                                },
                     })
                 )

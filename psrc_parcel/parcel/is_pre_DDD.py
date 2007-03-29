@@ -42,7 +42,6 @@ if __name__=='__main__':
     from numpy import ma
     from opus_core.resources import Resources    
     from psrc_parcel.datasets.parcels import ParcelSet
-    import numpy.strings as strarray
     
     class Tests(unittest.TestCase):
         variable_name = "psrc_parcel.parcel.is_pre_1940"

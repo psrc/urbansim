@@ -15,7 +15,6 @@
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
-import numpy.strings as strarray
     
 class has_DDD_workers(Variable):
     """if a household has DDD workers"""

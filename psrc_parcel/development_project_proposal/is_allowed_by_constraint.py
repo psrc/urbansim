@@ -67,7 +67,6 @@ from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 from numpy import array
-import numpy.strings as strarray
 from opus_core.tests.utils.variable_tester import VariableTester
 
 class Tests(opus_unittest.OpusTestCase):
@@ -80,16 +79,16 @@ class Tests(opus_unittest.OpusTestCase):
             {
                 'template_id': array([1,2,3,4]),
                 "building_type_id":array([1, 1, 2, 2]),
-                'density_name':   strarray.array(['units_per_acre', 'units_per_acre', 'far', 'far']),
-                'constraint_name':strarray.array(['units_per_acre', 'units_per_acre', 'far', 'far']),
+                'density_name':   array(['units_per_acre', 'units_per_acre', 'far', 'far']),
+                'constraint_name':array(['units_per_acre', 'units_per_acre', 'far', 'far']),
                 'units_per_acre': array([0.2, 2, 0, 0]),
                 'far':array([0, 0, 25, 7])
             },
             'building_type':
             {
                 "building_type_id":array([1, 2]),
-                'density_name':   strarray.array(['units_per_acre','far']),
-                'constraint_name':strarray.array(['units_per_acre','far']),
+                'density_name':   array(['units_per_acre','far']),
+                'constraint_name':array(['units_per_acre','far']),
             },
             'development_constraint':
             {

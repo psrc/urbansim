@@ -49,7 +49,7 @@ from opus_core.tests import opus_unittest
 from urbansim.datasets.building_type_dataset import BuildingTypeDataset
 from urbansim.datasets.building_dataset import BuildingDataset
 from opus_core.resources import Resources
-from numpy import array, strings, arange
+from numpy import array, arange
 from numpy import ma
 from opus_core.storage_factory import StorageFactory
 
@@ -66,8 +66,8 @@ class Tests(opus_unittest.OpusTestCase):
                 'out_table_name':building_types_table_name,
                 'values':{
                     'building_type_id':array([1,2]), 
-                    'name': strings.array(['residential', 'commercial']),
-                    'units': strings.array(['residential_units', 'commercial_sqft'])
+                    'name': array(['residential', 'commercial']),
+                    'units': array(['residential_units', 'commercial_sqft'])
                     }
                 })
             )
