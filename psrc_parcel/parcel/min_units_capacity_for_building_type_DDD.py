@@ -16,7 +16,7 @@ from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 
 class min_units_capacity_for_building_type_DDD(Variable):
-     """ minimum number of units allowed by development constraints  """
+    """ minimum number of units allowed by development constraints  """
 
     def __init__(self, id_number):
         Variable.__init__(self)
