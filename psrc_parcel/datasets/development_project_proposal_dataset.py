@@ -91,8 +91,8 @@ def create_from_parcel_and_development_template(parcel_dataset,
     interactionset = InteractionDataset(dataset1=parcel_dataset, 
                                     dataset2=development_template_dataset, 
                                     index1=index)
-    parcel_ids = interactionset.get_attribute("parcel_id").flat
-    template_ids = interactionset.get_attribute("template_id").flat
+    parcel_ids = interactionset.get_attribute("parcel_id").ravel()
+    template_ids = interactionset.get_attribute("template_id").ravel()
         
     storage = StorageFactory().get_storage('dict_storage')        
     storage._write_dataset(out_table_name='development_project_proposals',

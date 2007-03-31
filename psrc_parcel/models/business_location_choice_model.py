@@ -65,7 +65,7 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
                                     #building_use_id == proposed_agent_use_id)
                 
         # for memory reasons, discard columns that have only zeros
-        logger.log_status("shape of weight_array: ", weight_array.getshape())
+        logger.log_status("shape of weight_array: ", weight_array.shape)
         keep = where(sum(weight_array, axis=0, type=int32))[0]
         where_available = where_available[keep]
 
