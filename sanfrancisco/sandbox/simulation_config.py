@@ -51,5 +51,5 @@ my_configuration = {
         ),                      
     'base_year':2000,
     'years':(2001, 2002),
-    'seed':(1,1),
+    'seed':1,#(1,1),
     }

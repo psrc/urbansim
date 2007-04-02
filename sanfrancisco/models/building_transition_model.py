@@ -16,7 +16,7 @@ from opus_core.resources import Resources
 from opus_core.misc import DebugPrinter, concatenate
 from opus_core.variables.variable_name import VariableName
 from opus_core.model import Model
-from numpy.random_array import randint
+from numpy.random import randint
 from opus_core.opusnumpy import cumsum
 from opus_core.logger import logger
 from numpy import arange, array, where, zeros, ones, float32, int32, int8
