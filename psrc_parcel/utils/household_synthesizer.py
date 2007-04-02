@@ -87,7 +87,7 @@ class HouseholdSynthesizer(object):
                 print "WARNING: zone %s has %s households but only %s units" % (zone_id, is_household_in_this_zone.sum(), capacity)
                 continue
             
-            prob = datasets['building'].get_attribute(capacity_attribute_name) * is_building_in_this_zone / array(capacity, type=float64)
+            prob = datasets['building'].get_attribute(capacity_attribute_name) * is_building_in_this_zone / array(capacity, dtype=float64)
 
             r = random(sum(is_household_in_this_zone * is_household_unplace))
             prob_cumsum = ncumsum(prob)

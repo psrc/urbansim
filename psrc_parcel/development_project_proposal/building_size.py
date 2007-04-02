@@ -34,7 +34,7 @@ class building_size(Variable):
         types = bt.get_id_attribute()
         units = bt.get_attribute("units")
         my_type = self.get_dataset().get_attribute("building_type_id")
-        result = zeros(self.get_dataset().size(), type = self._return_type)
+        result = zeros(self.get_dataset().size(), dtype= self._return_type)
         for itype in range(bt.size()):
             idx = where(my_type == types[itype])[0]
             units_name = units[itype]

@@ -48,7 +48,7 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
         
     def get_weights_for_sampling_locations(self, agent_set, agents_index, data_objects=None):
         where_available = where(self.capacity)[0]
-        weight_array = (ones((agents_index.size, where_available.size), type=int8)).astype(bool8)
+        weight_array = (ones((agents_index.size, where_available.size), dtype=int8)).astype(bool8)
         
         building_sqft = self.choice_set.get_attribute_by_index('building_sqft', where_available)
         building_use_id = self.choice_set.get_attribute_by_index('building_use_id', where_available)
@@ -66,7 +66,7 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
                 
         # for memory reasons, discard columns that have only zeros
         logger.log_status("shape of weight_array: ", weight_array.shape)
-        keep = where(sum(weight_array, axis=0, type=int32))[0]
+        keep = where(sum(weight_array, axis=0, dtype=int32))[0]
         where_available = where_available[keep]
 
         weight_array = take(weight_array, keep, axis=1)

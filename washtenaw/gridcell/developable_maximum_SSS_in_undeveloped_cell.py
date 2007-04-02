@@ -36,7 +36,7 @@ class developable_maximum_SSS_in_undeveloped_cell(Variable):
         is_developable = self.get_dataset().get_attribute("is_in_development_type_group_developable")
         is_undeveloped = 1 - self.get_dataset().get_attribute("is_developed")
         w = where(logical_and(is_developable, is_undeveloped))[0]
-        result = zeros((self.get_dataset().size(),),type=float32)
+        result = zeros((self.get_dataset().size(),),dtype=float32)
         result[w] = self.get_dataset().get_development_constrained_capacity(
             constraints, 
             dataset_pool=dataset_pool,

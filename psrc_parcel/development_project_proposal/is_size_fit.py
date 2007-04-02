@@ -28,7 +28,7 @@ class is_size_fit(Variable):
 
     def compute(self, dataset_pool):
         dp = self.get_dataset()
-        results = zeros(dp.size(), type=bool8)
+        results = zeros(dp.size(), dtype=bool8)
         results[logical_and(dp.get_attribute("vacant_land_area") >= dp.get_attribute("land_area_min"),
                               dp.get_attribute("vacant_land_area") <= dp.get_attribute("land_area_max") )] = 1
         return results

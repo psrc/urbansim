@@ -24,7 +24,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
     model_name = "Development Project Proposal Regression Model"
     model_short_name = "PDPRM"
     outcome_attribute_name = "regression_result"
-    defalult_value = array([0], type=int16)  
+    defalult_value = array([0], dtype=int16)  
     # or defalult_value = 0.0, use 1 element array to control the type of the outcome attribute
     
     def __init__(self, regression_procedure="opus_core.linear_regression", 

@@ -25,5 +25,5 @@ class uniform_capacity(Variable):
         
     def compute(self,  dataset_pool):
         parcels = self.get_dataset()
-        return ones(parcels.size(), type=int8)
+        return ones(parcels.size(), dtype=int8)
     

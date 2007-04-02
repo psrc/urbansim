@@ -40,7 +40,7 @@ class units_proposed(Variable):
         proposals = self.get_dataset()
         templates = dataset_pool.get_dataset("development_template")
         #template_index = templates.get_id_index(proposals.get_attribute("template_id"))
-        #density = zeros(templates.size(), type=Float)
+        #density = zeros(templates.size(), dtype=Float)
         
         #for density_name in unique_values(templates.get_attribute("density_name")):
             #templates.compute_variables("%s.%s" % density_name)
@@ -83,13 +83,13 @@ class Tests(opus_unittest.OpusTestCase):
                 'building_type_id': array([1, 1, 2, 3]),
                 'density':array([0.6, 2, 10, 5]),
                 'percent_land_overhead':array([0, 10, 0, 20]),
-                'land_area_min': array([0, 10, 4, 30],type=int32) * self.ACRE,
-                'land_area_max': array([2, 20, 8, 100],type=int32) * self.ACRE
+                'land_area_min': array([0, 10, 4, 30],dtype=int32) * self.ACRE,
+                'land_area_max': array([2, 20, 8, 100],dtype=int32) * self.ACRE
             },
             'parcel':
             {
                 "parcel_id":        array([1,   2,    3]),
-                "vacant_land_area": array([1, 50,  200],type=int32)* self.ACRE,
+                "vacant_land_area": array([1, 50,  200],dtype=int32)* self.ACRE,
             },
             'building_type':
             {

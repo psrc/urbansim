@@ -28,7 +28,7 @@ class is_pre_DDD(Variable):
 
     def compute(self,  dataset_pool):
         year_built = self.get_dataset().get_attribute("year_built")
-        results = zeros(year_built.size, type=bool8)
+        results = zeros(year_built.size, dtype=bool8)
         results[where(year_built<self.year)] = 1
         return results
 

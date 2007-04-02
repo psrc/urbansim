@@ -41,7 +41,7 @@ class is_allowed_by_constraint(Variable):
         #template_index = templates.get_id_index(proposals.get_attribute("template_id"))
         parcel_index = parcels.get_id_index(proposals.get_attribute("parcel_id"))
 
-        results = zeros(proposals.size(), type=bool8)
+        results = zeros(proposals.size(), dtype=bool8)
         for i_template in range(templates.size()):
             this_template_id = templates.get_attribute("template_id")[i_template]
             building_type_id = templates.get_attribute("building_type_id")[i_template]

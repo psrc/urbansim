@@ -61,11 +61,11 @@ class BuildingTransitionModel( Model ):
         building_id_name = building_set.get_id_name()[0]
         location_id_name = location_set.get_id_name()[0]
         new_buildings = {building_id_name: array([]), 
-                         "building_use_id":array([], type=int8),
+                         "building_use_id":array([], dtype=int8),
                          "year_built": array([]),
 #                         "building_sqft": array([]),
 #                         "residential_units": array([]),
-                         "unit_price": array([], type = float32),
+                         "unit_price": array([], dtype= float32),
                          location_id_name: array([])}
         for attribute in unit_attributes:
             new_buildings[attribute] = array([])

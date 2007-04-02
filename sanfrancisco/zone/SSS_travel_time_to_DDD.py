@@ -40,7 +40,7 @@ class SSS_travel_time_to_DDD(Variable):
             time = travel_data.get_attribute_by_id(self.mode, keys)
         except:
             logger.log_warning("Variable %s returns zeros, since zone number %d is not in zoneset." % (self.my_name, self.dzone_id))
-            time = zeros(self.get_dataset().size(), type=float32)
+            time = zeros(self.get_dataset().size(), dtype=float32)
         return time
 
 if __name__=='__main__':

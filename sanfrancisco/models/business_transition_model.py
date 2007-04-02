@@ -46,8 +46,8 @@ class BusinessTransitionModel(Model):
         new_businesses = {self.location_id_name:array([]), 
                           "building_use_id":array([]),
                           business_id_name:array([]), 
-                          "sqft":array([], type=int32),
-                          "employees":array([], type=int32),}
+                          "sqft":array([], dtype=int32),
+                          "employees":array([], dtype=int32),}
         compute_resources = Resources(data_objects)
 #        compute_resources.merge({job_building_types.get_dataset_name():job_building_types, "debug":self.debug})
         business_set.compute_variables(
