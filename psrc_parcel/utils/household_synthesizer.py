@@ -14,7 +14,7 @@
 
 import os
 from numpy import float32, float64, searchsorted, array, zeros, where
-from numpy.random_array import random
+from numpy.random import random
 from opus_core.misc import ncumsum
 from opus_core.simulation_state import SimulationState
 from urbansim.session_configuration import SessionConfiguration
