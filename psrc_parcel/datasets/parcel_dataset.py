@@ -50,11 +50,11 @@ class ParcelDataset(UrbansimDataset):
         self.compute_variables(attributes_with_prefix, dataset_pool=dataset_pool)
         if index == None:
             index = arange(self.size())
-        development_constraints_array = ones((constraints.size(),index.size()), type=bool8)
+        development_constraints_array = ones((constraints.size(),index.size), type=bool8)
         for attr in attributes:
             values = self.get_attribute_by_index(attr, index)
             constr = reshape(constraints.get_attribute(attr), shape=(constraints.size(),1))
-            constr = repeat(constr, index.size(), axis=1)
+            constr = repeat(constr, index.size, axis=1)
             tmp = logical_or(constr == values, constr < 0)
             development_constraints_array = logical_and(development_constraints_array, tmp)
         
@@ -63,7 +63,7 @@ class ParcelDataset(UrbansimDataset):
         type_ids = constraints.get_attribute("building_type_id")
         #initialize results, set max to the max value found in constraints for each type
         for type_id in building_types.get_id_attribute():
-            self.development_constraints.update({type_id:zeros((index.size(),2), type=Float)})
+            self.development_constraints.update({type_id:zeros((index.size,2), type=Float)})
             w_this_type = where(type_ids == type_id)
             type_constraint_max = constraints.get_attribute("max_constraint")[w_this_type].max()
             self.development_constraints[type_id][:, 1] = type_constraint_max
@@ -71,7 +71,7 @@ class ParcelDataset(UrbansimDataset):
         for iconstr in range(constraints.size()):
             type_id = type_ids[iconstr]
             w = where(development_constraints_array[iconstr,:])[0]
-            if w.size() > 0:
+            if w.size > 0:
                 self.development_constraints[type_id][w,0] = \
                     ma.maximum(self.development_constraints[type_id][w,0],
                         constraints.get_attribute_by_index("min_constraint", iconstr))

@@ -173,7 +173,7 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
     def consider_proposals(self, proposals, target_vacancy_rates, data_objects):
         building_site = buildings.get_attribute("parcel_id")
         proposal_indexes = self.choice_set.get_id_index(proposals)
-        rejected_proposals = zeros(proposal_indexes.size())
+        rejected_proposals = zeros(proposal_indexes.size)
         proposal_site = self.choice_set.get_attribute_by_index("parcel_id", proposal_indexes)
         proposal_type = self.choice_set.get_attribute_by_index("type", proposal_indexes)
         pro_rated = self.choice_set.get_attribute_by_index("pro_rated", proposal_indexes)
@@ -235,9 +235,9 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
         for index in prorated:
             years = arange(2, years_to_build[index]) + this_year
             scheduled_year = concatenate((scheduled_year, years))
-            types = concatenate((types, repeat(types[index],years.size())))
+            types = concatenate((types, repeat(types[index],years.size)))
             units[index] = round(units[index] / years_to_build[index])  ##TODO: we may want a different prorating function
-            units = concatenate((units, units[index] * ones(years.size())))
+            units = concatenate((units, units[index] * ones(years.size)))
             ## append other building attributes
             
         storage = StorageFactory().get_storage('dict_storage')
@@ -246,7 +246,7 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
             Resources({
                 'out_table_name':storage_table_name,
                 'values':{
-                    'building_id':max_building_id + arange(1, scheduled_year.size()+1, 1),
+                    'building_id':max_building_id + arange(1, scheduled_year.size+1, 1),
                     'type': types,
                     'units': units,
                     'scheduled_year': scheduled_year

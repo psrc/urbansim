@@ -266,15 +266,15 @@ class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
         for index in prorated:
             years = arange(2, years_to_build[index]) + this_year
             scheduled_year = concatenate((scheduled_year, years))
-            types = concatenate((types, repeat(types[index],years.size())))
+            types = concatenate((types, repeat(types[index],years.size)))
             units[index] = round(units[index] / years_to_build[index])  ##TODO: we may want a different prorating function
-            units = concatenate((units, units[index] * ones(years.size())))
+            units = concatenate((units, units[index] * ones(years.size)))
             ## append other building attributes
             
         storage = StorageFactory().get_storage('dict_storage')
         storage._write_dataset(
             {'buildings_exogeneous':{
-                    'building_id':max_building_id + arange(1, scheduled_year.size()+1, 1),
+                    'building_id':max_building_id + arange(1, scheduled_year.size+1, 1),
                     'type': types,
                     'template_id': self.choice_set.get_attribute("template_id")[self.accepted_proposals],
                     'units': units,

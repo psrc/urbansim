@@ -97,7 +97,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
     storage = StorageFactory().get_storage('dict_storage')        
     storage._write_dataset(out_table_name='development_project_proposals',
                            values = {
-                               "proposal_id": arange(1, parcel_ids.size()+1, 1),
+                               "proposal_id": arange(1, parcel_ids.size+1, 1),
                                "parcel_id" : parcel_ids,
                                "template_id": template_ids,
                            }

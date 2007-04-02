@@ -35,7 +35,7 @@ class development_template_id(Variable):
         buildings = self.get_dataset()
         total_sqft = zeros(buildings.size())
         template_id = zeros(buildings.size())
-        for i in arange(unit_name.size()):
+        for i in arange(unit_name.size):
             unit_name = unit_names[i]
             if sqft_per_unit[i] > 0:
                 sqft = buildings.get_attribute(unit_name) * sqft_per_unit[i]

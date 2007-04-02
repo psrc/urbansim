@@ -48,7 +48,7 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
         
     def get_weights_for_sampling_locations(self, agent_set, agents_index, data_objects=None):
         where_available = where(self.capacity)[0]
-        weight_array = (ones((agents_index.size(), where_available.size()), type=int8)).astype(bool8)
+        weight_array = (ones((agents_index.size, where_available.size), type=int8)).astype(bool8)
         
         building_sqft = self.choice_set.get_attribute_by_index('building_sqft', where_available)
         building_use_id = self.choice_set.get_attribute_by_index('building_use_id', where_available)
@@ -56,7 +56,7 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
         proposed_agent_sizes = agent_set.get_attribute_by_index('sqft', agents_index)
         proposed_agent_use_ids = agent_set.get_attribute_by_index('building_use_id', agents_index)
         
-        for iagent in arange(agents_index.size()):
+        for iagent in arange(agents_index.size):
             proposed_agent_size = proposed_agent_sizes[iagent]
             proposed_agent_use_id = proposed_agent_use_ids[iagent]
             weight_array[iagent, :] = \
@@ -70,7 +70,7 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
         where_available = where_available[keep]
 
         weight_array = take(weight_array, keep, axis=1)
-        if where_available.size() <= 0:
+        if where_available.size <= 0:
             logger().log_warning("No developable locations available.")
         return (weight_array, where_available)
             
@@ -114,13 +114,13 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
             if self.location_id_string is not None:
                 agent_set.compute_variables(self.location_id_string, resources=Resources(data_objects))
             if portion_to_unplace < 1:
-                unplace_size = int(portion_to_unplace*index_to_unplace.size())
+                unplace_size = int(portion_to_unplace*index_to_unplace.size)
                 end_index_to_unplace = sample_noreplace(index_to_unplace, unplace_size)
             else:
                 end_index_to_unplace = index_to_unplace
-            logger.log_status("Unplace " + str(end_index_to_unplace.size()) + " agents.")
+            logger.log_status("Unplace " + str(end_index_to_unplace.size) + " agents.")
             agent_set.modify_attribute(self.choice_set.get_id_name()[0], 
-                                        -1*ones(end_index_to_unplace.size()), end_index_to_unplace)                                                  
+                                        -1*ones(end_index_to_unplace.size), end_index_to_unplace)                                                  
         # create agents for estimation        
         if agents_for_estimation_storage is not None:                 
             estimation_set = Dataset(in_storage = agents_for_estimation_storage, 

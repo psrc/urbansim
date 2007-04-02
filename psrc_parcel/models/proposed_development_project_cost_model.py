@@ -61,7 +61,7 @@ class ProposedDevelopmentProjectCostModel(RegressionModel):
         return_values = RegressionModel.run(self, specification, coefficients, dataset, 
                                     chunk_specification, data_objects, 
                                     run_config, debuglevel)
-        if (construction_cost_per_unit == None) or (construction_cost_per_unit.size() <=0):
+        if (construction_cost_per_unit == None) or (construction_cost_per_unit.size <=0):
             return None
         if "construction_cost_per_unit" not in dataset.get_known_attribute_names():
             dataset.add_attribute(zeros(dataset.size()), "construction_cost_per_unit")

@@ -131,14 +131,14 @@ class BuildingTransitionModel( Model ):
             #TODO: should the 'int' in the following line be 'ceil'?
             num_of_projects_to_select = max( 10, int( should_develop_units / mean_size ) )
             while True:
-                idx = concatenate( ( idx, randint( 0, history_values_without_zeros.size(), 
+                idx = concatenate( ( idx, randint( 0, history_values_without_zeros.size, 
                                                    shape=( num_of_projects_to_select, ) ) ) )
                 csum = cumsum( history_values_without_zeros[idx] )
                 idx = idx[where( csum <= should_develop_units )]
                 if csum[-1] >= should_develop_units:
                     break
                 
-            nbuildings = idx.size()
+            nbuildings = idx.size
 
             for attribute in unit_attributes:
                 

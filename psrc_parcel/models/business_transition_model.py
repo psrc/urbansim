@@ -94,11 +94,11 @@ class BusinessTransitionModel(Model):
                 % (difference, 
                    business_size, 
                    business_set.size(), 
-                   new_businesses[business_id_name].size(), 
-                   remove_businesses.size()), 
+                   new_businesses[business_id_name].size, 
+                   remove_businesses.size), 
             3)
         self.debug.print_debug("Number of unplaced businesses: %s" 
-            % where(business_set.get_attribute(self.location_id_name) <=0)[0].size(), 
+            % where(business_set.get_attribute(self.location_id_name) <=0)[0].size, 
             3)
         return difference
     
@@ -117,13 +117,13 @@ def get_array_without_non_placed_agents(business_set, arr, max_value=None, locat
         non_placed = where(business_set.get_attribute_by_index(location_id_name, arr) <= 0)[0]
     else:
         non_placed=array([])
-    size_non_placed = non_placed.size()    
+    size_non_placed = non_placed.size    
     if size_non_placed <= 0:
         return (arr, non_placed, 0)
     if (max_value is not None) and (size_non_placed > max_value):
         non_placed = sample_noreplace(non_placed, max_value)
-        size_non_placed = non_placed.size()
-    a = ones((arr.size(),))
+        size_non_placed = non_placed.size
+    a = ones((arr.size,))
     a[non_placed] = 0
     return (compress(a, arr), arr[non_placed], size_non_placed)
     

@@ -133,8 +133,8 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
         zone_ids = zone_set.get_id_attribute()
         
         #refactored from commented lines below, supposed to be faster
-        is_valid_from_zone_id = zeros(data_dict["from_zone_id"].size())
-        is_valid_to_zone_id = zeros(data_dict["to_zone_id"].size())
+        is_valid_from_zone_id = zeros(data_dict["from_zone_id"].size)
+        is_valid_to_zone_id = zeros(data_dict["to_zone_id"].size)
 
         for id in seq_taz:
             is_valid_from_zone_id += data_dict["from_zone_id"] == id
@@ -147,7 +147,7 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
         #keep_indices = []
         #o_zone_ids = []
         #d_zone_ids = []
-        #for index in range(data_dict["from_zone_id"].size()):
+        #for index in range(data_dict["from_zone_id"].size):
             #o = data_dict["from_zone_id"][index]
             #d = data_dict["to_zone_id"][index]
             #has_o = (seq_taz==o)

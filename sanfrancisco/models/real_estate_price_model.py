@@ -51,7 +51,7 @@ class RealEstatePriceModel(RegressionModel):
         outcome = RegressionModel.run(self, specification, coefficients, dataset, 
                                          index, chunk_specification, data_objects, 
                                          run_config, debuglevel)
-        if (outcome == None) or (outcome.size() <=0):
+        if (outcome == None) or (outcome.size <=0):
             return unit_price
         if index == None:
              index = arange(dataset.size())

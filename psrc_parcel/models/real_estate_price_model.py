@@ -49,7 +49,7 @@ class RealEstatePriceModel(RegressionModel):
         unit_price = RegressionModel.run(self, specification, coefficients, dataset, 
                                          index, chunk_specification, data_objects, 
                                          run_config, debuglevel)
-        if (unit_price == None) or (unit_price.size() <=0):
+        if (unit_price == None) or (unit_price.size <=0):
             return unit_price
         if index == None:
              index = arange(dataset.size())
