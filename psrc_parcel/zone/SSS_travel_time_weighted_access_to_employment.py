@@ -17,7 +17,7 @@ from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
 from variable_functions import my_attribute_label
 from numpy import where, power, float32, array
-from numpy.nd_image import sum as nd_image_sum
+from scipy.ndimage import sum as ndimage_sum
 
 class SSS_travel_time_weighted_access_to_employment(Variable):
     """sum of number of jobs in zone j divided by SSS (mode) travel time from zone i to j,
@@ -41,7 +41,7 @@ class SSS_travel_time_weighted_access_to_employment(Variable):
         num_jobs = self.get_dataset().get_attribute('employment')[zone_index]
 
         from_zone_id = travel_data.get_attribute("from_zone_id")        
-        results = array(nd_image_sum(num_jobs / time.astype(float32), labels = from_zone_id, index=zone_ids))
+        results = array(ndimage_sum(num_jobs / time.astype(float32), labels = from_zone_id, index=zone_ids))
         
         return results
 
