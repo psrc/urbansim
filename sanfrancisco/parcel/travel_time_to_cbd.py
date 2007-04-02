@@ -15,7 +15,7 @@
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
-from numpy.nd_image import correlate
+from scipy.ndimage import correlate
 from numpy import ma
 from opus_core.logger import logger
 
