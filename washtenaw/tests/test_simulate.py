@@ -34,7 +34,7 @@ if can_connect_to_trondheim.can_this_module_connect_to_mysql_on_trondheim(module
             self.simulation = RunSimulationFromMysql()
             run_configuration = Baseline()
             run_configuration['creating_baseyear_cache_configuration'].cache_directory_root = self.temp_dir
-            run_configuration['seed'] = (1,1)  # always start with same random seed
+            run_configuration['seed'] = 1,#(1,1)  # always start with same random seed
             self.simulation.prepare_for_simulation(run_configuration)
             self.completed_without_error = False
     
