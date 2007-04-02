@@ -16,7 +16,7 @@ from opus_core.resources import Resources
 from opus_core.regression_model import RegressionModel
 from psrc_parcel.datasets.development_project_proposal_dataset import DevelopmentProjectProposalDataset
 from psrc_parcel.datasets.development_project_proposal_dataset import create_from_parcel_and_development_template
-from numpy import exp, arange, logical_and, zeros, where, NumArray, array, float32, int16
+from numpy import exp, arange, logical_and, zeros, where, array, float32, int16
 
 class DevelopmentProjectProposalRegressionModel(RegressionModel):
     """Generic regression model on development project proposal dataset
