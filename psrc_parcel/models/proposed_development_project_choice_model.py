@@ -1,16 +1,16 @@
 #
 # UrbanSim software. Copyright (C) 1998-2007 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 import re
 from opus_core.resources import Resources
@@ -29,25 +29,25 @@ from opus_core.variable_name import VariableName
 from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
 from opus_core.opusnumpy import sum
 from numpy import zeros, arange, where, ones, logical_or, logical_and, logical_not, int32, float32, sometrue
-from numpy import compress, take, alltrue, argsort, array, int8, bool8, ceil, sort, minimum, reshape, concatenate
+from numpy import compress, take, alltrue, argsort, array, int8, bool8, ceil, sort, minimum, concatenate
 from gc import collect
 from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
 from psrc_parcel.datasets.proposed_development_project_dataset import create_from_parcel_and_development_template
 
 class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
-    
-    def __init__(self, choice_set, 
-                 sampler="opus_core.samplers.weighted_sampler", 
-                 utilities="opus_core.linear_utilities", 
-                 probabilities="opus_core.mnl_probabilities", 
+
+    def __init__(self, choice_set,
+                 sampler="opus_core.samplers.weighted_sampler",
+                 utilities="opus_core.linear_utilities",
+                 probabilities="opus_core.mnl_probabilities",
                  choices="urbansim.first_agent_first_choices",
-                 filter=None, submodel_string=None, 
+                 filter=None, submodel_string=None,
                  weight_string = None,
                  location_id_string = None,
-                 run_config=None, estimate_config=None, 
+                 run_config=None, estimate_config=None,
                  debuglevel=0, dataset_pool=None):
-        """ 
+        """
         """
         if not isinstance(choice_set, ProposedDevelopmentProjectDataset):
             parcels = data_objects['parcel']
@@ -55,17 +55,17 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
             choice_set = create_from_parcel_and_development_template(parcels, templates, index=index)
 
         dataset_pool.add_datasets_if_not_included({choice_set.get_dataset_name():choice_set})
-        
-        LocationChoiceModel.__init__(self, choice_set=choice_set, 
-                                     sampler=sampler, 
-                                     utilities=utilities, 
-                                     probabilities=probabilities, 
-                                     choices=choices, 
+
+        LocationChoiceModel.__init__(self, choice_set=choice_set,
+                                     sampler=sampler,
+                                     utilities=utilities,
+                                     probabilities=probabilities,
+                                     choices=choices,
                                      filter=filter,  #is_viable
-                                     submodel_string=submodel_string, 
-                                     run_config=run_config, 
-                                     estimate_config=estimate_config, 
-                                     debuglevel=debuglevel, 
+                                     submodel_string=submodel_string,
+                                     run_config=run_config,
+                                     estimate_config=estimate_config,
+                                     debuglevel=debuglevel,
                                      dataset_pool=dataset_pool)
 
         if 'sampling_weight' in self.run_config["sampling_weight"]:  #rate of return
@@ -75,15 +75,15 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
             self.weight = self.choice_set.get_attribute(weight_string)
         else:
             self.weight = ones(self.choice_set.size())  #equal weight
-            
+
         #self.location_id_string = location_id_string
         #if self.location_id_string is not None:
             #self.location_id_string = VariableName(self.location_id_string)
             #self.location_id_string.set_alias(location_set.get_id_name()[0])
         #self.probability_for_correcting_bias = None
-        
-    def run(self, specification, coefficients, agent_set, 
-            agents_index=None, chunk_specification=None, 
+
+    def run(self, specification, coefficients, agent_set,
+            agents_index=None, chunk_specification=None,
             data_objects=None, run_config=None, debuglevel=0):
         """
         Model the choice of proposed development project made by virtual finance agents
@@ -100,22 +100,22 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
                         },
                     })
                 )
-            
+
             agent_id = Dataset(
-                in_storage = storage, 
+                in_storage = storage,
                 in_table_name = storage_table_name,
                 id_name = 'agent_id',
                 dataset_name = 'agent_set',
                 )
-        
+
             agents_index = None
-            
+
         if run_config == None:
             run_config = Resources()
         self.run_config = run_config.merge_with_defaults(self.run_config)
         if data_objects is not None:
             self.dataset_pool.add_datasets_if_not_included(data_objects)
-            
+
         #if self.location_id_string is not None:
             #agent_set.compute_variables(self.location_id_string, dataset_pool=self.dataset_pool, resources=Resources(data_objects))
         #if self.run_config.get("agent_units_string", None): # used when agents take different amount of capacity from the total capacity
@@ -128,27 +128,27 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
 
         self.accepting_proposals = {}  #whether accepting new proposals, for each building type
         self.check_vacancy_rates(target_vacancy_rates, data_objects)
-        
+
         proposals = None  # proposals to be considered
         self.accepted_proposals = None # proposals accepted
         self.consider_proposals(proposals,
                                 target_vacancy_rates,
                                 data_objects)
         while self.accepting_proposal:
-            proposals = LocationChoiceModel.run(self,specification, 
-                                                coefficients, 
+            proposals = LocationChoiceModel.run(self,specification,
+                                                coefficients,
                                                 agent_set,
-                                                agents_index=agents_index, 
-                                                chunk_specification=chunk_specification, 
-                                                data_objects=data_objects, 
-                                                run_config=run_config, 
+                                                agents_index=agents_index,
+                                                chunk_specification=chunk_specification,
+                                                data_objects=data_objects,
+                                                run_config=run_config,
                                                 debuglevel=debuglevel)
-            
+
             self.consider_proposals(proposals,
                                     target_vacancy_rates,
                                     data_objects
                                    )
-        
+
         schedule_development_projects = self.schedule_accepted_proposal()
         return schedule_development_projects
 
@@ -157,7 +157,7 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
             type = target_vacancy_rates.get_attribute_by_index("type", index)
             target = target_vacancy_rates.get_attribute_by_index("target", index)
 
-            existing_units = buildings.get_attribute(type)            
+            existing_units = buildings.get_attribute(type)
             occupied_units = buildings.get_attribute("occupied_%s" % type)
             self.existing_units[type] = existing_units.sum()
             self.occupied_units[type] = occupied_units.sum()
@@ -168,7 +168,7 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
                 self.accepting_proposals[type] = True
             else:
                 self.accepting_proposals[type] = False
-    
+
     def consider_proposals(self, proposals, target_vacancy_rates, data_objects):
         building_site = buildings.get_attribute("parcel_id")
         proposal_indexes = self.choice_set.get_id_index(proposals)
@@ -176,9 +176,9 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
         proposal_site = self.choice_set.get_attribute_by_index("parcel_id", proposal_indexes)
         proposal_type = self.choice_set.get_attribute_by_index("type", proposal_indexes)
         pro_rated = self.choice_set.get_attribute_by_index("pro_rated", proposal_indexes)
-        years = self.choice_set.get_attribute_by_index("years", proposal_indexes)        
+        years = self.choice_set.get_attribute_by_index("years", proposal_indexes)
         proposal_construction_type = self.choice_set.get_attribute_by_index("construction_type", proposal_indexes)  #redevelopment or addition
-        
+
         for type in target_vacancy_rates.types:
             #occupied_units[type] = buildings.get_attribute("occupied_%s" % type)
             existing_units[type] = buildings.get_attribute(type)
@@ -218,13 +218,13 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
         for type, accepting_proposal in self.accepting_proposals.iteritems():
             if not accepting_proposal: # if a type isn't accepting proposal, don't propose any projects of this type in the future
                 self.weight[self.choice_set.get_attribute("type")==type] = 0.0
-                        
+
     def schedule_accepted_proposals(self):
         ##TODO: handle demolished buildings in self.demolished_buildings
         years_to_build = self.choice_set.get_attribute("years")[self.accepted_proposals]
         types = self.choice_set.get_attribute("type")[self.accepted_proposals]   #building componenet
         units = self.choice_set.get_attribute("units")[self.accepted_proposals]  #building componenet
-        
+
         scheduled_year = this_year * ones(len(self.accepted_proposals)) + 1
         unprorated = logical_not(self.choice_set.get_attribute("prorated")[self.accepted_proposals])
         scheduled_year[unprorated] = this_year + years_to_build[unprorated]
@@ -238,7 +238,7 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
             units[index] = round(units[index] / years_to_build[index])  ##TODO: we may want a different prorating function
             units = concatenate((units, units[index] * ones(years.size)))
             ## append other building attributes
-            
+
         storage = StorageFactory().get_storage('dict_storage')
         storage_table_name = 'buildings_exogeneous'
         storage.write_dataset(
@@ -252,16 +252,16 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
                     },
                 })
             )
-        
+
         scheduled_buildings = BuildingDataset(
-            in_storage = storage, 
+            in_storage = storage,
             in_table_name = storage_table_name,
             id_name = 'building_id',
             dataset_name = 'building_exogeneous',
             )
         ##TODO: flush dataset
-        
-        
+
+
     def estimate(self, *args, **kargs):
         agent_set = kargs["agent_set"]
         data_objects = kargs.get("data_objects", {})
@@ -269,31 +269,31 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
         estimate_config = kargs.get("estimate_config", {})
         return LocationChoiceModel.estimate(self, *args, **kargs)
 
-    def prepare_for_estimate(self, specification_dict = None, specification_storage=None, 
-                              specification_table=None, #agent_set=None, 
+    def prepare_for_estimate(self, specification_dict = None, specification_storage=None,
+                              specification_table=None, #agent_set=None,
                               agents_for_estimation_storage=None,
-                              agents_for_estimation_table=None, 
+                              agents_for_estimation_table=None,
                               filter=None, location_id_variable=None,
                               data_objects={}):
-    
+
      """similar to prepare_for_estimation method of AgentLocationChoiceModel
      agent_set is not needed because agents are virtual investors
      """
     from urbansim.estimation.estimator import get_specification_for_estimation
-    specification = get_specification_for_estimation(specification_dict, 
-                                                      specification_storage, 
-                                                      specification_table)   
-    
-    #def prepare_for_estimate(self, agent_set, specification_dict=None, specification_storage=None, 
-                              #specification_table=None, urbansim_constant=None, 
+    specification = get_specification_for_estimation(specification_dict,
+                                                      specification_storage,
+                                                      specification_table)
+
+    #def prepare_for_estimate(self, agent_set, specification_dict=None, specification_storage=None,
+                              #specification_table=None, urbansim_constant=None,
                               #location_id_variable=None, dataset_pool=None, **kwargs):
 #        Return index of buildings that are younger than 'recent_years'+2"""
     #if location_id_variable:
         #agent_set.compute_variables(location_id_variable, dataset_pool=dataset_pool)
-    if agents_for_estimation_storage is not None:                 
-        estimation_set = Dataset(in_storage = agents_for_estimation_storage, 
+    if agents_for_estimation_storage is not None:
+        estimation_set = Dataset(in_storage = agents_for_estimation_storage,
                                  in_table_name=agents_for_estimation_table,
-                                 id_name='building_id', 
+                                 id_name='building_id',
                                  dataset_name='building')
         if location_id_variable:  #map buildings to proposed development project, proposal_id
             estimation_set.compute_variables(location_id_variable, resources=Resources(data_objects))
@@ -307,4 +307,4 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
         raise DataError, 'agents_for_estimation_storage unspecified, which must be a subset of buildings.'
 
     return (specification, estimation_set)
-        
+

@@ -1,16 +1,16 @@
 #
 # UrbanSim software. Copyright (C) 1998-2004 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 from numpy import arange, bool8, Float, logical_and, logical_or
@@ -19,20 +19,20 @@ from numpy import ma
 from opus_core.misc import remove_elements_with_matched_prefix_from_list, remove_all
 
 class ParcelDataset(UrbansimDataset):
-    
+
     id_name_default = "parcel_id"
     in_table_name_default = "parcels"
     out_table_name_default = "parcels"
     dataset_name = "parcel"
-    
+
     def __init__(self, id_values=None, **kwargs):
         UrbansimDataset.__init__(self, **kwargs)
         self.development_constraints = None
 
-    def get_development_constraints(self, 
-            constraints, 
+    def get_development_constraints(self,
+            constraints,
             dataset_pool,
-            index = None, 
+            index = None,
             recompute_flag = False,
             variable_package_name="psrc_parcel.parcel"
             ):
@@ -53,11 +53,11 @@ class ParcelDataset(UrbansimDataset):
         development_constraints_array = ones((constraints.size(),index.size), dtype=bool8)
         for attr in attributes:
             values = self.get_attribute_by_index(attr, index)
-            constr = reshape(constraints.get_attribute(attr), shape=(constraints.size(),1))
+            constr = reshape(constraints.get_attribute(attr), (constraints.size(),1))
             constr = repeat(constr, index.size, axis=1)
             tmp = logical_or(constr == values, constr < 0)
             development_constraints_array = logical_and(development_constraints_array, tmp)
-        
+
         self.development_constraints = {"index": index}
         building_types = dataset_pool.get_dataset("building_type")
         type_ids = constraints.get_attribute("building_type_id")
@@ -67,7 +67,7 @@ class ParcelDataset(UrbansimDataset):
             w_this_type = where(type_ids == type_id)
             type_constraint_max = constraints.get_attribute("max_constraint")[w_this_type].max()
             self.development_constraints[type_id][:, 1] = type_constraint_max
-            
+
         for iconstr in range(constraints.size()):
             type_id = type_ids[iconstr]
             w = where(development_constraints_array[iconstr,:])[0]
@@ -79,7 +79,7 @@ class ParcelDataset(UrbansimDataset):
                     ma.minimum(self.development_constraints[type_id][w,1],
                         constraints.get_attribute_by_index("max_constraint", iconstr))
 
-        return self.development_constraints       
+        return self.development_constraints
 
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
@@ -98,7 +98,7 @@ class Tests(opus_unittest.OpusTestCase):
                 'constraint_name':array(['units_per_acre','far']),
             }
         )
-        
+
         storage._write_dataset(
             'development_constraints',
             {
@@ -106,7 +106,7 @@ class Tests(opus_unittest.OpusTestCase):
                 'is_constrained': array([0, 1, 1, 0]),
                 'building_type_id': array([1, 1, 2, 2]),
                 'min_constraint': array([0,  0,   2,  0]),
-                'max_constraint': array([3, 0.2, 10, 100]),                
+                'max_constraint': array([3, 0.2, 10, 100]),
             }
         )
         storage._write_dataset(
@@ -116,28 +116,28 @@ class Tests(opus_unittest.OpusTestCase):
                 "is_constrained":   array([1,   0,    1]),
             }
         )
-        
+
         dataset_pool = DatasetPool(package_order=['psrc_parcel','urbansim'],
                                    storage=storage)
 
         parcels = dataset_pool.get_dataset('parcel')
         constraints = dataset_pool.get_dataset('development_constraint')
-        
+
         values = parcels.get_development_constraints(constraints, dataset_pool)
-        
-        should_be = {1:array([[0,0.2], 
+
+        should_be = {1:array([[0,0.2],
                               [0, 3],
                               [0,0.2]]
                               ),
                      2:array([[2,10],
                               [0,100],
-                              [2,10]])    
+                              [2,10]])
                           }
         for key, should_be_value in should_be.iteritems():
             self.assert_(key in values)
-            self.assert_(ma.allclose(values[key], should_be_value), 
+            self.assert_(ma.allclose(values[key], should_be_value),
                          msg = "Error in parcel get_development_constraints")
 
 
 if __name__=='__main__':
-    opus_unittest.main() 
+    opus_unittest.main()
