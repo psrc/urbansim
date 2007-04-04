@@ -63,7 +63,7 @@ class ParcelDataset(UrbansimDataset):
         type_ids = constraints.get_attribute("building_type_id")
         #initialize results, set max to the max value found in constraints for each type
         for type_id in building_types.get_id_attribute():
-            self.development_constraints.update({type_id:zeros((index.size,2), dtype=Float)})
+            self.development_constraints.update({type_id:zeros((index.size,2), dtype="float32")})
             w_this_type = where(type_ids == type_id)
             type_constraint_max = constraints.get_attribute("max_constraint")[w_this_type].max()
             self.development_constraints[type_id][:, 1] = type_constraint_max

@@ -172,7 +172,7 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
     def consider_proposals(self, proposals, target_vacancy_rates, data_objects):
         building_site = buildings.get_attribute("parcel_id")
         proposal_indexes = self.choice_set.get_id_index(proposals)
-        rejected_proposals = zeros(proposal_indexes.size)
+        rejected_proposals = zeros(proposal_indexes.size, dtype="int32")
         proposal_site = self.choice_set.get_attribute_by_index("parcel_id", proposal_indexes)
         proposal_type = self.choice_set.get_attribute_by_index("type", proposal_indexes)
         pro_rated = self.choice_set.get_attribute_by_index("pro_rated", proposal_indexes)

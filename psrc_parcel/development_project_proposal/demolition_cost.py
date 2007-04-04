@@ -17,16 +17,15 @@ from numpy import zeros
 
 class demolition_cost(Variable):
     """return a dummy demolition cost (0s).
-       it may be an outcome attribute from a model, 
+       it may be an outcome attribute from a model,
        thus this variable is not needed
-       """ 
+       """
 
     def dependencies(self):
         return []
 
     def compute(self, dataset_pool):
-        return zeros(self.get_dataset().size())
+        return zeros(self.get_dataset().size(), dtype="int32")
 
     def post_check(self, values, dataset_pool):
         self.do_check("x >= 0", values)
-    

@@ -156,7 +156,7 @@ class BuildingTransitionModel( Model ):
             new_buildings["building_use_id"] = concatenate((new_buildings["building_use_id"], history_type_without_zeros[idx]))
             new_buildings["year_built"] = concatenate((new_buildings["year_built"], year*ones(nbuildings, dtype="int32")))
             new_buildings["unit_price"] = concatenate((new_buildings["unit_price"], history_price_without_zeros[idx]))
-            new_buildings[location_id_name] = concatenate((new_buildings[location_id_name], zeros(nbuildings)))
+            new_buildings[location_id_name] = concatenate((new_buildings[location_id_name], zeros(nbuildings, dtype="int32")))
             logger.log_status("Creating %s %s of %s %s buildings." % (history_values_without_zeros[idx].sum(),
                                                                       units_attribute, nbuildings, building_class))
 

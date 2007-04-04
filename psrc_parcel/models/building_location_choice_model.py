@@ -66,7 +66,7 @@ class BuildingLocationChoiceModel(UrbansimBuildingLocationChoiceModel):
 
             years = estimation_set.get_attribute("scheduled_year")
             recent_years = constants['recent_years']
-            indicator = zeros(estimation_set.size())
+            indicator = zeros(estimation_set.size(), dtype="int32")
             for year in range(base_year-recent_years, base_year+1):
                 indicator = logical_or(indicator, years==year)
             idx = where(logical_not(indicator))[0]

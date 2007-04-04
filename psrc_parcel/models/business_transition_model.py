@@ -70,7 +70,7 @@ class BusinessTransitionModel(Model):
                                            sample_noreplace(sample_array, max(0,abs(diff)-size_non_placed))))
 
             if diff > 0: #
-                new_businesses[self.location_id_name]=concatenate((new_businesses[self.location_id_name],zeros((diff,))))
+                new_businesses[self.location_id_name]=concatenate((new_businesses[self.location_id_name],zeros((diff,), dtype="int32")))
                 new_businesses["building_use_id"]=concatenate((new_businesses["building_use_id"],
                                                                sector*ones((diff,), dtype="int32")))
 
