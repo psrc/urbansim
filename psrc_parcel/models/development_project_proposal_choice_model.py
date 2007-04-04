@@ -256,7 +256,7 @@ class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
         types = self.choice_set.get_attribute("type")[self.accepted_proposals]   #building componenet
         units = self.choice_set.get_attribute("units")[self.accepted_proposals]  #building componenet
 
-        scheduled_year = this_year * ones(len(self.accepted_proposals)) + 1
+        scheduled_year = this_year * ones(len(self.accepted_proposals), dtype="int32") + 1
         unprorated = logical_not(self.choice_set.get_attribute("prorated")[self.accepted_proposals])
         scheduled_year[unprorated] = this_year + years_to_build[unprorated]
 
@@ -267,7 +267,7 @@ class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
             scheduled_year = concatenate((scheduled_year, years))
             types = concatenate((types, repeat(types[index],years.size)))
             units[index] = round(units[index] / years_to_build[index])  ##TODO: we may want a different prorating function
-            units = concatenate((units, units[index] * ones(years.size)))
+            units = concatenate((units, units[index] * ones(years.size, dtype="int32")))
             ## append other building attributes
 
         storage = StorageFactory().get_storage('dict_storage')
