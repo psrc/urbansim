@@ -14,9 +14,8 @@
 
 from opus_core.resources import Resources
 from opus_core.misc import DebugPrinter, unique_values
-from opus_core.misc import concatenate
 from opus_core.model import Model
-from numpy import arange, array, where, int8, zeros, ones, compress, int32
+from numpy import arange, array, where, int8, zeros, ones, compress, int32, concatenate
 from numpy import logical_not
 from scipy.ndimage import sum as ndimage_sum
 from opus_core.sampling_toolbox import sample_noreplace, probsample_replace
