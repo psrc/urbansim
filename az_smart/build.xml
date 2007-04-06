@@ -5,8 +5,9 @@
 		
 	<target name="unit-tests">
 		<echo message="Running UnitTests."/>
+		<property environment="env"/>
 		<exec executable="python">
-			<env key="PYTHONPATH" path="${pythonpathdir}" />
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
 			<arg line="tests/all_tests.py"/>
 		</exec>  	
 	</target>
@@ -26,8 +27,9 @@
 	</target>
 
 	<target name="build-latex-docs">
+		<property environment="env"/>
 		<exec executable="python" failonerror="true">
-			<env key="PYTHONPATH" path="${pythonpathdir}" />
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
 			<arg line="docs/latex/build_docs.py" />
 		</exec>  	
 	</target>

@@ -6,8 +6,9 @@
 	
 	<target name="unit-tests">
 		<echo message="Running UnitTests."/>
+		<property environment="env"/>
 		<exec executable="python">
-			<env key="PYTHONPATH" path="${pythonpathdir}" />
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
 			<arg line="tests/all_tests.py"/>
 		</exec>  	
 	</target>
