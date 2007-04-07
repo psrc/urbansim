@@ -41,9 +41,9 @@ class BusinessTransitionModel(Model):
         sectors = unique_values(control_totals.get_attribute_by_index("building_use_id", idx))
         max_id = business_set.get_id_attribute().max()
         business_size = business_set.size()
-        new_businesses = {self.location_id_name:array([]),
-                          "building_use_id":array([]),
-                          business_id_name:array([]),
+        new_businesses = {self.location_id_name:array([], dtype='int32'),
+                          "building_use_id":array([], dtype='int32'),
+                          business_id_name:array([], dtype='int32'),
                           "sqft":array([], dtype=int32),
                           "employees":array([], dtype=int32),}
         compute_resources = Resources(data_objects)
@@ -53,7 +53,7 @@ class BusinessTransitionModel(Model):
                     % (self.variable_package, business_set.get_dataset_name(), x),
                 sectors),
             resources = compute_resources)
-        remove_businesses = array([])
+        remove_businesses = array([], dtype='int32')
 
         for sector in sectors:
             total_businesses = control_totals.get_data_element_by_id((year,sector)).total_number_of_businesses
@@ -115,7 +115,7 @@ def get_array_without_non_placed_agents(business_set, arr, max_value=None, locat
     if location_id_name in business_set.get_known_attribute_names():
         non_placed = where(business_set.get_attribute_by_index(location_id_name, arr) <= 0)[0]
     else:
-        non_placed=array([])
+        non_placed=array([], dtype='int32')
     size_non_placed = non_placed.size
     if size_non_placed <= 0:
         return (arr, non_placed, 0)

@@ -126,7 +126,7 @@ class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
         self.occupied_units = {}   #total occupied units by building type
         self.proposed_units = {}   #total proposed units by building type
         self.demolished_units = {} #total (to be) demolished units by building type
-        self.demolished_buildings = array([])
+        self.demolished_buildings = array([], dtype='int32')
 
         self.accepting_proposals = {}  #whether accepting new proposals, for each building type
         self.check_vacancy_rates(current_target_vacancy, data_objects)  #initialize self.accepting_proposal based on current vacancy rate
