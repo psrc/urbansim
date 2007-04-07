@@ -60,15 +60,15 @@ class BuildingTransitionModel( Model ):
         unit_attributes = building_use_classification_table.get_attribute('units')
         building_id_name = building_set.get_id_name()[0]
         location_id_name = location_set.get_id_name()[0]
-        new_buildings = {building_id_name: array([]),
+        new_buildings = {building_id_name: array([], dtype='int32'),
                          "building_use_id":array([], dtype=int8),
-                         "year_built": array([]),
-#                         "building_sqft": array([]),
-#                         "residential_units": array([]),
+                         "year_built": array([], dtype='int32'),
+#                         "building_sqft": array([], dtype='int32'),
+#                         "residential_units": array([], dtype='int32'),
                          "unit_price": array([], dtype= float32),
-                         location_id_name: array([])}
+                         location_id_name: array([], dtype='int32')}
         for attribute in unit_attributes:
-            new_buildings[attribute] = array([])
+            new_buildings[attribute] = array([], dtype='int32')
 
         max_id = building_set.get_id_attribute().max()
         building_set_size_orig = building_set.size()
