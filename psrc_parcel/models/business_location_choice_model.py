@@ -14,13 +14,10 @@
 
 from opus_core.resources import Resources
 from urbansim.models.location_choice_model import LocationChoiceModel
-from opus_core.misc import remove_elements_with_matched_prefix_from_list, remove_all
 from opus_core.variable_name import VariableName
-from opus_core.opusnumpy import sum
-from numpy import zeros, arange, where, ones, logical_or, logical_and, logical_not, int32, float32
-from numpy import compress, take, alltrue, argsort, array, int8, bool8
-from opus_core.sampling_toolbox import probsample_noreplace, sample_noreplace
-from gc import collect
+from numpy import arange, where, ones, int32, float32
+from numpy import take, int8, bool8
+from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.logger import logger
 from opus_core.datasets.dataset import Dataset
 
@@ -66,7 +63,7 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
 
         # for memory reasons, discard columns that have only zeros
         logger.log_status("shape of weight_array: ", weight_array.shape)
-        keep = where(sum(weight_array, axis=0, dtype=int32))[0]
+        keep = where(weight_array.sum(axis=0, dtype=int32))[0]
         where_available = where_available[keep]
 
         weight_array = take(weight_array, keep, axis=1)
