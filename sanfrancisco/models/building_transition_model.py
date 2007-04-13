@@ -14,10 +14,8 @@
 
 from opus_core.resources import Resources
 from opus_core.misc import DebugPrinter, concatenate
-from opus_core.variables.variable_name import VariableName
 from opus_core.model import Model
 from numpy.random import randint
-from opus_core.opusnumpy import cumsum
 from opus_core.logger import logger
 from numpy import arange, array, where, zeros, ones, float32, int32, int8
 
@@ -133,7 +131,7 @@ class BuildingTransitionModel( Model ):
             while True:
                 idx = concatenate( ( idx, randint( 0, history_values_without_zeros.size,
                                                    size=num_of_projects_to_select) ) )
-                csum = cumsum( history_values_without_zeros[idx] )
+                csum = history_values_without_zeros[idx].cumsum()
                 idx = idx[where( csum <= should_develop_units )]
                 if csum[-1] >= should_develop_units:
                     break
