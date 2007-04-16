@@ -1,38 +1,25 @@
+#imports
 import arcgisscripting
 
+#create geoprocessor
 gp = arcgisscripting.create()
 
+#set up variables
 table = gp.getparameterastext(0)
 field = gp.getparameterastext(1)
 new_value = gp.getparameterastext(2)
 whereclause = "%s = ''" % (field)
 
+#create update cursor
 rows = gp.updatecursor(table, whereclause)
 row = rows.next()
 
+#loop through rows replacing empty strings with
+#new values for specified table, field, and new_value
 while row:
-    row.field = new_value
+    exec 'row.' + field + ' = new_value'
     rows.updaterow(row)
     row = rows.next()
 
+#print finished message
 gp.addmessage("\nFINISHED")
-
-## ALL OF THIS WORKS
-##import arcgisscripting, sys, os, string
-##
-##gp = arcgisscripting.create()
-##
-##table = "D:\\PimaCountyGIS\\AZ-SMART_geodb\\pima_source_data.gdb\\paregion"
-###field = "use_temp"
-###new_value = "99999"
-##whereclause = "use_temp = ''"
-##
-##rows = gp.UpdateCursor(table, whereclause)
-##row = rows.Next()
-##
-##while row:
-##    row.use_temp = "99999"
-##    rows.updaterow(row)
-##    row = rows.next()
-##
-##gp.addmessage("\nFINISHED")
