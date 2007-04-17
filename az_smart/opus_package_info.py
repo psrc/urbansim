@@ -17,4 +17,3 @@ from opus_core.opus_package import OpusPackage
 class package(OpusPackage):
     name = 'az_smart'
     required_opus_packages = ['opus_core']
-    version = '0.0-1'
