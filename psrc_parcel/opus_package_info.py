@@ -17,4 +17,3 @@ from opus_core.opus_package import OpusPackage
 class package(OpusPackage):
     name = 'psrc_parcel'
     required_opus_packages = ["opus_core", "opus_emme2", "urbansim"]
-    version = "1.0.beta2"
