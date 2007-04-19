@@ -13,7 +13,7 @@
 # 
 
 #
-# UrbanSim software. Copyright (C) 1998-2007 University of Washington
+# UrbanSim software. Copyright (C) 1998-2007 University of Wafshington
 # 
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation

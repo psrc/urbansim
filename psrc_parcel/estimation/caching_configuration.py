@@ -18,7 +18,7 @@ from opus_core.configurations.database_configuration import DatabaseConfiguratio
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
-from psrc_parcels.configs.baseline import Baseline
+from psrc_parcel.configs.baseline import Baseline
 
 
 class CachingConfiguration(Configuration):
@@ -44,7 +44,7 @@ class CachingConfiguration(Configuration):
             ]
         
         return {
-        'cache_directory' : 'D:/urbansim_cache/psrc_parcel/estimation', # change or leave out
+        'cache_directory' : '/workspace/urbansim_cache/psrc_parcel/estimation', # change or leave out
         'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
     #        cache_directory_root = '/tmp/urbcache/sandbox_runs/estimation',
             unroll_gridcells = False,

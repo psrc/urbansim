@@ -111,16 +111,13 @@ class Baseline(GeneralConfiguration):
 #                'unroll_gridcells':False            
                 "datasets_to_preload":{
                     'zone':{},
-                    'household':{},
+#                    'household':{},
                     'building':{},        
                     'parcel':{'package_name':'psrc_parcel'},
-                    'business':{'package_name':'psrc_parcel'},
-                    'person':{'package_name':'psrc_parcel'},        
-                    "building_use":{'package_name':'psrc_parcel'},
-                    "building_use_classification":{'package_name':'psrc_parcel'},
+#                    'business':{'package_name':'psrc_parcel'},
+#                    'person':{'package_name':'psrc_parcel'},        
+                    "building_type":{'package_name':'psrc_parcel'},
                     'travel_data':{},
-                    'target_vacancy':{},
-                    'development_event_history':{}
                     
                 }
         }

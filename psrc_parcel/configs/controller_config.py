@@ -41,6 +41,7 @@ my_controller_configuration = {
     "init": { 
         "name": "RealEstatePriceModel",
         "arguments": {"submodel_string": "'building_type_id'",
+                      "outcome_attribute": "'ln_unit_price=ln(psrc_parcel.building.unit_price)'",
                       "filter_attribute": None},
         },
     "prepare_for_run": {
@@ -62,7 +63,7 @@ my_controller_configuration = {
         "name": "prepare_for_estimate",
         "arguments": {"specification_storage": "base_cache_storage",
                       "specification_table": "'real_estate_price_model_specification'",
-                      "filter_variable":"'opus_core.func.ln_bounded(building.unit_price)'",
+                      "filter_variable":"'psrc_parcel.building.unit_price'",
                       "dataset": "building", 
                       "threshold": 1},
         "output": "(specification, index)"
@@ -70,7 +71,7 @@ my_controller_configuration = {
     "estimate": {
         "arguments": {
                       "specification": "specification",
-                      "outcome_attribute": "'building.unit_price'",
+                      "outcome_attribute": "'ln_unit_price=ln(psrc_parcel.building.unit_price)'",
                       "dataset": "building",
                       "index": "index",
                       "data_objects": "datasets",
@@ -387,13 +388,12 @@ config["models_configuration"]['household_location_choice_model']["controller"].
 
 config["datasets_to_preload"] = {
         'zone':{},
-        'household':{},
+#        'household':{},
         'building':{},        
         'parcel':{'package_name':'psrc_parcel'},
-        'business':{'package_name':'psrc_parcel'},
-        'person':{'package_name':'psrc_parcel'},        
-        "building_use":{'package_name':'psrc_parcel'},
-        "building_use_classification":{'package_name':'psrc_parcel'},
+#        'business':{'package_name':'psrc_parcel'},
+#        'person':{'package_name':'psrc_parcel'},        
+        "building_type":{'package_name':'psrc_parcel'},
         'travel_data':{}
         }
 

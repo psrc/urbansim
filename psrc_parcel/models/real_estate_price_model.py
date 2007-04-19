@@ -15,9 +15,10 @@
 from opus_core.resources import Resources
 from opus_core.regression_model import RegressionModel
 from numpy import exp, arange, logical_and, zeros, where, array
+import re
 
 class RealEstatePriceModel(RegressionModel):
-    """Updates building attribute 'unit_price'
+    """Updates building attributes 'unit_price'
     computed via a regression equation.
     """
 
@@ -27,6 +28,7 @@ class RealEstatePriceModel(RegressionModel):
     def __init__(self, regression_procedure="opus_core.linear_regression", 
                  filter_attribute=None,
                  submodel_string="building_type_id", 
+                 outcome_attribute = "unit_price",
                  run_config=None, 
                  estimate_config=None, 
                  debuglevel=0):
@@ -37,6 +39,7 @@ class RealEstatePriceModel(RegressionModel):
                                  run_config=run_config, 
                                  estimate_config=estimate_config, 
                                  debuglevel=debuglevel)
+        self.outcome_attribute = outcome_attribute
                     
     def run(self, specification, coefficients, dataset, index=None, chunk_specification=None, 
             data_objects=None, run_config=None, debuglevel=0):
@@ -46,16 +49,22 @@ class RealEstatePriceModel(RegressionModel):
             res = Resources(data_objects)
             res.merge({"debug":debuglevel})
             index = dataset.get_filtered_index(self.filter_attribute, threshold=0, index=index, resources=res)
-        unit_price = RegressionModel.run(self, specification, coefficients, dataset, 
+        outcome = RegressionModel.run(self, specification, coefficients, dataset, 
                                          index, chunk_specification, data_objects, 
                                          run_config, debuglevel)
-        if (unit_price == None) or (unit_price.size <=0):
+        if (outcome == None) or (outcome.size() <=0):
             return unit_price
         if index == None:
              index = arange(dataset.size())
-        dataset.set_values_of_one_attribute("unit_price", unit_price, index)
-        
-        return
+        if re.search("^ln_", self.outcome_attribute): # if the outcome attr. name starts with 'ln_'
+                                                      # the results will be exponentiated.
+            self.outcome_attribute = self.outcome_attribute[3:len(self.outcome_attribute)]
+            outcome = exp(outcome)
+        if self.outcome_attribute not in dataset.get_known_attribute_names():
+            dataset.add_primary_attribute(name=self.outcome_attribute, data=zeros(dataset.size(), Float32)) 
+             
+        dataset.set_values_of_one_attribute(self.outcome_attribute, outcome, index)
+        return outcome
 
     def estimate(self, specification, dataset, outcome_attribute="unit_price", index = None, 
                         procedure="opus_core.estimate_linear_regression", data_objects=None, 
