@@ -12,20 +12,6 @@
 # other acknowledgments.
 # 
 
-#
-# UrbanSim software. Copyright (C) 1998-2007 University of Wafshington
-# 
-# You can redistribute this program and/or modify it under the terms of the
-# GNU General Public License as published by the Free Software Foundation
-# (http://www.gnu.org/copyleft/gpl.html).
-# 
-# This program is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
-# and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
-# other acknowledgments.
-# 
-
 from urbansim.estimation.estimator import Estimator
 from urbansim.estimation.estimator import update_controller_by_specification_from_module
 from urbansim.estimation.estimator import plot_utility_diagnose
@@ -72,7 +58,9 @@ class EstimationRunner(object):
             self.estimator.reestimate(self.spec_file, type=self.model[2], submodels=submodels)
         else:
             self.estimator.reestimate(self.spec_file, submodels=submodels)
-    
+    def save_results(self):
+        self.estimator.save_results()
+        
     def plot_utility(self, submodel=-2):
         plot_utility_diagnose('util_submodel_%s' % submodel)
         
