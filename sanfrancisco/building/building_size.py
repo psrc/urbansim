@@ -26,78 +26,56 @@ class building_size(Variable):
     _return_type="int32"
     
     def dependencies(self):
-        return [attribute_label("building_use_classification", "name"), 
-                attribute_label("building_use_classification", "units"),
-                my_attribute_label("building_class_id"), 
-                my_attribute_label("building_sqft"), 
-                my_attribute_label("residential_units")]
+        return [my_attribute_label("building_sqft"), 
+                my_attribute_label("residential_units"),
+                "unit_name=building_use.disaggregate(building_use_classification.units)",
+                "unit_name=building.disaggregate(building_use.unit_name)",  
+                ]
         
     def compute(self,  dataset_pool):
-        bt = dataset_pool.get_dataset("building_use_classification")
-        types = bt.get_id_attribute()
-        units = bt.get_attribute("units")
-        my_type = self.get_dataset().get_attribute("building_class_id")
-        result = zeros(self.get_dataset().size(), dtype= self._return_type)
-        for itype in range(bt.size()):
-            idx = where(my_type == types[itype])[0]
-            units_name = units[itype]
-            if re.search("building_sqft", units_name):
-                attr_name = "building_sqft"
-            else:
-                attr_name = "residential_units"
-            result[idx] = self.get_dataset().get_attribute_by_index(attr_name,idx)
-        return result
+        buildings = self.get_dataset()        
+        bc = dataset_pool.get_dataset("building_use_classification")
+        results = zeros(buildings.size(), dtype = self._return_type)
+        for unit_name in bc.get_attribute("units"):
+            idx = where(buildings.get_attribute('unit_name') == unit_name)[0]
+            results[idx] = buildings.get_attribute_by_index(unit_name, idx)
+        return results
 
-import unittest
-from sanfrancisco.datasets.building_use_classification_dataset import BuildingUseClassificationDataset
-from urbansim.datasets.building_dataset import BuildingDataset
-from opus_core.resources import Resources
-from numpy import array, arange
+from opus_core.tests import opus_unittest
+from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
-from numpy import ma
-class Tests(unittest.TestCase):
-    variable_name = "sanfrancisco.building.building_size"
+from numpy import array, arange
+from opus_core.tests.utils.variable_tester import VariableTester
 
+class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
-        storage1 = StorageFactory().get_storage('dict_storage')
-        bu_table_name = 'building_use_classification'
+        tester = VariableTester(
+            __file__,
+            package_order=['sanfrancisco','urbansim'],
+            test_data={
+            'building_use':
+            {
+                "building_use_id":array([1,2,3,4]),
+                "class_id":array([1,2,1,2]),
+                },
+            'building_use_classification':
+            {
+                "class_id":array([1,2]),
+                "name": array(["nonresidential","residential"]),
+                "units":array(["building_sqft","residential_units"])                
+                },           
+            "building":{
+                'building_id': array([1, 2, 3, 4, 5]),
+                'building_use_id': array([1, 2, 3, 4, 3]),
+                'building_sqft': array([1000, 200, 0, 400, 1500]),
+                'residential_units': array([0, 2, 0, 40, 5]),                
+                },
+        }
+        )
         
-        storage1.write_dataset(
-            Resources({
-                'out_table_name':bu_table_name,
-                'values': {"class_id":array([1,2]), 
-                           "name": array(["residential", "nonresidential"]),
-                           "units": array(["residential_units", "building_sqft"])
-                           },
-                })
-            )
-
-        building_use_classification = BuildingUseClassificationDataset(in_storage=storage1, 
-                                                                       in_table_name=bu_table_name)
-
-        storage2 = StorageFactory().get_storage('dict_storage')
-        builing_table_name='building'
-        storage2.write_dataset(
-            Resources({
-                'out_table_name':builing_table_name,
-                'values': {
-                    "building_id": arange(6)+1,
-                    "building_class_id": array([1,2,1,2,1,1]),
-                    "building_sqft": array([100, 350, 1000, 0, 430, 95]),
-                    "residential_units": array([300, 0, 100, 0, 1000, 600])
-                             },
-                })
-            )
+        should_be = array([1000, 2, 0, 40, 1500])
         
-        buildings = BuildingDataset(in_storage=storage2, 
-                                    in_table_name=builing_table_name)
-        
-        buildings.compute_variables(self.variable_name, resources=Resources({"building_use_classification": building_use_classification}))
-
-        should_be = array([300, 350, 100, 0, 1000, 600])
-        values = buildings.get_attribute(self.variable_name)
-        self.assertEqual(ma.allequal(values, should_be), \
-                         True, msg = "Error in " + self.variable_name)
+        tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 
 if __name__=='__main__':
-    unittest.main()
+    opus_unittest.main()

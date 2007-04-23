@@ -28,7 +28,7 @@
 ##|              10 | MIXRES       |     2011 |
 ##|              11 | OPENSPACE    |        3 |
 ##|              13 | PDR          |      211 |
-##|              14 | RETAIL/ENT   |      279 |
+##|              14 | RETAILENT   |      279 |
 ##|              16 | VACANT       |       20 |
 ##|              17 | VISITOR      |       12 |
 ##+-----------------+--------------+----------+
@@ -45,12 +45,15 @@ specification = {
 #    "building.building_sqft",
     "households_in_zone=building.disaggregate(sanfrancisco.zone.number_of_households,intermediates=[parcel])",
 #    "lot_area=building.disaggregate(parcel.area)", 
-    "bus_travel_time_weighted_access_by_population=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])", 
-    "bus_travel_time_weighted_access_to_employment=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])", 
+#    "bus_travel_time_weighted_access_by_population=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])", 
+#    "bus_travel_time_weighted_access_to_employment=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])", 
     "employment_within_20_minutes_bus_travel_time=building.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,intermediates=[parcel])",          
-    "employment_of_sector_cie_in_zone=building.disaggregate(sanfrancisco.zone.employment_of_sector_cie,intermediates=[parcel])",
-    "businesses_of_sector_cie_in_zone=building.disaggregate(sanfrancisco.zone.number_of_businesses_of_sector_cie,intermediates=[parcel])",
-    "average_income_in_zone=building.disaggregate(sanfrancisco.zone.average_income, intermediates=[parcel])",
+#    "sector_3_employment_in_zone=building.disaggregate(zone.aggregate(sanfrancisco.building.employment_of_sector_3,intermediates=[parcel]), intermediates=[parcel])",    
+    "sector_3_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_3_from_building,intermediates=[parcel])",        
+#    "sector_4_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_4_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
+    "average_income_in_zone=ln(building.disaggregate(sanfrancisco.zone.average_income, intermediates=[parcel])",
 #    
 
 #    "building.stories",
@@ -66,11 +69,12 @@ specification = {
 #    "building.building_sqft",
 #    "households_in_zone=building.disaggregate(sanfrancisco.zone.number_of_households,intermediates=[parcel])",
     "lot_area=building.disaggregate(parcel.area)",
-    "bus_travel_time_weighted_access_by_population=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",
+#    "bus_travel_time_weighted_access_by_population=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",
     "bus_travel_time_weighted_access_to_employment=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])",
-    "employment_within_20_minutes_bus_travel_time=building.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,intermediates=[parcel])",
-    "employment_of_sector_cie_in_zone=building.disaggregate(sanfrancisco.zone.employment_of_sector_cie,intermediates=[parcel])",
-    "businesses_of_sector_cie_in_zone=building.disaggregate(sanfrancisco.zone.number_of_businesses_of_sector_cie,intermediates=[parcel])",
+    "sector_3_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_3_from_building,intermediates=[parcel])",    
+#    "sector_4_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_4_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
     
     "average_income_in_zone=building.disaggregate(sanfrancisco.zone.average_income, intermediates=[parcel])",
 ##    
@@ -88,11 +92,13 @@ specification = {
 #    "building.building_sqft",
 #    "households_in_zone=building.disaggregate(sanfrancisco.zone.number_of_households,intermediates=[parcel])",
     "lot_area=building.disaggregate(parcel.area)",
-    "bus_travel_time_weighted_access_by_population=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",
-    "bus_travel_time_weighted_access_to_employment=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])",
+#    "bus_travel_time_weighted_access_by_population=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",
+#    "bus_travel_time_weighted_access_to_employment=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])",
     "employment_within_20_minutes_bus_travel_time=building.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,intermediates=[parcel])",
-    "employment_of_sector_cie_in_zone=building.disaggregate(sanfrancisco.zone.employment_of_sector_cie,intermediates=[parcel])",
-    "businesses_of_sector_cie_in_zone=building.disaggregate(sanfrancisco.zone.number_of_businesses_of_sector_cie,intermediates=[parcel])",
+    "sector_3_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_3_from_building,intermediates=[parcel])",    
+#    "sector_4_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_4_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
     "average_income_in_zone=building.disaggregate(sanfrancisco.zone.average_income, intermediates=[parcel])",
 #
 ##    "building.stories",
@@ -108,11 +114,13 @@ specification = {
     "building.building_sqft",
 #    "households_in_zone=building.disaggregate(sanfrancisco.zone.number_of_households,intermediates=[parcel])",
     "lot_area=building.disaggregate(parcel.area)",
-    "bus_travel_time_weighted_access_by_population=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",
-    "bus_travel_time_weighted_access_to_employment=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])",
+#    "bus_travel_time_weighted_access_by_population=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",
+#    "bus_travel_time_weighted_access_to_employment=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])",
     "employment_within_20_minutes_bus_travel_time=building.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,intermediates=[parcel])",
-    "employment_of_sector_cie_in_zone=building.disaggregate(sanfrancisco.zone.employment_of_sector_cie,intermediates=[parcel])",
-    "businesses_of_sector_cie_in_zone=building.disaggregate(sanfrancisco.zone.number_of_businesses_of_sector_cie,intermediates=[parcel])",
+    "sector_3_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_3_from_building,intermediates=[parcel])",    
+#    "sector_4_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_4_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
     "average_income_in_zone=building.disaggregate(sanfrancisco.zone.average_income, intermediates=[parcel])",
 
 #
@@ -120,6 +128,75 @@ specification = {
 ##    "building.structure_value",    
     ],
 
+    7:
+            [
+    "constant",
+    "building.year_built",
+#    
+    "building.bedrooms",
+#        
+    "building.building_sqft",
+#    "households_in_zone=building.disaggregate(sanfrancisco.zone.number_of_households,intermediates=[parcel])",
+    "lot_area=building.disaggregate(parcel.area)",
+#    "bus_travel_time_weighted_access_by_population=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",
+    "bus_travel_time_weighted_access_to_employment=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])",
+#    "employment_within_20_minutes_bus_travel_time=building.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,intermediates=[parcel])",
+    "sector_3_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_3_from_building,intermediates=[parcel])",    
+#    "sector_4_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_4_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
+    "average_income_in_zone=building.disaggregate(sanfrancisco.zone.average_income, intermediates=[parcel])",
+#
+##    "building.stories",
+##    "building.structure_value",    
+    ],
+
+    8:
+            [
+    "constant",
+    "building.year_built",
+#    
+    "building.bedrooms",
+#        
+    "building.building_sqft",
+#    "households_in_zone=building.disaggregate(sanfrancisco.zone.number_of_households,intermediates=[parcel])",
+    "lot_area=building.disaggregate(parcel.area)",
+#    "bus_travel_time_weighted_access_by_population=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",
+    "bus_travel_time_weighted_access_to_employment=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])",
+#    "employment_within_20_minutes_bus_travel_time=building.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,intermediates=[parcel])",
+    "sector_3_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_3_from_building,intermediates=[parcel])",    
+#    "sector_4_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_4_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
+#    "sector_4_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_4_from_building,intermediates=[parcel])",
+    "average_income_in_zone=building.disaggregate(sanfrancisco.zone.average_income, intermediates=[parcel])",
+#
+##    "building.stories",
+##    "building.structure_value",    
+    ],
+
+    9:   #mixed residential
+            [
+    "constant",
+    "building.year_built",
+#    
+    "building.bedrooms",
+#        
+    "building.building_sqft",
+#    "households_in_zone=building.disaggregate(sanfrancisco.zone.number_of_households,intermediates=[parcel])",
+    "lot_area=building.disaggregate(parcel.area)",
+#    "bus_travel_time_weighted_access_by_population=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",
+    "bus_travel_time_weighted_access_to_employment=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])",
+#    "employment_within_20_minutes_bus_travel_time=building.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,intermediates=[parcel])",
+    "sector_3_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_3_from_building,intermediates=[parcel])",    
+#    "sector_4_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_4_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
+    "average_income_in_zone=building.disaggregate(sanfrancisco.zone.average_income, intermediates=[parcel])",
+#
+##    "building.stories",
+##    "building.structure_value",    
+    ],    
+    
     10:   #mixed residential
             [
     "constant",
@@ -130,9 +207,63 @@ specification = {
     "building.building_sqft",
 #    "households_in_zone=building.disaggregate(sanfrancisco.zone.number_of_households,intermediates=[parcel])",
     "lot_area=building.disaggregate(parcel.area)",
+#    "bus_travel_time_weighted_access_by_population=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",
+    "bus_travel_time_weighted_access_to_employment=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])",
+#    "employment_within_20_minutes_bus_travel_time=building.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,intermediates=[parcel])",
+    "sector_3_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_3_from_building,intermediates=[parcel])",    
+#    "sector_4_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_4_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
+    "average_income_in_zone=building.disaggregate(sanfrancisco.zone.average_income, intermediates=[parcel])",
 #
 ##    "building.stories",
 ##    "building.structure_value",    
-    ]
+    ],
+
+    13:   #mixed residential
+            [
+    "constant",
+    "building.year_built",
+#    
+    "building.bedrooms",
+#        
+    "building.building_sqft",
+#    "households_in_zone=building.disaggregate(sanfrancisco.zone.number_of_households,intermediates=[parcel])",
+    "lot_area=building.disaggregate(parcel.area)",
+#    "bus_travel_time_weighted_access_by_population=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",
+    "bus_travel_time_weighted_access_to_employment=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])",
+#    "employment_within_20_minutes_bus_travel_time=building.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,intermediates=[parcel])",
+    "sector_3_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_3_from_building,intermediates=[parcel])",    
+#    "sector_4_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_4_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
+    "average_income_in_zone=building.disaggregate(sanfrancisco.zone.average_income, intermediates=[parcel])",
+#
+##    "building.stories",
+##    "building.structure_value",    
+    ],
+
+    14:   #mixed residential
+            [
+    "constant",
+    "building.year_built",
+#    
+    "building.bedrooms",
+#        
+    "building.building_sqft",
+#    "households_in_zone=building.disaggregate(sanfrancisco.zone.number_of_households,intermediates=[parcel])",
+    "lot_area=building.disaggregate(parcel.area)",
+#    "bus_travel_time_weighted_access_by_population=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",
+    "bus_travel_time_weighted_access_to_employment=building.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])",
+#    "employment_within_20_minutes_bus_travel_time=building.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,intermediates=[parcel])",
+    "sector_3_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_3_from_building,intermediates=[parcel])",    
+#    "sector_4_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_4_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
+#    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
+    "average_income_in_zone=building.disaggregate(sanfrancisco.zone.average_income, intermediates=[parcel])",
+#
+##    "building.stories",
+##    "building.structure_value",    
+    ],        
 
 }            

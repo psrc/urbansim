@@ -20,42 +20,39 @@ class zone_id(Variable):
     """The taz id of this building. """
    
     def dependencies(self):
-        return [my_attribute_label("parcel_id"), attribute_label("parcel", "zone_id")]
+        return ['_zone_id=building.disaggregate(parcel.zone_id)'
+                ]
         
     def compute(self,  dataset_pool):
-        parcels = dataset_pool.get_dataset("parcel")
-        return self.get_dataset().get_join_data(parcels, name="zone_id")
-    
+        return self.get_dataset().get_attribute("_zone_id")
+
+from opus_core.tests import opus_unittest
+from opus_core.dataset_pool import DatasetPool
+from opus_core.storage_factory import StorageFactory
+from numpy import array
+from opus_core.tests.utils.variable_tester import VariableTester
+
+class Tests(opus_unittest.OpusTestCase):
+              
+    def test_my_inputs(self):
+        tester = VariableTester(
+            __file__,
+            package_order=['sanfrancisco','urbansim'],
+            test_data={
+            'parcel':
+            { "parcel_id":array([1,2,3,4,5]),
+              "zone_id":  array([2,1,2,3,1]),
+                },
+            "building":{
+                'building_id': array([1, 2, 3, 4, 5]),
+                'parcel_id': array([1, 2, 3, 4, 3]),
+                },
+        }
+        )
+        
+        should_be = array([2, 1, 2, 3, 2])
+        
+        tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
+
 if __name__=='__main__':
-    import unittest
-    from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numpy import array
-    from numpy import ma
-    from opus_core.resources import Resources    
-    from sanfrancisco.datasets.parcel_dataset import ParcelDataet
-    
-    class Tests(unittest.TestCase):
-        variable_name = "sanfrancisco.household.zone_id"
-
-        def test_my_inputs(self):
-            parcel_id = array([1,1,2,3,7])
-#            zone_id = array([4, 5, 6])
-
-            resources = Resources({'data':
-                                   {"parcel_id":array([1,2,3,4,5]),
-                                    "zone_id":  array([2,1,2,3,1]),
-                                    },
-                                  })
-            parcels = ParcelSet(resources=resources, in_storage_type="RAM")
-
-            values = VariableTestToolbox().compute_variable(self.variable_name, \
-                {"household":{ \
-                    "parcel_id":parcel_id}, \
-                 "parcel":parcels }, \
-                dataset = "household")
-            should_be = array([2, 2, 1, 2, -1])
-            
-            self.assertEqual(ma.allequal(values, should_be), \
-                             True, msg = "Error in " + self.variable_name)
-
-    unittest.main()
+    opus_unittest.main()

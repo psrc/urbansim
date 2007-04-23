@@ -60,7 +60,7 @@ if __name__=='__main__':
                      "from_zone_id":array([3,3,1,1]),
                      "to_zone_id":array([1,3,1,3]),
                      "hwy":array([1.1, 2.2, 3.3, 4.4])}},
-                dataset = "zone", package=package())
+                dataset = "zone")
             return values
 
         def test_to_1(self):

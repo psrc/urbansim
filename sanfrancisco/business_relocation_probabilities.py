@@ -34,7 +34,7 @@ class business_relocation_probabilities(Probabilities):
             return None
 #        rates.make_rates_array_if_not_made()
         probability = array(map(lambda x: sector_prob[rates.get_id_index(x)], \
-            business.get_attribute("building_use_id").astype(int32)))
+            business.get_attribute("sector_id").astype(int32)))
         return probability
 
     def get_dependent_datasets(self):

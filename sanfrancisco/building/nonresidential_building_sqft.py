@@ -20,74 +20,55 @@ from numpy import zeros, where
 class nonresidential_building_sqft(Variable):
     """total building_sqft in nonresidential class. """
    
+    _return_type="int32"
+    
     def dependencies(self):
-        return [my_attribute_label("building_class_id"), 
-                attribute_label("building_use", "class_id"),
-                "sanfrancisco.building_use.class_name"]
+        return [my_attribute_label("building_sqft"), 
+                "_class_name=building_use.disaggregate(building_use_classification.name)",
+                "_class_name=building.disaggregate(building_use._class_name)",
+            ]
         
     def compute(self,  dataset_pool):
-        building_use = dataset_pool.get_dataset("building_use")
-        building_class_ids = building_use.get_attribute("class_id")[
-             where(building_use.get_attribute("class_name") == "nonresidential")
-            ]
         buildings = self.get_dataset()
-        building_sqft = buildings.get_attribute("building_sqft")
-        results = zeros(buildings.size())
-        for class_id in building_class_ids:
-            index = buildings.get_attribute("building_class_id") == class_id
-            results[index] = building_sqft[index]
+        results = zeros(buildings.size(), dtype=self._return_type)
+        w = where(buildings.get_attribute("_class_name")=="nonresidential")[0]
+        results[w] = buildings.get_attribute("building_sqft")[w]
         return results
-    
+
+from opus_core.tests import opus_unittest
+from opus_core.dataset_pool import DatasetPool
+from opus_core.storage_factory import StorageFactory
+from numpy import array
+from opus_core.tests.utils.variable_tester import VariableTester
+
+class Tests(opus_unittest.OpusTestCase):
+    def test_my_inputs(self):
+        tester = VariableTester(
+            __file__,
+            package_order=['sanfrancisco','urbansim'],
+            test_data={
+            'building_use':
+            {
+                "building_use_id":array([1,2,3,4]),
+                "class_id":array([1,2,1,2]),
+                },
+            'building_use_classification':
+            {
+                "class_id":array([1,2]),
+                "name":    array(["nonresidential","residential"])
+                },           
+            "building":{
+                'building_id': array([1, 2, 3, 4, 5]),
+                'building_use_id': array([1, 2, 3, 4, 3]),
+                'building_sqft': array([1000, 200, 0, 400, 1500]),
+                },
+        }
+        )
+        
+        should_be = array([1000, 0, 0, 0, 1500])
+        
+        tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
+
 if __name__=='__main__':
-    import unittest
-    from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numpy import array, arange
-    from numpy import ma
-    from opus_core.resources import Resources
-    from urbansim.datasets.building_dataset import BuildingDataset
-    from sanfrancisco.datasets.building_use_classification_dataset import BuildingUseClassificationDataset
-    from opus_core.storage_factory import StorageFactory
-    
-    class Tests(unittest.TestCase):
-        variable_name = "sanfrancisco.building.nonresidential_building_sqft"
-        def test(self):
-#            building_id = array([1, 2, 3, 4])
-            
-            storage1 = StorageFactory().get_storage('dict_storage')
-            table1 = 'building_use'
-            
-            storage1.write_dataset(
-                Resources({
-                    'out_table_name':table1,
-                    'values': {"class_id":array([1,2]), 
-                               "class_name": array(["nonresidential","residential"])
-                               },
-                    })
-                )
-    
-            building_uses = BuildingUseClassificationDataset(in_storage=storage1, 
-                                                          in_table_name=table1)        
-            storage2 = StorageFactory().get_storage('dict_storage')
-            builing_table_name='building'
-            storage2.write_dataset(
-                Resources({
-                    'out_table_name':builing_table_name,
-                    'values': {"building_id":array([1,2,3,4]),
-                               "building_class_id":array([1,1,2,1]),
-                               "building_sqft":array([0, 100, 70, 29])},
-                })
-            )
-
-            buildings = BuildingDataset(in_storage=storage2, 
-                                        in_table_name=builing_table_name)
-
-
-            buildings.compute_variables(self.variable_name, 
-                                        resources=Resources({'building_use':building_uses}))
-            values = buildings.get_attribute(self.variable_name)
-            
-            should_be = array([0,100,0,29])
-            
-            self.assertEqual(ma.allclose(values, should_be, rtol=1e-20), \
-                             True, msg = "Error in " + self.variable_name)
-    unittest.main()
+    opus_unittest.main()
+       

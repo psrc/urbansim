@@ -15,23 +15,23 @@
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 
-class number_of_households_with_DDD_workers(Variable):
-    """Number of households with DDD workers in a given parcel"""
+class number_of_businesses_of_building_use_SSS(Variable):
+    """Number of businesses of_building_use_SSS in a given parcel"""
 
     _return_type="int32"
-    def __init__(self, nworkers):
-        self.variable = "number_of_households_with_%s_workers" % nworkers
+    def __init__(self, building_use):
+        self.building_use = building_use.lower()
         Variable.__init__(self)
         
     def dependencies(self):
-        return ["sanfrancisco.parcel.zone_id", 
-                "sanfrancisco.parcel.%s" % self.variable, 
-                my_attribute_label("zone_id")]
+        return [
+                "is_of_building_use_%s = sanfrancisco.business.is_building_use_%s" % (self.building_use, self.building_use),
+                "_number_of_businesses_of_building_use_%s = building.aggregate(business.is_of_building_use_%s)" % (self.building_use, self.building_use)
+                ]
 
     def compute(self,  dataset_pool):
-        parcels = dataset_pool.get_dataset("parcel")
-        return self.get_dataset().sum_dataset_over_ids(parcels, self.variable)
+        return self.get_dataset().get_attribute("_number_of_businesses_of_building_use_%s" % self.building_use)
 
     def post_check(self,  values, dataset_pool=None):
-        size = dataset_pool.get_dataset("parcel").get_attribute(self.variable).sum()
+        size = dataset_pool.get_dataset("building").size()
         self.do_check("x >= 0 and x <= " + str(size), values)

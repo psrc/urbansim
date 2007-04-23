@@ -25,47 +25,38 @@ class housing_value(Variable):
     residential_units = "residunits"
     
     def dependencies(self):
-        return [my_attribute_label(self.land_value), \
-                my_attribute_label(self.improvement_value), \
-                my_attribute_label(self.residential_units)]
+        return ["_housing_value = (parcel.land_val + parcel.struc_val ) / sanfrancisco.parcel.residential_units"
+                ]
         
     def compute(self,  dataset_pool):
-        parcels = self.get_dataset()
-        residential_units = parcels.get_attribute(self.residential_units)
-        return ma.filled((parcels.get_attribute(self.land_value) + \
-                       parcels.get_attribute(self.improvement_value)) /\
-                      ma.masked_where(residential_units==0, residential_units.astype(float32)), 0.0)
-
+        return self.get_dataset().get_attribute("_housing_value")
+    
     def post_check(self,  values, dataset_pool=None):
         self.do_check("x >= 0", values)
         
+from opus_core.tests import opus_unittest
+from opus_core.dataset_pool import DatasetPool
+from opus_core.storage_factory import StorageFactory
+from numpy import array
+from opus_core.tests.utils.variable_tester import VariableTester
+
+class Tests(opus_unittest.OpusTestCase):
+    def test_my_inputs(self):
+        tester = VariableTester(
+            __file__,
+            package_order=['sanfrancisco','urbansim'],
+            test_data={
+            'parcel':{
+                     "parcel_id":array([1,2,3,4,5]),
+                     "residential_units":array([2,0,1,4,7]),
+                     "land_val":array([1000,3000,2000,1005,7000]),
+                     "struc_val":array([2300,1285,2476,0,7]),                     
+                     }
+            }
+        )
+        
+        should_be = array([1650, 0, 4476, 251, 1001])
+        tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
+
 if __name__=='__main__':
-    import unittest
-    from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numpy import array
-    from opus_core.resources import Resources    
-    from sanfrancisco.datasets.parcels import ParcelSet
-
-    class Tests(unittest.TestCase):
-        variable_name = "sanfrancisco.parcel.housing_value"
-
-        def test_my_inputs(self):
-            resources = Resources({'data':
-                                   {"parcel_id":array([1,2,3,4,5]),
-                                    "residential_units":array([2,0,1,4,7]),
-                                    "land_value":array([100,11,20,0,90]),
-                                    "improvement_value":array([20,10,17,40,17]),
-                                    
-                                    },
-                                  })
-            parcels = ParcelSet(resources=resources, in_storage_type="RAM")
-
-            values = VariableTestToolbox().compute_variable(self.variable_name, \
-                {"parcel":parcels}, 
-                dataset = "parcel")
-            should_be = array([60, 0, 37, 10, 15.28571415])
-            
-            self.assertEqual(ma.allclose(values, should_be), \
-                             True, msg = "Error in " + self.variable_name)
-            
-    unittest.main()
+    opus_unittest.main()

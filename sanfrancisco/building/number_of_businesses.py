@@ -19,18 +19,12 @@ class number_of_businesses(Variable):
     """Number of businesses in a given parcel"""
 
     _return_type="int32"
-    def __init__(self, sector):
-        self.sector = sector.lower()
-        Variable.__init__(self)
         
     def dependencies(self):
-        return [
-                "sanfrancisco.business.is_sector_" + self.sector, 
-                "sanfrancisco.business.building_id"]
-
+        return ["_number_of_businesses=building.number_of_agents(business)"]
+                
     def compute(self,  dataset_pool):
-        business = dataset_pool.get_dataset("business")
-        return self.get_dataset().sum_dataset_over_ids(business, "is_sector_"+self.sector)
+        return self.get_dataset().get_attribute("_number_of_businesses")
 
     def post_check(self,  values, dataset_pool=None):
         size = dataset_pool.get_dataset("building").size()

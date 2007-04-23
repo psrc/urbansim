@@ -64,7 +64,7 @@ if __name__=='__main__':
                      "from_zone_id":array([3,3,1,1]),
                      "to_zone_id":array([1,3,1,3]),
                      mode:array([1, 2, 3, 4])}},
-                dataset = "zone", package=package())
+                dataset = "zone")
 
             should_be = array([1.17361, 10.25])
             self.assert_(ma.allclose(values, should_be, rtol=1e-3), "Error in travel_time_weighted_access_to_employment_hbw_am_drive_alone")

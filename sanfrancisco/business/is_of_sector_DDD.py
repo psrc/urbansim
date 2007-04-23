@@ -15,15 +15,19 @@
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
+    
+class is_of_sector_DDD(Variable):
+    """is business of sector_id DDD """
 
-class zone_id(Variable):
-    """The taz id of this household. """
-   
+    def __init__(self, sector_id):
+        self.sector_id = sector_id
+        Variable.__init__(self)
+        
     def dependencies(self):
-        return ["_zone_id=household.disaggregate(parcel.zone_id, intermediates=[building])"]
+        return ["_is_of_sector_%s=business.sector_id==%s" % (self.sector_id,self.sector_id)]
         
     def compute(self,  dataset_pool):
-        return self.get_dataset().get_attribute("_zone_id")
+        return  self.get_dataset().get_attribute("_is_of_sector_%s" % self.sector_id)
 
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
@@ -37,24 +41,16 @@ class Tests(opus_unittest.OpusTestCase):
             __file__,
             package_order=['sanfrancisco','urbansim'],
             test_data={
-            'parcel':
-            {"parcel_id":array([1,2,3,4,5]),
-             "zone_id":  array([2,1,2,3,1]),
+            'business':
+            {"business_id":array([1,2,3,4,5]),
+             "sector_id":array([4,2,4,3,4])
              },
-            'building':
-            {"building_id":array([1,2,3,4,5]),
-             "parcel_id":array([1,1,2,3,5])
-             },
-            'household':
-            {"household_id":array([1,2,3,4,5]),
-             "building_id":array([1,1,2,3,7])
-             },
-             
            }
         )
         
-        should_be = array([2, 2, 2, 1, -1])
-        tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
+        should_be = array([1, 0, 1, 0, 1])
+        instance_name = 'sanfrancisco.business.is_of_sector_4'
+        tester.test_is_equal_for_family_variable(self, should_be, instance_name)
 
 if __name__=='__main__':
     opus_unittest.main()

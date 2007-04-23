@@ -41,7 +41,7 @@ class employment_within_DDD_minutes_SSS_travel_time(Variable):
         num_jobs = self.get_dataset().get_attribute('employment')[zone_index]
 
         from_zone_id = travel_data.get_attribute("from_zone_id")        
-        results = array(ndimage_sum(within_indicator * num_jobs, labels = from_zone_id, index=zone_ids))
+        results = array(ndimage_sum(within_indicator * num_jobs.astype(float32), labels = from_zone_id, index=zone_ids))
         
         return results
 
@@ -63,7 +63,7 @@ if __name__=='__main__':
                      "from_zone_id":array([3,3,1,1]),
                      "to_zone_id":array([1,3,1,3]),
                      mode:array([1.1, 2.2, 3.3, 4.4])}},
-                dataset = "zone", package=package())
+                dataset = "zone")
             return values
 
         def test_to_2(self):

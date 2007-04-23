@@ -15,5 +15,6 @@
 from opus_core.opus_package import OpusPackage
 
 class package(OpusPackage):
-    name = 'sanfrancisco'
-    required_opus_packages = ["opus_core", "opus_emme2", "urbansim"]
+    name = None
+    required_opus_packages = ["opus_core", "urbansim"]
+    version = "1.0.beta2"

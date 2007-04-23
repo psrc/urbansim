@@ -24,50 +24,36 @@ class building_sqft_per_unit(Variable):
     residential_units = "residential_units"
     
     def dependencies(self):
-        return [my_attribute_label(self.building_sqft), \
-                my_attribute_label(self.residential_units)]
+        return ["_building_sqft_per_unit=building.building_sqft/building.residential_units"]
         
     def compute(self,  dataset_pool):
-        buildings = self.get_dataset()
-        residential_units = buildings.get_attribute(self.residential_units)
-        return ma.filled(buildings.get_attribute(self.building_sqft) / \
-                      ma.masked_where(residential_units==0, residential_units.astype(float32)), 0.0)
+        return self.get_dataset().get_attribute("_building_sqft_per_unit")
 
     def post_check(self,  values, dataset_pool=None):
         self.do_check("x >= 0", values)
+
+from opus_core.tests import opus_unittest
+from opus_core.dataset_pool import DatasetPool
+from opus_core.storage_factory import StorageFactory
+from numpy import array
+from opus_core.tests.utils.variable_tester import VariableTester
+
+class Tests(opus_unittest.OpusTestCase):
+    def test_my_inputs(self):
+        tester = VariableTester(
+            __file__,
+            package_order=['sanfrancisco','urbansim'],
+            test_data={
+            "building":{"building_id":array([1,2,3,4,5]),
+                       "residential_units":array([2,0,1,0,7]),
+                       "building_sqft":array([1000,0,2000,1000,7000]),
+                },
+        }
+        )
         
+        should_be = array([500, 0, 2000, 0, 1000])
+        
+        tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
+
 if __name__=='__main__':
-    import unittest
-    from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numpy import array
-    from opus_core.resources import Resources    
-    from sanfrancisco.datasets.building_dataset import BuildingDataset
-    from opus_core.storage_factory import StorageFactory
-    class Tests(unittest.TestCase):
-        variable_name = "sanfrancisco.building.building_sqft_per_unit"
-
-        def test_my_inputs(self):
-            storage2 = StorageFactory().get_storage('dict_storage')
-            building_table_name='building'
-            storage2.write_dataset(
-                Resources({
-                    'out_table_name':building_table_name,
-                    'values': {"building_id":array([1,2,3,4,5]),
-                               "residential_units":array([2,0,1,4,7]),
-                               "building_sqft":array([1000,0,2000,1000,7000]),
-                               },
-                })
-            )
-
-            buildings = BuildingDataset(in_storage=storage2, 
-                                        in_table_name=building_table_name)
-
-            buildings.compute_variables(self.variable_name)
-            values = buildings.get_attribute(self.variable_name)
-
-            should_be = array([500, 0, 2000, 250, 1000])
-            
-            self.assertEqual(ma.allclose(values, should_be), \
-                             True, msg = "Error in " + self.variable_name)
-            
-    unittest.main()
+    opus_unittest.main()

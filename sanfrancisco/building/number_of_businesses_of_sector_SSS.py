@@ -25,12 +25,12 @@ class number_of_businesses_of_sector_SSS(Variable):
         
     def dependencies(self):
         return [
-                "sanfrancisco.business.is_sector_" + self.sector, 
-                "sanfrancisco.business.building_id"]
+                "is_of_sector_%s = sanfrancisco.business.is_of_sector_%s" % (self.sector, self.sector),
+                "_number_of_businesses_of_sector_%s = building.aggregate(business.is_of_sector_%s)" % (self.sector, self.sector)
+                ]
 
     def compute(self,  dataset_pool):
-        business = dataset_pool.get_dataset("business")
-        return self.get_dataset().sum_dataset_over_ids(business, "is_sector_"+self.sector)
+        return self.get_dataset().get_attribute("_number_of_businesses_of_sector_%s" % self.sector)
 
     def post_check(self,  values, dataset_pool=None):
         size = dataset_pool.get_dataset("building").size()

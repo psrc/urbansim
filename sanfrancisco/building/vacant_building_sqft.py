@@ -22,14 +22,12 @@ class vacant_building_sqft(Variable):
     _return_type="int32"
     
     def dependencies(self):
-        return ["sanfrancisco.building.nonresidential_building_sqft", 
-                "sanfrancisco.building.occupied_sqft", 
-                my_attribute_label("building_id")]
+        return [
+               #"_vacant_building_sqft=sanfrancisco.building.nonresidential_building_sqft - sanfrancisco.building.occupied_sqft", 
+                "_vacant_building_sqft=sanfrancisco.building.building_sqft - sanfrancisco.building.occupied_sqft"]
 
     def compute(self,  dataset_pool):
-        return clip_to_zero_if_needed(
-               self.get_dataset().get_attribute("nonresidential_building_sqft") - \
-               self.get_dataset().get_attribute("occupied_sqft"))
+        return clip_to_zero_if_needed( self.get_dataset().get_attribute("_vacant_building_sqft") )
 
     def post_check(self,  values, dataset_pool=None):
         size = self.get_dataset().get_attribute("building_sqft").max()

@@ -22,43 +22,72 @@ class parcel_id(Variable):
     gc_parcel_id = "parcel_id"
     
     def dependencies(self):
-        return [my_attribute_label("building_id"), 
-                attribute_label("building", "parcel_id")]
+        return ["_parcel_id=business.disaggregate(building.parcel_id)"
+                ]
         
     def compute(self,  dataset_pool):
-        buildings = dataset_pool.get_dataset("building")
-        return self.get_dataset().get_join_data(buildings, name="parcel_id")
-    
+        return self.get_dataset().get_attribute("_parcel_id")
+
+from opus_core.tests import opus_unittest
+from opus_core.dataset_pool import DatasetPool
+from opus_core.storage_factory import StorageFactory
+from numpy import array
+from opus_core.tests.utils.variable_tester import VariableTester
+
+class Tests(opus_unittest.OpusTestCase):
+    def test_my_inputs(self):
+        tester = VariableTester(
+            __file__,
+            package_order=['sanfrancisco','urbansim'],
+            test_data={
+            'building':
+            {"building_id":array([1,2,3,4,5]),
+             "parcel_id":array([1,1,2,3,5])
+             },
+            'business':
+            {"business_id":array([1,2,3,4,5]),
+             "building_id":array([1,1,2,3,7])
+             },
+             
+           }
+        )
+        
+        should_be = array([1, 1, 1, 2, -1])
+        instance_name = 'sanfrancisco.business.parcel_id'
+        tester.test_is_close_for_variable_defined_by_this_module(self, should_be, instance_name)
+
 if __name__=='__main__':
-    import unittest
-    from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numpy import array
-    from numpy import ma
-    from opus_core.resources import Resources        
-    from sanfrancisco.datasets.buildings import BuildingSet
-        
-    class Tests(unittest.TestCase):
-        variable_name = "sanfrancisco.business.parcel_id"
-        
-        def test_my_inputs(self):
-            building_id = array([1,1,2,3,7])
+    opus_unittest.main()
 
-            resources = Resources({'data':
-                                   {"building_id":array([1,2,3,4,5]),
-                                    "parcel_id":  array([2,1,2,3,1]),
-                                    },
-                                  })
-            buildings = BuildingSet(resources=resources, in_storage_type="RAM")
-            
-            values = VariableTestToolbox().compute_variable(self.variable_name, \
-                {"business":{ \
-                    "building_id":building_id}, \
-                 "building":buildings,
-                  }, \
-                dataset = "business")
-            should_be = array([2, 2, 1, 2, -1])
 
-            self.assertEqual(ma.allclose(values, should_be, rtol=1e-7), \
-                             True, msg = "Error in " + self.variable_name)
 
-    unittest.main()
+#from opus_core.tests import opus_unittest
+#from opus_core.dataset_pool import DatasetPool
+#from opus_core.storage_factory import StorageFactory
+#from numpy import array
+#from opus_core.tests.utils.variable_tester import VariableTester
+#
+#class Tests(opus_unittest.OpusTestCase):
+#    def test_my_inputs(self):
+#        tester = VariableTester(
+#            __file__,
+#            package_order=['sanfrancisco','urbansim'],
+#            test_data={
+#            'business':
+#            {"business_id":array([1,2,3,4,5]),
+#             "building_id":array([4,2,4,3,4])
+#             },
+#            'building':
+#            {"building_id":array([1,2,3,4]),
+#             "parcel_id":array(["others","agr","manufactural","retail"])
+#             },
+#             
+#           }
+#        )
+#        
+#        should_be = array([1, 0, 1, 0, 1])
+#        instance_name = 'sanfrancisco.business.is_of_sector_retail'
+#        tester.test_is_close_for_variable_defined_by_this_module(self, should_be, instance_name)
+#
+#if __name__=='__main__':
+#    opus_unittest.main()

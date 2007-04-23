@@ -22,40 +22,13 @@ class average_income(Variable):
     
     def dependencies(self):
         return ["sanfrancisco.household.zone_id", 
-                "sanfrancisco.household.income", 
-                my_attribute_label("zone_id")]
+                "_average_income=zone.aggregate(household.income, function=mean)"
+                ]
 
     def compute(self,  dataset_pool):
-        households = dataset_pool.get_dataset("household")
-        return self.get_dataset().aggregate_dataset_over_ids(households, "mean", "income")
+        return self.get_dataset().get_attribute("_average_income")
 
     def post_check(self,  values, dataset_pool=None):
         imin = dataset_pool.get_dataset("household").get_attribute("income").min()
         imax = dataset_pool.get_dataset("household").get_attribute("income").max()
         self.do_check("x >= %s and x <= %s" % (imin, imax), values)
-
-if __name__=='__main__':
-    import unittest
-    from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numpy import array
-    from numpy import ma
-    from opus_core.resources import Resources
-    from sanfrancisco.datasets.parcels import ParcelSet
-    
-    class Tests(unittest.TestCase):
-        variable_name = "sanfrancisco.zone.average_income"
-        def test(self):
-
-            values = VariableTestToolbox().compute_variable(self.variable_name, \
-                {"zone":{
-                     "zone_id":array([1,2,3,4])}, \
-                 "household":{
-                              "zone_id":array([1, 1, 4, 4, 1, 2]),
-                              "income":array([10, 0, 7, 2, 3, 5]),
-                              }}, \
-                dataset = "zone")
-            should_be = array([13/3, 5.0, 0, 9/2])
-            
-            self.assertEqual(ma.allclose(values, should_be, rtol=1e-20), \
-                             True, msg = "Error in " + self.variable_name)
-    unittest.main()

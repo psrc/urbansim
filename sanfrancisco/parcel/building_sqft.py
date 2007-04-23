@@ -22,48 +22,12 @@ class building_sqft(Variable):
     _return_type="int32"
     
     def dependencies(self):
-        return [attribute_label("building", "building_sqft"), \
-                attribute_label("building", "parcel_id"), \
-                my_attribute_label("parcel_id")]
+        return ["_building_sqft = parcel.aggregate(building.building_sqft)"
+                ]
 
     def compute(self,  dataset_pool):
-        buildings = dataset_pool.get_dataset("building")
-        return self.get_dataset().sum_dataset_over_ids(buildings, "building_sqft")
+        return self.get_dataset().get_attribute("_building_sqft")
 
     def post_check(self,  values, dataset_pool=None):
         size = dataset_pool.get_dataset("building").get_attribute("building_sqft").sum()
         self.do_check("x >= 0 and x <= " + str(size), values)
-
-if __name__=='__main__':
-    import unittest
-    from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numpy import array
-    from numpy import ma
-    from opus_core.resources import Resources
-    from sanfrancisco.datasets.parcel_dataset import ParcelDataset
-    from sanfrancisco.datasets.building_dataset import BuildingDataset
-    
-    class Tests(unittest.TestCase):
-        variable_name = "sanfrancisco.parcel.building_sqft"
-        def test(self):
-            parcel_resources = Resources({'data':
-                                   {"parcel_id":array([1,2,3])},
-                                  })
-            parcels = ParcelDataset(resources=parcel_resources, in_storage_type="RAM")
-            building_resources = Resources({'data':
-                                   {"building_id":array([1,2,3,4]),
-                                    "parcel_id":array([1,2,3,2]),
-                                    "building_sqft":array([0,1,5,3]),
-                                    },
-                                  })
-            buildings = BuildingDataset(resources=building_resources, in_storage_type="RAM")
-            
-            values = VariableTestToolbox().compute_variable(self.variable_name, \
-                {"parcel":parcels, \
-                 "building":buildings}, \
-                dataset = "parcel")
-            should_be = array([0,4,5])
-            
-            self.assertEqual(ma.allclose(values, should_be, rtol=1e-20), \
-                             True, msg = "Error in " + self.variable_name)
-    unittest.main()

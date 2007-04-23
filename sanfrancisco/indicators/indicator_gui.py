@@ -10,5 +10,11 @@
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
+# open a traits-based GUI for editing PSRC indicator requests
+
+from opus_core.indicator_framework.traits.traits_indicator_handler import TraitsIndicatorHandler
+
+handler = TraitsIndicatorHandler()
+handler.open_editor(package_order = ['sanfrancisco','urbansim','opus_core'])

@@ -14,9 +14,9 @@
 
 from opus_core.resources import Resources
 from opus_core.misc import DebugPrinter, unique_values
-from opus_core.misc import concatenate
+#from opus_core.misc import concatenate
 from opus_core.model import Model
-from numpy import arange, array, where, int8, zeros, ones, compress, int32
+from numpy import arange, array, where, int8, zeros, ones, compress, int32, concatenate
 from numpy import logical_not
 from scipy.ndimage import sum as ndimage_sum
 from opus_core.sampling_toolbox import sample_noreplace, probsample_replace
@@ -39,18 +39,18 @@ class BusinessTransitionModel(Model):
         business_id_name = business_set.get_id_name()[0]
         control_totals.get_attribute("total_number_of_businesses")
         idx = where(control_totals.get_attribute("year")==year)
-        sectors = unique_values(control_totals.get_attribute_by_index("building_use_id", idx))
+        sectors = unique_values(control_totals.get_attribute_by_index("sector_id", idx))
         max_id = business_set.get_id_attribute().max()
         business_size = business_set.size()
         new_businesses = {self.location_id_name:array([], dtype='int32'), 
-                          "building_use_id":array([], dtype='int32'),
+                          "sector_id":array([], dtype='int32'),
                           business_id_name:array([], dtype='int32'), 
                           "sqft":array([], dtype=int32),
                           "employees":array([], dtype=int32),}
         compute_resources = Resources(data_objects)
 #        compute_resources.merge({job_building_types.get_dataset_name():job_building_types, "debug":self.debug})
         business_set.compute_variables(
-            map(lambda x: "%s.%s.is_sector_%s" 
+            map(lambda x: "%s.%s.is_of_sector_%s" 
                     % (self.variable_package, business_set.get_dataset_name(), x), 
                 sectors),
             resources = compute_resources)
@@ -58,7 +58,7 @@ class BusinessTransitionModel(Model):
         
         for sector in sectors:
             total_businesses = control_totals.get_data_element_by_id((year,sector)).total_number_of_businesses
-            is_in_sector = business_set.get_attribute("is_sector_%s" % sector)
+            is_in_sector = business_set.get_attribute("is_of_sector_%s" % sector)
             diff = int(total_businesses - is_in_sector.astype(int8).sum())
 
             if diff < 0: #
@@ -71,7 +71,7 @@ class BusinessTransitionModel(Model):
                                 
             if diff > 0: #
                 new_businesses[self.location_id_name]=concatenate((new_businesses[self.location_id_name],zeros((diff,))))
-                new_businesses["building_use_id"]=concatenate((new_businesses["building_use_id"], sector*ones((diff,))))
+                new_businesses["sector_id"]=concatenate((new_businesses["sector_id"], sector*ones((diff,))))
                 
                 available_business_index = where(is_in_sector)[0]
                 sampled_business = probsample_replace(available_business_index, diff, None)

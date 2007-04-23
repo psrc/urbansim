@@ -16,17 +16,17 @@ import os
 from opus_core.configuration import Configuration
 
 config = Configuration({
-    'cache_directory': "/urbansim_cache/sanfrancisco", # change or leave out
-    'cache_directory_root': "/urbansim_cache/sanfrancisco",
+    'cache_directory': "/workspace/urbansim_cache/sanfrancisco", # change or leave out
+    'cache_directory_root': "/workspace/urbansim_cache/sanfrancisco",
 
     'db_host_name':os.environ['MYSQLHOSTNAME'],
     'db_user_name':os.environ['MYSQLUSERNAME'], 
     'db_password':os.environ['MYSQLPASSWORD'],
     'input_configuration': { 
-        'db_input_database': "san_francisco_baseyear" #change
+        'db_input_database': "sanfrancisco_baseyear" #change
         },
     'output_configuration': {
-        "db_output_database":"san_francisco_estimation_output"
+        "db_output_database":"sanfrancisco_estimation_output"
         },
 
     'low_memory_mode':False,
@@ -35,8 +35,8 @@ config = Configuration({
     'baseyear_cache':{'directory_to_cache':"/urbansim_cache/sanfrancisco/cache_source",
                       #'years':range(1996,2001)
                      },
-    'base_year': 2000,
-    'years': (2000,2000),
+    'base_year': 2001,
+    'years': (2001,2001),
     'tables_to_cache':[
         'households',
         'buildings',

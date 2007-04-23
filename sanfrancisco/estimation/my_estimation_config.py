@@ -19,37 +19,12 @@ from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheC
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 
 my_configuration = {
-     'cache_directory':r'/workspace/urbansim_cache/sanfrancisco/estimation', ### TODO: Set this cache_directory to something useful.
-     'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-#           cache_directory_root = 'd:/urbansim_cache/sanfrancisco',
-        cache_from_mysql = False,
-        baseyear_cache = BaseyearCacheConfiguration(
-            existing_cache_to_copy = r"/media/sda2/urbansim_cache/sanfrancisco/cache_source20070204" #'/urbansim_cache/sanfrancisco/cache_source',
-            ),                
-        cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
-        unroll_gridcells = False,
-        tables_to_cache = [
-            'business',
-            'households',
-            'buildings',
-            'parcels',
-            'zones',
-            "households_for_estimation",
-            "business_for_estimation",
-            "persons",
-            "travel_data",
-            "annual_relocation_rates_for_business",
-            "buildings_for_estimation",
-            "building_use",
-            "building_use_classification",
-            'urbansim_constants'
-        ],  
-        ),
+     'cache_directory':r'/workspace/urbansim_cache/sanfrancisco/cache_source20070329', ### TODO: Set this cache_directory to something useful.
     'input_configuration': DatabaseConfiguration(
         host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
         user_name     = os.environ.get('MYSQLUSERNAME',''),
         password      = os.environ.get('MYSQLPASSWORD',''),
-        database_name = "san_francisco_baseyear_change_20061214",
+        database_name = "sanfrancisco_baseyear",
         ),
 
     'dataset_pool_configuration': DatasetPoolConfiguration(
@@ -60,7 +35,7 @@ my_configuration = {
         host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
         user_name     = os.environ.get('MYSQLUSERNAME',''),
         password      = os.environ.get('MYSQLPASSWORD',''),
-        database_name = "san_francisco_baseyear_change_20061228",
+        database_name = "sanfrancisco_baseyear_estimation20070329",
         ),
     'dataset_pool_configuration': DatasetPoolConfiguration(
         package_order=['sanfrancisco', 'urbansim', 'opus_core'],

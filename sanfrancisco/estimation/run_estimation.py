@@ -81,12 +81,12 @@ class EstimationRunner(object):
 
 if __name__ == '__main__':
     model = ("REPM", "real_estate_price_model")
-    #model = ("HLCM", "household_location_choice_model")
-    #model = ("BLCM", "business_location_choice_model")
-    #model = ("BLDGLCM", "building_location_choice_model", "nonresidential", False)
-    #model = ("BLDGLCM", "building_location_choice_model", "residential", False)
+#    model = ("HLCM", "household_location_choice_model")
+#    model = ("BLCM", "business_location_choice_model")
+#    model = ("BLDGLCM", "building_location_choice_model", "nonresidential", False)
+#    model = ("BLDGLCM", "building_location_choice_model", "residential", False)
 
     from my_estimation_config import my_configuration
     er = EstimationRunner()
-    er.run_estimation(my_configuration, model, save_estimation_results=False, diagnose=False)
+    er.run_estimation(my_configuration, model, save_estimation_results=True, diagnose=False)
     

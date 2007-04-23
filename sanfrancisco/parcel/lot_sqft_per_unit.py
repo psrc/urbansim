@@ -14,16 +14,22 @@
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
-from urbansim.functions import attribute_label
+from numpy import ma
+from numpy import float32
 
-class zone_id(Variable):
-    """The taz id of this household. """
-   
+class lot_sqft_per_unit(Variable):
+    """ (lot_sqft) / residential_units."""
+    
+    _return_type="float32"
+    
     def dependencies(self):
-        return ["_zone_id=household.disaggregate(parcel.zone_id, intermediates=[building])"]
+        return ["_lot_sqft_per_unit = parcel.lot_sf / parcel.residential_units"]
         
     def compute(self,  dataset_pool):
-        return self.get_dataset().get_attribute("_zone_id")
+        return self.get_dataset().get_attribute("_lot_sqft_per_unit")
+
+    def post_check(self,  values, dataset_pool=None):
+        self.do_check("x >= 0", values)
 
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
@@ -37,23 +43,15 @@ class Tests(opus_unittest.OpusTestCase):
             __file__,
             package_order=['sanfrancisco','urbansim'],
             test_data={
-            'parcel':
-            {"parcel_id":array([1,2,3,4,5]),
-             "zone_id":  array([2,1,2,3,1]),
-             },
-            'building':
-            {"building_id":array([1,2,3,4,5]),
-             "parcel_id":array([1,1,2,3,5])
-             },
-            'household':
-            {"household_id":array([1,2,3,4,5]),
-             "building_id":array([1,1,2,3,7])
-             },
-             
-           }
+            'parcel':{
+                     "parcel_id":array([1,2,3,4,5]),
+                     "residential_units":array([2,0,1,4,7]),
+                     "lot_sf":array([1000,3000,2000,1005,7000]),             
+                     }
+            }
         )
         
-        should_be = array([2, 2, 2, 1, -1])
+        should_be = array([500, 0, 2000, 251, 1000])
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 
 if __name__=='__main__':

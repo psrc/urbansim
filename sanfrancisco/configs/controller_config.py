@@ -15,7 +15,6 @@
 #from urbansim.estimation.config import config
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from opus_core.configuration import Configuration
-from numpy import array
 import os
 
 config = AbstractUrbansimConfiguration()
@@ -96,7 +95,7 @@ my_controller_configuration = {
                  "name": "prepare_for_run",
                  "arguments": {"storage": "base_cache_storage",
                                "in_table_name":"'annual_business_control_totals'",
-                               "id_name":"['year', 'building_use_id']"},
+                               "id_name":"['year', 'sector_id']"},
                  "output": "control_totals"
                 },
             "run": {
@@ -142,7 +141,7 @@ my_controller_configuration = {
                       "model_name":"'Business Location Choice Model'",
                       "short_name":"'BLCM'",
                       "choices":"'urbansim.lottery_choices'",
-                      "submodel_string":"'business.building_use_id'",
+                      "submodel_string":"'business.sector_id'",
                       "filter": None, #"'building.building_sqft'",
                       "location_id_string":"'building_id'",
                       "run_config":"models_configuration['business_location_choice_model']",

@@ -14,6 +14,7 @@
 
 from opus_core.resources import Resources
 from urbansim.models.location_choice_model import LocationChoiceModel
+from opus_core.misc import remove_elements_with_matched_prefix_from_list, remove_all
 from opus_core.variables.variable_name import VariableName
 from numpy import arange, where, ones, int32
 from numpy import take, int8, bool8
@@ -51,7 +52,7 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
         building_use_id = self.choice_set.get_attribute_by_index('building_use_id', where_available)
 #
         proposed_agent_sizes = agent_set.get_attribute_by_index('sqft', agents_index)
-        proposed_agent_use_ids = agent_set.get_attribute_by_index('building_use_id', agents_index)
+        proposed_agent_use_ids = agent_set.get_attribute_by_index('sector_id', agents_index)
         
         for iagent in arange(agents_index.size):
             proposed_agent_size = proposed_agent_sizes[iagent]
@@ -59,7 +60,7 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
             weight_array[iagent, :] = \
                         building_sqft >= proposed_agent_size
                         #logical_and(building_sqft >= proposed_agent_size, 
-                                    #building_use_id == proposed_agent_use_id)
+                                    #sector_id == proposed_agent_use_id)
                 
         # for memory reasons, discard columns that have only zeros
         logger.log_status("shape of weight_array: ", weight_array.shape)

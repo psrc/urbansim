@@ -20,13 +20,12 @@ class has_DDD_workers(Variable):
     """if a household has DDD workers"""
 
     def __init__(self, nworkers):
-        self.n = nworkers
+        self.nworkers = nworkers
         Variable.__init__(self)
         
     def dependencies(self):
-        return [my_attribute_label("nfulltime"), 
-                my_attribute_label("household_id")]
+        return ["_has_%s_workers = household.nfulltime=%s" % (self.nworkers, self.nworkers)
+                ]
         
     def compute(self,  dataset_pool):
-        workers = self.get_dataset().get_attribute("nfulltime")
-        return  workers == self.n
+        return  self.get_dataset().get_attribute("_has_%s_workers" % nworkers )

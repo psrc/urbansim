@@ -20,17 +20,16 @@ class number_of_households_with_DDD_workers(Variable):
 
     _return_type="int32"
     def __init__(self, nworkers):
-        self.variable = "has_%s_workers" % nworkers
+        self.nworkers = nworkers
         Variable.__init__(self)
         
     def dependencies(self):
         return [
-                "sanfrancisco.household.%s" % self.variable, 
-                "sanfrancisco.household.building_id"]
+                "_number_of_households_with_%s_workers = building.aggregate(sanfrancisco.household.has_%s_workers)" % (self.nworkers, self.nworkers),
+                ]
 
     def compute(self,  dataset_pool):
-        hh = dataset_pool.get_dataset("household")
-        return self.get_dataset().sum_dataset_over_ids(hh, self.variable)
+        return self.get_dataset().get_attribute("_number_of_households_with_%s_workers" % self.nworkers)
 
     def post_check(self,  values, dataset_pool=None):
         size = dataset_pool.get_dataset("household").size()

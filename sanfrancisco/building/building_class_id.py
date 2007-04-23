@@ -20,43 +20,40 @@ class building_class_id(Variable):
     """The class name (residential, nonresidential) of this building. """
    
     def dependencies(self):
-        return [my_attribute_label("building_use_id"), 
-                attribute_label("building_use", "class_id")]
+        return ["_building_class_id=building.disaggregate(building_use_classification.class_id, intermediates=[building_use])"]
         
     def compute(self,  dataset_pool):
-        building_use = dataset_pool.get_dataset("building_use")
-        return self.get_dataset().get_join_data(building_use, name="class_id")
+        return self.get_dataset().get_attribute("_building_class_id")
     
-#if __name__=='__main__':
-#    import unittest
-#    from urbansim.variable_test_toolbox import VariableTestToolbox
-#    from numpy import array
-#    from numpy import ma
-#    from opus_core.resources import Resources    
-#    from sanfrancisco.datasets.parcels import ParcelSet    
-#    
-#    class Tests(unittest.TestCase):
-#        variable_name = "sanfrancisco.household.zone_id"
-#
-#        def test_my_inputs(self):
-#            parcel_id = array([1,1,2,3,7])
-##            zone_id = array([4, 5, 6])
-#
-#            resources = Resources({'data':
-#                                   {"parcel_id":array([1,2,3,4,5]),
-#                                    "zone_id":  array([2,1,2,3,1]),
-#                                    },
-#                                  })
-#            parcels = ParcelSet(resources=resources, in_storage_type="RAM")
-#
-#            values = VariableTestToolbox().compute_variable(self.variable_name, \
-#                {"household":{ \
-#                    "parcel_id":parcel_id}, \
-#                 "parcel":parcels }, \
-#                dataset = "household")
-#            should_be = array([2, 2, 1, 2, -1])
-#            
-#            self.assertEqual(ma.allequal(values, should_be), \
-#                             True, msg = "Error in " + self.variable_name)
-#
-#    unittest.main()
+from opus_core.tests import opus_unittest
+from opus_core.dataset_pool import DatasetPool
+from opus_core.storage_factory import StorageFactory
+from numpy import array
+from opus_core.tests.utils.variable_tester import VariableTester
+
+class Tests(opus_unittest.OpusTestCase):
+    def test_my_inputs(self):
+        tester = VariableTester(
+            __file__,
+            package_order=['sanfrancisco','urbansim'],
+            test_data={
+                "building_use_classification":{
+                    "class_id":array([1,2]),
+                    "class_name":array(['residential','nonresidential']),
+                    },
+                "building_use":{
+                    "building_use_id":array([1,2,3,4]),
+                    "class_id":array([1,1,2,2])
+                    },
+                 "building":{
+                     "building_id":array([1,2,3,4,5,6]),
+                     "building_use_id":array([3,1,4,3,2,1]),
+                 }             
+           }
+        )
+        
+        should_be = array([2,1,2,2,1,1])
+
+        tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
+if __name__=='__main__':
+    opus_unittest.main()

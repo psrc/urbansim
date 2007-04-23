@@ -15,23 +15,23 @@
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 
-class number_of_businesses_of_sector_SSS(Variable):
-    """Number of businesses of_sector_SSS in a given parcel"""
+class employment_of_building_use_SSS(Variable):
+    """Number of businesses of_building_use_SSS in a given parcel"""
 
     _return_type="int32"
-    def __init__(self, sector):
-        self.sector = sector.lower()
+    def __init__(self, building_use):
+        self.building_use = building_use.lower()
         Variable.__init__(self)
         
     def dependencies(self):
-        return ["sanfrancisco.building.parcel_id", 
-                "sanfrancisco.building.number_of_businesses_of_sector_" + self.sector, 
-                my_attribute_label("parcel_id")]
+        return [
+                "_employment_of_building_use_%s = sanfrancisco.business.is_building_use_%s * sanfrancisco.business.employment" % (self.building_use, self.building_use),
+                "_employment_of_building_use_%s = building.aggregate(business._employment_of_building_use_%s)" % (self.building_use, self.building_use)
+                ]
 
     def compute(self,  dataset_pool):
-        buildings = dataset_pool.get_dataset("building")
-        return self.get_dataset().sum_dataset_over_ids(buildings, "number_of_businesses_of_sector_"+self.sector)
+        return self.get_dataset().get_attribute("_employment_of_building_use_%s" % self.building_use)
 
     def post_check(self,  values, dataset_pool=None):
-        size = dataset_pool.get_dataset("building").get_attribute("number_of_businesses_of_sector_"+self.sector).sum()
+        size = dataset_pool.get_dataset("building").size()
         self.do_check("x >= 0 and x <= " + str(size), values)

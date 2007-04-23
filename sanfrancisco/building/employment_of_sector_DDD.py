@@ -15,16 +15,23 @@
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 
-class employment(Variable):
-    """Number of employment a given building"""
+class employment_of_sector_DDD(Variable):
+    """Number of employment of sector DDD in a given building"""
 
     _return_type="int32"
+    def __init__(self, sector_id):
+        self.sector_id = "%s" % sector_id
+        Variable.__init__(self)
         
     def dependencies(self):
-        return ["_employment = building.aggregate(business.employment)"]
+        return ["_employment_of_sector_%s=sanfrancisco.business.is_of_sector_%s * business.employment" % (self.sector_id, self.sector_id),
+        #"_employment_of_sector_%s=building.aggregate(business._employment_of_sector_%s, function=sum)" % (self.sector_id, self.sector_id),
+    ]
 
     def compute(self,  dataset_pool):
-        return self.get_dataset().get_attribute("_employment")
+        #return self.get_dataset().get_attribute("_employment_of_sector_%s" % self.sector_id)
+        business = dataset_pool.get_dataset("business")
+        return self.get_dataset().sum_dataset_over_ids(business, constant=business.get_attribute("_employment_of_sector_%s" % self.sector_id).astype("float32"))
 
     def post_check(self,  values, dataset_pool=None):
         size = dataset_pool.get_dataset("building").size()
@@ -33,31 +40,32 @@ class employment(Variable):
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
-from numpy import array, arange
+from numpy import array
 from opus_core.tests.utils.variable_tester import VariableTester
 
 class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['psrc_parcel','urbansim'],
+            package_order=['sanfrancisco','urbansim'],
             test_data={
+            'business':
+            {"business_id":array([1,2,3,4,5]),
+             "sector_id":array([4,2,4,3,4]),
+             "building_id":array([1,1,2,2,2]),
+             "employment":array([100,20,40,30,41])
+             },
             'building':
             {
-                "building_id":array([1,2,3,4])
-            },
-            'business':
-            {
-                "business_id":arange(6)+1,
-                "building_id":array([1, 2, 3, 4, 2, -1]),
-                "employment":  array([2, 1, 1, 3, 4, 1])            }
-            }
+             "building_id":array([1,2]),
+             },
+             
+           }
         )
         
-        should_be = array([2,5,1,3])
-        
-        tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
+        should_be = array([100, 81])
+        instance_name = 'sanfrancisco.building.employment_of_sector_4'
+        tester.test_is_equal_for_family_variable(self, should_be, instance_name)
 
 if __name__=='__main__':
     opus_unittest.main()
-
