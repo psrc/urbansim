@@ -24,8 +24,8 @@ class has_DDD_workers(Variable):
         Variable.__init__(self)
         
     def dependencies(self):
-        return ["_has_%s_workers = household.nfulltime=%s" % (self.nworkers, self.nworkers)
+        return ["_has_%s_workers = household.nfulltime==%s" % (self.nworkers, self.nworkers)
                 ]
         
     def compute(self,  dataset_pool):
-        return  self.get_dataset().get_attribute("_has_%s_workers" % nworkers )
+        return  self.get_dataset().get_attribute("_has_%s_workers" % self.nworkers )

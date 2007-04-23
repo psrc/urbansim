@@ -25,12 +25,12 @@ from opus_core.indicator_framework.image_types.arcgeotiff_map import ArcGeotiffM
 from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
 
 run_description = '(run 2251 - baseline 04/05/2007)'
-cache_directory = r'/workspace/urbansim_cache/sanfrancisco/run_2251.2007_04_05_23_56'
+cache_directory = r'/workspace/urbansim_cache/sanfrancisco/2007_04_23_08_37'
 
 source_data = SourceData(
     cache_directory = cache_directory,
     run_description = run_description,
-    years = [2001,2002,2003,2004,2005],
+    years = [2001,2002],#,2003,2004,2005],
     dataset_pool_configuration = DatasetPoolConfiguration(
         package_order=['sanfrancisco','urbansim','opus_core'],
         package_order_exceptions={},
@@ -93,23 +93,23 @@ single_year_requests = [
        dataset_name = 'tract2000',
        #name = '',
        attributes = [ 
-                     'households_with_0_workers=tract2000.aggregate(sanfrancisco.zone.number_of_households_with_0_workers)',
-                     'households_with_1_worker=tract2000.aggregate(sanfrancisco.zone.number_of_households_with_1_workers)',
-                     'households_with_2_workers=tract2000.aggregate(sanfrancisco.zone.number_of_households_with_2_workers)',
-                     'households_with_3_workers=tract2000.aggregate(sanfrancisco.zone.number_of_households_with_3_workers)',
-                     'households_with_4_workers=tract2000.aggregate(sanfrancisco.zone.number_of_households_with_4_workers)',
-                     'households_with_5_workers=tract2000.aggregate(sanfrancisco.zone.number_of_households_with_5_workers)',
-                     'households_with_6_workers=tract2000.aggregate(sanfrancisco.zone.number_of_households_with_6_workers)',
-                     'households_with_7_workers=tract2000.aggregate(sanfrancisco.zone.number_of_households_with_7_workers)',
-                     'total_households=tract2000.aggregate(sanfrancisco.zone.number_of_households)',
-                     'total_population=tract2000.aggregate(sanfrancisco.zone.population)',                                     
-                     'sector_1_employment=tract2000.aggregate(sanfrancisco.zone.aggregate_employment_of_sector_1_from_building)',
-                     'sector_2_employment=tract2000.aggregate(sanfrancisco.zone.aggregate_employment_of_sector_2_from_building)',
-                     'sector_3_employment=tract2000.aggregate(sanfrancisco.zone.aggregate_employment_of_sector_3_from_building)',
-                     'sector_4_employment=tract2000.aggregate(sanfrancisco.zone.aggregate_employment_of_sector_4_from_building)',
-                     'sector_5_employment=tract2000.aggregate(sanfrancisco.zone.aggregate_employment_of_sector_5_from_building)',
-                     'sector_6_employment=tract2000.aggregate(sanfrancisco.zone.aggregate_employment_of_sector_6_from_building)',
-                     'total_employment=tract2000.aggregate(sanfrancisco.zone.aggregate_employment_from_building)',
+                     'households_with_0_workers=tract2000.aggregate(sanfrancisco.building.number_of_households_with_0_workers, intermediates=[parcel])',
+                     'households_with_1_worker =tract2000.aggregate(sanfrancisco.building.number_of_households_with_1_workers, intermediates=[parcel])',
+                     'households_with_2_workers=tract2000.aggregate(sanfrancisco.building.number_of_households_with_2_workers, intermediates=[parcel])',
+                     'households_with_3_workers=tract2000.aggregate(sanfrancisco.building.number_of_households_with_3_workers, intermediates=[parcel])',
+                     'households_with_4_workers=tract2000.aggregate(sanfrancisco.building.number_of_households_with_4_workers, intermediates=[parcel])',
+                     'households_with_5_workers=tract2000.aggregate(sanfrancisco.building.number_of_households_with_5_workers, intermediates=[parcel])',
+                     'households_with_6_workers=tract2000.aggregate(sanfrancisco.building.number_of_households_with_6_workers, intermediates=[parcel])',
+                     'households_with_7_workers=tract2000.aggregate(sanfrancisco.building.number_of_households_with_7_workers, intermediates=[parcel])',
+                     'total_households=tract2000.aggregate(sanfrancisco.building.number_of_households, intermediates=[parcel])',
+                     'total_population=tract2000.aggregate(sanfrancisco.building.population, intermediates=[parcel])',                                     
+                     'sector_1_employment=tract2000.aggregate(sanfrancisco.building.employment_of_sector_1, intermediates=[parcel])',
+                     'sector_2_employment=tract2000.aggregate(sanfrancisco.building.employment_of_sector_2, intermediates=[parcel])',
+                     'sector_3_employment=tract2000.aggregate(sanfrancisco.building.employment_of_sector_3, intermediates=[parcel])',
+                     'sector_4_employment=tract2000.aggregate(sanfrancisco.building.employment_of_sector_4, intermediates=[parcel])',
+                     'sector_5_employment=tract2000.aggregate(sanfrancisco.building.employment_of_sector_5, intermediates=[parcel])',
+                     'sector_6_employment=tract2000.aggregate(sanfrancisco.building.employment_of_sector_6, intermediates=[parcel])',
+                     'total_employment=tract2000.aggregate(sanfrancisco.building.employment, intermediates=[parcel])',
        ],
        exclude_condition = '==0' 
    ),
