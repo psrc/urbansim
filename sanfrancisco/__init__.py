@@ -1,6 +1,8 @@
 #
 # UrbanSim software. Copyright (C) 1998-2004 University of Washington
 # 
+# and another test
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
