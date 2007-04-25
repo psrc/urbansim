@@ -50,12 +50,17 @@ class LorenzCurve(object):
       ax.grid(color='0.5', linestyle=':', linewidth=0.5)
       xlabel('population')
       ylabel('household income')
+      title('Lorenz curve')
       font = {'fontname'   : 'Courier',
         'color'      : 'r',
         'fontweight' : 'bold',
         'fontsize'   : 11}
-      title('Lorenz curve')
-      text(5, 90, 'Gini coefficient:  %(gini)f' % {'gini' : self.gini()}, font, color='k')
+      box = { 'pad' : 6,
+                     'facecolor' : 'w',
+                     'linewidth' : 1,
+                     'fill' : True
+             }
+      text(5, 90, 'Gini coefficient:  %(gini)f' % {'gini' : self.gini()}, font, color='k', bbox=box )
       majorLocator = MultipleLocator(20)
       majorFormatter = FormatStrFormatter('%d %%')
       minorLocator = MultipleLocator(5)
