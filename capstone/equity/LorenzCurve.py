@@ -55,7 +55,7 @@ class LorenzCurve(object):
         'fontweight' : 'bold',
         'fontsize'   : 11}
       title('Lorenz curve')
-      text(0.5, 2.5, 'Gini coefficient: ' + self.gini().str() , font, color='k')
+      text(5, 90, 'Gini coefficient:  %(gini)f' % {'gini' : self.gini()}, font, color='k')
       majorLocator = MultipleLocator(20)
       majorFormatter = FormatStrFormatter('%d %%')
       minorLocator = MultipleLocator(5)
