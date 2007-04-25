@@ -2,11 +2,12 @@
 #  TODO: Base class is Variable
 #  TODO: check if numpy's sum and cumsum are safe
 
+from copy import copy
 from numpy import array, arange
 from numpy import ones, zeros, hstack, vstack
 from numpy import trapz
 from pylab import subplot, plot, show
-from pylab import xlabel, ylabel, title
+from pylab import xlabel, ylabel, title, text
 from pylab import MultipleLocator, FormatStrFormatter
 #from pylab import set_major_locator, set_major_formatter, set_minor_locator, set_minor_formatter
 
@@ -19,11 +20,11 @@ class LorenzCurve(object):
         # parameter must be 1d
         if(values.ndim != 1):
             raise TypeError, 'parameter must be a 1-dimensional array'
-    
-        num_values = values.size
-        values.sort()
+        self.values = array(values)
+        num_values = self.values.size
+        self.values.sort()
         F = arange(1, num_values + 1, 1, "float64")/num_values
-        L = values.cumsum(dtype="float64")/sum(values)
+        L = self.values.cumsum(dtype="float64")/sum(self.values)
         # Add (0, 0) as the first point for completeness (e.g. plotting)
         origin = array([[0], [0]])
         self.values = vstack((F, L))
@@ -47,9 +48,14 @@ class LorenzCurve(object):
       plot(a, a, 'k--', a, b, 'r')
       ax.set_ylim([0,100])
       ax.grid(color='0.5', linestyle=':', linewidth=0.5)
-      xlabel('% of gridcells')
-      ylabel('% of whatever')
+      xlabel('population')
+      ylabel('household income')
+      font = {'fontname'   : 'Courier',
+        'color'      : 'r',
+        'fontweight' : 'bold',
+        'fontsize'   : 11}
       title('Lorenz curve')
+      text(0.5, 2.5, 'Gini coefficient: ' + self.gini().str() , font, color='k')
       majorLocator = MultipleLocator(20)
       majorFormatter = FormatStrFormatter('%d %%')
       minorLocator = MultipleLocator(5)
@@ -116,6 +122,7 @@ class TestLorenzCurve(opus_unittest.OpusTestCase):
                          316, 124, 796, 250, 456, 112, 661, 294, 749, 619,
                          134, 582, 996, 413, 421, 219, 796, 923, 832, 557])
         result = LorenzCurve(incomes)
+        result.plot()
         wanted_result_F = arange(0, 111) / 110.
         wanted_result_L = array([ 0, 0.00202803,  0.00427335,  0.00664542,  0.00907181,  0.01167928,
         0.01457647,  0.01769094,  0.02089595,  0.02413718,  0.02754138,
