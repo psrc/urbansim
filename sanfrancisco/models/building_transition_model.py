@@ -85,7 +85,7 @@ class BuildingTransitionModel( Model ):
             compute_resources = Resources(resources)
             compute_resources.merge({"debug":self.debug})
             units_attribute = unit_attributes[itype]
-            vacant_units_attribute = 'vacant_' + units_attribute
+            vacant_units_attribute = 'vacant_%s_without_clip' % units_attribute
 
             # determine current-year vacancy rates
             building_set.compute_variables("sanfrancisco.building." + vacant_units_attribute,
@@ -125,7 +125,7 @@ class BuildingTransitionModel( Model ):
 
             #TODO: what happens if history has only zeroes?
             mean_size = history_values_without_zeros.mean()
-            idx = array( [] )
+            idx = array( [] ,dtype="int32")
             # Ensure that there are some development projects to choose from.
             #TODO: should the 'int' in the following line be 'ceil'?
             num_of_projects_to_select = max( 10, int( should_develop_units / mean_size ) )

@@ -33,9 +33,9 @@ class Baseline(GeneralConfiguration):
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
                 cache_directory_root = r'/workspace/urbansim_cache/sanfrancisco',
-                cache_from_mysql = False,
+                cache_from_mysql = True,
                 baseyear_cache = BaseyearCacheConfiguration(
-                    existing_cache_to_copy = r'/workspace/urbansim_cache/sanfrancisco/cache_source0423',
+                    existing_cache_to_copy = r'/workspace/urbansim_cache/sanfrancisco/cache_source20070428',
                     ),                
                 cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
                 tables_to_cache = [

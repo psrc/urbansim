@@ -304,9 +304,70 @@ my_controller_configuration = {
                               "storage": "base_cache_storage"},
                 "output": "scheduled_development_events"
                 }
-         }
+         },
             
-          
+##HLCM
+        "household_location_choice_model":{
+            "import": {"urbansim.models.household_location_choice_model_creator":
+                        "HouseholdLocationChoiceModelCreator",
+                      },
+            "init": {
+                "name": "HouseholdLocationChoiceModelCreator().get_model",
+                "arguments": {"location_set": "building",
+                              "location_id_string":"'building_id'",
+                              "choices":"'urbansim.lottery_choices'",
+                              "submodel_string":"'sanfrancisco.household.household_size_category'",
+                              "sample_size_locations":100,
+                              "dataset_pool": "dataset_pool",
+                              "run_config":{"capacity_string" : "sanfrancisco.building.vacant_residential_units",
+                                            "number_of_agents_string": "sanfrancisco.building.number_of_households",
+                                            "number_of_units_string": "building.residential_units",
+                                            },
+                              "estimate_config":{"weights_for_estimation_string" : None,
+                                            }                                            
+                              }
+                },
+            "prepare_for_run": {
+                "name": "prepare_for_run",
+                "arguments": {"specification_storage": "base_cache_storage",
+                              "specification_table": "'household_location_choice_model_specification'",
+                              "coefficients_storage": "base_cache_storage",
+                              "coefficients_table": "'household_location_choice_model_coefficients'",
+                              },
+                "output": "(specification, coefficients)"
+                },
+            "run": {
+                "arguments": {"specification": "specification",
+                              "coefficients":"coefficients",
+                              "agent_set": "household",
+                              "agents_index": "hrm_index",
+                              "data_objects": "datasets",
+                              "chunk_specification":"{'nchunks':12}",
+                              "debuglevel": "debuglevel" }
+                },
+            "prepare_for_estimate": {
+                "name": "prepare_for_estimate",
+                "arguments": {"specification_storage": "base_cache_storage",
+                              "specification_table": "'household_location_choice_model_specification'",
+                              "agent_set": "household",
+                              "agents_for_estimation_storage": "base_cache_storage",
+                              "agents_for_estimation_table": "'households_for_estimation'",
+                              "join_datasets": "True",
+                              "index_to_unplace":  None,
+                              "portion_to_unplace": 1/12.0,
+                              "data_objects": "datasets"
+                                  },
+                "output": "(specification, index)"
+                },
+            "estimate": {
+                "arguments": {"specification": "specification",
+                              "agent_set": "household",
+                              "agents_index": "index",
+                              "data_objects": "datasets",
+                              "debuglevel": "debuglevel"},
+                 "output": "(coefficients, dummy)"
+                }
+            }          
 }
 
 for model in my_controller_configuration.keys():
@@ -322,17 +383,17 @@ for model in my_controller_configuration.keys():
 
 
 #HLCM    
-hlcm_controller = config["models_configuration"]["household_location_choice_model"]["controller"]
-hlcm_controller["init"]["arguments"]["location_set"] = "building"
-hlcm_controller["init"]["arguments"]["location_id_string"] = "'building_id'"
-hlcm_controller["init"]["arguments"]["estimate_config"] = {"weights_for_estimation_string":None} #"urbansim.zone.vacant_residential_units"
-hlcm_controller["init"]["arguments"]["run_config"] = {"capacity_string":"sanfrancisco.building.vacant_residential_units"} #"urbansim.zone.vacant_residential_units"
-hlcm_controller["init"]["arguments"]['sample_size_locations']=30
-hlcm_controller["init"]["arguments"]['sampler']="'opus_core.samplers.weighted_sampler'"
-hlcm_controller["controller"]["init"]["arguments"]["submodel_string"] = "'household_size'"
-hlcm_controller["prepare_for_estimate"]["arguments"]["join_datasets"] = 'True'
-hlcm_controller["prepare_for_estimate"]["arguments"]["index_to_unplace"] = 'None'
-config["models_configuration"]['household_location_choice_model']["controller"].merge(hlcm_controller)
+#hlcm_controller = config["models_configuration"]["household_location_choice_model"]["controller"]
+#hlcm_controller["init"]["arguments"]["location_set"] = "building"
+#hlcm_controller["init"]["arguments"]["location_id_string"] = "'building_id'"
+#hlcm_controller["init"]["arguments"]["estimate_config"] = {"weights_for_estimation_string":None} #"urbansim.zone.vacant_residential_units"
+#hlcm_controller["init"]["arguments"]["run_config"] = {"capacity_string":"sanfrancisco.building.vacant_residential_units"} #"urbansim.zone.vacant_residential_units"
+#hlcm_controller["init"]["arguments"]['sample_size_locations']=60
+#hlcm_controller["init"]["arguments"]['sampler']="'opus_core.samplers.weighted_sampler'"
+#hlcm_controller["controller"]["init"]["arguments"]["submodel_string"] = "'household_size'"
+#hlcm_controller["prepare_for_estimate"]["arguments"]["join_datasets"] = 'True'
+#hlcm_controller["prepare_for_estimate"]["arguments"]["index_to_unplace"] = 'None'
+#config["models_configuration"]['household_location_choice_model']["controller"].merge(hlcm_controller)
 
 
 config["datasets_to_preload"] = {
