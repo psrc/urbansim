@@ -40,9 +40,7 @@ class CachingConfiguration(Configuration):
 #            "annual_relocation_rates_for_business",
 #            "buildings_for_estimation",
             "building_types",
-            'urbansim_constants',
-            'jobs',
-            'gridcells'
+            'urbansim_constants'
             ]
         
         return {
@@ -58,8 +56,7 @@ class CachingConfiguration(Configuration):
             tables_to_cache = tables_to_cache,
             tables_to_cache_nchunks = {
                 'parcels':4,
-                'buildings':5,
-                'gridcells':4
+                'buildings':5
                 },
             tables_to_copy_to_previous_years = {},                                          
             ),

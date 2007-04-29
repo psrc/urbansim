@@ -372,15 +372,15 @@ for model in my_controller_configuration.keys():
 #config["models_configuration"]['building_location_choice_model']["controller"].merge(bldglcm_controller)
 
 
-#HLCM    
+#HLCM
 hlcm_controller = config["models_configuration"]["household_location_choice_model"]["controller"]
 hlcm_controller["init"]["arguments"]["location_set"] = "building"
 hlcm_controller["init"]["arguments"]["location_id_string"] = "'building_id'"
-hlcm_controller["init"]["arguments"]["estimate_config"] = {"weights_for_estimation_string":None} #"urbansim.zone.vacant_residential_units"
+hlcm_controller["init"]["arguments"]["estimate_config"] = {"weights_for_estimation_string":"building.residential_units"} #"urbansim.zone.vacant_residential_units"
 hlcm_controller["init"]["arguments"]["run_config"] = {"capacity_string":"psrc_parcel.building.vacant_residential_units"} #"urbansim.zone.vacant_residential_units"
 hlcm_controller["init"]["arguments"]['sample_size_locations']=30
 hlcm_controller["init"]["arguments"]['sampler']="'opus_core.samplers.weighted_sampler'"
-hlcm_controller["controller"]["init"]["arguments"]["submodel_string"] = "'household_size'"
+hlcm_controller["controller"]["init"]["arguments"]["submodel_string"] =  None #"'household_size'"
 hlcm_controller["prepare_for_estimate"]["arguments"]["join_datasets"] = 'True'
 hlcm_controller["prepare_for_estimate"]["arguments"]["index_to_unplace"] = 'None'
 config["models_configuration"]['household_location_choice_model']["controller"].merge(hlcm_controller)
@@ -388,7 +388,7 @@ config["models_configuration"]['household_location_choice_model']["controller"].
 
 config["datasets_to_preload"] = {
         'zone':{},
-#        'household':{},
+        'household':{},
         'building':{},        
         'parcel':{'package_name':'psrc_parcel'},
 #        'business':{'package_name':'psrc_parcel'},
