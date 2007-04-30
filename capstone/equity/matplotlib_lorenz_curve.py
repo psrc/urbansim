@@ -59,7 +59,8 @@ class LorenzCurve(AbstractIndicator):
             title += '\n' + self.run_description
 
         # Do calculation
-        self.values = array(self._get_indicator(self.attribute, year))
+        # _get_indicator already returns a fresh array, so we don't need to make a new copy
+        self.values = self._get_indicator(self.attribute, year)
         num_values = self.values.size
         self.values.sort()
         F = arange(1, num_values + 1, 1, "float64")/num_values
@@ -70,15 +71,13 @@ class LorenzCurve(AbstractIndicator):
         self.values = hstack((origin, self.values))
         # This is the simple form of (0.5 - integral) / 0.5
         self.ginicoeff = 1 - 2 * trapz(self.values[1], self.values[0])
-
         
-        file_path = self.get_file_path(year = year)          
-    
-        self.plot(self.attribute, file_path, year);
+        file_path = self.get_file_path(year = year)           
+        self.plot(attribute_short, file_path );
         
         return file_path
 
-    def plot(self, attribute, file_path, year):
+    def plot(self, attribute_name, file_path=None ):
         a = self.values[0] * 100 
         b = self.values[1] * 100 
         ax = subplot(111)
@@ -86,7 +85,7 @@ class LorenzCurve(AbstractIndicator):
         ax.set_ylim([0,100])
         ax.grid(color='0.5', linestyle=':', linewidth=0.5)
         xlabel('population')
-        ylabel(attribute)
+        ylabel(attribute_name)
         title('Lorenz curve')
         font = {'fontname'   : 'Courier',
           'color'      : 'r',
@@ -108,8 +107,11 @@ class LorenzCurve(AbstractIndicator):
         ax.yaxis.set_major_locator( majorLocator )
         ax.yaxis.set_major_formatter( majorFormatter)
         ax.yaxis.set_minor_locator( minorLocator )
-        savefig(file_path)
-
+        
+        if file_path:
+            savefig(file_path)
+        else:
+            show()
 
 import os
 import tempfile
@@ -122,28 +124,6 @@ from opus_core.configurations.dataset_description import DatasetDescription
 
 from opus_core.indicator_framework.source_data import SourceData
 from opus_core.indicator_framework.abstract_indicator import AbstractIndicatorTest
-
-class Tests(AbstractIndicatorTest):
-        
-    def skip_test_create_indicator(self):
-        ####NOTE: THIS TEST FAILS BECAUSE THE OPUS_CORE DATASET DOES NOT HAVE 2D ATTRIBUTES, X/Y AXES
-        
-        indicator_path = os.path.join(self.temp_cache_path, 'indicators')
-        self.assert_(not os.path.exists(indicator_path))
-        
-        map = Map(
-                  source_data = self.source_data,
-                  attribute = 'package.test.attribute',
-                  dataset_name = 'test',
-                  years = None, 
-                  scale = [1,1000], 
-                  name = 'my_name'
-        )
-                
-        map.create(False)
-        
-        self.assert_(os.path.exists(indicator_path))
-        self.assert_(os.path.exists(os.path.join(indicator_path, 'test__map__my_name__1980.png')))
 
 if __name__ == '__main__':
     try: 
