@@ -34,6 +34,7 @@ class LorenzCurve(AbstractIndicator):
         AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, expression, name)
         self.values = None
         self.ginicoeff = None
+        self.scale = scale
 
     def is_single_year_indicator_image_type(self):
         return True
@@ -42,10 +43,10 @@ class LorenzCurve(AbstractIndicator):
         return 'png'
     
     def get_shorthand(self):
-        return 'lorenz_curve'
+        return 'lorenzcurve'
 
     def _get_additional_metadata(self):
-        return  []
+        return  [('scale',self.scale)]
     
     def _create_indicator(self, year):
         """Create a Lorenz Curve for the given indicator,
