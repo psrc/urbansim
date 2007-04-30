@@ -20,7 +20,7 @@ try:
 except:
     logger.log_warning('Could not load traits.ui. Skipping %s!' % __file__)
 else:
-    from opus_core.indicator_framework.image_types.lorenzcurve_plot import LorenzCurve
+    from opus_core.indicator_framework.image_types.matplotlib_lorenzcurve import LorenzCurve
     from opus_core.indicator_framework.traits.traits_abstract_indicator import TraitsAbstractIndicator
     
     class TraitsLorenz(TraitsAbstractIndicator):
