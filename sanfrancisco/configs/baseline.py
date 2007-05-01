@@ -32,7 +32,7 @@ class Baseline(GeneralConfiguration):
             'description':'San Francisco baseline',
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-                cache_directory_root = r'/workspace/urbansim_cache/sanfrancisco',
+                cache_directory_root = r'/urbansim_cache/sanfrancisco_lmwang',
                 cache_from_mysql = True,
                 baseyear_cache = BaseyearCacheConfiguration(
                     existing_cache_to_copy = r'/workspace/urbansim_cache/sanfrancisco/cache_source20070428',

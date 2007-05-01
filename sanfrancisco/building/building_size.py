@@ -38,7 +38,7 @@ class building_size(Variable):
         results = zeros(buildings.size(), dtype = self._return_type)
         for unit_name in bc.get_attribute("units"):
             idx = where(buildings.get_attribute('unit_name') == unit_name)[0]
-            results[idx] = buildings.get_attribute_by_index(unit_name, idx)
+            results[idx] = buildings.get_attribute_by_index(unit_name, idx).astype(self._return_type)
         return results
 
 from opus_core.tests import opus_unittest

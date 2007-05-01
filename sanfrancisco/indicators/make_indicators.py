@@ -17,20 +17,20 @@
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.indicator_framework.source_data import SourceData
-from opus_core.indicator_framework.image_types.matplotlib_map import Map
-from opus_core.indicator_framework.image_types.matplotlib_chart import Chart
+#from opus_core.indicator_framework.image_types.matplotlib_map import Map
+#from opus_core.indicator_framework.image_types.matplotlib_chart import Chart
 from opus_core.indicator_framework.image_types.table import Table
-from opus_core.indicator_framework.image_types.geotiff_map import GeotiffMap
-from opus_core.indicator_framework.image_types.arcgeotiff_map import ArcGeotiffMap
+#from opus_core.indicator_framework.image_types.geotiff_map import GeotiffMap
+#from opus_core.indicator_framework.image_types.arcgeotiff_map import ArcGeotiffMap
 from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
 
 run_description = '(run 2251 - baseline 04/05/2007)'
-cache_directory = r'/workspace/urbansim_cache/sanfrancisco/2007_04_23_08_37'
+cache_directory = r'/urbansim_cache/sanfrancisco_lmwang/run_2426.2007_04_29_19_54'  #'/workspace/urbansim_cache/sanfrancisco/2007_04_23_08_37'
 
 source_data = SourceData(
     cache_directory = cache_directory,
     run_description = run_description,
-    years = [2001,2002],#,2003,2004,2005],
+    years = [2001,2002,2003,2004,2005],
     dataset_pool_configuration = DatasetPoolConfiguration(
         package_order=['sanfrancisco','urbansim','opus_core'],
         package_order_exceptions={},
