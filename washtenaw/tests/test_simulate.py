@@ -13,20 +13,27 @@
 #
 
 import os
-from opus_core.tests import opus_unittest
 import tempfile
 from shutil import rmtree
+
+from opus_core.tests import opus_unittest
 from opus_core.logger import logger
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.misc import get_distinct_list
 from opus_core.variables.variable_name import VariableName
 from opus_core.simulation_state import SimulationState
 from opus_core.dataset_factory import DatasetFactory
-from urbansim.simulation.run_simulation_from_mysql import RunSimulationFromMysql
-from washtenaw.configs.baseline import Baseline
-from opus_core.tests import can_connect_to_trondheim
+from opus_core.misc import does_database_server_exist_for_this_hostname
 
-if can_connect_to_trondheim.can_this_module_connect_to_mysql_on_trondheim(module_name=__name__):
+from urbansim.simulation.run_simulation_from_mysql import RunSimulationFromMysql
+
+from washtenaw.configs.baseline import Baseline
+
+
+if does_database_server_exist_for_this_hostname(
+        module_name = __name__, 
+        hostname = Baseline()['input_configuration'].host_name):
+    
     class SimulationTest(opus_unittest.OpusTestCase):
         
         def setUp(self):
