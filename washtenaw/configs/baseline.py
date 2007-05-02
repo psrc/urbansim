@@ -37,14 +37,14 @@ class Baseline(GeneralConfiguration):
                 host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
                 user_name     = os.environ.get('MYSQLUSERNAME',''),
                 password      = os.environ.get('MYSQLPASSWORD',''),
-                database_name = 'washtenaw_baseyear',
+                database_name = 'washtenaw_class',
                 ),
             'in_storage':StorageFactory().get_storage('mysql_storage',
                 storage_location = ScenarioDatabase(
                     hostname = os.environ.get('MYSQLHOSTNAME','localhost'),
                     username = os.environ.get('MYSQLUSERNAME',''),
                     password = os.environ.get('MYSQLPASSWORD',''),
-                    database_name = 'washtenaw_baseyear',
+                    database_name = 'washtenaw_class',
                     )
                 ),
             'models': [
