@@ -48,8 +48,8 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
         """
         """
         if not isinstance(choice_set, ProposedDevelopmentProjectDataset):
-            parcels = data_objects['parcel']
-            templates = data_objects['development_template']
+            parcels = dataset_pool.get_dataset('parcel')
+            templates = dataset_pool.get_dataset('development_template')
             choice_set = create_from_parcel_and_development_template(parcels, templates, index=index)
 
         dataset_pool.add_datasets_if_not_included({choice_set.get_dataset_name():choice_set})
@@ -125,32 +125,29 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
         self.demolished_units = {} #total demolished units by building type
 
         self.accepting_proposals = {}  #whether accepting new proposals, for each building type
-        self.check_vacancy_rates(target_vacancy_rates, data_objects)
+        self.check_vacancy_rates(target_vacancy_rates)
 
         proposals = None  # proposals to be considered
         self.accepted_proposals = None # proposals accepted
         self.consider_proposals(proposals,
-                                target_vacancy_rates,
-                                data_objects)
+                                target_vacancy_rates)
         while self.accepting_proposal:
             proposals = LocationChoiceModel.run(self,specification,
                                                 coefficients,
                                                 agent_set,
                                                 agents_index=agents_index,
                                                 chunk_specification=chunk_specification,
-                                                data_objects=data_objects,
                                                 run_config=run_config,
                                                 debuglevel=debuglevel)
 
             self.consider_proposals(proposals,
-                                    target_vacancy_rates,
-                                    data_objects
+                                    target_vacancy_rates
                                    )
 
         schedule_development_projects = self.schedule_accepted_proposal()
         return schedule_development_projects
 
-    def check_vacancy_rates(self, target_vacancy_rates, data_objects):
+    def check_vacancy_rates(self, target_vacancy_rates):
         for index in arange(target_vacancy_rates.size()):
             type = target_vacancy_rates.get_attribute_by_index("type", index)
             target = target_vacancy_rates.get_attribute_by_index("target", index)
@@ -167,7 +164,7 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
             else:
                 self.accepting_proposals[type] = False
 
-    def consider_proposals(self, proposals, target_vacancy_rates, data_objects):
+    def consider_proposals(self, proposals, target_vacancy_rates):
         building_site = buildings.get_attribute("parcel_id")
         proposal_indexes = self.choice_set.get_id_index(proposals)
         rejected_proposals = zeros(proposal_indexes.size, dtype="int32")
@@ -274,35 +271,35 @@ class ProposedDevelopmentProjectChoiceModel(LocationChoiceModel):
                               filter=None, location_id_variable=None,
                               data_objects={}):
 
-     """similar to prepare_for_estimation method of AgentLocationChoiceModel
-     agent_set is not needed because agents are virtual investors
-     """
-    from urbansim.estimation.estimator import get_specification_for_estimation
-    specification = get_specification_for_estimation(specification_dict,
-                                                      specification_storage,
-                                                      specification_table)
+        """similar to prepare_for_estimation method of AgentLocationChoiceModel
+           agent_set is not needed because agents are virtual investors
+        """
+        from urbansim.estimation.estimator import get_specification_for_estimation
+        specification = get_specification_for_estimation(specification_dict,
+                                                          specification_storage,
+                                                          specification_table)
 
-    #def prepare_for_estimate(self, agent_set, specification_dict=None, specification_storage=None,
-                              #specification_table=None, urbansim_constant=None,
-                              #location_id_variable=None, dataset_pool=None, **kwargs):
-#        Return index of buildings that are younger than 'recent_years'+2"""
-    #if location_id_variable:
-        #agent_set.compute_variables(location_id_variable, dataset_pool=dataset_pool)
-    if agents_for_estimation_storage is not None:
-        estimation_set = Dataset(in_storage = agents_for_estimation_storage,
-                                 in_table_name=agents_for_estimation_table,
-                                 id_name='building_id',
-                                 dataset_name='building')
-        if location_id_variable:  #map buildings to proposed development project, proposal_id
-            estimation_set.compute_variables(location_id_variable, resources=Resources(data_objects))
-            # needs to be a primary attribute because of the join method below
-            #estimation_set.add_primary_attribute(estimation_set.get_attribute(location_id_variable), VariableName(location_id_variable).alias())
-        if filter:
-            estimation_set.compute_variables(filter, resources=Resources(data_objects))
-            index = where(estimation_set.get_attribute(filter) > 0)[0]
-            estimation_set.subset_by_index(index, flush_attributes_if_not_loaded=False)
-    else:
-        raise DataError, 'agents_for_estimation_storage unspecified, which must be a subset of buildings.'
+        #def prepare_for_estimate(self, agent_set, specification_dict=None, specification_storage=None,
+                                  #specification_table=None, urbansim_constant=None,
+                                  #location_id_variable=None, dataset_pool=None, **kwargs):
+    #        Return index of buildings that are younger than 'recent_years'+2"""
+        #if location_id_variable:
+            #agent_set.compute_variables(location_id_variable, dataset_pool=dataset_pool)
+        if agents_for_estimation_storage is not None:
+            estimation_set = Dataset(in_storage = agents_for_estimation_storage,
+                                     in_table_name=agents_for_estimation_table,
+                                     id_name='building_id',
+                                     dataset_name='building')
+            if location_id_variable:  #map buildings to proposed development project, proposal_id
+                estimation_set.compute_variables(location_id_variable, resources=Resources(data_objects))
+                # needs to be a primary attribute because of the join method below
+                #estimation_set.add_primary_attribute(estimation_set.get_attribute(location_id_variable), VariableName(location_id_variable).alias())
+            if filter:
+                estimation_set.compute_variables(filter, resources=Resources(data_objects))
+                index = where(estimation_set.get_attribute(filter) > 0)[0]
+                estimation_set.subset_by_index(index, flush_attributes_if_not_loaded=False)
+        else:
+            raise DataError, 'agents_for_estimation_storage unspecified, which must be a subset of buildings.'
 
-    return (specification, estimation_set)
+        return (specification, estimation_set)
 

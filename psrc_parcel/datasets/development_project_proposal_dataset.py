@@ -1,16 +1,16 @@
 #
 # UrbanSim software. Copyright (C) 1998-2004 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 from opus_core.datasets.interaction_dataset import InteractionDataset
@@ -34,7 +34,7 @@ class DevelopmentProjectProposalDataset(UrbansimDataset):
     def __init__(self, resources=None, dataset1=None, dataset2=None, index1=None, **kwargs):
         """ This dataset is an interaction of two datasets (originally, parcel and development template).
             It's similar to InteractionSet, but flattend to 1d, thus regression model can use this dataset without changes
-        """ 
+        """
         UrbansimDataset.__init__(self, resources=resources, **kwargs)
         if dataset1 is not None:
             self.dataset1 = dataset1
@@ -44,8 +44,8 @@ class DevelopmentProjectProposalDataset(UrbansimDataset):
             self.index1 = index1
 
     def _compute_if_needed(self, name, dataset_pool, resources=None, quiet=False, version=None):
-        """ Compute variable given by the argument 'name' only if this variable 
-        has not been computed before. 
+        """ Compute variable given by the argument 'name' only if this variable
+        has not been computed before.
         Check first if this variable belongs to dataset1 or dataset2.
         dataset_pool holds available datasets.
         """
@@ -66,10 +66,10 @@ class DevelopmentProjectProposalDataset(UrbansimDataset):
                 owner_dataset = self.dataset2
 #                index = self.get_2d_index()
             else:
-                self._raise_error(StandardError, "Cannot find variable '%s'\nin either dataset or in the interaction set." % 
+                self._raise_error(StandardError, "Cannot find variable '%s'\nin either dataset or in the interaction set." %
                                 variable_name.get_full_name())
             new_version =  self.compute_variables_return_versions_and_final_value("%s = %s.disaggregate(%s)" % \
-                                   ( short_name, self.get_dataset_name(), variable_name.get_expression() ), 
+                                   ( short_name, self.get_dataset_name(), variable_name.get_expression() ),
                                    dataset_pool=dataset_pool, resources=resources, quiet=quiet )[0]
         return new_version
 
@@ -77,39 +77,41 @@ class DevelopmentProjectProposalDataset(UrbansimDataset):
         """check that name is the name of this dataset or one of its components"""
         if name!=self.get_dataset_name() and name!=self.dataset1.get_dataset_name() and name!=self.dataset2.get_dataset_name():
             raise ValueError, 'different dataset names for variable and dataset or a component'
-    
-    
+
+
 def create_from_parcel_and_development_template(parcel_dataset,
-                                                development_template_dataset, 
-                                                index=None, 
+                                                development_template_dataset,
+                                                index=None,
                                                 filter=None,
+                                                dataset_pool=None,
                                                 resources=None):
     """create development project proposals from parcel and development_template_dataset,
     index1 - 1D array, indices of parcel_dataset
     """
 
-    interactionset = InteractionDataset(dataset1=parcel_dataset, 
-                                    dataset2=development_template_dataset, 
+    interactionset = InteractionDataset(dataset1=parcel_dataset,
+                                    dataset2=development_template_dataset,
                                     index1=index)
     parcel_ids = interactionset.get_attribute("parcel_id").ravel()
     template_ids = interactionset.get_attribute("template_id").ravel()
-        
-    storage = StorageFactory().get_storage('dict_storage')        
+
+    storage = StorageFactory().get_storage('dict_storage')
     storage._write_dataset(out_table_name='development_project_proposals',
                            values = {
                                "proposal_id": arange(1, parcel_ids.size+1, 1),
                                "parcel_id" : parcel_ids,
                                "template_id": template_ids,
                            }
-                       )            
+                       )
     development_project_proposals = DevelopmentProjectProposalDataset(resources=Resources(resources),
                                                                       dataset1 = parcel_dataset,
                                                                       dataset2 = development_template_dataset,
-                                                                      in_storage=storage, 
+                                                                      in_storage=storage,
                                                                       in_table_name='development_project_proposals',
                                                                       )
     if filter is not None:
-            development_project_proposals.compute_variables(filter, resources=Resources(resources))
+            development_project_proposals.compute_variables(filter, dataset_pool=dataset_pool,
+                                                            resources=Resources(resources))
             filter_index = where(development_project_proposals.get_attribute(filter) > 0)[0]
             development_project_proposals.subset_by_index(filter_index, flush_attributes_if_not_loaded=False)
 
@@ -124,7 +126,7 @@ from numpy import ma
 class Tests(opus_unittest.OpusTestCase):
     def setUp(self):
         storage = StorageFactory().get_storage('dict_storage')
-        
+
         storage._write_dataset(
             'development_templates',
             {
@@ -147,35 +149,35 @@ class Tests(opus_unittest.OpusTestCase):
                 "template_id":array([1,  2, 3, 4,  1, 2,  3, 4, 1,  2, 3, 4])
             }
         )
-        
+
         self.dataset_pool = DatasetPool(package_order=['psrc_parcel'],
                                    storage=storage)
         parcels = self.dataset_pool.get_dataset('parcel')
-        templates = self.dataset_pool.get_dataset('development_template')        
+        templates = self.dataset_pool.get_dataset('development_template')
         self.dataset = create_from_parcel_and_development_template(parcels, templates, resources=None)
-        
+
     def test_create(self):
         proposals = self.dataset_pool.get_dataset("development_project_proposal")
-        
+
         self.assert_(ma.allequal(self.dataset.get_id_attribute(), proposals.get_id_attribute()))
         self.assert_(ma.allequal(self.dataset.get_attribute("parcel_id"), proposals.get_attribute("parcel_id")))
         self.assert_(ma.allequal(self.dataset.get_attribute("template_id"), proposals.get_attribute("template_id")))
-        
-        
+
+
     def test_compute(self):
 
-        self.dataset.compute_variables("development_template.project_size", 
+        self.dataset.compute_variables("development_template.project_size",
                               dataset_pool=self.dataset_pool)
-        values = self.dataset.get_attribute("project_size")        
+        values = self.dataset.get_attribute("project_size")
         should_be = array([0, 1999, 2000, 10, 0, 1999, 2000, 10, 0, 1999, 2000, 10])
-        self.assert_(ma.allequal( values, should_be), 
+        self.assert_(ma.allequal( values, should_be),
                      msg = "Error in " + "development_template.project_size")
 
-        self.dataset.compute_variables("parcel.lot_size", 
+        self.dataset.compute_variables("parcel.lot_size",
                               dataset_pool=self.dataset_pool)
-        values = self.dataset.get_attribute("lot_size")        
+        values = self.dataset.get_attribute("lot_size")
         should_be = array([0, 0,  0, 0,  2005, 2005,2005,2005, 23, 23, 23, 23])
-        self.assert_(ma.allequal( values, should_be), 
+        self.assert_(ma.allequal( values, should_be),
                      msg = "Error in " + "parcel.lot_size")
 
 

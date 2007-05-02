@@ -27,11 +27,11 @@ class BuildingLocationChoiceModel(UrbansimBuildingLocationChoiceModel):
 #        weight_array = ones((where_developable.size), dtype=int8) #.astype(bool8)
 #        return (weight_array, where_developable)
 
-    def get_weights_for_sampling_locations_for_estimation(self, agent_set, agents_index, data_objects=None):
+    def get_weights_for_sampling_locations_for_estimation(self, agent_set, agents_index):
         if self.run_config.get("agent_units_string", None): # needs to be corrected
-            agent_set.compute_variables(self.run_config["agent_units_string"], resources=Resources(data_objects))
+            agent_set.compute_variables(self.run_config["agent_units_string"], dataset_pool=self.dataset_pool)
 
-        return self.get_weights_for_sampling_locations(agent_set, agents_index, data_objects)
+        return self.get_weights_for_sampling_locations(agent_set, agents_index)
 
     def prepare_for_estimate(self, add_member_prefix=True,
                              specification_dict=None,

@@ -1,10 +1,10 @@
 #
 # UrbanSim software. Copyright (C) 1998-2004 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
@@ -36,9 +36,9 @@ models_configuration["business_location_choice_model"] = {
 
 my_controller_configuration = {
  'real_estate_price_model': {
-    "import": {"psrc_parcel.models.real_estate_price_model":
+    "import": {"urbansim.models.real_estate_price_model":
                                         "RealEstatePriceModel"},
-    "init": { 
+    "init": {
         "name": "RealEstatePriceModel",
         "arguments": {"submodel_string": "'building_type_id'",
                       "outcome_attribute": "'ln_unit_price=ln(psrc_parcel.building.unit_price)'",
@@ -52,7 +52,7 @@ my_controller_configuration = {
                        "coefficients_table": "'real_estate_price_model_coefficients'"},
         "output": "(specification, coefficients)"
         },
-    "run": {                 
+    "run": {
         "arguments": {
                       "specification": "specification",
                       "coefficients":"coefficients",
@@ -64,7 +64,7 @@ my_controller_configuration = {
         "arguments": {"specification_storage": "base_cache_storage",
                       "specification_table": "'real_estate_price_model_specification'",
                       "filter_variable":"'psrc_parcel.building.unit_price'",
-                      "dataset": "building", 
+                      "dataset": "building",
                       "threshold": 1},
         "output": "(specification, index)"
         },
@@ -78,7 +78,7 @@ my_controller_configuration = {
                       "debuglevel": config['debuglevel']
                       },
         "output": "(coefficients, dummy)"
-        }                                  
+        }
 
   },
 
@@ -132,10 +132,10 @@ my_controller_configuration = {
                 "output": "brm_index"
                 }
     },
-  
+
  'business_location_choice_model': {
     "import": {"psrc_parcel.models.business_location_choice_model":"BusinessLocationChoiceModel"},
-    "init": { 
+    "init": {
         "name": "BusinessLocationChoiceModel",
         "arguments": {
                       "location_set":"building",
@@ -157,7 +157,7 @@ my_controller_configuration = {
                       },
         "output": "(specification, coefficients)"
         },
-        
+
     "run": {
         "arguments": {"specification": "specification",
                       "coefficients":"coefficients",
@@ -174,7 +174,7 @@ my_controller_configuration = {
                       "agent_set":"business",
                       "join_datasets": "False",
                       "agents_for_estimation_storage": "base_cache_storage",
-                      "agents_for_estimation_table": "'business_for_estimation'",                      
+                      "agents_for_estimation_table": "'business_for_estimation'",
                       "filter":None,
                       "index_to_unplace":  "brm_index",
                       "portion_to_unplace": 1/12.0,
@@ -183,7 +183,7 @@ my_controller_configuration = {
         "output": "(specification, index)"
         },
     "estimate": {
-        "arguments": {          
+        "arguments": {
                       "specification": "specification",
                       "agent_set": "business",
                      "agents_index": "index",
@@ -192,7 +192,7 @@ my_controller_configuration = {
         "output": "(coefficients, dummy)"
         },
    },
-   
+
    #'building_transition_model': {
             #"import": {"psrc_parcel.models.building_transition_model": "BuildingTransitionModel"},
             #"init": {"name": "BuildingTransitionModel"},
@@ -209,7 +209,7 @@ my_controller_configuration = {
                     #"output": "new_building_index",
             #}
           #},
-          
+
    #'building_location_choice_model':{
                 #"group_by_attribute": ("building_use_classification", "name"),
                 #"import": {"psrc_parcel.models.building_location_choice_model":
@@ -246,7 +246,7 @@ my_controller_configuration = {
                                   #"data_objects": "datasets" ,
                                   #"chunk_specification":"{'records_per_chunk':500}"}
                     #},
-                    
+
                 #"prepare_for_estimate": {
                     #"name": "prepare_for_estimate",
                     #"arguments": {"specification_storage": "base_cache_storage",
@@ -269,7 +269,7 @@ my_controller_configuration = {
                                       #"data_objects": "datasets"},
                          #"output": "(coefficients, dummy)"
                    #}
-         #},       
+         #},
 
         "household_relocation_model" : {
             "import": {"urbansim.models.household_relocation_model_creator":
@@ -310,7 +310,7 @@ my_controller_configuration = {
  'expected_sale_price_model': {
     "import": {"psrc_parcel.models.proposed_development_project_expected_sale_price_model":
                "ProposedDevelopmentProjectSalePriceModel"},
-    "init": { 
+    "init": {
         "name": "ProposedDevelopmentProjectSalePriceModel",
         "arguments": {"submodel_string": "'psrc_parcel.development_project_proposal.building_type_id'",
                       "filter_attribute": "'psrc_parcel.development_project_proposal.is_viable'"},
@@ -323,7 +323,7 @@ my_controller_configuration = {
                        "coefficients_table": "'real_estate_price_model_coefficients'"},
         "output": "(specification, coefficients)"
         },
-    "run": {                 
+    "run": {
         "arguments": {
                       "specification": "specification",
                       "coefficients":"coefficients",
@@ -332,11 +332,11 @@ my_controller_configuration = {
         "output":"development_project_proposal"  #get the development project proposal back
             },
   },
-  
+
  'construction_cost_model': {
     "import": {"psrc_parcel.models.proposed_development_project_cost_model":
                                         "ProposedDevelopmentProjectCostModel"},
-    "init": { 
+    "init": {
         "name": "ProposedDevelopmentProjectCostModel",
         "arguments": {"submodel_string": "'template_id'",
                       "filter_attribute": None},
@@ -349,20 +349,20 @@ my_controller_configuration = {
                        "coefficients_table": "'development_project_construction_cost_model_coefficients'"},
         "output": "(specification, coefficients)"
         },
-    "run": {                 
+    "run": {
         "arguments": {
                       "specification": "specification",
                       "coefficients":"coefficients",
                       "dataset": "development_project_proposal",  # use the dataset created by expected sale price model
                       "data_objects": "datasets" }
             },
-  },            
-          
+  },
+
 }
 
 for model in my_controller_configuration.keys():
     if model not in config["models_configuration"].keys():
-        config["models_configuration"][model] = {}    
+        config["models_configuration"][model] = {}
     models_configuration[model]['controller'] = my_controller_configuration[model]
 
 #BLDGLCM
@@ -389,10 +389,10 @@ config["models_configuration"]['household_location_choice_model']["controller"].
 config["datasets_to_preload"] = {
         'zone':{},
         'household':{},
-        'building':{},        
+        'building':{},
         'parcel':{'package_name':'psrc_parcel'},
 #        'business':{'package_name':'psrc_parcel'},
-#        'person':{'package_name':'psrc_parcel'},        
+#        'person':{'package_name':'psrc_parcel'},
         "building_type":{'package_name':'psrc_parcel'},
         'travel_data':{}
         }

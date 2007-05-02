@@ -1,10 +1,10 @@
 #
 # UrbanSim software. Copyright (C) 1998-2004 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
@@ -35,9 +35,9 @@ models_configuration["business_location_choice_model"] = {
 
 my_controller_configuration = {
  'real_estate_price_model': {
-    "import": {"sanfrancisco.models.real_estate_price_model":
+    "import": {"urbansim.models.real_estate_price_model":
                                         "RealEstatePriceModel"},
-    "init": { 
+    "init": {
         "name": "RealEstatePriceModel",
         "outcome_attribute":"'ln_unit_price'",
         "arguments": {"submodel_string": "'building_use_id'",
@@ -51,7 +51,7 @@ my_controller_configuration = {
                        "coefficients_table": "'real_estate_price_model_coefficients'"},
         "output": "(specification, coefficients)"
         },
-    "run": {                 
+    "run": {
         "arguments": {
                       "specification": "specification",
                       "coefficients":"coefficients",
@@ -63,7 +63,7 @@ my_controller_configuration = {
         "arguments": {"specification_storage": "base_cache_storage",
                       "specification_table": "'real_estate_price_model_specification'",
                       "filter_variable":"'unit_price'",
-                      "dataset": "building", 
+                      "dataset": "building",
                       "threshold": 1},
         "output": "(specification, index)"
         },
@@ -77,7 +77,7 @@ my_controller_configuration = {
                       "debuglevel": config['debuglevel']
                       },
         "output": "(coefficients, dummy)"
-        }                                  
+        }
 
   },
 
@@ -131,10 +131,10 @@ my_controller_configuration = {
                 "output": "brm_index"
                 }
     },
-  
+
  'business_location_choice_model': {
     "import": {"sanfrancisco.models.business_location_choice_model":"BusinessLocationChoiceModel"},
-    "init": { 
+    "init": {
         "name": "BusinessLocationChoiceModel",
         "arguments": {
                       "location_set":"building",
@@ -156,7 +156,7 @@ my_controller_configuration = {
                       },
         "output": "(specification, coefficients)"
         },
-        
+
     "run": {
         "arguments": {"specification": "specification",
                       "coefficients":"coefficients",
@@ -173,7 +173,7 @@ my_controller_configuration = {
                       "agent_set":"business",
                       "join_datasets": "False",
                       "agents_for_estimation_storage": "base_cache_storage",
-                      "agents_for_estimation_table": "'business_for_estimation'",                      
+                      "agents_for_estimation_table": "'business_for_estimation'",
                       "filter":None,
                       "index_to_unplace":  "brm_index",
                       "portion_to_unplace": 1/12.0,
@@ -182,7 +182,7 @@ my_controller_configuration = {
         "output": "(specification, index)"
         },
     "estimate": {
-        "arguments": {          
+        "arguments": {
                       "specification": "specification",
                       "agent_set": "business",
                      "agents_index": "index",
@@ -191,7 +191,7 @@ my_controller_configuration = {
         "output": "(coefficients, dummy)"
         },
    },
-   
+
    'building_transition_model': {
             "import": {"sanfrancisco.models.building_transition_model": "BuildingTransitionModel"},
             "init": {"name": "BuildingTransitionModel"},
@@ -208,7 +208,7 @@ my_controller_configuration = {
                     "output": "new_building_index",
             }
           },
-          
+
    'building_location_choice_model':{
                 "group_by_attribute": ("building_use_classification", "name"),
                 "import": {"sanfrancisco.models.building_location_choice_model":
@@ -247,7 +247,7 @@ my_controller_configuration = {
                                   "data_objects": "datasets" ,
                                   "chunk_specification":"{'records_per_chunk':500}"}
                     },
-                    
+
                 "prepare_for_estimate": {
                     "name": "prepare_for_estimate",
                     "arguments": {"specification_storage": "base_cache_storage",
@@ -270,7 +270,7 @@ my_controller_configuration = {
                                       "data_objects": "datasets"},
                          "output": "(coefficients, dummy)"
                    }
-         },       
+         },
         "household_relocation_model" : {
             "import": {"urbansim.models.household_relocation_model_creator":
                             "HouseholdRelocationModelCreator"
@@ -305,7 +305,7 @@ my_controller_configuration = {
                 "output": "scheduled_development_events"
                 }
          },
-            
+
 ##HLCM
         "household_location_choice_model":{
             "import": {"urbansim.models.household_location_choice_model_creator":
@@ -324,7 +324,7 @@ my_controller_configuration = {
                                             "number_of_units_string": "building.residential_units",
                                             },
                               "estimate_config":{"weights_for_estimation_string" : None,
-                                            }                                            
+                                            }
                               }
                 },
             "prepare_for_run": {
@@ -367,12 +367,12 @@ my_controller_configuration = {
                               "debuglevel": "debuglevel"},
                  "output": "(coefficients, dummy)"
                 }
-            }          
+            }
 }
 
 for model in my_controller_configuration.keys():
     if model not in config["models_configuration"].keys():
-        config["models_configuration"][model] = {}    
+        config["models_configuration"][model] = {}
     models_configuration[model]['controller'] = my_controller_configuration[model]
 
 #BLDGLCM
@@ -382,7 +382,7 @@ for model in my_controller_configuration.keys():
 #config["models_configuration"]['building_location_choice_model']["controller"].merge(bldglcm_controller)
 
 
-#HLCM    
+#HLCM
 #hlcm_controller = config["models_configuration"]["household_location_choice_model"]["controller"]
 #hlcm_controller["init"]["arguments"]["location_set"] = "building"
 #hlcm_controller["init"]["arguments"]["location_id_string"] = "'building_id'"
@@ -399,10 +399,10 @@ for model in my_controller_configuration.keys():
 config["datasets_to_preload"] = {
         'zone':{},
         'household':{},
-        'building':{},        
+        'building':{},
         'parcel':{'package_name':'sanfrancisco'},
         'business':{'package_name':'sanfrancisco'},
-        'person':{'package_name':'sanfrancisco'},        
+        'person':{'package_name':'sanfrancisco'},
         "building_use":{'package_name':'sanfrancisco'},
         "building_use_classification":{'package_name':'sanfrancisco'},
         'travel_data':{}

@@ -48,19 +48,20 @@ class ProposedDevelopmentProjectCostModel(RegressionModel):
             data_objects=None, run_config=None, debuglevel=0):
         """ For info on the arguments see RegressionModel.
         """
-        parcels = data_objects['parcel']
+        if data_objects is not None:
+            self.dataset_pool.add_datasets_if_not_included(data_objects)
+        parcels = self.dataset_pool.get_dataset('parcel')
         if self.filter_attribute <> None:
-            res = Resources(data_objects)
-            res.merge({"debug":debuglevel})
-            index = parcels.get_filtered_index(self.filter_attribute, threshold=0, index=index, resources=res)
+            res = Resources({"debug":debuglevel})
+            index = parcels.get_filtered_index(self.filter_attribute, threshold=0, index=index,
+                                           dataset_pool=self.dataset_pool, resources=res)
 
         if not isinstance(dataset, ProposedDevelopmentProjectDataset):
-            templates = data_objects['development_template']
+            templates = self.dataset_pool.get_dataset('development_template')
             dataset = create_from_parcel_and_development_template(parcels, templates, index=index)
 
         return_values = RegressionModel.run(self, specification, coefficients, dataset,
-                                    chunk_specification, data_objects,
-                                    run_config, debuglevel)
+                                    chunk_specification, run_config=run_config, debuglevel=debuglevel)
         if (construction_cost_per_unit == None) or (construction_cost_per_unit.size <=0):
             return None
         if "construction_cost_per_unit" not in dataset.get_known_attribute_names():

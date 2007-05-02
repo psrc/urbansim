@@ -43,7 +43,7 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
             return None
         LocationChoiceModel.run(self, *args, **kargs)
 
-    def get_weights_for_sampling_locations(self, agent_set, agents_index, data_objects=None):
+    def get_weights_for_sampling_locations(self, agent_set, agents_index):
         where_available = where(self.capacity)[0]
         weight_array = (ones((agents_index.size, where_available.size), dtype=int8)).astype(bool8)
 
@@ -72,7 +72,7 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
         return (weight_array, where_available)
 
 
-    def apply_filter(self, filter, weights, agent_set, agents_index, submodel=-2, data_objects=None):
+    def apply_filter(self, filter, weights, agent_set, agents_index, submodel=-2):
         """ apply filter comparing to mean size by submodel instead of 0, by shifting self.filter
         """
         size_filter = None
@@ -84,9 +84,9 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
 
             mean_size = agent_set.get_attribute("sqft")[agents_index].mean()
             if isinstance(submodel_filter, str):
-                resources = Resources(data_objects)
-                resources.merge({"debug":self.debug})
-                self.choice_set.compute_variables([submodel_filter, self.submodel_string], resources=resources)
+                resources = Resources({"debug":self.debug})
+                self.choice_set.compute_variables([submodel_filter, self.submodel_string],
+                                                  dataset_pool=self.dataset_pool, resources=resources)
                 filter_name = VariableName(submodel_filter)
                 submodel_string = VariableName(self.submodel_string)
                 size_filter = self.choice_set.get_attribute(filter_name.alias()) - mean_size
@@ -94,7 +94,7 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
                     size_filter = size_filter * (self.choice_set.get_attribute(submodel_string.alias())==submodel)
             else:
                 size_filter = submodel_filter - mean_size
-        return LocationChoiceModel.apply_filter(self, size_filter, weights, agent_set, agents_index, submodel=submodel, data_objects=data_objects)
+        return LocationChoiceModel.apply_filter(self, size_filter, weights, agent_set, agents_index, submodel=submodel)
 
     def prepare_for_estimate(self, specification_dict = None, specification_storage=None,
                               specification_table=None, agent_set=None,
