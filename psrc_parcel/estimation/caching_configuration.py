@@ -40,7 +40,8 @@ class CachingConfiguration(Configuration):
 #            "annual_relocation_rates_for_business",
 #            "buildings_for_estimation",
             "building_types",
-            'urbansim_constants'
+            'urbansim_constants',
+            'land_use_types'
             ]
         
         return {

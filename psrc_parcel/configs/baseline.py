@@ -73,6 +73,7 @@ class Baseline(GeneralConfiguration):
                     "annual_relocation_rates_for_business",
                     'development_event_history',
                     "development_events_exogenous",
+                    "land_use_types",
                     ],  
                 tables_to_cache_nchunks={'parcels': 1},
                 unroll_gridcells = False

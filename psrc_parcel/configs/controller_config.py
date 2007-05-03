@@ -40,8 +40,8 @@ my_controller_configuration = {
                                         "RealEstatePriceModel"},
     "init": {
         "name": "RealEstatePriceModel",
-        "arguments": {"submodel_string": "'building_type_id'",
-                      "outcome_attribute": "'ln_unit_price=ln(psrc_parcel.building.unit_price)'",
+        "arguments": {"submodel_string": "'land_use_type_id'",
+                      "outcome_attribute": "'ln_unit_price=ln(psrc_parcel.parcel.unit_price)'",
                       "filter_attribute": None},
         },
     "prepare_for_run": {
@@ -56,22 +56,22 @@ my_controller_configuration = {
         "arguments": {
                       "specification": "specification",
                       "coefficients":"coefficients",
-                      "dataset": "building",
+                      "dataset": "parcel",
                       "data_objects": "datasets" }
             },
     "prepare_for_estimate": {
         "name": "prepare_for_estimate",
         "arguments": {"specification_storage": "base_cache_storage",
                       "specification_table": "'real_estate_price_model_specification'",
-                      "filter_variable":"'psrc_parcel.building.unit_price'",
-                      "dataset": "building",
+                      "filter_variable":"'psrc_parcel.parcel.unit_price'",
+                      "dataset": "parcel",
                       "threshold": 1},
         "output": "(specification, index)"
         },
     "estimate": {
         "arguments": {
                       "specification": "specification",
-                      "outcome_attribute": "'ln_unit_price=ln(psrc_parcel.building.unit_price)'",
+                      "outcome_attribute": "'ln_unit_price=ln(psrc_parcel.parcel.unit_price)'",
                       "dataset": "building",
                       "index": "index",
                       "data_objects": "datasets",
