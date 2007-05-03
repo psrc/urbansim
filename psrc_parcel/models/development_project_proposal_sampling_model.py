@@ -80,7 +80,7 @@ class DevelopmentProjectProposalChoiceModel(object):
         self.check_vacancy_rates(current_target_vacancy)  #initialize self.accepting_proposal based on current vacancy rate
 
         while self.accepting_proposal:
-            sampled_proposals = probsample_noreplace(self.proposal_set.get_id_attribute(), n, prob_array=None,
+            sampled_proposals = probsample_noreplace(self.proposal_set.get_id_attribute(), n, prob_array=self.weight,
                                                      exclude_index=None, return_indices=False)
             self.consider_proposals(sampled_proposals,
                                     target_vacancy_rates
