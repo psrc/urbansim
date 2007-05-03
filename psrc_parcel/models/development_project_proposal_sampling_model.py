@@ -31,40 +31,36 @@ class DevelopmentProjectProposalChoiceModel(object):
     def __init__(self, proposal_set,
                  sampler="opus_core.samplers.weighted_sampler",
                  weight_string = "exp_ROI = exp(psrc_parcel.development_project_proposal.expected_rate_of_return_on_investment)",
-                 filter=None,                 
+                 filter=None,
                  run_config=None, estimate_config=None,
                  debuglevel=0, dataset_pool=None):
         """
         this model sample project proposals from proposal set weight by ROI
         """
-        if dataset_pool is None:
-            self.dataset_pool = SessionConfiguration().get_dataset_pool()
-        else:
-            self.dataset_pool = dataset_pool
-            
+        self.dataset_pool = self.create_dataset_pool(dataset_pool)
         self.dataset_pool.add_datasets_if_not_included({proposal_set.get_dataset_name(): proposal_set})
         self.proposal_set = proposal_set
 
         if weight_string is not None:
             if weight_string not in proposal_set.get_known_attribute_names():
-                proposal_set.compute_variables(weight_string)
+                proposal_set.compute_variables(weight_string, dataset_pool=self.dataset_pool)
             self.weight = self.proposal_set.get_attribute(weight_string)
         else:
             self.weight = ones(self.proposal_set.size(), dtype="float64")  #equal weight
-        
+
         ## TODO: handling of filter
 #        if filter is not None:
 #            if filter not in proposal_set.get_known_attribute_names():
 #                proposal_set.compute_variables(filter)
 #            elif not isinstance(filter, array):
-#                
+#
 #            self.weight = self.weight * proposal_set.get_attribute(filter)
-        
+
 
     def run(self, n=500, run_config=None, debuglevel=0):
         """
         """
-        
+
 #        if data_objects is not None:
 #            self.dataset_pool.add_datasets_if_not_included(data_objects)
 
@@ -79,7 +75,7 @@ class DevelopmentProjectProposalChoiceModel(object):
         self.demolished_buildings = array([], dtype='int32')  #ids of buildings to be demolished
 
         self.accepting_proposals = {}  #whether accepting new proposals, for each building type
-        self.accepted_proposals = None # accepted proposals 
+        self.accepted_proposals = None # accepted proposals
 
         self.check_vacancy_rates(current_target_vacancy)  #initialize self.accepting_proposal based on current vacancy rate
 
