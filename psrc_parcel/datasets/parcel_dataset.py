@@ -13,6 +13,7 @@
 #
 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
+from opus_core.misc import unique_values
 from numpy import arange, logical_and, logical_or
 from numpy import reshape, repeat, ones, zeros, where
 from numpy import ma
@@ -37,18 +38,20 @@ class ParcelDataset(UrbansimDataset):
             ):
         """
         calculate the min and max development capacity given by constraints.
+        modelled from the method of gridcell
         """
         if (self.development_constraints <> None) and (not recompute_flag):
             if (index <> None) and alltrue(self.development_constraints["index"] == index):
                 return self.development_constraints
         constraints.load_dataset_if_not_loaded()
         attributes = set(constraints.get_attribute_names()) - \
-                   set([constraints.get_id_name()[0], "building_type_id", "min_constraint", "max_constraint"])
+                   set([constraints.get_id_name()[0], "generic_building_type_id", "constraint_type", "minimum", "maximum"])
         attributes_with_prefix = map(lambda attr: "%s.%s" % (variable_package_name, attr),
                                         attributes)
         self.compute_variables(attributes_with_prefix, dataset_pool=dataset_pool)
         if index == None:
             index = arange(self.size())
+        # constraints are specified for each generic_building_type, 
         development_constraints_array = ones((constraints.size(),index.size), dtype='bool8')
         for attr in attributes:
             values = self.get_attribute_by_index(attr, index)
@@ -58,25 +61,34 @@ class ParcelDataset(UrbansimDataset):
             development_constraints_array = logical_and(development_constraints_array, tmp)
 
         self.development_constraints = {"index": index}
-        building_types = dataset_pool.get_dataset("building_type")
-        type_ids = constraints.get_attribute("building_type_id")
+#        building_types = dataset_pool.get_dataset("building_type")
+        type_ids = constraints.get_attribute("generic_building_type_id")
+        constraint_types = constraints.get_attribute("constraint_type")
         #initialize results, set max to the max value found in constraints for each type
-        for type_id in building_types.get_id_attribute():
-            self.development_constraints.update({type_id:zeros((index.size,2), dtype="float32")})
+        for type_id in unique_values(type_ids):
             w_this_type = where(type_ids == type_id)
-            type_constraint_max = constraints.get_attribute("max_constraint")[w_this_type].max()
-            self.development_constraints[type_id][:, 1] = type_constraint_max
+            self.development_constraints[type_id] = {}
+            for constraint_type in unique_values(constraint_types[w_this_type]):
+                self.development_constraints[type_id].update({ constraint_type : zeros((index.size,2), dtype="float32") })
+                w_this_type_and_constraint_type = where( logical_and(type_ids == type_id, constraint_types == constraint_type ) )
+                # initialize the maximum value, because minimum of maximum value below need to have this initial value to work
+                type_constraint_max = constraints.get_attribute("maximum")[w_this_type_and_constraint_type].max()
+                self.development_constraints[type_id][constraint_type][:, 1] = type_constraint_max
 
         for iconstr in range(constraints.size()):
             type_id = type_ids[iconstr]
+            constraint_type = constraint_types[iconstr]
             w = where(development_constraints_array[iconstr,:])[0]
-            if w.size > 0:
-                self.development_constraints[type_id][w,0] = \
-                    ma.maximum(self.development_constraints[type_id][w,0],
-                        constraints.get_attribute_by_index("min_constraint", iconstr))
-                self.development_constraints[type_id][w,1] = \
-                    ma.minimum(self.development_constraints[type_id][w,1],
-                        constraints.get_attribute_by_index("max_constraint", iconstr))
+            if w.size > 0: #has at least 1 match
+                ##TODO: this may be problematic when given building type and constraint type of 
+                ## a parcel doesn't match to any row of the constraints table, it'll use the max value
+                ## of the building type and constraint type
+                self.development_constraints[type_id][constraint_type][w,0] = \
+                    ma.maximum(self.development_constraints[type_id][constraint_type][w,0],
+                        constraints.get_attribute_by_index("minimum", iconstr))
+                self.development_constraints[type_id][constraint_type][w,1] = \
+                    ma.minimum(self.development_constraints[type_id][constraint_type][w,1],
+                        constraints.get_attribute_by_index("maximum", iconstr))
 
         return self.development_constraints
 
@@ -101,11 +113,12 @@ class Tests(opus_unittest.OpusTestCase):
         storage._write_dataset(
             'development_constraints',
             {
-                'constraint_id': array([1,2,3,4]),
-                'is_constrained': array([0, 1, 1, 0]),
-                'building_type_id': array([1, 1, 2, 2]),
-                'min_constraint': array([0,  0,   2,  0]),
-                'max_constraint': array([3, 0.2, 10, 100]),
+                'constraint_id': array([1,  2, 3, 4, 5, 6, 7]),
+                'is_constrained': array([0, 0, 1, 1, 1, 0, 0]),
+                'generic_building_type_id': array([1, 1, 1, 1, 2, 2, 2]),
+                'constraint_type': array(["unit_per_acre","far","unit_per_acre", "far", "far", "unit_per_acre", "far"]),
+                'minimum': array([0, 0,  0,  0,  2,  0, 0]),
+                'maximum': array([3, 0, 0.2, 1,  10, 0.4, 100]),
             }
         )
         storage._write_dataset(
@@ -124,19 +137,32 @@ class Tests(opus_unittest.OpusTestCase):
 
         values = parcels.get_development_constraints(constraints, dataset_pool)
 
-        should_be = {1:array([[0,0.2],
-                              [0, 3],
-                              [0,0.2]]
-                              ),
-                     2:array([[2,10],
-                              [0,100],
-                              [2,10]])
+        should_be = { 1:{"unit_per_acre":array([[0,0.2],
+                                                [0, 3],
+                                                [0,0.2]]
+                                              ),
+                         "far":array([[0, 1],
+                                     [0,  0],
+                                     [0,  1]]
+                                     ),                              
+                           },
+                      2:{"unit_per_acre":array([[0, 0.4],  #ideally [0, 0]
+                                                [0, 0.4],
+                                                [0, 0.4]]     #ideally [0, 0]
+                                               ),
+                         "far":array([[2,10],
+                                     [0, 100],
+                                     [2, 10]]
+                                     )         
                           }
-        for key, should_be_value in should_be.iteritems():
-            self.assert_(key in values)
-            self.assert_(ma.allclose(values[key], should_be_value),
-                         msg = "Error in parcel get_development_constraints")
-
+                     }
+        
+        for bt, ct in should_be.iteritems():
+            for key, should_be_value in ct.iteritems():
+                self.assert_(bt in values)
+                self.assert_(key in values[bt])
+                self.assert_(ma.allclose(values[bt][key], should_be_value),
+                             msg = "Error in parcel get_development_constraints")
 
 if __name__=='__main__':
     opus_unittest.main()

@@ -39,16 +39,6 @@ class units_proposed(Variable):
     def compute(self, dataset_pool):
         proposals = self.get_dataset()
         templates = dataset_pool.get_dataset("development_template")
-        #template_index = templates.get_id_index(proposals.get_attribute("template_id"))
-        #density = zeros(templates.size(), dtype=Float)
-
-        #for density_name in unique_values(templates.get_attribute("density_name")):
-            #templates.compute_variables("%s.%s" % density_name)
-            #itemplates_using_this_density_name = where(template.get_attribute("density_name")==density_name)[0]
-            #density[itemplates_using_this_density_name]=templates.get_attribute(density_name)[itemplates_using_this_density_name]
-
-        #proposal_density = density[template_index]
-        #possbile_units = proposals.get_attribute("vacant_land_area") * proposal_density
         possible_units = proposals.get_attribute("possible_units")
 
         min_units = proposals.get_attribute("min_units")

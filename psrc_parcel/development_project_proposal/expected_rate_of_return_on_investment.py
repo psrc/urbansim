@@ -7,7 +7,7 @@
 #
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
+# FITNESS FORFOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 #
@@ -26,9 +26,10 @@ class expected_rate_of_return_on_investment(Variable):
         return ["psrc_parcel.development_project_proposal.unit_price_expected",
                 "psrc_parcel.development_project_proposal.units_proposed",
                 "total_revenue = development_project_proposal.units_proposed * development_project_proposal.unit_price_expected",
-                "land_price = development_project_proposal.disaggregate(parcel.land_price)",
-                "land_cost = development_project_proposal.land_price * development_project_proposal.land_area_occupied",
-                "total_investment = development_project_proposal.land_cost + psrc_parcel.development_project_proposal.demolition_cost + psrc_parcel.development_project_proposal.construction_cost",
+                "unit_price = development_project_proposal.disaggregate(parcel.unit_price)",
+                "existing_units = development_project_proposal.disaggregate(psrc_parcel.parcel.existing_units)",
+                "acquisition_cost = development_project_proposal.unit_price * development_project_proposal.existing_units",
+                "total_investment = development_project_proposal.acquisition_cost + psrc_parcel.development_project_proposal.demolition_cost + psrc_parcel.development_project_proposal.construction_cost",
                 "profit = development_project_proposal.total_revenue - development_project_proposal.total_investment",
             ]
 

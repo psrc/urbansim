@@ -32,7 +32,7 @@ from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
 from opus_core.simulation_state import SimulationState
 
-class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
+class DevelopmentProjectProposalChoiceModel(object):
 
     def __init__(self, choice_set,
                  sampler="opus_core.samplers.weighted_sampler",

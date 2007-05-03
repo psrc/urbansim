@@ -27,66 +27,14 @@ class construction_cost_per_unit(Variable):
                 "component_sqft_per_unit = development_template_component.disaggregate(building_component.sqft_per_unit)",
                 "portion_of_building = development_template_component.percent_of_building_sqft / 100.0", 
                 "construction_cost_per_component = development_template_component.portion_of_building * development_template_component.construction_cost_per_component_unit / development_template_component.component_sqft_per_unit",
-                "construction_cost_per_unit = development_template.aggregate(development_template_component.construction_cost_per_component)"
+                "_construction_cost_per_unit = development_template.aggregate(development_template_component.construction_cost_per_component)"
                  ]
 
     def compute(self, dataset_pool):
-        return self.get_dataset().get_attribute("construction_cost_per_unit")
+        return self.get_dataset().get_attribute("_construction_cost_per_unit")
 
     def post_check(self, values, dataset_pool):
         self.do_check("x >= 0", values)
-
-#from opus_core.tests import opus_unittest
-#from opus_core.dataset_pool import DatasetPool
-#from opus_core.storage_factory import StorageFactory
-#from numpy import array, int32
-#from numpy import ma
-
-#class Tests(opus_unittest.OpusTestCase):
-    #variable_name = "psrc_parcel.development_template.construction_cost_per_unit"
-    #def test_my_inputs(self):
-        #storage = StorageFactory().get_storage('dict_storage')
-        
-        #storage._write_dataset(
-            #'development_templates',
-            #{
-                #'template_id': array([1,2,3,4]),
-            #}
-        #)
-        #storage._write_dataset(
-            #'development_template_components',
-            #{
-                #'template_id': array([1,2,3,4,4]),
-                #"component_id":array([1,2,3,4,1]),
-                #"percent_of_building_sqft":array([100, 100, 100, 20, 80])
-            #}
-        #)        
-        #storage._write_dataset(
-            #'building_components',
-            #{
-                #"component_id":array([1,  2,  3,  4]),
-                #"sqft_per_unit":  array([1600,  1,  2000,  1]),
-                #"construction_cost_per_unit":array([100000,  200,  300000,  100])
-            #}
-        #)
-        
-        #dataset_pool = DatasetPool(package_order=['psrc_parcel'],
-                                   #storage=storage)
-
-        #templates = dataset_pool.get_dataset('development_template')
-        #templates.compute_variables(self.variable_name, 
-                                   #dataset_pool=dataset_pool)
-        #values = templates.get_attribute(self.variable_name)
-        
-        #should_be = array([62.5, 200, 150, 70])
-        
-        #self.assert_(ma.allequal( values, should_be), 
-                     #msg = "Error in " + self.variable_name)
-
-
-#if __name__=='__main__':
-    #opus_unittest.main()
-    
 
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
