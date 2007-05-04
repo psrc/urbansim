@@ -72,7 +72,7 @@ my_controller_configuration = {
         "arguments": {
                       "specification": "specification",
                       "outcome_attribute": "'ln_unit_price=ln(psrc_parcel.parcel.unit_price)'",
-                      "dataset": "building",
+                      "dataset": "parcel",
                       "index": "index",
                       "data_objects": "datasets",
                       "debuglevel": config['debuglevel']

@@ -29,11 +29,11 @@ class CachingConfiguration(Configuration):
     def __my_configuration(self):
         tables_to_cache = [
 #            'business',
-#            'households',
+            'households',
             'buildings',
             'parcels',
             'zones',
-#            "households_for_estimation",
+            "households_for_estimation",
 #            "business_for_estimation",
 #            "persons",
             "travel_data",
@@ -41,11 +41,16 @@ class CachingConfiguration(Configuration):
 #            "buildings_for_estimation",
             "building_types",
             'urbansim_constants',
-            'land_use_types'
+            'land_use_types',
+            'gridcells',
+            'jobs',
+            'employment_sectors',
+            'employment_adhoc_sector_groups',
+            'employment_adhoc_sector_group_definitions'
             ]
         
         return {
-        'cache_directory' : '/workspace/urbansim_cache/psrc_parcel/estimation', # change or leave out
+        'cache_directory' : '/urbansim_cache/psrc_parcel_lmwang/estimation/', # change or leave out
         'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
     #        cache_directory_root = '/tmp/urbcache/sandbox_runs/estimation',
             unroll_gridcells = False,
