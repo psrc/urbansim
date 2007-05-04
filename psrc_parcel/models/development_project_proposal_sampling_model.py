@@ -25,8 +25,9 @@ from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
 from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
+from opus_core.model import Model
 
-class DevelopmentProjectProposalChoiceModel(object):
+class DevelopmentProjectProposalChoiceModel(Model):
 
     def __init__(self, proposal_set,
                  sampler="opus_core.samplers.weighted_sampler",
