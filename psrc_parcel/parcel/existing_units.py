@@ -21,7 +21,8 @@ class existing_units(Variable):
     """total number of units (residential units or sqft), which are defined by building_types
     """
     _return_type = "int32"
-
+    package_name = "psrc_parcel"
+    
     def dependencies(self):
         return ["unit_name = parcel.disaggregate(land_use_type.unit_name)",
                 "building_sqft = parcel.aggregate(building.building_sqft)",
@@ -33,6 +34,8 @@ class existing_units(Variable):
         unit_name = parcels.get_attribute("unit_name")
         results = zeros(parcels.size())
         for name in unique_values(unit_name):
+            if name not in parcels.get_known_attribute_names():
+                parcels.computer_variables("%s.parcel.%s" % (self.package_name, name), dataset_pool)
             w = where(unit_name == name)[0]
             results[w] = parcels.get_attribute(name)[w]
         return results
@@ -45,7 +48,6 @@ from numpy import array, int32
 from opus_core.tests.utils.variable_tester import VariableTester
 
 class Tests(opus_unittest.OpusTestCase):
-    ACRE = 43560
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,

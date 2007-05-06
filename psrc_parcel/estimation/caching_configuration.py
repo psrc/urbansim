@@ -46,7 +46,10 @@ class CachingConfiguration(Configuration):
             'jobs',
             'employment_sectors',
             'employment_adhoc_sector_groups',
-            'employment_adhoc_sector_group_definitions'
+            'employment_adhoc_sector_group_definitions',
+            'development_templates',
+            'template_components',
+            'development_constraints'
             ]
         
         return {

@@ -19,7 +19,7 @@ from opus_core.datasets.interaction_dataset import InteractionDataset
 from opus_core.storage_factory import StorageFactory
 from opus_core.resources import Resources
 from opus_core.variables.variable_name import VariableName
-from numpy import arange
+from numpy import arange, where
 
 class DevelopmentProjectProposalDataset(UrbansimDataset):
     """ contains the proposed development projects, which is created from interaction of parcels with development template;
@@ -68,8 +68,9 @@ class DevelopmentProjectProposalDataset(UrbansimDataset):
             else:
                 self._raise_error(StandardError, "Cannot find variable '%s'\nin either dataset or in the interaction set." %
                                 variable_name.get_full_name())
-            new_version =  self.compute_variables_return_versions_and_final_value("%s = %s.disaggregate(%s)" % \
-                                   ( short_name, self.get_dataset_name(), variable_name.get_expression() ),
+            owner_dataset.compute_variables([variable_name], dataset_pool, resources=resources, quiet=True)
+            new_version =  self.compute_variables_return_versions_and_final_value("%s = %s.disaggregate(%s.%s)" % \
+                                   ( short_name, self.get_dataset_name(), owner_dataset.get_dataset_name(), short_name ),
                                    dataset_pool=dataset_pool, resources=resources, quiet=quiet )[0]
         return new_version
 
@@ -82,7 +83,7 @@ class DevelopmentProjectProposalDataset(UrbansimDataset):
 def create_from_parcel_and_development_template(parcel_dataset,
                                                 development_template_dataset,
                                                 index=None,
-                                                filter=None,
+                                                filter_attribute=None,
                                                 dataset_pool=None,
                                                 resources=None):
     """create development project proposals from parcel and development_template_dataset,
@@ -106,13 +107,14 @@ def create_from_parcel_and_development_template(parcel_dataset,
     development_project_proposals = DevelopmentProjectProposalDataset(resources=Resources(resources),
                                                                       dataset1 = parcel_dataset,
                                                                       dataset2 = development_template_dataset,
+                                                                      index1 = index,
                                                                       in_storage=storage,
                                                                       in_table_name='development_project_proposals',
                                                                       )
-    if filter is not None:
-            development_project_proposals.compute_variables(filter, dataset_pool=dataset_pool,
+    if filter_attribute is not None:
+            development_project_proposals.compute_variables(filter_attribute, dataset_pool=dataset_pool,
                                                             resources=Resources(resources))
-            filter_index = where(development_project_proposals.get_attribute(filter) > 0)[0]
+            filter_index = where(development_project_proposals.get_attribute(filter_attribute) > 0)[0]
             development_project_proposals.subset_by_index(filter_index, flush_attributes_if_not_loaded=False)
 
     return development_project_proposals

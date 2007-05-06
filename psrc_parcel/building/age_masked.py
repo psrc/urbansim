@@ -22,6 +22,7 @@ class age_masked(Variable):
     from the current simulation year. Entries that have invalid year_built are masked."""
 
     year_built = "year_built"
+    _return_type="float32"  #TODO: this is a work around for numpy ndimage would not working with int
 
     def dependencies(self):
         return [my_attribute_label(self.year_built), my_attribute_label("has_valid_year_built")]

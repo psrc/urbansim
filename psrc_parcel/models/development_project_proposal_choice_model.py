@@ -32,7 +32,7 @@ from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
 from opus_core.simulation_state import SimulationState
 
-class DevelopmentProjectProposalChoiceModel(object):
+class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
 
     def __init__(self, choice_set,
                  sampler="opus_core.samplers.weighted_sampler",
@@ -46,6 +46,7 @@ class DevelopmentProjectProposalChoiceModel(object):
                  run_config=None, estimate_config=None,
                  debuglevel=0, dataset_pool=None):
         """
+        modeling proposal choice as a choice model
         """
 
         dataset_pool.add_datasets_if_not_included({choice_set.get_dataset_name(): choice_set})

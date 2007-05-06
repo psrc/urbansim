@@ -29,13 +29,13 @@ class Baseline(GeneralConfiguration):
         config = AbstractUrbansimConfiguration()
         
         config_changes = {
-            'description':'San Francisco baseline',
+            'description':'PSRC parcel baseline',
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-                cache_directory_root = r'/urbansim_cache/psrc_parcel',
+                cache_directory_root = r'/workspace/urbansim_cache/psrc_parcel',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
-                    existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/cache_source20070204',
+                    existing_cache_to_copy = r'/workspace/urbansim_cache/psrc_parcel/estimation',
                     ),                
                 cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
                 tables_to_cache = [
@@ -74,6 +74,12 @@ class Baseline(GeneralConfiguration):
                     'development_event_history',
                     "development_events_exogenous",
                     "land_use_types",
+                    'employment_sectors',
+                    'employment_adhoc_sector_groups',
+                    'employment_adhoc_sector_group_definitions',
+                    'development_templates',
+                    'template_components',
+                    'development_constraints'
                     ],  
                 tables_to_cache_nchunks={'parcels': 1},
                 unroll_gridcells = False
@@ -90,19 +96,20 @@ class Baseline(GeneralConfiguration):
                 ),                          
             'models_configuration':models_configuration,
             
-            'base_year':2001,
-            'years':(2002, 2005),
+            'base_year':2005,
+            'years':(2006, 2006),
             'models':[ # models are executed in the same order as in this list 
 #                "process_pipeline_events",
-                "real_estate_price_model",
-                "building_transition_model",
-                {'building_location_choice_model': {'group_members': '_all_'}},
-                "household_transition_model",
-                "business_transition_model",
-                "household_relocation_model", 
-                "household_location_choice_model",
-                "business_relocation_model", 
-                "business_location_choice_model",        
+#                "real_estate_price_model",
+                 "expected_sale_price_model",
+#                "building_transition_model",
+#                {'building_location_choice_model': {'group_members': '_all_'}},
+#                "household_transition_model",
+#                "business_transition_model",
+#                "household_relocation_model", 
+#                "household_location_choice_model",
+#                "business_relocation_model", 
+#                "business_location_choice_model",        
                 ],
 
                 'flush_dataset_to_cache_after_each_model':False,
@@ -115,6 +122,7 @@ class Baseline(GeneralConfiguration):
 #                    'household':{},
                     'building':{},        
                     'parcel':{'package_name':'psrc_parcel'},
+                    'development_template': {'package_name':'psrc_parcel'},
 #                    'business':{'package_name':'psrc_parcel'},
 #                    'person':{'package_name':'psrc_parcel'},        
                     "building_type":{'package_name':'psrc_parcel'},

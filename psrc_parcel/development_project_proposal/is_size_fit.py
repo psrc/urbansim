@@ -22,8 +22,8 @@ class is_size_fit(Variable):
 
     def dependencies(self):
         return ["vacant_land_area=development_project_proposal.disaggregate(psrc_parcel.parcel.vacant_land_area)",
-                "land_area_min=development_project_proposal.disaggregate(psrc_parcel.development_template.land_area_min)",
-                "land_area_max=development_project_proposal.disaggregate(psrc_parcel.development_template.land_area_max)",
+                "land_area_min=development_project_proposal.disaggregate(psrc_parcel.development_template.land_sqft_min)",
+                "land_area_max=development_project_proposal.disaggregate(psrc_parcel.development_template.land_sqft_max)",
                  ]
 
     def compute(self, dataset_pool):
@@ -52,8 +52,8 @@ class Tests(opus_unittest.OpusTestCase):
             'development_template':
             {
                 'template_id': array([1,2,3,4]),
-                'land_area_min': array([0, 10, 1000, 0]),
-                'land_area_max': array([0, 1999, 2000, 10]),                
+                'land_sqft_min': array([0, 10, 1000, 0]),
+                'land_sqft_max': array([0, 1999, 2000, 10]),                
             },
             'parcel':
             {

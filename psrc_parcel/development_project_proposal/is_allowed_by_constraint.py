@@ -23,41 +23,45 @@ class is_allowed_by_constraint(Variable):
     template_opus_path = "psrc_parcel.development_template"
     
     def dependencies(self):
-        return ["desnity_name=development_template.disaggregate(building_type.density_name)",
-                "constraint_name=development_template.disaggregate(building_type.constraint_name)",
-                "development_constraint.building_type_id",
+        return ["generic_building_type_id = development_template.disaggregate(building_type.generic_building_type_id)",
+                "development_template.density_type",
+                "development_constraint.constraint_type",
                 "parcel.parcel_id",
                  ]
 
     def compute(self, dataset_pool):
         proposals = self.get_dataset()
         templates = dataset_pool.get_dataset("development_template")
-        building_types = dataset_pool.get_dataset("building_type")
         parcels = dataset_pool.get_dataset("parcel")
         constraints = dataset_pool.get_dataset("development_constraint")        
-        parcels.get_development_constraints(constraints, dataset_pool)
-        #for name in templates.get_attribute("density_name"):  # or "constraint_name", unit_per_acre or FAR, these two should be the same or comparable
-            
-        #template_index = templates.get_id_index(proposals.get_attribute("template_id"))
-        parcel_index = parcels.get_id_index(proposals.get_attribute("parcel_id"))
 
+        parcels.get_development_constraints(constraints, dataset_pool, 
+                                            index= proposals.index1)
+
+        parcel_index = parcels.get_id_index(proposals.get_attribute("parcel_id"))
+        # transform parcel_index to be relative to index of parcels.development_constraints
+        i_sort = parcels.development_constraints['index'].argsort()
+        #i_sort_sort = i_sort.argsort()
+        parcel_index = parcels.development_constraints['index'][i_sort].searchsorted(parcel_index)
         results = zeros(proposals.size(), dtype=bool8)
         for i_template in range(templates.size()):
             this_template_id = templates.get_attribute("template_id")[i_template]
-            building_type_id = templates.get_attribute("building_type_id")[i_template]
-            constraint_name = templates.get_attribute("constraint_name")[i_template]
-            #assert constraint_name == templates.get_attribute("density_name_name")[i_template]
-            templates.compute_variables("%s.%s" % (self.template_opus_path, constraint_name), dataset_pool)
-            template_density = templates.get_attribute(constraint_name)[i_template]  #density converted to constraint variable name
-            
-            #get the constraint for each parcel for given building_type_id
-            min_constraint = parcels.development_constraints[building_type_id][:, 0][parcel_index] 
-            max_constraint = parcels.development_constraints[building_type_id][:, 1][parcel_index]
+            building_type_id = templates.get_attribute("generic_building_type_id")[i_template]
 
-            indicator = (template_density >= min_constraint) * \
-                          (template_density <= max_constraint) * \
-                          (proposals.get_attribute("template_id")==this_template_id)
-            results[where(indicator)] = True
+            fit_indicator = ( proposals.get_attribute("template_id")==this_template_id )
+            for constraint_type, constraints in parcels.development_constraints[building_type_id].iteritems():
+                templates.compute_variables("%s.%s" % (self.template_opus_path, constraint_type), dataset_pool)
+                template_attribute = templates.get_attribute(constraint_type)[i_template]  #density converted to constraint variable name
+            
+                #get the constraint for each parcel for given building_type_id
+                min_constraint = constraints[:, 0][parcel_index] 
+                max_constraint = constraints[:, 1][parcel_index]
+                
+                fit_indicator = logical_and(fit_indicator,
+                                            logical_and(template_attribute >= min_constraint,
+                                                        template_attribute <= max_constraint)
+                                            )
+            results[where(fit_indicator)] = True
         return results
 
     def post_check(self, values, dataset_pool):
@@ -79,24 +83,26 @@ class Tests(opus_unittest.OpusTestCase):
             {
                 'template_id': array([1,2,3,4]),
                 "building_type_id":array([1, 1, 2, 2]),
-                'density_name':   array(['units_per_acre', 'units_per_acre', 'far', 'far']),
-                'constraint_name':array(['units_per_acre', 'units_per_acre', 'far', 'far']),
+                'density_type':   array(['units_per_acre', 'units_per_acre', 'far', 'far']),
+#                'constraint_name':array(['units_per_acre', 'units_per_acre', 'far', 'far']),
                 'units_per_acre': array([0.2, 2, 0, 0]),
                 'far':array([0, 0, 25, 7])
             },
             'building_type':
             {
                 "building_type_id":array([1, 2]),
-                'density_name':   array(['units_per_acre','far']),
-                'constraint_name':array(['units_per_acre','far']),
+                "generic_building_type_id":array([1, 2]),
+#                'density_type':   array(['units_per_acre','far']),
+
             },
             'development_constraint':
             {
                 'constraint_id': array([1,2,3,4]),
                 'is_constrained': array([0, 1, 1, 0]),
-                'building_type_id': array([1, 1, 2, 2]),
-                'min_constraint': array([0,  0,   0,  0]),
-                'max_constraint': array([3, 0.2, 10, 100]),                
+                'generic_building_type_id': array([1, 1, 2, 2]),
+                'constraint_type':array(['units_per_acre','units_per_acre', 'far', 'far']),                
+                'minimum': array([0,  0,   0,  0]),
+                'maximum': array([3, 0.2, 10, 100]),                
             },
             'parcel':
             {

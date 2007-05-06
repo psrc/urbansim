@@ -308,11 +308,11 @@ my_controller_configuration = {
 
 # configuration for parcel-based developer model
  'expected_sale_price_model': {
-    "import": {"psrc_parcel.models.proposed_development_project_expected_sale_price_model":
-               "ProposedDevelopmentProjectSalePriceModel"},
+    "import": {"psrc_parcel.models.development_project_proposal_regression_model":
+               "DevelopmentProjectProposalRegressionModel"},
     "init": {
-        "name": "ProposedDevelopmentProjectSalePriceModel",
-        "arguments": {"submodel_string": "'psrc_parcel.development_project_proposal.building_type_id'",
+        "name": "DevelopmentProjectProposalRegressionModel",
+        "arguments": {"submodel_string": "'land_use_type_id=development_project_proposal.disaggregate(parcel.land_use_type_id)'",
                       "filter_attribute": "'psrc_parcel.development_project_proposal.is_viable'"},
         },
     "prepare_for_run": {
@@ -320,44 +320,36 @@ my_controller_configuration = {
         "arguments": {"specification_storage": "base_cache_storage",
                       "specification_table": "'real_estate_price_model_specification'",
                        "coefficients_storage": "base_cache_storage",
-                       "coefficients_table": "'real_estate_price_model_coefficients'"},
-        "output": "(specification, coefficients)"
+                       "coefficients_table": "'real_estate_price_model_coefficients'",
+                       "data_objects": "datasets",},
+        "output": "(proposal_set, specification, coefficients)"
         },
     "run": {
         "arguments": {
                       "specification": "specification",
                       "coefficients":"coefficients",
-                      "dataset": None,  # have the model create the data on the fly
+                      "dataset": 'proposal_set',  
                       "data_objects": "datasets" },
-        "output":"development_project_proposal"  #get the development project proposal back
+        "output":"proposal_set"  #get the development project proposal back
             },
   },
-
- 'construction_cost_model': {
-    "import": {"psrc_parcel.models.proposed_development_project_cost_model":
-                                        "ProposedDevelopmentProjectCostModel"},
+ 'development_proposal_choice_model': {
+    "import": {"psrc_parcel.models.development_project_proposal_sampling_model":
+               "DevelopmentProjectProposalSamplingModel"},
     "init": {
-        "name": "ProposedDevelopmentProjectCostModel",
-        "arguments": {"submodel_string": "'template_id'",
-                      "filter_attribute": None},
-        },
-    "prepare_for_run": {
-        "name": "prepare_for_run",
-        "arguments": {"specification_storage": "base_cache_storage",
-                      "specification_table": "'development_project_construction_cost_model_specification'",
-                       "coefficients_storage": "base_cache_storage",
-                       "coefficients_table": "'development_project_construction_cost_model_coefficients'"},
-        "output": "(specification, coefficients)"
+        "name": "DevelopmentProjectProposalSamplingModel",
+        "arguments": {"proposal_set": "proposal_set",
+                      #weight_string omitted to use defalut value "exp_ROI = exp(psrc_parcel.development_project_proposal.expected_rate_of_return_on_investment)",                      
+                      "filter_attribute": None, # the filter has been handled in the process of creating proposal set 
+                                                # (prepare_for_run in expected_sale_price_model)
+                      },
         },
     "run": {
-        "arguments": {
-                      "specification": "specification",
-                      "coefficients":"coefficients",
-                      "dataset": "development_project_proposal",  # use the dataset created by expected sale price model
-                      "data_objects": "datasets" }
+        "arguments": {'n':500,  # sample 500 proposal at a time, evaluate them one by one
+                      },
+        "output":"scheduled_development_events"
             },
   },
-
 }
 
 for model in my_controller_configuration.keys():

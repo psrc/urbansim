@@ -24,11 +24,11 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
     model_name = "Development Project Proposal Regression Model"
     model_short_name = "PDPRM"
     outcome_attribute_name = "regression_result"
-    defalult_value = array([0], dtype=int16)  
+    defalult_value = array([0], dtype="int32")  
     # or defalult_value = 0.0, use 1 element array to control the type of the outcome attribute
     
     def __init__(self, regression_procedure="opus_core.linear_regression", 
-                 filter=None,
+                 filter_attribute=None,
                  submodel_string="building_type_id", 
                  outcome_attribute_name=None,
                  model_name=None,
@@ -36,7 +36,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                  run_config=None, 
                  estimate_config=None, 
                  debuglevel=0):
-        self.filter = filter
+        self.filter = filter_attribute
         if model_name is not None:
             self.model_name = model_name
         if model_short_name is not None:
@@ -62,7 +62,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                                          index, chunk_specification, data_objects,
                                          run_config, debuglevel)
         if self.outcome_attribute_name not in dataset.get_known_attribute_names():
-            dataset.add_primary_attribute(self.defalult_value * ones(dataset.size()),
+            dataset.add_primary_attribute(self.defalult_value + zeros(dataset.size()),
                                              self.outcome_attribute_name)
         
         dataset.set_values_of_one_attribute(self.outcome_attribute_name, 
@@ -70,15 +70,22 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         
         return dataset
     
-    def prepare_for_run(self, data_objects):
+    def prepare_for_run(self, data_objects, *args, **kwargs):
         """create development project proposal dataset from parcels and development templates
         """
+        specification, coefficients = RegressionModel.prepare_for_run(self, *args, **kwargs)
+        #data_objects = kwargs['data_objects']
         parcels = data_objects['parcel']
+        from opus_core.misc import sample
+        from opus_core.datasets.dataset import DatasetSubset
+        n = parcels.size()
+        index1=sample(arange(n), int(n*0.001))
         templates = data_objects['development_template']
 
         resources = Resources(data_objects)
-        dataset = create_from_parcel_and_development_template(parcels, templates, 
-                                                              filter=self.filter,
+        proposal_set = create_from_parcel_and_development_template(parcels, templates, 
+                                                              filter_attribute=self.filter,
+                                                              index = index1,
                                                               resources=resources)
-        return dataset
+        return (proposal_set, specification, coefficients)
         

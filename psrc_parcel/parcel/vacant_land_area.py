@@ -24,15 +24,15 @@ class vacant_land_area(Variable):
     _return_type="int32"
     
     def dependencies(self):
-        return ["used_land_area = parcel.aggregate(building.land_area_sqft, function=sum)",
-                my_attribute_label("lot_size_sqft")]
+        return ["used_land_area = parcel.aggregate(building.footprint_sqft, function=sum)",
+                my_attribute_label("parcel_sqft")]
 
     def compute(self,  dataset_pool):
         parcels = self.get_dataset()
-        return parcels.get_attribute("lot_size_sqft") - parcels.get_attribute("used_land_area")
+        return parcels.get_attribute("parcel_sqft") - parcels.get_attribute("used_land_area")
 
     def post_check(self,  values, dataset_pool=None):
-        size = self.get_dataset().get_attribute("lot_size_sqft").max()
+        size = self.get_dataset().get_attribute("parcel_sqft").max()
         self.do_check("x >= 0 and x <= " + str(size), values)
 
 if __name__=='__main__':
@@ -54,7 +54,7 @@ if __name__=='__main__':
                     'out_table_name':parcels_table_name,
                     'values':{
                         'parcel_id':array([1,2,3]),
-                        "lot_size_sqft":array([1000,200,1300]),
+                        "parcel_sqft":array([1000,200,1300]),
                         },
                     })
                 )
@@ -67,7 +67,7 @@ if __name__=='__main__':
                  "building":{
                         'building_id':     array([1,   2,   3,   4,   5,   6,   7]),
                         'parcel_id':       array([1,   1,   2,   3,   3,   3,   3]),
-                        "land_area_sqft":  array([600, 400, 100, 300, 150, 400, 400]),
+                        "footprint_sqft":  array([600, 400, 100, 300, 150, 400, 400]),
                         },}, \
                 dataset = "parcel")
             should_be = array([0,100,50])

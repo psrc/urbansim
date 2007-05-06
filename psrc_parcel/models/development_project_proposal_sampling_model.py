@@ -27,18 +27,18 @@ from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.model import Model
 
-class DevelopmentProjectProposalChoiceModel(Model):
+class DevelopmentProjectProposalSamplingModel(Model):
 
     def __init__(self, proposal_set,
                  sampler="opus_core.samplers.weighted_sampler",
                  weight_string = "exp_ROI = exp(psrc_parcel.development_project_proposal.expected_rate_of_return_on_investment)",
-                 filter=None,
+                 filter_attribute=None,
                  run_config=None, estimate_config=None,
                  debuglevel=0, dataset_pool=None):
         """
-        this model sample project proposals from proposal set weight by ROI
+        this model sample project proposals from proposal set weighted by exponentiated ROI
         """
-        self.dataset_pool = self.create_dataset_pool(dataset_pool)
+        self.dataset_pool = self.create_dataset_pool(dataset_pool, pool_packages=['psrc_parcel', 'urbansim', 'opus_core'])
         self.dataset_pool.add_datasets_if_not_included({proposal_set.get_dataset_name(): proposal_set})
         self.proposal_set = proposal_set
 
@@ -49,17 +49,18 @@ class DevelopmentProjectProposalChoiceModel(Model):
         else:
             self.weight = ones(self.proposal_set.size(), dtype="float64")  #equal weight
 
-        ## TODO: handling of filter
-#        if filter is not None:
-#            if filter not in proposal_set.get_known_attribute_names():
-#                proposal_set.compute_variables(filter)
-#            elif not isinstance(filter, array):
+        ## TODO: handling of filter_attribute
+#        if filter_attribute is not None:
+#            if filter_attribute not in proposal_set.get_known_attribute_names():
+#                proposal_set.compute_variables(filter_attribute)
+#            elif not isinstance(filter_attribute, array):
 #
-#            self.weight = self.weight * proposal_set.get_attribute(filter)
+#            self.weight = self.weight * proposal_set.get_attribute(filter_attribute)
 
 
     def run(self, n=500, run_config=None, debuglevel=0):
         """
+        n - sample n proposals at a time, evaluate them one by one
         """
 
 #        if data_objects is not None:
@@ -67,15 +68,18 @@ class DevelopmentProjectProposalChoiceModel(Model):
 
         current_year = SimulationState().get_current_time()
         target_vacancy = self.dataset_pool.get_dataset('target_vacancy')
+        target_vacancy.compute_variables(['type_name=target_vacancy.disaggregate(land_use_type.land_use_type_name)', 
+                                          'unit_name=target_vacancy.disaggregate(land_use_type.unit_name)'],
+                                         dataset_pool=self.dataset_pool)
         current_target_vacancy = DatasetSubset(target_vacancy, index=where(target_vacancy.get_attribute("year")==current_year)[0])
 
-        self.existing_units = {}   #total existing units by building type
-        self.occupied_units = {}   #total occupied units by building type
-        self.proposed_units = {}   #total proposed units by building type
-        self.demolished_units = {} #total (to be) demolished units by building type
-        self.demolished_buildings = array([], dtype='int32')  #ids of buildings to be demolished
+        self.existing_units = {}   #total existing units by land_use type
+        self.occupied_units = {}   #total occupied units by land_use type
+        self.proposed_units = {}   #total proposed units by land_use type
+        self.demolished_units = {} #total (to be) demolished units by land_use type
+        self.demolished_buildings = array([], dtype='int32')  #id of buildings to be demolished
 
-        self.accepting_proposals = {}  #whether accepting new proposals, for each building type
+        self.accepting_proposals = {}  #whether accepting new proposals, for each land_use type
         self.accepted_proposals = None # accepted proposals
 
         self.check_vacancy_rates(current_target_vacancy)  #initialize self.accepting_proposal based on current vacancy rate
@@ -87,45 +91,50 @@ class DevelopmentProjectProposalChoiceModel(Model):
                                     target_vacancy_rates
                                    )
 
-        schedule_development_projects = self.schedule_accepted_proposals()
-        return schedule_development_projects
+#        schedule_development_projects = self.schedule_accepted_proposals()
+        return self.accepted_proposals  #schedule_development_projects
 
     def check_vacancy_rates(self, target_vacancy):
         for index in arange(target_vacancy.size()):
-            #type_id = target_vacancy_rates.get_attribute_by_index("building_type_id", index)
-            type_name = target_vacancy.get_attribute_by_index("type_name", index)  #vacancy by type, could be residential, non-residential, or by building_type
+            type_id = target_vacancy_rates.get_attribute_by_index("land_use_type_id", index)
+            type_name = target_vacancy_rates.get_attribute_by_index("type_name", index)            
+            unit_name = target_vacancy.get_attribute_by_index("unit_name", index)  #vacancy by type, could be residential, non-residential, or by building_type
+            
             target = target_vacancy.get_attribute_by_index("target_vacancy_rate", index)
-            buildings = self.dataset_pool.get_dataset("building")
-            existing_units = buildings.get_attribute(type_name)
-            occupied_units = buildings.get_attribute("%s_occupied" % type_name)
+            parcels = self.dataset_pool.get_dataset("parcel")
+            is_matched_type = parcels.get_attribute("land_use_type_id") == type_id
+            existing_units = zeros(parcels.size(), dtype="int32")
+            existing_units[is_with_matched_type] = parcels.get_attribute(unit_name)[is_with_matched_type]
+            parcels.compute_variables("psrc_parcel.parcel.occupied_units", dataset_pool=self.dataset_pool)
+            occupied_units = parcels.get_attribute("occupied_units")
 
-            self.existing_units[type_name] = existing_units.sum()
-            self.occupied_units[type_name] = occupied_units.sum()
-            self.proposed_units[type_name] = 0
-            self.demolished_units[type_name] = 0
-            vr = (self.existing_units[type_name] - self.occupied_units[type_name]) / float(self.existing_units[type_name])
+            self.existing_units[type_id] = existing_units.sum()
+            self.occupied_units[type_id] = occupied_units.sum()
+            self.proposed_units[type_id] = 0
+            self.demolished_units[type_id] = 0
+            vr = (self.existing_units[type_id] - self.occupied_units[type_id]) / float(self.existing_units[type_id])
             if vr < target:
-                self.accepting_proposals[type_name] = True
+                self.accepting_proposals[type_id] = True
             else:
-                self.accepting_proposals[type_name] = False
+                self.accepting_proposals[type_id] = False
 
     def consider_proposals(self, proposals, target_vacancy_rates):
-        buildings = self.dataset_pool.get_dataset("building")
-        building_site = buildings.get_attribute("parcel_id")
+        parcels = self.dataset_pool.get_dataset("parcel")
+        building_site = parcels.get_attribute("parcel_id")
         proposal_indexes = self.proposal_set.get_id_index(proposals)
         is_proposal_rejected = zeros(proposals.size(), dtype=bool8)
         proposal_site = self.proposal_set.get_attribute_by_index("parcel_id", proposal_indexes)
         #proposal_type = self.proposal_set.get_attribute_by_index("unit_type", proposal_indexes)
-        pro_rated = self.proposal_set.get_attribute_by_index("pro_rated", proposal_indexes) #whether the project is pro_rated
-        years = self.proposal_set.get_attribute_by_index("years", proposal_indexes)         #how many years it take to build
-        proposal_construction_type = self.proposal_set.get_attribute_by_index("construction_type", proposal_indexes)  #redevelopment or addition
+#        pro_rated = self.proposal_set.get_attribute_by_index("pro_rated", proposal_indexes) #whether the project is pro_rated
+#        years = self.proposal_set.get_attribute_by_index("years", proposal_indexes)         #how many years it take to build
+#        proposal_construction_type = self.proposal_set.get_attribute_by_index("construction_type", proposal_indexes)  #redevelopment or addition
 
         existing_units = {}
         proposal_units = {}
-        for type_name in target_vacancy_rates.get_attribute("type_name"):  #iterate all unit types, not necessary from vacancy_rates table
-            #occupied_units[type] = buildings.get_attribute("occupied_%s" % type)
-            existing_units[type] = buildings.get_attribute(type_name)
-            proposal_units[type] = self.proposal_set.get_attribute_by_index(type_name, proposal_indexes)
+        for type_id in target_vacancy_rates.get_attribute("land_use_type_id"):  #iterate all unit types, not necessary from vacancy_rates table
+            #occupied_units[type_id] = parcels.get_attribute("occupied_%s" % )
+            existing_units[type_id] = parcels.get_attribute(type_id)
+            proposal_units[type_id] = self.proposal_set.get_attribute_by_index(type_id, proposal_indexes)
 
         for proposal_index in proposal_indexes:  # consider 1 proposed project at a time
             if not sometrue(array(self.accepting_proposals.values())):
@@ -238,7 +247,7 @@ class DevelopmentProjectProposalChoiceModel(Model):
 #                              specification_table=None, #agent_set=None,
 #                              agents_for_estimation_storage=None,
 #                              agents_for_estimation_table=None,
-#                              filter=None, location_id_variable=None,
+#                              filter_attribute=None, location_id_variable=None,
 #                              data_objects={}):
 #
 #        """similar to prepare_for_estimation method of AgentLocationChoiceModel
@@ -264,9 +273,9 @@ class DevelopmentProjectProposalChoiceModel(Model):
 #                estimation_set.compute_variables(location_id_variable, resources=Resources(data_objects))
 #                # needs to be a primary attribute because of the join method below
 #                #estimation_set.add_primary_attribute(estimation_set.get_attribute(location_id_variable), VariableName(location_id_variable).alias())
-#            if filter:
-#                estimation_set.compute_variables(filter, resources=Resources(data_objects))
-#                index = where(estimation_set.get_attribute(filter) > 0)[0]
+#            if filter_attribute:
+#                estimation_set.compute_variables(filter_attribute, resources=Resources(data_objects))
+#                index = where(estimation_set.get_attribute(filter_attribute) > 0)[0]
 #                estimation_set.subset_by_index(index, flush_attributes_if_not_loaded=False)
 #        else:
 #            raise DataError, 'agents_for_estimation_storage unspecified, which must be a subset of buildings.'
