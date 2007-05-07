@@ -19,7 +19,7 @@ from opus_core.indicator_framework.abstract_indicator import AbstractIndicator
 from opus_core.logger import logger
 from numpy import array, arange
 from numpy import ones, zeros, hstack, vstack
-from numpy import trapz
+from numpy import trapz, trim_zeros
 from pylab import subplot, plot, show
 from pylab import xlabel, ylabel, title, text
 from pylab import MultipleLocator, FormatStrFormatter
@@ -29,7 +29,7 @@ class LorenzCurve(AbstractIndicator):
 
     def __init__(self, source_data, dataset_name, 
                  attribute = None, 
-                 years = None, expression = None, name = None):
+                 years = None, expression = None, name = None, scale=None):
         AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, expression, name)
         self.values = None
         self.ginicoeff = None
@@ -41,10 +41,10 @@ class LorenzCurve(AbstractIndicator):
         return 'png'
     
     def get_shorthand(self):
-        return 'lorenzcurve'
+        return 'LorenzCurve'
 
     def _get_additional_metadata(self):
-        return  [('scale',self.scale)]
+        return  []
     
     def _create_indicator(self, year):
         """Create a Lorenz Curve for the given indicator,
@@ -60,8 +60,12 @@ class LorenzCurve(AbstractIndicator):
         # Do calculation
         # _get_indicator already returns a fresh array, so we don't need to make a new copy
         self.values = self._get_indicator(self.attribute, year)
-        num_values = self.values.size
         self.values.sort()
+        
+        #remove 0 values from array
+        self.values = trim_zeros(self.values,'f')
+        
+        num_values = self.values.size
         F = arange(1, num_values + 1, 1, "float64")/num_values
         L = self.values.cumsum(dtype="float64")/sum(self.values)
         # Add (0, 0) as the first point for completeness (e.g. plotting)
@@ -112,18 +116,15 @@ class LorenzCurve(AbstractIndicator):
         else:
             show()
 
-import os
-import tempfile
 from opus_core.tests import opus_unittest
 
-from shutil import copytree, rmtree
-
-from opus_core.opus_package_info import package
-from opus_core.configurations.dataset_description import DatasetDescription
-
-from opus_core.indicator_framework.source_data import SourceData
-from opus_core.indicator_framework.abstract_indicator import AbstractIndicatorTest
-
+class TestLorenzCurve(opus_unittest.OpusTestCase):
+ 
+    def test_plot(self):
+        return 
+    #need some testing here
+    
+        
 if __name__ == '__main__':
     try: 
         import matplotlib
