@@ -29,12 +29,10 @@ class LorenzCurve(AbstractIndicator):
 
     def __init__(self, source_data, dataset_name, 
                  attribute = None, 
-                 years = None, expression = None, name = None,
-                 scale = None):
+                 years = None, expression = None, name = None):
         AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, expression, name)
         self.values = None
         self.ginicoeff = None
-        self.scale = scale
 
     def is_single_year_indicator_image_type(self):
         return True
