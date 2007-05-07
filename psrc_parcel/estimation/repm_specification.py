@@ -14,11 +14,12 @@
 
 specification ={}
 specification = {  
-
         3:   #commercial
             [
     "constant",
 #    "building.year_built",
+    "hwy600 = psrc.parcel.distance_to_highway_in_gridcell<600",
+    "art600 = psrc.parcel.distance_to_arterial_in_gridcell<600",
     "ln_bldgage=ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean))",
 #    "ln_bldgage2=(ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean)))**2",
 #    "ln_bldgage3=(ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean)))**3",
@@ -46,6 +47,8 @@ specification = {
             [
     "constant",
 #    "building.year_built",
+#    "hwy1000 = psrc.parcel.distance_to_highway_in_gridcell<1000",
+#    "art600 = psrc.parcel.distance_to_arterial_in_gridcell<600",
     "ln_bldgage=ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean))",
 #    "ln_bldgage2=(ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean)))**2",
 #    "ln_bldgage3=(ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean)))**3",
@@ -73,6 +76,8 @@ specification = {
     14:   #multi-family residential
             [
     "constant",
+    "hwy600 = psrc.parcel.distance_to_highway_in_gridcell<600",
+    "art300 = psrc.parcel.distance_to_arterial_in_gridcell<300",
 #    "ln_bldgage=ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean))",
 #    "bldgage=parcel.aggregate(psrc_parcel.building.age_masked, function=mean)",
 #    "yrblt10=building.year_built/10",
@@ -104,6 +109,8 @@ specification = {
     15:   #condominium multi-family 
             [
     "constant",
+    "hwy600 = psrc.parcel.distance_to_highway_in_gridcell<600",
+    "art600 = psrc.parcel.distance_to_arterial_in_gridcell<600",
     "lnbldgage=ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean))",
 #    "yrblt10=building.year_built/10",
 #    "new=parcel.aggregate(building.year_built>2000)>=1",
@@ -135,6 +142,9 @@ specification = {
     18:   #Office
             [
     "constant",
+#    "inugb = parcel.is_inside_urban_growth_boundary*1",
+    "hwy1000 = psrc.parcel.distance_to_highway_in_gridcell<1000",
+#    "art300 = psrc.parcel.distance_to_arterial_in_gridcell<300",
 #    "building.year_built",
     "ln_bldgage=ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean))",
 #    "ln_bldgage2=(ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean)))**2",
@@ -163,6 +173,10 @@ specification = {
     24:   #SINGLE family residential
             [
     "constant",
+    "inugb = parcel.is_inside_urban_growth_boundary*1",
+#    "pcthighinc = psrc.parcel.number_of_high_income_households_within_walking_distance / psrc.parcel.number_of_households_within_walking_distance",
+    "hwy600 = psrc.parcel.distance_to_highway_in_gridcell<600",
+    "art600 = psrc.parcel.distance_to_arterial_in_gridcell<600",
 #    "yrblt10=building.year_built/10",
     "ln_bldgage=ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean))",
 #    "ln_bldgage2=(ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean)))**2",
@@ -193,6 +207,8 @@ specification = {
     25:   #Transportation Communications and Utilities
             [
     "constant",
+    "hwy1000 = psrc.parcel.distance_to_highway_in_gridcell<1000",
+    "art600 = psrc.parcel.distance_to_arterial_in_gridcell<600",
 #    "building.year_built",
     "ln_bldgage=ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean))",
 #    "ln_bldgage2=(ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean)))**2",
@@ -214,6 +230,9 @@ specification = {
     26:   #Vacant Land (Developable)
         [
     "constant",
+    "inugb = parcel.is_inside_urban_growth_boundary*1",
+    "hwy1000 = psrc.parcel.distance_to_highway_in_gridcell<1000",
+    "art600 = psrc.parcel.distance_to_arterial_in_gridcell<600",
     "lnlotsqft=ln(parcel.parcel_sqft)",
 #    "lnemp10wa=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_walk))",
 #    "lnretempwa=ln(psrc.parcel.retail_sector_employment_within_walking_distance)",
@@ -247,6 +266,9 @@ specification = {
     28:   #Warehouse
             [
     "constant",
+#    "inugb = parcel.is_inside_urban_growth_boundary*1",
+    "hwy2000 = psrc.parcel.distance_to_highway_in_gridcell<2000",
+    "art600 = psrc.parcel.distance_to_arterial_in_gridcell<600",
 #    "building.year_built",
     "ln_bldgage=ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean))",
 #    "ln_bldgage2=(ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean)))**2",
@@ -259,7 +281,7 @@ specification = {
     "lngcdacbd=ln(parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd))",
     "lnpopden=ln(parcel.disaggregate(psrc.zone.population_per_acre))",
 #    "ln_land=ln(parcel.aggregate(building.footprint_sqft))",
-    "lnemp30da=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))",
+    "lnemp20da=ln(parcel.disaggregate(psrc.zone.employment_within_20_minutes_travel_time_hbw_am_drive_alone))",
 #    "land_access=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))*ln(parcel.aggregate(building.footprint_sqft))",
     "lnavginc=ln(parcel.disaggregate(urbansim.zone.average_income))",
     ],    
