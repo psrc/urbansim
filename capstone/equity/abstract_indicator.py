@@ -348,9 +348,9 @@ class AbstractIndicator(object):
         ''' sends alert to various forums if there's an error '''
                  
         #todo: improve error message
-        message = ('Failed to generate indicator! Check the indicator log '
+        message = ('Failed to generate indicator "%s"! Check the indicator log '
                 'in the indicators directory of the "%s" cache for further '
-                'details.\nError: %s.' % (self.source_data.cache_directory, e))
+                'details.\nError: %s.' % (self.name, self.source_data.cache_directory, e))
         logger.log_warning(message)
         logger.log_stack_trace()
         if display_error_box:
@@ -517,9 +517,9 @@ class AbstractIndicator(object):
             from opus_core.indicator_framework.image_types.dbf_export import DbfExport
             from opus_core.indicator_framework.image_types.matplotlib_map import Map
             from opus_core.indicator_framework.image_types.matplotlib_chart import Chart
+            from opus_core.indicator_framework.image_types.matplotlib_lorenzcurve import LorenzCurve
             from opus_core.indicator_framework.image_types.geotiff_map import GeotiffMap
             from opus_core.indicator_framework.image_types.arcgeotiff_map import ArcGeotiffMap
-            from opus_core.indicator_framework.image_types.lorenzcurve_plot import LorenzCurve
         except:
             pass
 

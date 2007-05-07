@@ -34,19 +34,11 @@ else:
             Item('attribute', label = 'Attribute', width = 300),
             Item('name', label = 'Name (optional)', width = 300),
             Item('dataset_name', label = 'Dataset', width = 300),     
-            Item('years', label = 'Year(s)', width = 300),
-            Group(
-              Item('min', label = 'Min', width = 50),
-              Item('max', label = 'Max', width = 50),    
-              label = 'Scale (optional)',
-              orientation = 'horizontal',
-              show_border = True
-              )
+            Item('years', label = 'Year(s)', width = 300)
         )
                     
         def detraitify(self, source_data):
             '''Detraitify output-type-specific traits.
-            
                source_data -- the SourceData object which the detrait-ed object requires
             '''
             detraits_dict = {}
@@ -58,5 +50,3 @@ else:
             lorenz = LorenzCurve(**detraits_dict)
             return lorenz
             
-  
-  

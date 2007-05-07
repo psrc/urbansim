@@ -23,7 +23,7 @@ from opus_core.indicator_framework.image_types.table import Table
 from opus_core.indicator_framework.image_types.geotiff_map import GeotiffMap
 from opus_core.indicator_framework.image_types.arcgeotiff_map import ArcGeotiffMap
 from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
-from opus_core.indicator_framework.image_types.matplotlib_lorenz_curve import LorenzCurve
+from opus_core.indicator_framework.image_types.matplotlib_lorenzcurve import LorenzCurve
 
 #some cache_directories and run descriptions
 #cache_directory = r'Y:/urbansim_cache/run_1090.2006_11_14_12_12'
@@ -32,7 +32,7 @@ from opus_core.indicator_framework.image_types.matplotlib_lorenz_curve import Lo
 #run_description = '(run 1091 - baseline 11/28/2006)'
 #cache_directory = r'D:\urbansim_cache\run_1454.2006_12_12_16_28'
 #run_description = '(run 1454 - travel data from quick travel model)'
-cache_directory = r'H:\urbansim_cache\2007_04_12_21_23'
+cache_directory = r'/Volumes/Daten/SVN/urbansim/usim/2007_04_29_16_44'
 run_description = '(run 2600 - tutorial run)'
 #cache_directory = r'Y:\urbansim_cache\run_1431.2006_12_08_09_45'
 #run_description = '(run 1431 - baseyear travel data from travel model run)'
@@ -44,42 +44,21 @@ run_description = '(run 2600 - tutorial run)'
 source_data = SourceData(
     cache_directory = cache_directory,
     run_description = run_description,
-    years = [1980],
+    years = [1982],
     dataset_pool_configuration = DatasetPoolConfiguration(
         package_order=['eugene','urbansim','opus_core'],
         package_order_exceptions={},
         ),       
 )
 single_year_requests = [
-    Table(
-        attribute = 'urbansim.zone.population',
-        dataset_name = 'zone',
-        source_data = source_data,
-        ),
-    LorenzCurve(attribute = 'urbansim.household.income',
+    LorenzCurve(
+                attribute = 'urbansim.household.income',
                 source_data = source_data,
                 dataset_name = 'household'
         )
     ]
 
-source_data = SourceData(
-    cache_directory = cache_directory,
-    run_description = run_description,
-    years = [1980, 1981, 1982],
-    dataset_pool_configuration = DatasetPoolConfiguration(
-        package_order=['eugene','urbansim','opus_core'],
-        package_order_exceptions={},
-        ),       
-)
-
-multi_year_requests = [
-    Table(
-        attribute = 'alldata.aggregate_all(urbansim.gridcell.residential_units, function=sum)',
-        dataset_name = 'alldata',
-        source_data = source_data,
-        name = 'residential_units'
-        ),
-    ]
+multi_year_requests = []
 
 if __name__ == '__main__':
     from opus_core.indicator_framework.indicator_factory import IndicatorFactory

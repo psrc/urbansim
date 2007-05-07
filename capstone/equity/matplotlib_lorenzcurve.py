@@ -23,7 +23,7 @@ from numpy import trapz, trim_zeros
 from pylab import subplot, plot, show
 from pylab import xlabel, ylabel, title, text
 from pylab import MultipleLocator, FormatStrFormatter
-from pylab import savefig
+from pylab import savefig, clf, close
 
 class LorenzCurve(AbstractIndicator):
 
@@ -41,7 +41,7 @@ class LorenzCurve(AbstractIndicator):
         return 'png'
     
     def get_shorthand(self):
-        return 'LorenzCurve'
+        return 'lorenzcurve'
 
     def _get_additional_metadata(self):
         return  []
@@ -75,12 +75,14 @@ class LorenzCurve(AbstractIndicator):
         # This is the simple form of (0.5 - integral) / 0.5
         self.ginicoeff = 1 - 2 * trapz(self.values[1], self.values[0])
         
-        file_path = self.get_file_path(year = year)           
-        self.plot(attribute_short, file_path );
+        file_path = self.get_file_path(year = year)
+        var_name = self.get_attribute_alias(year)      
+        self.plot(var_name, file_path );
         
         return file_path
 
     def plot(self, attribute_name, file_path=None ):
+        clf() # Clear existing plot
         a = self.values[0] * 100 
         b = self.values[1] * 100 
         ax = subplot(111)
@@ -113,18 +115,35 @@ class LorenzCurve(AbstractIndicator):
         
         if file_path:
             savefig(file_path)
+            close()
         else:
             show()
 
+import os
 from opus_core.tests import opus_unittest
 
-class TestLorenzCurve(opus_unittest.OpusTestCase):
- 
-    def test_plot(self):
-        return 
-    #need some testing here
-    
+from opus_core.indicator_framework.abstract_indicator import AbstractIndicatorTest
+
+class Tests(AbstractIndicatorTest):
+            
+    def test_create_indicator(self):
         
+        indicator_path = os.path.join(self.temp_cache_path, 'indicators')
+        self.assert_(not os.path.exists(indicator_path))
+        
+        lorenzcurve = LorenzCurve(
+                  source_data = self.source_data,
+                  attribute = 'package.test.attribute',
+                  dataset_name = 'test',
+                  years = None
+        )
+        
+        lorenzcurve.create(False)
+        
+        self.assert_(os.path.exists(indicator_path))
+        self.assert_(os.path.exists(os.path.join(indicator_path, 'test__lorenzcurve__attribute__1980.png')))
+
+    
 if __name__ == '__main__':
     try: 
         import matplotlib
