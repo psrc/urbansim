@@ -1,11 +1,11 @@
 <project>
-	<target name="updateProperty">
+	<target name="updateProjectBuildstatus">
 		<propertyfile file="buildstatus.properties">
 			<entry key="project.${projectname}.success" value="${thisbuildsuccessful}"/>
 		</propertyfile>
 	</target>
 	
-	<target name="checkProperty">
+	<target name="checkBuildstatus">
 		<property file="buildstatus.properties" />
 		<condition property="buildstatus.passed">
 			<and>
@@ -48,12 +48,12 @@
 		</telnet>
 	</target>
 	
-	<target name="trafficlights-finish" depends="updateProperty,checkProperty">
+	<target name="trafficlights-finish" depends="updateProjectBuildstatus,checkBuildstatus">
 		<antcall target="green" />
 		<antcall target="red" />
 	</target>
 	
-	<target name="trafficlights-start" depends="checkProperty">
+	<target name="trafficlights-start" depends="checkBuildstatus">
 		<antcall target="yellow" />
 		<antcall target="yellowred" />
 	</target>
