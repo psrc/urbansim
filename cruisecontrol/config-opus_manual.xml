@@ -1,0 +1,21 @@
+<cruisecontrol>
+  <project name="opus_manual" buildafterfailed="False">
+    <listeners>
+      <currentbuildstatuslistener file="logs/${project.name}/status.txt" />
+    </listeners>
+    <bootstrappers>
+      <svnbootstrapper localWorkingCopy="projects/${project.name}" />
+    </bootstrappers>
+    <modificationset quietperiod="30">
+      <svn localWorkingCopy="projects/${project.name}" />
+    </modificationset>
+    <schedule interval="60">
+      <ant anthome="apache-ant-1.6.5" buildfile="projects/${project.name}/build.xml" target="build-latex-docs" />
+    </schedule>
+    <publishers>
+      <onsuccess>
+        <artifactspublisher dest="artifacts/${project.name}" file="projects/${project.name}/docs/latex/userguide.pdf" />
+      </onsuccess>
+    </publishers>
+  </project>
+</cruisecontrol>
