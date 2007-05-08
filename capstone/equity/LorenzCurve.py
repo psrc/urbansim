@@ -127,7 +127,6 @@ class TestLorenzCurve(opus_unittest.OpusTestCase):
                          316, 124, 796, 250, 456, 112, 661, 294, 749, 619,
                          134, 582, 996, 413, 421, 219, 796, 923, 832, 557])
         result = LorenzCurve(incomes)
-        result.plot()
         wanted_result_F = arange(0, 111) / 110.
         wanted_result_L = array([ 0, 0.00202803,  0.00427335,  0.00664542,  0.00907181,  0.01167928,
         0.01457647,  0.01769094,  0.02089595,  0.02413718,  0.02754138,
