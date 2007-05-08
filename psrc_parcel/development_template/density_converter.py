@@ -14,24 +14,26 @@
 
 from opus_core.variables.variable import Variable
 #from variable_functions import my_attribute_label
-from numpy import where
+from numpy import where, ones
 
-class construction_cost_per_unit(Variable):
-    """  aggregate construction_cost_per_unit from unit_cost for each building component
-    result = sum over all components (percent_of_building_sqft * construction_cost_per_unit / sqft_per_unit)
+class density_converter(Variable):
     """
-    ##TODO: do we want to specify the construction cost of residential buildings by $/unit or $/sqft
-    #this variale compute the latter
+    return constants to convert density to a sqft basis 
+    units_per_acre -> units_per_sqft,
+    far (floor area ratio) -> far
+    """
+    _return_type = "float32"
+    ACRE_TO_SQFT = 43560.00
     def dependencies(self):
-        return ["development_template_component.construction_cost_per_unit",
-                "development_template_component.building_sqft_per_unit",
-                "portion_of_building = development_template_component.percent_building_sqft / 100.0", 
-                "construction_cost_per_component = development_template_component.construction_cost_per_unit * development_template_component.portion_of_building / development_template_component.building_sqft_per_unit",
-                "_construction_cost_per_unit = development_template.aggregate(development_template_component.construction_cost_per_component)"
+        return ["development_template.density_type",
                  ]
 
     def compute(self, dataset_pool):
-        return self.get_dataset().get_attribute("_construction_cost_per_unit")
+        dt = self.get_dataset()
+        results = ones(dt.size(), dtype=self._return_type)
+        idx = where(dt.get_attribute("density_type") == 'units_per_acre')[0]
+        results[idx] = 1 / self.ACRE_TO_SQFT
+        return results
 
     def post_check(self, values, dataset_pool):
         self.do_check("x >= 0", values)
@@ -51,24 +53,25 @@ class Tests(opus_unittest.OpusTestCase):
             'development_template':
             {
                 'template_id': array([1,2,3,4]),
+                'density_type': array(['units_per_acre', 'far', 'units_per_acre', 'far']),
+                'density':array([0.2, 10, 1.5, 7.2], dtype='float32')
             },
-            'development_template_component':
-            {
-                "component_id":array([1,2,3,4,5]),
-                'template_id': array([1,2,3,4,4]),
-                "percent_of_building_sqft":array([100, 100, 100, 20, 80]),
-                "building_sqft_per_unit":  array([1600,  1,  2000,  1, 1600]),
-                "construction_cost_per_unit":array([100000,  200,  300000,  100, 100000])
-
-            },
+#            'development_template_component':
+#            {
+#                'template_id': array([1,2,3,4,4]),
+#                "component_id":array([1,2,3,4,1]),
+#                "percent_of_building_sqft":array([100, 100, 100, 20, 80])
+#            },
 #            'building_component':
 #            {
 #                "component_id":array([1,  2,  3,  4]),
+#                "sqft_per_unit":  array([1600,  1,  2000,  1]),
+#                "construction_cost_per_unit":array([100000,  200,  300000,  100])
 #            }
             }
         )
         
-        should_be = array([62.5, 200, 150, 70])
+        should_be = array([1 / 43560.00, 1, 1 / 43560.00, 1])
         
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 

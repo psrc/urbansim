@@ -18,12 +18,12 @@ from numpy import where
 
 class construction_cost_per_unit(Variable):
     """ 
-    this variable can be an outcome attribute of a construction cost model,
+    this variable could be an outcome attribute of a construction cost model,
     then this variable wouldn't be needed
     """
 
     def dependencies(self):
-        return ["_construction_cost_per_unit = development_project_proposal.disaggregate(development_template.construction_cost_per_unit)",
+        return ["_construction_cost_per_unit = development_project_proposal.disaggregate(psrc_parcel.development_template.construction_cost_per_unit)",
                  ]
 
     def compute(self, dataset_pool):

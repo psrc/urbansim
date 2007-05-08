@@ -312,8 +312,11 @@ my_controller_configuration = {
                "DevelopmentProjectProposalRegressionModel"},
     "init": {
         "name": "DevelopmentProjectProposalRegressionModel",
-        "arguments": {"submodel_string": "'land_use_type_id=development_project_proposal.disaggregate(parcel.land_use_type_id)'",
-                      "filter_attribute": "'psrc_parcel.development_project_proposal.is_viable'"},
+        "arguments": {"submodel_string": "'land_use_type_id=development_project_proposal.disaggregate(parcel.land_use_type_id)'", 
+                      #"submodel_string": "'building_type_id=development_project_proposal.disaggregate(development_template.building_type_id)'", 
+                      "filter_attribute": "'psrc_parcel.development_project_proposal.is_viable'",
+                      "outcome_attribute_name":"'ln_unit_price_expected'"
+                      },
         },
     "prepare_for_run": {
         "name": "prepare_for_run",

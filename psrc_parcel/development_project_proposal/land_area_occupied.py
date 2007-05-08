@@ -25,21 +25,21 @@ class land_area_occupied(Variable):
 
     def dependencies(self):
         return ["vacant_land_area = development_project_proposal.disaggregate(psrc_parcel.parcel.vacant_land_area)",
-                "land_area_min = development_project_proposal.disaggregate(development_template.land_area_min)",
-                "land_area_max = development_project_proposal.disaggregate(development_template.land_area_max)", 
+                "land_sqft_min = development_project_proposal.disaggregate(development_template.land_sqft_min)",
+                "land_sqft_max = development_project_proposal.disaggregate(development_template.land_sqft_max)", 
                  ]
 
     def compute(self, dataset_pool):
         proposals = self.get_dataset()
         vacant_land_area = proposals.get_attribute("vacant_land_area")
-        land_area_min = proposals.get_attribute("land_area_min")
-        land_area_max = proposals.get_attribute("land_area_max")
+        land_sqft_min = proposals.get_attribute("land_sqft_min")
+        land_sqft_max = proposals.get_attribute("land_sqft_max")
         
-        results = vacant_land_area
-        w_min = where(results<land_area_min)
+        results = vacant_land_area.astype(self._return_type)
+        w_min = where(results<land_sqft_min)
         results[w_min] = 0 #min_units[w_min], there should not be any such cases; filter takes care of them
-        w_max = where(results >= land_area_max * (1+self.mol) )
-        results[w_max] = land_area_max[w_max]
+        w_max = where(results >= land_sqft_max * (1+self.mol) )
+        results[w_max] = land_sqft_max[w_max].astype(self._return_type)
         
         return results
 
@@ -63,8 +63,8 @@ class Tests(opus_unittest.OpusTestCase):
                 'template_id': array([1,2,3,4]),
                 'building_type_id': array([1, 1, 2, 3]),
                 'density':array([0.6, 2, 10, 5]),
-                'land_area_min': array([0, 10, 4, 30]), 
-                'land_area_max': array([2, 20, 8, 100])
+                'land_sqft_min': array([0, 10, 4, 30]), 
+                'land_sqft_max': array([2, 20, 8, 100])
             },
             'parcel':
             {

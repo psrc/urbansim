@@ -15,7 +15,7 @@
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 
-class occupied_units(Variable):
+class units_occupied(Variable):
     """number of units occupied for type SSS"""
 
 #    def __init__(self, type):

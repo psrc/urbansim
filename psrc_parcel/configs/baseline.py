@@ -52,6 +52,7 @@ class Baseline(GeneralConfiguration):
                     "annual_relocation_rates_for_business",
 #                    "buildings_for_estimation",
                     "building_types",
+                    "generic_building_types",
                     'urbansim_constants',
                     "target_vacancies",
                     "business_location_choice_model_coefficients",
@@ -78,8 +79,8 @@ class Baseline(GeneralConfiguration):
                     'employment_adhoc_sector_groups',
                     'employment_adhoc_sector_group_definitions',
                     'development_templates',
-                    'template_components',
-                    'development_constraints'
+                    'development_template_components',
+                    'development_constraints',
                     ],  
                 tables_to_cache_nchunks={'parcels': 1},
                 unroll_gridcells = False
@@ -100,8 +101,9 @@ class Baseline(GeneralConfiguration):
             'years':(2006, 2006),
             'models':[ # models are executed in the same order as in this list 
 #                "process_pipeline_events",
-#                "real_estate_price_model",
-                 "expected_sale_price_model",
+                "real_estate_price_model",
+                "expected_sale_price_model",
+                "development_proposal_choice_model",
 #                "building_transition_model",
 #                {'building_location_choice_model': {'group_members': '_all_'}},
 #                "household_transition_model",

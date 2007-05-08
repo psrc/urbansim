@@ -17,6 +17,7 @@ from opus_core.regression_model import RegressionModel
 from psrc_parcel.datasets.development_project_proposal_dataset import DevelopmentProjectProposalDataset
 from psrc_parcel.datasets.development_project_proposal_dataset import create_from_parcel_and_development_template
 from numpy import exp, arange, logical_and, zeros, where, array, float32, int16
+import re
 
 class DevelopmentProjectProposalRegressionModel(RegressionModel):
     """Generic regression model on development project proposal dataset
@@ -61,6 +62,12 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         result = RegressionModel.run(self, specification, coefficients, dataset, 
                                          index, chunk_specification, data_objects,
                                          run_config, debuglevel)
+
+        if re.search("^ln_", self.outcome_attribute_name): # if the outcome attr. name starts with 'ln_'
+                                                           # the results will be exponentiated.
+            self.outcome_attribute_name = self.outcome_attribute_name[3:len(self.outcome_attribute_name)]
+            result = exp(result)
+
         if self.outcome_attribute_name not in dataset.get_known_attribute_names():
             dataset.add_primary_attribute(self.defalult_value + zeros(dataset.size()),
                                              self.outcome_attribute_name)

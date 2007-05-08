@@ -15,9 +15,9 @@
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 
 class DevelopmentTemplateComponentDataset(UrbansimDataset):
-    """mapping from development template to building components.
+    """stores information on components of development templates
     """
     in_table_name_default = "development_template_components"
     out_table_name_default = "development_template_components"
     dataset_name = "development_template_component"
-    id_name_default = ["template_id", "component_id"]
+    id_name_default = "component_id"

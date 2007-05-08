@@ -24,32 +24,15 @@ class units_proposed(Variable):
     _return_type = "int32"
 
     def dependencies(self):
-        return ["vacant_land_area = development_project_proposal.disaggregate(psrc_parcel.parcel.vacant_land_area)",
-                "land_area_min = development_project_proposal.disaggregate(development_template.land_area_min)",
-                "land_area_max = development_project_proposal.disaggregate(development_template.land_area_max)",
+        return ["psrc_parcel.development_project_proposal.land_area_occupied",
                 "density = development_project_proposal.disaggregate(psrc_parcel.development_template.density)",
-                "density_convertor = development_template.disaggregate(building_type.density_convertor)",
-                "density_convertor = development_project_proposal.disaggregate(development_template.density_convertor)",
+                "density_convertor = development_project_proposal.disaggregate(psrc_parcel.development_template.density_converter)",  # land area is in sqft
                 "usable_ratio = 1- development_project_proposal.disaggregate(development_template.percent_land_overhead) / 100.0",
-                "possible_units = development_project_proposal.vacant_land_area * development_project_proposal.usable_ratio * development_project_proposal.density / development_project_proposal.density_convertor",
-                "min_units = development_project_proposal.land_area_min * development_project_proposal.usable_ratio * development_project_proposal.density / development_project_proposal.density_convertor",
-                "max_units = development_project_proposal.land_area_max * development_project_proposal.usable_ratio * development_project_proposal.density / development_project_proposal.density_convertor",
+                "_units_proposed = development_project_proposal.vacant_land_area * development_project_proposal.usable_ratio * development_project_proposal.density * development_project_proposal.density_convertor",
                  ]
 
     def compute(self, dataset_pool):
-        proposals = self.get_dataset()
-        templates = dataset_pool.get_dataset("development_template")
-        possible_units = proposals.get_attribute("possible_units")
-
-        min_units = proposals.get_attribute("min_units")
-        max_units = proposals.get_attribute("max_units")
-        results = possible_units
-        w_max = where(results>max_units)
-        w_min = where(results<min_units)
-        results[w_max] = max_units[w_max]
-        results[w_min] = 0 #min_units[w_min], there should not be any such cases; filter takes care of them
-
-        return results
+        return self.get_dataset().get_attribute("_units_proposed")
 
     def post_check(self, values, dataset_pool):
         self.do_check("x >= 0", values)
@@ -69,21 +52,16 @@ class Tests(opus_unittest.OpusTestCase):
             {
                 'template_id': array([1,2,3,4]),
                 'building_type_id': array([1, 1, 2, 3]),
+                "density_type":  array(['units_per_acre', 'units_per_acre', 'far',  'units_per_acre']),                
                 'density':array([0.6, 2, 10, 5]),
                 'percent_land_overhead':array([0, 10, 0, 20]),
-                'land_area_min': array([0, 10, 4, 30],dtype=int32) * self.ACRE,
-                'land_area_max': array([2, 20, 8, 100],dtype=int32) * self.ACRE
+                'land_sqft_min': array([0, 10, 4, 30],dtype=int32) * self.ACRE,
+                'land_sqft_max': array([2, 20, 8, 100],dtype=int32) * self.ACRE
             },
             'parcel':
             {
                 "parcel_id":        array([1,   2,    3]),
                 "vacant_land_area": array([1, 50,  200],dtype=int32)* self.ACRE,
-            },
-            'building_type':
-            {
-                "building_type_id":array([1,  2, 3]),
-                "density_name":  array(['units_per_acre',  'far',  'units_per_acre']),
-                "density_convertor": array([self.ACRE, 1, self.ACRE])
             },
             'development_project_proposal':
             {

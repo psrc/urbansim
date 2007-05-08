@@ -40,6 +40,7 @@ class CachingConfiguration(Configuration):
 #            "annual_relocation_rates_for_business",
 #            "buildings_for_estimation",
             "building_types",
+            "generic_building_types",            
             'urbansim_constants',
             'land_use_types',
             'gridcells',
@@ -48,8 +49,9 @@ class CachingConfiguration(Configuration):
             'employment_adhoc_sector_groups',
             'employment_adhoc_sector_group_definitions',
             'development_templates',
-            'template_components',
-            'development_constraints'
+            'development_template_components',
+            'development_constraints',
+            'target_vacancies'
             ]
         
         return {

@@ -37,8 +37,15 @@ class expected_rate_of_return_on_investment(Variable):
         proposals = self.get_dataset()
         total_investment = proposals.get_attribute("total_investment")
         profit = proposals.get_attribute("profit")
-        return ma.filled( profit / ma.masked_where(total_investment==0, total_investment.astype(float32)), 0.0)
- 
+        results = ma.filled( profit / ma.masked_where(total_investment==0, total_investment.astype(float32)), 0.0)
+
+        from numpy import clip, isnan, isinf, where
+        results[where(isnan(results))] = 0.0
+        results[where(isinf(results))] = 0.0
+        results = clip(results, -1, 1)
+
+        return results
+    
     def post_check(self, values, dataset_pool):
         self.do_check("x >= 0", values)
     
