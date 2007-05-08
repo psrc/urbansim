@@ -55,7 +55,7 @@ class DevelopmentProjectProposalDataset(UrbansimDataset):
             variable_name = name
         short_name = variable_name.get_alias()
 
-        dataset_name = variable_name.get_owner_dataset_name()
+        dataset_name = variable_name.get_dataset_name()
         if dataset_name == self.get_dataset_name():
             new_version = UrbansimDataset._compute_if_needed(self, variable_name, dataset_pool, resources, quiet=quiet, version=version)
         else:
