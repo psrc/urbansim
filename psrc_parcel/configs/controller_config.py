@@ -57,7 +57,9 @@ my_controller_configuration = {
                       "specification": "specification",
                       "coefficients":"coefficients",
                       "dataset": "parcel",
-                      "data_objects": "datasets" }
+                      "data_objects": "datasets",
+                      "run_config": "Configuration({'exclude_missing_values_from_initial_error': True})"
+                      }
             },
     "prepare_for_estimate": {
         "name": "prepare_for_estimate",
@@ -383,7 +385,7 @@ config["models_configuration"]['household_location_choice_model']["controller"].
 
 config["datasets_to_preload"] = {
         'zone':{},
-        'household':{},
+        #'household':{},
         'building':{},
         'parcel':{'package_name':'psrc_parcel'},
 #        'business':{'package_name':'psrc_parcel'},
