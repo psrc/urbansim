@@ -11,6 +11,23 @@
 			<and>
 				<istrue value="${project.opus_core.success}" />
 				<istrue value="${project.urbansim.success}" />
+				<istrue value="${project.washtenaw.success}" />
+				<istrue value="${project.psrc.success}" />
+				<istrue value="${project.opus_upgrade.success}" />
+				<istrue value="${project.travel_model.success}" />
+				<istrue value="${project.sanfrancisco.success}" />
+				<istrue value="${project.paris.success}" />
+				<istrue value="${project.transit_accessibility.success}" />
+				<istrue value="${project.waterdemand.success}" />
+				<istrue value="${project.opus_emme2.success}" />
+				<istrue value="${project.randstad.success}" />
+				<istrue value="${project.az_smart.success}" />
+				<istrue value="${project.inprocess.success}" />
+				<istrue value="${project.eugene.success}" />
+				<istrue value="${project.biocomplexity.success}" />
+				<istrue value="${project.psrc_parcel.success}" />
+				<istrue value="${project.biogeme.success}" />
+				<istrue value="${project.urbansim_cache.success}" />
 			</and>
 		</condition>
 		<condition property="buildstatus.failed">
