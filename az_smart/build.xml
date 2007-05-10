@@ -1,4 +1,4 @@
-<project name="az_smart" default="unit-tests" basedir=".">
+<project name="az_smart" default="unit-tests">
 
 	<property name="webdir" value="/projects/urbansim5/www.urbansim.org/opus/az_smart" />
 	<property name="pythonpathdir" value="${basedir}/.." />
