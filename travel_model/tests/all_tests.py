@@ -12,13 +12,6 @@
 # other acknowledgments.
 # 
 
-import unittest
+from opus_core.tests.utils.package_tester import PackageTester
 
-class AllTests(unittest.TestCase):
-    def test_no_opus_syntax_violations(self):
-        from opus_core.tests.find_opus_syntax_violations import OpusSyntaxChecker
-        OpusSyntaxChecker().check_syntax_for_opus_package('travel_model', 
-                                                          file_names_that_do_not_need_gpl=['wingdbstub.py'])
-        
-if __name__ == "__main__":
-    unittest.main()
+PackageTester().run_all_tests_for_package('travel_model')
