@@ -2,20 +2,20 @@
 
 	<property name="webdir" value="/projects/urbansim5/www.urbansim.org/opus/az_smart" />
 	<property name="pythonpathdir" value="${basedir}/.." />
-		
+
 	<target name="unit-tests">
 		<echo message="Running UnitTests."/>
 		<property environment="env"/>
 		<exec executable="python">
 			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
 			<arg line="tests/all_tests.py"/>
-		</exec>  	
+		</exec>
 	</target>
-	  	
+
 	<target name="release" description="Release module to the incremental website">
-        <delete includeemptydirs="true">
-            <fileset dir="${webdir}" includes="**/*"/>
-        </delete>
+		<delete includeemptydirs="true">
+			<fileset dir="${webdir}" includes="**/*"/>
+		</delete>
 		<copy todir="${webdir}/docs">
 			<fileset dir="${basedir}/docs">
 				<exclude name="**/*.tex" />
@@ -31,6 +31,13 @@
 		<exec executable="python" failonerror="true">
 			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
 			<arg line="docs/latex/build_docs.py" />
-		</exec>  	
+		</exec>
+	</target>
+
+	<target name="cruisecontrol">
+		<exec executable="python" failonerror="True">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
+			<arg line="tests/all_tests.py -x"/>
+		</exec>
 	</target>
 </project>
