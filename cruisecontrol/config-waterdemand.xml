@@ -1,5 +1,5 @@
 <cruisecontrol>
-  <project name="water_demand" buildafterfailed="False">
+  <project name="waterdemand" buildafterfailed="False">
     <listeners>
       <currentbuildstatuslistener file="logs/${project.name}/status.txt" />
     </listeners>

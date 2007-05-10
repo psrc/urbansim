@@ -18,5 +18,5 @@
   <include.projects file="config-travel_model.xml"/>
   <include.projects file="config-urbansim_cache.xml"/>
   <include.projects file="config-washtenaw.xml"/>
-  <include.projects file="config-water_demand.xml"/>
+  <include.projects file="config-waterdemand.xml"/>
 </cruisecontrol>
