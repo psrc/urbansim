@@ -43,7 +43,11 @@ class TestRunEstimation(opus_unittest.TestCase):
             ev = ('python "%s" --cache-directory="%s" washtenaw.tests.test_run_estimation_config'
                 % (create_baseyear_cache_script_path, cache_dir))
             logger.log_status("Invoking '%s'" % ev)
-            os.system(ev)
+            return_code = os.system(ev)
+            
+            if return_code > 0:
+                raise EnvironmentError('Failed while creating the baseyear cache '
+                    'needed to run Washtenaw estimation tests.')
             
             estimation_config = {
                 'cache_directory' : cache_dir,
