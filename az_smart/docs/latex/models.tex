@@ -56,11 +56,8 @@ and a parcel (or land use polygon) may contain multiple buildings.
 In the event that building data is not available, it could be
 imputed, to preserve a consistent data model.
 
-\item \emph{Development Projects, Sites and Templates}: Development
- Projects are proposed as a higher-level construct to represent
- one or more parcels that form a coherent single development
- project, such as single-family housing subdivision, or a shopping
- center complex.  These development projects will deal both with
+\item \emph{Development Projects, Sites and Templates}: Development 
+ projects include both
  known \emph{development projects} which the user wishes to
  incorporate into the simulation, and also development projects
  predicted by the simulation and assigned to \emph{development
@@ -113,11 +110,6 @@ to the database or removing them if a household type is declining.
 \item Employment Transition (Region): Reconciles the control totals
 of employment (by sector) with the database - adding businesses (jobs)
 to the database or removing them if a sector is declining.
-\item Development Project Transition (Region): Reconciles the total
-demand for real estate by type, including the results of the Demographic
-and Employment Transition models, with the existing stock of real estate,
-by generating proposed Development Projects until vacancy rates reach
-long-term structural levels.
 \item Household Relocation (Region): Predicts whether a household will
 move from their existing residence during the next time step.
 \item Business Relocation (Region): Predicts whether a business  (job)
@@ -135,16 +127,13 @@ predicted this will use information provided in the development project
 description or drawn from a development template.
 \item Parcel Aggregation (Parcel): Combines adjacent parcels to create
 a \emph{development site} suitable to place a development project.
-\item Demolition (Building): Removes existing buildings based on age
-and other characteristics that would indicate a high probability to
-convert to another use or be abandoned.
-\item Development Project Location (Development Site): Predicts the
-development site chosen to locate a development project.
-\item Building Development Model (Parcel): This would be based on the
-Development Velocity Model, and predicts the construction of individual
-buildings on parcels within a development project.
-\item Real Estate Price Model (Building): This will predict the price
-per unit (or sqft) for each type of real estate at each location (parcel).
+\item Development Project Proposal Choice Model (Parcel): Predicts the
+parcel chosen to locate a development project.
+\item Event Coordinator (Building): Generates building records from 
+the known and simulated development projects, based on their Development
+Velocity Functions, and adds them to the parcel the project is on.
+\item Real Estate Price Model (Parcel): Predicts the price
+per unit (or sqft) for each land use type at each location (parcel).
 \item Simplified Travel Model (TAZ): An abbreviated travel model with
 just a.m. peak, and other simplifications to provide a relatively
 high-speed regional travel model to use in intermediate years preceding
@@ -156,40 +145,28 @@ The models proposed for implementation in Phase 1 of this project are
 described in greater detail in the following section.
 
 \subsection{Phase 1 Model System}
-Phase 1 of the AZ-SMART project focuses on the allocation of land use
-sectors, essentially the real estate development process.  The plan
-for Phase 1 is to focus on the real estate development components of
-the full model system described in the preceding section, and to
-suppress or use only simple 'stub' models for the remaining models
-in the full system.  The objective is to provide the functionality
-that is provided now by SAM, but in an implementation that is a
-very big step towards a fully integrated market simulation model
-system such as UrbanSim, and incorporating valuable innovations
-such as the management of known development projects, and the use
-of an intermediate level geography such as RAZ as the basis for
-control totals for allocation to parcels or land use polygons.  
+Phase 1 of the AZ-SMART project focuses on the allocation of totals
+defined at the RAZ (or other) geographic level to parcels or land use
+polygons.  
 
 In the following
 description of the model system architecture, we a design
 option of using parcels or land use polygons.  For most purposes this would not affect
 the formulation of the models.  We propose initially to implement the model using 
-land use polygons, and once this is operational to explore the parcel option.
+parcels, using data for PIMA and Maricopa Counties.
 
-The following models would be the focus of model development in Phase 1:
+The following models are the focus of model development in Phase 1:
 
 \begin{itemize}
-\item Real Estate Price Model (Building)
-\item Development Project Proposal Choice Model (Development Site)
-\item Land Subdivision (Parcel or Land Use Polygon)
-\item Land Aggregation (Parcel or Land Use Polygon)
+\item Real Estate Price Model (Parcel)
+\item Development Project Proposal Choice Model (Parcel)
+\item Land Subdivision (Parcel)
+\item Land Aggregation (Parcel)
 \item Travel Model Interface (current emme/2 or new TransCad model)
 \end{itemize}
 
 The following models would be implemented for completeness, but would
-use only the simplest specification.  For example,
-the household location choice model could use an empty specification,
-which would randomly allocate the household control total for a RAZ to
-the housing units that have been developed on parcels in the RAZ.
+use a simple specification.
 
 For the sake of brevity, we will refer to parcels below, but please keep in mind
 that this would initially be done with land use polygons, and that land use 
@@ -205,16 +182,22 @@ would be operating on.
 \item Business Location (Parcel)
 \end{itemize}
 
-The components of the full model system would be deferred until after Phase 1:
+The following components of the full model system would be deferred until after Phase 1:
 
 \begin{itemize}
-\item Demolition (Building)
 \item Simplified Travel Model (TAZ)
+\item Higher - level model to replace DRAM/EMPAL
 \end{itemize}
 
 The proposed model architecture has the following steps, using a 5-year time interval.
 
-\subsubsection{Determine Quantity of Development Needed}
+Each model is described in the sequence it would be run within a simulation period.
+
+\subsubsection{Building Development Model}
+
+ 
+
+\subsubsection{Demographic Transition Model}
 
 The first task is to translate mid-level model predictions of population and employment by RAZ (or
 other mid-level geography) into predicted demands for housing units and land area of non-residential
@@ -223,6 +206,8 @@ population to the control target for a specified year, and if the existing popul
 total, it will add the needed number of households to the households table, without a location being specified.
 If the current population of a particular type is greater than the control total target, the model will remove
 households of this type randomly until the control total is met.
+
+
 The Economic Transition Model does the same with employment, comparing the sum of employment by
 industry sector (the sectors from Dram/Empal) to the employment control totals, and adds new jobs if the
 existing employment is less than the control total for a sector.  If the existing employment is greater, it
