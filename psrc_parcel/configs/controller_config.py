@@ -58,7 +58,7 @@ my_controller_configuration = {
                       "coefficients":"coefficients",
                       "dataset": "parcel",
                       "data_objects": "datasets",
-                      "run_config": "Configuration({'exclude_missing_values_from_initial_error': True})"
+                      "run_config": "Resources({'exclude_missing_values_from_initial_error': True})"
                       }
             },
     "prepare_for_estimate": {
