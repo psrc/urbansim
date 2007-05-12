@@ -77,17 +77,24 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         
         return dataset
     
-    def prepare_for_run(self, data_objects, *args, **kwargs):
+    def prepare_for_run(self, data_objects, parcel_filter=None, *args, **kwargs):
         """create development project proposal dataset from parcels and development templates
         """
         specification, coefficients = RegressionModel.prepare_for_run(self, *args, **kwargs)
         #data_objects = kwargs['data_objects']
         parcels = data_objects['parcel']
-        from opus_core.misc import sample
-        from opus_core.datasets.dataset import DatasetSubset
-        n = parcels.size()
-        index1=sample(arange(n), int(n*0.001))
         templates = data_objects['development_template']
+
+        if parcel_filter is not None:
+            parcels.compute_variables(parcel_filter)
+            index1 = where(parcels.get_attribute(parcel_filter))[0]
+        else:
+            index1 = None
+            
+#        from opus_core.misc import sample
+#        from opus_core.datasets.dataset import DatasetSubset
+#        n = parcels.size()
+#        index1=sample(arange(n), int(n*0.001))
 
         resources = Resources(data_objects)
         proposal_set = create_from_parcel_and_development_template(parcels, templates, 

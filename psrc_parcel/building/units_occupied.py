@@ -42,6 +42,8 @@ class units_occupied(Variable):
 #        results += buildings.get_attribute("_units_occupied")
         ##TODO: these dummy values are used when the businesses and households tables aren't ready
         for unit_name in unique_values(dataset_pool.get_dataset("generic_building_type").get_attribute("unit_name")):
+            #should not count parcel_sqft
+            if unit_name == "parcel_sqft":continue
             matched = buildings.get_attribute("unit_name") == unit_name
             results[matched] = buildings.get_attribute(unit_name)[matched]
         return results

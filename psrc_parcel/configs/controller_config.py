@@ -322,7 +322,8 @@ my_controller_configuration = {
         },
     "prepare_for_run": {
         "name": "prepare_for_run",
-        "arguments": {"specification_storage": "base_cache_storage",
+        "arguments": {"parcel_filter":"'is_vacant_developable=parcel.land_use_type_id==26'",
+                      "specification_storage": "base_cache_storage",
                       "specification_table": "'real_estate_price_model_specification'",
                        "coefficients_storage": "base_cache_storage",
                        "coefficients_table": "'real_estate_price_model_coefficients'",
