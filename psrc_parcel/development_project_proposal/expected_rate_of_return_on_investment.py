@@ -39,10 +39,11 @@ class expected_rate_of_return_on_investment(Variable):
         profit = proposals.get_attribute("profit")
         results = ma.filled( profit / ma.masked_where(total_investment==0, total_investment.astype(float32)), 0.0)
 
+        # TODO: this is to handle anomalies in the regression outcome
         from numpy import clip, isnan, isinf, where
         results[where(isnan(results))] = 0.0
         results[where(isinf(results))] = 0.0
-        results = clip(results, -1, 1)
+        results = clip(results, -9, 9)
 
         return results
     
@@ -69,7 +70,8 @@ class Tests(opus_unittest.OpusTestCase):
             'parcel':
             {
                 "parcel_id":        array([1,   2,    3]),
-                "land_price":       array([1000,   500,    1000000]),
+                "unit_price":       array([500,   500,    1000000]),
+                "existing_units":   array([2,    1,      1])
             },
             'development_project_proposal':
             {
@@ -78,18 +80,18 @@ class Tests(opus_unittest.OpusTestCase):
                 "template_id":array([1,  2, 3, 4,  2,  3, 4, 1,  2, 3, 4]),
                 "unit_price_expected":array([360000, 400000/1500, 400000/2000, 200000/8, 330000/1000, 420000/4000, 
                                                 480000/3, 1400000/2, 4600000/8000, 200000000/1000000, 1000000/4]),
-                "land_area_occupied":array([100, 50, 20, 200, 200, 80, 600, 1, 2, 70, 0.5]),
+                #"land_area_taken":array([100, 50, 20, 200, 200, 80, 600, 1, 2, 70, 0.5]),
                 "units_proposed":array([1, 1500, 2000, 8, 1000, 4000, 3, 2, 8000, 1000000, 4]),
                 
             }
             }
         )
         
-        should_be = array([0.2, 0.14,  1.0,  -0.8,  
-                             0.1, 0.05, -0.2, 
-                             0.0, 1/3.6, 1.0/4, 1.0/9])
+        should_be = array([0.79104478, 0.3255814,  1.20994475,  -0.75031211,  
+                             0.64588529, 0.16504854, 0.59733777, 
+                             0.000, 0.76923077, 1.1978022, -0.28571429])
         
-        tester.test_is_close_for_variable_defined_by_this_module(self, should_be, rtol=1e-3)
+        tester.test_is_close_for_variable_defined_by_this_module(self, should_be, rtol=1e-2)
 
 if __name__=='__main__':
     opus_unittest.main()

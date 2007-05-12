@@ -24,11 +24,12 @@ class units_proposed(Variable):
     _return_type = "int32"
 
     def dependencies(self):
-        return ["psrc_parcel.development_project_proposal.land_area_occupied",
+        return [
+                "land_area_taken = psrc_parcel.development_project_proposal.land_area_taken",
                 "density = development_project_proposal.disaggregate(psrc_parcel.development_template.density)",
                 "density_convertor = development_project_proposal.disaggregate(psrc_parcel.development_template.density_converter)",  # land area is in sqft
                 "usable_ratio = 1- development_project_proposal.disaggregate(development_template.percent_land_overhead) / 100.0",
-                "_units_proposed = development_project_proposal.vacant_land_area * development_project_proposal.usable_ratio * development_project_proposal.density * development_project_proposal.density_convertor",
+                "_units_proposed = development_project_proposal.land_area_taken * development_project_proposal.usable_ratio * development_project_proposal.density * development_project_proposal.density_convertor",
                  ]
 
     def compute(self, dataset_pool):

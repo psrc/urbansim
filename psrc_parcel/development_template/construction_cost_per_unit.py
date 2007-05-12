@@ -56,7 +56,7 @@ class Tests(opus_unittest.OpusTestCase):
             {
                 "component_id":array([1,2,3,4,5]),
                 'template_id': array([1,2,3,4,4]),
-                "percent_of_building_sqft":array([100, 100, 100, 20, 80]),
+                "percent_building_sqft":array([100, 100, 100, 20, 80]),
                 "building_sqft_per_unit":  array([1600,  1,  2000,  1, 1600]),
                 "construction_cost_per_unit":array([100000,  200,  300000,  100, 100000])
 

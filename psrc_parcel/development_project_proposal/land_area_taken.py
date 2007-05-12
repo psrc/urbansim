@@ -16,7 +16,7 @@ from opus_core.variables.variable import Variable
 #from variable_functions import my_attribute_label
 from numpy import where
 
-class land_area_occupied(Variable):
+class land_area_taken(Variable):
     """land area taken up by the proposal
     
     """

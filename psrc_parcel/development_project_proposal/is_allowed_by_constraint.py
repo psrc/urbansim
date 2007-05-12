@@ -34,9 +34,12 @@ class is_allowed_by_constraint(Variable):
         templates = dataset_pool.get_dataset("development_template")
         parcels = dataset_pool.get_dataset("parcel")
         constraints = dataset_pool.get_dataset("development_constraint")        
-
+        try:
+            index1 = proposals.index1
+        except:
+            index1 = None
         parcels.get_development_constraints(constraints, dataset_pool, 
-                                            index= proposals.index1)
+                                            index= index1)
 
         parcel_index = parcels.get_id_index(proposals.get_attribute("parcel_id"))
         # transform parcel_index to be relative to index of parcels.development_constraints
