@@ -76,7 +76,6 @@ class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
         #if self.location_id_string is not None:
             #self.location_id_string = VariableName(self.location_id_string)
             #self.location_id_string.set_alias(location_set.get_id_name()[0])
-        self.probability_for_correcting_bias = None
 
     def run(self, specification, coefficients, agent_set,
             agents_index=None, chunk_specification=None,
