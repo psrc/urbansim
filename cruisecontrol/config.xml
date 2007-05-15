@@ -1,4 +1,5 @@
 <cruisecontrol>
+  <property name="quietperiod" value="180">
   <include.projects file="config-opus_core.xml"/>
   <include.projects file="config-urbansim.xml"/>
   <include.projects file="config-az_smart.xml"/>

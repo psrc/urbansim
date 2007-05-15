@@ -6,7 +6,7 @@
     <bootstrappers>
       <svnbootstrapper localWorkingCopy="projects/${project.name}" />
     </bootstrappers>
-    <modificationset quietperiod="30">
+    <modificationset quietperiod="${quietperiod}">
       <svn localWorkingCopy="projects/${project.name}" />
       <buildstatus logdir="logs/urbansim" />
     </modificationset>

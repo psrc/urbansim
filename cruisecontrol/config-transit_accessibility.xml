@@ -6,7 +6,7 @@
     <bootstrappers>
       <cvsbootstrapper localWorkingCopy="projects/${project.name}" />
     </bootstrappers>
-    <modificationset quietperiod="30">
+    <modificationset quietperiod="${quietperiod}">
       <cvs localWorkingCopy="projects/${project.name}" />
       <buildstatus logdir="logs/psrc" />
     </modificationset>
