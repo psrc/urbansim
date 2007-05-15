@@ -42,7 +42,8 @@ my_controller_configuration = {
         "name": "RealEstatePriceModel",
         "arguments": {"submodel_string": "'land_use_type_id'",
                       "outcome_attribute": "'ln_unit_price=ln(psrc_parcel.parcel.unit_price)'",
-                      "filter_attribute": None},
+                      "filter_attribute": "'numpy.logical_or(parcel.aggregate(building.building_sqft), psrc_parcel.parcel.is_land_use_type_vacant)'"
+                      },
         },
     "prepare_for_run": {
         "name": "prepare_for_run",
