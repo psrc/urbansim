@@ -10,7 +10,7 @@
       <cvs localWorkingCopy="projects/${project.name}" />
       <buildstatus logdir="logs/opus_core" />
     </modificationset>
-    <schedule interval="60">
+    <schedule interval="${interval}">
       <ant anthome="apache-ant-1.6.5" buildfile="build.xml" target="run-build">
       	<property name="buildpath" value="projects/${project.name}" />
       </ant>
