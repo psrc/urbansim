@@ -121,8 +121,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
             #buildings.compute_variables("psrc_parcel.building.units_occupied", dataset_pool=self.dataset_pool)
             occupied_units = buildings.get_attribute("units_occupied")
 
-            self.existing_units[type_id] = existing_units.sum()
-            self.occupied_units[type_id] = occupied_units.sum()
+            self.existing_units[type_id] = existing_units[is_matched_type].sum()
+            self.occupied_units[type_id] = occupied_units[is_matched_type].sum()
             self.proposed_units[type_id] = 0
             self.demolished_units[type_id] = 0
             vr = (self.existing_units[type_id] - self.occupied_units[type_id]) / float(self.existing_units[type_id])
