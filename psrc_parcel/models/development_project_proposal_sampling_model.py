@@ -122,7 +122,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
             buildings = self.dataset_pool.get_dataset("building")
             is_matched_type = buildings.get_attribute("generic_building_type_id") == type_id
             existing_units = zeros(buildings.size(), dtype="int32")
-            existing_units[is_matched_type] = buildings.get_attribute(unit_name)[is_matched_type]
+            existing_units[is_matched_type] = buildings.get_attribute(unit_name)[is_matched_type].astype(existing_units.dtype)
             #buildings.compute_variables("psrc_parcel.building.units_occupied", dataset_pool=self.dataset_pool)
             occupied_units = buildings.get_attribute("units_occupied")
 
