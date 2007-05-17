@@ -13,11 +13,13 @@
 # 
 
 from opus_core.variables.variable import Variable
-from numpy import int32, zeros, where
+from numpy import zeros, where
 from opus_core.misc import unique_values
 
 class existing_units(Variable):
     """total number of units (residential_units or sqft, defined in building_types) """
+    _return_type = "int32"
+    
     def dependencies(self):
         return ["_unit_name=building.disaggregate(building_type.unit_name)",
                 "parcel_sqft=building.disaggregate(parcel.parcel_sqft)",
@@ -25,13 +27,13 @@ class existing_units(Variable):
         
     def compute(self,  dataset_pool):
         buildings = self.get_dataset()
-        results = zeros(buildings.size(),dtype=int32)
+        results = zeros(buildings.size(),dtype=self._return_type)
         unit_names = buildings.get_attribute("_unit_name")
         unique_unit_names = unique_values(unit_names)
         for unit_name in unique_unit_names:
             if unit_name.strip() == '':continue
             uw = where(unit_names == unit_name)[0]
-            results[uw] = buildings.get_attribute(unit_name)[uw]
+            results[uw] = buildings.get_attribute(unit_name)[uw].astype(self._return_type)
         return results
     
     def post_check(self,  values, dataset_pool=None):
