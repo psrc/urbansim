@@ -21,4 +21,5 @@
   <include.projects file="config-urbansim_cache.xml"/>
   <include.projects file="config-washtenaw.xml"/>
   <include.projects file="config-waterdemand.xml"/>
+  <include.projects file="config-nightly.xml"/>
 </cruisecontrol>

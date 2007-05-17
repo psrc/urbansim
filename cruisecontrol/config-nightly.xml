@@ -1,0 +1,21 @@
+<cruisecontrol>
+  <project name="nightly" buildafterfailed="False" requireModification="False">
+    <listeners>
+      <currentbuildstatuslistener file="logs/${project.name}/status.txt" />
+    </listeners>
+    <bootstrappers>
+      <cvsbootstrapper localWorkingCopy="projects/${project.name}" />
+    </bootstrappers>
+    <modificationset quietperiod="${quietperiod}">
+      <timebuild time="1200" />
+    </modificationset>
+    <schedule interval="${interval}">
+      <ant anthome="apache-ant-1.6.5" buildfile="build.xml" target="run-build">
+      	<property name="buildpath" value="projects/${project.name}" />
+      </ant>
+    </schedule>
+    <publishers>
+      <antpublisher Target="trafficlights-finish" BuildFile="build.xml" anthome="apache-ant-1.6.5" />
+    </publishers>
+  </project>
+</cruisecontrol>
