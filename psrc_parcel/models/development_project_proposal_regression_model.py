@@ -77,10 +77,14 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         
         return dataset
     
-    def prepare_for_run(self, data_objects, parcel_filter=None, *args, **kwargs):
-        """create development project proposal dataset from parcels and development templates
+    def prepare_for_run(self, data_objects, parcel_filter=None, spec_replace_module_variable_pair=None, 
+                        *args, **kwargs):
+        """create development project proposal dataset from parcels and development templates.
+        spec_replace_module_variable_pair is a tuple with two elements: module name, variable within the module
+        that contans a dictionary of model variables to be replaced in the specification.
         """
         specification, coefficients = RegressionModel.prepare_for_run(self, *args, **kwargs)
+
         #data_objects = kwargs['data_objects']
         parcels = data_objects['parcel']
         templates = data_objects['development_template']
@@ -101,5 +105,10 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                                                               filter_attribute=self.filter,
                                                               index = index1,
                                                               resources=resources)
+        if spec_replace_module_variable_pair is not None:
+            exec("from %s import %s as spec_replacement" % (spec_replace_module_variable_pair[0], 
+                                                            spec_replace_module_variable_pair[1]))
+            specification.replace_variables(spec_replacement)
+            
         return (proposal_set, specification, coefficients)
         

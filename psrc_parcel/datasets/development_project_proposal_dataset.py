@@ -19,6 +19,7 @@ from opus_core.datasets.interaction_dataset import InteractionDataset
 from opus_core.storage_factory import StorageFactory
 from opus_core.resources import Resources
 from opus_core.variables.variable_name import VariableName
+from opus_core.simulation_state import SimulationState
 from numpy import arange, where
 
 class DevelopmentProjectProposalDataset(UrbansimDataset):
@@ -102,6 +103,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
                                "proposal_id": arange(1, parcel_ids.size+1, 1),
                                "parcel_id" : parcel_ids,
                                "template_id": template_ids,
+                               "year_built": array(parcel_ids.size*[SimulationState().get_current_time()])
                            }
                        )
     development_project_proposals = DevelopmentProjectProposalDataset(resources=Resources(resources),

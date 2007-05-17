@@ -53,12 +53,12 @@ all_variables = [
     "plan_19=parcel.plan_type_id==19",
     "plan_20=parcel.plan_type_id==20",           
                  ]
-variables_translation_for_development_project_proposal = {
+variables_for_development_project_proposal = {
       'ln_bldgage' : 'ln(psrc_parcel.development_project_proposal.building_age)',
       'lnsqft': 'ln(psrc_parcel.development_project_proposal.units_proposed)',
       "lnsqftunit": 'ln(psrc_parcel.development_project_proposal.units_proposed)', # wrong
-      "lnlotsqftunit": "ln(development_project_proposal.aggregate(parcel.parcel_sqft)/psrc_parcel.development_project_proposal.units_proposed", # wrong
-      "ln_invfar": "ln(development_project_proposal.aggregate(parcel.parcel_sqft)/psrc_parcel.development_project_proposal.units_proposed",
+      "lnlotsqftunit": "ln(development_project_proposal.aggregate(parcel.parcel_sqft)/psrc_parcel.development_project_proposal.units_proposed)", # wrong
+      "ln_invfar": "ln(development_project_proposal.aggregate(parcel.parcel_sqft)/psrc_parcel.development_project_proposal.units_proposed)",
                                               }
 specification ={}
 specification = {
