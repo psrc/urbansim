@@ -45,7 +45,7 @@ class units_occupied(Variable):
             #should not count parcel_sqft
             if unit_name == "parcel_sqft":continue
             matched = buildings.get_attribute("unit_name") == unit_name
-            results[matched] = buildings.get_attribute(unit_name)[matched]
+            results[matched] = buildings.get_attribute(unit_name)[matched].dtype(self._return_type)
         return results
 
     def post_check(self,  values, dataset_pool=None):

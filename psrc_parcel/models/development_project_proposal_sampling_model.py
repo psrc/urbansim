@@ -75,7 +75,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
             'generic_building_type_id=development_project_proposal.disaggregate(building_type.generic_building_type_id)'],
                                          dataset_pool=self.dataset_pool)
         self.proposal_component_set.compute_variables([
-            'generic_building_type_id = development_project_proposal_component.disaggregate(building_type.generic_building_type_id)'],
+            'generic_building_type_id = development_template_component.disaggregate(building_type.generic_building_type_id)'],
                                         dataset_pool=self.dataset_pool)            
         buildings = self.dataset_pool.get_dataset("building")
         buildings.compute_variables(["generic_building_type_id = building.disaggregate(building_type.generic_building_type_id)",
