@@ -61,28 +61,24 @@ class Tests(opus_unittest.OpusTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         building_types_table_name = 'building_types'        
-        storage.write_dataset(
-            Resources({
-                'out_table_name':building_types_table_name,
-                'values':{
+        storage.write_table(
+                table_name=building_types_table_name,
+                table_data={
                     'building_type_id':array([1,2]), 
                     'name': array(['residential', 'commercial']),
                     'units': array(['residential_units', 'commercial_sqft'])
                     }
-                })
             )
 
         buildings_table_name = 'buildings'        
-        storage.write_dataset(
-            Resources({
-                'out_table_name':buildings_table_name,
-                'values':{
+        storage.write_table(
+                table_name=buildings_table_name,
+                table_data={
                      'building_id': arange(6)+1,
                      'building_type_id': array([1,2,1,2,1,1]),
                      'sqft': array([100, 350, 1000, 0, 430, 95]),
                      'residential_units': array([300, 0, 100, 0, 1000, 600])
                      }
-                })
             )
 
         building_types = BuildingTypeDataset(in_storage=storage, in_table_name=building_types_table_name)

@@ -35,7 +35,6 @@ class occupied_sqft(Variable):
 
 if __name__=='__main__':
     import unittest
-    from urbansim.variable_test_toolbox import VariableTestToolbox
     from numpy import array
     from numpy import ma
     from opus_core.resources import Resources
@@ -46,32 +45,28 @@ if __name__=='__main__':
     class Tests(unittest.TestCase):
         variable_name = "psrc_parcel.building.occupied_sqft"
         def test(self):
-            storage1 = StorageFactory().get_storage('dict_storage')
+            storage = StorageFactory().get_storage('dict_storage')
             bs_table_name = 'business'
             
-            storage1.write_dataset(
-                Resources({
-                    'out_table_name':bs_table_name,
-                    'values': {"business_id": array([1,2,3,4,5,6]),
+            storage.write_table(
+                    table_name=bs_table_name,
+                    table_data={"business_id": array([1,2,3,4,5,6]),
                                "sqft":        array([0,1,4,0,2,5]),
                                "building_id": array([2,1,3,2,1,2])
                                },
-                    })
                 )
     
-            bs = BusinessDataset(in_storage=storage1, 
+            bs = BusinessDataset(in_storage=storage, 
                                           in_table_name=bs_table_name)
 
-            storage2 = StorageFactory().get_storage('dict_storage')
+            storage = StorageFactory().get_storage('dict_storage')
             building_table_name='building'
-            storage2.write_dataset(
-                Resources({
-                    'out_table_name':building_table_name,
-                    'values':{"building_id": array([1,2,3]),},
-                })
+            storage.write_table(
+                    table_name=building_table_name,
+                    table_data={"building_id": array([1,2,3]),},
             )
 
-            buildings = BuildingDataset(in_storage=storage2, 
+            buildings = BuildingDataset(in_storage=storage, 
                                         in_table_name=building_table_name)
             
             buildings.compute_variables(self.variable_name, 

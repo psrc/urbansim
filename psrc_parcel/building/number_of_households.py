@@ -35,7 +35,6 @@ class number_of_households(Variable):
 
 if __name__=='__main__':
     import unittest
-    from urbansim.variable_test_toolbox import VariableTestToolbox
     from numpy import array, arange
     from numpy import ma
     from opus_core.resources import Resources
@@ -47,30 +46,26 @@ if __name__=='__main__':
         def test(self):
 #            building_id = array([1, 2, 3, 4])
             
-            storage1 = StorageFactory().get_storage('dict_storage')
+            storage = StorageFactory().get_storage('dict_storage')
             hh_table_name = 'households'
             
-            storage1.write_dataset(
-                Resources({
-                    'out_table_name':hh_table_name,
-                    'values': {"household_id":arange(1,7), 
+            storage.write_table(
+                    table_name=hh_table_name,
+                    table_data={"household_id":arange(1,7), 
                                "building_id": array([1, 2, 3, 4, 2, -1])
                                },
-                    })
                 )
     
-            households = HouseholdDataset(in_storage=storage1, 
+            households = HouseholdDataset(in_storage=storage, 
                                           in_table_name=hh_table_name)        
-            storage2 = StorageFactory().get_storage('dict_storage')
+            storage = StorageFactory().get_storage('dict_storage')
             builing_table_name='building'
-            storage2.write_dataset(
-                Resources({
-                    'out_table_name':builing_table_name,
-                    'values': {"building_id":array([1,2,3,4])},
-                })
+            storage.write_table(
+                    table_name=builing_table_name,
+                    table_data={"building_id":array([1,2,3,4])},
             )
 
-            buildings = BuildingDataset(in_storage=storage2, 
+            buildings = BuildingDataset(in_storage=storage, 
                                         in_table_name=builing_table_name)
 
 

@@ -38,28 +38,24 @@ class building_sqft_per_unit(Variable):
         
 if __name__=='__main__':
     import unittest
-    from urbansim.variable_test_toolbox import VariableTestToolbox
     from numpy import array
-    from opus_core.resources import Resources    
     from psrc_parcel.datasets.building_dataset import BuildingDataset
     from opus_core.storage_factory import StorageFactory
     class Tests(unittest.TestCase):
         variable_name = "psrc_parcel.building.building_sqft_per_unit"
 
         def test_my_inputs(self):
-            storage2 = StorageFactory().get_storage('dict_storage')
+            storage = StorageFactory().get_storage('dict_storage')
             building_table_name='building'
-            storage2.write_dataset(
-                Resources({
-                    'out_table_name':building_table_name,
-                    'values': {"building_id":array([1,2,3,4,5]),
+            storage.write_table(
+                    table_name=building_table_name,
+                    table_data={"building_id":array([1,2,3,4,5]),
                                "residential_units":array([2,0,1,4,7]),
                                "building_sqft":array([1000,0,2000,1000,7000]),
                                },
-                })
             )
 
-            buildings = BuildingDataset(in_storage=storage2, 
+            buildings = BuildingDataset(in_storage=storage, 
                                         in_table_name=building_table_name)
 
             buildings.compute_variables(self.variable_name)

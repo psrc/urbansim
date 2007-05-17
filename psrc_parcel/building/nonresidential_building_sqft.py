@@ -40,8 +40,7 @@ class nonresidential_building_sqft(Variable):
 
 if __name__=='__main__':
     import unittest
-    from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numpy import array, arange
+    from numpy import array
     from numpy import ma
     from opus_core.resources import Resources
     from urbansim.datasets.building_dataset import BuildingDataset
@@ -53,32 +52,28 @@ if __name__=='__main__':
         def test(self):
 #            building_id = array([1, 2, 3, 4])
 
-            storage1 = StorageFactory().get_storage('dict_storage')
+            storage = StorageFactory().get_storage('dict_storage')
             table1 = 'building_use'
 
-            storage1.write_dataset(
-                Resources({
-                    'out_table_name':table1,
-                    'values': {"class_id":array([1,2]),
+            storage.write_table(
+                    table_name=table1,
+                    table_data={"class_id":array([1,2]),
                                "class_name": array(["nonresidential","residential"])
                                },
-                    })
                 )
 
-            building_uses = BuildingUseClassificationDataset(in_storage=storage1,
+            building_uses = BuildingUseClassificationDataset(in_storage=storage,
                                                           in_table_name=table1)
-            storage2 = StorageFactory().get_storage('dict_storage')
+            storage = StorageFactory().get_storage('dict_storage')
             builing_table_name='building'
-            storage2.write_dataset(
-                Resources({
-                    'out_table_name':builing_table_name,
-                    'values': {"building_id":array([1,2,3,4]),
+            storage.write_table(
+                    table_name=builing_table_name,
+                    table_data={"building_id":array([1,2,3,4]),
                                "building_class_id":array([1,1,2,1]),
                                "building_sqft":array([0, 100, 70, 29])},
-                })
             )
 
-            buildings = BuildingDataset(in_storage=storage2,
+            buildings = BuildingDataset(in_storage=storage,
                                         in_table_name=builing_table_name)
 
 

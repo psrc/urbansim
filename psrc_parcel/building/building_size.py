@@ -59,37 +59,33 @@ class Tests(unittest.TestCase):
     variable_name = "psrc_parcel.building.building_size"
 
     def test_my_inputs(self):
-        storage1 = StorageFactory().get_storage('dict_storage')
+        storage = StorageFactory().get_storage('dict_storage')
         bu_table_name = 'building_use_classification'
         
-        storage1.write_dataset(
-            Resources({
-                'out_table_name':bu_table_name,
-                'values': {"class_id":array([1,2]), 
+        storage.write_table(
+                table_name=bu_table_name,
+                table_data={"class_id":array([1,2]), 
                            "name": array(["residential", "nonresidential"]),
                            "units": array(["residential_units", "building_sqft"])
                            },
-                })
             )
 
-        building_use_classification = BuildingUseClassificationDataset(in_storage=storage1, 
+        building_use_classification = BuildingUseClassificationDataset(in_storage=storage, 
                                                                        in_table_name=bu_table_name)
 
-        storage2 = StorageFactory().get_storage('dict_storage')
+        storage = StorageFactory().get_storage('dict_storage')
         builing_table_name='building'
-        storage2.write_dataset(
-            Resources({
-                'out_table_name':builing_table_name,
-                'values': {
+        storage.write_table(
+                table_name=builing_table_name,
+                table_data={
                     "building_id": arange(6)+1,
                     "building_class_id": array([1,2,1,2,1,1]),
                     "building_sqft": array([100, 350, 1000, 0, 430, 95]),
                     "residential_units": array([300, 0, 100, 0, 1000, 600])
                              },
-                })
             )
         
-        buildings = BuildingDataset(in_storage=storage2, 
+        buildings = BuildingDataset(in_storage=storage, 
                                     in_table_name=builing_table_name)
         
         buildings.compute_variables(self.variable_name, resources=Resources({"building_use_classification": building_use_classification}))

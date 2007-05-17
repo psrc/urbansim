@@ -32,6 +32,7 @@ from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
 from opus_core.simulation_state import SimulationState
 
+## TODO: Is this class working?
 class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
 
     def __init__(self, choice_set,
@@ -87,13 +88,11 @@ class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
         if not isinstance(agent_set, Dataset):
             storage = StorageFactory().get_storage('dict_storage')
             storage_table_name = 'agent_set'
-            storage.write_dataset(
-                Resources({
-                    'out_table_name':storage_table_name,
-                    'values':{
+            storage.write_table(
+                    table_name=storage_table_name,
+                    table_data={
                         'agent_id':array(agent_set)
                         },
-                    })
                 )
 
             agent_id = Dataset(

@@ -13,7 +13,6 @@
 #
 
 from opus_core.variables.variable import Variable
-from urbansim.functions import attribute_label
 from variable_functions import my_attribute_label
 
 class vacant_land_area(Variable):
@@ -40,26 +39,22 @@ if __name__=='__main__':
     from urbansim.variable_test_toolbox import VariableTestToolbox
     from numpy import array
     from numpy import ma
-    from opus_core.resources import Resources
     from psrc_parcel.datasets.parcel_dataset import ParcelDataset
-    from psrc_parcel.datasets.building_dataset import BuildingDataset
     from opus_core.storage_factory import StorageFactory    
     class Tests(unittest.TestCase):
         variable_name = "psrc_parcel.parcel.vacant_land_area"
         def test_my_inputs(self):
-            storage1 = StorageFactory().get_storage('dict_storage')
+            storage = StorageFactory().get_storage('dict_storage')
             parcels_table_name = 'parcels'            
-            storage1.write_dataset(
-                Resources({
-                    'out_table_name':parcels_table_name,
-                    'values':{
+            storage.write_table(
+                    table_name=parcels_table_name,
+                    table_data={
                         'parcel_id':array([1,2,3]),
                         "parcel_sqft":array([1000,200,1300]),
                         },
-                    })
                 )
     
-            parcels = ParcelDataset(in_storage=storage1, in_table_name=parcels_table_name)
+            parcels = ParcelDataset(in_storage=storage, in_table_name=parcels_table_name)
 
             
             values = VariableTestToolbox().compute_variable(self.variable_name, \
