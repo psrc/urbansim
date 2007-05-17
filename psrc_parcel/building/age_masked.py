@@ -32,12 +32,9 @@ class age_masked(Variable):
 
         if current_year == None:
             raise StandardError, "'SimulationState().get_current_time()' returns None."
-        urbansim_constant = dataset_pool.get_dataset('urbansim_constant')
         is_year_built = self.get_dataset().get_attribute("has_valid_year_built")
-        year_built_values = self.get_dataset().get_attribute(self.year_built)
-        building_age = maximum(0, current_year - year_built_values)
-        building_age = ma.masked_where( logical_not(is_year_built), building_age)
-        return building_age
+        building_age = maximum(0, current_year - self.get_dataset().get_attribute(self.year_built))
+        return ma.masked_where( logical_not(is_year_built), building_age)
 
     def post_check(self, values, dataset_pool):
         self.do_check("x >= 0", values)

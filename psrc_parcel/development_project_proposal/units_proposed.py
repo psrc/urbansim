@@ -29,11 +29,12 @@ class units_proposed(Variable):
                 "density = development_project_proposal.disaggregate(psrc_parcel.development_template.density)",
                 "density_convertor = development_project_proposal.disaggregate(psrc_parcel.development_template.density_converter)",  # land area is in sqft
                 "usable_ratio = 1- development_project_proposal.disaggregate(development_template.percent_land_overhead) / 100.0",
-                "_units_proposed = development_project_proposal.land_area_taken * development_project_proposal.usable_ratio * development_project_proposal.density * development_project_proposal.density_convertor",
                  ]
 
     def compute(self, dataset_pool):
-        return self.get_dataset().get_attribute("_units_proposed")
+        ds = self.get_dataset()
+        return ds.get_attribute("land_area_taken") * ds.get_attribute("usable_ratio") * \
+                            ds.get_attribute("density") * ds.get_attribute("density_convertor")
 
     def post_check(self, values, dataset_pool):
         self.do_check("x >= 0", values)
