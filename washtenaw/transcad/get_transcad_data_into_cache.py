@@ -15,20 +15,16 @@
 from opus_core.resources import Resources
 from opus_core.logger import logger
 from urbansim.datasets.travel_data_dataset import TravelDataDataset
-from numpy import array, where, zeros, float32, indices, logical_and
-from sets import Set
-from os.path import join
-import os, sets, shutil,re, csv
-import tempfile
+from numpy import array, where, zeros, logical_and
+import os, csv
 from travel_model.models.get_travel_model_data_into_cache import GetTravelModelDataIntoCache
-from opus_core.misc import module_path_from_opus_path
 from run_transcad_macro import run_transcad_macro
 from opus_core.storage_factory import StorageFactory
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.session_configuration import SessionConfiguration
-from washtenaw.travel_model.set_project_ini_file import set_project_ini_file
+from washtenaw.transcad.set_project_ini_file import set_project_ini_file
 
-
+## TODO: Is this class working?
 class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
     """
     A class to access the output of transcad travel models.
@@ -61,11 +57,9 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
         self.__convert_seqtaz_to_taz(zone_set, data_dict)
 
         in_storage = StorageFactory().get_storage('dict_storage')
-        in_storage.write_dataset(
-            Resources({
-                'out_table_name':table_name,
-                'values':data_dict
-                })
+        in_storage.write_table(
+                table_name=table_name,
+                table_data=data_dict
             )
                 
         travel_data_set = TravelDataDataset(in_storage=in_storage, in_table_name=table_name)
