@@ -35,7 +35,7 @@ class existing_units(Variable):
         results = zeros(parcels.size())
         for name in unique_values(unit_name):
             if name not in parcels.get_known_attribute_names():
-                parcels.computer_variables("%s.parcel.%s" % (self.package_name, name), dataset_pool)
+                parcels.compute_variables("%s.parcel.%s" % (self.package_name, name), dataset_pool)
             w = where(unit_name == name)[0]
             results[w] = parcels.get_attribute(name)[w]
         return results

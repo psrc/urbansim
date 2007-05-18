@@ -16,6 +16,7 @@ from opus_core.resources import Resources
 from opus_core.regression_model import RegressionModel
 from psrc_parcel.datasets.development_project_proposal_dataset import DevelopmentProjectProposalDataset
 from psrc_parcel.datasets.development_project_proposal_dataset import create_from_parcel_and_development_template
+from psrc_parcel.datasets.development_project_proposal_component_dataset import create_from_proposals_and_template_components
 from numpy import exp, arange, logical_and, zeros, where, array, float32, int16
 import re
 
@@ -77,7 +78,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         
         return dataset
     
-    def prepare_for_run(self, data_objects, parcel_filter=None, spec_replace_module_variable_pair=None, 
+    def prepare_for_run(self, dataset_pool, parcel_filter=None, spec_replace_module_variable_pair=None, 
                         *args, **kwargs):
         """create development project proposal dataset from parcels and development templates.
         spec_replace_module_variable_pair is a tuple with two elements: module name, variable within the module
@@ -86,8 +87,8 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         specification, coefficients = RegressionModel.prepare_for_run(self, *args, **kwargs)
 
         #data_objects = kwargs['data_objects']
-        parcels = data_objects['parcel']
-        templates = data_objects['development_template']
+        parcels = dataset_pool.get_dataseet('parcel')
+        templates = dataset_pool.get_dataset('development_template')
 
         if parcel_filter is not None:
             parcels.compute_variables(parcel_filter)
@@ -100,11 +101,14 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
 #        n = parcels.size()
 #        index1=sample(arange(n), int(n*0.001))
 
-        resources = Resources(data_objects)
         proposal_set = create_from_parcel_and_development_template(parcels, templates, 
                                                               filter_attribute=self.filter,
                                                               index = index1,
-                                                              resources=resources)
+                                                              dataset_pool=dataset_pool,
+                                                              resources = kwargs.get("resources", None))
+        proposal_component_set = create_from_proposals_and_template_components(proposal_set, 
+                                                           dataset_pool.get_dataset('development_template_component'))
+        dataset_pool.replace_dataset(proposal_component_set.get_dataset_name(), proposal_component_set)
         if spec_replace_module_variable_pair is not None:
             exec("from %s import %s as spec_replacement" % (spec_replace_module_variable_pair[0], 
                                                             spec_replace_module_variable_pair[1]))

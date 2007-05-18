@@ -29,7 +29,7 @@ from opus_core.model import Model
 
 class DevelopmentProjectProposalSamplingModel(Model):
 
-    def __init__(self, proposal_set, proposal_component_set,
+    def __init__(self, proposal_set,
                  sampler="opus_core.samplers.weighted_sampler",
                  weight_string = "exp_ROI = exp(psrc_parcel.development_project_proposal.expected_rate_of_return_on_investment)",
                  filter_attribute=None,
@@ -43,7 +43,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                                         proposal_component_set.get_dataset_name(): proposal_component_set
                                                         })
         self.proposal_set = proposal_set
-        self.proposal_component_set = proposal_component_set
+        self.proposal_component_set = self.dataset_pool.get_dataset("development_project_proposal_component")
 
         if weight_string is not None:
             if weight_string not in proposal_set.get_known_attribute_names():
@@ -75,7 +75,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
             'generic_building_type_id=development_project_proposal.disaggregate(building_type.generic_building_type_id)'],
                                          dataset_pool=self.dataset_pool)
         self.proposal_component_set.compute_variables([
-            'generic_building_type_id = development_template_component.disaggregate(building_type.generic_building_type_id)'],
+            'generic_building_type_id = development_project_proposal_component.disaggregate(building_type.generic_building_type_id)',
+            'development_project_proposal_component.units_proposed'],
                                         dataset_pool=self.dataset_pool)            
         buildings = self.dataset_pool.get_dataset("building")
         buildings.compute_variables(["generic_building_type_id = building.disaggregate(building_type.generic_building_type_id)",
@@ -149,27 +150,25 @@ class DevelopmentProjectProposalSamplingModel(Model):
 
         components_template_ids = self.proposal_component_set.get_attribute("template_id")
         components_generic_building_type_ids = self.proposal_component_set.get_attribute("generic_building_type_id")
-        percent_building_sqft = self.proposal_component_set.get_attribute("percent_building_sqft")
+
         proposal_ids = self.proposal_set.get_id_attribute()
+        proposal_ids_in_component_set = self.proposal_component_set.get_attribute("proposal_id")
         
         for i in range(proposal_indexes.size):
-            proposal_index = proposal_indexes[i]  # consider 1 proposed project at a time
             if not sometrue(array(self.accepting_proposals.values())):
                 # if none of the types is accepting_proposals, exit
                 # this is put in the loop to check if the last accepted proposal has sufficed
                 # the target vacancy rates for all types
                 return
-
-            components_index = where(components_template_ids == proposal_ids[i])[0]
-            units_proposed = self.proposal_set.get_attribute_by_index("units_proposed", proposal_index)
-            units_proposed_in_types = {}
-            for icomponent in range(component_index.size):
-                units_proposed_in_types[components_generic_building_type_ids[components_index[icomponent]]] =units_proposed/100.0 * \
-                                percent_building_sqft[components_generic_building_type_ids[components_index[icomponent]]]
+            proposal_index = proposal_indexes[i]  # consider 1 proposed project at a time
+            proposal_index_in_component_set = where(proposal_ids_in_component_set == proposal_ids[proposal_index])[0]
+            units_proposed = self.proposal_component_set.get_attribute_by_index("units_proposed", 
+                                                                                proposal_index_in_component_set)
+            component_types = components_generic_building_type_ids[proposal_index_in_component_set]
 
             # If one of the involved types is not accepted, reject the proposal 
-            accept_types = map(lambda x: self.accepting_proposals[x], units_proposed_in_types.keys())
-            if (False in accept_types) or (units_proposed == 0):
+            accept_types = map(lambda x: self.accepting_proposals[x], component_types)
+            if (False in accept_types) or (units_proposed.sum() == 0):
                 self.weight[proposal_index] = 0.0
                 is_proposal_rejected[i] = 1
                 continue
@@ -184,14 +183,15 @@ class DevelopmentProjectProposalSamplingModel(Model):
                     #existing_units[affected_building] = 0
                     #moving_agents += occupied_units[affected_building].sum()
                     #occupied_units[affected_building] = 0
-            for type_id in units_proposed_in_types.keys(): #
+            for itype_id in range(component_types.size): #
+                type_id = component_types[itype_id]
                 # this loop is only needed when a proposal could provide units from more than 1 generic building types
                 
                 #if pro_rated[i]:
                     #self.proposed_units[type_id] += round(unit_proposed / years[i])
                     ##TODO: handle pro-rated projects
                 #else:
-                self.proposed_units[type_id] += units_proposed_in_types[type_id]
+                self.proposed_units[type_id] += units_proposed[itype_id]
                 units_stock = self.existing_units[type_id] - self.demolished_units[type_id] + self.proposed_units[type_id]
                 vr = (units_stock - self.occupied_units[type_id]) / float(units_stock)
                 if vr >= target_vacancy.get_attribute("target_vacancy_rate")[target_vacancy.get_attribute("generic_building_type_id")==type_id][0]:
