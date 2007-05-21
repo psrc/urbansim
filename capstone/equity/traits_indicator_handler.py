@@ -35,6 +35,7 @@ else:
     from opus_core.indicator_framework.traits.traits_image_types.traits_table import TraitsTable
     from opus_core.indicator_framework.traits.traits_image_types.traits_dbf_export import TraitsDbfExport
     from opus_core.indicator_framework.traits.traits_image_types.traits_lorenz import TraitsLorenz
+    from opus_core.indicator_framework.traits.traits_image_types.traits_reldist import TraitsReldist
   
     from opus_core.indicator_framework.gui_utilities import display_message_dialog
     
@@ -184,7 +185,8 @@ else:
                                     'Matplotlib map',
                                     'Chart',
                                     'Dbf export',
-                                    'Lorenz curve'
+                                    'Lorenz curve',
+                                    'Reldist plot'
                                 ]),
                          style = 'simple',),
                 ),
@@ -235,6 +237,8 @@ else:
                 indicator = TraitsDbfExport()
             elif new_output_type == 'Lorenz curve':
                 indicator = TraitsLorenz()
+            elif new_output_type == 'Reldist plot':
+                indicator = TraitsReldist()
             else:
                 return
             
