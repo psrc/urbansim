@@ -78,6 +78,8 @@ class BuildingConstructionModel(Model):
                 parcel_index = parcels.get_id_index(parcel_id)
                 amount_built = parcels.get_attribute_by_index(unit_name, parcel_index)
                 amount_proposed = to_be_built[pidx].sum()
+                if amount_proposed > amount_built:
+                    pass
             
         max_building_id = building_dataset.get_id_attribute().max()
         new_buildings = {}

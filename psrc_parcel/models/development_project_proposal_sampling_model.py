@@ -159,6 +159,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 # the target vacancy rates for all types
                 return
             proposal_index = proposal_indexes[i]  # consider 1 proposed project at a time
+            if is_proposal_rejected[proposal_index]: 
+                continue
             proposal_index_in_component_set = where(proposal_ids_in_component_set == proposal_ids[proposal_index])[0]
             units_proposed = self.proposal_component_set.get_attribute_by_index("units_proposed", 
                                                                                 proposal_index_in_component_set)
@@ -168,7 +170,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
             accept_types = map(lambda x: self.accepting_proposals[x], component_types)
             if (False in accept_types) or (units_proposed.sum() == 0):
                 self.weight[proposal_index] = 0.0
-                is_proposal_rejected[i] = 1
+                is_proposal_rejected[i] = True
                 continue
  
             this_site = proposal_site[i]
@@ -200,8 +202,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
             # proposal accepted
             self.accepted_proposals.append(proposal_index)
             # reject all pending proposals for this site
-            is_proposal_rejected[proposal_site == this_site] = 1
-            # don't consider proposed projects for this site in the future
+            is_proposal_rejected[proposal_site == this_site] = True
+            # don't consider proposed projects for this site in the future (i.e. in further sampling)
             self.weight[self.proposal_set.get_attribute("parcel_id")==this_site] = 0.0
 
         ## TODO: because of demolition, this won't work
