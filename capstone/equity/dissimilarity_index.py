@@ -15,13 +15,13 @@ class dissimilarity_index(Variable):
     def compute(self, dataset_pool):
         ar_total_pop = dataset_pool.get_dataset('gridcell').get_attribute("population").astype(float64)
         ar_min_prop = dataset_pool.get_dataset('gridcell').get_attribute("number_of_minority_households").astype(float64) / ar_total_pop.sum()
-        return calc_index(ar_min_prop, ar_total_pop)
+        return self.calc_index(ar_min_prop, ar_total_pop)
         
     def calc_index(self, ar_min_prop, ar_total_pop):
         # Make some assertions about what we're operating on
-        assert(ar_min_prop.size is ar_total_pop.size)
+        #assert(ar_min_prop.size is ar_total_pop.size)
         # proportions must be between 0 and 1!
-        assert(ar_min_prop.max() <= 1 and ar_min_prop.min() >= 0)
+        #assert(ar_min_prop.max() <= 1 and ar_min_prop.min() >= 0)
             
         # Find total population for entire area
         self.total = ar_total_pop.sum()
@@ -35,8 +35,8 @@ class dissimilarity_index(Variable):
 
         # Override me
     def dependencies(self):
-        return [attribute_label("household", "population"),
-                        attribute_label("household", "number_of_minority_households")]
+        return [attribute_label("gridcell", "population"),
+                        attribute_label("gridcell", "number_of_minority_households")]
                 
         # Getter methods            
     def get_index(self):
@@ -59,7 +59,7 @@ class TestDissimilarityIndex(opus_unittest.OpusTestCase):
     def test_simple(self):
         self.min_prop = array([1/16., 2/16., 2/12., 1/20., 5/16.])
         self.total_pop = array([16, 16, 12, 20, 16])
-        ans = AbstractDissimilarityIndex()
+        ans = dissimilarity_index()
         ans.calc_index(self.min_prop, self.total_pop)
 
         self.assertAlmostEqual(ans.get_index(), 0.3320158103)
@@ -68,7 +68,7 @@ class TestDissimilarityIndex(opus_unittest.OpusTestCase):
     def test_very_even(self):
         self.min_prop = array([0.5, 0.5, 0.5, 0.5])
         self.total_pop = array([10, 10, 11, 12])
-        ans = AbstractDissimilarityIndex()
+        ans = dissimilarity_index()
         ans.calc_index(self.min_prop, self.total_pop)
 
         self.assertEqual(ans.get_index(), 0.0)
@@ -77,7 +77,7 @@ class TestDissimilarityIndex(opus_unittest.OpusTestCase):
     def test_very_segregated(self):
         self.min_prop = array([0, 0.3, 0.6, 0.9])
         self.total_pop = array([87, 27, 19, 5])
-        ans = AbstractDissimilarityIndex()
+        ans = dissimilarity_index()
         ans.calc_index(self.min_prop, self.total_pop)
 
         self.assertAlmostEqual(ans.get_index(), 0.7631579)
