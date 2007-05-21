@@ -16,8 +16,9 @@ from opus_core.model import Model
 from psrc_parcel.datasets.development_project_proposal_component_dataset import create_from_proposals_and_template_components
 from opus_core.logger import logger
 from opus_core.misc import unique_values
+from opus_core.simulation_state import SimulationState
 
-from numpy import where, arange, ones
+from numpy import where, arange, resize
 
 class BuildingConstructionModel(Model):
     """Process any pre-scheduled development projects (those that have status 'active'). New buildings are 
@@ -65,6 +66,13 @@ class BuildingConstructionModel(Model):
         # amount to be built
         to_be_built = proposal_component_set.get_attribute('units_proposed')/100.0 * development_amount
         
+        max_building_id = building_dataset.get_id_attribute().max()
+        new_buildings = {}
+        new_buildings["parcel_id"] = []
+        new_buildings["residential_units"] = []
+        new_buildings["non_residential_sqft"] = []
+        new_buildings["building_sqft"] = []
+        
         # iterate over building types
         for itype in range(unique_building_types.size):
             building_type = unique_building_types[itype]
@@ -79,16 +87,24 @@ class BuildingConstructionModel(Model):
                 amount_built = parcels.get_attribute_by_index(unit_name, parcel_index)
                 amount_proposed = to_be_built[pidx].sum()
                 if amount_proposed > amount_built:
-                    pass
+                    new_buildings["parcel_id"].append(parcel_id)
+                    if unit_name == "residential_units":
+                        bunit = "residential_units"
+                        bnunit = "non_residential_sqft"
+                    else:
+                        bnunit = "residential_units"
+                        bunit = "non_residential_sqft"
+                    new_buildings[bunit].append(amount_built-amount_proposed)
+                    new_buildings[bunit].append(0)
+                    
             
-        max_building_id = building_dataset.get_id_attribute().max()
-        new_buildings = {}
-        new_buildings["building_id"] = max_building_id + arange(1, proposal_component_set.size+1)
-        attained_attributes = ['parcel_id', 'residential_units', 'building_sqft', 'building_use_id', 'blklot']
-        for attribute in attained_attributes:
-            new_buildings[attribute] = scheduled_development_events.get_attribute(attribute)
-
-        new_buildings['year_built'] = ones(scheduled_index.size, dtype="int32") * year
+        new_buildings["parcel_id"] = array(new_buildings["parcel_id"])
+        new_buildings["residential_units"] = array(new_buildings["residential_units"])
+        new_buildings["non_residential_sqft"] = array(new_buildings["non_residential_sqft"])
+        new_buildings["building_sqft"] = array(new_buildings["building_sqft"])
+        new_buildings["building_id"] = max_building_id + arange(1, new_buildings["parcel_id"].size+1)
+        new_buildings['year_built'] = resize(array([SimulationState().get_current_time()], dtype="int32"), 
+                                             new_buildings["parcel_id"].size)
         building_dataset.add_elements(new_buildings, require_all_attributes=False)
-
-        return scheduled_development_events
+        #TODO: Change the status of the built projects
+        return development_proposal_set
