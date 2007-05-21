@@ -39,9 +39,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         this model sample project proposals from proposal set weighted by exponentiated ROI
         """
         self.dataset_pool = self.create_dataset_pool(dataset_pool, pool_packages=['psrc_parcel', 'urbansim', 'opus_core'])
-        self.dataset_pool.add_datasets_if_not_included({proposal_set.get_dataset_name(): proposal_set,
-                                                        proposal_component_set.get_dataset_name(): proposal_component_set
-                                                        })
+        self.dataset_pool.add_datasets_if_not_included({proposal_set.get_dataset_name(): proposal_set})
         self.proposal_set = proposal_set
         self.proposal_component_set = self.dataset_pool.get_dataset("development_project_proposal_component")
 
@@ -76,7 +74,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                          dataset_pool=self.dataset_pool)
         self.proposal_component_set.compute_variables([
             'generic_building_type_id = development_project_proposal_component.disaggregate(building_type.generic_building_type_id)',
-            'development_project_proposal_component.units_proposed'],
+            'psrc_parcel.development_project_proposal_component.units_proposed'],
                                         dataset_pool=self.dataset_pool)            
         buildings = self.dataset_pool.get_dataset("building")
         buildings.compute_variables(["generic_building_type_id = building.disaggregate(building_type.generic_building_type_id)",

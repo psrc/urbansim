@@ -37,7 +37,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                  model_short_name=None,
                  run_config=None, 
                  estimate_config=None, 
-                 debuglevel=0):
+                 debuglevel=0, dataset_pool=None):
         self.filter = filter_attribute
         if model_name is not None:
             self.model_name = model_name
@@ -51,7 +51,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                                  submodel_string=submodel_string, 
                                  run_config=run_config, 
                                  estimate_config=estimate_config, 
-                                 debuglevel=debuglevel)
+                                 debuglevel=debuglevel, dataset_pool=dataset_pool)
                     
     def run(self, specification, coefficients, dataset, index=None, chunk_specification=None, 
              data_objects=None, run_config=None, debuglevel=0):
@@ -60,6 +60,11 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         create dataset on the fly with parcel and development template
         index and self.filter_attribute (passed in __init___) are relative to dataset
         """
+        if data_objects is not None:
+            self.dataset_pool.add_datasets_if_not_included(data_objects)
+        proposal_component_set = create_from_proposals_and_template_components(dataset, 
+                                                           self.dataset_pool.get_dataset('development_template_component'))
+        self.dataset_pool.replace_dataset(proposal_component_set.get_dataset_name(), proposal_component_set)
         result = RegressionModel.run(self, specification, coefficients, dataset, 
                                          index, chunk_specification, data_objects,
                                          run_config, debuglevel)
@@ -87,7 +92,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         specification, coefficients = RegressionModel.prepare_for_run(self, *args, **kwargs)
 
         #data_objects = kwargs['data_objects']
-        parcels = dataset_pool.get_dataseet('parcel')
+        parcels = dataset_pool.get_dataset('parcel')
         templates = dataset_pool.get_dataset('development_template')
 
         if parcel_filter is not None:
@@ -106,9 +111,6 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                                                               index = index1,
                                                               dataset_pool=dataset_pool,
                                                               resources = kwargs.get("resources", None))
-        proposal_component_set = create_from_proposals_and_template_components(proposal_set, 
-                                                           dataset_pool.get_dataset('development_template_component'))
-        dataset_pool.replace_dataset(proposal_component_set.get_dataset_name(), proposal_component_set)
         if spec_replace_module_variable_pair is not None:
             exec("from %s import %s as spec_replacement" % (spec_replace_module_variable_pair[0], 
                                                             spec_replace_module_variable_pair[1]))

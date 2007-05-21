@@ -20,7 +20,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.resources import Resources
 from opus_core.variables.variable_name import VariableName
 from opus_core.simulation_state import SimulationState
-from numpy import arange, where
+from numpy import arange, where, resize
 
 class DevelopmentProjectProposalDataset(UrbansimDataset):
     """ contains the proposed development projects, which is created from interaction of parcels with development template;
@@ -32,6 +32,11 @@ class DevelopmentProjectProposalDataset(UrbansimDataset):
     dataset_name = "development_project_proposal"
     id_name_default = "proposal_id"
 
+    id_active = 1
+    id_proposed = 2
+    id_planned = 3
+    id_tentative = 4
+    
     def __init__(self, resources=None, dataset1=None, dataset2=None, index1=None, **kwargs):
         """ This dataset is an interaction of two datasets (originally, parcel and development template).
             It's similar to InteractionSet, but flattend to 1d, thus regression model can use this dataset without changes
@@ -103,7 +108,9 @@ def create_from_parcel_and_development_template(parcel_dataset,
                                "proposal_id": arange(1, parcel_ids.size+1, 1),
                                "parcel_id" : parcel_ids,
                                "template_id": template_ids,
-                               "year_built": array(parcel_ids.size*[SimulationState().get_current_time()])
+                               "start_year": array(parcel_ids.size*[SimulationState().get_current_time(),]),
+                               "status_id": resize(array([DevelopmentProjectProposalDataset.id_tentative], dtype="int16"), 
+                                                   parcel_ids.size)
                            }
                        )
     development_project_proposals = DevelopmentProjectProposalDataset(resources=Resources(resources),

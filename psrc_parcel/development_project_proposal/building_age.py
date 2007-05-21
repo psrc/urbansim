@@ -21,7 +21,7 @@ class building_age(age_masked):
     are masked.
     """
 
-    year_built = "year_built"
+    year_built = "start_year"
 
     def dependencies(self):
         return [my_attribute_label(self.year_built), my_attribute_label("has_valid_year_built")]
