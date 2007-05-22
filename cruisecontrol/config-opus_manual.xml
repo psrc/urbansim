@@ -10,7 +10,7 @@
       <cvs localWorkingCopy="projects/${project.name}" />
     </modificationset>
     <schedule interval="${interval}">
-      <ant anthome="apache-ant-1.6.5" buildfile="projects/${project.name}/build.xml" target="build-latex-docs" />
+      <ant anthome="${ant.home}" buildfile="projects/${project.name}/build.xml" target="build-latex-docs" />
     </schedule>
     <publishers>
       <onsuccess>

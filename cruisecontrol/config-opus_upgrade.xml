@@ -11,7 +11,7 @@
       <buildstatus logdir="logs/urbansim" />
     </modificationset>
     <schedule interval="${interval}">
-      <ant anthome="apache-ant-1.6.5" buildfile="build.xml" target="run-build">
+      <ant anthome="${ant.home}" buildfile="build.xml" target="run-build">
       	<property name="buildpath" value="projects/${project.name}" />
       </ant>
     </schedule>
@@ -19,7 +19,7 @@
       <merge dir="projects/${project.name}/tests" />
     </log>
     <publishers>
-      <antpublisher Target="trafficlights-finish" BuildFile="build.xml" anthome="apache-ant-1.6.5" />
+      <antpublisher Target="trafficlights-finish" BuildFile="build.xml" anthome="${ant.home}" />
     </publishers>
   </project>
 </cruisecontrol>
