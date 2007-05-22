@@ -16,7 +16,7 @@ from sanfrancisco.configs.controller_config import config
 
 run_configuration = config
 run_configuration["models"] = [
-#    {"land_price_model": ["run"]},                                      
-    {"business_relocation_model": ["run"]},
+#    {"land_price_model": ["run"]},                                     
+#    {"business_relocation_model": ["run"]},
     {"business_location_choice_model": ["estimate"]}
 ]

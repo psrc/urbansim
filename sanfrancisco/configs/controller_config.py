@@ -175,7 +175,7 @@ my_controller_configuration = {
                       "agents_for_estimation_storage": "base_cache_storage",
                       "agents_for_estimation_table": "'business_for_estimation'",
                       "filter":None,
-                      "index_to_unplace":  "brm_index",
+                      "index_to_unplace":  "None",
                       "portion_to_unplace": 1/12.0,
                       "data_objects": "datasets"
                         },
