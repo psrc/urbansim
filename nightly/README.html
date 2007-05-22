@@ -1,0 +1,16 @@
+
+<p>This Opus package exists to operate on the set of Opus packages that we
+distribute together.&nbsp; This set of Opus packages is defined in two places:</p>
+<ul>
+  <li>the &lt;copy-this-project&gt; in the fireman.xml</li>
+  <li>the opus_package_names list in tests/all_tests.py</li>
+</ul>
+<p>To change the set of Opus packages to put into the Opus base distribution, change both of these
+lists.</p>
+<p>This package does the following:</p>
+<ul>
+  <li>Runs the tests/all_tests.py file for each included Opus package.</li>
+  <li>Creates a zip file containing all of the included Opus packages (without
+    any .pyc files)</li>
+</ul>
+<p>&nbsp;</p>

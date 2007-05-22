@@ -1,0 +1,47 @@
+<project>
+	<property name="project_name" value="nightly" />
+	<property name="pythonpathdir" value="${basedir}/.." />
+	<import file="${pythonpathdir}/opus_core/common.xml" />
+	<property name="opus_version" value="${major}.${minor}" />
+
+	<target name="cruisecontrol" depends="cc-copy, cc-installer, cc-clean" />
+
+	<target name="cc-installer" depends="update-python-build-number">
+		<property environment="env" />
+		<exec executable="python">
+			<env key="PYTHONPATH" path="${basedir}/../dist:${env.PYTHONPATH}" />
+			<arg line="${basedir}/../dist/nightly/invoke_packager.py ${opus_version}.${BUILDNUMBER}" />
+		</exec>
+	</target>
+
+	<target name="cc-copy">
+		<copy todir="${basedir}/../dist">
+			<fileset dir="${basedir}/..">
+				<include name="eugene/**" />
+				<include name="nightly/**" />
+				<include name="opus_core/**" />
+				<include name="psrc/**" />
+				<include name="urbansim/**" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="cc-clean">
+		<property name="BUILDNUMBER" value="-BUILDNUMBER-" />
+		<delete>
+			<dirset dir="${basedir}/../dist">
+				<include name="eugene/**" />
+				<include name="nightly/**" />
+				<include name="opus_core/**" />
+				<include name="psrc/**" />
+				<include name="urbansim/**" />
+			</dirset>
+			<fileset dir="${basedir}/../dist">
+				<include name="*.py" />
+			</fileset>
+		</delete>
+		<move file="${basedir}/../dist/opus-${opus_version}.${BUILDNUMBER}.tar.gz" tofile="${basedir}/../dist/opus.tar.gz" />
+		<move file="${basedir}/../dist/opus-${opus_version}.${BUILDNUMBER}.win32.exe" tofile="${basedir}/../dist/opus.win32.exe" />
+	</target>
+
+</project>
