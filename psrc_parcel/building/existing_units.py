@@ -23,6 +23,8 @@ class existing_units(Variable):
     def dependencies(self):
         return ["_unit_name=building.disaggregate(building_type.unit_name)",
                 "parcel_sqft=building.disaggregate(parcel.parcel_sqft)",
+                "psrc_parcel.building.building_sqft",
+                "psrc_parcel.building.residential_units"
                 ]
         
     def compute(self,  dataset_pool):

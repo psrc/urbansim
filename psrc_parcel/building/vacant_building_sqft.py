@@ -22,13 +22,12 @@ class vacant_building_sqft(Variable):
     _return_type="int32"
     
     def dependencies(self):
-        return ["psrc_parcel.building.nonresidential_building_sqft", 
-                "psrc_parcel.building.occupied_sqft", 
-                my_attribute_label("building_id")]
+        return ["building.non_residential_sqft", 
+                "psrc_parcel.building.occupied_sqft"]
 
     def compute(self,  dataset_pool):
         return clip_to_zero_if_needed(
-               self.get_dataset().get_attribute("nonresidential_building_sqft") - \
+               self.get_dataset().get_attribute("non_residential_sqft") - \
                self.get_dataset().get_attribute("occupied_sqft"))
 
     def post_check(self,  values, dataset_pool=None):

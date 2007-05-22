@@ -42,7 +42,7 @@ my_controller_configuration = {
         "name": "RealEstatePriceModel",
         "arguments": {"submodel_string": "'land_use_type_id'",
                       "outcome_attribute": "'ln_unit_price=ln(psrc_parcel.parcel.unit_price)'",
-                      "filter_attribute": "'numpy.logical_or(parcel.aggregate(building.building_sqft), psrc_parcel.parcel.is_land_use_type_vacant)'"
+                      "filter_attribute": "'numpy.logical_or(parcel.aggregate(psrc_parcel.building.building_sqft), psrc_parcel.parcel.is_land_use_type_vacant)'"
                       },
         },
     "prepare_for_run": {
@@ -146,7 +146,7 @@ my_controller_configuration = {
                       "short_name":"'BLCM'",
                       "choices":"'urbansim.lottery_choices'",
                       "submodel_string":"'business.building_use_id'",
-                      "filter": "'building.building_sqft'",
+                      "filter": "'psrc_parcel.building.building_sqft'",
                       "location_id_string":"'building_id'",
                       "run_config":"models_configuration['business_location_choice_model']",
                       "estimate_config":"models_configuration['business_location_choice_model']"

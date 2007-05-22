@@ -71,7 +71,6 @@ class BuildingConstructionModel(Model):
         new_buildings["parcel_id"] = []
         new_buildings["residential_units"] = []
         new_buildings["non_residential_sqft"] = []
-        new_buildings["building_sqft"] = []
         
         # iterate over building types
         for itype in range(unique_building_types.size):
@@ -101,7 +100,6 @@ class BuildingConstructionModel(Model):
         new_buildings["parcel_id"] = array(new_buildings["parcel_id"])
         new_buildings["residential_units"] = array(new_buildings["residential_units"])
         new_buildings["non_residential_sqft"] = array(new_buildings["non_residential_sqft"])
-        new_buildings["building_sqft"] = array(new_buildings["building_sqft"])
         new_buildings["building_id"] = max_building_id + arange(1, new_buildings["parcel_id"].size+1)
         new_buildings['year_built'] = resize(array([SimulationState().get_current_time()], dtype="int32"), 
                                              new_buildings["parcel_id"].size)

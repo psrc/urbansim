@@ -24,7 +24,7 @@ specification = {
         7:   #CIE
             [
     "building.year_built",
-    "building.building_sqft",
+    "psrc_parcel.building.building_sqft",
     "building:opus_core.func.disaggregate(psrc_parcel.zone.number_of_households,[parcel]) as households_in_zone",
     "building:opus_core.func.disaggregate(parcel.area) as lot_area",             
     "building:opus_core.func.disaggregate(psrc_parcel.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
@@ -42,7 +42,7 @@ specification = {
         8:   #MIPS
             [
     "building.year_built",
-    "building.building_sqft",
+    "psrc_parcel.building.building_sqft",
     "building:opus_core.func.disaggregate(psrc_parcel.zone.number_of_households,[parcel]) as households_in_zone",
     "building:opus_core.func.disaggregate(parcel.area) as lot_area",             
     "building:opus_core.func.disaggregate(psrc_parcel.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
@@ -60,7 +60,7 @@ specification = {
     13:   #PDR
             [
     "building.year_built",
-    "building.building_sqft",
+    "psrc_parcel.building.building_sqft",
     "building:opus_core.func.disaggregate(psrc_parcel.zone.number_of_households,[parcel]) as households_in_zone",
     "building:opus_core.func.disaggregate(parcel.area) as lot_area",             
     "building:opus_core.func.disaggregate(psrc_parcel.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
@@ -80,7 +80,7 @@ specification = {
     14:   #RETAIL/ENT
             [
     "building.year_built",
-    "building.building_sqft",
+    "psrc_parcel.building.building_sqft",
     "building:opus_core.func.disaggregate(psrc_parcel.zone.number_of_households,[parcel]) as households_in_zone",
     "building:opus_core.func.disaggregate(parcel.area) as lot_area",             
     "building:opus_core.func.disaggregate(psrc_parcel.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             

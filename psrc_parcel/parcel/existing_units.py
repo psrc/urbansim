@@ -25,7 +25,7 @@ class existing_units(Variable):
     
     def dependencies(self):
         return ["unit_name = parcel.disaggregate(land_use_type.unit_name)",
-                "building_sqft = parcel.aggregate(building.building_sqft)",
+                "building_sqft = parcel.aggregate(psrc_parcel.building.building_sqft)",
                 "residential_units = parcel.aggregate(building.residential_units)",
                 ]
 

@@ -159,7 +159,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 # the target vacancy rates for all types
                 return
             proposal_index = proposal_indexes[i]  # consider 1 proposed project at a time
-            if is_proposal_rejected[proposal_index]: 
+            if is_proposal_rejected[i]: 
                 continue
             proposal_index_in_component_set = where(proposal_ids_in_component_set == proposal_ids[proposal_index])[0]
             units_proposed = self.proposal_component_set.get_attribute_by_index("units_proposed", 
