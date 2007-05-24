@@ -10,9 +10,9 @@
 
 	<target name="cc-installer" depends="update-python-build-number">
 		<property environment="env" />
-		<exec executable="python" dir="${basedir}/../dist/nightly/">
-			<env key="PYTHONPATH" path="${basedir}/../dist:${env.PYTHONPATH}" />
-			<arg line="${basedir}/../dist/nightly/invoke_packager.py ${opus_version}.${BUILDNUMBER}" />
+		<exec executable="python" dir="${sandboxdir}/nightly/">
+			<env key="PYTHONPATH" path="${sandboxdir}:${env.PYTHONPATH}" />
+			<arg line="invoke_packager.py ${opus_version}.${BUILDNUMBER}" />
 		</exec>
 	</target>
 
