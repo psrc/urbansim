@@ -502,7 +502,7 @@ specification = {
 #    "plan_6=parcel.plan_type_id==6",
 #    "plan_7=parcel.plan_type_id==7",
 #    "plan_8=parcel.plan_type_id==8",
-    "plan_9",
+#    "plan_9",   # exclude due to all zeros for vacant land, as of 5/24/07
 #    "plan_10=parcel.plan_type_id==10",
     "plan_11",
 #    "plan_12=parcel.plan_type_id==12",
