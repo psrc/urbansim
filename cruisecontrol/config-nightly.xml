@@ -4,13 +4,13 @@
       <currentbuildstatuslistener file="logs/${project.name}/status.txt" />
     </listeners>
     <bootstrappers>
-      <cvsbootstrapper localWorkingCopy="projects/${project.name}" />
+      <svnbootstrapper localWorkingCopy="projects/${project.name}" />
     </bootstrappers>
     <modificationset quietperiod="${quietperiod}">
-      <timebuild time="1200" />
+       <svn localWorkingCopy="projects/${project.name}" />
     </modificationset>
     <schedule interval="${interval}">
-      <ant anthome="${ant.home}" buildfile="build.xml" target="run-build">
+      <ant anthome="${ant.home}" buildfile="build.xml" target="run-build" time="1250">
       	<property name="buildpath" value="projects/${project.name}" />
       </ant>
     </schedule>
