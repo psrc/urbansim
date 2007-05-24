@@ -131,7 +131,7 @@
 				<include name="eugene/**" />
 				<include name="nightly/**" />
 				<include name="opus_core/**" />
-				<include name="opus_upgrdae/**" />
+				<include name="opus_upgrade/**" />
 				<include name="urbansim/**" />
 				<include name="opus_manual/**" />
 			</fileset>
