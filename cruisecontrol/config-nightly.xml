@@ -16,6 +16,10 @@
     </schedule>
     <publishers>
       <antpublisher Target="trafficlights-finish" BuildFile="build.xml" anthome="${ant.home}" />
+      <onsuccess>
+        <artifactspublisher dest="artifacts/${project.name}" file="projects/dist/opus.tar.gz" />
+        <artifactspublisher dest="artifacts/${project.name}" file="projects/dist/opus.win32.exe" />
+      </onsuccess>
     </publishers>
   </project>
 </cruisecontrol>
