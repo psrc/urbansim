@@ -1,6 +1,8 @@
 <project>
 	<property name="project_name" value="nightly" />
 	<property name="pythonpathdir" value="${basedir}/.." />
+	<property name="sandboxdir" value="${basedir}/../sandbox" />
+	<property name="distributiondir" value="${basedir}/../dist" />
 	<import file="${pythonpathdir}/opus_core/common.xml" />
 	<property name="opus_version" value="${major}.${minor}" />
 
@@ -15,7 +17,7 @@
 	</target>
 
 	<target name="cc-copy">
-		<copy todir="${basedir}/../dist">
+		<copy todir="${sandboxdir}">
 			<fileset dir="${basedir}/..">
 				<include name="eugene/**" />
 				<include name="nightly/**" />
@@ -28,20 +30,9 @@
 
 	<target name="cc-clean">
 		<property name="BUILDNUMBER" value="-BUILDNUMBER-" />
-		<delete>
-			<dirset dir="${basedir}/../dist">
-				<include name="eugene/**" />
-				<include name="nightly/**" />
-				<include name="opus_core/**" />
-				<include name="psrc/**" />
-				<include name="urbansim/**" />
-			</dirset>
-			<fileset dir="${basedir}/../dist">
-				<include name="*.py" />
-			</fileset>
-		</delete>
-		<move file="${basedir}/../dist/opus-${opus_version}.${BUILDNUMBER}.tar.gz" tofile="${basedir}/../dist/opus.tar.gz" />
-		<move file="${basedir}/../dist/opus-${opus_version}.${BUILDNUMBER}.win32.exe" tofile="${basedir}/../dist/opus.win32.exe" />
+		<move file="${sandboxdir}/dist/opus-${opus_version}.${BUILDNUMBER}.tar.gz" tofile="${distributiondir}/opus.tar.gz" />
+		<move file="${sandboxdir}/dist/opus-${opus_version}.${BUILDNUMBER}.win32.exe" tofile="${distributiondir}/opus.win32.exe" />
+		<delete dir="${sandboxdir}" />
 	</target>
 
 </project>
