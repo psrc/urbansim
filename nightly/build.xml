@@ -29,7 +29,7 @@
 		<exec executable="python">
 			<!-- Create eugene 1980 baseyear cache from MySQL -->
 			<env key="PYTHONPATH" path="${sandboxdir}:${env.PYTHONPATH}" />
-			<arg line="${sandboxdir}/opus_core/tools/create_baseyear_cache.py eugene.configs.baseline --cache-directory=${basedir}/release/eugene_1980_baseyear_cache" />
+			<arg line="${sandboxdir}/opus_core/tools/create_baseyear_cache.py eugene.configs.baseline --cache-directory=${sandboxdir}/release/eugene_1980_baseyear_cache" />
 		</exec>
 		<zip destfile="${sandboxdir}/release/eugene_1980_baseyear_cache.zip">
 			<!-- Create zip of eugene 1980 baseyear cache -->
@@ -57,19 +57,19 @@
 		<exec executable="python">
 			<!-- Copy the html versions of the tutorials -->
 			<env key="PYTHONPATH" path="${sandboxdir}:${env.PYTHONPATH}" />
-			<arg line="copy_html_tutorials.py -f ${sandboxdir}/opus_manual/docs/latex/tutorials -t ${basedir}/release/html" />
+			<arg line="copy_html_tutorials.py -f ${sandboxdir}/opus_manual/docs/latex/tutorials -t ${sandboxdir}/release/html" />
 		</exec>
 	</target>
 
 	<target name="demo:copy-html-userguide-into-temp" description="Copy docs html version of userguide into 'release/html' directory">
-		<copy todir="${basedir}/release/html">
+		<copy todir="${sandboxdir}/release/html">
 			<!-- Copy the html version of the manual -->
 			<fileset dir="${sandboxdir}/opus_manual/docs/latex/" includes="userguide/**" />
 		</copy>
 	</target>
 
 	<target name="demo:zip-docs" description="Zip up the docs directory into 'release' directory.">
-		<copy todir="${basedir}/release/docs">
+		<copy todir="${sandboxdir}/release/docs">
 			<fileset dir="${sandboxdir}/opus_manual/docs/">
 				<include name="images/new-logo-medium.gif" />
 				<include name="images/*.jpg" />
@@ -83,15 +83,15 @@
 			</fileset>
 			<fileset dir="${sandboxdir}/opus_manual/docs/latex/" includes="userguide.pdf" />
 			<fileset dir="${sandboxdir}/opus_manual/docs/latex/tutorials/" includes="*.pdf" />
-			<fileset dir="${basedir}/release/" includes="html/**" />
+			<fileset dir="${sandboxdir}/release/" includes="html/**" />
 		</copy>
-		<zip destfile="${basedir}/release/docs.zip">
-			<fileset dir="${basedir}/release/docs" />
+		<zip destfile="${sandboxdir}/release/docs.zip">
+			<fileset dir="${sandboxdir}/release/docs" />
 		</zip>
 	</target>
 
 	<target name="demo:copy-opus_upgrade" description="Copy opus_upgrade directory into 'release/opus_upgrade' directory">
-		<copy todir="${basedir}/release/opus_upgrade">
+		<copy todir="${sandboxdir}/release/opus_upgrade">
 			<fileset dir="${sandboxdir}/opus_upgrade">
 				<exclude name="build.xml" />
 				<exclude name="fireman.xml" />
@@ -102,14 +102,14 @@
 	</target>
 
 	<target name="demo:copy-installers" description="Copy installers into 'release/installers' directory">
-		<copy todir="${basedir}/release/installers">
+		<copy todir="${sandboxdir}/release/installers">
 			<fileset dir="${sandboxdir}/dist">
 			</fileset>
 		</copy>
 	</target>
 
 	<target name="demo:rewire-release-notes" description="Redo links in release_notes.html so they point to the opus_upgrade files">
-		<replace file="${basedir}/release/docs/release_notes.html" token="../../opus_upgrade" value="../opus_upgrade" />
+		<replace file="${sandboxdir}/release/docs/release_notes.html" token="../../opus_upgrade" value="../opus_upgrade" />
 	</target>
 
 	<target name="cruisecontrol" depends="cc-copy, cc-installer, cc-clean" />
@@ -128,7 +128,7 @@
 
 	<target name="cc-demo-copy">
 		<copy todir="${sandboxdir}">
-			<fileset dir="${basedir}/..">
+			<fileset dir="${sandboxdir}/..">
 				<include name="eugene/**" />
 				<include name="nightly/**" />
 				<include name="opus_core/**" />
@@ -153,7 +153,7 @@
 
 	<target name="cc-copy">
 		<copy todir="${sandboxdir}">
-			<fileset dir="${basedir}/..">
+			<fileset dir="${sandboxdir}/..">
 				<include name="eugene/**" />
 				<include name="nightly/**" />
 				<include name="opus_core/**" />
