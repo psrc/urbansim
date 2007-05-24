@@ -34,9 +34,9 @@ class TestExluDataset(opus_unittest.OpusTestCase):
     
     def test_exlu(self):
         storage = StorageFactory().get_storage('dict_storage')
-        storage._write_dataset(
-            out_table_name = 'exlu',
-            values = {
+        storage.write_table(
+            table_name = 'exlu',
+            table_data = {
                 'id': array([1]),
                 }
             )
