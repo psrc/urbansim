@@ -64,7 +64,7 @@ specification ={}
 specification = {
        "_definition_": all_variables,
        
-        3:   #commercial
+        1:   #commercial
             [
     "constant",
 #    "building.year_built",
@@ -93,7 +93,7 @@ specification = {
 
     ],
 
-    10:   #industrial
+    2:   #industrial
             [
     "constant",
 #    "building.year_built",
@@ -123,7 +123,7 @@ specification = {
     ],
 
 
-    14:   #multi-family residential
+    3:   #multi-family residential
             [
     "constant",
     "hwy600",
@@ -156,7 +156,7 @@ specification = {
     ],
 
 
-    15:   #condominium multi-family 
+    4:   #condominium multi-family 
             [
     "constant",
     "hwy600",
@@ -188,8 +188,188 @@ specification = {
 #    "empden=parcel.disaggregate(psrc.zone.number_of_jobs_per_acre)",
     "lnavginc",
     ],
-    
-    18:   #Office
+
+    5:   #Mixed Commercial/Industrial
+            [
+    "constant",
+#    "building.year_built",
+    "lnsqft=ln(parcel.aggregate(psrc_parcel.building.building_sqft))",
+#    "far=parcel.aggregate(building.building_sqft)/parcel.parcel_sqft",
+#    "building.stories",
+#    "empden=parcel.disaggregate(psrc.zone.number_of_jobs_per_acre)",
+#    "gcdacbd=parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)",
+#    "lnemp30wa=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_walk))",
+#    "popden=parcel.disaggregate(psrc.zone.population_per_acre)",
+#    "ln_land=ln(parcel.aggregate(building.footprint_sqft))",
+#    "lnemp10wa=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_walk))",
+    "lnretempwa=ln(psrc.parcel.retail_sector_employment_within_walking_distance)",
+    "lnemp10da=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone))",
+#    "lnemp30tw=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_transit_walk))",
+#    "land_access=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))*ln(parcel.aggregate(building.footprint_sqft))",
+    "lnavginc=ln(parcel.disaggregate(urbansim.zone.average_income))",
+    ],
+
+    6:   #Mixed Commercial/Office
+            [
+    "constant",
+#    "building.year_built",
+    "lnsqft=ln(parcel.aggregate(building.building_sqft))",
+#    "far=parcel.aggregate(building.building_sqft)/parcel.parcel_sqft",
+#    "building.stories",
+#    "empden=parcel.disaggregate(psrc.zone.number_of_jobs_per_acre)",
+#    "gcdacbd=parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)",
+#    "lnemp30wa=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_walk))",
+#    "popden=parcel.disaggregate(psrc.zone.population_per_acre)",
+#    "ln_land=ln(parcel.aggregate(building.footprint_sqft))",
+#    "lnemp10wa=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_walk))",
+    "lnretempwa=ln(psrc.parcel.retail_sector_employment_within_walking_distance)",
+    "lnemp10da=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone))",
+#    "lnemp30tw=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_transit_walk))",
+#    "land_access=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))*ln(parcel.aggregate(building.footprint_sqft))",
+    "lnavginc=ln(parcel.disaggregate(urbansim.zone.average_income))",
+    ], 
+
+    7:   #Mixed Commercial/Residential
+            [
+    "constant",
+#    "building.year_built",
+    "lnsqft=ln(parcel.aggregate(building.building_sqft))",
+#    "far=parcel.aggregate(building.building_sqft)/parcel.parcel_sqft",
+#    "building.stories",
+#    "empden=parcel.disaggregate(psrc.zone.number_of_jobs_per_acre)",
+#    "gcdacbd=parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)",
+#    "lnemp30wa=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_walk))",
+#    "popden=parcel.disaggregate(psrc.zone.population_per_acre)",
+#    "ln_land=ln(parcel.aggregate(building.footprint_sqft))",
+#    "lnemp10wa=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_walk))",
+    "lnretempwa=ln(psrc.parcel.retail_sector_employment_within_walking_distance)",
+    "lnemp10da=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone))",
+#    "lnemp30tw=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_transit_walk))",
+#    "land_access=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))*ln(parcel.aggregate(building.footprint_sqft))",
+    "lnavginc=ln(parcel.disaggregate(urbansim.zone.average_income))",
+    ], 
+
+#    8:   #Mixed Commercial/Warehouse
+#            [
+#    "constant",
+##    "building.year_built",
+#    "lnsqft=ln(parcel.aggregate(building.building_sqft))",
+##    "far=parcel.aggregate(building.building_sqft)/parcel.parcel_sqft",
+##    "building.stories",
+##    "empden=parcel.disaggregate(psrc.zone.number_of_jobs_per_acre)",
+##    "gcdacbd=parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)",
+##    "lnemp30wa=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_walk))",
+##    "popden=parcel.disaggregate(psrc.zone.population_per_acre)",
+##    "ln_land=ln(parcel.aggregate(building.footprint_sqft))",
+##    "lnemp10wa=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_walk))",
+#    "lnretempwa=ln(psrc.parcel.retail_sector_employment_within_walking_distance)",
+#    "lnemp10da=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone))",
+##    "lnemp30tw=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_transit_walk))",
+##    "land_access=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))*ln(parcel.aggregate(building.footprint_sqft))",
+#    "lnavginc=ln(parcel.disaggregate(urbansim.zone.average_income))",
+#    ], 
+
+    9:   #Mixed Industrial/Warehouse
+            [
+    "constant",
+#    "building.year_built",
+    "lnsqft=ln(parcel.aggregate(building.building_sqft))",
+#    "far=parcel.aggregate(building.building_sqft)/parcel.parcel_sqft",
+#    "building.stories",
+#    "empden=parcel.disaggregate(psrc.zone.number_of_jobs_per_acre)",
+#    "gcdacbd=parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)",
+#    "lnemp30wa=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_walk))",
+#    "popden=parcel.disaggregate(psrc.zone.population_per_acre)",
+#    "ln_land=ln(parcel.aggregate(building.footprint_sqft))",
+#    "lnemp10wa=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_walk))",
+    "lnretempwa=ln(psrc.parcel.retail_sector_employment_within_walking_distance)",
+    "lnemp10da=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone))",
+#    "lnemp30tw=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_transit_walk))",
+#    "land_access=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))*ln(parcel.aggregate(building.footprint_sqft))",
+    "lnavginc=ln(parcel.disaggregate(urbansim.zone.average_income))",
+    ], 
+
+    10:   #Mixed Office/Industrial
+            [
+    "constant",
+#    "building.year_built",
+    "lnsqft=ln(parcel.aggregate(building.building_sqft))",
+#    "far=parcel.aggregate(building.building_sqft)/parcel.parcel_sqft",
+#    "building.stories",
+#    "empden=parcel.disaggregate(psrc.zone.number_of_jobs_per_acre)",
+#    "gcdacbd=parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)",
+#    "lnemp30wa=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_walk))",
+#    "popden=parcel.disaggregate(psrc.zone.population_per_acre)",
+#    "ln_land=ln(parcel.aggregate(building.footprint_sqft))",
+#    "lnemp10wa=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_walk))",
+    "lnretempwa=ln(psrc.parcel.retail_sector_employment_within_walking_distance)",
+    "lnemp10da=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone))",
+#    "lnemp30tw=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_transit_walk))",
+#    "land_access=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))*ln(parcel.aggregate(building.footprint_sqft))",
+    "lnavginc=ln(parcel.disaggregate(urbansim.zone.average_income))",
+    ], 
+
+    11:   #Mixed Office/Residential
+            [
+    "constant",
+#    "building.year_built",
+    "lnsqft=ln(parcel.aggregate(building.building_sqft))",
+#    "far=parcel.aggregate(building.building_sqft)/parcel.parcel_sqft",
+#    "building.stories",
+#    "empden=parcel.disaggregate(psrc.zone.number_of_jobs_per_acre)",
+#    "gcdacbd=parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)",
+#    "lnemp30wa=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_walk))",
+#    "popden=parcel.disaggregate(psrc.zone.population_per_acre)",
+#    "ln_land=ln(parcel.aggregate(building.footprint_sqft))",
+#    "lnemp10wa=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_walk))",
+    "lnretempwa=ln(psrc.parcel.retail_sector_employment_within_walking_distance)",
+    "lnemp10da=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone))",
+#    "lnemp30tw=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_transit_walk))",
+#    "land_access=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))*ln(parcel.aggregate(building.footprint_sqft))",
+    "lnavginc=ln(parcel.disaggregate(urbansim.zone.average_income))",
+    ], 
+
+    12:   #Mixed Office/Warehouse
+            [
+    "constant",
+#    "building.year_built",
+    "lnsqft=ln(parcel.aggregate(building.building_sqft))",
+#    "far=parcel.aggregate(building.building_sqft)/parcel.parcel_sqft",
+#    "building.stories",
+#    "empden=parcel.disaggregate(psrc.zone.number_of_jobs_per_acre)",
+#    "gcdacbd=parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)",
+#    "lnemp30wa=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_walk))",
+#    "popden=parcel.disaggregate(psrc.zone.population_per_acre)",
+#    "ln_land=ln(parcel.aggregate(building.footprint_sqft))",
+#    "lnemp10wa=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_walk))",
+    "lnretempwa=ln(psrc.parcel.retail_sector_employment_within_walking_distance)",
+    "lnemp10da=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone))",
+#    "lnemp30tw=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_transit_walk))",
+#    "land_access=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))*ln(parcel.aggregate(building.footprint_sqft))",
+    "lnavginc=ln(parcel.disaggregate(urbansim.zone.average_income))",
+    ], 
+
+    13:   #Mixed Warehouse/Residential
+            [
+    "constant",
+#    "building.year_built",
+    "lnsqft=ln(parcel.aggregate(building.building_sqft))",
+#    "far=parcel.aggregate(building.building_sqft)/parcel.parcel_sqft",
+#    "building.stories",
+#    "empden=parcel.disaggregate(psrc.zone.number_of_jobs_per_acre)",
+#    "gcdacbd=parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)",
+#    "lnemp30wa=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_walk))",
+#    "popden=parcel.disaggregate(psrc.zone.population_per_acre)",
+#    "ln_land=ln(parcel.aggregate(building.footprint_sqft))",
+#    "lnemp10wa=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_walk))",
+    "lnretempwa=ln(psrc.parcel.retail_sector_employment_within_walking_distance)",
+    "lnemp10da=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone))",
+#    "lnemp30tw=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_transit_walk))",
+#    "land_access=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))*ln(parcel.aggregate(building.footprint_sqft))",
+    "lnavginc=ln(parcel.disaggregate(urbansim.zone.average_income))",
+    ],    
+
+    14:   #Office
             [
     "constant",
 #    "inugb = parcel.is_inside_urban_growth_boundary*1",
@@ -220,41 +400,41 @@ specification = {
     ],
 
 
-    24:   #SINGLE family residential
-            [
-    "constant",
-    "inugb",
-#    "pcthighinc = psrc.parcel.number_of_high_income_households_within_walking_distance / psrc.parcel.number_of_households_within_walking_distance",
-    "hwy600",
-    "art600",
-#    "yrblt10=building.year_built/10",
-    "ln_bldgage",
-#    "ln_bldgage2=(ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean)))**2",
-#    "ln_bldgage3=(ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean)))**3",
-#    "new=parcel.aggregate(building.year_built>2000)>=1",  #won't work (5/4/07)
-    #"preww2=parcel.aggregate(building.year_built<1945) >= 1", #won't work
-#    "bedrooms=parcel.aggregate(building.number_of_bedrooms)/parcel.aggregate(building.residential_units)",
-#    "lnbedsqft=ln(parcel.aggregate(building.building_sqft)/parcel.aggregate(building.number_of_bedrooms))",
-#    "baths=building.number_of_bathrooms",
-    "lnsqftunit",
-#    "far=parcel.aggregate(building.building_sqft)/parcel.parcel_sqft",
-#    "building.stories",        
-#    "lnsqft=ln(building.building_sqft)",
-#    "building:opus_core.func.disaggregate(psrc_parcel.zone.number_of_households,[parcel]) as households_in_zone",
-    "lnlotsqft",
-#    "lnlotgccbd=parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)*ln(parcel.parcel_sqft)",
-    "lnemp10wa",
-#    "lnretempwa=ln(psrc.parcel.retail_sector_employment_within_walking_distance)",
-#    "lnemp20da=ln(parcel.disaggregate(psrc.zone.employment_within_20_minutes_travel_time_hbw_am_drive_alone))",
-    "lnemp30tw",
-    "lngcdacbd",
-    "hbwavgtmda",
-    "lnempden",
-    "lnpopden",
-    "lnavginc",
-    ],
+#    15:   #SINGLE family residential
+#            [
+#    "constant",
+#    "inugb",
+##    "pcthighinc = psrc.parcel.number_of_high_income_households_within_walking_distance / psrc.parcel.number_of_households_within_walking_distance",
+#    "hwy600",
+#    "art600",
+##    "yrblt10=building.year_built/10",
+#    "ln_bldgage",
+##    "ln_bldgage2=(ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean)))**2",
+##    "ln_bldgage3=(ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean)))**3",
+##    "new=parcel.aggregate(building.year_built>2000)>=1",  #won't work (5/4/07)
+#    #"preww2=parcel.aggregate(building.year_built<1945) >= 1", #won't work
+##    "bedrooms=parcel.aggregate(building.number_of_bedrooms)/parcel.aggregate(building.residential_units)",
+##    "lnbedsqft=ln(parcel.aggregate(building.building_sqft)/parcel.aggregate(building.number_of_bedrooms))",
+##    "baths=building.number_of_bathrooms",
+#    "lnsqftunit",
+##    "far=parcel.aggregate(building.building_sqft)/parcel.parcel_sqft",
+##    "building.stories",        
+##    "lnsqft=ln(building.building_sqft)",
+##    "building:opus_core.func.disaggregate(psrc_parcel.zone.number_of_households,[parcel]) as households_in_zone",
+#    "lnlotsqft",
+##    "lnlotgccbd=parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)*ln(parcel.parcel_sqft)",
+#    "lnemp10wa",
+##    "lnretempwa=ln(psrc.parcel.retail_sector_employment_within_walking_distance)",
+##    "lnemp20da=ln(parcel.disaggregate(psrc.zone.employment_within_20_minutes_travel_time_hbw_am_drive_alone))",
+#    "lnemp30tw",
+#    "lngcdacbd",
+#    "hbwavgtmda",
+#    "lnempden",
+#    "lnpopden",
+#    "lnavginc",
+#    ],
 
-    25:   #Transportation Communications and Utilities
+    17:   #Transportation Communications and Utilities
             [
     "constant",
     "hwy1000",
@@ -277,7 +457,7 @@ specification = {
    ],
 
 
-    26:   #Vacant Land (Developable)
+    21:   #Vacant Land (Developable)
         [
     "constant",
     "inugb",
@@ -313,7 +493,7 @@ specification = {
     "lnavginc",
     ],
 
-    28:   #Warehouse
+    18:   #Warehouse
             [
     "constant",
 #    "inugb = parcel.is_inside_urban_growth_boundary*1",
@@ -335,26 +515,4 @@ specification = {
 #    "land_access=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))*ln(parcel.aggregate(building.footprint_sqft))",
     "lnavginc",
     ],    
-
-
-#    10:   #Mixed Use
-#            [
-#    "constant",
-##    "building.year_built",
-#    "lnsqft=ln(parcel.aggregate(building.building_sqft))",
-##    "far=parcel.aggregate(building.building_sqft)/parcel.parcel_sqft",
-##    "building.stories",
-##    "empden=parcel.disaggregate(psrc.zone.number_of_jobs_per_acre)",
-##    "gcdacbd=parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)",
-##    "lnemp30wa=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_walk))",
-##    "popden=parcel.disaggregate(psrc.zone.population_per_acre)",
-##    "ln_land=ln(parcel.aggregate(building.footprint_sqft))",
-##    "lnemp10wa=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_walk))",
-#    "lnretempwa=ln(psrc.parcel.retail_sector_employment_within_walking_distance)",
-#    "lnemp10da=ln(parcel.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone))",
-##    "lnemp30tw=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_transit_walk))",
-##    "land_access=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))*ln(parcel.aggregate(building.footprint_sqft))",
-#    "lnavginc=ln(parcel.disaggregate(urbansim.zone.average_income))",
-#    ],
-    
 }            
