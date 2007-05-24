@@ -9,11 +9,12 @@
 
 
 
-	<target name="demo:create-release-dir">
+	<target name="demo:create-dirs">
 		<delete quiet="true" includeEmptyDirs="true">
 			<fileset dir="${sandboxdir}/release" excludes="latest_nightly_build.html, index.html, myworkspace.png, urbansim_cache.png" />
 		</delete>
 		<mkdir dir="${sandboxdir}/release/" />
+		<mkdir dir="${sandboxdir}/dist/" />
 	</target>
 
 	<target name="demo:create-eugene-opus-package" description="Create zip of eugene Opus package and put into 'release' directory">
@@ -114,7 +115,7 @@
 	<target name="cruisecontrol" depends="cc-copy, cc-installer, cc-clean" />
 
 	<target name="cc-build-demo" description="Build the über-zip-file for the Eugene demo" depends="update-python-build-number,
-						 demo:create-release-dir, 
+						 demo:create-dirs, 
 						 demo:create-eugene-opus-package, 
 						 demo:create-eugene-cache,
 		                 demo:copy-html-userguide-into-temp,
