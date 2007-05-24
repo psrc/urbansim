@@ -5,6 +5,7 @@
 	<property name="distributiondir" value="${basedir}/../dist" />
 	<import file="${pythonpathdir}/opus_core/common.xml" />
 	<property name="opus_version" value="${major}.${minor}" />
+	<property name="BUILDNUMBER" value="CC" />
 
 	<target name="cruisecontrol" depends="cc-copy, cc-installer, cc-clean" />
 
@@ -29,7 +30,6 @@
 	</target>
 
 	<target name="cc-clean">
-		<property name="BUILDNUMBER" value="-BUILDNUMBER-" />
 		<move file="${sandboxdir}/dist/opus-${opus_version}.${BUILDNUMBER}.tar.gz" tofile="${distributiondir}/opus.tar.gz" />
 		<move file="${sandboxdir}/dist/opus-${opus_version}.${BUILDNUMBER}.win32.exe" tofile="${distributiondir}/opus.win32.exe" />
 		<delete dir="${sandboxdir}" />
