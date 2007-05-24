@@ -10,7 +10,7 @@
        <svn localWorkingCopy="projects/${project.name}" />
     </modificationset>
     <schedule interval="${interval}">
-      <ant anthome="${ant.home}" buildfile="build.xml" target="run-build" time="1250">
+      <ant anthome="${ant.home}" buildfile="build.xml" target="run-build" time="0200">
       	<property name="buildpath" value="projects/${project.name}" />
       </ant>
     </schedule>
