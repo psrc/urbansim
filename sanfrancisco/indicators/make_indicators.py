@@ -24,8 +24,8 @@ from opus_core.indicator_framework.image_types.table import Table
 #from opus_core.indicator_framework.image_types.arcgeotiff_map import ArcGeotiffMap
 from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
 
-run_description = '(run 2251 - baseline 04/05/2007)'
-cache_directory = r'/urbansim_cache/sanfrancisco_lmwang/run_2426.2007_04_29_19_54'  #'/workspace/urbansim_cache/sanfrancisco/2007_04_23_08_37'
+run_description = '(run 2554 - baseline 05/11/2007)'
+cache_directory = r'/urbansim_cache/sanfrancisco/run_2554.2007_05_11_11_39'  #'/workspace/urbansim_cache/sanfrancisco/2007_04_23_08_37'
 
 source_data = SourceData(
     cache_directory = cache_directory,

@@ -19,7 +19,7 @@ from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheC
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 
 my_configuration = {
-     'cache_directory':r'/workspace/urbansim_cache/sanfrancisco/cache_source20070329', ### TODO: Set this cache_directory to something useful.
+     'cache_directory':r'/urbansim_cache/sanfrancisco/cache_source', ### TODO: Set this cache_directory to something useful.
     'input_configuration': DatabaseConfiguration(
         host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
         user_name     = os.environ.get('MYSQLUSERNAME',''),
@@ -35,7 +35,7 @@ my_configuration = {
         host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
         user_name     = os.environ.get('MYSQLUSERNAME',''),
         password      = os.environ.get('MYSQLPASSWORD',''),
-        database_name = "sanfrancisco_baseyear_estimation20070329",
+        database_name = "sanfrancisco_baseyear_estimation20070429",
         ),
     'dataset_pool_configuration': DatasetPoolConfiguration(
         package_order=['sanfrancisco', 'urbansim', 'opus_core'],

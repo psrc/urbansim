@@ -32,10 +32,10 @@ class Baseline(GeneralConfiguration):
             'description':'San Francisco baseline',
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-                cache_directory_root = r'/urbansim_cache/sanfrancisco_lmwang',
-                cache_from_mysql = True,
+                cache_directory_root = r'/urbansim_cache/sanfrancisco',
+                cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
-                    existing_cache_to_copy = r'/workspace/urbansim_cache/sanfrancisco/cache_source20070428',
+                    existing_cache_to_copy = r'/urbansim_cache/sanfrancisco/cache_source',
                     ),                
                 cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
                 tables_to_cache = [
@@ -86,7 +86,7 @@ class Baseline(GeneralConfiguration):
                 host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
                 user_name     = os.environ.get('MYSQLUSERNAME',''),
                 password      = os.environ.get('MYSQLPASSWORD',''),
-                database_name = 'sanfrancisco_baseyear_estimation20070329',
+                database_name = 'sanfrancisco_baseyear_estimation20070429',
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['sanfrancisco', 'urbansim', 'opus_core'],

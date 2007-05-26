@@ -46,7 +46,7 @@ class CachingConfiguration(Configuration):
         ]
         
         return {
-        'cache_directory' : r'/urbansim_cache/sanfrancisco/estimation', # change or leave out
+        'cache_directory' : r'/urbansim_cache/sanfrancisco/cache_source', # change or leave out
         'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
     #        cache_directory_root = '/tmp/urbcache/sandbox_runs/estimation',
             unroll_gridcells = False,
