@@ -11,32 +11,34 @@ from urbansim.functions import attribute_label
 '''
 
 class dissimilarity_index(Variable):
+    t_data = "number_of_households"
+    m_data = "number_of_minority_households"
                 
     def compute(self, dataset_pool):
-        ar_total_pop = dataset_pool.get_dataset('gridcell').get_attribute("population").astype(float64)
-        ar_min_prop = dataset_pool.get_dataset('gridcell').get_attribute("number_of_minority_households").astype(float64) / ar_total_pop.sum()
-        return self.calc_index(ar_min_prop, ar_total_pop)
+        total_pop = dataset_pool.get_dataset('gridcell').get_attribute(self.t_data).astype(float64)
+        min_prop = dataset_pool.get_dataset('gridcell').get_attribute(self.m_data).astype(float64) / total_pop.sum()
+        return self.calc_index(min_prop, total_pop)
         
-    def calc_index(self, ar_min_prop, ar_total_pop):
+    def calc_index(self, min_prop, total_pop):
         # Make some assertions about what we're operating on
         #assert(ar_min_prop.size is ar_total_pop.size)
         # proportions must be between 0 and 1!
         #assert(ar_min_prop.max() <= 1 and ar_min_prop.min() >= 0)
             
         # Find total population for entire area
-        self.total = ar_total_pop.sum()
-        self.minority = (ar_min_prop * ar_total_pop).sum() / self.total
+        self.total = total_pop.sum()
+        self.minority = (min_prop * total_pop).sum() / self.total
 
         # Calculate
-        n = ar_total_pop * abs(ar_min_prop - self.minority)
+        n = total_pop * abs(min_prop - self.minority)
         d = 2. * self.total * self.minority * (1. - self.minority)
         self.index = sum(n/d)
         return self.index
 
         # Override me
     def dependencies(self):
-        return [attribute_label("gridcell", "population"),
-                        attribute_label("gridcell", "number_of_minority_households")]
+        return [attribute_label("gridcell", self.t_data),
+                attribute_label("gridcell", self.m_data)]
                 
         # Getter methods            
     def get_index(self):
