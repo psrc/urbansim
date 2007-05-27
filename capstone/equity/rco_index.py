@@ -18,7 +18,7 @@ from urbansim.functions import attribute_label
 class rco_index(Variable):
     x_data = "number_of_low_income_households"
     y_data = "number_of_high_income_households"
-    t_data = "population"
+    t_data = "number_of_households"
     a_data = "acres_of_land"
 
     def dependencies(self):
