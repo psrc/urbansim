@@ -19,7 +19,8 @@ class exposure_index(Variable):
 
     # Example of interaction of minorities against everybody else
     def dependencies(self):
-        return [attribute_label("gridcell", self.x_data),
+        return [attribute_label("gridcell", "region_id"),
+                attribute_label("gridcell", self.x_data),
                 attribute_label("gridcell", self.y_data),
                 attribute_label("gridcell", self.t_data),]
 
@@ -28,10 +29,10 @@ class exposure_index(Variable):
         y_pop = dataset_pool.get_dataset("gridcell").get_attribute(self.y_data).astype(float64)
         t_pop = dataset_pool.get_dataset("gridcell").get_attribute(self.t_data).astype(float64)
 
-        return calc_index(x_pop, y_pop, t_pop)
+        return self.calc_index(x_pop, y_pop, t_pop)
 
     def calc_index(self, x_pop, y_pop, t_pop):
-        assert(x_pop.size is y_pop.size and y_pop.size is t_pop.size)
+        assert(x_pop.size == y_pop.size and y_pop.size == t_pop.size)
         xp = x_pop.astype(float64)
         yp = y_pop.astype(float64)
         
