@@ -22,18 +22,19 @@ class rco_index(Variable):
     a_data = "acres_of_land"
 
     def dependencies(self):
-        return [attribute_label("gridcell", self.x_data),
+        return [attribute_label("gridcell", "region_id"),
+                attribute_label("gridcell", self.x_data),
                 attribute_label("gridcell", self.y_data),
                 attribute_label("gridcell", self.t_data),
-                attribute_label("gridcell", self.a_data),
+                attribute_label("gridcell", self.a_data),]
 
-    def compute(self):
+    def compute(self, dataset_pool):        
         x = dataset_pool.get_dataset().get_attribute(self.x_data).astype(float64)
         y = dataset_pool.get_dataset().get_attribute(self.y_data).astype(float64)
         t = dataset_pool.get_dataset().get_attribute(self.t_data).astype(float64)
         a = dataset_pool.get_dataset().get_attribute(self.a_data).astype(float64)
 
-        return calc_index(x, y, t, a)
+        return self.calc_index(x, y, t, a)
 
     def calc_index(self, x, y, t, a):
         assert(x.size is y.size and y.size is t.size and t.size is a.size)
@@ -86,7 +87,7 @@ class TestRCOIndex(opus_unittest.OpusTestCase):
         self.y_pop = array([4, 0, 3, 1, 1])
         self.t_pop = array([16, 20, 5, 7, 9])
         self.areas = array([1, 1, 2, 3, 4])
-        ans = RCOIndex()
+        ans = rco_index()
         ans = ans.calc_index(self.x_pop, self.y_pop, self.t_pop, self.areas)
 
         self.assertAlmostEqual(ans.get_index(), -0.5196078)
