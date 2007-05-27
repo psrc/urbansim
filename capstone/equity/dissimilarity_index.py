@@ -21,9 +21,9 @@ class dissimilarity_index(Variable):
         
     def calc_index(self, min_prop, total_pop):
         # Make some assertions about what we're operating on
-        #assert(ar_min_prop.size is ar_total_pop.size)
+        assert(min_prop.size == total_pop.size)
         # proportions must be between 0 and 1!
-        #assert(ar_min_prop.max() <= 1 and ar_min_prop.min() >= 0)
+        assert(min_prop.max() <= 1 and min_prop.min() >= 0)
             
         # Find total population for entire area
         self.total = total_pop.sum()
@@ -38,6 +38,7 @@ class dissimilarity_index(Variable):
         # Override me
     def dependencies(self):
         return [attribute_label("gridcell", self.t_data),
+                attribute_label("gridcell", "region_id"),
                 attribute_label("gridcell", self.m_data)]
                 
         # Getter methods            
