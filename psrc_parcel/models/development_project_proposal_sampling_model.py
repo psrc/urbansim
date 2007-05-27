@@ -100,8 +100,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
         self.check_vacancy_rates(current_target_vacancy)  #initialize self.accepting_proposal based on current vacancy rate
 
         while sometrue(array(self.accepting_proposals.values())):
-            if self.weight.sum() == 0.0:
-                raise RuntimeError, "Running out of proposals; there aren't any proposals with non-zero weight"
+            #if self.weight.sum() == 0.0:
+            #    raise RuntimeError, "Running out of proposals; there aren't any proposals with non-zero weight"
             sampled_proposal_indexes = probsample_noreplace(self.proposal_set.get_id_attribute(), n, prob_array=self.weight,
                                                      exclude_index=None, return_indices=True)
             self.consider_proposals(sampled_proposal_indexes,

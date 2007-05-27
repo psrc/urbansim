@@ -15,7 +15,7 @@
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 from opus_core.storage_factory import StorageFactory
 from opus_core.misc import unique_values
-from numpy import arange, where, concatenate, resize
+from numpy import arange, where, concatenate, resize, ones
 
 class DevelopmentProjectProposalComponentDataset(UrbansimDataset):
     """ contains components of all proposed development projects.

@@ -65,6 +65,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         proposal_component_set = create_from_proposals_and_template_components(dataset, 
                                                            self.dataset_pool.get_dataset('development_template_component'))
         self.dataset_pool.replace_dataset(proposal_component_set.get_dataset_name(), proposal_component_set)
+        self.dataset_pool.add_datasets_if_not_included({dataset.get_dataset_name(): dataset})
         result = RegressionModel.run(self, specification, coefficients, dataset, 
                                          index, chunk_specification, data_objects,
                                          run_config, debuglevel)

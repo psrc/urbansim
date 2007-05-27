@@ -20,6 +20,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.resources import Resources
 from opus_core.variables.variable_name import VariableName
 from opus_core.simulation_state import SimulationState
+from opus_core.logger import logger
 from numpy import arange, where, resize
 
 class DevelopmentProjectProposalDataset(UrbansimDataset):
@@ -85,7 +86,22 @@ class DevelopmentProjectProposalDataset(UrbansimDataset):
         if name!=self.get_dataset_name() and name!=self.dataset1.get_dataset_name() and name!=self.dataset2.get_dataset_name():
             raise ValueError, 'different dataset names for variable and dataset or a component'
 
-
+    def create_and_check_qualified_variable_name(self, name):
+        """Convert name to a VariableName if it isn't already, and add dataset_name to
+        the VariableName if it is missing.  If it already has a dataset_name, make sure
+        it is the same as the name of this dataset.
+        """
+        if isinstance(name, VariableName):
+            vname = name
+        else:
+            vname = VariableName(name)
+        if vname.get_dataset_name() is None:
+            vname.set_dataset_name(self.get_dataset_name())
+        else:
+            self._check_dataset_name(vname.get_dataset_name())
+            
+        return vname
+    
 def create_from_parcel_and_development_template(parcel_dataset,
                                                 development_template_dataset,
                                                 index=None,
@@ -96,6 +112,10 @@ def create_from_parcel_and_development_template(parcel_dataset,
     index1 - 1D array, indices of parcel_dataset
     """
 
+    if index is not None and index.size <= 0:
+        logger.log_warning("parcel index for creating development proposals is of size 0. No proposals will be created.")
+        return None
+    
     interactionset = InteractionDataset(dataset1=parcel_dataset,
                                     dataset2=development_template_dataset,
                                     index1=index)
