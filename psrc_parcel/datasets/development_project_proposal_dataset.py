@@ -109,7 +109,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
                                                 dataset_pool=None,
                                                 resources=None):
     """create development project proposals from parcel and development_template_dataset,
-    index1 - 1D array, indices of parcel_dataset
+    index1 - 1D array, indices of parcel_dataset. Status of the proposals is set to 'tentative'.
     """
 
     if index is not None and index.size <= 0:

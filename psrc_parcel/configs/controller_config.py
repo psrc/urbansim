@@ -359,6 +359,21 @@ my_controller_configuration = {
         "output":"scheduled_development_events"
             },
   },
+                               
+ 'building_construction_model': {
+     "import": {"psrc_parcel.models.building_construction_model":
+               "BuildingConstructionModel"},
+     "init": {
+        "name": "BuildingConstructionModel"
+        },
+     "run": {
+        "arguments": {
+           "development_proposal_set": "proposal_set",
+           "building_dataset": "building",
+           "dataset_pool": "dataset_pool"
+           }
+         }
+  }
 }
 
 for model in my_controller_configuration.keys():

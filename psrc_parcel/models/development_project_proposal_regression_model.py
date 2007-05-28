@@ -65,7 +65,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         proposal_component_set = create_from_proposals_and_template_components(dataset, 
                                                            self.dataset_pool.get_dataset('development_template_component'))
         self.dataset_pool.replace_dataset(proposal_component_set.get_dataset_name(), proposal_component_set)
-        self.dataset_pool.add_datasets_if_not_included({dataset.get_dataset_name(): dataset})
+
         result = RegressionModel.run(self, specification, coefficients, dataset, 
                                          index, chunk_specification, data_objects,
                                          run_config, debuglevel)
@@ -107,11 +107,21 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
 #        n = parcels.size()
 #        index1=sample(arange(n), int(n*0.001))
 
+        try:
+            existing_proposal_set = dataset_pool.get_dataset('development_project_proposal')
+        except:
+            existing_proposal_set = None
+            
         proposal_set = create_from_parcel_and_development_template(parcels, templates, 
                                                               filter_attribute=self.filter,
                                                               index = index1,
                                                               dataset_pool=dataset_pool,
                                                               resources = kwargs.get("resources", None))
+        
+        if existing_proposal_set is not None: # add existing proposals to the created ones
+            proposal_set.join_by_rows(existing_proposal_set, require_all_attributes=False, change_ids_if_not_unique=True)
+        dataset_pool.replace_dataset(proposal_set.get_dataset_name(), proposal_set)
+        
         if spec_replace_module_variable_pair is not None:
             exec("from %s import %s as spec_replacement" % (spec_replace_module_variable_pair[0], 
                                                             spec_replace_module_variable_pair[1]))

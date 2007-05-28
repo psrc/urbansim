@@ -99,16 +99,34 @@ class DevelopmentProjectProposalSamplingModel(Model):
 
         self.check_vacancy_rates(current_target_vacancy)  #initialize self.accepting_proposal based on current vacancy rate
 
-        while sometrue(array(self.accepting_proposals.values())):
+        # consider planned and proposed proposals
+        for status in [self.proposal_set.id_planned, self.proposal_set.id_proposed]:
             if self.weight.sum() == 0.0:
                 continue
+            idx = where(self.proposal_set.get_attribute("status_id") == status)[0]
+            isorted = self.weight[idx].argsort()[range(idx.size-1,-1,-1)]
+            self.consider_proposals(idx[isorted], current_target_vacancy)
+            
+        while sometrue(array(self.accepting_proposals.values())):
+            if self.weight.sum() == 0.0:
+                break
             #    raise RuntimeError, "Running out of proposals; there aren't any proposals with non-zero weight"
+            laccepted_proposals = len(self.accepted_proposals)
+            n = minimum((self.weight > 0).sum(), n)
             sampled_proposal_indexes = probsample_noreplace(self.proposal_set.get_id_attribute(), n, prob_array=self.weight,
                                                      exclude_index=None, return_indices=True)
             self.consider_proposals(sampled_proposal_indexes,
                                     current_target_vacancy
                                    )
-
+            if len(self.accepted_proposals) == laccepted_proposals:
+                break
+            
+        # set status of accepted proposals to 'active'
+        self.proposal_set.modify_attribute(name="status_id", data=self.proposal_set.id_active, 
+                                          index=array(self.accepted_proposals))
+        # delete all tentative (not accepted) proposals from the proposal set
+        self.proposal_set.remove_elements(where(
+                    self.proposal_set.get_attribute("status_id") == self.proposal_set.id_tentative)[0])
 #        schedule_development_projects = self.schedule_accepted_proposals()
         return self.accepted_proposals  #schedule_development_projects
 
