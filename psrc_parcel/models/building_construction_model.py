@@ -90,7 +90,9 @@ class BuildingConstructionModel(Model):
                 parcel_index = parcels.get_id_index(parcel_id)
                 # what is already built on this parcel
                 amount_built = parcels.get_attribute_by_index(unit_name, parcel_index)
+                # what is proposed on this parcel
                 amount_proposed = to_be_built[pidx].sum()
+                # build if needed
                 if amount_proposed > amount_built:
                     new_buildings["parcel_id"].append(parcel_id)
                     if unit_name == "residential_units":
@@ -102,7 +104,7 @@ class BuildingConstructionModel(Model):
                     new_buildings[bunit].append(amount_built-amount_proposed)
                     new_buildings[bunit].append(0)
                     
-            
+        # add created buildings to the existing building dataset
         new_buildings["parcel_id"] = array(new_buildings["parcel_id"])
         new_buildings["residential_units"] = array(new_buildings["residential_units"])
         new_buildings["non_residential_sqft"] = array(new_buildings["non_residential_sqft"])
@@ -110,6 +112,7 @@ class BuildingConstructionModel(Model):
         new_buildings['year_built'] = resize(array([SimulationState().get_current_time()], dtype="int32"), 
                                              new_buildings["parcel_id"].size)
         building_dataset.add_elements(new_buildings, require_all_attributes=False)
+        
         # remove active proposals from the proposal set
         development_proposal_set.remove_elements(active_idx)
         return development_proposal_set
