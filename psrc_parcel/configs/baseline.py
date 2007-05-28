@@ -32,10 +32,12 @@ class Baseline(GeneralConfiguration):
             'description':'PSRC parcel baseline',
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-                cache_directory_root = r'/workspace/urbansim_cache/psrc_parcel',
+                #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
+			   cache_directory_root = r'/workspace/urbansim_cache/psrc_parcel',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
-                    existing_cache_to_copy = r'/workspace/urbansim_cache/psrc_parcel/estimation',
+                    #existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
+				   existing_cache_to_copy = r'/workspace/urbansim_cache/psrc_parcel/estimation',
                     ),                
                 cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
                 tables_to_cache = [
@@ -72,8 +74,7 @@ class Baseline(GeneralConfiguration):
                     "household_characteristics_for_ht",
                     "annual_business_control_totals",
                     "annual_relocation_rates_for_business",
-                    'development_event_history',
-                    "development_events_exogenous",
+                    "development_project_proposals",
                     "land_use_types",
                     'employment_sectors',
                     'employment_adhoc_sector_groups',
@@ -104,6 +105,7 @@ class Baseline(GeneralConfiguration):
                 "real_estate_price_model",
                 "expected_sale_price_model",
                 "development_proposal_choice_model",
+                "building_construction_model",
 #                "building_transition_model",
 #                {'building_location_choice_model': {'group_members': '_all_'}},
 #                "household_transition_model",
@@ -117,7 +119,7 @@ class Baseline(GeneralConfiguration):
                 'flush_dataset_to_cache_after_each_model':False,
                 'flush_variables':False,
                 'low_memory_run':False,
-                'datasets_to_cache_after_each_model':[],
+                'datasets_to_cache_after_each_model':["parcel", "building"],
 #                'unroll_gridcells':False            
                 "datasets_to_preload":{
                     'zone':{},
@@ -125,6 +127,7 @@ class Baseline(GeneralConfiguration):
                     'building':{},        
                     'parcel':{'package_name':'psrc_parcel'},
                     'development_template': {'package_name':'psrc_parcel'},
+                    'development_template_component': {'package_name':'psrc_parcel'},
 #                    'business':{'package_name':'psrc_parcel'},
 #                    'person':{'package_name':'psrc_parcel'},        
                     "building_type":{'package_name':'psrc_parcel'},
