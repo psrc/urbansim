@@ -11,6 +11,7 @@ from urbansim.functions import attribute_label
 '''
 
 class dissimilarity_index(Variable):
+
     t_data = "number_of_households"
     m_data = "number_of_minority_households"
                 
