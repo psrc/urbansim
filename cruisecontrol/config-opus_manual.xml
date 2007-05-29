@@ -16,6 +16,11 @@
       <onsuccess>
         <artifactspublisher dest="artifacts/${project.name}" file="projects/${project.name}/docs/latex/userguide.pdf" />
         <artifactspublisher dest="artifacts/${project.name}" dir="projects/${project.name}/docs/latex/userguide" subdirectory="html" />
+        <artifactspublisher dest="artifacts/${project.name}" file="projects/${project.name}/docs/latex/tutorials/run-eugene-model.pdf" subdirectory="tutorials" />
+        <artifactspublisher dest="artifacts/${project.name}" file="projects/${project.name}/docs/latex/tutorials/lorenz-curve.pdf" subdirectory="tutorials" />
+        <artifactspublisher dest="artifacts/${project.name}" dir="projects/${project.name}/docs/latex/tutorials/lorenz-curve" subdirectory="tutorials/lorenz-curve" />
+        <artifactspublisher dest="artifacts/${project.name}" dir="projects/${project.name}/docs/latex/tutorials/run-eugene-model" subdirectory="tutorials/run-eugene-model" />
+        
       </onsuccess>
     </publishers>
   </project>
