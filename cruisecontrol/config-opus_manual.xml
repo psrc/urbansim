@@ -15,6 +15,7 @@
     <publishers>
       <onsuccess>
         <artifactspublisher dest="artifacts/${project.name}" file="projects/${project.name}/docs/latex/userguide.pdf" />
+        <artifactspublisher dest="artifacts/${project.name}" dir="projects/${project.name}/docs/latex/userguide" subdirectory="html" />
       </onsuccess>
     </publishers>
   </project>
