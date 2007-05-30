@@ -3,6 +3,7 @@
 from numpy import array, arange, hstack, vstack, sum, float64
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
+from urbansim.functions import my_attribute_label
 
 '''
     Inputs: proportion of minority group in an area's subdivisions,
@@ -40,7 +41,8 @@ class dissimilarity_index(Variable):
     def dependencies(self):
         return [attribute_label("gridcell", self.t_data),
                 attribute_label("gridcell", "region_id"),
-                attribute_label("gridcell", self.m_data)]
+                attribute_label("gridcell", self.m_data),
+                my_attribute_label("region_id")]
                 
         # Getter methods            
     def get_index(self):
@@ -85,6 +87,18 @@ class TestDissimilarityIndex(opus_unittest.OpusTestCase):
         ans.calc_index(self.min_prop, self.total_pop)
 
         self.assertAlmostEqual(ans.get_index(), 0.7631579)
+
+    def test_variable(self):
+        min_pop = array([1, 2, 2, 1, 5])
+        total_pop = array([16, 16, 12, 20, 16])
+        grid_id = array([1, 2, 3, 4, 5])
+
+        values = VariableTestToolbox().compute_variable("urbansim.region.dissimilarity_index",
+            {"region":RegionDataset(),
+             "gridcell": { "number_of_households":total_pop, "number_of_minority_households":min_pop, "grid_id":grid_id } },
+            dataset = "region")
+        wanted = array([0.3320158103])
+        self.assert_(allclose(wanted, values))
 
 ''' Run tests if this is file is not run as part of something larger '''
 if __name__ == '__main__':
