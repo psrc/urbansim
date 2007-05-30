@@ -1,6 +1,6 @@
 ''' Dissimilarity index from Massey & Denton 1988 '''
 
-from numpy import array, arange, hstack, vstack, sum, float64
+from numpy import array, hstack, vstack, sum, float64
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
 from urbansim.functions import my_attribute_label
@@ -58,6 +58,8 @@ class dissimilarity_index(Variable):
    # Tests are broken
    
 from opus_core.tests import opus_unittest
+from urbansim.variable_test_toolbox import VariableTestToolbox
+from urbansim.datasets.region_dataset import RegionDataset
    
 class TestDissimilarityIndex(opus_unittest.OpusTestCase):
    
