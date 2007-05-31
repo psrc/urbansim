@@ -32,7 +32,7 @@ from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
 from opus_core.simulation_state import SimulationState
 
-## TODO: Is this class working?
+## BUG: Is this class working?
 class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
 
     def __init__(self, choice_set,
@@ -265,8 +265,9 @@ class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
             ## append other building attributes
 
         storage = StorageFactory().get_storage('dict_storage')
-        storage._write_dataset(
-            {'buildings_exogeneous':{
+        storage.write_table(
+            table_name='buildings_exogeneous'
+                table_data={
                     'building_id':max_building_id + arange(1, scheduled_year.size+1, 1),
                     'type': types,
                     'template_id': self.choice_set.get_attribute("template_id")[self.accepted_proposals],

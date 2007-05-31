@@ -40,6 +40,7 @@ class ParcelDataset(UrbansimDataset):
         calculate the min and max development capacity given by constraints.
         modelled from the method of gridcell
         """
+        ## BUG: 'alltrue' is not imported, this class does not work, is it in use?
         if (self.development_constraints <> None) and (not recompute_flag):
             if (index <> None) and alltrue(self.development_constraints["index"] == index):
                 return self.development_constraints
@@ -96,23 +97,22 @@ from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 from numpy import array
-from numpy import ma
 
 class Tests(opus_unittest.OpusTestCase):
     def test_get_development_constraints(self):
         storage = StorageFactory().get_storage('dict_storage')
-        storage._write_dataset(
-            'building_types',
-            {
+        storage.write_table(
+            table_name='building_types',
+            table_data={
                 "building_type_id":array([1, 2]),
                 'density_name':   array(['units_per_acre','far']),
                 'constraint_name':array(['units_per_acre','far']),
             }
         )
 
-        storage._write_dataset(
-            'development_constraints',
-            {
+        storage.write_table(
+            table_name='development_constraints',
+            table_data={
                 'constraint_id': array([1,  2, 3, 4, 5, 6, 7]),
                 'is_constrained': array([0, 0, 1, 1, 1, 0, 0]),
                 'generic_building_type_id': array([1, 1, 1, 1, 2, 2, 2]),
@@ -121,9 +121,9 @@ class Tests(opus_unittest.OpusTestCase):
                 'maximum': array([3, 0, 0.2, 1,  10, 0.4, 100]),
             }
         )
-        storage._write_dataset(
-            'parcels',
-            {
+        storage.write_table(
+            table_name='parcels',
+            table_data={
                 "parcel_id":        array([1,   2,    3]),
                 "is_constrained":   array([1,   0,    1]),
             }

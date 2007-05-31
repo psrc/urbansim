@@ -14,8 +14,6 @@
 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 from opus_core.datasets.interaction_dataset import InteractionDataset
-from opus_core.datasets.dataset import Dataset
-from opus_core.datasets.interaction_dataset import InteractionDataset
 from opus_core.storage_factory import StorageFactory
 from opus_core.resources import Resources
 from opus_core.variables.variable_name import VariableName
@@ -123,16 +121,16 @@ def create_from_parcel_and_development_template(parcel_dataset,
     template_ids = interactionset.get_attribute("template_id").ravel()
 
     storage = StorageFactory().get_storage('dict_storage')
-    storage._write_dataset(out_table_name='development_project_proposals',
-                           values = {
-                               "proposal_id": arange(1, parcel_ids.size+1, 1),
-                               "parcel_id" : parcel_ids,
-                               "template_id": template_ids,
-                               "start_year": array(parcel_ids.size*[SimulationState().get_current_time(),]),
-                               "status_id": resize(array([DevelopmentProjectProposalDataset.id_tentative], dtype="int16"), 
-                                                   parcel_ids.size)
-                           }
-                       )
+    storage.write_table(table_name='development_project_proposals',
+        table_data={
+            "proposal_id": arange(1, parcel_ids.size+1, 1),
+            "parcel_id" : parcel_ids,
+            "template_id": template_ids,
+            "start_year": array(parcel_ids.size*[SimulationState().get_current_time(),]),
+            "status_id": resize(array([DevelopmentProjectProposalDataset.id_tentative], dtype="int16"), 
+                parcel_ids.size)
+            }
+        )
     development_project_proposals = DevelopmentProjectProposalDataset(resources=Resources(resources),
                                                                       dataset1 = parcel_dataset,
                                                                       dataset2 = development_template_dataset,
@@ -150,7 +148,6 @@ def create_from_parcel_and_development_template(parcel_dataset,
 
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
-from opus_core.storage_factory import StorageFactory
 from numpy import array
 from numpy import ma
 
@@ -158,23 +155,23 @@ class Tests(opus_unittest.OpusTestCase):
     def setUp(self):
         storage = StorageFactory().get_storage('dict_storage')
 
-        storage._write_dataset(
-            'development_templates',
-            {
+        storage.write_table(
+            table_name='development_templates',
+            table_data={
                 'template_id': array([1,2,3,4]),
                 'project_size': array([0, 1999, 2000, 10]),
             }
         )
-        storage._write_dataset(
-            'parcels',
-            {
+        storage.write_table(
+            table_name='parcels',
+            table_data={
                 "parcel_id": array([1,   2,    3]),
                 "lot_size":  array([0,   2005, 23])
             }
         )
-        storage._write_dataset(
-            'development_project_proposals',
-            {
+        storage.write_table(
+            table_name='development_project_proposals',
+            table_data={
                 "proposal_id":array([1,  2, 3,  4, 5,  6, 7, 8, 9, 10, 11, 12]),
                 "parcel_id":  array([1,  1,  1,  1, 2, 2,  2, 2, 3, 3, 3, 3 ]),
                 "template_id":array([1,  2, 3, 4,  1, 2,  3, 4, 1,  2, 3, 4])

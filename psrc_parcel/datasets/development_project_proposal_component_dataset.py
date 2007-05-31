@@ -15,7 +15,7 @@
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 from opus_core.storage_factory import StorageFactory
 from opus_core.misc import unique_values
-from numpy import arange, where, concatenate, resize, ones
+from numpy import arange, where, concatenate, resize
 
 class DevelopmentProjectProposalComponentDataset(UrbansimDataset):
     """ contains components of all proposed development projects.
@@ -52,13 +52,14 @@ def create_from_proposals_and_template_components(proposal_dataset,
                 resize(component_ids[comp_idx], proposal_ids[prop_idx].size*component_ids[comp_idx].size)))
         
     storage = StorageFactory().get_storage('dict_storage')
-    storage._write_dataset(out_table_name='development_project_proposal_components',
-                           values = {
-                               "proposal_component_id": arange(1, proposal_ids_in_comp.size+1, 1),
-                               "proposal_id": proposal_ids_in_comp,
-                               "component_id": component_ids_in_comp,
-                           }
-                       )
+    storage.write_table(
+        table_name='development_project_proposal_components',
+        table_data={
+            "proposal_component_id": arange(1, proposal_ids_in_comp.size+1, 1),
+            "proposal_id": proposal_ids_in_comp,
+            "component_id": component_ids_in_comp,
+            }
+        )
     development_project_proposal_components = DevelopmentProjectProposalComponentDataset(resources=resources,
                                                                   in_storage=storage,
                                                                   in_table_name='development_project_proposal_components',
@@ -73,7 +74,6 @@ def create_from_proposals_and_template_components(proposal_dataset,
 
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
-from opus_core.storage_factory import StorageFactory
 from development_project_proposal_dataset import create_from_parcel_and_development_template
 from numpy import array
 from numpy import ma
@@ -82,28 +82,28 @@ class Tests(opus_unittest.OpusTestCase):
     def setUp(self):
         storage = StorageFactory().get_storage('dict_storage')
 
-        storage._write_dataset(
-            'development_templates',
-            {
+        storage.write_table(
+            table_name='development_templates',
+            table_data={
                 'template_id': array([1,2,3]),
             }
         )
-        storage._write_dataset(
-            'development_template_components',
-            {
+        storage.write_table(
+            table_name='development_template_components',
+            table_data={
                 'template_id': array([1,1,2,3,3,3]),
                 'component_id': arange(6)+1
             }
         )
-        storage._write_dataset(
-            'parcels',
-            {
+        storage.write_table(
+            table_name='parcels',
+            table_data={
                 "parcel_id": array([1,   2,    3]),
             }
         )
-        storage._write_dataset(
-            'development_project_proposal_components',
-            {
+        storage.write_table(
+            table_name='development_project_proposal_components',
+            table_data={
                 "proposal_component_id": arange(18)+1,
                 "proposal_id":array([1,  1, 2, 3, 3,3, 4,4, 5,  6, 6,6,7, 7,8, 9, 9,9]),
                 "template_id":array([1,  1, 2, 3, 3,3, 1,1, 2,  3,3,3,  1, 1, 2, 3,3,3]),

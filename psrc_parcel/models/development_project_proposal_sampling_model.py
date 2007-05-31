@@ -27,6 +27,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.model import Model
 
+## BUG: broken class
 class DevelopmentProjectProposalSamplingModel(Model):
 
     def __init__(self, proposal_set,
@@ -249,8 +250,9 @@ class DevelopmentProjectProposalSamplingModel(Model):
             ## append other building attributes
 
         storage = StorageFactory().get_storage('dict_storage')
-        storage._write_dataset(
-            {'buildings_exogeneous':{
+        storage.write_table(
+            table_name='buildings_exogeneous'
+            table_data={
                     'building_id':max_building_id + arange(1, scheduled_year.size+1, 1),
                     'type': types,
                     'template_id': self.proposal_set.get_attribute("template_id")[self.accepted_proposals],
