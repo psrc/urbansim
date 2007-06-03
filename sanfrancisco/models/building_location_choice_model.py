@@ -28,7 +28,7 @@ class BuildingLocationChoiceModel(UrbansimBuildingLocationChoiceModel):
 #        return (weight_array, where_developable)
 
     def get_weights_for_sampling_locations_for_estimation(self, agent_set, agents_index):
-        if self.run_config.get("agent_units_string", None): # needs to be corrected
+        if self.run_config.get("agent_units_string", "sanfrancisco.building.building_size"): # needs to be corrected
             agent_set.compute_variables(self.run_config["agent_units_string"], dataset_pool=self.dataset_pool)
 
         return self.get_weights_for_sampling_locations(agent_set, agents_index)

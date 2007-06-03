@@ -46,7 +46,7 @@ class BusinessTransitionModel(Model):
                           "sector_id":array([], dtype='int32'),
                           business_id_name:array([], dtype='int32'), 
                           "sqft":array([], dtype=int32),
-                          "employees":array([], dtype=int32),}
+                          "employment":array([], dtype=int32),}
         compute_resources = Resources(data_objects)
 #        compute_resources.merge({job_building_types.get_dataset_name():job_building_types, "debug":self.debug})
         business_set.compute_variables(
@@ -78,8 +78,8 @@ class BusinessTransitionModel(Model):
                 
                 new_businesses["sqft"] = concatenate((new_businesses["sqft"],
                                                      business_set.get_attribute("sqft")[sampled_business]))
-                new_businesses["employees"] = concatenate((new_businesses["employees"],
-                                                           business_set.get_attribute("employees")[sampled_business]))
+                new_businesses["employment"] = concatenate((new_businesses["employment"],
+                                                           business_set.get_attribute("employment")[sampled_business]))
                 
                 new_max_id = max_id+diff
                 new_businesses[business_id_name]=concatenate((new_businesses[business_id_name], arange(max_id+1, new_max_id+1)))

@@ -23,7 +23,7 @@ models_configuration = config['models_configuration']
 models_configuration["business_location_choice_model"] = {
                      "estimation":"opus_core.bhhh_mnl_estimation",
                      "sampler":"opus_core.samplers.weighted_sampler",
-                     "sample_size_locations":30,
+                     "sample_size_locations":100,
 #                     "weights_for_estimation_string":"urbansim.zone.number_of_non_home_based_jobs",
                      "specification_table":"business_location_choice_model_specification",
                      "coefficients_table":"business_location_choice_model_coefficients",
@@ -39,7 +39,7 @@ my_controller_configuration = {
                                         "RealEstatePriceModel"},
     "init": {
         "name": "RealEstatePriceModel",
-        "outcome_attribute":"'ln_unit_price'",
+        "outcome_attribute":"'ln_unit_price=ln(building.unit_price)'",
         "arguments": {"submodel_string": "'building_use_id'",
                       "filter_attribute": "'valid'"}, # None},
         },
@@ -62,7 +62,7 @@ my_controller_configuration = {
         "name": "prepare_for_estimate",
         "arguments": {"specification_storage": "base_cache_storage",
                       "specification_table": "'real_estate_price_model_specification'",
-                      "filter_variable":"'unit_price'",
+                      "filter_variable":"'building.unit_price'",
                       "dataset": "building",
                       "threshold": 1},
         "output": "(specification, index)"
@@ -70,6 +70,7 @@ my_controller_configuration = {
     "estimate": {
         "arguments": {
                       "specification": "specification",
+ #                     "procedure": None, #Diagnostics
                       "outcome_attribute": "'ln_unit_price=ln(building.unit_price)'",
                       "dataset": "building",
                       "index": "index",
@@ -184,6 +185,7 @@ my_controller_configuration = {
     "estimate": {
         "arguments": {
                       "specification": "specification",
+                      "procedure": None,
                       "agent_set": "business",
                      "agents_index": "index",
                       "data_objects": "datasets",
@@ -226,7 +228,7 @@ my_controller_configuration = {
                         "developable_maximum_unit_variable" : "'UNITS_capacity'", #"developable_maximum_UNITS",
                         "developable_minimum_unit_variable" : None, # None means don't consider any minimum. For default, set it to empty string
                         "agents_grouping_attribute":"'sanfrancisco.building.building_class_id'",
-                        "estimate_config" : {'weights_for_estimation_string':"'sanfrancisco.parcel.uniform_capacity'"},
+                        "estimate_config" : {'weights_for_estimation_string': None}, #"'sanfrancisco.parcel.uniform_capacity'"},
                         "run_config":{"agent_units_string" : "sanfrancisco.building.building_size"}
                         }
                     },
@@ -316,8 +318,8 @@ my_controller_configuration = {
                 "arguments": {"location_set": "building",
                               "location_id_string":"'building_id'",
                               "choices":"'urbansim.lottery_choices'",
-                              "submodel_string":"None", #"'sanfrancisco.household.household_size_category'",
-                              "sample_size_locations":50,
+                              "submodel_string":"'sanfrancisco.household.household_size_category'",
+                              "sample_size_locations":100,
                               "dataset_pool": "dataset_pool",
                               "run_config":{"capacity_string" : "sanfrancisco.building.vacant_residential_units",
                                             "number_of_agents_string": "sanfrancisco.building.number_of_households",
@@ -361,6 +363,7 @@ my_controller_configuration = {
                 },
             "estimate": {
                 "arguments": {"specification": "specification",
+                              "procedure": None, # Only for diagnostic purposes
                               "agent_set": "household",
                               "agents_index": "index",
                               "data_objects": "datasets",
