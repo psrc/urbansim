@@ -396,15 +396,16 @@ hlcm_controller["init"]["arguments"]["estimate_config"] = {"weights_for_estimati
 hlcm_controller["init"]["arguments"]["run_config"] = {"capacity_string":"psrc_parcel.building.vacant_residential_units"} #"urbansim.zone.vacant_residential_units"
 hlcm_controller["init"]["arguments"]['sample_size_locations']=30
 hlcm_controller["init"]["arguments"]['sampler']="'opus_core.samplers.weighted_sampler'"
-hlcm_controller["controller"]["init"]["arguments"]["submodel_string"] =  None #"'household_size'"
+hlcm_controller["controller"]["init"]["arguments"]["submodel_string"] = 'None' #"'household_size'"
 hlcm_controller["prepare_for_estimate"]["arguments"]["join_datasets"] = 'True'
 hlcm_controller["prepare_for_estimate"]["arguments"]["index_to_unplace"] = 'None'
+#hlcm_controller["estimate"]["arguments"]["procedure"] = 'None'
 config["models_configuration"]['household_location_choice_model']["controller"].merge(hlcm_controller)
 
 
 config["datasets_to_preload"] = {
         'zone':{},
-        #'household':{},
+        'household':{},
         'building':{},
         'parcel':{'package_name':'psrc_parcel'},
 #        'business':{'package_name':'psrc_parcel'},

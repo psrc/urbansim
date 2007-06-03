@@ -40,7 +40,6 @@ class CachingConfiguration(Configuration):
 #            "annual_relocation_rates_for_business",
 #            "buildings_for_estimation",
             "building_types",
-            "generic_building_types",            
             'urbansim_constants',
             'land_use_types',
             'gridcells',
@@ -49,19 +48,18 @@ class CachingConfiguration(Configuration):
             'employment_adhoc_sector_groups',
             'employment_adhoc_sector_group_definitions',
             'development_templates',
-            'development_template_components',
-            'development_constraints',
-            'target_vacancies'
+            'template_components',
+            'development_constraints'
             ]
         
         return {
-        'cache_directory' : '/urbansim_cache/psrc_parcel_lmwang/estimation/', # change or leave out
+        'cache_directory' : '/urbansim_cache/psrc_parcel_2005/cache_source', # change or leave out
         'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
     #        cache_directory_root = '/tmp/urbcache/sandbox_runs/estimation',
             unroll_gridcells = False,
             cache_from_mysql = True,
             baseyear_cache = BaseyearCacheConfiguration(
-                existing_cache_to_copy = r'D:/urbansim_cache/psrc_parcel',
+                existing_cache_to_copy = r'/urbansim_cache/psrc_parcel_2005/cache_source',
                 ),
             cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
             tables_to_cache = tables_to_cache,
@@ -75,7 +73,7 @@ class CachingConfiguration(Configuration):
             host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
             user_name     = os.environ.get('MYSQLUSERNAME',''),
             password      = os.environ.get('MYSQLPASSWORD',''),
-            database_name = 'psrc_2005_parcel_baseyear',
+            database_name = 'psrc_2005_parcel_baseyear_change_20070524',
             ),
         'dataset_pool_configuration': DatasetPoolConfiguration(
             package_order=['psrc_parcel', 'urbansim', 'opus_core'],

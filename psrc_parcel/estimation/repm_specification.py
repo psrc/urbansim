@@ -53,7 +53,8 @@ all_variables = [
     "plan_15=parcel.plan_type_id==15",
     "plan_16=parcel.plan_type_id==16",
     "plan_19=parcel.plan_type_id==19",
-    "plan_20=parcel.plan_type_id==20",           
+    "plan_20=parcel.plan_type_id==20",
+    "is_pre_1940 = parcel.aggregate(building.year_built,function=mean) < 1940",
                  ]
 variables_for_development_project_proposal = {
       'ln_bldgage' : 'ln(psrc_parcel.development_project_proposal.building_age)',
@@ -402,39 +403,40 @@ specification = {
     ],
 
 
-#    15:   #SINGLE family residential
-#            [
-#    "constant",
-#    "inugb",
-##    "pcthighinc = psrc.parcel.number_of_high_income_households_within_walking_distance / psrc.parcel.number_of_households_within_walking_distance",
-#    "hwy600",
-#    "art600",
-##    "yrblt10=building.year_built/10",
-#    "ln_bldgage",
-##    "ln_bldgage2=(ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean)))**2",
-##    "ln_bldgage3=(ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean)))**3",
-##    "new=parcel.aggregate(building.year_built>2000)>=1",  #won't work (5/4/07)
-#    #"preww2=parcel.aggregate(building.year_built<1945) >= 1", #won't work
-##    "bedrooms=parcel.aggregate(building.number_of_bedrooms)/parcel.aggregate(building.residential_units)",
-##    "lnbedsqft=ln(parcel.aggregate(psrc_parcel.building.building_sqft)/parcel.aggregate(building.number_of_bedrooms))",
-##    "baths=building.number_of_bathrooms",
-#    "lnsqftunit",
-##    "far=parcel.aggregate(psrc_parcel.building.building_sqft)/parcel.parcel_sqft",
-##    "building.stories",        
-##    "lnsqft=ln(psrc_parcel.building.building_sqft)",
-##    "building:opus_core.func.disaggregate(psrc_parcel.zone.number_of_households,[parcel]) as households_in_zone",
-#    "lnlotsqft",
-##    "lnlotgccbd=parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)*ln(parcel.parcel_sqft)",
-#    "lnemp10wa",
-##    "lnretempwa=ln(psrc.parcel.retail_sector_employment_within_walking_distance)",
-##    "lnemp20da=ln(parcel.disaggregate(psrc.zone.employment_within_20_minutes_travel_time_hbw_am_drive_alone))",
-#    "lnemp30tw",
-#    "lngcdacbd",
-#    "hbwavgtmda",
-#    "lnempden",
-#    "lnpopden",
-#    "lnavginc",
-#    ],
+    15:   #SINGLE family residential
+            [
+    "constant",
+    "inugb",
+    "is_pre_1940",
+#    "pcthighinc = psrc.parcel.number_of_high_income_households_within_walking_distance / psrc.parcel.number_of_households_within_walking_distance",
+    "hwy600",
+    "art600",
+#    "yrblt10=building.year_built/10",
+    "ln_bldgage",
+#    "ln_bldgage2=(ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean)))**2",
+#    "ln_bldgage3=(ln(parcel.aggregate(psrc_parcel.building.age_masked, function=mean)))**3",
+#    "new=parcel.aggregate(building.year_built>2000)>=1",  #won't work (5/4/07)
+    #"preww2=parcel.aggregate(building.year_built<1945) >= 1", #won't work
+#    "bedrooms=parcel.aggregate(building.number_of_bedrooms)/parcel.aggregate(building.residential_units)",
+#    "lnbedsqft=ln(parcel.aggregate(psrc_parcel.building.building_sqft)/parcel.aggregate(building.number_of_bedrooms))",
+#    "baths=building.number_of_bathrooms",
+    "lnsqftunit",
+#    "far=parcel.aggregate(psrc_parcel.building.building_sqft)/parcel.parcel_sqft",
+#    "building.stories",        
+#    "lnsqft=ln(psrc_parcel.building.building_sqft)",
+#    "building:opus_core.func.disaggregate(psrc_parcel.zone.number_of_households,[parcel]) as households_in_zone",
+    "lnlotsqft",
+#    "lnlotgccbd=parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)*ln(parcel.parcel_sqft)",
+    "lnemp10wa",
+#    "lnretempwa=ln(psrc.parcel.retail_sector_employment_within_walking_distance)",
+#    "lnemp20da=ln(parcel.disaggregate(psrc.zone.employment_within_20_minutes_travel_time_hbw_am_drive_alone))",
+    "lnemp30tw",
+    "lngcdacbd",
+    "hbwavgtmda",
+    "lnempden",
+    "lnpopden",
+    "lnavginc",
+    ],
 
     17:   #Transportation Communications and Utilities
             [
