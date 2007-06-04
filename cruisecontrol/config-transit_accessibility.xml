@@ -4,10 +4,10 @@
       <currentbuildstatuslistener file="logs/${project.name}/status.txt" />
     </listeners>
     <bootstrappers>
-      <cvsbootstrapper localWorkingCopy="projects/${project.name}" />
+      <svnbootstrapper localWorkingCopy="projects/${project.name}" />
     </bootstrappers>
     <modificationset quietperiod="${quietperiod}">
-      <cvs localWorkingCopy="projects/${project.name}" />
+      <svn localWorkingCopy="projects/${project.name}" />
       <buildstatus logdir="logs/psrc" />
     </modificationset>
     <schedule interval="${interval}">
