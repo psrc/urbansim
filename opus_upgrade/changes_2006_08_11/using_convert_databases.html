@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"><html>
+ 
+<head>
+<title>Using the Convert Databases Tool</title>
+<link href="style/book.css" rel="stylesheet" type="text/css"> 
+<meta name="Microsoft Border" content="none, default">
+</head>
+
+<body><!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+  <table border="0" width="100%" cellspacing="0">
+    <tr>
+      <td><a href="http://www.urbansim.org/"><img border="0" src="images/new-logo-medium.gif" width="105" height="45" /></a></td>
+    </tr>
+    <tr>
+      <td width="100%" colspan="2" class="breadcrumbbox" bgcolor="#EEEEEE"><a href="index.shtml">Opus</a>
+        / <a href="release_notes.html"> UrbanSim Release Notes</a> / Using the Convert Databases Tool</td>
+    </tr>
+  </table>
+<!-- HEAD BANNER ENDS HERE -->
+
+<h1>Using the Convert Databases Tool</h1>
+
+<p>Note: before using this tool, we highly recommend that you use whatever
+mechanism you are comfortable with to backup the database(s) that you are
+modifying.</p>
+
+<p>The convert databases tool can be found 
+<a href='changes_2006_08_11_code.zip'>here</a>. The following 
+options are provided for <strong>do_convert_databases.py</strong>:</p>
+
+<dl>
+	<dt><strong>-o, --host</strong></dt>
+	<dd>Specify the host on which the databases to be converted are located. For
+	example, the option '-o localhost' will convert the databases on the local 
+	machine. If this option is not specified, the default is 'localhost'.
+	<br /><br /></dd>
+	
+	<dt><strong>-u, --username</strong></dt>
+	<dd>Specify the username for connecting to the mysql server located on the
+	specified host. For example, '-u my_username' will try to connect using the 
+	username 'my_username'. If no username is given, the MYSQLUSERNAME
+	environment variable will be used. If that is not defined, a blank username
+	will be used as the default instead.
+	<br /><br /></dd>
+	
+	<dt><strong>-p, --password</strong></dt>
+	<dd>Specify the password for connecting to the mysql server located on the
+	specified host. For example, '-p my_password' will try to connect using the 
+	password 'my_password'. If no password is given, the MYSQLPASSSWORD
+	environment variable will be used. If that is not defined, a blank password
+	will be used as the default instead.
+	<br /><br /></dd>
+		
+	<dt><strong>-n, --nobackup</strong></dt>
+	<dd>By default, a back-up of each table changed will be made. If this flag
+	is set, these back-ups will not be generated. This is to keep things nice
+	and clean if back-ups have already been made in a different manner.
+	<br /><br /></dd>
+		
+	<dt><strong>-f, --postfix</strong></dt>
+	<dd>Any back-up tables created will have this string appended to their 
+	table name. For example, '-f _20060811' will cause the back-up of table 
+	'table1' to be generated with the name 'table1_20060811'. The default 
+	postfix is '_old'.
+	<br /><br /></dd>
+		
+	<dt><strong>-d, --databases</strong></dt>
+	<dd>Use this option for each database to be converted. This option can be
+	used more than once. For example, '-d database1 -d database2' will convert
+	both database1 and database2. At least one database must be specified, or
+	no databases will be converted.
+	<br /><br /></dd>
+		
+	<dt><strong>-t, --tables</strong></dt>
+	<dd>Use this option for each table to be converted. This option can be used
+	more than once. For example, '-t table1 -t table2 -t table3' will convert
+	table1, table2, and table3 in each database specified. At least one table
+	must be specified, or no tables will be converted.
+	<br /><br /></dd>
+</dl>
+
+<p>For example, running</p>
+
+<pre>python do_convert_databases.py -o &lt;host&gt; -u &lt;username&gt; -p &lt;password&gt; -d db1 -d db2 -t table1 -t table2 -t table3</pre>
+
+<p>Will connect to &lt;host&gt; identified by &lt;username&gt; and &lt;password&gt; and convert
+table1, table2, and table3 in databases db1 and db2.</p>
+
+</body>
+</html>

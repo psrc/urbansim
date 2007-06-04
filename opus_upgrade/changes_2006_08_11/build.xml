@@ -1,0 +1,16 @@
+<project name="changes_2006_08_11" default="create-zip-file" basedir=".">
+
+	<property name="pythonpathdir" value="${basedir}/../.." />
+		
+	<target name="create-zip-file" 
+		description="Create zip file of code" >
+	    <delete includeEmptyDirs="true">
+	        <fileset file="${basedir}/changes_2006_08_11_code.zip"/>
+	    </delete>
+		<zip destfile="${basedir}/changes_2006_08_11_code.zip">
+	        <zipfileset dir="${basedir}" 
+	        	includes="**/*.py"
+				excludes="**/*.pyc" />
+		</zip>  	
+	</target>	
+</project>

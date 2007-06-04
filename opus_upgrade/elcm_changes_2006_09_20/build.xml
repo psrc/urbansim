@@ -1,0 +1,16 @@
+<project name="elcm_changes_2006_09_20" default="create-zip-file" basedir=".">
+
+	<property name="pythonpathdir" value="${basedir}/../.." />
+		
+	<target name="create-zip-file" 
+		description="Create zip file of code" >
+	    <delete includeEmptyDirs="true">
+	        <fileset file="${basedir}/elcm_changes_2006_09_20_code.zip"/>
+	    </delete>
+		<zip destfile="${basedir}/elcm_changes_2006_09_20_code.zip">
+	        <zipfileset dir="${basedir}" 
+	        	includes="**/*.py"
+				excludes="**/*.pyc" />
+		</zip>  	
+	</target>	
+</project>

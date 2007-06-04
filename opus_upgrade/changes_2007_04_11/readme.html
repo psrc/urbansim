@@ -1,0 +1,43 @@
+<h4>11 April 2007</h4>
+
+<p>To convert an UrbanSim cache, or any directory containing &quot;flt_storage&quot;
+files, produced by the numarray version of UrbanSim (version 4.0 or before) into one that can be read by
+the numpy version of UrbanSim (version 4.1 or after), 
+do the following steps in this sequence:&nbsp;</p>
+
+<blockquote>
+  <blockquote>
+
+<p><b>Note: This must be done on a computer that has the 
+same "endian-ness" as the computer that created the cache.</b> <i>(It is highly unlikely that you need
+to worry about endian-ness unless the computer that created the cache was using an PowerPC, Motorola
+or SPARC processor.  For more info, see 
+<a href="http://en.wikipedia.org/wiki/Endianness">Wikipedia</a>.)</i></p>
+
+  </blockquote>
+</blockquote>
+
+<ol>
+	
+	<li>Download the scripts from <a href="changes_2007_04_11_code.zip">changes_2007_04_11_code.zip</a>
+      and unzip into a temporary directory on your computer.</li>
+	
+	<li>Run the <font face="Courier New" size="2">do_convert_numarray_cache_to_numpy_cache.py</font>.  
+	The first parameter is the path to the directory to copy (the destination).  The second is the path into which
+	the copy will be put (the output directory).  This utility will not modify the original directory
+      or its files.</li>
+</ol>
+      
+<p>For example, if you are trying to convert a cache directory on Windows at C:\cache\old_run to a new one located at 
+C:\cache\converted_run, you would execute:</p>
+<blockquote>
+	<pre>python do_convert_numarray_cache_to_numpy_cache.py -d "C:\\cache\\old_run" -o "C:\\cache\\converted_run"</pre>
+</blockquote>
+
+<p>In the case of a problem, or if your environment variables have not been set,
+see usage information by executing:</p>
+<blockquote>
+    <pre>python do_convert_numarray_cache_to_numpy_cache.py --help</pre>
+</blockquote>
+
+<p>&nbsp;</p>
