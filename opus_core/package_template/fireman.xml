@@ -1,0 +1,20 @@
+<project builds-to-keep="4" build-machine="viola.cs.washington.edu">
+    <link-this-project>opus_core</link-this-project>
+	<build-steps>
+		<step>
+			<ant-target>unit-tests</ant-target>
+			<display-name>Unit Tests</display-name>
+			<log-file>unit-tests</log-file>
+			<traffic-light-color>
+				<three-lamp>+yellow</three-lamp>
+			</traffic-light-color>
+			<html-color>yellow</html-color>
+		</step>
+		<step ant-target="build-latex-docs" display-name="Build Latex Docs" html-color="magenta" >
+			<traffic-light-color three-lamp="+yellow" />
+		</step>
+		<step ant-target="release" display-name="Release" html-color="#99cc99" >
+			<traffic-light-color three-lamp="+green+yellow" />
+		</step>
+	</build-steps>
+</project>

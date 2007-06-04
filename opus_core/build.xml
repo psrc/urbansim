@@ -1,0 +1,41 @@
+<project default="unit-tests">
+
+	<property name="project_name" value="opus_core" />
+	<property name="webdir" value="/projects/urbansim5/www.urbansim.org/opus/${project_name}" />
+	<property name="pythonpathdir" value="${basedir}/.." />
+	<import file="${pythonpathdir}/opus_core/common.xml"/>
+	
+	<target name="unit-tests" description="Run unit tests for this package"
+		depends="update-python-build-number">
+		<echo message="Running UnitTests."/>
+		<chmod perm="u+w">
+			<!-- opus_packager.py tests must be able to edit the files copied from package_template -->
+		  <fileset dir="package_template">
+		  </fileset>
+		</chmod>
+		<exec executable="python">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
+			<arg line="tests/all_tests.py"/>
+		</exec>  	
+	</target>
+
+	<target name="release" description="Release module to the incremental website"
+		depends="update-python-build-number">
+        <delete includeemptydirs="true">
+            <fileset dir="${webdir}" includes="**/*"/>
+        </delete>
+		<copy todir="${webdir}">
+			<fileset dir="${basedir}">
+				<exclude name="**/*.pyc" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="cruisecontrol">
+		<exec executable="python" failonerror="True">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
+			<arg line="tests/all_tests.py -x"/>
+		</exec>  	
+	</target>
+	
+</project>

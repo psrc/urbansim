@@ -1,0 +1,41 @@
+<project name="opus_core.package_template" default="unit-tests">
+	<property environment="env"/>
+
+	<property name="webdir" value="/projects/urbansim5/www.urbansim.org/opus/${project_name}" />
+	<property name="pythonpathdir" value="${basedir}/.." />
+	<import file="${pythonpathdir}/opus_core/common.xml"/>
+		
+	<target name="unit-tests" description="Run unit tests for this package"
+		depends="update-python-build-number">
+		<echo message="Running UnitTests."/>
+		<property environment="env"/>
+		<exec executable="python">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
+			<arg line="tests/all_tests.py"/>
+		</exec>  	
+	</target>
+	  	
+	<target name="release" description="Release module to the incremental website"
+		depends="update-python-build-number">
+        <delete includeemptydirs="true">
+            <fileset dir="${webdir}" includes="**/*"/>
+        </delete>
+		<copy todir="${webdir}/docs">
+			<fileset dir="${basedir}/docs">
+				<exclude name="**/*.tex" />
+				<exclude name="**/*.sty" />
+				<exclude name="**/*.cls" />
+				<exclude name="**/*.ps" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="build-latex-docs"
+		depends="update-python-build-number">
+		<property environment="env"/>
+		<exec executable="python" failonerror="true">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
+			<arg line="docs/latex/build_docs.py"/>
+		</exec>  	
+	</target>
+</project>
