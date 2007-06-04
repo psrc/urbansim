@@ -1,0 +1,97 @@
+#
+# UrbanSim software. Copyright (C) 1998-2007 University of Washington
+# 
+# You can redistribute this program and/or modify it under the terms of the
+# GNU General Public License as published by the Free Software Foundation
+# (http://www.gnu.org/copyleft/gpl.html).
+# 
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
+# and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
+# other acknowledgments.
+#
+
+import os
+from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
+from urbansim.configs.general_configuration import GeneralConfiguration
+from urbansim.simulation.run_simulation import RunSimulation
+from urbansim.model_coordinators.model_system import ModelSystem
+from opus_core.misc import get_config_from_opus_path
+from opus_core.configurations.database_configuration import DatabaseConfiguration
+from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
+from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
+
+class ModelConfig(GeneralConfiguration):
+    """PSRC's baseline configuration.
+    """
+    def __init__(self, cache_directory, year, 
+                 travel_model_data_directory='baseline_travel_model_psrc_baseline'):
+        
+        config = AbstractUrbansimConfiguration()
+        
+        config_changes = {
+            'description':'baseline with travel model',
+
+            'cache_directory':cache_directory,
+            'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
+                cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
+                unroll_gridcells = False,
+                tables_to_cache = [],
+                tables_to_copy_to_previous_years = {},
+                ),
+            'models':[],  # run no urbansim models
+            'input_configuration': DatabaseConfiguration(
+                host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
+                user_name     = os.environ.get('MYSQLUSERNAME',''),
+                password      = os.environ.get('MYSQLPASSWORD',''),
+                database_name = 'PSRC_2000_baseyear',
+                ),
+            'base_year':year,
+            'years':(year, year),
+            }
+        config.merge(config_changes)
+        
+        years_to_run = {
+            2005:'2000_06',
+            2010:'2010_06',
+            2015:'2010_06',
+            2020:'2020_06',
+            2025:'2020_06',
+            2030:'2030_06',
+            }
+        year_to_run = {year:years_to_run[year]}
+        travel_model_config = create_travel_model_configuration(travel_model_data_directory, 
+                                                                mode='get_emme2_data_after_run',
+                                                                years_to_run = year_to_run,
+                                                                emme2_batch_file='QUICKRUN.BAT')
+        config['travel_model_configuration'] = travel_model_config
+        self.merge(config)
+
+
+if __name__ == "__main__":
+    from optparse import OptionParser
+    from opus_core.file_utilities import get_resources_from_file 
+    from opus_core.file_utilities import write_resources_to_file
+    from opus_core.store.attribute_cache import AttributeCache
+    from opus_core.fork_process import ForkProcess
+    
+    parser = OptionParser()
+    parser.add_option("-d", "--cache-directory", dest="cache_directory", action="store", type="string",
+                      help="Year in which to 'run' the travel model")
+    parser.add_option("-y", "--year", dest="year", action="store", type="int",
+                      help="Year in which to 'run' the travel model")
+    parser.add_option("-t", "--travel-model", dest="travel_model", default="baseline", 
+                      help="which travel model data to use")
+    
+    (options, args) = parser.parse_args()
+    travel_models = {"baseline":"baseline_travel_model_psrc",
+                     "no_build":"baseline_travel_model_psrc_no_build",
+                     "one_half_highway":"baseline_travel_model_psrc_highway_x_1.5",
+                     }
+    travel_model_path = travel_models[options.travel_model]
+    config = ModelConfig(options.cache_directory, options.year, travel_model_path)
+
+    ForkProcess().fork_new_process('opus_core.tools.start_run', resources=config,
+                                   optional_args="--hostname None")
+    
