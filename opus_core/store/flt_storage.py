@@ -206,7 +206,11 @@ class StorageTests(opus_unittest.OpusTestCase):
         self.storage = flt_storage(local_test_data_path)
     
     def test_get_files(self):
-        self.assertEqual(['city_id', 'city_name'], self.storage.get_column_names('cities'))
+        expected = ['city_id', 'city_name']
+        expected.sort()
+        actual = self.storage.get_column_names('cities')
+        actual.sort()
+        self.assertEqual(expected, actual)
         
     def test_load_table(self):
         expected = {
