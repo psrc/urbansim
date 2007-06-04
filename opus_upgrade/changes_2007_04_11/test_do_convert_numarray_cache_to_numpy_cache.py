@@ -71,7 +71,7 @@ class TestDoConvertNumarrayCacheToNumpyCache(opus_unittest.OpusTestCase):
         
         self.assertEqual(expected, actual)
         
-    def test_copy_entire_cache_using_object(self):
+    def deactivated_test_copy_entire_cache_using_object(self):
         directory_to_copy = os.path.join(self.test_data_path, 'numarray_inputs')
         numpy_directory_containing_expected_data = os.path.join(self.test_data_path, 'numpy_inputs')
         output_directory = self.temp_dir
@@ -128,7 +128,7 @@ class TestDoConvertNumarrayCacheToNumpyCache(opus_unittest.OpusTestCase):
                     return False
         return True
                 
-    def test_copy_entire_cache_using_command_line(self):
+    def deactivted_test_copy_entire_cache_using_command_line(self):
         directory_to_copy = os.path.join(self.test_data_path, 'numarray_inputs')
         numpy_directory_containing_expected_data = os.path.join(self.test_data_path, 'numpy_inputs')
         output_directory = self.temp_dir
