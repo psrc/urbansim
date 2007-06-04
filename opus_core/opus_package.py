@@ -186,7 +186,7 @@ class OpusPackageTests(opus_unittest.OpusTestCase):
 
         self.assertRaises(ValueError, self.package.get_path_for_package, "...an invalid package name..")
         
-    def test_create_package(self):
+    def deactivated_test_create_package(self):
         test_package_name = "test_create_package"
         self.path_to_new_package = os.path.join(self.temp_dir, test_package_name)
         
