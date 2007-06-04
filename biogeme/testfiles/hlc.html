@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html;charset=ISO-8859-1">
+<title>Report from BIOGEME Version 1.2 [Fri Dec 3 17:24:40 GMT 2004]</title>
+<meta name="keywords" content="biogeme, discrete choice, random utility">
+<meta name="description" content="Report from BIOGEME Version 1.2 [Fri Dec 3 17:24:40 GMT 2004]">
+<meta name="author" content="Michel Bierlaire">
+</head>
+<style>
+<!--table
+.biostyle
+	{font-size:10.0pt;
+	font-weight:400;
+	font-style:normal;
+	font-family:Courier;}
+-->
+</style>
+
+<body bgcolor="#ffffff">
+<h1>BIOGEME Version 1.2 [Fri Dec 3 17:24:40 GMT 2004]</h1>
+<h2>Author: Michel Bierlaire, EPFL (2001-2004)</h2>
+<p>This file has automatically been generated.</p>
+<p> Thu Apr 28 17:57:53 2005</p>
+
+<table>
+</table>
+
+<p>
+<table border="0">
+<tr class=biostyle ><td align=right><strong>Model</strong>:</td> <td>Multinomial Logit</td></tr>
+<tr class=biostyle><td align=right ><strong>Number of estimated parameters</strong>: </td> <td>5</td></tr>
+<tr class=biostyle><td align=right ><strong>Sample size</strong>: </td> <td>2000</td></tr>
+<tr class=biostyle><td align=right><strong>Null log-likelihood</strong>:	</td> <td>-4605.17</td></tr>
+<tr class=biostyle><td align=right><strong>Init log-likelihood</strong>:	</td> <td>-4605.17</td></tr>
+<tr class=biostyle><td align=right><strong>Final log-likelihood</strong>:	</td> <td>-4437.73</td></tr>
+<tr class=biostyle><td align=right><strong>Likelihood ratio test</strong>:	</td> <td>334.878</td></tr>
+<tr class=biostyle><td align=right><strong>Rho-square</strong>:		</td> <td>0.0363589</td></tr>
+<tr class=biostyle><td align=right><strong>Adjusted rho-square</strong>:		</td> <td>0.0352731</td></tr>
+<tr class=biostyle><td align=right><strong>Final gradient norm</strong>:	</td> <td>0.00805066</td></tr>
+<tr class=biostyle><td align=right><strong>Variance-covariance</strong>:	</td> <td>from finite difference hessian</td></tr>
+</table>
+</p>
+<h2>Utility parameters</h2>
+<table border="1">
+<tr class=biostyle><th>            Name </th><th>Value		</th><th>Std err		</th><th>t-test</th><th></th><th>Robust Std err		</th><th>Robust t-test</th><th></th></tr>
+<tr class=biostyle><td>
+b_dur_nc </td><td>-6.6564332e-003</td><td>+1.3274313e-003</td><td>-5.0145216e+000</td><td></td><td>+1.5615970e-003</td><td>-4.2625806e+000</td><td></td><td></td></tr>
+<tr class=biostyle><td>
+b_phiw_h </td><td>+2.5698409e-002</td><td>+2.5932318e-003</td><td>+9.9098005e+000</td><td></td><td>+2.6138578e-003</td><td>+9.8316020e+000</td><td></td><td></td></tr>
+<tr class=biostyle><td>
+b_pliw_l </td><td>+6.8065952e-002</td><td>+7.0126248e-003</td><td>+9.7062019e+000</td><td></td><td>+6.8465923e-003</td><td>+9.9415810e+000</td><td></td><td></td></tr>
+<tr class=biostyle><td>
+b_pmiw_m </td><td>+2.1821904e-002</td><td>+3.5433495e-003</td><td>+6.1585525e+000</td><td></td><td>+3.5418969e-003</td><td>+6.1610783e+000</td><td></td><td></td></tr>
+<tr class=biostyle><td>
+b_pmnwmj </td><td>+1.4359481e-001</td><td>+2.2370047e-002</td><td>+6.4190659e+000</td><td></td><td>+1.9970030e-002</td><td>+7.1905153e+000</td><td></td><td></td></tr>
+</table>
+<h2>Scale parameters</h2>
+<table border="1">
+<tr class=biostyle><th>            Name </th><th>Value		</th><th>Std err		</th><th>t-test 1</th><th></th><th>Robust Std err		</th><th>Robust t-test 1</th><th></th></tr>
+<tr class=biostyle><td>
+Scale1 </td><td>+1.0000000e+000</td><td> fixed</td></tr>
+</table>
+
+<h2>Utility functions</h2>
+<table border="1">
+<tr class=biostyle><td>1</td><td>alt1</td><td>av</td><td>b_dur_nc * dur_nc_1 + b_pmiw_m * pmiw_m_1 + b_pmnwmj * pmnwmj_1 + b_phiw_h * phiw_h_1 + b_pliw_l * pliw_l_1</td></tr>
+<tr class=biostyle><td>10</td><td>alt10</td><td>av</td><td>b_dur_nc * dur_nc_10 + b_pmiw_m * pmiw_m_10 + b_pmnwmj * pmnwmj_10 + b_phiw_h * phiw_h_10 + b_pliw_l * pliw_l_10</td></tr>
+<tr class=biostyle><td>2</td><td>alt2</td><td>av</td><td>b_dur_nc * dur_nc_2 + b_pmiw_m * pmiw_m_2 + b_pmnwmj * pmnwmj_2 + b_phiw_h * phiw_h_2 + b_pliw_l * pliw_l_2</td></tr>
+<tr class=biostyle><td>3</td><td>alt3</td><td>av</td><td>b_dur_nc * dur_nc_3 + b_pmiw_m * pmiw_m_3 + b_pmnwmj * pmnwmj_3 + b_phiw_h * phiw_h_3 + b_pliw_l * pliw_l_3</td></tr>
+<tr class=biostyle><td>4</td><td>alt4</td><td>av</td><td>b_dur_nc * dur_nc_4 + b_pmiw_m * pmiw_m_4 + b_pmnwmj * pmnwmj_4 + b_phiw_h * phiw_h_4 + b_pliw_l * pliw_l_4</td></tr>
+<tr class=biostyle><td>5</td><td>alt5</td><td>av</td><td>b_dur_nc * dur_nc_5 + b_pmiw_m * pmiw_m_5 + b_pmnwmj * pmnwmj_5 + b_phiw_h * phiw_h_5 + b_pliw_l * pliw_l_5</td></tr>
+<tr class=biostyle><td>6</td><td>alt6</td><td>av</td><td>b_dur_nc * dur_nc_6 + b_pmiw_m * pmiw_m_6 + b_pmnwmj * pmnwmj_6 + b_phiw_h * phiw_h_6 + b_pliw_l * pliw_l_6</td></tr>
+<tr class=biostyle><td>7</td><td>alt7</td><td>av</td><td>b_dur_nc * dur_nc_7 + b_pmiw_m * pmiw_m_7 + b_pmnwmj * pmnwmj_7 + b_phiw_h * phiw_h_7 + b_pliw_l * pliw_l_7</td></tr>
+<tr class=biostyle><td>8</td><td>alt8</td><td>av</td><td>b_dur_nc * dur_nc_8 + b_pmiw_m * pmiw_m_8 + b_pmnwmj * pmnwmj_8 + b_phiw_h * phiw_h_8 + b_pliw_l * pliw_l_8</td></tr>
+<tr class=biostyle><td>9</td><td>alt9</td><td>av</td><td>b_dur_nc * dur_nc_9 + b_pmiw_m * pmiw_m_9 + b_pmnwmj * pmnwmj_9 + b_phiw_h * phiw_h_9 + b_pliw_l * pliw_l_9</td></tr>
+</table>
+
+
+<h2>Correlation of coefficients</h2>
+<table border="1">
+<tr class=biostyle><th>Coefficient1 </th><th>Coefficient2</th><th>Covariance</th><th>Correlation</th><th>t-test</th><th></th><th>Rob. cov.</th><th>Rob. corr.</th><th>Rob. t-test</th></tr>
+<tr class=biostyle><td>
+b_phiw_h	</td><td>b_pmiw_m</td><td>-3.7564779e-007</td><td>-4.0881377e-002</td><td>+8.6613170e-001</td><td>*</td><td>-5.1791585e-007</td><td>-5.5942431e-002</td><td>+8.5799687e-001</td><td>*</td></tr>
+<tr class=biostyle><td>
+b_pliw_l	</td><td>b_pmnwmj</td><td>+2.8148914e-006</td><td>+1.7943788e-002</td><td>-3.2383738e+000</td><td></td><td>+4.7456638e-006</td><td>+3.4709134e-002</td><td>-3.6164023e+000</td></tr>
+<tr class=biostyle><td>
+b_phiw_h	</td><td>b_pmnwmj</td><td>-9.9658021e-006</td><td>-1.7179243e-001</td><td>-5.1352801e+000</td><td></td><td>-9.9560644e-006</td><td>-1.9073352e-001</td><td>-5.7151421e+000</td></tr>
+<tr class=biostyle><td>
+b_pmiw_m	</td><td>b_pmnwmj</td><td>+1.1218529e-005</td><td>+1.4153212e-001</td><td>-5.4981256e+000</td><td></td><td>+1.2024672e-005</td><td>+1.7000378e-001</td><td>-6.1876843e+000</td></tr>
+<tr class=biostyle><td>
+b_phiw_h	</td><td>b_pliw_l</td><td>-1.9836410e-007</td><td>-1.0907900e-002</td><td>-5.6465726e+000</td><td></td><td>-2.3824168e-007</td><td>-1.3312552e-002</td><td>-5.7556648e+000</td></tr>
+<tr class=biostyle><td>
+b_pliw_l	</td><td>b_pmiw_m</td><td>+2.2600726e-007</td><td>+9.0955252e-003</td><td>+5.9073907e+000</td><td></td><td>+2.6500291e-007</td><td>+1.0927989e-002</td><td>+6.0260387e+000</td></tr>
+<tr class=biostyle><td>
+b_dur_nc	</td><td>b_pmnwmj</td><td>-7.3570110e-007</td><td>-2.4775501e-002</td><td>-6.6950308e+000</td><td></td><td>-1.3288607e-006</td><td>-4.2611984e-002</td><td>-7.4762186e+000</td></tr>
+<tr class=biostyle><td>
+b_dur_nc	</td><td>b_pmiw_m</td><td>+5.3747352e-007</td><td>+1.1426968e-001</td><td>-7.8258301e+000</td><td></td><td>+7.5571814e-007</td><td>+1.3663280e-001</td><td>-7.7588196e+000</td></tr>
+<tr class=biostyle><td>
+b_dur_nc	</td><td>b_phiw_h</td><td>-4.6927470e-007</td><td>-1.3632444e-001</td><td>-1.0538716e+001</td><td></td><td>-6.9133445e-007</td><td>-1.6937031e-001</td><td>-9.9127237e+000</td></tr>
+<tr class=biostyle><td>
+b_dur_nc	</td><td>b_pliw_l</td><td>+5.1370802e-007</td><td>+5.5185333e-002</td><td>-1.0576699e+001</td><td></td><td>+4.1558565e-007</td><td>+3.8870229e-002</td><td>-1.0731364e+001</td></tr>
+</table>
+</html>

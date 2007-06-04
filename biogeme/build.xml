@@ -1,0 +1,42 @@
+<project name="biogeme" default="unit-tests">
+
+	<property name="webdir" value="/projects/urbansim5/www.urbansim.org/opus/biogeme" />
+	<property name="pythonpathdir" value="${basedir}/.." />
+	<import file="${pythonpathdir}/opus_core/common.xml" />
+	<property name="biogeme_path" location="/projects/urbansim/third-party/biogeme/biogeme/" />
+
+	<!-- taskdef name="py-run" classname="org.pyant.tasks.PythonRunTask" / -->
+
+	<target name="unit-tests" description="Run unit tests for this package" depends="update-python-build-number">
+		<echo message="Running UnitTests." />
+		<property environment="env" />
+		<exec executable="python">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
+			<!-- edit the following line for development on an individual workstation -->
+			<env key="PATH_TO_BIOGEME" path="${biogeme_path}" />
+			<arg line="tests/all_tests.py" />
+		</exec>
+	</target>
+
+	<target name="release" description="Copies the docs for pyant to a public location" depends="update-python-build-number">
+		<delete>
+			<fileset dir="${webdir}" />
+		</delete>
+		<copy todir="${webdir}">
+			<fileset dir="${basedir}/docs">
+				<include name="**/*.html" />
+				<include name="**/*.pdf" />
+				<include name="**/*.png" />
+				<include name="**/*.gif" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="cruisecontrol">
+		<exec executable="python" failonerror="True">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
+			<arg line="tests/all_tests.py -x" />
+		</exec>
+	</target>
+
+</project>
