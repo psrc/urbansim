@@ -1,0 +1,40 @@
+In order for this opus package to be installed, it must first install
+all of the required opus and python packages listed below.  If the
+opus installer already finds these packages are installed, it will
+not re-install them.  If any are not installed, it will request 
+the user to approve (or not) the installation of these packages.
+The Opus installer also can be invoked with the request to install
+all of the suggested packages, in which case they are added to the
+list of packages that are installed before this Opus package is 
+installed, as described above.
+
+# The opus packages that *must* be installed before
+# installing this opus package.
+required_opus_packages: opus_core.1.0
+
+# The opus packages that should be installed before
+# installing this opus package, if you use some of the 
+# uncommonly-used features of this opus package.
+suggested_opus_packages: 
+
+# The python packages that *must* be installed before
+# installing this package.
+required_python_packages:
+
+# The python packages that should be installed before
+# installing this opus package, if you use some of the 
+# uncommonly-used features of this opus package.
+suggested_python_packages: 
+
+# The list of src directories to "publish" to the user on install.
+# (1) Lists the src/ directories that will be installed for the user.
+#     Each listed directory will be installed as a child of src/.
+#     This allows for shorter import statements in the code.
+# (2) The developer system for Opus will add, to the os.syspath, the 
+#     parent of each of these directories, so that the code can 
+#     use the same import statements in both developer's world
+#     and user's world.
+publish:
+	data_objects/householdset/household 
+	data_objects/householdset 
+	

@@ -1,0 +1,24 @@
+#
+# UrbanSim software. Copyright (C) 1998-2007 University of Washington
+# 
+# You can redistribute this program and/or modify it under the terms of the
+# GNU General Public License as published by the Free Software Foundation
+# (http://www.gnu.org/copyleft/gpl.html).
+# 
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
+# and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
+# other acknowledgments.
+# 
+
+from opus_core.variables.variable import Variable
+from urbansim.functions import attribute_label
+
+class is_in_scalable_sector_group(Variable):
+ 
+    def dependencies(self):
+        return [my_attribute_label("is_in_employment_sector_group_scalable_sectors")]
+        
+    def compute(self, dataset_pool):
+        return self.get_dataset().get_attribute("is_in_employment_sector_group_scalable_sectors")

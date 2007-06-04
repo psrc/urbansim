@@ -1,0 +1,114 @@
+#
+# UrbanSim software. Copyright (C) 1998-2007 University of Washington
+# 
+# You can redistribute this program and/or modify it under the terms of the
+# GNU General Public License as published by the Free Software Foundation
+# (http://www.gnu.org/copyleft/gpl.html).
+# 
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
+# and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
+# other acknowledgments.
+# 
+
+from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
+
+from opus_core.configuration import Configuration
+
+
+class EventsCoordinatorConfigurationCreator(HasStrictTraits):
+    location_set = Str('gridcell')
+    development_type_set = Str('development_type')
+    
+    input_events = Str('development_events')
+    
+    output_changed_indices = Str('changed_indices')
+    output_processed_development_event_indices = Str('processed_development_event_indices')
+    
+    _model_name = 'events_coordinator'
+    
+    def execute(self):
+        return Configuration({
+            'import': {
+                'urbansim.models.%s_and_storing' % self._model_name: 'EventsCoordinatorAndStoring'
+                },
+            'init': {'name': 'EventsCoordinatorAndStoring'},
+            'run': {
+                'arguments': {
+                    'current_year': 'year',
+                    'development_event_set': self.input_events,
+                    'development_type_set': self.development_type_set,
+                    'location_set': self.location_set,
+                    'model_configuration': 'model_configuration'
+                    },
+                'output': '(%s, %s)' % (self.output_changed_indices, self.output_processed_development_event_indices)
+                }
+            })
+            
+
+from opus_core.tests import opus_unittest 
+
+
+class TestEventsCoordinatorConfigurationCreator(opus_unittest.OpusTestCase):
+    def setUp(self):
+        pass
+        
+    def tearDown(self):
+        pass
+        
+    def test_defaults(self):
+        creator = EventsCoordinatorConfigurationCreator()
+        
+        expected = Configuration({
+            'import': {
+                'urbansim.models.events_coordinator_and_storing': 'EventsCoordinatorAndStoring'
+                },
+            'init': {'name': 'EventsCoordinatorAndStoring'},
+            'run': {
+                'arguments': {
+                    'current_year': 'year',
+                    'development_event_set': 'development_events',
+                    'development_type_set': 'development_type',
+                    'location_set': 'gridcell',
+                    'model_configuration': 'model_configuration'
+                    },
+                'output': '(changed_indices, processed_development_event_indices)'
+                }
+            })
+        
+        result = creator.execute()
+        self.assertDictsEqual(result, expected)
+        
+    def test_with_arguments(self):
+        creator = EventsCoordinatorConfigurationCreator(
+            location_set = 'location_set',
+            development_type_set = 'development_type_set',
+            input_events = 'input_events',
+            output_changed_indices = 'output_changed_indices',
+            output_processed_development_event_indices = 'output_processed_development_event_indices',
+            )
+        
+        expected = Configuration({
+            'import': {
+                'urbansim.models.events_coordinator_and_storing': 'EventsCoordinatorAndStoring'
+                },
+            'init': {'name': 'EventsCoordinatorAndStoring'},
+            'run': {
+                'arguments': {
+                    'current_year': 'year',
+                    'development_event_set': 'input_events',
+                    'development_type_set': 'development_type_set',
+                    'location_set': 'location_set',
+                    'model_configuration': 'model_configuration'
+                    },
+                'output': '(output_changed_indices, output_processed_development_event_indices)'
+                }
+            })
+        
+        result = creator.execute()
+        self.assertDictsEqual(result, expected)
+            
+            
+if __name__ == '__main__':
+    opus_unittest.main()
