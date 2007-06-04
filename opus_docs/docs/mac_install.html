@@ -1,0 +1,291 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+
+
+  <title>Installing on Macintosh</title>
+  <link href="style/book.css" rel="stylesheet" type="text/css">
+ 
+  <meta name="Microsoft Border" content="none, default">
+</head>
+
+ 
+<body>
+<!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+  
+<table border="0" cellspacing="0" width="100%">
+
+    <tbody>
+    <tr>
+
+      <td><a href="http://www.urbansim.org/"><img src="images/new-logo-medium.gif" border="0" height="45" width="105"></a></td>
+
+    </tr>
+
+    <tr>
+
+      <td colspan="2" class="breadcrumbbox" bgcolor="#eeeeee" width="100%"><a href="index.shtml">Opus</a>
+        &gt; <a href="install.html"> Installing</a> &gt; Installing on Macintosh</td>
+
+    </tr>
+
+  
+  </tbody>
+</table>
+
+<!-- HEAD BANNER ENDS HERE -->
+<h1>Installing Opus &amp; UrbanSim on Macintosh OS X</h1>
+
+
+<p>This following instructions are for installing Opus &amp; UrbanSim on
+Macintosh OS X.&nbsp; These installation directions have been tested with
+Macintosh OS X Version 10.4.5 with both PowerPC and Intel processors. </p>
+
+<ol>
+
+  <li><a href="#python">Installing Python</a></li>
+
+  <li><a href="#mysql">Installing MySQL</a></li>
+
+  <li><a href="#libraries">Installing Python libraries</a></li>
+
+  <li><a href="#opus">Installing Opus and UrbanSim</a></li>
+
+  <li><a href="#create_package">Creating a workspace for your own Opus package</a></li>
+
+  <li><a href="#environment">Defining Environment Variables for Opus and UrbanSim</a></li>
+
+  <li><a href="#test">Testing your installation</a></li>
+
+  <li>(optional) <a href="#dev">
+Setting up a software development environment</a></li>
+
+</ol>
+
+<h2>Step 1: <a name="python">Installing Python</a>&nbsp;</h2>
+
+<p>Opus and UrbanSim are implemented in Python, making heavy use of numerical
+Python packages and other software. For the Mac we recommend using Python version 2.4.4. The <a href="http://www.python.org">official
+Python website</a> includes documentation, downloads, and much else. Go to the <a href="http://www.python.org/download/">Python
+download tab</a>
+and get the "Universal OS X image for Python 2.4.4". This is an
+installer that works on both PPC and Intel Macs. Double-click on the
+image to mount it, then double-click on the MacPython.mpkg package icon
+to install. When you're done you can unmount the image by clicking on
+the triange symbol next to it in the Finder. </p>
+
+<p>A note on Python versions: the Mac comes with Python version 2.3.5
+already installed. Opus and UrbanSim should still work with 2.3.5, but
+the universal installers for the required packages are only available
+for newer versions of Python, so you need a newer version. (We
+&nbsp;suggest leaving Apple's installed version alone - there is no
+need to uninstall it. When you install Python 2.4.4 the installer will
+put it earlier on the search path so that it will be found instead. You
+can still get to the old version via /usr/bin/python.) The current
+version of Python is 2.5, but we haven't migrated Opus/UrbanSim to it
+yet; also, not all the universal installers for the needed Python
+packages are available yet for 2.5.</p>
+
+<h2>Step 2: <a name="mysql">Installing MySQL</a></h2>
+
+<p>MySQL is an efficient, open-source SQL database. To run UrbanSim you'll
+either need to have a local copy or else run on a shared server.</p>
+
+<p>Opus works with MySQL 4.1 and 5.0.</p>
+
+<ol>
+
+  <li>
+  Choose which version of MySQL to use, and download the binary installer from <a href="http://dev.mysql.com/downloads/">http://dev.mysql.com/downloads/</a>.
+  </li>
+
+  <li>Install and configure MySQL.</li>
+
+</ol>
+
+<p>In addition to MySQL itself, you might get the <a href="http://www.mysql.com/products/tools/query-browser/">MySQL
+Query Browser</a> (for prowling around in UrbanSim databases using a graphical
+interface), and the <a href="http://www.mysql.com/products/tools/administrator/">MySQL
+Administrator</a>. These are both available as binaries.</p>
+<p>See the <a href="mysqlinstall.4.1.html">Opus/UrbanSim MySQL Installation and Configuration Page</a>
+for additional specific configuration steps. &nbsp;This page is written
+for Windows, but is straightforward to use for the Mac as well.</p>
+
+
+<h2>Step 3: <a name="libraries">Installing Python Libraries</a></h2>
+
+<p> Unfortunately, there is no download for the Mac that contains all
+of the
+Python libraries needed by Opus and UrbanSim, so several steps are
+needed to install the Python libraries. But fortunately nearly all of
+them are available as pre-built packages for Universal Python (so they
+work on both Intel &nbsp;and PPC Macs). Download the following packages
+from <a href="http://pythonmac.org/packages/py24-fat/index.html">http://pythonmac.org/packages/py24-fat/index.html</a> and install them (in any order):</p>
+<ul>
+  <li>MySQLdb version 1.2.1</li>
+  <li>NumPy version 1.0.1 or greater</li>
+  <li>SciPy version 0.5.2</li>
+  <li>PyXML version 0.8.4</li>
+  <li>wxPython version 2.6 (<span style="font-style: italic;">not</span> 2.7)</li>
+</ul>
+Then download and install matplotlib version 0.87.7 (binary) from <a href="http://matplotlib.sourceforge.net/">http://matplotlib.sourceforge.net/</a>. (The version of matplotlib on pythonmac.org didn't work for us.) <br>
+<br>
+Finally install Traits. This is not currently available as a prebuilt
+binary, so you'll need to compile it yourself. To compile it, you'll
+need to have the appropriate gcc compiler. This comes on the Mac OS
+Install Disk 1. &nbsp;(You should have gotten this with your
+machine.)&nbsp; If you have an Intel Mac, insert the CD, double-click
+"Xcode Tools," double-click "XcodeTools.mpkg", and follow the on-screen
+instructions. If you have a PPC Mac, the version of Xcode Tools that
+came with your computer may be old, and won't work with Universal
+Binaries. In that case download Xcode Tools from the <a href="http://developer.apple.com/tools/download/">Apple Tools Download page.</a> (You'll need to register and login, but it's free. The file is huge - 924 MB.)<br>
+<br>
+Then get the source file for Traits and the Traits UI&nbsp;Release 1.1.0  from <a href="http://code.enthought.com/traits/">http://code.enthought.com/traits/.</a>
+Untar the file and put the directory enthought in some (permanent)
+convenient
+location.&nbsp; If you create a workspace (Step 5 below), you can put
+it in the workspace, along with your own code - but it can be someplace
+else if you prefer. Unfortunately you need to make one or more <a href="mac_traits_patches.html"> patches to traits</a>
+for
+it to work on the Mac -- follow the link for details.&nbsp; (You just
+need the first patch, unless you will be setting up your computer for
+development.) Then do
+an "inplace build" in the enthought/traits directory:
+
+<pre>python setup_minimal.py build_ext --inplace</pre>
+Finally add the enthought directory to your Python path (see Step 6 below).<br>
+<br>
+Troubleshooting: when you are compiling Traits, if you get compile
+errors make sure you have an up-to-date version of Xcode (see above).
+<br>
+<br>
+Install any or all of these optional Python packages:
+<ul>
+  <li>If you are using R, install <b>RPy</b> (<a href="http://rpy.sourceforge.net/">http://rpy.sourceforge.net/</a>).&nbsp;
+    This
+    is a Python interface for the statistical programming language R (tested
+    with version 0.4.6).</li>
+<li>If you need to use .dbf files (for example, those produced by ArcGIS), install <b>dbfpy</b> (<a href="http://sourceforge.net/projects/dbfpy">http://sourceforge.net/projects/dbfpy</a>).</li>        
+</ul>
+
+
+<h2>Step 4: <a name="opus">Installing Opus and UrbanSim</a></h2>
+
+<ol>
+
+  <li>Download the Unix/Linux installer file from "Unix/Linux" link on our <a href="http://www.urbansim.org/download/index.shtml">download
+    page</a>.</li>
+
+  <li>Unzip it to any convenient directory, for example to a new directory 'opus_install'
+    on your desktop or home directory.&nbsp; It doesn't matter where this
+    directory is, and you can discard it after Opus/UrbanSim is installed
+    (although we will use it briefly in testing the installation, so don't
+    throw it out right away).&nbsp; For concreteness, suppose that you put the
+    directory in your home directory on the Mac, i.e. '/Users/yourname/opus_install'
+    (replace 'yourname' with the user name for your home directory).&nbsp;</li>
+
+  <li>Open a command terminal by choosing the "Terminal" application under
+    "Applications/Utilities."&nbsp;</li>
+
+  <li>Change the current working directory to 'opus' subdirectory in the 'opus_install'
+    directory, e.g. 'opus-0.8'.&nbsp; (So if you put this in the suggested
+    place, on the Mac, type cd /Users/yourname/opus_install/opus-0.8.)&nbsp;</li>
+
+  <li>Finally, type the command:</li>
+
+</ol>
+
+<blockquote>
+  
+  <pre>sudo python setup.py install. </pre>
+
+  
+  <p>This will compile and install this Opus packages, including urbansim, in your Python 'site-packages'
+  library.</p>
+
+</blockquote>
+
+<h2>Step 5: <a name="create_package">Creating your own Opus package</a></h2>
+
+<p>Follow <a href="create_opus_package.html">these instructions</a> to create an
+Opus package in which you can place your own code.&nbsp;&nbsp;</p>
+
+<h2>Step 6: <a name="environment">Defining Environment Variables</a>&nbsp;</h2>
+
+<p>UrbanSim requires the following four environment variables.&nbsp; The first
+three describe how to connect to MySQL.&nbsp; The last describes how to find the
+Python code.</p>
+
+<ul>
+
+  <li><b>MYSQLHOSTNAMEFORTESTS</b> - This environment variable is only used
+    for running unit tests that use MySQL. These tests use the MySQL database
+	hostname described by this environment variable.  If this environment
+	variable is not defined, unit tests that expect this database server
+	will not run, but will instead print a warning message.</li>
+	
+  <li><b>MYSQLHOSTNAME</b> - The name of the MySQL server. Use <font face="Courier New" size="2">localhost</font>
+    for the MySQL server on the same computer.&nbsp;</li>
+
+  <li><b>MYSQLUSERNAME</b> - This should have the MySQL user name to be used for
+    querying the UrbanSim database. In the lab, we use the MySQL username "urbansim"
+    as a convenient way to allow sharing scripts among all the lab members.
+    (Note that MySQL user names are independent of login names.)&nbsp;</li>
+
+  <li><b>MYSQLPASSWORD</b> - The password for the MySQL user name given
+    above.&nbsp;</li>
+
+  <li><b>PYTHONPATH</b> - This environment variable tells Python where to look
+    for files outside of Python's 'site-packages' directory (which is the
+    default location for Python installers). Change PYTHONPATH to include the
+    path to the directory containing your 'workspace', e.g. '/Users/yourname/workspace'.&nbsp;
+    In addition, if you install Opus to somewhere other than Python's 'site-packages'
+    directory (which is the default location for Python installers) you will
+    need to the add that directory, e.g. '/Users/yourname/opus_install', to the
+    PYTHONPATH. Finally, make sure your directory with enthought/traits is on the PYTHONPATH.</li>
+
+</ul>
+
+<p>On the Mac under OS X, the way to set environment variables is via an XML
+file '.MacOSX/environment.plist' in the user's home directory so that the
+environment variables are seen by the various different shells (see <a href="http://developer.apple.com/qa/qa2001/qa1067.html">http://developer.apple.com/qa/qa2001/qa1067.html</a>).
+Here is the sample contents of the file for these variables:</p>
+
+<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE plist PUBLIC &quot;-//Apple Computer//DTD PLIST 1.0//EN&quot;
+&quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;
+&lt;plist version=&quot;1.0&quot;&gt;
+  &lt;dict&gt;
+    &lt;key&gt;DISPLAY&lt;/key&gt;
+    &lt;string&gt;:0.0&lt;/string&gt;
+
+    &lt;key&gt;MYSQLHOSTNAME&lt;/key&gt;
+    &lt;string&gt;localhost&lt;/string&gt;
+
+    &lt;key&gt;MYSQLUSERNAME&lt;/key&gt;
+    &lt;string&gt;urbansim&lt;/string&gt;
+
+    &lt;key&gt;MYSQLPASSWORD&lt;/key&gt;
+    &lt;string&gt;thesecretpassword&lt;/string&gt;
+
+    &lt;key&gt;PYTHONPATH&lt;/key&gt;
+    &lt;string&gt;/Users/yourusername/workspace&lt;/string&gt;
+
+  &lt;/dict&gt;
+&lt;/plist&gt;</pre>
+
+
+<h2>Step 7: <a name="test">Testing your installation</a></h2>
+
+<p>Follow <a href="test_install.html">these instructions</a> to test your
+installation.</p>
+
+<h2>Step 8: <a name="dev">(optional) Setting up a development environment</a></h2>
+
+
+<p>If you plan to be editing code in one or more Opus packages, including your
+own package(s), follow <a href="developer_setup.html">these instructions</a> to set up your
+software development environment.</p>
+<br>
+</body>
+</html>

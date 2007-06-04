@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"><html>
+ 
+<head>
+<title>Using LaTeX with Opus</title>
+<link href="style/book.css" rel="stylesheet" type="text/css"> 
+<meta name="Microsoft Border" content="none, default">
+</head>
+
+<body><!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+  <table border="0" width="100%" cellspacing="0">
+    <tr>
+      <td><a href="http://www.urbansim.org/"><img border="0" src="images/new-logo-medium.gif" width="105" height="45" /></a></td>
+    </tr>
+    <tr>
+      <td width="100%" colspan="2" class="breadcrumbbox" bgcolor="#EEEEEE"><a href="index.shtml">Opus</a>
+        &gt; <a href="install.html"> Installing</a> &gt; Using LaTeX</td>
+    </tr>
+  </table>
+<!-- HEAD BANNER ENDS HERE -->
+<h1>Using LaTeX with Opus</h1>
+
+<p>This section provides instructions for using LaTeX.&nbsp; The Opus and
+UrbanSim Reference Manual and Users Guide (aka Manual) are written using the
+LaTeX document preparation system.&nbsp; Advantages of LaTeX are that it is
+open-source, platform independent, provides a rich set of features for indexing
+and cross-referencing, and is the standard used for documenting Python packages.
+It also typesets elegantly, particularly for mathematical formulae. The
+disadvantage is that it is not a WYSIWYG (“what you see is what you get”)
+system.&nbsp; Instead, you edit a source document with a text editor, then use LaTeX
+to format it and produce a pdf file and / or a set of html pages.&nbsp; If you are new with LaTeX, take a look at the <a href="http://www.tug.org/begin.html">Getting
+Started with TeX, LaTeX, and Friends</a> page. </p>
+
+<p>The source for the Manual resides in the opus_docs Opus package in the <a href="cvs.html">CUSPA
+CVS repository</a>.&nbsp; The root LaTeX source file is 'userguide.tex'.&nbsp;
+It includes a set of other .tex files, normally one file per chapter.&nbsp; The
+latex files use the Python latex documentation standards and latex definition
+files (although not yet consistently); see <a href="http://www.python.org/doc/current/doc/doc.html">http://www.python.org/doc/current/doc/doc.html</a>.&nbsp; </p>
+
+<h2>Installing a LaTeX environment </h2>
+
+<p>There are many applications and environments that support editing LaTeX
+files.&nbsp;&nbsp; </p>
+
+<p> On Windows, folk in our group at the UW tend to use the <a href="http://texlipse.sourceforge.net/">Texlipse</a>
+Eclipse plug-in, that provides decent LaTeX support, or the <a href="http://www.miktex.org">Miktex</a>
+version of LaTeX.&nbsp; You might want to try the <a href="http://www.ctan.org/starter.html">proTeXt</a>
+installation that is based on the MiKTeX distribution, and includes some
+additional components including the <a href="http://www.toolscenter.org/">TeXnicCenter</a>
+LaTeX editor.&nbsp; SuSe comes with LaTeX, as do most other Linux distributions. </p>
+
+<p>On the Mac, closet UNIX hackers will probably prefer to interact with LaTeX
+via the command line.&nbsp; If you’re comfortable with that, use the Fink
+distribution of LaTeX. To install LaTeX this way, after you’ve got Fink
+installed (Section 3.2.1), use the FinkCommander graphical interface to install
+the tetex-base package.&nbsp; You just need tetex-base, not the whole system.
+Even so, this will install an alarmingly large number of megabytes of stuff on
+your system - but it should all go smoothly.&nbsp; You can now interact with
+latex and pdflatex from the command line in the usual way.&nbsp; If the phrase
+“interact with latex and pdflatex from the command line in the usual way”
+sounds like a lot of new stuff to learn, as opposed to having the familiarity of
+an old shoe, you might want to check out one of the Mac ports of LaTeX that
+provides a more Mac-like graphical interface instead.&nbsp; See <a href="http://www.esm.psu.edu/mac-tex/">http://www.esm.psu.edu/mac-tex/</a>
+or <a href="http://www.macdevcenter.com/pub/a/mac/2004/02/03/latex.html">http://www.macdevcenter.com/pub/a/mac/2004/02/03/latex.html</a>
+for more information.&nbsp; Or use the <a href="http://texlipse.sourceforge.net/">Texlipse</a>
+Eclipse plug-in. </p>
+
+<h2>Running LaTeX</h2>
+<p>The easiest way to rebuild a local version of the pdf and html documentation
+for the Manual is to use a Python script that is in the opus_docs Opus
+package:</p>
+<ol>
+  <li>Get the opus_docs package from the <a href="cvs.html">CUSPA CVS
+    repository</a> and put it in your workspace (e.g., to C:\myworkspace)</li>
+  <li>Open a command window and navigate to the location of your opus_docs/docs/latex
+    directory (e.g. to C:\myworkspace\opus_docs\docs\latex)</li>
+  <li>Run the commands to build a local copy of the documentation:</li>
+</ol>
+<blockquote>
+  <pre><font face="Courier New" size="2">python builddocs.py</font></pre>
+  <p>The new pdf file, and associated html pages, will be in the opus_docs/docs/latex
+  directory</p>
+</blockquote>
+<p>Alternatively, you can issue the individual commands:</p>
+<ol>
+  <li>Get the opus_docs package from the <a href="cvs.html">CUSPA CVS
+    repository</a> and put it in your workspace (e.g., to C:\myworkspace)</li>
+  <li>Open a command window and navigate to the location of your opus_docs/docs/latex
+    directory (e.g. to C:\myworkspace\opus_docs\docs\latex)</li>
+  <li>Run latex on the file ‘userguide.tex’ (the root LaTeX source file) to
+    produce the pdf file:</li>
+</ol>
+<blockquote>
+  <pre><font face="Courier New" size="2">pdflatex userguide </font> </pre>
+  <p>If you get an error message that the file ‘userguide.ind’ wasn’t
+  found (this will happen the first time you do the above command), just hit
+  return and continue, since the next step will create this index file.</p>
+</blockquote>
+<ol start="4">
+  <li>Generate the index:</li>
+</ol>
+<blockquote>
+  <pre>makeindex userguide </pre>
+</blockquote>
+<ol start="5">
+  <li>Run latex again to incorporate the index and resolve any cross-references:</li>
+</ol>
+<blockquote>
+  <pre><font face="Courier New" size="2">pdflatex userguide </font></pre>
+  <p>The new pdf file will be in this directory.</p>
+</blockquote>
+<ol start="6">
+  <li>(optional) To create the html version of the manual, run the latex2html
+    command:</li>
+</ol>
+<blockquote>
+  <pre>latex2html -local_icons -bottom_navigation -address &quot;info (at) urbansim.org&quot; userguide</pre>
+</blockquote>
+
+</body>
+</html>

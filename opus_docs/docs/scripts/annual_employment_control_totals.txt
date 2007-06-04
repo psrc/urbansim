@@ -1,0 +1,67 @@
+﻿-- This script updates the annual_employment_control_totals table to the UrbanSim4 format
+-- by adding and calculating 2 additional fields: TOTAL_HOME_BASED_EMPLOYMENT and
+-- TOTAL_NON_HOME_BASED_EMPLOYMENT
+
+-- Creates a backup of the annual_employment_control_totals table
+CREATE TABLE annual_employment_control_totals_OLD
+SELECT * FROM annual_employment_control_totals;
+
+-- Creates a temp table with the total number of home-based jobs by sector
+CREATE TABLE temp_home_based_jobs
+SELECT sector_id,count(*) as total_home_based
+FROM eugene_1980_baseyear.jobs
+WHERE home_based = 1 group by sector_id;
+
+-- Creates a temp table with the total number of non-home-based jobs by sector
+CREATE TABLE temp_non_home_based_jobs
+SELECT sector_id,count(*) as total_non_home_based
+FROM eugene_1980_baseyear.jobs
+WHERE home_based = 0 group by sector_id;
+
+-- Creates a temp table with both non and home-based jobs with sector id
+CREATE TABLE temp_all_jobs
+SELECT total_home_based, total_non_home_based, temp_home_based_jobs.sector_id
+FROM temp_home_based_jobs
+INNER JOIN temp_non_home_based_jobs
+ON temp_home_based_jobs.sector_id = temp_non_home_based_jobs.sector_id;
+
+-- Creates a temp table with a new field calculated as percentage of home-based jobs
+CREATE TABLE temp_all_jobs1
+SELECT total_home_based/total_non_home_based AS pct_home_based, temp_home_based_jobs.sector_id
+FROM temp_home_based_jobs
+INNER JOIN temp_non_home_based_jobs
+ON temp_home_based_jobs.sector_id = temp_non_home_based_jobs.sector_id;
+
+-- Creates a temp table with the pct_home_based joined to each control total by sector id
+CREATE TABLE temp_annual_employment_control_totals
+SELECT annual_employment_control_totals.sector_id, year, total_employment, temp_all_jobs1.pct_home_based  FROM annual_employment_control_totals
+INNER JOIN temp_all_jobs1
+ON annual_employment_control_totals.sector_id = temp_all_jobs1.sector_id;
+
+-- Creates a temp table with new rounded/calculated field total home-based employment
+CREATE TABLE temp_annual_employment_control_totals1
+SELECT sector_id, year, total_employment, ROUND(total_employment*pct_home_based) AS TOTAL_HOME_BASED_EMPLOYMENT
+FROM temp_annual_employment_control_totals;
+
+-- Creates a temp table with new calculated non-home-based employment field
+CREATE TABLE temp_annual_employment_control_totals2
+SELECT sector_id, year, total_employment, TOTAL_HOME_BASED_EMPLOYMENT, total_employment-TOTAL_HOME_BASED_EMPLOYMENT AS TOTAL_NON_HOME_BASED_EMPLOYMENT
+FROM temp_annual_employment_control_totals1;
+
+-- Deletes temporary tables except annual_employment_control_totals_BAK
+DROP TABLE temp_home_based_jobs;
+DROP TABLE temp_non_home_based_jobs;
+DROP TABLE temp_all_jobs;
+DROP TABLE temp_all_jobs1;
+DROP TABLE temp_annual_employment_control_totals;
+DROP TABLE temp_annual_employment_control_totals1;
+
+-- Deletes old annual_employment_control_totals table
+DROP TABLE annual_employment_control_totals;
+
+-- Renames newly created table to annual_employment_control_totals
+RENAME TABLE temp_annual_employment_control_totals2 TO annual_employment_control_totals
+
+-- Changes datatype of 2 columns to integer
+ALTER TABLE annual_employment_control_totals MODIFY total_home_based_employment INTEGER;
+ALTER TABLE annual_employment_control_totals MODIFY total_non_home_based_employment INTEGER;

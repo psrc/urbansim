@@ -1,0 +1,36 @@
+% $Id: upcomingchanges.tex,v 1.16 2007/06/01 23:49:22 borning Exp $
+
+% Copyright (c) 2005-2007 Center for Urban Simulation and Policy Analysis,
+% University of Washington.  Permission is granted to copy, distribute and/or
+% modify this document under the terms of the GNU Free Documentation License,
+% Version 1.2 or any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+% A copy of the license is included in the section entitled "GNU Free
+% Documentation License".
+
+\chapter{Upcoming Changes}
+
+Opus and UrbanSim continue to evolve.  This chapter outlines some planned
+near-term changes that may impact Opus and UrbanSim users.  (The contents
+of this chapter will change regularly, as the changes are made.)
+
+\section{Python 2.5 Upgrade}
+
+Projected timeline: 2007
+
+Python 2.5 \pythonversionindex is scheduled for release in September 2006 and
+includes some important improvements for UrbanSim.  In particular, it handles
+memory management in a way that will result in more re-use of memory (In Python
+2.4 once a block of memory is allocated to int32 storage, it can be freed and
+re-used to store other int32 values, but will never be used to store any other
+types of values, e.g. not for float32.  This is problematic for Opus.) 
+
+Python 2.5 also provides much better support for 64-bit processors.  If it
+works as advertised, then 64-bit processors will have dramatically larger
+address spaces, which means that a Python process will be able to access
+more than the 2 GB of memory that is the limit for 32-bit processors.  This
+should reduce our memory problems.
+
+We plan to migrate to Python 2.5 once the libraries we need have been
+converted to Python 2.5.  so presumably sometime later we'll further
+migrate to version 2.5. \pythonversionindex

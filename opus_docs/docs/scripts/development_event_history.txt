@@ -1,0 +1,71 @@
+﻿-- This script updates the development_event_history table to the UrbanSim4 format
+
+-- Add new columns
+ALTER TABLE development_event_history ADD COLUMN commercial_sqft integer;
+ALTER TABLE development_event_history ADD COLUMN industrial_sqft integer;
+ALTER TABLE development_event_history ADD COLUMN governmental_sqft integer;
+ALTER TABLE development_event_history ADD COLUMN residential_units integer;
+ALTER TABLE development_event_history ADD COLUMN commercial_improvement_value integer;
+ALTER TABLE development_event_history ADD COLUMN industrial_improvement_value integer;
+ALTER TABLE development_event_history ADD COLUMN governmental_improvement_value integer;
+ALTER TABLE development_event_history ADD COLUMN residential_improvement_value integer;
+
+-- Update new columns
+UPDATE development_event_history SET commercial_sqft = 0;
+UPDATE development_event_history SET commercial_sqft  =  difference_sqft
+WHERE (ending_development_type_id > 8 AND ending_development_type_id < 20);
+
+UPDATE development_event_history SET industrial_sqft = 0;
+UPDATE development_event_history SET industrial_sqft  =  difference_sqft
+WHERE (ending_development_type_id > 19 AND ending_development_type_id < 23);
+
+UPDATE development_event_history SET governmental_sqft = 0;
+UPDATE development_event_history SET governmental_sqft  =  difference_sqft
+WHERE (ending_development_type_id = 23);
+
+UPDATE development_event_history SET residential_units = 0;
+UPDATE development_event_history SET residential_units  =  difference_units
+WHERE (ending_development_type_id < 9);
+
+UPDATE development_event_history SET commercial_improvement_value = 0;
+UPDATE development_event_history SET commercial_improvement_value = ending_non_residential_improvement_value
+WHERE (ending_development_type_id > 8 AND ending_development_type_id < 20);
+
+UPDATE development_event_history SET industrial_improvement_value = 0;
+UPDATE development_event_history SET industrial_improvement_value  = ending_non_residential_improvement_value
+WHERE (ending_development_type_id > 19 AND ending_development_type_id < 23);
+
+UPDATE development_event_history SET governmental_improvement_value = 0;
+UPDATE development_event_history SET governmental_improvement_value  = ending_non_residential_improvement_value
+WHERE (ending_development_type_id = 23);
+
+UPDATE development_event_history SET residential_improvement_value = 0;
+UPDATE development_event_history SET residential_improvement_value = ending_residential_improvement_value
+WHERE (ending_development_type_id < 9);
+
+-- Drop old and unnecessary columns
+ALTER TABLE development_event_history DROP COLUMN fraction_residential_land_value;
+ALTER TABLE development_event_history DROP COLUMN fraction_residential_land_value_change_type;
+ALTER TABLE development_event_history DROP COLUMN governmental_improvement_value_change_type;
+ALTER TABLE development_event_history DROP COLUMN industrial_improvement_value_change_type;
+ALTER TABLE development_event_history DROP COLUMN commercial_improvement_value_change_type;
+ALTER TABLE development_event_history DROP COLUMN residential_improvement_value_change_type;
+ALTER TABLE development_event_history DROP COLUMN governmental_sqft_change_type;
+ALTER TABLE development_event_history DROP COLUMN industrial_sqft_change_type;
+ALTER TABLE development_event_history DROP COLUMN commercial_sqft_change_type;
+ALTER TABLE development_event_history DROP COLUMN residential_units_change_type;
+ALTER TABLE development_event_history DROP COLUMN development_type_change_type;
+ALTER TABLE development_event_history DROP COLUMN starting_sqft;
+ALTER TABLE development_event_history DROP COLUMN starting_units;
+ALTER TABLE development_event_history DROP COLUMN starting_residential_improvement_value;
+ALTER TABLE development_event_history DROP COLUMN starting_non_residential_improvement_value;
+ALTER TABLE development_event_history DROP COLUMN starting_development_type_id;
+ALTER TABLE development_event_history DROP COLUMN ending_sqft;
+ALTER TABLE development_event_history DROP COLUMN ending_units;
+ALTER TABLE development_event_history DROP COLUMN ending_residential_improvement_value;
+ALTER TABLE development_event_history DROP COLUMN ending_non_residential_improvement_value;
+ALTER TABLE development_event_history DROP COLUMN ending_development_type_id;
+ALTER TABLE development_event_history DROP COLUMN difference_sqft;
+ALTER TABLE development_event_history DROP COLUMN difference_units;
+ALTER TABLE development_event_history DROP COLUMN difference_residential_improvement_value;
+ALTER TABLE development_event_history DROP COLUMN difference_non_residential_improvement_value; 

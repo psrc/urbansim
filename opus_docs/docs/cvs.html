@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"><html>
+ 
+<head>
+<title>Getting Opus Packages from CUSPA’s CVS Repository</title>
+<link href="style/book.css" rel="stylesheet" type="text/css"> 
+<meta name="Microsoft Border" content="none, default">
+</head>
+
+<body><!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+  <table border="0" width="100%" cellspacing="0">
+    <tr>
+      <td><a href="http://www.urbansim.org/"><img border="0" src="images/new-logo-medium.gif" width="105" height="45" /></a></td>
+    </tr>
+    <tr>
+      <td width="100%" colspan="2" class="breadcrumbbox" bgcolor="#EEEEEE"><a href="index.shtml">Opus</a>
+        &gt; <a href="install.html"> Installing</a> &gt; Getting Opus Packages
+        from CUSPA's CVS</td>
+    </tr>
+  </table>
+<!-- HEAD BANNER ENDS HERE -->
+<h1>Getting Opus Packages from CUSPA’s CVS Repository</h1>
+
+<p>The following directions assume that you are using Eclipse to connect to CVS
+and that you have an account on the University of Washington Computer Science
+&amp; Engineering computers. (At the moment, this is the only way to connect to
+our CVS repositories, though we plan to fix that.) </p>
+
+<ol>
+  <li>In Eclipse, open the <b>CVS Repository Exploring</b> perspective by
+    clicking onWindow!Open Perspective!CVS Repository Exploring </li>
+  <li>Right-click on the <b>CVS Repositories</b> window and select <b>New </b>&gt;<b>
+    Repository Location</b></li>
+  <li>Enter the following information: 
+    <ul>
+      <li><b>Host:</b> trondheim.cs.washington.edu </li>
+      <li><b>Repository path:</b> /projects/urbansim2/repository </li>
+      <li><b>User:</b> &lt;your CSE UNIX account name&gt; </li>
+      <li><b>Connection type:</b> extssh </li>
+    </ul>
+  </li>
+  <li>Press <b>Finish </b></li>
+  <li>You will be prompted for password for your CSE UNIX account. Enter it and
+    press <b>OK</b>. </li>
+  <li>In the <b>CVS Repositories</b> view, expand the repository whose name ends
+    with &quot;:projects/urbansim2/repository&quot;, open the repository’s <b>HEAD</b>,
+    select the projects you want to check out by right-clicking on each of them,
+    and selecting <b>Check Out</b>. This set typically includes: opus_core and
+    urbansim. </li>
+</ol>
+<p>&nbsp;</p>
+
+</body>
+</html>

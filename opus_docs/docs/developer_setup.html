@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"><html>
+ 
+<head>
+<title>Developer Setup</title>
+<link href="style/book.css" rel="stylesheet" type="text/css"> 
+<meta name="Microsoft Border" content="none, default">
+</head>
+
+<body><!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+  <table border="0" width="100%" cellspacing="0">
+    <tr>
+      <td><a href="http://www.urbansim.org/"><img border="0" src="images/new-logo-medium.gif" width="105" height="45" /></a></td>
+    </tr>
+    <tr>
+      <td width="100%" colspan="2" class="breadcrumbbox" bgcolor="#EEEEEE"><a href="index.shtml">Opus</a>
+        &gt; <a href="install.html"> Installing</a> &gt; Developer Setup</td>
+    </tr>
+  </table>
+<!-- HEAD BANNER ENDS HERE -->
+<h1>Creating a Developer Setup</h1>
+
+<p>This section provides instructions for configuring your computer to do
+software development on one or more Opus packages. </p>
+
+<h2>Choosing a Development Environment </h2>
+
+<p>In general, if you are doing much software development, you will benefit a
+lot from using an
+integrated development environment (IDE) that supports for the range of
+activities involved in, such as such as editing code, running tests,
+debugging code, connecting to a code repository, etc.&nbsp; There are numerous such IDEs for
+Python, and unfortunately no one IDE fits all needs.&nbsp; Within CUSPA, we tend
+to use one of three editors for Python, and one of three editors for LaTeX
+files. </p>
+
+<p>Configure your Python editor appropriately.&nbsp; The software developers in
+CUSPA typically use Eclipse for talking to CVS, Wing for debugging, and either
+or both for editing Python code.&nbsp; Here are instructions for <a href="wing.html">configuring Wing</a> and <a href="eclipse.html">configuring
+    Eclipse</a>. </p>
+
+<p>If you need to edit the Opus and UrbanSim Reference Manual and Users Guide
+(as opposed to just reading it), you’ll need to use <a href="http://www.latex-project.org/">LaTeX</a> since our documentation
+is written in LaTeX.&nbsp; Here are instructions for configuring a <a href="latex.html">installing
+and configuring a LATEX document preparation system</a>. </p>
+
+<h2>Getting the Code for the CUSPA Opus Packages </h2>
+
+<p>As a developer, you also may need to modify code in one of the Opus packages in the base CUSPA
+distribution (e.g. in the installer).&nbsp; If this is the case, you need to get
+that code and configure your computer
+appropriately so that Python will find the files you want: </p>
+<ol>
+  <li>Contact <a href="mailto:info@(RemoveBeforeSending)urbansim.org">CUSPA</a>
+    to get CVS access to the Opus repositories. </li>
+  <li>Download the desired Opus packages from the CUSPA <a href="cvs.html">CVS
+    repository</a> and put them into your workspace directory. </li>
+  <li>Make sure that your workspace directory is in your PYTHONPATH.&nbsp; This
+    will ensure that Python uses these packages instead of the same-named Opus
+    packages installed in its 'site-packages' directory.</li>
+  <li>(optional) If you wish, you may uninstall the Opus located in Python's
+    'site-packages' directory, however this is not strictly necessary since Python will
+    use the Opus packages it finds in your PYTHONPATH before it uses the ones
+    installed in 'site-packages'.</li>
+</ol>
+
+<p>You now should have a directory structure similar to the following: </p>
+<pre>C:\workspace
+    opus_core/                &lt;-- if this is one of the packages you got from CVS
+    urbansim/                 &lt;-- if this is one of the packages you got from CVS
+    ...
+    atlantis/
+        docs/
+        ...
+        __init__.py
+        opus_package_info.py</pre>
+
+<p>Now you can make changes to both the <font face="Courier New" size="2">atlantis</font>
+and other Opus packages in your workspace, and use CVS to keep track of the
+changes between your copies of the Opus packages and those in the CUSPA
+repository, update your copies with changes from the repository, etc. </p>
+
+<p>Note that the code in the CVS repositories is updated frequently (often
+multiple times per day). If you do not frequently update your code from the
+repositories, it will become very difficult to keep your changes in synch with
+the code in the repository. Be warned! </p>
+
+<p>If you make a change that you believe merits inclusion in the CUSPA
+repository, please let us know so that we may incorporate that change into the
+repository. The more we all improve the code, the better for all of us. </p>
+
+<p>In general, it is a bad idea to directly edit code to Python’s ‘site-packages’
+directory (the default location used for most installers, including our
+installer).
+These changes would be over-written when you upgrade the associated Python
+package, e.g. when you upgrade Opus. If you need to modify such code, follow the
+directions in this section. </p>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+﻿-- This script updates the jobs table to the UrbanSim4 format
+-- It adds a building_type column with a code corresponding to
+-- 1 = commercial sqft
+-- 2 = governmental sqft
+-- 3 = industrial sqft
+-- 4 = residential sqft
+
+-- Creates a backup of the jobs table
+CREATE TABLE jobs_OLD
+SELECT * FROM jobs;
+
+-- Create a new temporary joined table
+-- NOTE: THIS COULD TAKE A WHILE
+CREATE TABLE jobs_TEMP
+SELECT development_type_id, job_id, home_based, sector_id, jobs.grid_id
+FROM jobs, gridcells
+WHERE jobs.grid_id = gridcells.grid_id;
+
+-- Add new building_type column to the jobs_TEMP table
+ALTER TABLE jobs_TEMP ADD COLUMN building_type integer;
+
+-- Update the bulding_type column to be the appropriate type
+-- based on development_type_id
+UPDATE jobs_TEMP
+SET building_type = 1 WHERE (development_type_id > 8 AND development_type_id < 20);
+
+UPDATE jobs_TEMP
+SET building_type = 2 WHERE (development_type_id = 23);
+
+UPDATE jobs_TEMP
+SET building_type = 3 WHERE (development_type_id > 19 AND development_type_id < 23);
+
+UPDATE jobs_TEMP
+SET building_type = 4 WHERE home_based = 1;
+
+-- Deletes the old jobs table
+DROP TABLE jobs;
+
+-- Renames the jobs_TEMP table to jobs
+RENAME TABLE jobs_TEMP TO jobs;

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="doc-formatter.xsl"?>
+<!DOCTYPE indicator-declaration SYSTEM "indicator-declaration.dtd">
+<indicator-declaration display-name="Residential units">
+<syntax-version-2.8/>
+<indicator-documentation>
+<definition>
+For each year of interest, this indicator shows the number of residential units in each unit of geography.
+</definition>
+
+<interpreting-results>
+This indicator is useful for seeing the amount of available housing at different units of geography.  
+(These residential units might or might not be occupied.)
+</interpreting-results>
+
+<principal-uses>
+This indicator is useful for both evaluative and diagnostic purposes.
+</principal-uses>
+
+<limitations>
+UrbanSim currently does not model demolitions of existing buildings, and
+and demolished residential units or nonresidential space will continue to show
+up in the database.  For example, if in a given year the Developer 
+Model simulates the replacement of 4 older existing houses with a 20 unit
+apartment building, afterwards the UrbanSim database will include 24
+residential units, rather than 20.
+</limitations>
+
+<specification>
+For the specialized 'region' version, we find all the grid cells exported for the given year, and sum the number of residential
+units.  For the general form, for
+each year and unit of geography, we find all the grid cells exported for that year that are in the geography.
+Then we sum the number of residential units.
+</specification>
+		
+<source-evolution-examples>
+This indicator was originally written by the UrbanSim group.
+</source-evolution-examples>
+
+<how-modeled>
+This indicator is modeled by UrbanSim.
+</how-modeled>
+
+<display-format>
+<units>residential units</units>
+<number digits="0"/>
+</display-format>
+
+<related-indicators>
+<p>These results are for residential units, whether occupied or unoccupied.
+<a href="vac_res_units.xml">Vacant residential units</a> gives the
+number of vacant units.</p>
+</related-indicators>
+		
+</indicator-documentation>
+
+<source>
+urbansim.gridcell.residential_units (Opus primary attribute)
+</source>
+
+</indicator-declaration>
