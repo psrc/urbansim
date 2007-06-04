@@ -1,5 +1,5 @@
 <cruisecontrol>
-  <project name="opus_manual" buildafterfailed="False">
+  <project name="opus_docs" buildafterfailed="False">
     <listeners>
       <currentbuildstatuslistener file="logs/${project.name}/status.txt" />
     </listeners>
