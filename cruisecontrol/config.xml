@@ -9,8 +9,8 @@
   <include.projects file="config-biogeme.xml"/>
   <include.projects file="config-eugene.xml"/>
   <include.projects file="config-inprocess.xml"/>
+  <include.projects file="config-opus_docs.xml"/>
   <include.projects file="config-opus_emme2.xml"/>
-  <include.projects file="config-opus_manual.xml"/>
   <include.projects file="config-opus_upgrade.xml"/>
   <include.projects file="config-paris.xml"/>
   <include.projects file="config-psrc.xml"/>
