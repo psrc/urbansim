@@ -1,0 +1,77 @@
+%% $Id: intro.tex,v 1.19 2001/08/16 18:01:27 pwaddell Exp $
+
+\section{Introduction}
+\label{sec:introduction}
+
+Patterns of land use and available transportation systems play a
+critical role in determining the economic vitality, livability,
+and sustainability of urban areas.  Transportation interacts
+strongly with land use.  For example, automobile-oriented
+development may induce demand for more roads and parking (which in
+turn induces more automobile-oriented development), while compact
+urban environments may induce more walking and demand for transit.
+Both land use and transportation have significant environmental
+effects, in particular on emissions, resource consumption, and
+conversion of rural to suburban or urban land.
+
+Good technical support can play an important role in fostering informed
+civic deliberation and debate on these issues.  To aid urban planners,
+residents, and elected officials in evaluating alternate
+scenarios---packages of policies and investments---we want to simulate the
+effects of these scenarios on patterns of urban growth and redevelopment,
+of transportation usage, and resource consumption, over periods of twenty
+or more years.
+
+Early attempts at comprehensive urban simulations in the 1960s and
+early 1970s were largely unsuccessful \citep{lee-1973,lee-1994}.
+Much has changed since then, both on the supply side (including
+dramatically improved hardware, theoretical and methodological
+advances such as discrete choice choice modeling
+\citep{mcfadden-1973,mcfadden-iatbr-2000}, and the emergence of a
+commercial GIS market), and on the demand side (including public
+concern over sprawl, legal challenges to transportation plans made
+without considering their land use implications
+\citep{garret-1996}, and regulatory requirements such as the Clean
+Air Act Amendments of 1990).  As a result, there has been somewhat
+of a renaissance in interest in urban simulation modeling over the
+past decade.
+
+However, in terms of planning agency practice, land use planning
+is still often poorly integrated with transportation planning,
+despite their strong interactions.  While transportation models
+have been in routine use by metropolitan planning organizations
+for decades, the state of common practice in land use modeling,
+and in integrated land use and transportation modeling, is much
+less advanced than that for transportation modeling alone.  For
+example, the Travel Model Improvement Project sponsored by the
+U.S. Department of Transportation and the Environmental Protection
+Agency has focused a substantial investment on TRANSIMS, a new
+traffic microsimulation model \citep{TRANSIMS-1999}, but almost no
+federal investment has occurred on land use modeling to integrate
+with these new travel models.
+
+The UrbanSim system has been designed and implemented in response
+to these needs.  It is a system for simulating the development of
+urban areas, including land use, transportation, and environmental
+impacts, over periods of twenty or more years
+\citep{waddell-env-and-planning-2000,urbansim-reference-2000,waddell-nse-2001}.
+From a software perspective, it is a large, complex application,
+with heavy demands for excellent space efficiency and support for
+software evolution. The system is fully operational and freely
+available via our web site at {\sf www.urbansim.org}.  It consists
+of around 130,000 lines of Java code for the core UrbanSim system;
+including the visualization, data preparation, and calibration
+tools, the total is approximately 200,000 lines, plus another
+100,000 lines of automatically generated code.  It has been
+applied to Eugene-Springfield, Oregon; Salt Lake City, Utah; and
+Honolulu, Hawaii, working with the planning organizations in those
+metropolitan regions.  Application to other regions is underway.
+We have also done a historical validation of the system, starting
+UrbanSim with 1980 data for Eugene-Springfield, running it through
+1994, and comparing the results with what actually transpired
+\citep{waddell-oregon-2000}.  Correlations between results of the
+15 year simulation and observed data were generally above 0.8 at
+the level of the grid cell, and were higher for spatial
+aggregations such as traffic analysis zones.
+
+% LocalWords:  noth UrbanSim sustainability Exp pwaddell GIS

@@ -1,0 +1,413 @@
+% $Id: research-initiatives.tex,v 1.14 2007/02/16 18:08:11 borning Exp $
+
+\subsection{Subsequent Research Initiatives}
+
+After the initial development work on the UrbanSim prototype and a first
+effort to improve the software engineering and design of the system, three
+priorities emerged.  First, we wanted to further refine the models, to
+improve their validity and comprehensiveness (see the taxonomy in Section
+\ref{sec:refinement-taxonomy}).  Second, we wanted to explore more
+systematically the issues around opening the process of using the model to
+more participation, as well as carefully considering issues of
+transparency, fairness, and the range of stakeholders affected by the
+decisions that were to be informed by information coming from the model
+system.  These priorities in turn gave rise to the third priority, namely,
+addressing the significant computational and software engineering
+challenges that then arose due to the level of detail the system was
+attempting to represent, the complexity of the models, and the need to
+support system evolution and change.
+
+Guided by these priorities, we submitted two additional NSF proposals.  In
+2001 we were fortunate enough to be awarded a 5-year NSF grant under the
+Information Technology Research Initiative, administered through the NSF
+Digital Government program, along with a companion grant from the Digital
+Government program itself.  This increased level of funding and longer
+funding period enabled us take on a substantially larger and more risky
+research agenda, while still pursuing our overall strategy of integrating
+the research with close collaboration with local and metropolitan
+governments and planning processes.  In the remainder of this section we
+summarize these initiatives.  Relating back to the taxonomy, these
+initiatives all apply to various items in the taxonomy of refinements, but
+often an initiative will pertain to several --- there is usually not a
+one-to-one mapping between initiatives and items in the taxonomy.
+
+\subsubsection{Improving Model Validity}
+
+A significant amount of the work in the past several years has concerned
+improving the validity of the models.  Much of this work has been quite
+technical, and for purposes of this case study, we mention two of these
+activities, along with providing references to papers that provide
+additional detail.
+
+The location choice models (for Household Location Choice and
+Employment Location Choice), for example, have undergone a series
+of improvements. Despite this, throughout the UrbanSim 3 efforts
+these two models suffered from a problem of dispersion. For
+example, highly desirable residential areas
+--- e.g.\ with a lake or ocean view --- typically have higher real estate
+values and wealthier residents.  Absent some significant external
+cause we would expect this to continue; yet in the simulation
+results we were seeing a dispersion of wealthy households from
+these neighborhoods, as well as poorer households moving into
+these desirable areas. (While for policy reasons we might desire
+more mixed neighborhoods, achieving this would require policy
+changes
+--- the effect we were seeing was due to some combination of model 
+specification and software implementation.)
+This shortcoming was an issue in an assessment of the application
+of UrbanSim in Salt Lake City (see Section
+\ref{sec:urbansim-applications}, and a full description in reference
+\cite{waddell-wfrc-2006}). It was only in our most recent version
+of the system, UrbanSim 4 (Section \ref{sec:opus}), that we were able to
+address this. This problem was one of several that precipitated a
+complete redesign of the software implementation, since diagnosing
+and addressing it proved to be too challenging in the UrbanSim 3
+implementation.
+
+The Developer Model, which simulates the actions of real estate
+developers, is one of the most complex of UrbanSim's component
+models.  We have had more versions of this model component than
+any other.  In part this reflects the relatively smaller amount of
+academic research on real estate supply than on demand.
+Two approaches are discussed in the real estate
+literature: the site looking for a use and the use looking for a
+site.  The former approaches the problem from the land owner's
+perspective: whether to develop a parcel, and if so, into what
+use.  The latter approaches the problem from the perspective of a
+specialized developer, say, of office space, who needs to choose a
+profitable location for the project.  Through UrbanSim 3 we
+adopted the site looking for a use perspective, which was
+consistent with the literature in land cover change. We learned
+through several model applications, however, that this approach
+was problematic from the perspective of policy sensitivity.  If we
+significantly changed the land area available for development, for
+example, modeling the introduction of an Urban Growth Boundary to
+constrain low-density development, then the amount of development
+was significantly reduced, which does not conform to expectations.
+Instead, we would expect development to continue, but at higher
+prices, and focused in the areas available for development.  So in
+the development of UrbanSim 4, we re-designed the developer model
+from the use looking for a site perspective, which has a natural
+and behaviorally-correct response to a significant change in the
+area of land available for development: it scales the
+probabilities among the remaining available sites.
+
+
+\subsubsection{Increasing Model Comprehensiveness --- Modeling
+Environmental Impacts}
+
+Another aspect of model refinement is increasing the comprehensiveness of
+UrbanSim's component models to encompass additional phenomena.  In some
+cases this is of primary interest as a means of improving model validity.
+For example, one such effort has concerned improving the Demographic
+Transition Model, which simulates the creation and removal of households
+(to simulate the real world processes of births, deaths, children leaving
+home, and movement into and out of the study area).  The primary purpose of
+this activity is to improve the validity of the location choice models.
+
+%% *** omitted for now - continue to leave out?  Put someplace else?
+%%
+%% In addition to model refinement, a companion aspect of this work has been
+%% improving technical characteristics of our modeling process, by putting
+%% parameters of this model into a set of Household Control Total tables in a
+%% SQL database, allowing easier access and modification, and improving model
+%% transparency.  These steps have significantly improved the situation
+%% relative to where we were with respect to this model in 2000.  However,
+%% shortcomings remain --- in particular, our demographic transition model
+%% still does not simulate aging and other changes within each household, but
+%% simply adds or removes households with the appropriate characteristics.  We
+%% plan to address these shortcomings in future work.
+
+Another reason to model additional phenomena is to capture important
+impacts of land use and transportation decisions, even if these impacts
+don't feed back directly into the operation of the other component models.
+Environmental impacts are the most significant class of such phenomena.  In
+our current implementation, we produce indicators of greenhouse gas
+emissions from transportation, and have a component model that simulates
+land cover change.  (Land cover is important in its own right, and is also
+useful as a factor in producing other environmental indicators --- for
+example, impervious surface affects water runoff characteristics.)  We plan
+to add additional indicators in the near future, beginning with air quality
+and resource consumption indicators.
+
+As noted above, these indicators do not currently feed back into the
+operation of the other component models --- although adding such feedback
+(e.g.\ to the residential location choice model) is a research topic for
+the future.  In any case, these indicators of environmental impact become
+important considerations in the deliberative process in which the model is
+used.
+
+\subsubsection{Value Sensitive Design}
+\label{sec:vsd}
+
+The domain of urban planning is both value laden and rife with
+long-standing disagreements.  In addition, as described in the
+introduction, there is increasing desire to move the modeling and planning
+process from a technically-focused ``back room'' operation to a more open
+and participatory one, which immediately leads to questions of who are the
+stakeholders and who should participate, along with other issues of
+transparency, accountability, and openness.  In terms of our taxonomy,
+these issues initially fall into the category of ``Support for a more
+effective democratic process,'' but fairly quickly lead to issues regarding
+the process of constructing and applying the models, as well as to
+pressures for refinements to the model.
+
+To approach these value issues in a principled fashion, we rely on the
+Value Sensitive Design theory and methodology \cite{friedman-amis-2006}.
+Value Sensitive Design is an approach to the design of information systems
+that seeks to account for human values in a principled and comprehensive
+way throughout the design process.  Key features are its interactional
+perspective, tripartite methodology (consisting of conceptual, empirical,
+and technical investigations), and emphasis on indirect as well as direct
+stakeholders.
+
+%% *** long version of the above paragraph: ***
+%%
+%% To approach these value issues in a principled fashion, we rely on the
+%% Value Sensitive Design theory and methodology \cite{friedman-amis-2006}.
+%% Value Sensitive Design is an approach to the design of information systems
+%% that seeks to account for human values in a principled and comprehensive
+%% way throughout the design process.  Key features are its interactional
+%% perspective, tripartite methodology, and emphasis on indirect as well as
+%% direct stakeholders.  Value Sensitive Design is an interactional theory:
+%% people and social systems affect technological development, and
+%% technologies --- such as urban simulation systems --- shape (but do not
+%% rigidly determine) individual behavior and social systems.  Value Sensitive
+%% Design employs a tripartite methodology, consisting of conceptual,
+%% empirical, and technical investigations.  Conceptual investigations
+%% comprise philosophically informed analyses of the central constructs and
+%% issues under investigation.  Empirical investigations focus on the human
+%% response to the technical artifact, and on the larger social context in
+%% which the technology is situated, using quantitative and qualitative
+%% methods from social science research.  Technical investigations focus on
+%% the design and performance of the technology itself.  A third key aspect of
+%% Value Sensitive Design is its focus on both direct and indirect
+%% stakeholders.  The direct stakeholders are the users of the system; the
+%% indirect stakeholders are those who dont use the system directly, but who
+%% are affected by it --- a group often overlooked in other design
+%%% methodologies.
+
+For UrbanSim in its current form, the direct stakeholders are the
+urban modelers and technical planners who use UrbanSim and
+manipulate its results.  The indirect stakeholders are those who
+do not use the system directly, but who are affected by it.  They
+include for example elected officials, members of advocacy and
+business groups, and more generally all the residents of the
+region being modeled, as well as residents of nearby regions.  One
+way of framing our goal of opening up the planning process and use
+of models to wider participation is to move more people from the
+indirect to the direct stakeholder category: to provide meaningful
+direct access to the results from the models, and ultimately to
+the tools for simulating other possible plans and futures.
+
+Early in our conceptual investigations, we made a sharp distinction between
+explicitly supported values (i.e., ones that we explicitly want to support
+in the model system) and stakeholder values (i.e., ones that are important
+to some but not necessarily all of the stakeholders).  Next, we committed
+to several key moral values to support explicitly: fairness and more
+specifically freedom from bias \cite{friedman-tois-1996},
+representativeness, accountability, and support for a democratic society.
+In turn, as part of supporting a democratic society, we decided that the
+system should not a priori favor or rule out any given set of stakeholder
+values, but instead should allow different stakeholders to articulate the
+values that are most important to them, and evaluate the alternatives in
+light of these values.  We identified comprehensibility, and subsequently 
+legitimation and transparency, as key instrumental values to be supported
+explicitly as well.
+
+In terms of specific Value Sensitive design research activities, one
+project involved carefully documenting and presenting the indicators that
+portray key results from the simulations \cite{borning-ecscw-2005} using a
+web-based Indicator Browser.  We also developed the Indicator Perspective
+framework, which allows a set of organizations with a diverse set of
+positions and interests to put forth different perspectives on what is most
+important in the results from UrbanSim, and how it should be interpreted.
+Our design for the Indicator Browser and Indicator Perspectives addresses a
+number of challenges, including responding to the values and interests of
+diverse stakeholders, and providing relatively neutral technical
+information and at the same time supporting value advocacy and opinion.  A
+third activity has been the development of ``Personal Indicators'' that
+allow individuals and households to ask how different alternatives will
+affect them personally, for example, in terms of housing costs or
+individual commute times \cite{davis-chi-2006,davis-phd}.  Together, these
+projects represent a significant set of steps toward making the modeling
+components of the planning process more open and participatory, supported
+by a solid theoretical foundation.
+
+%% \subsubsection{Other User Interface Issues}
+%% GUIs for modelers
+%% eclipse project - subsequently abandoned
+%% run monitor
+
+\subsubsection{Software Engineering}
+
+The significant performance demands of the system that arise due to the
+level of detail being represented, the complexity of
+the models, the close scrutiny of the simulation results, and the need to
+support system evolution and change, all give rise to pressures for good
+software engineering and software development practices.  The ITR grant,
+with its funding level and five-year term, enabled us to hire two software
+engineering professional with substantial industry experience, who were
+then able to provide much stronger guidance on our software development
+process, as well as being able to work closely with the students involved
+with the software side of the project over the years, including a large
+number of computer science and computer engineering undergraduates.
+
+We put into place an agile software development process
+\cite{beck-book-2000}, which relies on small, incremental development steps,
+automated testing, and responsiveness to change.  \emph{Unit tests} ---
+small, self-contained tests that exercise a particular part of the code ---
+play an essential role in the process
+\cite{hunt-book-2003,noonan-sigcse-2002}.  Following a
+modified eXtreme Programming approach \cite{beck-book-2003}, we carry this
+further and use a test-first development strategy, in which the software
+developer first writes the unit tests, and then writes the code to be
+tested.  We also rely on an automatic build system that runs all the tests
+whenever new code is checked into the code repository.  A novel feature of
+our development environment is a set of traffic lights (real ones), placed
+in the hallway of our lab and in developers' offices.  When the light is
+green, the checked-in code has passed all tests; when it is yellow, the
+tests are currently being run on newly-submitted code; and when it is red,
+one or more tests have failed.  A green light serves as a reassuring status
+indicator of the state of the software, while a red light is a powerful
+social incentive to fix the software problem, as a top priority.  The
+traffic light and other novel features of our development methodology are
+described in a paper in the 2003 Agile Development Conference
+\cite{freeman-benson-agile-2003}, while another novel feature of our
+process, the use of `today' messages as a coordination tool for software
+developers, is discussed in more detail in reference
+\cite{brush-hicss-2005}.  Finally, a recent paper
+\cite{sevcikova-issta-2006} describes a novel extension to the unit testing
+framework to handle testing stochastic models (such as many of the UrbanSim
+models).
+
+\subsubsection{Opus and UrbanSim 4}
+\label{sec:opus}
+
+In 2002 we rewrote UrbanSim again (still in Java), resulting in
+UrbanSim 3, which was our production system for several years.  The
+use of Java as an implementation language for UrbanSim was a good
+choice in many respects, but there were some problems as well, in
+particular, inaccessibility of the code to domain experts, and
+performance issues.  Regarding accessibility, our hope was that, by
+using suitable abstractions and a very clear coding style, that
+modelers (domain experts), as well as software engineers, could
+experiment with the models.  Alas, due to the inherent complexities
+of the Java implementation of UrbanSim 3 and the Java development
+environment, this did not happen. There were also some intractable
+modeling problems (regarding dispersion of housing and employment)
+that we were having great difficulty with in the Java version
+--- but which we were able to quickly resolve in some experimental code in the
+Python programming language.  We also found that, unlike Java, the
+domain experts (the modelers) \emph{were} willing to read and
+modify Python code.  Python itself has poorer performance than
+Java.  However, in recent years, a number of packages have been
+developed, including Numeric and numarray, that can be called from
+Python and that allow one to manipulate large arrays and matrices very
+efficiently.  UrbanSim simulations usually process a huge amount of
+data, which in the Java version was done using iterations written in
+Java, and is now handled using calls to these efficient packages.
+
+Another problem was the existence of a set of independent research
+projects at different institutions, all working in the domain of
+land use and transportation modeling, but that had incompatible
+platforms and implementations, making it hard to share and build on
+each other's work.  A growing consensus emerged among researchers in
+the urban modeling community that a common, open-source platform
+would greatly facilitate sharing and collaboration.  In response, an
+international group of researchers, including groups at the
+University of Toronto, the Technical University of Berlin, and ETH
+(the Swiss Federal Institute of Technology in Zurich), began
+collaborating with the UrbanSim team to developed a new software
+architecture and framework --- Opus, the Open Platform for Urban
+Simulation \cite{waddell-opus-2005}.
+
+At the same time that we were designing and implementing Opus, we began
+implementing UrbanSim~4 using the new platform (using UrbanSim as
+one of the test cases for the design and implementation of Opus). We
+continued using our agile, test-driven development methodology with
+Opus/UrbanSim. We now have a well-functioning system, written in
+Python, that makes heavy use of efficient matrix and array
+manipulation libraries.  Opus and UrbanSim 4
+contain far less code than the previous implementation, yet
+implement a much more modular and user-extensible system that also
+runs faster. UrbanSim 4 also incorporates key functional extensions
+such as integrated model estimation and visualization.  In terms of
+our taxonomy (Section \ref{sec:refinement-taxonomy}), these
+extensions are process refinements that address technical and
+engineering issues. Model estimation, for example, was formerly an
+error-prone process involving using external econometric packages,
+which required several months of skilled staff time.  With the
+integrated estimation capabilities, models can now be estimated in
+less than a day.  The integrated visualization facilities don't
+provide quite such a dramatic gain in efficiency, but nevertheless
+make it much easier to produce simple visualizations of indicator
+results for diagnosis and policy application.
+
+%*** drop the following paragraph? (well, comment it out?) ***
+
+Another component of the Opus work --- our data storage
+representation --- illustrates the ongoing tension between ease of
+use and transparent access on the one hand, and efficiency on the
+other.  In UrbanSim 2, input data for the simulation was held in a
+single large binary file that used a format specific to UrbanSim
+(and similarly for output data).  This was efficient but not
+particularly transparent.  In addition, we regularly changed the
+format to meet new requirements, introducing versioning problems.
+For UrbanSim 3, we moved to a SQL database, using MySQL, an
+efficient, widely-used open source database.  The database schema
+was carefully documented in our web-based documentation.  Indicators
+were defined using SQL queries, which were part of ``live''
+technical documentation \cite{borning-ecscw-2005}.  This greatly
+enhanced transparency, but at a cost in efficiency.  In particular,
+computing a set of indicators could take longer than the run time
+for the simulation itself.  In Opus and UrbanSim 4, we support a variety of
+data storage formats, including a SQL database, binary files (using
+the format defined by the numarray package), tab-delimited files,
+and others. Indicators can now be defined using Opus variable
+definitions in addition to SQL queries. This is currently a
+considerably less transparent format, but indicator values can now
+be computed in minutes rather than hours.  We expect to be able to
+design ways to increase the transparency of this more efficient
+approach by developing appropriate user interfaces for browsing and
+computing indicators.
+
+We released Opus and UrbanSim 4 in June 2006. UrbanSim is currently in use
+in projects in the U.S. for the metropolitan regions around Detroit, El
+Paso, Honolulu, Houston, and Seattle, and internationally in Amsterdam,
+Paris, Tel Aviv, and Zurich. Additional projects have been launched in
+Burlington, Durham, Phoenix, and San Francisco, and internationally in
+Melbourne, Australia. Many of the current projects, as well as all of the
+new ones, are now using UrbanSim 4. In July 2006 we hosted the second
+UrbanSim Users Group meeting, which included 35 participants from across 18
+Chapter 22 the U.S., as well as Netherlands and Israel. The primary purpose
+of this meeting was to assist current users in transitioning to UrbanSim 4.
+
+\subsubsection{Uncertainty}
+\label{sec:uncertainty}
+
+We recently started a project to provide a principled statistical
+analysis of uncertainty in UrbanSim, and to portray these results in
+a clear and useful way to the users of the system.  In this work, we are
+leveraging a promising technique, Bayesian melding,
+which combines evidence and uncertainty about the inputs and outputs
+of a computer model to yield distributions of quantities of policy
+interest.  From this can be derived both best estimates and
+statements of uncertainty about these quantities. This past year we
+have had some initial success in employing this technique, applying
+it to calibrate the model using various sources of uncertainty with
+an application in Eugene-Springfield, Oregon. These results are
+reported in a recent journal article \cite{sevcikova-trb-2006}. Once
+the analysis infrastructure is in place, we will extend the
+Indicator Browser and other interaction and
+visualization tools to include appropriate depictions of
+uncertainty.  We also intend to extend the uncertainty analysis to
+address simultaneously the problems of developing data for use in
+modeling (which is currently a very tedious and error-prone process)
+and analyzing the role of uncertainty in input data on model
+estimation and on simulation results.
+
+% LocalWords:  tex pwaddell UrbanSim ITR Biocomplexity interactional analyses
+% LocalWords:  integratively Socha Numarray MPOs San borning eXtreme ETH SQL
+% LocalWords:  numarray UrbanSim's versioning MySQL FHWA COE NGO Utahns WFRC
+% LocalWords:  WFRCs LRP PSRC amis

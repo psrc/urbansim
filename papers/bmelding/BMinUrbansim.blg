@@ -1,0 +1,45 @@
+This is BibTeX, Version 0.99c (Web2C 7.4.5)
+The top-level auxiliary file: BMinUrbansim.aux
+The style file: chicago.bst
+Database file #1: bmliterature.bib
+You've used 16 entries,
+            2861 wiz_defined-function locations,
+            711 strings with 7567 characters,
+and the built_in function-call counts, 11345 in all, are:
+= -- 928
+> -- 883
+< -- 0
++ -- 266
+- -- 302
+* -- 1047
+:= -- 2100
+add.period$ -- 49
+call.type$ -- 16
+change.case$ -- 117
+chr.to.int$ -- 16
+cite$ -- 16
+duplicate$ -- 287
+empty$ -- 670
+format.name$ -- 346
+if$ -- 2077
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 19
+newline$ -- 83
+num.names$ -- 162
+pop$ -- 88
+preamble$ -- 1
+purify$ -- 216
+quote$ -- 0
+skip$ -- 302
+stack$ -- 0
+substring$ -- 603
+swap$ -- 87
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 290
+warning$ -- 0
+while$ -- 161
+width$ -- 0
+write$ -- 212

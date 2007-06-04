@@ -1,0 +1,240 @@
+
+SUB_MODEL_ID = 1
+Variable	-1	1	2	3	4	5	9
+Constant	0.134 (0)	-8.742 (0)	-15.551 (0)	-21.635 (0)	-41.762 (0)	-26.878 (0)	-7.347 (0)
+Indicator for cells near an arterial	--	0.488 (0.275)!	--	--	-0.377 (0.273)	-0.377 (0.273)	1.052 (0.308)!!
+Indicator for cells near a highway	--	--	-0.663 (0.120)!!	-0.663 (0.120)!!	--	--	--
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	0.329 (0.094)!!	0.329 (0.094)!!	--	1.787 (0.501)!!	--	--
+Log of the total land value in the grid cell	--	-0.165 (0.089)!	0.784 (0.039)!!	1.516 (0.078)!!	1.211 (0.209)!!	1.745 (0.245)!!	--
+Percent of development type group commercial within walking distance	--	-0.045 (0.006)!!	-0.045 (0.006)!!	-0.045 (0.006)!!	-0.045 (0.006)!!	--	0.054 (0.017)!!
+Percent of development type group industrial within walking distance	--	--	-0.064 (0.014)!!	--	--	--	0.038 (0.036)
+Percent of development type group residential within walking distance	--	--	--	--	--	--	--
+A measure of proximity to development	--	--	--	--	--	--	--
+
+SUB_MODEL_ID = 2
+Variable	-1	2	3	4	5	6	9	17
+Constant	0.914 (0)	-12.540 (0)	-15.081 (0)	-28.278 (0)	-18.582 (0)	-6.660 (0)	-3.439 (0)	-7.668 (0)
+Indicator for cells near an arterial	--	-0.283 (0.044)!!	-0.283 (0.044)!!	-0.466 (0.166)!!	-0.873 (0.355)!!	--	0.449 (0.291)	--
+Indicator for cells near a highway	--	-0.544 (0.072)!!	-0.544 (0.072)!!	-0.888 (0.290)!!	-1.177 (0.591)!!	--	--	--
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	0.584 (0.076)!!	0.209 (0.077)!!	0.827 (0.217)!!	--	--	--	--
+Log of the total land value in the grid cell	--	0.314 (0.039)!!	0.905 (0.043)!!	1.176 (0.098)!!	1.176 (0.098)!!	--	-0.185 (0.184)	--
+Percent of development type group commercial within walking distance	--	-0.032 (0.004)!!	-0.032 (0.004)!!	-0.019 (0.011)!	--	--	0.059 (0.019)!!	--
+Percent of development type group industrial within walking distance	--	-0.053 (0.011)!!	-0.022 (0.009)!!	--	--	--	-0.069 (0.068)	--
+Percent of development type group residential within walking distance	--	-0.004 (0.001)!!	-0.004 (0.001)!!	-0.004 (0.001)!!	-0.013 (0.006)!!	--	-0.013 (0.010)	--
+A measure of proximity to development	--	--	--	--	--	--	--	--
+
+SUB_MODEL_ID = 3
+Variable	-1	3	4	5	6	7	9
+Constant	0.985 (0)	-7.940 (0)	-11.276 (0)	-21.785 (0)	-21.130 (0)	-5.881 (0)	-6.269 (0)
+Indicator for cells near an arterial	--	-0.210 (0.041)!!	-0.210 (0.041)!!	-0.210 (0.041)!!	--	--	--
+Indicator for cells near a highway	--	-0.447 (0.064)!!	-0.447 (0.064)!!	-0.447 (0.064)!!	--	--	--
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	0.131 (0.057)!!	0.140 (0.076)!	0.923 (0.180)!!	1.193 (0.462)!!	--	--
+Log of the total land value in the grid cell	--	0.488 (0.040)!!	0.656 (0.052)!!	0.656 (0.052)!!	--	--	--
+Percent of development type group commercial within walking distance	--	-0.051 (0.004)!!	-0.025 (0.005)!!	-0.039 (0.011)!!	0.038 (0.016)!!	--	--
+Percent of development type group industrial within walking distance	--	-0.046 (0.008)!!	-0.027 (0.010)!!	--	--	--	--
+Percent of development type group residential within walking distance	--	-0.015 (0.001)!!	-0.010 (0.002)!!	-0.025 (0.003)!!	--	--	--
+A measure of proximity to development	--	--	--	--	--	--	--
+
+SUB_MODEL_ID = 4
+Variable	-1	4	5	6	7
+Constant	0.731 (0)	-4.123 (0)	-4.289 (0)	-21.691 (0)	-7.264 (0)
+Indicator for cells near an arterial	--	-0.215 (0.049)!!	-0.215 (0.049)!!	-0.505 (0.383)	--
+Indicator for cells near a highway	--	-0.528 (0.074)!!	-0.528 (0.074)!!	-0.528 (0.074)!!	--
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	0.022 (0.058)	--	1.386 (0.403)!!	--
+Log of the total land value in the grid cell	--	0.244 (0.038)!!	0.244 (0.038)!!	--	--
+Percent of development type group commercial within walking distance	--	-0.035 (0.003)!!	-0.035 (0.003)!!	-0.027 (0.021)	--
+Percent of development type group industrial within walking distance	--	-0.034 (0.008)!!	--	--	--
+Percent of development type group residential within walking distance	--	-0.012 (0.001)!!	-0.016 (0.002)!!	-0.016 (0.002)!!	--
+A measure of proximity to development	--	--	--	--	--
+
+SUB_MODEL_ID = 5
+Variable	-1	5	6	7
+Constant	0.796 (0)	-0.980 (0)	-9.494 (0)	-7.528 (0)
+Indicator for cells near an arterial	--	-0.267 (0.062)!!	-0.267 (0.062)!!	--
+Indicator for cells near a highway	--	-0.558 (0.098)!!	-0.558 (0.098)!!	--
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	-0.153 (0.079)!	0.676 (0.139)!!	--
+Log of the total land value in the grid cell	--	0.197 (0.056)!!	--	--
+Percent of development type group commercial within walking distance	--	-0.047 (0.004)!!	-0.047 (0.004)!!	--
+Percent of development type group industrial within walking distance	--	-0.021 (0.008)!!	-0.034 (0.015)!!	--
+Percent of development type group residential within walking distance	--	-0.021 (0.002)!!	-0.033 (0.003)!!	--
+A measure of proximity to development	--	--	--	--
+
+SUB_MODEL_ID = 6
+Variable	-1	6	7
+Constant	0.323 (0)	-7.484 (0)	-6.098 (0)
+Indicator for cells near an arterial	--	-0.281 (0.127)!!	--
+Indicator for cells near a highway	--	-0.448 (0.186)!!	--
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	0.514 (0.140)!!	--
+Log of the total land value in the grid cell	--	--	0.283 (0.166)!
+Percent of development type group commercial within walking distance	--	-0.031 (0.007)!!	-0.031 (0.007)!!
+Percent of development type group industrial within walking distance	--	-0.035 (0.011)!!	-0.035 (0.011)!!
+Percent of development type group residential within walking distance	--	-0.027 (0.004)!!	-0.035 (0.006)!!
+A measure of proximity to development	--	--	--
+
+SUB_MODEL_ID = 7
+Variable	-1	7
+Constant	0.329 (0)	-5.472 (0)
+Indicator for cells near an arterial	--	--
+Indicator for cells near a highway	--	-0.596 (0.190)!!
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	--
+Log of the total land value in the grid cell	--	0.109 (0.072)
+Percent of development type group commercial within walking distance	--	0.012 (0.009)
+Percent of development type group industrial within walking distance	--	0.018 (0.016)
+Percent of development type group residential within walking distance	--	0.011 (0.005)!!
+A measure of proximity to development	--	--
+
+SUB_MODEL_ID = 8
+Variable	-1	8
+Constant	0.331 (0)	-3.470 (0)
+Indicator for cells near an arterial	--	-0.574 (0.433)
+Indicator for cells near a highway	--	--
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	2.033 (0.960)!!
+Log of the total land value in the grid cell	--	-2.048 (0.582)!!
+Percent of development type group commercial within walking distance	--	0.030 (0.025)
+Percent of development type group industrial within walking distance	--	-0.138 (0.051)!!
+Percent of development type group residential within walking distance	--	0.019 (0.017)
+A measure of proximity to development	--	--
+
+SUB_MODEL_ID = 9
+Variable	-1	4	9	10	17
+Constant	0.562 (0)	-11.877 (0)	0.966 (0)	-5.878 (0)	-6.266 (0)
+Indicator for cells near an arterial	--	--	-0.135 (0.132)	--	--
+Indicator for cells near a highway	--	-1.098 (0.644)!	-0.913 (0.198)!!	--	--
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	-0.582 (0.694)	-0.718 (0.236)!!	--	--
+Log of the total land value in the grid cell	--	0.907 (0.444)!!	0.316 (0.122)!!	--	--
+Percent of development type group commercial within walking distance	--	-0.041 (0.029)	-0.023 (0.008)!!	--	--
+Percent of development type group industrial within walking distance	--	0.031 (0.022)	-0.019 (0.009)!!	--	--
+Percent of development type group residential within walking distance	--	0.056 (0.013)!!	0.031 (0.004)!!	--	--
+A measure of proximity to development	--	--	--	--	--
+
+SUB_MODEL_ID = 10
+Variable	-1	10
+Constant	0.342 (0)	-11.403 (0)
+Indicator for cells near an arterial	--	-0.357 (0.279)
+Indicator for cells near a highway	--	-1.155 (0.393)!!
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	1.314 (0.451)!!
+Log of the total land value in the grid cell	--	-0.667 (0.291)!!
+Percent of development type group commercial within walking distance	--	--
+Percent of development type group industrial within walking distance	--	--
+Percent of development type group residential within walking distance	--	0.011 (0.007)
+A measure of proximity to development	--	--
+
+SUB_MODEL_ID = 11
+Variable	-1	11
+Constant	0.327 (0)	-4.005 (0)
+Indicator for cells near an arterial	--	-0.259 (0.207)
+Indicator for cells near a highway	--	-0.822 (0.247)!!
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	--
+Log of the total land value in the grid cell	--	--
+Percent of development type group commercial within walking distance	--	0.014 (0.011)
+Percent of development type group industrial within walking distance	--	--
+Percent of development type group residential within walking distance	--	0.014 (0.007)!
+A measure of proximity to development	--	--
+
+SUB_MODEL_ID = 12
+Variable	-1	12
+Constant	0.669 (0)	-3.304 (0)
+Indicator for cells near an arterial	--	--
+Indicator for cells near a highway	--	--
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	--
+Log of the total land value in the grid cell	--	--
+Percent of development type group commercial within walking distance	--	--
+Percent of development type group industrial within walking distance	--	--
+Percent of development type group residential within walking distance	--	--
+A measure of proximity to development	--	--
+
+SUB_MODEL_ID = 14
+Variable	-1	14
+Constant	0.605 (0)	-4.376 (0)
+Indicator for cells near an arterial	--	--
+Indicator for cells near a highway	--	--
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	--
+Log of the total land value in the grid cell	--	--
+Percent of development type group commercial within walking distance	--	--
+Percent of development type group industrial within walking distance	--	--
+Percent of development type group residential within walking distance	--	--
+A measure of proximity to development	--	--
+
+SUB_MODEL_ID = 17
+Variable	-1	11	17
+Constant	0.187 (0)	-19.608 (0)	-7.511 (0)
+Indicator for cells near an arterial	--	-0.837 (0.302)!!	-0.624 (0.171)!!
+Indicator for cells near a highway	--	-1.143 (0.397)!!	-0.779 (0.206)!!
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	--	--
+Log of the total land value in the grid cell	--	1.038 (0.261)!!	0.328 (0.137)!!
+Percent of development type group commercial within walking distance	--	--	-0.034 (0.009)!!
+Percent of development type group industrial within walking distance	--	--	-0.044 (0.014)!!
+Percent of development type group residential within walking distance	--	0.034 (0.007)!!	0.019 (0.006)!!
+A measure of proximity to development	--	--	--
+
+SUB_MODEL_ID = 18
+Variable	-1	12	18
+Constant	0.740 (0)	-5.799 (0)	-3.597 (0)
+Indicator for cells near an arterial	--	--	--
+Indicator for cells near a highway	--	--	-0.997 (0.343)!!
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	--	--
+Log of the total land value in the grid cell	--	--	--
+Percent of development type group commercial within walking distance	--	--	-0.040 (0.015)!!
+Percent of development type group industrial within walking distance	--	--	-0.030 (0.025)
+Percent of development type group residential within walking distance	--	--	0.035 (0.009)!!
+A measure of proximity to development	--	--	--
+
+SUB_MODEL_ID = 19
+Variable	-1	19
+Constant	0.147 (0)	-6.788 (0)
+Indicator for cells near an arterial	--	-0.763 (0.486)
+Indicator for cells near a highway	--	--
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	--
+Log of the total land value in the grid cell	--	--
+Percent of development type group commercial within walking distance	--	-0.021 (0.020)
+Percent of development type group industrial within walking distance	--	-0.156 (0.124)
+Percent of development type group residential within walking distance	--	0.063 (0.018)!!
+A measure of proximity to development	--	--
+
+SUB_MODEL_ID = 20
+Variable	-1	20
+Constant	0.106 (0)	-5.024 (0)
+Indicator for cells near an arterial	--	--
+Indicator for cells near a highway	--	--
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	--
+Log of the total land value in the grid cell	--	--
+Percent of development type group commercial within walking distance	--	0.025 (0.015)
+Percent of development type group industrial within walking distance	--	-0.020 (0.013)
+Percent of development type group residential within walking distance	--	0.055 (0.012)!!
+A measure of proximity to development	--	--
+
+SUB_MODEL_ID = 21
+Variable	-1	21
+Constant	0.351 (0)	-4.207 (0)
+Indicator for cells near an arterial	--	--
+Indicator for cells near a highway	--	--
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	--
+Log of the total land value in the grid cell	--	--
+Percent of development type group commercial within walking distance	--	--
+Percent of development type group industrial within walking distance	--	--
+Percent of development type group residential within walking distance	--	--
+A measure of proximity to development	--	--
+
+SUB_MODEL_ID = 23
+Variable	-1	23
+Constant	0.121 (0)	5.506 (0)
+Indicator for cells near an arterial	--	--
+Indicator for cells near a highway	--	--
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	-1.604 (0.320)!!
+Log of the total land value in the grid cell	--	0.652 (0.111)!!
+Percent of development type group commercial within walking distance	--	--
+Percent of development type group industrial within walking distance	--	-0.031 (0.028)
+Percent of development type group residential within walking distance	--	0.030 (0.005)!!
+A measure of proximity to development	--	--
+
+SUB_MODEL_ID = 24
+Variable	-1	1	2	3	4	5	6	7	9	17	20	21	22
+Constant	0.436 (0)	-11.933 (0)	-19.182 (0)	-22.624 (0)	-22.624 (0)	-22.624 (0)	-9.141 (0)	-30.953 (0)	-15.900 (0)	-18.625 (0)	-19.219 (0)	-18.395 (0)	-7.524 (0)
+Indicator for cells near an arterial	--	0.302 (0.066)!!	0.302 (0.066)!!	--	--	--	--	1.255 (0.274)!!	0.823 (0.144)!!	0.806 (0.241)!!	1.196 (0.270)!!	1.610 (0.305)!!	--
+Indicator for cells near a highway	--	-0.579 (0.127)!!	-0.970 (0.170)!!	-1.220 (0.236)!!	-0.669 (0.299)!!	-0.802 (0.427)!	--	--	0.860 (0.162)!!	1.723 (0.226)!!	--	--	--
+Log of accessibility to population for one-vehicle households in the cell's TAZ	--	-0.443 (0.087)!!	-0.443 (0.087)!!	-0.596 (0.136)!!	-0.596 (0.136)!!	-0.596 (0.136)!!	--	0.330 (0.156)!!	0.330 (0.156)!!	--	--	--	--
+Log of the total land value in the grid cell	--	0.941 (0.039)!!	1.579 (0.052)!!	1.999 (0.069)!!	1.914 (0.069)!!	1.863 (0.069)!!	--	1.541 (0.193)!!	0.194 (0.051)!!	0.746 (0.103)!!	0.885 (0.099)!!	0.885 (0.099)!!	--
+Percent of development type group commercial within walking distance	--	-0.058 (0.007)!!	-0.058 (0.007)!!	-0.058 (0.007)!!	-0.058 (0.007)!!	-0.058 (0.007)!!	--	0.034 (0.014)!!	0.060 (0.008)!!	0.048 (0.012)!!	0.031 (0.014)!!	0.045 (0.015)!!	--
+Percent of development type group industrial within walking distance	--	-0.080 (0.011)!!	-0.055 (0.011)!!	-0.036 (0.010)!!	-0.036 (0.010)!!	-0.036 (0.010)!!	--	-0.036 (0.010)!!	0.030 (0.008)!!	--	0.056 (0.008)!!	0.024 (0.012)!!	--
+Percent of development type group residential within walking distance	--	0.025 (0.001)!!	0.025 (0.001)!!	0.025 (0.001)!!	0.025 (0.001)!!	0.025 (0.001)!!	--	0.008 (0.003)!!	0.008 (0.003)!!	--	-0.055 (0.010)!!	-0.107 (0.019)!!	--
+A measure of proximity to development	--	3.396 (0.250)!!	3.396 (0.250)!!	3.396 (0.250)!!	3.396 (0.250)!!	3.396 (0.250)!!	--	3.396 (0.250)!!	3.396 (0.250)!!	3.396 (0.250)!!	2.314 (0.686)!!	2.314 (0.686)!!	--

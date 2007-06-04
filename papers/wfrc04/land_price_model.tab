@@ -1,0 +1,59 @@
+Variable	-2
+Constant	-6.386 (0.108)!!
+Indicator for development type 1	-0.436 (0.036)!!
+Indicator for development type 10	0.187 (0.069)!!
+Indicator for development type 11	0.252 (0.052)!!
+Indicator for development type 12	0.281 (0.093)!!
+Indicator for development type 13	0.483 (0.085)!!
+Indicator for development type 14	0.084 (0.080)
+Indicator for development type 15	0.190 (0.128)
+Indicator for development type 16	0.672 (0.123)!!
+Indicator for development type 17	0.401 (0.036)!!
+Indicator for development type 18	0.708 (0.042)!!
+Indicator for development type 19	0.912 (0.045)!!
+Indicator for development type 2	-0.243 (0.037)!!
+Indicator for development type 20	0.273 (0.041)!!
+Indicator for development type 21	0.278 (0.047)!!
+Indicator for development type 22	0.608 (0.047)!!
+Indicator for development type 23	0.114 (0.015)!!
+Indicator for development type 3	-0.181 (0.041)!!
+Indicator for development type 4	-0.093 (0.045)!!
+Indicator for development type 5	-0.151 (0.048)!!
+Indicator for development type 6	-0.312 (0.051)!!
+Indicator for development type 7	-0.612 (0.056)!!
+Indicator for development type 8	-0.760 (0.081)!!
+Indicator for development type 9	-0.083 (0.030)!!
+Indicator for cells near a highway	0.135 (0.015)!!
+Log of the average total value per residential unit within walking distance	-0.004 (9.551e-04)!!
+Log of commercial sq.ft. in the grid cell	-0.067 (0.003)!!
+Log of commercial sq.ft within walking distance	3.029e-05 (0.001)
+Log of the distance to nearest highway	0.058 (0.003)!!
+Log of accessibility to employment for one-vehicle households in the cell's TAZ	-0.829 (0.032)!!
+Log of accessibility to population for one-vehicle households in the cell's TAZ	2.024 (0.036)!!
+Log of the percent of development type group commercial within walking distance	0.033 (0.004)!!
+Log of the percent of development type group governmental within walking distance	0.055 (0.003)!!
+Log of the percent of development type group industrial within walking distance	0.056 (0.005)!!
+Log of the percent of development type group mixed use within walking distance	0.007 (0.004)
+Log of the number of residential units in the grid cell	0.186 (0.012)!!
+Log of the number of residential units within walking distance	0.163 (0.003)!!
+Log of total employment within walking distance	0.049 (0.003)!!
+Log of total improvement value in the cell	0.119 (0.003)!!
+Percent of cell covered by floodplain	-0.006 (3.162e-04)!!
+Percent of cell covered by open space	0.005 (2.076e-04)!!
+Percent of cell covered by public space	-0.004 (2.090e-04)!!
+Percent of cell covered by roads	-0.002 (2.378e-04)!!
+Percent of cell covered by slope	-0.014 (2.291e-04)!!
+Percent of cell covered by stream buffers	-0.010 (8.325e-04)!!
+Percent of cell covered by water	-0.005 (3.738e-04)!!
+Percent of cell covered by wetland	-0.010 (3.627e-04)!!
+Indicator for plantype 1	-0.009 (0.021)
+Indicator for plantype 10	-0.143 (0.042)!!
+Indicator for plantype 2	0.477 (0.011)!!
+Indicator for plantype 3	0.679 (0.016)!!
+Indicator for plantype 4	0.565 (0.014)!!
+Indicator for plantype 5	0.811 (0.127)!!
+Indicator for plantype 6	0.565 (0.020)!!
+Indicator for plantype 7	0.385 (0.022)!!
+Indicator for plantype 8	1.628 (0.026)!!
+Indicator for plantype 9	-0.482 (0.481)
+Overall vacancy rate in cell	

@@ -1,0 +1,7 @@
+% $Id: weblinks.txt,v 1.1 2005/10/08 00:02:47 bleek Exp $
+
+http://www.acm.org/pubs/contents/proceedings/series/issta/
+
+http://www.informatik.uni-trier.de/~ley/db/conf/issta/issta2002.html
+
+http://www.informatik.uni-trier.de/~ley/db/conf/issta/issta96.html

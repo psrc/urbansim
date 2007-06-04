@@ -1,0 +1,7 @@
+*.dvi
+*.aux
+*.bbl
+*.blg
+*.pdf
+*.ps
+.project

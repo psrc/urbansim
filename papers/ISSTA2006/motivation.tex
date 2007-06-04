@@ -1,0 +1,149 @@
+% $Id: motivation.tex,v 1.5 2006/01/25 03:58:04 borning Exp $
+
+% *** THIS SECTION IS NO LONGER USED
+% (some of it is folded into the ``Prior Experience with UrbanSim'' section)
+
+
+\section{Motivation for a Statistical Approach}
+
+In response to the problems with testing described in the previous section, we 
+set out to design robust, statistically-based tests that would be intuitive to 
+the modelers and straightforward to write for the software developers.  This 
+section describes how our solutions evolved, and in the process highlights some 
+of the types of problems that we needed to solve.  The following section
+describes the statistical mechanism and justification for the final solution. 
+And the section after that describes some generalizations and design patterns
+that derive from our solution.
+
+Our current use of stochasting testing focuses on testing individual land-use ``models''
+in isolation.  Each run of our simulation system sequentially runs a set of
+models.  The question we were addressing was whether each individual model was
+behaving correctly in isolation.  
+
+For instance, the \emph{Household Location Choice model} allows households to choose a 
+new place to live.  The basic idea is that each such household gets presented a 
+small set of alternative locations from which they may choose.  For each 
+location, the household computes ``attractiveness'' measure, and then uses that 
+to determine which location to choose.
+
+This process has two stochastic steps.  First, randomness is used to draw the 
+set of alternative locations from the total universe of available locations. 
+Second, randomness is used to select from the available locations based upon 
+their ``attractiveness'' -- this allows locations that are nearly equally 
+attractive to be choosen with nearly equal probability.
+
+To test that households preferentially choose attractiveness locations, we 
+created a set of 100 locations.  Half of these had a ``cost'' of 100; the others 
+a ``cost'' of 1000.  Presumably, households would prefer to choose the less 
+expensive locations.  How much more they would choose locations with a cost of 
+100 versus those with a cost of 1000 depends upon the ``attractiveness'' 
+formula used by the households.  For this test, we defined a very simple 
+attractiveness formula where a location $l$'s attactiveness, $a_{l}$, is a 
+simple function of that location's cost, $c_{l}$: $a_{l} = -0.001 * c_{l}$.  
+The higher the cost, the less attactive the location.  Using this formula, we 
+determined that $71\%$ of the households should choose the less expensive 
+locations, and the remaining $29\%$ the more expensive locations.
+
+The next step was to determine how many households to use for this test. 
+Clearly, using a single household would be unsatisfactory, since it would not
+provide us enough resolution about the distribution.  We decided to use 10000
+households, since we thought that would be a large enough sample.
+
+These model tests are similar to unit tests, so we built our stochastic test 
+system by extending the standard PyUnit unit-testing framework.
+
+\subsection{First solution: Tolerance}
+
+Our first test technique ran the model once on the test data to place all 10000 
+households, and then compared the actual proportion of households that choose
+the less expensive locations to the expected ratio of $0.71$.  If it was within
+some tolerance of the expected value, we were happy enough.  The Python code for
+this was:
+
+\begin{verbatim}
+... run model ...
+n = # of households in more attractive grid cells
+self.assert_(allclose(n, 10000*0.71, rtol=0.05))
+\end{verbatim}
+
+When such a test occassionally failed, we ran it again.  
+
+But what was the appropriate amount of tolerance to allow?  Some tests used 
+0.05, others 0.40. This made us nervous -- were we really catching errors?  Or 
+were some tests so loose they were ineffective?  When tests failed more than 
+was comfortable, we would increase the relative tolerance value to some 
+arbitrarily higher value.  Very unsatisfying.
+
+We also looked for solutions to this problem elsewhere, but could not find any 
+-- at least not in the software engineering or testing literature.
+
+\subsection{Second solution: Multiple Runs}
+
+Some tests continued to fail more than we liked.  But we did not want to 
+increase the tolerance.  Instead, we decided to run the test multiple times and 
+see if it passed at least once:
+
+\begin{verbatim}
+succeeded = False
+for i in range(2):
+    ... run model ...
+    n = # of households in more attr. grid cells
+    if allclose(n, 10000*0.71, rtol=0.05):
+        succeeded = True
+self.assert_(succeeded)
+\end{verbatim}
+
+Again, we knew this was a hack, but we did not know how to do it correctly.  We 
+hoped it would work well enough until we could think it through.
+
+[2006-jan-24-wgb: I would place the following paragraph somewhere else since it
+suggests that particularly the above code is referenced. From knowing the project it is
+not this particular one but the idea of the first and second solution in general.]
+
+As we increased the number of such tests in the system, the automated build 
+system started to fail more and more frequently simply because one of the 
+stochastic tests failed.  Also, people were worrying that the code was broken, 
+when it was only our test techniques that were broken (or at least we hoped it 
+was only the latter).
+
+\subsection{Third solution: Stochastic Foundation}
+
+At last, we knew we had to find the right solution.  After a series of 
+conversations with Hana, our statistician, one day she came in and filled our 
+white board with the solution.  It was a relief, since it appeared to be a 
+solution grounded in statistical theory, and one that eliminated much of the 
+guesswork.  
+[2006-jan-24-wgb: as a non-native speaker the words "appeared to be" 
+read as if the authors are uncertain. Is this correct/intended?]
+
+We implemented the solution in a class {\sf StochasticTestCase} that extended 
+PyUnit's {\sf TestCase} class with a single new method: 
+{\sf run\_stochastic\_test}.  
+This method takes a ``run method'' that returns an 
+array of values by running a model, an array of expected results, and the 
+number of times to run the ``run method'' before doing the comparison.  We made 
+sure it worked in one case, and then returned to our other work.  Every time 
+one of our naively constructed stochastic tests failed, we would replace it 
+with the new {\sf StochasticTestCase} solution.  
+
+For instance, for the \emph{Household Location Choice model}, the code looks like the 
+following.  Note that we halved the number of households to improve the run 
+time, now that we were more confidence in the test.
+
+\begin{verbatim}
+def run_model():
+    ... run model ...
+expected_results = array(50*[5000*0.71/50])
+self.run_stochastic_test(run_model, 
+                         expected_results, 10)
+\end{verbatim}
+
+This solution felt much better.  It was based upon solid statistics.  And it 
+also tested that the distribution of households was uniform across the 50 
+attractive grid cells.
+
+We were still nervous, though, since some of the test cases continued to fail 
+more than would be expected.  How should we determine the number of times to 
+run the ``run method''?  How many households and locations did we need to use? 
+This required us to know more about the power of the tests.
+

@@ -1,0 +1,1168 @@
+\section{Old Introduction}
+Regional transportation planning has historically been poorly
+integrated with land use planning in the United States, where
+local municipalities control land use policy.  However, there is
+growing interest in coordinating these policies to achieve
+overarching regional objectives, such as economic competitiveness,
+high levels of accessibility, social equity, and environmental
+protection.  Metropolitan Planning Organizations are charged with
+responsibility for coordinating the development of long-term
+regional transportation plans, and make substantial use of travel
+demand model systems and aggregate macroeconomic forecasts in
+preparing these plans.   To date, however, the integration of
+macroeconomic models and transportation models with models of
+urban land use development has been rare.  This paper describes
+the application of a land use model system to the metropolitan
+region surrounding Seattle, Washington, and its integration with a
+regional transportation model system and a regional macroeconomic
+model system.
+
+UrbanSim is a model system has been developed over the past
+several years to support intra-metropolitan simulation and policy
+analysis of transportation, land use, and environmental policies.
+The system is available as Open Source software at
+http://www.urbansim.org. As the theory, specifications and
+software architecture of UrbanSim have been documented previously
+(Waddell, 2002; Waddell et al., 2003; Noth et al., 2003), this
+paper focuses on aspects that have not been previously documented
+in the literature, and condenses the discussion of the theory and
+specification of the model system in the following section. The
+focus in this paper is on the interfacing of the travel models
+with UrbanSim via alternative accessibility measures, the linkage
+with a regional macroeconomic model, development of the database,
+and results from the model estimation for the Central Puget Sound
+region.  The model development effort described here represents
+the initial phase of development of an integrated model system for
+operational use in regional planning by the Puget Sound Regional
+Council and affiliated agencies.  The system is currently being
+tested in preparation for use in the development of an updated
+regional transportation plan.
+
+\section{Model Specification}
+
+UrbanSim simulates annually key events and choice processes
+related to urban spatial development and location of activities,
+at the level of individual households, jobs, and locations defined
+by small grid cells of 150 by 150 meters. The main model
+components are the economic and demographic transition models, the
+household and employment mobility (intra-urban relocation) models,
+the household and employment location choice models, the real
+estate development model, and the land price model.
+
+It is worth noting that a key feature of the model system, in
+addition to its microsimulation representation, is that it
+represents the processes modeled as either short-term (less than
+one year) or long-term (more than one year), with the long-term
+processes fixed for the short-term processes.  Specifically,
+household and firm relocation and location choices, reflecting the
+demand side of the real estate market, are treated as elastic in
+the short-term, while the supply-side of the real estate market
+represented by real estate development, is treated as a long-term
+process due to the time lags involved in real estate development.
+This means that real estate prices adjust in the short-term to
+account for short-term imbalances between real estate demand and
+supply.  This formulation marks a clear departure from
+full-equilibrium treatments that are more common in urban
+simulation, which abstract the adjustments over time to reflect a
+temporally-indefinite result that exhibits no path-dependence. The
+approach we use reflects current understanding of the implications
+of durability of real estate, the lag times in real estate
+development, and the development and price volatility that
+accompany local business cycles.
+
+Exploiting the Random Utility Maximization (RUM) models pioneered
+by McFadden (1974, 1981), UrbanSim implements the residential
+location choice, employment location choice, and real-estate
+development choice models as discrete choice models\footnote{This
+section draws substantially on a longer description of the model
+theory and specification provided in Waddell \emph{et al}, 2004.}.
+We describe this common framework before discussing each model
+component individually. We assume that each alternative $i$ has
+associated with it a utility $U_i$ that can be separated into a
+systematic part and a random part:
+\begin{equation}
+    U_i = u_i + \epsilon_i,
+    \label{eq:utility}
+\end{equation}
+where $u_i = \vk{\beta}\cdot\vk{x}_i$ is a linear-in-parameters
+function, $\vk{\beta}$ is a vector of $k$ estimable coefficients,
+$\vk{x}_i$ is a vector of observed, exogenous, independent
+alternative-specific variables that may be interacted with the
+characteristics of the agent making the choice (e.g. household
+characteristics in the residential location choice model), and
+$\epsilon_i$ is an unobserved random term. Assuming the unobserved
+term in (\ref{eq:utility}) to be distributed with a Gumbel
+distribution (Type I extreme value distribution) leads to the
+familiar multinomial logit model (McFadden 1974, 1981):
+\begin{equation}
+    P_i = \frac{\mathrm{e}^{u_i}}{\sum_j \mathrm{e}^{u_j}},
+    \label{eq:mnl}
+\end{equation}
+where $j$ is an index over all possible alternatives. The
+estimable coefficients of (\ref{eq:mnl}), $\vk{\beta}$, are
+estimated with the method of maximum likelihood (see for example
+Greene, 2002).
+
+\subsubsection{Employment Location Choice}
+
+The Employment Location Choice model simulates location choices
+for new jobs created as a byproduct of economic expansion,
+predicted by an external macroeconomic model, and for jobs that
+have been predicted to move by the employment relocation model
+component of UrbanSim. To arrive at a choice model for employment
+location we assume that 1) each job belongs to a firm (whose
+characteristics other than industry sector remain latent) which is
+faced with a choice between alternative locations for the job, 2)
+that each location, indexed by $i$, has attached to it some
+utility, $U_i$, for the firm, and 3) that the location with the
+highest utility has been chosen (maximization of utility).
+
+We refer to the more general concept of utility maximization
+rather than profit maximization, since the utility may be based
+largely or exclusively on expectations of profit for some sectors,
+but profit may represent a small or nonexistent part of the
+utility for other sectors, such as governmental and educational
+establishments. We only observe the current location of jobs, and
+do not observe the alternative locations open to the employer
+before locating the job, nor do we observe the utility. We proceed
+with the multinomial logit assumptions for the utility
+(\ref{eq:utility}) leading to (\ref{eq:mnl}).
+
+The systematic component of the utility of a particular location
+(dropping the index $i$ for simplicity) is specified as a function
+of an array of characteristics at the \emph{site} ($\vk{x}_S$),
+including the real estate characteristics (land value, residential
+units, commercial sq. ft., land use) and proximity of the site to
+freeways and arterials; characteristics of the land use mix and
+value (quantity of residential units, average land values, average
+improvement values) in the immediate \emph{neighborhood}
+surrounding the site ($\vk{x}_N$); agglomeration economies from
+geographic \emph{clustering} (employment by sector within 600 m)
+of firms of the same and each of the other sectors ($\vk{x}_C$);
+and multi-modal \emph{accessibility} to labor, consumers, the
+Central Business District (CBD), and the regional airport
+($\vk{x}_A$):
+\begin{equation}
+    u = \vk{\beta}_S \vk{x}_S
+     + \vk{\beta}_N \vk{x}_N
+     + \vk{\beta}_C \vk{x}_C
+     + \vk{\beta}_A \vk{x}_A.
+     \label{eq:uemploc}
+\end{equation}
+
+The probability, $P_i$, represents the probability of the firm
+choosing location alternative $i$ for a particular job. We
+estimate one choice model (i.e. one set of coefficients) for each
+of the 14 industry sectors shown in Table\ref{ta:sectors} on a
+random sample of 5000 observed jobs in each sector. To estimate
+the model coefficients we use data for business establishments in
+1997, geo-coded to grid cells. The database links individual jobs
+to job spaces. The job spaces can be either nonresidential square
+footage, or a residential housing unit to account for home-based
+employment.
+
+To arrive at a set of alternatives we allow each job in a sector
+the choice of all locations in the universe open to that industry
+sector. This generates a very large choice set. We use a uniform
+distribution to randomly sample a set of nine alternatives in
+addition to the chosen location and estimate a model using this
+random sample of alternatives. This makes it impossible to
+estimate alternative-specific coefficients or alternative-specific
+constants. However, it can be proven that the coefficients of a
+choice model estimated from a random sample of alternatives,
+selected with a uniform distribution, are consistent, as explained
+by McFadden (1978) in his paper on residential location choice,
+which faces a similar issue.
+
+Since the coefficients are based on random sampling of
+alternatives, there are no alternative-specific constants, and no
+base alternative. The coefficients are therefore interpretable in
+terms of the direction of the influence of a variable on the
+utility and the probability of a location choice. In addition,
+coefficients can be compared across industry sectors, since the
+same specification is used for all sectors, with the exception of
+insignificant variables, which were restricted to zero.
+
+\subsubsection{Residential Location Choice}
+
+The residential location choice model predicts the probability
+that a household will select a location, defined in the current
+specification by a grid cell of 150 by 150 meters. Each grid cell
+can include zero or more housing units and households can only
+select cells with vacant housing. All housing units on a cell are
+assumed to be identical and we therefore do not assign the
+household to a particular unit.
+
+The model is therefore a disaggregate choice model with over one
+million housing units. The number of alternatives that households
+can select form is the total number of available housing units,
+though noting that we only specify the location to a grid cell.
+This creates a very large choice set and in this implementation of
+the model we reduce that set by simply selecting a random sample
+of nine alternatives from the universe of vacant housing, in
+addition to the observed choice for each household, yielding 10
+alternatives in the model.
+
+The model is specified as a multinomial logit model (\ref{eq:mnl})
+with a systematic utility for a particular location (we drop the
+index $i$ for convenience) on the form:
+\begin{equation}
+    u =  \alpha
+     + \vk{\beta}_H \vk{x}_H
+     + \vk{\beta}_R \vk{x}_R
+     + \vk{\beta}_N \vk{x}_N,
+    \label{eq:uresloc}
+\end{equation}
+where each utility term is a linear combination of variables that
+have been grouped in to categories: $H$ indicates housing
+characteristics (e.g. prices, density, age), $R$ indicates
+regional accessibility, and $N$ reflects neighborhood-scale
+effects (socioeconomic composition, land use mix, density, local
+accessibility).
+
+\subsubsection{Real Estate Development}
+
+The real estate development model simulates the actions of real
+estate developers to intensify the real estate development within
+any given location, or grid cell.  The unit of analysis in this
+model is the grid cell, and the choice outcomes are alternative
+development types.  The probability of each alternative (no
+development, increasing density of current cell within its current
+development type, and transitions to other development types)
+being chosen is calculated using a discrete choice model. We draw
+on discrete choice theory and random utility maximizing models,
+following the work of McFadden (1974, 1981), to design a
+multinomial logit model.
+
+To arrive at a choice model for development we assume that 1) each
+cell has a developer agent, 2) that each development alternative,
+indexed by $i$, has attached to it some utility, $U_i$, for the
+developer, based principally on profit expectations, and 3) that
+the development event with the highest utility has occurred
+(maximization of utility). We only observe events that have
+occurred and do not observe the utility.
+
+To form the estimation data we take all the development event
+cells, i.e. cells with a known development event and look up the
+values for a set of independent variables from the grid cell
+database. The independent variables in the real estate development
+model include characteristics of the \emph{site} ($\vk{x}_S$),
+including current development, land use plan, environmental
+constraints, policy constraints, land and improvement value,
+proximity to highways, arterials, existing development, and recent
+development; characteristics of the land use mix, property values,
+and local accessibility measures in the \emph{neighborhood}
+surrounding the site ($\vk{x}_N$); and multi-modal
+\emph{accessibility} ($\vk{x}_A$), including access to population
+and employment and travel time to the central business district
+and airport:
+%
+\begin{equation}
+    u = \alpha
+     + \vk{\beta}_S \vk{x}_S
+     + \vk{\beta}_N \vk{x}_N
+     + \vk{\beta}_A \vk{x}_A.
+     \label{eq:uemploc}
+\end{equation}
+%
+We proceed with the multinomial logit assumptions for the utility
+(\ref{eq:utility}) leading to (\ref{eq:mnl}). The probability,
+$P_i$, represents the probability of a developer agent for a
+particular cell choosing development alternative $i$.
+
+We now need to take into account the much larger set of cells that
+didn't experience a development event. We take a random sample of
+these cells to generate a set of similar size as the development
+event set. This gives us a choice-based sample of cells.
+Choice-based sampling only biases the alternative-specific
+constants but other coefficients remain consistent (Manski and
+McFadden, 1981). We adjust the alternative-specific constants
+after estimation to account for this bias.
+
+We estimate one choice model (i.e. one set of coefficients) for
+each development type, since the types are very different and the
+development alternatives open to each development type vary. To
+estimate the model coefficients we need data for cells
+experiencing no development and for cells with development events
+of all types.
+
+
+\subsection{Land Price}
+
+Land prices represent the interaction between demand and supply
+sides of the model system, with prices fluctuating in response to
+short-term (intra-year) shifts in demand and long-term
+(inter-year) shifts in supply, and work in the traditional
+economic sense to ration scarce supply of land and clear the
+market in the short term. A semi-log specification is used to
+define a hedonic regression model. The model is a linear
+multiple-regression of the log of land prices, $\ln(v_i)$, for
+each cell $i$, on an array of housing structural ($\vk{x}_{Si}$),
+neighborhood ($\vk{x}_{Ni}$), and accessibility ($\vk{x}_{Ai}$)
+characteristics:
+\begin{equation}
+    \ln(v_i) = \alpha
+        + \vk{\beta_S}\vk{x_{Si}}
+        + \vk{\beta_N}\vk{x_{Ni}}
+        + \vk{\beta_A}\vk{x_{Ai}}
+        + \epsilon_i,
+\end{equation}
+where $\alpha$ is the estimable intercept term; $\vk{\beta_S}$,
+$\vk{\beta_N}$, and $\vk{\beta_A}$ are the estimable coefficient
+vectors on the housing structural, neighborhood, and accessibility
+characteristics, respectively; $\epsilon_i$ is an unobserved error
+term, assumed to be normally distributed with mean zero and
+variance $\sigma^2$.
+
+The full set of grid cells in the study area is used in model
+estimation, using base year characteristics and values. As such,
+this is a cross-sectional estimation of the market hedonic price
+function, rather than an estimation of a dynamic price function.
+Dynamics are introduced through the process of annual changes in
+the characteristics of grid cells due to simulated results from
+the real estate development, residential location and employment
+location models, and the external transportation model system, all
+of which combine to change the characteristics of grid cells on an
+annual basis.
+
+\section{Overview of the Database Development Process}
+The data preparation process is a collection of procedures, both
+automated and manual, to create the baseyear database used in the
+application of UrbanSim to the central Puget Sound region. Our
+approach has emphasized using the best available local data, and
+undertaking as much effort as feasible within time and budget
+constraints to improve the quality and consistency of the data for
+use in model estimation and application.
+
+Details regarding the structure of  the database produced in the
+data preparation process is described in the UrbanSim User Manual,
+available at www.urbansim.org/docs. The database contains three
+primary tables (gridcells, households and jobs) and numerous
+supporting tables. The model documentation specifies the required
+contents, names, and formats for each field in these tables. These
+details are omitted from this paper in order to focus the
+discussion on the model specification and estimation results.
+
+The development of the base year database consisted of a series of
+steps.  The major components of this process are summarized below.
+The tools used to undertake the processes described in the report
+include ArcGIS 8.3 (GIS), the R statistical package, the MySQL
+database, Structured Query Language (SQL), and Java, Perl, and
+Python programming languages. All scripts, queries, and programs
+are available from www.urbansim.org.
+
+\begin{description}
+\item{\textbf{Define Study Area}}
+
+The determination of the study area boundary is a critical first
+step, since it determines the geographic extent of the data
+collection effort. The area defined for the Puget Sound Regional
+Council model application was based on the 4-county region for
+which the PSRC does transportation planning: King, Kitsap, Pierce
+and Snohomish. An additional 4 counties outside this region were
+anticipated for potential extension of the model: Island, Mason,
+Skagit, and Thurston.  %A map of this area is shown in Figure
+%\ref{fig:AreaMap}.
+
+%\begin{figure}[h]
+%\centering
+%\includegraphics[width=5in]{../graphics/psrc_p1.jpg}
+%\caption{The Study Area} \label{fig:AreaMap}
+%\end{figure}
+
+\item{\textbf{Generate Grid Over Study Area}}
+
+The current specification of UrbanSim uses a grid as its
+geographic units of analysis.  The database development process
+therefore involves the creation of a GIS grid (typically using 150
+meter cell size) that covers the study area, and assigning unique
+identifying numbers to each cell in the grid. Water and other
+areas that are not relevant for the model application could be
+suppressed from the grid at this point to make the database more
+compact.
+
+Even though the study area for this project comprised the four
+main counties of the central Puget Sound region (King, Pierce,
+Snohomish, and Kitsap), the grid created included the greater
+Puget Sound region consisting of eight counties (Skagit, Island,
+Mason, Thurston, King, Pierce, Snohomish, and Kitsap).  This
+larger grid was created to allow for possible expansion of the
+study area in the future.  The eight-county grid was clipped to
+the four central counties of the initial study area, and all
+further processing was done only for the four core counties.
+
+%Figure \ref{fig:GridcellExample} shows the resulting grid in the
+%Green Lake area of Seattle, with Traffic Analysis Zones (TAZ) and
+%Forecast Analysis Zones (FAZ) superimposed to show the relative
+%sizes of these geographies.  The grid cells at 150 by 150 meters
+%cover approximately 5.56 acres, somewhat smaller than a suburban
+%square block.
+
+%\begin{figure}[h]
+%\centering
+%\includegraphics[width=5in]{../graphics/grid_greenlake.jpg}
+%\caption{Grid Sample} \label{fig:GridcellExample}
+%\end{figure}
+
+\item{\textbf{Assemble and Standardize Parcel Data}}
+
+Parcel data form a foundation for the description of the land use
+and real estate inventory within the study area  These files are
+increasingly available from County Tax Assessor offices in GIS
+format, with associated attribute tables containing the main
+characteristics relevant to urban modeling.  These attributes
+include lot size, land use, housing units, built square footage,
+year built, zoning, land use plan designation, assessed land
+value, assessed improvement value, and others.  An important step
+in this process was to standardize the names of and coding
+standards used for these fields.
+
+\item{\textbf{Impute Missing Data on Parcels}}
+
+Parcel data tend to have both systematic and random errors, as
+well as missing data.  For example, tax exempt properties, such as
+government-owned properties, tend to have incomplete data in the
+assessor files since there is no compelling reason for assessors
+to collect these items.  The data are massive in volume, and rely
+on individual property assessors to input data, so the resulting
+databases are often riddled with missing data and data errors.
+However, much of the data is likely to be correct, and serves as
+the most widely available and complete representation of land use
+and real estate data that is collected and maintained. As a result
+of these limitations in the data and the difficulty of manually
+verifying the data, it was necessary to develop automated
+procedures to impute missing data for key fields such as land use
+codes, year built, and housing units.
+
+\item{\textbf{Assemble Employment Data}}
+
+Assembling and processing employment data was one of the most
+challenging aspects of the database development process. The
+principal source of employment data used in this process was the
+ES202 unemployment insurance database from the Washington State
+Department of Employment Security (ESD). These records are
+confidential, and great care was taken to ensure that the final
+data derived from them did not violate confidentiality agreements.
+The ESD data contained addresses, Standard Industrial
+Classification codes (SIC) and the newer NAICS classifications of
+sectors, and the number of jobs at each establishment address.
+These data had been geocoded by the PSRC, usually using a
+combination of automatic and manual address-matching techniques.
+Additional employment sources included an inventory of government
+and educational establishments developed by the Puget Sound
+Regional Council, and estimates of proprietor and self-employed
+developed by comparing the wage and salary employment totals to
+total employment estimates by county.
+
+\item{\textbf{Assign Employment to Parcels}}
+
+Once geocoded, these establishments and the jobs they contain
+needed to be allocated to the available real estate in the parcel
+data. Systematic and random errors occur in both the employment
+data and parcel data, making their reconciliation difficult. The
+geocoding of business establishments had been conducted by the
+PSRC using an address-matching process that frequently placed
+employer near, but not on within, the parcel in which the employer
+is truly located. This was most often due to the fact that the
+employers had been geocoded to the street centerline as opposed to
+the parcel.  Also, the ESD data represented only \emph{covered}
+employment, and did not include workers who were self-employed. In
+order to account for these jobs, county-level estimates of total
+employment were obtained from the PSRC. Several algorithms were
+developed to allocate the ESD records, government and educational
+establishments, and proprietors to parcels, and to attempt to
+resolve many of the inconsistencies within and between these data
+sources.
+
+\item{\textbf{Convert Parcel Data to Grid}} In order to support
+the grid-cell based specification of the model, the parcel data
+were converted to a grid. To avoid data loss at cell resolutions
+coarser than small parcels, a GIS polygon overlay operation was
+used. Once this was completed, the fraction of land area of a
+parcel that falls within each grid cell was used to allocate the
+quantities within the parcel to the cells it overlays.
+
+\item{\textbf{Convert Other GIS Layers to Grid}} Each grid cell
+was assigned to any environmental or planning areas that it falls
+into, such as wetlands, floodplains, steep slope areas, traffic
+analysis zones, cities, counties, urban growth boundaries. Simple
+GIS overlay processing is used to make these assignments.
+
+\item{\textbf{Assign Development Types}}
+
+The model system uses the real estate contents of grid cells to
+classify cells into Development Types based on the quantities of
+housing units and square feet of commercial, industrial and
+governmental/institutional space in each grid cell produced in the
+conversion of parcel data to grid cells.  One development type is
+identified as Undevelopable based on characteristics such as
+water, wetlands, steep slopes, federal lands, or other
+user-specified characteristics. It is important to note that
+designating a cell as Undevelopable means that the model system
+will not consider the cell for development, regardless of what
+policies the user later applies to the cell (unless they change
+the Development Type to something other than Undevelopable).  The
+remaining Development Types are assigned using a lookup table of
+units and square feet of nonresidential space in the cell.  For
+those cells that have nonresidential square footage and virtually
+no residential units, the relative magnitudes of commercial,
+industrial and government space are used to further differentiate
+the Development Type.
+
+\item{\textbf{Synthesize Household Database}}
+
+Since there is no inventory of households at the household level
+in the United States (or most anywhere else), we must resort to
+synthesizing this database of households from publicly available
+census data sources. We have adapted a process developed by
+Richard Beckman as part of the TRANSIMS traffic microsimulation
+model system, to integrate census tabulations of household
+characteristics at the census tract level (in Summary File 3A)
+with a sample of actual households available from the Public Use
+Microdata Sample (PUMS).
+
+\item{\textbf{Diagnose Data Quality and Make Refinements}}
+
+Part of the process of developing the baseyear database involves
+diagnosing problems in the integration of the data such as missing
+or invalid data, or inconsistencies within or between tables. A
+series of checks of the data were used to determine the
+suitability of the database for use in model development and
+application.
+\end{description}
+
+\section{Accessibility Measures}
+
+The development of the land use model system depends heavily on
+measures of accessibility, which influence location choices, real
+estate development, and land prices.  Several alternative
+accessibility measures have been evaluated as part of this project
+by interfacing UrbanSim with a travel demand model system.  In the
+Puget Sound Region, the travel models used by the Puget Sound
+Regional Council for developing regional transportation plans are
+the basis for this model integration.  This section describes
+alternative accesibility measures derived from the integration of
+UrbanSim and the travel model system which are used as independent
+variables in UrbanSim.
+
+\subsection{Logsum-weighted Access to Activity}
+
+The initial approach to measuring accessibility by interacting
+UrbanSim with a travel model is to use the Logsum, or composite
+utility information from the mode choice model, and interacting
+this with the spatial distribution of activities in UrbanSim to
+form summary measures of accessibility to general types of
+activities, such as jobs.   The form of this calculation is:
+
+\begin{equation}
+A_i = \sum_{j=1}^{J} D_j e^{L_{aij}} \end{equation}
+
+\begin{tabbing}
+
+where: \= \\
+\> $D_j$ \= is the quantity of activity in location $j$ \\
+
+\> $L_{aij}$ \=is composite utility, or logsum, for vehicle
+ownership
+level $a$ households, from \\
+\> \> location $i$ to $j$.
+
+\end{tabbing}
+
+where the Logsum is scaled to ensure it is non-positive.
+
+The exponentiated logsum provides a weight between 0 and 1 to
+apply to the quantity of activity in a particular destination,
+discounting the activity more heavily in destinations that are
+relatively less accessible.  Since the range of logsum values is
+occasionally slightly positive in practice (though theoretically
+the values should all be negative since this is representing the
+disutility of travel), we scale the logsums by subtracting a
+constant equivalent to the maximum value of the logsums across all
+ij pairs, resulting in a new maximum equal to zero, and a weight
+equal to 1 for the highest accessibility destination.
+
+The main advantage of the logsum term is that it provides a
+single, comprehensive measure of travel disutility across modes,
+and incorporates all the factors considered in the mode choice
+model that have an impact on utility, such as tolls, fares, wait
+times, transfer penalties, comfort, etc.  It is theoretically
+elegant, in that it potentially provides a way to incorporate into
+broader consumer welfare measures the effects of land use and
+transportation changes.
+
+The following are some disadvantages of this formulation, in the
+context of use in land use modeling:
+
+\begin{itemize}
+
+\item Logsums are difficult to interpret, compared to simpler
+measures such as travel times.
+
+\item The Logsums must be scaled to ensure that they are not
+positive values, since exponentiating positive values would
+produce very large weights for specific destinations (the behavior
+of the weight differs drastically for positive as compared to
+negative values of Logsums) distorting the access measure
+significantly.  This scaling is problematic, since it is
+arbitrary, and is an artifact of the scale of the single maximum
+value, which is much more volatile than any measures of central
+tendency, such as the mean Logsum.
+
+\item The Logsum\-weighted Access measure will be inflated by
+growth in population and jobs in a region, unless Logsum values
+degrade at a greater rate.  This can introduce unintended behavior
+in the models in which the measure is used, such as a real estate
+price model, causing predictions to shift quite far from
+conditions on which the model was calibrated.
+
+\item The Access measure is somewhat inconsistent with the travel
+model, since it does not consider the probability of making trips
+to different destinations from the origin zone, as predicted by
+the trip distribution model.  One minor variant of the above
+formulation that would modestly improve the consistency with the
+trip distribution is to multiply the Logsum by a coefficient that
+is calibrated as the friction factor in the trip distribution
+model - but this also depends on the structure of the trip
+distribution model, and does not account fully for the patterns of
+travel predicted by the travel model.
+
+\item Mode choice models vary in their structure, and particularly
+in their stratification, with some models using auto ownership,
+others using a relationship of autos and workers, etc. This
+complicates the use of the measure, in that the measure should be
+applied in the land use model using the same stratification, for
+consistency.
+
+\end{itemize}
+
+\subsection{Travel Time Threshold Measures}
+
+A simple measure of accessibility that is widely used in the
+literature, and in practical modeling applications, is a count of
+activities that can be reached within a specified threshold radius
+of travel time, such as 30 minutes. This is an intuitively
+appealing measure, because it is easy to understand.  It may also
+therefore be valuable, to the extent that it mimics how people
+consider accessibility in actual decision-making situations such
+as choosing a residence location.
+
+\begin{equation}
+A_i = \sum_{j=1}^{J} D_j \forall j \in C_{ij} < X
+\end{equation}
+
+\begin{tabbing}
+
+where: \= \\
+\> $D_j$ \= is the quantity of activity in location $j$ \\
+
+\> $C_{ij}$ \=is the travel impedance from location $i$ to $j$ \\
+
+\> $X$ \=is a threshold value.
+
+\end{tabbing}
+
+
+This measure has limitations also, such as:
+
+\begin{itemize}
+
+\item The arbitrariness of the threshold.  What threshold should
+be used? Why should an activity one minute beyond the threshold
+not count at all, while an activity one minute within the
+threshold counts in full?  Are activities one minute away no more
+accessible than activities just within the threshold?
+
+\item It only accounts for time.  What about tolls or fares?
+
+\item Representing the effect of different modes would either
+require using a similar threshold measure for each mode, or using
+some arbitrary method of averaging.
+
+\item It is even less consistent with the travel model than the
+first measure.
+
+\end{itemize}
+
+\subsection{Trip-weighted Travel Disutility}
+
+An alternative access measure that might address some of the
+concerns raised about both of the preceding measures is one that
+computes a weighted average of a measure of travel disutility,
+such as Logsum, travel time, or generalized cost, where the
+weighting is based on the probability of making a trip to a
+particular destination.  Variants on this measure include
+stratification by trip purpose and/or by mode.
+
+\begin{equation}
+A_i = {\sum_{j=1}^{J} T_{ij} L_{pij} \over \sum_{j=1}^{J} T_{ij}}
+\end{equation}
+
+\begin{tabbing}
+
+where: \= \\
+\> $D_j$ \= is the quantity of activity in location $j$ \\
+
+\> $L_{pij}$ \=is composite utility for trip purpose p (Home-Based
+Work) from location $i$ to $j$.
+
+\end{tabbing}
+
+An advantage of this measure is that it uses not only the
+composite utility of travel for specific interchanges computed by
+the mode choice model, but it also uses information on trip
+distribution from the travel model, increasing the consistency of
+the accessibility measure used in land use modeling with the
+information in the travel model.
+
+A second advantage of the measure is that the scale of the
+disutility measure need not be adjusted artificially, as in the
+first measure.  Nor does it inflate over time due to population or
+employment growth.
+
+\subsection{Accessibility Measures Used in Puget Sound Model Estimation}
+
+After considerable testing within the model estimation process
+described in the following sections, the accessibility measures
+that proved most useful in explaining location and development
+choices in the region were:
+
+\begin{itemize}
+
+\item Logsum-weighted Access to Jobs
+
+\item Travel time to the Central Business District of Seattle
+
+\item Trip\-weighted Travel Time via Single-Occupancy Vehicle for
+the Home-Based Work purpose, and the same measure described for
+destinations
+
+\item Trip\-weighted Travel Time via Transit with Walk Access for
+the Home-Based Work purpose
+
+\item Trip\-weighted Composite Utility via Single-Occupancy
+Vehicle for the Home-Based Work purpose
+
+\item Trip\-weighted Composite Utility via Transit with Walk
+Access for the Home-Based Work purpose
+
+\end{itemize}
+
+\section{Macroeconomic Model Interface}
+
+The macroeconomic model to which UrbanSim is coupled in this
+application is the STEP model (Conway, 1990).  It is a hybrid
+input-output/econometric model that represents a localization of
+the Washington State economic model it is derived from.  The
+sectors used in this model are the basis for the sector
+definitions in UrbanSim, and the total employment by sector, total
+population, and households predicted by the STEP model are used as
+control totals for use in UrbanSim.  UrbanSim adds or deletes jobs
+by sector, or households, from its database on an annual basis, in
+order to match these predicted totals.  In short, this is a
+trivial one-way connection of the models.
+
+There has been ongoing interest in examining the economic effects
+of transportation projects for several decades (Chinitz, 1960). To
+date the issue of feedback from local policies to macro-scale
+economic or demographic outcomes has not been addressed within our
+modelling framework.  The changes required to the macroeconomic
+model to accommodate this feedback would be substantial, and were
+outside the scope of this project. It is a significant topic for
+future research, and should be a priority for further development
+of the UrbanSim system.
+
+There may be several viable alternative strategies to pursue
+integration of spatial and macro-scale modeling. One is to
+continue to use an aggregate macroeconomic model similar to the
+STEP input-output/econometric model, and simply add variables that
+would be generated by the land use and travel demand model system,
+such as average housing prices, vehicle miles travelled, or total
+hours of congestion delay.  Of course, these kinds of
+transportation measures, though they may have significant
+aggregate effect on economic growth, are not available
+historically, and make the likelihood of incorporation into the
+current macro scale models unlikely.
+
+A second approach to integrating macro-scale modeling would be to
+examine the possibility of implementing the behavior of the
+macro-scale model at the disaggregate level, through
+microsimulation.  While this has been done fairly extensively for
+demongraphic modeling, I am not aware of any operational systems
+designed for microsimulation of emergent regional macroeconomic
+outcomes. Experimentation in the Agent-based Computational
+Economics community may eventually lead to some useful building
+blocks for such an approach (c.f. Tesfatsion, 2004).
+
+\section{Model Estimation}
+\subsection{Land Price Model}
+
+The Land Price model is a linear regression model, with the
+natural logarithm of the total land value within a grid cell set
+as the dependent value, and a series of physical, real estate, and
+locational variables used as independent variables.  Figures
+\ref{fig:totlvbase} and \ref{fig:totlvpred} show the observed and
+predicted land values per acre in 2000.
+
+The coefficients were estimated using Ordinary Least Squares (OLS)
+estimation on a sample of 100,000 gridcells, randomly selected
+from cells with non-zero land values from across the region.  The
+model had an adjusted R\(^{2}\) of 0.779, indicating that the
+model explains approximately 80 percent of the variation in land
+values in the base year. Table \ref{tab:LP_coefficients} lists the
+coefficients used, along with their values and descriptive
+statistics.
+
+\subsection{Household Location Choice Model}
+
+The Household Location Choice Model predicts the location choices
+of households that are moving into or within the region.  Location
+choices are defined as grid cells of 150 meters, representing an
+area of approximately 5.5 acres.  Since there are a very large
+number of alternative locations, the model estimation process uses
+a random sample of 9 non-chosen alternatives, in addition to the
+location the household is observed to occupy, to construct a
+choice set.  This random sampling of alternatives technique is
+commonly used to estimate multinomial logit models with large
+numbers of alternatives, and has been shown to produce unbiased
+coefficient estimates.
+
+The coefficients for the Household Location Choice Model were
+calculated using data from the PSRC Household Activity Survey. All
+households that had moved within the previous five years were
+included, which provided us with a sample size of 2,364
+observations.  The restriction to households which had moved
+within the past 5 years was made to reflect the choices of
+households in similar circumstances to those being modelled.
+Figure \ref{fig:HH2} displays the locations of households used in
+the model estimation. Table \ref{tab:HLC_coefficients} lists the
+variable codes and coefficients that were included in the final
+model.
+
+Once an acceptable model specification was determined and its
+coefficients were estimated, several summary tables were
+constructed to aid in the analysis of results.  These tables took
+the form of summaries of the prediction success rates by
+geographical units we called FAZ districts (so called because they
+were made up of agglomerations of the PSRC's Forecast Analysis
+Zones).  We defined nine FAZ districts regionally such that they
+represented broad areas of relatively homogenous, or at least
+internally similar, social areas.  We then calculated several
+summaries of the results of the estimation by these districts.
+These summaries can be grouped into  the following three main
+classifications:
+
+\begin{description}
+    \item[Sums of Probabilities] -- During estimation, predicted
+    probabilities are assigned to each grid cell in a household's
+    choice set.  This value represents the expected probability that
+    the household would choose that grid cell to move to were it to
+    move to a grid cell in the choice set.  These probabilities were
+    summed by FAZ district, with the expectation that the sums would
+    be comparable to the counts of observed households.
+    \item[Counts of Predictions -- Maximum Probability]  Within a
+    choice set, we declared the grid cell with the highest
+    probability to be the predicted choice for that household.
+    These sums of predicted locations can be compared against the
+    sums of observed locations.
+    \item[Counts of Predictions -- Random Choice Simulation] The third approach to implementing a choice prediction is to
+    stochastically select a grid cell from the choice set in such
+    a way that the probability of selecting each cell is
+    proportional to that cell's predicted probability.  This is
+    the approach used in the UrbanSim application.
+\end{description}
+
+Each of these prediction success definitions were summarized in
+several ways, as can be observed in table
+\ref{tab:HLC_fazdist_matrix_probability}, which summarizes the
+results by FAZ district.  FAZ districts predicted are summarized
+here by FAZ districts observed.  The predictions are then
+expressed in three summary columns: A) as percentages correctly
+placed (where correct placement is defined as placement in the
+correct FAZ disrict), B) as counts of households placed in the
+wrong FAZ district, and C) as totals placed divided by totals
+observed, regardless of which district each individual chose.
+
+
+\subsection{Employment Location Choice Model}
+
+% Document sampling process for employment
+
+Employment sectors were defined based on Standard Industrial
+Classification (SIC) codes, grouped into 18 \emph{sectors} that
+correspond to aggregations of those defined in the STEP
+macroeconomic model used by PSRC to predict metropolitan
+employment and population levels over a thirty-year planning
+horizon, as shown in Table \ref{tab:Sectors}.
+
+Model estimation has been performed for all sectors except
+military, government, and education.  These sectors are
+distinguished from the private sectors in that the location of
+jobs in these sectors are considered as outcomes of governmental
+decisions that are outside the scope being modeled within the real
+estate market. An additional pragmatic reason for this design
+choice is that the quality of real estate information is very poor
+for tax-exempt properties, resulting in many public facilities
+lacking information in the parcel file on square footage. Without
+such data, it would be impractical to model the location and use
+of space by these governmental sectors.  Location of employment in
+public facilities is therefore regarded as an exogenous policy
+input. To facilitate use of the model, simplified algorithms for
+the allocation of jobs in these sectors have been implemented to
+allocate growth in any of these sectors to locations in proportion
+to the existing employment in the same sector.  The procedure
+samples an existing job in the database randomly, and assigns its
+location to the current job in the queue to be placed.
+
+Home-based jobs, principally in the form of proprietors and small
+contractors with the home address as the principal work address,
+will be handled separately from jobs occupying non-residential
+real estate.  The use of a fixed ratio of units to home-based jobs
+was considered to be too simplistic and will be replaced by a new
+home-based job location model.  An initial split of jobs in each
+sector into home-based and non-home based categories is applied,
+based on proportions found in the 2000 Public Use Microdata Sample
+data.  A new model to assign home-based jobs to households is
+currently in development, but will be based on the probability of
+households of differing characteristics (such as income, age, and
+number of workers) having a home-based job.  The remainder of this
+section describes the procedure for estimating the probability of
+location choices for non-home based jobs, by sector.
+
+The data used for estimating the Employment Location Choice Model
+were based on 1995 and 2000 employment databases maintained by
+PSRC and derived from the Washington Employment Securities
+Division ES202 records.  The total employment by Traffic Analysis
+Zone and employment sector were compared between 1995 and 2000.
+Net gains in employment by zone and sector were used to define the
+universe of recent job location choices.  From this set of job
+gains by zone and sector, samples of 5,000 jobs were randomly
+selected in each sector for use in model estimation.
+
+Estimation for the Employment Location Choice Model used a similar
+process as the Household Location Choice Model. That is, a choice
+set of ten grid cells was selected for each non-home based job in
+the estimation data set (hereafter we will simply refer to
+'non-home based jobs' as 'jobs'). The alternatives include the
+grid cell on which the job was observed (i.e. the "chosen" grid
+cell), and nine non-chosen alternatives selected at random from
+the set of all grid cells in proportion to the quantity of
+non-home-based job spaces in those grid cells.  This random
+sampling of alternatives technique is commonly used to estimate
+multinomial logit models with large numbers of alternatives, and
+has been shown to produce unbiased coefficient estimates.
+
+Job spaces are calculated for each grid cell as a function of
+nonresidential square footage in the cell. Nonhome-based job
+spaces are determined by a gridcell's total nonresidential square
+footage.  Total job spaces are the sum of home-based jobs and
+nonhome-based jobs supported by a given cell's units and
+nonresidential square footage.
+
+Coefficient estimation for the Employment Location Choice model
+was performed on a subset of jobs, which was selected on a
+stratified random basis from all jobs in the region.  The
+construction of this subset took place in a two-part process.
+First, jobs were divided into sector-TAZ groups and were selected
+from each group in proportion to the number of jobs that had been
+added since 1995.  This was done in order that the set of jobs
+used for estimation would reflect the jobs that had recently
+moved.  Job samples of 5,000 jobs per sector were then selected at
+random from this distribution.
+
+The estimation process for the Employment Location Choice model is
+somewhat different from the previously discussed models in that it
+comprises a number of submodels, one for each employment sector.
+Each submodel was estimated independently.  Most of the variable
+sets were similar across submodels, although the do vary slightly
+owing to the principal that jobs of divergent sectors might
+predicate their location choice on different factors.  Table
+\ref{tab:ELC_coefficients} lists the variables and their
+coefficients for the Finance, Insurance and Real Estate sector
+submodel\footnote{results for all other sectors are available in
+Waddell \emph{et al} 2004a}.  Prediction-success results for this
+sector follow in Table \ref{tab:ELC_prediction_10}.
+
+\subsection{Developer Model}
+
+The Developer Model consists of a number of multinomial logit
+models that predict potential development events on each grid
+cell. Whereas the previous logit models predict an agent's choice
+from a set of grid cells, the Developer model predicts a grid
+cell\'s choice from a set of possible development type change
+events.  The choice set for each grid cell is therefore the set of
+all possible development types it could convert to, including the
+most common alternative: no change. This choice set size varies by
+starting development type, since some development type transitions
+are unlikely to occur.
+
+Estimation was conducted independently for grid cells of each
+starting development type.  This approach was used because many of
+the development types are so different from one another, and the
+development of them would thus be expected to depend on very
+different factors. This is reflected in the SUB\_MODEL\_ID field
+in the developer\_model\_specification and
+developer\_model\_coefficients tables; Each submodel number
+corresponds to a development type ID before a development event.
+Within a given submodel there are usually several EQUATION\_ID\'s,
+each of which correspond to a different ending development type
+ID.
+
+The data used to estimate the developer model equations draw
+heavily from the base year database.  The year built values are
+used to construct estimates of the location and type of
+development events over a historical period, in this case from
+1995 through 1999.  The model estimation then attempts to find
+coefficients that explain the variations in the timing, nature,
+and location of development events.
+
+The base year distribution of housing units and total
+nonresidential square footage, and changes in these quantities
+from 1990 to 2000 are shown below in Figure \ref{fig:units_base}
+through \ref{fig:nonres_added}.  Maps depicting industrial and
+commercial sqft in 2000 and added over the preceding decade are
+shown in Figures \ref{fig:ind_base} through \ref{com_added}.
+
+The estimation process for the Developer Choice model, like the
+Employment Location Choice Model, contains a number of submodels,
+one for each development type. Each submodel was estimated
+independently. Table \ref{tab:DEV_coefficients} lists the
+variables and their coefficients for only the submodel
+representing conversions from vacant land, development type 24.
+Although this is clearly an important source of development, in
+the Puget Sound region more than half the development events
+occurred on cells that were already developed.  These other 23
+development types are also estimated, but due to the volume of
+results, the interested reader is referred to Waddell \emph{et al}
+(2004) for these estimation results.  Prediction success results
+are not reported here since this model includes
+alternative-specific constants, and the prediction success results
+therefore match the observed counts of transitions almost exactly.
+
+\section{Conclusions}
+
+The results reported here represent a work in progress, and may be
+substantially modified before the UrbanSim model is put into
+production use by the Puget Sound Regional Council and its
+constituents.  The next phase of this project is to undertake a
+substantial effort to validate and test the model system,
+historical validation if sufficient data are available, and
+augmenting this with a rigorous set of sensitivity tests to
+examine the sensitivity of the model system to policy changes and
+other exogenous shocks.
+
+Much more remains to be done in improving the integration of
+UrbanSim with transportation and macroeconomic models.  Due to the
+interactions of household short-term travel choices and their
+longer-term choices of residence location, workplace, schools, and
+vehicle ownership, it is likely that the integration of land use
+and travel modeling will need to be done at the individual choice
+level to allow for sufficient representation of substitutability
+across these choice outcomes.  The recent emergence of
+activity-based travel models provides new opportunities for
+micro-level integration of these processes.
+
+
+\section*{Acknowledgements}
+
+This material is based upon work supported by the National Science
+Foundation under Grants CMS-9818378, EIA-0090832, BCS-0120024, and
+EIA-0121326, and by the Puget Sound Regional Council.  I also wish
+to acknowledge the important contributions of members of the Puget
+Sound Regional Council Technical Advisory Committee, and
+particularly Larry Blain, Mark Simonson and Chris Peak at the
+PSRC, who each contributed substantially to the analysis in this
+paper.  Acknowledgement is also due to Peter Caballero, who did
+much of the database development, Robert Duisberg, who developed
+automation tools to facilitate the estimation of the model system
+and development of reports, Jack Kim, who contributed to the
+analysis of non-residential real estate, and Liming Wang, who
+contributed analyis and automation support throughout.  Last, but
+not least, credit is due to Alan Borning, co-Director of the
+Center for Urban Simulation and Policy Analysis, and David Socha
+and Bjorn Freeman-Benson, who designed and developed the software
+implementation for UrbanSim.
+
+\section*{References}
+
+\newlength{\lengthstorage}
+\lengthstorage=\parindent
+\parindent=0pt
+\parskip=2mm
+
+Ben-Akiva M, and Lerman S, 1987 \textit{Discrete Choice Analysis:
+Theory and Application to Travel Demand}  The MIT Press,
+Cambridge, MA
+
+Chinitz B, 1960 "The Effect of Transportation Forms on Regional
+Economic Growth" \textit{Traffic Quarterly} \textbf{14} pp
+129--142
+
+Conway, R, 1990 "The Washington Projection and Simulation Model: A
+regional interindustry econometric model" \textit{International
+Regional Science Review} \textbf{13} (1)
+
+DiPasquale D, and Wheaton W, 1996 \textit{Urban economics and real
+estate markets} Prentice Hall, Englewood Cliffs, NJ
+
+Greene W, 2002 \textit{Econometric Analysis} 5th Ed. Pearson
+Education
+
+Krugman P, 1991 "Increasing Returns and Economic Geography"
+\textit{Journal of Political Economy} \textbf{99} pp 483--499
+
+
+McFadden D, 1974 "Conditional logit analysis of qualitative choice
+behavior" In \textit{Frontiers in Econometrics} Zarembka P, ed.,
+Academic Press, New York, NY
+
+McFadden D, 1978 "Modeling the choice of residential location in
+spatial interaction theory and planning models" In \textit{Spatial
+Interaction Theory and Planning Models} Karlqvist A, Lundqvist L,
+Snickars F, and Wiebull J W, eds, North Holland, Amsterdam, pp
+75--96
+
+McFadden D, 1981 "Econometric Models of Probabilistic Choice" In
+\textit{Structural Analysis of Discrete Data with Econometric
+Applications} Manski C F, and McFadden D, eds, MIT Press,
+Cambridge, MA, pp 198--272
+
+
+Noth M, Borning A, and Waddell P, 2003 "An Extensible, Modular
+Architecture for Simulating Urban Development, Transportation, and
+Environmental Impacts" \textit{Computers, Environment and Urban
+Systems} \textbf{27} (2) pp 181--203
+
+O'Sullivan A, 2000 \textit{Urban Economics} McGraw-Hill, New York,
+NY
+
+Tesfatsion L (2004)  "Agent-Based Computational Economics Growing
+Economies from the Bottom Up" Web Portal for Agent-Based
+Computational Economics, accessed at
+http://www.econ.iastate.edu/tesfatsi/ace.htm.
+
+Waddell P, 2000 "A behavioral simulation model for metropolitan
+policy analysis and planning: residential location and housing
+market components of UrbanSim" \textit{Environment and Planning B:
+Planning and Design} \textbf{27} (2) pp 247--263
+
+Waddell P, 2002 "UrbanSim: Modeling Urban Development for Land
+Use, Transportation and Environmental Planning" \textit{Journal of
+the American Planning Association} \textbf{68} 3 pp 297--314
+
+Waddell P, and Nourzad F, 2002 "Incorporating Non-Motorized Mode
+and Neighborhood Accessibility in an Integrated Land Use and
+Transportation Model System" \textit{Transportation Research
+Record 1805} pp 119--127
+
+Waddell P, Borning A, Noth M, Freier N, Becke M and Ulfarsson G F,
+2003a "Microsimulation of Urban Development and Location Choices:
+Design and Implementation of UrbanSim" \textit{Networks and
+Spatial Economics} \textbf{3} (1) pp 43--67
+
+
+\parindent=\lengthstorage
+\parskip=0pt
+
+\appendix
+\newpage

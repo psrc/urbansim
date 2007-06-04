@@ -1,0 +1,106 @@
+% $Id: main.tex,v 1.19 2006/05/11 22:08:27 hana Exp $
+%
+
+%\documentclass{acm_proc_article-sp}
+\documentclass{sig-alternate}
+\usepackage{url}
+\sloppy
+
+\begin{document}
+\conferenceinfo{ISSTA'06,} {July 17--20, 2006, Portland, Maine, USA.}
+
+\CopyrightYear{2006}
+
+\crdata{1-59593-263-1/06/0007} 
+
+
+\title{Automated Testing of Stochastic Systems: \\
+A Statistically Grounded Approach}
+
+\numberofauthors{3}
+
+% Put no more than the first THREE authors in the \author command
+\author{
+%
+% The command \alignauthor (no curly braces needed) should
+% precede each author name, affiliation/snail-mail address and
+% e-mail address. Additionally, tag each line of
+% affiliation/address with \affaddr, and tag the
+%% e-mail address with \email.
+\alignauthor Hana {\v{S}}ev\v{c}\'{\i}kov\'{a}\\
+       \affaddr{Department~of~Statistics}\\
+       \affaddr{University~of~Washington}\\
+       \affaddr{Seattle, WA 98195,~USA}%\\
+       \email{hana@stat.washington.edu}
+\alignauthor Alan Borning and David Socha \\
+       \affaddr{Dept.\ of Computer Science \& Engr.}\\
+       \affaddr{University~of~Washington}\\
+       \affaddr{Seattle, WA 98195,~USA}%\\
+       \email{\{borning,socha\}@cs.washington.edu}
+\alignauthor Wolf-Gideon~Bleek\\
+       \affaddr{Department of Informatics}\\
+       \affaddr{University~of~Hamburg}\\
+       \affaddr{22527~Hamburg,~Germany}\\
+       \email{wbleek@acm.org}
+}
+
+
+\date{10 January 2006}
+\maketitle 
+
+\input{abstract}
+
+\vspace{1mm}
+\noindent
+{\bf Categories and Subject Descriptors:} \\{D.2.5} {[\bf Software
+  Engineering]}: {Testing and Debugging -- {\it Testing tools}}
+
+% For more detailed information see http://www.acm.org/class/1998 
+% and http://www.acm.org/class/how_to_use.html
+% A category with the (minimum) three required fields
+%\category{D.2.5}{Software Engineering}{Testing and Debugging}[Testing tools]
+%A category including the fourth, optional field follows...
+%\category{D.2.8}{Software Engineering}{Metrics}[complexity measures, performance measures]
+
+%\terms{Testing Stochastic Algorithms}
+\vspace{1mm}
+\noindent
+{\bf General Terms:} Testing Stochastic Algorithms
+
+%\keywords{Software testing, Unit tests, Stochastic algorithms, 
+%Software engineering, Hypothesis testing} % NOT required for Proceedings
+
+\vspace{1mm}
+\noindent
+{\bf Keywords:} Software testing, Unit tests, Stochastic algorithms, 
+ Software engineering, Hypothesis testing
+
+\newpage
+\input{context}
+\input{related-work}
+\newpage
+\input{urbansim3-experience}
+\input{statistical-formulation}
+\input{power-of-test}
+\input{guidelines}
+\input{conclusion}
+
+% unused sections: motivation.tex, patterns.tex, test-framework.tex
+
+\section{Acknowledgments}
+
+This research has been funded in part by Grant Nos.\ EIA-0121326 and
+IIS-0534094 from the National Science Foundation, and in part by a
+partnership with the Puget Sound Regional Council.
+
+\bibliographystyle{abbrv}
+% this assumes that the 'bibliographies' project has been checked out.  
+% This contains the master UrbanSim bibliography.
+\bibliography{agile,testing,unittest,brush,../bibliographies/urbansim}
+
+%\balancecolumns
+ 
+\end{document}
+
+% LocalWords:  borning Metadata XXXXX ev kov Socha Engr socha Bleek tex EIA IIS
+% LocalWords:  unittest

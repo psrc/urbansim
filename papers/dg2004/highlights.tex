@@ -1,0 +1,121 @@
+%% $Id: highlights.tex,v 1.1 2004/04/16 00:33:15 borning Exp $
+\documentclass[11pt]{article} 
+\usepackage{times,url,fullpage}
+
+\newcommand{\tight}{\itemsep 0pt}
+
+\begin{document}
+
+\title{Integrated Land Use, Transportation, and Environmental Simulation:
+UrbanSim Project Highlights}
+
+\author{Alan Borning and Paul Waddell\\
+Center for Urban Simulation and Policy Analysis \\
+University of Washington, Box 353055 \\
+Seattle, Washington 98195 \\
+borning@cs.washington.edu, pwaddell@u.washington.edu}
+
+% I should actually put in my CSE address instead, probably, since I don't
+% think mail delivery to CUSPA is completely worked out
+\date{}
+
+\maketitle
+
+\section{Project Overview and Impacts}
+
+The process of planning and constructing a new light rail system or
+freeway, setting an urban growth boundary, changing tax policy, or
+modifying zoning and land use plans is often politically charged.  Our goal
+in the UrbanSim project is to provide tools for planners and stakeholders
+to be able to consider different scenarios --- packages of possible
+policies and investments --- and then, based on these alternatives, model
+the resulting patterns of urban growth and redevelopment, of transportation
+usage, and of resource consumption and other environmental impacts, over
+periods of twenty or more years.  UrbanSim
+\cite{noth-ceus-2003,waddell-nse-2003,waddell-ulfarsson-2004}
+performs simulations of urban development, including transportation, land
+use, environmental impacts, and their interactions.  It consists of a set
+of interacting component models that simulate different actors or processes
+within the urban environment.  The system is written in Java, and is
+distributed as Open Source software.  (Source code, as well as papers and
+reports, are available from \mbox{\url{www.urbansim.org}}.)
+
+\section{Collaboration Examples and Success Stories}
+
+We have two primary kinds of government collaborators.  The immediate users
+of UrbanSim (and systems like it) are Metropolitan Planning Organizations:
+regional agencies that are charged with transportation planning in urban
+areas.  In the past year, we have been collaborating most closely with two
+such organizations: the Wasatch Front Regional Council (the Metropolitan
+Planning Organization for the Salt Lake City, Utah, region); and the Puget
+Sound Regional Council (Seattle, Washington, and other cities and suburbs
+in the region).  In the Salt Lake City region, UrbanSim played a central
+role in a lawsuit over a major highway project (the ``Legacy Parkway'').
+The suit was settled out of court, with a central provision being an
+agreement by all parties to test UrbanSim for operational use in the
+region.  An expert Peer Review Panel endorsed continuing the process of
+applying UrbanSim, along with providing many thoughtful suggestions for
+improvements.  In our own region, we set up a partnership with Puget Sound
+Regional Council to apply UrbanSim, with the goal being to use UrbanSim as
+the operational model for Puget Sound.  Our first major local use of the
+system will be the upcoming update of Vision 2020, the adopted regional
+long-range strategy for transportation and growth management.  Working with
+our lab, UrbanSim has also been applied in Eugene/Springfield, Oregon;
+Honolulu, Hawaii; and Houston, Texas.
+
+Our other primary government collaborators are Federal agencies.  We have
+been fortunate to receive significant funding from the NSF Digital
+Government and ITR programs.  The case study in Salt Lake City was funded
+in major part by a grant from the Federal Highway Administration, which was
+designated as matching funds for the Digital Government award.  We have
+also had productive discussions with the Environmental Protection Agency
+and the Department of Housing and Urban Development, and hope to set up
+collaborations with staff in those agencies.
+
+As noted above, UrbanSim is an open source project, and we make our source
+code freely available via the web.  As a result, groups in sites as diverse
+as Manila, Paris, Taipei, and Torino have downloaded our system and are
+seeking to apply it in their regions.
+
+\section{Challenges and Barriers}
+
+Urban regions are incredibly complex systems.  The resulting technical
+challenges include difficulties in identifying or developing the necessary
+theoretical basis for modeling such regions, significant computational
+challenges raised by massive amounts of data and fine-grained simulation,
+and the issue of how to make the results accessible and relevant to the
+stakeholders.  A second set of challenges arises from aligning academic and
+government objectives.  Academia and NSF wants long-term, risky,
+potentially high-payoff research.  Planning agencies, on the other hand,
+are fundamentally risk-adverse, with limited funds, and must make
+politically charged decisions under heavy public scrutiny.  Another
+challenge is the tension between research and deliverables.  On one side,
+we want to do research on alternative approaches, to explore different
+architectures, to make rapid progress.  On the other, our domain requires
+that we deliver a robust, highly reliable, credible system.  A third set of
+challenges arises from the difficulties of doing academic interdisciplinary
+research.  A forthcoming paper \cite{waddell-sscr-2004} discusses these
+challenges in more detail.
+
+\subsection*{Acknowledgments}
+
+We would like to thank each and every member of the UrbanSim research team
+for their work on the project.  Thanks also to the NSF Digital Government
+program, which has provided a solid home for this work within NSF.  In
+particular, the Digital Government program has supported the kind of
+mixture of basic and applied, and highly interdisciplinary, research that
+is needed for this domain.
+
+This research has been funded in part by grants from the National Science
+Foundation (EIA-0090832 and EIA-0121326) and the Federal Highway
+Administration, and in part by a partnership with the Puget Sound Regional
+Council.
+
+\bibliographystyle{plain}
+\bibliography{urbansim}
+
+\end{document}
+
+% LocalWords:  Modeler's UrbanSim Borning Waddell CSE CUSPA sustainability sscr
+% LocalWords:  stakeholders ulfarsson Puget consultancies streetscapes MySQL
+% LocalWords:  MyCC EIA urbansim Wasatch ITR Torino ceus japa waddell nse

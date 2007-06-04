@@ -1,0 +1,176 @@
+% $Id: eparticipation.tex,v 1.3 2006/04/15 04:11:41 borning Exp $
+
+\documentclass{acm_proc_article-sp}
+\usepackage{url}
+\sloppy
+
+\begin{document}
+
+\title{Informing eParticipation with Results \\ 
+from Simulations of Urban Development}
+
+\numberofauthors{2}
+
+\author{
+\alignauthor Alan Borning and Janet Davis\\
+       \affaddr{Dept.\ of Computer Science \& Engineering}\\
+       \affaddr{University of Washington}\\
+       \affaddr{Box 352350}\\
+       \affaddr{Seattle, Washington 98195}\\
+       \email{\{borning,jlnd\}@cs.washington.edu}
+\alignauthor Batya Friedman\\
+       \affaddr{The Information School}\\
+       \affaddr{University of Washington}\\
+       \affaddr{Box 352840 }\\
+       \affaddr{Seattle, Washington 98195}\\
+       \email{batya@u.washington.edu}
+}
+\date{28 March 2006}
+\maketitle
+
+\section{Overview}
+
+UrbanSim is a system for modeling urban development over periods of 20 or
+more years.  Its purpose is to support making more informed decisions about
+such issues as building new transit systems or freeways, or adopting
+alternative growth management regulations and incentives, as well as on
+broader issues such as sustainable, livable cities, economic vitality,
+social equity, and environmental preservation.  When presented with
+alternate scenarios --- packages of possible policies and investments ---
+UrbanSim models the resulting patterns of urban growth and redevelopment, of
+transportation usage, and of resource consumption and other environmental
+impacts.
+
+Indicators provide the principal mechanism for presenting results from
+UrbanSim simulations to staff at government agencies, elected officials,
+members of advocacy groups, and interested citizens generally.  Presenting
+information about indicators to better inform public deliberation presents
+several challenges.  One such challenge is how to provide
+relatively neutral technical information, and at the same time support
+value advocacy and opinion.  Another is how to support the value of
+fairness (and more specifically freedom from bias).  A third challenge (and
+one most connected with the workshop) is how to encourage participation and
+deliberation --- both electronic and other --- around the simulation
+results and their implications.
+
+To approach these issues in a principled
+fashion, we rely on the Value Sensitive Design theory and methodology
+\cite{friedman-amis-2006}, an approach to the design of information systems
+that seeks to account for human values in a principled and comprehensive
+way throughout the design process.  Key features of the methodology are its
+interactional perspective, tripartite methodology, and emphasis on direct
+and indirect stakeholders.
+
+\section{UrbanSim}
+
+The process of planning and constructing a new light rail system or
+freeway, setting an urban growth boundary, changing tax policy, or
+modifying zoning and land use plans is often politically charged.  Our goal
+in the UrbanSim project is to provide tools for planners and stakeholders
+to be able to consider different scenarios --- packages of possible
+policies and investments --- and then to evaluate these policies by
+modeling the resulting patterns of urban growth and redevelopment, of
+transportation usage, and of resource consumption and other environmental
+impacts, over periods of twenty or more years.  UrbanSim
+\cite{waddell-nse-2003,waddell-ulfarsson-2004}, combined with
+transportation models and macroeconomic inputs, performs simulations of the
+interactions among urban development, transportation, land use, and
+environmental impacts. It consists of a set of interacting component models
+that simulate different actors or processes within the urban environment.
+
+An integral part of our research program is facilitating the application of
+UrbanSim to real metropolitan regions, working with regional government
+agencies, and using this real-world experience to extend the research.  So
+far, UrbanSim is being transitioned into operational use in the Puget Sound
+region (Seattle and surrounding areas), Honolulu, and Salt Lake City; and
+has already been used operationally in Houston.  There have also been
+research and pilot applications in Amsterdam, Detroit, Eugene, Paris,
+Phoenix, Tel Aviv, and Zurich.
+
+The current version of the system, UrbanSim 4, is written using a new
+software architecture and framework named Opus, the Open Platform for Urban
+Simulation \cite{waddell-opus-2005}.  The system is written in Python, and
+makes heavy use of efficient matrix and array manipulation libraries
+(principally numarray).
+
+\section{Indicators and Indicator Perspectives}
+
+In urban planning, indicators \cite{gallopin-1997,hart-book-1999} are often
+used to monitor changes in a region with respect to specific attributes of
+concern.  In UrbanSim, simulation results can be presented using the same
+set of selected indicators for all the policy alternatives being
+considered, thus aiding the assessment and comparison of different
+scenarios.  For example, suppose that a number of stakeholders are
+interested in fostering compact, walkable, more densely populated
+neighborhoods within the urban area, and curbing low-density, auto-oriented
+development (``sprawl'').  In the urban planning literature, population
+density is regarded as one of the key indicators of the character of
+development (e.g., dense urban, low-density suburban, rural, etc.).  They
+can then monitor population density to understand current trends, and also
+use UrbanSim to assess and compare the impacts of different policies on
+population density 30 years in the future.
+
+The choice and description of indicators can be value-laden and politically
+sensitive.  As noted above, our work in this area is guided by the Value
+Sensitive Design methodology.  One project in the Value Sensitive
+Design/UrbanSim area involved carefully documenting and presenting the
+indicators that portray key results from the simulations
+\cite{borning-ecscw-2005}.  Our design addresses a number of challenges,
+including responding to the values and interests of diverse stakeholders,
+and balancing the value of fairness with presenting a diverse set of
+advocacy positions.
+
+Among other things, we found that it was difficult to present a single
+description of an indicator that simultaneously provided relatively neutral
+technical information, and at the same time supported value advocacy and
+opinion.  In response to this, we developed the Indicator Perspective
+framework, which allows a set of organizations with a diverse set of
+positions and interests to put forth different perspectives on what is most
+important in the results from UrbanSim, and how it should be interpreted.
+Our initial partners in this are Northwest Environment Watch, the King
+County Benchmarks Program, and the Washington Association of Realtors.
+
+We recently completed an empirical investigation of how well this framework
+achieves two goals: first, of simultaneously providing relatively neutral
+technical information and at the same time supporting value advocacy and
+opinion, and second, of supporting the value of fairness (and more
+specifically freedom from bias).  Data analysis is just getting under way,
+and we hope to present some findings from this research at the workshop.
+
+\section{Facilitating eParticipation around Indicator Perspectives}
+
+In its current form, the Indicator Perspectives framework strongly supports
+participation by organizations --- each organization is in charge of its
+perspective, and determines what content is appropriate, with technical
+support being provided by the UrbanSim team.  However, it doesn't support
+electronic discussion and participation by individuals.  
+
+As part of this recent study, we also did some formative evaluation of an
+interface to support such participation, including a facility for adding
+comments and discussion to different Indicator Perspectives, as well as a
+novel mechanism that will allow users to upload evocative photos (which
+they take themselves) to perspectives.  We envision, for example, users
+adding photos of such places and situations as walkable,
+pedestrian-friendly streets, or of graffiti, or congested freeways, or
+parks.  In the future, we plan to implement and deploy such an interface,
+and evaluate its effectiveness.
+
+\subsection*{Acknowledgments}
+
+We would like to thank all of the UrbanSim research team members and
+collaborators, in particular Peyina Lin, who worked closely with us on the
+empirical investigation of the Indicator Browser and Indicator
+Perspectives.  This research has been funded in part by grants from the
+National Science Foundation (EIA-0121326, IIS-0325035, and IIS-0534094), in
+part by a partnership with the Puget Sound Regional Council, and in part by
+gifts from IBM and Google.
+
+\bibliographystyle{abbrv}
+\bibliography{../bibliographies/urbansim}
+
+%\balancecolumns
+
+\end{document}
+
+% LocalWords:  eParticipation Borning UrbanSim numarray interactional EIA IIS
+% LocalWords:  Google

@@ -1,0 +1,114 @@
+\begin{thebibliography}{10}
+
+\bibitem{beckman-1995}
+R.~J. Beckman, K.~A. Baggerly, et~al.
+\newblock Creating synthetic baseline populations.
+\newblock In {\em Transportation Research Board Annual Meeting}, Washington,
+  D.C., 1995.
+
+\bibitem{ben-akiva-lerman-1987}
+Moshe Ben-Akiva and Steven~R. Lerman.
+\newblock {\em Discrete Choice Analysis: Theory and Application to Travel
+  Demand}.
+\newblock The MIT Press, Cambridge, Massachusets, 1987.
+
+\bibitem{berry-econometrica-1995}
+Steven Berry, James Levinsohn, and Ariel Pakes.
+\newblock Automobile prices in market equilibrium.
+\newblock {\em Econometrica}, 63(4):841--890, 1995.
+
+\bibitem{berry-cowles-2003}
+Steven Berry, James Levinsohn, and Ariel Pakes.
+\newblock Differentiated products demand systems from a combination of micro
+  and macro data: The new car market.
+\newblock (1337), February 2003.
+\newblock Available from \url{http://www.urbansim.org/seminar/microblp.pdf}.
+
+\bibitem{goldstein-book-1995}
+H.~Goldstein.
+\newblock {\em Multilevel statistical models}.
+\newblock 2nd edition.
+
+\bibitem{Greene-2002}
+William~H. Greene.
+\newblock {\em Econometric Analysis}.
+\newblock 5 edition.
+
+\bibitem{mcfadden-1974}
+Daniel McFadden.
+\newblock Conditional logit analysis of qualitative choice behavior.
+\newblock In P.~Zarembka, editor, {\em Frontiers in Econometrics}, pages
+  105--142. Academic Press, New York, 1974.
+
+\bibitem{mcfadden-1981}
+Daniel McFadden.
+\newblock Econometric models of probabilistic choice.
+\newblock In C.F. Manski and D.~McFadden, editors, {\em Structural Analysis of
+  Discrete Data with Econometric Applications}, pages 198--272. MIT Press,
+  Cambridge, MA, 1981.
+
+\bibitem{miller-tcrp-1999}
+Eric Miller, David Kriger, and John Hunt.
+\newblock Integrated urban models for simulation of transit and land use
+  policies.
+\newblock Final Report, Project H-12. TCRP Web Document 9, Transit Cooperative
+  Highway Research Project, National Academy of Sciences: Washington, DC.
+  \url{http://books.nap.edu/ books/ tcr009/ html}, 1999.
+
+\bibitem{noth-ceus-2003}
+Michael Noth, Alan Borning, and Paul Waddell.
+\newblock An extensible, modular architecture for simulating urban development,
+  transportation, and environmental impacts.
+\newblock {\em Computers, Environment and Urban Systems}, 27(2):181--203, March
+  2003.
+
+\bibitem{openshaw-taylor-1981}
+S.~Openshaw and P.J. Taylor.
+\newblock The modifiable areal unit problem.
+\newblock In N.~Wrigley and R.J. Bennett, editors, {\em Quantitative Geography;
+  A British View}, pages 60--70. Routledge and Kegan Paul, London, 1981.
+
+\bibitem{schelling-1978}
+Thomas~C. Schelling.
+\newblock {\em Micromotives and Macrobehavior}.
+\newblock Norton, New York.
+
+\bibitem{schelling-1969}
+Thomas~C. Schelling.
+\newblock Models of segregation.
+\newblock {\em American Economic Association Papers and Proceedings},
+  59:488--493, 1969.
+
+\bibitem{schelling-1971}
+Thomas~C. Schelling.
+\newblock Dynamic models of segregation.
+\newblock {\em Journal of Mathematical Sociology}, 1:143--186, 1971.
+
+\bibitem{waddell-env-and-planning-2000}
+Paul Waddell.
+\newblock A behavioral simulation model for metropolitan policy analysis and
+  planning: Residential location and housing market components of {UrbanSim}.
+\newblock {\em Environment and Planning B: Planning and Design 2000},
+  27(2):247--263, 2000.
+
+\bibitem{waddell-japa-2002}
+Paul Waddell.
+\newblock {UrbanSim}: Modeling urban development for land use, transportation,
+  and environmental planning.
+\newblock {\em Journal of the American Planning Association}, 68(3):297--314,
+  Summer 2002.
+
+\bibitem{waddell-cuspa-2004}
+Paul Waddell, Chris Peak, and Peter Caballero.
+\newblock Urbansim: Database development for the puget sound region.
+\newblock Technical report, Center for Urban Simulation and Policy Analysis,
+  University of Washington, Seattle, 2004.
+\newblock Available from
+  \url{http://www.urbansim.org/projects/psrc/documentation/tex/main_doc.pdf}.
+
+\bibitem{wegener-1994}
+Michael Wegener.
+\newblock Operational urban models: State of the art.
+\newblock {\em Journal of the American Planning Association}, 59:17--29, 1994.
+
+\end{thebibliography}

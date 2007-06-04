@@ -1,0 +1,78 @@
+% $Id: unit-tests.tex,v 1.1 2006/01/26 06:29:25 borning Exp $
+
+*** long unit tests related work section (currently mostly unused)
+
+\subsection{Unit Tests}
+\label{related-work-unit-tests}
+
+To help ensure the code quality of UrbanSim, we make use of unit tests 
+\cite{beckgamma,hunt:2003,Noonan:2002} to test all classes automatically. For 
+each of the program's units a test is written --- typical units under test are 
+classes and their operations.  For each class a corresponding test case exists 
+that makes sure that every method is called and tested.  By implementing the 
+test, not only is the class tested initially,
+but also a test case will be available and run automatically as the system
+evolves.  To automate testing, a unit test framework and a testrunner is 
+employed.
+Each test case follows a specific implementation pattern, so that the test
+runner 
+is able to collect all test cases, and to identify and invoke
+all the test methods that they contain.
+
+The availability of test cases allows all programmers of the development
+team to make use of all tests during ongoing development.  This is important
+for agile development processes \cite{cockburn:2001,highsmith:2002},
+especially test driven development \cite{beck:2003} as they heavily
+rely on short cycles and frequent use of refactorings \cite{fowler:2001}.
+After implementing a new feature or refactoring existing code, all unit
+tests are run to make sure all parts of the software still run without
+errors. In order to support short development cycles (and make it easy for
+programmers to actually run the tests), these tests must run in a fairly
+short time.  Nevertheless, unit tests may have errors as well.  To minimize
+this, unit tests should be kept as simple and as straightforward as
+possible.  In general, unit tests should be 
+responsible for testing only a single
+unit; if a class makes use of complex other classes these 
+should be replaced by mock objects.
+
+With unit tests the quality of the software product increases significantly 
+because unit tests help find errors: we can make sure that each unit is tested 
+(coverage), unit tests are simple, they are automated (test runner), they run 
+quickly, and 
+they identify problems in remote parts of the software that have not 
+been touched by the actual programming activity.
+
+% unit test philosophy
+This philosophy of unit tests is to provide a set of tests for the programmer 
+that enables him/her at any point in time during the development process to 
+check whether new or changed parts in the program affect existing code. 
+Typically one runs all unit tests before development starts and ensures that 
+all tests run without a problem. Then, after development, one runs the tests 
+again and expects them to still run successfully. If new parts are introduced 
+in the system, corresponding tests have to be written. If an error was to be 
+fixed in the system, first a test was written that identifies this error and 
+then runs successfully after the error has been removed. A stronger approach, 
+called test-driven-development \cite{beck:2003}, incorporates these tests more 
+tightly into the process of development by requiring the programmer to write a 
+failing test for each new function and then fix this test by implementing the 
+function correctly. While the more relaxed
+approach requires the tests to run in a 
+moderate time, the stricter one
+requires that tests be run every five to ten 
+minutes, leaving only little time for the tests to run completely.
+
+The aim of this way of testing is to find errors early in the development 
+process. An additional benefit of using unit tests is to find problems in 
+remote parts induced by programming activity. The underlying assumption of 
+existing unit test frameworks is that the unit under test (in most cases a 
+class) has a deterministic behavior. Therefore, tests can assume an initial 
+state when creating an instance of that particular class. Consequently, each 
+operation modifies the instance's state in a deterministic way. Probing the 
+instance's state will result in a repeatable constant value. By applying 
+classic unit tests, 
+we implicitly deal with deterministic finite state machines.
+
+The vast majority of the testing literature deals with such deterministic
+finite state machines \cite{lee:1996,yannakakis:1991,sidhu:1989}, in which
+test cases are considered to be action sequences, and the tester is assumed
+to be in full control of the state of the unit under test.

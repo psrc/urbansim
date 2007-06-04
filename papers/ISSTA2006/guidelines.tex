@@ -1,0 +1,172 @@
+% $Id: guidelines.tex,v 1.20 2006/05/11 22:08:27 hana Exp $
+
+\section{Guidelines}
+\label{sec:guidelines}
+
+We turn now to some practical considerations for constructing and using
+stochastic unit tests, including suggestions for setting the various
+parameters.  Note that these are guidelines rather than an
+algorithm for constructing the test, and some adaptation may be needed for
+other situations.
+
+\begin{enumerate}
+
+\item
+{\bf Separate the unit test code into two parts.}  Part A prepares input to the
+stochastic algorithm, while Part B includes the stochastic aspects of the
+algorithm.  Part B will be run repeatedly by the stochastic test system,
+while part A only needs to be run once --- assuming that part B does not
+modify the values prepared by part A\@.  For instance, if a model moves
+households, part B must include the initial setup of the households so that
+every time part B is run it starts with the same set of households in the
+same locations.  Sometimes it is pragmatically convenient to include in B
+some deterministic tests about quantities that should always have the same
+value every time B is run.  Implement part B as a separate function or
+method that returns $K$ values.
+
+\item
+{\bf Determine the desired dimensionality $K$ of the output data.}  In
+general, it is best to use small test sets that are hand-crafted to test
+specific stochastic aspects of the algorithm, and small enough so you can
+compute the expected values by hand.  Our experiments suggest that the
+tests are independent of the number of dimensions (see
+Figure~\ref{fig:error1-k-agents}), which is the result we would expect from
+statistical theory.  Thus, keeping this number small for run-time
+efficiency should not affect the results if the hypothesis test is
+constructed properly.  Recall that the tests assume independence, both for
+values within each dimension and across all dimensions.  If the dimensions
+are not independent, increasing their number might help to approximate
+independence.  (However, as shown by the comparison between
+Figure~\ref{fig:power-T1} and Figure~\ref{fig:power-T2}, using fewer
+dimensions may increase the chance of detecting errors in the code.)
+
+\item
+\label{assess-type-of-distribution}
+{\bf Assess the type of distribution} of each of the $K$ outputs that B will
+return when called repeatedly.  For example, the Poisson distribution is
+likely to be a good choice when dealing with count data, while in other cases
+the normal distribution may be preferable.  Other candidates to look at when
+dealing with practical applications are the binomial and gamma
+distributions.  It is also possible to apply a transformation function of your
+choice to the output values in order to obtain an approximate normal
+distribution (see e.g.~\cite{Afifi&2004}, Chapter~4).
+
+
+
+\item
+\label{assess-variances}
+{\bf Assess whether the variances are independent of the means} if your
+choice is the normal distribution.  This can be done, for example, by
+calling part B of the test $R$ times and storing all $K\times R$ output
+values. Then create a scatter plot, with the means of the values for each
+of the $K$ rows computed over $R$ columns on the $x$ axis, and the
+variances computed on the same data on the $y$-axis.  If the points lie
+approximately along a horizontal line, no action needs to be taken.
+Otherwise apply a transformation function on the output data and repeat
+this experiment.  Common transformations are the square root, log, or the
+inverse function.
+
+\item
+\label{choose-hypothesis-test}
+{\bf Choose a hypothesis test.}  In Section~\ref{sec:statform} we described
+tests that can be used with normally and Poisson distributed data. If those
+tests are not appropriate, a variety of methods for finding a hypothesis test
+is available (see for example~\cite{mood-book-1974}, Chapter IX). The simplest
+way is to construct a likelihood ratio test by plugging the particular density
+function into the formula $2(\log L_{H_1} - \log L_{H_0})$, as was done in
+the techniques described in Sections~\ref{sec:normal} and~\ref{sec:poisson}.
+
+\item
+{\bf Choose the number of replicates.}  Figure~\ref{fig:error1} suggests
+that the frequency of a type I error is independent of the number of
+replicates unless this number is very small. On the other hand, the higher
+the number of replicates, the better the power of the test (see
+Figures~\ref{fig:power-T1} and~\ref{fig:power-T2}). We recommend between 10
+and 20 replicates, based on the experience with our application.  (A
+different number of replicates may be necessary for other applications with
+substantially different characteristics, however.)
+
+\item
+\label{choose-significance-level}
+{\bf Choose a significance level.}  There is trade-off in setting the
+significance level $\alpha$. The higher the $\alpha$ value, the higher the
+probability of type I error (compare the left to the right panel of
+Figure~\ref{fig:error1}). On the other hand, the higher the $\alpha$ value,
+the higher the power (compare the left to the right panel of
+Figures~\ref{fig:power-T1} and~\ref{fig:power-T2}). If $\alpha=0.05$ we
+expect the test to falsely fail once out of 20 runs.  If there were a 100
+stochastic tests in the system, our automated build would fail once every 5
+runs, on average.  In our own development environment, this would very
+likely lead to problems --- either the modelers and developers would become
+increasingly annoyed at the automated test system, or worse, start ignoring
+red lights (which might result in real problems being neglected).
+  
+Given this tradeoff, it is difficult to proscribe a universally acceptable
+value for the significance level.  Instead, it will be a pragmatic decision
+for different projects.  In our case, we use a smaller value of
+$\alpha=0.01$ to minimize the number of false failures, while still not 
+reducing the power of the tests too severely.
+
+Our decision for $\alpha=0.01$ in our real-world application is supported by
+the following experiment: We constructed a suite with 11 different
+$LRTS_{poisson}$ tests covering stochastic qualities of four different types
+of models.  We ran each of these 11 tests 100 times with significance level of
+$0.01$.  In these $1100$ test runs there were only 3 type I errors, i.e.\ the
+probability of a type I error occurrence is $0.003$.
+
+\item
+{\bf Invoke the test.}  Suppose the hypothesis test is implemented in a
+unit test method, as is the case in Opus. Such an implementation typically
+takes as arguments a reference to the function B, the expected results, and
+a significance level.  It calls the function B $R$ times, then using the
+$K\times R$ outputs, it computes the test statistics and the corresponding
+$p$-values, as described in Section~\ref{sec:statform}. There are
+statistical packages for various programming languages that provide
+functions for obtaining $p$-values.  (For Python, we recommend the module
+pstat.) The method fails if the $p$-value is smaller than the given
+significance level.  In our implementation, the StochasticTestCase in Opus
+extends PyUnit's TestCase class with a run\_stochastic\_test method that
+performs this step.
+
+\item
+{\bf Check the test behavior.}
+Run the test multiple times and count the number of failures. If the frequency
+of failing is significantly higher then $\alpha$, before adjusting the test
+parameters, check whether there is some other cause for the failures, such as:
+\begin{itemize}
+\item The hypothesis test itself is implemented incorrectly.
+\item There is a bug in the code.
+\item There is an error in the expected values.
+\item The data are not modeled properly (i.e. the assumptions of the
+  chosen hypothesis test are not met, such as the underlying distribution of
+  the data or independence). 
+\end{itemize}
+
+After elimating these other possible causes, then, if necessary, adjust the
+test parameters --- the number of replicates, the significance level, the
+number of outputs, or the test data --- in order to produce a satisfactory
+test.
+
+\end{enumerate}
+
+
+In practice, we do not need to repeat each of these steps for every new
+test.  The results that are tested in unit tests often have similar
+characteristics, such as being count data with a Poisson distribution, or
+continuous data with a normal distribution.  In these cases, it often is
+sufficient to do Step~\ref{assess-variances} just once for each such
+variety of data.  And if the unit test framework already contains methods
+for hypothesis testing of classes or methods with those characteristics,
+Steps~\ref{assess-type-of-distribution} and \ref{choose-hypothesis-test}
+reduce to characterizing the data and selecting an appropriate statistical
+test method.  This significantly reduces the effort necessary for using
+this stochastic testing methodology.
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 
+
+% LocalWords:  pstat socha al tradeoff StochasticTestCase PyUnit's TestCase
+% LocalWords:  LRTS poisson borning

@@ -1,0 +1,7 @@
+tmp
+*.dvi
+*.aux
+*.bbl
+*.blg
+main.pdf
+main.ps

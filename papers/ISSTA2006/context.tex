@@ -1,0 +1,91 @@
+% $Id: context.tex,v 1.20 2006/05/10 03:08:24 hana Exp $
+
+\section{Project Context}
+
+In many urban regions, there is increasing concern 
+about pollution, traffic jams,
+resource consumption, loss of open space, loss of coherent community, lack of
+sustainability, and unchecked sprawl.  Elected officials, planners, and
+citizens in urban areas grapple with these difficult issues as they develop
+and evaluate alternatives for such decisions as building a new rail line or
+freeway, establishing an urban growth boundary, or changing incentives or
+taxes.  These decisions interact in complex ways.  There are both legal and
+common sense reasons to try to understand the long-term consequences of these
+interactions and decisions.
+
+Unfortunately, the need for this understanding far outstrips
+the capability of the analytic tools used in current practice.  In response
+to this need, we have been developing UrbanSim, a sophisticated, reusable
+simulation package for predicting patterns of urban development for periods
+of twenty years or more, under different possible scenarios, each a package
+of possible policies and investments 
+\cite{waddell-japa-2002,waddell-nse-2003}.  Its
+primary purpose is to provide urban planners and other stakeholders with
+tools to aid in more informed decision-making.  When provided with
+different scenarios,
+UrbanSim models the resulting patterns of urban growth and redevelopment,
+of transportation usage, and of resource consumption and other
+environmental impacts.  To date, UrbanSim has been applied in the
+metropolitan regions in the U.S. around Eugene,
+Honolulu, Houston, Phoenix, Salt Lake City, and Seattle.
+Internationally, it has
+been applied in Paris, Tel Aviv, and in the Netherlands.
+
+Having reliable, credible software is essential, since
+the domain is politically charged, with many regions having sharp and
+long-standing disagreements over such issues as the balance of
+automobile-oriented transportation facilities, public transportation, and
+bicycles, regarding housing affordability, environmental impacts, and
+others.  
+
+For UrbanSim, an important unit of credibility is to determine whether each
+of the UrbanSim components works correctly.  UrbanSim is implemented as a
+set of interacting component models that represent major actors and
+processes in the urban system \cite{noth-ceus-2003}.  For example, the
+\emph{Residential Location Choice model} simulates the choice process of a
+household selecting a new place to live, while the \emph{Developer model}
+simulates the actions of a real estate developer deciding whether to
+renovate existing buildings or construct new houses, apartments, offices,
+or the like.  UrbanSim takes a highly disaggregated approach, modeling
+individual households, jobs, and real estate development and location
+choices using grid cells of $150\times 150$ meters in size.  The model
+system microsimulates the annual evolution in locations of individual
+households and jobs, and the evolution of the real estate within each
+individual grid cell as the result of actions by real estate developers.
+The Puget Sound application of UrbanSim, for instance, includes 1.3 million
+simulated households --- each making choices involving randomness, every
+year.  The question addressed in this paper is how to write robust and
+useful unit tests of these models, given the stochastic nature of the code.
+
+The most recent version of the system, UrbanSim~4, is implemented using
+Opus (the Open Platform for Urban Simulation), a new object-oriented
+architecture and platform developed by our group and others
+\cite{waddell-opus-2005}.  Opus and UrbanSim~4 are implemented in Python,
+making heavy use of highly optimized array and matrix manipulation
+packages, written in C++, to handle all of the inner loop computations.
+(Previous versions were in Java.)  Opus and UrbanSim are open source, under
+the GNU Public License.  For more information please see the project
+website \url{www.urbansim.org}.
+
+Simulation and modeling is used extensively in other politically-charged,
+economically, socially, and environmentally significant domains as well,
+and the testing methodology described in this paper is applicable to
+stochastic models of many sorts.  In the remainder of this paper, we first
+provide a brief discussion of related work in software testing.  We then
+describe our earlier experience with using automated testing for UrbanSim,
+and our initial experience with \emph{ad hoc} nondeterministic tests.  This
+experience motivates the need for a more rigorous statistical analysis of
+probabilistic tests for stochastic algorithms, which we present in
+Section~\ref{sec:statform}.  In Section~\ref{sec:power} we provide an
+evaluation of these tests.  Section~\ref{sec:guidelines} provides
+guidelines and practical suggestions for implementing unit tests for
+stochastic algorithms in other applications.  We conclude with an
+assessment of the current state of the work and directions for future
+research.
+
+% LocalWords:  borning UrbanSim microsimulates socha hana
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 

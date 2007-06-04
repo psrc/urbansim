@@ -1,0 +1,165 @@
+%% $Id: model-coordinator.tex,v 1.16 2001/08/18 00:56:25 borning Exp $
+
+\subsection{Model Coordinator}
+\label{sec:ModelCoordinator}
+
+The Model Coordinator is responsible for managing the collection of models
+present in a simulation.  It is responsible for determining the execution
+order of models, resolving any data dependencies one model may have on
+another, and notifying a model when another model has changed data it is
+monitoring.
+
+Some key methods defined by the Model Coordinator class are:
+
+\begin{description}
+
+\item[\varnm{runSimulation}] Run the simulation once the event queue has been
+populated.
+
+\item[\varnm{executeEvent}] Execute a single event (provided as an argument
+to this method).
+
+\item[\varnm{getOrdering}] Determine a total ordering among a collection of
+events (provided as an argument to this method).
+
+\end{description}
+
+\subsubsection{The Event Queue}
+\label{sec:event-queue}
+
+The Model Coordinator maintains an event queue containing timestamped
+events.  These events include requests by a model to execute at a future
+time, development events scheduled to occur at a future time, database
+updates that were created by exogenous events that did not occur
+instantaneously, and policy events that indicate planned changes in
+regional or local policy.  Running the simulation consists of gathering the
+set of events that are to occur at the current timestep, determining a
+total order for those events that preserves any data or ordering
+dependencies they may have, and then executing them in that order.
+
+The event queue is thus the traditional data structure used in discrete
+event simulations, except for the additional consideration of breaking ties
+among events scheduled to occur at the same time.  Any number of models or
+simulation events may be scheduled to execute at the same instantaneous
+timestep.  However, the Model Coordinator may \emph{not} then execute these
+events in an arbitrary order---there may be dependencies among them.  For
+example, if the Household Mobility Model and the Household Location Choice
+Model are both scheduled to execute at time $t$, the Household Mobility
+Model must be run first, determining a set of households that decide to
+move, and then the Household Location Choice Model must be run to find
+available housing units for them.  In other words, the choice to move from
+a current dwelling and the choice to look for a new dwelling are not
+independent; this dependency is reflected by the constraints on the order
+in which the models are run.
+
+Since models are not restricted to running at regular intervals, in general
+it is not possible to determine execution orders until run-time.  This
+introduces an enormous amount of complexity not found in most other urban
+modeling systems, which typically have a fixed ordering of execution.  When
+more than one event is to occur at a given timestep, it is necessary to
+determine a total order of the events that preserves any order dependencies
+that may exist between them.  Dependencies are of two types, data-level
+dependencies, and model-level dependencies between model execution events.
+
+A data dependency exists between two models when one model writes to a
+field that another model reads from.  In such cases, it is essential that
+the reading model reads the correct version of the data, and the writing
+model overwrites data only when it is safe to do so from another model's
+perspective.  In the absence of other ordering dependencies, we assume that
+all reads to a field occur before any writes to it,
+and that writes can occur in any order.
+This reflects the typical access pattern of models, which generally read
+from many objects and write to a small number of fields of a small number
+of objects.  (The fields written to generally have a very small overlap
+with reads from other models.)
+
+A model-level dependency is an ordering dependency explicitly introduced by
+a model's author, in the form of a set of partial orderings between two or
+more models.  This provides a mechanism to order models based on their
+semantics rather than their syntax (data reads/writes).  For example, the
+Land Developer Model and the Land Price Model could be executed in either
+order, based on their inputs and outputs, but we schedule the latter to
+execute after the former so that adjustments in land price due to this
+year's demographic and economic changes do not affect development.  This is
+based on the simplification of market dynamics that we adopt: that
+development decisions are made once per year, looking at the state of the
+region in the prior year to decide what should be built in the current
+year.
+
+To determine a valid total order for a collection of events, a
+directed acyclic graph is constructed.  Events are represented as
+nodes in the graph, and directed edges are created between events
+that access the same data fields of objects or that have
+model-level dependencies, with the direction of the edge
+indicating that the source node (event) must occur before the
+destination.  When determining the possible dependencies between
+two model execution events, we must compute the transitive closure
+of all models and all fields that may potentially be read from or
+written to on the basis of the notification mechanisms. To ensure
+correctness, the full chain of potential reads and writes must be
+considered. Model-level dependencies override data-level
+dependencies in the case of conflicts.  A topological sort is used
+to generate a valid total ordering of the events to be executed.
+
+\subsubsection{Development, Employment, and Policy Events}
+\label{sec:DevPolicyEvents}
+
+UrbanSim supports events that create, modify, or delete buildings;
+create, move, or delete businesses or households; or change the
+urban growth boundary or re-zone land. Many of these events are
+generated by models.  (For example, the developer model generates
+building development events.)  However, events can also be read
+from an external file, allowing the modeler to introduce
+development projects and policy changes into the event pipeline
+that are exogenous to the models.  For example, a scenario author
+may wish to simulate the effects of a major business leaving the
+region, a shopping center being constructed, or a modification to
+the urban growth boundary that occurs at a particular 
+time in the simulated future.
+
+%This can be used for calibration purposes as well, by introducing
+%major events from historical data.
+%This capability was useful, for instance, in performing our
+%historical validation of the system for Eugene-Springfield, Oregon
+%(starting the model with 1980 data and comparing the simulated
+%results for 1994 with what actually transpired).  We used
+%Development Events to model the phased closure of a large
+%Weyerhauser lumber mill in the 1980s, and the opening of the
+%Gateway regional shopping mall in 1990.
+
+%As a somewhat philosophical aside, the reader may wonder why these sorts of
+%large events are exogenous and not produced by models themselves.  The
+%reason is that UrbanSim is intended to model the dynamics of a single urban
+%region---but events in that region are influenced by the larger world.  For
+%example, the closing of a lumber mill might be due to declining timber
+%stocks, changing world markets, or other external factors.  Other
+%examples of exogenous inputs are population control totals, based on
+%predictions by demographers for the region, and overall economic
+%predictions.  This gives rise to another question.  If we need to introduce
+%a Business Event (such as a plant closure) for the system to give an
+%accurate simulation of the historical development of a region, how can we
+%have confidence in the system's predictions about a region in the year
+%2020?  Might there not be some major event in 2015---for example, a global
+%economic downturn---that will drastically influence the region?  The answer
+%is, of course, that UrbanSim provides no crystal ball regarding the global
+%economy.  Planners must use expert judgment in using the model, generally
+%testing it under alternate scenarios and showing the results for all of
+%them.  For example, when evaluating the effects of a major transportation
+%infrastructure project, it would be prudent to perform this evaluation
+%based on several alternative scenarios for general economic conditions.
+
+%A related issue concerns policy events, such as moving an urban
+%growth boundary or re-zoning land.  These are also input as
+%external events, and are not the output of a model.  In contrast
+%to development events representing global influences, these might
+%be purely local policy changes. Our reason for representing policy
+%events as exogenous inputs is philosophical rather than pragmatic:
+%UrbanSim is intended as a tool to aid civic deliberation and
+%debate, not as a tool to model the behavior of voters or
+%governments.  We want it to be used to say ``if you adopt the
+%following policy, here are the consequences,'' but not to say
+%``UrbanSim predicts that in 5 years the city will adopt the
+%following policy.''
+
+% LocalWords:  Exp UrbanSim  timestamped timestep noth runSimulation C's
+% LocalWords:  executeEvent getOrdering borning pwaddell

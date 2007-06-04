@@ -1,0 +1,70 @@
+$Id: patterns.tex,v 1.6 2006/01/26 18:29:27 borning Exp $
+
+% *** THIS SECTION IS NO LONGER USED
+% the last paragraph may well be useful elsewhere though!
+
+\section{Patterns of Statistical Automated Tests}
+
+[2006-jan-24-wgb: what is the purpose of this chapter? it is fairly short and - as far
+as I can see - does not functions as a binding segment between the preceeding and the
+following section.  In this current state I would suggest to put the discovered
+patterns in the discussion section and move the "doubt paragraphs" at the end to the
+outlook and future work section.]
+
+As we developed robust, statistically-based tests, we developed a collection of 
+design patterns for such tests, refining it as we gained experience with the 
+methodology.
+
+% TODO: check names for these patterns
+
+One pattern is for a \emph{uniform distributional test}, in which there are
+a set of equally-likely choices.  In this case, we expect the outcomes to
+be roughly equally distributed among the possibilities.  For example, we
+might have a collection of 100 gridcells, each with 20 vacant residential
+units, and 1000 households.  All households and residential units have the
+same characteristics.  In this case we'd expect that we'd end up with
+approximately 10 households placed in each grid cell.
+
+[2006-jan-24-wgb: in each section we are using different examples with different numbers (100, 1000, 10000). could we use the same example and numbers in each sections to make the paper more easy for the reader?]
+
+[2006-jan-24-wgb: is it OK to have the short form of would "'d" in a paper?]
+
+Another pattern is for a \emph{highly likely choice}, in which there is one
+choice that is much better than the others.  For example, we might have one
+unplaced household to be placed, and 10 vacant units, one of which is much
+more attractive than the others.  We'd expect the household to be placed in
+the more attractive unit nearly all of the time.
+(Additional patterns, and discussions of our experience with them, are
+presented in Section \ref{test-patterns}.)
+
+In stochastic models different runs produce different results when using
+random numbers generator with different seeds.  Nevertheless, for test
+patterns such as those described above, the expected result is known --- in
+fact it often can be computed by hand, as in the examples above.  (More
+generally, if the formula for computing probability of a certain behavior
+is known, the resulting quantity measuring that behavior will be
+proportional to that probability.)
+
+However, we have no or very little information about the spread of the
+results around these expected quantities.  Furthermore, UrbanSim (like many
+other simulation systems) produces a large number of outputs, for
+example, the number of households for each of the
+800,000 gridcells in Puget Sound.  The spread of the results around the expected values can
+differ for each of these outputs.  These facts make it infeasible to design a
+test that is based on a comparison using a single specific tolerance.
+
+If we were running and assessing the test results manually, typical
+practice would be to inspect the results and ask a domain expert if they
+looked reasonable, and if they did not, perhaps run the test again (in case
+we were unlucky with the random number seed that time).  This isn't a
+feasible solution for an automated test environment.  (For example, how do
+we decide if the results are reasonable?  How often should we repeat the
+test?)
+
+[2006-jan-24-wgb: having said the above, I/one could also suggest to write (much) more about how
+these new test patterns fit into a continuous development cycle.]
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 

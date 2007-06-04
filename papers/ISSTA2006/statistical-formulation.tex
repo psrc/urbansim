@@ -1,0 +1,348 @@
+% $Id: statistical-formulation.tex,v 1.39 2006/05/11 22:08:27 hana Exp $
+
+\section{A Statistical Formulation for Automated Tests}
+\label{sec:statform}
+
+To properly support our goal of automated testing, we put the matter
+of testing our stochastic systems on a firm theoretical basis by using
+statistical hypothesis testing (see e.g.\ \cite{mood-book-1974}, Chapter 9).
+We define the null hypothesis $H_0$ and the alternative hypothesis
+$H_1$ as follows:
+
+\begin{tabular}{ll}
+$H_0$: & program behaves as expected\\
+$H_1$: & program does not behave as expected
+\end{tabular}
+
+Using various properties of the results of running the test, we can test
+whether there is strong evidence to reject $H_0$. In such a case, the unit
+test should fail.
+
+There are many ways to construct the test statistics; the best choice depends
+primarily on the properties of the distribution of output values.  The
+methodology is based on comparing the distribution of the output values to the
+expected distribution. This requires multiple runs of the program.
+Furthermore, one has to be able to model the expected output properties by a
+probability distribution with known density function. Often, various
+transformation functions can be applied to the data in order to obtain an
+approximation of a known distribution (see e.g.~\cite{Afifi&2004}, Chapter~4).
+As in the case of deterministic unit test, the approach is applicable to test
+cases for which one can calculate expected values, which are then the
+parameters of the expected distribution.
+
+In the following subsections, we present different ways of constructing a test
+statistics for the above hypothesis, namely for normally distributed and for
+Poisson distributed data (Sections \ref{sec:normal} and \ref{sec:poisson}
+respectively).  These two commonly used distributions have proved sufficient
+for the cases that arise in our application.  We believe that further they
+will cover the vast majority of cases that researchers and practitioners must
+deal with.  However, the methodology is easily extensible, so that tests can
+be constructed for data with other kinds of distributions.
+
+%
+\subsection{Normally Distributed Data}
+\label{sec:normal}
+%
+The normal distribution is typically the most commonly used distribution. (It
+is actually not so widespread in our application --- for UrbanSim, it arises
+for real-valued quantities, especially averages, and the like.)  For output
+values that are independent and normally distributed, we suggest using the
+following test.  The program is assumed to be correct if the
+actual distribution of outputs for each dimension\footnote{In this paper we
+  use the term ``dimension'' to refer to the number of outputs for one test.
+  This is standard terminology in statistics when used in joint probability
+  distribution formulas.}  has the same mean as the expected distribution.
+Thus, we will perform a test on means of normal distributions with unknown
+variance using a likelihood-ratio test statistic (LRTS).
+
+This test requires the variance to be constant over all dimensions, which is not
+necessarily the case. A simple solution is to find an appropriate
+transformation of the output values prior to the statistical testing that will
+stabilize the variance. Often a square root or log transformation is a good
+candidate if the variance varies with the mean.  Plotting the variances
+against means (one point per dimension) before and after the transformation
+can be helpful in finding the right function (see for
+example~\cite{sevcikova-trb-2006}, Figures 2 and 3).
+
+More formally, we denote the number of replications by $R$ and the number of
+dimensions by $K$\@. $y_{kr}$ denotes the $k$-th output from $r$-th
+replication.  Note that all $K \times R$ ouputs are produced using the same
+inputs. The differences in $y$ along the $r$ axis are due to the
+nondeterminism of the code. $x_{kr}$ is either equal to $y_{kr}$ if no
+transformation is necessary, or $x_{kr} = g(y_{kr})$ where $g(\cdot)$ denotes
+the transformation function.  Suppose that $x_{kr}$ is independent normally
+distributed
+\[
+x_{kr} \sim N(\mu_k, \sigma^2)\;, k=1,\dots, K,\; r=1,\dots,R
+\]
+where $\mu_k$ denotes the mean of the distribution for dimension $k$
+and $\sigma^2$ denotes the variance which is constant over all dimensions.
+
+We translate the above formulated hypothesis test into:
+\[
+\begin{array}{lc}
+H_0: & \forall k: \, \mu_{k} = \mu_{k}^{(0)}\\
+H_1: & \exists k: \, \mu_{k} \not= \mu_{k}^{(0)}
+\end{array}
+\]
+Here, $\mu_{k}^{(0)}$ denotes the known mean for the output dimension $k$
+(i.e. the expected value for $k$-th output). Using the formulas for normal distribution,
+we can define the likelihood for each hypothesis as
+\[
+L_{H_0} = \prod_{k,r}\frac{1}{\sqrt{2\pi\hat{\sigma}_0^2}} \exp\left[ \frac{-1/2(x_{kr}-\mu_{k}^{(0)})^2}{\hat{\sigma}_0^2}\right]
+\]
+and
+\[
+L_{H_1} = \prod_{k,r}\frac{1}{\sqrt{2\pi\hat{\sigma}_1^2}} \exp\left[
+  \frac{-1/2(x_{kr}-\hat{\mu}_{k})^2}{\hat{\sigma}_1^2}\right]
+\]
+where
+\[
+\hat{\mu}_{k} = \frac{1}{R}\sum_{r=1}^R x_{kr}\,.
+\]
+$\hat{\sigma}_0^2$ and $\hat{\sigma}_1^2$ are estimates of the
+variance for the null and alternative hypothesis, respectively. They are
+obtained by
+\[
+\hat{\sigma}_0^2 = \frac{1}{KR}\sum_{k,r}(x_{kr}-\mu_{k}^{(0)})^2
+\]
+and
+\[
+\hat{\sigma}_1^2 = \frac{1}{KR}\sum_{k,r}(x_{kr}-\hat{\mu}_{k})^2\,.
+\]
+
+The likelihood-ratio test statistic
+\[
+LRTS_{normal} = 2(\log L_{H_1} - \log L_{H_0}) = KR
+\log\left(\frac{\hat{\sigma}_0^2}{\hat{\sigma}_1^2}\right)
+\]
+has a $\chi^2$ distribution with $K$
+degrees of freedom, asymptotically. If the corresponding $p$-value is smaller than a selected level
+of significance $\alpha$, the null hypothesis
+will be rejected.
+
+%
+\subsection{Poisson Distributed Data}
+\label{sec:poisson}
+%
+The Poisson distribution can be used if the outputs are integers,
+especially if they represent counts.  (This is the more common case in
+UrbanSim and other systems using discrete choice models.  Examples of such
+outputs in UrbanSim are the number of households per grid cell, jobs in a
+particular employment sector, and the like.)  We assume that the data $x_{kr}$
+are independent Poisson distributed
+\[
+x_{kr} \sim Poisson(\lambda_k),\; \lambda_k>0, \; k=1,\dots, K,\; r=1,\dots,R
+\]
+where $\lambda_k$ denotes the mean and variance of the distribution for
+dimension $k$.
+
+Similarly to the case of normal distribution, we set the hypothesis as
+\[
+\begin{array}{lc}
+H_0: & \forall k: \, \lambda_{k} = \lambda_{k}^{(0)}\\
+H_1: & \exists k: \, \lambda_{k} \not= \lambda_{k}^{(0)}
+\end{array}
+\]
+where $\lambda_{k}^{(0)}$ denotes the known mean (and variance)
+for dimension $k$.
+
+A likelihood-ratio test statistic is constructed as follows:
+
+\begin{eqnarray*}
+\log L_{H_0}& =& \log \prod_{k,r} \frac{(\lambda_k^{(0)})^{x_{kr}}
+    \exp(-\lambda_k^{(0)})}{x_{kr}!} \\
+ &= &\sum_{k,r} (x_{kr}\log \lambda_k^{(0)}
+    - \lambda_k^{(0)}) - \sum_{k,r} \log (x_{kr}!)
+\end{eqnarray*}
+
+
+ \begin{eqnarray*}
+\log L_{H_1} &= &\log \prod_{k,r} \frac{\hat{\lambda}_{k}^{x_{kr}}
+    \exp(-\hat{\lambda}_{k})}{x_{kr}!} \\
+&= &\sum_{k,r} (x_{kr}\log \hat{\lambda}_{k}
+    - \hat{\lambda}_{k}) - \sum_{k,r} \log (x_{kr}!)
+\end{eqnarray*}
+where $\hat{\lambda}_{k}$ is the maximum likelihood estimator of $\lambda_{k}$:
+\[
+\hat{\lambda}_{k} = \frac{1}{R}\sum_{r=1}^R x_{kr}\,.
+\]
+
+This gives the likelihood ratio test statistic
+\begin{eqnarray*}
+LRTS_{poisson}  & = & 2(\log L_{H_1} - \log L_{H_0}) \\
+&= &2 \sum_{k,r} \left[ x_{kr} \log
+\left(\frac{\hat{\lambda}_{k}}{\lambda_k^{(0)}}\right) - \hat{\lambda}_{k} + \lambda_k^{(0)} \right]
+\end{eqnarray*}
+which has a $\chi^2$ distribution with $K$
+degrees of freedom, asymptotically.
+
+A common alternative to this likelihood-ratio test statistic for the Poisson
+distribution is the Pearson $\chi^2$ test:
+\[
+\text{Pearson } \chi^2 = \sum_{k,r} \frac{(x_{kr} - \lambda_k^{(0)})^2}{\lambda_k^{(0)}}
+\]
+This test statistic is also $\chi^2$ distributed and has $KR$
+degrees of freedom, asymptotically. In Section~\ref{sec:power} we will provide a
+comparison of those tests.
+
+
+\subsection{An Example}
+\label{sec:example}
+
+We apply the above methodology to a simple but realistic example, by
+writing a unit test for a model that is based on multinomial logit theory
+\cite{ben-akiva-lerman-1987,train-book-2003}.  UrbanSim contains several
+such models, including the \emph{Residential Location Choice model}, the
+\emph{Developer model}, and others.  For example, the Residential Location
+Choice model simulates the decision-making process of households deciding
+where to live.  For each household that is moving to a new house or
+apartment, the probability of moving to each vacant unit is computed, based
+on characteristics both of the household (income, number of children, age
+of head, \ldots), and of the potential dwellings (cost, percent residential
+within walking distance, \ldots).
+
+More generally, these models represent a
+situation in which agents make a choice from a set of alternatives. The choice
+process is based on probabilities for each of the alternatives which are
+computed using the multinomial logit formula.  Thus, the deterministically
+computed probabilities are the basis for determining the known means
+$\mu_k^{(0)}$ or $\lambda_k^{(0)}$ for $k=1,\dots,K$, where $K$ denotes the
+number of alternatives.
+
+Suppose we have a set of $100$ agents, each of which
+chooses one of $10$ available locations.  Of these locations,
+$5$ cost \$$1000$ each, while the other $5$ locations are less costly, say
+\$$100$ each. (In production use, these models employ
+many parameters in addition to cost, but
+for purposes of writing a unit test, we use just the one parameter.
+This follows the unit test philosophy of using a minimal set of data that
+nevertheless exercises the code.)
+
+We set the cost coefficient
+to $\beta = -0.001$ and denote the cost variable for location $i$ by
+$c_i$. The multinomial logit formula
+\[
+ P_{k} = \frac{e^{\beta c_k}}{\sum_{i=1}^{K}e^{\beta c_i}}
+\]
+yields probabilities that suggest that $5\cdot 14.2 \% = 71 \%$ of the agents
+in total will choose the less expensive locations, whereas $5 \cdot 5.8 \% =
+29 \%$ will choose the more expensive alternatives. Our quantity of interest
+is the number of agents in each location. From the above computations we know
+that the expected number of agents in an expensive location is $100 \cdot
+0.058$ and in a less expensive location is $100 \cdot 0.142$.  For illustrative
+purposes, we will apply all
+three tests described in Sections~\ref{sec:normal} and~\ref{sec:poisson}.  As
+a transformation function in the likelihood-ratio test for normal distribution
+we choose the square root function.
+
+Running our program $5$ times gives the intermediate values
+shown in Table \ref{good-results-table}, which can be used to compute
+$LRTS_{normal}$, $LRTS_{poisson}$ and Pearson $\chi^{2}$. Note that in the
+two Poisson tests $x_{kr}=y_{kr}$, whereas in the test for normal distribution
+$x_{kr}=\sqrt{y_{kr}}$.
+
+\begin{table*}[t]
+\[
+\begin{array}{lr|rrrrrrrrrr}
+% experiment made with seed(1,1) (stochastic_test_power.py)
+&& \multicolumn{5}{c}{\text{less expensive locations}} & \multicolumn{5}{c}{\text{more expensive
+      locations}} \\
+& r \backslash k& 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\\hline
+& 1 & 19& 15& 18&  9 & 9 & 7 & 11 & 5 & 3 & 4 \\
+& 2 & 17 &16 &10 &16 &10 & 5 & 5 & 6 &11 & 4 \\
+y_{kr} & 3 & 11 & 22& 12& 19& 14 & 4 & 5 & 5 & 6 & 2 \\
+& 4 & 13 & 9 &21 &12 &13 & 6 & 7 & 3 & 7 & 9 \\
+& 5 & 14 &17 &17 & 7 &15 & 5 & 6 & 3 & 7 & 9 \\\hline
+\mu_{k}^{(0)} & & 3.77 & 3.77 & 3.77 & 3.77 & 3.77 & 2.41 & 2.41 &2.41
+      &2.41 & 2.41\\
+\hat{\mu}_{k} & & 3.83 &   3.94 &  3.91 &  3.49 &  3.48 &
+  2.31 &  2.58 &  2.08 &  2.56 &  2.28 \\\hline
+\lambda_{k}^{(0)} & & 14.2  & 14.2 & 14.2 & 14.2 & 14.2
+& 5.8 &  5.8 &  5.8 &  5.8 &  5.8\\
+\hat{\lambda}_{k} & & 14.8 &  15.8 &  15.6 &  12.6 &  12.2 &
+   5.4 &    6.8 &   4.4 &    6.8 &   5.6 \\
+\\
+\multicolumn{12}{l}{\hat{\sigma}_0^2=0.2555$, $\hat{\sigma}_1^2=0.2155}
+\end{array}
+\]
+
+\caption{Results from running a correct location choice model}
+\label{good-results-table}
+\end{table*}
+
+The three different test statistics are:
+\[
+\begin{array}{l|rrr}
+& \text{test statistic} &\text{df} & p\text{-value} \\\hline
+LRTS_{\text{normal}} & 8.5026 & 10 & 0.5799 \\
+LRTS_{\text{poisson}} & 7.7336 & 10 & 0.6548 \\
+\text{Pearson } \chi^2 & 50.2234 & 50 & 0.4645
+\end{array}
+\]
+where df denotes degrees of freedom.  All three $p$-values suggest that there
+is no strong evidence to reject the null hypothesis --- employing the commonly
+used significance level $\alpha=0.05$ we would accept the hypothesis that the
+program behaves as expected (and so it would pass the unit test) in all three cases.
+
+To see what happens when there is an error in the model code, we will use an
+example bug that our stochastic unit test case recently exposed.
+Initially, the test only
+examined the first half of the choice set, namely the less expensive locations,
+and succeeded.  When we expanded it to examine the whole choice set, it failed
+every time.  Upon investigation, it turned out that one of the locations was,
+by mistake, being excluded from the set of alternatives, due to an indexing
+error in the model code.
+
+Repeating the above experiment for the model code with this error gives the
+values shown in Table \ref{bad-results-table}, which produces these test
+statistics values:
+\[
+\begin{array}{l|rrr}
+& \text{test statistics} &\text{df} & p\text{-value} \\\hline
+LRTS_{\text{normal}} & 78.9807 & 10 & 0.0000 \\
+LRTS_{\text{poisson}} & 68.4220 & 10 & 0.0000 \\
+\text{Pearson } \chi^2 & 75.1238 & 50 & 0.0123
+\end{array}
+\]
+
+\begin{table*}[t]
+\[
+\begin{array}{lr|rrrrrrrrrr}
+% experiment made with seed(1,1) (stochastic_test_power.py)
+&& \multicolumn{5}{c}{\text{less expensive locations}} & \multicolumn{5}{c}{\text{more expensive
+      locations}} \\
+& r \backslash k& 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\\hline
+& 1 &19 & 16 & 19 & 7 & 14& 12 & 6 & 3 & 4 & 0\\
+& 2 &19 &15& 14 &16 & 9 & 6 & 5 & 12 & 4 & 0\\
+y_{kr} & 3 &14 &20 &18 &15 &15 & 5 & 4 & 6 & 3 & 0\\
+& 4 &13 &13 &18 &13 &16 & 6 & 5 & 7 & 9 & 0\\
+& 5 &14 &18 &17 & 9 &17 & 6 & 3 & 5 &11 & 0\\\hline
+\mu_{k}^{(0)} & & 3.77 & 3.77 & 3.77 & 3.77 & 3.77 & 2.41 & 2.41 &2.41
+      &2.41 & 2.41\\
+\hat{\mu}_{k} & & 3.96 &  4.04 &  4.14 &  3.42 &  3.75 &
+  2.61 &  2.13 &   2.51 & 2.41 &   0.00 \\\hline
+\lambda_{k}^{(0)} & & 14.2  & 14.2 & 14.2 & 14.2 & 14.2
+& 5.8 &  5.8 &  5.8 &  5.8 &  5.8\\
+\hat{\lambda}_{k} & & 15.8 &  16.4 &  17.2 &  12.0 & 14.2 &   7.0 &
+   4.6 &    6.6 &    6.2 &   0.0 \\
+\\
+\multicolumn{12}{l}{\hat{\sigma}_0^2 = 0.7929$, $\hat{\sigma}_1^2 = 0.1634}
+\end{array}
+\]
+\caption{Results from running a location choice model with a bug}
+\label{bad-results-table}
+\end{table*}
+
+In this case, the tests correctly detect that the means for $k=10$ departs from
+the expected value, leading to small $p$-value.  The unit test would fail
+in all three cases for level of significance $\alpha=0.05$.
+
+% LocalWords:  UrbanSim gridcell numarray closeto kr lc LRTS logit rrrrrrrrrr
+% LocalWords:  cccc tex borning TODO gridcells hana poisson lr rrr df
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: main
+%%% TeX-master: "main"
+%%% End:

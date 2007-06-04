@@ -1,0 +1,70 @@
+% $Id: introduction.tex,v 1.11 2006/09/08 23:57:16 borning Exp $
+
+\section{Introduction}
+\label{sec:introduction}
+
+The process of planning and constructing a new light rail system or
+freeway, setting an urban growth boundary, changing tax policy, or
+modifying zoning and land use plans is often politically charged.  Our goal
+in the UrbanSim project is to provide tools for stakeholders to be able to
+consider different scenarios, and then to evaluate these scenarios by
+modeling the resulting patterns of urban growth and redevelopment, of
+transportation usage, and of environmental impacts, over periods of 20--30
+years \cite{waddell-sscr-2004,waddell-ulfarsson-2004}.  
+
+UrbanSim, combined with transportation models and macroeconomic inputs,
+performs simulations of the interactions among urban development,
+transportation, land use, and environmental impacts. It consists of a set
+of interacting component models that simulate different actors or processes
+within the urban environment.  For example, one component model, the
+Residential Location Choice Model, simulates the decision-making process of
+a household seeking a new place to live.  Other component models include
+the Land Price Model (which captures key aspects of the real estate
+market), the Demographic Transition Model (which simulates changes in the
+overall demographics of the region, such as births, deaths, and moves in
+and out of the region), and a Real Estate Development Model (which
+simulates the actions of real estate developers as they build or renovate
+housing, office space, and so forth).  An external travel model models
+trips, mode choice (whether the trip is by automobile, bus, bicycle, etc),
+and congestion.  Typically, each component model is run on a simulated
+annual basis. To apply UrbanSim in a particular area, users 
+prepare a ``baseyear database'' that consists of the starting state of the
+region in a particular year.  They then prepare alternate scenarios ---
+packages of transportation investments, and policy and land use changes ---
+and then simulate the effects of these scenarios over periods of 20--30
+years.  These scenarios are either realistic alternatives that are
+under active consideration, or diagnostic test scenarios to
+help evaluate how well UrbanSim performs on a particular region. 
+
+UrbanSim's output is presented using indicators, which are variables that
+convey information on significant aspects of the simulation results. This
+paper describes the Indicator Browser, a web-based interface that
+facilitates indicator generation and visualization. We discuss the
+interface design and implementation process, in particular the integration
+of Value Sensitive Design \cite{friedman-amis-2006} into user-centered
+interface design practices and a discussion of our recurring design issues
+and implemented solutions, as an e-government infrastructure case study.
+
+The UrbanSim group has worked with regional government agencies in applying
+the system in the urban areas around Detroit, Eugene, Honolulu, Houston,
+Puget Sound (Seattle and surrounding cities), and Salt Lake City.  There
+have also been research and pilot applications in Amsterdam, Paris,
+Phoenix, Tel Aviv, and Zurich.  The Puget Sound application of UrbanSim,
+and our work with the regional planning agency, the Puget Sound Regional
+Council (PSRC), plays a central role in the system evaluation reported
+here.
+
+The rest of the paper is organized as follows.  Section
+\ref{sec:indicators} describes how indicators are used to present key
+results from UrbanSim simulations, while Section \ref{sec:prevwork}
+summarizes prior work on indicators for UrbanSim, informed by the 
+Value Sensitive Design theory and methodology, which underlies much of the
+research presented here.  Section \ref{sec:opus} discusses some issues
+around the latest implementation of UrbanSim and implications for the
+Indicator Browser.  Sections \ref{sec:interface}, \ref{sec:system-design},
+and \ref{sec:evaluation} describe the interface design, system architecture
+and implementation, and evaluation of the Indicator Browser.  Section
+\ref{sec:conclusion} concludes.
+
+% LocalWords:  borning UrbanSim PSRC Aviv baseyear UrbanSim's
+

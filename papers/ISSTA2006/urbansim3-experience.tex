@@ -1,0 +1,103 @@
+% $Id: urbansim3-experience.tex,v 1.25 2006/05/10 07:04:11 hana Exp $
+
+\section{Experience With UrbanSim Unit Tests}
+\label{prior-experience}
+
+Our prior implementation of UrbanSim was written in Java, using agile
+development techniques, such as unit tests (using JUnit, integrated with
+the Eclipse IDE), FIT tests (using Ward Cunningham's Framework for
+Integrated Testing), small steps with frequent check-ins, test-first
+development, nested planning iterations, regular refactoring, automated
+builds, and so forth.  Central to this approach is having good unit tests,
+and making it easy to know when they fail.  To facilitate this, in our lab
+we installed traffic lights (real ones) that provide ambient indicators of
+the most recent results of these tests~\cite{freeman-benson-agile-2003}.
+
+We continue to use many aspects of this software development methodology in
+our current work on UrbanSim 4, including extensive testing (now using PyUnit,
+since we are working in Python), and the traffic lights.  One aspect that did
+not work well, however, was our unit tests of the parts of the system
+that exhibited stochastic behavior.
+
+\subsection{Problems Writing Unit Tests for Stochastic Models}
+
+A good
+unit test typically runs the component with just enough data to exercise the
+part of the algorithm and implementation being tested, and is simple enough
+that the expected output values can be computed by hand for checking against
+the result from running the algorithm.  We were able to write such tests for
+components of the system involving deterministic algorithms, and these tests
+were very useful for detecting problems there.
+
+However, neither the domain
+experts (the urban modelers) nor the developers were able to devise really
+satisfactory tests for the stochastic models.  So instead we generally
+resorted to regression testing, checking whether the output values from a new
+version of an algorithm was identical to that from the previous version, or if
+there was a change that \emph{should} have changed the output values,
+convincing ourselves that the new output values were correct, and then
+installing this as the new standard against which future runs would be
+checked.
+
+In practice, however, it was difficult to decide whether the new result was
+correct when there was a change.  We used both a realistic test data set
+(for Eugene, Oregon), as well as a contrived one.  But the results from the
+Eugene set were too complex to feasibly do more than check for identical
+results.  On the other hand, the results from the small, contrived set were
+unrealistic, and the modelers could not reason about them.
+
+Another problem was that for comparing exact results, the test scenarios were
+fragile.  The scenario required running the algorithm with a fixed seed for the
+random number generator, and tiny algorithmic changes (for example, a change
+that caused the random number generator to be called one more time), would give
+different output values.
+
+As a result, over time we slowly reduced the power of the
+tests as their fragility caused increasing pain for the developers.
+Eventually, many of the unit tests for models
+degraded to simply testing that the
+number of rows of data produced were as expected.  (Not surprisingly, we
+subsequently discovered that there were still bugs in the model algorithms
+and implementation, which were not found by such tests.)  We did, however, continue to
+have extensive and reasonable unit tests of the deterministic aspects of
+the system.
+
+\subsection{Toward Statistically-Based Unit Tests}
+
+In response to these problems, in UrbanSim 4 we set out to
+design statistically-based tests that would be reliable, intuitive to the
+modelers, and straightforward to write for the software developers.
+
+When running in production mode, UrbanSim (like many other simulation
+systems) produces voluminous, multidimensional outputs, for example, the
+number of households in each grid cell.  However, for small test cases,
+even though different runs in general will produce different values, the
+expected values can be readily found --- in fact they often can be computed
+by hand, as in the case of simple deterministic tests.
+But we have no, or very little, information about the spread of the
+actual results around the expected ones.  We could test whether the actual
+results from a unit test are within a certain tolerance of the expected
+results, but what tolerance should be used to decide whether the test has
+succeeded?  Furthermore, the spread can differ across different outputs,
+for example it may increase with larger expected values. Under such
+conditions, even a solution of running the test several times, and letting
+it pass if it succeeds at least once, is obviously \emph{ad hoc}.
+
+For our very real-world application, these are not purely theoretical
+questions.  When we first began to use such unit tests, we used a tolerance
+to determine whether the test had succeeded, but we kept needing to
+increase the tolerance, or to increase the number of times the test was
+run, to get some of our tests to pass consistently.  This was especially
+true as we added more tests to the system, which caused our traffic lights
+to go red more often. This was clearly unsatisfying: did we still have
+good unit tests, or had we relaxed them to the point where we were masking
+errors?  Such considerations motivated the development of a more
+mathematically grounded approach.
+
+% LocalWords:  UrbanSim tex borning YP XP JUnit IDE wgb CVS PyUnit jan logit
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
+% LocalWords:  hana gridcell socha

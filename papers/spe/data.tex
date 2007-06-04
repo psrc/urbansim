@@ -1,0 +1,40 @@
+%% $Id: data.tex,v 1.5 2001/08/18 00:56:25 borning Exp $
+
+\subsection{Data Import and Export}
+
+On the input side, UrbanSim requires a substantial amount of data
+to simulate an urban area, including census, employment, parcel,
+zoning, and transportation network data.  We have written a suite
+of custom data preparation tools that can convert data to the
+formats we require, merge datasets, detect inconsistencies, and in
+some cases fill in missing data or correct errors in base year
+input data using heuristics.  This input data is generally made
+available to UrbanSim in the form of delimited ASCII text files.
+
+On the output side, UrbanSim's output module is responsible for
+gathering, aggregating, and exporting data from the Object Store
+to a set of external ASCII text files containing requested
+extracts or summaries from the Object Store. Currently, the export
+model writes output files containing households and jobs by type,
+housing units, non-residential square footage, and land and
+improvement values, summarized by grid cell and by Traffic
+Analysis Zone. These files are then passed on to other systems
+(including GIS software, statistical software, spreadsheets, and
+the external travel model) for subsequent analysis and graphical
+display.  To simplify the software engineering aspects of data
+export, we have defined the output module as a model, analogous to
+the Demographic Transition Model, the Household Mobility Model,
+and so forth (Section \ref{sec:models}).  This allows the Export
+Model to be scheduled to run at defined times, querying the Object
+Store to take a snapshot of the state of the simulation.
+Conceptually, however, it is not a model like the Demographic
+Transition Model or others, since it does not represent an agent
+in the simulated world, and only performs reads of the Object
+Store, not writes.
+
+Finally, in addition to input and output files, the system can
+write a snapshot of the current state of the Object Store to an
+external file, allowing the system to be restarted quickly from a
+given point in the simulation.
+
+% LocalWords:  Exp UrbanSim  UrbanSim's GIS pwaddell

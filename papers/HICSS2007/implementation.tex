@@ -1,0 +1,50 @@
+% $Id: implementation.tex,v 1.7 2006/09/08 23:57:16 borning Exp $
+
+\subsection{System Implementation}
+\label{sec:implementation}
+
+\subsubsection{Agile Test-first Software Development}
+
+The Indicator Browser was developed using Agile Test-first software
+development \cite{cockburn-book-2002}, which is a technique that focuses on
+producing software systems in small steps driven by unit tests. The
+idea is to deliver working software early and continuously to enhance
+customer satisfaction. A developer should first write a test for a new piece
+of functionality before it is implemented (test-driven development).  
+Both independent modules and interactions between modules
+are tested.  UrbanSim developers are encouraged to commit their code as
+often as practical.  Fireman, a program that runs all the project's tests
+every time the code is committed
+to the source code repository, also aids in maintaining code quality.
+Agile development encourages constant communication amongst the people
+involved in the development process.  Developers write ``Today
+messages'' \cite{brush-hicss-2005} every day to let the rest of the
+development team know about their daily progress. In addition, software
+engineers and project leaders meet with customers on a frequent basis to
+communicate about the project's progress and redefine requirements.
+
+\subsubsection{System Reliability and Robustness}
+
+Robustness refers to the ability of the software system to perform
+correctly even under extreme circumstances or when there are external or
+internal changes that affect system's performance. Reliability refers to
+the ability of the software system to perform as intended for a long
+period of time.  Opus is an evolving system that constantly redefines its
+requirements and whose code base is unstable.  However, the Indicator
+Browser needs to be robust, reliable and flexible with respect to the
+changes in the Opus code. Therefore, there were certain measures taken in
+order to improve such reliability and robustness.
+
+In order for the Indicator Browser to be reliable, all displayed indicators
+should be able to be generated and visualized. To achieve this goal, we
+created a set of Python unit tests that generate all possible indicator
+visualizations under all possible visualization types for a small test
+scenario run. The only indicators that are displayed on the interface are
+those that passed the aforementioned test, therefore considerably improving
+the chances that all the indicators displayed on the Indicator Browser can
+in fact be successfully generated and visualized. Currently, these tests
+and the set of available indicators are run and updated manually.  However,
+these tests will be eventually added to the Opus nightly build and the
+available indicator list will be updated automatically.
+
+% LocalWords:  borning UrbanSim

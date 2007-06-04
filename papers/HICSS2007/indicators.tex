@@ -1,0 +1,43 @@
+% $Id: indicators.tex,v 1.3 2006/09/06 19:09:21 borning Exp $
+
+\section{Indicators}
+\label{sec:indicators}
+
+As used in the planning literature, an indicator is a variable that conveys
+information on the condition or trend of one or more attributes of the
+system considered \cite{gallopin-1997,hart-book-1999}.  The indicator will
+then have a specific value at a given time.  Indicators form the principal
+means for presenting information from an UrbanSim simulation to the users.
+Some examples of UrbanSim indicators are population, number of jobs, land
+price per acre, vehicle miles traveled per year, or greenhouse gas
+emissions from transportation.  Generally we can produce values for these
+indicators for the region as a whole, and also for different subregions (for
+example, the population of the region, or of a particular county, city, or
+neighborhood).  We can also find values for the indicator for each of the
+simulated years, and for different scenarios being investigated.  The
+indicator values are then displayed as tables, charts, or maps.  For
+example, we might track the greenhouse gas emissions for the region for
+each simulated year between 2005 and 2030, under two different scenarios.
+The greenhouse gas emissions for the entire region 
+would best be displayed as a table
+or graph, while a spatially distributed indicator, such as population
+density, would typically be displayed as a choropleth map (a map that
+portrays different population densities as different shades, e.g.\ darker
+blue for higher densities).  Figure \ref{fig:pregenerated} shows a variety
+of such indicator visualizations.
+
+One important use of indicators is in policy analysis.  For example,
+suppose that we are interested in fostering compact, walkable, more densely
+populated neighborhoods within the urban area, and curbing low-density,
+auto-oriented development.  In the urban planning literature, population
+density is regarded as one of the key indicators of the character of
+development, e.g.\ dense urban, low-density suburban, rural, etc.  We can
+then use UrbanSim to predict population density in different parts of the
+region, under alternate scenarios, and show the results as choropleth maps.
+In addition, modelers use UrbanSim indicators diagnostically, to learn
+about the system's internal operation, to help assess whether it is
+operating correctly, and to debug problems.  In the work reported here, we
+are concerned with both evaluative and diagnostic uses.
+
+% LocalWords:  borning UrbanSim PSRC choropleth subregions
+

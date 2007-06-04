@@ -1,0 +1,11 @@
+#TeXlipse project settings
+#Mon Jan 16 15:12:49 PST 2006
+builderNum=0
+outputDir=
+outputFormat=dvi
+tempDir=tmp
+mainTexFile=
+outputFile=
+langSpell=en
+markDer=true
+srcDir=

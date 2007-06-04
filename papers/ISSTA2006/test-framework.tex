@@ -1,0 +1,74 @@
+% $Id: test-framework.tex,v 1.14 2006/01/25 08:47:13 borning Exp $
+
+*** SECTION NO LONGER USED ***
+
+\section{A Framework for Stochastic Tests}
+
+\subsection{Patterns for Automated Tests}
+\label{test-patterns}
+
+  \begin{itemize}
+    \item standard UnitTests for deterministic models (e.g. LandPriceModel)
+    \item distributional tests (1000 households) [Is there a better name for this?]
+    \item forced choice, e.g. have one unplaced household to be placed, a vacancy exists, no
+    sampling, so the model must place the household in that location.
+    \item highly likely choice, e.g. have one unplaced household to be placed, 10 vacancies,
+    one is much more attractive than the others, the household is highly likely to be 
+    placed in that place.
+  \end{itemize}
+
+
+\subsection{The Stochastic System Test Case}
+
+Patterns
+\begin{itemize}
+  \item run once (UnitTest)
+  \item run until test succeeds, maximum n times
+  \item run n times, number of successes must be between j and k for the test to succeed
+\end{itemize}
+
+Support to help modelers and developers choose the correct test parameters (e.g. number of times
+to run a test until it succeeds, or bounds on the number of successes.  This support could include
+a tool that runs a small test many times and gathers statistics, and also something that tells the
+modeler or developer how likely Type 1 and Type 2 errors are.
+
+\subsection{Practical Aspects}
+
+\begin{itemize}
+  \item how difficult is it to write these tests?
+  \item who can write them?  only domain experts? 
+  \item how much maintenance do these tests require?
+  \item how fragile are these tests?
+  \item how useful are these tests?  Are they practical, lightweight, 
+     understandable, and convincing?
+  \item do they fit into the unit test philosophy (adapted it to accomodate
+  stochastic models of these kinds)?
+\end{itemize}
+
+\subsection{Results So Far}
+
+So far, our use of these stochastic tests have had three positive results. 
+Firstly, it exposed an error in our implementation of the \emph{Household Location 
+Choice model} -- the same bug that we used as example in this paper.  Secondly, 
+the stochastic test framework reduced the frequency of the tests failing when 
+they should have passed.  Switching from a Normal distribution to a Poisson 
+distribution reduced these incorrect failures even more for the tests that were 
+checking counts. Thirdly, we have more confidence in our system now that we are 
+using tests based upon rigorous statistical theory.  What became an intractable
+problem with our former version of UrbanSim seems quite tractable and pleasant now.
+
+We plan to continue to refine our use of this testing framework, which is part 
+of our upcoming Opus release.  Providing it as part of the Opus system, makes 
+it available to anyone using Opus for their modeling systems. We look forward 
+to seeing the types of design patterns that emerge as we expand convert the 
+rest of our stochastic tests to using this system, and add more stochastic 
+tests for the UrbanSim models and model in other packages that we and our 
+colleagues are developing.
+
+
+% LocalWords:  UnitTests LandPriceModel UnitTest
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End: 

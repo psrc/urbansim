@@ -1,0 +1,8 @@
+*.aux
+*.dvi
+*.blg
+*.bbl
+*.log
+*.swp
+*.pdf
+urbansim.bib

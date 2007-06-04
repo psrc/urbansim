@@ -1,0 +1,185 @@
+% $Id: applications.tex,v 1.8 2006/06/05 05:47:20 borning Exp $
+
+\subsection{Applying UrbanSim}
+\label{sec:urbansim-applications}
+
+An important part of our research agenda has been close collaborations with
+a number of regional government agencies in applying UrbanSim to their
+regions.  In this subsection we call out the Salt Lake City and Puget Sound
+applications in particular.  These two cases present substantially
+different aspects, both in terms of characteristics of the region, and of
+the legal and political context.  The Salt Lake City application is
+described in detail in reference \cite{waddell-wfrc-2006}, and more briefly
+in reference \cite{waddell-sscr-2004}.  The PSRC application is being
+studied, particularly with respect to the PSRC/UW collaboration, the
+decision-making regarding adoption, and their implications for use of the
+model in practice, as a component of Ruth F\"{o}rster's forthcoming
+Ph.D. dissertation \cite{foerster-phd}.
+
+During 2002--20003, we worked intensively with the Wasatch Front
+Regional Council in applying UrbanSim to Salt Lake City and the
+surrounding areas, building on earlier work with the agency.  The
+Greater Wasatch Area, containing 80\% of Utah's population and
+centered on Salt Lake City, is a rapidly growing metropolitan area,
+with population predicted to increase by 60\% in the year 2020.  In
+order to deal with projected increases in population and travel,
+Utah officials developed a series of transportation improvement
+plans, one component being the Legacy Parkway, a controversial
+four-lane highway extending 14 miles north from Salt Lake City.  The
+highway project precipitated a lawsuit, which ultimately resulted in a
+settlement that included terms requiring the Wasatch Front Regional
+Council to test the integration of UrbanSim with their regional
+travel model system, and if successful, to bring this into their
+operational use in transportation planning.
+
+The assessment of the integration of UrbanSim with the regional
+travel model system was launched in 2003 with the formation of a
+Peer Review Panel, consisting of technical experts in land use and
+transportation modeling, along with a Management and Policy
+Committee and a Scenarios Committee.  A very tight schedule was
+specified in the out-of-court settlement, requiring that the entire
+review be completed by the end of 2003.  The Peer Review Panel
+decided on a validation of the combined UrbanSim -- Travel Model
+System using a series of tests.  One test was to model the effects
+of the existing long-range plan (LRP) in 2030.  There were also five
+other ``sensitivity tests,'' each of which involved making a simulated major
+change to the adopted plan and assessing the results, for example,
+removing a major highway link included in the LRP, removing a major
+transit link, or adding a significant land use policy such as an
+urban growth boundary.  The overall evaluation focused on issues of
+model validity and usability.
+
+The Peer Review Panel concluded that UrbanSim produced credible
+results for tests involving large changes (e.g.\ the urban growth
+boundary test), but not for relatively smaller changes (e.g.\
+removing a major highway link).  It was during this process that we
+discovered the dispersion problem mentioned earlier. Their summary
+assessment supported the implementation and application of UrbanSim
+by the WFRC, with the understanding that important refinements and
+improvements were needed.  Subsequently, during 2004, staff of the
+WFRC made additional efforts to improve the data and the model
+specification, and the agency decided to move the model into
+operational use.
+
+Another important collaboration has been with the Puget Sound
+Regional Council (PSRC), to apply UrbanSim to that region (which
+includes Seattle and other surrounding cities).  In this project, a
+collaborative agreement was developed between the PSRC and the
+Center for Urban Simulation and Policy Analysis (CUSPA), to develop
+the database and apply UrbanSim to the Central Puget Sound region
+containing Seattle.  A Technical Advisory Committee, consisting of
+planners and analysts from cities and counties in the region, was
+engaged with the process to review the development of the data and
+model, and to provide refinements to the data and feedback on the
+model development.  The process was managed closely by two staff
+members of the PSRC, and during the project two PSRC staff members
+were hired by CUSPA for the intensive database development effort,
+and then re-hired by PSRC afterwards.  The project was funded by the
+PSRC and structured in annual contracts with clear work scope for
+each period.  The first two years were essentially spent on database
+development and refinement, and the third on model estimation and
+testing.
+
+During this period, as we learned from both the Salt Lake City
+project and the Puget Sound project about several problems in the
+model specification and software implementation in UrbanSim 3, we
+confronted a difficult choice of whether to attempt to resolve these
+problems in the production system (UrbanSim 3 in Java), or invest
+all of our effort on completing more quickly the conversion to the
+more modular Python implementation in OPUS and UrbanSim 4.  We had
+already learned that we could more readily solve modeling problems
+using the incomplete Python version that we had been unable to
+address in the UrbanSim 3 code base (mainly due to the complexity of
+debugging the code).  At the same time, there were considerable
+risks to attempting to rapidly complete and test the conversion to
+Python without putting the PSRC project well behind schedule.
+Ultimately, after extensive consultation with the PSRC, we made the
+decision to freeze further investment in the UrbanSim 3 code, other
+than minor maintenance, and to put all our effort into the new
+platform. Since that decision, we have fully implemented the PSRC
+model application using the new UrbanSim 4 code in OPUS, and have
+done extensive testing with the system.  It may have added as much
+as a year to the project schedule over what had been expected, but
+it is not clear that the schedule would have been any earlier if we
+had continued working on the UrbanSim 3 platform to attempt to
+resolve the problems we faced.
+
+PSRC staff worked with CUSPA to develop criteria for evaluating the model
+results and to determine when it would be ready to put into production use.
+Unfortunately, longitudinal data were not available to undertake a
+historical validation as was done in Eugene-Springfield
+\cite{waddell-japa-2002}, so the focus of the evaluation was shifted to
+sensitivity analysis and comparison with previous results. The PSRC has used
+the DRAM/EMPAL model to prepare land use allocations for use in its
+transportation planning process for many years, and though they have
+numerous concerns about it, they have managed to find workable solutions by
+overriding the model results based on local review procedures using their
+Technical Advisory Committee and a Regional Technical Forum.  The
+assessment of UrbanSim involved comparing the predictions from 2000 (the
+base year) to 2030 using UrbanSim with the heavily reviewed and adjusted
+predictions of DRAM/EMPAL\@.  Since the two models use different levels of
+geography (DRAM/EMPAL uses approximately 200 Forecast Analysis Zones and
+UrbanSim uses approximately 800,000 grid cells), UrbanSim data were
+aggregated to levels that could be compared to the previous results. The
+initial focus was on population and employment predictions, since these are
+the data used in the travel model system.  A set of indicators was selected
+for use in diagnosing the performance of the model and to identify issues
+and problems, in a process of negotiation among the participants.
+
+Based on this, the UW/PSRC team classified the issues into critical,
+significant, and cosmetic.  (Critical issues were ones that had to be
+resolved before the PSRC would be comfortable placing the model system into
+operational use.  Significant issues were ones that PSRC regarded as
+important, but would not block putting the system into operational use.)
+
+In addition to comparing the predictions of UrbanSim with previously
+adopted forecasts, a series of sensitivity tests were conducted to
+determine if the results from the model were sensitive in the
+direction and magnitude experts would expect when an input was
+changed significantly.  For these tests, we compared results for the baseline
+scenario, which was based on currently adopted land use policies and
+the adopted Regional Transportation Plan, with results for
+scenarios that included
+doubling highway capacity in Snohomish County on the north end of
+the study area, relaxing the Urban Growth Boundary, and constraining
+development capacity in King County (the central county in the study
+area).  These tests 
+were selected to probe both the scientific robustness of the
+model and its sensitivity to policies of interest in the region.
+This can thus be seen as addressing both the accuracy and policy
+sensitivity aspects of model validity, as discussed in the taxonomy
+presented in Section \ref{sec:refinement-taxonomy}.
+
+The land use policies showed the expected effects, but the
+highway scenario showed less sensitivity than was expected, in the
+sense that it did not produce much redistribution of population and
+employment into Snohomish County.  This was consistent with a
+pattern in the comparison of the UrbanSim baseline scenario against
+previously adopted forecasts, which showed considerably lower growth
+rates in Snohomish County than the earlier results did.  These
+remain on the agenda for further examination to determine whether
+these results are plausible or are an artifact of the model
+specification or input data.  In spite of these remaining issues,
+the PSRC is moving ahead with the process of bringing UrbanSim into
+operational use, and is preparing for a final phase of work to do so
+during 2006-07.
+
+In addition to the Salt Lake City and Puget Sound applications, we
+have worked with other agencies in applying UrbanSim in the urban
+areas around Detroit, Eugene, Honolulu, and Houston.  There have
+also been research and pilot applications in Amsterdam, Paris,
+Phoenix, Tel Aviv, and Zurich. We have also been working actively to
+form a user community.  The first UrbanSim Users Group Meeting was
+in San Antonio, Texas, in January 2005. This meeting attracted some
+30 participants from Metropolitan Planning Organizations around the
+country, a number of academic researchers, and one participant from
+Europe.  The second UrbanSim Users Group meeting will be held in
+July 2006, with one important goal being to help existing UrbanSim 3
+users to migrate to UrbanSim 4.  We hope to increasingly engage
+model users and other research groups in the collaborative
+development of Opus and of
+UrbanSim itself, by extensions and refinements to the current model
+system, and the addition of new tools and models.
+
+% LocalWords:   borning UrbanSim FHWA COE NGO Utahns WFRC WFRC's LRP PSRC San
+% LocalWords:  pwaddell UW rster's CUSPA afterwards EMPAL Snohomish

@@ -1,0 +1,133 @@
+% $Id: evaluation.tex,v 1.12 2006/09/08 23:57:16 borning Exp $
+
+\section{Evaluation}
+\label{sec:evaluation}
+
+The Indicator Browser was evaluated by four urban planners and two UrbanSim
+developers in April 2006. The evaluation consisted of an observation of the
+use of the Indicator Browser in a natural setting, followed by an informal
+interview guided by five general questions.  The users were asked to
+generate and visualize the indicators that they usually work with using our
+interface. If they were unclear about what indicators to generate, the
+evaluator prompted them to generate the indicators that were discussed on
+one of the PSRC-UrbanSim meetings that was held a few days before the
+evaluation.  The users were asked how often and how they usually generate
+and visualize indicator visualizations. They were asked to compare the
+Indicator Browser with the tools they currently use. They were also asked
+whether and how they would use the Indicator Browser, and what changes
+needed to be made for the interface to be useful for them. Finally,
+they were asked to consider whether this interface could be used by a
+different set of users and if so, who would that group be. We were
+interested in gauging how commonplace it was for the users to generate or
+visualize indicators.  Since there are two different types of users: urban
+modelers and planners on the one hand, and UrbanSim developers on the other,
+each group might have a
+different set of needs and uses for the Indicator Browser. Furthermore, we
+wanted to prioritize the usability issues found during the evaluation and
+to have an understanding of possible future steps.
+
+\subsection{Usability and Value Issues}
+
+% *** COULD SHORTEN OR EVEN SKIP THIS SECTION ***
+
+The evaluations showed that there are still some usability issues to fix
+before deploying the interface.  Some of the interface changes made after
+the second round of usability testing, mainly due to internal design
+discussions, had not been evaluated before and showed the need for
+refinement. For example, we added a feature that allowed users to see
+pre-generated indicators immediately after the scenario selection (Figure
+\ref{fig:pregenerated}).  If the indicator that the user wanted wasn't on
+the list there was a \emph{Choose a different indicator} button that allowed
+them to continue making their request. This was a very useful feature that
+the users liked.  The users showed interest once again in having 
+more ready-to-hand information, such as having the scenario's name 
+for each of the requests on the results page.
+
+\subsection{Post-task Interview}
+
+After the users interacted with the interface for about half an hour the
+evaluator asked them the following five questions:
+
+\begin{itemize}
+\item How often and how do you currently generate indicator visualizations?
+\item How does the Indicator Browser compare to the tools you currently use
+  to generate indicator visualizations?
+\item Would you use the Indicator Browser? If so, how?
+\item What would need to be fixed for you to use the Indicator Browser?
+\item Would you recommend this interface to someone else? If so, who?
+\end{itemize}
+
+The interviews revealed that each of the user groups generate indicators
+with different frequency and that they have different perspectives on how
+useful currently used tools are based on generation frequency and level of
+programming expertise.  Their perception of the utility of the currently
+used tools had an impact in their perception of utility of the Indicator
+Browser.
+
+One of the users is a general urban planner who usually does not generate
+indicators himself. The indicators are generated for him and he can access
+them through a file server.  He then visualizes them using the
+FastStone Image Viewer tool (\url{http://www.faststone.org}), which allows
+contiguous visualization of up to four images, as well as synchronized
+image zooming and panning. Consequently, he did not find the indicator
+generation mechanism extremely helpful for his common work tasks. He
+mentioned he usually looks at the same set of indicators, and so he would
+use this interface to see the pre-generated indicators and would most
+likely not create some of his own.  However, he suggested that the
+interface would be a useful way for the general public to access this
+information.
+
+Two of our interface evaluators are urban modelers and generate indicators
+on a regular basis. Although they know how to create macros and how to
+program, they felt much more comfortable generating indicators through a
+web application. They found the Python script (described in Section
+\ref{sec:opus}) to have a high set-up cost. The Python script requires them
+to check out the correct projects from the source code
+repository, set environment
+variables, modify the Python script, and run it using multiple
+applications.  Since several sub-processes are launched within the script,
+the users became confused whenever windows popped on their screen which
+they didn't know if they could close or what they were meant to do. 
+This last user group found the Indicator
+Browser very useful for indicator generation due to its low set-up cost,
+aggregation of functions into a single web-based application, and the
+elimination of the need to program. Their primary concern was with the
+pre-generated indicators section of the interface, which they found
+confusing, and mentioned they would
+use the interface after this issue was resolved.
+
+Two of our evaluators are software engineers and developers with the
+UrbanSim project. They are very comfortable using and modifying the Python
+script and enjoy the flexibility that it affords. The Python script allows
+them to force color ramps on maps and create indicator difference,
+aggregations and dis-aggregations of data across multiple levels of
+geography. However, they do not have direct access to the file server at
+home. One of the evaluators mentioned he had to use Microsoft's Remote
+Desktop application to access the generated indicators from the UrbanSim
+file servers. Therefore, he found the Indicator Browser to be useful for
+accessing the indicators using a web browser from any
+location. The second evaluator liked the organization of information. He
+liked that he could see which scenarios were available and that he could
+access the indicators by selecting the scenario from a list on a webpage
+rather than having to find out what the scenario directory was through
+database tables and access it through the file server.  He mentioned that
+once he analyzes the outcome of the big batch of indicators generated
+through the script he would use the Indicator Browser to create additional
+indicators instead of editing and rerunning the script. However, the
+other software engineer mentioned that he would not use the Indicator
+Browser since he enjoys the Python script functionality and does not like
+using multiple applications to complete a single task.
+
+Some users mentioned they would recommend this interface to the general
+public and activist groups for use in urban planning courses, engaged
+citizens workshops, technical advisory committees and general regional
+policy inquiries.
+
+All users found emailing the results or accessing the results through a URL
+to be very useful. Most of them mentioned they would use the Indicator
+Browser to create additional indicators to get more detailed information
+after analyzing the pre-generated indicators.
+
+
+% LocalWords:  borning UrbanSim PSRC  pre FastStone EMPAL FAZ Fortran gauging
+% LocalWords:  webpage

@@ -1,0 +1,113 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\citeauthoryear{Beven}{Beven}{2000}]{beven00}
+Beven, K. (2000).
+\newblock {\em Rainfall-runoff modelling: The primer}.
+\newblock John Wiley \& Sons, Ltd.
+
+\bibitem[\protect\citeauthoryear{Beven and Binley}{Beven and
+  Binley}{1992}]{beven92}
+Beven, K. and A.~Binley (1992).
+\newblock The future of distributed models: Model calibration and uncertainty
+  prediction.
+\newblock {\em Hydrological Processes\/}~{\em 6}, 279--298.
+
+\bibitem[\protect\citeauthoryear{Christensen}{Christensen}{2003}]{christensen0%
+3}
+Christensen, S. (2003).
+\newblock A synthetic groundwater modelling study of the accuracy of {GLUE}
+  uncertainty intervals.
+\newblock {\em Nordic Hydrology\/}~{\em 35\/}(1), 45--59.
+
+\bibitem[\protect\citeauthoryear{Dubus, Brown, and Beulke}{Dubus
+  et~al.}{2003}]{dubus03}
+Dubus, I.~G., C.~D. Brown, and S.~Beulke (2003).
+\newblock Sources of uncertainty in pesticide fate modelling.
+\newblock {\em The Science of the Total Environment\/}~{\em 317}, 53--72.
+
+\bibitem[\protect\citeauthoryear{Korving, van Noortwijk, van Gelder, and
+  Parkhi}{Korving et~al.}{2003}]{korving03}
+Korving, H., J.~M. van Noortwijk, P.~H.~A.~J.~M. van Gelder, and R.~S. Parkhi
+  (2003).
+\newblock Coping with uncertainty in sewer system rehabilitation.
+\newblock In Bedford and van Gelder (Eds.), {\em Safety and Reliability}. Swets
+  \& Zeitlinger, Lisse, ISBM 90 5809 551 7.
+
+\bibitem[\protect\citeauthoryear{Morgan and Henrion}{Morgan and
+  Henrion}{1990}]{morgan90}
+Morgan, M.~G. and M.~Henrion (1990).
+\newblock {\em Uncertainty : a guide to dealing with uncertainty in
+  quantitative risk and policy analysis}.
+\newblock New York: Cambridge University Press.
+
+\bibitem[\protect\citeauthoryear{Neuman}{Neuman}{2003}]{neuman03}
+Neuman, S.~P. (2003).
+\newblock Maximum likelihood bayesian averaging of uncertain model predictions.
+\newblock {\em Stochastic Environmental Research and Risk Assessment\/}~{\em
+  17}, 291--305.
+
+\bibitem[\protect\citeauthoryear{Poole and Raftery}{Poole and
+  Raftery}{2000}]{poole00}
+Poole, D. and A.~E. Raftery (2000).
+\newblock Inference for deterministic simulation models: the {B}ayesian melding
+  approach.
+\newblock {\em Journal of the American Statistical Association\/}~{\em
+  95\/}(452), 1244--1255.
+
+\bibitem[\protect\citeauthoryear{Raftery, Givens, and Zeh}{Raftery
+  et~al.}{1995}]{raftery95}
+Raftery, A.~E., G.~H. Givens, and J.~E. Zeh (1995).
+\newblock Inference from a deterministic population dynamics model for bowhead
+  whales.
+\newblock {\em Journal of the American Statistical Association\/}~{\em
+  90\/}(430), 402--416.
+
+\bibitem[\protect\citeauthoryear{Refsgaard and Henriksen}{Refsgaard and
+  Henriksen}{2004}]{refsgaard04}
+Refsgaard, J.~C. and H.~J. Henriksen (2004).
+\newblock Modelling guidelines -- terminology and guiding principles.
+\newblock {\em Advances in Water Resources\/}~{\em 27}, 71--82.
+
+\bibitem[\protect\citeauthoryear{Regan, Akcakaya, Ferson, Root, Carroll, and
+  Ginzburg}{Regan et~al.}{2003}]{regan03}
+Regan, H.~M., H.~R. Akcakaya, S.~Ferson, K.~V. Root, S.~Carroll, and L.~R.
+  Ginzburg (2003).
+\newblock Treatments of uncertainty and variability in ecological risk
+  assessment of single-species populations.
+\newblock {\em Human and Ecological Risk Assessment\/}~{\em 9\/}(4), 889--906.
+
+\bibitem[\protect\citeauthoryear{Train}{Train}{2003}]{train03}
+Train, K.~E. (2003).
+\newblock {\em Discrete Choice Methods with Simulation}.
+\newblock Cambridge University Press.
+
+\bibitem[\protect\citeauthoryear{van Asselt and Rotmans}{van Asselt and
+  Rotmans}{2002}]{vanasselt02}
+van Asselt, M.~B.~A. and J.~Rotmans (2002).
+\newblock Uncertainty in integrated assessment modelling -- from positivism to
+  pluralism.
+\newblock {\em Climatic Change\/}~{\em 54\/}(1-2), 75--105.
+
+\bibitem[\protect\citeauthoryear{Waddell}{Waddell}{2002}]{waddell02}
+Waddell, P. (2002).
+\newblock Urban{S}im: Modeling urban development for land use, transportation
+  and environmental planning.
+\newblock {\em Journal of the American Planning Association\/}~{\em 68\/}(3),
+  297--314.
+
+\bibitem[\protect\citeauthoryear{Waddell, Berry, and Hoch}{Waddell
+  et~al.}{1993}]{waddell93}
+Waddell, P., B.~J.~L. Berry, and I.~Hoch (1993).
+\newblock Residential property values in multinodal urban area: New evidence on
+  the implicit price of location.
+\newblock {\em Journal of Real Estate Finance and Economics\/}~{\em 7},
+  117--141.
+
+\bibitem[\protect\citeauthoryear{Waddell, Borning, Noth, Freier, Becke, and
+  Ulfarsson}{Waddell et~al.}{2003}]{waddell03}
+Waddell, P., A.~Borning, M.~Noth, N.~Freier, M.~Becke, and G.~Ulfarsson (2003).
+\newblock Microsimulation of urban development and location choices: Design and
+  implementation of {U}rban{S}im.
+\newblock {\em Networks and Spatial Economics\/}~{\em 3\/}(1), 43--67.
+
+\end{thebibliography}

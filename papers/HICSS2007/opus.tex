@@ -1,0 +1,86 @@
+% $Id: opus.tex,v 1.9 2006/09/07 14:37:46 yaels Exp $
+
+\section{Indicators in Opus, the Open Platform for Urban Simulation}
+\label{sec:opus}
+
+In collaboration with an international group of urban modelers, the
+UrbanSim team recently developed a new open-source platform, named Opus,
+the Open Platform for Urban Simulation \cite{waddell-opus-2005}.  Opus is
+written in Python, and makes heavy use of efficient C++ array and matrix
+manipulation libraries, such as numarray.  The latest version of UrbanSim,
+UrbanSim 4, is now written using the Opus framework.  The Opus/UrbanSim 4
+work was carried out after the work on
+value sensitive design of indicators had been completed, and while it had
+no major impact on the results of the conceptual investigations, it did
+result in major changes in the way that indicators were computed.  The SQL
+queries that were used in UrbanSim 3 greatly enhanced transparency, but at
+a cost in efficiency.  In particular, computing a set of indicators could
+take longer than the run time for the simulation itself.  In Opus and
+UrbanSim 4, indicators can now be defined using Opus variable definitions
+in addition to SQL queries.  This is a considerably less transparent
+format, but indicator values can now be computed in minutes rather than
+hours.  As discussed in reference \cite{friedman-amis-2006}, there is a 
+complex relationship between supporting human values and usability. 
+Sometimes these goals align, sometimes they are independent, and sometimes
+in conflict.  This situation is an example of a conflict: between supporting
+the value of transparency and enhancing usability (where the more transparent
+SQL indicators in some cases were so inefficient as to be nearly unusable).
+
+Opus represents data using instances of the class DataSet, which in turn
+uses efficient numarray storage representations.  Example datasets include
+the set of all households in a simulation, and the set of all gridcells
+(the basic geographic unit in our simulation).  Households and gridcells in
+turn have attributes, such as each household's income, or the number of
+people whose residence is in a given gridcell.  There are two types of
+attributes: primary and computed.  Primary attributes represent raw data
+(e.g.\ the gridcell in which a given household is placed, or the number of
+people in a household).  Computed attributes are the result of computations
+or aggregations of one or more other attributes (e.g.\ the population in a
+gridcell, which is computed by summing the number of people in each
+household placed in that gridcell).  Furthermore, attributes that aggregate
+multiple gridcells at different geography levels, such as zones or
+counties, are considered to be computed as well.  Computed attributes are
+generated lazily --- that is, their values are computed only when needed,
+and then cached in case they are requested again.  Using this scheme,
+indicators can be simply represented as particular kinds of Opus
+attributes.  (Note that in general, the running simulation won't compute
+these particular attributes --- in other words, the indicator values won't
+be available until they are explicitly requested --- unless some other part
+of the system happens to need them.)
+
+As with indicators in UrbanSim 3, indicator values in UrbanSim 4 can be
+computed and visualized using scripts.  We currently typically use scripts
+that generate an entire batch of indicator visualizations based on Opus
+attributes at one time.  The script uses a Python dictionary to specify
+declaratively which indicators to visualize, the scenario, year(s), level
+of geographic aggregation, and visualization type.  The script also allows
+the user to aggregate indicators from smaller geographies to larger ones
+and vice versa.  For example, one can aggregate the values of an indicator
+at a gridcell level onto the entire region, or dis-aggregate an indicator
+that gets computed for the counties onto the respective districts within
+each county. Finally, the script gives the users the flexibility to alter
+the visualization code to, for example, fix the color range displayed on
+the maps or determine the desired range on charts.  The currently available
+visualization types are charts, graphs, and maps using the matplotlib
+library (\url{http://matplotlib.sourceforge.net/}), maps using OpenEV,
+latex tables, and comma-separated-value files (which can then be read by
+any spreadsheet program).
+
+Even though this interface provides considerable flexibility and power over
+the visualization outcome, some modelers and planners are not 
+comfortable with writing and running code. They find that this interface 
+produces unexpected side effects (such as launching sub-processes from the
+script that open unexpected command windows). In addition, the modelers
+still need to reformat and rerun the script, synchronize their code with
+the source code repository, set the right environment variables, and
+utilize various applications in order to create the
+visualizations. UrbanSim developers, on the other hand, feel very
+comfortable manipulating code, but can only access the visualizations from a
+file server located at the office instead of being able to access them
+through a web-browser at any location, and they need to edit and rerun
+the script even if all they want is a single additional 
+indicator visualization.
+
+% LocalWords:  borning UrbanSim DataSets gridcells gridcell SQL EMPAL yaels
+% LocalWords:  PSRC FAZ DataSet  refactor numarray datasets declaratively versa
+% LocalWords:  matplotlib OpenEV
