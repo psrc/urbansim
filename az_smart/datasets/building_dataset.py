@@ -1,5 +1,5 @@
 #
-# UrbanSim software. Copyright (C) 1998-2007 University of Washington
+# UrbanSim software. Copyright (C) 1998-2004 University of Washington
 # 
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
@@ -12,6 +12,15 @@
 # other acknowledgments.
 # 
 
-from opus_core.tests.utils.package_tester import PackageTester
+from urbansim.datasets.dataset import Dataset as UrbansimDataset
 
-PackageTester().run_all_tests_for_package('psrc_parcel')
+class BuildingDataset(UrbansimDataset):
+    
+    id_name_default = "building_id"
+    in_table_name_default = "buildings"
+    out_table_name_default = "buildings"
+    dataset_name = "building"
+    
+    def __init__(self, id_values=None, **kwargs):
+        UrbansimDataset.__init__(self, **kwargs)
+        
