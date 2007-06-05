@@ -172,7 +172,7 @@ class TestDatasetPool(opus_unittest.OpusTestCase):
         dataset_pool = DatasetPool()
         self.assertRaises(Exception, dataset_pool.get_dataset, 'gridcell')
         
-    def deactivated_test_change_package_order(self):
+    def test_change_package_order(self):
         """Does it find the correct dataset when there are multiple packages?"""
         opus_path = package().get_package_parent_path()
         old_sys_path = sys.path

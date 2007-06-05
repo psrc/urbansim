@@ -14,12 +14,13 @@
 
 """Collection of useful miscellaneous functions and definitions"""
 
+import copy
 import os
 import os.path
 import re
-import copy
-import sys
+import shutil
 import socket
+import sys
 import tempfile
 
 from opus_core.logger import logger
@@ -41,6 +42,23 @@ class DebugPrinter(object):
             logger.log_status(message)
 
 # Functions:
+
+def copytree(src, dst, skip_subdirectories=[]):
+    """recursively copy the directory tree rooted at src to the destination directory dst.
+    Skip any subdirectories in skip_subdirectories."""
+    # This function is adapted from the shutil.copytree function.  It adds the optional 
+    # skip_subdirectories parameter, and omits the symlinks parameter.
+    names = os.listdir(src)
+    os.mkdir(dst)
+    for name in names:
+        if name not in skip_subdirectories:
+            srcname = os.path.join(src, name)
+            dstname = os.path.join(dst, name)
+            if os.path.isdir(srcname):
+                copytree(srcname, dstname, skip_subdirectories=skip_subdirectories)
+            else:
+                shutil.copy2(srcname, dstname)
+            
 def ematch (list, str):
     """ Exact match of a string in a 1D-array of strings. Returns an array of matches.
     """
@@ -894,6 +912,36 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
             result = directory_path_from_opus_path(input)
             self.assertEqual(result, output)
 
+    def test_copytree(self):
+        temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
+        dest = os.path.join(temp_dir, 'dest')
+        os.mkdir(dest)
+        dirs = [
+            ['d1', 'd2', 'd3', 'CVS', 'sub'],
+            ['d2', 'd3'],
+            ['d4', 'CVS', 'd1'],
+            ['d5'],
+            ['d6', '.svn', 'd1', 'd2'],
+            ]
+        try:
+            for t in dirs:
+                path = temp_dir
+                for n in t:
+                    path = os.path.join(path, n)
+                os.makedirs(path)
+                source = os.path.join(temp_dir, t[0])
+                sub = os.path.join(dest, t[0])
+                copytree(source, sub, skip_subdirectories=['CVS', '.svn'])
+            for t in dirs:
+                path = dest
+                for n in t:
+                    path = os.path.join(path, n)
+                if 'CVS' in t or '.svn' in t:
+                    self.assert_(not os.path.exists(path))
+                else:
+                    self.assert_(os.path.exists(path))
+        finally:
+            shutil.rmtree(temp_dir)
 
 if __name__ == "__main__":
     opus_unittest.main()

@@ -12,11 +12,10 @@
 # other acknowledgments.
 #
 
-import os
-from shutil import rmtree
-from shutil import copytree
+import os, shutil
 from opus_core.path import path
 from opus_core.logger import logger
+from opus_core.misc import copytree
 from opus_core.misc import replace_string_in_files
 from opus_core.misc import remove_directories_with_this_name
 
@@ -143,9 +142,7 @@ def create_package(package_parent_dir, package_name):
     new_package_dir=path(package_parent_dir) / package_name
     if not os.path.exists(new_package_dir.parent):
         os.makedirs(new_package_dir.parent)
-    copytree(package_template, new_package_dir)
-    remove_directories_with_this_name(new_package_dir, 'CVS')
-    
+    copytree(package_template, new_package_dir, skip_subdirectories=['CVS', '.svn'])
     # Replace each instance of opus_core.package_template in any of the
     # template files with the actual name of this Opus package.
     replace_string_in_files(new_package_dir, 'opus_core.package_template', package_name)
@@ -170,7 +167,7 @@ class OpusPackageTests(opus_unittest.OpusTestCase):
             
     def tearDown(self):
         if os.path.exists(self.temp_dir):
-            rmtree(self.temp_dir)
+            shutil.rmtree(self.temp_dir)
         sys.path = self.old_sys_path
         
     def test_get_package_info_does_not_crash(self):
@@ -186,7 +183,7 @@ class OpusPackageTests(opus_unittest.OpusTestCase):
 
         self.assertRaises(ValueError, self.package.get_path_for_package, "...an invalid package name..")
         
-    def deactivated_test_create_package(self):
+    def test_create_package(self):
         test_package_name = "test_create_package"
         self.path_to_new_package = os.path.join(self.temp_dir, test_package_name)
         
