@@ -71,7 +71,7 @@ class TestDoConvertNumarrayCacheToNumpyCache(opus_unittest.OpusTestCase):
         
         self.assertEqual(expected, actual)
         
-    def deactivated_test_copy_entire_cache_using_object(self):
+    def test_copy_entire_cache_using_object(self):
         directory_to_copy = os.path.join(self.test_data_path, 'numarray_inputs')
         numpy_directory_containing_expected_data = os.path.join(self.test_data_path, 'numpy_inputs')
         output_directory = self.temp_dir
@@ -102,7 +102,7 @@ class TestDoConvertNumarrayCacheToNumpyCache(opus_unittest.OpusTestCase):
                 self._is_first_directory_subset_of_second(second_path, first_path))
      
     def _is_first_directory_subset_of_second(self, first_path, second_path):
-        files_and_directories_to_ignore = ['CVS']
+        files_and_directories_to_ignore = ['CVS', '.svn']
         
         def files_have_same_data(first_path, second_path):
             f = open(first_path)

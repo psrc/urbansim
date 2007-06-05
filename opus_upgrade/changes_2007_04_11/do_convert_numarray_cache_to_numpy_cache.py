@@ -55,14 +55,17 @@ class ConvertNumarrayCacheToNumpyCache(object):
         """
         Create a new cache where all numarray files are converted to numpy
         format and extensions, and all other files and directories are copied.
+        Exclude directories named CVS or .svn.
         """
+        excluded_directories = ['CVS', '.svn']
         mkpath (output_path) # does nothing if output_path already exists
         for file_or_dir_name in os.listdir(input_path):
-            file_or_dir_path = os.path.join(input_path, file_or_dir_name)
-            if os.path.isfile(file_or_dir_path):
-                self.convert_file (input_path, file_or_dir_name, output_path)
-            else:
-                self.execute(file_or_dir_path, os.path.join(output_path, file_or_dir_name))
+            if file_or_dir_name not in excluded_directories:
+                file_or_dir_path = os.path.join(input_path, file_or_dir_name)
+                if os.path.isfile(file_or_dir_path):
+                    self.convert_file (input_path, file_or_dir_name, output_path)
+                else:
+                    self.execute(file_or_dir_path, os.path.join(output_path, file_or_dir_name))
 
     def convert_file(self, file_directory, file_name, output_directory):
         file_path = os.path.join(file_directory, file_name)
