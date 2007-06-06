@@ -1,0 +1,17 @@
+<cruisecontrol>
+  <project name="website" buildafterfailed="False">
+    <listeners>
+      <currentbuildstatuslistener file="logs/${project.name}/status.txt" />
+    </listeners>
+    <bootstrappers>
+      <svnbootstrapper localWorkingCopy="projects/${project.name}" />
+    </bootstrappers>
+    <modificationset quietperiod="${quietperiod}">
+      <svn localWorkingCopy="projects/${project.name}" />
+      <buildstatus logdir="logs/urbansim" />
+    </modificationset>
+    <schedule interval="${interval}">
+      <ant anthome="${ant.home}" buildfile="projects/${project.name}/build.xml" target="cruisecontrol" />
+    </schedule>
+  </project>
+</cruisecontrol>

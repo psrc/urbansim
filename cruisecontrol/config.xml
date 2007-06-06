@@ -23,5 +23,6 @@
   <include.projects file="config-washtenaw.xml"/>
   <include.projects file="config-waterdemand.xml"/>
   
+  <include.projects file="config-website.xml"/>
   <include.projects file="config-nightly.xml"/>
 </cruisecontrol>
