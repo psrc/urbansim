@@ -14,9 +14,9 @@
 
 from opus_core.resources import Resources
 from opus_core.regression_model import RegressionModel
-from psrc_parcel.datasets.development_project_proposal_dataset import DevelopmentProjectProposalDataset
-from psrc_parcel.datasets.development_project_proposal_dataset import create_from_parcel_and_development_template
-from psrc_parcel.datasets.development_project_proposal_component_dataset import create_from_proposals_and_template_components
+from az_smart.datasets.development_project_proposal_dataset import DevelopmentProjectProposalDataset
+from az_smart.datasets.development_project_proposal_dataset import create_from_parcel_and_development_template
+from az_smart.datasets.development_project_proposal_component_dataset import create_from_proposals_and_template_components
 from numpy import exp, arange, logical_and, zeros, where, array, float32, int16
 import re
 

@@ -25,9 +25,9 @@ class units_proposed(Variable):
 
     def dependencies(self):
         return [
-                "land_area_taken = psrc_parcel.development_project_proposal.land_area_taken",
-                "density = development_project_proposal.disaggregate(psrc_parcel.development_template.density)",
-                "density_convertor = development_project_proposal.disaggregate(psrc_parcel.development_template.density_converter)",  # land area is in sqft
+                "land_area_taken = az_smart.development_project_proposal.land_area_taken",
+                "density = development_project_proposal.disaggregate(az_smart.development_template.density)",
+                "density_convertor = development_project_proposal.disaggregate(az_smart.development_template.density_converter)",  # land area is in sqft
                 "usable_ratio = 1- development_project_proposal.disaggregate(development_template.percent_land_overhead) / 100.0",
                  ]
 
@@ -48,7 +48,7 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['psrc_parcel', 'urbansim'],
+            package_order=['az_smart', 'urbansim'],
             test_data={
             'development_template':
             {

@@ -41,10 +41,10 @@ if __name__=='__main__':
     from urbansim.variable_test_toolbox import VariableTestToolbox
     from numpy import ma
     from opus_core.resources import Resources        
-    from psrc_parcel.datasets.businesses import BusinessSet
+    from az_smart.datasets.businesses import BusinessSet
         
     class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.business.is_sector_cie"
+        variable_name = "az_smart.business.is_sector_cie"
         
         def test_my_inputs(self):
             building_id = array([1,1,2,3,7])

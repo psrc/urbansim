@@ -14,8 +14,8 @@
 
 
 my_configuration = {
-    'cache_directory': "/urbansim_cache/psrc_parcel", # change or leave out
-    'cache_directory_root': "/urbansim_cache/psrc_parcel",
+    'cache_directory': "/urbansim_cache/az_smart", # change or leave out
+    'cache_directory_root': "/urbansim_cache/az_smart",
     'input_configuration': { 
     'db_input_database': "san_francisco_baseyear" #change
         },
@@ -26,7 +26,7 @@ my_configuration = {
     'low_memory_mode':False,
     'cache_from_mysql': True,
     'debuglevel':7,
-    'baseyear_cache':{'directory_to_cache':"/urbansim_cache/psrc_parcel/cache_source",
+    'baseyear_cache':{'directory_to_cache':"/urbansim_cache/az_smart/cache_source",
                       #'years':range(1996,2001)
                      },
     'base_year': 2001,
@@ -48,9 +48,9 @@ my_configuration = {
 #        'zone':{},
 #        'household':{},
 #        'building':{},        
-#        'parcel':{'package_name':'psrc_parcel'},
-#        'business':{'package_name':'psrc_parcel'},
-#        'person':{'package_name':'psrc_parcel'},        
+#        'parcel':{'package_name':'az_smart'},
+#        'business':{'package_name':'az_smart'},
+#        'person':{'package_name':'az_smart'},        
 #        'travel_data':{}
 #        }     
     }

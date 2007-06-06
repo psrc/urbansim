@@ -24,7 +24,7 @@ class development_project_proposal_id(Variable):
     def dependencies(self):
         return [my_attribute_label("development_template_id"), 
                 my_attribute_label("parcel_id"),
-                "psrc_parcel.development_project_proposal.proposal_id",]
+                "az_smart.development_project_proposal.proposal_id",]
         
     def compute(self,  dataset_pool):
         dpp = dataset_pool.get_dataset("development_project_proposal")
@@ -52,7 +52,7 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['psrc_parcel','urbansim'],
+            package_order=['az_smart','urbansim'],
             test_data={
             'development_project_proposal':
             {

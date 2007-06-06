@@ -39,10 +39,10 @@ if __name__=='__main__':
     from numpy import array
     from numpy import ma
     from opus_core.resources import Resources    
-    from psrc_parcel.datasets.parcels import ParcelSet
+    from az_smart.datasets.parcels import ParcelSet
     
     class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.parcel.has_2_units"
+        variable_name = "az_smart.parcel.has_2_units"
 
         def test_my_inputs(self):
             residential_units = array([1, 2, 5])

@@ -32,10 +32,10 @@ if __name__=='__main__':
     from numpy import array
     from numpy import ma
     from opus_core.resources import Resources    
-    from psrc_parcel.datasets.parcel_dataset import ParcelDataet
+    from az_smart.datasets.parcel_dataset import ParcelDataet
     
     class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.household.zone_id"
+        variable_name = "az_smart.household.zone_id"
 
         def test_my_inputs(self):
             parcel_id = array([1,1,2,3,7])

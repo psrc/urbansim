@@ -21,8 +21,8 @@ class average_income(Variable):
     _return_type="int32"
     
     def dependencies(self):
-        return ["psrc_parcel.household.zone_id", 
-                "psrc_parcel.household.income", 
+        return ["az_smart.household.zone_id", 
+                "az_smart.household.income", 
                 my_attribute_label("zone_id")]
 
     def compute(self,  dataset_pool):
@@ -40,10 +40,10 @@ if __name__=='__main__':
     from numpy import array
     from numpy import ma
     from opus_core.resources import Resources
-    from psrc_parcel.datasets.parcels import ParcelSet
+    from az_smart.datasets.parcels import ParcelSet
     
     class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.zone.average_income"
+        variable_name = "az_smart.zone.average_income"
         def test(self):
 
             values = VariableTestToolbox().compute_variable(self.variable_name, \

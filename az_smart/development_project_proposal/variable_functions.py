@@ -16,5 +16,5 @@
 def my_attribute_label(attribute_name):
     """Return a triple (package, dataset_name, attribute_name).
     """
-    return "psrc_parcel.development_project_proposal." + attribute_name
+    return "az_smart.development_project_proposal." + attribute_name
     

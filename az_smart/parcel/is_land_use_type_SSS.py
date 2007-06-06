@@ -49,7 +49,7 @@ from opus_core.storage_factory import StorageFactory
 
 
 class Tests(opus_unittest.OpusTestCase):
-    variable_name = "psrc_parcel.parcel.is_land_use_type_vacant"
+    variable_name = "az_smart.parcel.is_land_use_type_vacant"
 
     def test_my_inputs(self):
         storage = StorageFactory().get_storage('dict_storage')
@@ -71,7 +71,7 @@ class Tests(opus_unittest.OpusTestCase):
                     'land_use_type_id': array([2,0,2, 4, 3, 3])
                     }
                 )
-        dataset_pool = DatasetPool(package_order=['psrc_parcel', 'urbansim'], storage=storage)
+        dataset_pool = DatasetPool(package_order=['az_smart', 'urbansim'], storage=storage)
         parcels = dataset_pool.get_dataset('parcel')
         
         values = parcels.compute_variables(self.variable_name, dataset_pool=dataset_pool)

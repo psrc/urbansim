@@ -14,4 +14,4 @@
 
 from opus_core.tests.utils.package_tester import PackageTester
 
-PackageTester().run_all_tests_for_package('psrc_parcel')
+PackageTester().run_all_tests_for_package('az_smart')

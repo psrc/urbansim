@@ -34,7 +34,7 @@ class ParcelDataset(UrbansimDataset):
             dataset_pool,
             index = None,
             recompute_flag = False,
-            variable_package_name="psrc_parcel.parcel"
+            variable_package_name="az_smart.parcel"
             ):
         """
         calculate the min and max development capacity given by constraints.
@@ -129,7 +129,7 @@ class Tests(opus_unittest.OpusTestCase):
             }
         )
 
-        dataset_pool = DatasetPool(package_order=['psrc_parcel','urbansim'],
+        dataset_pool = DatasetPool(package_order=['az_smart','urbansim'],
                                    storage=storage)
 
         parcels = dataset_pool.get_dataset('parcel')

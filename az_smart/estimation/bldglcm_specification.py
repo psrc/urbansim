@@ -27,15 +27,15 @@ specification['nonresidential'] = {
     "parcel.area",
     "parcel.land_value",    
 #    
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.number_of_households,[parcel]) as households_in_zone",
+    "parcel:opus_core.func.disaggregate(az_smart.zone.number_of_households,[parcel]) as households_in_zone",
 #    "parcel:opus_core.func.disaggregate(parcel.area) as lot_area",             
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.bus_travel_time_weighted_access_to_employment,[parcel]) as bus_travel_time_weighted_access_to_employment",             
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.employment_within_20_minutes_bus_travel_time,[parcel]) as employment_within_20_minutes_bus_travel_time",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.employment_of_sector_mips,[parcel]) as employment_of_sector_mips_in_zone",             
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.number_of_businesses_of_sector_mips,[parcel]) as businesses_of_sector_mips_in_zone",             
+    "parcel:opus_core.func.disaggregate(az_smart.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
+    "parcel:opus_core.func.disaggregate(az_smart.zone.bus_travel_time_weighted_access_to_employment,[parcel]) as bus_travel_time_weighted_access_to_employment",             
+    "parcel:opus_core.func.disaggregate(az_smart.zone.employment_within_20_minutes_bus_travel_time,[parcel]) as employment_within_20_minutes_bus_travel_time",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.employment_of_sector_mips,[parcel]) as employment_of_sector_mips_in_zone",             
+    "parcel:opus_core.func.disaggregate(az_smart.zone.number_of_businesses_of_sector_mips,[parcel]) as businesses_of_sector_mips_in_zone",             
     
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.average_income, [parcel]) as average_income_in_zone",
+    "parcel:opus_core.func.disaggregate(az_smart.zone.average_income, [parcel]) as average_income_in_zone",
     ],
     9:   #RETAIL/ENT
             [
@@ -43,15 +43,15 @@ specification['nonresidential'] = {
     "parcel.area",
     "parcel.land_value",    
 #    
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.number_of_households,[parcel]) as households_in_zone",
+    "parcel:opus_core.func.disaggregate(az_smart.zone.number_of_households,[parcel]) as households_in_zone",
 #    "parcel:opus_core.func.disaggregate(parcel.area) as lot_area",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.bus_travel_time_weighted_access_to_employment,[parcel]) as bus_travel_time_weighted_access_to_employment",             
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.employment_within_20_minutes_bus_travel_time,[parcel]) as employment_within_20_minutes_bus_travel_time",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.employment_of_sector_retailent,[parcel]) as employment_of_sector_retailent_in_zone",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.number_of_businesses_of_sector_retailent,[parcel]) as businesses_of_sector_retailent_in_zone",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
+    "parcel:opus_core.func.disaggregate(az_smart.zone.bus_travel_time_weighted_access_to_employment,[parcel]) as bus_travel_time_weighted_access_to_employment",             
+    "parcel:opus_core.func.disaggregate(az_smart.zone.employment_within_20_minutes_bus_travel_time,[parcel]) as employment_within_20_minutes_bus_travel_time",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.employment_of_sector_retailent,[parcel]) as employment_of_sector_retailent_in_zone",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.number_of_businesses_of_sector_retailent,[parcel]) as businesses_of_sector_retailent_in_zone",             
     
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.average_income, [parcel]) as average_income_in_zone",
+    "parcel:opus_core.func.disaggregate(az_smart.zone.average_income, [parcel]) as average_income_in_zone",
     ],
 }            
 
@@ -62,18 +62,18 @@ specification['residential'] = {
 #    "parcel.area",
 #    "parcel.land_value",    
 #    
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.number_of_households,[parcel]) as households_in_zone",
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.number_of_households,[parcel]) as households_in_zone",
 #    "parcel:opus_core.func.disaggregate(parcel.area) as lot_area",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.bus_travel_time_weighted_access_to_employment,[parcel]) as bus_travel_time_weighted_access_to_employment",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.hwy_travel_time_weighted_access_by_population,[parcel]) as hwy_travel_time_weighted_access_by_population",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.hwy_travel_time_weighted_access_to_employment,[parcel]) as hwy_travel_time_weighted_access_to_employment",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
+    "parcel:opus_core.func.disaggregate(az_smart.zone.bus_travel_time_weighted_access_to_employment,[parcel]) as bus_travel_time_weighted_access_to_employment",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.hwy_travel_time_weighted_access_by_population,[parcel]) as hwy_travel_time_weighted_access_by_population",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.hwy_travel_time_weighted_access_to_employment,[parcel]) as hwy_travel_time_weighted_access_to_employment",             
 
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.employment_within_20_minutes_bus_travel_time,[parcel]) as employment_within_20_minutes_bus_travel_time",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.employment_of_sector_retailent,[parcel]) as employment_of_sector_retailent_in_zone",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.number_of_businesses_of_sector_retailent,[parcel]) as businesses_of_sector_retailent_in_zone",             
+    "parcel:opus_core.func.disaggregate(az_smart.zone.employment_within_20_minutes_bus_travel_time,[parcel]) as employment_within_20_minutes_bus_travel_time",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.employment_of_sector_retailent,[parcel]) as employment_of_sector_retailent_in_zone",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.number_of_businesses_of_sector_retailent,[parcel]) as businesses_of_sector_retailent_in_zone",             
     
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.average_income, [parcel]) as average_income_in_zone",
+    "parcel:opus_core.func.disaggregate(az_smart.zone.average_income, [parcel]) as average_income_in_zone",
     ],
 
     2:   #CONDO
@@ -82,17 +82,17 @@ specification['residential'] = {
 #    "parcel.area",
     "parcel.land_value",    
 #    
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.number_of_households,[parcel]) as households_in_zone",
+    "parcel:opus_core.func.disaggregate(az_smart.zone.number_of_households,[parcel]) as households_in_zone",
 #    "parcel:opus_core.func.disaggregate(parcel.area) as lot_area",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.bus_travel_time_weighted_access_to_employment,[parcel]) as bus_travel_time_weighted_access_to_employment",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.hwy_travel_time_weighted_access_by_population,[parcel]) as hwy_travel_time_weighted_access_by_population",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.hwy_travel_time_weighted_access_to_employment,[parcel]) as hwy_travel_time_weighted_access_to_employment",             
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.employment_within_20_minutes_bus_travel_time,[parcel]) as employment_within_20_minutes_bus_travel_time",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.employment_of_sector_retailent,[parcel]) as employment_of_sector_retailent_in_zone",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.number_of_businesses_of_sector_retailent,[parcel]) as businesses_of_sector_retailent_in_zone",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
+    "parcel:opus_core.func.disaggregate(az_smart.zone.bus_travel_time_weighted_access_to_employment,[parcel]) as bus_travel_time_weighted_access_to_employment",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.hwy_travel_time_weighted_access_by_population,[parcel]) as hwy_travel_time_weighted_access_by_population",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.hwy_travel_time_weighted_access_to_employment,[parcel]) as hwy_travel_time_weighted_access_to_employment",             
+    "parcel:opus_core.func.disaggregate(az_smart.zone.employment_within_20_minutes_bus_travel_time,[parcel]) as employment_within_20_minutes_bus_travel_time",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.employment_of_sector_retailent,[parcel]) as employment_of_sector_retailent_in_zone",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.number_of_businesses_of_sector_retailent,[parcel]) as businesses_of_sector_retailent_in_zone",             
     
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.average_income, [parcel]) as average_income_in_zone",
+    "parcel:opus_core.func.disaggregate(az_smart.zone.average_income, [parcel]) as average_income_in_zone",
     ],
 
     3:   #FLATS
@@ -101,15 +101,15 @@ specification['residential'] = {
     "parcel.area",
 #    "parcel.land_value",    
 #    
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.number_of_households,[parcel]) as households_in_zone",
+    "parcel:opus_core.func.disaggregate(az_smart.zone.number_of_households,[parcel]) as households_in_zone",
 #    "parcel:opus_core.func.disaggregate(parcel.area) as lot_area",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.bus_travel_time_weighted_access_to_employment,[parcel]) as bus_travel_time_weighted_access_to_employment",             
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.employment_within_60_minutes_bus_travel_time,[parcel]) as employment_within_60_minutes_bus_travel_time",             
-##    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.employment_of_sector_retailent,[parcel]) as employment_of_sector_retailent_in_zone",             
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.number_of_businesses_of_sector_retailent,[parcel]) as businesses_of_sector_retailent_in_zone",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.bus_travel_time_weighted_access_to_employment,[parcel]) as bus_travel_time_weighted_access_to_employment",             
+    "parcel:opus_core.func.disaggregate(az_smart.zone.employment_within_60_minutes_bus_travel_time,[parcel]) as employment_within_60_minutes_bus_travel_time",             
+##    "parcel:opus_core.func.disaggregate(az_smart.zone.employment_of_sector_retailent,[parcel]) as employment_of_sector_retailent_in_zone",             
+    "parcel:opus_core.func.disaggregate(az_smart.zone.number_of_businesses_of_sector_retailent,[parcel]) as businesses_of_sector_retailent_in_zone",             
     
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.average_income, [parcel]) as average_income_in_zone",
+    "parcel:opus_core.func.disaggregate(az_smart.zone.average_income, [parcel]) as average_income_in_zone",
     ],
     5:   #SINGLE
             [
@@ -117,15 +117,15 @@ specification['residential'] = {
 #    "parcel.area",
 #    "parcel.land_value",    
 #    
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.number_of_households,[parcel]) as households_in_zone",
+    "parcel:opus_core.func.disaggregate(az_smart.zone.number_of_households,[parcel]) as households_in_zone",
 #    "parcel:opus_core.func.disaggregate(parcel.area) as lot_area",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.bus_travel_time_weighted_access_to_employment,[parcel]) as bus_travel_time_weighted_access_to_employment",             
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.employment_within_20_minutes_bus_travel_time,[parcel]) as employment_within_20_minutes_bus_travel_time",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.employment_of_sector_retailent,[parcel]) as employment_of_sector_retailent_in_zone",             
-#    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.number_of_businesses_of_sector_retailent,[parcel]) as businesses_of_sector_retailent_in_zone",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.bus_travel_time_weighted_access_by_population,[parcel]) as bus_travel_time_weighted_access_by_population",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.bus_travel_time_weighted_access_to_employment,[parcel]) as bus_travel_time_weighted_access_to_employment",             
+    "parcel:opus_core.func.disaggregate(az_smart.zone.employment_within_20_minutes_bus_travel_time,[parcel]) as employment_within_20_minutes_bus_travel_time",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.employment_of_sector_retailent,[parcel]) as employment_of_sector_retailent_in_zone",             
+#    "parcel:opus_core.func.disaggregate(az_smart.zone.number_of_businesses_of_sector_retailent,[parcel]) as businesses_of_sector_retailent_in_zone",             
     
-    "parcel:opus_core.func.disaggregate(psrc_parcel.zone.average_income, [parcel]) as average_income_in_zone",
+    "parcel:opus_core.func.disaggregate(az_smart.zone.average_income, [parcel]) as average_income_in_zone",
     ],
 
 }

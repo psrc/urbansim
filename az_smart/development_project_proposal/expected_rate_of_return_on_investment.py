@@ -23,13 +23,13 @@ class expected_rate_of_return_on_investment(Variable):
     """ 
 
     def dependencies(self):
-        return ["psrc_parcel.development_project_proposal.unit_price_expected",
-                "psrc_parcel.development_project_proposal.units_proposed",
+        return ["az_smart.development_project_proposal.unit_price_expected",
+                "az_smart.development_project_proposal.units_proposed",
                 "total_revenue = development_project_proposal.units_proposed * development_project_proposal.unit_price_expected",
-                "unit_price = development_project_proposal.disaggregate(psrc_parcel.parcel.unit_price)",
-                "existing_units = development_project_proposal.disaggregate(psrc_parcel.parcel.existing_units)",
+                "unit_price = development_project_proposal.disaggregate(az_smart.parcel.unit_price)",
+                "existing_units = development_project_proposal.disaggregate(az_smart.parcel.existing_units)",
                 "acquisition_cost = development_project_proposal.unit_price * development_project_proposal.existing_units",
-                "total_investment = development_project_proposal.acquisition_cost + psrc_parcel.development_project_proposal.demolition_cost + psrc_parcel.development_project_proposal.construction_cost",
+                "total_investment = development_project_proposal.acquisition_cost + az_smart.development_project_proposal.demolition_cost + az_smart.development_project_proposal.construction_cost",
                 "profit = development_project_proposal.total_revenue - development_project_proposal.total_investment",
             ]
 
@@ -60,7 +60,7 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['psrc_parcel','urbansim'],
+            package_order=['az_smart','urbansim'],
             test_data={
             'development_template':
             {

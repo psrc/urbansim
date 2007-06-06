@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from psrc_parcel.configs.baseline import Baseline
+from az_smart.configs.baseline import Baseline
 #from config_for_multiple_runs import ConfigForMultipleRuns
 from urbansim.simulation.run_simulation import RunSimulation
 from urbansim.model_coordinators.model_system import ModelSystem

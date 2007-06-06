@@ -59,10 +59,10 @@ if __name__=='__main__':
     from urbansim.variable_test_toolbox import VariableTestToolbox
     from numpy import array
     from opus_core.resources import Resources
-    from psrc_parcel.datasets.parcels import ParcelSet
+    from az_smart.datasets.parcels import ParcelSet
 
     class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.parcel.lot_sf_per_unit"
+        variable_name = "az_smart.parcel.lot_sf_per_unit"
 
         def test_my_inputs(self):
             resources = Resources({'data':

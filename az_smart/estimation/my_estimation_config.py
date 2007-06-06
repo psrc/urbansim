@@ -22,19 +22,19 @@ from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheC
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 
 my_configuration = {
-    'cache_directory' : '/workspace/urbansim_cache/psrc_parcel/estimation/', # change or leave out
+    'cache_directory' : 'c:/urbansim_cache/az_smart/cache_source', # change or leave out
     'output_configuration': DatabaseConfiguration(
         host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
         user_name     = os.environ.get('MYSQLUSERNAME',''),
         password      = os.environ.get('MYSQLPASSWORD',''),
-        database_name = 'psrc_2005_data_workspace_lmwang',
+        database_name = 'az_smart_2000_estimation', #we want to write these to MSSQL
         ),
     'dataset_pool_configuration': DatasetPoolConfiguration(
-        package_order=['psrc_parcel','psrc', 'urbansim', 'opus_core'],
+        package_order=['az_smart','psrc', 'urbansim', 'opus_core'],
         package_order_exceptions={},
         ),
     'datasets_to_cache_after_each_model':[],
     'low_memory_mode':False,
-    'base_year': 2005,
-    'years': (2005,2005),                    
+    'base_year': 2000,
+    'years': (2000,2005),                    
     }

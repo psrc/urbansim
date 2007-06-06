@@ -22,8 +22,8 @@ class vacant_residential_units(Variable):
     _return_type="int32"
     
     def dependencies(self):
-        return ["psrc_parcel.building.residential_units", 
-                "psrc_parcel.building.number_of_households", 
+        return ["az_smart.building.residential_units", 
+                "az_smart.building.number_of_households", 
                 my_attribute_label("building_id")]
 
     def compute(self,  dataset_pool):

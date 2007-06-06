@@ -29,9 +29,9 @@ models_configuration["business_location_choice_model"] = {
                      "specification_table":"business_location_choice_model_specification",
                      "coefficients_table":"business_location_choice_model_coefficients",
                      "compute_capacity_flag":True,
-                     "capacity_string":"psrc_parcel.building.building_sqft",
+                     "capacity_string":"az_smart.building.building_sqft",
                      "number_of_agents_string":"business.sqft",
-                     "number_of_units_string":"psrc_parcel.building.vacant_building_sqft",
+                     "number_of_units_string":"az_smart.building.vacant_building_sqft",
    }
 
 my_controller_configuration = {
@@ -41,8 +41,8 @@ my_controller_configuration = {
     "init": {
         "name": "RealEstatePriceModel",
         "arguments": {"submodel_string": "'land_use_type_id'",
-                      "outcome_attribute": "'ln_unit_price=ln(psrc_parcel.parcel.unit_price)'",
-                      "filter_attribute": "'numpy.logical_or(parcel.aggregate(psrc_parcel.building.building_sqft), psrc_parcel.parcel.is_land_use_type_vacant)'"
+                      "outcome_attribute": "'ln_unit_price=ln(az_smart.parcel.unit_price)'",
+                      "filter_attribute": "'numpy.logical_or(parcel.aggregate(az_smart.building.building_sqft), az_smart.parcel.is_land_use_type_vacant)'"
                       },
         },
     "prepare_for_run": {
@@ -66,7 +66,7 @@ my_controller_configuration = {
         "name": "prepare_for_estimate",
         "arguments": {"specification_storage": "base_cache_storage",
                       "specification_table": "'real_estate_price_model_specification'",
-                      "filter_variable":"'psrc_parcel.parcel.unit_price'",
+                      "filter_variable":"'az_smart.parcel.unit_price'",
                       "dataset": "parcel",
                       "threshold": 1},
         "output": "(specification, index)"
@@ -74,7 +74,7 @@ my_controller_configuration = {
     "estimate": {
         "arguments": {
                       "specification": "specification",
-                      "outcome_attribute": "'ln_unit_price=ln(psrc_parcel.parcel.unit_price)'",
+                      "outcome_attribute": "'ln_unit_price=ln(az_smart.parcel.unit_price)'",
                       "dataset": "parcel",
                       "index": "index",
                       "data_objects": "datasets",
@@ -86,7 +86,7 @@ my_controller_configuration = {
   },
 
   "business_transition_model" : {
-            "import": {"psrc_parcel.models.business_transition_model":
+            "import": {"az_smart.models.business_transition_model":
                             "BusinessTransitionModel"
                       },
             "init": {
@@ -118,7 +118,7 @@ my_controller_configuration = {
             "init": {
                 "name": "AgentRelocationModel",
                 "arguments": {
-                              "probabilities":"'psrc_parcel.business_relocation_probabilities'",
+                              "probabilities":"'az_smart.business_relocation_probabilities'",
                               "model_name":"'Business Relocation Model'",
                               "location_id_name":"'building_id'",
                               "debuglevel": config['debuglevel']
@@ -137,7 +137,7 @@ my_controller_configuration = {
     },
 
  'business_location_choice_model': {
-    "import": {"psrc_parcel.models.business_location_choice_model":"BusinessLocationChoiceModel"},
+    "import": {"az_smart.models.business_location_choice_model":"BusinessLocationChoiceModel"},
     "init": {
         "name": "BusinessLocationChoiceModel",
         "arguments": {
@@ -146,7 +146,7 @@ my_controller_configuration = {
                       "short_name":"'BLCM'",
                       "choices":"'urbansim.lottery_choices'",
                       "submodel_string":"'business.building_use_id'",
-                      "filter": "'psrc_parcel.building.building_sqft'",
+                      "filter": "'az_smart.building.building_sqft'",
                       "location_id_string":"'building_id'",
                       "run_config":"models_configuration['business_location_choice_model']",
                       "estimate_config":"models_configuration['business_location_choice_model']"
@@ -197,7 +197,7 @@ my_controller_configuration = {
    },
 
    #'building_transition_model': {
-            #"import": {"psrc_parcel.models.building_transition_model": "BuildingTransitionModel"},
+            #"import": {"az_smart.models.building_transition_model": "BuildingTransitionModel"},
             #"init": {"name": "BuildingTransitionModel"},
             #"run": {"arguments": {
                           #"building_set": "building",
@@ -215,7 +215,7 @@ my_controller_configuration = {
 
    #'building_location_choice_model':{
                 #"group_by_attribute": ("building_use_classification", "name"),
-                #"import": {"psrc_parcel.models.building_location_choice_model":
+                #"import": {"az_smart.models.building_location_choice_model":
                                     #"BuildingLocationChoiceModel",
                             #},
                 #"init": {
@@ -227,9 +227,9 @@ my_controller_configuration = {
                         #"filter" : None,
                         #"developable_maximum_unit_variable" : "'UNITS_capacity'", #"developable_maximum_UNITS",
                         #"developable_minimum_unit_variable" : None, # None means don't consider any minimum. For default, set it to empty string
-                        #"agents_grouping_attribute":"'psrc_parcel.building.building_class_id'",
-                        #"estimate_config" : {'weights_for_estimation_string':"'psrc_parcel.parcel.uniform_capacity'"},
-                        #"run_config":{"agent_units_string" : "psrc_parcel.building.building_size"}
+                        #"agents_grouping_attribute":"'az_smart.building.building_class_id'",
+                        #"estimate_config" : {'weights_for_estimation_string':"'az_smart.parcel.uniform_capacity'"},
+                        #"run_config":{"agent_units_string" : "az_smart.building.building_size"}
                         #}
                     #},
                 #"prepare_for_run": {
@@ -297,7 +297,7 @@ my_controller_configuration = {
                 }
             },
         "process_pipeline_events":{
-             "import": {"psrc_parcel.models.process_pipeline_events":
+             "import": {"az_smart.models.process_pipeline_events":
                                                  "ProcessPipelineEvents"},
              "init": {
                 "name": "ProcessPipelineEvents"},
@@ -311,13 +311,13 @@ my_controller_configuration = {
 
 # configuration for parcel-based developer model
  'expected_sale_price_model': {
-    "import": {"psrc_parcel.models.development_project_proposal_regression_model":
+    "import": {"az_smart.models.development_project_proposal_regression_model":
                "DevelopmentProjectProposalRegressionModel"},
     "init": {
         "name": "DevelopmentProjectProposalRegressionModel",
         "arguments": {"submodel_string": "'land_use_type_id=development_project_proposal.disaggregate(parcel.land_use_type_id)'", 
                       #"submodel_string": "'building_type_id=development_project_proposal.disaggregate(development_template.building_type_id)'", 
-                      "filter_attribute": "'psrc_parcel.development_project_proposal.is_viable'",
+                      "filter_attribute": "'az_smart.development_project_proposal.is_viable'",
                       "outcome_attribute_name":"'ln_unit_price_expected'",
                       "dataset_pool": "dataset_pool"
                       },
@@ -329,7 +329,7 @@ my_controller_configuration = {
                       "specification_table": "'real_estate_price_model_specification'",
                        "coefficients_storage": "base_cache_storage",
                        "coefficients_table": "'real_estate_price_model_coefficients'",
-                       "spec_replace_module_variable_pair": "('psrc_parcel.estimation.repm_specification', 'variables_for_development_project_proposal')",
+                       "spec_replace_module_variable_pair": "('az_smart.estimation.repm_specification', 'variables_for_development_project_proposal')",
                        "dataset_pool": "dataset_pool",},
         "output": "(proposal_set, specification, coefficients)"
         },
@@ -343,12 +343,12 @@ my_controller_configuration = {
             },
   },
  'development_proposal_choice_model': {
-    "import": {"psrc_parcel.models.development_project_proposal_sampling_model":
+    "import": {"az_smart.models.development_project_proposal_sampling_model":
                "DevelopmentProjectProposalSamplingModel"},
     "init": {
         "name": "DevelopmentProjectProposalSamplingModel",
         "arguments": {"proposal_set": "proposal_set",
-                      #weight_string omitted to use defalut value "exp_ROI = exp(psrc_parcel.development_project_proposal.expected_rate_of_return_on_investment)",                      
+                      #weight_string omitted to use defalut value "exp_ROI = exp(az_smart.development_project_proposal.expected_rate_of_return_on_investment)",                      
                       "filter_attribute": None, # the filter has been handled in the process of creating proposal set 
                                                 # (prepare_for_run in expected_sale_price_model)
                       },
@@ -361,7 +361,7 @@ my_controller_configuration = {
   },
                                
  'building_construction_model': {
-     "import": {"psrc_parcel.models.building_construction_model":
+     "import": {"az_smart.models.building_construction_model":
                "BuildingConstructionModel"},
      "init": {
         "name": "BuildingConstructionModel"
@@ -393,7 +393,7 @@ hlcm_controller = config["models_configuration"]["household_location_choice_mode
 hlcm_controller["init"]["arguments"]["location_set"] = "building"
 hlcm_controller["init"]["arguments"]["location_id_string"] = "'building_id'"
 hlcm_controller["init"]["arguments"]["estimate_config"] = {"weights_for_estimation_string":"building.residential_units"} #"urbansim.zone.vacant_residential_units"
-hlcm_controller["init"]["arguments"]["run_config"] = {"capacity_string":"psrc_parcel.building.vacant_residential_units"} #"urbansim.zone.vacant_residential_units"
+hlcm_controller["init"]["arguments"]["run_config"] = {"capacity_string":"az_smart.building.vacant_residential_units"} #"urbansim.zone.vacant_residential_units"
 hlcm_controller["init"]["arguments"]['sample_size_locations']=30
 hlcm_controller["init"]["arguments"]['sampler']="'opus_core.samplers.weighted_sampler'"
 hlcm_controller["controller"]["init"]["arguments"]["submodel_string"] =  None #"'household_size'"
@@ -403,15 +403,15 @@ config["models_configuration"]['household_location_choice_model']["controller"].
 
 
 config["datasets_to_preload"] = {
-        'zone':{},
+#        'zone':{},
         #'household':{},
         'building':{},
-        'parcel':{'package_name':'psrc_parcel'},
-#        'business':{'package_name':'psrc_parcel'},
-#        'person':{'package_name':'psrc_parcel'},
-        "building_type":{'package_name':'psrc_parcel'},
-        'travel_data':{}
+        'parcel':{'package_name':'az_smart'},
+#        'business':{'package_name':'az_smart'},
+#        'person':{'package_name':'az_smart'},
+        "building_type":{'package_name':'az_smart'},
+#        'travel_data':{}
         }
 
-#config["datasets_to_preload"]['business'] = {'package_name':'psrc_parcel'}
+#config["datasets_to_preload"]['business'] = {'package_name':'az_smart'}
 #config["base_year"] = 2001

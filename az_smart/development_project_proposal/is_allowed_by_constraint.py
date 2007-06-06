@@ -20,7 +20,7 @@ class is_allowed_by_constraint(Variable):
     """whether the proposed development template is viable for a given parcel and its constraints,
     compare if parcel.min_constraint <= development_template.density <=  parcel.min_constraint
     """
-    template_opus_path = "psrc_parcel.development_template"
+    template_opus_path = "az_smart.development_template"
     
     def dependencies(self):
         return ["generic_building_type_id = development_template.disaggregate(building_type.generic_building_type_id)",
@@ -80,7 +80,7 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['psrc_parcel','urbansim'],
+            package_order=['az_smart','urbansim'],
             test_data={
             'development_template':
             {

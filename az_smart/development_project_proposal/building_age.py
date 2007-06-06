@@ -13,7 +13,7 @@
 #
 
 from variable_functions import my_attribute_label
-from psrc_parcel.building.age_masked import age_masked
+from az_smart.building.age_masked import age_masked
 
 class building_age(age_masked):
     """The age of buildings in proposals, computed by subtracting the year built

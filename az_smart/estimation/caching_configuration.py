@@ -18,7 +18,7 @@ from opus_core.configurations.database_configuration import DatabaseConfiguratio
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
-from psrc_parcel.configs.baseline import Baseline
+from az_smart.configs.baseline import Baseline
 
 
 class CachingConfiguration(Configuration):
@@ -29,39 +29,39 @@ class CachingConfiguration(Configuration):
     def __my_configuration(self):
         tables_to_cache = [
 #            'business',
-            'households',
+#            'households',
             'buildings',
             'parcels',
-            'zones',
-            "households_for_estimation",
+#            'zones',
+#            "households_for_estimation",
 #            "business_for_estimation",
 #            "persons",
-            "travel_data",
+#            "travel_data",
 #            "annual_relocation_rates_for_business",
 #            "buildings_for_estimation",
             "building_types",
-            "generic_building_types",            
-            'urbansim_constants',
-            'land_use_types',
-            'gridcells',
-            'jobs',
-            'employment_sectors',
-            'employment_adhoc_sector_groups',
-            'employment_adhoc_sector_group_definitions',
-            'development_templates',
-            'development_template_components',
-            'development_constraints',
-            'target_vacancies'
+            #"generic_building_types",            
+            #'urbansim_constants',
+            #'land_use_types',
+            #'gridcells',
+            #'jobs',
+            #'employment_sectors',
+            #'employment_adhoc_sector_groups',
+            #'employment_adhoc_sector_group_definitions',
+            #'development_templates',
+            #'development_template_components',
+            #'development_constraints',
+            #'target_vacancies'
             ]
         
         return {
-        'cache_directory' : '/urbansim_cache/psrc_parcel_lmwang/estimation/', # change or leave out
+        'cache_directory' : '/urbansim_cache/az_smart_lmwang/estimation/', # change or leave out
         'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
     #        cache_directory_root = '/tmp/urbcache/sandbox_runs/estimation',
             unroll_gridcells = False,
-            cache_from_mysql = True,
+            cache_from_mysql = False,
             baseyear_cache = BaseyearCacheConfiguration(
-                existing_cache_to_copy = r'D:/urbansim_cache/psrc_parcel',
+                existing_cache_to_copy = r'D:/urbansim_cache/az_smart',
                 ),
             cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
             tables_to_cache = tables_to_cache,
@@ -78,10 +78,10 @@ class CachingConfiguration(Configuration):
             database_name = 'psrc_2005_parcel_baseyear',
             ),
         'dataset_pool_configuration': DatasetPoolConfiguration(
-            package_order=['psrc_parcel', 'urbansim', 'opus_core'],
+            package_order=['az_smart', 'urbansim', 'opus_core'],
             package_order_exceptions={},
             ),
-        'base_year': 2005,
+        'base_year': 2000,
         }
 
     

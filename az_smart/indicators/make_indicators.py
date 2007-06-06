@@ -20,14 +20,14 @@ from inprocess.travis.urbansim.indicators.indicator_configuration import Indicat
 from inprocess.travis.urbansim.indicators.indicator_configuration_handler_batch_mode import generate_indicators
 
 config = IndicatorConfiguration()
-config.dataset_pool_configuration.package_order = ['psrc_parcel', 'urbansim', 'opus_core']
+config.dataset_pool_configuration.package_order = ['az_smart', 'urbansim', 'opus_core']
 
 # *** Set up database ***
 # use the defaults for mysql hostname, username, and password 
 # (the defaults are to get these from environment variables)
 #config.database_configuration.database_name = 'PSRC_2000_baseyear'
 #config.run_description = '(run 1090 - double highway capacity 11/28/2006)'
-config.cache_directory = r'/urbansim_cache/psrc_parcel/run_23.2007_02_05_01_48' #'/workspace/urbansim_cache/psrc_parcel/run_23.2007_02_05_01_48'
+config.cache_directory = r'/urbansim_cache/az_smart/run_23.2007_02_05_01_48' #'/workspace/urbansim_cache/az_smart/run_23.2007_02_05_01_48'
 
 #
 # When the indicator name includes the year as "%(year)s", it will be replaced
@@ -40,11 +40,11 @@ config.request_years = [2001,2005]
 config.requests = [
 #                 {'dataset':'district14',
 #                  'image_type':'table',
-#                  'attribute':'opus_core.func.aggregate(psrc_parcel.zone.population) as population'
+#                  'attribute':'opus_core.func.aggregate(az_smart.zone.population) as population'
 #                  },  
 #                 {'dataset':'district14',
 #                  'image_type':'table',
-#                  'attribute':'opus_core.func.aggregate(psrc_parcel.zone.employment) as employment'
+#                  'attribute':'opus_core.func.aggregate(az_smart.zone.employment) as employment'
 #                  },
 #                  {'dataset':'district14',
 #                    'image_type':'dataset_table',
@@ -52,22 +52,22 @@ config.requests = [
 #                    'arguments':{
 #                                 'attribute': 'dataset_table', # ... this! (for image_type dataset_table)
 #                                 'attributes' : [
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_0_workers) as 0_worker_households',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_1_workers) as 1_worker_households',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_2_workers) as 2_worker_households',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_3_workers) as 3_worker_households',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_4_workers) as 4_worker_households',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_5_workers) as 5_worker_households',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_6_workers) as 6_worker_households',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_7_workers) as 7_worker_households',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households) as total_households',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.employment_of_sector_cie) as cie_sector_employment',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.employment_of_sector_med) as med_sector_employment',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.employment_of_sector_mips) as mips_sector_employment',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.employment_of_sector_pdr) as pdr_sector_employment',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.employment_of_sector_retail_ent) as retail_ent_sector_employment',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.employment_of_sector_visitor) as visitor_sector_employment',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.employment) as total_employment'
+#                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_0_workers) as 0_worker_households',
+#                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_1_workers) as 1_worker_households',
+#                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_2_workers) as 2_worker_households',
+#                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_3_workers) as 3_worker_households',
+#                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_4_workers) as 4_worker_households',
+#                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_5_workers) as 5_worker_households',
+#                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_6_workers) as 6_worker_households',
+#                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_7_workers) as 7_worker_households',
+#                                     'opus_core.func.aggregate(az_smart.zone.number_of_households) as total_households',
+#                                     'opus_core.func.aggregate(az_smart.zone.employment_of_sector_cie) as cie_sector_employment',
+#                                     'opus_core.func.aggregate(az_smart.zone.employment_of_sector_med) as med_sector_employment',
+#                                     'opus_core.func.aggregate(az_smart.zone.employment_of_sector_mips) as mips_sector_employment',
+#                                     'opus_core.func.aggregate(az_smart.zone.employment_of_sector_pdr) as pdr_sector_employment',
+#                                     'opus_core.func.aggregate(az_smart.zone.employment_of_sector_retail_ent) as retail_ent_sector_employment',
+#                                     'opus_core.func.aggregate(az_smart.zone.employment_of_sector_visitor) as visitor_sector_employment',
+#                                     'opus_core.func.aggregate(az_smart.zone.employment) as total_employment'
 #                                     ],
 ##                                 'conditional':'==0',
 #                                 },
@@ -80,22 +80,22 @@ config.requests = [
 #                    'arguments':{
 #                                 'attribute': 'dataset_table', # ... this! (for image_type dataset_table)
 #                                 'attributes' : [
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_0_workers) as 0_worker_households',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_1_workers) as 1_worker_households',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_2_workers) as 2_worker_households',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_3_workers) as 3_worker_households',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_4_workers) as 4_worker_households',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_5_workers) as 5_worker_households',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_6_workers) as 6_worker_households',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_7_workers) as 7_worker_households',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households) as total_households',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.employment_of_sector_cie) as cie_sector_employment',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.employment_of_sector_med) as med_sector_employment',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.employment_of_sector_mips) as mips_sector_employment',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.employment_of_sector_pdr) as pdr_sector_employment',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.employment_of_sector_retail_ent) as retail_ent_sector_employment',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.employment_of_sector_visitor) as visitor_sector_employment',
-#                                     'opus_core.func.aggregate(psrc_parcel.zone.employment) as total_employment'
+#                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_0_workers) as 0_worker_households',
+#                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_1_workers) as 1_worker_households',
+#                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_2_workers) as 2_worker_households',
+#                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_3_workers) as 3_worker_households',
+#                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_4_workers) as 4_worker_households',
+#                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_5_workers) as 5_worker_households',
+#                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_6_workers) as 6_worker_households',
+#                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_7_workers) as 7_worker_households',
+#                                     'opus_core.func.aggregate(az_smart.zone.number_of_households) as total_households',
+#                                     'opus_core.func.aggregate(az_smart.zone.employment_of_sector_cie) as cie_sector_employment',
+#                                     'opus_core.func.aggregate(az_smart.zone.employment_of_sector_med) as med_sector_employment',
+#                                     'opus_core.func.aggregate(az_smart.zone.employment_of_sector_mips) as mips_sector_employment',
+#                                     'opus_core.func.aggregate(az_smart.zone.employment_of_sector_pdr) as pdr_sector_employment',
+#                                     'opus_core.func.aggregate(az_smart.zone.employment_of_sector_retail_ent) as retail_ent_sector_employment',
+#                                     'opus_core.func.aggregate(az_smart.zone.employment_of_sector_visitor) as visitor_sector_employment',
+#                                     'opus_core.func.aggregate(az_smart.zone.employment) as total_employment'
 #                                     ],
 ##                                 'conditional':'==0',
 #                                 },
@@ -108,22 +108,22 @@ config.requests = [
                     'arguments':{
                                  'attribute': 'dataset_table', # ... this! (for image_type dataset_table)
                                  'attributes' : [
-                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_0_workers) as 0_worker_households',
-                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_1_workers) as 1_worker_households',
-                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_2_workers) as 2_worker_households',
-                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_3_workers) as 3_worker_households',
-                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_4_workers) as 4_worker_households',
-                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_5_workers) as 5_worker_households',
-                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_6_workers) as 6_worker_households',
-                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households_with_7_workers) as 7_worker_households',
-                                     'opus_core.func.aggregate(psrc_parcel.zone.number_of_households) as total_households',
-                                     'opus_core.func.aggregate(psrc_parcel.zone.employment_of_sector_cie) as cie_sector_employment',
-                                     'opus_core.func.aggregate(psrc_parcel.zone.employment_of_sector_med) as med_sector_employment',
-                                     'opus_core.func.aggregate(psrc_parcel.zone.employment_of_sector_mips) as mips_sector_employment',
-                                     'opus_core.func.aggregate(psrc_parcel.zone.employment_of_sector_pdr) as pdr_sector_employment',
-                                     'opus_core.func.aggregate(psrc_parcel.zone.employment_of_sector_retail_ent) as retail_ent_sector_employment',
-                                     'opus_core.func.aggregate(psrc_parcel.zone.employment_of_sector_visitor) as visitor_sector_employment',
-                                     'opus_core.func.aggregate(psrc_parcel.zone.employment) as total_employment'
+                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_0_workers) as 0_worker_households',
+                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_1_workers) as 1_worker_households',
+                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_2_workers) as 2_worker_households',
+                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_3_workers) as 3_worker_households',
+                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_4_workers) as 4_worker_households',
+                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_5_workers) as 5_worker_households',
+                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_6_workers) as 6_worker_households',
+                                     'opus_core.func.aggregate(az_smart.zone.number_of_households_with_7_workers) as 7_worker_households',
+                                     'opus_core.func.aggregate(az_smart.zone.number_of_households) as total_households',
+                                     'opus_core.func.aggregate(az_smart.zone.employment_of_sector_cie) as cie_sector_employment',
+                                     'opus_core.func.aggregate(az_smart.zone.employment_of_sector_med) as med_sector_employment',
+                                     'opus_core.func.aggregate(az_smart.zone.employment_of_sector_mips) as mips_sector_employment',
+                                     'opus_core.func.aggregate(az_smart.zone.employment_of_sector_pdr) as pdr_sector_employment',
+                                     'opus_core.func.aggregate(az_smart.zone.employment_of_sector_retail_ent) as retail_ent_sector_employment',
+                                     'opus_core.func.aggregate(az_smart.zone.employment_of_sector_visitor) as visitor_sector_employment',
+                                     'opus_core.func.aggregate(az_smart.zone.employment) as total_employment'
                                      ],
 #                                 'conditional':'==0',
                                  },

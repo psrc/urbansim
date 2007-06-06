@@ -24,8 +24,8 @@ class number_of_businesses_of_sector_SSS(Variable):
         Variable.__init__(self)
         
     def dependencies(self):
-        return ["psrc_parcel.building.parcel_id", 
-                "psrc_parcel.building.number_of_businesses_of_sector_" + self.sector, 
+        return ["az_smart.building.parcel_id", 
+                "az_smart.building.number_of_businesses_of_sector_" + self.sector, 
                 my_attribute_label("parcel_id")]
 
     def compute(self,  dataset_pool):

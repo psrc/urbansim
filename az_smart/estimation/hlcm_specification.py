@@ -12,7 +12,7 @@
 # other acknowledgments.
 # 
 
-##this is a copy from inprocess/psrc_parcel/hlcm_parcel_specification
+##this is a copy from inprocess/az_smart/hlcm_parcel_specification
 specification = {}
 
 specification = {
@@ -23,7 +23,7 @@ specification = {
             #"is_condo_residential = building.disaggregate(building_type.building_type_name)=='condo_residential'",
             #"is_multi_family_residential = building.disaggregate(building_type.building_type_name)=='multi_family_residential'",
             #"is_single_family_residential = building.disaggregate(building_type.building_type_name)=='single_family_residential'",
-            "ln_avg_building_sf_per_unit = ln(psrc_parcel.building.building_sqft/building.residential_units)",
+            "ln_avg_building_sf_per_unit = ln(az_smart.building.building_sqft/building.residential_units)",
             "ln_avg_value_per_unit = ln(building.total_value/building.residential_units)",
             #"ln_parcel_sf = ln(building.disaggregate(parcel.parcel_sqft))",
             "ln_parcel_sf_per_unit = ln(building.disaggregate(parcel.parcel_sqft)/building.residential_units)",
@@ -61,12 +61,12 @@ specification = {
             #"income_x_ln_parcel_sf = household.income * ln(urbansim.building.parcel_sqft)",
             "income_x_ln_parcel_sf_per_unit = household.income * ln(urbansim.building.parcel_sqft_per_unit)",
             #"income_x_ln_residential_units = household.income * ln(building.residential_units)",
-            "income_x_sqft_bedroom = (household.income * (psrc_parcel.building.building_sqft / building.number_of_bedrooms))",
+            "income_x_sqft_bedroom = (household.income * (az_smart.building.building_sqft / building.number_of_bedrooms))",
 
             #"persons_x_is_condo_residential = household.persons * urbansim.building.is_condo_residential",
             #"persons_x_is_multi_family_residential = household.persons * urbansim.building.is_multi_family_residential",
             "persons_x_is_single_family_residential = household.persons * urbansim.building.is_single_family_residential",            
-            "persons_x_ln_avg_building_sf_per_unit = household.persons * ln(psrc_parcel.building.building_sqft/building.residential_units)",
+            "persons_x_ln_avg_building_sf_per_unit = household.persons * ln(az_smart.building.building_sqft/building.residential_units)",
             #"persons_x_ln_avg_value_per_unit = household.persons * ln(building.total_value/building.residential_units)",
             #"persons_x_ln_parcel_sf = household.persons * ln(urbansim.building.parcel_sqft)",
             "persons_x_ln_parcel_sf_per_unit = household.persons * ln(urbansim.building.parcel_sqft_per_unit)",

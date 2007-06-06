@@ -16,8 +16,8 @@ import os
 from opus_core.configuration import Configuration
 
 config = Configuration({
-    'cache_directory': "/urbansim_cache/psrc_parcel", # change or leave out
-    'cache_directory_root': "/urbansim_cache/psrc_parcel",
+    'cache_directory': "/urbansim_cache/az_smart", # change or leave out
+    'cache_directory_root': "/urbansim_cache/az_smart",
 
     'db_host_name':os.environ['MYSQLHOSTNAME'],
     'db_user_name':os.environ['MYSQLUSERNAME'], 
@@ -32,7 +32,7 @@ config = Configuration({
     'low_memory_mode':False,
     'cache_from_mysql': True,
     'debuglevel':7,
-    'baseyear_cache':{'directory_to_cache':"/urbansim_cache/psrc_parcel/cache_source",
+    'baseyear_cache':{'directory_to_cache':"/urbansim_cache/az_smart/cache_source",
                       #'years':range(1996,2001)
                      },
     'base_year': 2000,
@@ -48,7 +48,7 @@ config = Configuration({
         'zone':{},
         'household':{},
         'building':{},        
-        'parcel':{'package_name':'psrc_parcel'},        
+        'parcel':{'package_name':'az_smart'},        
         }    
     }
 )    

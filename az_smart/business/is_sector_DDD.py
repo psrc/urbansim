@@ -37,10 +37,10 @@ if __name__=='__main__':
     from numpy import array
     from numpy import ma
     from opus_core.resources import Resources        
-    from psrc_parcel.datasets.businesses import BusinessDataset
+    from az_smart.datasets.businesses import BusinessDataset
         
     class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.business.is_sector_14"
+        variable_name = "az_smart.business.is_sector_14"
         
         def test_my_inputs(self):
             building_id = array([1,1,2,3,7])

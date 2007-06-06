@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from psrc_parcel.building.has_valid_year_built import has_valid_year_built as building_has_valid_year_built
+from az_smart.building.has_valid_year_built import has_valid_year_built as building_has_valid_year_built
 from variable_functions import my_attribute_label
 
 class has_valid_year_built(building_has_valid_year_built):

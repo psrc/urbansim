@@ -28,7 +28,7 @@ class units_occupied(Variable):
         return [
 #                "occupied_building_sqft = building.aggregate(business.building_sqft)",
 #                "occupied_residential_units = building.number_of_agents(household)",
-#                "psrc_parcel.building.building_sqft_per_residential_unit",
+#                "az_smart.building.building_sqft_per_residential_unit",
 #                "_units_occupied = building.occupied_building_sqft + building.occupied_residential_units * building.building_sqft_per_residential_unit"
                 "_generic_unit_name = building.disaggregate(generic_building_type.unit_name, intermediates=[building_type])",
                 "parcel_sqft = building.disaggregate(parcel.parcel_sqft)",

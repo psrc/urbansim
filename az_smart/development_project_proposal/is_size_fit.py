@@ -21,9 +21,9 @@ class is_size_fit(Variable):
     """
 
     def dependencies(self):
-        return ["vacant_land_area=development_project_proposal.disaggregate(psrc_parcel.parcel.vacant_land_area)",
-                "land_area_min=development_project_proposal.disaggregate(psrc_parcel.development_template.land_sqft_min)",
-                "land_area_max=development_project_proposal.disaggregate(psrc_parcel.development_template.land_sqft_max)",
+        return ["vacant_land_area=development_project_proposal.disaggregate(az_smart.parcel.vacant_land_area)",
+                "land_area_min=development_project_proposal.disaggregate(az_smart.development_template.land_sqft_min)",
+                "land_area_max=development_project_proposal.disaggregate(az_smart.development_template.land_sqft_max)",
                  ]
 
     def compute(self, dataset_pool):
@@ -47,7 +47,7 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['psrc_parcel'],
+            package_order=['az_smart'],
             test_data={
             'development_template':
             {

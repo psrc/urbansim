@@ -40,11 +40,11 @@ if __name__=='__main__':
     from numpy import array
     from numpy import ma
     from opus_core.resources import Resources
-    from psrc_parcel.datasets.parcels import ParcelSet
-    from psrc_parcel.datasets.buildings import BuildingSet
+    from az_smart.datasets.parcels import ParcelSet
+    from az_smart.datasets.buildings import BuildingSet
     
     class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.parcel.residential_units"
+        variable_name = "az_smart.parcel.residential_units"
         def test(self):
             parcel_resources = Resources({'data':
                                    {"parcel_id":array([1,2,3])},

@@ -23,7 +23,7 @@ class nonresidential_building_sqft(Variable):
     def dependencies(self):
         return [my_attribute_label("building_class_id"),
                 attribute_label("building_use", "class_id"),
-                "psrc_parcel.building_use.class_name"]
+                "az_smart.building_use.class_name"]
 
     def compute(self,  dataset_pool):
         building_use = dataset_pool.get_dataset("building_use")
@@ -44,11 +44,11 @@ if __name__=='__main__':
     from numpy import ma
     from opus_core.resources import Resources
     from urbansim.datasets.building_dataset import BuildingDataset
-    from psrc_parcel.datasets.building_use_classification_dataset import BuildingUseClassificationDataset
+    from az_smart.datasets.building_use_classification_dataset import BuildingUseClassificationDataset
     from opus_core.storage_factory import StorageFactory
 
     class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.building.nonresidential_building_sqft"
+        variable_name = "az_smart.building.nonresidential_building_sqft"
         def test(self):
 #            building_id = array([1, 2, 3, 4])
 

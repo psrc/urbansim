@@ -49,14 +49,14 @@ class building_size(Variable):
         return result
 
 import unittest
-from psrc_parcel.datasets.building_use_classification_dataset import BuildingUseClassificationDataset
+from az_smart.datasets.building_use_classification_dataset import BuildingUseClassificationDataset
 from urbansim.datasets.building_dataset import BuildingDataset
 from opus_core.resources import Resources
 from numpy import array, arange
 from opus_core.storage_factory import StorageFactory
 from numpy import ma
 class Tests(unittest.TestCase):
-    variable_name = "psrc_parcel.building.building_size"
+    variable_name = "az_smart.building.building_size"
 
     def test_my_inputs(self):
         storage = StorageFactory().get_storage('dict_storage')

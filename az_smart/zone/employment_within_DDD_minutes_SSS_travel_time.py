@@ -50,12 +50,12 @@ if __name__=='__main__':
     from urbansim.variable_test_toolbox import VariableTestToolbox
     from numpy import array
     from numpy import ma
-    from psrc_parcel.opus_package_info import package
+    from az_smart.opus_package_info import package
     
     class Tests(unittest.TestCase):
         def get_values(self, number, mode):
             values = VariableTestToolbox().compute_variable(
-                "psrc_parcel.zone.employment_within_%s_minutes_%s_travel_time" % (number, mode),
+                "az_smart.zone.employment_within_%s_minutes_%s_travel_time" % (number, mode),
                 {"zone":{
                     "zone_id":array([1,3]),
                     "employment":array([10, 1])},

@@ -19,7 +19,7 @@ from urbansim.estimation.estimator import plot_correlation_diagnose
 
 class EstimationRunner(object):
 
-    def run_estimation(self, estimation_config, model, save_estimation_results=True, diagnose=False):
+    def run_estimation(self, estimation_config, model, save_estimation_results=False, diagnose=False):
         self.model = model
         self.spec_file = "%s_specification" % model[0].lower()
         ### TODO: Re-write this
@@ -30,17 +30,17 @@ class EstimationRunner(object):
             if len(model) > 3:
                 add_member_prefix = model[3]
         if type is None:
-            exec("from psrc_parcel.estimation.%s_estimation_config import run_configuration" % model[0].lower())
+            exec("from az_smart.estimation.%s_estimation_config import run_configuration" % model[0].lower())
             run_configuration = update_controller_by_specification_from_module(
                                 run_configuration, model[1],
-                                "psrc_parcel.estimation.%s" % self.spec_file)
+                                "az_smart.estimation.%s" % self.spec_file)
         else:
-            exec("from psrc_parcel.estimation.%s_estimation_config import %s_configuration as config" % (model[0].lower(),
+            exec("from az_smart.estimation.%s_estimation_config import %s_configuration as config" % (model[0].lower(),
                   model[0].lower()))
             conf = config(type, add_member_prefix)
             run_configuration = conf.get_configuration()
             run_configuration = conf.get_updated_configuration_from_module(
-                                     run_configuration, "psrc_parcel.estimation.%s" % self.spec_file)
+                                     run_configuration, "az_smart.estimation.%s" % self.spec_file)
 
         if diagnose and self.model[0] != 'REPM':  #only works for LCM and derivatives
             model_name = model[1]
@@ -76,5 +76,5 @@ if __name__ == '__main__':
 
     from my_estimation_config import my_configuration
     er = EstimationRunner()
-    er.run_estimation(my_configuration, model, diagnose=True)
+    er.run_estimation(my_configuration, model, diagnose=False)
     

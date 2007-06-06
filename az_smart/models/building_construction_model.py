@@ -13,7 +13,7 @@
 #
 
 from opus_core.model import Model
-from psrc_parcel.datasets.development_project_proposal_component_dataset import create_from_proposals_and_template_components
+from az_smart.datasets.development_project_proposal_component_dataset import create_from_proposals_and_template_components
 from opus_core.logger import logger
 from opus_core.misc import unique_values
 from opus_core.simulation_state import SimulationState

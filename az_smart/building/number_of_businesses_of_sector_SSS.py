@@ -25,8 +25,8 @@ class number_of_businesses_of_sector_SSS(Variable):
         
     def dependencies(self):
         return [
-                "psrc_parcel.business.is_sector_" + self.sector, 
-                "psrc_parcel.business.building_id"]
+                "az_smart.business.is_sector_" + self.sector, 
+                "az_smart.business.building_id"]
 
     def compute(self,  dataset_pool):
         business = dataset_pool.get_dataset("business")

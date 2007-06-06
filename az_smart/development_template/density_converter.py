@@ -48,7 +48,7 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['psrc_parcel','urbansim'],
+            package_order=['az_smart','urbansim'],
             test_data={            
             'development_template':
             {

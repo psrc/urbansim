@@ -39,10 +39,10 @@ class building_sqft_per_unit(Variable):
 if __name__=='__main__':
     import unittest
     from numpy import array
-    from psrc_parcel.datasets.building_dataset import BuildingDataset
+    from az_smart.datasets.building_dataset import BuildingDataset
     from opus_core.storage_factory import StorageFactory
     class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.building.building_sqft_per_unit"
+        variable_name = "az_smart.building.building_sqft_per_unit"
 
         def test_my_inputs(self):
             storage = StorageFactory().get_storage('dict_storage')
