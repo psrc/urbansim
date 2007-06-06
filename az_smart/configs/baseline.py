@@ -33,11 +33,11 @@ class Baseline(GeneralConfiguration):
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
                 #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
-			   cache_directory_root = r'/urbansim_cache/az_smart',
+               cache_directory_root = r'/urbansim_cache/az_smart',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     #existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
-				   existing_cache_to_copy = r'/workspace/urbansim_cache/az_smart/estimation',
+                   existing_cache_to_copy = r'/workspace/urbansim_cache/az_smart/estimation',
                     ),                
                 cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
                 tables_to_cache = [
