@@ -170,10 +170,11 @@
 	</target>
 
 	<target name="cc-publish-documentation">
-		<delete dir="/projects/null/urbansim5/www.urbansim.org/opus/nightly/docs" />
-		<copy todir="/projects/null/urbansim5/www.urbansim.org/opus/nightly/docs">
-			<fileset dir="${basedir}/../opus_docs/docs/latex/userguide">
-				<include name="**" />
+		<delete dir="/projects/null/urbansim5/www.urbansim.org/opus/nightly/docs/html" />
+		<copy todir="/projects/null/urbansim5/www.urbansim.org/opus/nightly/docs/html">
+			<fileset dir="${basedir}/../opus_docs/docs/latex">
+				<include name="userguide/**" />
+				<include name="userguide.pdf" />
 			</fileset>
 		</copy>
 	</target>
