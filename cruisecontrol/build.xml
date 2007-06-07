@@ -35,49 +35,43 @@
 		</condition>
 	</target>
 
-	<target name="green" if="buildstatus.passed">
+	<target name="trafficlights">
 		<telnet server="roslyn" port="5353">
-			<write>+green</write>
+			<write>${trafficlights.status}</write>
 		</telnet>
 		<telnet server="wickersham" port="5353">
-			<write>+green</write>
+			<write>${trafficlights.status}</write>
 		</telnet>
+	</target>
+
+	<target name="green" if="buildstatus.passed">
+		<antcall target="trafficlights">
+			<property name="trafficlights.status" value="+green" />
+		</antcall>
 	</target>
 
 	<target name="yellow" if="buildstatus.passed">
-		<telnet server="roslyn" port="5353">
-			<write>+yellow</write>
-		</telnet>
-		<telnet server="wickersham" port="5353">
-			<write>+yellow</write>
-		</telnet>
+		<antcall target="trafficlights">
+			<property name="trafficlights.status" value="+yellow" />
+		</antcall>
 	</target>
 
 	<target name="red" if="buildstatus.failed">
-		<telnet server="roslyn" port="5353">
-			<write>+red</write>
-		</telnet>
-		<telnet server="wickersham" port="5353">
-			<write>+red</write>
-		</telnet>
+		<antcall target="trafficlights">
+			<property name="trafficlights.status" value="+red" />
+		</antcall>
 	</target>
 
 	<target name="greenyellow">
-		<telnet server="roslyn" port="5353">
-			<write>+green+yellow</write>
-		</telnet>
-		<telnet server="wickersham" port="5353">
-			<write>+green+yellow</write>
-		</telnet>
+		<antcall target="trafficlights">
+			<property name="trafficlights.status" value="+green+yellow" />
+		</antcall>
 	</target>
 
 	<target name="yellowred" if="buildstatus.failed">
-		<telnet server="roslyn" port="5353">
-			<write>+yellow+red</write>
-		</telnet>
-		<telnet server="wickersham" port="5353">
-			<write>+yellow+red</write>
-		</telnet>
+		<antcall target="trafficlights">
+			<property name="trafficlights.status" value="+yellow+red" />
+		</antcall>
 	</target>
 
 	<target name="trafficlights-finish" depends="updateProjectBuildstatus,checkBuildstatus">
