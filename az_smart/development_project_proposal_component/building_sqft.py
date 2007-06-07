@@ -42,20 +42,14 @@ class Tests(opus_unittest.OpusTestCase):
             __file__,
             package_order=['az_smart', 'urbansim'],
             test_data={
-            'development_project_proposal':
-            {
-                "proposal_id":    array([1,  2,    3,  4, 5]),
-                "units_proposed": array([34, 250, 130, 0, 52])
-            },
             'development_project_proposal_component':
             {
                 "proposal_component_id": arange(8)+1,
-                 "proposal_id":           array([3,   3, 5,  2,   5,   1, 3, 1]),
-                 "percent_building_sqft": array([30, 25, 1, 100, 99, 100, 45, 0]),
-                 "building_sqft_per_unit": array([1, 1,  60, 25,  10, 2,  1,  1])
+                 "units_proposed":         array([100, 250, 130, 0,   52, 1, 20, 0]),
+                 "building_sqft_per_unit": array([1,    1,  60,  25,  10, 2,  1,  1])
              }
         })
-        should_be = array([130/100.0*30, 130/100.0*25,  52/100.0*60,  250*25, 52/100.0 * 99 * 10, 34*2, 130/100.0*45, 0])
+        should_be = array([100, 250,  130*60,  0, 52 * 10, 2, 20, 0])
 
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 
