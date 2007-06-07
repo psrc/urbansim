@@ -171,7 +171,7 @@
 
 	<target name="cc-publish-documentation">
 		<copy todir="/projects/null/urbansim5/www.urbansim.org/opus/nightly">
-			<fileset dir="${basedir}/../opus_docs/docs/latex/html">
+			<fileset dir="${basedir}/../opus_docs/docs/latex/userguide">
 				<include name="**" />
 			</fileset>
 		</copy>
