@@ -17,6 +17,8 @@ all_variables = [
     "lnsqftunit=ln(parcel.aggregate(building.building_sqft)/parcel.aggregate(building.residential_units))",
     "lnlotsqft=ln(parcel.parcel_sqft)",
     "lnlotsqftunit=ln(parcel.parcel_sqft/parcel.aggregate(building.residential_units))",
+    "ln_bldgage=ln(parcel.aggregate(az_smart.building.age_masked, function=mean))",
+    "far=parcel.aggregate(az_smart.building.building_sqft)/parcel.parcel_sqft",
                  ]
 
 specification = {
@@ -27,7 +29,7 @@ specification = {
     "constant",
     "lnsqft",
     "lnlotsqft",
-#    "yrbuilt=building.year_built",
+    "ln_bldgage",
     ],
 
     3:   #Single Family High Density
@@ -57,8 +59,9 @@ specification = {
     8:   #Office
             [
     "constant",
-#    "lnsqft",
-    "far=parcel.aggregate(az_smart.building.building_sqft)/parcel.parcel_sqft",
+    "lnsqft",
+    "far",
+    "ln_bldgage",
 #    "lnlotsqft",
     ],
 
