@@ -18,11 +18,11 @@ all_variables = [
     #"hwy2000 = psrc.parcel.distance_to_highway_in_gridcell<2000",
     #"art300 = psrc.parcel.distance_to_arterial_in_gridcell<300",
     #"art600 = psrc.parcel.distance_to_arterial_in_gridcell<600",
-    "ln_bldgage=ln(parcel.aggregate(az_smart.building.age_masked, function=mean))",
+#    "ln_bldgage=ln(parcel.aggregate(az_smart.building.age_masked, function=mean))",
     "lnsqft=ln(parcel.aggregate(az_smart.building.building_sqft))",
-    "lnsqftunit=ln(parcel.aggregate(az_smart.building.building_sqft)/parcel.aggregate(building.residential_units))",
+    "lnsqftunit=ln(parcel.aggregate(building.building_sqft)/parcel.aggregate(building.residential_units))",
     "lnlotsqft=ln(parcel.parcel_sqft)",
-    #"lnlotsqftunit=ln(parcel.parcel_sqft/parcel.aggregate(building.residential_units))",
+    "lnlotsqftunit=ln(parcel.parcel_sqft/parcel.aggregate(building.residential_units))",
     #"ln_invfar=ln(parcel.parcel_sqft/parcel.aggregate(az_smart.building.building_sqft))",
     #"lngcdacbd=ln(parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd))",
     #"lnemp30da=ln(parcel.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))",
@@ -55,13 +55,13 @@ all_variables = [
     #"plan_19=parcel.plan_type_id==19",
     #"plan_20=parcel.plan_type_id==20",           
                  ]
-variables_for_development_project_proposal = {
-      'ln_bldgage' : 'ln(az_smart.development_project_proposal.building_age)',
-      'lnsqft': 'ln(az_smart.development_project_proposal.building_sqft)',
-      "lnsqftunit": 'ln(az_smart.development_project_proposal.building_sqft/az_smart.development_project_proposal.units_proposed)',
-      "lnlotsqftunit": "ln(development_project_proposal.aggregate(parcel.parcel_sqft)/az_smart.development_project_proposal.units_proposed)",
-      "ln_invfar": "ln(development_project_proposal.aggregate(parcel.parcel_sqft)/az_smart.development_project_proposal.building_sqft)",
-                                              }
+#variables_for_development_project_proposal = {
+      #'ln_bldgage' : 'ln(az_smart.development_project_proposal.building_age)',
+      #'lnsqft': 'ln(az_smart.development_project_proposal.building_sqft)',
+      #"lnsqftunit": 'ln(az_smart.development_project_proposal.building_sqft/az_smart.development_project_proposal.units_proposed)',
+      #"lnlotsqftunit": "ln(development_project_proposal.aggregate(parcel.parcel_sqft)/az_smart.development_project_proposal.units_proposed)",
+      #"ln_invfar": "ln(development_project_proposal.aggregate(parcel.parcel_sqft)/az_smart.development_project_proposal.building_sqft)",
+                                              #}
 specification ={}
 specification = {
        "_definition_": all_variables,
@@ -75,7 +75,7 @@ specification = {
     #"ln_bldgage",
 ##    "ln_bldgage2=(ln(parcel.aggregate(az_smart.building.age_masked, function=mean)))**2",
 ##    "ln_bldgage3=(ln(parcel.aggregate(az_smart.building.age_masked, function=mean)))**3",
-    #"lnsqft",
+    "lnsqft",
 ##    "far=parcel.aggregate(az_smart.building.building_sqft)/parcel.parcel_sqft",
     #"ln_invfar",
 ##    "building.stories",
@@ -95,7 +95,7 @@ specification = {
 
     ],
 
-    2:   #industrial
+    8:   #industrial
             [
     "constant",
 ##    "building.year_built",
@@ -104,7 +104,7 @@ specification = {
     #"ln_bldgage",
 ##    "ln_bldgage2=(ln(parcel.aggregate(az_smart.building.age_masked, function=mean)))**2",
 ##    "ln_bldgage3=(ln(parcel.aggregate(az_smart.building.age_masked, function=mean)))**3",
-    #"lnsqft",
+    "lnsqft",
     #"ln_invfar",
 ##    "far=parcel.aggregate(az_smart.building.building_sqft)/parcel.parcel_sqft",
 ##    "building.stories",
@@ -125,7 +125,7 @@ specification = {
     ],
 
 
-    3:   #multi-family residential
+    9:   #multi-family residential
             [
     "constant",
     #"hwy600",
@@ -139,7 +139,8 @@ specification = {
 ##    "lnbedsqft=ln(parcel.aggregate(az_smart.building.building_sqft)/parcel.aggregate(building.number_of_bedrooms))",
 ##    "baths=building.number_of_bathrooms",
     #"lnsqftunit",
-    #"lnlotsqftunit",
+      "lnsqft",
+    "lnlotsqftunit",
 ##    "ln_invfar=ln(parcel.parcel_sqft/parcel.aggregate(az_smart.building.building_sqft))",
 ##    "far=parcel.aggregate(az_smart.building.building_sqft)/parcel.parcel_sqft",
 ##    "building.stories",        

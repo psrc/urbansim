@@ -36,5 +36,5 @@ my_configuration = {
     'datasets_to_cache_after_each_model':[],
     'low_memory_mode':False,
     'base_year': 2000,
-    'years': (2000,2005),                    
+    'years': (2000,2000),                    
     }

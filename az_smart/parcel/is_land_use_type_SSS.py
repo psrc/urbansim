@@ -21,17 +21,17 @@ class is_land_use_type_SSS(Variable):
     """ Is this parcel of a land use type SSS."""
 
     
-    def __init__(self, land_use_name):
-        self.land_use_name = land_use_name
+    def __init__(self, land_use_type_name):
+        self.land_use_type_name = land_use_type_name
         Variable.__init__(self)
         
     def dependencies(self):
-        return [attribute_label("land_use_type", "land_use_name"), my_attribute_label("land_use_type_id")]
+        return [attribute_label("land_use_type", "land_use_type_name"), my_attribute_label("land_use_type_id")]
         
     def compute(self, dataset_pool):
         land_types = dataset_pool.get_dataset('land_use_type')
         parcels = self.get_dataset()
-        codes = land_types.get_id_attribute()[land_types.get_attribute("land_use_name") == self.land_use_name]
+        codes = land_types.get_id_attribute()[land_types.get_attribute("land_use_type_name") == self.land_use_type_name]
         result = zeros(parcels.size(), dtype='bool8')
         for code in codes:
             result = logical_or(result, parcels.get_attribute("land_use_type_id") == code)
@@ -59,7 +59,7 @@ class Tests(opus_unittest.OpusTestCase):
                    out_table_name = land_use_types_table_name,
                    values = {
                     'land_use_type_id':array([0, 2, 3, 4]), 
-                    'land_use_name': array(['foo', 'vacant', 'commercial', 'vacant'])
+                    'land_use_type_name': array(['foo', 'vacant', 'commercial', 'vacant'])
                     }
                 )
 
