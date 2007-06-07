@@ -169,4 +169,12 @@
 		<delete dir="${sandboxdir}" />
 	</target>
 
+	<target name="cc-publish-documentation">
+		<copy todir="/projects/null/urbansim5/www.urbansim.org/opus/nightly">
+			<fileset dir="${basedir}/../opus_docs/docs/latex/html">
+				<include name="**" />
+			</fileset>
+		</copy>
+	</target>
+
 </project>
