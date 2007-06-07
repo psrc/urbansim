@@ -46,31 +46,31 @@
 
 	<target name="green" if="buildstatus.passed">
 		<antcall target="trafficlights">
-			<property name="trafficlights.status" value="+green" />
+			<param name="trafficlights.status" value="+green" />
 		</antcall>
 	</target>
 
 	<target name="yellow" if="buildstatus.passed">
 		<antcall target="trafficlights">
-			<property name="trafficlights.status" value="+yellow" />
+			<param name="trafficlights.status" value="+yellow" />
 		</antcall>
 	</target>
 
 	<target name="red" if="buildstatus.failed">
 		<antcall target="trafficlights">
-			<property name="trafficlights.status" value="+red" />
+			<param name="trafficlights.status" value="+red" />
 		</antcall>
 	</target>
 
 	<target name="greenyellow">
 		<antcall target="trafficlights">
-			<property name="trafficlights.status" value="+green+yellow" />
+			<param name="trafficlights.status" value="+green+yellow" />
 		</antcall>
 	</target>
 
 	<target name="yellowred" if="buildstatus.failed">
 		<antcall target="trafficlights">
-			<property name="trafficlights.status" value="+yellow+red" />
+			<param name="trafficlights.status" value="+yellow+red" />
 		</antcall>
 	</target>
 
