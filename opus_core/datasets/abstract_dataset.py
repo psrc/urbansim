@@ -344,6 +344,8 @@ class AbstractDataset(object):
             names = names.tolist()
         if (not isinstance(names, list)) and (not isinstance(names, tuple)):
             names=[names]
+        if not names:
+            raise ValueError, "No variable given to the compute method."
         new_versions = []
         for ivar in range(len(names)):
             if isinstance(names[ivar], tuple):
@@ -409,7 +411,10 @@ class AbstractDataset(object):
             self._create_id_mapping()
         else:
             if self.id_mapping_type == "A":
-                self.id_mapping_shift = ids.min()
+                if ids.size > 0:
+                    self.id_mapping_shift = ids.min()
+                else:
+                    self.id_mapping_shift = 0
                 self.id_mapping = do_id_mapping_array_from_array(ids)
             else:
                 self.id_mapping.clear()
