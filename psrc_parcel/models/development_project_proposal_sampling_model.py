@@ -76,15 +76,17 @@ class DevelopmentProjectProposalSamplingModel(Model):
         self.proposal_component_set.compute_variables([
             'generic_building_type_id = development_project_proposal_component.disaggregate(building_type.generic_building_type_id)',
             'psrc_parcel.development_project_proposal_component.units_proposed'],
-                                        dataset_pool=self.dataset_pool)            
+                                        dataset_pool=self.dataset_pool)
         buildings = self.dataset_pool.get_dataset("building")
         buildings.compute_variables(["generic_building_type_id = building.disaggregate(building_type.generic_building_type_id)",
-                                    "psrc_parcel.building.units_occupied",
+                                    "psrc_parcel.building.occupied_building_sqft",
                                     "psrc_parcel.building.existing_units",
+                                    "occupied_residential_units = building.number_of_agents(household)",
+                                    "occupied_parcel_sqft = psrc_parcel.building.occupied_building_sqft",
                                     ],
                                     dataset_pool=self.dataset_pool)
         target_vacancy = self.dataset_pool.get_dataset('target_vacancy')
-        target_vacancy.compute_variables(['type_name=target_vacancy.disaggregate(generic_building_type.generic_building_type_name)', 
+        target_vacancy.compute_variables(['type_name=target_vacancy.disaggregate(generic_building_type.generic_building_type_name)',
                                           'unit_name=target_vacancy.disaggregate(generic_building_type.unit_name)'],
                                          dataset_pool=self.dataset_pool)
         current_target_vacancy = DatasetSubset(target_vacancy, index=where(target_vacancy.get_attribute("year")==current_year)[0])
@@ -107,7 +109,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
             idx = where(self.proposal_set.get_attribute("status_id") == status)[0]
             isorted = self.weight[idx].argsort()[range(idx.size-1,-1,-1)]
             self.consider_proposals(idx[isorted], current_target_vacancy)
-            
+
         while sometrue(array(self.accepting_proposals.values())):
             if self.weight.sum() == 0.0:
                 break
@@ -121,9 +123,9 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                    )
             if len(self.accepted_proposals) == laccepted_proposals:
                 break
-            
+
         # set status of accepted proposals to 'active'
-        self.proposal_set.modify_attribute(name="status_id", data=self.proposal_set.id_active, 
+        self.proposal_set.modify_attribute(name="status_id", data=self.proposal_set.id_active,
                                           index=array(self.accepted_proposals))
         # delete all tentative (not accepted) proposals from the proposal set
         self.proposal_set.remove_elements(where(
@@ -134,19 +136,17 @@ class DevelopmentProjectProposalSamplingModel(Model):
     def check_vacancy_rates(self, target_vacancy):
         for index in arange(target_vacancy.size()):
             type_id = target_vacancy.get_attribute_by_index("generic_building_type_id", index)
-            type_name = target_vacancy.get_attribute_by_index("type_name", index)            
+            type_name = target_vacancy.get_attribute_by_index("type_name", index)
             unit_name = target_vacancy.get_attribute_by_index("unit_name", index)  #vacancy by type, could be residential, non-residential, or by building_type
-            
+
             target = target_vacancy.get_attribute_by_index("target_vacancy_rate", index)
             buildings = self.dataset_pool.get_dataset("building")
             is_matched_type = buildings.get_attribute("generic_building_type_id") == type_id
-            existing_units = zeros(buildings.size(), dtype="int32")
-            existing_units[is_matched_type] = buildings.get_attribute(unit_name)[is_matched_type].astype(existing_units.dtype)
-            #buildings.compute_variables("psrc_parcel.building.units_occupied", dataset_pool=self.dataset_pool)
-            occupied_units = buildings.get_attribute("units_occupied")
+            existing_units = buildings.get_attribute(unit_name)[is_matched_type]
+            occupied_units = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type]
 
-            self.existing_units[type_id] = existing_units[is_matched_type].sum()
-            self.occupied_units[type_id] = occupied_units[is_matched_type].sum()
+            self.existing_units[type_id] = existing_units.astype("float32").sum()
+            self.occupied_units[type_id] = occupied_units.astype("float32").sum()
             self.proposed_units[type_id] = 0
             self.demolished_units[type_id] = 0
             vr = (self.existing_units[type_id] - self.occupied_units[type_id]) / float(self.existing_units[type_id])
@@ -171,7 +171,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
 
         proposal_ids = self.proposal_set.get_id_attribute()
         proposal_ids_in_component_set = self.proposal_component_set.get_attribute("proposal_id")
-        
+
         for i in range(proposal_indexes.size):
             if not sometrue(array(self.accepting_proposals.values())):
                 # if none of the types is accepting_proposals, exit
@@ -179,22 +179,22 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 # the target vacancy rates for all types
                 return
             proposal_index = proposal_indexes[i]  # consider 1 proposed project at a time
-            if is_proposal_rejected[i]: 
+            if is_proposal_rejected[i]:
                 continue
             proposal_index_in_component_set = where(proposal_ids_in_component_set == proposal_ids[proposal_index])[0]
-            units_proposed = self.proposal_component_set.get_attribute_by_index("units_proposed", 
+            units_proposed = self.proposal_component_set.get_attribute_by_index("units_proposed",
                                                                                 proposal_index_in_component_set)
             component_types = components_generic_building_type_ids[proposal_index_in_component_set]
 
-            # If one of the involved types is not accepted, reject the proposal 
+            # If one of the involved types is not accepted, reject the proposal
             accept_types = map(lambda x: self.accepting_proposals[x], component_types)
             if (False in accept_types) or (units_proposed.sum() == 0):
                 self.weight[proposal_index] = 0.0
                 is_proposal_rejected[i] = True
                 continue
- 
+
             this_site = proposal_site[i]
-            if False: #proposal_construction_type[i] == 'R':  
+            if False: #proposal_construction_type[i] == 'R':
                 ##TODO:if it's a redevelopment project,demolish existing buildings of this site
                 affected_building = where(building_site==this_site)[0]
                 self.demolished_buildings = concatenate((self.demolished_buildings, affected_building))
@@ -206,7 +206,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
             for itype_id in range(component_types.size): #
                 type_id = component_types[itype_id]
                 # this loop is only needed when a proposal could provide units from more than 1 generic building types
-                
+
                 #if pro_rated[i]:
                     #self.proposed_units[type_id] += round(unit_proposed / years[i])
                     ##TODO: handle pro-rated projects
@@ -251,7 +251,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
 
         storage = StorageFactory().get_storage('dict_storage')
         storage.write_table(
-            table_name='buildings_exogeneous'
+            table_name='buildings_exogeneous',
             table_data={
                     'building_id':max_building_id + arange(1, scheduled_year.size+1, 1),
                     'type': types,
@@ -259,7 +259,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                     'units': units,
                     'scheduled_year': scheduled_year
                     },
-                })
+                )
 
         scheduled_buildings = BuildingDataset(
             in_storage = storage,

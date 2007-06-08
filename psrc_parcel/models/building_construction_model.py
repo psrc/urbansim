@@ -19,7 +19,7 @@ from opus_core.misc import unique_values
 from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset import DatasetSubset
 
-from numpy import where, arange, resize
+from numpy import where, arange, resize, array
 
 class BuildingConstructionModel(Model):
     """Process any pre-scheduled development projects (those that have status 'active'). New buildings are 
@@ -28,6 +28,10 @@ class BuildingConstructionModel(Model):
     model_name = "BuildingConstructionModel"
 
     def run (self, development_proposal_set, building_dataset, dataset_pool):
+        if development_proposal_set.size() <= 0:
+            logger.log_status("Proposal set is empty. Nothing to be constructed.")
+            return development_proposal_set
+        
         # load velocity function dataset
         try:
             velocity_function_set = dataset_pool.get_dataset("velocity_function_dataset")
@@ -57,15 +61,15 @@ class BuildingConstructionModel(Model):
         
         # determine existing units on parcels
         parcels = dataset_pool.get_dataset("parcel")
-        parcels.compute_variables(map(lambda x: "%s = parcel.aggregate(building.%s)" % (x, x), unique_unit_names), 
+        parcels.compute_variables(map(lambda x: "%s = parcel.aggregate(psrc_parcel.building.%s)" % (x, x), unique_unit_names), 
                                   dataset_pool=dataset_pool)
         
         # from the velocity function determine the amount to be built for each component
-        if velocity_function is not None:
+        if velocity_function_set is not None:
             development_amount = proposal_component_set.compute_variables(["cummulative_amount_of_development"], 
                                                                       dataset_pool=dataset_pool)
         else: # if there is no velocity function, all components have velocity of 100%
-            development_amount = resize(array([100], dtype="int32"), proposal_component_set.size)
+            development_amount = resize(array([100], dtype="int32"), proposal_component_set.size())
         
         # amount to be built
         to_be_built = proposal_component_set.get_attribute('units_proposed')/100.0 * development_amount

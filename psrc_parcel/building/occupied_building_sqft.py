@@ -15,14 +15,14 @@
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 
-class occupied_sqft(Variable):
-    """Number of households in a given parcel"""
+class occupied_building_sqft(Variable):
+    """sum of business sqft per building"""
 
     _return_type="int32"
-    
+
     def dependencies(self):
-        return ["psrc_parcel.business.building_id", 
-                "psrc_parcel.business.sqft", 
+        return ["psrc_parcel.business.building_id",
+                "psrc_parcel.business.sqft",
                 my_attribute_label("building_id")]
 
     def compute(self,  dataset_pool):
@@ -40,14 +40,14 @@ if __name__=='__main__':
     from opus_core.resources import Resources
     from psrc_parcel.datasets.building_dataset import BuildingDataset
     from psrc_parcel.datasets.business_dataset import BusinessDataset
-    from opus_core.storage_factory import StorageFactory   
-    
+    from opus_core.storage_factory import StorageFactory
+
     class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.building.occupied_sqft"
+        variable_name = "psrc_parcel.building.occupied_building_sqft"
         def test(self):
             storage = StorageFactory().get_storage('dict_storage')
             bs_table_name = 'business'
-            
+
             storage.write_table(
                     table_name=bs_table_name,
                     table_data={"business_id": array([1,2,3,4,5,6]),
@@ -55,8 +55,8 @@ if __name__=='__main__':
                                "building_id": array([2,1,3,2,1,2])
                                },
                 )
-    
-            bs = BusinessDataset(in_storage=storage, 
+
+            bs = BusinessDataset(in_storage=storage,
                                           in_table_name=bs_table_name)
 
             storage = StorageFactory().get_storage('dict_storage')
@@ -66,14 +66,14 @@ if __name__=='__main__':
                     table_data={"building_id": array([1,2,3]),},
             )
 
-            buildings = BuildingDataset(in_storage=storage, 
+            buildings = BuildingDataset(in_storage=storage,
                                         in_table_name=building_table_name)
-            
-            buildings.compute_variables(self.variable_name, 
+
+            buildings.compute_variables(self.variable_name,
                                         resources=Resources({'business':bs}))
             values = buildings.get_attribute(self.variable_name)
             should_be = array([3,5,4])
-            
+
             self.assertEqual(ma.allclose(values, should_be, rtol=1e-20), \
                              True, msg = "Error in " + self.variable_name)
     unittest.main()
