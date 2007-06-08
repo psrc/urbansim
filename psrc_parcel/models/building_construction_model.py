@@ -72,7 +72,9 @@ class BuildingConstructionModel(Model):
             development_amount = resize(array([100], dtype="int32"), proposal_component_set.size())
         
         # amount to be built
-        to_be_built = proposal_component_set.get_attribute('units_proposed')/100.0 * development_amount
+        to_be_built = proposal_component_set.compute_variables([
+                    'psrc_parcel.development_project_proposal_component.units_proposed'],
+                                                 dataset_pool=dataset_pool)/100.0 * development_amount
         
         # initializing for new buildings
         max_building_id = building_dataset.get_id_attribute().max()
@@ -116,7 +118,7 @@ class BuildingConstructionModel(Model):
         new_buildings['year_built'] = resize(array([SimulationState().get_current_time()], dtype="int32"), 
                                              new_buildings["parcel_id"].size)
         building_dataset.add_elements(new_buildings, require_all_attributes=False)
-        
+        logger.log_status("%s new buildings built." % new_buildings["parcel_id"].size)
         # remove active proposals from the proposal set
         development_proposal_set.remove_elements(active_idx)
         return development_proposal_set
