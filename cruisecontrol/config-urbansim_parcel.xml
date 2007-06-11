@@ -1,5 +1,5 @@
 <cruisecontrol>
-  <project name="psrc_parcel" buildafterfailed="False">
+  <project name="urbansim_parcel" buildafterfailed="False">
     <listeners>
       <currentbuildstatuslistener file="logs/${project.name}/status.txt" />
     </listeners>
@@ -8,8 +8,7 @@
     </bootstrappers>
     <modificationset quietperiod="${quietperiod}">
       <svn localWorkingCopy="projects/${project.name}" />
-      <buildstatus logdir="logs/psrc" />
-      <buildstatus logdir="logs/urbansim_parcel" />
+      <buildstatus logdir="logs/urbansim" />
     </modificationset>
     <schedule interval="${interval}">
       <ant anthome="${ant.home}" buildfile="build.xml" target="run-build">
