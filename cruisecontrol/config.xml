@@ -4,7 +4,6 @@
   <property name="ant.home" value="apache-ant-1.7.0"/>
   <include.projects file="config-opus_core.xml"/>
   <include.projects file="config-urbansim.xml"/>
-  <include.projects file="config-az_smart.xml"/>
   <include.projects file="config-biocomplexity.xml"/>
   <include.projects file="config-biogeme.xml"/>
   <include.projects file="config-eugene.xml"/>
