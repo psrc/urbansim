@@ -17,4 +17,4 @@
 from opus_core.indicator_framework.traits.traits_indicator_handler import TraitsIndicatorHandler
 
 handler = TraitsIndicatorHandler()
-handler.open_editor(package_order = ['sanfrancisco','urbansim','opus_core'])
+handler.open_editor(package_order = ['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])

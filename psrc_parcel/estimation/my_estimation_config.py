@@ -30,7 +30,7 @@ my_configuration = {
         database_name = 'psrc_2005_parcel_baseyear_change_20070524',
         ),
     'dataset_pool_configuration': DatasetPoolConfiguration(
-        package_order=['psrc_parcel','psrc', 'urbansim', 'opus_core'],
+        package_order=['psrc_parcel', 'psrc', 'urbansim_parcel', 'urbansim', 'opus_core'],
         package_order_exceptions={},
         ),
     'datasets_to_cache_after_each_model':[],

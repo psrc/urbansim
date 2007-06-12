@@ -76,7 +76,7 @@ class CachingConfiguration(Configuration):
             database_name = 'psrc_2005_parcel_baseyear_change_20070524',
             ),
         'dataset_pool_configuration': DatasetPoolConfiguration(
-            package_order=['psrc_parcel', 'urbansim', 'opus_core'],
+            package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
             package_order_exceptions={},
             ),
         'base_year': 2005,

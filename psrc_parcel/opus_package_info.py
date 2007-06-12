@@ -16,4 +16,4 @@ from opus_core.opus_package import OpusPackage
 
 class package(OpusPackage):
     name = 'psrc_parcel'
-    required_opus_packages = ["opus_core", "opus_emme2", "urbansim"]
+    required_opus_packages = ["opus_core", "opus_emme2", "urbansim", "urbansim_parcel"]
