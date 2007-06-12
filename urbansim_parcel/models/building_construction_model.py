@@ -84,7 +84,7 @@ class BuildingConstructionModel(Model):
         new_buildings["residential_units"] = array([], dtype="int32")
         new_buildings["non_residential_sqft"] = array([], dtype="int32")
         new_buildings["building_type_id"] = array([], dtype="int32")
-        new_buildings["sqft_per_unit"] = array([], dtype="int32")
+        new_buildings["sqft_per_unit"] = array([], dtype=sqft_per_unit.dtype)
         
         # iterate over building types that are unique over the involved proposals
         for itype in range(unique_building_types.size):
@@ -116,7 +116,7 @@ class BuildingConstructionModel(Model):
                     new_buildings[bunit] = concatenate((new_buildings[bunit], to_be_built[pidx][idx_to_be_built]))
                     new_buildings[bnunit] = concatenate((new_buildings[bnunit], array(idx_to_be_built.size * [0])))
                     new_buildings["building_type_id"] = concatenate((new_buildings["building_type_id"], 
-                             array(idx_to_be_built.size * [this_gbuilding_type])))
+                             array(idx_to_be_built.size * [this_building_type])))
                     new_buildings["sqft_per_unit"] = concatenate((new_buildings["sqft_per_unit"],
                                                                   sqft_per_unit[component_index][pidx][idx_to_be_built]))
                                                                   
