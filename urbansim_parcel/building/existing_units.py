@@ -23,8 +23,8 @@ class existing_units(Variable):
     def dependencies(self):
         return ["_unit_name=building.disaggregate(building_type.unit_name)",
                 "parcel_sqft=building.disaggregate(parcel.parcel_sqft)",
-                "psrc_parcel.building.building_sqft",
-                "psrc_parcel.building.residential_units"
+                "urbansim_parcel.building.building_sqft",
+                "urbansim_parcel.building.residential_units"
                 ]
         
     def compute(self,  dataset_pool):
@@ -51,7 +51,7 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['psrc_parcel','urbansim'],
+            package_order=['urbansim_parcel','urbansim'],
             test_data={
             'building':
             {

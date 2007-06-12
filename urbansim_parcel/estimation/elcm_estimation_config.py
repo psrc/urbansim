@@ -12,3 +12,7 @@
 # other acknowledgments.
 # 
 
+from urbansim.configs.elcm_estimation_config import elcm_configuration as config
+
+class elcm_configuration(config):
+    pass

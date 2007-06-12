@@ -24,8 +24,8 @@ class number_of_households_with_DDD_workers(Variable):
         Variable.__init__(self)
         
     def dependencies(self):
-        return ["psrc_parcel.parcel.zone_id", 
-                "psrc_parcel.parcel.%s" % self.variable, 
+        return ["urbansim_parcel.parcel.zone_id", 
+                "urbansim_parcel.parcel.%s" % self.variable, 
                 my_attribute_label("zone_id")]
 
     def compute(self,  dataset_pool):

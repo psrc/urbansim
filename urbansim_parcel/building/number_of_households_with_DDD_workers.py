@@ -25,8 +25,8 @@ class number_of_households_with_DDD_workers(Variable):
         
     def dependencies(self):
         return [
-                "psrc_parcel.household.%s" % self.variable, 
-                "psrc_parcel.household.building_id"]
+                "urbansim_parcel.household.%s" % self.variable, 
+                "urbansim_parcel.household.building_id"]
 
     def compute(self,  dataset_pool):
         hh = dataset_pool.get_dataset("household")

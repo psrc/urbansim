@@ -35,10 +35,10 @@ if __name__=='__main__':
     from numpy import array
     from numpy import ma
     from opus_core.resources import Resources        
-    from psrc_parcel.datasets.buildings import BuildingSet
+    from urbansim_parcel.datasets.buildings import BuildingSet
         
     class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.business.parcel_id"
+        variable_name = "urbansim_parcel.business.parcel_id"
         
         def test_my_inputs(self):
             building_id = array([1,1,2,3,7])

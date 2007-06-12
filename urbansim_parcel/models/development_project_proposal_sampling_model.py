@@ -32,14 +32,14 @@ class DevelopmentProjectProposalSamplingModel(Model):
 
     def __init__(self, proposal_set,
                  sampler="opus_core.samplers.weighted_sampler",
-                 weight_string = "exp_ROI = exp(psrc_parcel.development_project_proposal.expected_rate_of_return_on_investment)",
+                 weight_string = "exp_ROI = exp(urbansim_parcel.development_project_proposal.expected_rate_of_return_on_investment)",
                  filter_attribute=None,
                  run_config=None, estimate_config=None,
                  debuglevel=0, dataset_pool=None):
         """
         this model sample project proposals from proposal set weighted by exponentiated ROI
         """
-        self.dataset_pool = self.create_dataset_pool(dataset_pool, pool_packages=['psrc_parcel', 'urbansim', 'opus_core'])
+        self.dataset_pool = self.create_dataset_pool(dataset_pool, pool_packages=['urbansim_parcel', 'urbansim', 'opus_core'])
         self.dataset_pool.add_datasets_if_not_included({proposal_set.get_dataset_name(): proposal_set})
         self.proposal_set = proposal_set
         self.proposal_component_set = self.dataset_pool.get_dataset("development_project_proposal_component")
@@ -75,14 +75,14 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                          dataset_pool=self.dataset_pool)
         self.proposal_component_set.compute_variables([
             'generic_building_type_id = development_project_proposal_component.disaggregate(building_type.generic_building_type_id)',
-            'psrc_parcel.development_project_proposal_component.units_proposed'],
+            'urbansim_parcel.development_project_proposal_component.units_proposed'],
                                         dataset_pool=self.dataset_pool)
         buildings = self.dataset_pool.get_dataset("building")
         buildings.compute_variables(["generic_building_type_id = building.disaggregate(building_type.generic_building_type_id)",
-                                    "psrc_parcel.building.occupied_building_sqft",
-                                    "psrc_parcel.building.existing_units",
+                                    "urbansim_parcel.building.occupied_building_sqft",
+                                    "urbansim_parcel.building.existing_units",
                                     "occupied_residential_units = building.number_of_agents(household)",
-                                    "occupied_parcel_sqft = psrc_parcel.building.occupied_building_sqft",
+                                    "occupied_parcel_sqft = urbansim_parcel.building.occupied_building_sqft",
                                     ],
                                     dataset_pool=self.dataset_pool)
         target_vacancy = self.dataset_pool.get_dataset('target_vacancy')

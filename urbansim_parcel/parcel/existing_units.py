@@ -21,11 +21,11 @@ class existing_units(Variable):
     """total number of units (residential units or sqft), which are defined by building_types
     """
     _return_type = "int32"
-    package_name = "psrc_parcel"
+    package_name = "urbansim_parcel"
     
     def dependencies(self):
         return ["unit_name = parcel.disaggregate(land_use_type.unit_name)",
-                "building_sqft = parcel.aggregate(psrc_parcel.building.building_sqft)",
+                "building_sqft = parcel.aggregate(urbansim_parcel.building.building_sqft)",
                 "residential_units = parcel.aggregate(building.residential_units)",
                 ]
 
@@ -51,7 +51,7 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['psrc_parcel', 'urbansim'],
+            package_order=['urbansim_parcel', 'urbansim'],
             test_data={
             'parcel':
             {

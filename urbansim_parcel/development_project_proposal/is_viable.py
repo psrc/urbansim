@@ -21,8 +21,8 @@ class is_viable(Variable):
     """
 
     def dependencies(self):
-        return ["psrc_parcel.development_project_proposal.is_allowed_by_constraint",
-                "psrc_parcel.development_project_proposal.is_size_fit"
+        return ["urbansim_parcel.development_project_proposal.is_allowed_by_constraint",
+                "urbansim_parcel.development_project_proposal.is_size_fit"
                  ]
 
     def compute(self, dataset_pool):
@@ -43,7 +43,7 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['psrc_parcel'],
+            package_order=['urbansim_parcel'],
             test_data={
             'development_project_proposal':
             {

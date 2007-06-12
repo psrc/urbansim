@@ -23,7 +23,7 @@ class vacant_building_sqft(Variable):
 
     def dependencies(self):
         return ["building.non_residential_sqft",
-                "psrc_parcel.building.occupied_building_sqft"]
+                "urbansim_parcel.building.occupied_building_sqft"]
 
     def compute(self,  dataset_pool):
         return clip_to_zero_if_needed(

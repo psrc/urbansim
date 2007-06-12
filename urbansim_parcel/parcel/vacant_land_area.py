@@ -39,10 +39,10 @@ if __name__=='__main__':
     from urbansim.variable_test_toolbox import VariableTestToolbox
     from numpy import array
     from numpy import ma
-    from psrc_parcel.datasets.parcel_dataset import ParcelDataset
+    from urbansim_parcel.datasets.parcel_dataset import ParcelDataset
     from opus_core.storage_factory import StorageFactory    
     class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.parcel.vacant_land_area"
+        variable_name = "urbansim_parcel.parcel.vacant_land_area"
         def test_my_inputs(self):
             storage = StorageFactory().get_storage('dict_storage')
             parcels_table_name = 'parcels'            

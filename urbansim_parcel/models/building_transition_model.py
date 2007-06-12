@@ -87,7 +87,7 @@ class BuildingTransitionModel( Model ):
             vacant_units_attribute = 'vacant_' + units_attribute
 
             # determine current-year vacancy rates
-            building_set.compute_variables("psrc_parcel.building." + vacant_units_attribute,
+            building_set.compute_variables("urbansim_parcel.building." + vacant_units_attribute,
                                            resources = compute_resources)
 
             vacant_units_sum = building_set.get_attribute(vacant_units_attribute).sum()

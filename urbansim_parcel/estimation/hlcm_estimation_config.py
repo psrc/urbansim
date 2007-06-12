@@ -12,7 +12,7 @@
 # other acknowledgments.
 # 
 
-from psrc_parcel.configs.controller_config import config
+from urbansim_parcel.configs.controller_config import config
 
 run_configuration = config
 run_configuration["models"] = [

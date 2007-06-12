@@ -20,7 +20,7 @@ class building_sqft(Variable):
     """
 
     def dependencies(self):
-        return ["_building_sqft = development_project_proposal.aggregate(psrc_parcel.development_project_proposal_component.building_sqft)",
+        return ["_building_sqft = development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.building_sqft)",
                  ]
 
     def compute(self, dataset_pool):

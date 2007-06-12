@@ -13,7 +13,7 @@
 # 
 
 from urbansim.configs.estimation_config_for_model_members import model_member_configuration
-from psrc_parcel.configs.controller_config import config
+from urbansim_parcel.configs.controller_config import config
 from urbansim.estimation.estimator import update_controller_by_specification_from_module
 
 class bldglcm_configuration(model_member_configuration):

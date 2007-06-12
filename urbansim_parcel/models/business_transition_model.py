@@ -26,7 +26,7 @@ class BusinessTransitionModel(Model):
 
     model_name = "Business Transition Model"
     location_id_name = "building_id"
-    variable_package = "psrc_parcel"
+    variable_package = "urbansim_parcel"
 
     def __init__(self, debuglevel=0):
         self.debug = DebugPrinter(debuglevel)

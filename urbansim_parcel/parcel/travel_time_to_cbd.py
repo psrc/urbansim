@@ -43,9 +43,9 @@ if __name__=='__main__':
     from numpy import array
     from numpy import ma
     from opus_core.resources import Resources
-    from psrc_parcel.datasets.parcels import ParcelSet
+    from urbansim_parcel.datasets.parcels import ParcelSet
     class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.parcel.travel_time_to_cbd"
+        variable_name = "urbansim_parcel.parcel.travel_time_to_cbd"
 
         def test_my_inputs(self):
             travel_time_to_cbd = array([100, 1000, 1500])

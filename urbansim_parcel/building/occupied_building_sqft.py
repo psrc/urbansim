@@ -21,8 +21,8 @@ class occupied_building_sqft(Variable):
     _return_type="int32"
 
     def dependencies(self):
-        return ["psrc_parcel.business.building_id",
-                "psrc_parcel.business.sqft",
+        return ["urbansim_parcel.business.building_id",
+                "urbansim_parcel.business.sqft",
                 my_attribute_label("building_id")]
 
     def compute(self,  dataset_pool):
@@ -38,12 +38,12 @@ if __name__=='__main__':
     from numpy import array
     from numpy import ma
     from opus_core.resources import Resources
-    from psrc_parcel.datasets.building_dataset import BuildingDataset
-    from psrc_parcel.datasets.business_dataset import BusinessDataset
+    from urbansim_parcel.datasets.building_dataset import BuildingDataset
+    from urbansim_parcel.datasets.business_dataset import BusinessDataset
     from opus_core.storage_factory import StorageFactory
 
     class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.building.occupied_building_sqft"
+        variable_name = "urbansim_parcel.building.occupied_building_sqft"
         def test(self):
             storage = StorageFactory().get_storage('dict_storage')
             bs_table_name = 'business'

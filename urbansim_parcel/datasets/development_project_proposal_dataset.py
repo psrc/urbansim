@@ -178,7 +178,7 @@ class Tests(opus_unittest.OpusTestCase):
             }
         )
 
-        self.dataset_pool = DatasetPool(package_order=['psrc_parcel'],
+        self.dataset_pool = DatasetPool(package_order=['urbansim_parcel'],
                                    storage=storage)
         parcels = self.dataset_pool.get_dataset('parcel')
         templates = self.dataset_pool.get_dataset('development_template')

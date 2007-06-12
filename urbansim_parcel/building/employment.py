@@ -25,8 +25,8 @@ class employment(Variable):
         
     def dependencies(self):
         return [
-                "psrc_parcel.business.employees", 
-                "psrc_parcel.business.building_id"]
+                "urbansim_parcel.business.employees", 
+                "urbansim_parcel.business.building_id"]
 
     def compute(self,  dataset_pool):
         business = dataset_pool.get_dataset("business")

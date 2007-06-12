@@ -21,8 +21,8 @@ class population(Variable):
     _return_type="int32"
     
     def dependencies(self):
-        return ["psrc_parcel.household.building_id", 
-                "psrc_parcel.household.persons", 
+        return ["urbansim_parcel.household.building_id", 
+                "urbansim_parcel.household.persons", 
                 my_attribute_label("building_id")]
 
     def compute(self,  dataset_pool):
@@ -39,10 +39,10 @@ if __name__=='__main__':
     from numpy import array
     from numpy import ma
     from opus_core.resources import Resources
-    from psrc_parcel.datasets.building_dataset import BuildingDataset
+    from urbansim_parcel.datasets.building_dataset import BuildingDataset
     from opus_core.storage_factory import StorageFactory        
     class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.building.population"
+        variable_name = "urbansim_parcel.building.population"
         def test(self):
 
             values = VariableTestToolbox().compute_variable(self.variable_name, \

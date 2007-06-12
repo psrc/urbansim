@@ -23,7 +23,7 @@ class construction_cost_per_unit(Variable):
     """
 
     def dependencies(self):
-        return ["_construction_cost_per_unit = development_project_proposal.disaggregate(psrc_parcel.development_template.construction_cost_per_unit)",
+        return ["_construction_cost_per_unit = development_project_proposal.disaggregate(urbansim_parcel.development_template.construction_cost_per_unit)",
                  ]
 
     def compute(self, dataset_pool):
@@ -42,7 +42,7 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['psrc_parcel','urbansim'],
+            package_order=['urbansim_parcel','urbansim'],
             test_data={
             'development_template':
             {

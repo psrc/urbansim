@@ -19,7 +19,7 @@ from opus_core.misc import do_id_mapping_dict_from_array
 class unit_price(Variable):
     """total_value / building.units """
     def dependencies(self):
-        return ["_unit_price=building.total_value/psrc_parcel.building.units",]
+        return ["_unit_price=building.total_value/urbansim_parcel.building.units",]
         
     def compute(self,  dataset_pool):
         return self.get_dataset().get_attribute("_unit_price")
@@ -37,7 +37,7 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['psrc_parcel','urbansim'],
+            package_order=['urbansim_parcel','urbansim'],
             test_data={
             'building':
             {

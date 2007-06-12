@@ -20,8 +20,8 @@ class construction_cost(Variable):
            """ 
 
     def dependencies(self):
-        return ["psrc_parcel.development_project_proposal.construction_cost_per_unit",
-                "psrc_parcel.development_project_proposal.units_proposed", ]
+        return ["urbansim_parcel.development_project_proposal.construction_cost_per_unit",
+                "urbansim_parcel.development_project_proposal.units_proposed", ]
 
     def compute(self, dataset_pool):
         proposals = self.get_dataset()
@@ -40,7 +40,7 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['psrc_parcel','urbansim'],
+            package_order=['urbansim_parcel','urbansim'],
             test_data={
             'development_template':
             {

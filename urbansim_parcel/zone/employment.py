@@ -21,8 +21,8 @@ class employment(Variable):
     _return_type="int32"
     
     def dependencies(self):
-        return ["psrc_parcel.parcel.employment", 
-                "psrc_parcel.parcel.zone_id", 
+        return ["urbansim_parcel.parcel.employment", 
+                "urbansim_parcel.parcel.zone_id", 
                 my_attribute_label("zone_id")]
 
     def compute(self,  dataset_pool):
@@ -39,10 +39,10 @@ if __name__=='__main__':
     from numpy import array
     from numpy import ma
     from opus_core.resources import Resources
-    from psrc_parcel.datasets.parcels import ParcelSet
+    from urbansim_parcel.datasets.parcels import ParcelSet
     
     class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.zone.employment"
+        variable_name = "urbansim_parcel.zone.employment"
         def test(self):
             resources = Resources({'data':
                                    {"parcel_id": array([1,2,3,4,5,6]),

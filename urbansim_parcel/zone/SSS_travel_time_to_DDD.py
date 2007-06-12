@@ -53,7 +53,7 @@ if __name__=='__main__':
     class Tests(unittest.TestCase):
         def get_values(self, number):
             values = VariableTestToolbox().compute_variable(
-                "psrc_parcel.zone.hwy_travel_time_to_%d" % number,
+                "urbansim_parcel.zone.hwy_travel_time_to_%d" % number,
                 {"zone":{
                     "zone_id":array([1,3])},
                  "travel_data":{

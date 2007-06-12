@@ -25,8 +25,8 @@ class number_of_businesses(Variable):
         
     def dependencies(self):
         return [
-                "psrc_parcel.business.is_sector_" + self.sector, 
-                "psrc_parcel.business.building_id"]
+                "urbansim_parcel.business.is_sector_" + self.sector, 
+                "urbansim_parcel.business.building_id"]
 
     def compute(self,  dataset_pool):
         business = dataset_pool.get_dataset("business")

@@ -42,7 +42,7 @@ if __name__=='__main__':
     from urbansim.datasets.household_dataset import HouseholdDataset
     from opus_core.storage_factory import StorageFactory    
     class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.building.number_of_households"
+        variable_name = "urbansim_parcel.building.number_of_households"
         def test(self):
 #            building_id = array([1, 2, 3, 4])
             

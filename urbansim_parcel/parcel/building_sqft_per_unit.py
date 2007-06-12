@@ -42,10 +42,10 @@ if __name__=='__main__':
     from numpy import array
     from numpy import ma
     from opus_core.resources import Resources    
-    from psrc_parcel.datasets.buildings import BuildingSet
+    from urbansim_parcel.datasets.buildings import BuildingSet
 
     class Tests(unittest.TestCase):
-        variable_name = "psrc_parcel.building.building_sqft_per_unit"
+        variable_name = "urbansim_parcel.building.building_sqft_per_unit"
 
         def test_my_inputs(self):
             resources = Resources({'data':

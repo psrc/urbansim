@@ -13,7 +13,7 @@
 #
 
 from opus_core.model import Model
-from psrc_parcel.datasets.development_project_proposal_component_dataset import create_from_proposals_and_template_components
+from urbansim_parcel.datasets.development_project_proposal_component_dataset import create_from_proposals_and_template_components
 from opus_core.logger import logger
 from opus_core.misc import unique_values
 from opus_core.simulation_state import SimulationState
@@ -61,7 +61,7 @@ class BuildingConstructionModel(Model):
         
         # determine existing units on parcels
         parcels = dataset_pool.get_dataset("parcel")
-        parcels.compute_variables(map(lambda x: "%s = parcel.aggregate(psrc_parcel.building.%s)" % (x, x), unique_unit_names), 
+        parcels.compute_variables(map(lambda x: "%s = parcel.aggregate(urbansim_parcel.building.%s)" % (x, x), unique_unit_names), 
                                   dataset_pool=dataset_pool)
         
         # from the velocity function determine the amount to be built for each component
@@ -73,7 +73,7 @@ class BuildingConstructionModel(Model):
         
         # amount to be built
         to_be_built = proposal_component_set.compute_variables([
-                    'psrc_parcel.development_project_proposal_component.units_proposed'],
+                    'urbansim_parcel.development_project_proposal_component.units_proposed'],
                                                  dataset_pool=dataset_pool)/100.0 * development_amount
         
         # initializing for new buildings

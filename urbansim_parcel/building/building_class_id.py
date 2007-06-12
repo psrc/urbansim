@@ -33,10 +33,10 @@ class building_class_id(Variable):
 #    from numpy import array
 #    from numpy import ma
 #    from opus_core.resources import Resources    
-#    from psrc_parcel.datasets.parcels import ParcelSet    
+#    from urbansim_parcel.datasets.parcels import ParcelSet    
 #    
 #    class Tests(unittest.TestCase):
-#        variable_name = "psrc_parcel.household.zone_id"
+#        variable_name = "urbansim_parcel.household.zone_id"
 #
 #        def test_my_inputs(self):
 #            parcel_id = array([1,1,2,3,7])

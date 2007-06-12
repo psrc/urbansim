@@ -25,8 +25,8 @@ class employment_of_sector_SSS(Variable):
         
     def dependencies(self):
         return [
-                "psrc_parcel.parcel.employment_of_sector_" + self.sector, 
-                "psrc_parcel.parcel.zone_id", ]
+                "urbansim_parcel.parcel.employment_of_sector_" + self.sector, 
+                "urbansim_parcel.parcel.zone_id", ]
 
     def compute(self,  dataset_pool):
         parcel = dataset_pool.get_dataset("parcel")

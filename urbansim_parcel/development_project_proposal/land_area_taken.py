@@ -24,7 +24,7 @@ class land_area_taken(Variable):
     mol = 0.1  #more or less, in this range use all vacant_land_area
 
     def dependencies(self):
-        return ["vacant_land_area = development_project_proposal.disaggregate(psrc_parcel.parcel.vacant_land_area)",
+        return ["vacant_land_area = development_project_proposal.disaggregate(urbansim_parcel.parcel.vacant_land_area)",
                 "land_sqft_min = development_project_proposal.disaggregate(development_template.land_sqft_min)",
                 "land_sqft_max = development_project_proposal.disaggregate(development_template.land_sqft_max)", 
                  ]
@@ -56,7 +56,7 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['psrc_parcel'],
+            package_order=['urbansim_parcel'],
             test_data={
             'development_template':
             {
