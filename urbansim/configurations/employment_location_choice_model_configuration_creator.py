@@ -27,6 +27,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
     records_per_chunk = Int(50000)
     attribute_to_group_by = Str('job_building_type.name')
     agents_for_estimation_table = Str('jobs_for_estimation')
+    filter_for_estimation = Str('None')
     
     input_index = Str('erm_index')
     
@@ -83,6 +84,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
                     'portion_to_unplace': self.portion_to_unplace,
                     'specification_storage': 'base_cache_storage',
                     'specification_table': "'%s'" % self.specification_table,
+                    'filter': self.filter_for_estimation,
                     },
                 'name': 'prepare_for_estimate',
                 'output': '(%s, %s)' % (_specification, _index)
