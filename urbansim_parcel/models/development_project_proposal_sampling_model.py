@@ -116,8 +116,9 @@ class DevelopmentProjectProposalSamplingModel(Model):
             #    raise RuntimeError, "Running out of proposals; there aren't any proposals with non-zero weight"
             laccepted_proposals = len(self.accepted_proposals)
             n = minimum((self.weight > 0).sum(), n)
-            sampled_proposal_indexes = probsample_noreplace(self.proposal_set.get_id_attribute(), n, prob_array=self.weight,
-                                                     exclude_index=None, return_indices=True)
+            sampled_proposal_indexes = probsample_noreplace(self.proposal_set.get_id_attribute(), n, 
+                                                            prob_array=self.weight/float(self.weight.sum()),
+                                                            exclude_index=None, return_indices=True)
             self.consider_proposals(sampled_proposal_indexes,
                                     current_target_vacancy
                                    )
@@ -131,7 +132,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
         self.proposal_set.remove_elements(where(
                     self.proposal_set.get_attribute("status_id") == self.proposal_set.id_tentative)[0])
 #        schedule_development_projects = self.schedule_accepted_proposals()
-        return self.accepted_proposals  #schedule_development_projects
+        logger.log_status("Status of %s development proposals set to active." % len(self.accepted_proposals))
+        return self.proposal_set  #schedule_development_projects
 
     def check_vacancy_rates(self, target_vacancy):
         for index in arange(target_vacancy.size()):

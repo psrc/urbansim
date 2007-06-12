@@ -52,7 +52,6 @@ class BuildingConstructionModel(Model):
         building_type_set = dataset_pool.get_dataset("building_type")
         unit_names = building_type_set.compute_variables([
                                   'building_type.disaggregate(generic_building_type.unit_name)'], dataset_pool=dataset_pool)
-        sqft_per_unit = proposal_component_set.get_attribute("building_sqft_per_unit")
         
         # get unique values of the involved generic building types and unique unit names
         unique_building_types = unique_values(building_type_id)
@@ -84,7 +83,11 @@ class BuildingConstructionModel(Model):
         new_buildings["residential_units"] = array([], dtype="int32")
         new_buildings["non_residential_sqft"] = array([], dtype="int32")
         new_buildings["building_type_id"] = array([], dtype="int32")
-        new_buildings["sqft_per_unit"] = array([], dtype=sqft_per_unit.dtype)
+        new_buildings["sqft_per_unit"] = array([], dtype=building_dataset.get_attribute("sqft_per_unit").dtype)
+        new_buildings["land_area"] = array([], dtype=building_dataset.get_attribute("land_area").dtype)
+        
+        sqft_per_unit = proposal_component_set.get_attribute("building_sqft_per_unit").astype(new_buildings["sqft_per_unit"].dtype)
+        parcel_sqft = parcels.get_attribute("parcel_sqft").astype(new_buildings["land_area"].dtype)
         
         # iterate over building types that are unique over the involved proposals
         for itype in range(unique_building_types.size):
@@ -118,13 +121,21 @@ class BuildingConstructionModel(Model):
                     new_buildings["building_type_id"] = concatenate((new_buildings["building_type_id"], 
                              array(idx_to_be_built.size * [this_building_type])))
                     new_buildings["sqft_per_unit"] = concatenate((new_buildings["sqft_per_unit"],
-                                                                  sqft_per_unit[component_index][pidx][idx_to_be_built]))
+                                                                  sqft_per_unit[pidx][idx_to_be_built]))
+                    new_buildings["land_area"] = concatenate((new_buildings["land_area"], 
+                                                              array(idx_to_be_built.size * [parcel_sqft[parcel_index]])))
                                                                   
         # add created buildings to the existing building dataset
         new_buildings["building_id"] = max_building_id + arange(1, new_buildings["parcel_id"].size+1)
         new_buildings['year_built'] = resize(array([SimulationState().get_current_time()], dtype="int32"), 
                                              new_buildings["parcel_id"].size)
         building_dataset.add_elements(new_buildings, require_all_attributes=False)
+        if "zone_id" in building_dataset.get_known_attribute_names():
+            zone_ids = building_dataset.compute_variables(['building.disaggregate(parcel.zone_id)'], dataset_pool=dataset_pool)
+            building_dataset.modify_attribute(name="zone_id", data=zone_ids)
+        if "county" in building_dataset.get_known_attribute_names():
+            county_ids = building_dataset.compute_variables(['building.disaggregate(parcel.county)'], dataset_pool=dataset_pool)
+            building_dataset.modify_attribute(name="county", data=county_ids)
         
         logger.log_status("%s new buildings built." % new_buildings["parcel_id"].size)
         # remove active proposals from the proposal set

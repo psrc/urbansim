@@ -18,6 +18,9 @@ from opus_core.configuration import Configuration
 from numpy import array
 import os
 
+from urbansim.configurations.employment_relocation_model_configuration_creator import EmploymentRelocationModelConfigurationCreator
+from urbansim.configurations.employment_location_choice_model_configuration_creator import EmploymentLocationChoiceModelConfigurationCreator
+
 config = AbstractUrbansimConfiguration()
 models_configuration = config['models_configuration']
 
@@ -84,7 +87,18 @@ my_controller_configuration = {
         }
 
   },
-
+       'employment_relocation_model':
+            EmploymentRelocationModelConfigurationCreator(
+                        output_index = 'erm_index').execute(),
+            
+                               
+       'employment_location_choice_model': 
+           EmploymentLocationChoiceModelConfigurationCreator(
+                        location_set = "building",
+                        input_index = 'erm_index',
+                        filter_for_estimation = "building_id"
+                        ).execute(),
+                               
   "business_transition_model" : {
             "import": {"urbansim_parcel.models.business_transition_model":
                             "BusinessTransitionModel"
@@ -356,7 +370,7 @@ my_controller_configuration = {
     "run": {
         "arguments": {'n':500,  # sample 500 proposal at a time, evaluate them one by one
                       },
-        "output":"scheduled_development_events"
+        "output":"proposal_set"
             },
   },
                                
