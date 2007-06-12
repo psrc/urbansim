@@ -19,7 +19,7 @@ from opus_core.misc import unique_values
 from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset import DatasetSubset
 
-from numpy import where, arange, resize, array
+from numpy import where, arange, resize, array, cumsum, concatenate
 
 class BuildingConstructionModel(Model):
     """Process any pre-scheduled development projects (those that have status 'active'). New buildings are 
@@ -47,16 +47,17 @@ class BuildingConstructionModel(Model):
                                                    dataset_pool.get_dataset('development_template_component'))
         dataset_pool.replace_dataset(proposal_component_set.get_dataset_name(), proposal_component_set)
         
-        # determine generic building types and corresponding unit names of the involved building_types
-        generic_building_type_id = proposal_component_set.compute_variables([
-        'generic_building_type_id = development_project_proposal_component.disaggregate(building_type.generic_building_type_id)'],
-                                                 dataset_pool=dataset_pool)
-        generic_building_type_set = dataset_pool.get_dataset("generic_building_type")
+        # determine building types and corresponding unit names of the involved building_types
+        building_type_id = proposal_component_set.get_attribute("building_type_id")
+        building_type_set = dataset_pool.get_dataset("building_type")
+        unit_names = building_type_set.compute_variables([
+                                  'building_type.disaggregate(generic_building_type.unit_name)'], dataset_pool=dataset_pool)
+        sqft_per_unit = proposal_component_set.get_attribute("building_sqft_per_unit")
         
         # get unique values of the involved generic building types and unique unit names
-        unique_building_types = unique_values(generic_building_type_id)
-        index_in_gen_building_types = generic_building_type_set.get_id_index(unique_building_types)
-        unit_names = generic_building_type_set.get_attribute_by_index("unit_name", index_in_gen_building_types)
+        unique_building_types = unique_values(building_type_id)
+        index_in_building_types = building_type_set.get_id_index(unique_building_types)
+        unit_names = unit_names[index_in_building_types]
         unique_unit_names = unique_values(unit_names)
         
         # determine existing units on parcels
@@ -79,15 +80,17 @@ class BuildingConstructionModel(Model):
         # initializing for new buildings
         max_building_id = building_dataset.get_id_attribute().max()
         new_buildings = {}
-        new_buildings["parcel_id"] = []
-        new_buildings["residential_units"] = []
-        new_buildings["non_residential_sqft"] = []
+        new_buildings["parcel_id"] = array([], dtype="int32")
+        new_buildings["residential_units"] = array([], dtype="int32")
+        new_buildings["non_residential_sqft"] = array([], dtype="int32")
+        new_buildings["building_type_id"] = array([], dtype="int32")
+        new_buildings["sqft_per_unit"] = array([], dtype="int32")
         
         # iterate over building types that are unique over the involved proposals
         for itype in range(unique_building_types.size):
-            this_gbuilding_type = unique_building_types[itype]
+            this_building_type = unique_building_types[itype]
             unit_name = unit_names[itype]
-            component_index = where(generic_building_type_id == this_gbuilding_type)[0]
+            component_index = where(building_type_id == this_building_type)[0]
             parcel_ids_in_components = proposal_component_set.get_attribute_by_index("parcel_id", component_index)
             unique_parcels = unique_values(parcel_ids_in_components)
             # iterate over involved parcels
@@ -100,24 +103,29 @@ class BuildingConstructionModel(Model):
                 amount_proposed = to_be_built[pidx].sum()
                 # build if needed
                 if amount_proposed > amount_built:
-                    new_buildings["parcel_id"].append(parcel_id)
                     if unit_name == "residential_units":
                         bunit = "residential_units"
                         bnunit = "non_residential_sqft"
                     else:
                         bnunit = "residential_units"
                         bunit = "non_residential_sqft"
-                    new_buildings[bunit].append(amount_built-amount_proposed)
-                    new_buildings[bunit].append(0)
-                    
+                    to_be_built_cumsum = cumsum(to_be_built[pidx])
+                    idx_to_be_built = where(to_be_built_cumsum > amount_built)[0]
+                    new_buildings["parcel_id"] = concatenate((new_buildings["parcel_id"], 
+                                                              array(idx_to_be_built.size * [parcel_id])))
+                    new_buildings[bunit] = concatenate((new_buildings[bunit], to_be_built[pidx][idx_to_be_built]))
+                    new_buildings[bnunit] = concatenate((new_buildings[bnunit], array(idx_to_be_built.size * [0])))
+                    new_buildings["building_type_id"] = concatenate((new_buildings["building_type_id"], 
+                             array(idx_to_be_built.size * [this_gbuilding_type])))
+                    new_buildings["sqft_per_unit"] = concatenate((new_buildings["sqft_per_unit"],
+                                                                  sqft_per_unit[component_index][pidx][idx_to_be_built]))
+                                                                  
         # add created buildings to the existing building dataset
-        new_buildings["parcel_id"] = array(new_buildings["parcel_id"])
-        new_buildings["residential_units"] = array(new_buildings["residential_units"])
-        new_buildings["non_residential_sqft"] = array(new_buildings["non_residential_sqft"])
         new_buildings["building_id"] = max_building_id + arange(1, new_buildings["parcel_id"].size+1)
         new_buildings['year_built'] = resize(array([SimulationState().get_current_time()], dtype="int32"), 
                                              new_buildings["parcel_id"].size)
         building_dataset.add_elements(new_buildings, require_all_attributes=False)
+        
         logger.log_status("%s new buildings built." % new_buildings["parcel_id"].size)
         # remove active proposals from the proposal set
         development_proposal_set.remove_elements(active_idx)
