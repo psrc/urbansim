@@ -30,12 +30,12 @@ class EstimationRunner(object):
             if len(model) > 3:
                 add_member_prefix = model[3]
         if type is None:
-            exec("from psrc_parcel.estimation.%s_estimation_config import run_configuration" % model[0].lower())
+            exec("from urbansim_parcel.estimation.%s_estimation_config import run_configuration" % model[0].lower())
             run_configuration = update_controller_by_specification_from_module(
                                 run_configuration, model[1],
                                 "psrc_parcel.estimation.%s" % self.spec_file)
         else:
-            exec("from psrc_parcel.estimation.%s_estimation_config import %s_configuration as config" % (model[0].lower(),
+            exec("from urbansim_parcel.estimation.%s_estimation_config import %s_configuration as config" % (model[0].lower(),
                   model[0].lower()))
             conf = config(type, add_member_prefix)
             run_configuration = conf.get_configuration()
@@ -71,10 +71,11 @@ if __name__ == '__main__':
     model = ("REPM", "real_estate_price_model")
 #    model = ("HLCM", "household_location_choice_model")
 #    model = ("BLCM", "business_location_choice_model")
+#    model = ("ELCM", "employment_location_choice_model", "commercial", False)
 #    model = ("BLDGLCM", "building_location_choice_model", "nonresidential", False)
 #    model = ("BLDGLCM", "building_location_choice_model", "residential", False)
 
     from my_estimation_config import my_configuration
     er = EstimationRunner()
-    er.run_estimation(my_configuration, model, diagnose=True)
+    er.run_estimation(my_configuration, model, save_estimation_results=True, diagnose=True)
     
