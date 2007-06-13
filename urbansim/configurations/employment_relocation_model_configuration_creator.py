@@ -22,6 +22,7 @@ class EmploymentRelocationModelConfigurationCreator(HasStrictTraits):
     agent_set = Str('job')
     what = Str('jobs')
     rate_table = Str('annual_relocation_rates_for_jobs')
+    location_id_name = Str('grid_id')
     
     output_index = Str('erm_index')
     
@@ -37,7 +38,10 @@ class EmploymentRelocationModelConfigurationCreator(HasStrictTraits):
                 'urbansim.models.employment_relocation_model_creator': 'EmploymentRelocationModelCreator'
                 },
             'init': {
-                'arguments': {'debuglevel': self.debuglevel},
+                'arguments': {
+                              'debuglevel': self.debuglevel,
+                              'location_id_name': "'%s'" % self.location_id_name
+                              },
                 'name': 'EmploymentRelocationModelCreator().get_model'
                 },
             'prepare_for_run': {
@@ -77,7 +81,8 @@ class TestEmploymentRelocationModelConfigurationCreator(opus_unittest.OpusTestCa
                 'urbansim.models.employment_relocation_model_creator': 'EmploymentRelocationModelCreator'
                 },
             'init': {
-                'arguments': {'debuglevel': 'debuglevel'},
+                'arguments': {'debuglevel': 'debuglevel',
+                              'location_id_name': "'grid_id'"},
                 'name': 'EmploymentRelocationModelCreator().get_model'
                 },
             'prepare_for_run': {
@@ -115,7 +120,8 @@ class TestEmploymentRelocationModelConfigurationCreator(opus_unittest.OpusTestCa
                 'urbansim.models.employment_relocation_model_creator': 'EmploymentRelocationModelCreator'
                 },
             'init': {
-                'arguments': {'debuglevel': 9999},
+                'arguments': {'debuglevel': 9999,
+                              'location_id_name': "'grid_id'"},
                 'name': 'EmploymentRelocationModelCreator().get_model'
                 },
             'prepare_for_run': {
