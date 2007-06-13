@@ -14,7 +14,7 @@
 
 #from urbansim.estimation.config import config
 from opus_core.configurations.database_configuration import DatabaseConfiguration
-from psrc_parcel.configs.controller_config import models_configuration
+from urbansim_parcel.configs.controller_config import UrbansimParcelConfiguration
 from urbansim.configs.general_configuration import GeneralConfiguration
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
@@ -24,7 +24,7 @@ from opus_core.resources import merge_resources_with_defaults
 from numpy import array
 import os
 
-class Baseline(GeneralConfiguration):
+class Baseline(UrbansimParcelConfiguration):
     def __init__(self):
         config = AbstractUrbansimConfiguration()
 
