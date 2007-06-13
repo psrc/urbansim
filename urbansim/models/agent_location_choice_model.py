@@ -166,13 +166,13 @@ class AgentLocationChoiceModel(LocationChoiceModel):
             agent_set.set_values_of_one_attribute(id_name, agent_set.get_attribute(mod_id_name))
         result = LocationChoiceModel.get_choice_index_for_estimation_and_selected_choice(self, nchoices, agent_set,
                                                             agents_index, *args, **kwargs)
-        logger.log_status("Unplace agents for estimation.")
+        #logger.log_status("Unplace agents for estimation.")
         # Copy the agents locations into a temporary attribute (called e.g. __grid_id__)
         # in case it will be needed for reestimation
-        if  (mod_id_name not in agent_set.get_known_attribute_names()):
-            agent_set.add_attribute(name=mod_id_name, data=array(agent_set.get_attribute(id_name))) # must be a copy
+        #if  (mod_id_name not in agent_set.get_known_attribute_names()):
+        #    agent_set.add_attribute(name=mod_id_name, data=array(agent_set.get_attribute(id_name))) # must be a copy
         # Agents for estimation are unplaced in order not to influence the location characteristics
-        agent_set.set_values_of_one_attribute(id_name,resize(array([-1.0]), agents_index.size), agents_index)
+        #agent_set.set_values_of_one_attribute(id_name,resize(array([-1.0]), agents_index.size), agents_index)
         return result
 
     def prepare_for_estimate(self, specification_dict = None, specification_storage=None,
