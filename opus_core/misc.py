@@ -745,7 +745,7 @@ def create_combination_indices(shape):
     return index
 
 def get_string_or_None(arg):
-    if (arg is not None) and (arg != 'None'):
+    if arg is not None:
         return "'%s'" % arg
     return None
 
