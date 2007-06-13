@@ -27,9 +27,9 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
     records_per_chunk = Int(50000)
     attribute_to_group_by = Str('job_building_type.name')
     agents_for_estimation_table = Str('jobs_for_estimation')
-    filter_for_estimation = Str('None')
-    capacity_string = Str('vacant_SSS_job_space')
-    estimation_weight_string = Str('total_number_of_possible_SSS_jobs')
+    filter_for_estimation = Trait(None, None, Str)
+    capacity_string = Trait('vacant_SSS_job_space', None, Str)
+    estimation_weight_string = Trait('total_number_of_possible_SSS_jobs', None, Str)
     
     input_index = Str('erm_index')
     
