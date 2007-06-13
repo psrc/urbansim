@@ -744,6 +744,11 @@ def create_combination_indices(shape):
         index[:,idim] = tindices[idim].ravel()
     return index
 
+def get_string_or_None(arg):
+    if (arg is not None) and (arg != 'None'):
+        return "'%s'" % arg
+    return None
+
 from opus_core.tests import opus_unittest
 import shutil
 import opus_core
