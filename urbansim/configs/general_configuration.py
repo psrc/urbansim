@@ -215,8 +215,8 @@ class GeneralConfiguration(Configuration):
                 },
             'model_system':'urbansim.model_coordinators.model_system',
             'services_configuration': ServicesConfigurationCreator(
-                host_name = os.environ.get('MYSQLHOSTNAME', None),
-                user_name = os.environ.get('MYSQLUSERNAME', None),
+                host_name = os.environ.get('MYSQLHOSTNAME', 'localhost'),
+                user_name = os.environ.get('MYSQLUSERNAME', 'urbansim'),
                 database_name = 'services',
                 ).execute(),
             'models':[ # models are executed in the same order as in this list
