@@ -19,7 +19,7 @@ from opus_core.configuration import Configuration
 
 class ServicesConfigurationCreator(HasStrictTraits):
     host_name = Str('localhost')
-    user_name = Str(None)
+    user_name = Trait(None, None, Str)
     database_name = Str('services')
     
     _model_name = 'services_configuration'
