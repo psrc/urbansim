@@ -15,7 +15,7 @@
 from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
 
 from opus_core.configuration import Configuration
-
+from opus_core.misc import get_string_or_None
 
 class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
     agent_set = Str('job')
@@ -28,6 +28,8 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
     attribute_to_group_by = Str('job_building_type.name')
     agents_for_estimation_table = Str('jobs_for_estimation')
     filter_for_estimation = Str('None')
+    capacity_string = Str('vacant_SSS_job_space')
+    estimation_weight_string = Str('total_number_of_possible_SSS_jobs')
     
     input_index = Str('erm_index')
     
@@ -72,6 +74,8 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
                     'dataset_pool': 'dataset_pool',
                     'location_set': self.location_set,
                     'sample_size_locations': self.sample_size_locations,
+                    'capacity_string': get_string_or_None(self.capacity_string),
+                    'estimation_weight_string': get_string_or_None(self.estimation_weight_string),
                     },
                 'name': 'EmploymentLocationChoiceModel'
                 },
@@ -84,7 +88,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
                     'portion_to_unplace': self.portion_to_unplace,
                     'specification_storage': 'base_cache_storage',
                     'specification_table': "'%s'" % self.specification_table,
-                    'filter': self.filter_for_estimation,
+                    'filter': get_string_or_None(self.filter_for_estimation),
                     },
                 'name': 'prepare_for_estimate',
                 'output': '(%s, %s)' % (_specification, _index)
@@ -146,7 +150,9 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'choices': "'urbansim.lottery_choices'",
                     'dataset_pool': 'dataset_pool',
                     'location_set': 'gridcell',
-                    'sample_size_locations': 30
+                    'sample_size_locations': 30,
+                    'capacity_string': "'vacant_SSS_job_space'",
+                    'estimation_weight_string': "'total_number_of_possible_SSS_jobs'"
                     },
                 'name': 'EmploymentLocationChoiceModel'
                 },
@@ -158,7 +164,8 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'data_objects': 'datasets',
                     'portion_to_unplace': 1/12.,
                     'specification_storage': 'base_cache_storage',
-                    'specification_table': "'employment_location_choice_model_specification'"
+                    'specification_table': "'employment_location_choice_model_specification'",
+                    'filter': None
                     },
                 'name': 'prepare_for_estimate',
                 'output': '(specification, index)'
@@ -226,6 +233,8 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'dataset_pool': 'dataset_pool',
                     'location_set': 'location_set',
                     'sample_size_locations': 9999,
+                    'capacity_string': "'vacant_SSS_job_space'",
+                    'estimation_weight_string': "'total_number_of_possible_SSS_jobs'"
                     },
                 'name': 'EmploymentLocationChoiceModel'
                 },
@@ -237,7 +246,8 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'data_objects': 'datasets',
                     'portion_to_unplace': 7777.7,
                     'specification_storage': 'base_cache_storage',
-                    'specification_table': "'specification_table'"
+                    'specification_table': "'specification_table'",
+                    'filter': None
                     },
                 'name': 'prepare_for_estimate',
                 'output': '(specification, index)'
