@@ -30,17 +30,17 @@ class EstimationRunner(object):
             if len(model) > 3:
                 add_member_prefix = model[3]
         if type is None:
-            exec("from az_smart.estimation.%s_estimation_config import run_configuration" % model[0].lower())
+            exec("from mag_parcel.estimation.%s_estimation_config import run_configuration" % model[0].lower())
             run_configuration = update_controller_by_specification_from_module(
                                 run_configuration, model[1],
-                                "az_smart.estimation.%s" % self.spec_file)
+                                "mag_parcel.estimation.%s" % self.spec_file)
         else:
-            exec("from az_smart.estimation.%s_estimation_config import %s_configuration as config" % (model[0].lower(),
+            exec("from mag_parcel.estimation.%s_estimation_config import %s_configuration as config" % (model[0].lower(),
                   model[0].lower()))
             conf = config(type, add_member_prefix)
             run_configuration = conf.get_configuration()
             run_configuration = conf.get_updated_configuration_from_module(
-                                     run_configuration, "az_smart.estimation.%s" % self.spec_file)
+                                     run_configuration, "mag_parcel.estimation.%s" % self.spec_file)
 
         if diagnose and self.model[0] != 'REPM':  #only works for LCM and derivatives
             model_name = model[1]
