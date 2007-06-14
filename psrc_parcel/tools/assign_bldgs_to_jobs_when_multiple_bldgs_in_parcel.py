@@ -13,7 +13,7 @@
 #
 
 import os
-from numpy import array, where, logical_and, arange, ones, cumsum, zeros, alltrue
+from numpy import array, where, logical_and, arange, ones, cumsum, zeros, alltrue, absolute
 from scipy.ndimage import sum as ndimage_sum
 from opus_core.logger import logger
 from opus_core.store.opus_database import OpusDatabase
@@ -74,9 +74,8 @@ class AssignBuildingsToJobs:
             keep_bldgs = where(capacity>0)[0]
             capacity = capacity[keep_bldgs]
             idx_in_bldgs = idx_in_bldgs[keep_bldgs]
-            tmp = (idx_in_bldgs.size*ones(idx_in_jobs.size)).astype("int32")
             cumcap = cumsum(capacity)
-            tmp = (capacity.sum()*ones(idx_in_jobs.size)).astype("int32")
+            tmp = (capacity.sum()*ones(idx_in_jobs.size)).astype("int32") # the sampling is done proportional to the capacity
             comb = create_combination_indices(tmp)
             tcomb = array(comb)
             for j in range(idx_in_jobs.size):
@@ -99,32 +98,48 @@ class AssignBuildingsToJobs:
         unique_parcels = unique_values(parcel_ids[job_index_non_home_based])
         job_building_types = job_dataset.compute_variables(["job.disaggregate(building.building_type_id"], 
                                                            dataset_pool=dataset_pool)[job_index_non_home_based]
-        unique_job_building_types = unique_values(job_building_types)
+        building_type_dataset = datasett_pool.get_dataset("building_type")
+        available_building_types= building_type_dataset.get_id_attribute()
+        idx_available_bt = building_type_dataset.get_id_index(available_building_types)
         sectors = job_dataset.get_attribute_by_index("sector_id", job_index_non_home_based)
         unique_sectors = unique_values(sectors)
-        sector_bt_distribution = zeros((unique_sectors.size, unique_job_building_types.size), dtype="int32")
+        sector_bt_distribution = zeros((unique_sectors.size, building_type_dataset.size()), dtype="float32")
+        jobs_sqft = job_dataset.get_attribute_by_index("sqft", job_index_non_home_based)
         
         # find sector -> building_type distribution
         for isector in range(unique_sectors.size):
             idx = where(sectors==unique_sectors[isector])[0]
             o = ones(idx.size, dtype="int32")
-            sector_bt_distribution[isector,:] = ndimage_sum(o, labels=job_building_types[idx], index=unique_job_building_types)
+            sector_bt_distribution[isector,:] = ndimage_sum(o, labels=job_building_types[idx], index=avalable_building_types)
         
-        capacity = building_dataset.get_attribute("non_residential_sqft")
+        non_res_sqft = building_dataset.get_attribute("non_residential_sqft")
+        occupied = building_dataset.compute_variables(["urbansim_parcel.building.occupied_building_sqft_by_jobs"],
+                                                                     dataset_pool=dataset_pool)
+        
         # iterate ovar parcels
         for parcel in unique_parcels:
             idx_in_bldgs = where(parcel_ids_in_bldgs == parcel)[0]
             idx_in_jobs = where(parcel_ids[job_index_non_home_based] == parcel)[0]
+            capacity = non_res_sqft[idx_in_bldgs] - occupied[idx_in_bldgs]
             if capacity.sum() <= 0:
                 continue
-            keep_bldgs = where(capacity>0)[0]
-            capacity = capacity[keep_bldgs]
-            idx_in_bldgs = idx_in_bldgs[keep_bldgs]
-            while True:
-                random_job = sample_noreplace(idx_in_jobs, 1)
-                type = job_building_types[idx_in_jobs[random_job]]
-                sector = sectors[idx_in_jobs[random_job]]
-                
+            this_jobs_sectors = sectors[idx_in_jobs]
+            this_jobs_types = job_building_types[idx_in_jobs]
+            tmp = (idx_in_bldgs.size*ones(idx_in_jobs.size)).astype("int32")
+            comb = create_combination_indices(tmp)
+            s = zeros((comb.shape[0], capacity.size))
+            o = jobs_sqft[idx_in_jobs]
+            idx = arange(capacity.size)+1
+            for i in range(comb.shape[0]): # compute capacity requirements for each building 
+                s[i,:] = ndimage_sum(o, labels=comb[i,:]+1, index=idx)
+            allowed = alltrue(s<=capacity, axis=1)
+            if allowed.sum() <= 0: # no combination fits
+                dif = absolute(s - capacity)
+                imindif = dif.argmin() # get combination with min. difference
+                building_ids[job_index_non_home_based[idx_in_jobs]] = bldg_ids_in_bldgs[idx_in_bldgs][comb[imindif]][0]
+                continue
+            
+            random_job = sample_noreplace(idx_in_jobs, 1)
             
         job_dataset.modify_attribute(name="building_id", data = building_ids)
         job_dataset.write_dataset(out_table_name=jobs_table, out_storage=out_storage)
