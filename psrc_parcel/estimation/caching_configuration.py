@@ -40,7 +40,8 @@ class CachingConfiguration(Configuration):
             "travel_data",
 #            "annual_relocation_rates_for_business",
 #            "buildings_for_estimation",
-            "building_types",
+            "building_types",qualified_name
+            "generic_building_types",
             "job_building_types",
             'urbansim_constants',
             'land_use_types',
@@ -62,7 +63,7 @@ class CachingConfiguration(Configuration):
 
         return {
         #'cache_directory' : '/urbansim_cache/psrc_parcel_2005/cache_source', # change or leave out
-        'cache_directory' : '/Users/hana/urbansim_cache/psrc/cache_source_parcel/',
+        'cache_directory' : '/workspace/urbansim_cache/psrc_parcel/estimation/',
         'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
     #        cache_directory_root = '/tmp/urbcache/sandbox_runs/estimation',
             unroll_gridcells = False,
