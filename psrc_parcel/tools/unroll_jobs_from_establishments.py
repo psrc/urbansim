@@ -13,7 +13,7 @@
 #
 
 import os
-from numpy import array, concatenate, arange, cumsum, resize
+from numpy import array, arange, cumsum, resize
 from opus_core.logger import logger
 from opus_core.store.opus_database import OpusDatabase
 from opus_core.storage_factory import StorageFactory
