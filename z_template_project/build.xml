@@ -18,4 +18,5 @@
 			<arg line="tests/all_tests.py -x" />
 		</exec>
 	</target>
+	
 </project>
