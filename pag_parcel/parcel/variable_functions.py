@@ -18,5 +18,5 @@ from urbansim.functions import attribute_label
 def my_attribute_label(attribute_name):
     """Return a triple (package, dataset_name, attribute_name).
     """
-    return "mag_parcel.parcel." + attribute_name
+    return "pag_parcel.parcel." + attribute_name
     

@@ -14,7 +14,7 @@
 
 #from urbansim.estimation.config import config
 from opus_core.configurations.database_configuration import DatabaseConfiguration
-from mag_parcel.configs.controller_config import models_configuration
+from pag_parcel.configs.controller_config import models_configuration
 from urbansim.configs.general_configuration import GeneralConfiguration
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
@@ -33,11 +33,11 @@ class Baseline(GeneralConfiguration):
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
                 cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
-            #cache_directory_root = r'/workspace/urbansim_cache/mag_parcel',
+            #cache_directory_root = r'/workspace/urbansim_cache/pag_parcel',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
-           #existing_cache_to_copy = r'/workspace/urbansim_cache/mag_parcel/estimation',
+           #existing_cache_to_copy = r'/workspace/urbansim_cache/pag_parcel/estimation',
                     ),
                 cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
                 tables_to_cache = [
@@ -93,10 +93,10 @@ class Baseline(GeneralConfiguration):
                 host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
                 user_name     = os.environ.get('MYSQLUSERNAME',''),
                 password      = os.environ.get('MYSQLPASSWORD',''),
-                database_name = 'mag_parcel_baseyear',
+                database_name = 'pag_parcel_baseyear',
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
-                package_order=['mag_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
+                package_order=['pag_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
                 package_order_exceptions={},
                 ),
             'models_configuration':models_configuration,

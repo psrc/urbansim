@@ -12,8 +12,11 @@
 # other acknowledgments.
 # 
 
-from mag_parcel.configs.controller_config import config
-
-run_configuration = config
-run_configuration['models'] = [
-    {'real_estate_price_model':['estimate']} ]
+from numpy import where, zeros
+from urbansim.functions import attribute_label
+  
+def my_attribute_label(attribute_name):
+    """Return a triple (package, dataset_name, attribute_name).
+    """
+    return "pag_parcel.building." + attribute_name
+    

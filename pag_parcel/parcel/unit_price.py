@@ -24,7 +24,7 @@ class unit_price(Variable):
     improvement_value = "improvement_value"
     
     def dependencies(self):
-        return ["_unit_price = (parcel.land_value + parcel.improvement_value) / mag_parcel.parcel.existing_units"]
+        return ["_unit_price = (parcel.land_value + parcel.improvement_value) / pag_parcel.parcel.existing_units"]
         
     def compute(self,  dataset_pool):
         return self.get_dataset().get_attribute("_unit_price")
@@ -41,7 +41,7 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['mag_parcel', 'urbansim'],
+            package_order=['pag_parcel', 'urbansim'],
             test_data={
             'parcel':
             {
