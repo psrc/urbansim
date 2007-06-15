@@ -55,18 +55,18 @@ class Tests(opus_unittest.OpusTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         land_use_types_table_name = 'land_use_types'        
-        storage._write_dataset(
-                   out_table_name = land_use_types_table_name,
-                   values = {
+        storage.write_table(
+                   table_name=land_use_types_table_name,
+                   table_data={
                     'land_use_type_id':array([0, 2, 3, 4]), 
                     'land_use_type_name': array(['foo', 'vacant', 'commercial', 'vacant'])
                     }
                 )
 
         parcel_table_name = 'parcels'        
-        storage._write_dataset(
-                 out_table_name = parcel_table_name,
-                 values = {
+        storage.write_table(
+                 table_name=parcel_table_name,
+                 table_data={
                     'parcel_id':array([1,2,3, 4, 5, 6]),
                     'land_use_type_id': array([2,0,2, 4, 3, 3])
                     }
