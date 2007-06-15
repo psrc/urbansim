@@ -18,6 +18,8 @@ from urbansim.datasets.gridcell_dataset import GridcellDataset
 from urbansim.datasets.development_type_dataset import DevelopmentTypeDataset
 from urbansim.datasets.development_event_dataset import DevelopmentEventDataset
 
+# This class is not tested by all_tests.py, why? The tests fail
+
 class GridcellClassifier:
    """
    This class provides methods to re-classify the development type of gridcells.
