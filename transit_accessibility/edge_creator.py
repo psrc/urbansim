@@ -20,6 +20,7 @@ from opus_core.misc import unique_values
 from numpy import where, array, arange, int64, int32
 from opus_core.storage_factory import StorageFactory
 
+# TODO: class is not tested in all_tests.py and the test is broken
 
 class EdgeCreator(object):
     def create_edges(self, input_file_dir, input_file_name, output_file_name):
@@ -45,8 +46,8 @@ class EdgeCreator(object):
        
         storage = StorageFactory().get_storage('dict_storage')
         
-        storage._write_dataset(out_table_name='edges',
-            values = {
+        storage.write_table(table_name='edges',
+            table_data={
                 'edge_id': arange(len(source_list))+1, 
                 'source': array(source_list), #type=int64), # <<<< OUTPUT FIELD, USE array
                 'target': array(target_list), #type=int64), # <<<< OUTPUT FIELD, USE array
