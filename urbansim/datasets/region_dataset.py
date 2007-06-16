@@ -13,10 +13,8 @@
 #
 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
-from opus_core.misc import unique_values
-from numpy import array, zeros, int16, int8, ones, take, arange
+from numpy import array
 from opus_core.resources import Resources
-from opus_core.variables.variable_name import VariableName
 from opus_core.storage_factory import StorageFactory
 
 class RegionDataset(UrbansimDataset):
@@ -29,8 +27,8 @@ class RegionDataset(UrbansimDataset):
     def __init__(self, id_values=1, **kwargs):
         storage = StorageFactory().get_storage('dict_storage')
 
-        storage._write_dataset(out_table_name='regions',
-            values = {
+        storage.write_table(table_name='regions',
+            table_data={
                 self.id_name_default:array([id_values])
                 }
             )

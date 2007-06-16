@@ -48,9 +48,6 @@ from numpy import ma
 
 from opus_core.simulation_state import SimulationState
 from opus_core.storage_factory import StorageFactory
-from opus_core.store.attribute_cache import AttributeCache
-from opus_core.session_configuration import SessionConfiguration
-
 
 class DevelopmentEventDatasetTests(opus_unittest.OpusTestCase):
     def setUp(self):
@@ -63,7 +60,7 @@ class DevelopmentEventDatasetTests(opus_unittest.OpusTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         development_events_table = 'development_events'
-        storage._write_dataset(development_events_table, data)
+        storage.write_table(table_name=development_events_table, table_data=data)
 
         development_events_dataset = DevelopmentEventDataset(
             in_storage = storage,

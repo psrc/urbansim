@@ -15,7 +15,6 @@
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
 from variable_functions import my_attribute_label
-from numpy import logical_and
 
 class is_transition_from_development_type_group_SSS(Variable):
 
@@ -82,18 +81,18 @@ class Tests(opus_unittest.OpusTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         #declare an array of four gridcells, each with the specified sector ID below
-        storage._write_dataset(
-            'development_events',
-            {
+        storage.write_table(
+            table_name='development_events',
+            table_data={
                 'grid_id': array([100,100,101,102]),
                 'scheduled_year': array([1999,1998,1999,1999]),
                 'starting_development_type_id': array([1, 3, 2, 3]),
                 'ending_development_type_id': array([1, 1, 2, 3]),
             }
         )
-        storage._write_dataset(
-            'development_type_groups',
-            {
+        storage.write_table(
+            table_name='development_type_groups',
+            table_data={
                 'name': array(["vacant_developable", "developed"]),
                 'group_id': array([1,2]),
             }

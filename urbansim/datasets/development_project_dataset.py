@@ -48,7 +48,7 @@ class DevelopmentProjectDataset(Dataset):
         if data <> None:
             in_storage = StorageFactory().get_storage('dict_storage')
             
-            in_storage._write_dataset(out_table_name='development_projects', values=data)
+            in_storage.write_table(table_name='development_projects', table_data=data)
             in_table_name='development_projects'
         
         resources = ResourceFactory().get_resources_for_dataset(

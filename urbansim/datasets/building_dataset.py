@@ -59,8 +59,8 @@ class BuildingCreator(object):
         
         storage = StorageFactory().get_storage('dict_storage')
         
-        storage._write_dataset(out_table_name='buildings',
-            values = {
+        storage.write_table(table_name='buildings',
+            table_data={
                 BuildingDataset.id_name_default: ids, 
                 "grid_id" : grid_ids,
                 "building_type_id": type_code*ones(nbuildings), 

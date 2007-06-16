@@ -15,7 +15,7 @@
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
-from numpy import where, zeros, int8, bool8
+from numpy import zeros, int8, bool8
 
 class is_in_development_type_group_SSS(Variable):
     """Returns a boolean indicating whether this gridcell's development type group is
@@ -77,15 +77,13 @@ class Tests(opus_unittest.OpusTestCase):
     variable_name1 = "urbansim.development_type.is_in_development_type_group_mixed_use"
     variable_name2 = "urbansim.development_type.is_in_development_type_group_high_density_residential"
     def test_my_inputs( self ):
-        #declare an array of four locations, each with the specified sector ID below
-        development_type_id = array([1, 3, 2, 3])
 
         storage = StorageFactory().get_storage('dict_storage')
 
         development_type_table_name = 'development_type'
-        storage._write_dataset(
-            out_table_name = development_type_table_name,
-            values = {
+        storage.write_table(
+            table_name=development_type_table_name,
+            table_data={
                 'development_type_id':array([1,2,3])
                 }
             )

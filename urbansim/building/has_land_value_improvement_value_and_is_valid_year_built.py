@@ -50,18 +50,18 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         storage = StorageFactory().get_storage('dict_storage')        
         
-        storage._write_dataset(
-            'buildings',
-            {
+        storage.write_table(
+            table_name='buildings',
+            table_data={
                 'building_id': array([1,2,3,4, 5, 6]),
                 'year_built': array([1995, 2000, 2005, 0, 1800, 1799]),
                 'land_value': array([0,10,500,20,0,9]),
                 'improvement_value': array([2,0,10,10,0,70])
             }
         )
-        storage._write_dataset(
-            'urbansim_constants',
-            {
+        storage.write_table(
+            table_name='urbansim_constants',
+            table_data={
                 "absolute_min_year": array([1800]),
             }
         )

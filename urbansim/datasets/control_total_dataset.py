@@ -20,9 +20,6 @@ from opus_core.datasets.dataset import Dataset
 from opus_core.resource_factory import ResourceFactory
 from opus_core.variables.attribute_type import AttributeType
 
-from urbansim.opus_package_info import package
-
-
 class ControlTotalDataset(Dataset):
     id_name_default = {"household":["year"],
                         "employment":["year", "sector_id"]}
@@ -101,9 +98,9 @@ class Tests(StochasticTestCase):
             storage = StorageFactory().get_storage('dict_storage')
 
             control_totals_table_name = 'control_totals'
-            storage._write_dataset(
-                    control_totals_table_name,
-                    {
+            storage.write_table(
+                    table_name=control_totals_table_name,
+                    table_data={
                         'year': arange(1980, 1986),
                         'totals_for_households': household_totals,
                         'totals_for_jobs': job_totals,
