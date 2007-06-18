@@ -187,7 +187,7 @@ class Dataset(AbstractDataset):
                                              "flush_after_each_chunk":flush_after_each_chunk_default})
 
         # check obligatory entries
-        local_resources.check_obligatory_keys(["in_storage"])
+        local_resources.check_obligatory_keys(["in_storage", "in_table_name"])
 
         # prepare for loading
         in_storage = local_resources["in_storage"]
