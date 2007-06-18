@@ -13,7 +13,7 @@
 # 
 
 
-from enthought.traits import List
+from enthought.traits.api import List
 from enthought.envisage.single_project.api import Project as EnvisageProject
 
 from opus_gui.model.model_specification_list import ModelSpecificationList

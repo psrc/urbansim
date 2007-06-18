@@ -12,8 +12,8 @@
 # other acknowledgments.
 # 
 
-from enthought.traits import HasTraits, Str
-from enthought.traits.ui import View, Item, Group
+from enthought.traits.api import HasTraits, Str
+from enthought.traits.ui.api import View, Item, Group
 
 
 class ModelSpecification(HasTraits):

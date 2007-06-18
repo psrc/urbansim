@@ -12,8 +12,8 @@
 # other acknowledgments.
 # 
 
-from enthought.traits import HasTraits, Instance, Str, List
-from enthought.traits.ui import View, Item, Group
+from enthought.traits.api import HasTraits, Instance, Str, List
+from enthought.traits.ui.api import View, Item, Group
 
 from opus_gui.model.model_specification import ModelSpecification
 
