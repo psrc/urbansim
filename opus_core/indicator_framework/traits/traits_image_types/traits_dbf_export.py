@@ -15,8 +15,9 @@
 from opus_core.logger import logger
 try:
     import enthought.traits.ui
-    from enthought.traits import HasTraits, Str, Int
-    from enthought.traits.ui import Item, View, Group, EnumEditor
+    from enthought.traits.api import HasTraits, Str, Int
+    # later update the ui import to:   from enthought.traits.ui.api import Item, View, Group, EnumEditor
+    from enthought.traits.api import Item, View, Group, EnumEditor
 except:
     logger.log_warning('Could not load traits.ui. Skipping %s!' % __file__)
 else:

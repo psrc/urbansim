@@ -17,18 +17,18 @@ import os
 from sets import Set
 from tempfile import mktemp
 
-from enthought.traits import Any
-from enthought.traits import Str
-from enthought.traits import Bool
-from enthought.traits import Dict
-from enthought.traits import List
-from enthought.traits import Event
-from enthought.traits import Trait
-from enthought.traits import ListStr
-from enthought.traits import Instance
-from enthought.traits import Undefined
-from enthought.traits import DictStrInt
-from enthought.traits import HasStrictTraits
+from enthought.traits.api import Any
+from enthought.traits.api import Str
+from enthought.traits.api import Bool
+from enthought.traits.api import Dict
+from enthought.traits.api import List
+from enthought.traits.api import Event
+from enthought.traits.api import Trait
+from enthought.traits.api import ListStr
+from enthought.traits.api import Instance
+from enthought.traits.api import Undefined
+from enthought.traits.api import DictStrInt
+from enthought.traits.api import HasStrictTraits
 
 from opus_core.store.mysql_database_server import MysqlDatabaseServer
 from opus_core.configurations.cache_location import CacheLocation
@@ -96,7 +96,7 @@ class CreatingBaseyearCacheConfiguration(HasStrictTraits):
         
 from opus_core.tests import opus_unittest
 
-from enthought.traits import TraitError
+from enthought.traits.api import TraitError
 
 
 class CreatingBaseyearCacheConfigurationTests(opus_unittest.OpusTestCase):

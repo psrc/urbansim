@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from enthought.traits import ListInt, Str, Trait, Constant, HasStrictTraits
+from enthought.traits.api import ListInt, Str, Trait, Constant, HasStrictTraits
 
 
 class BaseyearCacheConfiguration(HasStrictTraits):
@@ -48,7 +48,7 @@ class BaseyearCacheConfiguration(HasStrictTraits):
 import os
 from opus_core.tests import opus_unittest
 
-from enthought.traits import TraitError
+from enthought.traits.api import TraitError
 
 
 class DatabaseConfigurationTests(opus_unittest.OpusTestCase):

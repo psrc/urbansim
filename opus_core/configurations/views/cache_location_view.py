@@ -12,9 +12,9 @@
 # other acknowledgments.
 #
 
-from enthought.traits.ui import Item, Group, View
-from enthought.traits.ui import ButtonEditor
-from enthought.traits import Event
+from enthought.traits.api import Event
+from enthought.traits.api import Item, Group, View, ButtonEditor
+# later update the ui import to:   from enthought.traits.ui.api import Item, Group, View, ButtonEditor
 
 
 class CacheLocationView(View):

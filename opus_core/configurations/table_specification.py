@@ -12,10 +12,10 @@
 # other acknowledgments.
 #
 
-from enthought.traits import Int
-from enthought.traits import Str
-from enthought.traits import Bool
-from enthought.traits import HasStrictTraits 
+from enthought.traits.api import Int
+from enthought.traits.api import Str
+from enthought.traits.api import Bool
+from enthought.traits.api import HasStrictTraits 
 
 
 class TableSpecification(HasStrictTraits):

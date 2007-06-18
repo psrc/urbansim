@@ -17,8 +17,9 @@ import sys
 
 from time import strftime, localtime
 
-from enthought.traits import HasTraits, Directory, Int, Str, File
-from enthought.traits.ui import View, Group, Item
+from enthought.traits.api import HasTraits, Directory, Int, Str, File
+# later update the ui import to:   from enthought.traits.ui.api import View, Group, Item
+from enthought.traits.api import View, Group, Item
 
 
 class ExportCSVToCacheGUI(HasTraits):

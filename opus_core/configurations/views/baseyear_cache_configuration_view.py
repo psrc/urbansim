@@ -12,8 +12,9 @@
 # other acknowledgments.
 #
 
-from enthought.traits import Directory
-from enthought.traits.ui import Item, Group, View
+from enthought.traits.api import Directory
+# later update the ui import to:   from enthought.traits.ui.api import Item, Group, View
+from enthought.traits.api import Item, Group, View
 
 
 class BaseyearCacheConfigurationView(View):

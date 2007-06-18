@@ -15,7 +15,7 @@
 from opus_core.logger import logger
 try:
     import enthought.traits.ui
-    from enthought.traits import Instance, Bool, DictStrAny, Directory, File, Int, List, ListStr, ListInt, Str
+    from enthought.traits.api import Instance, Bool, DictStrAny, Directory, File, Int, List, ListStr, ListInt, Str
 except:
     logger.log_warning('Could not load traits.ui. Skipping %s!' % __file__)
 else:

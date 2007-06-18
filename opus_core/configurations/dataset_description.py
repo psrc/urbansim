@@ -13,7 +13,7 @@
 #
 
 from opus_core.configurations.abstract_configuration import AbstractConfiguration
-from enthought.traits import Int, Str
+from enthought.traits.api import Int, Str
 import os
 
 class DatasetDescription(AbstractConfiguration):

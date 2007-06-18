@@ -14,9 +14,9 @@
 
 import os
 
-from enthought.traits import List
-from enthought.traits import Instance
-from enthought.traits import HasStrictTraits
+from enthought.traits.api import List
+from enthought.traits.api import Instance
+from enthought.traits.api import HasStrictTraits
 
 from opus_core.configurations.table_specification import TableSpecification
 

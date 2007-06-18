@@ -12,10 +12,10 @@
 # other acknowledgments.
 # 
 
-from enthought.traits import HasTraits, Directory, Str, Int
-from enthought.traits.ui import View, Group, Item
+from enthought.traits.api import HasTraits, Directory, Str, Int
+# later update the ui import to:   from enthought.traits.ui.api import View, Group, Item
+from enthought.traits.api import View, Group, Item
 from enthought.traits.ui.menu import CloseAction
-
 
 class GuiExportDbfTableToCache(HasTraits):
     dbf_directory = Directory

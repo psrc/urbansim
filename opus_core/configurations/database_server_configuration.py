@@ -15,9 +15,9 @@
 import os
 from copy import copy
 
-from enthought.traits import Str
-from enthought.traits import Bool
-from enthought.traits import Password
+from enthought.traits.api import Str
+from enthought.traits.api import Bool
+from enthought.traits.api import Password
 
 from opus_core.configurations.abstract_configuration import AbstractConfiguration
 

@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from enthought.traits import HasTraits
+from enthought.traits.api import HasTraits
 # wrap the import of traits.ui in a try/except block.  This allows
 # a configuration to be used without the traits UI; however,
 # you won't be able to configure it using the interactive editor.

@@ -17,9 +17,9 @@ import os
 from time import strftime
 from time import localtime
 
-from enthought.traits import HasStrictTraits
-from enthought.traits import List
-from enthought.traits import Dict
+from enthought.traits.api import HasStrictTraits
+from enthought.traits.api import List
+from enthought.traits.api import Dict
 
 
 class DatasetPoolConfiguration(HasStrictTraits):

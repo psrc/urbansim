@@ -26,15 +26,10 @@
 
 import wx
 
-from enthought.traits import Dict
-from enthought.traits import List
-from enthought.traits import Any
-from enthought.traits import Bool
-from enthought.traits import Undefined
+from enthought.traits.api import Dict, List, Any, Bool, Undefined
 
-from enthought.traits.ui import View
-from enthought.traits.ui import Group
-from enthought.traits.ui import Item
+# later update the ui import to:   from enthought.traits.ui.api import View, Group, Item
+from enthought.traits.api import View, Group, Item
 
 from enthought.traits.ui.wx.editor import EditorWithList
 from enthought.traits.ui.wx.constants import ReadonlyColor

@@ -16,8 +16,9 @@
 from opus_core.configurations.dataset_description import DatasetDescription
 
 try:
-    from enthought.traits import Constant, Directory, Int, Str, Trait, List, ListInt, Bool, DictStrAny, File, Instance
-    from enthought.traits.ui import Item, Group, View, EnumEditor, Handler, TreeEditor, TreeNode, BooleanEditor
+    from enthought.traits.api import Constant, Directory, Int, Str, Trait, List, ListInt, Bool, DictStrAny, File, Instance
+    from enthought.traits.api import Item, Group, View, EnumEditor, Handler, TreeEditor, TreeNode, BooleanEditor
+    # later update the ui import to:   from enthought.traits.ui.api import Item, Group, View, EnumEditor, Handler, TreeEditor, TreeNode, BooleanEditor
     from enthought.traits.ui.menu import Action, Menu, MenuBar, CloseAction, HelpAction
 except:
     logger.log_warning('Could not load traits.ui. Skipping %s!' % __file__)

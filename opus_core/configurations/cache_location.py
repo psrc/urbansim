@@ -17,7 +17,7 @@ import os
 from time import strftime
 from time import localtime
 
-from enthought.traits import HasStrictTraits, Str, Bool, Event
+from enthought.traits.api import HasStrictTraits, Str, Bool, Event
 
 
 class CacheLocation(HasStrictTraits):
