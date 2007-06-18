@@ -13,14 +13,17 @@
 #
 
 import os
-from numpy import array, where, logical_and, arange, ones, cumsum, zeros, alltrue, absolute
+from numpy import array, where, logical_and, arange, ones, cumsum, zeros, alltrue, absolute, resize, any, floor
+from numpy.random import seed
 from scipy.ndimage import sum as ndimage_sum
 from opus_core.logger import logger
 from opus_core.store.opus_database import OpusDatabase
 from opus_core.storage_factory import StorageFactory
-from opus_core.sampling_toolbox import sample_noreplace, sample_replace
+from opus_core.sampling_toolbox import sample_noreplace, sample_replace, probsample_noreplace
 from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset import Dataset
 from opus_core.misc import unique_values, create_combination_indices
+from opus_core.variables.attribute_type import AttributeType
 from urbansim.datasets.job_dataset import JobDataset
 
 class DB_settings(object):
@@ -43,107 +46,172 @@ class FltStorage:
         return storage
     
 class AssignBuildingsToJobs:
-    def run(self, in_storage, out_storage, dataset_pool_storage, jobs_table="jobs"):
+    def run(self, in_storage, out_storage, dataset_pool_storage, jobs_table="jobs", 
+            zone_averages_table="building_sqft_per_job"):
+        """
+        'in_storage' should contain the jobs table and the zone_averages_table. The 'dataset_pool_storage'
+        shoudl contain all other tables needed (buildings, households, building_types). 
+        The script runs for all jobs that have parcel assigned but no building_id, separately 
+        for home_based and non_home_based_jobs.
+        For home_based jobs the capacity of a single-family building is determined from sizes of the households living there 
+        (for each household the minimum of numper of members and 2 is taken). For multi-family buildings the capacity is 50.
+        """
+        seed(1)
         job_dataset = JobDataset(in_storage=in_storage, in_table_name = jobs_table)
         dataset_pool = DatasetPool(package_order=['urbansim_parcel', 'urbansim'],
                                    storage=dataset_pool_storage)
+        dataset_pool._add_dataset("job", job_dataset)
         parcel_ids = job_dataset.get_attribute("parcel_id")
         building_ids = job_dataset.get_attribute("building_id")
         building_types = job_dataset.get_attribute("building_type")
-        is_considered = logical_and(parcel_ids > 0, building_ids <= 0) # jobs taht have assigned parcel but not a building
+        is_considered = logical_and(parcel_ids > 0, building_ids <= 0) # jobs that have assigned parcel but not a building
         job_index_home_based = where(logical_and(is_considered, building_types == 1))[0]
         job_index_non_home_based = where(logical_and(is_considered, building_types == 2))[0]
         
         building_dataset = dataset_pool.get_dataset('building')
         parcel_ids_in_bldgs = building_dataset.get_attribute("parcel_id")
         bldg_ids_in_bldgs = building_dataset.get_id_attribute()
+        bldg_types_in_bldgs = building_dataset.get_attribute("building_type_id")
         
         # home_based
         unique_parcels = unique_values(parcel_ids[job_index_home_based])
-        population_in_buildings = building_dataset.compute_variables(["urbansim_parcel.building.population"],
-                                                                     dataset_pool=dataset_pool)
+        capacity_in_buildings = building_dataset.compute_variables([
+                          "building.aggregate(psrc_parcel.household.minimum_persons_and_2)"],
+                             dataset_pool=dataset_pool)
+        capacity_in_buildings[bldg_types_in_bldgs==12] = 50 # in multi-family houses is higher capacity
         occupied = building_dataset.compute_variables(["urbansim_parcel.building.number_of_jobs"],
                                                                      dataset_pool=dataset_pool)
         # iterate ovar parcels
         for parcel in unique_parcels:
             idx_in_bldgs = where(parcel_ids_in_bldgs == parcel)[0]
             idx_in_jobs = where(parcel_ids[job_index_home_based] == parcel)[0]
-            capacity = population_in_buildings[idx_in_bldgs] - occupied[idx_in_bldgs]
+            capacity = capacity_in_buildings[idx_in_bldgs] - occupied[idx_in_bldgs]
             if capacity.sum() <= 0:
                 continue
             keep_bldgs = where(capacity>0)[0]
             capacity = capacity[keep_bldgs]
             idx_in_bldgs = idx_in_bldgs[keep_bldgs]
             cumcap = cumsum(capacity)
-            tmp = (capacity.sum()*ones(idx_in_jobs.size)).astype("int32") # the sampling is done proportional to the capacity
+            tmp = (idx_in_bldgs.size*ones(idx_in_jobs.size)).astype("int32")
             comb = create_combination_indices(tmp)
-            tcomb = array(comb)
-            for j in range(idx_in_jobs.size):
-                for i in range(cumcap.size-1, -1, -1):
-                    tcomb[where(comb[:,j] < cumcap[i])[0], j] = i
-            s = zeros((tcomb.shape[0], capacity.size))
-            o = ones(tcomb.shape[1], dtype="int32")
+            s = zeros((comb.shape[0], capacity.size))
+            o = ones(comb.shape[1], dtype="int32")
             idx = arange(capacity.size)+1
-            for i in range(tcomb.shape[0]):
-                s[i,:] = ndimage_sum(o, labels=tcomb[i,:]+1, index=idx)
-            tcomb = tcomb[alltrue(s<=capacity, axis=1)]
-            if tcomb.size <= 0: # not enough space for all jobs
+            for i in range(comb.shape[0]):
+                s[i,:] = ndimage_sum(o, labels=comb[i,:]+1, index=idx)
+            comb = comb[alltrue(s<=capacity, axis=1)]
+            if comb.size <= 0: # not enough space for all jobs
                 draw = sample_replace(arange(idx_in_jobs.size), capacity.sum()) # sample jobs that will be placed
                 building_ids[job_index_home_based[idx_in_jobs[draw]]] = bldg_ids_in_bldgs[idx_in_bldgs]
             else:
-                draw = sample_noreplace(arange(tcomb.shape[0]), 1)
-                building_ids[job_index_home_based[idx_in_jobs]] = bldg_ids_in_bldgs[idx_in_bldgs][tcomb[draw]][0]
+                draw = sample_noreplace(arange(comb.shape[0]), 1)
+                building_ids[job_index_home_based[idx_in_jobs]] = bldg_ids_in_bldgs[idx_in_bldgs][comb[draw]][0]
         
+        logger.log_status("%s home based jobs (out of %s hb jobs) were placed." % ((building_ids[job_index_home_based]>0).sum(),
+                                                                         job_index_home_based.size))
         # non_home_based
         unique_parcels = unique_values(parcel_ids[job_index_non_home_based])
-        job_building_types = job_dataset.compute_variables(["job.disaggregate(building.building_type_id"], 
-                                                           dataset_pool=dataset_pool)[job_index_non_home_based]
-        building_type_dataset = datasett_pool.get_dataset("building_type")
+        job_building_types = job_dataset.compute_variables(["job.disaggregate(building.building_type_id)"], 
+                                                           dataset_pool=dataset_pool)
+        where_valid_jbt = where(logical_and(job_building_types>0, building_types == 2))[0]                     
+        building_type_dataset = dataset_pool.get_dataset("building_type")
         available_building_types= building_type_dataset.get_id_attribute()
         idx_available_bt = building_type_dataset.get_id_index(available_building_types)
-        sectors = job_dataset.get_attribute_by_index("sector_id", job_index_non_home_based)
+        sectors = job_dataset.get_attribute("sector_id")
         unique_sectors = unique_values(sectors)
         sector_bt_distribution = zeros((unique_sectors.size, building_type_dataset.size()), dtype="float32")
-        jobs_sqft = job_dataset.get_attribute_by_index("sqft", job_index_non_home_based)
+        
+        jobs_sqft = job_dataset.get_attribute_by_index("sqft", job_index_non_home_based).astype("float32")
+        jobs_zones = job_dataset.get_attribute_by_index("zone_id", job_index_non_home_based)
         
         # find sector -> building_type distribution
+        sector_index_mapping = {}
         for isector in range(unique_sectors.size):
-            idx = where(sectors==unique_sectors[isector])[0]
+            idx = where(sectors[where_valid_jbt]==unique_sectors[isector])[0]
             o = ones(idx.size, dtype="int32")
-            sector_bt_distribution[isector,:] = ndimage_sum(o, labels=job_building_types[idx], index=avalable_building_types)
+            sector_bt_distribution[isector,:] = ndimage_sum(o, labels=job_building_types[where_valid_jbt[idx]], 
+                                                            index=available_building_types)
+            sector_bt_distribution[isector,:] = sector_bt_distribution[isector,:]/sector_bt_distribution[isector,:].sum()
+            sector_index_mapping[unique_sectors[isector]] = isector
         
         non_res_sqft = building_dataset.get_attribute("non_residential_sqft")
         occupied = building_dataset.compute_variables(["urbansim_parcel.building.occupied_building_sqft_by_jobs"],
                                                                      dataset_pool=dataset_pool)
         
-        # iterate ovar parcels
+        # create a lookup table for zonal average per building type of sqft per employee 
+        zone_average_dataset = Dataset(in_storage=in_storage, id_name=[], dataset_name="building_sqft_per_job", 
+                                       in_table_name=zone_averages_table)
+        zone_ids_in_zad = zone_average_dataset.get_attribute("zone_id").astype("int32")
+        bt_in_zad = zone_average_dataset.get_attribute("building_type_id")
+        sqft_in_zad = zone_average_dataset.get_attribute("building_sqft_per_job")
+        zone_bt_lookup = zeros((zone_ids_in_zad.max()+1, bt_in_zad.max()+1)) 
+        for i in range(zone_average_dataset.size()):
+            zone_bt_lookup[zone_ids_in_zad[i], bt_in_zad[i]] = sqft_in_zad[i]
+        counter_zero_capacity = 0
+        counter_zero_distr = 0
+        # iterate over parcels
         for parcel in unique_parcels:
             idx_in_bldgs = where(parcel_ids_in_bldgs == parcel)[0]
             idx_in_jobs = where(parcel_ids[job_index_non_home_based] == parcel)[0]
             capacity = non_res_sqft[idx_in_bldgs] - occupied[idx_in_bldgs]
             if capacity.sum() <= 0:
+                counter_zero_capacity += idx_in_jobs.size
                 continue
-            this_jobs_sectors = sectors[idx_in_jobs]
-            this_jobs_types = job_building_types[idx_in_jobs]
-            tmp = (idx_in_bldgs.size*ones(idx_in_jobs.size)).astype("int32")
-            comb = create_combination_indices(tmp)
-            s = zeros((comb.shape[0], capacity.size))
-            o = jobs_sqft[idx_in_jobs]
-            idx = arange(capacity.size)+1
-            for i in range(comb.shape[0]): # compute capacity requirements for each building 
-                s[i,:] = ndimage_sum(o, labels=comb[i,:]+1, index=idx)
-            allowed = alltrue(s<=capacity, axis=1)
-            if allowed.sum() <= 0: # no combination fits
-                dif = absolute(s - capacity)
-                imindif = dif.argmin() # get combination with min. difference
-                building_ids[job_index_non_home_based[idx_in_jobs]] = bldg_ids_in_bldgs[idx_in_bldgs][comb[imindif]][0]
-                continue
+            this_jobs_sectors = sectors[job_index_non_home_based][idx_in_jobs]
+            this_jobs_sqft_table = resize(jobs_sqft[idx_in_jobs], (idx_in_bldgs.size, idx_in_jobs.size))
+            wn = jobs_sqft[idx_in_jobs] <= 0
+            for i in range(idx_in_bldgs.size):
+                this_jobs_sqft_table[i, where(wn)[0]] = zone_bt_lookup[jobs_zones[idx_in_jobs[wn]], bldg_types_in_bldgs[idx_in_bldgs[i]]]
+            supply_demand_ratio = (resize(capacity, (capacity.size, 1))/this_jobs_sqft_table.astype("float32").sum(axis=0))/float(idx_in_jobs.size)*0.9
+            if any(supply_demand_ratio < 1): # correct only if supply is smaller than demand 
+                this_jobs_sqft_table = this_jobs_sqft_table * supply_demand_ratio
+            probcomb = zeros(this_jobs_sqft_table.shape)
+            bt = bldg_types_in_bldgs[idx_in_bldgs]
+            ibt = building_type_dataset.get_id_index(bt)
+            for i in range(probcomb.shape[0]):
+                for j in range(probcomb.shape[1]):
+                    probcomb[i,j] = sector_bt_distribution[sector_index_mapping[this_jobs_sectors[j]],ibt[i]]
+            pcs = probcomb.sum(axis=0)
+            probcomb = probcomb/pcs
+            wz = where(pcs<=0)[0]
+            counter_zero_distr += wz.size
+            probcomb[:, wz] = 0 # to avoid nan values
+            taken = zeros(capacity.shape)
+            has_sqft = this_jobs_sqft_table > 0
+            while True:
+                if (has_sqft * probcomb).sum() <= 0:
+                    break
+                req =  (this_jobs_sqft_table * probcomb).sum(axis=0)
+                maxi = req.max()
+                wmaxi = where(req==maxi)[0]
+                drawjob = sample_noreplace(arange(wmaxi.size), 1) # draw job from jobs with the maximum size
+                imax_req = wmaxi[drawjob]
+                weights = has_sqft[:,imax_req] * probcomb[:,imax_req]
+                draw = probsample_noreplace(arange(probcomb.shape[0]), 1, resize(weights/weights.sum(), (probcomb.shape[0],)))
+                if (taken[draw] + this_jobs_sqft_table[draw,imax_req]) > capacity[draw]:
+                    probcomb[draw,imax_req]=0
+                    continue
+                taken[draw] = taken[draw] + this_jobs_sqft_table[draw,imax_req]
+                building_ids[job_index_non_home_based[idx_in_jobs[imax_req]]] = bldg_ids_in_bldgs[idx_in_bldgs[draw]]
+                probcomb[:,imax_req] = 0
             
-            random_job = sample_noreplace(idx_in_jobs, 1)
-            
+        logger.log_status("%s non home based jobs (out of %s nhb jobs) were placed." % (
+                                                                (building_ids[job_index_non_home_based]>0).sum(),
+                                                                 job_index_non_home_based.size))
+        logger.log_status("Unplaced due to zero capacity: %s" % counter_zero_capacity)
+        logger.log_status("Unplaced due to zero distribution: %s" % counter_zero_distr)
+        
         job_dataset.modify_attribute(name="building_id", data = building_ids)
-        job_dataset.write_dataset(out_table_name=jobs_table, out_storage=out_storage)
+        job_dataset.write_dataset(out_table_name=jobs_table, out_storage=out_storage, attributes=AttributeType.PRIMARY)
         logger.log_status("Done.")
+#        idx = where(building_ids[job_index_non_home_based]<=0)[0]
+#        unique_parcels = unique_values(parcel_ids[job_index_non_home_based[idx]])
+#        rescapacity=[]
+#        for parcel in unique_parcels:
+#            idx_in_bldgs = where(parcel_ids_in_bldgs == parcel)[0]
+#            rescapacity.append(non_res_sqft[idx_in_bldgs] - occupied[idx_in_bldgs])
+#        print array(rescapacity).max()            
+        
         
 if __name__ == '__main__':
     input_database_name = "psrc_2005_parcel_baseyear_change_20070613"
