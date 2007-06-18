@@ -36,7 +36,7 @@
 all_variables = [
     "ln_hholds_per_acre_in_zone=ln(building.disaggregate(sanfrancisco.zone.number_of_households,intermediates=[parcel])/(building.disaggregate(sanfrancisco.parcel.area)*0.0000229568411))", 
     "ln_jobs_per_acre_in_zone=ln(building.disaggregate(sanfrancisco.zone.employment,intermediates=[parcel])/(building.disaggregate(sanfrancisco.parcel.area)*0.0000229568411))", 
-    "age = psrc_parcel.building.age_masked",    
+    "age = urbansim_parcel.building.age_masked",    
     "far = building.building_sqft/building.disaggregate(parcel.area)",        
     "ln_sqft = ln(building.building_sqft)",
     "ln_sqft_unit = ln(building.building_sqft/building.residential_units)",
