@@ -16,7 +16,7 @@ import os
 
 from tempfile import mktemp
 
-from enthought.traits import Bool
+from enthought.traits.api import Bool
 
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.configurations.creating_baseyear_cache_configuration \
