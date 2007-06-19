@@ -13,8 +13,7 @@
 # 
 
 from opus_core.variables.variable import Variable
-from numpy import where, repeat, ones, float32, newaxis
-from urbansim.functions import attribute_label
+from numpy import newaxis
 from opus_core.logger import logger
 
 class workerDDD_SSS_if_worker_SSS(Variable):
@@ -36,7 +35,7 @@ class workerDDD_SSS_if_worker_SSS(Variable):
                household_x_parcels.get_attribute(self.var_name)
         
 
-from numpy import array, arange, where
+from numpy import array
 from numpy import ma
 
 from opus_core.tests import opus_unittest
@@ -56,9 +55,9 @@ class TestsHouseholdParcelWorkerDddSssIfWorkerSss(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         storage = StorageFactory().get_storage('dict_storage')
         
-        storage._write_dataset(
-            'persons',
-            {
+        storage.write_table(
+            table_name='persons',
+            table_data={
                 'person_id':array([1,  2,  3,  4,  5,  6]),                                
                 'household_id':array([1,  1,  2,  3,  3,  3]),
                 'member_id':array([1,  2,  1,  1,  2,  3]),
@@ -67,23 +66,23 @@ class TestsHouseholdParcelWorkerDddSssIfWorkerSss(opus_unittest.OpusTestCase):
                 'work_place_zone_id':array([1,  3,  3,  2,  1,  3])
             }
         )
-        storage._write_dataset(
-            'parcels',
-            {
+        storage.write_table(
+            table_name='parcels',
+            table_data={
                 'parcel_id':array([1,2,3,4]),
                 'zone_id':array([1, 1, 3, 2]),
             }
         )
-        storage._write_dataset(
-            'households',
-            {
+        storage.write_table(
+            table_name='households',
+            table_data={
                 'household_id':array([1,2,3,4,5]),
                 'zone_id':array([3, 1, 1, 1, 2]),
             }
         )
-        storage._write_dataset(
-            'travel_data',
-            {
+        storage.write_table(
+            table_name='travel_data',
+            table_data={
                 'from_zone_id':array([3,3,1,1,1,2,2,3,2]),
                 'to_zone_id':array([1,3,1,3,2,1,3,2,2]),
                 'am_total_transit_time_walk':array([1.1, 2.2, 3.3, 4.4, 0.5, 0.7, 8.7, 7.8, 1.0])
