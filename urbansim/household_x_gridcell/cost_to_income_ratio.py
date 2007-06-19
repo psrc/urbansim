@@ -14,7 +14,6 @@
 
 from opus_core.variables.variable import Variable
 from urbansim.functions import attribute_label
-from numpy import float32
 
 class cost_to_income_ratio(Variable):
     """ total_annual_rent /income""" 
@@ -43,16 +42,16 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         storage = StorageFactory().get_storage('dict_storage')        
         
-        storage._write_dataset(
-            'gridcells',
-            {
+        storage.write_table(
+            table_name='gridcells',
+            table_data={
                 'grid_id': array([1,2,3]),
                 'total_annual_rent': array([1000, 10000, 100000]),
             }
         )
-        storage._write_dataset(
-            'households',
-            {
+        storage.write_table(
+            table_name='households',
+            table_data={
                 'household_id': array([1, 2, 3]),
                 'income': array([1, 20, 500]),
             }

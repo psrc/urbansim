@@ -78,30 +78,30 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs( self ):
         storage = StorageFactory().get_storage('dict_storage')
 
-        storage._write_dataset(
-            'jobs',
-            {
+        storage.write_table(
+            table_name='jobs',
+            table_data={
                 'job_id': array([1,2,3,4]),
                 'sector_id': array([1, 3, 2, 3]),
             }
         )
-        storage._write_dataset(
-            'employment_sectors',
-            {
+        storage.write_table(
+            table_name='employment_sectors',
+            table_data={
                 'sector_id': array([1,2]),
                 'name': array(["basic", "retail"]),
             }
         )
-        storage._write_dataset(
-            'employment_adhoc_sector_groups',
-            {
+        storage.write_table(
+            table_name='employment_adhoc_sector_groups',
+            table_data={
                 'group_id': array([1,2]),
                 'name': array(["basic", "retail"]),
             }
         )
-        storage._write_dataset(
-            'employment_adhoc_sector_group_definitions',
-            {
+        storage.write_table(
+            table_name='employment_adhoc_sector_group_definitions',
+            table_data={
                 'sector_id': array([1,2]),
                 'group_id': array([1,2]),
             }

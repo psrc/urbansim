@@ -13,10 +13,7 @@
 #
 
 from opus_core.variables.variable import Variable
-from urbansim.functions import attribute_label
-from variable_functions import my_attribute_label
-from numpy import zeros, logical_and
-from opus_core.logger import logger
+from numpy import zeros
 
 class n_recent_development_projects(Variable):
     """Number of development projects per each gridcell has experienced in the last
@@ -53,15 +50,10 @@ import shutil
 from numpy import array
 from numpy import ma
 
-from opus_core.resources import Resources
 from opus_core.simulation_state import SimulationState
-from opus_core.storage_factory import StorageFactory
 from opus_core.dataset_pool import DatasetPool
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.session_configuration import SessionConfiguration
-
-from urbansim.variable_test_toolbox import VariableTestToolbox
-from urbansim.datasets.gridcell_dataset import GridcellDataset
 from opus_core.storage_factory import StorageFactory
 
 
@@ -91,9 +83,9 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool = DatasetPool(package_order=['urbansim'],
                                    storage=storage)
 
-        storage._write_dataset(
-            'gridcells',
-            {
+        storage.write_table(
+            table_name='gridcells',
+            table_data={
                 'grid_id':array([1,2,3,4]),
                 'residential_units':array([1,0,5,0]),
                 'commercial_sqft':array([0,20,7,0]),
@@ -105,9 +97,9 @@ class Tests(opus_unittest.OpusTestCase):
         self._write_dataset_to_cache(gridcell, cache_dir, 1998)
         dataset_pool.remove_all_datasets()
 
-        storage._write_dataset(
-            'gridcells',
-            {
+        storage.write_table(
+            table_name='gridcells',
+            table_data={
                 'grid_id':array([1,2,3,4]),
                 'residential_units':array([1,0,6,0]),
                 'commercial_sqft':array([10,20,10,0]),
@@ -119,9 +111,9 @@ class Tests(opus_unittest.OpusTestCase):
         self._write_dataset_to_cache(gridcell, cache_dir, 1999)
         dataset_pool.remove_all_datasets()
 
-        storage._write_dataset(
-            'gridcells',
-            {
+        storage.write_table(
+            table_name='gridcells',
+            table_data={
                 'grid_id':array([1,2,3,4]),
                 'residential_units':array([1,0,6,0]),
                 'commercial_sqft':array([10,20,10,0]),
@@ -135,9 +127,9 @@ class Tests(opus_unittest.OpusTestCase):
 
         # For 2001, make sure every gridcell has changed in every way,
         # since this data should *not* be used by this variable.
-        storage._write_dataset(
-            'gridcells',
-            {
+        storage.write_table(
+            table_name='gridcells',
+            table_data={
             'grid_id':array([1,2,3,4]),
             'residential_units':gridcell.get_attribute('residential_units') + 1,
             'commercial_sqft':gridcell.get_attribute('commercial_sqft') + 1,
@@ -149,9 +141,9 @@ class Tests(opus_unittest.OpusTestCase):
         self._write_dataset_to_cache(gridcell, cache_dir, 2001)
         dataset_pool.remove_all_datasets()
 
-        storage._write_dataset(
-            'urbansim_constants',
-            {
+        storage.write_table(
+            table_name='urbansim_constants',
+            table_data={
                 'recent_years': array([recent_years]),
             }
         )

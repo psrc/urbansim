@@ -15,7 +15,6 @@
 from numpy import logical_not
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
-from urbansim.functions import attribute_label
 
 class is_non_home_based_job(Variable):
     """Determine if jobs are non-home-based (from building_type) according to job_building_types table. """
@@ -44,18 +43,18 @@ class Tests(opus_unittest.OpusTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         job_building_types_table_name = 'job_building_types'        
-        storage._write_dataset(
-            out_table_name = job_building_types_table_name,
-            values = {
+        storage.write_table(
+            table_name=job_building_types_table_name,
+            table_data={
                 'id':array([1,2,3,4]), 
                 'home_based': array([1, 0, 1, 0])
                 }
             )
             
         jobs_table_name = 'jobs'        
-        storage._write_dataset(
-            out_table_name = jobs_table_name,
-            values = {
+        storage.write_table(
+            table_name=jobs_table_name,
+            table_data={
                 'job_id':arange(10)+1,
                 'building_type': array([3,3,2,2,4,2,1,3,4,1])
                 }

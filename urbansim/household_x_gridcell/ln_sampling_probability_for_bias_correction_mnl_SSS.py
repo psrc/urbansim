@@ -31,16 +31,16 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         storage = StorageFactory().get_storage('dict_storage')        
         
-        storage._write_dataset(
-            'gridcells',
-            {
+        storage.write_table(
+            table_name='gridcells',
+            table_data={
                 'grid_id': arange(50),
                 'residential_units': array(5*[0]+10*[20]+5*[15]+10*[50]+15*[3]+5*[45]),
             }
         )
-        storage._write_dataset(
-            'households',
-            {
+        storage.write_table(
+            table_name='households',
+            table_data={
                 'household_id': array([1, 2, 3]),
             }
         )

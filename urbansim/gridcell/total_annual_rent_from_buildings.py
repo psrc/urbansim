@@ -14,8 +14,6 @@
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
-from numpy import ma
-from numpy import float32
 
 class total_annual_rent_from_buildings(Variable):
     """Total annual rent computed by dividing the total residential value of the gridcell
@@ -45,16 +43,16 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         storage = StorageFactory().get_storage('dict_storage')        
         
-        storage._write_dataset(
-            'gridcells',
-            {
+        storage.write_table(
+            table_name='gridcells',
+            table_data={
                 'grid_id': array([1,2,3]),
                 'avg_val_per_unit_residential': array([25, 50, 75]),
             }
         )
-        storage._write_dataset(
-            'urbansim_constants',
-            {
+        storage.write_table(
+            table_name='urbansim_constants',
+            table_data={
                 'property_value_to_annual_cost_ratio': array([50]),
             }
         )

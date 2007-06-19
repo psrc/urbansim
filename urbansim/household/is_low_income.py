@@ -40,17 +40,17 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs( self ):
         storage = StorageFactory().get_storage('dict_storage')        
         
-        storage._write_dataset(
-            'households',
-            {
+        storage.write_table(
+            table_name='households',
+            table_data={
                 'household_id': array([1, 2, 3, 4]),
                 'income': array([50, 100, 200, 300]),
             }
         )
         
-        storage._write_dataset(
-            'urbansim_constants',
-            {
+        storage.write_table(
+            table_name='urbansim_constants',
+            table_data={
                 "low_income_fraction": array([.25]),
                 'mid_income_fraction': array([.5]),
             }

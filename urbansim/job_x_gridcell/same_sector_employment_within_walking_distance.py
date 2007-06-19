@@ -37,8 +37,6 @@ class same_sector_employment_within_walking_distance(Variable):
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
-from urbansim.variable_test_toolbox import VariableTestToolbox
-from numpy import array
 from numpy import ma
 
 class Tests(opus_unittest.OpusTestCase):
@@ -47,25 +45,25 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         storage = StorageFactory().get_storage('dict_storage')
         
-        storage._write_dataset(
-            'jobs',
-            {
+        storage.write_table(
+            table_name='jobs',
+            table_data={
                 'job_id': array([1,2,3,4]),
                 'sector_id': array([2,1,2,3]),
                 'grid_id': array([1,2, 3, 4]),
             }
         )
-        storage._write_dataset(
-            'gridcells',
-            {
+        storage.write_table(
+            table_name='gridcells',
+            table_data={
                 'grid_id': array([1,2,3,4]),
                 'relative_x': array([1,2,1,2]),
                 'relative_y': array([1,1,2,2]),
             }
         )
-        storage._write_dataset(
-            'urbansim_constants',
-            {
+        storage.write_table(
+            table_name='urbansim_constants',
+            table_data={
                 "walking_distance_circle_radius": array([150]),
                 'cell_size': array([150]),
             }

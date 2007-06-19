@@ -44,23 +44,23 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         storage = StorageFactory().get_storage('dict_storage')        
         
-        storage._write_dataset(
-            'gridcells',
-            {
+        storage.write_table(
+            table_name='gridcells',
+            table_data={
                 'grid_id': array([1,2,3]),
                 'percent_high_income_households_within_walking_distance': array([50, 10, 20]),
             }
         )
-        storage._write_dataset(
-            'households',
-            {
+        storage.write_table(
+            table_name='households',
+            table_data={
                 'household_id': array([1, 2, 3, 4]),
                 'is_high_income': array([1, 0, 1, 0]),
             }
         )
-        storage._write_dataset(
-            'urbansim_constants',
-            {
+        storage.write_table(
+            table_name='urbansim_constants',
+            table_data={
                 "walking_distance_circle_radius": array([150]),
                 'cell_size': array([150]),
                 'low_income_fraction': array([.25]),

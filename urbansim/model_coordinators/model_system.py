@@ -40,7 +40,7 @@ from opus_core.store.mysql_database_server import MysqlDatabaseServer
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
 
-
+# TODO: This file has syntax errors, is it working?
 class ModelSystem(object):
     """
     Uses the information in configuration to run/estimate a set of models.

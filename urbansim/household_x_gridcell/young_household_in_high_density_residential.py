@@ -50,23 +50,23 @@ class Tests(opus_unittest.OpusTestCase):
     def test_most_of_tree(self):
         storage = StorageFactory().get_storage('dict_storage')        
         
-        storage._write_dataset(
-            'gridcells',
-            {
+        storage.write_table(
+            table_name='gridcells',
+            table_data={
                 'grid_id': array([1,2,3]),
                 'is_in_development_type_group_high_density_residential': array([0,1,1]),
             }
         )
-        storage._write_dataset(
-            'households',
-            {
+        storage.write_table(
+            table_name='households',
+            table_data={
                 'household_id': array([1,2,3,4,5,6]),
                 'age_of_head': array([30,31,22,65,100,25]), # so [1,0,1,0,0,1] for is_young
             }
         )
-        storage._write_dataset(
-            'urbansim_constants',
-            {
+        storage.write_table(
+            table_name='urbansim_constants',
+            table_data={
                 "young_age": array([30]),
             }
         )
@@ -92,23 +92,23 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         storage = StorageFactory().get_storage('dict_storage')        
         
-        storage._write_dataset(
-            'gridcells',
-            {
+        storage.write_table(
+            table_name='gridcells',
+            table_data={
                 'grid_id': array([1,2,3]),
                 'is_in_development_type_group_high_density_residential': array([0,1,1]),
             }
         )
-        storage._write_dataset(
-            'households',
-            {
+        storage.write_table(
+            table_name='households',
+            table_data={
                 'household_id': array([1,2,3,4,5,6]),
                 'is_young': array([1,0,1,0,0,1])
             }
         )
-        storage._write_dataset(
-            'urbansim_constants',
-            {
+        storage.write_table(
+            table_name='urbansim_constants',
+            table_data={
                 "young_age": array([30]),
             }
         )

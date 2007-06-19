@@ -48,16 +48,16 @@ class Tests(opus_unittest.OpusTestCase):
         # that the corresponding value is also 0
         storage = StorageFactory().get_storage('dict_storage')        
         
-        storage._write_dataset(
-            'gridcells',
-            {
+        storage.write_table(
+            table_name='gridcells',
+            table_data={
                 'grid_id': array([1,2,3,4]),
                 'ln_residential_units_within_walking_distance': array([log(7), log(100), 0, log(24)]),
             }
         )
-        storage._write_dataset(
-            'households',
-            {
+        storage.write_table(
+            table_name='households',
+            table_data={
                 'household_id': array([1, 2, 3]),
                 'persons': array([4, 1, 10]),
             }
@@ -78,10 +78,5 @@ class Tests(opus_unittest.OpusTestCase):
         self.assert_(ma.allclose(values, should_be, rtol=1e-7), 
                      msg="Error in " + self.variable_name)
         
-        
-        persons = array([4, 1, 10])
-        ln_residential_units_within_walking_distance = array([log(7), log(100), 0, log(24)])
-        
-
 if __name__=='__main__':
     opus_unittest.main()

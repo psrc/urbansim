@@ -43,9 +43,9 @@ class Tests(opus_unittest.OpusTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         job_building_types_table_name = 'job_building_types'        
-        storage._write_dataset(
-            out_table_name = job_building_types_table_name,
-            values = {
+        storage.write_table(
+            table_name=job_building_types_table_name,
+            table_data={
                 'id':array([3,2]), 
                 'name': array(['governmental', 'commercial'])
                 }
