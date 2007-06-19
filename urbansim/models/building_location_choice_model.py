@@ -343,10 +343,11 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModelMember):
             specification = None
         return (specification, idx_new_buildings)
 
-    def modify_agents_size(self, agent_set, size, index):
+    def modify_agents_size(self, agent_set, size, index, non_residential_attr_name="sqft", 
+                           residential_attr_name="residential_units"):
         if re.search("sqft", self.units_full_name):
-            attr_name = "sqft"
+            attr_name = non_residential_attr_name
         else:
-            attr_name = "residential_units"
+            attr_name = residential_attr_name
         agent_set.modify_attribute(attr_name, size, index)
         agent_set.compute_variables(self.units_full_name, dataset_pool = self.dataset_pool)

@@ -33,6 +33,11 @@ class BuildingLocationChoiceModel(UrbansimBuildingLocationChoiceModel):
 
         return self.get_weights_for_sampling_locations(agent_set, agents_index)
 
+    def modify_agents_size(self, agent_set, size, index, non_residential_attr_name="building_sqft", 
+                           residential_attr_name="residential_units"):
+        UrbansimBuildingLocationChoiceModel.modify_agents_size(self, agent_set, size, index, non_residential_attr_name, 
+                                                               residential_attr_name)
+        
     def prepare_for_estimate(self, add_member_prefix=True,
                              specification_dict=None,
                              specification_storage=None,
