@@ -21,6 +21,7 @@ try:
     # later update the ui import to:   from enthought.traits.ui.api import Item, Group, View, EnumEditor, Handler, TreeEditor, TreeNode, BooleanEditor
     from enthought.traits.ui.menu import Action, Menu, MenuBar, CloseAction, HelpAction
 except:
+    from opus_core.logger import logger
     logger.log_warning('Could not load traits.ui. Skipping %s!' % __file__)
 else:
     import wx, os, sys, thread, webbrowser
