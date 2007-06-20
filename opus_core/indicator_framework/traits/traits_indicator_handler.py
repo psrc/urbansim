@@ -32,7 +32,7 @@ else:
 
     from opus_core.indicator_framework.traits.traits_image_types import TraitsAbstractIndicator
     from opus_core.indicator_framework.traits.traits_image_types import TraitsMap, TraitsChart, TraitsTable
-    from opus_core.indicator_framework.traits.traits_image_types import TraitsDbfExport, TraitsLorenz
+    from opus_core.indicator_framework.traits.traits_image_types import TraitsLorenz
     
     from opus_core.indicator_framework.gui_utilities import display_message_dialog
     
@@ -181,7 +181,7 @@ else:
                                     'Tab-separated table', 
                                     'Matplotlib map',
                                     'Chart',
-                                    'Dbf export',
+                                    'Dbf table',
                                     'Lorenz curve'
                                 ]),
                          style = 'simple',),
@@ -229,8 +229,9 @@ else:
                 indicator = TraitsMap()
             elif new_output_type == 'Chart':
                 indicator = TraitsChart()
-            elif new_output_type == 'Dbf export':
-                indicator = TraitsDbfExport()
+            elif new_output_type == 'Dbf table':
+                indicator = TraitsTable()
+                indicator.output_type = 'dbf'
             elif new_output_type == 'Lorenz curve':
                 indicator = TraitsLorenz()
             else:

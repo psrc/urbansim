@@ -25,6 +25,7 @@ class Table(AbstractIndicator):
 
     def __init__(self, source_data, dataset_name, attribute, 
                  years = None, expression = None, name = None,
+                 #decimal_places = 4,
                  output_type = 'csv'):
         
         if output_type not in ['dbf', 'csv', 'tab']:
@@ -33,12 +34,13 @@ class Table(AbstractIndicator):
         AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, expression, name)
         
         self.output_type = output_type
+        #self.decimal_places = decimal_places
         
-        storage_factory = StorageFactory()
-        
-        self.store = storage_factory.get_storage(
+        self.store = StorageFactory().get_storage(
             type = self.output_type + '_storage',
-            storage_location = self.source_data.get_indicator_directory())
+            storage_location = self.source_data.get_indicator_directory(),
+            #digits_to_right_of_decimal = self.decimal_places
+        )
         
     def is_single_year_indicator_image_type(self):
         return False
@@ -55,7 +57,9 @@ class Table(AbstractIndicator):
             return 'dbf'
 
     def _get_additional_metadata(self):
-        return  [('output_type',self.output_type)]
+        return  [
+                 #('decimal_places',self.decimal_places),
+                 ('output_type',self.output_type)]
         
     def _create_indicator(self, years):
         """Create a table for the given indicator, save it to the cache

@@ -18,8 +18,7 @@ from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfi
 from opus_core.indicator_framework import SourceData
 from opus_core.indicator_framework import Map, GeotiffMap, ArcGeotiffMap
 from opus_core.indicator_framework import Chart, LorenzCurve
-from opus_core.indicator_framework import Table, DatasetTable, DbfExport
-
+from opus_core.indicator_framework import Table, DatasetTable
 '''-------------------------
    ------  SourceData ------
 -------------------------------
@@ -104,7 +103,8 @@ Table
     expression:
         See below
     output_type:
-        Tab or comma-separated output (tab/csv)
+        Tab, comma-separated output, or dbf (tab/csv/dbf). 
+        DBF Requires Dbfpy.
 
 --------------
 DatasetTable
@@ -132,16 +132,6 @@ GeotiffMap
     attribute: 
         The fully qualified opus path of the indicator. If
         an expression is specified, this field is optional.
-
---------------
-DbfExport
-    Outputs the indicator to DBF format. Requires Dbfpy.
---------------
-    attribute: 
-        The fully qualified opus path of the indicator. If
-        an expression is specified, this field is optional.
-    decimal_places:
-        The number of decimal places that should be outputted.
         
 --------------
 ArcGeotiffMap
@@ -222,11 +212,11 @@ indicators = [
        output_type = 'tab'
        ),  
 
-   DbfExport(
+   Table(
        source_data = source_data,
        dataset_name = 'zone',
        attribute = 'urbansim.zone.industrial_sqft',
-       decimal_places = 4,
+       output_type = 'dbf',
        ), 
               
    GeotiffMap(
