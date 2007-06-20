@@ -20,7 +20,7 @@ from time import strftime, localtime
 from opus_core.logger import logger
 import cPickle as pickle
 
-from opus_core.indicator_framework import IndicatorMetaData
+from opus_core.indicator_framework.utilities import IndicatorMetaData
 from opus_core.indicator_framework import SourceData
 from opus_core.indicator_framework import AbstractIndicator
 

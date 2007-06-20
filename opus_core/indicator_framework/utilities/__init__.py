@@ -13,5 +13,5 @@
 # 
 
 from opus_core.indicator_framework.utilities.gui_utilities import display_message_dialog
-
+from opus_core.indicator_framework.utilities.indicator_meta_data import IndicatorMetaData
 
