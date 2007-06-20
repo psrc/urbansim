@@ -62,14 +62,12 @@
 	</target>
 
 	<target name="copy-to-webserver">
-		<copy todir="${webdir}/docs/latex">
-			<fileset dir="${basedir}/docs">
-				<exclude name="**/*.tex" />
-				<exclude name="**/*.sty" />
-				<exclude name="**/*.cls" />
-				<exclude name="**/*.ps" />
-			</fileset>
-		</copy>
+		<move file="${basedir}/docs/latex/userguide.pdf" todir="${webdir}/docs" />
+		<move file="${basedir}/docs/latex/userguide" tofile="${webdir}/docs/html" />
+		<move file="${basedir}/docs/latex/tutorials/run-eugene-model.pdf" todir="${webdir}/docs/tutorials" />
+		<move file="${basedir}/docs/latex/tutorials/run-eugene-model" tofile="${webdir}/docs/tutorials/run-eugene-model" />
+		<move file="${basedir}/docs/latex/tutorials/lorenz-curve.pdf" todir="${webdir}/docs/tutorials" />
+		<move file="${basedir}/docs/latex/tutorials/lorenz-curve" tofile="${webdir}/docs/tutorials/lorenz-curve" />
 	</target>
 
 	<target name="cruisecontrol" depends="build-latex-docs, build-tutorials, copy-to-webserver" />
