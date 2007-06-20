@@ -21,7 +21,7 @@ try:
 except:
     logger.log_warning('Could not load traits.ui. Skipping %s!' % __file__)
 else:
-    from opus_core.indicator_framework.gui_utilities import display_message_dialog
+    from opus_core.indicator_framework.utilities import display_message_dialog
     from opus_core.indicator_framework import AbstractIndicator
     from opus_core.variables.variable_name import VariableName
     

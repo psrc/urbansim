@@ -28,7 +28,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 
-from opus_core.indicator_framework.gui_utilities import display_message_dialog
+from opus_core.indicator_framework.utilities import display_message_dialog
 from opus_core.indicator_framework.source_data import SourceData
 
 

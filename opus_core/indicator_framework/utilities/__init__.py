@@ -12,9 +12,6 @@
 # other acknowledgments.
 # 
 
-from opus_core.indicator_framework.source_data import SourceData
-from opus_core.indicator_framework.abstract_indicator import AbstractIndicator
-from opus_core.indicator_framework.indicator_meta_data import IndicatorMetaData
-from opus_core.indicator_framework.indicator_results import IndicatorResults
-from opus_core.indicator_framework.indicator_factory import IndicatorFactory
+from opus_core.indicator_framework.utilities.gui_utilities import display_message_dialog
+
 
