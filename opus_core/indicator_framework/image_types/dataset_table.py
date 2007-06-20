@@ -56,13 +56,14 @@ class DatasetTable(AbstractIndicator):
                  ('exclude_condition',self.exclude_condition)]
     
     def get_file_name(self, 
-                      year = None, 
+                      year, 
                       extension = None,
                       suppress_extension_addition = False):
         '''returns the file name for the outputted indicator'''
         
         if extension is None:
             extension = self.get_file_extension()
+            
         file_name = '%s__dataset_table__%s__%i'%(
             self.dataset_name,
             self.name,
@@ -89,21 +90,18 @@ class DatasetTable(AbstractIndicator):
            contains data for only one year and one dataset.
         '''
 
-        attributes = self.attributes
-        
         dataset = self._get_dataset(year)
+        
         id_attributes = dataset.get_id_name()
-        for id_attr_name in id_attributes:
-            if id_attr_name not in attributes:
-                attributes = [id_attr_name] + attributes
-                
-        id_columns = []
-        for col in range(len(attributes)):
-            attr_name = attributes[col]
-            if attr_name in id_attributes:
-                id_columns.append(col)
-                
-        id_attributes = dataset.get_id_attribute()
+        non_id_attributes = []
+
+        for attribute_name in self.attributes:
+            if attribute_name not in id_attributes:
+                non_id_attributes.append(attribute_name)
+   
+        attributes = id_attributes + non_id_attributes   
+        id_columns = [i for i in range(len(id_attributes))]
+    
         cols = []
         col_titles = []
         
@@ -123,10 +121,20 @@ class DatasetTable(AbstractIndicator):
         for i in range(len(col_titles)):
             attribute_vals[col_titles[i]] = cols[i]
         
-        self.store.write_table(
-            table_name=self.get_file_name(year = year, suppress_extension_addition = True),
-            table_data=attribute_vals,
-            )
+        
+        write_resources = {
+           'out_table_name':self.get_file_name(year, suppress_extension_addition=True),
+           'values':attribute_vals,
+           'fixed_column_ordering':col_titles,
+           'append_type_info':False
+           }
+                 
+        self.store.write_dataset(write_resources)               
+        
+#        self.store.write_table(
+#            table_name=self.get_file_name(year = year, suppress_extension_addition = True),
+#            table_data=attribute_vals,
+#            )
 
         return self.get_file_path(year = year)
     

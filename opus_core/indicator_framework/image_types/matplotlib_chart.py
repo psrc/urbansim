@@ -121,7 +121,7 @@ else:
     
     class Tests(AbstractIndicatorTest):
             
-        def skip_test_create_indicator(self):
+        def test_create_indicator(self):
             
             indicator_path = os.path.join(self.temp_cache_path, 'indicators')
             self.assert_(not os.path.exists(indicator_path))
