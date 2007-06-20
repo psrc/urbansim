@@ -21,8 +21,8 @@ try:
 except:
     logger.log_warning('Could not load traits.ui. Skipping %s!' % __file__)
 else:
-    from opus_core.indicator_framework.image_types.dbf_export import DbfExport
-    from opus_core.indicator_framework.traits.traits_abstract_indicator import TraitsAbstractIndicator
+    from opus_core.indicator_framework.image_types import DbfExport
+    from opus_core.indicator_framework.traits import TraitsAbstractIndicator
     
     class TraitsDbfExport(TraitsAbstractIndicator):
         '''The traits version of DbfExport'''

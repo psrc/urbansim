@@ -16,7 +16,7 @@ from opus_core.logger import logger
 import os, re, sys, time, traceback
 from copy import copy
 
-from opus_core.indicator_framework.abstract_indicator import AbstractIndicator
+from opus_core.indicator_framework import AbstractIndicator
 
 from numpy import newaxis
 try:

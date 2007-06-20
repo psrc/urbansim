@@ -22,8 +22,8 @@ import os, re, sys, time, traceback
 from copy import copy
 from opus_core.misc import directory_path_from_opus_path
 
-from opus_core.indicator_framework.image_types.geotiff_map import GeotiffMap
-from opus_core.indicator_framework.abstract_indicator import AbstractIndicator
+from opus_core.indicator_framework.image_types import GeotiffMap
+from opus_core.indicator_framework import AbstractIndicator
 
 class ArcGeotiffMap(AbstractIndicator):
 

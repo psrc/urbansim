@@ -12,3 +12,9 @@
 # other acknowledgments.
 # 
 
+from opus_core.indicator_framework.traits.traits_abstract_indicator import TraitsAbstractIndicator
+from opus_core.indicator_framework.traits.traits_image_types.traits_map import TraitsMap
+from opus_core.indicator_framework.traits.traits_image_types.traits_chart import TraitsChart
+from opus_core.indicator_framework.traits.traits_image_types.traits_table import TraitsTable
+from opus_core.indicator_framework.traits.traits_image_types.traits_dbf_export import TraitsDbfExport
+from opus_core.indicator_framework.traits.traits_image_types.traits_lorenz import TraitsLorenz

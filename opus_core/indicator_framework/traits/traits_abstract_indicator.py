@@ -22,7 +22,7 @@ except:
     logger.log_warning('Could not load traits.ui. Skipping %s!' % __file__)
 else:
     from opus_core.indicator_framework.gui_utilities import display_message_dialog
-    from opus_core.indicator_framework.abstract_indicator import AbstractIndicator
+    from opus_core.indicator_framework import AbstractIndicator
     from opus_core.variables.variable_name import VariableName
     
     class TraitsAbstractIndicator(HasTraits):
@@ -107,9 +107,9 @@ else:
             return years
                     
     from opus_core.tests import opus_unittest
-    from opus_core.indicator_framework.source_data import SourceData
+    from opus_core.indicator_framework import SourceData
     from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-    from opus_core.indicator_framework.abstract_indicator import AbstractIndicator    
+    from opus_core.indicator_framework import AbstractIndicator    
     
     class TraitsAbstractIndicatorTest(opus_unittest.OpusTestCase):
         def test_detraitify(self):

@@ -18,7 +18,7 @@ from copy import copy
 
 from numpy import newaxis, concatenate
 
-from opus_core.indicator_framework.abstract_indicator import AbstractIndicator
+from opus_core.indicator_framework import AbstractIndicator
 from opus_core.storage_factory import StorageFactory
 
 class Table(AbstractIndicator):

@@ -31,6 +31,7 @@ from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfi
 from opus_core.indicator_framework.gui_utilities import display_message_dialog
 from opus_core.indicator_framework.source_data import SourceData
 
+
 from numpy import array, subtract, concatenate
 
 class AbstractIndicator(object):
@@ -247,7 +248,7 @@ class AbstractIndicator(object):
         return indicator_vals
 
     def _compute_indicator(self, attribute, year):
-        attribute = attribute .replace('DDDD',repr(year))
+        attribute = attribute.replace('DDDD',repr(year))
         
         short_name = VariableName(attribute).get_alias()
         dataset = self._get_dataset(year = year)
@@ -277,11 +278,6 @@ class AbstractIndicator(object):
                          
         if fetch_dataset:
             #only compute dataset if its necessary
-    #        if self.dataset is not None:
-                #memory cleanup...
-     #           del self.dataset
-     #           collect()
-            
             SimulationState().set_current_time(year)
             SessionConfiguration().get_dataset_pool().remove_all_datasets()
             
@@ -516,22 +512,11 @@ class AbstractIndicator(object):
                         non_constructor_attr[name] = value
                     else:
                         params[name] = value
-        f.close()
-                
-        #create indicator
-        #TODO: better way to comb through and import available image types
-        try:
-            from opus_core.indicator_framework.image_types.table import Table
-            from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
-            from opus_core.indicator_framework.image_types.dbf_export import DbfExport
-            from opus_core.indicator_framework.image_types.matplotlib_map import Map
-            from opus_core.indicator_framework.image_types.matplotlib_chart import Chart
-            from opus_core.indicator_framework.image_types.matplotlib_lorenzcurve import LorenzCurve
-            from opus_core.indicator_framework.image_types.geotiff_map import GeotiffMap
-            from opus_core.indicator_framework.image_types.arcgeotiff_map import ArcGeotiffMap
-        except:
-            pass
 
+        f.close()
+
+        from opus_core.indicator_framework.image_types import *
+        
         indicator = eval('%s(**params)'%indicator_class)
         for attr, value in non_constructor_attr.items():
             if value == 'None':

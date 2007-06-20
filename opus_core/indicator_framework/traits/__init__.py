@@ -12,3 +12,7 @@
 # other acknowledgments.
 # 
 
+from opus_core.indicator_framework.traits.traits_source_data import TraitsSourceData
+from opus_core.indicator_framework.traits.traits_abstract_indicator import TraitsAbstractIndicator
+from opus_core.indicator_framework.traits.traits_indicator_handler import TraitsIndicatorHandler
+

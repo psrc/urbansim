@@ -15,14 +15,10 @@
 # script to produce a number of indicators
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.indicator_framework.source_data import SourceData
-from opus_core.indicator_framework.image_types.matplotlib_map import Map
-from opus_core.indicator_framework.image_types.matplotlib_chart import Chart
-from opus_core.indicator_framework.image_types.table import Table
-from opus_core.indicator_framework.image_types.geotiff_map import GeotiffMap
-from opus_core.indicator_framework.image_types.arcgeotiff_map import ArcGeotiffMap
-from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
-from opus_core.indicator_framework.image_types.dbf_export import DbfExport
+from opus_core.indicator_framework import SourceData
+from opus_core.indicator_framework import Map, GeotiffMap, ArcGeotiffMap
+from opus_core.indicator_framework import Chart, LorenzCurve
+from opus_core.indicator_framework import Table, DatasetTable, DbfExport
 
 '''-------------------------
    ------  SourceData ------

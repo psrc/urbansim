@@ -20,9 +20,9 @@ from time import strftime, localtime
 from opus_core.logger import logger
 import cPickle as pickle
 
-from opus_core.indicator_framework.indicator_meta_data import IndicatorMetaData
-from opus_core.indicator_framework.source_data import SourceData
-from opus_core.indicator_framework.abstract_indicator import AbstractIndicator
+from opus_core.indicator_framework import IndicatorMetaData
+from opus_core.indicator_framework import SourceData
+from opus_core.indicator_framework import AbstractIndicator
 
 class IndicatorResults(object):
     """  Takes the descriptions and locations of precomputed indicators and generates an html file to browse them.

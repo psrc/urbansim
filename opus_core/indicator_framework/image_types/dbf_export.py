@@ -14,7 +14,7 @@
 
 from opus_core.storage_factory import StorageFactory
 
-from opus_core.indicator_framework.abstract_indicator import AbstractIndicator
+from opus_core.indicator_framework import AbstractIndicator
 
 class DbfExport(AbstractIndicator):
 

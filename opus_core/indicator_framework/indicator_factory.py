@@ -16,9 +16,9 @@
 import os, webbrowser
 from time import strftime,localtime
 
-from opus_core.indicator_framework.source_data import SourceData
-from opus_core.indicator_framework.indicator_results import IndicatorResults
-from opus_core.indicator_framework.gui_utilities import display_message_dialog
+from opus_core.indicator_framework import SourceData
+from opus_core.indicator_framework import IndicatorResults
+from opus_core.indicator_framework import display_message_dialog
 
 from opus_core.logger import logger
 

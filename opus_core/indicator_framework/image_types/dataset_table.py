@@ -14,7 +14,7 @@
 
 from numpy import array, logical_and, logical_not
 
-from opus_core.indicator_framework.abstract_indicator import AbstractIndicator
+from opus_core.indicator_framework import AbstractIndicator
 from opus_core.variables.variable_name import VariableName
 from opus_core.storage_factory import StorageFactory
 

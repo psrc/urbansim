@@ -22,7 +22,7 @@ else:
 
     import os, sys
     from opus_core.configurations.abstract_configuration import AbstractConfiguration
-    from opus_core.indicator_framework.source_data import SourceData
+    from opus_core.indicator_framework import SourceData
     from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
     
     class TraitsSourceData(AbstractConfiguration):
