@@ -41,6 +41,7 @@ class CachingConfiguration(Configuration):
             'household_characteristics_for_ht',
             'parcels',
             'zones',
+            "tracts",
             "households_for_estimation",
             "business_for_estimation",
             "persons",

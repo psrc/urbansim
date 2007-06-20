@@ -24,8 +24,8 @@ from opus_core.indicator_framework.image_types.table import Table
 #from opus_core.indicator_framework.image_types.arcgeotiff_map import ArcGeotiffMap
 from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
 
-run_description = '(run 2554 - baseline 05/11/2007)'
-cache_directory = r'/urbansim_cache/sanfrancisco/run_2554.2007_05_11_11_39'  #'/workspace/urbansim_cache/sanfrancisco/2007_04_23_08_37'
+run_description = '(run 3036 - baseline 06/20/2007)'
+cache_directory = r'/urbansim_cache/sanfrancisco/run_3036.2007_06_19_22_34/'  #'/workspace/urbansim_cache/sanfrancisco/2007_04_23_08_37'
 
 source_data = SourceData(
     cache_directory = cache_directory,
@@ -113,6 +113,33 @@ single_year_requests = [
        ],
        exclude_condition = '==0' 
    ),
+
+       DatasetTable(
+       source_data = source_data,
+       dataset_name = 'zone',
+       #name = '',
+       attributes = [ 
+                     'households_with_0_workers=zone.aggregate(sanfrancisco.building.number_of_households_with_0_workers, intermediates=[parcel])',
+                     'households_with_1_worker =zone.aggregate(sanfrancisco.building.number_of_households_with_1_workers, intermediates=[parcel])',
+                     'households_with_2_workers=zone.aggregate(sanfrancisco.building.number_of_households_with_2_workers, intermediates=[parcel])',
+                     'households_with_3_workers=zone.aggregate(sanfrancisco.building.number_of_households_with_3_workers, intermediates=[parcel])',
+                     'households_with_4_workers=zone.aggregate(sanfrancisco.building.number_of_households_with_4_workers, intermediates=[parcel])',
+                     'households_with_5_workers=zone.aggregate(sanfrancisco.building.number_of_households_with_5_workers, intermediates=[parcel])',
+                     'households_with_6_workers=zone.aggregate(sanfrancisco.building.number_of_households_with_6_workers, intermediates=[parcel])',
+                     'households_with_7_workers=zone.aggregate(sanfrancisco.building.number_of_households_with_7_workers, intermediates=[parcel])',
+                     'total_households=zone.aggregate(sanfrancisco.building.number_of_households, intermediates=[parcel])',
+                     'total_population=zone.aggregate(sanfrancisco.building.population, intermediates=[parcel])',                                     
+                     'sector_1_employment=zone.aggregate(sanfrancisco.building.employment_of_sector_1, intermediates=[parcel])',
+                     'sector_2_employment=zone.aggregate(sanfrancisco.building.employment_of_sector_2, intermediates=[parcel])',
+                     'sector_3_employment=zone.aggregate(sanfrancisco.building.employment_of_sector_3, intermediates=[parcel])',
+                     'sector_4_employment=zone.aggregate(sanfrancisco.building.employment_of_sector_4, intermediates=[parcel])',
+                     'sector_5_employment=zone.aggregate(sanfrancisco.building.employment_of_sector_5, intermediates=[parcel])',
+                     'sector_6_employment=zone.aggregate(sanfrancisco.building.employment_of_sector_6, intermediates=[parcel])',
+                     'total_employment=zone.aggregate(sanfrancisco.building.employment, intermediates=[parcel])',
+       ],
+       exclude_condition = '==0' 
+   ),
+
 
 ]
 

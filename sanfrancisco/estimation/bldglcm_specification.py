@@ -202,11 +202,11 @@ specification['residential'] = {
 
     3:   #FLATS
             [
-    "ln_land_area_unit = ln(parcel.area/parcel.aggregate(sanfrancisco.building.residential_units))",
+#    "ln_land_area_unit = ln(parcel.area/parcel.aggregate(sanfrancisco.building.residential_units))",
     "ln_hholds_per_acre_in_zone=ln(parcel.disaggregate(sanfrancisco.zone.number_of_households)/(parcel.area*0.0000229568411))", 
     "ln_jobs_per_acre_in_zone=ln(parcel.disaggregate(sanfrancisco.zone.employment)/(parcel.area*0.0000229568411))", 
 #    "parcel.land_value",  
-    "ln_land_area = ln(parcel.area)",
+#    "ln_land_area = ln(parcel.area)",
 #     "ln_price = ln(parcel.aggregate(building.unit_price, function=mean))",
 #    "ln_price = ln(sanfrancisco.building.unit_price)",
      "ln_price = ln(parcel.aggregate(building.unit_price, function=mean))",
@@ -214,7 +214,7 @@ specification['residential'] = {
 #    "lot_area=parcel.disaggregate(parcel.area)",             
     "bus_travel_time_weighted_access_by_population=parcel.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_by_population,intermediates=[parcel])",             
     "bus_travel_time_weighted_access_to_employment=parcel.disaggregate(sanfrancisco.zone.bus_travel_time_weighted_access_to_employment,intermediates=[parcel])",             
-    "employment_within_20_minutes_bus_travel_time=parcel.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,intermediates=[parcel])",             
+#    "employment_within_20_minutes_bus_travel_time=parcel.disaggregate(sanfrancisco.zone.employment_within_20_minutes_bus_travel_time,intermediates=[parcel])",             
 #    "sector_3_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_3_from_building,intermediates=[parcel])",    
 #    "sector_4_employment_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_employment_of_sector_4_from_building,intermediates=[parcel])",
 #    "sector_3_businesses_in_zone=building.disaggregate(sanfrancisco.zone.aggregate_number_of_businesses_of_sector_3_from_building,intermediates=[parcel])",
