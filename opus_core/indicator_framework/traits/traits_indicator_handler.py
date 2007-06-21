@@ -31,9 +31,9 @@ else:
     from opus_core.indicator_framework import IndicatorFactory
     from opus_core.indicator_framework.traits import TraitsSourceData
 
-    from opus_core.indicator_framework.traits.traits_image_types import TraitsAbstractIndicator
-    from opus_core.indicator_framework.traits.traits_image_types import TraitsMap, TraitsChart, TraitsTable
-    from opus_core.indicator_framework.traits.traits_image_types import TraitsLorenz
+    from opus_core.indicator_framework.traits import TraitsAbstractIndicator
+    from opus_core.indicator_framework.traits.traits_image_types \
+        import TraitsMap, TraitsChart, TraitsTable, TraitsLorenz
     
     from opus_core.indicator_framework.utilities import display_message_dialog
     

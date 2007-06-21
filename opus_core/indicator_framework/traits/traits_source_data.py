@@ -22,8 +22,9 @@ else:
 
     import os, sys
     from opus_core.configurations.abstract_configuration import AbstractConfiguration
-    from opus_core.indicator_framework import SourceData
     from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
+    
+    from opus_core.indicator_framework import SourceData
     
     class TraitsSourceData(AbstractConfiguration):
         """Configuration information for computing a set of indicators.  This uses the
