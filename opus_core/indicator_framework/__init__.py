@@ -12,9 +12,9 @@
 # other acknowledgments.
 # 
 
-from opus_core.indicator_framework.source_data import SourceData
-from opus_core.indicator_framework.abstract_indicator import AbstractIndicator
-from opus_core.indicator_framework.indicator_meta_data import IndicatorMetaData
-from opus_core.indicator_framework.indicator_results import IndicatorResults
-from opus_core.indicator_framework.indicator_factory import IndicatorFactory
+from source_data import SourceData
+from abstract_indicator import AbstractIndicator
+from indicator_results import IndicatorResults
+from indicator_factory import IndicatorFactory
+
 

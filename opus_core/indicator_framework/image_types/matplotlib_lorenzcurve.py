@@ -128,7 +128,7 @@ class LorenzCurve(AbstractIndicator):
 import os
 from opus_core.tests import opus_unittest
 from numpy import allclose
-from opus_core.indicator_framework.abstract_indicator import AbstractIndicatorTest
+from opus_core.indicator_framework.utilities import AbstractIndicatorTest
 
 class Tests(AbstractIndicatorTest):
             

@@ -13,24 +13,20 @@
 # other acknowledgments.
 # 
 
-from opus_core.logger import logger
-
-import os, sys, traceback, re
+import os, sys, re
 from time import strftime, localtime, time
-from copy import copy, deepcopy
+from copy import copy
 from gc import collect
 
 from opus_core.variables.variable_name import VariableName
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.storage_factory import StorageFactory
-from opus_core.dataset_factory import DatasetFactory
 from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
-from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
+from opus_core.logger import logger
 
 from opus_core.indicator_framework.utilities import display_message_dialog
-from opus_core.indicator_framework.source_data import SourceData
-
+from opus_core.indicator_framework import SourceData
 
 from numpy import array, subtract, concatenate
 
@@ -437,167 +433,9 @@ class AbstractIndicator(object):
         f.close()
         
         return lines
-    
-    def create_from_metadata(cls, file_path):
-        '''creates and returns an indicator from the file pointed to in file_path 
-        '''
 
-        #TODO: If the additional child parameters are not strings, the current implementation will fail.
-        
-        f = open(file_path)
-        
-        version = f.readline()
-        indicator_class = f.readline().strip()
-        indicator_class = indicator_class[1:-1]
-        
-        in_expression = False
-        in_source_data = False
-        
-        expression = None
-        source_data_params = {}
-        
-        non_constructor_attr = {
-            'date_computed': None
-        }
-        
-        params = {}
-        
-        for line in f.readlines():
-            line = line.strip()
-            if line == '<expression>':
-                in_expression = True
-                expression = {}
-            elif line == '</expression>':
-                params['expression'] = expression
-                in_expression = False
-            elif line == '<source_data>':
-                in_source_data = True
-            elif line == '</source_data>':
-                source_data = SourceData(**source_data_params)
-                params['source_data'] = source_data
-                in_source_data = False
-            elif line != '</%s>'%indicator_class:
-                (name, value) = AbstractIndicator._extract_name_and_value(line)
-                
-                #TODO: figure out way for each object to know which values to 
-                #reinterpret from string
-                if name == 'years' or name == 'scale':
-                    if value == 'None' or value == '[]':
-                        value = []
-                    else:
-                        value = [int(y) for y in value[1:-1].split(',')]
-                elif name == 'attributes':
-                    if value == 'None' or value == '[]':
-                        value = []
-                    else: 
-                        value = [attr.strip().replace("'",'') for attr in value[1:-1].split(',')]
-                
-                if in_expression:
-                    expression[name] = value
-                elif in_source_data:
-                    if name == 'package_order':
-                        order = [eval(p) for p in value[1:-1].split(',')]
-                        
-                        pool = DatasetPoolConfiguration(
-                            package_order = order,
-                            package_order_exceptions = {},
-                        )
-                        source_data_params['dataset_pool_configuration'] = pool
-                    else:
-                        source_data_params[name] = value
-                else:
-                    if name == 'dataset_name':
-                        params['dataset_name'] = value
-                    elif name in non_constructor_attr:
-                        non_constructor_attr[name] = value
-                    else:
-                        params[name] = value
-
-        f.close()
-
-        from opus_core.indicator_framework.image_types import *
-        
-        indicator = eval('%s(**params)'%indicator_class)
-        for attr, value in non_constructor_attr.items():
-            if value == 'None':
-                value = None
-            indicator.__setattr__(attr,value)
-        return indicator 
-    
-    def _extract_name_and_value(cls, line):
-        '''takes a line of xml and returns attr name/value tuple'''
-        name_re = re.compile('<\w+>')
-        value_re = re.compile('>.*<')
-        
-        line = line.strip()
-        name = name_re.match(line).group()
-        name = name[1:-1]
-        value = value_re.search(line).group()
-        value = value[1:-1]
-        return (name, value)
-
-    #makes create_from_metadata and _extract_name_and_value a class method
-    create_from_metadata = classmethod(create_from_metadata)
-    _extract_name_and_value = classmethod(_extract_name_and_value)
-    
-    
-import os
-import tempfile
 from opus_core.tests import opus_unittest
-
-from shutil import copytree, rmtree
-
-from opus_core.resources import Resources
-from opus_core.variables.attribute_type import AttributeType
-from opus_core.opus_package_info import package
-
-from numpy import array
-
-class AbstractIndicatorTest(opus_unittest.OpusTestCase):
-    def setUp(self):
-        self.temp_cache_path = tempfile.mkdtemp(prefix='opus_tmp')    
-        self.temp_cache_path2 = tempfile.mkdtemp(prefix='opus_tmp')
-      
-        baseyear_dir = os.path.join(self.temp_cache_path, '1980')
-        storage = StorageFactory().get_storage('flt_storage', storage_location=baseyear_dir)
-        storage.write_dataset(Resources({
-           'out_table_name': 'tests',
-           'values': {
-               'id': array([1,2,3,4]),
-               'attribute': array([5,6,7,8]),
-               'attribute2': array([50,60,70,80])
-               },
-           'attrtype':{
-               'id': AttributeType.PRIMARY,
-               'attribute': AttributeType.PRIMARY,
-               'attribute2': AttributeType.PRIMARY, 
-               }
-           }))
-        
-        copytree(baseyear_dir,  os.path.join(self.temp_cache_path2, '1980'))
-        
-        self.cross_scenario_source_data = SourceData(
-            cache_directory = self.temp_cache_path,
-            comparison_cache_directory = self.temp_cache_path2,
-            years = [1980],
-            dataset_pool_configuration = DatasetPoolConfiguration(
-                package_order=['opus_core'],
-                package_order_exceptions={},
-            )
-        )
-        self.source_data = SourceData(
-            cache_directory = self.temp_cache_path,
-            years = [1980],
-            dataset_pool_configuration = DatasetPoolConfiguration(
-                package_order=['opus_core'],
-                package_order_exceptions={},
-            )
-        )
-                
-    def tearDown(self):
-        rmtree(self.temp_cache_path)
-        rmtree(self.temp_cache_path2)
-    
+from opus_core.indicator_framework.utilities import AbstractIndicatorTest
 
 class Tests(AbstractIndicatorTest):                
     def test__get_indicator_path(self):
@@ -656,43 +494,6 @@ class Tests(AbstractIndicatorTest):
             
             self.assertEqual(output,expected)
             
-    def test__read_write_metadata(self):
-        try:
-            from opus_core.indicator_framework.image_types.table import Table
-            from opus_core.indicator_framework.source_data import SourceData
-        except: pass
-        else:
-            
-            table = Table(
-                source_data = self.source_data,
-                attribute = 'xxx.yyy.population',
-                dataset_name = 'yyy',
-                output_type = 'tab',
-                years = [0,1] # Indicators are not actually being computed, so the years don't matter here.
-            )
-            
-#            table.create(False)
-            table._write_metadata()
-            metadata_file = table.get_file_name(extension = 'meta')
-            metadata_path = os.path.join(self.source_data.get_indicator_directory(),
-                                         metadata_file)
-            self.assertEqual(os.path.exists(metadata_path), True)
-            
-            expected_path = 'yyy__tab__population.meta'
-            self.assertEqual(metadata_file,expected_path)
-            
-            new_table = AbstractIndicator.create_from_metadata(metadata_path)
-            for attr in ['attribute','dataset_name',
-                         'output_type','date_computed',
-                         'years']:
-                old_val = table.__getattribute__(attr)
-                new_val = new_table.__getattribute__(attr)
-                self.assertEqual(old_val,new_val)
-            
-            self.assertEqual(table.source_data.cache_directory,
-                             new_table.source_data.cache_directory)
-            self.assertEqual(table.source_data.dataset_pool_configuration.package_order,
-                             new_table.source_data.dataset_pool_configuration.package_order)
 
     def test__output_types(self):
         try:
@@ -734,7 +535,6 @@ class Tests(AbstractIndicatorTest):
             for l in f.readlines():
                 (id, value) = l.split(',')
                 self.assertEqual(0, int(value.strip()))
-    
-    
+
 if __name__ == '__main__':
     opus_unittest.main()

@@ -16,9 +16,9 @@
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.indicator_framework import SourceData
-from opus_core.indicator_framework import Map, GeotiffMap, ArcGeotiffMap
-from opus_core.indicator_framework import Chart, LorenzCurve
-from opus_core.indicator_framework import Table, DatasetTable
+from opus_core.indicator_framework.image_types import Map, GeotiffMap, ArcGeotiffMap
+from opus_core.indicator_framework.image_types import Chart, LorenzCurve
+from opus_core.indicator_framework.image_types import Table, DatasetTable
 '''-------------------------
    ------  SourceData ------
 -------------------------------
@@ -279,7 +279,7 @@ indicators = [
 ]
 
 if __name__ == '__main__':
-    from opus_core.indicator_framework.indicator_factory import IndicatorFactory
+    from opus_core.indicator_framework import IndicatorFactory
 
     IndicatorFactory().create_indicators(
         indicators = indicators,

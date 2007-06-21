@@ -21,8 +21,10 @@ from opus_core.logger import logger
 import cPickle as pickle
 
 from opus_core.indicator_framework.utilities import IndicatorMetaData
+from opus_core.indicator_framework.utilities import IndicatorMetaDataParser
 from opus_core.indicator_framework import SourceData
 from opus_core.indicator_framework import AbstractIndicator
+
 
 class IndicatorResults(object):
     """  Takes the descriptions and locations of precomputed indicators and generates an html file to browse them.
@@ -170,7 +172,7 @@ class IndicatorResults(object):
             if len(filename) >= 5 and filename[-5:] == '.meta':
                 try:
                     meta_path = os.path.join(indicator_directory, filename)
-                    indicator = AbstractIndicator.create_from_metadata(meta_path)
+                    indicator = IndicatorMetaDataParser.create_from_metadata(meta_path)
                     indicators.append(indicator)
                 except: pass
         

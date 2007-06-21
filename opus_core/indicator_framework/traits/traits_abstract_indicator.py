@@ -109,7 +109,7 @@ else:
     from opus_core.tests import opus_unittest
     from opus_core.indicator_framework import SourceData
     from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-    from opus_core.indicator_framework import AbstractIndicator    
+    from opus_core.indicator_framework.abstract_indicator import AbstractIndicator    
     
     class TraitsAbstractIndicatorTest(opus_unittest.OpusTestCase):
         def test_detraitify(self):

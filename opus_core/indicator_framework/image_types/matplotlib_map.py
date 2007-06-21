@@ -72,17 +72,9 @@ class Map(AbstractIndicator):
         return file_path
 
 
-import os
-import tempfile
 from opus_core.tests import opus_unittest
-
-from shutil import copytree, rmtree
-
-from opus_core.opus_package_info import package
-from opus_core.configurations.dataset_description import DatasetDescription
-
-from opus_core.indicator_framework.source_data import SourceData
-from opus_core.indicator_framework.abstract_indicator import AbstractIndicatorTest
+from opus_core.indicator_framework import SourceData
+from opus_core.indicator_framework.utilities import AbstractIndicatorTest
 
 class Tests(AbstractIndicatorTest):
         

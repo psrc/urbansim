@@ -12,6 +12,7 @@
 # other acknowledgments.
 # 
 
-from opus_core.indicator_framework.utilities.gui_utilities import display_message_dialog
-from opus_core.indicator_framework.utilities.indicator_meta_data import IndicatorMetaData
-
+from gui_utilities import display_message_dialog
+from indicator_meta_data_parser import IndicatorMetaDataParser
+from indicator_meta_data import IndicatorMetaData
+from abstract_indicator_test import AbstractIndicatorTest
