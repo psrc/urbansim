@@ -16,7 +16,7 @@
 # this illustrates using traits-based configurations programatically
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.indicator_framework.source_data import SourceData
+from opus_core.indicator_framework import SourceData
 
 from opus_core.indicator_framework.image_types import Map, Chart, GeotiffMap, ArcGeotiffMap, LorenzCurve
 from opus_core.indicator_framework.image_types import Table, DatasetTable
@@ -72,12 +72,12 @@ single_year_requests = [
 #        dataset_name = 'large_area',
 #        source_data = source_data,
 #        ),
-#    Map(
-#        attribute = 'psrc.large_area.de_population_DDDD',
-#        scale = [1, 750000],
-#        dataset_name = 'large_area',
-#        source_data = source_data,
-#        ),
+    Map(
+        attribute = 'psrc.large_area.de_population_DDDD',
+        scale = [1, 750000],
+        dataset_name = 'large_area',
+        source_data = source_data,
+        ),
 #    Map(
 #        attribute = 'psrc.large_area.de_employment_DDDD',
 #        scale = [1, 700000],
@@ -499,7 +499,7 @@ multi_year_requests = [
     ]
 
 if __name__ == '__main__':
-    from opus_core.indicator_framework.indicator_factory import IndicatorFactory
+    from opus_core.indicator_framework import IndicatorFactory
 
     IndicatorFactory().create_indicators(
         indicators = single_year_requests,
