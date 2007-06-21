@@ -62,8 +62,8 @@
 	</target>
 
 	<target name="copy-to-webserver">
-		<move file="${basedir}/docs/latex/userguide.pdf" todir="${webdir}/docs" />
-		<move file="${basedir}/docs/latex/userguide" tofile="${webdir}/docs/html" />
+		<move file="${basedir}/docs/latex/userguide.pdf" tofile="${webdir}/docs/opus_userguide.pdf" />
+		<move file="${basedir}/docs/latex/userguide" tofile="${webdir}/docs/userguide" />
 		<move file="${basedir}/docs/latex/tutorials/run-eugene-model.pdf" todir="${webdir}/docs/tutorials" />
 		<move file="${basedir}/docs/latex/tutorials/run-eugene-model" tofile="${webdir}/docs/tutorials/run-eugene-model" />
 		<move file="${basedir}/docs/latex/tutorials/lorenz-curve.pdf" todir="${webdir}/docs/tutorials" />
