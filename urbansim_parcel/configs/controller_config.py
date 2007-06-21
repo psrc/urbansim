@@ -103,8 +103,8 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                    EmploymentLocationChoiceModelConfigurationCreator(
                                 location_set = "building",
                                 input_index = 'erm_index',
-                                estimation_weight_string = None,
-                                agents_for_estimation_table = "jobs",
+                                estimation_weight_string = "pre_2001=building.year_built<=2000",
+                                agents_for_estimation_table = "jobs_for_estimation",
                                 filter_for_estimation = "job.building_id",
                                 portion_to_unplace = 0,
                                 ).execute(),
