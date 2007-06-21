@@ -16,16 +16,18 @@ from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 from urbansim.functions import attribute_label
 
-class parcel_id(Variable):
-    """The parcel_id of household."""
-
-    gc_parcel_id = "parcel_id"
+class is_sector_DDD(Variable):
+    """whether the job is of sector id DDD."""
+    _return_type="int32"
+    def __init__(self, sector_id):
+        self.sector_id = sector_id
+        Variable.__init__(self)    
     
     def dependencies(self):
-        return ["_parcel_id = job.disaggregate(building.parcel_id)"]
+        return ["_is_of_sector = job.sector_id == %s" % self.sector_id]
         
     def compute(self,  dataset_pool):
-        return self.get_dataset().get_attribute("_parcel_id")
+        return self.get_dataset().get_attribute("_is_of_sector")
 
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
@@ -41,26 +43,14 @@ class Tests(opus_unittest.OpusTestCase):
             test_data={
                 "job":{
                     "job_id":array([1, 2, 3, 4, 5, 6, 7, 8]),
-                    "building_id":array([1, 2, 2, 2, 3, 3, 4, 5]),
-                    },
-                "building":{
-                    "building_id":array([1,2,3,4,5]),
-                    "parcel_id":  array([1,1,2,3,4])
-                    },
-                "parcel":{
-                     "parcel_id":array([1,2,3,4]),
-                     "zone_id":  array([1,3,2,2]),
-                     "parcel_sqft":array([0.1, 0.2, 0.4, 0.3]) * 43560.0,                     
-                 },
-                "zone":{
-                     "zone_id":array([1,2,3]),
-                 }             
-                 
+                    "sector_id":array([1, 2, 2, 2, 3, 3, 4, 5]),
+                    },                 
            }
         )
         
-        should_be = array([1, 1, 1, 1, 2, 2, 3, 4])
+        should_be = array([0, 1, 1, 1, 0, 0, 0, 0])
+        instance_name = 'urbansim_parcel.job.is_sector_2'
+        tester.test_is_equal_for_family_variable(self, should_be, instance_name)
 
-        tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 if __name__=='__main__':
     opus_unittest.main()
