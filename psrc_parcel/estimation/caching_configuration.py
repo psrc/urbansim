@@ -64,7 +64,7 @@ class CachingConfiguration(Configuration):
 
         return {
         #'cache_directory' : '/urbansim_cache/psrc_parcel_2005/cache_source', # change or leave out
-        'cache_directory' : '/workspace/urbansim_cache/psrc_parcel/estimation/',
+        'cache_directory' : '/workspace/urbansim_cache/psrc_parcel_lmwang/estimation/',
         'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
     #        cache_directory_root = '/tmp/urbcache/sandbox_runs/estimation',
             unroll_gridcells = False,

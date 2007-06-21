@@ -22,7 +22,7 @@ from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheC
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 
 my_configuration = {
-    'cache_directory' : '/urbansim_cache/psrc_parcel_2005/cache_source/', # change or leave out
+    'cache_directory' : '/urbansim_cache/psrc_parcel_lmwang/cache_source/', # change or leave out
     'output_configuration': DatabaseConfiguration(
         host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
         user_name     = os.environ.get('MYSQLUSERNAME',''),
