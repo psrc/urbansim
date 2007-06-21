@@ -43,16 +43,17 @@ class UnrollJobsFromEstablishments:
     def run(self, in_storage, out_storage, business_table="business", jobs_table="jobs"):
         
         # get attributes from the establisments table
-        business_dataset = BusinessDataset(in_storage=in_storage, in_table_name=business_table, id_name=[])
+        business_dataset = BusinessDataset(in_storage=in_storage, in_table_name=business_table, id_name="employer_id")
         business_sizes = business_dataset.get_attribute("jobs00").astype("int32")
-        sectors = business_dataset.get_attribute("psef_sector")
-        tazes = business_dataset.get_attribute("taz").astype("int32")
+        sectors = business_dataset.get_attribute("sector_id")
+        tazes = business_dataset.get_attribute("zone_id").astype("int32")
         building_ids = business_dataset.get_attribute("building_id")
         parcel_ids = business_dataset.get_attribute("parcel_id")
         home_based = business_dataset.get_attribute("home_based")
         building_sqft = business_dataset.get_attribute("building_sqft_10vac")
         join_flags = business_dataset.get_attribute("join_flag")
         taz_est = business_dataset.get_attribute("taz_est")
+        impute_sqft_flag = business_dataset.get_attribute("impute_building_sqft_flag")
         
         # inititalize jobs attributes
         total_size = business_sizes.sum()
@@ -65,6 +66,7 @@ class UnrollJobsFromEstablishments:
         jobs_data["sqft"] = resize(array([], dtype=building_sqft.dtype), total_size)
         jobs_data["join_flag"] = resize(array([], dtype=join_flags.dtype), total_size)
         jobs_data["taz_est"] = resize(array([], dtype=taz_est.dtype), total_size)
+        jobs_data["impute_building_sqft_flag"] = resize(array([], dtype=impute_sqft_flag.dtype), total_size)
         
         indices = cumsum(business_sizes)
         # iterate over establishments. For each business create the corresponding number of jobs by filling the corresponding part 
@@ -80,6 +82,7 @@ class UnrollJobsFromEstablishments:
             jobs_data["sqft"][start_index:end_index] = building_sqft[i]/float(business_sizes[i]) # sqft per employee
             jobs_data["join_flag"][start_index:end_index] = join_flags[i]
             jobs_data["taz_est"][start_index:end_index] = taz_est[i]
+            jobs_data["impute_building_sqft_flag"][start_index:end_index]  = impute_sqft_flag[i]
             start_index = end_index
             
         jobs_data["job_id"] = arange(total_size)+1
@@ -98,8 +101,10 @@ class UnrollJobsFromEstablishments:
 
 
 if __name__ == '__main__':
-    business_table = "est00_match_bldg2005_flag123457_flag12bldg"
-    input_database_name = "psrc_2005_parcel_baseyear_change_hyungtai"
+    #business_table = "est00_match_bldg2005_flag123457_flag12bldg"
+    business_table = "business"
+    #input_database_name = "psrc_2005_parcel_baseyear_change_hyungtai"
+    input_database_name = "psrc_2005_data_workspace_hana"
     output_database_name = "psrc_2005_data_workspace_hana"
     input_cache = "/Users/hana/urbansim_cache/psrc/cache_source/2000"
     output_cache = "/Users/hana/urbansim_cache/psrc/cache_source_parcel/2005"
