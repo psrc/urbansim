@@ -13,6 +13,7 @@
 # 
 
 from gui_utilities import display_message_dialog
+from abstract_indicator_test import AbstractIndicatorTest
 from indicator_meta_data_parser import IndicatorMetaDataParser
 from indicator_meta_data import IndicatorMetaData
-from abstract_indicator_test import AbstractIndicatorTest
+
