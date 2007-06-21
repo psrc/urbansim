@@ -68,6 +68,11 @@
 		<move file="${basedir}/docs/latex/tutorials/run-eugene-model" tofile="${webdir}/docs/tutorials/run-eugene-model" />
 		<move file="${basedir}/docs/latex/tutorials/lorenz-curve.pdf" todir="${webdir}/docs/tutorials" />
 		<move file="${basedir}/docs/latex/tutorials/lorenz-curve" tofile="${webdir}/docs/tutorials/lorenz-curve" />
+		<move todir="${webdir}/docs/installation">
+			<fileset dir="${basedir}/docs">
+				<include name="*.html" />
+			</fileset>
+		</move>
 	</target>
 
 	<target name="cruisecontrol" depends="build-latex-docs, build-tutorials, copy-to-webserver" />
