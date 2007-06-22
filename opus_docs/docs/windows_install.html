@@ -321,8 +321,8 @@ to get Opus and UrbanSim using subversion, depending on whether you are
 using the Eclipse IDE. &nbsp;So OK, that's 3 options in all.)</p>
 
 
-<p>For each of these options, you construct a workspace, called say 'c:\workspace'. You'll then need to
-add c:\workspace to your Python path (see <a href="mac_install.html#Step_5:_Defining_Environment_Variables_">Step 4</a>
+<p>For each of these options, you construct a workspace, called say 'c:\opusworkspace'. You'll then need to
+add c:\opusworkspace to your Python path (see <a href="mac_install.html#Step_5:_Defining_Environment_Variables_">Step 4</a>
 for how to do this). &nbsp;The workspace will have subdirectories with
 the code for opus_core, urbansim, and other packages, and also a file
 docs with all of the documentation for that version. &nbsp;The manual
@@ -347,8 +347,8 @@ of instructions.</span><br>
 
 
 Create a workspace directory, say
-'c:\workspace', and unzip the file there. &nbsp;You should end up with a directory structure like this:
-<pre>c:\workspace<br>    opus_core<br>    urbansim<br>    eugene<br>    ....</pre>
+'c:\opusworkspace', and unzip the file there. &nbsp;You should end up with a directory structure like this:
+<pre>c:\opusworkspace<br>    opus_core<br>    urbansim<br>    eugene<br>    ....</pre>
 
 
 
@@ -370,7 +370,7 @@ subversion client -- if you don't have it already, download it by
 following the link. &nbsp;(You can use another client if you prefer,
 though -- see <a href="http://subversion.tigris.org/project_packages.html">http://subversion.tigris.org/project_packages.html</a> for a list.)</p>
 
-<p>Create a workspace directory, say 'c:\workspace'. &nbsp;In Windows
+<p>Create a workspace directory, say 'c:\opusworkspace'. &nbsp;In Windows
 explorer, open up this directory and right-click in an empty region.
 &nbsp;Select 'SVN Checkout ...', and fill in the dialog box.</p>
 
@@ -395,7 +395,7 @@ repository' field in the dialog box with: '<span style="font-family: monospace;"
 filled
 in with your workspace folder -- but to this append '\opus_core'.
 &nbsp;(So if you used the suggested location for the workspace, the
-whole name will be '<span style="font-family: monospace;">c:\workspace\opus_cor</span>e'.
+whole name will be '<span style="font-family: monospace;">c:\opusworkspace\opus_core</span>'.
 &nbsp;Pick 'OK', and your system should
 download the opus_core package. &nbsp;Do the same thing for the other
 packages you need, minimally 'urbansim' and 'eugene'. &nbsp;In other
@@ -418,7 +418,7 @@ words, the repository addresses for these three packages are:</p>
 <p>Whether you get all of the packages, or just the ones you need, you should end up with a directory structure like this:</p>
 
 
-<pre>c:\workspace<br>    opus_core<br>    urbansim<br>    eugene<br>    ....</pre>
+<pre>c:\opusworkspace<br>    opus_core<br>    urbansim<br>    eugene<br>    ....</pre>
 
 
 <p>Later, you can update a package to the latest version from the
@@ -481,7 +481,7 @@ Python code.</p>
   <li><b>PYTHONPATH</b> - This environment variable tells Python where to look
     for files outside of Python&rsquo;s &lsquo;site-packages&rsquo; directory (which is the
     default location for Python installers).&nbsp; Change PYTHONPATH to include the
-    path to the directory containing your &lsquo;workspace&rsquo;, e.g. &lsquo;c:\workspace&rsquo;.</li>
+    path to the directory containing your &lsquo;workspace&rsquo;, e.g. &lsquo;c:\opusworkspace&rsquo;.</li>
 
 
 </ul>

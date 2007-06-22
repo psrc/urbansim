@@ -15,14 +15,6 @@ This chapter provides some practical details on developing programs in Opus
 and UrbanSim, including how to start a new Opus package, design guidelines,
 and Python coding standards.
 
-\section{Cautions}
-
-By convention, files installed in the default Python location
-(\file{site-packages}) should not be edited. If you need to modify the contents
-of \emph{any} of the installed Opus packages, follow the instructions at
-\url{http://www.urbansim.org/opus/opus_manual/docs/developer_setup.html} to
-create a ``developer setup'' for editing those files.
-
 \section{Creating Your Own Opus Package}
 \label{sec:create-opus-package}
 \index{opus packages!creating new package}
@@ -32,28 +24,24 @@ This section provides information on constructing a new Opus project.
 An Opus package is a Python package \pythonpackagesindex that conforms to the
 Opus conventions.  In general, we recommend creating your own Opus package
 to contain your configuration information, define new variables for existing
-datasets, define new datasets, define models, etc.  These files should not be
-put into Python’s \file{site-packages} directory (where Opus is installed by
-default), since they would be over-written when you upgrade Opus or UrbanSim.
+datasets, define new datasets, define models, etc.  The new package should be 
+placed in your workspace, alongside of the Opus and UrbanSim packages such as 
+\package{opus_core} and \package{urbansim}.
 
-Instead, we recommend that you create a workspace, e.g.
-\file{C:\textbackslash myworkspace} into which you create your own
-Opus package(s) to contain these files.  For instance, to create an
+For instance, to create an
 Opus package for the fictitious ``atlantis'' MPO:
 
 \begin{enumerate}
-  \item Create a directory into which to place your Opus package, e.g.
-  \file{C:/myworkspace}.
   \item Use the following Python commands to create a new \file{atlantis} Opus
   package pre-populated with the structure and files expected in an Opus package
   (replace ``atlantis'' with the name for your Opus package):
 \begin{verbatim}
 >>> from opus_core.opus_package import create_package
->>> create_package('c:/myworkspace', 'atlantis')
+>>> create_package('c:/opusworkspace', 'atlantis')
 \end{verbatim}
 \end{enumerate}
 
-This will create a new directory, e.g. \file{C:/myworkspace/atlantis},
+This will create a new directory, e.g. \file{C:/opusworkspace/atlantis},
 containing a set of commonly useful files and directories, though some may not
 suitable to your application. For instance, you might want to delete the
 following four files that are useful in the CUSPA \cuspaindex infrastructure,

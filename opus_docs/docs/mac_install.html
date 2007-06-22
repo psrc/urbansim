@@ -290,8 +290,8 @@ your machine.</p>
 <p>Here are instructions for each of these options. &nbsp;(Well, actually, we're going to give you two ways
 to get Opus and UrbanSim using subversion, depending on whether you are
 using the Eclipse IDE. &nbsp;So OK, that's 3 options in all.)</p>
-<p>For each of these options, you construct a workspace, called say '/Users/yourusername/workspace'. You'll then need to
-add&nbsp;/Users/yourusername/workspace to your Python path (see <a href="mac_install.html#Step_5:_Defining_Environment_Variables_">Step 5</a>
+<p>For each of these options, you construct a workspace, called say '/Users/yourusername/opusworkspace'. You'll then need to
+add&nbsp;/Users/yourusername/opusworkspace to your Python path (see <a href="mac_install.html#Step_5:_Defining_Environment_Variables_">Step 5</a>
 for how to do this). &nbsp;The workspace will have subdirectories with
 the code for opus_core, urbansim, and other packages, and also a file
 docs with all of the documentation for that version. &nbsp;The manual
@@ -306,7 +306,7 @@ release if you are using these directions! &nbsp;That uses an older set
 of instructions on doing an install.</span> &nbsp;Get a 2007 release or later.<br>
 <br>
 Create a workspace directory, say
-'/Users/yourusername/workspace', and unzip the file there.<br>
+'/Users/yourusername/opusworkspace', and unzip the file there.<br>
 
 <br>
 
@@ -318,9 +318,9 @@ code.
 <h3>Option 2: Getting Opus and UrbanSim using a command line interface to subversion</h3>
 
 <p>First, make sure you have a subversion client installed. &nbsp;If not, you can get one from <a href="http://subversion.tigris.org/project_packages.html">http://subversion.tigris.org/project_packages.html</a>. &nbsp;Next, in a shell (i.e. a terminal window), type the following commands:</p>
-<pre>mkdir workspace<br>cd workspace<br>svn checkout https://trondheim.cs.washington.edu/svn/opus/opus_core<br>svn checkout https://trondheim.cs.washington.edu/svn/opus/urbansim<br>svn checkout https://trondheim.cs.washington.edu/svn/opus/eugene</pre>
+<pre>mkdir opusworkspace<br>cd opusworkspace<br>svn checkout https://trondheim.cs.washington.edu/svn/opus/opus_core<br>svn checkout https://trondheim.cs.washington.edu/svn/opus/urbansim<br>svn checkout https://trondheim.cs.washington.edu/svn/opus/eugene</pre>
 <p>You can also get all of the Opus and UrbanSim packages using these commands instead, but only do this if you have a fast internet connection and enough disk space (since there will be a lot of data).</p>
-<pre>mkdir workspace<br>cd workspace<br>svn checkout https://trondheim.cs.washington.edu/svn/opus</pre>
+<pre>mkdir opusworkspace<br>cd opusworkspace<br>svn checkout https://trondheim.cs.washington.edu/svn/opus</pre>
 <h3>Option 3: Getting Opus and UrbanSim using subversion and Eclipse</h3>
 This is the best option if you'll be doing software development. &nbsp;See <a href="ide_setup.html">Installing Opus and UrbanSim using an IDE</a> for details.<br>
 
@@ -366,7 +366,7 @@ tells Python where to look for files outside of Python's
 'site-packages' directory (which is the default location for Python
 installers). Change PYTHONPATH to include the path to the directory
 containing your 'workspace' that you defined in Step 4, e.g.
-'/Users/yourname/workspace'.&nbsp; Finally, make sure your directory with enthought/traits is on the
+'/Users/yourname/opusworkspace'.&nbsp; Finally, make sure your directory with enthought/traits is on the
 PYTHONPATH.</li>
 
 
@@ -381,7 +381,7 @@ environment variables are seen by the various different shells (see <a href="htt
 Here is the sample contents of the file for these variables:</p>
 
 
-<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br>&lt;!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"<br>"http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;<br>&lt;plist version="1.0"&gt;<br> &lt;dict&gt;<br> &lt;key&gt;DISPLAY&lt;/key&gt;<br> &lt;string&gt;:0.0&lt;/string&gt;<br><br> &lt;key&gt;MYSQLHOSTNAME&lt;/key&gt;<br> &lt;string&gt;localhost&lt;/string&gt;<br><br> &lt;key&gt;MYSQLUSERNAME&lt;/key&gt;<br> &lt;string&gt;urbansim&lt;/string&gt;<br><br> &lt;key&gt;MYSQLPASSWORD&lt;/key&gt;<br> &lt;string&gt;thesecretpassword&lt;/string&gt;<br><br> &lt;key&gt;PYTHONPATH&lt;/key&gt;<br> &lt;string&gt;/Users/yourusername/workspace&lt;/string&gt;<br><br> &lt;/dict&gt;<br>&lt;/plist&gt;</pre>
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br>&lt;!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"<br>"http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;<br>&lt;plist version="1.0"&gt;<br> &lt;dict&gt;<br> &lt;key&gt;DISPLAY&lt;/key&gt;<br> &lt;string&gt;:0.0&lt;/string&gt;<br><br> &lt;key&gt;MYSQLHOSTNAME&lt;/key&gt;<br> &lt;string&gt;localhost&lt;/string&gt;<br><br> &lt;key&gt;MYSQLUSERNAME&lt;/key&gt;<br> &lt;string&gt;urbansim&lt;/string&gt;<br><br> &lt;key&gt;MYSQLPASSWORD&lt;/key&gt;<br> &lt;string&gt;thesecretpassword&lt;/string&gt;<br><br> &lt;key&gt;PYTHONPATH&lt;/key&gt;<br> &lt;string&gt;/Users/yourusername/opusworkspace&lt;/string&gt;<br><br> &lt;/dict&gt;<br>&lt;/plist&gt;</pre>
 
 
 <h2>Step 6: <a name="test">Testing your installation</a></h2>

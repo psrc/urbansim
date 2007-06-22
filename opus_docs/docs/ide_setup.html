@@ -72,21 +72,14 @@ and configuring a LATEX document preparation system</a>. </p>
 your workspace directory. </li>
 
   <li>Make sure that your workspace directory is in your
-PYTHONPATH.&nbsp; This will ensure that Python uses these packages
-instead of the same-named Opus packages installed in its
-'site-packages' directory.</li>
-
-  <li>(optional) If you wish, you may uninstall the Opus located
-in Python's 'site-packages' directory, however this is not strictly
-necessary since Python will use the Opus packages it finds in your
-PYTHONPATH before it uses the ones installed in 'site-packages'.</li>
+PYTHONPATH.</li>
 
 </ol>
 
 <p>You now should have a directory structure similar to the
 following: </p>
 
-<pre>C:\workspace<br> opus_core/ &lt;-- if this is one of the packages you got from subversion<br> urbansim/ &lt;-- another package from subversion<br> ...<br> atlantis/<br> docs/<br> ...<br> __init__.py<br> opus_package_info.py</pre>
+<pre>C:\opusworkspace<br> opus_core/ &lt;-- if this is one of the packages you got from subversion<br> urbansim/ &lt;-- another package from subversion<br> ...<br> atlantis/<br> docs/<br> ...<br> __init__.py<br> opus_package_info.py</pre>
 
 <p>Now you can make changes to the <font face="Courier New" size="2">atlantis</font>
 and other Opus packages in your workspace, and use subversion to keep track of

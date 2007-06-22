@@ -21,28 +21,20 @@
 
 <p>In general, you will want to create your own Opus package to contain your
 configuration information, define new variables for existing datasets, define
-new datasets, define models, etc. These files should not be put into Python’s
-‘site-packages’ directory (where Opus is installed by default), since they
-would be over-written when you upgrade Opus or UrbanSim. </p>
-<p>Instead, we recommend that you create a workspace into which you create your
-own Opus package(s) to contain these files. To do this:: </p>
+new datasets, define models, etc.  To do this:: </p>
 <ol>
-  <li>Create a directory into which to place your Opus package, e.g. ‘C:/myworkspace’.</li>
   <li>Create a new Opus package pre-populated with many of the files you
     probably will want (in the following commands, replace <font face="Courier New" size="2">atlantis</font>
     with the appropriate name for your organization):</li>
 </ol>
 <pre>&gt;&gt;&gt; from opus_core.opus_package import create_package 
-&gt;&gt;&gt; create_package('c:/myworkspace', 'atlantis') </pre>
-<p>This will create a new directory under myworkspace, e.g. ‘C:/workshop/atlantis’.&nbsp;
+&gt;&gt;&gt; create_package('c:/opusworkspace', 'atlantis') </pre>
+<p>This will create a new directory under opusworkspace, e.g. ‘C:/workshop/atlantis’.&nbsp;
 This directory contains a set of commonly useful files and directories, though
 some may not suitable to your application. For instance, you might want to
 delete the following four files that are useful in the CUSPA infrastructure, but
 probably not in yours: </p>
 <ul>
-  <li><b>.cvsignore</b> - Informs the CVS version control system of files to not
-    commit to the repository (see <a href="http://www.nongnu.org/cvs/">http://www.nongnu.org/cvs/</a>).
-  </li>
   <li><b>.project</b> - Eclipse’s container for project-specific information
     (see <a href="http://www.eclipse.org/">http://www.eclipse.org/</a>). </li>
   <li><b>build.xml</b> and <b>fireman.xml</b> -&nbsp; Directives for CUSPA’s
