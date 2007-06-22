@@ -11,21 +11,3 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 # 
-
-def __get_version():
-    from opus_core.get_version import get_version
-    
-    try:
-        import __from_installer__
-        installed = True
-    except ImportError:
-        installed = False
-    
-    # The build number in following "build = ..." line is automatically updated 
-    # each time Fireman builds this project.
-    build = '0615'
-        
-    return get_version(build, installed)
-    
-
-__version__ = __get_version()
