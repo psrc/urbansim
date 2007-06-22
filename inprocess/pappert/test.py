@@ -16,7 +16,7 @@ from opus_core.tests import opus_unittest
 class TestTests(opus_unittest.OpusTestCase):
 
     def test_test(self):
-        self.assert_(False)
+        self.assert_(True)
 
 if __name__ == '__main__':
     opus_unittest.main()
