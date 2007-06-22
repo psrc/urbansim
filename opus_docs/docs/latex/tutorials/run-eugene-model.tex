@@ -87,32 +87,60 @@ set of tutorials to assist new and more experienced users in taking
 advantage of the functionality in the UrbanSim model system, using
 the new Open Platform for Urban Simulation (OPUS).
 
+\section*{Install Software and Download Sample Data}
+
+If you have not already done so, install Opus and UrbanSim, along with
+any needed supporting software.  Directions for the current version of
+the code are at \url{http://www.urbansim.org/docs/installation/}.  If
+you are using a (perhaps older) stable release rather than the current
+version fresh out of the subversion repository, the table of releases
+at \url{http://www.urbansim.org/download/} includes a link to the installation
+instructions corresponding to that particular version.
+
+Next, download the Eugene 1980 baseyear cache zip file by following the 
+appropriate link on the download page \url{http://www.urbansim.org/download/}.
+If you are using the source code for a stable release, there will be a link
+to the Eugene 1980 baseyear cache file that works with this version in the table
+of stable release versions.  Alternatively, if you are getting the latest version
+of the code from the subversion repository, there is a link in the ``Current Source Code''
+section.  (We frequently update the Opus and UrbanSim source code, but the sample database
+doesn't change very often --- so the stable release version and latest version will likely 
+be the same.)
+
+Unzip the file into a cache
+directory of your choice, such as \verb|c:\urbansim_cache| on Windows, or 
+\verb|/Users/yourname/urbansim_cache| on the Mac. This example 
+Eugene-Springfield database contains all of the data that UrbanSim needs to 
+run a simulation of Eugene starting for simulated year 1980.
 
 \section*{Running a Simulation}
 
-In this step, you will execute a two-year simulation run of the
+In this part of the tutorial, you will execute a two-year simulation run of the
 Eugene-Springfield metro area.
-
-If you have not already done so, install the necessary software and
-data for this tutorial by following the directions at
-\url{http://www.urbansim.org/wiki/external/index.php/Install_Eugene_Tutorial}. 
 
 \begin{enumerate}
 
 \item First, open a command window (yes, that archaic interface to the
 computer where you actually have to \emph{type commands}). For
 example, in Windows, go to the \file{Start} menu, choosing
-\file{Run...}, typing ``cmd'', and clicking \file{OK}.
+\file{Run...}, typing ``cmd'', and clicking \file{OK}.  On the Mac,
+open a terminal window (by picking ''terminal'' from the applications).
 
 \item Next, change directory to the workspace subdirectory containing
-the Eugene tools, 
-\file{C:\textbackslash myworkspace\textbackslash eugene\textbackslash tools} 
-(modify this appropriately if you unzipped the package to a different location).
-For example, type:
+the Eugene tools, e.g.\
+\file{C:\textbackslash workspace\textbackslash eugene\textbackslash tools}
+(modify this appropriately if your workspace has a different name).
+For example, on Windows type:
 
 \begin{verbatim}
-cd C:\myworkspace\eugene\tools
+cd C:\workspace\eugene\tools
 \end{verbatim}
+
+On the Mac, type:
+\begin{verbatim}
+cd /Users/yourname/workspace/eugene/tools
+\end{verbatim}
+replacing {\tt yourname} with your login name on your machine.
 
 \item Now enter the following command at the command line:
 
@@ -131,7 +159,9 @@ application may be hidden behind another window.
 \item In the ``Get baseyear data from this cache directory'' field , enter the
 path to the location where you unzipped the
 baseyear cache, above, e.g. 
-\file{C:\textbackslash urbansim_cache\textbackslash eugene_1980_baseyear_cache\textbackslash}.
+\file{C:\textbackslash urbansim_cache\textbackslash eugene_1980_baseyear_cache\textbackslash}
+on Windows, or
+\file{/Users/yourname/urbansim_cache/eugene_1980_baseyear_cache/} on the Mac.
 
 The ``Use this configuration'' entry is pre-set to use the
 default baseline configuration in the eugene Opus package
