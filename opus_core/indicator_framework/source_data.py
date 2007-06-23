@@ -46,9 +46,22 @@ class SourceData(object):
         if run_description is not None:
             self.run_description = run_description                             
     
-    def get_indicator_directory(self):
-        return os.path.join(self.cache_directory, 'indicators')
+    def get_indicator_directory(self, create_if_does_not_exist = True):
+        indicators_directory = os.path.join(self.cache_directory, 'indicators')
+        if create_if_does_not_exist and not os.path.exists(indicators_directory):
+            os.makedirs(indicators_directory)
+        return indicators_directory
     
+    def get_run_description(self):
+        if self.run_description == '':
+            self.run_description = self.cache_directory
+            if self.comparison_cache_directory != '':
+                self.run_description = '%s vs.\n%s'%(
+                    self.cache_directory, 
+                    self.comparison_cache_directory)  
+                 
+        return self.run_description         
+        
     def get_metadata(self, indentation = 1):
         '''gets list based representation of self outputable to a metadata file
         
@@ -78,7 +91,11 @@ class SourceData(object):
         metadata_lines.append(cur_line)
         
         return metadata_lines
-        
+    
+    def get_package_order_and_exceptions(self):
+        return (self.dataset_pool_configuration.package_order, 
+                self.dataset_pool_configuration.package_order_exceptions)
+    
 from opus_core.tests import opus_unittest
 
 class TestSourceData(opus_unittest.OpusTestCase):
