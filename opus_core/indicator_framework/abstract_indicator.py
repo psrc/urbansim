@@ -61,26 +61,13 @@ class AbstractIndicator(object):
         }
         
         self.last_computed_attribute = None
-
-        #todo: this logic should be in SourceData
-        self.run_description = self.source_data.run_description
-        if self.run_description == '':
-            self.run_description = self.source_data.cache_directory
-            if self.source_data.comparison_cache_directory != '':
-                self.run_description = '%s vs.\n%s'%(
-                    self.source_data.cache_directory, 
-                    self.source_data.comparison_cache_directory)        
-                
-        #setting indicators directory
+        self.date_computed = None    
+        self.run_description = self.source_data.get_run_description()
         indicators_directory = self.source_data.get_indicator_directory()
-        if not os.path.exists(indicators_directory):
-            os.makedirs(indicators_directory)
-            
-        self.date_computed = None
 
         # Use attribute cache so that can access info from prior years, too.
-        self.package_order = self.source_data.dataset_pool_configuration.package_order
-        self.package_order_exceptions = self.source_data.dataset_pool_configuration.package_order_exceptions
+        (self.package_order, self.package_order_exceptions) = \
+            self.source_data.get_package_order_and_exceptions()
         
     def _set_cache_directory(self, cache_directory):
         if cache_directory != SimulationState().get_cache_directory():
@@ -180,6 +167,7 @@ class AbstractIndicator(object):
             years_found.append(year)
             
         #if sizes of the results differ across years, fill in missing data
+        #TODO: investigate the use of lag variables to account for this issue
         sizes = [len(year_data) for year_data in results]
         min_size, max_size = (min(sizes),max(sizes))
         if min_size != max_size:
@@ -201,6 +189,7 @@ class AbstractIndicator(object):
         id_attributes = self._get_dataset(year).get_id_name()
         cache_dir2 = self.source_data.comparison_cache_directory
         if cache_dir2 != '' and attribute not in id_attributes:
+            #TODO: should check if second cache dir exists immediately
             if not os.path.exists(cache_dir2):
                 raise Exception, 'The second cache directory was not found.'
             short_name = VariableName(attribute).get_alias()
@@ -225,6 +214,7 @@ class AbstractIndicator(object):
             indicator_vals = self._compute_indicator(attribute, year)
         else:
             #this handles indicator expressions
+            #TODO: clean up this code with new style expressions in mind
             self.in_expression = True
             try:
                 values = []
@@ -271,9 +261,9 @@ class AbstractIndicator(object):
         fetch_dataset = (self.dataset == None or
                          self.dataset_state['year'] != year or
                          self.dataset_state['current_cache_directory'] != SimulationState().cache_directory)
-                         
-        if fetch_dataset:
-            #only compute dataset if its necessary
+
+        #only get dataset if its necessary                 
+        if fetch_dataset: 
             SimulationState().set_current_time(year)
             SessionConfiguration().get_dataset_pool().remove_all_datasets()
             
@@ -306,7 +296,11 @@ class AbstractIndicator(object):
         if self.attribute is None:
             alias = self.name
         else:
-            alias = VariableName(self.attribute).get_alias()
+            #TODO: less hacky way to do this
+            if self.attribute[:10] == 'autogenvar':
+                alias = VariableName(self.attribute).get_squished_expression()
+            else:
+                alias = VariableName(self.attribute).get_alias()
         
         if year is not None:
             alias = alias.replace('DDDD',repr(year))
@@ -368,17 +362,17 @@ class AbstractIndicator(object):
         gid = dataset.get_attribute('grid_id')
         return (where(gid <= 0)[0]).size
 
-    def divide(self, values, attribute):
-        return values[0].sum()/float(values[1].sum())
-
-    def times(self, values, attribute):
-        return values[0] * values[1]
-
-    def subtract(self, values, attribute):
-        return values[0] - values[1]
+#    def divide(self, values, attribute):
+#        return values[0].sum()/float(values[1].sum())
+#
+#    def times(self, values, attribute):
+#        return values[0] * values[1]
+#
+#    def subtract(self, values, attribute):
+#        return values[0] - values[1]
 
     def percent_change(self, values, attribute):
-        baseyear_values, dummy = self._get_indicator_for_years(attribute, [2000,])
+        baseyear_values, years_found = self._get_indicator_for_years(attribute, [2000,])
 
         ret_values = ma.filled(( values[0] - baseyear_values[0,]) * 100 / \
                 ma.masked_where(baseyear_values[0,]==0, baseyear_values[0,].astype(float32),0.0))
@@ -387,8 +381,8 @@ class AbstractIndicator(object):
 
 
     def change(self, values, attribute):
-        baseyear_values, dummy = self._get_indicator_for_years(attribute, [2000,])
-        ret_values = values[0]-baseyear_values[0,]
+        baseyear_values, years_found = self._get_indicator_for_years(attribute, [2000,])
+        ret_values = values[0] - baseyear_values[0,]
         return ret_values   #, "change value attached to dataset as attribute %s" % attribute)
 
 #methods for reading and writing metadata
@@ -484,13 +478,14 @@ class Tests(AbstractIndicatorTest):
                 '\t<source_data>\n'
                 '\t\t<cache_directory>%s</cache_directory>\n'
                 '\t\t<comparison_cache_directory>%s</comparison_cache_directory>\n' 
-                '\t\t<run_description></run_description>\n'
+                '\t\t<run_description>%s</run_description>\n'
                 '\t\t<years>[1980]</years>\n'
                 '\t\t<package_order>[\'opus_core\']</package_order>\n'
                 '\t</source_data>\n'
                 '</Table>'
             )%(self.temp_cache_path,
-               self.temp_cache_path2)
+               self.temp_cache_path2,
+               self.cross_scenario_source_data.get_run_description())
             
             self.assertEqual(output,expected)
             
@@ -536,5 +531,63 @@ class Tests(AbstractIndicatorTest):
                 (id, value) = l.split(',')
                 self.assertEqual(0, int(value.strip()))
 
+    def test__indicator_expressions(self):
+        try:
+            from opus_core.indicator_framework.image_types.table import Table
+        except:
+            pass
+        else:
+            table = Table(
+                source_data = self.source_data,
+                attribute = '2 * package.test.attribute',
+                dataset_name = 'test',
+                output_type = 'csv')
+            
+            
+            table.create(False)
+            path = table.get_file_path()
+            f = open(path)
+            f.readline() #chop off header
+        
+            computed_vals = {}
+            for l in f.readlines():
+                (id, value) = l.split(',')
+                computed_vals[int(id)] = int(value)
+                
+            true_vals = {}
+            for i in range(len(self.id_vals)):
+                true_vals[self.id_vals[i]] = 2 * self.attribute_vals[i]
+            
+            self.assertEqual(computed_vals,true_vals)
+
+    def test__indicator_expressions_with_two_variables(self):
+        try:
+            from opus_core.indicator_framework.image_types.table import Table
+        except:
+            pass
+        else:
+            table = Table(
+                source_data = self.source_data,
+                attribute = '2 * package.test.attribute - package.test.attribute2',
+                dataset_name = 'test',
+                output_type = 'csv')
+            
+            
+            table.create(False)
+            path = table.get_file_path()
+            f = open(path)
+            f.readline() #chop off header
+        
+            computed_vals = {}
+            for l in f.readlines():
+                (id, value) = l.split(',')
+                computed_vals[int(id)] = int(value)
+                
+            true_vals = {}
+            for i in range(len(self.id_vals)):
+                true_vals[self.id_vals[i]] = 2 * self.attribute_vals[i] - self.attribute_vals2[i]
+            
+            self.assertEqual(computed_vals,true_vals)
+                               
 if __name__ == '__main__':
     opus_unittest.main()
