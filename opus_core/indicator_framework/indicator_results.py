@@ -172,7 +172,7 @@ class IndicatorResults(object):
             if len(filename) >= 5 and filename[-5:] == '.meta':
                 try:
                     meta_path = os.path.join(indicator_directory, filename)
-                    indicator = IndicatorMetaDataParser.create_from_metadata(meta_path)
+                    indicator = IndicatorMetaDataParser.create_indicator_from_metadata(meta_path)
                     indicators.append(indicator)
                 except: pass
         
