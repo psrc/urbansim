@@ -34,12 +34,17 @@ class AbstractIndicatorTest(opus_unittest.OpusTestCase):
       
         baseyear_dir = os.path.join(self.temp_cache_path, '1980')
         storage = StorageFactory().get_storage('flt_storage', storage_location=baseyear_dir)
+        
+        self.attribute_vals = array([5,6,7,8])
+        self.attribute_vals2 = array([50,60,70,80])
+        self.id_vals = array([1,2,3,4])
+        
         storage.write_dataset(Resources({
            'out_table_name': 'tests',
            'values': {
-               'id': array([1,2,3,4]),
-               'attribute': array([5,6,7,8]),
-               'attribute2': array([50,60,70,80])
+               'id': self.id_vals,
+               'attribute': self.attribute_vals,
+               'attribute2': self.attribute_vals2,
                },
            'attrtype':{
                'id': AttributeType.PRIMARY,
