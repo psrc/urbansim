@@ -24,14 +24,14 @@ from opus_core.storage_factory import StorageFactory
 class Table(AbstractIndicator):
 
     def __init__(self, source_data, dataset_name, attribute, 
-                 years = None, expression = None, name = None,
+                 years = None, operation = None, name = None,
                  #decimal_places = 4,
                  output_type = 'csv'):
         
         if output_type not in ['dbf', 'csv', 'tab']:
             raise "table output type needs to be either dbf, csv, or tab"
 
-        AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, expression, name)
+        AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, operation, name)
         
         self.output_type = output_type
         #self.decimal_places = decimal_places
@@ -48,7 +48,7 @@ class Table(AbstractIndicator):
     def get_file_extension(self):
         return self.output_type
     
-    def get_shorthand(self):
+    def get_visualization_shorthand(self):
         if self.output_type == 'csv':
             return 'table'
         elif self.output_type == 'tab':
@@ -56,7 +56,7 @@ class Table(AbstractIndicator):
         else:
             return 'dbf'
 
-    def _get_additional_metadata(self):
+    def get_additional_metadata(self):
         return  [
                  #('decimal_places',self.decimal_places),
                  ('output_type',self.output_type)]

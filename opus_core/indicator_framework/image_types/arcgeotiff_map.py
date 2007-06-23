@@ -30,12 +30,12 @@ class ArcGeotiffMap(AbstractIndicator):
     def __init__(self, source_data, dataset_name, 
                  package,
                  attribute = None, 
-                 years = None, expression = None, name = None, 
+                 years = None, operation = None, name = None, 
                  prototype_dataset = None, arcmap_args = None,
                  layer_file = '', transparency = 0, 
                  exit_after_export = False, export_type = 'jpg'):
         
-       AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, expression, name)
+       AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, operation, name)
        self.geotiff_map = GeotiffMap(source_data = source_data, 
                                      dataset_name = dataset_name, 
                                      package = package,
@@ -54,10 +54,10 @@ class ArcGeotiffMap(AbstractIndicator):
     def get_file_extension(self):
         return self.export_type
     
-    def get_shorthand(self):
+    def get_visualization_shorthand(self):
         return 'arcmap'
 
-    def _get_additional_metadata(self):
+    def get_additional_metadata(self):
         return  [('layer_file',self.layer_file),
                  ('transparency',self.transparency),
                  ('exit_after_export',self.self.exit_aafter_export),

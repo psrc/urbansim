@@ -21,7 +21,7 @@ from opus_core.storage_factory import StorageFactory
 class DatasetTable(AbstractIndicator):
 
     def __init__(self, source_data, dataset_name, attributes, 
-                 years = None, expression = None, name = None,
+                 name, years = None, operation = None, 
                  exclude_condition = None, output_type = 'tab'):
         
         if output_type not in ['dbf', 'csv', 'tab']:
@@ -32,7 +32,7 @@ class DatasetTable(AbstractIndicator):
         self.exclude_condition = exclude_condition
         self.name = name
         
-        AbstractIndicator.__init__(self, source_data, dataset_name, '', years, expression, name)
+        AbstractIndicator.__init__(self, source_data, dataset_name, '', years, operation, name)
         
         self.output_type = output_type
         storage_factory = StorageFactory()
@@ -47,10 +47,10 @@ class DatasetTable(AbstractIndicator):
     def get_file_extension(self):
         return self.output_type
                 
-    def get_shorthand(self):
+    def get_visualization_shorthand(self):
         return 'dataset_table'
 
-    def _get_additional_metadata(self):
+    def get_additional_metadata(self):
         return  [('attributes',self.attributes),
                  ('output_type',self.output_type),
                  ('exclude_condition',self.exclude_condition)]
@@ -75,12 +75,9 @@ class DatasetTable(AbstractIndicator):
         return file_name
     
     def get_attribute_alias(self, year = None):
-        if self.name is None:
-            alias = 'of_%i_attr'%(len(self.attributes))
-        else:
-            alias = self.name
-            if year is not None:
-                alias = self.name.replace('DDDD',repr(year))
+        alias = self.name
+        if year is not None:
+            alias = self.name.replace('DDDD',repr(year))
         return alias
       
     def _create_indicator(self, year):
@@ -203,7 +200,8 @@ class Tests(AbstractIndicatorTest):
         
         dataset_table = DatasetTable(source_data = self.source_data, 
                                      attributes = [], 
-                                     dataset_name = '')
+                                     dataset_name = '',
+                                     name = 'test')
         
         data = [
           array([1,1,2,2]),#id 1

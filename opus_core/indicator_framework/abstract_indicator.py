@@ -26,28 +26,29 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.logger import logger
 
 from opus_core.indicator_framework.utilities import display_message_dialog
+from opus_core.indicator_framework.utilities import IndicatorMetaDataParser
 from opus_core.indicator_framework import SourceData
+
 
 from numpy import array, subtract, concatenate
 
 class AbstractIndicator(object):
     
     def __init__(self, source_data, dataset_name, attribute, 
-                 years = None, expression = None, name = None,
+                 years = None, operation = None, name = None,
                  suppress_file_extension_addition = False ):
 
         self.dataset_name = dataset_name 
         self.attribute = attribute
-        self.expression = expression
+        self.operation = operation
         self.source_data = source_data
         self.suppress_file_extension_addition = suppress_file_extension_addition
-        
-        if expression is None and attribute is None:
-            raise Exception, 'Expression and attribute cannot both be None'
-         
+
         self.name = name
         if self.name == None:
             self.name = self.get_attribute_alias()
+            if self.operation is not None:
+                self.name = '%s_%s'%(self.operation,self.name)
         
         if years is None:
             self.years = self.source_data.years
@@ -90,14 +91,14 @@ class AbstractIndicator(object):
                 try:
                     self._create_indicator(year = year)
                     self.date_computed = strftime("%Y-%m-%d %H:%M:%S", localtime(time()))
-                    self._write_metadata(year = year)
+                    IndicatorMetaDataParser.write_indicator_metadata(indicator = self, year = year)
                 except Exception, e:
                     self._handle_indicator_error(e, display_error_box)
         else:
             try:
                 self._create_indicator(years = self.years)
                 self.date_computed = strftime("%Y-%m-%d %H:%M:%S", localtime(time()))
-                self._write_metadata()
+                IndicatorMetaDataParser.write_indicator_metadata(indicator = self)
             except Exception, e:
                 self._handle_indicator_error(e, display_error_box)
         
@@ -134,16 +135,16 @@ class AbstractIndicator(object):
                    'to be overridden by child class.')
         raise NotImplementedError(message)
 
-    def get_shorthand(self):
+    def get_visualization_shorthand(self):
         '''Returns the shorthand for this output type
         
            Abstract method that needs to be overridden in child classes.
         '''
-        message = ('abstract_image_type.get_shorthand needs '
+        message = ('abstract_image_type.get_visualization_shorthand needs '
                    'to be overridden by child class.')
         raise NotImplementedError(message)
             
-    def _get_additional_metadata(self):
+    def get_additional_metadata(self):
         '''returns additional attributes
         
            Child method should override this method if there are any 
@@ -210,24 +211,15 @@ class AbstractIndicator(object):
             
 
     def _get_indicator_helper(self, attribute, year):
-        if self.expression is None or self.in_expression:
-            indicator_vals = self._compute_indicator(attribute, year)
-        else:
-            #this handles indicator expressions
+        indicator_vals = self._compute_indicator(attribute, year)
+        if self.operation is not None and not self.in_expression:
             #TODO: clean up this code with new style expressions in mind
             self.in_expression = True
             try:
-                values = []
-                for arg_attribute in self.expression['operands']:
-                    arg_vals = self._compute_indicator(arg_attribute, year)
-                    values.append(arg_vals)
-                    
-                base_attribute = self.expression['operands'][0]
-                cmd = 'self.%s(values, base_attribute)'%self.expression['operation']
-                indicator_vals = array(eval(cmd))
+                indicator_vals = self.perform_operation(self.operation, indicator_vals)
                 dataset = self._get_dataset(year = year)
-                dataset.add_attribute(indicator_vals, attribute)
-                self.last_computed_attribute = attribute
+                dataset.add_attribute(indicator_vals, self.name)
+                self.last_computed_attribute = self.name
             finally:
                 self.in_expression = False
             
@@ -293,17 +285,15 @@ class AbstractIndicator(object):
         return self.dataset
     
     def get_attribute_alias(self, year = None):
-        if self.attribute is None:
-            alias = self.name
+        #TODO: less hacky way to do this
+        if self.attribute[:10] == 'autogenvar':
+            alias = VariableName(self.attribute).get_squished_expression()
         else:
-            #TODO: less hacky way to do this
-            if self.attribute[:10] == 'autogenvar':
-                alias = VariableName(self.attribute).get_squished_expression()
-            else:
-                alias = VariableName(self.attribute).get_alias()
+            alias = VariableName(self.attribute).get_alias()
         
         if year is not None:
             alias = alias.replace('DDDD',repr(year))
+           
         return alias
     
     def get_last_computed_attribute(self):
@@ -322,7 +312,7 @@ class AbstractIndicator(object):
             short_name = short_name.replace('DDDD',repr(year))
             
         file_name = '%s__%s__%s'%(self.dataset_name,
-                                  self.get_shorthand(),
+                                  self.get_visualization_shorthand(),
                                   short_name
                                   )
         
@@ -350,83 +340,26 @@ class AbstractIndicator(object):
         logger.log_stack_trace()
         if display_error_box:
             display_message_dialog(message)
+
+    def perform_operation(self, operation, values = None):
+        results = None
+        
+        if operation == 'size':
+            dataset = self._get_dataset()
+            dataset.get_id_attribute()
+            results = dataset.size()
             
-    ####### Indicator Operations ##########  
-    def size(self, values=None):
-        dataset = self._get_dataset()
-        dataset.get_id_attribute()
-        return dataset.size()
-    
-    def unplaced(self, values=None):
-        dataset = self._get_dataset()
-        gid = dataset.get_attribute('grid_id')
-        return (where(gid <= 0)[0]).size
-
-#    def divide(self, values, attribute):
-#        return values[0].sum()/float(values[1].sum())
-#
-#    def times(self, values, attribute):
-#        return values[0] * values[1]
-#
-#    def subtract(self, values, attribute):
-#        return values[0] - values[1]
-
-    def percent_change(self, values, attribute):
-        baseyear_values, years_found = self._get_indicator_for_years(attribute, [2000,])
-
-        ret_values = ma.filled(( values[0] - baseyear_values[0,]) * 100 / \
+        elif operation == 'percent_change':
+            baseyear_values, years_found = self._get_indicator_for_years(self.attribute, [2000,])
+            results = ma.filled(( values[0] - baseyear_values[0,]) * 100 / \
                 ma.masked_where(baseyear_values[0,]==0, baseyear_values[0,].astype(float32),0.0))
-
-        return ret_values   #, "change value attached to dataset as attribute %s" % attribute)
-
-
-    def change(self, values, attribute):
-        baseyear_values, years_found = self._get_indicator_for_years(attribute, [2000,])
-        ret_values = values[0] - baseyear_values[0,]
-        return ret_values   #, "change value attached to dataset as attribute %s" % attribute)
-
-#methods for reading and writing metadata
-    def _write_metadata(self, year = None):
-        VERSION = 1.0
-        '''Writes to a file information about this indicator'''
-
-        lines = []
-        class_name = self.__class__.__name__
-        
-        lines.append('<version>%.1f</version>'%VERSION)
-        lines.append('<%s>'%class_name)
-        basic_attributes = ['dataset_name','years','date_computed', 'name']
-        if class_name != 'DatasetTable':
-            basic_attributes.append('attribute')
-        for basic_attr in basic_attributes:
-            attr_value = self.__getattribute__(basic_attr)
-            lines.append('\t<%s>%s</%s>'%(basic_attr,
-                                     str(attr_value),
-                                     basic_attr))
-        
-        #get additional attributes for child classes...
-        for attr,value in self._get_additional_metadata():
-            lines.append('\t<%s>%s</%s>'%(attr,str(value),attr))
             
-        lines += self.source_data.get_metadata(indentation = 1)
-        if self.expression != None:
-            lines.append('\t<expression>')
-            for k,v in self.expression.items():
-                lines.append('\t\t<%s>%s</%s>'%(k,str(v),k))
-            lines.append('\t</expression>')
-        
-        lines.append('</%s>'%class_name)
-        
-        #write to metadata file
-        file = self.get_file_name(year = year, extension = 'meta')
-        path = os.path.join(self.source_data.get_indicator_directory(),
-                            file)
-        f = open(path, 'w')
-        output = '\n'.join(lines)
-        f.write(output)
-        f.close()
-        
-        return lines
+        elif operation == 'change':
+            baseyear_values, years_found = self._get_indicator_for_years(attribute, [2000,])
+            results = values[0] - baseyear_values[0,]
+            
+        return results
+
 
 from opus_core.tests import opus_unittest
 from opus_core.indicator_framework.utilities import AbstractIndicatorTest
@@ -447,48 +380,7 @@ class Tests(AbstractIndicatorTest):
             returned_path = table.get_file_name()
             expected_path = 'yyy__tab__population.tab'
             
-            self.assertEqual(returned_path, expected_path)
-
-    def test__write_metadata(self):
-        try:
-            from opus_core.indicator_framework.image_types.table import Table
-            from opus_core.indicator_framework.source_data import SourceData
-        except: pass
-        else:
-            table = Table(
-                source_data = self.cross_scenario_source_data,
-                attribute = 'xxx.yyy.population',
-                dataset_name = 'yyy',
-                output_type = 'tab',
-                years = [0,1] # Indicators are not actually being computed, so the years don't matter here.
-            )
-            
-            lines = table._write_metadata()
-            output = '\n'.join(lines)
-            
-            expected = (
-                '<version>1.0</version>\n'          
-                '<Table>\n'
-                '\t<dataset_name>yyy</dataset_name>\n'
-                '\t<years>[0, 1]</years>\n'
-                '\t<date_computed>None</date_computed>\n'
-                '\t<name>population</name>\n'
-                '\t<attribute>xxx.yyy.population</attribute>\n'
-                '\t<output_type>tab</output_type>\n'
-                '\t<source_data>\n'
-                '\t\t<cache_directory>%s</cache_directory>\n'
-                '\t\t<comparison_cache_directory>%s</comparison_cache_directory>\n' 
-                '\t\t<run_description>%s</run_description>\n'
-                '\t\t<years>[1980]</years>\n'
-                '\t\t<package_order>[\'opus_core\']</package_order>\n'
-                '\t</source_data>\n'
-                '</Table>'
-            )%(self.temp_cache_path,
-               self.temp_cache_path2,
-               self.cross_scenario_source_data.get_run_description())
-            
-            self.assertEqual(output,expected)
-            
+            self.assertEqual(returned_path, expected_path)            
 
     def test__output_types(self):
         try:

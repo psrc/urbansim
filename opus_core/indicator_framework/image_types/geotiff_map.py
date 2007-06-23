@@ -29,11 +29,11 @@ class GeotiffMap(AbstractIndicator):
     def __init__(self, source_data, dataset_name,
                  attribute = None, 
                  years = None, 
-                 expression = None, 
+                 operation = None, 
                  name = None,
                  package = None,
                  prototype_dataset = None):
-        AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, expression, name)
+        AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, operation, name)
         
         if prototype_dataset is None:
             dir = directory_path_from_opus_path('%s.indicators.geotiff_files'%package)
@@ -48,10 +48,10 @@ class GeotiffMap(AbstractIndicator):
     def get_file_extension(self):
         return 'tif'
     
-    def get_shorthand(self):
+    def get_visualization_shorthand(self):
         return 'geotiff'
     
-    def _get_additional_metadata(self):
+    def get_additional_metadata(self):
         return  [('prototype_dataset',self.prototype_dataset)]
     
     def _create_indicator(self, year):

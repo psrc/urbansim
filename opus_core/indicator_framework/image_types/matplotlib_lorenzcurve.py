@@ -29,8 +29,8 @@ class LorenzCurve(AbstractIndicator):
 
     def __init__(self, source_data, dataset_name, 
                  attribute = None, 
-                 years = None, expression = None, name = None, scale=None):
-        AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, expression, name)
+                 years = None, operation = None, name = None, scale=None):
+        AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, operation, name)
         self._values = None
         self._ginicoeff = None
 
@@ -40,10 +40,10 @@ class LorenzCurve(AbstractIndicator):
     def get_file_extension(self):
         return 'png'
     
-    def get_shorthand(self):
+    def get_visualization_shorthand(self):
         return 'lorenzcurve'
 
-    def _get_additional_metadata(self):
+    def get_additional_metadata(self):
         return  []
     
     def _create_indicator(self, year):

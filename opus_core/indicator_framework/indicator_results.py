@@ -125,7 +125,7 @@ class IndicatorResults(object):
             row = [  
                doc_link,
                indicator.dataset_name,
-               indicator.get_shorthand(), 
+               indicator.get_visualization_shorthand(), 
                image_paths
             ]
             rows.append(row)
@@ -322,19 +322,19 @@ class IndicatorResultsTests(opus_unittest.OpusTestCase):
             ]
             attribute_name = 'population'
             
-            image_type = requests[0].get_shorthand()
+            image_type = requests[0].get_visualization_shorthand()
             (dataset,name) = (requests[0].dataset_name, 
                                    requests[0].name)
     
-            image_type2 = requests[1].get_shorthand()
+            image_type2 = requests[1].get_visualization_shorthand()
             (dataset2,name2) = (requests[1].dataset_name, 
                                  requests[1].name)
     
-            image_type3 = requests[2].get_shorthand()
+            image_type3 = requests[2].get_visualization_shorthand()
             (dataset3,name3) = (requests[2].dataset_name, 
                                      requests[2].name)
             
-            image_type4 = requests[3].get_shorthand()
+            image_type4 = requests[3].get_visualization_shorthand()
             (dataset4,name4) = (requests[3].dataset_name, 
                                      requests[3].name)
                                 

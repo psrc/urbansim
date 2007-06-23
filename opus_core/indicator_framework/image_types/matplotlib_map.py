@@ -22,9 +22,9 @@ class Map(AbstractIndicator):
 
     def __init__(self, source_data, dataset_name, 
                  attribute = None, 
-                 years = None, expression = None, name = None,
+                 years = None, operation = None, name = None,
                  scale = None):
-        AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, expression, name)
+        AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, operation, name)
         self.scale = scale
 
     def is_single_year_indicator_image_type(self):
@@ -33,10 +33,10 @@ class Map(AbstractIndicator):
     def get_file_extension(self):
         return 'png'
     
-    def get_shorthand(self):
+    def get_visualization_shorthand(self):
         return 'map'
 
-    def _get_additional_metadata(self):
+    def get_additional_metadata(self):
         return  [('scale',self.scale)]
     
     def _create_indicator(self, year):

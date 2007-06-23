@@ -32,8 +32,8 @@ else:
     
         def __init__(self, source_data, dataset_name, 
                      attribute = None, 
-                     years = None, expression = None, name = None):
-            AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, expression, name)
+                     years = None, operation = None, name = None):
+            AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, operation, name)
     
         def is_single_year_indicator_image_type(self):
             return False
@@ -41,7 +41,7 @@ else:
         def get_file_extension(self):
             return 'png'
         
-        def get_shorthand(self):
+        def get_visualization_shorthand(self):
             return 'chart'
         
         def _create_indicator(self, years):

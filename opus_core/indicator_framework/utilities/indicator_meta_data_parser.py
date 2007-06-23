@@ -16,6 +16,42 @@ from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfi
 from opus_core.indicator_framework import SourceData
 
 class IndicatorMetaDataParser:
+    def write_indicator_metadata(cls, indicator, year = None):
+        VERSION = 1.0
+        '''Writes to a file information about this indicator'''
+
+        lines = []
+        class_name = indicator.__class__.__name__
+        
+        lines.append('<version>%.1f</version>'%VERSION)
+        lines.append('<%s>'%class_name)
+        basic_attributes = ['dataset_name','years','date_computed', 'name', 'operation']
+        if class_name != 'DatasetTable':
+            basic_attributes.append('attribute')
+        for basic_attr in basic_attributes:
+            attr_value = indicator.__getattribute__(basic_attr)
+            lines.append('\t<%s>%s</%s>'%(basic_attr,
+                                     str(attr_value),
+                                     basic_attr))
+        
+        #get additional attributes for child classes...
+        for attr,value in indicator.get_additional_metadata():
+            lines.append('\t<%s>%s</%s>'%(attr,str(value),attr))
+            
+        lines += indicator.source_data.get_metadata(indentation = 1)
+        
+        lines.append('</%s>'%class_name)
+        
+        #write to metadata file
+        file = indicator.get_file_name(year = year, extension = 'meta')
+        path = os.path.join(indicator.source_data.get_indicator_directory(),
+                            file)
+        f = open(path, 'w')
+        output = '\n'.join(lines)
+        f.write(output)
+        f.close()
+        
+        return lines
     def create_indicator_from_metadata(cls, file_path):
         '''creates and returns an indicator from the file pointed to in file_path 
         '''
@@ -27,10 +63,8 @@ class IndicatorMetaDataParser:
         indicator_class = f.readline().strip()
         indicator_class = indicator_class[1:-1]
         
-        in_expression = False
         in_source_data = False
         
-        expression = None
         source_data_params = {}
         
         non_constructor_attr = {
@@ -41,13 +75,7 @@ class IndicatorMetaDataParser:
         
         for line in f.readlines():
             line = line.strip()
-            if line == '<expression>':
-                in_expression = True
-                expression = {}
-            elif line == '</expression>':
-                params['expression'] = expression
-                in_expression = False
-            elif line == '<source_data>':
+            if line == '<source_data>':
                 in_source_data = True
             elif line == '</source_data>':
                 source_data = SourceData(**source_data_params)
@@ -69,9 +97,7 @@ class IndicatorMetaDataParser:
                     else: 
                         value = [attr.strip().replace("'",'') for attr in value[1:-1].split(',')]
                 
-                if in_expression:
-                    expression[name] = value
-                elif in_source_data:
+                if in_source_data:
                     if name == 'package_order':
                         order = [eval(p) for p in value[1:-1].split(',')]
                         
@@ -113,7 +139,8 @@ class IndicatorMetaDataParser:
         value = value[1:-1]
         return (name, value)
 
-    #makes create_from_metadata and _extract_name_and_value a class method
+    #make class methods
+    write_indicator_metadata = classmethod(write_indicator_metadata)
     create_indicator_from_metadata = classmethod(create_indicator_from_metadata)
     _extract_name_and_value = classmethod(_extract_name_and_value)
 
@@ -122,7 +149,48 @@ from opus_core.tests import opus_unittest
 from opus_core.indicator_framework.utilities import AbstractIndicatorTest
 import os
 
-class Tests(AbstractIndicatorTest):    
+class Tests(AbstractIndicatorTest):  
+    def test__write_metadata(self):
+        try:
+            from opus_core.indicator_framework.image_types.table import Table
+            from opus_core.indicator_framework.source_data import SourceData
+        except: pass
+        else:
+            table = Table(
+                source_data = self.cross_scenario_source_data,
+                attribute = 'xxx.yyy.population',
+                dataset_name = 'yyy',
+                output_type = 'tab',
+                years = [0,1] # Indicators are not actually being computed, so the years don't matter here.
+            )
+            
+            lines = IndicatorMetaDataParser.write_indicator_metadata(indicator = table)
+            output = '\n'.join(lines)
+            
+            expected = (
+                '<version>1.0</version>\n'          
+                '<Table>\n'
+                '\t<dataset_name>yyy</dataset_name>\n'
+                '\t<years>[0, 1]</years>\n'
+                '\t<date_computed>None</date_computed>\n'
+                '\t<name>population</name>\n'
+                '\t<operation>None</operation>\n'
+                '\t<attribute>xxx.yyy.population</attribute>\n'
+                '\t<output_type>tab</output_type>\n'
+                '\t<source_data>\n'
+                '\t\t<cache_directory>%s</cache_directory>\n'
+                '\t\t<comparison_cache_directory>%s</comparison_cache_directory>\n' 
+                '\t\t<run_description>%s</run_description>\n'
+                '\t\t<years>[1980]</years>\n'
+                '\t\t<package_order>[\'opus_core\']</package_order>\n'
+                '\t</source_data>\n'
+                '</Table>'
+            )%(self.temp_cache_path,
+               self.temp_cache_path2,
+               self.cross_scenario_source_data.get_run_description())
+            
+            self.assertEqual(output,expected)
+  
     def test__read_write_metadata(self):
         try:
             from opus_core.indicator_framework.image_types import Table
@@ -140,7 +208,7 @@ class Tests(AbstractIndicatorTest):
             )
             
 #            table.create(False)
-            table._write_metadata()
+            IndicatorMetaDataParser.write_indicator_metadata(indicator = table)
             metadata_file = table.get_file_name(extension = 'meta')
             metadata_path = os.path.join(self.source_data.get_indicator_directory(),
                                          metadata_file)
