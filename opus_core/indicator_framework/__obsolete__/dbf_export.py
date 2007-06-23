@@ -65,35 +65,35 @@ class DbfExport(AbstractIndicator):
         file_path = self.get_file_path(year = year)
         return file_path
 
-import os
-from opus_core.tests import opus_unittest
-
-from opus_core.indicator_framework.abstract_indicator import AbstractIndicatorTest
-
-class Tests(AbstractIndicatorTest):
-    def test_create_indicator(self):
-        indicator_path = os.path.join(self.temp_cache_path, 'indicators')
-        self.assert_(not os.path.exists(indicator_path))
-        
-        dbf_export = DbfExport(
-              source_data = self.source_data,
-              dataset_name = 'test', 
-              attribute = 'package.test.attribute', 
-              years = None,
-              decimal_places = 2,
-        )
-        dbf_export.create(False)
-        
-        self.assert_(os.path.exists(indicator_path))
-        
-        # Don't fail if dbfpy Python package is not installed.
-        try:
-            import dbfpy
-        except:
-            pass
-        
-        else:
-            self.assert_(os.path.exists(os.path.join(indicator_path, 'test__dbf_export__attribute__1980.dbf')))
-                    
-if __name__ == '__main__':
-    opus_unittest.main()
+#import os
+#from opus_core.tests import opus_unittest
+#
+#from opus_core.indicator_framework.abstract_indicator import AbstractIndicatorTest
+#
+#class Tests(AbstractIndicatorTest):
+#    def test_create_indicator(self):
+#        indicator_path = os.path.join(self.temp_cache_path, 'indicators')
+#        self.assert_(not os.path.exists(indicator_path))
+#        
+#        dbf_export = DbfExport(
+#              source_data = self.source_data,
+#              dataset_name = 'test', 
+#              attribute = 'package.test.attribute', 
+#              years = None,
+#              decimal_places = 2,
+#        )
+#        dbf_export.create(False)
+#        
+#        self.assert_(os.path.exists(indicator_path))
+#        
+#        # Don't fail if dbfpy Python package is not installed.
+#        try:
+#            import dbfpy
+#        except:
+#            pass
+#        
+#        else:
+#            self.assert_(os.path.exists(os.path.join(indicator_path, 'test__dbf_export__attribute__1980.dbf')))
+#                    
+#if __name__ == '__main__':
+#    opus_unittest.main()

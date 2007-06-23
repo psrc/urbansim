@@ -48,38 +48,38 @@ else:
             dbf_export = DbfExport(**detraits_dict)
             return dbf_export
             
-    from opus_core.tests import opus_unittest
-    from opus_core.indicator_framework.source_data import SourceData
-    from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-        
-    class TraitsDbfExportTest(opus_unittest.OpusTestCase):
-        def test_detraitify(self):
-            indicator = TraitsDbfExport()
-            indicator.name = 'my_name'
-            indicator.attribute = 'my_attribute'
-            indicator.dataset_name = 'my_dataset'
-            indicator.decimal_places = 10
-            indicator.years = '2005'
-            
-            source_data = SourceData(
-                             cache_directory = '', 
-                             years = [],
-                             dataset_pool_configuration = DatasetPoolConfiguration(
-                                 package_order=['opus_core'],
-                                 package_order_exceptions={},
-                             ))
-            returned = indicator.detraitify(source_data = source_data)
-            correct = DbfExport(dataset_name = 'my_dataset',
-                            attribute = 'my_attribute',
-                            name = 'my_name',
-                            source_data = source_data,
-                            years = [2005],
-                            decimal_places = 10)
-            
-            self.assertEqual(correct.dataset_name, returned.dataset_name)
-            self.assertEqual(correct.attribute, returned.attribute)
-            self.assertEqual(correct.name, returned.name)
-            self.assertEqual(correct.decimal_places, returned.decimal_places)
-            
-    if __name__ == '__main__':
-        opus_unittest.main()
+#    from opus_core.tests import opus_unittest
+#    from opus_core.indicator_framework.source_data import SourceData
+#    from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
+#        
+#    class TraitsDbfExportTest(opus_unittest.OpusTestCase):
+#        def test_detraitify(self):
+#            indicator = TraitsDbfExport()
+#            indicator.name = 'my_name'
+#            indicator.attribute = 'my_attribute'
+#            indicator.dataset_name = 'my_dataset'
+#            indicator.decimal_places = 10
+#            indicator.years = '2005'
+#            
+#            source_data = SourceData(
+#                             cache_directory = '', 
+#                             years = [],
+#                             dataset_pool_configuration = DatasetPoolConfiguration(
+#                                 package_order=['opus_core'],
+#                                 package_order_exceptions={},
+#                             ))
+#            returned = indicator.detraitify(source_data = source_data)
+#            correct = DbfExport(dataset_name = 'my_dataset',
+#                            attribute = 'my_attribute',
+#                            name = 'my_name',
+#                            source_data = source_data,
+#                            years = [2005],
+#                            decimal_places = 10)
+#            
+#            self.assertEqual(correct.dataset_name, returned.dataset_name)
+#            self.assertEqual(correct.attribute, returned.attribute)
+#            self.assertEqual(correct.name, returned.name)
+#            self.assertEqual(correct.decimal_places, returned.decimal_places)
+#            
+#    if __name__ == '__main__':
+#        opus_unittest.main()
