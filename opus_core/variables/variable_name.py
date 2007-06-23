@@ -69,7 +69,10 @@ class VariableName(object):
 
     def get_short_name(self):
         return self._short_name
-
+    
+    def get_squished_expression(self):
+        return self._squished_expression
+    
     def get_alias(self):
         if self._alias is None:
             return self.get_short_name()
