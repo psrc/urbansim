@@ -42,7 +42,7 @@ This indicator was originally written by the UrbanSim group.
 
 </indicator-documentation>
 <source>
-<a href="../../../urbansim/gridcell/population.py">urbansim.gridcell.population</a>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/urbansim/gridcell/population.py">urbansim.gridcell.population</a>
 </source>
 
 </indicator-declaration>

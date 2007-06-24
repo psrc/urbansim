@@ -66,7 +66,7 @@ This indicator was originally written by the UrbanSim group.
 
 </indicator-documentation>
 <source>
-<a href="../../../psrc/zone/greenhouse_gas_emissions_from_vehicle_travel.py">psrc.zone.greenhouse_gas_emissions_from_vehicle_travel</a>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/psrc/zone/greenhouse_gas_emissions_from_vehicle_travel.py">psrc.zone.greenhouse_gas_emissions_from_vehicle_travel</a>
 </source>
 
 </indicator-declaration>

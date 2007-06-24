@@ -56,7 +56,7 @@ This indicator was originally written by the UrbanSim group.
 
 </indicator-documentation>
 <source>
-<a href="../../../psrc/zone/vehicle_miles_traveled_per_capita.py">psrc.zone.vehicle_miles_traveled_per_capita</a>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/psrc/zone/vehicle_miles_traveled_per_capita.py">psrc.zone.vehicle_miles_traveled_per_capita</a>
 </source>
 
 </indicator-declaration>

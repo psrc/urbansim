@@ -65,7 +65,7 @@ This indicator is modeled by UrbanSim.
 </indicator-documentation>
 
 <source>
-<a href="../../../urbansim/gridcell/nonresidential_improvement_value.py">urbansim.gridcell.nonresidential_improvement_value</a>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/urbansim/gridcell/nonresidential_improvement_value.py">urbansim.gridcell.nonresidential_improvement_value</a>
 </source>
 
 </indicator-declaration>

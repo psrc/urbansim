@@ -52,7 +52,7 @@ This indicator is modeled by UrbanSim.
 </indicator-documentation>
 
 <source>
-<a href="../../../urbansim/gridcell/vacant_residential_units.py">urbansim.gridcell.vacant_residential_units</a>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/urbansim/gridcell/vacant_residential_units.py">urbansim.gridcell.vacant_residential_units</a>
 </source>
 
 </indicator-declaration>

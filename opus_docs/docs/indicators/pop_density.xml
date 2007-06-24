@@ -95,7 +95,7 @@ This indicator is modeled by UrbanSim.
 </indicator-documentation>
 
 <source>
-<a href="../../../urbansim/gridcell/population_density.py">urbansim.gridcell.population_density</a>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/urbansim/gridcell/population_density.py">urbansim.gridcell.population_density</a>
 </source>
 
 </indicator-declaration>

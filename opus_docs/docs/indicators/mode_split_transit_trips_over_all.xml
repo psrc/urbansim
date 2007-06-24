@@ -50,7 +50,7 @@ This indicator was originally written by the UrbanSim group.
 
 </indicator-documentation>
 <source>
-<a href="../../../psrc/zone/mode_split_transit_trips_over_all.py">psrc.zone.mode_split_transit_trips_over_all</a>
+<a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/browser/psrc/zone/mode_split_transit_trips_over_all.py">psrc.zone.mode_split_transit_trips_over_all</a>
 </source>
 
 </indicator-declaration>
