@@ -23,29 +23,21 @@ class OpusPackage(object):
     """An abstraction for creating and manipulating Opus packages.
     """
     
-    # Must over-ride following names in child class:
+    # Must over-ride following name in child class:
     name = None
-    version = None
 
     # May over-ride following names in child class:
-    required_external_packages = ['numpy>=1.3.2', 'MySQL-python>=1.2.0']
+    required_external_packages = ['numpy>=1.0.1', 'MySQL-python>=1.2.0']
     required_opus_packages = [] 
 
-    optional_external_packages = ['matplotlib>=0.53', 'Numeric>=23.8', 
+    optional_external_packages = ['matplotlib>=0.87.7', 'Numeric>=23.8', 
                                   'rpy>=0.4.6']
     optional_opus_packages = []
     
     required_included_file_types = ['*.pdf','*.html','*.png']
     optional_included_file_types = ['*.gif']
     
-    def __init__(self):
-        if self.name is not None:
-            exec('from %s import __version__ as my_version' % self.name)
-            self.version = my_version
         
-        else:
-            self.version = 'unknown version'
-    
     def _get_mod(self, modulePath):
         return __import__(modulePath, globals(), locals(), ['*'])
     
@@ -87,15 +79,9 @@ class OpusPackage(object):
         
     def get_optional_included_file_types(self):
         return self.optional_included_file_types
-        
-    def get_package_version(self):
-        return self.version
-    
+            
     def print_package_name(self):
         logger.log_status("Opus package " + self.get_package_name())
-    
-    def print_package_version(self):
-        logger.log_status(self.get_package_name() + ", version " + self.version)
     
     def print_package_requires(self):
         self.print_package_requires_opus()
@@ -128,7 +114,6 @@ class OpusPackage(object):
     #TODO: outdated, include other print methods
     def info(self):
         self.print_package_name()
-        self.print_package_version()
         self.print_package_requires()
         
         

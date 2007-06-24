@@ -19,7 +19,7 @@ from opus_core.opus_package import OpusPackage
 class package(OpusPackage):
     name = 'opus_core'
 
-    required_external_packages = ['numpy>=1.0.2', 'MySQL-python>=1.2.0']
+    required_external_packages = ['numpy>=1.0.1', 'MySQL-python>=1.2.0']
     required_opus_packages = []
     optional_external_packages = ['matplotlib>=0.87', 'Numeric>=23.8',
                                   'rpy>=0.4.6']
