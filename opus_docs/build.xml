@@ -49,7 +49,7 @@
 		<property environment="env" />
 		<exec executable="python" failonerror="true">
 			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
-			<arg line="docs/latex/build_docs.py" />
+			<arg line="manual/build_docs.py" />
 		</exec>
 	</target>
 
