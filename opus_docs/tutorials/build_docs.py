@@ -17,7 +17,7 @@ import os
 import opus_docs
 
 basepath = opus_docs.__path__[0]
-path = os.path.join(basepath, "docs", "latex", 'tutorials')
+path = os.path.join(basepath, 'tutorials')
 print "path = '%s'" % path
 
 cwd = os.getcwd()
