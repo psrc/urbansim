@@ -1,60 +1,17 @@
-<project name="opus_docs" default="unit-tests">
+<project name="opus_docs" basedir=".">
 
 	<property name="webdir" value="/projects/urbansim5/www.urbansim.org/" />
 	<property name="pythonpathdir" value="${basedir}/.." />
-	<import file="${pythonpathdir}/opus_core/common.xml" />
+	<property environment="env" />
 
-	<!-- These are the custom python-related tasks installed on the build server -->
-
-	<target name="unit-tests" description="Run unit tests for this package" depends="update-python-build-number">
-		<echo message="Running UnitTests." />
-		<property environment="env" />
-		<exec executable="python">
-			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
-			<arg line="tests/all_tests.py" />
-		</exec>
-	</target>
-
-	<target name="build-pydoc" description="Prepare the pydoc" depends="update-python-build-number">
-		<mkdir dir="docs/pydoc" />
-		<py-doc pythonpath="${pythonpath}:${basedir}/.." destdir="docs/pydoc">
-			<fileset dir="${basedir}">
-				<include name="**/*.py" />
-				<exclude name="**/__init__.py" />
-			</fileset>
-		</py-doc>
-		<!-- since the pydoc generator doesn't make an index, we'll make one ourselves -->
-		<!-- exec executable="perl" failonerror="true">
-            <arg line="release-files/generate-pydoc-index.pl" />
-            <arg line="../../release/pydoc/" />
-            <arg line="release-files/pydoc_index_template.html" />
-        </exec -->
-	</target>
-
-	<target name="release" description="Release module to the incremental website" depends="update-python-build-number">
-		<delete includeemptydirs="true">
-			<fileset dir="${webdir}" includes="**/*" />
-		</delete>
-		<copy todir="${webdir}/docs">
-			<fileset dir="${basedir}/docs">
-				<exclude name="**/*.tex" />
-				<exclude name="**/*.sty" />
-				<exclude name="**/*.cls" />
-				<exclude name="**/*.ps" />
-			</fileset>
-		</copy>
-	</target>
-
-	<target name="build-latex-docs" depends="update-python-build-number">
-		<property environment="env" />
+	<target name="build-latex-docs">
 		<exec executable="python" failonerror="true">
 			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
 			<arg line="manual/build_docs.py" />
 		</exec>
 	</target>
 
-	<target name="build-tutorials" depends="update-python-build-number">
-		<property environment="env" />
+	<target name="build-tutorials">
 		<exec executable="python" failonerror="true">
 			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
 			<arg line="tutorials/build_docs.py" />
