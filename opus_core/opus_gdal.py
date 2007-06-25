@@ -42,7 +42,18 @@ class OpusGDAL(object):
 
         tdata = numeric.array(attribute_values_in_2d_array.tolist())
         tdata = numeric.transpose(tdata)
-
+        
+        min_val = min(numeric.argmin(tdata))
+        if min_val >= 0:
+            null_substitute = -1
+        else:
+            null_substitute = min_val + min_val * 10
+            
+        for i in range(len(tdata)):
+            for j in range(len(tdata[i])):
+                if tdata[i][j] == 999999:
+                    tdata[i][j] = null_substitute
+        
         if prototype_dataset is not None:
             imgds = gdalnumeric.OpenArray(tdata, prototype_ds=prototype_dataset)
         else:
