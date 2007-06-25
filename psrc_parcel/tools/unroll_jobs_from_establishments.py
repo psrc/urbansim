@@ -43,7 +43,7 @@ class UnrollJobsFromEstablishments:
     def run(self, in_storage, out_storage, business_table="business", jobs_table="jobs"):
         
         # get attributes from the establisments table
-        business_dataset = BusinessDataset(in_storage=in_storage, in_table_name=business_table, id_name="employer_id")
+        business_dataset = BusinessDataset(in_storage=in_storage, in_table_name=business_table)
         business_sizes = business_dataset.get_attribute("jobs00").astype("int32")
         sectors = business_dataset.get_attribute("sector_id")
         tazes = business_dataset.get_attribute("zone_id").astype("int32")
@@ -102,9 +102,9 @@ class UnrollJobsFromEstablishments:
 
 if __name__ == '__main__':
     #business_table = "est00_match_bldg2005_flag123457_flag12bldg"
-    business_table = "business"
-    #input_database_name = "psrc_2005_parcel_baseyear_change_hyungtai"
-    input_database_name = "psrc_2005_data_workspace_hana"
+    business_table = "businesses"
+    input_database_name = "psrc_2005_parcel_baseyear_change_hyungtai"
+    #input_database_name = "psrc_2005_data_workspace_hana"
     output_database_name = "psrc_2005_data_workspace_hana"
     input_cache = "/Users/hana/urbansim_cache/psrc/cache_source/2000"
     output_cache = "/Users/hana/urbansim_cache/psrc/cache_source_parcel/2005"
