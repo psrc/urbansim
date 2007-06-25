@@ -1,9 +1,10 @@
-\subsection{Land Price Model}
-\label{sec:land-price-model} \index{Land Price Model}
+
+\subsection{Real Estate Price Model}
+\label{sec:real-estate-price-model} \index{Real Estate Price Model}
 \modelsindex
 %
-The \class{LandPriceModel} \modelsindex predicts prices of land, in particular the
-residential and non-residential land value for each member of the given
+The \class{RealEstatePriceModel} \modelsindex predicts per-unit prices of buildings, 
+for each member of the given
 location set. The prediction is done via a regression procedure and thus,
 the model \modelsindex is a child of the \class{RegressionModel} \modelsindex described in
 Section~\ref{sec:regression-model}.
@@ -18,12 +19,10 @@ The class is initialized by passing the following arguments:
   ``opus_core.linear_regression''.
 \item[filter] - name of a variable/attribute used to filter out elements for
   the regression (applied to both, the \method{run()} and \method{estimate()}
-  method). Default value is
-  ``urbansim.gridcell.is_in_development_type_group_developable'' which requires an entry 'developable'
-  in the table ``develpment_type_groups'' (\ref{sec:development-tables-type-groups}).
+  method). Default value is None.
 \item[submodel_string] - If model \modelsindex contains submodels, this character string
   specifies what attribute of the observation set determines those
-  submodels. Default value is ``development_type_id''.
+  submodels. Default value is ``building_type_id''.
 \item[run_config] - A collection of additional arguments that control a
   simulation run. It should be of class \class{Resources}.
 \item[estimate_config] - A collection of additional arguments that control an
@@ -49,23 +48,22 @@ attribute/variable \attributesindex\variablesindex \verb|filter| is
 larger than zero. It then invokes the \method{run()} method of
 \class{RegressionModel} \modelsindex passing all arguments where
 \verb|index| is possibly modified. The returned value of this call
-is considered to be the prediction of the natural logarithm of total
-land value for each element of \verb|dataset| included in
-\verb|index|. Each of those values is then exponentiated and split
-into residential and non-residential land value, using the attribute
-\attributesindex ``fraction_residential_land'' (this must be a known
-attribute \attributesindex of \verb|dataset|). \datasetindex
-Attributes \attributesindex ``residential_land_value'' and
-``nonresidential_land_value'' (which also are expected to be known
-attributes \attributesindex of the \verb|dataset|) are modified by
+is considered to be the prediction of the natural logarithm of the value 
+per unit for each element of \verb|dataset| included in
+\verb|index|. The 'unit' used for the predictions is per 'square foot' 
+for non-residential buildings, and per residential unit for residential buildings. 
+Each of those values is then exponentiated . 
+Attribute \attributesindex ``unit_price'' 
+ (which is expected to be a known
+attribute \attributesindex of the \verb|dataset|) is modified by
 replacing current values with the computed values.
 
 If any of the computed values exceeds the maximal value of float32, a warning
 is issued and the value is clipped to the maximal possible value.
 
 {\it Output}:\\[1mm]
-The method returns an index of values within \verb|dataset| \datasetindex for which the land
-value was modified.
+The method returns an index of values within \verb|dataset| \datasetindex for which the 
+unit_price was modified.
 
 \subsubsection{The Estimate Method}
 {\it Input}:\\[1mm]
@@ -94,157 +92,16 @@ following arguments:
 \begin{description}
 \item[specification] - An
 \class{EquationSpecification} object created with data from table
-``land_price_model_specification''.  \modelsindex
+``real_estate_price_model_specification''.  \modelsindex
 \item[coefficients] \coefficientsindex - A \class{Coefficients} \coefficientsindex object created
-with data from table ``land_price_model_coefficients''. \coefficientsindex\modelsindex
-\item[dataset] \datasetindex - An instance of class \class{GridcellDataset} created with data
-  from table ``gridcells'' (see Section~\ref{sec:gridcell-tables} for the
+with data from table ``real_estate_price_model_coefficients''. \coefficientsindex\modelsindex
+\item[dataset] \datasetindex - An instance of class \class{BuildingDataset} created with data
+  from table ``buildings'' (see Section~\ref{sec:parcel-tables} for the
   table structure).
 \item[index] - None. Thus, the model \modelsindex runs on all members of \verb|dataset| \datasetindex which are possibly 
-filtered using a filter passed to the constructor (by default ``urbansim.gridcell.is_in_development_type_group_developable'', see
+filtered using a filter passed to the constructor (by default ``None'', see
 the Initialization paragraph).
 \end{description}
-
-\subsubsection{Correct Land Values Model}
-\modelsindex
-%
-\index{Correct Land Values Model}
-After the Land Price Model \modelsindex runs at least for 2 years, the production code
-invokes every year a model \modelsindex called \class{CorrectLandValue}. This model \modelsindex makes a
-correction of the land value to avoid its declination with development type
-change.
-
-Its \method{run()} method determines those members of \class{dataset} \datasetindex whose
-development type changed and at the same time have lower total land value when
-comparing to previous simulated year. Values of the attributes \attributesindex
-``residential_land_value'' and ``nonresidential_land_value'' of these members
-are replaced by values of the same attributes \attributesindex from previous year. The method
-returns an index of the modified \class{dataset} \datasetindex members.
-
-%
-\subsection{Development Project Transition Model}
-\modelsindex
-%
-\label{sec:development-project-transition-model}
-\index{Development Project Transition Model}
-%
-The model \modelsindex (implemented in the class \class{DevelopmentProjectTransitionModel}) \modelsindex
-creates development projects in order to match the desired vacancy rates. Each
-development project is for a single type of development, e.g.  'industrial' or
-'commercial'.  The distribution of project sizes (amount of space, value of
-space) is determined by sampling from the projects obtained from the history.
-
-\subsubsection{The Run Method}
-%
-{\it Input}:
-\begin{description}
-\item[model_configuration] - a \class{Configuration} object that determines
-  project types and settings for each type (see
-  Section Model \modelsindex Configuration bellow).
-\item[vacancy_table] - a \class{Dataset} \datasetindex object that must have attribute \attributesindex
-  ``year'' as the unique identifier and should contain attributes \attributesindex
-  ``target_total_residential_vacancy'' and
-  ``target_total_non_residential_vacancy''. Those attributes \attributesindex give vacancy
-  rates for specific years.
-\item[history_table] - a \class{Dataset} \datasetindex object giving historical data of
-  development events.
-\item[year] - simulated year.
-\item[location_set] - a \class{Dataset} \datasetindex object on which vacancies will be
-  determined.
-\item[resources] - a \class{Resources} object for additional arguments. It can
-  contain names of variables \variablesindex that compute the current vacancies per project
-  type. Those entry names are composed from the project type and a character
-  string `vacant_variable', e.g. for commercial project type the key for this
-  argument is ``commercial_vacant_variable''.  Default values for those
-  entries are ``urbansim.vacant_'' + project type, e.g.
-  ``urbansim.vacant_commercial''.
-\end{description}
-
-
-
-{\it Algorithm}:~\\[1mm]
-The method first determines the target vacancy rates. It distinguishes between
-residential and non-residential vacancy rate.  For each project type given in
-the \verb|model_configuration|, \modelsindex the method obtains current vacancy in each
-location (from \verb|location_set| and the overall vacancy rate). By comparing
-the rate with the target vacancy rate, it determines if there is a need for
-development and how many units should be developed. If there are units to be
-developed, from the historical data it samples sizes of projects so that their
-sum gives approximately the desired number of units to be developed. It then
-creates an instance of class \class{DevelopmentProjectDataset} for this particular
-project type that has unique identifier called ``project_id''. Each project
-corresponds to one of the sampled amount of units. This amount is stored in
-the new dataset \datasetindex as an attribute given in the entry ``units'' of
-\verb|model_configuration| \modelsindex (see below for details). If an attribute \attributesindex called
-project type + ``_improvement_value'' is contained in the \verb|location_set|,
-an average improvement value is computed over all locations and this project
-type and this value is added to each project in the created
-\class{DevelopmentProjectDataset}.  Additionally, an attribute \attributesindex of the same name as
-the unique identifier of \verb|location_set| is added to the
-\class{DevelopmentProjectDataset} and set to 0's (which means that the projects
-are unplaced).
-
-{\it Output}:~\\[1mm]
-The method returns a dictionary with an entry for each project type containing
-the corresponding \class{DevelopmentProjectDataset} object. If no projects were
-created for a project type, the corresponding dictionary value is \verb|None|.
-
-
-\subsubsection{Model Configuration}
-\label{sec:DPTM-configuration}
-\modelsindex
-The \method{run()} method of this class expects a dictionary
-\verb|model_configuration| \modelsindex as an argument. This object must contain an entry
-``development_project_types'' which is also a dictionary. The name of each
-element is a project type and value is again a dictionary. Entries on this
-level are ``units'', ``categories'', and ``residential''. Entry ``units''
-gives the name of the attribute \attributesindex that determines sizes of projects. An
-attribute \attributesindex of the same name must be contained in the \verb|location_set| and in
-the dataset \datasetindex with the historical data. Entry ``categories'' determines
-categories of a project set. It can be an empty array if categories are not
-used. Entry ``residential'' is a boolean value determining if vacancy of this
-project type should be compared to the residential vacancy rate or not. In the
-latter case, it is compared to the non-residential vacancy rate.
-
-{\em Configuration for Production Run}:\\[1mm]
-For a production run of UrbanSim the method \method{run()} is called using the
-following arguments:
-\begin{description}
-\item[model_configuration] \modelsindex - The default configuration for project types in
-  \file{general_configuration.py} is \label{page:model-configuration}
-\begin{verbatim}
-{
-    'development_project_types':{
-        'residential':{
-            'units':'residential_units',
-            'categories':array([1,2,3,5,10,20]),
-            'residential':True,
-            },
-        'commercial':{
-            'units':'commercial_sqft',
-            'categories':1000*array([1, 2, 5, 10]),
-            'residential':False,
-            },
-        'industrial':{
-            'units':'industrial_sqft',
-            'categories':1000*array([1,2,5,10]),
-            'residential':False,
-            },
-        }
-}
-\end{verbatim}
-\item[vacancy_table] - An object of class \class{TargetVacancyDataset} created
-  with data from table ``target_vacancies'' (see
-  Section~\ref{sec:table-target-vacancies} for the table structure).
-\item[history_table] - An object of class \class{DevelopmentEventDataset} created
-  with data from table ``development_event_history'' (see
-  Section~\ref{sec:table-development-event-history} for the  table structure).
-\item[location_set] - An instance of class \class{GridcellDataset} created with
-  data from table ``gridcells'' (see Section~\ref{sec:gridcell-tables} for the
-  table structure).
-\end{description}
-
-
 
 \subsection{Location Choice Model}
 \label{sec:location-choice-model}
@@ -394,327 +251,129 @@ first one.
 As mentioned above, \verb|estimate_config| can also contain an entry ``weights_for_estimation_string''.
 
 
-\subsection{Development Project Location Choice Model}
-\label{sec:development-project-lcm}
-\index{Development Project Location Choice Model}
+\subsection{Development Project Proposal Choice Model}
+\label{sec:development-project-proposal-cm}
+\index{Development Project Proposal Choice Model}
 %
-The Development project location choice model \modelsindex simulates a process where
-development projects of a specific type choose locations to be placed into.
-The class \class{DevelopmentProjectLocationChoiceModel} \modelsindex is a child of
+The Development project proposal choice model \modelsindex simulates a process where
+development project proposals are generated for all development sites, and a hypothetical
+financing agent (a construction lender) evaluates the expected return on investment
+for each proposal and selects projects based on their relative ROI, until the accepted
+projects saturate demand (as measured by a long-term vacancy rate target).
+The class \class{DevelopmentProjectProposalChoiceModel} \modelsindex is a child of
 \class{LocationChoiceModel} \modelsindex described in
 Section~\ref{sec:location-choice-model}.
 
-\subsubsection{Initialization}
-%
-The class is initialized by passing the following arguments:
-\begin{description}
-\item[location_set] - A dataset \datasetindex of locations to be chosen from.
-\item[project_type] - A character string determining the type of the projects
-  for this model. \modelsindex
-\item[units] - A character string giving the name of the attribute \attributesindex that
-  determines sizes of projects.
-\item[developable_maximum_unit_variable_full_name] \variablesindex -  A character string determining
-  which Opus variable \variablesindex to use for the maximum developable units.
-\item[developable_minimum_unit_variable_full_name] \variablesindex -  A character string determining
-  which Opus variable \variablesindex to use for the minimum developable units.
-\item[model_name] \modelsindex - An optional argument giving the model \modelsindex name.
-\item[+] all remaining arguments from the constructor of
-  \class{LocationChoiceModel}. \modelsindex
-\end{description}
-The \verb|location_set| is expected to have a variable \variablesindex
-``developable_minimum_''+\verb|units| and ``developable_maximum_''+\verb|units|
-implemented in the given \verb|opus_package|.
+\subsubsection{Generate Development Proposals}
+
+The \emph{Development Project Proposal Choice Model} begins by evaluating for each development site 
+the applicable development constraints, and
+generating a set of proposed development projects, from the set of development templates
+that would fit on the site and are consistent with land use regulations.  
+Note that more than one project that might be allowed on a site, and
+there may be sites that would not allow any projects to be developed.  The result of this step
+is a list of proposed development projects, from which the most likely projects should be
+selected, while imposing the constraint that once a project is selected for a site, the site is
+excluded from further consideration for other projects, and that once the project committments
+reach a stage that at completion they would cause the vacancy rate in a given property type (land
+use) to exceed a long-term stable rate (a break-even rate for developers), a project will not be
+accepted for development.  This is equivalent to the role of the financial sector providing
+capital to developers for financing construction projects. When vacancy rates exceed a long-term
+level that is seen as a high-risk threshold, the likelihood of being able to secure financing for
+a development project should fall quickly.
+
+\subsubsection{Development Scoring: Estimated Return on Investment}
+The evaluation of which development proposals are most likely to be implemented is based on
+a prediction of the return on investment for each proposal.  This allows comparisons to be made 
+among all development proposals, the computation of a probabilty in proportion to the ROI
+predictions and any other factors to be considered.
+
+The probability of being successful in securing financing is assumed to be proportional
+to the return on investment on a project.  Note that this
+approach combines and reconciles the two contrasting approaches used in real estate economics and
+finance: the site looking for a use (the landowner perspective) and the use looking for a site (the developer 
+perspective).  If multiple project proposals are generated on each development site,
+and their expected profit compared across proposals for the same site, and across
+sites, the model accounts for the competition among developers for sites, and
+among land owners for development.  
+
+Expected profit is predicted by hedonic regression.  This
+approach allows the specification and estimation
+of models with price as the dependent variable (or log price), and a set of structural and locational
+attributes on the right hand side of the model.  It 'decomposes' the sales transaction
+price (or assessed value if sales data are not readily available) into component marginal prices for
+each attribute, such as bedrooms, square footage, age, accessibility and other locational
+and structural characteristics.
+
+\begin{equation}
+ln(P) = \alpha + \beta X + \gamma Z
+\end{equation}
+
+where $ln(P)$ is the natural log of the price per unit for residential, and per square foot for nonresidential 
+buildings and land; $X$ is a set of location characteristics, and $Z$ is a set of characteristics of the 
+building.  Parameters $\beta$ and $\gamma$ would be estimated using Ordinary Least Squares, with OPUS
+estimation utilities.  The particular variables to be used in the model specification can be determined
+during the model development phase, through iterative testing of alternative specifications.  A relatively
+simple model specification with good explanatory power is preferred over model complex specifications.
+
+Using the Real Estate Price Models for each property type, the model can estimate the resulting final value of any
+development project by predicting the valuation of the component parts of a project and summing them
+over the components.  It then subtracts the value of the site prior to development, and subtracts the
+cost of the construction (and possibly the cost of demolishing existing buildings on the site), to produce
+a working estimate of the expected return on investment from the development.
+
+\begin{equation}
+ROI^* = \frac{\sum{e^{ln(P^*)}Q^*}-\sum{e^{ln(P^0)}Q^0 - C_c - C_s - C_d - C_f}}{\sum{e^{ln(P^0)}Q^0 + C_c + C_s + C_d + C_f}}
+\end{equation}
+
+where $ROI^*$ is the estimated return on investment on a proposed project, $P^*$ is the estimated market value per unit (sqft)
+of the building after completion, $Q^*$ is the quantity or size of the development project (number of units, number of square feet),
+$P^0$ is the estimated pre-development value per unit of the existing property, and $Q^0$ is the pre-development quantity
+of development.  $C_c$ is the construction cost of the development, $C_s$ is the cost of site preparation, including provision of 
+infrastructure to the site, $C_d$ is the cost of demolition of any existing buildings on the site, and $C_f$ is the financing cost over
+the duration of time that the project is under development and on the market. 
+
+The costs in the model can initially be estimated using simple constants, but can be replaced with more sophisticated 
+algorithms as needed.
+
+\subsubsection{Predict Development Project Proposal Probabilities}
+Once the development project proposals have been evaluated and the expected 
+return on investment from each has been
+estimated, a multinomial logit model generates the probabilities of each being
+developed.  The principle term in the utility function is the expected ROI, and the probability of
+development will be proportional to the relative profit of the proposed project.
+
+\begin{equation}
+Pr(i) = \frac{e^{ROI_i}}{\sum_{j \in J}{e^{ROI_j}}}
+\end{equation}
+
+\subsubsection{Sample Development Projects Until Demand Met}
+Once we have generated the probability distribution across projects, the model
+draws samples from the probability distribution and adds them to the list of committed projects,
+at each step updating the amount of committed space by type, and evaluating whether a cutoff 
+threshold has been reached for any property types.  Once the committed projects reach a point that the next
+project adds enought space to exceed the structural vacancy rate, then the algorithm will reject any
+additional proposals that would further increase the vacancy rate in that property type.  The drawing
+process proceeds until the threshold vacancy rate has beeen exceeded in all property types or a
+predefined number of iterations has been reached.
+
+\subsubsection{Iterate over RAZs (or other geography) and Allocate Unplaced Development Projects}
+
+Once allocation of all development in a RAZ or other mid-level geography is completed, process the
+next RAZ. If not all development could be allocated in a RAZ, accumulate unmet demand within a higher
+level geography to be processed in a final iteration. If needed, allocate unmet demand from higher
+level (city or county for example), to Development Sites as above.
 
 
-\subsubsection{The Run Method}
-%
-{\it Input}:\\[1mm]
-It takes the same arguments as the \method{run()} of its parent: \\
-{\bf specification}, {\bf coefficients}, \coefficientsindex {\bf agent_set}, {\bf agents_index},
-{\bf chunk_specification}, {\bf data_objects}, and {\bf run_config}.
+\subsection{Prescheduled Events}
+\label{sec:prescheduled-events}
 
-The \verb|agent_set| is expected to be an instance of
-\class{DevelopmentProjectDataset}. It is assumed that initially all projects are
-unplaced.
+The capacity to process development project events provided as inputs by the user, and development
+proposals simulated by the Development Project Proposal Choice Model, is implemented in a
+Prescheduled Events class.  This class has no estimate method.  It processes Development Projects, both
+user-provided and simulated, and determines the quantity of each type of building to construct on each
+Development Site, according to the Development Velocity Function associated with the project.
 
-{\it Algorithm}:\\[1mm]
-The model \modelsindex must be set to use capacity (via entries ``compute_capacity_flag''
-and ``capacity_string'' in \verb|run_config|).  The capacity attribute \attributesindex is
-considered as a variable \variablesindex that is 1 for locations that are developable for this
-particular project type, otherwise 0. This means that no more than one project
-of the same type can occupy one location. The method
-\method{determine_units_capacity()} assures that locations taken in previous
-chunks are marked as taken.
-
-The weight array for sampling is constructed in each chunk by combining
-information about project sizes and minimum and maximum developable units in
-each location.  Thus, the weight array is a 2-d array which implies that
-different projects have different weights for the same locations, depending on
-their size. The dimension of the location axis of this array is for memory
-reasons reduced to only locations that are developable. No additional
-filtering is done (the model \modelsindex sets the class property \verb|filter| to
-\verb|None|).
-
-The class overwrites the method \verb|get_agents_order()| in a way that it
-sorts the agents according to their sizes in descending order. This means that
-larger projects enter the choice process first.
-
-The \method{run()} method proceeds otherwise as defined in the parent class.
-
-{\it Output}:~\\[1mm]
-It returns results of its parent class.
-
-\subsubsection{The Estimate Method}
-%
-The \method{estimate()} method is identical to its parent method
-\method{estimate()}.
-
-
-\subsubsection{Creators}
-%
-The model \modelsindex can be created using pre-defined creators in \package{urbansim}.
-The class\\
-\class{DevelopmentProjectLocationChoiceModelCreator} \modelsindex sets useful default
-values for arguments of the constructor, \verb|run_config| and
-\verb|estimate_config|. The model \modelsindex is by default initialized with:
-\begin{description}
-\item[sampler] - ``opus_core.samplers.weighted_sampler''
-\item[utilities] - ``opus_core.linear_utilities''
-\item[probabilities] - ``opus_core.mnl_probabilities''
-\item[choices] - ``urbansim.first_agent_first_choices'' (see
-  Section~\ref{sec:urbansim-choices})
-\item[submodel_string] - ``size_capacity''
-\end{description}
-Entries of \verb|run_config| are set as to:
-\begin{verbatim}
-{   "compute_capacity_flag": True,
-    "sample_size_locations": 10,
-    "correct_sampling_bias": False,
-    "capacity_string": "urbansim.gridcell.is_developable_for_%s" % units }
-\end{verbatim}
-The variable \variablesindex \verb|units| in the last line is taken from a model \modelsindex configuration
-that is passed to the creator in an entry ``units'' of the corresponding
-project type (see model \modelsindex configuration on
-page~\pageref{page:model-configuration}).
-
-Entries of \verb|estimate_config| are set as to:
-\begin{verbatim}
-{   "estimation": "opus_core.bhhh_mnl_estimation",
-    "sample_size_locations": 10,
-    "estimation_size_agents": 1.0,
-    "correct_sampling_bias": False  }
-\end{verbatim}
-
-
-\class{DevelopmentProjectLocationChoiceModelCreator} \modelsindex is used by
-\begin{itemize}
-\item \class{DevelopmentProjectCommercialLocationChoiceModelCreator} \modelsindex
-\item \class{DevelopmentProjectIndustrialLocationChoiceModelCreator} \modelsindex
-\item \class{DevelopmentProjectResidentialLocationChoiceModelCreator} \modelsindex
-\end{itemize}
-which set in addition the appropriate type of projects for which the model \modelsindex
-should run.
-
-\subsubsection{Model Configuration}
-\modelsindex
-%
-{\em Configuration for Production Run}:\\[1mm]
-The production run of UrbanSim is configured with three development project
-types: ``residential'', ``commercial'', and ``industrial''. Thus, there are
-three instances of the model, \modelsindex each initialized with the particular project
-type and a \class{GridcellDataset} as \verb|location_set|.  Each of the models \modelsindex
-runs only if the Development Project Transition Model \modelsindex returns some projects
-for the project type, i.e. the output value for this particular project type
-is not None.  The \method{run()} method of each of the model \modelsindex is called by
-passing the following arguments:
-\begin{description}
-\item[specification] - An
-\class{EquationSpecification} object created with data from table
-``\%s_development_location_choice_model_specification''.  \modelsindex
-\item[coefficients] \coefficientsindex - A \class{Coefficients} \coefficientsindex object created
-with data from table ``\%s_development_location_choice_model_coefficients''. \coefficientsindex\modelsindex
-\item[agent_set] - A \class{DevelopmentProjectDataset} returned by the Development
-  Project Transition Model \modelsindex in its entry for this particular project type.
-\end{description}
-The ``\%s'' in the above character strings are replaced by project type.
-
-%
-\subsection{Development Event Transition Model}
-\modelsindex
-%
-\label{sec:development-event-transition-model}
-\index{Development Event Transition Model}
-%
-The model \modelsindex creates for each location a development event, which is a collection
-of development projects of different type (e.g. commercial, residential,
-industrial) for this location. This model \modelsindex is not estimated and contains only a
-method \method{run()}.
-
-%
-\subsubsection{The Run Method}
-%
-{\it Input}:
-\begin{description}
-\item[projects] - a dictionary where key is the type of development
-  project and value is an instance of \class{DevelopmentProjectDataset} for that
-  particular project type.
-\item[types] - a list of project types which the resulting event should
-  consist of.
-\item[units] - a list of attribute \attributesindex names (defined as dataset \datasetindex qualified names)
-  that determine the units for each project type (e.g. ``commercial_sqft'' for
-  copmmercial type or ``residential_units'' for residential type). The
-  ordering in the list must correspond to the ordering in \verb|types|.
-\item[year] - an integer indicating for which year this events are
-  created. Default value is 0.
-\item[location_id_name] - name of the attribute \attributesindex that determines
-  locations. Default value is ``grid_id''.
-\end{description}
-
-{\it Algorithm}:\\[1mm]
-It generates a distinct set of all locations in which at least one project is
-located. It creates a \class{DevelopmentEventDataset} of size of number of those
-locations. It has an attribute \attributesindex given in \verb|location_id_name| with id values
-of the locations. Furthermore, it has all attributes \attributesindex given in the argument
-\verb|units|. Values for each these attributes \attributesindex are the sums of values of the
-attribute \attributesindex of the same name in the corresponding project dataset \datasetindex over the
-corresponding locations. It also has an attribute \attributesindex ``scheduled_year'' with the
-same value for each location, namely the one given in the argument
-\verb|year|. Additional attributes \attributesindex \verb|type| + ``_improvement_value''
-contain the sum of the project set attribute \attributesindex ``improvement_value'' over the
-corresponding locations.
-
-{\it Output}:~\\[1mm]
-The model \modelsindex returns an instance of \class{DevelopmentEventDataset}.
-
-\subsubsection{Model Configuration}
-\modelsindex
-%
-{\em Configuration for Production Run}:\\[1mm]
-In a production run of UrbanSim, the \method{run()} method is called by
-passing the following arguments:
-\begin{description}
-\item[projects] - A dictionary that results from a run of the Development
-  Project Transition Model, \modelsindex and is (possibly) modified by runs of all three
-  Development Project Location Choice Models. \modelsindex
-\item[types] - A list of project types for which the Development Project
-  Location Choice Model \modelsindex has run, i.e. for which there are projects to be
-  developed.
-\item[units] - A list of ``units'' entries from model \modelsindex configuration in
-  \file{general_configuration.py} (see page~\pageref{page:model-configuration}) for which the
-  Development Project Location Choice Model \modelsindex has run, i.e. that correspond to
-  \verb|types|.
-\item[year] - The simulated year.
-\end{description}
-
-
-%
-\subsection{Events Coordinator}
-\label{sec:events-coordinator}
-\index{Events Coordinator}
-%
-The class \class{EventsCoordinator} updates a location set to reflect changes
-that are contained in the output of the Development Event Transition Model. \modelsindex
-There is no \method{estimate()} method for this model. \modelsindex
-%
-\subsubsection{The Run Method}
-%
-{\it Input}:
-\begin{description}
-\item[model_configuration] \modelsindex - a \class{Configuration} object that determines
-  project types and settings for each type (see Model \modelsindex Configuration of
-  Section~\ref{sec:development-project-transition-model}).
-\item[location_set] - a \class{Dataset} \datasetindex object to be updated.
-\item[development_event_set] - a \class{DevelopmentEventDataset} with development
-  events to be used to update the locations.
-\item[development_type_set] - an object of class \class{DevelopmentTypeDataset}.
-\item[current_year] - an integer value determining the year of events by
-  which the locations are updated.
-\end{description}
-
-{\it Algorithm}:\\[1mm]
-
-
-{\it Output}:~\\[1mm]
-Returns a tuple of indices of locations that were modified, and indices of
-development events that were processed.
-
-\subsubsection{Model Configuration}
-\modelsindex
-%
-{\em Configuration for Production Run}:\\[1mm]
-For a production run of UrbanSim the method \method{run()} is called using the
-following arguments:
-\begin{description}
-\item[model_configuration] \modelsindex - The model \modelsindex configuration for project types from
-  \file{general_configuration.py} as shown on page~\pageref{page:model-configuration}.
-\item[location_set] - An instance of class \class{GridcellDataset} created with
-  data from table ``gridcells'' (see Section~\ref{sec:gridcell-tables} for the
-  table structure) and (possibly) modified by previous models. \modelsindex
-\item[development_event_set] - Result of a Development Event Transition Model \modelsindex
-  run.
-\item[development_type_set] - An object of class \class{DevelopmentTypeDataset}
-  created with data from table ``development_types'' and
-  ``development_type_group_definitions'' (see
-  Section~\ref{sec:development-tables} for the tables structure).
-\item[current_year] - The current year of the simulation.
-\end{description}
-
-%
-\subsection{Residential Land Share Model}
-\modelsindex
-%
-\label{sec:residential-land-share-model}
-\index{Residential Land Share Model}
-
-Residential land share model \modelsindex (implemented in class
-\class{ResidentialLandShareModel}) \modelsindex predicts what fraction of each location is
-residential land. It is a \class{RegressionModel} \modelsindex
-(Section~\ref{sec:regression-model}) \modelsindex with an only method overwritten, the
-\method{run()} method.
-
-\subsubsection{The Run Method}
-%
-{\it Input}:\\[1mm]
-It takes the same arguments as the \method{run()} of its parent: \\
-{\bf specification}, {\bf coefficients}, \coefficientsindex {\bf dataset}, \datasetindex {\bf index}, {\bf
-  chunk_specification}, {\bf data_objects}, and {\bf run_config}.
-
-{\it Algorithm}:\\[1mm]
-The \method{run()} method of \class{RegressionModel} \modelsindex is invoked in order to
-obtain a regression outcome $y$. If the run
-was successful, the resulting quantity $y'$ is computed as
-\[
-y' = \frac{e^y}{1+e^y}
-\]
-$y'$ is an array of values for each member of \verb|dataset| \datasetindex given by
-\verb|index|. Those values are stored in the attribute \attributesindex given by the class
-property \verb|attribute_to_modify|. This is by default
-``fraction_residential_land''. If such attribute \attributesindex does not exists in the
-\verb|dataset|, \datasetindex it is created.
-
-{\it Output}:\\[1mm]
-The method returns $y'$.
-
-\subsubsection{Model Configuration}
-\modelsindex
-%
-{\em Configuration for Production Run}:\\[1mm]
-For a production run of UrbanSim the method \method{run()} is called only if
-the Events Coordinator actually changed any locations.  The following
-arguments are passed to the run:
-\begin{description}
-\item[specification] -  An
-\class{EquationSpecification} object created with data from table
-``residential_land_share_model_specification''. \modelsindex
-\item[coefficients] - A \class{Coefficients} object created
-with data from table ``residential_land_share_model_coefficients''. \coefficientsindex\modelsindex
-\item[dataset] - An instance of class \class{GridcellDataset} that was passed to
-  the Events Coordinator.
-\item[index] - Indices of the gridcells that were changed by the Events
-  Coordinator, i.e. the first element of its output tuple.
-\end{description}
-
-%
 \subsection{Household Transition Model}
 \modelsindex
 %
@@ -808,11 +467,11 @@ Figure~\ref{fig:htm-example}.
 \begin{figure}
 \begin{center}
 %begin{latexonly}
-\includegraphics[scale=0.5, angle=-90]{../images/htmexample.pdf}
+\includegraphics[scale=0.5, angle=-90]{images/htmexample.pdf}
 %end{latexonly}
 \caption{\label{fig:htm-example}\small Example of dividing household
   characteristics into bins.}
-\htmlonly{\includegraphics[scale=0.5, angle=-90]{../images/htmexample.jpg}}
+\htmlonly{\includegraphics[scale=0.5, angle=-90]{images/htmexample.jpg}}
 \end{center}
 \end{figure}
 
@@ -1132,37 +791,13 @@ arguments, \verb|run_config| and \verb|estimate_config| to fully-qualified
 names, by using the dataset name of the given \verb|location_set| and package
 ``urbansim''.
 
-\subsubsection{Creators}
-The model can be created using pre-defined creators in \package{urbansim}.
-They set useful default values for arguments of the
-\class{AgentLocationChoiceModel} \modelsindex constructor, \verb|run_config| and
-\verb|estimate_config|, depending on what model \modelsindex they create. In a production run we use one creator, namely the
-{\bf HouseholdLocationChoiceModelCreator}. \modelsindex  It uses all default
-  values of the \class{LocationChoiceModel} \modelsindex constructor and sets
-  \verb|run_config| to:
-\begin{verbatim}
-{   "compute_capacity_flag": True,
-    "sample_size_locations": 30,
-    "correct_sampling_bias": False,
-    "capacity_string": "vacant_residential_units",
-    "number_of_agents_string": "number_of_households",
-    "number_of_units_string": "residential_units"  }
-\end{verbatim}
-Entries of \verb|estimate_config| are set as to:
-\begin{verbatim}
-{   "estimation": "opus_core.bhhh_mnl_estimation",
-    "sample_size_locations": 30,
-    "estimation_size_agents": 1.0,
-    "correct_sampling_bias": False,
-    "weights_for_estimation_string": "residential_units" }
-\end{verbatim}
 
 \subsubsection{Model Configuration}
 \modelsindex
 %
 {\em Configuration for Production Run}:\\[1mm]
 The {\bf HouseholdLocationChoiceModelCreator} passes a
-\class{GridcellDataset} object that was (possibly) used and modified by the
+\class{BuildingDataset} object that was (possibly) used and modified by the
 development models \modelsindex to the constructor of \class{AgentLocationChoiceModel} \modelsindex as
 the argument {\bf location_set}. Additionally, it overwrites the default
 value of {\bf choices} with ``urbansim.lottery_choices'' (see
@@ -1181,52 +816,23 @@ The following arguments are passed to
 when running Household Location Choice Model.
 \end{description}
 
-
-\subsection{Agent Location Choice Model Member}
-%
-\modelsindex
-\label{sec:agent-lcm-member}
-\index{Agent Location Choice Model Member}
-%
-This model is a child of \class{AgentLocationChoiceModel} (Section~\ref{sec:agent-lcm}) that is used 
-for running the parent class with different subsets of the agents.
-
-\subsubsection{Initialization}
-%
-The class is initialized by passing the following arguments:
-\begin{description}
-\item[group_member] - An object of class \class{ModelGroupMember} determining for which member is this model initialized.
-\item[location_set] - A dataset of locations.
-\item[agents_grouping_attribute] - An attribute of the agent set that is used for classifying agents into the member groups. 
-\end{description}
-Other arguments of the parent class can be passed. 
-
-\subsubsection{The Run and Estimate Methods}
-%
-For both methods, the agents that correspond to the given member are selected and the model is run/estimated only
-on those agents. 
-
-The \method{prepare_for_estimate} appends the member name as prefix in front of the specification and coefficients tables.
-
 \subsection{Employment Location Choice Model}
 \modelsindex
 \label{sec:elcm} \index{Employment Location Choice Model}
 %
-The class \class{EmploymentLocationChoiceModel} is a child of \class{AgentLocationChoiceModelMember}\index{model group}. 
+The class \class{EmploymentLocationChoiceModel} is a child of \class{AgentLocationChoiceModel}\index{model group}. 
 It is initialized by arguments (see also their default values):
 \begin{verbatim}
-    group_member, 
     location_set, 
-    agents_grouping_attribute = 'job.building_type',
     sampler = "opus_core.samplers.weighted_sampler", 
     utilities = "opus_core.linear_utilities", 
     choices = "opus_core.random_choices", 
     probabilities = "opus_core.mnl_probabilities", 
     estimation = "opus_core.bhhh_mnl_estimation", 
-    capacity_string = "vacant_SSS_job_space",
-    estimation_weight_string = "total_number_of_possible_SSS_jobs",
-    number_of_agents_string = "number_of_SSS_jobs",
-    number_of_units_string = "total_number_of_possible_SSS_jobs",
+    capacity_string = "vacant_job_space",
+    estimation_weight_string = "total_number_of_possible_jobs",
+    number_of_agents_string = "number_of_jobs",
+    number_of_units_string = "total_number_of_possible_jobs",
     sample_proportion_locations = None, 
     sample_size_locations = 30, 
     estimation_size_agents = 1.0, 
@@ -1242,30 +848,22 @@ It is initialized by arguments (see also their default values):
     dataset_pool=None):
 \end{verbatim}
 
-The initialization procedure replaces any occurence of the string 'SSS' in 'capacity_string', 'estimation_weight_string',
-'number_of_agents_string', 'number_of_units_string', and 'demand_string' by the name of the group member. Then it places 
-the arguments appropriately into 'run_config' and 'estimate_config' and calls its parent's constructor.
 
 \subsubsection{Model Configuration}
 \modelsindex
 %
 {\em Configuration for Production Run}:\\[1mm]
-In the production run of UrbanSim, this model is called by default for members 'commercial', 'industrial', and 'home_based'
- (if these names are contained in the table \file{job_building_types}). 
- The following arguments are passed to the constructors of models for all members:
+The following arguments are passed to the model constructor:
 \begin{description}
-\item[location_set] - A \class{GridcellDataset} object.
+\item[location_set] - A \class{BuildingDataset} object.
 \item[choices] - 'urbansim.lottery_choices'
 \end{description}
-Additionally, the member 'home_based' overwrites the arguments {\bf estimation_weight_string} by the value 'residential_units' 
-and {\bf number_of_units_string} also by the value 'residential_units'.
 
 The \method{run()} method is called with the following arguments:
 \begin{description}
 \item[specification] - Uses data from
-  ``\%s_employment_location_choice_model_specification'' where \%s is replaced by the member name.
-\item[coefficients] \coefficientsindex - Uses data from ``\%s_employment_location_choice_model_coefficients'' 
-    where \%s is replaced by the member name. \coefficientsindex\modelsindex
+  ``employment_location_choice_model_specification'' .
+\item[coefficients] \coefficientsindex - Uses data from ``employment_location_choice_model_coefficients'' 
 \item[agent_set] - A \class{JobDataset} object used in Employment Relocation Model. \modelsindex
 \item[agents_index] - Results of Employment Relocation Model \modelsindex.
 \end{description}
@@ -1338,51 +936,51 @@ the following arguments:
 \item[agents_index] - Results of Employment Relocation Model. \modelsindex
 \end{description}
 
+\subsection{Events Coordinator}
+\label{sec:events-coordinator}
+\index{Events Coordinator}
+%
+The class \class{EventsCoordinator} updates a location set to reflect changes
+that are contained in the output of the Development Event Transition Model. \modelsindex
+There is no \method{estimate()} method for this model. \modelsindex
+%
+\subsubsection{The Run Method}
+%
+{\it Input}:
+\begin{description}
+\item[model_configuration] \modelsindex - a \class{Configuration} object that determines
+  project types and settings for each type (see Model \modelsindex Configuration of
+  Section~\ref{sec:development-project-transition-model}).
+\item[location_set] - a \class{Dataset} \datasetindex object to be updated.
+\item[development_event_set] - a \class{DevelopmentEventDataset} with development
+  events to be used to update the locations.
+\item[development_type_set] - an object of class \class{DevelopmentTypeDataset}.
+\item[current_year] - an integer value determining the year of events by
+  which the locations are updated.
+\end{description}
 
-\subsection{Distribute Unplaced Jobs Model}
+{\it Algorithm}:\\[1mm]
+
+
+{\it Output}:~\\[1mm]
+Returns a tuple of indices of locations that were modified, and indices of
+development events that were processed.
+
+\subsubsection{Model Configuration}
 \modelsindex
 %
-\label{sec:distribute-unplaced-jobs-model} \index{Distribute Unplaced Jobs Model}
-%
-This model is a child of the \class{ScalingJobsModel}. It determines all unplaced jobs, i.e.
- jobs with location identifier smaller equal 0. Then it calls the parent model on those jobs, setting 
- 'group_member' to \verb|None|.
+{\em Configuration for Production Run}:\\[1mm]
+For a production run of UrbanSim the method \method{run()} is called using the
+following arguments:
+\begin{description}
+\item[model_configuration] \modelsindex - The model \modelsindex configuration for project types from
+  \file{general_configuration.py} as shown on page~\pageref{page:model-configuration}.
+\item[location_set] - An instance of class \class{GridcellDataset} created with
+  data from table ``gridcells'' (see Section~\ref{sec:gridcell-tables} for the
+  table structure) and (possibly) modified by previous models. \modelsindex
+\item[development_event_set] - Result of a Development Event Transition Model \modelsindex
+  run.
+\item[current_year] - The current year of the simulation.
+\end{description}
 
-\section{Model Components}
-\modelsindex
-%
-\label{sec:urbansim-model-components}
-%
-\subsection{Probabilities Classes}
-%
-\label{sec:urbansim-probabilities}
-This section describes \class{Probabilitites} classes (see
-Section~\ref{sec:probabilities}) that are implemented in \package{urbansim}.
 
-\subsubsection{household_relocation_probabilities}
-%
-\index{household_relocation_probabilities}
-This class is implemented to be used with a rate set (instance of
-\class{RateDataset} initialized for households) structured according to the
-description for ``annual_relocation_rates_for_households'' in
-Section~\ref{sec:household-tables}. The \method{run()} method iterates over
-households and using the rate set, for each household it determines from the
-values of required primary attributes \primaryattributesindex ``age_of_head'' and ``income'' the
-probability of relocation. It returns a 1D array of those probabilities. The
-household set and rate set are expected to be contained in the argument
-\verb|resources| of the \method{run()} method.
-
-\subsubsection{employment_relocation_probabilities}
-%
-\index{employment_relocation_probabilities}
-This class is implemented to be used with a rate set (instance of
-\class{RateDataset} initialized for jobs) structured according to the description
-for ``annual_relocation_rates_for_jobs'' in
-Section~\ref{sec:employment-tables}. The \method{run()} method iterates over
-jobs and using the rate set, for each job it determines from the values of
-required primary attribute \primaryattributesindex ``sector_id'' the probability of relocation. It
-returns a 1D array of those probabilities. The job set and rate set are
-expected to be contained in the argument \verb|resources| of the
-\method{run()} method.
-
-%
