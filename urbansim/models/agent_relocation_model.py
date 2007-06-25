@@ -68,7 +68,7 @@ class AgentRelocationModel(Model):
                         n=100, multiplicator=1, flush_rates=True):
         from urbansim.datasets.rate_dataset import RateDataset
         resources = Resources()
-        if rate_storage is not None:
+        if (rate_storage is not None) and (rate_table is not None):
             rates = RateDataset(what=what, in_storage=rate_storage,
                              in_table_name=rate_table)
             if sample_rates:

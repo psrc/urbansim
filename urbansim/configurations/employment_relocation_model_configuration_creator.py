@@ -15,15 +15,15 @@
 from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
 
 from opus_core.configuration import Configuration
-
+from opus_core.misc import get_string_or_None
 
 class EmploymentRelocationModelConfigurationCreator(HasStrictTraits):
     debuglevel = Trait('debuglevel', Str, Int)
     agent_set = Str('job')
     what = Str('jobs')
-    rate_table = Str('annual_relocation_rates_for_jobs')
+    rate_table = Trait('annual_relocation_rates_for_jobs', None, Str)
     location_id_name = Str('grid_id')
-    
+    probabilities = Trait('urbansim.employment_relocation_probabilities', None, Str)
     output_index = Str('erm_index')
     
     _model_name = 'employment_transition_model'
@@ -40,14 +40,15 @@ class EmploymentRelocationModelConfigurationCreator(HasStrictTraits):
             'init': {
                 'arguments': {
                               'debuglevel': self.debuglevel,
-                              'location_id_name': "'%s'" % self.location_id_name
+                              'location_id_name': "'%s'" % self.location_id_name,
+                              'probabilities': get_string_or_None(self.probabilities),
                               },
                 'name': 'EmploymentRelocationModelCreator().get_model'
                 },
             'prepare_for_run': {
                 'arguments': {
                     'rate_storage': 'base_cache_storage',
-                    'rate_table': "'%s'" % self.rate_table,
+                    'rate_table': get_string_or_None(self.rate_table),
                     'what': "'%s'" % self.what,
                     },
                 'name': 'prepare_for_run',
@@ -82,8 +83,10 @@ class TestEmploymentRelocationModelConfigurationCreator(opus_unittest.OpusTestCa
                 },
             'init': {
                 'arguments': {'debuglevel': 'debuglevel',
-                              'location_id_name': "'grid_id'"},
-                'name': 'EmploymentRelocationModelCreator().get_model'
+                              'location_id_name': "'grid_id'",
+                              'probabilities': "'urbansim.employment_relocation_probabilities'"},
+                'name': 'EmploymentRelocationModelCreator().get_model',
+                
                 },
             'prepare_for_run': {
                 'arguments': {
@@ -121,7 +124,8 @@ class TestEmploymentRelocationModelConfigurationCreator(opus_unittest.OpusTestCa
                 },
             'init': {
                 'arguments': {'debuglevel': 9999,
-                              'location_id_name': "'grid_id'"},
+                              'location_id_name': "'grid_id'",
+                              'probabilities': "'urbansim.employment_relocation_probabilities'",},
                 'name': 'EmploymentRelocationModelCreator().get_model'
                 },
             'prepare_for_run': {

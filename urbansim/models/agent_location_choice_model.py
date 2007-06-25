@@ -176,7 +176,7 @@ class AgentLocationChoiceModel(LocationChoiceModel):
         return result
 
     def prepare_for_estimate(self, specification_dict = None, specification_storage=None,
-                              specification_table=None, agent_set=None,
+                              specification_table=None, agent_set=None, 
                               agents_for_estimation_storage=None,
                               agents_for_estimation_table=None, join_datasets=False,
                               index_to_unplace=None, portion_to_unplace=1.0,
@@ -219,7 +219,7 @@ class AgentLocationChoiceModel(LocationChoiceModel):
                                                    resources=Resources(data_objects))
 
         # create agents for estimation
-        if agents_for_estimation_storage is not None:
+        if (agents_for_estimation_storage is not None) and (agents_for_estimation_table is not None):
             estimation_set = Dataset(in_storage = agents_for_estimation_storage,
                                       in_table_name=agents_for_estimation_table,
                                       id_name=agent_set.get_id_name(), dataset_name=agent_set.get_dataset_name())
@@ -228,8 +228,8 @@ class AgentLocationChoiceModel(LocationChoiceModel):
                 # needs to be a primary attribute because of the join method below
                 estimation_set.add_primary_attribute(estimation_set.get_attribute(location_id_variable), VariableName(location_id_variable).get_alias())
             if filter:
-                estimation_set.compute_variables(filter, resources=Resources(data_objects))
-                index = where(estimation_set.get_attribute(filter) > 0)[0]
+                values = estimation_set.compute_variables(filter, resources=Resources(data_objects))
+                index = where(values > 0)[0]
                 estimation_set.subset_by_index(index, flush_attributes_if_not_loaded=False)
 
             if join_datasets:
@@ -240,7 +240,11 @@ class AgentLocationChoiceModel(LocationChoiceModel):
                 index = agent_set.get_id_index(estimation_set.get_id_attribute())
         else:
             if agent_set is not None:
-                index = arange(agent_set.size())
+                if filter is not None:
+                    values = agent_set.compute_variables(filter, resources=Resources(data_objects))
+                    index = where(values > 0)[0]
+                else:
+                    index = arange(agent_set.size())
             else:
                 index = None
         return (specification, index)

@@ -26,8 +26,9 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
     portion_to_unplace = Float(1/12.)
     records_per_chunk = Int(50000)
     attribute_to_group_by = Str('job_building_type.name')
-    agents_for_estimation_table = Str('jobs_for_estimation')
+    agents_for_estimation_table = Trait('jobs_for_estimation', None, Str)
     filter_for_estimation = Trait(None, None, Str)
+    filter = Trait(None, None, Str)
     capacity_string = Trait('vacant_SSS_job_space', None, Str)
     estimation_weight_string = Trait('total_number_of_possible_SSS_jobs', None, Str)
     
@@ -76,6 +77,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
                     'sample_size_locations': self.sample_size_locations,
                     'capacity_string': get_string_or_None(self.capacity_string),
                     'estimation_weight_string': get_string_or_None(self.estimation_weight_string),
+                    'filter': get_string_or_None(self.filter),
                     },
                 'name': 'EmploymentLocationChoiceModel'
                 },
@@ -83,7 +85,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
                 'arguments': {
                     'agent_set': self.agent_set,
                     'agents_for_estimation_storage': 'base_cache_storage',
-                    'agents_for_estimation_table': "'%s'" % self.agents_for_estimation_table,
+                    'agents_for_estimation_table': get_string_or_None(self.agents_for_estimation_table),
                     'data_objects': 'datasets',
                     'portion_to_unplace': self.portion_to_unplace,
                     'specification_storage': 'base_cache_storage',
