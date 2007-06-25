@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+  <title>Installing Opus and UrbanSim using an IDE</title>
+
+
+  <link href="style/book.css" rel="stylesheet" type="text/css">
+
+  <meta name="Microsoft Border" content="none, default">
+
+</head>
+
+ 
+<body>
+
+<!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+<table border="0" cellspacing="0" width="100%">
+
+  <tbody>
+
+    <tr>
+
+      <td><a href="http://www.urbansim.org/"><img src="images/new-logo-medium.gif" border="0" height="45" width="105"></a></td>
+
+    </tr>
+
+    <tr>
+
+      <td colspan="2" class="breadcrumbbox" bgcolor="#eeeeee" width="100%"><a href="index.html">Installing Opus &amp; UrbanSim</a> &gt; IDE Setup</td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+<!-- HEAD BANNER ENDS HERE -->
+<h1>Installing Opus and UrbanSim using an IDE (Interactive
+Development Environment)</h1>
+<h2>Choosing a Development Environment </h2>
+
+<p>In general, if you are doing much software development, you
+will benefit a
+lot from using an
+integrated development environment (IDE) that supports for the range of
+activities involved in, such as such as editing code, running tests,
+debugging code, connecting to a code repository, etc.&nbsp; There
+are numerous such IDEs for
+Python, and unfortunately no one IDE fits all needs.&nbsp; Within
+CUSPA, we tend
+to use one of three editors for Python, and one of three editors for
+LaTeX
+files. </p>
+
+<p>Configure your Python editor appropriately.&nbsp; The
+software developers in
+CUSPA typically use Eclipse for talking to subversion, Wing for debugging, and
+either
+or both for editing Python code.&nbsp; Here are instructions for <a href="wing.html">configuring Wing</a> and <a href="eclipse.html">configuring Eclipse</a>. </p>
+
+<p>If you need to edit the Opus and UrbanSim Reference Manual and
+Users Guide
+(as opposed to just reading it), you&rsquo;ll need to use <a href="http://www.latex-project.org/">LaTeX</a> since
+our documentation
+is written in LaTeX.&nbsp; Here are instructions for configuring a <a href="latex.html">installing
+and configuring a LATEX document preparation system</a>. </p>
+
+<h2>Getting the Code for the Opus Packages </h2>
+
+
+<ol>
+<li>Download the desired Opus packages from the CUSPA subversion repository
+at <a href="https://trondheim.cs.washington.edu/svn/opus">https://trondheim.cs.washington.edu/svn/opus</a>
+and put them into your workspace directory. </li>
+
+  <li>Make sure that your workspace directory is in your
+PYTHONPATH.</li>
+
+</ol>
+
+<p>You now should have a directory structure similar to the
+following: </p>
+
+<pre>C:\opusworkspace<br> opus_core/ &lt;-- if this is one of the packages you got from subversion<br> urbansim/ &lt;-- another package from subversion<br> ...<br> atlantis/<br> docs/<br> ...<br> __init__.py<br> opus_package_info.py</pre>
+
+<p>Now you can make changes to the <font face="Courier New" size="2">atlantis</font>
+and other Opus packages in your workspace, and use subversion to keep track of
+the
+changes between your copies of the Opus packages and those in the CUSPA
+repository, update your copies with changes from the repository, etc. </p>
+
+<p>Note that the code in the suversion repository is updated
+frequently (often
+multiple times per day). If you do not frequently update your code from
+the
+repository, it will become very difficult to keep your changes in
+synch with
+the code in the repository. Be warned! </p>
+
+<p>If you make a change that you believe merits inclusion in the
+CUSPA
+repository, please let us know so that we may incorporate that change
+into the
+repository. The more we all improve the code, the better for all of us.
+</p>
+
+
+</body>
+</html>

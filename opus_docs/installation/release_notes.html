@@ -1,0 +1,1567 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+
+  
+
+
+  
+  <title>Opus / UrbanSim Release Notes</title>
+  <link href="style/book.css" rel="stylesheet" type="text/css">
+
+
+  
+  <meta name="Microsoft Border" content="none, default">
+</head>
+
+
+<body>
+
+
+<!-- HEAD BANNER BEGINS HERE :: to be placed immediately below body tag -->
+<table border="0" cellspacing="0" width="100%">
+
+
+  <tbody>
+
+
+    <tr>
+
+
+      <td><a href="http://www.urbansim.org/"><img src="images/new-logo-medium.gif" border="0" height="45" width="105"></a></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td colspan="2" class="breadcrumbbox" bgcolor="#eeeeee" width="100%">Opus / UrbanSim Release Notes</td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<!-- HEAD BANNER ENDS HERE -->
+<h1>Opus / UrbanSim Release Notes</h1>
+
+
+<p>This document describes changes that users may want to be
+aware of, such as
+changes to functionality, changes to data requirements, and changes to
+the
+external API.&nbsp;&nbsp;</p>
+
+
+<p>If you have questions, please send them to
+bugs at urbansim dot org.&nbsp;&nbsp;</p>
+
+
+<p><span style="background-color: rgb(255, 255, 153);">Note:
+the upgrade scripts linked from
+this page run with the latest version of the code from our <a href="subversion.html">subversion repository</a>.&nbsp;
+They are not guaranteed to work with older versions.&nbsp; Thus, to
+use them
+either (a) upgrade to the latest version, or (b) use the
+version of the scripts
+in the opus_upgrade directory in your local copy of the system.&nbsp;
+The opus_upgrade
+was only included in our installer after 9 October 2006.</span></p>
+
+
+<h2>Changes since 23 April 2007 (Opus version 4.1)</h2>
+
+<h4>19 June 2007 </h4>
+<p>Major change to the way Opus/UrbanSim is distributed. &nbsp;We are now
+using a subversion repository rather than CVS. &nbsp;In addition, the
+stable releases are now available as a zip file that users should unzip
+into a workspace directory, rather than being installed in Python
+site-packages. &nbsp;This should make it easier to find scripts that
+need to be run. &nbsp;Also, since subversion has good support for
+anonymous read access, this will make it easier for users to update
+their Opus/UrbanSim installation.</p>
+
+<p>If you have an existing Opus/Urbansim installation in Python site-packages, please
+delete it first, and then install the new version in a workspace.</p>
+
+<h4>13 May 2007 </h4>
+
+Internal support for bias correction due to sampling of alternatives was removed from LocationChoiceModel.
+Support for setting fixed values of coefficients in an estimation was added. Thus, the bias correction can be done by 
+adding a variable to the specification and setting its coefficient to 1. 
+
+<h4>4 May 2007 </h4>
+
+ChoiceModel was a little bit reorganized - functionality that involves the interaction set was moved into
+a separate class. It is an internal change and shouldn't affect the API.
+
+<h4>2 May 2007 </h4>
+
+The model RealEstatePriceModel was replaced by the version used in the psrc_parcel
+and sanfrancisco package. The main difference is that the model is not implemented as a model group anymore.
+The different types of real estate are handled as submodels (rather than group members).
+
+<h2>Changes since 21 November 2006 (Opus version 4.0)</h2>
+
+<h4>16 April 2007 </h4>
+
+The Opus classes Coefficients and EquationSpecification were modified in a way that
+they handle their class attributes as arrays (and not as tuples anymore). These changes are
+mainly internal; the constructors still work with arguments passed as tuples.
+Nevertheless, some methods now return arrays instead of tuples.
+
+<h4>10 April 2007 - Converting from numarray to numpy</h4>
+
+
+<p>Opus and UrbanSim used to use numarray.&nbsp; They now use numpy.&nbsp; This
+change was done for several reasons:</p>
+
+
+<ul>
+
+  <li> numarray is being deprecated</li>
+
+  <li> numpy is better designed than numarray</li>
+
+  <li>numpy runs faster than numarray (for instance, on an Intel Mac our
+    simulations now run 1/3 faster with numpy)</li>
+
+</ul>
+
+<p>This change is extensive, involving many thousands of changes to the
+code.&nbsp; Some of the important externally visible changes are:</p>
+
+<ul>
+
+  <li>You need to install (or upgrade) numpy and install scipy.&nbsp; See the <a href="index.html">installation
+    instructions</a> for your system.
+    
+    <ul>
+
+      <li>If you already have numpy, make sure it is version 1.0.1 or
+        greater.&nbsp; If not, please upgrade it.</li>
+
+      <li>If you already have scipy, make sure it is version 0.5.2 or
+        greater.&nbsp; If not, please upgrade it.</li>
+
+    
+    </ul>
+
+  </li>
+
+  <li>Opus flt_storage files (and thus attribute_cache files) are stored
+    differently with different file names:
+    
+    <ul>
+
+      <li>The binary data is stored in a different format (numpy instead of
+        numarray).&nbsp;&nbsp;&nbsp;&nbsp;</li>
+
+      <li>The flt_storage files (and thus attribute_cache files) have different file extensions.  For instance, a file that used
+to have file extension 'Float32' now has file extension 'lf4' or 'bf4',
+depending upon whether your computer's processor uses little-endian ('l') or big-endian
+('b').  These file extensions correspond to the numpy dtype values, except that
+the endian symbols have been converted from '&lt;', '&gt;', or '|' to 'l', 'b', or 'i'
+    (for little-endian, big-endian, or irrelevant-endian).</li>
+
+      <li>Text attributes are stored in a fixed-width format.  The file
+extension includes the number of characters used for each value.&nbsp; For
+    instance, an extension of '.iS12' uses 12 characters for each value.</li>
+
+    
+    </ul>
+
+  </li>
+
+  <li>Attribute caches produced by the numarray version of Opus will not work
+    with the numpy-based Opus.&nbsp; However, we do provide a <a href="../../opus_upgrade/changes_2007_04_11/readme.html">cache
+conversion tool found here</a> that will create a new cache containing all of
+    the data as an old cache but stored with the new format and file names.</li>
+
+  <li>Our Opus packages are now version 4.1.</li>
+
+  <li>Each Opus package now has the standard __version__ property, e.g. from
+    Python you can:</li>
+
+</ul>
+
+<blockquote>
+  
+  <pre>&gt;&gt;&gt; import opus_core<br>&gt;&gt;&gt; opus_core.__version__<br>'4.1.0819 (from cvs)'<br>&gt;&gt;&gt;</pre>
+
+</blockquote>
+
+<ul>
+
+  <li>The version number (above) now includes the build number (e.g.
+    0819).&nbsp; If "(from cvs)" appears in the version, the code was
+    taken directly from our CVS repository (versus being installed by an
+    installer).&nbsp;</li>
+
+</ul>
+
+
+<p>Internally, the code has been changed in many, many ways (see Section 2.7 of
+Travis Oliphant's <a href="http://www.tramy.us/">Guide to Numpy</a>, and <a href="http://www.stsci.edu/resources/software_hardware/numarray/numarray2numpy.pdf">Christopher
+Hanley's notes</a>).&nbsp; Some significant changes not in these notes are:</p>
+
+
+<ul>
+
+  <li>In numpy the functions "ones" and "zeros" by default
+    create arrays with data of type float32.&nbsp; In numarray the default data
+    type is int.&nbsp; To get around this, in numpy you can use "ones_like" and
+"zeros_like" on an array of integers, or you can explicitly specify the
+dtype='i' argument in the ones or zeros, e.g. <font face="Courier New" size="2">ones(3,
+    dtype='i')</font> produces an array of three integers.</li>
+
+  <li>In numpy, assigning an array of a single element into a single element of an array of
+    floats will produce the error "TypeError: array cannot be safely cast to required
+    type".&nbsp; In numarray, the single-valued-array is automatically be
+cast into a single value and put into the destination array.&nbsp;</li>
+
+  <li>In numpy, invoking <font face="Courier New" size="2">concatenate</font> an array of strings and an
+array of integers, for instance, returns an array of strings. In numarray <font face="Courier New" size="2">concatenate</font>
+    fails on such mis-matched types.</li>
+
+  <li>The functions numarray.stddev and numarray.nd_image.standard_deviation
+    produce different results from the numpy.std function. Similarly, the
+    numarray.nd_image.variance function produces different results from&nbsp;
+    numpy.var function. Numpy uses biased computations:
+
+    <pre>1/N(sum((x-mu)^2))</pre>
+
+
+    
+    <p>whereas numarray uses unbiased computations:
+    </p>
+  </li>
+</ul>
+
+<blockquote>
+
+  <pre>1/(N-1)(sum((x-mu)^2))</pre>
+
+</blockquote>
+
+<blockquote>
+  
+  <p>This does not make much difference for larger arrays, but can be quite
+  different for very small arrays.&nbsp; The numpy.oldnumeric.mlab.std function
+  also uses biased computations. If you want unbiased computation, use scipy.ndimage.variance and
+  scipy.ndimage.standard_deviation.&nbsp;</p>
+
+</blockquote>
+
+<ul>
+
+  <li>The axis parameter of take is more restrictive in numpy.</li>
+
+  <li>The numpy.argmax function requires an axis argument for a 2D array.&nbsp;
+    The numarray.argmax function does not.</li>
+
+  <li>Function put behaves differently. Instead of</li>
+
+</ul>
+
+<blockquote>
+  <pre>put(myarray, (index1, index2), values, axis=(0,1))</pre>
+ use 
+  <pre>myarray[index1, index2] = values</pre>
+
+</blockquote>
+
+<ul>
+
+  <li>Functions of numpy.random for drawing random numbers do not take arrays as
+arguments for distribution parameters.</li>
+
+  <li>In numpy, arrays of type float96 and float128 print and display incorrectly,
+    even though the data is correct.&nbsp; This is a problem in numpy version
+    1.0.2, and will be fixed in the next numpy release.</li>
+
+  <li>numpy.random.seed takes at most one parameter, as opposed to
+numarray.random_array.seed, which takes up to two inputs.</li>
+
+</ul>
+
+
+
+<h4>22 March 2007</h4>
+
+
+<p>The way expressions for Opus variables are defined has been greatly
+enhanced.  See Section 6.3 (Opus Variables) in Chapter 6, and Section 7.4 (Opus Variables)
+in Chapter 7 of the user manual for information.  Existing
+references to variable names should continue to work without change, but
+any expressions or aliases will need to be updated.  Here is a list of
+things that may need to be changed in user variable definitions:
+
+</p>
+<ul>
+
+  <li>Alias declarations.&nbsp; Example:&nbsp; <tt><br>
+
+  &nbsp;&nbsp;&nbsp; urbansim.gridcell.population as pop</tt> &nbsp;<br>
+
+  should be replaced by&nbsp;<tt><br>
+
+  &nbsp;&nbsp;&nbsp; pop = urbansim.gridcell.population</tt></li>
+
+
+  <p>
+
+  </p>
+  <li>Function applications.&nbsp; Example:&nbsp; <tt><br>
+
+  &nbsp;&nbsp;&nbsp; opus_core.func.ln(urbansim.gridcell.population)</tt> <br>
+
+  should be replaced by&nbsp;<tt><br>
+
+  &nbsp;&nbsp;&nbsp; ln(urbansim.gridcell.population)</tt></li>
+
+
+  <p>
+
+  </p>
+  <li>Aggregation and disaggregation operations.&nbsp; Examples: <br>
+    <br>
+
+  <tt>&nbsp;&nbsp;&nbsp; district:opus_core.func.aggregate(gridcell.population, [zone, faz])</tt> <br>
+
+  should be replaced by <br>
+
+  <tt>&nbsp;&nbsp;&nbsp; district.aggregate(gridcell.population, intermediates=[zone, faz])</tt><br>
+    <br>
+
+  <tt>&nbsp;&nbsp;&nbsp; opus_core.func.aggregate(gridcell.population, [], mean)</tt> <br>
+
+  should be replaced by<br>
+
+  <tt>&nbsp;&nbsp;&nbsp; zone.aggregate(gridcell.population, function=mean)</tt> <br>
+
+  assuming this is being aggregated to the zone level</li>
+
+
+</ul>
+
+
+<p>Changing the function names (e.g. <tt>opus_core.func.ln</tt> to
+<tt>ln</tt>) can probably be done with a search-and-replace in all the
+relevant files, since the function names themselves haven't changed -- just
+remove the <tt>opus_core.func</tt> prefix.  Aliases will probably require
+hand editing but are routine.  (The only exception would be if you have
+declared an alias for an expression embedded inside another expression.
+In that case you'll need to break it into two expressions, since aliases
+are now declared using an assignment statement, which must be at the top level.
+You probably don't have any embedded aliases though ....)</p>
+
+
+<p>Updating the aggregation and disaggregation
+will require more hand editing, since these are now syntactically methods
+-- you'll need to put the receiver dataset in front of the aggregate or
+disaggregate method call.  Also, the optional parameters should now use
+keywords ("intermediates" and "function").</p>
+
+
+<p>These changes to variable names will probably require that models be
+re-estimated if the new version of Opus is used.</p>
+
+
+<h4>25 February 2007</h4>
+
+
+<p>There have been significant changes to the indicator framework, which
+is now part of the opus_core. The major change has been a change from
+using dictionaries to specify indicators to using objects to specify
+indicators. The new indicator API is described in the "Generating
+and Visualizing Indicators" chapter of the opus manual.Old batch indicator
+scripts need to be updated to support the new indicator framework.
+Please contact us if there are problems updating.</p>
+
+
+<h4>13 February 2007</h4>
+
+
+<p>Replaced tab_storage and csv_storage with new modules that support the
+built-in Python csv module, rather than use custom code.</p>
+
+
+<h4>31 January 2007</h4>
+
+
+<p>Removed the DbConnection class, all instances are now ScenarioDatabase or
+OpusDatabase, depending on whether linking between databases is required.</p>
+
+
+<h4>3 January 2007</h4>
+
+
+<p>Eliminated ram_storage.</p>
+
+
+<p>Removed the data parameter from Dataset. Now requires an in_storage
+object.</p>
+
+
+<h4>22 December 2006</h4>
+
+
+<p>mysql_storage no longer maintains a database connection, but rather
+constructs one only for the short period of time it is necessary, closing it
+immediately after. Parameters have been added to the constructor such that one
+may either pass in a database connection like before or specify the database
+name, hostname, username, and password instead. Once all mysql_storage objects
+are constructed without a database connection object, that parameter is to be
+removed.</p>
+
+
+<p>Split urbansim.indiactors.indicator_maker into two files. The class remains
+in the same file. The script used for running was moved to
+urbansim.tools.make_indicators_tool.</p>
+
+
+<p>Moved opus_core.storage to opus_core.store.storage.</p>
+
+
+<h4>21 December 2006</h4>
+
+
+<p>The SessionConfiguration object now uses a DatasetPool object to hold
+the set of active datasets. &nbsp;If the dataset pool does not have the
+requested dataset, it will use the information in the new
+"dataset_pool_configuration" to find the module containing the
+requested dataset class. &nbsp;If the "package_order_exceptions" has an
+entry for the requested dataset name, it will use the module specified.
+&nbsp;Otherwise, it will look for a module for the requested dataset in
+the "datasets" directories of the Opus packages listed in the
+"package_order" entry of the "dataset_pool_configuration". &nbsp;</p>
+
+
+<p>Configurations for simulation now require an entry for
+"dataset_pool_configuration". &nbsp;Please add one if it does not have
+one.</p>
+
+
+<p>Replaced the use of the Constants class with UrbansimConstantDataset - a
+dataset-like class that contains all of the values defined in the "urbansim_constants"
+table as well as some values derived from those.&nbsp; (Actually, at the
+moment UrbansimConstantDataset is a facade to Constants.) &nbsp;This
+dataset now acts like a read-only dataset, so it can be constructed via
+DatasetPool (via DatasetFactory) just like any other dataset.&nbsp;&nbsp;</p>
+
+
+<p>Changed all configurations that used parameter "constants" to use
+parameter "urbansim_constant".</p>
+
+
+<p>The "urbansim_constants" must be copied to the earliest year unrolled. &nbsp;Please add an entry such as</p>
+
+
+<p>&nbsp; &nbsp; 'urbansim_constants': 1975,</p>
+
+
+<p>to your configuration's "tables_to_copy_to_previous_years" entry, where the year listed is the earliest year unrolled.</p>
+
+
+<p>Created an OpusTestCase class that automatically destroys all
+singletons before and after each unit test, in order to ensure that
+each unit test has a clean state.</p>
+
+
+
+<p>Created test and test_x_test datasets for unit testing in opus_core.</p>
+
+
+
+<p>The tab_storage now requires its tab files to be in files with an extension
+of ".tab".&nbsp; The "in_table_name" argument to tab_storage
+should not have any file extension, e.g. it should be like "urbansim_constant"&nbsp;
+(not "urbansim_constant.tab"), so that the same in_table_name will
+work with other storage objects.</p>
+
+
+
+<p>Cleaned up the washtenaw Opus package by moving some files that were used for
+the UrbanSim course, but are no longer how we do things, into the washtenaw
+directory of the sandbox Opus package.</p>
+
+
+
+<h4>20 December 2006</h4>
+
+
+<p>Renamed directory_to_cache to existing_cache_to_copy, since it was difficult
+to intuit the difference between cache_directory and directory_to_cache.</p>
+
+
+<p>Removed the is_low_memory_run parameter from AttributeCache. Use the one in
+SimulationState instead.</p>
+
+
+<h4>19 December 2006</h4>
+
+
+<p>Moved opus_core.attribute_cache to opus_core.store.attribute_cache</p>
+
+
+<h4>12 December 2006</h4>
+
+
+<p>All storage objects are now constructed actively before being passed to the
+system rather than passively through specifying in/out_storage_type and
+in/out_storage_location. (There is no more guessing the parameters for
+constructing a storage object deep down in the code.) Thus,
+in/out_storage_type and location have been removed throughout the system, as
+they are no longer needed. As a consequence, when constructing Datasets,
+specifying configurations, and similar, in/out_storage will need to be
+specified directly, rather than specifying the storage type and location, as
+those parameters no longer exist.</p>
+
+
+<h4>11 December 2006</h4>
+
+
+<p>Moved opus_core.dataset to opus_core.datasets.dataset.</p>
+
+
+<h4>7 December 2006</h4>
+
+
+<p>Changed SessionConfiguration to require an in_storage parameter when
+creating a new instance.</p>
+
+<p>Removed references to no-longer-used "change_type" fields in development_events_history and development_events_exogenous.</p>
+
+<h4>6 December 2006</h4>
+
+
+<p>Removed the resources argument from the opus_core.store
+storage classes'
+__init__ methods and StorageFactory.</p>
+
+
+<h4>5 December 2006</h4>
+
+
+<p>StorageCreator was almost exactly a duplicate of
+StorageFactory, so it has
+been removed. StorageFactory is used instead. For the time being,
+storage types such as 'ram' and 'mysql' have been replaced with
+'ram_storage' and the like in
+order to get rid of StorageCreator. StorageCreator was not the proper
+place
+for such a conversion (of 'ram' to 'ram_storage', for example), and
+this functionality needs to be written elsewhere, later, if at all.</p>
+
+
+<h4>4 December 2006</h4>
+
+
+<p>The estimation process no longer uses a
+creating_baseyear_cache_configuration.</p>
+
+
+<p>Moved cache_directory out of
+creating_baseyear_cache_configuration.</p>
+
+
+<h4>30 November 2006</h4>
+
+
+<p>Changed names of the dataset Python modules to to use singular
+with a "_dataset" suffix, e.g. we now use "gridcell_dataset.py"
+(instead of "gridcells.py").</p>
+
+
+<h4>29 November 2006</h4>
+
+
+<p>Replaced the contents of
+urbansim.configs.general_configuration with
+the contents from
+urbansim.configs.general_configuration_with_changed_elcm (and then
+deleted general_configuration_with_changed_elcm).</p>
+
+
+<h4>28 November 2006</h4>
+
+
+<p>Changed all 'creating_baseyear_cache_configuration' entries to
+use opus_core- or
+urbansim.configurations.creating_baseyear_cache_configuration.
+Flattened each resulting entry to account for inability to merge
+non-dictionary objects in the code.</p>
+
+
+<p>Added
+urbansim.configurations.creating_baseyear_cache_configuration. Adds an
+unroll_gridcells parameter and changes the default of cache_mysql_data
+to
+'urbansim.model_coordinators.cache_mysql_data'.</p>
+
+
+<p>Changed
+opus_core.configurations.creating_baseyear_cache_configuration
+to match the current state of our configurations.</p>
+
+
+<h4>27 November 2006</h4>
+
+
+<p>Changed all 'baseyear_cache' configuration entries to use
+opus_core.configurations.baseyear_cache_configuration.</p>
+
+
+<p>Changed case of class 'DataSet' to be 'Dataset'.</p>
+
+
+<h2>Changes since 14 July 2006 (Opus version 1.0 beta1)</h2>
+
+
+<h4>17 November 2006</h4>
+
+
+<p>We made a set of changes to dataset names:</p>
+
+
+<ul>
+
+
+  <li>We now use the singular case for the dataset names and
+their class names.&nbsp; The dataset "gridcell", for instance now
+is defined by class "GridcellDataset" defined in Python module
+"gridcell.py".&nbsp; Plural is still used in the database table
+names, e.g. table gridcells.&nbsp; Using singular everywhere except
+for the table names makes it easier.&nbsp; <i>(In the near
+future, we plan to extend the configuration so that the user specifies
+which module to use for each table.&nbsp; This will allow the user
+to use the same dataset class for multiple tables, and to use whatever
+table names suit them, regardless of the dataset names.)</i></li>
+
+
+  <li>The class names for all datasets now end with "Dataset"
+instead of "Set", e.g. we now use "GridcellDataset" (instead of
+"GridcellSet").&nbsp;</li>
+
+
+  <li>The interaction datasets now include an "x" in their class
+and module names, e.g. we now define class "HouseholdXGridcellDataset"
+in Python module "household_x_gridcell" (instead of
+"HouseholdGridcellSet" in Python module
+"household_gridcell.py").&nbsp; This makes it easier to visually
+see which dataset is an interaction set, and eliminates ambiguity about
+(a) whether a dataset such as "employment_center" is a single dataset
+or an interaction set and (b) where the first dataset name ends and the
+second name begins.</li>
+
+
+</ul>
+
+
+<p>To update the specification tables in your database to use the
+new names, use
+the <a href="../../opus_upgrade/changes_2006_11_16_interaction_set_changes/readme.html">upgrade
+scripts located here</a>.</p>
+
+
+<p>If your models use the "building_types" and "buildings"
+table, use the <a href="../../opus_upgrade/changes_2006_09_26/readme.html">upgrade
+scripts located here to add these tables to your dataset</a>.</p>
+
+
+<h4>2 November 2006</h4>
+
+
+<p>The database table "opus_development_constraints" is now named
+"development_constraints".&nbsp; Please make this name change in
+your
+database.</p>
+
+
+<h4>24 October 2006</h4>
+
+
+<p>The start_run tool now requires that stored configurations
+either:</p>
+
+
+<ol>
+
+
+  <li>be in files whose module name is "equivalent" its class
+name,
+where the module name is lower_case_with_underscores and its class is
+CamelCase,
+e.g. module a_stored_configuration.py would define class
+AStoredConfiguration.</li>
+
+
+  <li>or define a run_configuration object that is the
+configuration object.</li>
+
+
+</ol>
+
+
+<h4>18 October 2006</h4>
+
+
+<p>Removed update method from the Configuration class.&nbsp;
+Instead, use the
+merge method.&nbsp; (The problem was that the update method
+replaced values at
+the top level of the configuration, which often removed much more than
+desired.&nbsp; The merge method only changes values at the "leaves"
+leaving the rest of the Configuration unchanged.&nbsp; For
+instance, if a
+Configuration C contains the data:</p>
+
+
+<blockquote>
+  
+  <pre>{<br> 'a':{<br> 'b':10,<br> 'c':20<br> }<br>}</pre>
+
+
+</blockquote>
+
+
+<p>then C.merge({'a':{'n':30}}) will result in:</p>
+
+
+<blockquote>
+  
+  <pre>{<br> 'a':{<br> 'b':10,<br> 'c':20,<br> 'n':30<br> }<br>}</pre>
+
+
+</blockquote>
+
+
+<p>whereas C.update({'a':{'n':30}}) would have resulted in:</p>
+
+
+<blockquote>
+  
+  <pre>{<br> 'a':{<br> 'n':30<br> }<br>}</pre>
+
+
+</blockquote>
+
+
+<h4>16 October 2006</h4>
+
+
+<p>The create_database() method of MysqlDatabaseServer no longer
+has an
+"overwrite" argument. If you want to delete the database first, you
+have to do that explicitly, e.g. with a call to drop_database().</p>
+
+
+<h4>13 October 2006</h4>
+
+
+<p>Also placed 'unroll_gridcells' under
+'creating_baseyear_cache_configuration'.</p>
+
+
+<h4>12 October 2006</h4>
+
+
+<p>Grouped the following configuration entries under a single
+'creating_baseyear_cache_configuration' entry:</p>
+
+
+<ul>
+
+
+  <li>'baseyear_cache'</li>
+
+
+  <li>'cache_directory_root'</li>
+
+
+  <li>'cache_directory'</li>
+
+
+  <li>'cache_from_mysql'</li>
+
+
+  <li>'tables_to_cache'</li>
+
+
+  <li>'tables_to_cache_nchunks'</li>
+
+
+  <li>'tables_to_copy_to_previous_years'</li>
+
+
+</ul>
+
+
+<h4>11 October 2006</h4>
+
+
+<p>MysqlDatabaseServer now expects a DatabaseConfiguration or
+DatabaseServerConfiguration object (or similar interface).</p>
+
+
+<h4>10 October 2006</h4>
+
+
+<p>Delegated some data from DatabaseConfiguration to a
+DatabaseServerConfiguration.</p>
+
+
+<p>All 'output_configuration's are now DatabaseConfiguration
+objects.</p>
+
+
+<h4>9 October 2006</h4>
+
+
+<p>All 'input_configuration's are now DatabaseConfiguration
+objects.</p>
+
+
+<p>A safer fork_process that takes care of the pickling and
+cleaning up for you.</p>
+
+
+<p>DatabaseConfiguration now requires all fields to be specified
+upon
+construction. (No more defaults.)</p>
+
+
+<p>Opus and UrbanSim now require the Traits package (<a href="http://code.enthought.com/traits/">http://code.enthought.com/traits/</a>)
+for some of the configurations.&nbsp; This is the start of a
+conversion to using
+Trait-based configuration objects throughout Opus, which we hope to
+complete by
+the end of this month.&nbsp; The Traits package is included in the
+Enthought
+Python Edition.&nbsp;&nbsp;</p>
+
+
+<p>Added opus_upgrade project to our installer.</p>
+
+
+<h4>6 October 2006</h4>
+
+
+<p>Changed the code so that it really does require the
+'cache_mysql_data' entry
+in the configuration.&nbsp; The Manual had already stated that this
+entry was
+mandatory, but the code was not using it (ouch!).</p>
+
+
+<h4>29 September 2006</h4>
+
+
+<ul>
+
+
+  <li>The NewDatabaseServer.get_database() method now returns a
+ScenarioDatabase object if the database requested contains a
+"scenario_information" table (and thus may have a non-empty chain of
+databases through which it should look for tables), and an OpusDatabase
+object otherwise.&nbsp; Thus, the user no longer needs to check
+which type of database object to use.</li>
+
+
+  <li>The upgrade scripts will now work with a chain of scenario
+databases, such as is used within CUSPA for configuration management of
+our "gold standard" database.</li>
+
+
+</ul>
+
+
+<h4>28 September 2006</h4>
+
+
+<p>
+Agent Relocation Model was modified in a way that if no 'probabilities'
+argument is passed (or its value is None), the model returns simply an
+index of all unplaced agents. If 'probabilities' is given, the
+behaviour remains unchanged, i.e. it results in an index of all
+unplaced agents plus an index of sampled agents.
+</p>
+
+
+<h4>25 September 2006</h4>
+
+
+<p>
+The need for having a job attribute 'home_based' was removed. The
+Employment Transition Model and all variables which use home_based and
+non_home_based distinction of jobs determine these from the job
+attribute 'building_type' and the column 'home_based' of the table
+'job_building_types'. Thus, the column 'home_based' of the table 'jobs'
+becomes obsolete and can be removed. </p>
+
+
+<h4>22 September 2006</h4>
+
+
+<p>
+The four different employment location choice models:
+</p>
+
+
+<ul>
+
+
+  <li>Commercial ELCM</li>
+
+
+  <li>Industrial ELCM</li>
+
+
+  <li>Home Based ELCM</li>
+
+
+  <li>Scaling Jobs Model</li>
+
+
+</ul>
+
+
+were merged into one model group (called 'Employment Location Choice
+Model')
+with several members (submodels). This allows easy extension to other
+types of ELCMs.
+<p>Use
+<a href="../../opus_upgrade/elcm_changes_2006_09_20/readme.html">the
+upgrade
+scripts located here</a> to update your database to work with
+these changes.</p>
+
+
+<p>Here
+are more details about these changes:
+</p>
+
+
+<ol>
+
+
+  <li> Create a table of building types for jobs, called
+'job_building_types', that determines the members of the ELCM group. It
+has the following structure and example values:
+    
+    <table border="1">
+
+
+      <tbody>
+
+
+        <tr>
+
+
+          <th>id</th>
+
+
+          <th>name</th>
+
+
+          <th>home_based</th>
+
+
+        </tr>
+
+
+        <tr>
+
+
+          <td>1</td>
+
+
+          <td>commercial</td>
+
+
+          <td>0</td>
+
+
+        </tr>
+
+
+        <tr>
+
+
+          <td>2</td>
+
+
+          <td>governmental</td>
+
+
+          <td>0</td>
+
+
+        </tr>
+
+
+        <tr>
+
+
+          <td>3</td>
+
+
+          <td>industrial</td>
+
+
+          <td>0</td>
+
+
+        </tr>
+
+
+        <tr>
+
+
+          <td>4</td>
+
+
+          <td>home_based</td>
+
+
+          <td>1</td>
+
+
+        </tr>
+
+
+      
+      </tbody>
+    
+    </table>
+
+
+Such table can be created using the script <b>
+do_create_job_building_types_table_for_elcm.py</b>. </li>
+
+
+  <li> If the submodels are using specification and coefficient
+tables, these must be called <i>type</i>_employment_location_choice_model_specification/coefficients
+where <i>type</i> stands for the corresponding name from
+the <b>name</b> column in the above table. Since until now
+we used tables called
+employment_<i>type</i>_location_choice_model_specification/coefficients,
+they must be renamed. This can be done for types commercial, industrial
+and home_based using the script <b>do_rename_by_swapping_employment_and_commercial_or_industrial_or_home_based_for_elcm.py</b>.
+  </li>
+
+
+  <li> If you have separate tables of jobs for estimation for the
+different submodels, such as
+jobs_for_estimation_commercial, jobs_for_estimation_industrial, ...,
+put them into one table, called e.g. 'jobs_for_estimation'.
+You can use the script <b>
+do_combine_job_for_estimation_tables_for_elcm.py</b>. </li>
+
+
+</ol>
+
+
+<p>
+The configuration for running UrbanSim is by default set up to run all
+submodels found in the table above. I.e. entry 'models' in
+general_configuration.py contains:
+</p>
+
+
+<blockquote>
+  
+  <pre><tt>{"employment_location_choice_model": {"group_members": "_all_"}}</tt></pre>
+
+
+</blockquote>
+
+
+<p>
+This can be changed to specific submodels, e.g. by:
+</p>
+
+
+<blockquote>
+  
+  <pre><tt>{"employment_location_choice_model": {"group_members": ["commercial", "industrial"]}}</tt></pre>
+
+
+</blockquote>
+
+
+<p>
+Each submodel selects the appropriate jobs according to values in the
+attribute 'building_type' of the jobs table.
+Therefore, we are not running the Divide Jobs Model anymore.
+</p>
+
+
+<p>
+All submodels with one exception are configured by default as location
+choice models. The configuration can be found in the controller entry
+for "employment_location_choice_model". One can overwrite this settings
+for a specific submodel with an entry "<i>type</i>_employment_location_choice_model"
+which has a priority over the default controller. This is done for the
+governmental submodel which is running the Scaling Jobs Model.
+</p>
+
+
+<p>
+We added a new model, called Distribute Unplaced Jobs Model. This model
+determines all unplaced jobs in the job set and places them using the
+Scaling Jobs Model. This assures that all jobs will be placed, even if
+they are not
+explicitly included in the specification of one of the ELCM models.
+</p>
+
+
+<h4>20 September 2006</h4>
+
+
+<p> Changed all configurations so that 'db_input_database',
+'db_host_name', 'db_password', and
+'db_output_database' are specified under 'input_configuration' or
+'output_configuration', as appropriate.</p>
+
+
+<h4>19 September 2006</h4>
+
+
+<p>Removed the opus_core.tools.get_status command, since it never
+did much of
+use and we have a better design for how to do this but don't plan to
+implement
+it soon.&nbsp; Also removed the rest of the associated heuristics
+and heartbeat
+code.</p>
+
+
+<h4>14 September 2006</h4>
+
+
+<p>Change semantics of Configuration's merge() method.&nbsp;
+Before, for the
+command <font face="Courier New" size="2">to_config.merge(from_config)</font>
+if
+<font face="Courier New" size="2">from_config</font>
+had an entry that was a
+dictionary, then that dictionary would *replace* the same-named entry
+in <font face="Courier New" size="2">to_config</font>.&nbsp;
+Now, the individual values from the dictionary in <font face="Courier New" size="2">from_config</font>
+will be added to the same-named entry in <font face="Courier New" size="2">to_config</font>.&nbsp;
+This allows <font face="Courier New" size="2">from_config</font>
+to contain a
+set of "spot changes" of values to insert into the specified locations
+within <font face="Courier New" size="2">to_config</font>.</p>
+
+
+<p>Renamed dataset.set to dataset.attribute_boxes.</p>
+
+
+<p>Moved AttributeBox into opus_core.attribute_box.</p>
+
+
+<p>Removed heuristics, RunMonitor and fork_new_monitored_process
+from the system.</p>
+
+
+<p>Added is_invalid method to check for NaNs in Coefficients.
+estimator_new will
+no longer try to save results that cause NaNs.</p>
+
+
+<h4>13 September 2006</h4>
+
+
+<p>Renamed and moved opus_core.services.run_server.misc to
+opus_core.fork_process after moving create_datasets_from_flt into
+opus_core.dataset_factory.</p>
+
+
+<h4>7 September 2006</h4>
+
+
+<p>The sampling rates database constants were not being used in
+the code. They
+have been removed.</p>
+
+
+<h4>6 September 2006</h4>
+
+
+<p>Replaced the use of the translate* methods of Resources
+&amp;
+GeneralResources with the equivalent standard dict syntax, since it
+uses the
+Python standard and is more concise.</p>
+
+
+<h4>4 September 2006</h4>
+
+
+<p>Moved opus_core.services.run_server.create_flt_cache to
+opus_core.store.create_flt_cache.</p>
+
+
+<p>Moved opus_core.services.run_server.create_baseyear_cache to
+opus_core.tools.create_baseyear_cache.</p>
+
+
+<p>Moved opus_core.services.run_server.create_services_database
+to opus_core.tools.create_services_database.</p>
+
+
+<p>Moved opus_core.services.run_server.delete_run to
+opus_core.tools.delete_run.</p>
+
+
+<p>Moved opus_core.services.run_server.get_status to
+opus_core.tools.get_status.</p>
+
+
+<p>Moved opus_core.services.run_server.restart_run to
+opus_core.tools.restart_run.</p>
+
+
+<p>Moved opus_core.services.run_server.scenario_database to
+opus_core.store.scenario_database.</p>
+
+
+<h4>1 September 2006</h4>
+
+
+<p>Finished implementing automatic unit test detection and
+running for all_tests.</p>
+
+
+<p>Added a nicer looking testRunner for all_tests:
+opus_core.tests.utils.opus_test_runner. When used, OpusTestRunner will
+display the name and module of each test as it is being run.</p>
+
+
+<h4>31 August 2006</h4>
+
+
+<p><b>Lag variables:</b> Fixed a bug with lag
+variables.&nbsp; For lag variables
+for computed attributes (those defined by an Opus variable) the code
+had been
+always returning the values from the current year.&nbsp; Now it
+returns the
+correct values from the correct prior year.&nbsp;&nbsp;</p>
+
+
+<p><b>Unrolling gridcells</b>:<b> </b>Fixed
+a bug in the processing of the
+development_event_history table.&nbsp; The bug was that when
+converting the year
+N data to year N-1, the code had been using the development events for
+year N-1,
+but should have been using the events for year N.</p>
+
+
+<p>Sometimes a lag variable will need to compute data for before
+the base year,
+and that computation will require some of the "invariant" data that
+was copied from the baseyear database into the baseyear
+cache.&nbsp; If this is
+the case, add those database tables to the list of tables in the
+configuration's
+'tables_to_copy_to_previous_years' entry.</p>
+
+
+<p><b>Variables computing "recent" changes:</b>
+Changed the semantics
+of whether to look in the current year when computing the number or
+amount of
+"recent" changes, e.g. for
+urbansim.gridcell.n_recent_development_projects.&nbsp; The code had
+been
+including the items from the current year as well as the prior N
+years.&nbsp; It
+now only looks at items from the prior N years.&nbsp; This provides
+a more
+consistent view of "recent" changes, since even if additional changes
+occur during the current year, models before and after those changes
+will still
+see the same values for the variables on "recent" changes.&nbsp; We
+changed the following two variable definitions, though other variables
+that
+depend upon them also now produce different results:&nbsp;</p>
+
+
+<ul>
+
+
+  <li>urbansim.gridcell.n_recent_development_projects</li>
+
+
+  <li>urbansim.gridcell.n_recent_transitions_to_developed</li>
+
+
+</ul>
+
+
+<h4>30 August 2006</h4>
+
+
+<p><b>Types of attributes: </b>Changed 'secondary'
+attributes (formerly known as 'derived' attributes) to be
+'computed' attributes.</p>
+
+
+<h4>25 August 2006</h4>
+
+
+<p>Finished replacing "entity" with "dataset", since they were
+synonyms.</p>
+
+
+<p>Added 'cache_mysql_data' entry (the full Opus path to a
+cache_mysql_data model) to the urbansim run_configuration and changed
+the opus_core create_baseyear_cache tool to expect such an entry and
+act appropriately.</p>
+
+
+<h4>24 August 2006</h4>
+
+
+<p>Removed the datasets and session_configuration code from
+run_server.run_manager. Removed the opus_core model_system. Added a
+'model_system' argument to the urbansim base_config run_configuration
+to specify
+the location of the model system to use (e.g.
+'urbansim.model_coordinators.model_system'). Removed the
+--datasets_module
+option from run_server restart_run.py, start_run_set.py, start_run.py.</p>
+
+
+<h4>23 August 2006</h4>
+
+
+<p>Converted many references of "entity" to "dataset." At this
+point, most occurrences of "entity_name" have been changed, but no
+others.</p>
+
+
+<p>Moved:</p>
+
+
+<ul>
+
+
+  <li> biocomplexity.utils.misc to biocomplexity.misc and removed
+the utils
+folder.</li>
+
+
+  <li> opus_core.utils.file_utilitites to
+opus_core.file_utilities.</li>
+
+
+  <li> opus_core.utils.latex to opus_core.latex and removed the
+utils folder.</li>
+
+
+  <li> randstad.utils.gridcell_classifier to
+randstad.gridcell_classifier.</li>
+
+
+  <li> urbansim.utils.flatten_scenario_database_chain to
+urbansim.flatten_scenario_database_chain.</li>
+
+
+  <li> urbansim.utils.latex_table_creator to
+urbansim.latex_table_creator.</li>
+
+
+  <li> urbansim.utils.rollback_gridcells to
+urbansim.rollback_gridcells.</li>
+
+
+  <li> urbansim.utils.synthesize_jobs to urbansim.synthesize_jobs
+and removed the utils directory.</li>
+
+
+</ul>
+
+
+<h4>21 August 2006</h4>
+
+
+<p>We completed the move of the 'services' Opus package into
+opus_core. Because the urbansim dependencies were removed,
+opus_core.services.run_server.run_manager run_run() and restart_run()
+now require a 'datasets' argument (such as 'urbansim') specifying in
+which module the datasets are kept. Added a --datasets_module option to
+run_server restart_run.py, start_run_set.py, start_run.py.</p>
+
+
+<h4>14 - 18 August 2006</h4>
+
+
+<p>We renamed the 'emme2' Opus package to be "opus_emme2."</p>
+
+
+<p>We renamed the 'manual' Opus package to be "opus_manual."</p>
+
+
+<p>We changed 'non-derived' attributes to be 'primary' attributes
+and 'derived' attributes to be 'secondary' attributes. (It looks like
+this might change again...)</p>
+
+
+<p>More indexing of the manual was done.</p>
+
+
+<h4>11 August 2006</h4>
+
+
+<p>We just finished two major changes to the Opus code and data
+that will require you to completely update your Opus installation and
+change
+some of your baseyear data :</p>
+
+
+<ul>
+
+
+  <li>We renamed the "core" Opus package to be "opus_core".</li>
+
+
+  <li>We removed the "opus" directory and all "opus." references
+from our Opus system.
+    
+    <ul>
+
+
+      <li>All Opus packages are now top-level Python packages.</li>
+
+
+      <li>The "opus" directory is gone.</li>
+
+
+      <li> We
+no longer use the "opus." in any of our imports or our fully-qualified
+Opus paths.</li>
+
+
+      <li> Variable specifications no longer include "opus." at
+the beginning; instead of typing:</li>
+
+
+    
+    </ul>
+
+
+    
+    <blockquote>
+      
+      <blockquote>
+        
+        <p>opus.core.func.ln(opus.urbansim.gridcell.residential_units)</p>
+
+
+      </blockquote>
+
+
+      
+      <p>you should now type:</p>
+
+
+      
+      <blockquote>
+        
+        <p>ln(urbansim.gridcell.residential_units)</p>
+
+
+      </blockquote>
+
+
+    </blockquote>
+
+
+  </li>
+
+
+</ul>
+
+
+<p>To update to this new system:</p>
+
+
+<ol>
+
+
+  <li>Uninstall your current Opus installation, if it is from
+before 11 August 2006.</li>
+
+
+  <li>Install an Opus version from 11 August 2006 or after.</li>
+
+
+  <li>Remove any instance of the sub-string "opus." from your
+Python code.</li>
+
+
+  <li>Use the <a href="../../opus_upgrade/changes_2006_08_11/using_convert_databases.html">database
+conversion tool</a> at to change your variable_name entries in
+your database specification tables (e.g. in
+land_price_model_specification).&nbsp; This tool will:
+    
+    <ul>
+
+
+      <li>Remove any instance of the sub-string "opus."&nbsp;</li>
+
+
+      <li>Change any instance of "core" to "opus_core"</li>
+
+
+    
+    </ul>
+
+
+  </li>
+
+
+</ol>
+
+
+<h5>Minor changes</h5>
+
+
+<ul>
+
+
+  <li>Created a <a href="http://www.urbansim.org/opus/web/urbansim/user/contribution/index.html">place
+for user contributed items</a>.</li>
+
+
+  <li>Documented steps necessary to <a href="scripts/converting_3_to_4.html">convert an UrbanSim 3
+baseyear database into the form needed for UrbanSim 4</a>.</li>
+
+
+  <li>Moved much of <i>services</i> into <i>opus_core</i>
+(and are in process of moving the rest of it).</li>
+
+
+  <li>The manual Opus package was renamed to opus_manual.</li>
+
+
+  <li>The emme2 Opus package was renamed to opus_emme2.</li>
+
+
+</ul>
+
+
+</body>
+</html>
