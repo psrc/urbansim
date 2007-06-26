@@ -18,8 +18,7 @@ from opus_core.tests import opus_unittest
 
 from shutil import copytree, rmtree
 
-from opus_core.indicator_framework import SourceData
-from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
+
 from opus_core.resources import Resources
 from opus_core.variables.attribute_type import AttributeType
 from opus_core.opus_package_info import package
@@ -27,17 +26,22 @@ from opus_core.storage_factory import StorageFactory
 
 from numpy import array
 
-class AbstractIndicatorTest(opus_unittest.OpusTestCase):
+class TestWithAttributeData(opus_unittest.OpusTestCase):
     def setUp(self):
         self.temp_cache_path = tempfile.mkdtemp(prefix='opus_tmp')    
         self.temp_cache_path2 = tempfile.mkdtemp(prefix='opus_tmp')
       
-        baseyear_dir = os.path.join(self.temp_cache_path, '1980')
-        storage = StorageFactory().get_storage('flt_storage', storage_location=baseyear_dir)
-        
         self.attribute_vals = array([5,6,7,8])
         self.attribute_vals2 = array([50,60,70,80])
         self.id_vals = array([1,2,3,4])
+        
+        years = [1980, 1981, 1982]
+        for year in years:
+            self.add_attributes(year)
+        
+    def add_attributes(self, year):
+        dir = os.path.join(self.temp_cache_path, repr(year))
+        storage = StorageFactory().get_storage('flt_storage', storage_location=dir)
         
         storage.write_dataset(Resources({
            'out_table_name': 'tests',
@@ -53,25 +57,7 @@ class AbstractIndicatorTest(opus_unittest.OpusTestCase):
                }
            }))
         
-        copytree(baseyear_dir,  os.path.join(self.temp_cache_path2, '1980'))
-        
-        self.cross_scenario_source_data = SourceData(
-            cache_directory = self.temp_cache_path,
-            comparison_cache_directory = self.temp_cache_path2,
-            years = [1980],
-            dataset_pool_configuration = DatasetPoolConfiguration(
-                package_order=['opus_core'],
-                package_order_exceptions={},
-            )
-        )
-        self.source_data = SourceData(
-            cache_directory = self.temp_cache_path,
-            years = [1980],
-            dataset_pool_configuration = DatasetPoolConfiguration(
-                package_order=['opus_core'],
-                package_order_exceptions={},
-            )
-        )
+        copytree(dir,  os.path.join(self.temp_cache_path2, repr(year)))
                 
     def tearDown(self):
         rmtree(self.temp_cache_path)

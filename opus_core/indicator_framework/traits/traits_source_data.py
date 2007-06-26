@@ -24,7 +24,7 @@ else:
     from opus_core.configurations.abstract_configuration import AbstractConfiguration
     from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
     
-    from opus_core.indicator_framework import SourceData
+    from opus_core.indicator_framework.core import SourceData
     
     class TraitsSourceData(AbstractConfiguration):
         """Configuration information for computing a set of indicators.  This uses the
@@ -60,18 +60,19 @@ else:
             return new_source
   
     from opus_core.tests import opus_unittest
+    from opus_core.indicator_framework.test_classes import TestWithAttributeData
     
-    class TestTraitsSourceData(opus_unittest.OpusTestCase):
+    class TestTraitsSourceData(TestWithAttributeData):
         
         def test__detraitify(self):
             source_data = TraitsSourceData(['opus_core'])
-            source_data.cache_directory = 'cache'
-            source_data.comparison_cache_directory = 'cache2'
+            source_data.cache_directory = self.temp_cache_path
+            source_data.comparison_cache_directory = self.temp_cache_path2
             source_data.run_description = 'test'
             
-            from opus_core.indicator_framework.source_data import SourceData
-            correct = SourceData(cache_directory = 'cache',
-                                 comparison_cache_directory = 'cache2',
+            from opus_core.indicator_framework.core import SourceData
+            correct = SourceData(cache_directory = self.temp_cache_path,
+                                 comparison_cache_directory = self.temp_cache_path2,
                                  run_description = 'test',
                                  dataset_pool_configuration = DatasetPoolConfiguration(
                                     package_order=['opus_core'],

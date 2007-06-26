@@ -23,7 +23,7 @@ from copy import copy
 from opus_core.misc import directory_path_from_opus_path
 
 from opus_core.indicator_framework.image_types import GeotiffMap
-from opus_core.indicator_framework import AbstractIndicator
+from opus_core.indicator_framework.core import AbstractIndicator
 
 class ArcGeotiffMap(AbstractIndicator):
 
@@ -103,8 +103,8 @@ class ArcGeotiffMap(AbstractIndicator):
     
 
 from opus_core.tests import opus_unittest
-from opus_core.indicator_framework import SourceData
-from opus_core.indicator_framework.utilities import AbstractIndicatorTest
+from opus_core.indicator_framework.core import SourceData
+from opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
 
 class Tests(AbstractIndicatorTest):
     

@@ -45,19 +45,20 @@ else:
             return chart
             
     from opus_core.tests import opus_unittest
-    from opus_core.indicator_framework.source_data import SourceData
+    from opus_core.indicator_framework.core import SourceData
     from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
+    from opus_core.indicator_framework.test_classes import TestWithAttributeData
         
-    class TraitsChartTest(opus_unittest.OpusTestCase):
+    class TraitsChartTest(TestWithAttributeData):
         def test_detraitify(self):
             indicator = TraitsChart()
             indicator.name = 'my_name'
             indicator.attribute = 'my_attribute'
-            indicator.dataset_name = 'my_dataset'
-            indicator.years = '2005'
+            indicator.dataset_name = 'test'
+            indicator.years = '1980'
             
             source_data = SourceData(
-                             cache_directory = '', 
+                             cache_directory = self.temp_cache_path, 
                              years = [],
                              dataset_pool_configuration = DatasetPoolConfiguration(
                                  package_order=['opus_core'],
@@ -65,10 +66,10 @@ else:
                              ))
             returned = indicator.detraitify(source_data = source_data)
             correct = Chart(source_data = source_data,
-                          dataset_name = 'my_dataset',
+                          dataset_name = 'test',
                           attribute = 'my_attribute',
                           name = 'my_name',
-                          years = [2005])
+                          years = [1980])
             
             self.assertEqual(correct.dataset_name, returned.dataset_name)
             self.assertEqual(correct.attribute, returned.attribute)

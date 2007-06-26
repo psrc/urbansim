@@ -14,7 +14,7 @@
 
 from numpy import array, logical_and, logical_not
 
-from opus_core.indicator_framework import AbstractIndicator
+from opus_core.indicator_framework.core import AbstractIndicator
 from opus_core.variables.variable_name import VariableName
 from opus_core.storage_factory import StorageFactory
 
@@ -169,7 +169,7 @@ class DatasetTable(AbstractIndicator):
 import os
 from opus_core.tests import opus_unittest
 
-from opus_core.indicator_framework.utilities import AbstractIndicatorTest
+from opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
 
 from numpy import ma
 
@@ -198,10 +198,11 @@ class Tests(AbstractIndicatorTest):
 
     def test__conditionally_eliminate_rows(self):
         
-        dataset_table = DatasetTable(source_data = self.source_data, 
-                                     attributes = [], 
-                                     dataset_name = '',
-                                     name = 'test')
+        dataset_table = DatasetTable(
+             source_data = self.source_data, 
+             attributes = [], 
+             dataset_name = 'test',
+             name = 'test')
         
         data = [
           array([1,1,2,2]),#id 1

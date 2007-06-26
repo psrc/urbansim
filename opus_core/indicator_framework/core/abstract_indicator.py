@@ -26,9 +26,9 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.logger import logger
 
 from opus_core.indicator_framework.utilities import display_message_dialog
-from opus_core.indicator_framework.utilities import IndicatorDataManager
-from opus_core.indicator_framework import SourceData
-
+from opus_core.indicator_framework.core import IndicatorDataManager
+from opus_core.indicator_framework.core import SourceData
+from opus_core.indicator_framework.utilities import IntegrityError
 
 from numpy import array, subtract, concatenate
 
@@ -70,6 +70,39 @@ class AbstractIndicator(object):
             
         self.data_manager = IndicatorDataManager()
         
+        cache_directory = self.source_data.cache_directory
+        self._set_cache_directory(cache_directory)
+        
+        self._check_integrity()
+
+    def _check_integrity(self):
+        #do all years exist in cache dirs?
+        cross_scenario_comparison = self.source_data.comparison_cache_directory != ''
+        for year in self.years:
+            year_dir = os.path.join(self.source_data.cache_directory, repr(year))
+            if not os.path.exists(year_dir):
+                raise IntegrityError('Year %i does not exist in cache directory %s'%
+                                     (year, self.source_data.cache_directory))
+            if cross_scenario_comparison:
+                year_dir = os.path.join(self.source_data.comparison_cache_directory, repr(year))
+                if not os.path.exists(year_dir):
+                    raise IntegrityError('Year %i does not exist in comparison cache directory %s'%
+                                         (year, self.source_data.comparison_cache_directory))
+                    
+        '''package does not exist'''
+        
+        '''dataset does not exist'''     
+        try:
+            dataset = self._get_dataset(year = self.years[0])
+        except:
+            raise IntegrityError('Dataset %s is not available'%self.dataset_name)
+        
+        '''attribute is not available for this dataset'''
+#        this is disabled because it is unclear how expressions would work
+#        if not dataset.has_attribute(self.attribute):
+#            raise IntegrityError('Variable %s is not available'%self.attribute)
+        
+              
     def _set_cache_directory(self, cache_directory):
         if cache_directory != SimulationState().get_cache_directory():
             SimulationState().set_cache_directory(cache_directory) 
@@ -78,12 +111,10 @@ class AbstractIndicator(object):
                 package_order = self.package_order,
                 package_order_exceptions = self.package_order_exceptions,
                 in_storage = AttributeCache()) 
-            
+         
     def create(self, display_error_box):
         '''Computes and outputs the indicator to the cache directory's 'indicators' sub-directory.
         '''
-        cache_directory = self.source_data.cache_directory
-        self._set_cache_directory(cache_directory)
         self.in_expression = False
         
         if self.is_single_year_indicator_image_type():
@@ -193,9 +224,6 @@ class AbstractIndicator(object):
         id_attributes = self._get_dataset(year).get_id_name()
         cache_dir2 = self.source_data.comparison_cache_directory
         if cache_dir2 != '' and attribute not in id_attributes:
-            #TODO: should check if second cache dir exists immediately
-            if not os.path.exists(cache_dir2):
-                raise Exception, 'The second cache directory was not found.'
             short_name = VariableName(attribute).get_alias()
             
             #save cache_dir's dataset
@@ -259,9 +287,6 @@ class AbstractIndicator(object):
         if fetch_dataset: 
             SimulationState().set_current_time(year)
             SessionConfiguration().get_dataset_pool().remove_all_datasets()
-            
-            for dataset_description in self.source_data.datasets_to_preload:
-                SessionConfiguration().get_dataset_from_pool(dataset_description.dataset_name)
                 
             #exceptions to handle non-standard in_table_names
             exception_in_table_names = {'development_event':'development_events_generated' } 
@@ -362,124 +387,161 @@ class AbstractIndicator(object):
 
 
 from opus_core.tests import opus_unittest
-from opus_core.indicator_framework.utilities import AbstractIndicatorTest
-
+from opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
+from opus_core.indicator_framework.core import SourceData
+        
 class Tests(AbstractIndicatorTest):                
     def test__get_indicator_path(self):
-        try:
-            from opus_core.indicator_framework.image_types.table import Table
-            from opus_core.indicator_framework.source_data import SourceData
-        except: pass
-        else:
-            
-            table = Table(
-                source_data = self.source_data,
-                attribute = 'xxx.yyy.population',
-                dataset_name = 'yyy',
-                output_type = 'tab')
-            returned_path = table.get_file_name()
-            expected_path = 'yyy__tab__population.tab'
-            
-            self.assertEqual(returned_path, expected_path)            
+        from opus_core.indicator_framework.image_types.table import Table
+        table = Table(
+            source_data = self.source_data,
+            attribute = 'xxx.test.population',
+            dataset_name = 'test',
+            output_type = 'tab')
+        returned_path = table.get_file_name()
+        expected_path = 'test__tab__population.tab'
+        
+        self.assertEqual(returned_path, expected_path)            
 
     def test__output_types(self):
-        try:
-            from opus_core.indicator_framework.image_types.table import Table
-            from opus_core.indicator_framework.source_data import SourceData
-        except: pass
-
-        else:
-            for output_type in ['dbf','csv','tab']:
-                table = Table(
-                    source_data = self.cross_scenario_source_data,
-                    attribute = 'package.test.attribute',
-                    dataset_name = 'test',
-                    output_type = output_type)
-                
-                
-                table.create(False)
-                path = table.get_file_path()
-                self.assertEqual(os.path.exists(path), True)
-                
-    def test__cross_scenario_indicator(self):
-        try:
-            from opus_core.indicator_framework.image_types.table import Table
-            from opus_core.indicator_framework.source_data import SourceData
-        except: pass
-
-        else:
+        from opus_core.indicator_framework.image_types.table import Table
+        for output_type in ['dbf','csv','tab']:
             table = Table(
                 source_data = self.cross_scenario_source_data,
                 attribute = 'package.test.attribute',
                 dataset_name = 'test',
-                output_type = 'csv')
-            
+                output_type = output_type)
             
             table.create(False)
             path = table.get_file_path()
-            f = open(path)
-            f.readline() #chop off header
-            for l in f.readlines():
-                (id, value) = l.split(',')
-                self.assertEqual(0, int(value.strip()))
+            self.assertEqual(os.path.exists(path), True)
+                
+    def test__cross_scenario_indicator(self):
+        from opus_core.indicator_framework.image_types.table import Table
+        table = Table(
+            source_data = self.cross_scenario_source_data,
+            attribute = 'package.test.attribute',
+            dataset_name = 'test',
+            output_type = 'csv')
+        
+        table.create(False)
+        path = table.get_file_path()
+        f = open(path)
+        f.readline() #chop off header
+        for l in f.readlines():
+            (id, value) = l.split(',')
+            self.assertEqual(0, int(value.strip()))
 
     def test__indicator_expressions(self):
-        try:
-            from opus_core.indicator_framework.image_types.table import Table
-        except:
-            pass
-        else:
-            table = Table(
-                source_data = self.source_data,
-                attribute = '2 * package.test.attribute',
-                dataset_name = 'test',
-                output_type = 'csv')
-            
-            
-            table.create(False)
-            path = table.get_file_path()
-            f = open(path)
-            f.readline() #chop off header
+        from opus_core.indicator_framework.image_types.table import Table
+        table = Table(
+            source_data = self.source_data,
+            attribute = '2 * package.test.attribute',
+            dataset_name = 'test',
+            output_type = 'csv')
         
-            computed_vals = {}
-            for l in f.readlines():
-                (id, value) = l.split(',')
-                computed_vals[int(id)] = int(value)
-                
-            true_vals = {}
-            for i in range(len(self.id_vals)):
-                true_vals[self.id_vals[i]] = 2 * self.attribute_vals[i]
+        table.create(False)
+        path = table.get_file_path()
+        f = open(path)
+        f.readline() #chop off header
+    
+        computed_vals = {}
+        for l in f.readlines():
+            (id, value) = l.split(',')
+            computed_vals[int(id)] = int(value)
             
-            self.assertEqual(computed_vals,true_vals)
+        true_vals = {}
+        for i in range(len(self.id_vals)):
+            true_vals[self.id_vals[i]] = 2 * self.attribute_vals[i]
+        
+        self.assertEqual(computed_vals,true_vals)
 
     def test__indicator_expressions_with_two_variables(self):
+        from opus_core.indicator_framework.image_types.table import Table
+        table = Table(
+            source_data = self.source_data,
+            attribute = '2 * package.test.attribute - package.test.attribute2',
+            dataset_name = 'test',
+            output_type = 'csv')
+        
+        table.create(False)
+        path = table.get_file_path()
+        f = open(path)
+        f.readline() #chop off header
+    
+        computed_vals = {}
+        for l in f.readlines():
+            (id, value) = l.split(',')
+            computed_vals[int(id)] = int(value)
+            
+        true_vals = {}
+        for i in range(len(self.id_vals)):
+            true_vals[self.id_vals[i]] = 2 * self.attribute_vals[i] - self.attribute_vals2[i]
+        
+        self.assertEqual(computed_vals,true_vals)
+    
+    def test__integrity_checker(self):
+        from opus_core.indicator_framework.image_types.table import Table
         try:
-            from opus_core.indicator_framework.image_types.table import Table
-        except:
-            pass
-        else:
             table = Table(
                 source_data = self.source_data,
-                attribute = '2 * package.test.attribute - package.test.attribute2',
+                attribute = 'package.test.attribute',
                 dataset_name = 'test',
                 output_type = 'csv')
-            
-            
-            table.create(False)
-            path = table.get_file_path()
-            f = open(path)
-            f.readline() #chop off header
+        except IntegrityError:
+            self.assertTrue(False)
         
-            computed_vals = {}
-            for l in f.readlines():
-                (id, value) = l.split(',')
-                computed_vals[int(id)] = int(value)
-                
-            true_vals = {}
-            for i in range(len(self.id_vals)):
-                true_vals[self.id_vals[i]] = 2 * self.attribute_vals[i] - self.attribute_vals2[i]
+#        '''attribute3 is not available'''
+#        try:
+#            table = Table(
+#                source_data = self.source_data,
+#                attribute = 'package.test.attribute3',
+#                dataset_name = 'test',
+#                output_type = 'csv')
+#        except IntegrityError:
+#            pass
+#        else:
+#            self.assertTrue(False)   
+        
+        '''test2 is incorrect dataset'''     
+        try:
+            table = Table(
+                source_data = self.source_data,
+                attribute = 'package.test.attribute',
+                dataset_name = 'test2',
+                output_type = 'csv')
+        except IntegrityError:
+            pass
+        else:
+            self.assertTrue(False)  
+                 
+#        '''package2 does not exist'''
+#        try:
+#            table = Table(
+#                source_data = self.source_data,
+#                attribute = 'package2.test.attribute',
+#                dataset_name = 'test',
+#                output_type = 'csv')
+#        except IntegrityError:
+#            pass
+#        else:
+#            self.assertTrue(False)           
+#
+#        bad_source = self.source_data
+#        bad_source.years = [1970]
+
+        '''don't have data available for year 1970'''
+        try:
+            table = Table(
+                source_data = self.source_data,
+                attribute = 'package.test.attribute',
+                dataset_name = 'test',
+                years = [1970],
+                output_type = 'csv')
+        except IntegrityError:
+            pass
+        else:
+            self.assertTrue(False) 
             
-            self.assertEqual(computed_vals,true_vals)
-                               
 if __name__ == '__main__':
     opus_unittest.main()

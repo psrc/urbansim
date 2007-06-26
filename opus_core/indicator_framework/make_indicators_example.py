@@ -15,7 +15,7 @@
 # script to produce a number of indicators
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.indicator_framework import SourceData
+from opus_core.indicator_framework.core import SourceData
 from opus_core.indicator_framework.image_types import Map, GeotiffMap, ArcGeotiffMap
 from opus_core.indicator_framework.image_types import Chart, LorenzCurve
 from opus_core.indicator_framework.image_types import Table, DatasetTable

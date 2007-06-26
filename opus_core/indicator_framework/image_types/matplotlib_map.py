@@ -14,7 +14,7 @@
 
 import os, re, sys, time, traceback
 from copy import copy
-from opus_core.indicator_framework import AbstractIndicator
+from opus_core.indicator_framework.core import AbstractIndicator
 
 from opus_core.logger import logger
 
@@ -73,8 +73,8 @@ class Map(AbstractIndicator):
 
 
 from opus_core.tests import opus_unittest
-from opus_core.indicator_framework import SourceData
-from opus_core.indicator_framework.utilities import AbstractIndicatorTest
+from opus_core.indicator_framework.core import SourceData
+from opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
 
 class Tests(AbstractIndicatorTest):
         

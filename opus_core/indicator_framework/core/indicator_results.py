@@ -21,9 +21,9 @@ from opus_core.logger import logger
 import cPickle as pickle
 
 from opus_core.indicator_framework.utilities import IndicatorMetaData
-from opus_core.indicator_framework.utilities import IndicatorDataManager
-from opus_core.indicator_framework import SourceData
-from opus_core.indicator_framework import AbstractIndicator
+from opus_core.indicator_framework.core import IndicatorDataManager
+from opus_core.indicator_framework.core import SourceData
+from opus_core.indicator_framework.core import AbstractIndicator
 
 
 class IndicatorResults(object):
@@ -239,21 +239,20 @@ from opus_core.tests import opus_unittest
 import tempfile
 import shutil
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
+from opus_core.indicator_framework.test_classes import TestWithAttributeData
 
-class IndicatorResultsTests(opus_unittest.OpusTestCase):
+class IndicatorResultsTests(TestWithAttributeData):
     def setUp(self):
+        TestWithAttributeData.setUp(self)
         self.i_results = IndicatorResults()
         self.i_results.indicator_documentation_mapping = {}
         self.source_data = SourceData(
-            cache_directory = '',
+            cache_directory = self.temp_cache_path,
             run_description = '(xxx)',
             dataset_pool_configuration = DatasetPoolConfiguration(
                 package_order=['opus_core'],
                 package_order_exceptions={},
             ))
-        
-    def tearDown(self):
-        pass
             
     def test__year_aggregation(self):
         year_aggregation = self.i_results._get_year_aggregation([2001,2002,2004,2006,2007])
@@ -266,7 +265,7 @@ class IndicatorResultsTests(opus_unittest.OpusTestCase):
     def test__output_configuration_info(self):                                              
         
         output = (
-                  '<b>Cache directory: </b><br><br>\n'
+                  '<b>Cache directory: </b>%s<br><br>\n'%self.temp_cache_path
                   )
         
         html = self.i_results._output_configuration_info(self.source_data)
@@ -284,31 +283,31 @@ class IndicatorResultsTests(opus_unittest.OpusTestCase):
             from opus_core.indicator_framework.image_types.matplotlib_lorenzcurve import LorenzCurve
         except: pass
         else:
-            self.source_data.years = [2000, 2002]
+            self.source_data.years = [1980, 1982]
             
             requests = [
                 Map(
                     source_data = self.source_data,
-                    attribute = 'xxx.yyy.population',
+                    attribute = 'xxx.test.population',
                     scale = [1,75000],
-                    dataset_name = 'yyy'
+                    dataset_name = 'test'
                 ),
                 Chart(
                     source_data = self.source_data,
-                    attribute = 'xxx.yyy.population',
-                    dataset_name = 'yyy',
+                    attribute = 'xxx.test.population',
+                    dataset_name = 'test',
                     name = 'my_name',    
                 ),
                 Chart(
                     source_data = self.source_data,
-                    attribute = 'xxx.yyy.population',
-                    dataset_name = 'yyy',
-                    years = [2001]
+                    attribute = 'xxx.test.population',
+                    dataset_name = 'test',
+                    years = [1981]
                 ),
                 LorenzCurve(
                     source_data = self.source_data,
-                    attribute = 'xxx.yyy.population',
-                    dataset_name = 'yyy'
+                    attribute = 'xxx.test.population',
+                    dataset_name = 'test'
                 ),
             ]
             attribute_name = 'population'
@@ -335,25 +334,25 @@ class IndicatorResultsTests(opus_unittest.OpusTestCase):
                 [ doc_link,
                   dataset, 
                   image_type, 
-                  ('<A HREF="%s__%s__%s__2000.png">2000</A>,'
-                   '<A HREF="%s__%s__%s__2002.png">2002</A>')%
+                  ('<A HREF="%s__%s__%s__1980.png">1980</A>,'
+                   '<A HREF="%s__%s__%s__1982.png">1982</A>')%
                      (dataset, image_type, name, dataset, image_type, name)
                 ],
                 [ doc_link2,
                   dataset2, 
                   image_type2, 
-                  '<A HREF="%s__%s__%s.png">2000,2002</A>'%(dataset2,image_type2,name2)
+                  '<A HREF="%s__%s__%s.png">1980,1982</A>'%(dataset2,image_type2,name2)
                 ],
                 [ doc_link,
                   dataset3, 
                   image_type3, 
-                  '<A HREF="%s__%s__%s.png">2001</A>'%(dataset3,image_type3,name3)
+                  '<A HREF="%s__%s__%s.png">1981</A>'%(dataset3,image_type3,name3)
                 ],
                 [ doc_link,
                   dataset4, 
                   image_type4, 
-                  ('<A HREF="%s__%s__%s__2000.png">2000</A>,'
-                  '<A HREF="%s__%s__%s__2002.png">2002</A>')%
+                  ('<A HREF="%s__%s__%s__1980.png">1980</A>,'
+                  '<A HREF="%s__%s__%s__1982.png">1982</A>')%
                   (dataset4,image_type4,name4,dataset4,image_type4,name4)
                 ]
             ]

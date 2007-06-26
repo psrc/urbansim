@@ -22,7 +22,7 @@ except:
     logger.log_warning('Could not load traits.ui. Skipping %s!' % __file__)
 else:
     from opus_core.indicator_framework.utilities import display_message_dialog
-    from opus_core.indicator_framework import AbstractIndicator
+    from opus_core.indicator_framework.core import AbstractIndicator
     from opus_core.variables.variable_name import VariableName
     
     class TraitsAbstractIndicator(HasTraits):
@@ -107,20 +107,21 @@ else:
             return years
                     
     from opus_core.tests import opus_unittest
-    from opus_core.indicator_framework import SourceData
+    from opus_core.indicator_framework.core import SourceData
     from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-    from opus_core.indicator_framework.abstract_indicator import AbstractIndicator    
+    from opus_core.indicator_framework.core import AbstractIndicator    
+    from opus_core.indicator_framework.test_classes import TestWithAttributeData
     
-    class TraitsAbstractIndicatorTest(opus_unittest.OpusTestCase):
+    class TraitsAbstractIndicatorTest(TestWithAttributeData):
         def test_detraitify(self):
             indicator = TraitsAbstractIndicator()
             indicator.name = 'my_name'
             indicator.attribute = 'my_attribute'
-            indicator.dataset_name = 'my_dataset'
-            indicator.years = '2000-2003'
+            indicator.dataset_name = 'test'
+            indicator.years = '1980-1982'
  
             source_data = SourceData(
-                             cache_directory = '', 
+                             cache_directory = self.temp_cache_path, 
                              years = [],
                              dataset_pool_configuration = DatasetPoolConfiguration(
                                  package_order=['opus_core'],
@@ -128,11 +129,11 @@ else:
                              ))
             returned = indicator.detraitify(source_data = source_data)
 
-            correct = AbstractIndicator(dataset_name = 'my_dataset',
+            correct = AbstractIndicator(dataset_name = 'test',
                                         attribute = 'my_attribute',
                                         name = 'my_name',
                                         source_data = source_data,
-                                        years = [2000,2001,2002,2003])
+                                        years = [1980, 1981, 1982])
             self.assertEqual(correct.dataset_name, returned.dataset_name)
             self.assertEqual(correct.attribute, returned.attribute)
             self.assertEqual(correct.name, returned.name)
@@ -140,22 +141,21 @@ else:
         def test_detraitify2(self):
             indicator = TraitsAbstractIndicator()
             indicator.attribute = 'my_attribute'
-            indicator.dataset_name = 'my_dataset'
-            indicator.years = '2004,2006'
+            indicator.dataset_name = 'test'
+            indicator.years = '1980,1982'
 
             source_data = SourceData(
-                             cache_directory = '', 
+                             cache_directory = self.temp_cache_path, 
                              years = [],
                              dataset_pool_configuration = DatasetPoolConfiguration(
                                  package_order=['opus_core'],
                                  package_order_exceptions={},
                              ))
             returned = indicator.detraitify(source_data = source_data)
-            from opus_core.indicator_framework.abstract_indicator import AbstractIndicator
-            correct = AbstractIndicator(dataset_name = 'my_dataset',
+            correct = AbstractIndicator(dataset_name = 'test',
                                         attribute = 'my_attribute',
                                         source_data = source_data,
-                                        years = [2004,2006]
+                                        years = [1980,1982]
                                         )
             self.assertEqual(correct.dataset_name, returned.dataset_name)
             self.assertEqual(correct.attribute, returned.attribute)

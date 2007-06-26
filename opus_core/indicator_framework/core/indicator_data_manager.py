@@ -1,5 +1,5 @@
 #
-# UrbanSim software. Copyright (C) 1998-2004 University of Washington
+# UrbanSim software. Copyright (C) 1998-2019814 University of Washington
 # 
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
@@ -13,7 +13,7 @@
 
 import re
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.indicator_framework import SourceData
+from opus_core.indicator_framework.core import SourceData
 
 class IndicatorDataManager:
     
@@ -165,7 +165,8 @@ class IndicatorDataManager:
         return (name, value)
 
 from opus_core.tests import opus_unittest
-from opus_core.indicator_framework.utilities import AbstractIndicatorTest
+from opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
+from opus_core.indicator_framework.core import SourceData
 import os
 
 class Tests(AbstractIndicatorTest):  
@@ -176,15 +177,14 @@ class Tests(AbstractIndicatorTest):
     def test__write_metadata(self):
         try:
             from opus_core.indicator_framework.image_types.table import Table
-            from opus_core.indicator_framework.source_data import SourceData
         except: pass
         else:
             table = Table(
                 source_data = self.cross_scenario_source_data,
-                attribute = 'xxx.yyy.population',
-                dataset_name = 'yyy',
+                attribute = 'xxx.test.population',
+                dataset_name = 'test',
                 output_type = 'tab',
-                years = [0,1] # Indicators are not actually being computed, so the years don't matter here.
+                years = [1980,1981] # Indicators are not actually being computed, so the years don't matter here.
             )
             
             output = self.data_manager._export_indicator_to_file(
@@ -195,12 +195,12 @@ class Tests(AbstractIndicatorTest):
             expected = [
                 '<version>1.0</version>',          
                 '<Table>',
-                '\t<dataset_name>yyy</dataset_name>',
-                '\t<years>[0, 1]</years>',
+                '\t<dataset_name>test</dataset_name>',
+                '\t<years>[1980, 1981]</years>',
                 '\t<date_computed>None</date_computed>',
                 '\t<name>population</name>',
                 '\t<operation>None</operation>',
-                '\t<attribute>xxx.yyy.population</attribute>',
+                '\t<attribute>xxx.test.population</attribute>',
                 '\t<output_type>tab</output_type>',
                 '\t<source_data>',
                 '\t\t<cache_directory>%s</cache_directory>'%self.temp_cache_path,
@@ -221,17 +221,16 @@ class Tests(AbstractIndicatorTest):
     def test__read_write_metadata(self):
         try:
             from opus_core.indicator_framework.image_types import Table
-            from opus_core.indicator_framework.source_data import SourceData
         except: 
             raise
         else:
             
             table = Table(
                 source_data = self.source_data,
-                attribute = 'xxx.yyy.population',
-                dataset_name = 'yyy',
+                attribute = 'xxx.test.population',
+                dataset_name = 'test',
                 output_type = 'tab',
-                years = [0,1] # Indicators are not actually being computed, so the years don't matter here.
+                years = [1980,1981] # Indicators are not actually being computed, so the years don't matter here.
             )
             
 #            table.create(False)
@@ -244,7 +243,7 @@ class Tests(AbstractIndicatorTest):
                                          metadata_file)
             self.assertEqual(os.path.exists(metadata_path), True)
             
-            expected_path = 'yyy__tab__population.meta'
+            expected_path = 'test__tab__population.meta'
             self.assertEqual(metadata_file,expected_path)
             
             new_table = self.data_manager._import_indicator_from_file(metadata_path)
