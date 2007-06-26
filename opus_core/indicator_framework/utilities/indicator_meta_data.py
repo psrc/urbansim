@@ -19,7 +19,7 @@ class IndicatorMetaData(object):
     '''
         
     def get_indicator_documentation_URL(cls):
-        return r'http://www.urbansim.org/opus/opus_manual/docs/indicators/'
+        return r'http://www.urbansim.org/docs/indicators/'
     
     def get_single_year_indicator_image_type_map(cls):
         '''returns a list of all the image types whose indicators must be output per year.'''
