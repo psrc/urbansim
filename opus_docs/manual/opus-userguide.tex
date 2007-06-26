@@ -19,7 +19,7 @@
 % the GNU Free Documentation License as a comment.
 
 \documentclass{manual}
-\usepackage{amsmath, graphics, graphicx, rotating, html, upquote}
+\usepackage{amsmath, graphics, graphicx, rotating, html, upquote, makeidx}
 
 % this package causes the font encodings to include an _ (underscore)
 % character -- this is useful because then searching the pdf document
@@ -131,9 +131,6 @@ Email: \email{info@urbansim.org}
 %end{latexonly}
 % \input{mod\jobname.ind}               % Module Index
 
-%begin{latexonly}
-\renewcommand{\indexname}{Index}
-%end{latexonly}
-\input{opus-userguide.ind}
+\printindex
 
 \end{document}

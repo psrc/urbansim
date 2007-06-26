@@ -24,17 +24,15 @@ os.chdir(path)
 
 modules = ["opus-userguide"]
 for module in modules:
-    # hack - make a fake index file to prime the pump, so that latex doesn't give an error the first time it is run
-    # (There's probaby a better way to do this, but this works.)
-    index_file = file(module + ".ind", 'w')
-    index_file.write(r"\begin{theindex} \end{theindex}")
-    index_file.close()
-   # run latex, make the index, then run latex again to resolve cross-references correctly and include the index
+   # run latex, make the index, then run latex twice more to resolve cross-references correctly and include the index
     os.system("pdflatex -interaction=nonstopmode " + module + ".tex")
     # The makeindex command will fail if the module doesn't have an index - so it's important NOT to check 
     # if the result of the system call succeeded.  (The advantage of calling it anyway is that we can just
     # process all of the files with a loop, rather than having separate processing for modules with and without indices.)
     os.system("makeindex " + module + ".idx")
+    # this is ludicrous -- but we need to run pdflatex *twice* -- otherwise the index isn't included in
+    # the table of contents
+    os.system("pdflatex -interaction=nonstopmode " + module + ".tex")
     os.system("pdflatex -interaction=nonstopmode " + module + ".tex")
     # run latex2html to make an html version of the manual.  
     latex2html_call = 'latex2html -local_icons -bottom_navigation -address "info (at) urbansim.org" %s' % module
