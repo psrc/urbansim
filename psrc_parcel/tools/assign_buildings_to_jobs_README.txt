@@ -1,5 +1,15 @@
-JOB DATA PREPARATION
-====================
+DATA PREPARATION
+================
+Households:
+-----------
+
+1. Run a simulation in order to assign buildings to households.
+  - Use start_run.py with the configuration psrc_parce.configs.data_preparation_households
+
+
+Jobs:
+-----
+
 Starting from a business table that have assigned buildings only from one-building parcels, the following step
 should be done in order to assign buildings to the remaining jobs:
 
@@ -28,7 +38,7 @@ should be done in order to assign buildings to the remaining jobs:
 
 4. Run a simulation with estimated coefficients in order to assign buildings to the remaining jobs.
   - Prior to this, copy the resulting tables from step 2. (jobs, buildings) into your cache_directory.
-  - Use start_run.py with the configuration psrc_parce.configs.data_preparation (not tested yet)
+  - Use start_run.py with the configuration psrc_parce.configs.data_preparation_jobs
 
 5. Export the resulting jobs table from the simulation cache into database,
   using opus_core/tools/do_export_cache_to_mysql_database.py with the -t option.

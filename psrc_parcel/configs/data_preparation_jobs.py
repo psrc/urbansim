@@ -26,7 +26,7 @@ from opus_core.resources import merge_resources_with_defaults
 from numpy import array
 import os
 
-class DataPreparation(UrbansimParcelConfiguration):
+class DataPreparationJobs(UrbansimParcelConfiguration):
     def __init__(self):
         config = UrbansimParcelConfiguration()
 
