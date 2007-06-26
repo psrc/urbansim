@@ -45,7 +45,7 @@ processors. </p>
 
   <li><a href="#python">Install Python and Python libraries</a></li>
 
-  <li><a href="#mysql">Install MySQL</a></li>
+  <li>(optional) <a href="#mysql">Install MySQL</a></li>
 
   <li><a href="#opus">Install Opus and UrbanSim</a></li>
   <li><a href="#environment">Define Environment Variables for Opus and UrbanSim</a></li>
@@ -132,10 +132,16 @@ package:</p>
 
 </ol>
 
-<h2>Step 2: <a name="mysql">Installing &amp; Configuring MySQL</a></h2>
+<h2>(optional) Step 2: <a name="mysql">Installing &amp; Configuring MySQL</a></h2>
 
-<p>MySQL is an efficient, open-source SQL database. To run UrbanSim you&rsquo;ll
-either need to have a local copy or else run on a shared server.&nbsp;</p>
+<p>MySQL is an efficient, open-source SQL database.  You don't need it to run the 
+basic Eugene tutorial, although for serious use with your own dataset you will want
+a database of some sort.  (We are steadily reducing the dependencies on the particular
+database used, however, with the goal of allowing Opus and UrbanSim to be used with
+any SQL database.)  If you use MySQL you can either have a local copy or run on a shared server.</p>
+
+<p>If you don't install MySQL right away, you can return and install it later if you discover you 
+need it.</>
 
 <p>SuSe 10.0 contains MySQL version 4.1.13; be sure to also install packages
 mysql-devel and mysql-shared.&nbsp; If MySQL is not installed, or to install a
@@ -216,13 +222,20 @@ connection and enough disk space (since there will be a lot of data).</p>
 <pre>mkdir workspace<br>cd workspace<br>svn checkout https://trondheim.cs.washington.edu/svn/opus</pre>
 <h3>Option 3: Getting Opus and UrbanSim using subversion and Eclipse</h3>
 This is the best option if you'll be doing software development. &nbsp;See <a href="ide_setup.html">Installing Opus and UrbanSim using an IDE</a> for details.
+
 <h2>Step 4: <a name="environment">Defining Environment Variables</a>&nbsp;</h2>
 
-<p>UrbanSim requires the following four environment variables.&nbsp; The first
-three describe how to connect to MySQL.&nbsp; The last describes how to find the
-Python code.</p>
+<p>UrbanSim requires the following environment variables.&nbsp; The first
+tells the Python interpreter where to find the Opus/UrbanSim code.  The remaining
+variables describe how to connect to MySQL -- leave those four out if you aren't
+installing MySQL.</p>
 
 <ul>
+
+  <li><b>PYTHONPATH</b> - This environment variable tells Python where to look
+    for files outside of Python&rsquo;s &lsquo;site-packages&rsquo; directory (which is the
+    default location for Python installers). Change PYTHONPATH to include the
+    path to the directory containing your &lsquo;workspace&rsquo;, e.g. &lsquo;C:/workspace&rsquo;.</li>
 
   <li><b>MYSQLHOSTNAMEFORTESTS</b> - This environment variable is only used
     for running unit tests that use MySQL. These tests use the MySQL database
@@ -240,11 +253,6 @@ Python code.</p>
 
   <li><b>MYSQLPASSWORD</b> - The password for the MySQL user name given
     above.&nbsp;</li>
-
-  <li><b>PYTHONPATH</b> - This environment variable tells Python where to look
-    for files outside of Python&rsquo;s &lsquo;site-packages&rsquo; directory (which is the
-    default location for Python installers). Change PYTHONPATH to include the
-    path to the directory containing your &lsquo;workspace&rsquo;, e.g. &lsquo;C:/workspace&rsquo;.</li>
 
 </ul>
 
