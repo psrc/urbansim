@@ -16,7 +16,7 @@
 # this illustrates using traits-based configurations programatically
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.indicator_framework import SourceData
+from opus_core.indicator_framework.core import SourceData
 
 from opus_core.indicator_framework.image_types import Map, Chart, GeotiffMap, ArcGeotiffMap, LorenzCurve
 from opus_core.indicator_framework.image_types import Table, DatasetTable
@@ -41,7 +41,7 @@ run_description = '(run 1453 - travel data from full travel model)'
 source_data = SourceData(
     cache_directory = cache_directory,
     run_description = run_description,
-    years = [2000,2010],
+    years = [2010],
     dataset_pool_configuration = DatasetPoolConfiguration(
         package_order=['psrc','urbansim','opus_core'],
         package_order_exceptions={},
@@ -49,16 +49,17 @@ source_data = SourceData(
 )
 single_year_requests = [
 
-   DatasetTable(
-       source_data = source_data,
-       dataset_name = 'zone',
-       name = 'pop_and_ind_sqft',
-       attributes = [ 
-         'urbansim.zone.population',
-         'urbansim.zone.industrial_sqft',                     
-       ],
-       exclude_condition = '==0' 
-   ),
+#   DatasetTable(
+#       years = [2000],
+#       source_data = source_data,
+#       dataset_name = 'zone',
+#       name = 'pop_and_ind_sqft',
+#       attributes = [ 
+#         'urbansim.zone.population',
+#         'urbansim.zone.industrial_sqft',                     
+#       ],
+#       exclude_condition = '==0' 
+#   ),
    
 #    Map(
 #        attribute = 'psrc.large_area.population',
@@ -72,10 +73,10 @@ single_year_requests = [
 #        dataset_name = 'large_area',
 #        source_data = source_data,
 #        ),
-    Map(
-        attribute = 'psrc.large_area.de_population_DDDD',
-        scale = [1, 750000],
-        dataset_name = 'large_area',
+    GeotiffMap(
+        attribute = 'urbansim.gridcell.population',
+        dataset_name = 'gridcell',
+        package = 'psrc', 
         source_data = source_data,
         ),
 #    Map(
@@ -499,7 +500,7 @@ multi_year_requests = [
     ]
 
 if __name__ == '__main__':
-    from opus_core.indicator_framework import IndicatorFactory
+    from opus_core.indicator_framework.core import IndicatorFactory
 
     IndicatorFactory().create_indicators(
         indicators = single_year_requests,

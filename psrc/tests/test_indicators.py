@@ -27,9 +27,9 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.indicator_framework.image_types import Table
-from opus_core.indicator_framework import SourceData
+from opus_core.indicator_framework.core import SourceData
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.indicator_framework import IndicatorFactory
+from opus_core.indicator_framework.core import IndicatorFactory
 
 
 class TestIndicators(opus_unittest.OpusTestCase):
