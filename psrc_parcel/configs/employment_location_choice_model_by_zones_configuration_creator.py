@@ -22,5 +22,5 @@ class EmploymentLocationChoiceModelByZonesConfigurationCreator(EmploymentLocatio
                 'psrc_parcel.models.%s' % self._model_name: 'EmploymentLocationChoiceModelByZones'
                 }
         result['init']['name'] = 'EmploymentLocationChoiceModelByZones'
-        result["run"]["arguments"] = 'zone'
+        result["run"]["arguments"]["zones"] = 'zone'
         return result

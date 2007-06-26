@@ -13,6 +13,7 @@
 #
 
 from numpy import arange, zeros, logical_and, where
+from opus_core.logger import logger
 from urbansim.models.employment_location_choice_model import EmploymentLocationChoiceModel
 
 class EmploymentLocationChoiceModelByZones(EmploymentLocationChoiceModel):
@@ -22,9 +23,10 @@ class EmploymentLocationChoiceModelByZones(EmploymentLocationChoiceModel):
             agents_index = arange(agent_set.size())
         cond_array = zeros(agent_set.size(), dtype="bool8")
         cond_array[agents_index] = True
-        zone_ids = zones.get_id_atribute()
+        zone_ids = zones.get_id_attribute()
         agents_zones = agent_set.get_attribute(zones.get_id_name()[0])
         for zone_id in zone_ids:
-            new_index = where(logical_and(cond_array, agent_zones == zone_id))[0]
+            new_index = where(logical_and(cond_array, agents_zones == zone_id))[0]
             self.filter = "building.zone_id == %s" % zone_id
+            logger.log_status("ELCM for zone %s" % zone_id)
             EmploymentLocationChoiceModel.run(self, specification, coefficients, agent_set, agents_index=new_index, **kwargs)

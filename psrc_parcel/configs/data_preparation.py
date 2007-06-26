@@ -56,16 +56,32 @@ class DataPreparation(UrbansimParcelConfiguration):
             "datasets_to_preload":{
                     'zone':{},
                     'job':{},
-                    "job_building_type":{}
+                    "job_building_type":{},
+                    'building': {}
                 }
         }
         #use configuration in config as defaults and merge with config_changes
         config.replace(config_changes)
         self.merge(config)
-        self['models_configuration']['employment_location_choice_model']['controller'] = \
+        self['models_configuration']['non_home_based_employment_location_choice_model'] = {}
+        self['models_configuration']['non_home_based_employment_location_choice_model']['controller'] = \
                    EmploymentLocationChoiceModelByZonesConfigurationCreator(
                                 location_set = "building",
                                 input_index = 'erm_index',
+                                #capacity_string = "non_residential_sqft",
+                                compute_capacity_flag = False,
+                                #agent_units_string = "sqft",
+                                choices = 'opus_core.random_choices_from_index'
+                                ).execute()
+        self['models_configuration']['home_based_employment_location_choice_model'] = {}
+        self['models_configuration']['home_based_employment_location_choice_model']['controller'] = \
+                   EmploymentLocationChoiceModelByZonesConfigurationCreator(
+                                location_set = "building",
+                                input_index = 'erm_index',
+                                capacity_string = "building.aggregate(psrc_parcel.household.minimum_persons_and_2)",
+                                number_of_units_string = None,
+                                #agent_units_string = "sqft",
+                                #choices = 'opus_core.random_choices_from_index'
                                 ).execute()
         self['models_configuration']['employment_relocation_model']['controller'] = \
                     EmploymentRelocationModelConfigurationCreator(
