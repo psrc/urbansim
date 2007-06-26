@@ -21,21 +21,24 @@ from opus_core.logger import logger
 import cPickle as pickle
 
 from opus_core.indicator_framework.utilities import IndicatorMetaData
-from opus_core.indicator_framework.utilities import IndicatorMetaDataParser
+from opus_core.indicator_framework.utilities import IndicatorDataManager
 from opus_core.indicator_framework import SourceData
 from opus_core.indicator_framework import AbstractIndicator
 
 
 class IndicatorResults(object):
-    """  Takes the descriptions and locations of precomputed indicators and generates an html file to browse them.
+    """  Takes the descriptions and locations of precomputed indicators 
+         and generates an html file to browse them.
     
-         The purpose of IndicatorResults is to take in a description of the indicators that were 
-         requested through the GUI and output an html file that can be used to browse the indicator
-         results. There is a single entry point and all the other functions are private.
+         The purpose of IndicatorResults is to take in a description 
+         of the indicators that were requested through the GUI and output 
+         an html file that can be used to browse the indicator results. 
+         There is a single entry point and all the other functions are private.
     """ 
     
     def __init__(self, show_error_dialog = False):
         self.show_error_dialog = show_error_dialog
+        self.data_manager = IndicatorDataManager()
         
     def create_page(self, source_data, indicators, page_name = 'indicator_results.html'):
         """  Generates the html page based on information about precomputed indicators.
@@ -43,7 +46,7 @@ class IndicatorResults(object):
              The file path to the generated html page is returned.
              
              Parameters:
-                 source_data -- informatiourl = self._get_documentation_url(attribute_alias)n about where the indicators were computed from
+                 source_data -- information about where the indicators were computed from
                  page_name -- the filename of the outputted html file
                  indicators -- a list of the generated indicators
         """
@@ -63,7 +66,8 @@ class IndicatorResults(object):
         
         #load previously computed indicators
         try:
-            indicators = self._reconstruct_from_metadata(indicator_directory)
+            indicators = self.data_manager.import_indicators(
+                             indicator_directory = indicator_directory)
         except: 
             indicators = []
         
@@ -96,7 +100,8 @@ class IndicatorResults(object):
     def _output_body(self, source_data, indicators, rows, test = False):
         """ Generates the html for the indicators. 
         
-            Finds the indicator file for every year each of the indicators were run and formats this into a table.
+            Finds the indicator file for every year each of the indicators 
+            were run and formats this into a table.
             
             test is only used for unit testing
         """    
@@ -131,8 +136,9 @@ class IndicatorResults(object):
             rows.append(row)
     
     def _get_year_aggregation(self, years):
-        """Given a sequence of years, outputs a string that represents the years with dashes
-           between consecutive years (e.g. "1983,1985-1987,1999") 
+        """Given a sequence of years, outputs a string that represents 
+           the years with dashes between consecutive years 
+           (e.g. "1983,1985-1987,1999") 
         """
         years = list(years) #traits funniness
         years.sort()
@@ -162,22 +168,7 @@ class IndicatorResults(object):
             html.append('<b>%s</b>%s<br><br>\n'%(title,value))
         
         return ''.join(html)
-    
-    def _reconstruct_from_metadata(self, indicator_directory):
-        '''scans the indicator directory for indicator meta files and 
-           recreates the indicators'''
-        indicators = []
-        files = os.listdir(indicator_directory)
-        for filename in files:
-            if len(filename) >= 5 and filename[-5:] == '.meta':
-                try:
-                    meta_path = os.path.join(indicator_directory, filename)
-                    indicator = IndicatorMetaDataParser.create_indicator_from_metadata(meta_path)
-                    indicators.append(indicator)
-                except: pass
         
-        return indicators
-    
     def _get_doc_link(self, indicator):
         try:
             attribute_alias = indicator.get_attribute_alias()

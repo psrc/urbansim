@@ -26,7 +26,7 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.logger import logger
 
 from opus_core.indicator_framework.utilities import display_message_dialog
-from opus_core.indicator_framework.utilities import IndicatorMetaDataParser
+from opus_core.indicator_framework.utilities import IndicatorDataManager
 from opus_core.indicator_framework import SourceData
 
 
@@ -61,14 +61,14 @@ class AbstractIndicator(object):
               'year':None
         }
         
-        self.last_computed_attribute = None
         self.date_computed = None    
         self.run_description = self.source_data.get_run_description()
-        indicators_directory = self.source_data.get_indicator_directory()
 
         # Use attribute cache so that can access info from prior years, too.
         (self.package_order, self.package_order_exceptions) = \
             self.source_data.get_package_order_and_exceptions()
+            
+        self.data_manager = IndicatorDataManager()
         
     def _set_cache_directory(self, cache_directory):
         if cache_directory != SimulationState().get_cache_directory():
@@ -91,14 +91,17 @@ class AbstractIndicator(object):
                 try:
                     self._create_indicator(year = year)
                     self.date_computed = strftime("%Y-%m-%d %H:%M:%S", localtime(time()))
-                    IndicatorMetaDataParser.write_indicator_metadata(indicator = self, year = year)
+                    self.data_manager.export_indicator(indicator = self, 
+                                                       source_data = indicator.source_data,
+                                                       year = year)
                 except Exception, e:
                     self._handle_indicator_error(e, display_error_box)
         else:
             try:
                 self._create_indicator(years = self.years)
                 self.date_computed = strftime("%Y-%m-%d %H:%M:%S", localtime(time()))
-                IndicatorMetaDataParser.write_indicator_metadata(indicator = self)
+                self.data_manager.export_indicator(indicator = self,
+                                                   source_data = indicator.source_data)
             except Exception, e:
                 self._handle_indicator_error(e, display_error_box)
         
@@ -219,7 +222,6 @@ class AbstractIndicator(object):
                 indicator_vals = self.perform_operation(self.operation, indicator_vals)
                 dataset = self._get_dataset(year = year)
                 dataset.add_attribute(indicator_vals, self.name)
-                self.last_computed_attribute = self.name
             finally:
                 self.in_expression = False
             
@@ -233,7 +235,6 @@ class AbstractIndicator(object):
         if short_name not in dataset.get_known_attribute_names():
             dataset.compute_variables(attribute)
         v = dataset.get_attribute(short_name)
-        self.last_computed_attribute = short_name
         return v
             
     def _set_dataset(self, dataset, dataset_state):
@@ -296,9 +297,6 @@ class AbstractIndicator(object):
            
         return alias
     
-    def get_last_computed_attribute(self):
-        return self.last_computed_attribute
-    
     def get_file_name(self, year = None, 
                       extension = None, 
                       suppress_extension_addition = False):
@@ -332,7 +330,7 @@ class AbstractIndicator(object):
     def _handle_indicator_error(self, e, display_error_box = False):
         ''' sends alert to various forums if there's an error '''
                  
-        #todo: improve error message
+        #TODO: improve error message
         message = ('Failed to generate indicator "%s"! Check the indicator log '
                 'in the indicators directory of the "%s" cache for further '
                 'details.\nError: %s.' % (self.name, self.source_data.cache_directory, e))
@@ -351,8 +349,10 @@ class AbstractIndicator(object):
             
         elif operation == 'percent_change':
             baseyear_values, years_found = self._get_indicator_for_years(self.attribute, [2000,])
-            results = ma.filled(( values[0] - baseyear_values[0,]) * 100 / \
-                ma.masked_where(baseyear_values[0,]==0, baseyear_values[0,].astype(float32),0.0))
+            numerator = ( values[0] - baseyear_values[0,]) * 100
+            denominator = ma.masked_where(baseyear_values[0,]==0, 
+                                          baseyear_values[0,].astype(float32), 0.0)
+            results = ma.filled( numerator / denominator )
             
         elif operation == 'change':
             baseyear_values, years_found = self._get_indicator_for_years(attribute, [2000,])

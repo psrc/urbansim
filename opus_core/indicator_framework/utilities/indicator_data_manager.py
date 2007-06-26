@@ -15,8 +15,12 @@ import re
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.indicator_framework import SourceData
 
-class IndicatorMetaDataParser:
-    def write_indicator_metadata(cls, indicator, year = None):
+class IndicatorDataManager:
+    
+    def export_indicator(self, indicator, year = None):
+        self.write_indicator_metadata(indicator, year)
+        
+    def _export_indicator_to_file(self, indicator, source_data, year):
         VERSION = 1.0
         '''Writes to a file information about this indicator'''
 
@@ -38,13 +42,13 @@ class IndicatorMetaDataParser:
         for attr,value in indicator.get_additional_metadata():
             lines.append('\t<%s>%s</%s>'%(attr,str(value),attr))
             
-        lines += indicator.source_data.get_metadata(indentation = 1)
+        lines += source_data.get_metadata(indentation = 1)
         
         lines.append('</%s>'%class_name)
         
         #write to metadata file
         file = indicator.get_file_name(year = year, extension = 'meta')
-        path = os.path.join(indicator.source_data.get_indicator_directory(),
+        path = os.path.join(source_data.get_indicator_directory(),
                             file)
         f = open(path, 'w')
         output = '\n'.join(lines)
@@ -52,7 +56,25 @@ class IndicatorMetaDataParser:
         f.close()
         
         return lines
-    def create_indicator_from_metadata(cls, file_path):
+
+    def import_indicators(self, indicator_directory):
+        self._import_indicators_from_file(indicator_directory)
+
+    def _import_indicators_from_file(self, indicator_directory):
+        '''scans the indicator directory for indicator meta files and 
+           recreates the indicators'''
+        import glob
+        files = glob.glob('*.meta')
+        indicators = [self._import_indicator_from_file(f) for f in files]
+        return indicators        
+    
+    '''not in use yet'''
+#    def import_indicator(self):
+#        meta_path = os.path.join(indicator_directory, filename)
+#        indicator = self._import_indicator_from_file(meta_path)
+#        indicators.append(indicator)
+                    
+    def _import_indicator_from_file(self, file_path):
         '''creates and returns an indicator from the file pointed to in file_path 
         '''
         #TODO: If the additional child parameters are not strings, the current implementation will fail.
@@ -82,7 +104,7 @@ class IndicatorMetaDataParser:
                 params['source_data'] = source_data
                 in_source_data = False
             elif line != '</%s>'%indicator_class:
-                (name, value) = IndicatorMetaDataParser._extract_name_and_value(line)
+                (name, value) = self._extract_name_and_value(line)
                 
                 #TODO: figure out way for each object to know which values to 
                 #reinterpret from string
@@ -117,39 +139,40 @@ class IndicatorMetaDataParser:
                         params[name] = value
 
         f.close()
+        indicator = self._create_indicator(indicator_class, 
+                                           params,
+                                           non_constructor_attr)
+        return indicator
         
+    def _create_indicator(self, indicator_class, params, non_constructor_attributes):
         exec('from opus_core.indicator_framework.image_types import %s'%indicator_class)
         indicator = locals()[indicator_class](**params)
         
-        for attr, value in non_constructor_attr.items():
+        for attr, value in non_constructor_attributes.items():
             if value == 'None':
                 value = None
             indicator.__setattr__(attr,value)
         return indicator 
     
-    def _extract_name_and_value(cls, line):
+    def _extract_name_and_value(self, line):
         '''takes a line of xml and returns attr name/value tuple'''
         name_re = re.compile('<\w+>')
         value_re = re.compile('>.*<')
         
         line = line.strip()
-        name = name_re.match(line).group()
-        name = name[1:-1]
-        value = value_re.search(line).group()
-        value = value[1:-1]
+        name = name_re.match(line).group()[1:-1]
+        value = value_re.search(line).group()[1:-1]
         return (name, value)
-
-    #make class methods
-    write_indicator_metadata = classmethod(write_indicator_metadata)
-    create_indicator_from_metadata = classmethod(create_indicator_from_metadata)
-    _extract_name_and_value = classmethod(_extract_name_and_value)
-
 
 from opus_core.tests import opus_unittest
 from opus_core.indicator_framework.utilities import AbstractIndicatorTest
 import os
 
 class Tests(AbstractIndicatorTest):  
+    def setUp(self):
+        self.data_manager = IndicatorDataManager()
+        AbstractIndicatorTest.setUp(self)
+        
     def test__write_metadata(self):
         try:
             from opus_core.indicator_framework.image_types.table import Table
@@ -164,31 +187,35 @@ class Tests(AbstractIndicatorTest):
                 years = [0,1] # Indicators are not actually being computed, so the years don't matter here.
             )
             
-            lines = IndicatorMetaDataParser.write_indicator_metadata(indicator = table)
-            output = '\n'.join(lines)
+            output = self.data_manager._export_indicator_to_file(
+                 indicator = table,
+                 source_data = self.cross_scenario_source_data,
+                 year = None)
             
-            expected = (
-                '<version>1.0</version>\n'          
-                '<Table>\n'
-                '\t<dataset_name>yyy</dataset_name>\n'
-                '\t<years>[0, 1]</years>\n'
-                '\t<date_computed>None</date_computed>\n'
-                '\t<name>population</name>\n'
-                '\t<operation>None</operation>\n'
-                '\t<attribute>xxx.yyy.population</attribute>\n'
-                '\t<output_type>tab</output_type>\n'
-                '\t<source_data>\n'
-                '\t\t<cache_directory>%s</cache_directory>\n'
-                '\t\t<comparison_cache_directory>%s</comparison_cache_directory>\n' 
-                '\t\t<run_description>%s</run_description>\n'
-                '\t\t<years>[1980]</years>\n'
-                '\t\t<package_order>[\'opus_core\']</package_order>\n'
-                '\t</source_data>\n'
+            expected = [
+                '<version>1.0</version>',          
+                '<Table>',
+                '\t<dataset_name>yyy</dataset_name>',
+                '\t<years>[0, 1]</years>',
+                '\t<date_computed>None</date_computed>',
+                '\t<name>population</name>',
+                '\t<operation>None</operation>',
+                '\t<attribute>xxx.yyy.population</attribute>',
+                '\t<output_type>tab</output_type>',
+                '\t<source_data>',
+                '\t\t<cache_directory>%s</cache_directory>'%self.temp_cache_path,
+                '\t\t<comparison_cache_directory>%s</comparison_cache_directory>'%self.temp_cache_path2, 
+                '\t\t<run_description>%s</run_description>'%self.cross_scenario_source_data.get_run_description(),
+                '\t\t<years>[1980]</years>',
+                '\t\t<package_order>[\'opus_core\']</package_order>',
+                '\t</source_data>',
                 '</Table>'
-            )%(self.temp_cache_path,
-               self.temp_cache_path2,
-               self.cross_scenario_source_data.get_run_description())
+            ]
             
+            for i in range(len(output)):
+                if expected[i] != output[i]:
+                    print expected[i], output[i]
+                    
             self.assertEqual(output,expected)
   
     def test__read_write_metadata(self):
@@ -208,7 +235,10 @@ class Tests(AbstractIndicatorTest):
             )
             
 #            table.create(False)
-            IndicatorMetaDataParser.write_indicator_metadata(indicator = table)
+            self.data_manager._export_indicator_to_file(indicator = table,
+                                                        source_data = self.source_data,
+                                                        year = None)
+            
             metadata_file = table.get_file_name(extension = 'meta')
             metadata_path = os.path.join(self.source_data.get_indicator_directory(),
                                          metadata_file)
@@ -217,7 +247,7 @@ class Tests(AbstractIndicatorTest):
             expected_path = 'yyy__tab__population.meta'
             self.assertEqual(metadata_file,expected_path)
             
-            new_table = IndicatorMetaDataParser.create_indicator_from_metadata(metadata_path)
+            new_table = self.data_manager._import_indicator_from_file(metadata_path)
             for attr in ['attribute','dataset_name',
                          'output_type','date_computed',
                          'years']:
