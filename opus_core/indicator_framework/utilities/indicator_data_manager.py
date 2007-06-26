@@ -17,8 +17,8 @@ from opus_core.indicator_framework import SourceData
 
 class IndicatorDataManager:
     
-    def export_indicator(self, indicator, year = None):
-        self.write_indicator_metadata(indicator, year)
+    def export_indicator(self, indicator, source_data, year = None):
+        self._export_indicator_to_file(indicator, source_data, year)
         
     def _export_indicator_to_file(self, indicator, source_data, year):
         VERSION = 1.0

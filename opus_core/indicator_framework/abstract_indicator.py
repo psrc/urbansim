@@ -92,7 +92,7 @@ class AbstractIndicator(object):
                     self._create_indicator(year = year)
                     self.date_computed = strftime("%Y-%m-%d %H:%M:%S", localtime(time()))
                     self.data_manager.export_indicator(indicator = self, 
-                                                       source_data = indicator.source_data,
+                                                       source_data = self.source_data,
                                                        year = year)
                 except Exception, e:
                     self._handle_indicator_error(e, display_error_box)
@@ -101,7 +101,7 @@ class AbstractIndicator(object):
                 self._create_indicator(years = self.years)
                 self.date_computed = strftime("%Y-%m-%d %H:%M:%S", localtime(time()))
                 self.data_manager.export_indicator(indicator = self,
-                                                   source_data = indicator.source_data)
+                                                   source_data = self.source_data)
             except Exception, e:
                 self._handle_indicator_error(e, display_error_box)
         
