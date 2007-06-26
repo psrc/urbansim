@@ -273,7 +273,7 @@ class IndicatorResultsTests(opus_unittest.OpusTestCase):
         self.assertEqual(output, html)
         
     def test___get_documentation_url(self):
-        output = 'http://www.urbansim.org/opus/opus_manual/docs/indicators/population.xml'
+        output = 'http://www.urbansim.org/docs/indicators/population.xml'
         result = self.i_results._get_documentation_url('population')
         self.assertEqual(result, output)
         
@@ -329,8 +329,8 @@ class IndicatorResultsTests(opus_unittest.OpusTestCase):
             (dataset4,name4) = (requests[3].dataset_name, 
                                      requests[3].name)
                                 
-            doc_link = '<A HREF="http://www.urbansim.org/opus/opus_manual/docs/indicators/population.xml">population</A>'
-            doc_link2 = '<A HREF="http://www.urbansim.org/opus/opus_manual/docs/indicators/population.xml">my_name</A>'
+            doc_link = '<A HREF="http://www.urbansim.org/docs/indicators/population.xml">population</A>'
+            doc_link2 = '<A HREF="http://www.urbansim.org/docs/indicators/population.xml">my_name</A>'
             output = [
                 [ doc_link,
                   dataset, 
