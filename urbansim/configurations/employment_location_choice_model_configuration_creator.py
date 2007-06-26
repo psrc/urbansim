@@ -154,7 +154,8 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'location_set': 'gridcell',
                     'sample_size_locations': 30,
                     'capacity_string': "'vacant_SSS_job_space'",
-                    'estimation_weight_string': "'total_number_of_possible_SSS_jobs'"
+                    'estimation_weight_string': "'total_number_of_possible_SSS_jobs'",
+                    'filter': None,
                     },
                 'name': 'EmploymentLocationChoiceModel'
                 },
@@ -236,7 +237,8 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'location_set': 'location_set',
                     'sample_size_locations': 9999,
                     'capacity_string': "'vacant_SSS_job_space'",
-                    'estimation_weight_string': "'total_number_of_possible_SSS_jobs'"
+                    'estimation_weight_string': "'total_number_of_possible_SSS_jobs'",
+                    'filter': None,
                     },
                 'name': 'EmploymentLocationChoiceModel'
                 },
