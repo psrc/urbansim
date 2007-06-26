@@ -1,3 +1,5 @@
+JOB DATA PREPARATION
+====================
 Starting from a business table that have assigned buildings only from one-building parcels, the following step
 should be done in order to assign buildings to the remaining jobs:
 
@@ -17,11 +19,16 @@ should be done in order to assign buildings to the remaining jobs:
     prior to running this script, if the instorage is Flt)
   - The script assigns building_id to jobs where possible and writes out the table into the outstorage.
   
-3. Run a simulation with estimated coefficients in order to assign buildings to the remaining jobs.
+3. Estimate coefficients for home_based and non_home_based ELCM, using 
+  psrc_parcel/estimation/run_estimation.py
+  - Uncomment the appropriate model in __main__
+  - Set the appropriate cache directory in my_estimation_config.py
+
+4. Run a simulation with estimated coefficients in order to assign buildings to the remaining jobs.
   - Prior to this, copy the resulting table from step 2. into your cache_directory.
   - Use start_run.py with the configuration psrc_parce.configs.data_preparation (not tested yet)
 
-4. Export the resulting jobs table from the simulation cache into database,
+5. Export the resulting jobs table from the simulation cache into database,
   using opus_core/tools/do_export_cache_to_mysql_database.py with the -t option.
   
   
