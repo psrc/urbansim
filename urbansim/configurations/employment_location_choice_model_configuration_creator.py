@@ -12,7 +12,7 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
+from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait, Bool
 
 from opus_core.configuration import Configuration
 from opus_core.misc import get_string_or_None
@@ -30,8 +30,11 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
     filter_for_estimation = Trait(None, None, Str)
     filter = Trait(None, None, Str)
     capacity_string = Trait('vacant_SSS_job_space', None, Str)
+    compute_capacity_flag = Bool(True)
     estimation_weight_string = Trait('total_number_of_possible_SSS_jobs', None, Str)
     estimation_size_agents = Float(1.)
+    agent_units_string = Trait(None, None, Str)
+    number_of_units_string = Trait('total_number_of_possible_SSS_jobs', None, Str)
     
     input_index = Str('erm_index')
     
@@ -79,7 +82,10 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
                     'capacity_string': get_string_or_None(self.capacity_string),
                     'estimation_weight_string': get_string_or_None(self.estimation_weight_string),
                     'filter': get_string_or_None(self.filter),
-                    'estimation_size_agents': self.estimation_size_agents
+                    'estimation_size_agents': self.estimation_size_agents,
+                    'compute_capacity_flag': self.compute_capacity_flag,
+                    'number_of_units_string': get_string_or_None(self.number_of_units_string), 
+                    'run_config': {'agent_units_string': get_string_or_None(self.agent_units_string)}
                     },
                 'name': 'EmploymentLocationChoiceModel'
                 },
@@ -158,7 +164,10 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'capacity_string': "'vacant_SSS_job_space'",
                     'estimation_weight_string': "'total_number_of_possible_SSS_jobs'",
                     'filter': None,
-                    'estimation_size_agents': 1.
+                    'estimation_size_agents': 1.,
+                    'compute_capacity_flag': True,
+                    'number_of_units_string': "'total_number_of_possible_SSS_jobs'",
+                    'run_config': {'agent_units_string': None}
                     },
                 'name': 'EmploymentLocationChoiceModel'
                 },
@@ -216,6 +225,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
             coefficients_table = 'coefficients_table',
             specification_table = 'specification_table',
             input_index = 'input_index',
+            compute_capacity_flag = False
             )
 
         expected = Configuration({
@@ -242,7 +252,10 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'capacity_string': "'vacant_SSS_job_space'",
                     'estimation_weight_string': "'total_number_of_possible_SSS_jobs'",
                     'filter': None,
-                    'estimation_size_agents': 1.
+                    'estimation_size_agents': 1.,
+                    'compute_capacity_flag': False,
+                    'number_of_units_string': "'total_number_of_possible_SSS_jobs'",
+                    'run_config': {'agent_units_string': None}
                     },
                 'name': 'EmploymentLocationChoiceModel'
                 },
