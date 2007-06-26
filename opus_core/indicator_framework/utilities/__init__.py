@@ -14,6 +14,6 @@
 
 from gui_utilities import display_message_dialog
 from abstract_indicator_test import AbstractIndicatorTest
-from indicator_meta_data_parser import IndicatorMetaDataParser
+from indicator_data_manager import IndicatorDataManager
 from indicator_meta_data import IndicatorMetaData
 
