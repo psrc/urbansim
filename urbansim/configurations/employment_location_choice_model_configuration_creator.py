@@ -31,6 +31,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
     filter = Trait(None, None, Str)
     capacity_string = Trait('vacant_SSS_job_space', None, Str)
     estimation_weight_string = Trait('total_number_of_possible_SSS_jobs', None, Str)
+    estimation_size_agents = Float(1.)
     
     input_index = Str('erm_index')
     
@@ -78,6 +79,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
                     'capacity_string': get_string_or_None(self.capacity_string),
                     'estimation_weight_string': get_string_or_None(self.estimation_weight_string),
                     'filter': get_string_or_None(self.filter),
+                    'estimation_size_agents': self.estimation_size_agents
                     },
                 'name': 'EmploymentLocationChoiceModel'
                 },
@@ -156,6 +158,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'capacity_string': "'vacant_SSS_job_space'",
                     'estimation_weight_string': "'total_number_of_possible_SSS_jobs'",
                     'filter': None,
+                    'estimation_size_agents': 1.
                     },
                 'name': 'EmploymentLocationChoiceModel'
                 },
@@ -239,6 +242,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'capacity_string': "'vacant_SSS_job_space'",
                     'estimation_weight_string': "'total_number_of_possible_SSS_jobs'",
                     'filter': None,
+                    'estimation_size_agents': 1.
                     },
                 'name': 'EmploymentLocationChoiceModel'
                 },
