@@ -18,6 +18,8 @@ should be done in order to assign buildings to the remaining jobs:
     (Note: it also needs the table "building_sqft_per_job" on instorage, so one needs to cache it
     prior to running this script, if the instorage is Flt)
   - The script assigns building_id to jobs where possible and writes out the table into the outstorage.
+  - It also imputes non_residential_sqft to buildings where needed and writes out the buildings table 
+      into the outstorage.
   
 3. Estimate coefficients for home_based and non_home_based ELCM, using 
   psrc_parcel/estimation/run_estimation.py
@@ -25,7 +27,7 @@ should be done in order to assign buildings to the remaining jobs:
   - Set the appropriate cache directory in my_estimation_config.py
 
 4. Run a simulation with estimated coefficients in order to assign buildings to the remaining jobs.
-  - Prior to this, copy the resulting table from step 2. into your cache_directory.
+  - Prior to this, copy the resulting tables from step 2. (jobs, buildings) into your cache_directory.
   - Use start_run.py with the configuration psrc_parce.configs.data_preparation (not tested yet)
 
 5. Export the resulting jobs table from the simulation cache into database,
