@@ -15,17 +15,19 @@
 from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
 
 from opus_core.configuration import Configuration
-
+from opus_core.misc import get_string_or_None
 
 class HouseholdLocationChoiceModelConfigurationCreator(HasStrictTraits):
     agent_set = Str('household')
     debuglevel = Trait('debuglevel', Str, Int)
     choices = Str('urbansim.lottery_choices')
     location_set = Str('gridcell')
+    capacity_string = Trait('vacant_residential_units', None, Str)
     sample_size_locations = Int(30)
     portion_to_unplace = Float(1/12.0)
     nchunks = Int(12)
     agents_for_estimation_table_name = Str('households_for_estimation')
+    number_of_units_string = Trait('residential_units', None, Str)
     
     coefficients_table = Str('household_location_choice_model_coefficients')
     specification_table = Str('household_location_choice_model_specification')
@@ -51,16 +53,18 @@ class HouseholdLocationChoiceModelConfigurationCreator(HasStrictTraits):
                 'output': '(%s, _)' % _coefficients
                 },
             'import': {
-                'urbansim.models.%s_creator' % self._model_name: 'HouseholdLocationChoiceModelCreator'
+                'urbansim.models.%s' % self._model_name: 'HouseholdLocationChoiceModel'
                 },
             'init': {
                 'arguments': {
                     'choices': "'%s'" % self.choices,
                     'dataset_pool': 'dataset_pool',
                     'location_set': self.location_set,
-                    'sample_size_locations': self.sample_size_locations
+                    'sample_size_locations': self.sample_size_locations,
+                    'capacity_string': get_string_or_None(self.capacity_string),
+                    'number_of_units_string': get_string_or_None(self.number_of_units_string),
                     },
-                'name': 'HouseholdLocationChoiceModelCreator().get_model'
+                'name': 'HouseholdLocationChoiceModel'
                 },
             'prepare_for_estimate': {
                 'arguments': {
@@ -126,16 +130,18 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                 'output': '(coefficients, _)'
                 },
             'import': {
-                'urbansim.models.household_location_choice_model_creator': 'HouseholdLocationChoiceModelCreator'
+                'urbansim.models.household_location_choice_model': 'HouseholdLocationChoiceModel'
                 },
             'init': {
                 'arguments': {
                     'choices': "'urbansim.lottery_choices'",
                     'dataset_pool': 'dataset_pool',
                     'location_set': 'gridcell',
-                    'sample_size_locations': 30
+                    'sample_size_locations': 30,
+                    'capacity_string': "'vacant_residential_units'",
+                    'number_of_units_string': "'residential_units'",
                     },
-                'name': 'HouseholdLocationChoiceModelCreator().get_model'
+                'name': 'HouseholdLocationChoiceModel'
                 },
             'prepare_for_estimate': {
                 'arguments': {
@@ -205,16 +211,18 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                 'output': '(coefficients, _)'
                 },
             'import': {
-                'urbansim.models.household_location_choice_model_creator': 'HouseholdLocationChoiceModelCreator'
+                'urbansim.models.household_location_choice_model': 'HouseholdLocationChoiceModel'
                 },
             'init': {
                 'arguments': {
                     'choices': "'package.choices'",
                     'dataset_pool': 'dataset_pool',
                     'location_set': 'location_set',
-                    'sample_size_locations': 2000
+                    'sample_size_locations': 2000,
+                    'capacity_string': "'vacant_residential_units'",
+                    'number_of_units_string': "'residential_units'",
                     },
-                'name': 'HouseholdLocationChoiceModelCreator().get_model'
+                'name': 'HouseholdLocationChoiceModel'
                 },
             'prepare_for_estimate': {
                 'arguments': {

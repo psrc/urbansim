@@ -15,12 +15,14 @@
 from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
 
 from opus_core.configuration import Configuration
-
+from opus_core.misc import get_string_or_None
 
 class HouseholdRelocationModelConfigurationCreator(HasStrictTraits):
     agent_set = Str('household')
     debuglevel = Trait('debuglevel', Str, Int)
-    rate_table = Str('annual_relocation_rates_for_households')
+    rate_table = Trait('annual_relocation_rates_for_households', None, Str)
+    location_id_name = Str('grid_id')
+    probabilities = Trait('urbansim.household_relocation_probabilities', None, Str)
     what = Str('households')
     
     output_index = Str('hrm_index')
@@ -37,13 +39,16 @@ class HouseholdRelocationModelConfigurationCreator(HasStrictTraits):
                 'urbansim.models.%s_creator' % self._model_name: 'HouseholdRelocationModelCreator'
                 },
             'init': {
-                'arguments': {'debuglevel': self.debuglevel},
+                'arguments': {'debuglevel': self.debuglevel,
+                              'location_id_name': "'%s'" % self.location_id_name,
+                              'probabilities': get_string_or_None(self.probabilities),
+                                },
                 'name': 'HouseholdRelocationModelCreator().get_model'
                 },
             'prepare_for_run': {
                 'arguments': {
                     'rate_storage': 'base_cache_storage',
-                    'rate_table': "'%s'" % self.rate_table,
+                    'rate_table': get_string_or_None(self.rate_table),
                     'what': "'%s'" % self.what,
                     },
                 'name': 'prepare_for_run',
@@ -77,7 +82,9 @@ class TestHouseholdRelocationModelConfigurationCreator(opus_unittest.OpusTestCas
                 'urbansim.models.household_relocation_model_creator': 'HouseholdRelocationModelCreator'
                 },
             'init': {
-                'arguments': {'debuglevel': 'debuglevel'},
+                'arguments': {'debuglevel': 'debuglevel',
+                              'location_id_name': "'grid_id'",
+                              'probabilities': "'urbansim.household_relocation_probabilities'"},
                 'name': 'HouseholdRelocationModelCreator().get_model'
                 },
             'prepare_for_run': {
@@ -115,7 +122,10 @@ class TestHouseholdRelocationModelConfigurationCreator(opus_unittest.OpusTestCas
                 'urbansim.models.household_relocation_model_creator': 'HouseholdRelocationModelCreator'
                 },
             'init': {
-                'arguments': {'debuglevel': 9999},
+                'arguments': {'debuglevel': 9999,
+                              'location_id_name': "'grid_id'",
+                              'probabilities': "'urbansim.household_relocation_probabilities'"                      
+                                  },
                 'name': 'HouseholdRelocationModelCreator().get_model'
                 },
             'prepare_for_run': {
