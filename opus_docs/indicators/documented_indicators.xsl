@@ -10,13 +10,16 @@
 <meta http-equiv="Content-Language" content="en-us" />
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
 <link href="../style/book.css" rel="stylesheet" type="text/css" />
-<title>List of Predefined Indicators</title>
+<title>Indicator Documentation</title>
 </head>
 
 <body>
 
-<h1>List of Predefined Indicators</h1>
+<h1>Indicator Documentation</h1>
 
+<p>This page provides a list of available documentation pages for Opus/UrbanSim
+indicators.  Also see <a href="reading_indicator_documentation.html">Reading Indicator Documentation</a>
+for a description of the sections of an indicator documentation page.</p>
 
 <xsl:for-each select="indicator_list/group">
 
