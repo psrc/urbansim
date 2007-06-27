@@ -86,7 +86,10 @@ class SourceData(object):
             cur_line = indent + '<%s>%s</%s>'%(attr,str(attr_value),attr)
             metadata_lines.append(cur_line)
             
-        metadata_lines.append(indent + '<package_order>[\'opus_core\']</package_order>')
+        package_order = self.dataset_pool_configuration.package_order
+        package_order_output = repr(package_order).replace("'","\'")
+        
+        metadata_lines.append(indent + '<package_order>%s</package_order>'%package_order_output)
         cur_line = ''
         for i in range(indentation): cur_line += '\t'
         cur_line += ('</source_data>')

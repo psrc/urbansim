@@ -63,9 +63,16 @@ class IndicatorDataManager:
     def _import_indicators_from_file(self, indicator_directory):
         '''scans the indicator directory for indicator meta files and 
            recreates the indicators'''
-        import glob
-        files = glob.glob('*.meta')
-        indicators = [self._import_indicator_from_file(f) for f in files]
+        import fnmatch
+        files = [os.path.join(indicator_directory, f) for f in os.listdir(indicator_directory)]
+        indicators = []
+        for f in files:
+            if fnmatch.fnmatch(f,'*.meta'):
+                try:
+                     indicator = self._import_indicator_from_file(f) 
+                     indicators.append(indicator)
+                except:
+                    pass
         return indicators        
     
     '''not in use yet'''
@@ -100,8 +107,6 @@ class IndicatorDataManager:
             if line == '<source_data>':
                 in_source_data = True
             elif line == '</source_data>':
-                source_data = SourceData(**source_data_params)
-                params['source_data'] = source_data
                 in_source_data = False
             elif line != '</%s>'%indicator_class:
                 (name, value) = self._extract_name_and_value(line)
@@ -111,7 +116,9 @@ class IndicatorDataManager:
                 if name == 'years' or name == 'scale':
                     if value == 'None' or value == '[]':
                         value = []
-                    else:
+                    elif name=='scale':
+                        value = [float(y) for y in value[1:-1].split(',')]
+                    elif name=='years':
                         value = [int(y) for y in value[1:-1].split(',')]
                 elif name == 'attributes':
                     if value == 'None' or value == '[]':
@@ -121,7 +128,7 @@ class IndicatorDataManager:
                 
                 if in_source_data:
                     if name == 'package_order':
-                        order = [eval(p) for p in value[1:-1].split(',')]
+                        order = [eval(p.strip()) for p in value[1:-1].split(',')]
                         
                         pool = DatasetPoolConfiguration(
                             package_order = order,
@@ -141,10 +148,14 @@ class IndicatorDataManager:
         f.close()
         indicator = self._create_indicator(indicator_class, 
                                            params,
-                                           non_constructor_attr)
+                                           non_constructor_attr,
+                                           source_data_params)
         return indicator
         
-    def _create_indicator(self, indicator_class, params, non_constructor_attributes):
+    def _create_indicator(self, indicator_class, params, non_constructor_attributes, source_data_params):
+        source_data = SourceData(**source_data_params)
+        params['source_data'] = source_data
+        
         exec('from opus_core.indicator_framework.image_types import %s'%indicator_class)
         indicator = locals()[indicator_class](**params)
         
