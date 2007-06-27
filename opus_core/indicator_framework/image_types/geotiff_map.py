@@ -90,7 +90,7 @@ class Tests(AbstractIndicatorTest):
         
         map = GeotiffMap(
                   source_data = self.source_data,
-                  attribute = 'package.test.attribute',
+                  attribute = 'opus_core.test.attribute',
                   dataset_name = 'test',
                   prototype_dataset = None,
                   years = None

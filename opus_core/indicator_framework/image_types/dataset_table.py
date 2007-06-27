@@ -184,8 +184,8 @@ class Tests(AbstractIndicatorTest):
                   source_data = self.source_data,
                   name = '',
                   dataset_name = 'test', 
-                  attributes = ['package.test.attribute', 
-                                'package.test.attribute2'],
+                  attributes = ['opus_core.test.attribute', 
+                                'opus_core.test.attribute2'],
                   output_type = 'tab'
         )
         

@@ -97,11 +97,11 @@ class Tests(opus_unittest.OpusTestCase):
         output_map = self.get_char_count(output[0])
         expected_map = self.get_char_count(expected[0])
         #self.assertEqual(output,expected)
-        for k in expected_map.keys():
-            if k not in output_map:
-                print '%s in expected but not output'%k
-            elif output_map[k] != expected_map[k]:
-                print '%s: output=%i, expected=%i'%(k,output_map[k],expected_map[k])
+#        for k in expected_map.keys():
+#            if k not in output_map:
+#                print '%s in expected but not output'%k
+#            elif output_map[k] != expected_map[k]:
+#                print '%s: output=%i, expected=%i'%(k,output_map[k],expected_map[k])
             
         self.assertEqual(len(output_map.keys()),len(expected_map.keys()))
                 
@@ -114,10 +114,10 @@ class Tests(opus_unittest.OpusTestCase):
                 char_map[ch] += 1
         return char_map
     
-if __name__ == '__main__':
-    #opus_unittest.main()
-    from psrc.indicators.make_indicators import multi_year_requests
-    print multi_year_requests
-    results = convert(multi_year_requests, indent = 1)
-    for i in results:
-        print i + ','
+#if __name__ == '__main__':
+#    #opus_unittest.main()
+#    from psrc.indicators.make_indicators import multi_year_requests
+#    print multi_year_requests
+#    results = convert(multi_year_requests, indent = 1)
+#    for i in results:
+#        print i + ','

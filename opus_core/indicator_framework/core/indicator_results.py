@@ -248,7 +248,7 @@ class IndicatorResultsTests(TestWithAttributeData):
         self.i_results.indicator_documentation_mapping = {}
         self.source_data = SourceData(
             cache_directory = self.temp_cache_path,
-            run_description = '(xxx)',
+            run_description = '(opus_core)',
             dataset_pool_configuration = DatasetPoolConfiguration(
                 package_order=['opus_core'],
                 package_order_exceptions={},
@@ -288,25 +288,25 @@ class IndicatorResultsTests(TestWithAttributeData):
             requests = [
                 Map(
                     source_data = self.source_data,
-                    attribute = 'xxx.test.population',
+                    attribute = 'opus_core.test.population',
                     scale = [1,75000],
                     dataset_name = 'test'
                 ),
                 Chart(
                     source_data = self.source_data,
-                    attribute = 'xxx.test.population',
+                    attribute = 'opus_core.test.population',
                     dataset_name = 'test',
                     name = 'my_name',    
                 ),
                 Chart(
                     source_data = self.source_data,
-                    attribute = 'xxx.test.population',
+                    attribute = 'opus_core.test.population',
                     dataset_name = 'test',
                     years = [1981]
                 ),
                 LorenzCurve(
                     source_data = self.source_data,
-                    attribute = 'xxx.test.population',
+                    attribute = 'opus_core.test.population',
                     dataset_name = 'test'
                 ),
             ]

@@ -117,7 +117,7 @@ class Tests(AbstractIndicatorTest):
         table = Table(
                   source_data = self.source_data,
                   dataset_name = 'test', 
-                  attribute = 'package.test.attribute', 
+                  attribute = 'opus_core.test.attribute', 
                   years = None, 
                   output_type = 'csv'
         )

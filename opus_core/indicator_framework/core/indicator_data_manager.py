@@ -181,7 +181,7 @@ class Tests(AbstractIndicatorTest):
         else:
             table = Table(
                 source_data = self.cross_scenario_source_data,
-                attribute = 'xxx.test.population',
+                attribute = 'opus_core.test.population',
                 dataset_name = 'test',
                 output_type = 'tab',
                 years = [1980,1981] # Indicators are not actually being computed, so the years don't matter here.
@@ -200,7 +200,7 @@ class Tests(AbstractIndicatorTest):
                 '\t<date_computed>None</date_computed>',
                 '\t<name>population</name>',
                 '\t<operation>None</operation>',
-                '\t<attribute>xxx.test.population</attribute>',
+                '\t<attribute>opus_core.test.population</attribute>',
                 '\t<output_type>tab</output_type>',
                 '\t<source_data>',
                 '\t\t<cache_directory>%s</cache_directory>'%self.temp_cache_path,
@@ -227,7 +227,7 @@ class Tests(AbstractIndicatorTest):
             
             table = Table(
                 source_data = self.source_data,
-                attribute = 'xxx.test.population',
+                attribute = 'opus_core.test.population',
                 dataset_name = 'test',
                 output_type = 'tab',
                 years = [1980,1981] # Indicators are not actually being computed, so the years don't matter here.

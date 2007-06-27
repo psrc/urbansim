@@ -119,8 +119,8 @@ class Tests(AbstractIndicatorTest):
             map = ArcGeotiffMap(
                   source_data = self.source_data,
                   dataset_name = 'test', 
-                  package = 'package',
-                  attribute = 'package.test.attribute', 
+                  package = 'opus_core',
+                  attribute = 'opus_core.test.attribute', 
                   prototype_dataset = None,
                   layer_file = 'D:/ArcMap_automation/6_RedClassBreaks_noZeroValues.lyr', #(optional); will default to ''
                   transparency = 0, 

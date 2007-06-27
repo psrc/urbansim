@@ -90,7 +90,11 @@ class AbstractIndicator(object):
                                          (year, self.source_data.comparison_cache_directory))
                     
         '''package does not exist'''
-        
+        if self.attribute != '':
+            package = VariableName(self.attribute).get_package_name()
+            if package != None and package not in self.package_order:
+                raise IntegrityError('Package %s is not available'%package)
+            
         '''dataset does not exist'''     
         try:
             dataset = self._get_dataset(year = self.years[0])
@@ -395,7 +399,7 @@ class Tests(AbstractIndicatorTest):
         from opus_core.indicator_framework.image_types.table import Table
         table = Table(
             source_data = self.source_data,
-            attribute = 'xxx.test.population',
+            attribute = 'opus_core.test.population',
             dataset_name = 'test',
             output_type = 'tab')
         returned_path = table.get_file_name()
@@ -408,7 +412,7 @@ class Tests(AbstractIndicatorTest):
         for output_type in ['dbf','csv','tab']:
             table = Table(
                 source_data = self.cross_scenario_source_data,
-                attribute = 'package.test.attribute',
+                attribute = 'opus_core.test.attribute',
                 dataset_name = 'test',
                 output_type = output_type)
             
@@ -420,7 +424,7 @@ class Tests(AbstractIndicatorTest):
         from opus_core.indicator_framework.image_types.table import Table
         table = Table(
             source_data = self.cross_scenario_source_data,
-            attribute = 'package.test.attribute',
+            attribute = 'opus_core.test.attribute',
             dataset_name = 'test',
             output_type = 'csv')
         
@@ -436,7 +440,7 @@ class Tests(AbstractIndicatorTest):
         from opus_core.indicator_framework.image_types.table import Table
         table = Table(
             source_data = self.source_data,
-            attribute = '2 * package.test.attribute',
+            attribute = '2 * opus_core.test.attribute',
             dataset_name = 'test',
             output_type = 'csv')
         
@@ -460,7 +464,7 @@ class Tests(AbstractIndicatorTest):
         from opus_core.indicator_framework.image_types.table import Table
         table = Table(
             source_data = self.source_data,
-            attribute = '2 * package.test.attribute - package.test.attribute2',
+            attribute = '2 * opus_core.test.attribute - opus_core.test.attribute2',
             dataset_name = 'test',
             output_type = 'csv')
         
@@ -485,7 +489,7 @@ class Tests(AbstractIndicatorTest):
         try:
             table = Table(
                 source_data = self.source_data,
-                attribute = 'package.test.attribute',
+                attribute = 'opus_core.test.attribute',
                 dataset_name = 'test',
                 output_type = 'csv')
         except IntegrityError:
@@ -507,7 +511,7 @@ class Tests(AbstractIndicatorTest):
         try:
             table = Table(
                 source_data = self.source_data,
-                attribute = 'package.test.attribute',
+                attribute = 'opus_core.test.attribute',
                 dataset_name = 'test2',
                 output_type = 'csv')
         except IntegrityError:
@@ -515,26 +519,26 @@ class Tests(AbstractIndicatorTest):
         else:
             self.assertTrue(False)  
                  
-#        '''package2 does not exist'''
-#        try:
-#            table = Table(
-#                source_data = self.source_data,
-#                attribute = 'package2.test.attribute',
-#                dataset_name = 'test',
-#                output_type = 'csv')
-#        except IntegrityError:
-#            pass
-#        else:
-#            self.assertTrue(False)           
-#
-#        bad_source = self.source_data
-#        bad_source.years = [1970]
+        '''package does not exist'''
+        try:
+            table = Table(
+                source_data = self.source_data,
+                attribute = 'package.test.attribute',
+                dataset_name = 'test',
+                output_type = 'csv')
+        except IntegrityError:
+            pass
+        else:
+            self.assertTrue(False)           
+
+        bad_source = self.source_data
+        bad_source.years = [1970]
 
         '''don't have data available for year 1970'''
         try:
             table = Table(
                 source_data = self.source_data,
-                attribute = 'package.test.attribute',
+                attribute = 'opus_core.test.attribute',
                 dataset_name = 'test',
                 years = [1970],
                 output_type = 'csv')

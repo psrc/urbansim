@@ -139,7 +139,7 @@ class Tests(AbstractIndicatorTest):
         
         lorenzcurve = LorenzCurve(
                   source_data = self.source_data,
-                  attribute = 'package.test.attribute',
+                  attribute = 'opus_core.test.attribute',
                   dataset_name = 'test',
                   years = None
         )
@@ -153,7 +153,7 @@ class Tests(AbstractIndicatorTest):
         """Perfect equality is when everybody has the same amount of something"""
         lorenzcurve = LorenzCurve(
                   source_data = self.source_data,
-                  attribute = 'package.test.attribute',
+                  attribute = 'opus_core.test.attribute',
                   dataset_name = 'test',
                   years = None
         )
@@ -167,7 +167,7 @@ class Tests(AbstractIndicatorTest):
         """Perfect inequality is when one person has all of something"""
         lorenzcurve = LorenzCurve(
                   source_data = self.source_data,
-                  attribute = 'package.test.attribute',
+                  attribute = 'opus_core.test.attribute',
                   dataset_name = 'test',
                   years = None
         )
@@ -183,7 +183,7 @@ class Tests(AbstractIndicatorTest):
         """Test case for less than 100 people"""
         lorenzcurve = LorenzCurve(
                   source_data = self.source_data,
-                  attribute = 'package.test.attribute',
+                  attribute = 'opus_core.test.attribute',
                   dataset_name = 'test',
                   years = None
         )
@@ -199,7 +199,7 @@ class Tests(AbstractIndicatorTest):
         """Test case for gini coefficient for the small case"""
         lorenzcurve = LorenzCurve(
                   source_data = self.source_data,
-                  attribute = 'package.test.attribute',
+                  attribute = 'opus_core.test.attribute',
                   dataset_name = 'test',
                   years = None
         )
@@ -215,7 +215,7 @@ class Tests(AbstractIndicatorTest):
         """Test case for more than 100 people"""
         lorenzcurve = LorenzCurve(
                   source_data = self.source_data,
-                  attribute = 'package.test.attribute',
+                  attribute = 'opus_core.test.attribute',
                   dataset_name = 'test',
                   years = None
         )

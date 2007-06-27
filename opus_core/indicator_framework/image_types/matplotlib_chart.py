@@ -121,7 +121,7 @@ else:
             
             chart = Chart(
                       source_data = self.source_data,
-                      attribute = 'package.test.attribute',
+                      attribute = 'opus_core.test.attribute',
                       dataset_name = 'test',
                       years = None
             )
