@@ -58,7 +58,7 @@ class IndicatorDataManager:
         return lines
 
     def import_indicators(self, indicator_directory):
-        self._import_indicators_from_file(indicator_directory)
+        return self._import_indicators_from_file(indicator_directory)
 
     def _import_indicators_from_file(self, indicator_directory):
         '''scans the indicator directory for indicator meta files and 
