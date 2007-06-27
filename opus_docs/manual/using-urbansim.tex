@@ -282,9 +282,9 @@ that influences behaviour of the run manager. \runmanagerindex Mandatory entries
 values for optional entries are marked in the comments. The actual values for
 the listed entries are only examples.
 
-\emph{15 Sept 2006: Note: we are in the process of splitting the following
-configuration information into separate parts.  Once we are done
-with that refactoring, we will update the documentation to the new arrangement.}
+\emph{Note: we are in the process of splitting the following configuration
+information into separate parts.  Once we are done with that refactoring,
+we will update the documentation to the new arrangement.}
 
 \mysqlhostnameindex\mysqlpasswordindex\baseyearcacheindex
 \begin{verbatim}
@@ -336,6 +336,11 @@ run_configuration = {
             'urbansim_constants': 1996,
             },
         ),
+\end{verbatim}
+
+% long script split into two parts since it won't fit on one page
+
+\begin{verbatim}
     'input_configuration': DatabaseConfiguration(    # mandatory
         host_name = os.environ['MYSQLHOSTNAME']      # mandatory
         user_name = 'urbansim',                      # mandatory

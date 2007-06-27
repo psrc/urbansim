@@ -46,8 +46,8 @@ batch of indicators to be computed. Some of the more advanced functionality is
 also available only through the script. 
 
 There is online documentation for some of the indicators, 
-linked from \url{http://www.urbansim.org/opus}.  See Section
-\ref{sec:writing-indicators} for information on writing indicator
+linked from \url{http://www.urbansim.org/docs/indicators/index.xml}.  
+See Section \ref{sec:writing-indicators} for information on writing indicator
 \indicatorsindex documentation.  (Formerly we computed the values for
 indicators using SQL queries, but this proved too slow in many cases, so we
 switched to using Opus attributes exclusively.  There was much more
@@ -101,7 +101,8 @@ for example:
 Of these, the first one (\module{urbansim.gridcell.residential_units}) is a
 primary \primaryattributesindex attribute --- the number of residential
 units is part of the data stored for each gridcell. 
-\computedattributesindex (Population is computed, even for
+\computedattributesindex (The variable
+\code{population} is computed, even for
 gridcells --- for a gridcell, it is computed by summing the number of
 persons in each household located in that grid cell.) 
 % Residential units at
@@ -109,14 +110,14 @@ persons in each household located in that grid cell.)
 % by summing, via the aggregate function, the number of residential units in
 % each gridcell in that zone.)
 
-Variable expressions may also be used in the place of an attribute 
+Expressions may also be used in the place of simple variables 
 (see Section~\ref{sec:opus-core-expressions}). For example, the following are
-all valid attribute declarations for an indicator: 
+all valid names of an indicator: 
 
 \begin{itemize}
 \tight
-\item \module{2 * urbansim.gridcell.population + 1}
-\item \module{urbansim.gridcell.residential_units + urbansim.gridcell.commercial_units}
+\item \code{2 * urbansim.gridcell.population + 1}
+\item \code{urbansim.gridcell.residential_units + urbansim.gridcell.commercial_units}
 \end{itemize}
 
 Attributes \attributesindex can also be in project-specific packages in
@@ -143,76 +144,85 @@ These two techniques are described in the following two sections
 \section{The Indicator GUI}
 \label{sec:indicator-configuration-gui}
 
-The Indicator GUI is specified using the Enthought Traits packages
+The Indicator GUI is implemented using the Enthought Traits packages
 (\url{http://www.enthought.com}).  It provides a graphical editor for
 specifying and generating an indicator.  The GUI can be started by running
 the indicator_gui.py located in the indicators subdirectory of each
 project. For example, for the PSRC application, run
 \file{psrc/indicators/indicator_gui.py}.  This will open the indicator GUI.
 
-Currently, there are two parts of the GUI: specifying scenario information and 
-specifying the indicator. 
+Currently, there are two parts of the GUI: one for specifying scenario 
+information, and another for specifying the indicator. 
 
 \subsection{Specifying Scenario Information}
 The scenario specification pane is where you input information 
 about which scenario results should be used for computing the indicators. 
 The fields are:
+
 \begin{itemize}
+
 \tight
-\item[Cache directory] is the directory holding the cache with the
-  simulation results from which indicators are to be produced.
 
-\item[Comparison cache directory] is an optional field. It can 
-be set to point to another cache directory of simulation results.
-If it is specified, the computed indicators will be compared 
-between the two scenarios. See section \ref{sec:indicator-cross-scenario} 
-for more details. 
+\item {\bf Cache directory} is the directory holding the cache with the
+simulation results from which indicators are to be produced.
 
-\item[Compare to another cache directory] is a checkbox that toggles
+\item {\bf Comparison cache directory} is an optional field. It can be set to
+point to another cache directory of simulation results.  If it is
+specified, the computed indicators will be compared between the two
+scenarios. See section \ref{sec:indicator-cross-scenario} for more details.
+
+\item {\bf Compare to another cache directory} is a checkbox that toggles
 on and off the ability to specify a comparison cache directory.
 
 \end{itemize}
 
 \subsection{Specifying Indicators}
-The indicator specification pane is where you specify the 
-indicator you wish to compute. There are four possible output 
-types: Tab-deliminated Table, Comma-separated Table, Map, and 
-Chart. The fields are:
+
+The indicator specification pane is where you specify the indicator you
+wish to compute. There are a number of possible output types.  Three of
+these (Tab-deliminated table, Comma-separated table, and Dbf table) are all
+variants of a basic ``table'' output type, only varying by the particular
+format.  ``Chart'' and ``map'' produce \file{.png} files with an
+appropriate chart or map, produced by the \package{matplotlib} package.
+See Section \ref{sec:indicator-configuration-script}
+for more information on these output formats.
+
+The fields are:
 
 \begin{itemize}
 \tight
-\item[Type] is the output type of the indicator.
+\item {\bf Type} is the output type of the indicator.
 
-\item[Attribute] is the fully qualified path of an opus variable, as 
+\item {\bf Attribute} is the fully qualified path of an opus variable, as 
 described at the beginning of this section. 
 
-\item[Name] is the desired name of the indicator. This field is optional.
+\item {\bf Name} is the desired name of the indicator. This field is optional.
 It defaults to the attribute field.
 
-\item[Dataset] is the dataset for which the indicator should be 
+\item {\bf Dataset} is the dataset for which the indicator should be 
 computed from (e.g. grid cell, zone).
 
-\item[Years] lets you select the years for
+\item {\bf Years} lets you select the years for
 which these indicator values should be computed. Examples include
 ``2001,2003'' and ``2010-2020'', the latter of which results in 
 the indicator being computed for all years between 2010 and 2020
 inclusive. 
 
-\item[Comparison cache directory] is an optional field. It can 
+\item {\bf Comparison cache directory} is an optional field. It can 
 be set to point to another cache directory of simulation results.
 If it is specified, the computed indicators will be compared 
 between the two scenarios. See section \ref{sec:indicator-cross-scenario} 
 for more details. 
 
-\item[Compare to another cache directory] is a checkbox that toggles
+\item {\bf Compare to another cache directory} is a checkbox that toggles
 on and off the ability to specify a comparison cache directory.
 
 \end{itemize}
 
 The \verb|map| visualization type has an additional optional field: 
-\begin{description}
-\item[Scale] specifies the minimum and maximum values for the map coloring. 
-\end{description}  
+\begin{itemize}
+\item {\bf Scale} specifies the minimum and maximum values for the map coloring. 
+\end{itemize}  
 
 There is a ``run'' button at the bottom of the GUI that starts the indicator 
 computations.  There is also a ``view results'' button that launches a 
@@ -222,7 +232,7 @@ addition, the ``file'' menu includes items for saving a configuration, and
 opening a previously saved one.  (The ``run'' action is also available via
 the run menu.) 
 
-\section{Constructing a batch of indicators in a Python script}
+\section{Constructing a Batch of Indicators using a Python Script}
 \label{sec:indicator-configuration-script}
 
 It is also possible to set up a indicator request configuration
@@ -244,21 +254,21 @@ be compared against. Each indicator requires a source data object to be passed
 to it. Every SourceData object accepts the following arguments:
 \begin{itemize}
 \tight
-\item[dataset_pool_configuration] is an object that handles which 
+\item {\bf dataset_pool_configuration} is an object that handles which 
 datasets get loaded and in what order. 
 
-\item[cache_directory] is a path to the directory containing the 
+\item {\bf cache_directory} is a path to the directory containing the 
 simulation results that the indicators should be computed from.
 
-\item[comparison_cache_directory] is an optional field. Set this field 
+\item {\bf comparison_cache_directory} is an optional field. Set this field 
 to the path to a second cache directory in order to run a 
 cross-scenario indicator comparison. See \ref{sec:indicator-cross-scenario}
 for more information.
 
-\item[run_description] is a description of this indicator batch. 
+\item {\bf run_description} is a description of this indicator batch. 
 This field is optional. 
 
-\item[years] are the default years that all the indicators will be computed for.
+\item {\bf years} are the default years that all the indicators will be computed for.
 This field is optional, although all indicators will then need to have a 
 years field if not specified here.
 
@@ -285,10 +295,10 @@ number of different visualization types available.
 
 \begin{itemize}
 \tight
-\item[\code{table}] \index{tables} produce a table \index{tables} of indicator \indicatorsindex values
-\item[\code{chart}] \index{charts} produce a chart \index{charts} or graph \index{graphs} using matplotlib \matplotlibindex
-\item[\code{map}] \index{maps} produce a choropleth map \index{maps} using matplotlib \matplotlibindex
-\item[\code{dataset_table}] produces a table for every specified year 
+\item {\bf \code{table}} \index{tables} produce a table \index{tables} of indicator \indicatorsindex values
+\item {\bf \code{chart}} \index{charts} produce a chart \index{charts} or graph \index{graphs} using matplotlib \matplotlibindex
+\item {\bf \code{map}} \index{maps} produce a choropleth map \index{maps} using matplotlib \matplotlibindex
+\item {\bf \code{dataset_table}} produces a table for every specified year 
 with the values of each of the specified indicators.
 \end{itemize}
 
@@ -299,17 +309,17 @@ object takes the following parameters:
 
 \begin{itemize}
 \tight
-\item[source_data] references the desired \verb|SourceData| object (see above). 
+\item {\bf source_data} references the desired \verb|SourceData| object (see above). 
 
-\item[dataset_name] is the name of the dataset that this indicator will be 
+\item {\bf dataset_name} is the name of the dataset that this indicator will be 
 computed for.
 
-\item[years] are the years that the indicator will be computed for.
+\item {\bf years} are the years that the indicator will be computed for.
 This field is optional if the \verb|SourceData| object also 
 has a years field. The indicator years field overrides
 the \verb|SourceData| years field.
 
-\item[name] is the desired name of the indicator. This field is optional. 
+\item {\bf name} is the desired name of the indicator. This field is optional. 
 The default name is the indicator attribute, although 
 some indicators overload the default name. Name replaces 
 the old 'as' syntax.
@@ -322,9 +332,9 @@ A Table object accepts the following parameters:
 
 \begin{itemize}
 \tight
-\item[attribute] is the the fully qualified opus path of the indicator. 
-\item[output_type] specifies whether the results should be separated 
-by tabs or commas, or output as a dbf file ("tab", "csv", or ``dbf", respectively).
+\item {\bf attribute} is the the fully qualified opus path of the indicator. 
+\item {\bf output_type} specifies whether the results should be separated 
+by tabs or commas, or output as a dbf file (``tab'', ``csv'', or ``dbf'', respectively).
 \end{itemize}
 
 An example:
@@ -347,8 +357,8 @@ A Map object accepts the following parameters:
 
 \begin{itemize}
 \tight
-\item[attribute] is the the fully qualified opus path of the indicator. 
-\item[scale] is a two element list that specifies the min and max values 
+\item {\bf attribute} is the the fully qualified opus path of the indicator. 
+\item {\bf scale} is a two element list that specifies the min and max values 
 for the scale of the values on the map. It is optional and defaults to the
 min/max values of the indicator. 
 \end{itemize}
@@ -374,7 +384,7 @@ A Chart object accepts the following parameters:
 
 \begin{itemize}
 \tight
-\item[attribute] is the the fully qualified opus path of the indicator. 
+\item {\bf attribute} is the the fully qualified opus path of the indicator. 
 \end{itemize}
 
 An example:
@@ -395,8 +405,8 @@ A DatasetTable object accepts the following parameters:
 
 \begin{itemize}
 \tight
-\item[attributes] is the the fully qualified opus path of the indicator.
-\item[exclude_condition] determines the condition under which certain rows 
+\item {\bf attributes} is the the fully qualified opus path of the indicator.
+\item {\bf exclude_condition} determines the condition under which certain rows 
 are not included in the result. For example, if all the values in the row 
 are zero, set this to "==0". This field is optional.
 \end{itemize}
@@ -424,13 +434,13 @@ following values:
 
 \begin{itemize}
 \tight
-  \item[change] returns the difference of the specified
+  \item {\bf change} returns the difference of the specified
   attribute for the current year with respect to the baseyear (currently fixed
   at 2000).
-  \item[percent_change] returns the percent difference of the specified
+  \item {\bf percent_change} returns the percent difference of the specified
   attribute for the current year with respect to the baseyear (currently fixed
   at 2000). 
-  \item[size] returns the size of the data set used.
+  \item {\bf size} returns the size of the data set used.
 \end{itemize}
 
 An example using operations:
