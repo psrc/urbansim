@@ -66,6 +66,7 @@ class DataPreparationHouseholds(UrbansimParcelConfiguration):
         self['models_configuration']['household_location_choice_model']['controller'] = \
                    HouseholdLocationChoiceModelByZonesConfigurationCreator(
                                 location_set = "building",
+                                sampler = None,
                                 input_index = 'hrm_index',
                                 capacity_string = "urbansim_parcel.building.vacant_residential_units",
                                 number_of_units_string = None,

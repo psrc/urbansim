@@ -147,10 +147,12 @@ class ChoiceModel(ChunkModel):
             return array([], dtype='int32')
         agentsubset = DatasetSubset(agent_set, agents_index)
 
-
+        self.set_choice_set_size()  
+        index = self.get_choice_index(agent_set, agents_index, agentsubset)
         nchoices = self.get_choice_set_size()
+        
         self.debug.print_debug("Choice set size: " + str(nchoices),4)
-        index = self.get_choice_index(nchoices, agent_set, agents_index, agentsubset)
+        
         if isinstance(index, ndarray):
             if (index.size <= 0) or ((index.ndim > 1) and (index.shape[1]<=0)):
                 return zeros(agents_index.size, dtype="int32")
@@ -263,6 +265,7 @@ class ChoiceModel(ChunkModel):
 
         estimation_set = DatasetSubset(agent_set, agents_index)
 
+        self.set_choice_set_size()
         nchoices = self.get_choice_set_size()
 
         estimation_size_agents = estimate_config.get("estimation_size_agents", None) # should be a proportion of the agent_set
@@ -293,7 +296,7 @@ class ChoiceModel(ChunkModel):
                                       resources = Resources({"debug": self.debug}))
                 
         index, self.selected_choice = \
-            self.get_choice_index_for_estimation_and_selected_choice(nchoices, agent_set,
+            self.get_choice_index_for_estimation_and_selected_choice(agent_set,
                         agents_for_estimation_idx, estimation_set, submodels)
 
         self.debug.print_debug("Choice set size: " + str(nchoices),4)
@@ -438,13 +441,16 @@ class ChoiceModel(ChunkModel):
     def get_agents_order(self, agents):
         return permutation(agents.size())
 
+    def set_choice_set_size(self):
+        self.choice_set_size = self.choice_set.size()
+        
     def get_choice_set_size(self):
-        return self.choice_set.size()
+        return self.choice_set_size
 
-    def get_choice_index(self, nchoices=None, agent_set=None, agents_index=None, agent_subset=None):
+    def get_choice_index(self, agent_set=None, agents_index=None, agent_subset=None):
         return None
 
-    def get_choice_index_for_estimation_and_selected_choice(self, nchoices=None, agent_set=None,
+    def get_choice_index_for_estimation_and_selected_choice(self, agent_set=None,
                                                             agents_index=None, agent_subset=None,
                                                             submodels=[1]):
         """ Return tuple of index of choices to be considered for each agent that will be passed

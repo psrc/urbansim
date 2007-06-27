@@ -31,6 +31,9 @@ class HouseholdLocationChoiceModelByZones(HouseholdLocationChoiceModel):
             logger.log_status("HLCM for zone %s" % zone_id)
             HouseholdLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                              agents_index=new_index, **kwargs)
+            agent_set.flush_dataset()
+            self.choice_set.flush_dataset()
+            
         # set the right parcels
         parcels = agent_set.compute_variables(["household.disaggregate(building.parcel_id)"],
                                               dataset_pool = self.dataset_pool)

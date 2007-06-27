@@ -102,9 +102,10 @@ class LandCoverChangeModel(ChoiceModel):
             agent_set_year1.delete_one_attribute(new_submodel_string)
         return self.coefficients, results[1]
 
-    def get_choice_index_for_estimation(self, nchoices, agent_set, agents_index=None,
+    def get_choice_index_for_estimation(self, agent_set, agents_index=None,
                                          agent_subset=None, submodels=[1]):
         # need to work on this - return indicies of filtered choices
+        nchoices = self.get_choice_set_size()
         index = (-1*ones((agents_index.size, nchoices))).astype("int32")
         self.selected_choice = zeros((agents_index.size,), dtype="int32")
         for submodel in submodels:
