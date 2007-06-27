@@ -25,6 +25,7 @@ except:
     logger.log_warning('Could not load traits.ui. Skipping %s!' % __file__)
 else:
     import wx, os, sys, thread, webbrowser
+    from threading import Thread
     import cPickle as pickle
     from copy import copy
     
@@ -109,23 +110,26 @@ else:
             if not input_valid: return
             
             indicator = self.indicator.detraitify(source_data)
+            thread = Thread(target = self._generate_indicator, args = ([indicator],))
+            thread.start()
+
+        def _generate_indicator(self, indicators):
+            factory = IndicatorFactory()
             self.busy = True
             try:
-                factory = IndicatorFactory()
                 self.results_page = factory.create_indicators(
-                    [indicator],
+                    indicators,
                     show_results = False,
-                    display_error_box = True)
+                    display_error_box = True)                
             except:
-                self.busy = False
                 display_message_dialog("Failed to generate indicator! Check the indicator log "
                         "in the indicators directory of the '%s' cache for further "
                         "details." % self.source_data.cache_directory)
-                return
+            else:
+                self.has_results = True
             
             self.busy = False
-            self.has_results = True
-            
+
         def do_view_results(self, info):
             if self.has_results:
                 webbrowser.open_new(self.results_page)
@@ -141,7 +145,7 @@ else:
             SaveAsAction = Action(name="Save as ...", action="do_save_as")
             RevertAction = Action(name="Revert", action="do_revert", enabled_when="handler.updated and len(handler.pickle_file)>0")
             RunAction = Action(name="Run requests", action="do_run", enabled_when="not handler.busy")
-            ResultsAction = Action(name="View results", action="do_view_results", enabled_when="handler.has_results")
+            ResultsAction = Action(name="View results", action="do_view_results", enabled_when="handler.has_results and not handler.busy")
             #
             # menus
             file_menu = Menu(OpenAction, SaveAction, SaveAsAction, RevertAction, CloseAction, name='File')
