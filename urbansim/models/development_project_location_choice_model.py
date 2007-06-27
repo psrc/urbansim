@@ -134,6 +134,7 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
         max_capacity = self.choice_set.get_attribute(self.developable_maximum_unit_short_name)
         min_capacity = self.choice_set.get_attribute(self.developable_minimum_unit_short_name)
 
+        self.set_choice_set_size()
         nchoices = self.get_choice_set_size()
         project_average_size = agent_set.get_attribute(agent_set.get_attribute_name()).mean()
         add_projects = 0

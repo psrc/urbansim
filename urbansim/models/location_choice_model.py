@@ -14,7 +14,7 @@
 
 from opus_core.resources import Resources
 from opus_core.chunk_specification import ChunkSpecification
-from numpy import zeros, array, arange, ones, float32, concatenate
+from numpy import zeros, array, arange, ones, float32, concatenate, where
 from numpy import int8, take, put, greater, resize
 from scipy import ndimage
 from numpy.random import permutation
@@ -201,8 +201,7 @@ class LocationChoiceModel(ChoiceModel):
         if self.capacity_string is None:
             return None
         
-        self.choice_set.compute_variables(self.capacity_string, dataset_pool=self.dataset_pool, resources=resources)
-        capacity = self.choice_set.get_attribute(self.capacity_string)
+        capacity = self.choice_set.compute_variables(self.capacity_string, dataset_pool=self.dataset_pool, resources=resources)
         return capacity
 
     def determine_units_capacity_for_estimation(self, agent_set, agents_index):
@@ -234,7 +233,7 @@ class LocationChoiceModel(ChoiceModel):
     def get_agents_order(self, movers):
         return permutation(movers.size())
 
-    def get_choice_set_size(self):
+    def set_choice_set_size(self):
         """If "sample_size_locations" is specified in resources, it is considered as the choice set size. Otherwise
         the value of resources entry "sample_proportion_locations" is considered as determining the proportion of
         all locations to be the choice set size.
@@ -251,15 +250,21 @@ class LocationChoiceModel(ChoiceModel):
                     nchoices = int(pchoices*self.choice_set.size())
         else:
             nchoices = self.choice_set.size()
-        return min(nchoices, self.choice_set.size())
+        self.choice_set_size =  min(nchoices, self.choice_set.size())
 
-    def get_choice_index(self, nchoices, agent_set, agents_index, agent_subset):
+    def get_choice_index(self, agent_set, agents_index, agent_subset):
         self.weights = None
-        if nchoices == self.choice_set.size():
-            return None
-        self.debug.print_debug("Sampling locations ...",3)
+        nchoices = self.get_choice_set_size()
+        if (nchoices == self.choice_set.size()) and (self.filter is None):
+            return None            
         self.weights, location_index = self.get_weights_for_sampling_locations(agent_set, agents_index)
         self.weights = self.apply_filter(self.filter, self.weights, agent_set, agents_index)
+        if (nchoices == self.choice_set.size()): # take all alternatives that pass through the filter and have eights larger than 0
+            index = where(self.weights > 0)[0]
+            self.choice_set_size = index.size # modify the choice set size
+            index = resize(index, (agents_index.size, self.choice_set_size))
+            return index
+        self.debug.print_debug("Sampling locations ...",3)
         # the following model component must return a 2D array of sampled locations per agent
         index, chosen_choice = self.sampler_class.run(agent_subset, self.choice_set, index2=location_index, sample_size=nchoices,
                 weight=self.weights, resources=self.run_config)
@@ -267,7 +272,7 @@ class LocationChoiceModel(ChoiceModel):
             index = array([], dtype="int32")
         return index
 
-    def get_choice_index_for_estimation_and_selected_choice(self, nchoices, agent_set,
+    def get_choice_index_for_estimation_and_selected_choice(self, agent_set,
                                                             agents_index, agent_subset=None, submodels=[1]):
         """Performs sampling if required. It can be done in several chunks, which is useful especially if the sampling weights
         is a 2D array. The chunking is controlled by an entry 'chunk_specification_for_estimation' in estimate_config.
@@ -278,6 +283,7 @@ class LocationChoiceModel(ChoiceModel):
         self.model_interaction.set_selected_choice(agents_index)
         selected_choice = self.model_interaction.get_selected_choice()
         self.weights = None
+        nchoices = self.get_choice_set_size()
         if nchoices < self.choice_set.size():
             chunk_specification = self.estimate_config.get("chunk_specification_for_estimation", ChunkSpecification({"nchunks":1}))
             logger.log_status("Sampling locations for estimation ...")
@@ -315,7 +321,7 @@ class LocationChoiceModel(ChoiceModel):
             self.model_interaction.set_selected_choice_for_LCM(selected_choice)
         else:
             index, selected_choice = ChoiceModel.get_choice_index_for_estimation_and_selected_choice(self,
-                                        nchoices, agent_set, agents_index, agent_subset,
+                                        agent_set, agents_index, agent_subset,
                                         submodels=submodels)        
         return (index, selected_choice)
 

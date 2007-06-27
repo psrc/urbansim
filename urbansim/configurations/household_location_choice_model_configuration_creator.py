@@ -20,6 +20,7 @@ from opus_core.misc import get_string_or_None
 class HouseholdLocationChoiceModelConfigurationCreator(HasStrictTraits):
     agent_set = Str('household')
     debuglevel = Trait('debuglevel', Str, Int)
+    sampler = Trait('opus_core.samplers.weighted_sampler', None, Str) 
     choices = Str('urbansim.lottery_choices')
     location_set = Str('gridcell')
     capacity_string = Trait('vacant_residential_units', None, Str)
@@ -57,6 +58,7 @@ class HouseholdLocationChoiceModelConfigurationCreator(HasStrictTraits):
                 },
             'init': {
                 'arguments': {
+                    'sampler': get_string_or_None(self.sampler),
                     'choices': "'%s'" % self.choices,
                     'dataset_pool': 'dataset_pool',
                     'location_set': self.location_set,
@@ -134,6 +136,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                 },
             'init': {
                 'arguments': {
+                    'sampler': "'opus_core.samplers.weighted_sampler'",
                     'choices': "'urbansim.lottery_choices'",
                     'dataset_pool': 'dataset_pool',
                     'location_set': 'gridcell',
@@ -188,6 +191,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
         creator = HouseholdLocationChoiceModelConfigurationCreator(
             agent_set = 'agent_set',
             debuglevel = 999,
+            sampler = None,
             choices = 'package.choices',
             location_set = 'location_set',
             sample_size_locations = 2000,
@@ -215,6 +219,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                 },
             'init': {
                 'arguments': {
+                    'sampler': None, 
                     'choices': "'package.choices'",
                     'dataset_pool': 'dataset_pool',
                     'location_set': 'location_set',

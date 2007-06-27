@@ -252,13 +252,13 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModelMember):
         #logger.log_status("Buildings size: %d" % (agent_set.get_attribute_by_index(self.units_full_name).sum()))
         return AgentLocationChoiceModelMember.estimate(self, *args, **kargs)
 
-    def get_choice_index_for_estimation_and_selected_choice(self, nchoices, agent_set,
+    def get_choice_index_for_estimation_and_selected_choice(self, agent_set,
                                                             agents_index, *args, **kwargs):
         id_name = self.choice_set.get_id_name()[0]
         mod_id_name = "__%s__" % id_name
         if mod_id_name in agent_set.get_known_attribute_names():
             agent_set.set_values_of_one_attribute(id_name, agent_set.get_attribute(mod_id_name))
-        result = LocationChoiceModel.get_choice_index_for_estimation_and_selected_choice(self, nchoices, agent_set,
+        result = LocationChoiceModel.get_choice_index_for_estimation_and_selected_choice(self, agent_set,
                                                             agents_index, *args, **kwargs)
         # select randomly buildings to unplace
         ntounplace = int(agents_index.size/4.0)

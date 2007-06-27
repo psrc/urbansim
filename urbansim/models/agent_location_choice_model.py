@@ -156,7 +156,7 @@ class AgentLocationChoiceModel(LocationChoiceModel):
                     resources.merge({
                         variable_name:add_string+variable_string})
 
-    def get_choice_index_for_estimation_and_selected_choice(self, nchoices, agent_set,
+    def get_choice_index_for_estimation_and_selected_choice(self, agent_set,
                                                             agents_index, *args, **kwargs):
         id_name = self.choice_set.get_id_name()[0]
         mod_id_name = "__%s__" % id_name
@@ -164,7 +164,7 @@ class AgentLocationChoiceModel(LocationChoiceModel):
         # in the previous run and their original locations were stored in mod_id_name
         if mod_id_name in agent_set.get_known_attribute_names():
             agent_set.set_values_of_one_attribute(id_name, agent_set.get_attribute(mod_id_name))
-        result = LocationChoiceModel.get_choice_index_for_estimation_and_selected_choice(self, nchoices, agent_set,
+        result = LocationChoiceModel.get_choice_index_for_estimation_and_selected_choice(self, agent_set,
                                                             agents_index, *args, **kwargs)
         #logger.log_status("Unplace agents for estimation.")
         # Copy the agents locations into a temporary attribute (called e.g. __grid_id__)
