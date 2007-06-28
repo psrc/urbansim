@@ -349,7 +349,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                 },
             "prepare_for_run": {
                 "name": "prepare_for_run",
-                "arguments": {"parcel_filter":"'is_vacant_developable=numpy.logical_and(parcel.land_use_type_id==21, numpy.logical_and(parcel.plan_type_id != 18, parcel.plan_type_id != 2))'",
+                "arguments": {"parcel_filter":"'is_vacant_developable=parcel.land_use_type_id==26'",
                               "specification_storage": "base_cache_storage",
                               "specification_table": "'real_estate_price_model_specification'",
                                "coefficients_storage": "base_cache_storage",

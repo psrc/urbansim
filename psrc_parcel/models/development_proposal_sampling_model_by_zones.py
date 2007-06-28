@@ -14,7 +14,7 @@
 
 from numpy import arange, zeros, logical_and, where
 from opus_core.logger import logger
-from urbansim_parcel.models.development_proposal_sampling_model import DevelopmentProposalSamplingModel
+from urbansim_parcel.models.development_project_proposal_sampling_model import DevelopmentProjectProposalSamplingModel
 from opus_core.datasets.dataset import DatasetSubset
 
 class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSamplingModel):
@@ -33,7 +33,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             self.proposal_set = DatasetSubset(self.proposal_set, 
                                               index = where(self.proposal_set.get_attribute("zone_id") == zone_id)[0])
             logger.log_status("DPSM for zone %s" % zone_id)
-            DevelopmentProposalSamplingModel.run(self, *args, **kwargs)
+            DevelopmentProjectProposalSamplingModel.run(self, *args, **kwargs)
 
     def check_vacancy_rates(self, target_vacancy):
         for index in arange(target_vacancy.size()):

@@ -64,5 +64,11 @@ class ConfigBuildings(UrbansimParcelConfiguration):
         config.replace(config_changes)
         self.merge(config)
 #        self['models_configuration']['development_proposal_choice_model'] = {}
+        self['models_configuration']['development_proposal_choice_model']['controller']["import"] =  {
+                       "psrc_parcel.models.development_proposal_sampling_model_by_zones":
+                       "DevelopmentProposalSamplingModelByZones"
+                       }
+        self['models_configuration']['development_proposal_choice_model']['controller']["init"]["name"] =\
+                        "DevelopmentProposalSamplingModelByZones"
         self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["zones"] = 'zone'
         self['models_configuration']['expected_sale_price_model']['controller']  #no change needed 
