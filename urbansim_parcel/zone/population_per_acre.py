@@ -21,8 +21,8 @@ class population_per_acre(Variable):
     _return_type="int32"
     
     def dependencies(self):
-        return ["urbansim_parcel.household.zone_id",
-                "population = urbansim_parcel.zone.population",
+        return [
+                "urbansim_parcel.zone.population",
                 "acres = zone.aggregate(parcel.parcel_sqft) / 43560.0 ",
                 "_population_per_acre = zone.population / zone.acres",
                 ]
@@ -34,32 +34,41 @@ class population_per_acre(Variable):
         size = dataset_pool.get_dataset("parcel").get_attribute("population").sum()
         self.do_check("x >= 0 and x <= " + str(size), values)
 
-if __name__=='__main__':
-    import unittest
-    from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numpy import array
-    from numpy import ma
-    from opus_core.resources import Resources
-    from urbansim_parcel.datasets.parcels import ParcelSet
-    
-    class Tests(unittest.TestCase):
-        variable_name = "urbansim_parcel.zone.population"
-        def test(self):
-            resources = Resources({'data':
-                                   {"parcel_id": array([1,2,3,4,5,6]),
-                                    "population":array([0,1,4,0,2,5]),
-                                    "zone_id":   array([4,1,3,2,1,2])
-                                    },
-                                  })
-            parcels = ParcelSet(resources=resources, in_storage_type="RAM")
+from opus_core.tests import opus_unittest
+from opus_core.dataset_pool import DatasetPool
+from opus_core.storage_factory import StorageFactory
+from numpy import array
+from opus_core.tests.utils.variable_tester import VariableTester
 
-            values = VariableTestToolbox().compute_variable(self.variable_name, \
-                {"zone":{
-                     "zone_id":array([1,2,3,4])}, \
-                 "parcel":parcels}, \
-                dataset = "zone")
-            should_be = array([3,5,4,0])
-            
-            self.assertEqual(ma.allclose(values, should_be, rtol=1e-20), \
-                             True, msg = "Error in " + self.variable_name)
-    unittest.main()
+class Tests(opus_unittest.OpusTestCase):
+    def test_my_inputs(self):
+        tester = VariableTester(
+            __file__,
+            package_order=['urbansim_parcel','urbansim'],
+            test_data={
+                "household":{
+                    "household_id":array([1, 2, 3, 4, 5, 6, 7, 8]),
+                    "building_id": array([1, 2, 2, 2, 3, 3, 4, 5]),
+                    "persons":     array([1, 2, 2, 2, 3, 3, 1, 5])
+                    },
+                "building":{
+                    "building_id":array([1,2,3,4,5]),
+                    "parcel_id":  array([1,1,2,3,4])
+                    },
+                "parcel":{
+                     "parcel_id":array([1,2,3,4]),
+                     "zone_id":  array([1,3,2,2]),
+                     "parcel_sqft":array([0.1, 0.2, 0.4, 0.3]) * 43560.0,                     
+                 },
+                "zone":{
+                     "zone_id":array([1,2,3]),
+                 }             
+                 
+           }
+        )
+        
+        should_be = array([7/0.1, int(6/(0.3+0.4)), 6/0.2])
+
+        tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
+if __name__=='__main__':
+    opus_unittest.main()
