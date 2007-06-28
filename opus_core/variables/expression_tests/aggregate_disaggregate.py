@@ -427,6 +427,70 @@ class Tests(opus_unittest.OpusTestCase):
         values = ds0.compute_variables([expr], dataset_pool=dataset_pool)
         should_be = array([400, 4000, 400, 2500, 4000, 2500, 400])
         self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in disaggregate_and_multiply")
+        
+    def skip_test_aggregate_expression(self):
+        # test aggregating an expression rather than a simple variable
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name='zones',
+            table_data={
+                'zone_id':array([1,2]),
+                }
+            )
+        storage.write_table(table_name='gridcells',
+            table_data={
+                'my_variable':array([4,8,0.5,1]), 
+                'grid_id':array([1,2,3,4]),
+                'zone_id':array([1,2,1,2]),
+                }
+            )
+        zone_dataset = Dataset(in_storage=storage, in_table_name='zones', id_name="zone_id", dataset_name='zone')
+        gridcell_dataset = Dataset(in_storage=storage, in_table_name='gridcells', id_name="grid_id", dataset_name='gridcell')
+        dataset_pool = DatasetPool()
+        dataset_pool._add_dataset('gridcell', gridcell_dataset)
+        dataset_pool._add_dataset('zone', zone_dataset)
+        values = zone_dataset.compute_variables(['zone.aggregate(10*gridcell.my_variable)'], dataset_pool=dataset_pool)
+        should_be = array([45, 90]) 
+        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_expression")
+        
+    def skip_test_aggregate_expression_two_levels(self):
+        # test aggregating an expression rather than a simple variable, over two levels
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name='zones',
+            table_data={
+                'my_variable':array([4,8,2,1,40,23,78,20, 25]), 
+                'id0':arange(9)+1,
+                'id1':array([1,3,1,2,3,2,1, 4, 4])
+                }
+            )
+        storage.write_table(table_name='fazes',
+            table_data={
+                'id1':array([1,2,3,4]),
+                'id2':array([1,2,1,3])}
+            )
+        storage.write_table(table_name='fazdistrs',
+            table_data={
+                'id2':array([1,2,3]), 
+                'id3':array([1,2,1])
+                }
+            )
+        storage.write_table(table_name='neighborhoods',
+            table_data={
+                "id3":array([1,2])
+                }
+            )
+        ds0 = Dataset(in_storage=storage, in_table_name='zones', id_name="id0", dataset_name="myzone")
+        ds1 = Dataset(in_storage=storage, in_table_name='fazes', id_name="id1", dataset_name="myfaz")             
+        ds2 = Dataset(in_storage=storage, in_table_name='fazdistrs', id_name="id2", dataset_name="myfazdistr")
+        ds3 = Dataset(in_storage=storage, in_table_name='neighborhoods', id_name="id3", dataset_name="myneighborhood")          
+        dataset_pool = DatasetPool()
+        dataset_pool._add_dataset('myzone', ds0)
+        dataset_pool._add_dataset('myfaz',ds1)
+        dataset_pool._add_dataset('myfazdistr',ds2)
+        dataset_pool._add_dataset('myneighborhood',ds3)
+        values = ds3.compute_variables(['myneighborhood.aggregate(10*myzone.my_variable, intermediates=[myfaz,myfazdistr], function=sum)'], dataset_pool=dataset_pool)
+        should_be = array([1770, 240])
+        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_expression_two_levels")    
+        
 
 if __name__=='__main__':
     opus_unittest.main()
