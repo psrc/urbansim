@@ -73,35 +73,3 @@ class Tests(opus_unittest.OpusTestCase):
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 if __name__=='__main__':
     opus_unittest.main()
-
-
-#from opus_core.tests import opus_unittest
-#from urbansim.variable_test_toolbox import VariableTestToolbox
-#from numpy import array
-#from numpy import ma
-#
-#class Tests(opus_unittest.OpusTestCase):
-#    variable_name = "psrc.zone.number_of_jobs_per_acre"
-# 
-#    def test_my_inputs(self):
-#        number_of_jobs = array([21,22,27,42]) 
-#        acres_of_land = array([1.0,2.0,1.0,2.0])
-#        some_gridcell_zone_ids = array([1,2,1,3]) 
-#        grid_id = array([1,2,3,4])
-#            
-#        values = VariableTestToolbox().compute_variable(self.variable_name, \
-#                {"zone":{
-#                "zone_id":array([1,2, 3])}, \
-#            "gridcell":{ \
-#                "number_of_jobs":number_of_jobs,\
-#                "acres_of_land":acres_of_land,\
-#                "zone_id":some_gridcell_zone_ids, \
-#                "grid_id":grid_id}}, \
-#            dataset = "zone")
-#        should_be = array([24, 11, 21])
-#
-#        self.assertEqual(ma.allclose(values, should_be, rtol=1e-2), \
-#                         True, msg = "Error in " + self.variable_name)
-#
-#if __name__=='__main__':
-#    opus_unittest.main()
