@@ -70,7 +70,8 @@ class DataPreparationHouseholds(UrbansimParcelConfiguration):
                                 input_index = 'hrm_index',
                                 capacity_string = "urbansim_parcel.building.vacant_residential_units",
                                 number_of_units_string = None,
-                                nchunks=1
+                                nchunks=1,
+                                lottery_max_iterations=20
                                 ).execute()
         self['models_configuration']['household_relocation_model']['controller'] = \
                     HouseholdRelocationModelConfigurationCreator(

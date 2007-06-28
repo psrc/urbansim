@@ -31,6 +31,8 @@ class EmploymentLocationChoiceModelByZones(EmploymentLocationChoiceModel):
             logger.log_status("ELCM for zone %s" % zone_id)
             EmploymentLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                               agents_index=new_index, **kwargs)
+            agent_set.flush_dataset()
+            self.choice_set.flush_dataset()
         # set the right parcels
         parcels = agent_set.compute_variables(["job.disaggregate(building.parcel_id)"],
                                               dataset_pool = self.dataset_pool)
