@@ -53,6 +53,7 @@ class ConfigBuildings(UrbansimParcelConfiguration):
             'models':[ # models are executed in the same order as in this list
                  "expected_sale_price_model",
                  "development_proposal_choice_model",
+                 "building_construction_model",
                 ],
             "datasets_to_preload":{
                     'zone':{},
