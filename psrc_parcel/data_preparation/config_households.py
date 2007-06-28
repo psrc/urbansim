@@ -26,12 +26,12 @@ from opus_core.resources import merge_resources_with_defaults
 from numpy import array
 import os
 
-class DataPreparationBuildings(UrbansimParcelConfiguration):
+class ConfigHouseholds(UrbansimParcelConfiguration):
     def __init__(self):
         config = UrbansimParcelConfiguration()
 
         config_changes = {
-            'description':'data preparation for PSRC parcel (buildings)',
+            'description':'data preparation for PSRC parcel (households)',
             'cache_directory': None,
             'creating_baseyear_cache_configuration': CreatingBaseyearCacheConfiguration(
                 cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
@@ -40,6 +40,7 @@ class DataPreparationBuildings(UrbansimParcelConfiguration):
                 baseyear_cache = BaseyearCacheConfiguration(
                     existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
                     #existing_cache_to_copy = r'/workspace/urbansim_cache/psrc_parcel/estimation',
+                    years_to_cache = [2005]
                     ),
                 cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
                 ),
@@ -50,8 +51,8 @@ class DataPreparationBuildings(UrbansimParcelConfiguration):
             'base_year':2005,
             'years':(2006, 2006),
             'models':[ # models are executed in the same order as in this list
-                 "expected_sale_price_model",
-                 "development_proposal_choice_model",
+                 "household_relocation_model",
+                 "household_location_choice_model",
                 ],
             "datasets_to_preload":{
                     'zone':{},
@@ -62,6 +63,21 @@ class DataPreparationBuildings(UrbansimParcelConfiguration):
         #use configuration in config as defaults and merge with config_changes
         config.replace(config_changes)
         self.merge(config)
-#        self['models_configuration']['development_proposal_choice_model'] = {}
-        self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["zones"] = 'zone'
-        self['models_configuration']['expected_sale_price_model']['controller']  #no change needed 
+        self['models_configuration']['household_location_choice_model'] = {}
+        self['models_configuration']['household_location_choice_model']['controller'] = \
+                   HouseholdLocationChoiceModelByZonesConfigurationCreator(
+                                location_set = "building",
+                                sampler = None,
+                                input_index = 'hrm_index',
+                                capacity_string = "urbansim_parcel.building.vacant_residential_units",
+                                number_of_units_string = None,
+                                nchunks=1,
+                                lottery_max_iterations=20
+                                ).execute()
+        self['models_configuration']['household_relocation_model']['controller'] = \
+                    HouseholdRelocationModelConfigurationCreator(
+                               location_id_name = 'building_id',
+                               probabilities = None,
+                               rate_table=None,
+                               output_index = 'hrm_index').execute()
+                    

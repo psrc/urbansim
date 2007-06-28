@@ -20,18 +20,18 @@ from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from psrc_parcel.configs.household_location_choice_model_by_zones_configuration_creator import HouseholdLocationChoiceModelByZonesConfigurationCreator
-from urbansim.configurations.household_relocation_model_configuration_creator import HouseholdRelocationModelConfigurationCreator
+from psrc_parcel.configs.employment_location_choice_model_by_zones_configuration_creator import EmploymentLocationChoiceModelByZonesConfigurationCreator
+from urbansim.configurations.employment_relocation_model_configuration_creator import EmploymentRelocationModelConfigurationCreator
 from opus_core.resources import merge_resources_with_defaults
 from numpy import array
 import os
 
-class DataPreparationHouseholds(UrbansimParcelConfiguration):
+class ConfigJobs(UrbansimParcelConfiguration):
     def __init__(self):
         config = UrbansimParcelConfiguration()
 
         config_changes = {
-            'description':'data preparation for PSRC parcel (households)',
+            'description':'data preparation for PSRC parcel',
             'cache_directory': None,
             'creating_baseyear_cache_configuration': CreatingBaseyearCacheConfiguration(
                 cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
@@ -40,6 +40,7 @@ class DataPreparationHouseholds(UrbansimParcelConfiguration):
                 baseyear_cache = BaseyearCacheConfiguration(
                     existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
                     #existing_cache_to_copy = r'/workspace/urbansim_cache/psrc_parcel/estimation',
+                    years_to_cache = [2005]
                     ),
                 cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
                 ),
@@ -50,33 +51,43 @@ class DataPreparationHouseholds(UrbansimParcelConfiguration):
             'base_year':2005,
             'years':(2006, 2006),
             'models':[ # models are executed in the same order as in this list
-                 "household_relocation_model",
-                 "household_location_choice_model",
+                 "employment_relocation_model",
+                {"employment_location_choice_model": {"group_members": "_all_"}},
                 ],
             "datasets_to_preload":{
                     'zone':{},
-                    'household':{},
+                    'job':{},
+                    "job_building_type":{},
                     'building': {}
                 }
         }
         #use configuration in config as defaults and merge with config_changes
         config.replace(config_changes)
         self.merge(config)
-        self['models_configuration']['household_location_choice_model'] = {}
-        self['models_configuration']['household_location_choice_model']['controller'] = \
-                   HouseholdLocationChoiceModelByZonesConfigurationCreator(
+        self['models_configuration']['non_home_based_employment_location_choice_model'] = {}
+        self['models_configuration']['non_home_based_employment_location_choice_model']['controller'] = \
+                   EmploymentLocationChoiceModelByZonesConfigurationCreator(
                                 location_set = "building",
-                                sampler = None,
-                                input_index = 'hrm_index',
-                                capacity_string = "urbansim_parcel.building.vacant_residential_units",
-                                number_of_units_string = None,
-                                nchunks=1,
-                                lottery_max_iterations=20
+                                input_index = 'erm_index',
+                                #capacity_string = "non_residential_sqft",
+                                compute_capacity_flag = False,
+                                #agent_units_string = "sqft",
+                                choices = 'opus_core.random_choices_from_index'
                                 ).execute()
-        self['models_configuration']['household_relocation_model']['controller'] = \
-                    HouseholdRelocationModelConfigurationCreator(
+        self['models_configuration']['home_based_employment_location_choice_model'] = {}
+        self['models_configuration']['home_based_employment_location_choice_model']['controller'] = \
+                   EmploymentLocationChoiceModelByZonesConfigurationCreator(
+                                location_set = "building",
+                                input_index = 'erm_index',
+                                capacity_string = "building.aggregate(psrc_parcel.household.minimum_persons_and_2)",
+                                number_of_units_string = None,
+                                #agent_units_string = "sqft",
+                                #choices = 'opus_core.random_choices_from_index'
+                                ).execute()
+        self['models_configuration']['employment_relocation_model']['controller'] = \
+                    EmploymentRelocationModelConfigurationCreator(
                                location_id_name = 'building_id',
                                probabilities = None,
                                rate_table=None,
-                               output_index = 'hrm_index').execute()
+                               output_index = 'erm_index').execute()
                     
