@@ -23,7 +23,7 @@ class is_allowed_by_constraint(Variable):
     template_opus_path = "urbansim_parcel.development_template"
     
     def dependencies(self):
-        return ["generic_building_type_id = development_template.disaggregate(building_type.generic_building_type_id)",
+        return ["generic_land_use_type_id = development_template.disaggregate(land_use_type.generic_land_use_type_id)",
                 "development_template.density_type",
                 "development_constraint.constraint_type",
                 "parcel.parcel_id",
@@ -48,7 +48,7 @@ class is_allowed_by_constraint(Variable):
         constraint_types = unique_values(constraints.get_attribute("constraint_type"))
         templates.compute_variables(map(lambda x: "%s.%s" % (self.template_opus_path, x), constraint_types), dataset_pool)
         template_ids = templates.get_attribute("template_id")
-        generic_building_type_ids = templates.get_attribute("generic_building_type_id")
+        generic_building_type_ids = templates.get_attribute("generic_land_use_type_id")
         proposal_template_ids = proposals.get_attribute("template_id")
         results = zeros(proposals.size(), dtype=bool8)
         for i_template in range(templates.size()):
@@ -85,16 +85,16 @@ class Tests(opus_unittest.OpusTestCase):
             'development_template':
             {
                 'template_id': array([1,2,3,4]),
-                "building_type_id":array([1, 1, 2, 2]),
+                "land_use_type_id":array([1, 1, 2, 2]),
                 'density_type':   array(['units_per_acre', 'units_per_acre', 'far', 'far']),
 #                'constraint_name':array(['units_per_acre', 'units_per_acre', 'far', 'far']),
                 'units_per_acre': array([0.2, 2, 0, 0]),
                 'far':array([0, 0, 25, 7])
             },
-            'building_type':
+            'land_use_type':
             {
-                "building_type_id":array([1, 2]),
-                "generic_building_type_id":array([1, 2]),
+                "land_use_type_id":array([1, 2]),
+                "generic_land_use_type_id":array([1, 2]),
 #                'density_type':   array(['units_per_acre','far']),
 
             },
@@ -102,7 +102,7 @@ class Tests(opus_unittest.OpusTestCase):
             {
                 'constraint_id': array([1,2,3,4]),
                 'is_constrained': array([0, 1, 1, 0]),
-                'generic_building_type_id': array([1, 1, 2, 2]),
+                'generic_land_use_type_id': array([1, 1, 2, 2]),
                 'constraint_type':array(['units_per_acre','units_per_acre', 'far', 'far']),                
                 'minimum': array([0,  0,   0,  0]),
                 'maximum': array([3, 0.2, 10, 100]),                

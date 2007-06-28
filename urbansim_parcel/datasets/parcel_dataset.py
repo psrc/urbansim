@@ -46,7 +46,7 @@ class ParcelDataset(UrbansimDataset):
                 return self.development_constraints
         constraints.load_dataset_if_not_loaded()
         attributes = set(constraints.get_attribute_names()) - \
-                   set([constraints.get_id_name()[0], "generic_building_type_id", "constraint_type", "minimum", "maximum"])
+                   set([constraints.get_id_name()[0], "generic_land_use_type_id", "constraint_type", "minimum", "maximum"])
         attributes_with_prefix = map(lambda attr: "%s.%s" % (variable_package_name, attr),
                                         attributes)
         self.compute_variables(attributes_with_prefix, dataset_pool=dataset_pool)
@@ -63,7 +63,7 @@ class ParcelDataset(UrbansimDataset):
 
         self.development_constraints = {"index": index}
 #        building_types = dataset_pool.get_dataset("building_type")
-        type_ids = constraints.get_attribute("generic_building_type_id")
+        type_ids = constraints.get_attribute("generic_land_use_type_id")
         constraint_types = constraints.get_attribute("constraint_type")
         #initialize results, set max to the max value found in constraints for each type
         for type_id in unique_values(type_ids):
@@ -102,9 +102,9 @@ class Tests(opus_unittest.OpusTestCase):
     def test_get_development_constraints(self):
         storage = StorageFactory().get_storage('dict_storage')
         storage.write_table(
-            table_name='building_types',
+            table_name='land_use_types',
             table_data={
-                "building_type_id":array([1, 2]),
+                "land_use_type_id":array([1, 2]),
                 'density_name':   array(['units_per_acre','far']),
                 'constraint_name':array(['units_per_acre','far']),
             }
@@ -115,7 +115,7 @@ class Tests(opus_unittest.OpusTestCase):
             table_data={
                 'constraint_id': array([1,  2, 3, 4, 5, 6, 7]),
                 'is_constrained': array([0, 0, 1, 1, 1, 0, 0]),
-                'generic_building_type_id': array([1, 1, 1, 1, 2, 2, 2]),
+                'generic_land_use_type_id': array([1, 1, 1, 1, 2, 2, 2]),
                 'constraint_type': array(["unit_per_acre","far","unit_per_acre", "far", "far", "unit_per_acre", "far"]),
                 'minimum': array([0, 0,  0,  0,  2,  0, 0]),
                 'maximum': array([3, 0, 0.2, 1,  10, 0.4, 100]),
