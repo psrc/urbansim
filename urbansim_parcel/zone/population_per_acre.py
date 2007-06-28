@@ -22,7 +22,8 @@ class population_per_acre(Variable):
     
     def dependencies(self):
         return [
-                "urbansim_parcel.zone.population",
+                "urbansim_parcel.household.zone_id",
+                "population = zone.aggregate(household.persons)",
                 "acres = zone.aggregate(parcel.parcel_sqft) / 43560.0 ",
                 "_population_per_acre = zone.population / zone.acres",
                 ]
