@@ -19,4 +19,4 @@ class TestTests(opus_unittest.OpusTestCase):
         self.assert_(True)
 
 if __name__ == '__main__':
-    opus_unittest.main()
+    opus_unittest.main() 
