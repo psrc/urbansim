@@ -105,25 +105,28 @@ class DevelopmentProjectProposalSamplingModel(Model):
         # consider planned and proposed proposals
         for status in [self.proposal_set.id_planned, self.proposal_set.id_proposed]:
             if self.weight.sum() == 0.0:
-                continue
+                break
             idx = where(self.proposal_set.get_attribute("status_id") == status)[0]
             isorted = self.weight[idx].argsort()[range(idx.size-1,-1,-1)]
             self.consider_proposals(idx[isorted], current_target_vacancy)
 
-        while sometrue(array(self.accepting_proposals.values())):
-            if self.weight.sum() == 0.0:
-                break
+        # consider tentative proposals
+        idx_tentative = where(self.proposal_set.get_attribute("status_id") == self.proposal_set.id_tentative)[0]
+        if idx_tentative.size > 0:
+            while sometrue(array(self.accepting_proposals.values())):
+                if self.weight.sum() == 0.0:
+                    break
             #    raise RuntimeError, "Running out of proposals; there aren't any proposals with non-zero weight"
-            laccepted_proposals = len(self.accepted_proposals)
-            n = minimum((self.weight > 0).sum(), n)
-            sampled_proposal_indexes = probsample_noreplace(self.proposal_set.get_id_attribute(), n, 
-                                                            prob_array=self.weight/float(self.weight.sum()),
-                                                            exclude_index=None, return_indices=True)
-            self.consider_proposals(sampled_proposal_indexes,
-                                    current_target_vacancy
-                                   )
-            if len(self.accepted_proposals) == laccepted_proposals:
-                break
+                laccepted_proposals = len(self.accepted_proposals)
+                n = minimum((self.weight > 0).sum(), n)
+                sampled_proposal_indexes = probsample_noreplace(self.proposal_set.get_id_attribute()[idx_tentative], n, 
+                                                prob_array=self.weight[idx_tentative]/float(self.weight[idx_tentative].sum()),
+                                                exclude_index=None, return_indices=True)
+                self.consider_proposals(arange(self.proposal_set.size)[idx_tentative[sampled_proposal_indexes]],
+                                        current_target_vacancy
+                                       )
+                if len(self.accepted_proposals) == laccepted_proposals:
+                    break
 
         # set status of accepted proposals to 'active'
         self.proposal_set.modify_attribute(name="status_id", data=self.proposal_set.id_active,

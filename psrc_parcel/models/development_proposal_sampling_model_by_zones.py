@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from numpy import arange, zeros, logical_and, where
+from numpy import arange, zeros, logical_and, where, logical_not
 from opus_core.logger import logger
 from urbansim_parcel.models.development_project_proposal_sampling_model import DevelopmentProjectProposalSamplingModel
 from opus_core.datasets.dataset import DatasetSubset
@@ -30,8 +30,15 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             self.zone = zone_id
             self.proposal_set.compute_variables("zone_id = development_project_proposal.disaggregate(parcel.zone_id)", 
                                                 dataset_pool=self.dataset_pool)
-            self.proposal_set = DatasetSubset(self.proposal_set, 
-                                              index = where(self.proposal_set.get_attribute("zone_id") == zone_id)[0])
+            status = self.proposal_set.get_attribute("status_id")
+            where_zone = self.proposal_set.get_attribute("zone_id") == zone_id
+            idx_zone = where(where_zone)[0]
+            idx_out_zone_not_active = where(logical_and(status != self.proposal_set.id_active, logical_not(where_zone)))[0]
+            status[idx_zone] = self.proposal_set.id_proposed
+            status[idx_out_zone_not_active] = self.proposal_set.id_not_available
+            self.proposal_set.modify_attribute(name="status_id", data=status)
+            #self.proposal_set = DatasetSubset(self.proposal_set, 
+            #                                  index = where(self.proposal_set.get_attribute("zone_id") == zone_id)[0])
             logger.log_status("DPSM for zone %s" % zone_id)
             DevelopmentProjectProposalSamplingModel.run(self, *args, **kwargs)
 

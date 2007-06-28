@@ -374,6 +374,10 @@ class DatasetSubset(Dataset):
         self._id_names = self.parent._id_names
         self.dataset_name = self.parent.dataset_name
         self.attribute_boxes = self.parent.attribute_boxes
+        self._aliases = self.parent._aliases
+        self._precached_attribute_names = self.parent._precached_attribute_names
+        self.variable_factory =  self.parent.variable_factory
+        self.attribute_cache = self.parent.attribute_cache
 
     def get_attribute(self, name):
         """ Return an array of the (by the argument name) given attribute."""
