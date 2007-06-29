@@ -40,6 +40,10 @@ class BuildingConstructionModel(Model):
                 
         # choose active projects
         active_idx = where(development_proposal_set.get_attribute("status_id") == development_proposal_set.id_active)[0]
+        if active_idx.size <= 0:
+            logger.log_status("No new buildings built.")
+            return development_proposal_set
+        
         active_proposal_set = DatasetSubset(development_proposal_set, active_idx)
         
         # create proposal_component_set from the active proposals

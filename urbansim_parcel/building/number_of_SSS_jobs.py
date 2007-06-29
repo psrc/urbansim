@@ -26,7 +26,7 @@ class number_of_SSS_jobs(Variable):
         
     def dependencies(self):
         return ["job_building_type.name",
-                "job.home_based",
+                "job.building_type",
                 "job.building_id"
                 ]
 
@@ -34,7 +34,7 @@ class number_of_SSS_jobs(Variable):
         job_building_type = dataset_pool.get_dataset("job_building_type")
         jobs = dataset_pool.get_dataset("job")
         job_building_type_id = job_building_type.get_id_attribute()[where(job_building_type.get_attribute("name")==self.status)[0]]
-        is_of_status = jobs.get_attribute("home_based") == job_building_type_id
+        is_of_status = jobs.get_attribute("building_type") == job_building_type_id
     
         return self.get_dataset().sum_dataset_over_ids(jobs, constant=is_of_status)
 
@@ -56,7 +56,7 @@ class Tests(opus_unittest.OpusTestCase):
             test_data={
             'job':
             {"job_id":array([1,2,3,4,5]),
-             "home_based":array([1,2,1,1,2]),
+             "building_type":array([1,2,1,1,2]),
              "building_id":array([1,1,3,2,2]),
              },
             'building':

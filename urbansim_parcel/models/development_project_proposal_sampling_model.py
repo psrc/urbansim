@@ -69,10 +69,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
 #            self.dataset_pool.add_datasets_if_not_included(data_objects)
 
         current_year = SimulationState().get_current_time()
-        self.proposal_set.compute_variables([
-            'building_type_id=development_project_proposal.disaggregate(development_template.building_type_id)',
-            'generic_building_type_id=development_project_proposal.disaggregate(building_type.generic_building_type_id)'],
-                                         dataset_pool=self.dataset_pool)
+
         self.proposal_component_set.compute_variables([
             'generic_building_type_id = development_project_proposal_component.disaggregate(building_type.generic_building_type_id)',
             'urbansim_parcel.development_project_proposal_component.units_proposed'],
