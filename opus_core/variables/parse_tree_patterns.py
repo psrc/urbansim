@@ -140,7 +140,7 @@ EXPRESSION_IS_ATTRIBUTE =  \
                    (symbol.atom, (token.NAME, ['shortname']))))))))))))))))
 
 # ************************************************************************************
-# The patterns named SUBPATTERN__* match bits of expressions consisting of the named item.
+# The patterns named SUBPATTERN_* match bits of expressions consisting of the named item.
 # These can be used in picking out bits of a more complex tree.
 # ************************************************************************************
 
@@ -196,7 +196,6 @@ SUBPATTERN_METHOD_CALL_WITH_ARGS =  \
 
 SUBPATTERN_NAME = (token.NAME, ['name'])
 
-# number_of_agents has a required argument 'agent', and an optional argument 'target'
 SUBPATTERN_NUMBER_OF_AGENTS = \
     (symbol.arglist,
      (symbol.argument,

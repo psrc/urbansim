@@ -218,49 +218,55 @@ class AutogenVariableFactory(object):
 
     def _analyze_method_call(self, receiver, method, args):
         if method=='number_of_agents':
-            same, vars = match(SUBPATTERN_NUMBER_OF_AGENTS, args)
-            if not same:
-                raise ValueError, "syntax error for number_of_agents function call"
-            self._uses_number_of_agents  = True
-            self._number_of_agents_receivers.add(receiver)
-            self._literals.add(vars['agent'])
+            self._analyze_number_of_agents_method_call(receiver, method, args)
         elif method in ['aggregate', 'disaggregate', 'aggregate_all']: 
-            same, vars = match(SUBPATTERN_AGGREGATION, args)
-            if not same:
-                raise ValueError, "syntax error for aggregation method call (note that the attribute being aggregated must be a variable, not an expression)"
-            if 'aggr_name3' in vars:
-                # the aggregated variable is a fully-qualified name
-                pkg = vars['aggr_name1']
-                dataset = vars['aggr_name2']
-                attr = vars['aggr_name3']
-            else:
-                # the aggregated variable is a dataset-qualified name
-                pkg = None
-                dataset = vars['aggr_name1']
-                attr = vars['aggr_name2']
-            # the rest of the arguments are optional
-            optional_args = self._get_arguments( ('arg2','arg3'), ('intermediates','function'), vars )
-            if 'intermediates' in optional_args:
-                # make sure that it really is a list
-                s, v = match(SUBPATTERN_LIST_ARG, optional_args['intermediates'])
-                if not s:
-                    raise ValueError, "syntax error for aggregation method call (list of intermediate datasets not a list?)"
-                intermediates = self._extract_names(optional_args['intermediates'])
-                self._literals.update(intermediates)
-            else:
-                intermediates = ()
-            if 'function' in optional_args:
-                s,v = match(SUBPATTERN_NAME_ARG, optional_args['function'])
-                if not s:
-                    raise ValueError, "syntax error for aggregation method call (problem with the function argument in the call)"
-                op = v['name']
-                self._literals.add(op)
-            else:
-                op = None
-            self._aggregation_calls.add( (receiver, method, pkg, dataset, attr, intermediates, op) )
+            self._analyze_aggregation_method_call(receiver, method, args)
         else:
             # it's some other kind of method call - just analyze the args (omit the initial the symbol.arglist token)
             self._analyze_arguments(args[1:])
+
+    def _analyze_number_of_agents_method_call(self, receiver, method, args):
+        same, vars = match(SUBPATTERN_NUMBER_OF_AGENTS, args)
+        if not same:
+            raise ValueError, "syntax error for number_of_agents function call"
+        self._uses_number_of_agents  = True
+        self._number_of_agents_receivers.add(receiver)
+        self._literals.add(vars['agent'])
+
+    def _analyze_aggregation_method_call(self, receiver, method, args):
+        same, vars = match(SUBPATTERN_AGGREGATION, args)
+        if not same:
+            raise ValueError, "syntax error for aggregation method call (note that the attribute being aggregated must be a variable, not an expression)"
+        if 'aggr_name3' in vars:
+            # the aggregated variable is a fully-qualified name
+            pkg = vars['aggr_name1']
+            dataset = vars['aggr_name2']
+            attr = vars['aggr_name3']
+        else:
+            # the aggregated variable is a dataset-qualified name
+            pkg = None
+            dataset = vars['aggr_name1']
+            attr = vars['aggr_name2']
+        # the rest of the arguments are optional
+        optional_args = self._get_arguments( ('arg2','arg3'), ('intermediates','function'), vars )
+        if 'intermediates' in optional_args:
+            # make sure that it really is a list
+            s, v = match(SUBPATTERN_LIST_ARG, optional_args['intermediates'])
+            if not s:
+                raise ValueError, "syntax error for aggregation method call (list of intermediate datasets not a list?)"
+            intermediates = self._extract_names(optional_args['intermediates'])
+            self._literals.update(intermediates)
+        else:
+            intermediates = ()
+        if 'function' in optional_args:
+            s,v = match(SUBPATTERN_NAME_ARG, optional_args['function'])
+            if not s:
+                raise ValueError, "syntax error for aggregation method call (problem with the function argument in the call)"
+            op = v['name']
+            self._literals.add(op)
+        else:
+            op = None
+        self._aggregation_calls.add( (receiver, method, pkg, dataset, attr, intermediates, op) )
 
     # extract all the names from tree and return them in a tuple
     def _extract_names(self, tree):

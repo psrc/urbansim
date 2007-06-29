@@ -73,7 +73,7 @@ class Table(AbstractIndicator):
         attribute_name_short = self.get_attribute_alias()
         
         id_attribute = dataset.get_id_attribute()
-        if id_attribute.size == 1 and results.size == 1:
+        if id_attribute.size == 1 and rank(results) == 1:
             results = concatenate((id_attribute, results))[:, newaxis]
         else:
             results = concatenate((id_attribute[newaxis,:], results))
