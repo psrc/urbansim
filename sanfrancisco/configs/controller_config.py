@@ -23,7 +23,7 @@ models_configuration = config['models_configuration']
 models_configuration["business_location_choice_model"] = {
                      "estimation":"opus_core.bhhh_mnl_estimation",
                      "sampler":"opus_core.samplers.weighted_sampler",
-                     "sample_size_locations":100,
+                     "sample_size_locations":50,
 #                     "weights_for_estimation_string":"urbansim.zone.number_of_non_home_based_jobs",
                      "specification_table":"business_location_choice_model_specification",
                      "coefficients_table":"business_location_choice_model_coefficients",
@@ -319,7 +319,7 @@ my_controller_configuration = {
                               "location_id_string":"'building_id'",
                               "choices":"'urbansim.lottery_choices'",
                               "submodel_string":"'sanfrancisco.household.household_size_category'",
-                              "sample_size_locations":100,
+                              "sample_size_locations":50,
                               "dataset_pool": "dataset_pool",
                               "run_config":{"capacity_string" : "sanfrancisco.building.vacant_residential_units",
                                             "number_of_agents_string": "sanfrancisco.building.number_of_households",
@@ -391,7 +391,7 @@ for model in my_controller_configuration.keys():
 #hlcm_controller["init"]["arguments"]["location_id_string"] = "'building_id'"
 #hlcm_controller["init"]["arguments"]["estimate_config"] = {"weights_for_estimation_string":None} #"urbansim.zone.vacant_residential_units"
 #hlcm_controller["init"]["arguments"]["run_config"] = {"capacity_string":"sanfrancisco.building.vacant_residential_units"} #"urbansim.zone.vacant_residential_units"
-#hlcm_controller["init"]["arguments"]['sample_size_locations']=60
+#hlcm_controller["init"]["arguments"]['sample_size_locations']=50
 #hlcm_controller["init"]["arguments"]['sampler']="'opus_core.samplers.weighted_sampler'"
 #hlcm_controller["controller"]["init"]["arguments"]["submodel_string"] = "'household_size'"
 #hlcm_controller["prepare_for_estimate"]["arguments"]["join_datasets"] = 'True'
