@@ -16,82 +16,31 @@
 # this illustrates using traits-based configurations programatically
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.indicator_framework.source_data import SourceData
-#from opus_core.indicator_framework.image_types.matplotlib_map import Map
-#from opus_core.indicator_framework.image_types.matplotlib_chart import Chart
-from opus_core.indicator_framework.image_types.table import Table
-#from opus_core.indicator_framework.image_types.geotiff_map import GeotiffMap
-#from opus_core.indicator_framework.image_types.arcgeotiff_map import ArcGeotiffMap
-from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
+from opus_core.indicator_framework.core import SourceData
 
-run_description = '(run 3036 - baseline 06/20/2007)'
-cache_directory = r'/urbansim_cache/sanfrancisco/run_3036.2007_06_19_22_34/'  #'/workspace/urbansim_cache/sanfrancisco/2007_04_23_08_37'
+from opus_core.indicator_framework.image_types import Map, Chart, GeotiffMap, ArcGeotiffMap, LorenzCurve
+from opus_core.indicator_framework.image_types import Table, DatasetTable
+
+
+run_description = '(baseline 06/28/2007)'
+cache_directory = r'/urbansim_cache/sanfrancisco/07_06_28_17_18_21/'
 
 source_data = SourceData(
     cache_directory = cache_directory,
     run_description = run_description,
-    years = [2001,2002,2003,2004,2005],
+    years = [2001],
     dataset_pool_configuration = DatasetPoolConfiguration(
         package_order=['sanfrancisco','urbansim','opus_core'],
         package_order_exceptions={},
-        ),
+        ),       
 )
-
 single_year_requests = [
-#       DatasetTable(
-#       source_data = source_data,
-#       dataset_name = 'district14',
-#       #name = '',
-#       attributes = [ 
-#                                     '0_worker_households=district14.aggregate(sanfrancisco.zone.number_of_households_with_0_workers)',
-#                                     '1_worker_households=district14.aggregate(sanfrancisco.zone.number_of_households_with_1_workers)',
-#                                     '2_worker_households=district14.aggregate(sanfrancisco.zone.number_of_households_with_2_workers)',
-#                                     '3_worker_households=district14.aggregate(sanfrancisco.zone.number_of_households_with_3_workers)',
-#                                     '4_worker_households=district14.aggregate(sanfrancisco.zone.number_of_households_with_4_workers)',
-#                                     '5_worker_households=district14.aggregate(sanfrancisco.zone.number_of_households_with_5_workers)',
-#                                     '6_worker_households=district14.aggregate(sanfrancisco.zone.number_of_households_with_6_workers)',
-#                                     '7_worker_households=district14.aggregate(sanfrancisco.zone.number_of_households_with_7_workers)',
-#                                     'total_households=district14.aggregate(sanfrancisco.zone.number_of_households)',
-#                                     'cie_building_use_employment=district14.aggregate(sanfrancisco.zone.employment_of_building_use_cie)',
-#                                     'med_building_use_employment=district14.aggregate(sanfrancisco.zone.employment_of_building_use_med)',
-#                                     'mips_building_use_employment=district14.aggregate(sanfrancisco.zone.employment_of_building_use_mips)',
-#                                     'pdr_building_use_employment=district14.aggregate(sanfrancisco.zone.employment_of_building_use_pdr)',
-#                                     'retail_ent_building_use_employment=district14.aggregate(sanfrancisco.zone.employment_of_building_use_retail_ent)',
-#                                     'visitor_building_use_employment=district14.aggregate(sanfrancisco.zone.employment_of_building_use_visitor)',
-#                                     'total_employment=district14.aggregate(sanfrancisco.zone.employment)',
-#       ],
-#       exclude_condition = '==0' 
-#   ),
-
-#       DatasetTable(
-#       source_data = source_data,
-#       dataset_name = 'district24',
-#       #name = '',
-#       attributes = [ 
-#                                     '0_worker_households=district24.aggregate(sanfrancisco.zone.number_of_households_with_0_workers)',
-#                                     '1_worker_households=district24.aggregate(sanfrancisco.zone.number_of_households_with_1_workers)',
-#                                     '2_worker_households=district24.aggregate(sanfrancisco.zone.number_of_households_with_2_workers)',
-#                                     '3_worker_households=district24.aggregate(sanfrancisco.zone.number_of_households_with_3_workers)',
-#                                     '4_worker_households=district24.aggregate(sanfrancisco.zone.number_of_households_with_4_workers)',
-#                                     '5_worker_households=district24.aggregate(sanfrancisco.zone.number_of_households_with_5_workers)',
-#                                     '6_worker_households=district24.aggregate(sanfrancisco.zone.number_of_households_with_6_workers)',
-#                                     '7_worker_households=district24.aggregate(sanfrancisco.zone.number_of_households_with_7_workers)',
-#                                     'total_households=district24.aggregate(sanfrancisco.zone.number_of_households)',
-#                                     'cie_building_use_employment=district24.aggregate(sanfrancisco.zone.employment_of_building_use_cie)',
-#                                     'med_building_use_employment=district24.aggregate(sanfrancisco.zone.employment_of_building_use_med)',
-#                                     'mips_building_use_employment=district24.aggregate(sanfrancisco.zone.employment_of_building_use_mips)',
-#                                     'pdr_building_use_employment=district24.aggregate(sanfrancisco.zone.employment_of_building_use_pdr)',
-#                                     'retail_ent_building_use_employment=district24.aggregate(sanfrancisco.zone.employment_of_building_use_retail_ent)',
-#                                     'visitor_building_use_employment=district24.aggregate(sanfrancisco.zone.employment_of_building_use_visitor)',
-#                                     'total_employment=district24.aggregate(sanfrancisco.zone.employment),'
-#       ],
-#       exclude_condition = '==0' 
-#   ),
 
        DatasetTable(
        source_data = source_data,
        dataset_name = 'tract2000',
-       #name = '',
+       name = 'Tract Indicators',
+       output_type='csv',
        attributes = [ 
                      'households_with_0_workers=tract2000.aggregate(sanfrancisco.building.number_of_households_with_0_workers, intermediates=[parcel])',
                      'households_with_1_worker =tract2000.aggregate(sanfrancisco.building.number_of_households_with_1_workers, intermediates=[parcel])',
@@ -117,7 +66,8 @@ single_year_requests = [
        DatasetTable(
        source_data = source_data,
        dataset_name = 'zone',
-       #name = '',
+       name = 'Zone Indicators',
+       output_type='csv',
        attributes = [ 
                      'households_with_0_workers=zone.aggregate(sanfrancisco.building.number_of_households_with_0_workers, intermediates=[parcel])',
                      'households_with_1_worker =zone.aggregate(sanfrancisco.building.number_of_households_with_1_workers, intermediates=[parcel])',
@@ -138,50 +88,36 @@ single_year_requests = [
                      'total_employment=zone.aggregate(sanfrancisco.building.employment, intermediates=[parcel])',
        ],
        exclude_condition = '==0' 
-   ),
+),
 
+    ]
 
-]
+source_data = SourceData(
+    cache_directory = cache_directory,
+    run_description = run_description,
+    years = [2001,2002,2003,2004,2005],
+    dataset_pool_configuration = DatasetPoolConfiguration(
+        package_order=['sanfrancisco','urbansim','opus_core'],
+        package_order_exceptions={},
+        ),       
+)
 
-multi_year_requests=[
-#    Table(
-#        dataset_name = 'district14',
-#        source_data = source_data,
-#        attribute = 'district14.aggregate(sanfrancisco.zone.population)',
-#        name = 'population'
-#        ),
-#    
-#    Table(
-#        dataset_name = 'district14',
-#        source_data = source_data,
-#        attribute = 'district14.aggregate(sanfrancisco.zone.employment)',
-#        name = 'employment'
-#    ),
-#    
-#    Table(
-#        dataset_name = 'alldata',
-#        source_data = source_data,
-#        attribute = "alldata.aggregate_all(sanfrancisco.zone.number_of_jobs)",
-#        name = "total_employment"
-#    ),
-#
-#    Table(
-#        dataset_name = 'alldata',
-#        source_data = source_data,
-#        attribute = 'alldata.aggregate_all(sanfrancisco.zone.population)',
-#        name = 'population'
-#    ),
-]
+multi_year_requests = [
+    #Chart(
+        #attribute = 'sanfrancisco.district14.aggregate(building.residential_units,intermediates=[parcel])',
+        #dataset_name = 'district14',
+        #source_data = source_data,
+        #),
+    ]
 
-# finally, run the requests
 if __name__ == '__main__':
-    from opus_core.indicator_framework.indicator_factory import IndicatorFactory
+    from opus_core.indicator_framework.core import IndicatorFactory
 
     IndicatorFactory().create_indicators(
         indicators = single_year_requests,
         display_error_box = False, 
         show_results = True)   
-    IndicatorFactory().create_indicators(
-        indicators = multi_year_requests,
-        display_error_box = False, 
-        show_results = True)   
+    #IndicatorFactory().create_indicators(
+        #indicators = multi_year_requests,
+        #display_error_box = False, 
+        #show_results = True)   
