@@ -21,7 +21,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         
     def run(self, zones, *args, **kwargs):
 
-        zones.compute_variables(["occupied_residential_units = urbansim_parcel.zone.number_of_households",
+        zones.compute_variables(["occupied_residential_units = zone.number_of_agents(household)",
                                  "existing_residential_units = zone.aggregate(building.residential_units, [parcel])"],
                                 dataset_pool=self.dataset_pool)
         occupied_residential_units = zones.get_attribute("occupied_residential_units")
@@ -29,7 +29,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         zone_ids = zones.get_id_attribute()
 
         zone_index = 0
-        for zone_id in zone_ids[0:10]:
+        for zone_id in zone_ids:
             self.zone = zone_id
             self.existing_to_occupied_ratio =  exisiting_residential_units[zone_index] / float(occupied_residential_units[zone_index])
             self.proposal_set.compute_variables("zone_id = development_project_proposal.disaggregate(parcel.zone_id)", 
