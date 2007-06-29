@@ -55,7 +55,7 @@ extensive documentation for the SQL versions of the indicators; if there is
 demand for this and as time allows, we will also provide documentation for
 other indicators represented as Opus attributes.)
 
-\section{Computing the Values of Indicators using Opus Attributes}
+\section{Using Opus Attributes in Indicators}
 
 The basic class for dealing with data in Opus is the class \class{Dataset}
 \datasetindex (Section \ref{sec:opus-core-datasets}).  A dataset
@@ -64,27 +64,39 @@ particular type of entity, such as a set of grid cells, or a set of
 households.  Each member in this set has the same set of characteristics,
 such as income of household.  In Opus, these characteristics are called
 attributes. \attributesindex Attributes \attributesindex can be either read
-from a data store (primary attributes), \primaryattributesindex or computed
+from a data store (primary attributes) \primaryattributesindex or computed
 using an Opus variable definition (computed
 attributes). \computedattributesindex
 
 Any Opus attribute \attributesindex (primary or computed)
 \computedattributesindex\primaryattributesindex can be used as an
 indicator, \indicatorsindex although of course only some attributes
-\attributesindex will be particularly \emph{useful}
+\attributesindex will be particularly \emph{useful} as
 indicators. \indicatorsindex The primary attributes \primaryattributesindex
 of interest are commonly in the database tables for the given Opus
 application.  For UrbanSim, these database tables and their attributes
 \attributesindex are documented in Chapter
-\ref{chapter:urbansim-database-tables}, ``UrbanSim Database Tables.''  (A
-fine point: models or other Opus code can also create other primary
-attributes, \primaryattributesindex even on the fly --- so the database
-tables don't provide a comprehensive list of primary
-attributes. \primaryattributesindex However, probably all of the primary
-attributes \primaryattributesindex of interest for indicators
-\indicatorsindex will be in the database tables.)  Each computed attribute
+\ref{chapter:urbansim-database-tables}, ``UrbanSim Database Tables.''  
+% (A
+% fine point: models or other Opus code can also create other primary
+% attributes, \primaryattributesindex even on the fly --- so the database
+% tables don't provide a comprehensive list of primary
+% attributes. \primaryattributesindex However, probably all of the primary
+% attributes \primaryattributesindex of interest for indicators
+% \indicatorsindex will be in the database tables.)  
+Each computed attribute
 \computedattributesindex is defined by an Opus variable \variablesindex
 definition.
+
+Indicators can be computed and visualized, via a
+GUI\ref{sec:indicator-configuration-gui} or Python script
+\ref{sec:indicator-configuration-script}. Before describing these in detail, 
+a number of different ways that attributes can be specified needs to be
+described; specifically, attributes can be specified through its
+fully-qualified name, as an aggregation of other attributes, or as an expression
+involving multiple attributes. 
+
+\subsection{Definition through Fully-qualified Name}
 
 For both primary \primaryattributesindex and computed attributes,
 \computedattributesindex the attribute \attributesindex to be used as an
@@ -95,30 +107,14 @@ for example:
 \tight
 \item \module{urbansim.gridcell.residential_units}
 \item \module{urbansim.gridcell.population}
-%\item \module{zone.aggregate(gridcell.residential_units, function=sum)}
 \end{itemize}
 
-Of these, the first one (\module{urbansim.gridcell.residential_units}) is a
+Of these, \module{urbansim.gridcell.residential_units} is a
 primary \primaryattributesindex attribute --- the number of residential
 units is part of the data stored for each gridcell. 
-\computedattributesindex (The variable
-\code{population} is computed, even for
-gridcells --- for a gridcell, it is computed by summing the number of
-persons in each household located in that grid cell.) 
-% Residential units at
-% the zone level is computed, \computedattributesindex since it is computed
-% by summing, via the aggregate function, the number of residential units in
-% each gridcell in that zone.)
-
-Expressions may also be used in the place of simple variables 
-(see Section~\ref{sec:opus-core-expressions}). For example, the following are
-all valid names of an indicator: 
-
-\begin{itemize}
-\tight
-\item \code{2 * urbansim.gridcell.population + 1}
-\item \code{urbansim.gridcell.residential_units + urbansim.gridcell.commercial_units}
-\end{itemize}
+\computedattributesindex Population is computed, even for
+gridcells; for a gridcell, it is computed by summing the number of
+persons in each household located in that grid cell. 
 
 Attributes \attributesindex can also be in project-specific packages in
 addition to ones in the \package{urbansim} package.  For example, in our
@@ -133,13 +129,43 @@ be a template that matches a family of related variables, \variablesindex
 such as \module{psrc.houeshold.has_DDD_cars}.  This variable
 \variablesindex can then be instantiated with a particular number of cars,
 e.g.\ \module{psrc.houeshold.has_2_cars}.
+\subsection{Definition through Aggregation}
+Expressions may also be used in the place of simple variables 
+(see Section~\ref{sec:opus-core-expressions}). For example, the following are
+all valid names of an indicator: 
 
-The values of a set of indicators \indicatorsindex can be computed,
-and charts and maps produced for these values, using either a
-graphical interface, or programatically (using a Python script).
-These two techniques are described in the following two sections
-(\ref{sec:indicator-configuration-gui} and
-\ref{sec:indicator-configuration-script} respectively).  
+\subsection{Definition through Aggregation}
+
+Attributes can also be specified as aggregations of primary or computed
+attributes. For example:
+
+\begin{itemize}
+\tight
+\item \module{zone.aggregate(gridcell.residential_units, function=sum)}
+\item \module{alldata.aggregate_all(urbansim.zone.number_of_home_based_jobs)}
+\end{itemize}
+
+In these examples, an attribute defined at a particular geographic dataset is
+aggregated to a larger dataset. For example,
+\module{zone.aggregate(gridcell.residential_units, function=sum)} will, for
+every zone, sum the residential_units of all gridcells that comprise that zone. 
+The second example,
+\module{alldata.aggregate_all(urbansim.zone.number_of_home_based_jobs, function=sum)}, will
+result in a single value because the alldata dataset represents a single
+regional value. The number of home-based jobs in all zones will be added
+together to produce a single region-level total. 
+
+\subsection{Definition through Expressions}
+
+Variable expressions may also be used in the place of an attribute 
+(see Section~\ref{sec:opus-core-expressions}). For example, the following are
+all valid attribute declarations for an indicator: 
+
+\begin{itemize}
+\tight
+\item \module{2 * urbansim.gridcell.population + 1}
+\item \module{urbansim.gridcell.residential_units + urbansim.gridcell.commercial_units}
+\end{itemize}
 
 \section{The Indicator GUI}
 \label{sec:indicator-configuration-gui}
@@ -163,15 +189,15 @@ The fields are:
 
 \tight
 
-\item {\bf Cache directory} is the directory holding the cache with the
+\item \code{Cache directory} is the directory holding the cache with the
 simulation results from which indicators are to be produced.
 
-\item {\bf Comparison cache directory} is an optional field. It can be set to
+\item \code{Comparison cache directory} is an optional field. It can be set to
 point to another cache directory of simulation results.  If it is
 specified, the computed indicators will be compared between the two
 scenarios. See section \ref{sec:indicator-cross-scenario} for more details.
 
-\item {\bf Compare to another cache directory} is a checkbox that toggles
+\item \code{Compare to another cache directory} is a checkbox that toggles
 on and off the ability to specify a comparison cache directory.
 
 \end{itemize}
@@ -191,46 +217,48 @@ The fields are:
 
 \begin{itemize}
 \tight
-\item {\bf Type} is the output type of the indicator.
+\item \code{Type} is the output type of the indicator.
 
-\item {\bf Attribute} is the fully qualified path of an opus variable, as 
+\item \code{Attribute} is the fully qualified path of an opus variable, as 
 described at the beginning of this section. 
 
-\item {\bf Name} is the desired name of the indicator. This field is optional.
+\item \code{Name} is the desired name of the indicator. This field is optional.
 It defaults to the attribute field.
 
-\item {\bf Dataset} is the dataset for which the indicator should be 
+\item \code{Dataset} is the dataset for which the indicator should be 
 computed from (e.g. grid cell, zone).
 
-\item {\bf Years} lets you select the years for
+\item \code{Years} lets you select the years for
 which these indicator values should be computed. Examples include
 ``2001,2003'' and ``2010-2020'', the latter of which results in 
 the indicator being computed for all years between 2010 and 2020
 inclusive. 
 
-\item {\bf Comparison cache directory} is an optional field. It can 
+\item \code{Comparison cache directory} is an optional field. It can 
 be set to point to another cache directory of simulation results.
 If it is specified, the computed indicators will be compared 
 between the two scenarios. See section \ref{sec:indicator-cross-scenario} 
 for more details. 
 
-\item {\bf Compare to another cache directory} is a checkbox that toggles
+\item \code{Compare to another cache directory} is a checkbox that toggles
 on and off the ability to specify a comparison cache directory.
 
 \end{itemize}
 
-The \verb|map| visualization type has an additional optional field: 
-\begin{itemize}
-\item {\bf Scale} specifies the minimum and maximum values for the map coloring. 
-\end{itemize}  
+Some of the visualization types have additional fields. For example, the
+\verb|map| visualization type has a \code{Scale} field which specifies 
+the minimum and maximum values for the map coloring. 
 
-There is a ``run'' button at the bottom of the GUI that starts the indicator 
-computations.  There is also a ``view results'' button that launches a 
-static HTML page with the results of the indicator computations in a 
-web browser (see section \ref{sec:indicator-results}). In
-addition, the ``file'' menu includes items for saving a configuration, and
-opening a previously saved one.  (The ``run'' action is also available via
-the run menu.) 
+There is a ``run all requests'' button at the bottom of the GUI that starts the 
+indicator computations.  There is also a ``view results'' button that launches 
+a static HTML page with the results of the indicator computations in a web 
+browser (see section \ref{sec:indicator-results}). In addition, the ``file'' 
+menu includes items for saving a configuration, and opening a previously saved 
+one.  (The ``run'' action is also available via the run menu.) When the 
+indicators are being computed, both the ``run all requests'' and ``view 
+results'' buttons are grayed out. It is safe, however, to change the fields in 
+the GUI to different values in preparation for the next batch.
+
 
 \section{Constructing a Batch of Indicators using a Python Script}
 \label{sec:indicator-configuration-script}
@@ -254,21 +282,21 @@ be compared against. Each indicator requires a source data object to be passed
 to it. Every SourceData object accepts the following arguments:
 \begin{itemize}
 \tight
-\item {\bf dataset_pool_configuration} is an object that handles which 
+\item \code{dataset_pool_configuration} is an object that handles which 
 datasets get loaded and in what order. 
 
-\item {\bf cache_directory} is a path to the directory containing the 
+\item \code{cache_directory} is a path to the directory containing the 
 simulation results that the indicators should be computed from.
 
-\item {\bf comparison_cache_directory} is an optional field. Set this field 
+\item \code{comparison_cache_directory} is an optional field. Set this field 
 to the path to a second cache directory in order to run a 
 cross-scenario indicator comparison. See \ref{sec:indicator-cross-scenario}
 for more information.
 
-\item {\bf run_description} is a description of this indicator batch. 
+\item \code{run_description} is a description of this indicator batch. 
 This field is optional. 
 
-\item {\bf years} are the default years that all the indicators will be computed for.
+\item \code{years} are the default years that all the indicators will be computed for.
 This field is optional, although all indicators will then need to have a 
 years field if not specified here.
 
@@ -295,10 +323,10 @@ number of different visualization types available.
 
 \begin{itemize}
 \tight
-\item {\bf \code{table}} \index{tables} produce a table \index{tables} of indicator \indicatorsindex values
-\item {\bf \code{chart}} \index{charts} produce a chart \index{charts} or graph \index{graphs} using matplotlib \matplotlibindex
-\item {\bf \code{map}} \index{maps} produce a choropleth map \index{maps} using matplotlib \matplotlibindex
-\item {\bf \code{dataset_table}} produces a table for every specified year 
+\item \code{table} \index{tables} produce a table \index{tables} of indicator \indicatorsindex values
+\item \code{chart} \index{charts} produce a chart \index{charts} or graph \index{graphs} using matplotlib \matplotlibindex
+\item \code{map} \index{maps} produce a choropleth map \index{maps} using matplotlib \matplotlibindex
+\item \code{dataset_table} produces a table for every specified year 
 with the values of each of the specified indicators.
 \end{itemize}
 
@@ -309,17 +337,17 @@ object takes the following parameters:
 
 \begin{itemize}
 \tight
-\item {\bf source_data} references the desired \verb|SourceData| object (see above). 
+\item \code{source_data} references the desired \verb|SourceData| object (see above). 
 
-\item {\bf dataset_name} is the name of the dataset that this indicator will be 
+\item \code{dataset_name} is the name of the dataset that this indicator will be 
 computed for.
 
-\item {\bf years} are the years that the indicator will be computed for.
+\item \code{years} are the years that the indicator will be computed for.
 This field is optional if the \verb|SourceData| object also 
 has a years field. The indicator years field overrides
 the \verb|SourceData| years field.
 
-\item {\bf name} is the desired name of the indicator. This field is optional. 
+\item \code{name} is the desired name of the indicator. This field is optional. 
 The default name is the indicator attribute, although 
 some indicators overload the default name. Name replaces 
 the old 'as' syntax.
@@ -332,8 +360,8 @@ A Table object accepts the following parameters:
 
 \begin{itemize}
 \tight
-\item {\bf attribute} is the the fully qualified opus path of the indicator. 
-\item {\bf output_type} specifies whether the results should be separated 
+\item \code{attribute} is the the fully qualified opus path of the indicator. 
+\item \code{output_type} specifies whether the results should be separated 
 by tabs or commas, or output as a dbf file (``tab'', ``csv'', or ``dbf'', respectively).
 \end{itemize}
 
@@ -357,8 +385,8 @@ A Map object accepts the following parameters:
 
 \begin{itemize}
 \tight
-\item {\bf attribute} is the the fully qualified opus path of the indicator. 
-\item {\bf scale} is a two element list that specifies the min and max values 
+\item \code{attribute} is the the fully qualified opus path of the indicator. 
+\item \code{scale} is a two element list that specifies the min and max values 
 for the scale of the values on the map. It is optional and defaults to the
 min/max values of the indicator. 
 \end{itemize}
@@ -384,7 +412,7 @@ A Chart object accepts the following parameters:
 
 \begin{itemize}
 \tight
-\item {\bf attribute} is the the fully qualified opus path of the indicator. 
+\item \code{attribute} is the the fully qualified opus path of the indicator. 
 \end{itemize}
 
 An example:
@@ -405,8 +433,8 @@ A DatasetTable object accepts the following parameters:
 
 \begin{itemize}
 \tight
-\item {\bf attributes} is the the fully qualified opus path of the indicator.
-\item {\bf exclude_condition} determines the condition under which certain rows 
+\item \code{attributes} is the the fully qualified opus path of the indicator.
+\item \code{exclude_condition} determines the condition under which certain rows 
 are not included in the result. For example, if all the values in the row 
 are zero, set this to "==0". This field is optional.
 \end{itemize}
@@ -434,13 +462,13 @@ following values:
 
 \begin{itemize}
 \tight
-  \item {\bf change} returns the difference of the specified
+  \item \code{change} returns the difference of the specified
   attribute for the current year with respect to the baseyear (currently fixed
   at 2000).
-  \item {\bf percent_change} returns the percent difference of the specified
+  \item \code{percent_change} returns the percent difference of the specified
   attribute for the current year with respect to the baseyear (currently fixed
   at 2000). 
-  \item {\bf size} returns the size of the data set used.
+  \item \code{size} returns the size of the data set used.
 \end{itemize}
 
 An example using operations:
