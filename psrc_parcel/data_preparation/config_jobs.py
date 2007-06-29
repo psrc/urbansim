@@ -69,20 +69,20 @@ class ConfigJobs(UrbansimParcelConfiguration):
                    EmploymentLocationChoiceModelByZonesConfigurationCreator(
                                 location_set = "building",
                                 input_index = 'erm_index',
-                                #capacity_string = "non_residential_sqft",
-                                compute_capacity_flag = False,
-                                #agent_units_string = "sqft",
-                                choices = 'opus_core.random_choices_from_index'
+                                sampler = None,
+                                capacity_string = "urbansim_parcel.building.vacant_non_home_based_job_space",
+                                number_of_units_string = None,
+                                lottery_max_iterations=20
                                 ).execute()
         self['models_configuration']['home_based_employment_location_choice_model'] = {}
         self['models_configuration']['home_based_employment_location_choice_model']['controller'] = \
                    EmploymentLocationChoiceModelByZonesConfigurationCreator(
                                 location_set = "building",
                                 input_index = 'erm_index',
+                                sampler = None,
                                 capacity_string = "building.aggregate(psrc_parcel.household.minimum_persons_and_2)",
                                 number_of_units_string = None,
-                                #agent_units_string = "sqft",
-                                #choices = 'opus_core.random_choices_from_index'
+                                lottery_max_iterations=20
                                 ).execute()
         self['models_configuration']['employment_relocation_model']['controller'] = \
                     EmploymentRelocationModelConfigurationCreator(
