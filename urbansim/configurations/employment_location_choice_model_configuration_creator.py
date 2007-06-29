@@ -21,6 +21,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
     agent_set = Str('job')
     sample_size_locations = Int(30)
     debuglevel = Trait('debuglevel', Str, Int)
+    sampler = Trait('opus_core.samplers.weighted_sampler', None, Str)
     choices = Str('urbansim.lottery_choices')
     location_set = Str('gridcell')
     portion_to_unplace = Float(1/12.)
@@ -35,6 +36,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
     estimation_size_agents = Float(1.)
     agent_units_string = Trait(None, None, Str)
     number_of_units_string = Trait('total_number_of_possible_SSS_jobs', None, Str)
+    lottery_max_iterations = Int(3)
     
     input_index = Str('erm_index')
     
@@ -75,6 +77,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
                 },
             'init': {
                 'arguments': {
+                    'sampler': get_string_or_None(self.sampler),
                     'choices': "'%s'" % self.choices,
                     'dataset_pool': 'dataset_pool',
                     'location_set': self.location_set,
@@ -85,7 +88,8 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
                     'estimation_size_agents': self.estimation_size_agents,
                     'compute_capacity_flag': self.compute_capacity_flag,
                     'number_of_units_string': get_string_or_None(self.number_of_units_string), 
-                    'run_config': {'agent_units_string': get_string_or_None(self.agent_units_string)}
+                    'run_config': {'agent_units_string': get_string_or_None(self.agent_units_string),
+                                   'lottery_max_iterations': self.lottery_max_iterations}
                     },
                 'name': 'EmploymentLocationChoiceModel'
                 },
@@ -157,6 +161,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                 },
             'init': {
                 'arguments': {
+                    'sampler': "'opus_core.samplers.weighted_sampler'",
                     'choices': "'urbansim.lottery_choices'",
                     'dataset_pool': 'dataset_pool',
                     'location_set': 'gridcell',
@@ -167,7 +172,8 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'estimation_size_agents': 1.,
                     'compute_capacity_flag': True,
                     'number_of_units_string': "'total_number_of_possible_SSS_jobs'",
-                    'run_config': {'agent_units_string': None}
+                    'run_config': {'agent_units_string': None,
+                                   'lottery_max_iterations': 3}
                     },
                 'name': 'EmploymentLocationChoiceModel'
                 },
@@ -216,10 +222,12 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
             agent_set = 'agent_set',
             sample_size_locations = 9999,
             debuglevel = 8888,
+            sampler = None,
             choices = 'package.choices',
             location_set = 'location_set',
             portion_to_unplace = 7777.7,
             records_per_chunk = 6666,
+            lottery_max_iterations = 20,
             attribute_to_group_by = 'dataset_name.attribute_name',
             agents_for_estimation_table = 'agents_for_estimation_table',
             coefficients_table = 'coefficients_table',
@@ -245,6 +253,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                 },
             'init': {
                 'arguments': {
+                    'sampler': None, 
                     'choices': "'package.choices'",
                     'dataset_pool': 'dataset_pool',
                     'location_set': 'location_set',
@@ -255,7 +264,8 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'estimation_size_agents': 1.,
                     'compute_capacity_flag': False,
                     'number_of_units_string': "'total_number_of_possible_SSS_jobs'",
-                    'run_config': {'agent_units_string': None}
+                    'run_config': {'agent_units_string': None,
+                                   'lottery_max_iterations': 20}
                     },
                 'name': 'EmploymentLocationChoiceModel'
                 },
