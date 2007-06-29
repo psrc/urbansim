@@ -156,27 +156,6 @@ ArcGeotiffMap
     export_type:
         The output format of the outputted indicator from ArcMap.
         Optional. Will default to jpg
-
-Indicators can also be computed from other variables and 
-indicators using "expressions", which are dictionaries. 
-The expression syntax is as follows:
-
-Expression :
-     operation: 
-         The operation to be performed between the 
-         variables specified as operand(s). Available
-         operations working on two operands include 
-         subtract, divide, and times. Available 
-         operations for a single operand include
-         size, unplaced, percent_change, and change. 
-     operands: 
-         A list of attributes that are used to perform
-         the computation. There should either be one
-         or two specified operands.
-      
-In the case that an expression argument is present for an 
-indicator with an attribute field, the attribute field is
-used as the name of the indicator.    
 '''
 
 #An example script:
@@ -239,6 +218,35 @@ indicators = [
        exclude_condition = '==0' 
    ),
 
+   #Expression example
+   Table(
+       source_data = source_data,
+       dataset_name = 'large_area',
+       name = 'de_population_change',
+       attribute = 'psrc.large_area.de_population_DDDD - psrc.large_area.de_population_2000',
+   ),
+         
+   #example of using an operation ("change since baseyear"). Other available operations
+   #are "percent_change" and "size" (of the dataset)         
+   Table(
+       source_data = source_data,
+       attribute = 'urbansim.faz.population',
+       dataset_name = 'faz',
+       name = 'population_change(DDDD-00)',
+       operation = 'change',
+       years = [2030]
+   ),   
+
+   #example using regional-level aggregators
+   Table(
+       attribute = 'alldata.aggregate_all(urbansim.zone.number_of_home_based_jobs)',
+       dataset_name = 'alldata',
+       source_data = source_data,
+       name =  'number_of_home_based_jobs',
+       years = [2000, 2010]
+   ),
+   ]
+
 #   ArcGeotiffMap(
 #       source_data = source_data,
 #       dataset_name = 'gridcell',
@@ -251,33 +259,6 @@ indicators = [
 #       package = 'package',
 #    ), 
 
-   #Expression examples
-   Map(
-       source_data = source_data,
-       dataset_name = 'large_area',
-       name = 'de_population_change',
-       expression = {
-         'operation':'subtract',
-         'operands': [
-              'psrc.large_area.de_population_DDDD', 
-              'psrc.large_area.de_population_2000'],
-         },
-       scale = [-5000, 250000]
-   ),
-                  
-   Map(
-       source_data = source_data,
-       dataset_name = 'faz',
-       name = 'population_change(DDDD-00)',
-       expression = {
-         'operation':'change',
-         'operands': ['urbansim.faz.population']
-         },
-       scale = [-5000, 250000],
-       years = [2030]
-   ),   
-
-]
 
 if __name__ == '__main__':
     from opus_core.indicator_framework import IndicatorFactory
