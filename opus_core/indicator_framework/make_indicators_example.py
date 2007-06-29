@@ -184,7 +184,7 @@ used as the name of the indicator.
 source_data = SourceData(
    cache_directory = r'D:\urbansim_cache\run_1090.2006_11_14_12_12',
    comparison_cache_directory = r'D:\urbansim_cache\run_1091.2006_11_14_12_12',
-   years = [2010],
+   years = [2000, 2010],
    dataset_pool_configuration = DatasetPoolConfiguration(
          package_order=['urbansim','opus_core'],
          package_order_exceptions={},
@@ -217,6 +217,7 @@ indicators = [
        dataset_name = 'zone',
        attribute = 'urbansim.zone.industrial_sqft',
        output_type = 'dbf',
+       years = [2000, 2002]
        ), 
               
    GeotiffMap(
