@@ -14,7 +14,7 @@
     
 
 # Match function for parse trees, along with parse tree patterns for use in autogenerating variable classes.
-# See the file utils/parse_tree_pattern_generator for utility functions for generating new tree fragments.
+# See the file utils/parsetree_pattern_generator for utility functions for generating new tree fragments.
 
 from types import ListType, TupleType
 
@@ -89,7 +89,7 @@ def match(pattern, data, vars=None):
 from opus_core.tests import opus_unittest
 import parser
 import symbol, token
-from opus_core.variables.parse_tree_patterns import *
+from opus_core.variables.parsetree_patterns import *
 
 TEST_PATTERN_FULLY_QUALIFIED_VARIABLE =  \
     (symbol.power,

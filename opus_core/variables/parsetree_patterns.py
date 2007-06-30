@@ -13,7 +13,7 @@
 # 
 
 # Parse tree patterns for use in autogenerating variable classes.
-# See the file utils/parse_tree_pattern_generator for utility functions for generating new tree fragments.
+# See the file utils/parsetree_pattern_generator for utility functions for generating new tree fragments.
 
 import symbol, token, sys
     
@@ -217,32 +217,10 @@ SUBPATTERN_NUMBER_OF_AGENTS = \
                      ['agent'])))))))))))))))))
 
 # Pattern that matches the arguments to a call to aggregate(...) and disaggregate(...)
-# The first argument is required, but can be either a dataset-qualified name or a fully-qualified name.
-# The remaining 3 arguments are optional.
+# The first argument is required.  The remaining 2 arguments are optional.
 SUBPATTERN_AGGREGATION =  \
     (symbol.arglist,
-     (symbol.argument,
-      (symbol.test,
-       _or_test_subtree(           
-        (symbol.and_test,
-         (symbol.not_test,
-          (symbol.comparison,
-           (symbol.expr,
-            (symbol.xor_expr,
-             (symbol.and_expr,
-              (symbol.shift_expr,
-               (symbol.arith_expr,
-                (symbol.term,
-                 (symbol.factor,
-                  (symbol.power,
-                   (symbol.atom,
-                    (token.NAME,
-                     ['aggr_name1'])),
-                   (symbol.trailer,
-                    (token.DOT, '.'),
-                    (token.NAME,
-                     ['aggr_name2'])),
-                   ['?', (symbol.trailer, (token.DOT, '.'), (token.NAME, ['aggr_name3']))])))))))))))))),
+     ['arg1'],
      ['?', (token.COMMA, ',')],
      ['?', ['arg2']],
      ['?', (token.COMMA, ',')],
@@ -255,6 +233,48 @@ SUBPATTERN_ARGUMENT = \
      ['?', (token.EQUAL, '=')],
      ['?', ['part2']])
 
+# match an argument that is simply a fully qualified variable (not a more complex expression)
+SUBPATTERN_FULLY_QUALIFIED_VARIABLE_ARG =  \
+      (symbol.test,
+       _or_test_subtree(                  
+        (symbol.and_test,
+         (symbol.not_test,
+          (symbol.comparison,
+           (symbol.expr,
+            (symbol.xor_expr,
+             (symbol.and_expr,
+              (symbol.shift_expr,
+               (symbol.arith_expr,
+                (symbol.term,
+                 (symbol.factor,
+                  (symbol.power,
+                   (symbol.atom, (token.NAME, ['package'])),
+                   (symbol.trailer,
+                    (token.DOT, '.'),
+                    (token.NAME, ['dataset'])),
+                   (symbol.trailer,
+                    (token.DOT, '.'),
+                    (token.NAME, ['shortname'])))))))))))))))
+
+# match an expression that is simply a dataset qualified variable (not a more complex expression)
+SUBPATTERN_DATASET_QUALIFIED_VARIABLE_ARG =  \
+      (symbol.test,
+       _or_test_subtree(                  
+        (symbol.and_test,
+         (symbol.not_test,
+          (symbol.comparison,
+           (symbol.expr,
+            (symbol.xor_expr,
+             (symbol.and_expr,
+              (symbol.shift_expr,
+               (symbol.arith_expr,
+                (symbol.term,
+                 (symbol.factor,
+                  (symbol.power,
+                   (symbol.atom, (token.NAME, ['dataset'])),
+                   (symbol.trailer,
+                    (token.DOT, '.'),
+                    (token.NAME, ['shortname'])))))))))))))))
 
  # match an argument consisting of just a name
 SUBPATTERN_NAME_ARG = \
@@ -293,3 +313,4 @@ SUBPATTERN_LIST_ARG = \
                   (token.LSQB, '['),
                   ['?', ['list']],  # if the list is empty this will match the right bracket; otherwise the list contents
                   ['?', (token.RSQB, ']')]))))))))))))))
+
