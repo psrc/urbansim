@@ -1427,6 +1427,8 @@ examples are:
 \begin{itemize}
 \item \code{zone.aggregate(gridcell.population)}
 
+\item \code{zone.aggregate(2.5*gridcell.population)}
+
 \item \code{zone.aggregate(urbansim.gridcell.population)}
 
 \item \code{neighborhood.aggregate(gridcell.population, 
@@ -1591,28 +1593,15 @@ In addition to \method{sum}, the \class{aggregate_all} class accepts all
 functions that are accepted by the \class{aggregate} class;
 the default is \method{sum}.
 
-The attribute being aggregated or disaggregated should be either
-dataset-qualified or fully-qualified, i.e.\ always including the dataset
-name and optionally including the package name.  The result of an
-aggregation or disaggregation can be used in more complex expressions,
-e.g. \code{ln(2*aggregate(gridcell.population))}.  However, there is
-currently a limitation that the attribute being aggregated or disaggregated
-must be designated with a single attribute name; it can't be an
-expression. (If you want an expression for the first argument, declare a
-new variable for it.)  For example, this expression isn't legal currently:
-
-\begin{verbatim}
-zone.aggregate(2*gridcell.capacity)
-\end{verbatim}
-
-Instead you should define a new variable \code{double_capacity} for
-gridcell, and then write
-
-\begin{verbatim}
-zone.aggregate(gridcell.double_capacity)
-\end{verbatim}
-
-(We hope to remove this limitation in the future.)
+If the attribute being aggregated or disaggregated is a simple variable, it
+should be either dataset-qualified or fully-qualified, i.e.\ always
+including the dataset name and optionally including the package name.  The
+attribute being aggregated can also be an expression.  (In this case,
+behind the scenes the system generates a new variable for that expression,
+and then uses the new variable in the aggregation or disaggregation
+operations.  However, this isn't visible to the user.)  The result of an
+aggregation or disaggregation can also be used in more complex expressions,
+e.g. \code{ln(2*aggregate(gridcell.population))}.
 
 \subsubsection{Number of Agents}
 \index{number_of_agents}
