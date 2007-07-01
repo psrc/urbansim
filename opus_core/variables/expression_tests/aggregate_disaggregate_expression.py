@@ -22,38 +22,8 @@ from numpy import array, ma, arange
 
 class Tests(opus_unittest.OpusTestCase):
     
-    # Tests involving aggregation/disaggregation for InteractionSets are in interaction_aggregate_disaggregate
-
-    def test_number_of_agents(self):
-        expr = "mygridcell.number_of_agents(myjob)"
-        storage = StorageFactory().get_storage('dict_storage')
-        gridcell_grid_id = array([1, 2, 3])
-        job_grid_id = array([2, 1, 3, 1]) #specify an array of 4 jobs, 1st job's grid_id = 2 (it's in gridcell 2), etc.
-        storage.write_table(table_name='gridcells', table_data={'gid':gridcell_grid_id})
-        storage.write_table(table_name='jobs', table_data={'jid':arange(4)+1, 'gid':job_grid_id})
-        gs = Dataset(in_storage=storage, in_table_name='gridcells', id_name="gid", dataset_name="mygridcell")
-        jobs = Dataset(in_storage=storage, in_table_name='jobs', id_name="jid", dataset_name="myjob")       
-        values = gs.compute_variables([expr], resources=Resources({"myjob":jobs, "mygridcell":gs}))
-        should_be = array([2, 1, 1])            
-        self.assert_(ma.allclose(values, should_be, rtol=1e-7), msg = "Error in " + expr)
-        # change gids of jobs (to test if computing dependencies is working)
-        jobs.modify_attribute(name="gid", data=array([1,1,1,1]))
-        values2 = gs.compute_variables([expr], resources=Resources({"myjob":jobs, "mygridcell":gs}))
-        should_be2 = array([4, 0, 0])            
-        self.assert_(ma.allclose(values2, should_be2, rtol=1e-7), msg = "Error in " + expr)
-
-    def test_number_of_agents_expression(self):
-        expr = "mygridcell.number_of_agents(myjob)+10"
-        storage = StorageFactory().get_storage('dict_storage')
-        gridcell_grid_id = array([1, 2, 3])
-        job_grid_id = array([2, 1, 3, 1]) #specify an array of 4 jobs, 1st job's grid_id = 2 (it's in gridcell 2), etc.
-        storage.write_table(table_name='gridcells', table_data={'gid':gridcell_grid_id})
-        storage.write_table(table_name='jobs', table_data={'jid':arange(4)+1, 'gid':job_grid_id})
-        gs = Dataset(in_storage=storage, in_table_name='gridcells', id_name="gid", dataset_name="mygridcell")
-        jobs = Dataset(in_storage=storage, in_table_name='jobs', id_name="jid", dataset_name="myjob")       
-        values = gs.compute_variables([expr], resources=Resources({"myjob":jobs, "mygridcell":gs}))
-        should_be = array([12, 11, 11])            
-        self.assert_(ma.allclose(values, should_be, rtol=1e-7), msg = "Error in " + expr)
+    # like aggregate_disaggregate.py, except that the thing being aggregated is an expression
+    # omits tests involving number_of_agents
 
     def test_aggregate(self):
         # test aggregate with no function specified (so defaults to 'sum')
@@ -75,8 +45,8 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool = DatasetPool()
         dataset_pool._add_dataset('gridcell', gridcell_dataset)
         dataset_pool._add_dataset('zone', zone_dataset)
-        values = zone_dataset.compute_variables(['zone.aggregate(gridcell.my_variable)'], dataset_pool=dataset_pool)
-        should_be = array([4.5, 9]) 
+        values = zone_dataset.compute_variables(['zone.aggregate(10.0*gridcell.my_variable)'], dataset_pool=dataset_pool)
+        should_be = array([45, 90]) 
         self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate")
         
     def test_aggregate_fully_qualified_variable(self):
@@ -99,8 +69,8 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool = DatasetPool()
         dataset_pool._add_dataset('zone', zone_dataset)
         dataset_pool._add_dataset('tests', test_dataset)
-        values = zone_dataset.compute_variables(['zone.aggregate(opus_core.tests.a_test_variable)'], dataset_pool=dataset_pool)
-        should_be = array([45, 90]) 
+        values = zone_dataset.compute_variables(['zone.aggregate(10.0*opus_core.tests.a_test_variable)'], dataset_pool=dataset_pool)
+        should_be = array([450, 900]) 
         self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in test_aggregate_fully_qualified_variable")
 
     def test_aggregate_sum(self):
@@ -118,8 +88,8 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool = DatasetPool()
         dataset_pool._add_dataset('myzone', ds)
         dataset_pool._add_dataset('myfaz', ds2)
-        values = ds2.compute_variables(['myfaz.aggregate(myzone.my_variable, function=sum)'], dataset_pool=dataset_pool)
-        should_be = array([4.5, 9]) 
+        values = ds2.compute_variables(['myfaz.aggregate(10.0*myzone.my_variable, function=sum)'], dataset_pool=dataset_pool)
+        should_be = array([45,90]) 
         self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_sum")
 
     def test_aggregate_sum_one_level(self):
@@ -149,8 +119,8 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('myzone', ds0)
         dataset_pool._add_dataset('myfaz',ds1)
         dataset_pool._add_dataset('myfazdistr',ds2)
-        values = ds2.compute_variables(['myfazdistr.aggregate(myzone.my_variable, intermediates=[myfaz])'], dataset_pool=dataset_pool)
-        should_be = array([132, 24])
+        values = ds2.compute_variables(['myfazdistr.aggregate(10.0*myzone.my_variable, intermediates=[myfaz])'], dataset_pool=dataset_pool)
+        should_be = array([1320, 240])
         self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_sum_one_level") 
 
     def test_aggregate_sum_two_levels(self):
@@ -187,8 +157,8 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('myfaz',ds1)
         dataset_pool._add_dataset('myfazdistr',ds2)
         dataset_pool._add_dataset('myneighborhood',ds3)
-        values = ds3.compute_variables(['myneighborhood.aggregate(myzone.my_variable, intermediates=[myfaz,myfazdistr], function=sum)'], dataset_pool=dataset_pool)
-        should_be = array([177, 24])
+        values = ds3.compute_variables(['myneighborhood.aggregate(10.0*myzone.my_variable, intermediates=[myfaz,myfazdistr], function=sum)'], dataset_pool=dataset_pool)
+        should_be = array([1770, 240])
         self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_sum_two_levels")    
         
     def test_aggregate_mean(self):
@@ -210,8 +180,8 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool = DatasetPool()
         dataset_pool._add_dataset('myzone', ds)
         dataset_pool._add_dataset('myfaz', ds2)
-        values = ds2.compute_variables(['myfaz.aggregate(myzone.my_variable, function=mean)'], dataset_pool=dataset_pool)
-        should_be = array([7.0, 4.5])
+        values = ds2.compute_variables(['myfaz.aggregate(10.0*myzone.my_variable, function=mean)'], dataset_pool=dataset_pool)
+        should_be = array([70, 45])
         self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_mean")      
 
     def test_aggregate_all(self):
@@ -225,9 +195,9 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool = DatasetPool()
         dataset_pool._add_dataset('myzone', ds)
         dataset_pool._add_dataset('myregion', ds2)
-        ds2.compute_variables(["myvar = myregion.aggregate_all(myzone.my_variable)"], dataset_pool=dataset_pool)         
+        ds2.compute_variables(["myvar = myregion.aggregate_all(10.0*myzone.my_variable)"], dataset_pool=dataset_pool)         
         values = ds2.get_attribute("myvar")
-        should_be = array([13.5])
+        should_be = array([135])
         self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_all")
 
     def test_aggregate_all_sum(self):
@@ -248,9 +218,9 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool = DatasetPool()
         dataset_pool._add_dataset('myzone', ds)
         dataset_pool._add_dataset('myregion', ds2)
-        ds2.compute_variables(["myvar = myregion.aggregate_all(myzone.my_variable, function=sum)"], dataset_pool=dataset_pool)    
+        ds2.compute_variables(["myvar = myregion.aggregate_all(10.0*myzone.my_variable, function=sum)"], dataset_pool=dataset_pool)    
         values = ds2.get_attribute("myvar")
-        should_be = array([13.5])
+        should_be = array([135])
         self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_all_sum")
 
     def test_aggregate_all_mean(self):
@@ -271,9 +241,9 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool = DatasetPool()
         dataset_pool._add_dataset('myzone', ds)
         dataset_pool._add_dataset('myregion', ds2)
-        ds2.compute_variables(["myvar = myregion.aggregate_all(myzone.my_variable, function=mean)"], dataset_pool=dataset_pool)
+        ds2.compute_variables(["myvar = myregion.aggregate_all(10.0*myzone.my_variable, function=mean)"], dataset_pool=dataset_pool)
         values = ds2.get_attribute("myvar")
-        should_be = array([5.75])
+        should_be = array([57.5])
         self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_all_mean")      
 
     def test_disaggregate(self):
@@ -295,8 +265,8 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool = DatasetPool()
         dataset_pool._add_dataset('myzone', ds)
         dataset_pool._add_dataset('myfaz', ds2)
-        values = ds.compute_variables(["myzone.disaggregate(myfaz.my_variable)"], dataset_pool=dataset_pool)
-        should_be = array([4, 8, 4, 8])
+        values = ds.compute_variables(["myzone.disaggregate(10.0*myfaz.my_variable)"], dataset_pool=dataset_pool)
+        should_be = array([40, 80, 40, 80])
         self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in disaggregate")
         
     def test_disaggregate_fully_qualified_variable(self):
@@ -319,8 +289,8 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool = DatasetPool()
         dataset_pool._add_dataset('zone', zone_dataset)
         dataset_pool._add_dataset('test_location', test_dataset)
-        values = zone_dataset.compute_variables(['zone.disaggregate(opus_core.test_location.cost_times_3)'], dataset_pool=dataset_pool)
-        should_be = array([12, 24, 12, 24]) 
+        values = zone_dataset.compute_variables(['zone.disaggregate(10.0*opus_core.test_location.cost_times_3)'], dataset_pool=dataset_pool)
+        should_be = array([120, 240, 120, 240]) 
         self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in test_disaggregate_fully_qualified_variable")
 
     def test_disaggregate_one_level(self):
@@ -350,8 +320,8 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('myzone', ds0)
         dataset_pool._add_dataset('myfaz', ds1)
         dataset_pool._add_dataset('myfazdistr', ds2)
-        values = ds0.compute_variables(["myzone.disaggregate(myfazdistr.my_variable, intermediates=[myfaz])"], dataset_pool=dataset_pool)
-        should_be = array([40, 40, 40, 50, 40,50, 40])
+        values = ds0.compute_variables(["myzone.disaggregate(10.0*myfazdistr.my_variable, intermediates=[myfaz])"], dataset_pool=dataset_pool)
+        should_be = array([400, 400, 400, 500, 400, 500, 400])
         self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in disaggregate_one_level") 
           
     def test_disaggregate_two_levels(self):
@@ -389,14 +359,14 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('myzone', ds0)
         dataset_pool._add_dataset('myfaz', ds1)
         dataset_pool._add_dataset('myfazdistr', ds2)
-        values = ds.compute_variables(["mygridcell.disaggregate(myfazdistr.my_variable, intermediates=[myfaz,myzone])"], dataset_pool=dataset_pool)
-        should_be = array([40, 50, 40, 40, 50,50, 40, 40, 40])
+        values = ds.compute_variables(["mygridcell.disaggregate(10.0*myfazdistr.my_variable, intermediates=[myfaz,myzone])"], dataset_pool=dataset_pool)
+        should_be = array([400, 500, 400, 400, 500, 500, 400, 400, 400])
         self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in disaggregate_two_levels")
 
     def test_disaggregate_and_multiply(self):
         # Perform two different disaggregations and multiply the results.  This tests using a dataset name in both the
         # list of intermediates and as the dataset being disaggregated (myfaz in this case).
-        expr = "myzone.disaggregate(myfaz.fazsqft) * myzone.disaggregate(myfazdistr.my_variable, intermediates=[myfaz])"
+        expr = "myzone.disaggregate(2.0*myfaz.fazsqft) * myzone.disaggregate(3.0*myfazdistr.my_variable, intermediates=[myfaz])"
         storage = StorageFactory().get_storage('dict_storage')
         storage.write_table(table_name='zones',
             table_data={
@@ -425,7 +395,7 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool._add_dataset('myfaz', ds1)
         dataset_pool._add_dataset('myfazdistr', ds2)
         values = ds0.compute_variables([expr], dataset_pool=dataset_pool)
-        should_be = array([400, 4000, 400, 2500, 4000, 2500, 400])
+        should_be = array([2400, 24000, 2400, 15000, 24000, 15000, 2400])
         self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in disaggregate_and_multiply")
         
 if __name__=='__main__':

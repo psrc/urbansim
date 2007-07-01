@@ -314,3 +314,10 @@ SUBPATTERN_LIST_ARG = \
                   ['?', ['list']],  # if the list is empty this will match the right bracket; otherwise the list contents
                   ['?', (token.RSQB, ']')]))))))))))))))
 
+DATASET_QUALIFIED_VARIABLE_TEMPLATE =  \
+    (symbol.power,
+     (symbol.atom, (token.NAME, 'dataset')),
+     (symbol.trailer,
+      (token.DOT, '.'),
+      (token.NAME, 'attribute')))
+

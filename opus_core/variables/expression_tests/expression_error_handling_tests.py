@@ -48,31 +48,6 @@ class Tests(opus_unittest.OpusTestCase):
             )
         dataset = Dataset(in_storage=storage, in_table_name='testzz', id_name="id", dataset_name="testzz")
         self.assertRaises(StandardError, dataset.compute_variables, [expr])
-        
-    def test_aggregate_expression(self):
-        # the attribute being aggregated must be a simple variable, not an expression -- test this
-        expr = "zone.aggregate(2*gridcell.my_variable)"
-        storage = StorageFactory().get_storage('dict_storage')
-        storage.write_table(
-            table_name='zones',
-            table_data={
-                'zone_id':array([1,2]),
-                }
-            )
-        storage.write_table(
-            table_name='gridcells',
-            table_data={
-                'my_variable':array([4,8,0.5,1]), 
-                'grid_id':array([1,2,3,4]),
-                'zone_id':array([1,2,1,2]),
-                }
-            )
-        zone_dataset = Dataset(in_storage=storage, in_table_name='zones', id_name="zone_id", dataset_name='zone')
-        gridcell_dataset = Dataset(in_storage=storage, in_table_name='gridcells', id_name="grid_id", dataset_name='gridcell')
-        dataset_pool = DatasetPool()
-        dataset_pool._add_dataset('gridcell', gridcell_dataset)
-        dataset_pool._add_dataset('zone', zone_dataset)
-        self.assertRaises(ValueError, zone_dataset.compute_variables, [expr], dataset_pool=dataset_pool)
 
     def test_aggregate_bad_list(self):
         # the 'intermediates' argument must be a list -- test this
