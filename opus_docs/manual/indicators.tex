@@ -129,10 +129,6 @@ be a template that matches a family of related variables, \variablesindex
 such as \module{psrc.houeshold.has_DDD_cars}.  This variable
 \variablesindex can then be instantiated with a particular number of cars,
 e.g.\ \module{psrc.houeshold.has_2_cars}.
-\subsection{Definition through Aggregation}
-Expressions may also be used in the place of simple variables 
-(see Section~\ref{sec:opus-core-expressions}). For example, the following are
-all valid names of an indicator: 
 
 \subsection{Definition through Aggregation}
 
@@ -298,8 +294,8 @@ This field is optional.
 
 \item \code{years} are the default years that all the indicators that use this
 \verb|SourceData| object will be computed for.
-This field is optional, although every indicator will then need to individually
-specify a years parameter to its constructor. 
+This field is optional, although, if absent, every indicator will need to
+individually specify a years parameter to its constructor. 
 
 \end{itemize}
 
@@ -380,9 +376,8 @@ Table(
     dataset_name = 'zone',
     attribute = 'urbansim.zone.industrial_sqft',
     output_type = 'tab',
-	years = [2000, 2005] 
+    years = [2000, 2005] 
 ) 
-# Note that the years parameter is optional if years is defined in source_data. 
 \end{verbatim}
 
 \subsection{Map}
@@ -488,7 +483,7 @@ Table(
     dataset_name = 'large_area',
     name = 'de_population_change',
     operation = 'change',
-	years = [2015]
+    years = [2015]
 )
 \end{verbatim}
 
