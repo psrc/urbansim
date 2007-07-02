@@ -265,6 +265,8 @@ class AutogenVariableFactory(object):
                 newvar = VariableName(parsetree_to_string(subexpr))
                 pkg = None
                 dataset = newvar.get_dataset_name()
+                if dataset is None:
+                    raise ValueError, "syntax error for aggregation method call - could not determine dataset for variable being aggregated"
                 attr = newvar.get_short_name()
                 replacements = {'dataset': dataset, 'attribute': attr}
                 newvar_tree = parsetree_substitute(DATASET_QUALIFIED_VARIABLE_TEMPLATE, replacements)

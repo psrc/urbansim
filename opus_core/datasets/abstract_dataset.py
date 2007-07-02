@@ -869,7 +869,10 @@ class AbstractDataset(object):
         else:
             filled_what = what
         try:
-            values = eval("ndimage."+function+"(filled_what, labels=ids, index=myids)")
+            # formerly: values = eval("ndimage."+function+"(filled_what, labels=ids, index=myids)")
+            # f is the function from ndimage
+            f = getattr(ndimage, function)
+            values = f(*[filled_what], **{'labels': ids, 'index': myids})
             result = array(values)
         except:
             raise StandardError, "Unknown function " + function + " or error occured during evaluation."
