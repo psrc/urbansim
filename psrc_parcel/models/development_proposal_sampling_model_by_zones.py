@@ -22,16 +22,23 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
     def run(self, zones, *args, **kwargs):
 
         zones.compute_variables(["occupied_residential_units = zone.number_of_agents(household)",
-                                 "existing_residential_units = zone.aggregate(building.residential_units, [parcel])"],
+                                 "existing_residential_units = zone.aggregate(building.residential_units, [parcel])",
+                                 "occupied_job_spaces = zone.number_of_agents(job)",
+                                 "existing_job_spaces = zone.aggregate(urbansim_parcel.building.total_non_home_based_job_space, [parcel])",
+                                 ],
                                 dataset_pool=self.dataset_pool)
         occupied_residential_units = zones.get_attribute("occupied_residential_units")
         exisiting_residential_units = zones.get_attribute("existing_residential_units")
+        occupied_job_spaces = zones.get_attribute("occupied_job_spaces")
+        existing_job_spaces = zones.get_attribute("existing_job_spaces")
+        
         zone_ids = zones.get_id_attribute()
 
         zone_index = 0
         for zone_id in zone_ids:
             self.zone = zone_id
-            self.existing_to_occupied_ratio =  exisiting_residential_units[zone_index] / float(occupied_residential_units[zone_index])
+            self.existing_to_occupied_ratio_residential =  exisiting_residential_units[zone_index] / float(occupied_residential_units[zone_index])
+            self.existing_to_occupied_ratio_non_residential =  existing_job_spaces[zone_index] / float(occupied_job_spaces[zone_index])
             self.proposal_set.compute_variables("zone_id = development_project_proposal.disaggregate(parcel.zone_id)", 
                                                 dataset_pool=self.dataset_pool)
             status = self.proposal_set.get_attribute("status_id")
@@ -63,13 +70,15 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             is_matched_type = buildings.get_attribute("generic_building_type_id") == type_id
             is_in_right_zone = buildings.get_attribute("zone_id") == self.zone
             existing_units = buildings.get_attribute(unit_name)[is_matched_type*is_in_right_zone]
-            occupied_units = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type*is_in_right_zone]
+            #occupied_units = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type*is_in_right_zone]
 
             self.existing_units[type_id] = existing_units.astype("float32").sum()
             if unit_name == "residential_units":
-                self.occupied_units[type_id] = int(self.existing_units[type_id]/self.existing_to_occupied_ratio)
+                self.occupied_units[type_id] = int(self.existing_units[type_id]/self.existing_to_occupied_ratio_residential)
             else:
-                self.occupied_units[type_id] = occupied_units.astype("float32").sum()
+                ##TODO: need to multiple the building_sqft_per_job for this building_type/generic_building_type?
+                self.occupied_units[type_id] = int(self.existing_units[type_id]/self.existing_to_occupied_ratio_non_residential)
+                #self.occupied_units[type_id] = occupied_units.astype("float32").sum()
             self.proposed_units[type_id] = 0
             self.demolished_units[type_id] = 0
             vr = (self.existing_units[type_id] - self.occupied_units[type_id]) / float(self.existing_units[type_id])

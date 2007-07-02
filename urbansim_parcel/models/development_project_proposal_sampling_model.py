@@ -27,7 +27,6 @@ from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.model import Model
 
-## BUG: broken class
 class DevelopmentProjectProposalSamplingModel(Model):
 
     def __init__(self, proposal_set,
@@ -76,10 +75,10 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                         dataset_pool=self.dataset_pool)
         buildings = self.dataset_pool.get_dataset("building")
         buildings.compute_variables(["generic_building_type_id = building.disaggregate(building_type.generic_building_type_id)",
-                                    "urbansim_parcel.building.occupied_building_sqft",
+                                    "occupied_building_sqft=urbansim_parcel.building.occupied_building_sqft_by_jobs",
                                     "urbansim_parcel.building.existing_units",
                                     "occupied_residential_units = building.number_of_agents(household)",
-                                    "occupied_parcel_sqft = urbansim_parcel.building.occupied_building_sqft",
+                                    #"occupied_parcel_sqft = urbansim_parcel.building.occupied_building_sqft",
                                     ],
                                     dataset_pool=self.dataset_pool)
         target_vacancy = self.dataset_pool.get_dataset('target_vacancy')
@@ -127,7 +126,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
 
         # set status of accepted proposals to 'active'
         self.proposal_set.modify_attribute(name="status_id", data=self.proposal_set.id_active,
-                                          index=array(self.accepted_proposals))
+                                          index=array(self.accepted_proposals, dtype='int'))
         # delete all tentative (not accepted) proposals from the proposal set
         self.proposal_set.remove_elements(where(
                     self.proposal_set.get_attribute("status_id") == self.proposal_set.id_tentative)[0])
