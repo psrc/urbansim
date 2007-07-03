@@ -44,6 +44,9 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             status = self.proposal_set.get_attribute("status_id")
             where_zone = self.proposal_set.get_attribute("zone_id") == zone_id
             idx_zone = where(where_zone)[0]
+            if idx_zone.size <= 0:
+                logger.log_status("No proposals for zone %s" % zone_id)
+                continue
             idx_out_zone_not_active = where(logical_and(status != self.proposal_set.id_active, logical_not(where_zone)))[0]
             status[idx_zone] = self.proposal_set.id_proposed
             status[idx_out_zone_not_active] = self.proposal_set.id_not_available

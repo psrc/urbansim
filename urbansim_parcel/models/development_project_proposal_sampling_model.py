@@ -126,7 +126,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
 
         # set status of accepted proposals to 'active'
         self.proposal_set.modify_attribute(name="status_id", data=self.proposal_set.id_active,
-                                          index=array(self.accepted_proposals, dtype='int'))
+                                          index=array(self.accepted_proposals, dtype='int32'))
         # delete all tentative (not accepted) proposals from the proposal set
         self.proposal_set.remove_elements(where(
                     self.proposal_set.get_attribute("status_id") == self.proposal_set.id_tentative)[0])
