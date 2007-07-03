@@ -37,6 +37,7 @@ else:
         import TraitsMap, TraitsChart, TraitsTable, TraitsLorenz
     
     from opus_core.indicator_framework.utilities import display_message_dialog
+    from opus_core.indicator_framework.utilities import IntegrityError
     
     class TraitsIndicatorHandler(Handler):
         """Handler for creating indicators."""
@@ -86,40 +87,42 @@ else:
                 if cache_directory == '': continue
                 cache_directory = source_data.cache_directory
                 if not os.path.exists(cache_directory):
-                    display_message_dialog("Cache directory '%s' does not exist. Please enter a "
-                            "valid cache directory path." % cache_directory)
-                    return False
+                    message = ("Cache directory '%s' does not exist. Please enter a "
+                              "valid cache directory path." % cache_directory)
+                    display_message_dialog()
+                    raise IntegrityError(message)
                     
                 unfound_years = []
                 for year in source_data.years:
                     year_cache_dir = os.path.join(cache_directory, str(year))
                     if not os.path.exists(year_cache_dir):
                         unfound_years.append(year)
+                        
                 if len(unfound_years) > 0:
-                    display_message_dialog("Cannot find directory for years %s in cache directory %s. "
-                            "Please enter other years." % (','.join(unfound_years), cache_directory))
-                    return False
-            
-            return True
+                    message = ("Cannot find directory for years %s in cache directory %s. "
+                               "Please enter other years." % (','.join(unfound_years), cache_directory))
+                    raise IntegrityError(message)
             
         def do_run(self, info):
             '''Takes the indicator_configuration and indicator and sends it off to the indicator factory.'''
-            source_data = self.source_data.detraitify()
-            input_valid = self._check_input_integrity(info, source_data)
-            if not input_valid: return
-            
-            indicator = self.indicator.detraitify(source_data)
-            self._generate_indicator([indicator])
-            #the following code enables threads whenever run requests is clicked
-#            thread = Thread(target = self._generate_indicator, args = ([indicator],))
-#            thread.start()
+            try:
+                source_data = self.source_data.detraitify()
+                input_valid = self._check_input_integrity(info, source_data)
+                indicator = self.indicator.detraitify(source_data)
+            except IntegrityError, e:
+                display_message_dialog(e.value)
+            else:
+                self._generate_indicator(indicator)
+                #the following code enables threads whenever run requests is clicked
+                #thread = Thread(target = self._generate_indicator, args = ([indicator],))
+                #thread.start()
 
-        def _generate_indicator(self, indicators):
+        def _generate_indicator(self, indicator):
             factory = IndicatorFactory()
             self.busy = True
             try:
                 self.results_page = factory.create_indicators(
-                    indicators,
+                    [indicator],
                     show_results = False,
                     display_error_box = True)                
             except:
