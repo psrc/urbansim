@@ -104,14 +104,15 @@ else:
             
         def do_run(self, info):
             '''Takes the indicator_configuration and indicator and sends it off to the indicator factory.'''
-               
             source_data = self.source_data.detraitify()
             input_valid = self._check_input_integrity(info, source_data)
             if not input_valid: return
             
             indicator = self.indicator.detraitify(source_data)
-            thread = Thread(target = self._generate_indicator, args = ([indicator],))
-            thread.start()
+            self._generate_indicator([indicator])
+            #the following code enables threads whenever run requests is clicked
+#            thread = Thread(target = self._generate_indicator, args = ([indicator],))
+#            thread.start()
 
         def _generate_indicator(self, indicators):
             factory = IndicatorFactory()
@@ -140,12 +141,22 @@ else:
             # location is either None, or a wx.Point that is the upper-left-hand corner of the new window
             #
             # menu & button items
-            OpenAction = Action(name="Open ...", action="do_open")
-            SaveAction = Action(name="Save", action="do_save", enabled_when="len(handler.pickle_file)>0")
-            SaveAsAction = Action(name="Save as ...", action="do_save_as")
-            RevertAction = Action(name="Revert", action="do_revert", enabled_when="handler.updated and len(handler.pickle_file)>0")
-            RunAction = Action(name="Run requests", action="do_run", enabled_when="not handler.busy")
-            ResultsAction = Action(name="View results", action="do_view_results", enabled_when="handler.has_results and not handler.busy")
+            OpenAction = Action(name="Open ...", 
+                                action="do_open")
+            SaveAction = Action(name="Save", 
+                                action="do_save", 
+                                enabled_when="len(handler.pickle_file)>0")
+            SaveAsAction = Action(name="Save as ...", 
+                                  action="do_save_as")
+            RevertAction = Action(name="Revert", 
+                                  action="do_revert", 
+                                  enabled_when="handler.updated and len(handler.pickle_file)>0")
+            RunAction = Action(name="Run requests", 
+                               action="do_run", 
+                               enabled_when="not handler.busy")
+            ResultsAction = Action(name="View results", 
+                                   action="do_view_results", 
+                                   enabled_when="handler.has_results and not handler.busy")
             #
             # menus
             file_menu = Menu(OpenAction, SaveAction, SaveAsAction, RevertAction, CloseAction, name='File')
