@@ -60,7 +60,7 @@ class Baseline(GeneralConfiguration):
                 password = os.environ.get('MYSQLPASSWORD',''),
                 database_name = 'eugene_1980_baseyear',
                 ),
-            'cache_directory':'c:/myworkspace/eugene',
+            'cache_directory':'c:/opusworkspace/eugene',
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
                 cache_directory_root = 'c:/urbansim_cache',
                 cache_from_mysql = False,
