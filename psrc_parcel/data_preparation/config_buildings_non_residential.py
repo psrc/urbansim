@@ -26,7 +26,7 @@ from opus_core.resources import merge_resources_with_defaults
 from numpy import array
 import os
 
-class ConfigBuildingsResidential(UrbansimParcelConfiguration):
+class ConfigBuildingsNonResidential(UrbansimParcelConfiguration):
     def __init__(self):
         config = UrbansimParcelConfiguration()
 
@@ -71,8 +71,8 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
         self['models_configuration']['development_proposal_choice_model']['controller']["init"]["name"] =\
                         "DevelopmentProposalSamplingModelByZones"
         self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["zones"] = 'zone'
-        self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["type"] = "'residential'"
+        self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["type"] = "'non_residential'"
         self['models_configuration']['expected_sale_price_model']['controller']["prepare_for_run"]['arguments']["parcel_filter"] = \
-                "'numpy.logical_and(numpy.logical_or(urbansim_parcel.parcel.is_residential_land_use_type, parcel.land_use_type_id==26), urbansim_parcel.parcel.vacant_land_area > 0)'"
+                "'numpy.logical_and(numpy.logical_or(numpy.logical_not(urbansim_parcel.parcel.is_residential_land_use_type), parcel.land_use_type_id==26), urbansim_parcel.parcel.vacant_land_area > 0)'"
                 #"'numpy.logical_or(parcel.land_use_type_id==26, numpy.logical_and(urbansim_parcel.parcel.is_residential_land_use_type, urbansim_parcel.parcel.vacant_land_area > 0))'"
                 
