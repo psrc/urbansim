@@ -29,6 +29,8 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             self.type["residential"] = True
         if (type is None) or (type == 'non_residential'):
             self.type["non_residential"] = True
+            
+        self.proposal_set.flush_dataset()
         zones.compute_variables(["existing_residential_units = zone.aggregate(building.residential_units, [parcel])",
                                  "existing_job_spaces = zone.aggregate(urbansim_parcel.building.total_non_home_based_job_space, [parcel])",
                                  ], dataset_pool=self.dataset_pool)
@@ -42,6 +44,8 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         exisiting_residential_units = zones.get_attribute("existing_residential_units")
         existing_job_spaces = zones.get_attribute("existing_job_spaces")
         
+        zone_ids_in_proposals = self.proposal_set.compute_variables("zone_id = development_project_proposal.disaggregate(parcel.zone_id)", 
+                                                dataset_pool=self.dataset_pool)
         zone_ids = zones.get_id_attribute()
 
         for zone_index in range(zone_ids.size):
@@ -52,10 +56,9 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             if self.type["non_residential"]:
                 self.existing_to_occupied_ratio_non_residential =  \
                             existing_job_spaces[zone_index] / float(occupied_job_spaces[zone_index])
-            self.proposal_set.compute_variables("zone_id = development_project_proposal.disaggregate(parcel.zone_id)", 
-                                                dataset_pool=self.dataset_pool)
+            
             status = self.proposal_set.get_attribute("status_id")
-            where_zone = self.proposal_set.get_attribute("zone_id") == self.zone
+            where_zone = zone_ids_in_proposals == self.zone
             idx_zone = where(where_zone)[0]
             if idx_zone.size <= 0:
                 logger.log_status("No proposals for zone %s" % self.zone)
