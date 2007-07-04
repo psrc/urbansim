@@ -26,7 +26,7 @@ from opus_core.resources import merge_resources_with_defaults
 from numpy import array
 import os
 
-class ConfigBuildings(UrbansimParcelConfiguration):
+class ConfigBuildingsResidential(UrbansimParcelConfiguration):
     def __init__(self):
         config = UrbansimParcelConfiguration()
 
@@ -64,7 +64,6 @@ class ConfigBuildings(UrbansimParcelConfiguration):
         #use configuration in config as defaults and merge with config_changes
         config.replace(config_changes)
         self.merge(config)
-#        self['models_configuration']['development_proposal_choice_model'] = {}
         self['models_configuration']['development_proposal_choice_model']['controller']["import"] =  {
                        "psrc_parcel.models.development_proposal_sampling_model_by_zones":
                        "DevelopmentProposalSamplingModelByZones"
@@ -72,4 +71,8 @@ class ConfigBuildings(UrbansimParcelConfiguration):
         self['models_configuration']['development_proposal_choice_model']['controller']["init"]["name"] =\
                         "DevelopmentProposalSamplingModelByZones"
         self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["zones"] = 'zone'
-        self['models_configuration']['expected_sale_price_model']['controller']  #no change needed 
+        self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["type"] = "'residential'"
+        self['models_configuration']['expected_sale_price_model']['controller']["prepare_for_run"]['arguments']["parcel_filter"] = \
+                "'numpy.logical_and(urbansim_parcel.parcel.is_residential_land_use_type, urbansim_parcel.parcel.vacant_land_area > 0)'"
+                #"'numpy.logical_or(parcel.land_use_type_id==26, numpy.logical_and(urbansim_parcel.parcel.is_residential_land_use_type, urbansim_parcel.parcel.vacant_land_area > 0))'"
+                
