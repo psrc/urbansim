@@ -14,7 +14,7 @@
 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 from opus_core.misc import unique_values
-from numpy import arange, logical_and, logical_or
+from numpy import arange, logical_and, logical_or, alltrue
 from numpy import reshape, repeat, ones, zeros, where
 from numpy import ma
 

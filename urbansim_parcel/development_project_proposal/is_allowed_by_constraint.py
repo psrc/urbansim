@@ -26,7 +26,9 @@ class is_allowed_by_constraint(Variable):
         return ["generic_land_use_type_id = development_template.disaggregate(land_use_type.generic_land_use_type_id)",
                 "development_template.density_type",
                 "development_constraint.constraint_type",
-                "parcel.parcel_id",
+                "development_project_proposal.parcel_id",
+                "development_project_proposal.template_id",
+                
                  ]
 
     def compute(self, dataset_pool):
@@ -47,14 +49,15 @@ class is_allowed_by_constraint(Variable):
         parcel_index = parcels.development_constraints['index'][i_sort].searchsorted(parcel_index)
         constraint_types = unique_values(constraints.get_attribute("constraint_type"))
         templates.compute_variables(map(lambda x: "%s.%s" % (self.template_opus_path, x), constraint_types), dataset_pool)
-        template_ids = templates.get_attribute("template_id")
+        template_ids = templates.get_id_attribute()
         generic_building_type_ids = templates.get_attribute("generic_land_use_type_id")
         proposal_template_ids = proposals.get_attribute("template_id")
         results = zeros(proposals.size(), dtype=bool8)
-        for i_template in range(templates.size()):
-            this_template_id = template_ids[i_template]
-            building_type_id = generic_building_type_ids[i_template]
+        unique_templates = unique_values(proposal_template_ids)
+        for this_template_id in unique_templates:
+            i_template = templates.get_id_index(this_template_id)
             fit_indicator = (proposal_template_ids == this_template_id )
+            building_type_id = generic_building_type_ids[i_template]
             for constraint_type, constraint in parcels.development_constraints[building_type_id].iteritems():                
                 template_attribute = templates.get_attribute(constraint_type)[i_template]  #density converted to constraint variable name           
                 min_constraint = constraint[:, 0][parcel_index] 
