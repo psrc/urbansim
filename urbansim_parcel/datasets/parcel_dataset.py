@@ -40,7 +40,6 @@ class ParcelDataset(UrbansimDataset):
         calculate the min and max development capacity given by constraints.
         modelled from the method of gridcell
         """
-        ## BUG: 'alltrue' is not imported, this class does not work, is it in use?
         if (self.development_constraints <> None) and (not recompute_flag):
             if (index <> None) and alltrue(self.development_constraints["index"] == index):
                 return self.development_constraints
