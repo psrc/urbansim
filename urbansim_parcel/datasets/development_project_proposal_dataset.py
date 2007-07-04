@@ -147,10 +147,10 @@ def create_from_parcel_and_development_template(parcel_dataset,
             development_project_proposals.subset_by_index(filter_index, flush_attributes_if_not_loaded=False)
         return development_project_proposals
 
-    try:
-        parcel_ids = interactionset.get_attribute("parcel_id").ravel()
+    if (interactionset.get_reduced_n() * interactionset.get_reduced_m()) < 1000000: #TODO: How to set this condition properly? 
+        parcel_ids = interactionset.get_attribute("parcel_id").ravel()              # (Catching MemoryError does not work, since python doesn't clean up.)
         template_ids = interactionset.get_attribute("template_id").ravel()
-    except MemoryError:
+    else: # do it in chunks if the datasetes are too big
         parcel_dataset.flush_dataset()
         if isinstance(dataset_pool, DatasetPool):
             dataset_pool.flush_loaded_datasets()
