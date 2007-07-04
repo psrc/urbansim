@@ -3,11 +3,13 @@ DATA PREPARATION
 Process: 
 
 I.   Create a 'jobs' table from a table of businesses
-II.  Create new buildings to accommodate all households
+II.  Create new residential buildings to accommodate all households
 III. Assign buildings to households
-IV.  Assign buildings to jobs
+IV.  Assign buildings to jobs with known parcel_id
+V.   Create new non-residential buildings to accommodate all jobs
+VI.  Assign buildings to remaining jobs
 
-I.
+I. Create a 'jobs' table
 ****
 1. Run the script unroll_jobs_from_establishments.py
   - choose appropriate settings in the __main__ part
@@ -15,22 +17,15 @@ I.
                  outstorage set to FltStorage (where your cache data is)
   - The script creates a 'jobs' table and writes it out into the outstorage.
            
-II.
+II. Create new residential buildings
 ****
-Buildings:
-----------
 1. Run a development location choice model.
-  - Use: python opus_core/tools/start_run.py -c psrc_parcel.data_preparation.config_buildings
+  - Use: python opus_core/tools/start_run.py -c psrc_parcel.data_preparation.config_buildings_residential
 
 2. Copy the resulting 'buildings' table to your cache directory (replace the existing one).
-
-3. Export the 'buildings' table to the database.
-  - Use: opus_core/tools/do_export_cache_to_mysql_database.py -c your_cache_directory/year -t buildings -d database_name
   
-III.
+III. Assign buildings to households
 ****
-Households:
------------
 1. Run a household location choice model.
   - Use: python opus_core/tools/start_run.py -c psrc_parcel.data_preparation.config_households
   
@@ -39,10 +34,8 @@ Households:
 3. Export the 'households' table to the database.
   - Use: opus_core/tools/do_export_cache_to_mysql_database.py -c your_cache_directory/year -t households -d database_name
 
-IV.
+IV. Assign buildings to jobs with known parcel_id
 ****
-Jobs:
------
 Note: We assume that the 'jobs' table have already assigned buildings from one-building parcels.
   
 1. Run the script assign_bldgs_to_jobs_when_multiple_bldgs_in_parcel.py
@@ -58,21 +51,29 @@ Note: We assume that the 'jobs' table have already assigned buildings from one-b
       into the outstorage.
   
 2. Copy the 'jobs' and 'buildings' tables into your cache directory (replace the existing ones).
+  
+V. Create new non-residential buildings
+****
+1. Run a development location choice model.
+  - Use: python opus_core/tools/start_run.py -c psrc_parcel.data_preparation.config_buildings_non_residential
 
-3. Estimate coefficients for home_based and non_home_based ELCM, using 
+2. Copy the resulting 'buildings' table to your cache directory (replace the existing one).
+
+3. Export the 'buildings' table to the database.
+  - Use: opus_core/tools/do_export_cache_to_mysql_database.py -c your_cache_directory/year -t buildings -d database_name
+  
+VI.  Assign buildings to remaining jobs
+****
+1. Estimate coefficients for home_based and non_home_based ELCM, using 
    psrc_parcel/estimation/run_estimation.py
   - Uncomment the appropriate model in __main__
   - Set the appropriate cache directory in my_estimation_config.py
 
-4. Run the employment location choice model with the estimated coefficients in order to assign buildings 
+2. Run the employment location choice model with the estimated coefficients in order to assign buildings 
    to the remaining jobs.
   - Use: python opus_core/tools/start_run.py -c psrc_parcel.data_preparation.config_jobs
 
-5. Copy the resulting 'jobs' table to your cache directory (replace the existing one).
+3. Copy the resulting 'jobs' table to your cache directory (replace the existing one).
 
-6. Export the 'jobs' table to the database.
-  - Use: opus_core/tools/do_export_cache_to_mysql_database.py -c your_cache_directory/year -t jobs -d database_name. 
-
-  
-  
-  
+4. Export the 'jobs' table to the database.
+  - Use: opus_core/tools/do_export_cache_to_mysql_database.py -c your_cache_directory/year -t jobs -d database_name.

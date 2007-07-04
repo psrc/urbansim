@@ -59,7 +59,10 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
                     'zone':{},
                     'household':{},
                     'building': {}
-                }
+                },
+            "datasets_to_cache_after_each_model": [
+                     'parcel', 'building', 'development_project_proposal', 'household', 'job'
+                     ]
         }
         #use configuration in config as defaults and merge with config_changes
         config.replace(config_changes)
