@@ -18,6 +18,8 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.resources import Resources
 from opus_core.variables.variable_name import VariableName
 from opus_core.simulation_state import SimulationState
+from opus_core.dataset_pool import DatasetPool
+from opus_core.chunk_specification import ChunkSpecification
 from opus_core.logger import logger
 from numpy import arange, where, resize
 
@@ -118,8 +120,15 @@ def create_from_parcel_and_development_template(parcel_dataset,
     interactionset = InteractionDataset(dataset1=parcel_dataset,
                                     dataset2=development_template_dataset,
                                     index1=index)
-    parcel_ids = interactionset.get_attribute("parcel_id").ravel()
-    template_ids = interactionset.get_attribute("template_id").ravel()
+    try:
+        parcel_ids = interactionset.get_attribute("parcel_id").ravel()
+        template_ids = interactionset.get_attribute("template_id").ravel()
+    except MemoryError:
+        parcel_dataset.flush_dataset()
+        if isinstance(dataset_pool, DatasetPool):
+            dataset_pool.flush_loaded_datasets()
+        parcel_ids = interactionset.get_attribute("parcel_id").ravel()
+        template_ids = interactionset.get_attribute("template_id").ravel()
 
     storage = StorageFactory().get_storage('dict_storage')
     storage.write_table(table_name='development_project_proposals',
@@ -140,10 +149,10 @@ def create_from_parcel_and_development_template(parcel_dataset,
                                                                       in_table_name='development_project_proposals',
                                                                       )
     if filter_attribute is not None:
-            development_project_proposals.compute_variables(filter_attribute, dataset_pool=dataset_pool,
-                                                            resources=Resources(resources))
-            filter_index = where(development_project_proposals.get_attribute(filter_attribute) > 0)[0]
-            development_project_proposals.subset_by_index(filter_index, flush_attributes_if_not_loaded=False)
+        development_project_proposals.compute_variables(filter_attribute, dataset_pool=dataset_pool,
+                                                        resources=Resources(resources))
+        filter_index = where(development_project_proposals.get_attribute(filter_attribute) > 0)[0]
+        development_project_proposals.subset_by_index(filter_index, flush_attributes_if_not_loaded=False)
 
     return development_project_proposals
 
