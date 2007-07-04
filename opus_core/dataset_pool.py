@@ -88,6 +88,10 @@ class DatasetPool(object):
         """Empty this pool."""
         for dataset_name in self._loaded_datasets.keys():
             self._remove_dataset(dataset_name)
+            
+    def flush_loaded_datasets(self):
+        for dataset in self.datasets_in_pool().values():
+            dataset.flush_dataset()
         
     def _remove_dataset(self, dataset_name):
         """Remove this dataset from this pool."""
