@@ -59,8 +59,8 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             status = self.proposal_set.get_attribute("status_id")
             where_zone = zone_ids_in_proposals == self.zone
             idx_zone = where(where_zone)[0]
-            if self.proposal_set.id_active in status[idx_zone]: # this zone was handled previously
-                continue
+            if (self.proposal_set.id_active in status[idx_zone]) or (self.proposal_set.id_refused in status[idx_zone]):
+                continue # this zone was handled previously
             if idx_zone.size <= 0:
                 logger.log_status("No proposals for zone %s" % self.zone)
                 continue
@@ -70,6 +70,9 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             self.proposal_set.modify_attribute(name="status_id", data=status)
             logger.log_status("DPSM for zone %s" % self.zone)
             DevelopmentProjectProposalSamplingModel.run(self, **kwargs)
+            where_not_active = where(self.proposal_set.get_attribute('status')[idx_zone] != self.proposal_set.id_active)[0]
+            status[idx_zone[where_not_active]] = self.proposal_set.id_refused
+            self.proposal_set.modify_attribute(name="status_id", data=status)
             if ((zone_index+1) % 10) == 0: # flush every 10th zone 
                 self.proposal_set.flush_dataset()
         return self.proposal_set
@@ -84,7 +87,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             type_id = target_vacancy.get_attribute_by_index("generic_building_type_id", index)
             type_name = target_vacancy.get_attribute_by_index("type_name", index)
             unit_name = target_vacancy.get_attribute_by_index("unit_name", index)  #vacancy by type, could be residential, non-residential, or by building_type
-            target = target_vacancy.get_attribute_by_index("target_vacancy_rate", index)
+            target = self.target_vacancies[type_id]
             buildings = self.dataset_pool.get_dataset("building")
             is_matched_type = buildings.get_attribute("generic_building_type_id") == type_id
             is_in_right_zone = buildings.get_attribute("zone_id") == self.zone
