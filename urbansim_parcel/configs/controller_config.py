@@ -356,15 +356,15 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                "coefficients_table": "'real_estate_price_model_coefficients'",
                                "spec_replace_module_variable_pair": "('psrc_parcel.estimation.repm_specification', 'variables_for_development_project_proposal')",
                                "dataset_pool": "dataset_pool",},
-                "output": "(proposal_set, specification, coefficients)"
+                "output": "(development_project_proposal, specification, coefficients)"
                 },
             "run": {
                 "arguments": {
                               "specification": "specification",
                               "coefficients":"coefficients",
-                              "dataset": 'proposal_set',  
+                              "dataset": 'development_project_proposal',  
                               "data_objects": "datasets" },
-                "output":"proposal_set"  #get the development project proposal back
+                "output":"development_project_proposal"  #get the development project proposal back
                     },
           },
          'development_proposal_choice_model': {
@@ -372,7 +372,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                        "DevelopmentProjectProposalSamplingModel"},
             "init": {
                 "name": "DevelopmentProjectProposalSamplingModel",
-                "arguments": {"proposal_set": "proposal_set",
+                "arguments": {"proposal_set": "development_project_proposal",
                               #weight_string omitted to use defalut value "exp_ROI = exp(urbansim_parcel.development_project_proposal.expected_rate_of_return_on_investment)",                      
                               "filter_attribute": None, # the filter has been handled in the process of creating proposal set 
                                                         # (prepare_for_run in expected_sale_price_model)

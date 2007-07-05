@@ -25,13 +25,14 @@ from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
 from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
+from urbansim_parcel.datasets.development_project_proposal_component_dataset import create_from_proposals_and_template_components
 from opus_core.model import Model
 
 class DevelopmentProjectProposalSamplingModel(Model):
 
     def __init__(self, proposal_set,
                  sampler="opus_core.samplers.weighted_sampler",
-                 weight_string = "exp_ROI = exp(urbansim_parcel.development_project_proposal.expected_rate_of_return_on_investment)",
+                 weight_string = "exp_roi = exp(urbansim_parcel.development_project_proposal.expected_rate_of_return_on_investment)",
                  filter_attribute=None,
                  run_config=None, estimate_config=None,
                  debuglevel=0, dataset_pool=None):
@@ -41,7 +42,12 @@ class DevelopmentProjectProposalSamplingModel(Model):
         self.dataset_pool = self.create_dataset_pool(dataset_pool, pool_packages=['urbansim_parcel', 'urbansim', 'opus_core'])
         self.dataset_pool.add_datasets_if_not_included({proposal_set.get_dataset_name(): proposal_set})
         self.proposal_set = proposal_set
-        self.proposal_component_set = self.dataset_pool.get_dataset("development_project_proposal_component")
+        if not self.dataset_pool.has_dataset("development_project_proposal_component"):
+            self.proposal_component_set = create_from_proposals_and_template_components(proposal_set, 
+                                                       self.dataset_pool.get_dataset('development_template_component'))
+            self.dataset_pool.replace_dataset(self.proposal_component_set.get_dataset_name(), self.proposal_component_set)
+        else:
+            self.proposal_component_set = self.dataset_pool.get_dataset("development_project_proposal_component")
 
         if weight_string is not None:
             if weight_string not in proposal_set.get_known_attribute_names():
@@ -103,7 +109,10 @@ class DevelopmentProjectProposalSamplingModel(Model):
             if self.weight.sum() == 0.0:
                 break
             idx = where(self.proposal_set.get_attribute("status_id") == status)[0]
+            if idx.size <= 0:
+                continue
             isorted = self.weight[idx].argsort()[range(idx.size-1,-1,-1)]
+            # consider proposals in order of the highest weights
             self.consider_proposals(idx[isorted], current_target_vacancy)
 
         # consider tentative proposals
@@ -127,11 +136,12 @@ class DevelopmentProjectProposalSamplingModel(Model):
         # set status of accepted proposals to 'active'
         self.proposal_set.modify_attribute(name="status_id", data=self.proposal_set.id_active,
                                           index=array(self.accepted_proposals, dtype='int32'))
+        logger.log_status("Status of %s development proposals set to active." % len(self.accepted_proposals))
         # delete all tentative (not accepted) proposals from the proposal set
         self.proposal_set.remove_elements(where(
                     self.proposal_set.get_attribute("status_id") == self.proposal_set.id_tentative)[0])
 #        schedule_development_projects = self.schedule_accepted_proposals()
-        logger.log_status("Status of %s development proposals set to active." % len(self.accepted_proposals))
+        
         return self.proposal_set  #schedule_development_projects
 
     def check_vacancy_rates(self, target_vacancy):
