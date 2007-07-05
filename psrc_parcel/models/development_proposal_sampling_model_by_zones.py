@@ -59,6 +59,8 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             status = self.proposal_set.get_attribute("status_id")
             where_zone = zone_ids_in_proposals == self.zone
             idx_zone = where(where_zone)[0]
+            if self.proposal_set.id_active in status[idx_zone]: # this zone was handled previously
+                continue
             if idx_zone.size <= 0:
                 logger.log_status("No proposals for zone %s" % self.zone)
                 continue
@@ -68,6 +70,8 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             self.proposal_set.modify_attribute(name="status_id", data=status)
             logger.log_status("DPSM for zone %s" % self.zone)
             DevelopmentProjectProposalSamplingModel.run(self, **kwargs)
+            if ((zone_index+1) % 10) == 0: # flush every 10th zone 
+                self.proposal_set.flush_dataset()
         return self.proposal_set
 
     def check_vacancy_rates(self, target_vacancy):

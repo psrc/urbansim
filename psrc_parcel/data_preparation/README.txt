@@ -23,6 +23,15 @@ II. Create new residential buildings
   - Use: python opus_core/tools/start_run.py -c psrc_parcel.data_preparation.config_buildings_residential
 
 2. Copy the resulting 'buildings' table to your cache directory (replace the existing one).
+
+Note: The procedure in Step 1. includes creating a proposal set which can be very time consuming. 
+      If you pass the point where the proposal set is created (i.e. the Development Project Proposal Regression Model
+      has finished) and need to re-run the step, do the following:
+      - copy the directory 'development_project_proposals' from the simulation directory to your baseyear cache
+      - modify config_buildings_residential.py as follows:
+          * comment out the entry "expected_sale_price_model" in "models" 
+          * add 'development_project_proposal': {} to the 'datasets_to_preload' entry
+      - invoke the start_run.py command (Step 1.) again
   
 III. Assign buildings to households
 ****
