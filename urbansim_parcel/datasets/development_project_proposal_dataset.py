@@ -19,8 +19,9 @@ from opus_core.resources import Resources
 from opus_core.variables.variable_name import VariableName
 from opus_core.simulation_state import SimulationState
 from opus_core.dataset_pool import DatasetPool
+from opus_core.misc import unique_values
 from opus_core.logger import logger
-from numpy import arange, where, resize
+from numpy import arange, where, resize, zeros, array, logical_and, logical_or
 
 class DevelopmentProjectProposalDataset(UrbansimDataset):
     """ contains the proposed development projects, which is created from interaction of parcels with development template;
@@ -116,15 +117,16 @@ def create_from_parcel_and_development_template(parcel_dataset,
         logger.log_warning("parcel index for creating development proposals is of size 0. No proposals will be created.")
         return None
     
+    template_index = _preselect_templates(parcel_dataset, index, development_template_dataset, dataset_pool)
     interactionset = InteractionDataset(dataset1=parcel_dataset,
                                     dataset2=development_template_dataset,
-                                    index1=index)
+                                    index1=index, index2=template_index)
+    
     storage = StorageFactory().get_storage('dict_storage')
     current_year = SimulationState().get_current_time()
     
-    def _create_project_proposals(parcel_ids, template_ids):
-        storage.write_table(table_name='development_project_proposals',
-            table_data={
+    def _get_data(parcel_ids, template_ids):
+        return {
                 "proposal_id": arange(1, parcel_ids.size+1, 1),
                 "parcel_id" : parcel_ids,
                 "template_id": template_ids,
@@ -132,6 +134,10 @@ def create_from_parcel_and_development_template(parcel_dataset,
                 "status_id": resize(array([DevelopmentProjectProposalDataset.id_tentative], dtype="int16"), 
                     parcel_ids.size)
                 }
+        
+    def _create_project_proposals(parcel_ids, template_ids):
+        storage.write_table(table_name='development_project_proposals',
+            table_data = _get_data(parcel_ids, template_ids)
             )
         development_project_proposals = DevelopmentProjectProposalDataset(resources=Resources(resources),
                                                                           dataset1 = parcel_dataset,
@@ -140,37 +146,98 @@ def create_from_parcel_and_development_template(parcel_dataset,
                                                                           in_storage=storage,
                                                                           in_table_name='development_project_proposals',
                                                                           )
-        if filter_attribute is not None:
-            development_project_proposals.compute_variables(filter_attribute, dataset_pool=dataset_pool,
-                                                            resources=Resources(resources))
-            filter_index = where(development_project_proposals.get_attribute(filter_attribute) > 0)[0]
-            development_project_proposals.subset_by_index(filter_index, flush_attributes_if_not_loaded=False)
         return development_project_proposals
+    
+    def _compute_filter(proposals):
+        if filter_attribute is not None:
+            proposals.compute_variables(filter_attribute, dataset_pool=dataset_pool,
+                                                            resources=Resources(resources))
+            filter_index = where(proposals.get_attribute(filter_attribute) > 0)[0]
+            return filter_index
+        return None
+    
+    def _subset_by_filter(proposals):
+        filter_index = _compute_filter(proposals)
+        if filter_index is not None:
+            proposals.subset_by_index(filter_index, flush_attributes_if_not_loaded=False)
+        return proposals
 
-    if (interactionset.get_reduced_n() * interactionset.get_reduced_m()) < 1000000: #TODO: How to set this condition properly? 
-        parcel_ids = interactionset.get_attribute("parcel_id").ravel()              # (Catching MemoryError does not work, since python doesn't clean up.)
-        template_ids = interactionset.get_attribute("template_id").ravel()
-    else: # do it in chunks if the datasetes are too big
-        parcel_dataset.flush_dataset()
+    if (interactionset.get_reduced_n() * interactionset.get_reduced_m()) > 1000000: #TODO: How to set this condition properly? 
+                                                                                    # (Catching MemoryError does not work, since python doesn't clean up.)
+        # do it in chunks (per template) if the total size is too big
+        parcel_dataset.flush_dataset() 
         if isinstance(dataset_pool, DatasetPool):
             dataset_pool.flush_loaded_datasets()
         if index is None:
             index = arange(parcel_dataset.size())
+        logger.log_status("Iterate over %s templates." % template_index.size)
         # iterate over the size of template dataset
-        template_ids = development_template_dataset.get_id_attribute()
+        template_ids = development_template_dataset.get_id_attribute()[template_index]
         parcel_ids = parcel_dataset.get_id_attribute()[index]
         proposals = None
-        for itemplate in range(development_template_dataset.size()):
+        working_proposals = None
+        for itemplate in range(template_index.size):
             this_template_ids = array(index.size * [template_ids[itemplate]])
-            new_proposals = _create_project_proposals(parcel_ids, this_template_ids)
-            if proposals is None:
-                proposals = new_proposals
+            if working_proposals is None:
+                working_proposals = _create_project_proposals(parcel_ids, this_template_ids)
+                proposals = _create_project_proposals(parcel_ids, this_template_ids)
+                proposals = _subset_by_filter(proposals)
             else:
-                proposals.join_by_rows(new_proposals, change_ids_if_not_unique=True)
+                working_proposals.modify_attribute(name="template_id", data = this_template_ids)
+                filter_index = _compute_filter(working_proposals)
+                proposals.add_elements(_get_data(parcel_ids[filter_index], this_template_ids[filter_index]),
+                                                 change_ids_if_not_unique=True)
+        proposals.flush_dataset()
         return proposals
 
-    return _create_project_proposals(parcel_ids, template_ids)
+    parcel_ids = interactionset.get_attribute("parcel_id").ravel()              
+    template_ids = interactionset.get_attribute("template_id").ravel()
+    proposals = _create_project_proposals(parcel_ids, template_ids)
+    return _subset_by_filter(proposals)
 
+def _preselect_templates(parcel_dataset, parcel_index, development_template_dataset, dataset_pool,
+                         template_opus_path = "urbansim_parcel.development_template"):
+    """ The function returns an index of templates (within the template dataset) which can be used
+    in combination with the given parcels (in parcel_index). The eligibility is checked using
+    the constraints dataset. 
+    (The code is a modified version of the variable development_project_proposal.is_allowed_by_constraint.)
+    """
+    if (parcel_index is None):
+        return arange(development_template_dataset.size()) # take all templates
+
+    try:
+        constraints = dataset_pool.get_dataset("development_constraint")
+    except:
+        return arange(development_template_dataset.size())
+
+    parcel_dataset.get_development_constraints(constraints, dataset_pool, index=parcel_index)
+    constraint_types = unique_values(constraints.get_attribute("constraint_type"))
+    development_template_dataset.compute_variables(map(lambda x: "%s.%s" % (template_opus_path, x), constraint_types), 
+                                                   dataset_pool)
+    template_ids = development_template_dataset.get_id_attribute()
+    generic_land_use_type_ids = development_template_dataset.compute_variables([
+                "generic_land_use_type_id = development_template.disaggregate(land_use_type.generic_land_use_type_id)"],
+                 dataset_pool=dataset_pool)
+    results = zeros(development_template_dataset.size(), dtype='bool8')
+    for i_template in range(template_ids.size):
+        this_template_id = template_ids[i_template]
+        land_use_type_id = generic_land_use_type_ids[i_template]
+        fit_indicator = array(parcel_index.size*[False], dtype="bool8")
+        for constraint_type, constraint in parcel_dataset.development_constraints[land_use_type_id].iteritems():                
+            template_attribute = development_template_dataset.get_attribute(constraint_type)[i_template]  #density converted to constraint variable name
+            if template_attribute == 0:
+                continue
+            min_constraint = constraint[:, 0]
+            max_constraint = constraint[:, 1]
+            
+            fit_indicator = logical_or(fit_indicator,
+                                        logical_and(template_attribute >= min_constraint,
+                                                    template_attribute <= max_constraint)
+                                        )
+        if True in fit_indicator:
+            results[i_template] = True
+    return where(results)[0]
+    
 from opus_core.tests import opus_unittest
 from opus_core.dataset_pool import DatasetPool
 from numpy import array

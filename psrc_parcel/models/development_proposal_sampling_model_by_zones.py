@@ -30,7 +30,6 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         if (type is None) or (type == 'non_residential'):
             self.type["non_residential"] = True
             
-        self.proposal_set.flush_dataset()
         zones.compute_variables(["existing_residential_units = zone.aggregate(building.residential_units, [parcel])",
                                  "existing_job_spaces = zone.aggregate(urbansim_parcel.building.total_non_home_based_job_space, [parcel])",
                                  ], dataset_pool=self.dataset_pool)
@@ -68,7 +67,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             status[idx_out_zone_not_active] = self.proposal_set.id_not_available
             self.proposal_set.modify_attribute(name="status_id", data=status)
             logger.log_status("DPSM for zone %s" % self.zone)
-            DevelopmentProjectProposalSamplingModel.run(self, *args, **kwargs)
+            DevelopmentProjectProposalSamplingModel.run(self, **kwargs)
         return self.proposal_set
 
     def check_vacancy_rates(self, target_vacancy):
