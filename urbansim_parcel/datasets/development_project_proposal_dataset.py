@@ -38,6 +38,7 @@ class DevelopmentProjectProposalDataset(UrbansimDataset):
     id_planned = 3
     id_tentative = 4
     id_not_available = 5
+    id_refused = 6
     
     def __init__(self, resources=None, dataset1=None, dataset2=None, index1=None, **kwargs):
         """ This dataset is an interaction of two datasets (originally, parcel and development template).

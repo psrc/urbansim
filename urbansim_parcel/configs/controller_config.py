@@ -381,7 +381,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
             "run": {
                 "arguments": {'n':500,  # sample 500 proposal at a time, evaluate them one by one
                               },
-                "output":"proposal_set"
+                "output":"development_project_proposal"
                     },
           },
                                        
@@ -393,7 +393,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                 },
              "run": {
                 "arguments": {
-                   "development_proposal_set": "proposal_set",
+                   "development_proposal_set": "development_project_proposal",
                    "building_dataset": "building",
                    "dataset_pool": "dataset_pool"
                    }

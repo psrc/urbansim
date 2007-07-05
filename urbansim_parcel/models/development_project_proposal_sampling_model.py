@@ -102,6 +102,12 @@ class DevelopmentProjectProposalSamplingModel(Model):
         self.accepting_proposals = {}  #whether accepting new proposals, for each land_use type
         self.accepted_proposals = [] # index of accepted proposals
 
+        self.target_vacancies = {}
+        tv_gen_building_types = current_target_vacancy.get_attribute("generic_building_type_id")
+        tv_rate = current_target_vacancy.get_attribute("target_vacancy_rate")
+        for itype in range(tv_gen_building_types.size):
+            self.target_vacancies[tv_gen_building_types[i]] = tv_rate[itype]
+            
         self.check_vacancy_rates(current_target_vacancy)  #initialize self.accepting_proposal based on current vacancy rate
 
         # consider planned and proposed proposals
@@ -150,7 +156,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
             type_name = target_vacancy.get_attribute_by_index("type_name", index)
             unit_name = target_vacancy.get_attribute_by_index("unit_name", index)  #vacancy by type, could be residential, non-residential, or by building_type
 
-            target = target_vacancy.get_attribute_by_index("target_vacancy_rate", index)
+            target = self.target_vacancies[type_id]
             buildings = self.dataset_pool.get_dataset("building")
             is_matched_type = buildings.get_attribute("generic_building_type_id") == type_id
             existing_units = buildings.get_attribute(unit_name)[is_matched_type]
@@ -169,9 +175,10 @@ class DevelopmentProjectProposalSamplingModel(Model):
     def consider_proposals(self, proposal_indexes, target_vacancy):
         buildings = self.dataset_pool.get_dataset("building")
         building_site = buildings.get_attribute("parcel_id")
-        #proposal_indexes = self.proposal_set.get_id_index(proposals)
+
         is_proposal_rejected = zeros(proposal_indexes.size, dtype=bool8)
-        proposal_site = self.proposal_set.get_attribute_by_index("parcel_id", proposal_indexes)
+        proposals_parcel_ids = self.proposal_set.get_attribute("parcel_id")
+        proposal_site = proposals_parcel_ids[proposal_indexes]
         #proposal_type = self.proposal_set.get_attribute_by_index("unit_type", proposal_indexes)
 #        pro_rated = self.proposal_set.get_attribute_by_index("pro_rated", proposal_indexes) #whether the project is pro_rated
 #        years = self.proposal_set.get_attribute_by_index("years", proposal_indexes)         #how many years it take to build
@@ -182,9 +189,10 @@ class DevelopmentProjectProposalSamplingModel(Model):
 
         proposal_ids = self.proposal_set.get_id_attribute()
         proposal_ids_in_component_set = self.proposal_component_set.get_attribute("proposal_id")
-
+        all_units_proposed = self.proposal_component_set.get_attribute("units_proposed")
+        
         for i in range(proposal_indexes.size):
-            if not sometrue(array(self.accepting_proposals.values())):
+            if not (True in self.accepting_proposals.values()):
                 # if none of the types is accepting_proposals, exit
                 # this is put in the loop to check if the last accepted proposal has sufficed
                 # the target vacancy rates for all types
@@ -193,8 +201,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
             if is_proposal_rejected[i]:
                 continue
             proposal_index_in_component_set = where(proposal_ids_in_component_set == proposal_ids[proposal_index])[0]
-            units_proposed = self.proposal_component_set.get_attribute_by_index("units_proposed",
-                                                                                proposal_index_in_component_set)
+            units_proposed = all_units_proposed[proposal_index_in_component_set]
             component_types = components_generic_building_type_ids[proposal_index_in_component_set]
 
             # If one of the involved types is not accepted, reject the proposal
@@ -225,7 +232,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 self.proposed_units[type_id] += units_proposed[itype_id]
                 units_stock = self.existing_units[type_id] - self.demolished_units[type_id] + self.proposed_units[type_id]
                 vr = (units_stock - self.occupied_units[type_id]) / float(units_stock)
-                if vr >= target_vacancy.get_attribute("target_vacancy_rate")[target_vacancy.get_attribute("generic_building_type_id")==type_id][0]:
+                if vr >= self.target_vacancies[type_id]:
                     self.accepting_proposals[type_id] = False
                 else:
                     self.accepting_proposals[type_id] = True
@@ -235,7 +242,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
             # reject all pending proposals for this site
             is_proposal_rejected[proposal_site == this_site] = True
             # don't consider proposed projects for this site in the future (i.e. in further sampling)
-            self.weight[self.proposal_set.get_attribute("parcel_id")==this_site] = 0.0
+            self.weight[proposals_parcel_ids == this_site] = 0.0
 
         ## TODO: because of demolition, this won't work
         ## a type reaching target vacancy rates may become less than target

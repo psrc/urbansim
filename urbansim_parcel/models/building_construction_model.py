@@ -67,7 +67,12 @@ class BuildingConstructionModel(Model):
         parcels = dataset_pool.get_dataset("parcel")
         parcels.compute_variables(map(lambda x: "%s = parcel.aggregate(urbansim_parcel.building.%s)" % (x, x), unique_unit_names), 
                                   dataset_pool=dataset_pool)
-        
+        parcel_is_lut_vacant = parcels.compute_variables(["urbansim_parcel.parcel.is_land_use_type_vacant"], 
+                                  dataset_pool=dataset_pool)
+        parcel_lut = parcels.get_attribute("land_use_type_id")
+        component_land_use_types = proposal_component_set.compute_variables([
+              'development_project_proposal_component.disaggregate(development_template.land_use_type_id, [development_project_proposal])'],
+                      dataset_pool=dataset_pool)
         # from the velocity function determine the amount to be built for each component
         if velocity_function_set is not None:
             development_amount = proposal_component_set.compute_variables(["cummulative_amount_of_development"], 
@@ -128,6 +133,8 @@ class BuildingConstructionModel(Model):
                                                                   sqft_per_unit[pidx][idx_to_be_built]))
                     new_buildings["land_area"] = concatenate((new_buildings["land_area"], 
                                                               array(idx_to_be_built.size * [parcel_sqft[parcel_index]])))
+                    if parcel_is_lut_vacant[parcel_index]:
+                        parcel_lut[parcel_index] = component_land_use_types[pidx][idx_to_be_built][0]
                                                                   
         # add created buildings to the existing building dataset
         new_buildings["building_id"] = max_building_id + arange(1, new_buildings["parcel_id"].size+1)
