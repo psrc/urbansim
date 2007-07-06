@@ -59,7 +59,10 @@ class ConfigBuildingsNonResidential(UrbansimParcelConfiguration):
                     'zone':{},
                     'household':{},
                     'building': {}
-                }
+                },
+            "datasets_to_cache_after_each_model": [
+                     'parcel', 'building', 'development_project_proposal', 'household', 'job'
+                     ]
         }
         #use configuration in config as defaults and merge with config_changes
         config.replace(config_changes)
@@ -73,6 +76,6 @@ class ConfigBuildingsNonResidential(UrbansimParcelConfiguration):
         self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["zones"] = 'zone'
         self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["type"] = "'non_residential'"
         self['models_configuration']['expected_sale_price_model']['controller']["prepare_for_run"]['arguments']["parcel_filter"] = \
-                "'numpy.logical_and(numpy.logical_or(numpy.logical_not(urbansim_parcel.parcel.is_residential_land_use_type), parcel.land_use_type_id==26), urbansim_parcel.parcel.vacant_land_area > 0)'"
+            "'numpy.logical_and(numpy.logical_or(numpy.logical_not(urbansim_parcel.parcel.is_residential_land_use_type), logical_and(parcel.land_use_type_id==26, urbansim_parcel.parcel.is_non_residential_plan_type)), urbansim_parcel.parcel.vacant_land_area > 0)'"
                 #"'numpy.logical_or(parcel.land_use_type_id==26, numpy.logical_and(urbansim_parcel.parcel.is_residential_land_use_type, urbansim_parcel.parcel.vacant_land_area > 0))'"
                 

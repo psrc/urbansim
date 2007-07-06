@@ -70,7 +70,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             self.proposal_set.modify_attribute(name="status_id", data=status)
             logger.log_status("DPSM for zone %s" % self.zone)
             DevelopmentProjectProposalSamplingModel.run(self, **kwargs)
-            where_not_active = where(self.proposal_set.get_attribute('status')[idx_zone] != self.proposal_set.id_active)[0]
+            where_not_active = where(self.proposal_set.get_attribute('status_id')[idx_zone] != self.proposal_set.id_active)[0]
             status[idx_zone[where_not_active]] = self.proposal_set.id_refused
             self.proposal_set.modify_attribute(name="status_id", data=status)
             if ((zone_index+1) % 10) == 0: # flush every 10th zone 

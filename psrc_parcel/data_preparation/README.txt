@@ -25,12 +25,16 @@ II. Create new residential buildings
 2. Copy the resulting 'buildings' table to your cache directory (replace the existing one).
 
 Note: The procedure in Step 1. includes creating a proposal set which can be very time consuming. 
-      If you pass the point where the proposal set is created (i.e. the Development Project Proposal Regression Model
-      has finished) and need to re-run the step, do the following:
+      If you pass the point where the proposal set is created and need to re-run the step, do the following:
       - copy the directory 'development_project_proposals' from the simulation directory to your baseyear cache
       - modify config_buildings_residential.py as follows:
-          * comment out the entry "expected_sale_price_model" in "models" 
           * add 'development_project_proposal': {} to the 'datasets_to_preload' entry
+          * if you need to also re-run the Development Project Proposal Regression Model,
+            uncomment the line 
+            self['models_configuration']['expected_sale_price_model']['controller']["prepare_for_run"]['arguments']["create_proposal_set"] = False
+          * otherwise, comment out the entry "expected_sale_price_model" in "models" 
+           (make sure the development_project_proposals directory in your baseyear cache has the attribute 'unit_price_expected',
+            which is the result of the eliminated model)
       - invoke the start_run.py command (Step 1.) again
   
 III. Assign buildings to households
