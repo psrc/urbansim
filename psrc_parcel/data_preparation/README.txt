@@ -35,6 +35,9 @@ Note: The procedure in Step 1. includes creating a proposal set which can be ver
           * otherwise, comment out the entry "expected_sale_price_model" in "models" 
            (make sure the development_project_proposals directory in your baseyear cache has the attribute 'unit_price_expected',
             which is the result of the eliminated model)
+      - if you want to re-run the development sampling model starting with the zone where your previous run ended,
+        make sure that the development_project_proposals directory in your baseyear cache has the most recent version 
+        of the attribute 'status_id' (the model flushes the dataset every 10 zones into the simulation directory).
       - invoke the start_run.py command (Step 1.) again
   
 III. Assign buildings to households
