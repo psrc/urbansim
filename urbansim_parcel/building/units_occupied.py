@@ -30,9 +30,9 @@ class units_occupied(Variable):
 #                "occupied_residential_units = building.number_of_agents(household)",
 #                "urbansim_parcel.building.building_sqft_per_residential_unit",
 #                "_units_occupied = building.occupied_building_sqft + building.occupied_residential_units * building.building_sqft_per_residential_unit"
-                "_generic_unit_name = building.disaggregate(generic_building_type.unit_name, intermediates=[building_type])",
-                "parcel_sqft = building.disaggregate(parcel.parcel_sqft)",
-
+                "urbansim_parcel.building.generic_unit_name",
+                "urbansim_parcel.building.parcel_sqft",
+                "generic_building_type.unit_name"
 ##                "generic_building_type_name = building.disaggregate(generic_building_type.generic_building_type_name, intermediates=[building_type])"
                 ]
 
@@ -44,7 +44,7 @@ class units_occupied(Variable):
         for unit_name in unique_values(dataset_pool.get_dataset("generic_building_type").get_attribute("unit_name")):
             #should not count parcel_sqft
             if unit_name == "parcel_sqft":continue
-            matched = buildings.get_attribute("_generic_unit_name") == unit_name
+            matched = buildings.get_attribute("generic_unit_name") == unit_name
             results[matched] = buildings.get_attribute(unit_name)[matched].astype(self._return_type)
         return results
 

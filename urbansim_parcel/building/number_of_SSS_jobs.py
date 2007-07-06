@@ -20,23 +20,19 @@ class number_of_SSS_jobs(Variable):
     """Number of SSS (home_based, non_home_based) jobs in a given building"""
 
     _return_type="int32"
+    
     def __init__(self, status):
         self.status = status
         Variable.__init__(self)
         
     def dependencies(self):
-        return ["job_building_type.name",
-                "job.building_type",
+        return ["urbansim.job.is_building_type_%s" % self.status,
                 "job.building_id"
                 ]
 
     def compute(self,  dataset_pool):
-        job_building_type = dataset_pool.get_dataset("job_building_type")
-        jobs = dataset_pool.get_dataset("job")
-        job_building_type_id = job_building_type.get_id_attribute()[where(job_building_type.get_attribute("name")==self.status)[0]]
-        is_of_status = jobs.get_attribute("building_type") == job_building_type_id
-    
-        return self.get_dataset().sum_dataset_over_ids(jobs, constant=is_of_status)
+        jobs = dataset_pool.get_dataset('job')
+        return self.get_dataset().sum_dataset_over_ids(jobs, attribute_name="is_building_type_%s" % self.status)
 
     def post_check(self,  values, dataset_pool=None):
         size = dataset_pool.get_dataset("job").size()

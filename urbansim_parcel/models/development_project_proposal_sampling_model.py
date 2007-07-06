@@ -80,7 +80,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
             'urbansim_parcel.development_project_proposal_component.units_proposed'],
                                         dataset_pool=self.dataset_pool)
         buildings = self.dataset_pool.get_dataset("building")
-        buildings.compute_variables(["generic_building_type_id = building.disaggregate(building_type.generic_building_type_id)",
+        buildings.compute_variables(["urbansim_parcel.building.generic_building_type_id",
                                     "occupied_building_sqft=urbansim_parcel.building.occupied_building_sqft_by_jobs",
                                     "urbansim_parcel.building.existing_units",
                                     "occupied_residential_units = building.number_of_agents(household)",
