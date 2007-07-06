@@ -106,7 +106,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         tv_gen_building_types = current_target_vacancy.get_attribute("generic_building_type_id")
         tv_rate = current_target_vacancy.get_attribute("target_vacancy_rate")
         for itype in range(tv_gen_building_types.size):
-            self.target_vacancies[tv_gen_building_types[i]] = tv_rate[itype]
+            self.target_vacancies[tv_gen_building_types[itype]] = tv_rate[itype]
             
         self.check_vacancy_rates(current_target_vacancy)  #initialize self.accepting_proposal based on current vacancy rate
 
@@ -241,8 +241,12 @@ class DevelopmentProjectProposalSamplingModel(Model):
             self.accepted_proposals.append(proposal_index)
             # reject all pending proposals for this site
             is_proposal_rejected[proposal_site == this_site] = True
+            if is_proposal_rejected.sum() == is_proposal_rejected.size:
+                break
             # don't consider proposed projects for this site in the future (i.e. in further sampling)
             self.weight[proposals_parcel_ids == this_site] = 0.0
+            if self.weight.sum() == 0.0:
+                break
 
         ## TODO: because of demolition, this won't work
         ## a type reaching target vacancy rates may become less than target

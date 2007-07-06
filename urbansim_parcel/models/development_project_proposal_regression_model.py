@@ -84,42 +84,45 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         
         return dataset
     
-    def prepare_for_run(self, dataset_pool, parcel_filter=None, spec_replace_module_variable_pair=None, 
-                        *args, **kwargs):
+    def prepare_for_run(self, dataset_pool, parcel_filter=None, create_proposal_set=True,
+                        spec_replace_module_variable_pair=None, **kwargs):
         """create development project proposal dataset from parcels and development templates.
         spec_replace_module_variable_pair is a tuple with two elements: module name, variable within the module
         that contans a dictionary of model variables to be replaced in the specification.
         """
-        specification, coefficients = RegressionModel.prepare_for_run(self, *args, **kwargs)
-
-        #data_objects = kwargs['data_objects']
+        specification, coefficients = RegressionModel.prepare_for_run(self, **kwargs)
+        try:
+            existing_proposal_set = dataset_pool.get_dataset('development_project_proposal')
+        except:
+            existing_proposal_set = None
+            
         parcels = dataset_pool.get_dataset('parcel')
         templates = dataset_pool.get_dataset('development_template')
-
+        
         if parcel_filter is not None:
             parcels.compute_variables(parcel_filter)
             index1 = where(parcels.get_attribute(parcel_filter))[0]
         else:
             index1 = None
             
-#        from opus_core.misc import sample
-#        from opus_core.datasets.dataset import DatasetSubset
-#        n = parcels.size()
-#        index1=sample(arange(n), int(n*0.001))
-
-        try:
-            existing_proposal_set = dataset_pool.get_dataset('development_project_proposal')
-        except:
-            existing_proposal_set = None
-            
-        proposal_set = create_from_parcel_and_development_template(parcels, templates, 
+        if create_proposal_set:
+    #        from opus_core.misc import sample
+    #        from opus_core.datasets.dataset import DatasetSubset
+    #        n = parcels.size()
+    #        index1=sample(arange(n), int(n*0.001))
+                    
+            proposal_set = create_from_parcel_and_development_template(parcels, templates, 
                                                               filter_attribute=self.filter,
                                                               index = index1,
                                                               dataset_pool=dataset_pool,
                                                               resources = kwargs.get("resources", None))
         
-        if existing_proposal_set is not None: # add existing proposals to the created ones
-            proposal_set.join_by_rows(existing_proposal_set, require_all_attributes=False, change_ids_if_not_unique=True)
+            if existing_proposal_set is not None: # add existing proposals to the created ones
+                proposal_set.join_by_rows(existing_proposal_set, require_all_attributes=False, change_ids_if_not_unique=True)
+        else:
+            proposal_set = existing_proposal_set
+            proposal_set._set_my_class_attributes(parcels, templates, index1)
+            
         dataset_pool.replace_dataset(proposal_set.get_dataset_name(), proposal_set)
         
         if spec_replace_module_variable_pair is not None:

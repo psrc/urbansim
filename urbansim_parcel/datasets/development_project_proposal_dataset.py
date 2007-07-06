@@ -45,13 +45,16 @@ class DevelopmentProjectProposalDataset(UrbansimDataset):
             It's similar to InteractionSet, but flattend to 1d, thus regression model can use this dataset without changes
         """
         UrbansimDataset.__init__(self, resources=resources, **kwargs)
+        self._set_my_class_attributes(dataset1, dataset2, index1)
+
+    def _set_my_class_attributes(self, dataset1=None, dataset2=None, index1=None):
         if dataset1 is not None:
             self.dataset1 = dataset1
         if dataset2 is not None:
             self.dataset2 = dataset2
         if index1 is not None:
             self.index1 = index1
-
+        
     def _compute_if_needed(self, name, dataset_pool, resources=None, quiet=False, version=None):
         """ Compute variable given by the argument 'name' only if this variable
         has not been computed before.
