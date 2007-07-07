@@ -16,8 +16,9 @@
 # one of the aliases uses a primary attribute in the expression, the other a variable
 
 aliases = [
-   "generic_unit_name = building.disaggregate(generic_building_type.unit_name, intermediates=[building_type])",
-   "generic_building_type_id = building.disaggregate(building_type.generic_building_type_id)",
+#   "generic_unit_name = building.disaggregate(generic_building_type.unit_name, intermediates=[building_type])",
+   "unit_name = building.disaggregate(building_type.unit_name)",
+#   "generic_building_type_id = building.disaggregate(building_type.generic_building_type_id)",
    "parcel_sqft = building.disaggregate(parcel.parcel_sqft)",
    "number_of_jobs = building.number_of_agents(job)",
    "occupied_building_sqft_by_non_home_based_jobs = building.aggregate(job.sqft * urbansim.job.is_building_type_non_home_based)",

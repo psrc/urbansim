@@ -51,7 +51,7 @@ class ParcelDataset(UrbansimDataset):
         self.compute_variables(attributes_with_prefix, dataset_pool=dataset_pool)
         if index == None:
             index = arange(self.size())
-        # constraints are specified for each generic_building_type, 
+        # constraints are specified for each generic_land use_type, 
         development_constraints_array = ones((constraints.size(),index.size), dtype='bool8')
         for attr in attributes:
             values = self.get_attribute_by_index(attr, index)

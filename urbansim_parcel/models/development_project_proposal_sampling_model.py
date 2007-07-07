@@ -76,11 +76,11 @@ class DevelopmentProjectProposalSamplingModel(Model):
         current_year = SimulationState().get_current_time()
 
         self.proposal_component_set.compute_variables([
-            'generic_building_type_id = development_project_proposal_component.disaggregate(building_type.generic_building_type_id)',
+#            'generic_building_type_id = development_project_proposal_component.disaggregate(building_type.generic_building_type_id)',
             'urbansim_parcel.development_project_proposal_component.units_proposed'],
                                         dataset_pool=self.dataset_pool)
         buildings = self.dataset_pool.get_dataset("building")
-        buildings.compute_variables(["urbansim_parcel.building.generic_building_type_id",
+        buildings.compute_variables([#"urbansim_parcel.building.generic_building_type_id",
                                     "occupied_building_sqft=urbansim_parcel.building.occupied_building_sqft_by_jobs",
                                     "urbansim_parcel.building.existing_units",
                                     "occupied_residential_units = building.number_of_agents(household)",
@@ -88,8 +88,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                     ],
                                     dataset_pool=self.dataset_pool)
         target_vacancy = self.dataset_pool.get_dataset('target_vacancy')
-        target_vacancy.compute_variables(['type_name=target_vacancy.disaggregate(generic_building_type.generic_building_type_name)',
-                                          'unit_name=target_vacancy.disaggregate(generic_building_type.unit_name)'],
+        target_vacancy.compute_variables(['type_name=target_vacancy.disaggregate(building_type.building_type_name)',
+                                          'unit_name=target_vacancy.disaggregate(building_type.unit_name)'],
                                          dataset_pool=self.dataset_pool)
         current_target_vacancy = DatasetSubset(target_vacancy, index=where(target_vacancy.get_attribute("year")==current_year)[0])
 
@@ -103,7 +103,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         self.accepted_proposals = [] # index of accepted proposals
 
         self.target_vacancies = {}
-        tv_gen_building_types = current_target_vacancy.get_attribute("generic_building_type_id")
+        tv_gen_building_types = current_target_vacancy.get_attribute("building_type_id")
         tv_rate = current_target_vacancy.get_attribute("target_vacancy_rate")
         for itype in range(tv_gen_building_types.size):
             self.target_vacancies[tv_gen_building_types[itype]] = tv_rate[itype]
@@ -152,13 +152,13 @@ class DevelopmentProjectProposalSamplingModel(Model):
 
     def check_vacancy_rates(self, target_vacancy):
         for index in arange(target_vacancy.size()):
-            type_id = target_vacancy.get_attribute_by_index("generic_building_type_id", index)
+            type_id = target_vacancy.get_attribute_by_index("building_type_id", index)
             type_name = target_vacancy.get_attribute_by_index("type_name", index)
             unit_name = target_vacancy.get_attribute_by_index("unit_name", index)  #vacancy by type, could be residential, non-residential, or by building_type
 
             target = self.target_vacancies[type_id]
             buildings = self.dataset_pool.get_dataset("building")
-            is_matched_type = buildings.get_attribute("generic_building_type_id") == type_id
+            is_matched_type = buildings.get_attribute("building_type_id") == type_id
             existing_units = buildings.get_attribute(unit_name)[is_matched_type]
             occupied_units = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type]
 
@@ -185,7 +185,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
 #        proposal_construction_type = self.proposal_set.get_attribute_by_index("construction_type", proposal_indexes)  #redevelopment or addition
 
         components_template_ids = self.proposal_component_set.get_attribute("template_id")
-        components_generic_building_type_ids = self.proposal_component_set.get_attribute("generic_building_type_id")
+        components_building_type_ids = self.proposal_component_set.get_attribute("building_type_id")
 
         proposal_ids = self.proposal_set.get_id_attribute()
         proposal_ids_in_component_set = self.proposal_component_set.get_attribute("proposal_id")
@@ -202,7 +202,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 continue
             proposal_index_in_component_set = where(proposal_ids_in_component_set == proposal_ids[proposal_index])[0]
             units_proposed = all_units_proposed[proposal_index_in_component_set]
-            component_types = components_generic_building_type_ids[proposal_index_in_component_set]
+            component_types = components_building_type_ids[proposal_index_in_component_set]
 
             # If one of the involved types is not accepted, reject the proposal
             accept_types = map(lambda x: self.accepting_proposals[x], component_types)

@@ -18,7 +18,7 @@ from variable_functions import my_attribute_label
 from numpy import zeros
 
 class units_occupied(Variable):
-    """units occupied by consumers, the unit is defined by unit_name in generic_building_types 
+    """units occupied by consumers, the unit is defined by unit_name in building_types 
        table (either building_sqft or residential_units)
     """
 
@@ -32,7 +32,7 @@ class units_occupied(Variable):
 #                "_units_occupied = building.occupied_building_sqft + building.occupied_residential_units * building.building_sqft_per_residential_unit"
                 "urbansim_parcel.building.generic_unit_name",
                 "urbansim_parcel.building.parcel_sqft",
-                "generic_building_type.unit_name"
+                "building_type.unit_name"
 ##                "generic_building_type_name = building.disaggregate(generic_building_type.generic_building_type_name, intermediates=[building_type])"
                 ]
 
@@ -41,10 +41,10 @@ class units_occupied(Variable):
         results = zeros(buildings.size(), dtype=self._return_type)
 #        results += buildings.get_attribute("_units_occupied")
         ##TODO: these dummy values are used when the businesses and households tables aren't ready
-        for unit_name in unique_values(dataset_pool.get_dataset("generic_building_type").get_attribute("unit_name")):
+        for unit_name in unique_values(dataset_pool.get_dataset("building_type").get_attribute("unit_name")):
             #should not count parcel_sqft
             if unit_name == "parcel_sqft":continue
-            matched = buildings.get_attribute("generic_unit_name") == unit_name
+            matched = buildings.get_attribute("unit_name") == unit_name
             results[matched] = buildings.get_attribute(unit_name)[matched].astype(self._return_type)
         return results
 

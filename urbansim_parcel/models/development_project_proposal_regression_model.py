@@ -113,7 +113,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                     
             proposal_set = create_from_parcel_and_development_template(parcels, templates, 
                                                               filter_attribute=self.filter,
-                                                              index = index1,
+                                                              parcel_index = index1,
                                                               dataset_pool=dataset_pool,
                                                               resources = kwargs.get("resources", None))
         

@@ -266,15 +266,15 @@ class DevelopmentProjectProposalChoiceModel(LocationChoiceModel):
 
         storage = StorageFactory().get_storage('dict_storage')
         storage.write_table(
-            table_name='buildings_exogeneous'
-                table_data={
+            table_name='buildings_exogeneous',
+            table_data={
                     'building_id':max_building_id + arange(1, scheduled_year.size+1, 1),
                     'type': types,
                     'template_id': self.choice_set.get_attribute("template_id")[self.accepted_proposals],
                     'units': units,
                     'scheduled_year': scheduled_year
                     },
-                })
+                )
 
         scheduled_buildings = BuildingDataset(
             in_storage = storage,

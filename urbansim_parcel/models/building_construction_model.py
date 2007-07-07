@@ -54,9 +54,9 @@ class BuildingConstructionModel(Model):
         # determine building types and corresponding unit names of the involved building_types
         building_type_id = proposal_component_set.get_attribute("building_type_id")
         building_type_set = dataset_pool.get_dataset("building_type")
-        unit_names = building_type_set.compute_variables([
-                                  'building_type.disaggregate(generic_building_type.unit_name)'], dataset_pool=dataset_pool)
-        
+#        unit_names = building_type_set.compute_variables([
+#                                  'building_type.disaggregate(generic_building_type.unit_name)'], dataset_pool=dataset_pool)
+        unit_names = building_type_set.get_attribute("unit_name")
         # get unique values of the involved generic building types and unique unit names
         unique_building_types = unique_values(building_type_id)
         index_in_building_types = building_type_set.get_id_index(unique_building_types)
