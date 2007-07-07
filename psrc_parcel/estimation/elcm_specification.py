@@ -43,12 +43,12 @@ all_variables = [
     "lnpopden=ln(building.disaggregate(psrc.zone.population_per_acre, [parcel]))",
     "inugb = building.disaggregate(parcel.is_inside_urban_growth_boundary)*1",
      
-    "is_commercial_building = building.disaggregate(generic_building_type.generic_building_type_name, [building_type]) == 'commercial'",
-    "is_industrial_building = building.disaggregate(generic_building_type.generic_building_type_name, [building_type]) == 'industrial'",
-    "is_office_building = building.disaggregate(generic_building_type.generic_building_type_name, [building_type]) == 'office'",
-    "is_mixed_use_building = building.disaggregate(generic_building_type.generic_building_type_name, [building_type]) == 'mixed_use'",
-    "is_sfh_building = building.disaggregate(generic_building_type.generic_building_type_name, [building_type]) == 'single_family_residential'",
-    "is_mfh_building = building.disaggregate(generic_building_type.generic_building_type_name, [building_type]) == 'multi_family_residential'",
+    "is_commercial_building = building.disaggregate(building_type.building_type_name) == 'commercial'",
+    "is_industrial_building = building.disaggregate(building_type.building_type_name) == 'industrial'",
+    "is_office_building = building.disaggregate(building_type.building_type_name) == 'office'",
+    "is_mixed_use_building = building.disaggregate(building_type.building_type_name) == 'mixed_use'",
+    "is_sfh_building = building.disaggregate(building_type.building_type_name) == 'single_family_residential'",
+    "is_mfh_building = building.disaggregate(building_type.building_type_name) == 'multi_family_residential'",
      
                  ]
 

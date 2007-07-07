@@ -27,7 +27,10 @@ class EmploymentLocationChoiceModelByZones(EmploymentLocationChoiceModel):
         agents_zones = agent_set.get_attribute(zones.get_id_name()[0])
         for zone_id in zone_ids:
             new_index = where(logical_and(cond_array, agents_zones == zone_id))[0]
-            self.filter = "building.zone_id == %s" % zone_id
+            if self.filter is not None:
+                self.filter = "(building.zone_id == %s) * %s" % (zone_id, self.filter)
+            else:
+                self.filter = "building.zone_id == %s" % zone_id
             logger.log_status("ELCM for zone %s" % zone_id)
             EmploymentLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                               agents_index=new_index, **kwargs)

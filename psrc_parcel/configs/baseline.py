@@ -57,7 +57,7 @@ class Baseline(UrbansimParcelConfiguration):
 #                    "buildings_for_estimation",
                     "building_types",
                     "job_building_types",
-                    "generic_building_types",
+#                    "generic_building_types",
                     'urbansim_constants',
                     "target_vacancies",
                     "business_location_choice_model_coefficients",

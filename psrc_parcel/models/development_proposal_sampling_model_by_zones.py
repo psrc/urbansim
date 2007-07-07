@@ -130,12 +130,12 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             #zone_id = target_vacancy.get_attribute_by_index("zone_id", index)
             #if zone_id != self.zone: continue
 
-            type_id = target_vacancy.get_attribute_by_index("generic_building_type_id", index)
+            type_id = target_vacancy.get_attribute_by_index("building_type_id", index)
             type_name = target_vacancy.get_attribute_by_index("type_name", index)
             unit_name = target_vacancy.get_attribute_by_index("unit_name", index)  #vacancy by type, could be residential, non-residential, or by building_type
             target = self.target_vacancies[type_id]
             buildings = self.dataset_pool.get_dataset("building")
-            is_matched_type = buildings.get_attribute("generic_building_type_id") == type_id
+            is_matched_type = buildings.get_attribute("building_type_id") == type_id
             is_in_right_zone = buildings.get_attribute("zone_id") == self.zone
             existing_units = buildings.get_attribute(unit_name)[is_matched_type*is_in_right_zone]
             #occupied_units = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type*is_in_right_zone]

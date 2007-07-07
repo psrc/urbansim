@@ -185,7 +185,7 @@ class AssignBuildingsToJobs:
         
         # re-classify unplaced non-home based jobs to home-based if parcels contain residential buildings
         bldgs_unit_names = building_dataset.compute_variables([
-                               "building.disaggregate(generic_building_type.unit_name, [building_type])"], 
+                               "building.disaggregate(building_type.unit_name)"], 
                                                            dataset_pool=dataset_pool)
         is_now_considered = logical_and(parcel_ids > 0, building_ids <= 0)
         job_index_non_home_based_unplaced = where(logical_and(is_now_considered, building_types == 2))[0]
