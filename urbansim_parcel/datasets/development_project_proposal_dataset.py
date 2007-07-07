@@ -183,13 +183,14 @@ def create_from_parcel_and_development_template(parcel_dataset,
             
         parcel_dataset.get_development_constraints(constraints, dataset_pool, 
                                                    index=index1)
+        development_template_dataset.compute_variables("generic_land_use_type_id=development_template.disaggregate(land_use_type.generic_land_use_type_id)")
         generic_land_use_type_ids = development_template_dataset.get_attribute("generic_land_use_type_id")
         
     parcel_ids = parcel_dataset.get_id_attribute()
     template_ids = development_template_dataset.get_id_attribute()
     
-    proposal_parcel_ids = array([])
-    proposal_template_ids = array([])
+    proposal_parcel_ids = array([],dtype="int32")
+    proposal_template_ids = array([],dtype="int32")
     for i_template in range(development_template_dataset.size()):
         this_template_id = template_ids[i_template]
         fit_indicator = array(index1.size*[True], dtype="bool8")
@@ -200,8 +201,8 @@ def create_from_parcel_and_development_template(parcel_dataset,
                 template_attribute = development_template_dataset.get_attribute(constraint_type)[i_template]  #density converted to constraint variable name
                 if template_attribute == 0:
                     continue
-                min_constraint = constraint[:, 0][index1]
-                max_constraint = constraint[:, 1][index1]
+                min_constraint = constraint[:, 0]
+                max_constraint = constraint[:, 1]
                 
                 fit_indicator = logical_and(fit_indicator,
                                             logical_and(template_attribute >= min_constraint,
