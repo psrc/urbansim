@@ -22,5 +22,6 @@ aliases = [
    "existing_units = development_project_proposal.disaggregate(urbansim_parcel.parcel.existing_units)",
    "acquisition_cost = urbansim_parcel.development_project_proposal.unit_price * urbansim_parcel.development_project_proposal.existing_units",
    "total_investment = urbansim_parcel.development_project_proposal.acquisition_cost + urbansim_parcel.development_project_proposal.demolition_cost + urbansim_parcel.development_project_proposal.construction_cost",
-   "profit = urbansim_parcel.development_project_proposal.total_revenue - urbansim_parcel.development_project_proposal.total_investment"
+   "profit = urbansim_parcel.development_project_proposal.total_revenue - urbansim_parcel.development_project_proposal.total_investment",
+   "building_sqft = development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.building_sqft)"
     ]

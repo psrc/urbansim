@@ -15,10 +15,11 @@
 from opus_core.variables.variable import Variable
 
 class construction_cost(Variable):
-    """construction cost of the developmentt project proposal
+    """construction cost of the development project proposal
        it may compute on the fly using expression, thus this variable is not needed
            """ 
-
+    _return_type = 'float32'
+    
     def dependencies(self):
         return ["urbansim_parcel.development_project_proposal.construction_cost_per_unit",
                 "urbansim_parcel.development_project_proposal.units_proposed", ]
