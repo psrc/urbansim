@@ -242,11 +242,11 @@ class DevelopmentProjectProposalSamplingModel(Model):
             # reject all pending proposals for this site
             is_proposal_rejected[proposal_site == this_site] = True
             if is_proposal_rejected.sum() == is_proposal_rejected.size:
-                break
+                return
             # don't consider proposed projects for this site in the future (i.e. in further sampling)
             self.weight[proposals_parcel_ids == this_site] = 0.0
-            if self.weight.sum() == 0.0:
-                break
+            if self.weight[proposal_indexes].sum() == 0.0:
+                return
 
         ## TODO: because of demolition, this won't work
         ## a type reaching target vacancy rates may become less than target

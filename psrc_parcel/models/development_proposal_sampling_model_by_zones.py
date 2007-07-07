@@ -58,7 +58,9 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         zone_ids_in_proposals = self.proposal_set.compute_variables("zone_id = development_project_proposal.disaggregate(parcel.zone_id)", 
                                                 dataset_pool=self.dataset_pool)
         zone_ids = zones.get_id_attribute()
-
+        # keep copy of the weights
+        original_weights = self.weights.copy()
+        
         for zone_index in range(zone_ids.size):
             self.zone = zone_ids[zone_index]
             if self.type["residential"]: 
@@ -76,13 +78,17 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             if idx_zone.size <= 0:
                 logger.log_status("No proposals for zone %s" % self.zone)
                 continue
-            idx_out_zone_not_active = where(logical_and(status != self.proposal_set.id_active, logical_not(where_zone)))[0]
+            idx_out_zone_not_active_not_refused = where(logical_and(logical_or(status != self.proposal_set.id_active, 
+                                                                               status != self.proposal_set.id_refused),
+                                                                    logical_not(where_zone)))[0]
             status[idx_zone] = self.proposal_set.id_proposed
-            status[idx_out_zone_not_active] = self.proposal_set.id_not_available
+            status[idx_out_zone_not_active_not_refused] = self.proposal_set.id_not_available
             self.proposal_set.modify_attribute(name="status_id", data=status)
+            self.weights[:] = original_weights[:]
             logger.log_status("DPSM for zone %s" % self.zone)
             DevelopmentProjectProposalSamplingModel.run(self, **kwargs)
-            where_not_active = where(self.proposal_set.get_attribute('status_id')[idx_zone] != self.proposal_set.id_active)[0]
+            status = self.proposal_set.get_attribute("status_id")
+            where_not_active = where(status[idx_zone] != self.proposal_set.id_active)[0]
             status[idx_zone[where_not_active]] = self.proposal_set.id_refused
             self.proposal_set.modify_attribute(name="status_id", data=status)
             if ((zone_index+1) % 10) == 0: # flush every 10th zone 

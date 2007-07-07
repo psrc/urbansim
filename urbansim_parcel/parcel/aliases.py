@@ -40,27 +40,27 @@ aliases = [
     # Carefull: the following two variables depend on the contents of the table plan_types
     "is_residential_plan_type = (%s + %s + %s + %s + %s + %s + %s + %s + %s + %s + %s + %s + %s + %s) > 0" % (
               "urbansim_parcel.parcel.plan_1",
-              "urbansim_parcel.parcel.plan_5",
+              "urbansim_parcel.parcel.plan_3",
+              "urbansim_parcel.parcel.plan_4",
               "urbansim_parcel.parcel.plan_6",
               "urbansim_parcel.parcel.plan_7",
+              "urbansim_parcel.parcel.plan_8",
               "urbansim_parcel.parcel.plan_9",
-              "urbansim_parcel.parcel.plan_10",
               "urbansim_parcel.parcel.plan_11",
               "urbansim_parcel.parcel.plan_12",
               "urbansim_parcel.parcel.plan_13",
-              "urbansim_parcel.parcel.plan_14",
-              "urbansim_parcel.parcel.plan_15",
+              "urbansim_parcel.parcel.plan_16",
               "urbansim_parcel.parcel.plan_17",
               "urbansim_parcel.parcel.plan_19",
               "urbansim_parcel.parcel.plan_20"),
     "is_non_residential_plan_type = (%s + %s + %s + %s + %s + %s + %s + %s + %s) > 0" % (
-              "urbansim_parcel.parcel.plan_1",
-              "urbansim_parcel.parcel.plan_2",
-              "urbansim_parcel.parcel.plan_3",
-              "urbansim_parcel.parcel.plan_4",
               "urbansim_parcel.parcel.plan_5",
-              "urbansim_parcel.parcel.plan_8",
-              "urbansim_parcel.parcel.plan_9",
+              "urbansim_parcel.parcel.plan_6",
               "urbansim_parcel.parcel.plan_10",
-              "urbansim_parcel.parcel.plan_16")
+              "urbansim_parcel.parcel.plan_12",
+              "urbansim_parcel.parcel.plan_14",
+              "urbansim_parcel.parcel.plan_15",
+              "urbansim_parcel.parcel.plan_16",
+              "urbansim_parcel.parcel.plan_18",
+              "urbansim_parcel.parcel.plan_20")
            ]
