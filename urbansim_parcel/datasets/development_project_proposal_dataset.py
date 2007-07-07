@@ -111,6 +111,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
                                                 development_template_dataset,
                                                 parcel_index=None,
                                                 filter_attribute=None,
+                                                template_opus_path="urbansim_parcel.development_template",
                                                 dataset_pool=None,
                                                 resources=None):
     """create development project proposals from parcel and development_template_dataset,
