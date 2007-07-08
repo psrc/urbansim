@@ -350,7 +350,7 @@ class EquationSpecification(object):
         for alias, new_expr in new_variables.iteritems():
             idx = where(current_aliases == alias)[0]
             for i in range(idx.size):
-                variables[i] = VariableName(new_expr)
+                variables[idx[i]] = VariableName(new_expr)
         self.variables = tuple(variables)
         
 #Functions

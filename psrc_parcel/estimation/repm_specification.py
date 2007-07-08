@@ -62,8 +62,8 @@ variables_for_development_project_proposal = {
       'ln_bldgage' : '(ln(urbansim_parcel.development_project_proposal.building_age)).astype(float32)',
       'lnsqft': '(ln(urbansim_parcel.development_project_proposal.building_sqft)).astype(float32)',
       "lnsqftunit": '(ln(urbansim_parcel.development_project_proposal.building_sqft/urbansim_parcel.development_project_proposal.units_proposed)).astype(float32)',
-      "lnlotsqftunit": "(ln(development_project_proposal.aggregate(parcel.parcel_sqft)/urbansim_parcel.development_project_proposal.units_proposed)).astype(float32)",
-      "ln_invfar": "(ln(development_project_proposal.aggregate(parcel.parcel_sqft)/urbansim_parcel.development_project_proposal.building_sqft)).astype(float32)",
+      "lnlotsqftunit": "(ln(development_project_proposal.disaggregate(parcel.parcel_sqft)/urbansim_parcel.development_project_proposal.units_proposed)).astype(float32)",
+      "ln_invfar": "(ln(development_project_proposal.disaggregate(parcel.parcel_sqft)/urbansim_parcel.development_project_proposal.building_sqft)).astype(float32)",
                                               }
 specification ={}
 specification = {
