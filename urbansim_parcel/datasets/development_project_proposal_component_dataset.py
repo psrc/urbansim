@@ -66,10 +66,10 @@ def create_from_proposals_and_template_components(proposal_dataset,
                                                                   )
     development_project_proposal_components.join(proposal_dataset, "parcel_id", 
                                                  join_attribute="proposal_id")
-    templates_attributes = template_component_dataset.get_known_attribute_names()
-    templates_attributes.remove("component_id")
-    development_project_proposal_components.join(template_component_dataset, templates_attributes,
-                                                 join_attribute="component_id")
+    #templates_attributes = template_component_dataset.get_known_attribute_names()
+    #templates_attributes.remove("component_id")
+    #development_project_proposal_components.join(template_component_dataset, templates_attributes,
+    #                                             join_attribute="component_id")
     return development_project_proposal_components
 
 from opus_core.tests import opus_unittest

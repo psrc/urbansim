@@ -28,7 +28,7 @@ class units_proposed(Variable):
                 "land_area_taken = urbansim_parcel.development_project_proposal.land_area_taken",
                 "density = development_project_proposal.disaggregate(urbansim_parcel.development_template.density)",
                 "density_convertor = development_project_proposal.disaggregate(urbansim_parcel.development_template.density_converter)",  # land area is in sqft
-                "usable_ratio = 1- development_project_proposal.disaggregate(development_template.percent_land_overhead) / 100.0",
+                "usable_ratio = (1- development_project_proposal.disaggregate(development_template.percent_land_overhead) / 100.0).astype(float32)",
                  ]
 
     def compute(self, dataset_pool):
