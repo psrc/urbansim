@@ -59,13 +59,19 @@ class AttributeCache(Storage, AttributeCache_old):
     def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True,
             id_name=None # Not used for this storage, but required for SQL-based storages
             ):
-        columns_years = self._get_column_names_and_years(table_name, lowercase)
         result = {}
         column_names_for_year = {}
-        for column_name, year in columns_years:
-            if not column_names_for_year.has_key(year):
-                column_names_for_year[year] = []
-            column_names_for_year[year].append(column_name)
+
+        years = self.get_years(table_name)
+        if isinstance(column_names, list):
+            columns = column_names
+        else:
+            columns = self.get_column_names(table_name, lowercase)
+        
+        for year in years:
+            column_names_for_year[year] = []
+            for column_name in columns:
+                column_names_for_year[year].append(column_name)
         for year in column_names_for_year:
             storage = flt_storage(os.path.join(self.get_storage_location(), '%s' % year))
             result.update(storage.load_table(table_name, column_names=column_names_for_year[year], lowercase=lowercase))
@@ -82,6 +88,10 @@ class AttributeCache(Storage, AttributeCache_old):
         columns = self._get_column_names_and_years(table_name, lowercase)
         return [column[0] for column in columns]
     
+    def get_years(self, table_name):
+        columns = self._get_column_names_and_years(table_name)
+        return [column[1] for column in columns]
+        
     def get_table_names(self):
         result = []
         for year in self._get_sorted_list_of_years():
@@ -220,6 +230,14 @@ class AttributeCacheTests(opus_unittest.OpusTestCase):
             'city_name': array(['NotUnknownAnymore', 'Eugene', 'Springfield']),
             }
         actual = self.storage.load_table('cities')
+        self.assertDictsEqual(expected, actual)
+        
+    def test_load_one_attribute(self):
+        SimulationState().set_current_time(1980)
+        expected = {
+            'city_id': array([3, 1, 2])
+            }
+        actual = self.storage.load_table('cities', column_names=['city_id'])
         self.assertDictsEqual(expected, actual)
         
 import tempfile

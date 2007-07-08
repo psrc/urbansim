@@ -77,7 +77,7 @@ class Variable(object):
             logger.start_block(name=an_instance.name(), verbose=False)
             try:
                 results = compute_method(*req_args, **opt_args)
-                an_instance._flush_dependent_attributes(req_args, opt_args)
+                an_instance._do_flush_dependent_variables_if_required()
             finally:
                 logger.end_block()
             return results       
@@ -89,42 +89,34 @@ class Variable(object):
         self.dependencies_list = None
         self.dataset = None
         self.number_of_compute_runs = 0
-
-    def _flush_dependent_attributes(self, req_args, opt_args):
-        """Removes the dependent attributes from memory, leaving them in the cache."""
-        if req_args:
-            for arg in req_args:
-                self._do_flush_dependent_variables_if_required(arg)
-        for key in opt_args.keys():
-            self._do_flush_dependent_variables_if_required(opt_args[key])
             
     def name(self):
         return self.__module__
             
-    def _do_flush_dependent_variables_if_required(self, arguments):
+    def _do_flush_dependent_variables_if_required(self):
+        if not SessionConfiguration().get('flush_variables', False):
+            return
+        
         from opus_core.datasets.interaction_dataset import InteractionDataset
-        if isinstance(arguments, Resources):
-            flush_variables = arguments.get('flush_variables',  False)
-            if flush_variables:
-                dataset = self.get_dataset()
-                dependencies = self.get_current_dependencies()
-                my_dataset_name = dataset.get_dataset_name()
-                for iattr in range(len(dependencies)): # iterate over dependent variables
-                    dep_item = dependencies[iattr][0]
-                    if isinstance(dep_item, str):
-                        depvar_name = VariableName(dep_item)
-                    else:
-                        depvar_name = dep_item.get_variable_name() # dep_item should be an instance of AttributeBox
-                    dataset_name = depvar_name.get_dataset_name()
-                    if dataset_name == my_dataset_name:
-                        ds = dataset
-                    else:
-                        ds = SessionConfiguration().get_dataset_from_pool(dataset_name)
-                        #ds = dataset_pool.get_dataset('dataset_name')
-                    if not isinstance(ds, InteractionDataset):
-                        short_name = depvar_name.get_alias()
-                        if short_name not in ds.get_id_name():   
-                            ds.flush_attribute(depvar_name)
+        dataset = self.get_dataset()
+        dependencies = self.get_current_dependencies()
+        my_dataset_name = dataset.get_dataset_name()
+        for iattr in range(len(dependencies)): # iterate over dependent variables
+            dep_item = dependencies[iattr][0]
+            if isinstance(dep_item, str):
+                depvar_name = VariableName(dep_item)
+            else:
+                depvar_name = dep_item.get_variable_name() # dep_item should be an instance of AttributeBox
+            dataset_name = depvar_name.get_dataset_name()
+            if dataset_name == my_dataset_name:
+                ds = dataset
+            else:
+                ds = SessionConfiguration().get_dataset_from_pool(dataset_name)
+                #ds = dataset_pool.get_dataset('dataset_name')
+            if not isinstance(ds, InteractionDataset):
+                short_name = depvar_name.get_alias()
+                if short_name not in ds.get_id_name():   
+                    ds.flush_attribute(depvar_name)
         
     def compute(self, dataset_pool):
         """Returns the result of this variable.  Private use only."""
