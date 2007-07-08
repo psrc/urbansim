@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from numpy import arange, zeros, logical_and, where, logical_not
+from numpy import arange, zeros, logical_and, where, logical_not, logical_or
 from opus_core.logger import logger
 from opus_core.misc import clip_to_zero_if_needed
 from urbansim_parcel.models.development_project_proposal_sampling_model import DevelopmentProjectProposalSamplingModel
@@ -59,7 +59,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
                                                 dataset_pool=self.dataset_pool)
         zone_ids = zones.get_id_attribute()
         # keep copy of the weights
-        original_weights = self.weights.copy()
+        original_weight = self.weight.copy()
         
         for zone_index in range(zone_ids.size):
             self.zone = zone_ids[zone_index]
@@ -84,7 +84,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             status[idx_zone] = self.proposal_set.id_proposed
             status[idx_out_zone_not_active_not_refused] = self.proposal_set.id_not_available
             self.proposal_set.modify_attribute(name="status_id", data=status)
-            self.weights[:] = original_weights[:]
+            self.weight[:] = original_weight[:]
             logger.log_status("DPSM for zone %s" % self.zone)
             DevelopmentProjectProposalSamplingModel.run(self, **kwargs)
             status = self.proposal_set.get_attribute("status_id")
