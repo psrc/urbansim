@@ -1328,6 +1328,7 @@ scalar argument, scales all the elements in an array,
 e.g.\ \code{1.2*household.income}.
 
 \subsubsection{Aliasing}
+\label{sec:aliasing}
 \index{aliasing}
 
 A new attribute name can be declared and initialized using an assignment
@@ -1336,10 +1337,67 @@ statement:
 \code{lnpop = ln(urbansim.gridcell.population)}
 
 This is treated as an expression, which can occur in the list of
-expressions given to \method{compute_variables}.  The value of the new
-alias is returned as the value of the expression if it's the last item on
-the list of variables and expressions.
+expressions given to \method{compute_variables} or in an \file{aliases.py}
+file (see below).  The value of the new alias is returned as the value of
+the expression if it's the last item on the list of variables and
+expressions.
 
+It is convenient, and often more efficient, to gather all the expressions
+and aliases for a particular package and dataset into one place.  The
+optional \file{aliases.py} file supports this.  \index{alias.py file}
+This file should define a
+single variable \code{aliases} to be a list of expressions, each of which
+should define an alias.  This file is then placed in the same directory as
+variables for that package and dataset.  For example, to define aliases
+relevant to \code{urbansim.gridcell}, put an \file{aliases.py} file into
+the \file{urbansim.gridcell} directory.  These aliases can then be referred
+to using the fully-qualified name of the alias.  When finding a variable
+referenced by a fully-qualified name, the system first searches the aliases
+file (if present), and then the variable definitions in the appropriate
+directory.
+
+As an example, the directory \code{opus_core.test_agent} contains one
+variable definition, for the variable \code{income_times_2}.  (This
+directory and variable are used for unit tests for \package{opus_core}.)
+The file \file{aliases.py} in that same directory contains the following:
+
+\begin{verbatim}
+aliases = [
+    'income_times_5 = 5*opus_core.test_agent.income',
+    'income_times_10 = 5*opus_core.test_agent.income_times_2'
+    ]
+\end{verbatim}
+
+The first alias refers to a primary attribute (\code{test_agent.income}),
+and the second to the variable.  These aliases can then be referred to
+using a fully-qualified name, in exactly the same way as a variable,
+for example
+
+\code{opus_core.test_agent.income_times_5}.  
+
+See the unit tests in
+\file{opus_core.variables.expression_tests.aliases_file} for examples of
+using these aliases.
+
+\subsubsection{Casting the Value of an Expression}
+\index{casting}
+
+Normally the value of a variable defined by an expressions will be a
+\code{float64} (this is a numpy type).  For large datasets this may use too
+much space.  You can cast the result of any expression to a different type
+using the numpy \code{astype} method.  For example, the alias defined by
+this expression will be of type \code{float32}:
+
+\begin{verbatim}
+lnpop = ( ln(urbansim.gridcell.population) ).astype(float32)
+\end{verbatim}
+
+The following numpy types can be used as the argument to the \code{astype}
+method: \code{bool8}, \code{int8}, \code{uint8}, \code{int16},
+\code{uint16}, \code{int32}, \code{uint32}, \code{int64}, \code{uint64}
+\code{float32}, \code{float64}, \code{complex64}, \code{complex128}, and
+\code{longlong}.
+ 
 \subsubsection{Interaction Sets}
 \index{interaction sets}
 

@@ -823,13 +823,15 @@ urbansim.gridcell.population + 1
 However, two textually different expressions are \emph{not} equivalent,
 even if they are algebraically equal.  For example,
 \verb|1 + urbansim.gridcell.population| is different from the previous
-expressions.  In many cases this doesn't matter.  Reasons it may matter are:
-(1) if the resulting value uses a lot of memory or takes a long time to
-compute, having a second copy of the value will waste memory or computation
-time; and (2) if the variable defined by the expression is used in a
-specification, you could inadvertently end up with two variables.  For this
-reason, good programming practice is to have just one place in a file that
-defines the expression, including an alias.  Elsewhere use the alias.
+expressions.  In many cases this doesn't matter.  Reasons it may matter
+are: (1) if the resulting value uses a lot of memory or takes a long time
+to compute, having a second copy of the value will waste memory or
+computation time; and (2) if the variable defined by the expression is used
+in a specification, you could inadvertently end up with two variables.  For
+this reason, good practice is to put each expression that you'll need for a
+given package and dataset, along with an alias for that expression, in an
+\file{aliases.py} file.  (See Section \ref{sec:aliasing}.)  Elsewhere use
+the alias.
 
 \subsubsection{Implementation of Expressions}
 \index{expression implementation}
