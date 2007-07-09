@@ -78,7 +78,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             if idx_zone.size <= 0:
                 logger.log_status("No proposals for zone %s" % self.zone)
                 continue
-            idx_out_zone_not_active_not_refused = where(logical_and(logical_or(status != self.proposal_set.id_active, 
+            idx_out_zone_not_active_not_refused = where(logical_and(logical_and(status != self.proposal_set.id_active, 
                                                                                status != self.proposal_set.id_refused),
                                                                     logical_not(where_zone)))[0]
             status[idx_zone] = self.proposal_set.id_proposed
