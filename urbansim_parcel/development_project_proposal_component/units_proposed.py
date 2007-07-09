@@ -24,6 +24,7 @@ class units_proposed(Variable):
                 "_units_proposed_in_proposal = development_project_proposal_component.disaggregate(urbansim_parcel.development_project_proposal.units_proposed)",
                 "_is_far_unit = development_project_proposal_component.disaggregate(urbansim_parcel.development_template.is_far)",
                  my_attribute_label("percent_building_sqft"),
+                 my_attribute_label("building_sqft_per_unit"),
                  my_attribute_label("is_residential")
                 ]
 
