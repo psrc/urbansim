@@ -21,6 +21,7 @@ II. Create new residential buildings
 ****
 1. Run a development location choice model.
   - Use: python opus_core/tools/start_run.py -c psrc_parcel.data_preparation.config_buildings_residential
+    (update 'cache_directory_root' and 'existing_cache_to_copy' to your local environment)
 
 2. Copy the resulting 'buildings' table to your cache directory (replace the existing one).
 
@@ -44,6 +45,7 @@ III. Assign buildings to households
 ****
 1. Run a household location choice model.
   - Use: python opus_core/tools/start_run.py -c psrc_parcel.data_preparation.config_households
+    (update 'cache_directory_root' and 'existing_cache_to_copy' to your local environment)
   
 2. Copy the resulting 'households' table to your cache directory (replace the existing one).
 
@@ -72,6 +74,7 @@ V. Create new non-residential buildings
 ****
 1. Run a development location choice model.
   - Use: python opus_core/tools/start_run.py -c psrc_parcel.data_preparation.config_buildings_non_residential
+    (update 'cache_directory_root' and 'existing_cache_to_copy' to your local environment)
 
 2. Copy the resulting 'buildings' table to your cache directory (replace the existing one).
 
