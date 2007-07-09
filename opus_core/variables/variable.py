@@ -461,10 +461,10 @@ class VariableTests(opus_unittest.OpusTestCase):
         
         dataset = Dataset(in_storage=storage, in_table_name='tests', id_name='id', dataset_name='tests')
         
-        resources = Resources({"flush_variables":True})
+        SessionConfiguration(in_storage=storage)["flush_variables"] = True
         dataset.get_attribute("a_dependent_variable")
         self.assert_("a_dependent_variable" in dataset.get_attributes_in_memory())
-        dataset.compute_variables("opus_core.tests.a_test_variable", resources=resources)
+        dataset.compute_variables("opus_core.tests.a_test_variable")
         self.assert_("a_dependent_variable" not in dataset.get_attributes_in_memory())
         self.assert_("a_test_variable" in dataset.get_attributes_in_memory())
         SimulationState().remove_singleton(delete_cache=True)
