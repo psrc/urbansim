@@ -183,9 +183,8 @@ def create_from_parcel_and_development_template(parcel_dataset,
             
         parcel_dataset.get_development_constraints(constraints, dataset_pool, 
                                                    index=index1)
-        development_template_dataset.compute_variables("generic_land_use_type_id=development_template.disaggregate(land_use_type.generic_land_use_type_id)")
-        generic_land_use_type_ids = development_template_dataset.get_attribute("generic_land_use_type_id")
-        
+        generic_land_use_type_ids = development_template_dataset.compute_variables("urbansim_parcel.development_template.generic_land_use_type_id",
+                                                       dataset_pool=dataset_pool)       
     parcel_ids = parcel_dataset.get_id_attribute()
     template_ids = development_template_dataset.get_id_attribute()
     
@@ -214,7 +213,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
     
     proposals = _create_project_proposals(proposal_parcel_ids, proposal_template_ids)
     proposals = _subset_by_filter(proposals)
-    proposals.flush_dataset()
+    proposals.flush_dataset_if_low_memory_mode()
     return proposals
     
 from opus_core.tests import opus_unittest

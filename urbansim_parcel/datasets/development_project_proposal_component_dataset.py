@@ -15,6 +15,7 @@
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
 from opus_core.storage_factory import StorageFactory
 from opus_core.misc import unique_values
+from opus_core.variables.attribute_type import AttributeType
 from numpy import arange, where, concatenate, resize
 
 class DevelopmentProjectProposalComponentDataset(UrbansimDataset):
@@ -65,11 +66,12 @@ def create_from_proposals_and_template_components(proposal_dataset,
                                                                   in_table_name='development_project_proposal_components',
                                                                   )
     development_project_proposal_components.join(proposal_dataset, "parcel_id", 
-                                                 join_attribute="proposal_id")
-    #templates_attributes = template_component_dataset.get_known_attribute_names()
-    #templates_attributes.remove("component_id")
-    #development_project_proposal_components.join(template_component_dataset, templates_attributes,
-    #                                             join_attribute="component_id")
+                                                 join_attribute="proposal_id", metadata=AttributeType.PRIMARY)
+    attributes = ["template_id"]
+    if "building_type_id" in template_component_dataset.get_known_attribute_names():
+        attributes.append("building_type_id")
+    development_project_proposal_components.join(template_component_dataset, attributes,
+                                                 join_attribute="component_id", metadata=AttributeType.PRIMARY)
     return development_project_proposal_components
 
 from opus_core.tests import opus_unittest
