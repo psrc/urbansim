@@ -190,17 +190,21 @@ class DevelopmentProjectProposalSamplingModel(Model):
         components_building_type_ids = self.proposal_component_set.get_attribute("building_type_id").astype("int32")
         proposal_ids = self.proposal_set.get_id_attribute()
         proposal_ids_in_component_set = self.proposal_component_set.get_attribute("proposal_id")
+        all_units_proposed = self.proposal_component_set.get_attribute("units_proposed")
+        number_of_components_in_proposals = self.proposal_set.get_attribute("number_of_components")
         
-        # consider only those proposals that have all components of accepted type 
+        # consider only those proposals that have all components of accepted type and sum of proposed units > 0
         array_accepting_proposals = zeros(components_building_type_ids.max()+1, dtype='bool8')
         for type, value in self.accepting_proposals.iteritems():
             array_accepting_proposals[type] = value
         is_accepted_type = array_accepting_proposals[components_building_type_ids]
         sum_is_accepted_type_over_proposals = array(ndimage.sum(is_accepted_type, labels = proposal_ids_in_component_set, 
-                                                          index = proposal_ids))
-        sub_proposal_indexes = where(sum_is_accepted_type_over_proposals[proposal_indexes] == self.proposal_set.get_attribute("number_of_components")[proposal_indexes])[0]
-        
-        all_units_proposed = self.proposal_component_set.get_attribute("units_proposed")
+                                                          index = proposal_ids[proposal_indexes]))
+        sum_of_units_proposed = array(ndimage.sum(all_units_proposed, labels = proposal_ids_in_component_set, 
+                                                          index = proposal_ids[proposal_indexes]))
+        sub_proposal_indexes = where(logical_and(sum_is_accepted_type_over_proposals == number_of_components_in_proposals[proposal_indexes],
+                                     sum_of_units_proposed > 0))[0]
+                
         is_proposal_rejected = zeros(sub_proposal_indexes.size, dtype=bool8)
         proposal_site = proposals_parcel_ids[proposal_indexes[sub_proposal_indexes]]
         
@@ -210,9 +214,9 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 # this is put in the loop to check if the last accepted proposal has sufficed
                 # the target vacancy rates for all types
                 return
-            proposal_index = proposal_indexes[sub_proposal_indexes[i]]  # consider 1 proposed project at a time
             if is_proposal_rejected[i]:
                 continue
+            proposal_index = proposal_indexes[sub_proposal_indexes[i]]  # consider 1 proposed project at a time
             proposal_index_in_component_set = where(proposal_ids_in_component_set == proposal_ids[proposal_index])[0]
             units_proposed = all_units_proposed[proposal_index_in_component_set]
             component_types = components_building_type_ids[proposal_index_in_component_set]
@@ -247,6 +251,15 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 vr = (units_stock - self.occupied_units[type_id]) / float(units_stock)
                 if vr >= self.target_vacancies[type_id]:
                     self.accepting_proposals[type_id] = False
+                    # reject all proposals that have one of the components of this type
+                    array_accepting_proposals[type_id] = False
+                    is_accepted_type = array_accepting_proposals[components_building_type_ids]
+                    consider_idx = proposal_indexes[sub_proposal_indexes[(i+1):sub_proposal_indexes.size]]
+                    sum_is_accepted_type_over_proposals = array(ndimage.sum(is_accepted_type, labels = proposal_ids_in_component_set, 
+                                                          index = proposal_ids[consider_idx]))                   
+                    is_rejected_indices = where(sum_is_accepted_type_over_proposals < 
+                                                number_of_components_in_proposals[consider_idx])[0]
+                    is_proposal_rejected[arange((i+1),sub_proposal_indexes.size)[is_rejected_indices]] = True
                 else:
                     self.accepting_proposals[type_id] = True
 
