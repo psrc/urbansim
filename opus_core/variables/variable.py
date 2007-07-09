@@ -94,9 +94,10 @@ class Variable(object):
         return self.__module__
             
     def _do_flush_dependent_variables_if_required(self):
-        if not SessionConfiguration().has_key('flush_variables'):
-            return
-        if not SessionConfiguration().get('flush_variables'):
+        try:
+            if not SessionConfiguration().get('flush_variables', False):
+                return
+        except:
             return
         from opus_core.datasets.interaction_dataset import InteractionDataset
         dataset = self.get_dataset()
