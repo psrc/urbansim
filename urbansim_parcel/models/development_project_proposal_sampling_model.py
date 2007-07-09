@@ -27,6 +27,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from urbansim_parcel.datasets.development_project_proposal_component_dataset import create_from_proposals_and_template_components
 from opus_core.model import Model
+from scipy import ndimage
 
 class DevelopmentProjectProposalSamplingModel(Model):
 
@@ -77,6 +78,9 @@ class DevelopmentProjectProposalSamplingModel(Model):
 
         self.proposal_component_set.compute_variables([
             'urbansim_parcel.development_project_proposal_component.units_proposed'],
+                                        dataset_pool=self.dataset_pool)
+        self.proposal_set.compute_variables([
+            'urbansim_parcel.development_project_proposal.number_of_components'],
                                         dataset_pool=self.dataset_pool)
         buildings = self.dataset_pool.get_dataset("building")
         buildings.compute_variables([
@@ -175,28 +179,38 @@ class DevelopmentProjectProposalSamplingModel(Model):
         buildings = self.dataset_pool.get_dataset("building")
         building_site = buildings.get_attribute("parcel_id")
 
-        is_proposal_rejected = zeros(proposal_indexes.size, dtype=bool8)
         proposals_parcel_ids = self.proposal_set.get_attribute("parcel_id")
-        proposal_site = proposals_parcel_ids[proposal_indexes]
+        
         #proposal_type = self.proposal_set.get_attribute_by_index("unit_type", proposal_indexes)
 #        pro_rated = self.proposal_set.get_attribute_by_index("pro_rated", proposal_indexes) #whether the project is pro_rated
 #        years = self.proposal_set.get_attribute_by_index("years", proposal_indexes)         #how many years it take to build
 #        proposal_construction_type = self.proposal_set.get_attribute_by_index("construction_type", proposal_indexes)  #redevelopment or addition
 
         components_template_ids = self.proposal_component_set.get_attribute("template_id")
-        components_building_type_ids = self.proposal_component_set.get_attribute("building_type_id")
-
+        components_building_type_ids = self.proposal_component_set.get_attribute("building_type_id").astype("int32")
         proposal_ids = self.proposal_set.get_id_attribute()
         proposal_ids_in_component_set = self.proposal_component_set.get_attribute("proposal_id")
-        all_units_proposed = self.proposal_component_set.get_attribute("units_proposed")
         
-        for i in range(proposal_indexes.size):
+        # consider only those proposals that have all components of accepted type 
+        array_accepting_proposals = zeros(components_building_type_ids.max()+1, dtype='bool8')
+        for type, value in self.accepting_proposals.iteritems():
+            array_accepting_proposals[type] = value
+        is_accepted_type = array_accepting_proposals[components_building_type_ids]
+        sum_is_accepted_type_over_proposals = array(ndimage.sum(is_accepted_type, labels = proposal_ids_in_component_set, 
+                                                          index = proposal_ids))
+        sub_proposal_indexes = where(sum_is_accepted_type_over_proposals[proposal_indexes] == self.proposal_set.get_attribute("number_of_components")[proposal_indexes])[0]
+        
+        all_units_proposed = self.proposal_component_set.get_attribute("units_proposed")
+        is_proposal_rejected = zeros(sub_proposal_indexes.size, dtype=bool8)
+        proposal_site = proposals_parcel_ids[proposal_indexes[sub_proposal_indexes]]
+        
+        for i in range(sub_proposal_indexes.size):
             if not (True in self.accepting_proposals.values()):
                 # if none of the types is accepting_proposals, exit
                 # this is put in the loop to check if the last accepted proposal has sufficed
                 # the target vacancy rates for all types
                 return
-            proposal_index = proposal_indexes[i]  # consider 1 proposed project at a time
+            proposal_index = proposal_indexes[sub_proposal_indexes[i]]  # consider 1 proposed project at a time
             if is_proposal_rejected[i]:
                 continue
             proposal_index_in_component_set = where(proposal_ids_in_component_set == proposal_ids[proposal_index])[0]
@@ -244,7 +258,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 return
             # don't consider proposed projects for this site in the future (i.e. in further sampling)
             self.weight[proposals_parcel_ids == this_site] = 0.0
-            if self.weight[proposal_indexes].sum() == 0.0:
+            if self.weight[proposal_indexes[sub_proposal_indexes]].sum() == 0.0:
                 return
 
         ## TODO: because of demolition, this won't work
