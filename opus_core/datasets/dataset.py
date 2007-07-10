@@ -368,9 +368,6 @@ class DatasetSubset(Dataset):
         self.resources = parent.resources
         self._primary_attribute_names = self.parent._primary_attribute_names
         self.debug = self.parent.debug
-        self.id_mapping = self.parent.id_mapping
-        self.id_mapping_type = self.parent.id_mapping_type
-        self.id_mapping_shift = self.parent.id_mapping_shift
         self._id_names = self.parent._id_names
         self.dataset_name = self.parent.dataset_name
         self.attribute_boxes = self.parent.attribute_boxes
@@ -378,11 +375,12 @@ class DatasetSubset(Dataset):
         self._precached_attribute_names = self.parent._precached_attribute_names
         self.variable_factory =  self.parent.variable_factory
         self.attribute_cache = self.parent.attribute_cache
-
+        self._create_id_mapping()
+        
     def get_attribute(self, name):
         """ Return an array of the (by the argument name) given attribute."""
-        return self.parent.get_attribute(name)[self.index]
-
+        return self.parent.get_attribute(name)[self.get_index()]
+    
     def get_index(self):
         """Return the indices of the parent's rows that are in this subset."""
         return self.index
