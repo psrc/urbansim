@@ -213,6 +213,8 @@ def create_from_parcel_and_development_template(parcel_dataset,
     
     proposals = _create_project_proposals(proposal_parcel_ids, proposal_template_ids)
     proposals = _subset_by_filter(proposals)
+    
+    logger.log_status("proposal set created with %s proposals." % proposals.size())
     proposals.flush_dataset_if_low_memory_mode()
     return proposals
     
