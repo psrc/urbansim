@@ -74,6 +74,7 @@ class GeneralConfiguration(Configuration):
                 'development_project_types': DevelopmentProjectTypesConfigurationCreator(
                     commercial = DevelopmentProjectTypeConfigurationCreator(
                         categories = [1000, 2000, 5000, 10000],
+                        #categories = [],
                         developable_maximum_unit_variable_full_name = 'urbansim.gridcell.developable_maximum_commercial_sqft',
                         developable_minimum_unit_variable_full_name = 'urbansim.gridcell.developable_minimum_commercial_sqft',
                         residential = False,
@@ -81,6 +82,7 @@ class GeneralConfiguration(Configuration):
                         ),
                     industrial = DevelopmentProjectTypeConfigurationCreator(
                         categories = [1000,2000,5000,10000],
+                        #categories = [],
                         developable_maximum_unit_variable_full_name = 'urbansim.gridcell.developable_maximum_industrial_sqft',
                         developable_minimum_unit_variable_full_name = 'urbansim.gridcell.developable_minimum_industrial_sqft',
                         residential = False,
@@ -88,6 +90,7 @@ class GeneralConfiguration(Configuration):
                         ),
                     residential = DevelopmentProjectTypeConfigurationCreator(
                         categories = [1,2,3,5,10,20],
+                        #categories = [],
                         developable_maximum_unit_variable_full_name = 'urbansim.gridcell.developable_maximum_residential_units',
                         developable_minimum_unit_variable_full_name = 'urbansim.gridcell.developable_minimum_residential_units',
                         residential = True,
@@ -99,6 +102,7 @@ class GeneralConfiguration(Configuration):
                         project_type = 'residential',
                         coefficients_table = 'residential_development_location_choice_model_coefficients',
                         specification_table = 'residential_development_location_choice_model_specification',
+                        #submodel_string = None
                         ).execute(),
                     },
                 'commercial_development_project_location_choice_model':{
@@ -106,6 +110,7 @@ class GeneralConfiguration(Configuration):
                         project_type = 'commercial',
                         coefficients_table = 'commercial_development_location_choice_model_coefficients',
                         specification_table = 'commercial_development_location_choice_model_specification',
+                        #submodel_string = None
                         ).execute(),
                     },
                 'industrial_development_project_location_choice_model':{
@@ -113,6 +118,7 @@ class GeneralConfiguration(Configuration):
                         project_type = 'industrial',
                         coefficients_table = 'industrial_development_location_choice_model_coefficients',
                         specification_table = 'industrial_development_location_choice_model_specification',
+                        #submodel_string = None
                         ).execute(),
                     },
                 'prescheduled_events': {

@@ -125,7 +125,7 @@ class DevelopmentProjectTransitionModel( Model ):
                     if csum[-1] >= should_develop_units:
                         break
                 data = {units_attribute: history_values_without_zeros[idx],
-                             "project_id": arange( idx.size ),
+                             "project_id": arange( idx.size ) + 1,
                              location_set.get_id_name()[0]: zeros( ( idx.size, ), dtype=int32)}
                 if average_improvement_value is not None:
                     data["improvement_value"] = (ones( ( idx.size, ))*average_improvement_value).astype(float32)

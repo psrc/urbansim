@@ -15,7 +15,7 @@
 from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
 
 from opus_core.configuration import Configuration
-
+from opus_core.misc import get_string_or_None
 
 class DevelopmentProjectLocationChoiceModelConfigurationCreator(HasStrictTraits):
     # Set in constructor
@@ -32,6 +32,7 @@ class DevelopmentProjectLocationChoiceModelConfigurationCreator(HasStrictTraits)
     debuglevel = Trait('debuglevel', Str, Int)
     location_set = Str('gridcell')
     events_for_estimation_table = Str('development_event_history')
+    submodel_string = Trait('size_category', None, Str)
 
     def __init__(self, project_type, *args, **kwargs):
         """Construct attributes that depend upon project_type's value"""        
@@ -72,7 +73,8 @@ class DevelopmentProjectLocationChoiceModelConfigurationCreator(HasStrictTraits)
                 'arguments': {
                     'location_set': self.location_set,
                     'model_configuration': "model_configuration['development_project_types']['%s']" % self.project_type,
-                    'project_type': "'%s'" % self.project_type
+                    'project_type': "'%s'" % self.project_type,
+                    'submodel_string': get_string_or_None(self.submodel_string),
                     },
                 'name': 'DevelopmentProjectLocationChoiceModelCreator().get_model'
                 },
@@ -144,7 +146,8 @@ class TestDevelopmentProjectLocationChoiceModelConfigurationCreator(opus_unittes
                 'arguments': {
                     'location_set': 'gridcell',
                     'model_configuration': "model_configuration['development_project_types']['project_type']",
-                    'project_type': "'project_type'"
+                    'project_type': "'project_type'",
+                    'submodel_string': "'size_category'"
                     },
                 'name': 'DevelopmentProjectLocationChoiceModelCreator().get_model'
                 },
@@ -196,6 +199,7 @@ class TestDevelopmentProjectLocationChoiceModelConfigurationCreator(opus_unittes
             events_for_estimation_table = 'events_for_estimation_table',
             coefficients_table = 'coefficients_table',
             specification_table = 'specification_table',
+            submodel_string = None
             )
         
         expected = Configuration({
@@ -215,7 +219,8 @@ class TestDevelopmentProjectLocationChoiceModelConfigurationCreator(opus_unittes
                 'arguments': {
                     'location_set': 'location_set',
                     'model_configuration': "model_configuration['development_project_types']['project_type']",
-                    'project_type': "'project_type'"
+                    'project_type': "'project_type'",
+                    'submodel_string': None
                     },
                 'name': 'DevelopmentProjectLocationChoiceModelCreator().get_model'
                 },
