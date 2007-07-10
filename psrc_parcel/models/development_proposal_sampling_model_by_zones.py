@@ -91,7 +91,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             where_not_active = where(status[idx_zone] != self.proposal_set.id_active)[0]
             status[idx_zone[where_not_active]] = self.proposal_set.id_refused
             self.proposal_set.modify_attribute(name="status_id", data=status)
-            if ((zone_index+1) % 10) == 0: # flush every 10th zone 
+            if ((zone_index+1) % 50) == 0: # flush every 50th zone 
                 self.proposal_set.flush_dataset()
         return self.proposal_set
 
@@ -130,25 +130,26 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         return (sqft_lookup[:,building_type_ids] * job_building_type_distribution).sum(axis=1)
         
     def check_vacancy_rates(self, target_vacancy):
-
+        type_ids = target_vacancy.get_attribute("building_type_id")
+        type_names = target_vacancy.get_attribute("type_name")
+        unit_names = target_vacancy.get_attribute("unit_name")
+        buildings = self.dataset_pool.get_dataset("building")
+        building_type_ids = buildings.get_attribute("building_type_id")
+        building_zone_ids = buildings.get_attribute("zone_id")
+        
         for index in arange(target_vacancy.size()):
             ##TODO allow target vacancies to vary across zones/sub region geographies
             #zone_id = target_vacancy.get_attribute_by_index("zone_id", index)
             #if zone_id != self.zone: continue
-
-            type_id = target_vacancy.get_attribute_by_index("building_type_id", index)
-            type_name = target_vacancy.get_attribute_by_index("type_name", index)
-            unit_name = target_vacancy.get_attribute_by_index("unit_name", index)  #vacancy by type, could be residential, non-residential, or by building_type
+            type_id = type_ids[index]
+            type_name = type_names[index]
+            unit_name = unit_names[index] #vacancy by type, could be residential, non-residential, or by building_type
             target = self.target_vacancies[type_id]
-            buildings = self.dataset_pool.get_dataset("building")
-            is_matched_type = buildings.get_attribute("building_type_id") == type_id
-            is_in_right_zone = buildings.get_attribute("zone_id") == self.zone
-            existing_units = buildings.get_attribute(unit_name)[is_matched_type*is_in_right_zone]
-            #occupied_units = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type*is_in_right_zone]
-
+            is_matched_type = building_type_ids == type_id
+            is_in_right_zone = building_zone_ids == self.zone 
             self.proposed_units[type_id] = 0
             self.demolished_units[type_id] = 0
-            self.existing_units[type_id] = existing_units.astype("float32").sum()
+            self.existing_units[type_id] = buildings.get_attribute(unit_name)[is_matched_type*is_in_right_zone].astype("float32").sum()
             self.occupied_units[type_id] = 0
             if unit_name == "residential_units":
                 if self.type["residential"]:
@@ -166,5 +167,3 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
                     
             if vr < target:
                 self.accepting_proposals[type_id] = True
-            else:
-                self.accepting_proposals[type_id] = False

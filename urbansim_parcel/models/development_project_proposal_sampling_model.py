@@ -102,45 +102,59 @@ class DevelopmentProjectProposalSamplingModel(Model):
         self.demolished_units = {} #total (to be) demolished units by land_use type
         self.demolished_buildings = array([], dtype='int32')  #id of buildings to be demolished
 
-        self.accepting_proposals = {}  #whether accepting new proposals, for each land_use type
+        components_building_type_ids = self.proposal_component_set.get_attribute("building_type_id").astype("int32")
+        proposal_ids = self.proposal_set.get_id_attribute()
+        proposal_ids_in_component_set = self.proposal_component_set.get_attribute("proposal_id")
+        all_units_proposed = self.proposal_component_set.get_attribute("units_proposed")
+        number_of_components_in_proposals = self.proposal_set.get_attribute("number_of_components")
+        
+        self.accepting_proposals = zeros(components_building_type_ids.max()+1, dtype='bool8')  #whether accepting new proposals, for each building type
         self.accepted_proposals = [] # index of accepted proposals
 
         self.target_vacancies = {}
-        tv_gen_building_types = current_target_vacancy.get_attribute("building_type_id")
+        tv_building_types = current_target_vacancy.get_attribute("building_type_id")
         tv_rate = current_target_vacancy.get_attribute("target_vacancy_rate")
-        for itype in range(tv_gen_building_types.size):
-            self.target_vacancies[tv_gen_building_types[itype]] = tv_rate[itype]
+        for itype in range(tv_building_types.size):
+            self.target_vacancies[tv_building_types[itype]] = tv_rate[itype]
             
         self.check_vacancy_rates(current_target_vacancy)  #initialize self.accepting_proposal based on current vacancy rate
 
-        # consider planned and proposed proposals
+        # consider only those proposals that have all components of accepted type and sum of proposed units > 0
+        is_accepted_type = self.accepting_proposals[components_building_type_ids]
+        sum_is_accepted_type_over_proposals = array(ndimage.sum(is_accepted_type, labels = proposal_ids_in_component_set, 
+                                                          index = proposal_ids))
+        sum_of_units_proposed = array(ndimage.sum(all_units_proposed, labels = proposal_ids_in_component_set, 
+                                                          index = proposal_ids))
+        is_proposal_eligible = logical_and(sum_is_accepted_type_over_proposals == number_of_components_in_proposals,
+                                     sum_of_units_proposed > 0)
+
+        # consider planned proposals (they are not sampled)
         for status in [self.proposal_set.id_planned, self.proposal_set.id_proposed]:
             if self.weight.sum() == 0.0:
                 break
-            idx = where(self.proposal_set.get_attribute("status_id") == status)[0]
+            idx = where(logical_and(self.proposal_set.get_attribute("status_id") == status, is_proposal_eligible))[0]
             if idx.size <= 0:
                 continue
             isorted = self.weight[idx].argsort()[range(idx.size-1,-1,-1)]
             # consider proposals in order of the highest weights
             self.consider_proposals(idx[isorted], current_target_vacancy)
 
-        # consider tentative proposals
-        idx_tentative = where(self.proposal_set.get_attribute("status_id") == self.proposal_set.id_tentative)[0]
-        if idx_tentative.size > 0:
-            while sometrue(array(self.accepting_proposals.values())):
-                if self.weight.sum() == 0.0:
+        # consider proposed and tentative proposals
+        for status in [self.proposal_set.id_tentative]:
+            idx = where(logical_and(self.proposal_set.get_attribute("status_id") == status, is_proposal_eligible))[0]
+            if idx.size <= 0:
+                continue
+            while (True in self.accepting_proposals):
+                if self.weight[idx].sum() == 0.0:
                     break
             #    raise RuntimeError, "Running out of proposals; there aren't any proposals with non-zero weight"
-                laccepted_proposals = len(self.accepted_proposals)
-                n = minimum((self.weight > 0).sum(), n)
-                sampled_proposal_indexes = probsample_noreplace(self.proposal_set.get_id_attribute()[idx_tentative], n, 
-                                                prob_array=self.weight[idx_tentative]/float(self.weight[idx_tentative].sum()),
+                n = minimum((self.weight[idx] > 0).sum(), n)
+                sampled_proposal_indexes = probsample_noreplace(proposal_ids[idx], n, 
+                                                prob_array=self.weight[idx]/float(self.weight[idx].sum()),
                                                 exclude_index=None, return_indices=True)
-                self.consider_proposals(arange(self.proposal_set.size)[idx_tentative[sampled_proposal_indexes]],
+                self.consider_proposals(arange(self.proposal_set.size())[idx[sampled_proposal_indexes]],
                                         current_target_vacancy
                                        )
-                if len(self.accepted_proposals) == laccepted_proposals:
-                    break
 
         # set status of accepted proposals to 'active'
         self.proposal_set.modify_attribute(name="status_id", data=self.proposal_set.id_active,
@@ -154,30 +168,28 @@ class DevelopmentProjectProposalSamplingModel(Model):
         return self.proposal_set  #schedule_development_projects
 
     def check_vacancy_rates(self, target_vacancy):
+        type_ids = target_vacancy.get_attribute("building_type_id")
+        type_names = target_vacancy.get_attribute("type_name")
+        unit_names = target_vacancy.get_attribute("unit_name")
+        buildings = self.dataset_pool.get_dataset("building")
+        building_type_ids = buildings.get_attribute("building_type_id")
         for index in arange(target_vacancy.size()):
-            type_id = target_vacancy.get_attribute_by_index("building_type_id", index)
-            type_name = target_vacancy.get_attribute_by_index("type_name", index)
-            unit_name = target_vacancy.get_attribute_by_index("unit_name", index)  #vacancy by type, could be residential, non-residential, or by building_type
-
-            target = self.target_vacancies[type_id]
-            buildings = self.dataset_pool.get_dataset("building")
-            is_matched_type = buildings.get_attribute("building_type_id") == type_id
-            existing_units = buildings.get_attribute(unit_name)[is_matched_type]
-            occupied_units = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type]
-
-            self.existing_units[type_id] = existing_units.astype("float32").sum()
-            self.occupied_units[type_id] = occupied_units.astype("float32").sum()
+            type_id = type_ids[index]
+            type_name = type_names[index]
+            unit_name = unit_names[index]  #vacancy by type, could be residential, non-residential, or by building_type
+            target = self.target_vacancies[type_id]           
+            is_matched_type = building_type_ids == type_id
+            self.existing_units[type_id] = buildings.get_attribute(unit_name)[is_matched_type].astype("float32").sum()
+            self.occupied_units[type_id] = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type].astype("float32").sum()
             self.proposed_units[type_id] = 0
             self.demolished_units[type_id] = 0
             vr = (self.existing_units[type_id] - self.occupied_units[type_id]) / float(self.existing_units[type_id])
             if vr < target:
                 self.accepting_proposals[type_id] = True
-            else:
-                self.accepting_proposals[type_id] = False
 
     def consider_proposals(self, proposal_indexes, target_vacancy):
-        buildings = self.dataset_pool.get_dataset("building")
-        building_site = buildings.get_attribute("parcel_id")
+        #buildings = self.dataset_pool.get_dataset("building")
+        #building_site = buildings.get_attribute("parcel_id")
 
         proposals_parcel_ids = self.proposal_set.get_attribute("parcel_id")
         
@@ -186,47 +198,27 @@ class DevelopmentProjectProposalSamplingModel(Model):
 #        years = self.proposal_set.get_attribute_by_index("years", proposal_indexes)         #how many years it take to build
 #        proposal_construction_type = self.proposal_set.get_attribute_by_index("construction_type", proposal_indexes)  #redevelopment or addition
 
-        components_template_ids = self.proposal_component_set.get_attribute("template_id")
         components_building_type_ids = self.proposal_component_set.get_attribute("building_type_id").astype("int32")
         proposal_ids = self.proposal_set.get_id_attribute()
         proposal_ids_in_component_set = self.proposal_component_set.get_attribute("proposal_id")
         all_units_proposed = self.proposal_component_set.get_attribute("units_proposed")
         number_of_components_in_proposals = self.proposal_set.get_attribute("number_of_components")
         
-        # consider only those proposals that have all components of accepted type and sum of proposed units > 0
-        array_accepting_proposals = zeros(components_building_type_ids.max()+1, dtype='bool8')
-        for type, value in self.accepting_proposals.iteritems():
-            array_accepting_proposals[type] = value
-        is_accepted_type = array_accepting_proposals[components_building_type_ids]
-        sum_is_accepted_type_over_proposals = array(ndimage.sum(is_accepted_type, labels = proposal_ids_in_component_set, 
-                                                          index = proposal_ids[proposal_indexes]))
-        sum_of_units_proposed = array(ndimage.sum(all_units_proposed, labels = proposal_ids_in_component_set, 
-                                                          index = proposal_ids[proposal_indexes]))
-        sub_proposal_indexes = where(logical_and(sum_is_accepted_type_over_proposals == number_of_components_in_proposals[proposal_indexes],
-                                     sum_of_units_proposed > 0))[0]
-                
-        is_proposal_rejected = zeros(sub_proposal_indexes.size, dtype=bool8)
-        proposal_site = proposals_parcel_ids[proposal_indexes[sub_proposal_indexes]]
+        is_proposal_rejected = zeros(proposal_indexes.size, dtype=bool8)
+        proposal_site = proposals_parcel_ids[proposal_indexes]
         
-        for i in range(sub_proposal_indexes.size):
-            if not (True in self.accepting_proposals.values()):
+        for i in range(proposal_indexes.size):
+            if not (True in self.accepting_proposals):
                 # if none of the types is accepting_proposals, exit
                 # this is put in the loop to check if the last accepted proposal has sufficed
                 # the target vacancy rates for all types
                 return
             if is_proposal_rejected[i]:
                 continue
-            proposal_index = proposal_indexes[sub_proposal_indexes[i]]  # consider 1 proposed project at a time
+            proposal_index = proposal_indexes[i]  # consider 1 proposed project at a time
             proposal_index_in_component_set = where(proposal_ids_in_component_set == proposal_ids[proposal_index])[0]
             units_proposed = all_units_proposed[proposal_index_in_component_set]
             component_types = components_building_type_ids[proposal_index_in_component_set]
-
-            # If one of the involved types is not accepted, reject the proposal
-            accept_types = map(lambda x: self.accepting_proposals[x], component_types)
-            if (False in accept_types) or (units_proposed.sum() == 0):
-                self.weight[proposal_index] = 0.0
-                is_proposal_rejected[i] = True
-                continue
 
             this_site = proposal_site[i]
             if False: #proposal_construction_type[i] == 'R':
@@ -252,16 +244,17 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 if vr >= self.target_vacancies[type_id]:
                     self.accepting_proposals[type_id] = False
                     # reject all proposals that have one of the components of this type
-                    array_accepting_proposals[type_id] = False
-                    is_accepted_type = array_accepting_proposals[components_building_type_ids]
-                    consider_idx = proposal_indexes[sub_proposal_indexes[(i+1):sub_proposal_indexes.size]]
-                    sum_is_accepted_type_over_proposals = array(ndimage.sum(is_accepted_type, labels = proposal_ids_in_component_set, 
+                    consider_idx = proposal_indexes[(i+1):proposal_indexes.size] # consider only proposals to be processed
+                    if consider_idx.size > 0:
+                        is_accepted_type = self.accepting_proposals[components_building_type_ids]
+                        sum_is_accepted_type_over_proposals = array(ndimage.sum(is_accepted_type, 
+                                                                            labels = proposal_ids_in_component_set, 
                                                           index = proposal_ids[consider_idx]))                   
-                    is_rejected_indices = where(sum_is_accepted_type_over_proposals < 
+                        is_rejected_indices = where(sum_is_accepted_type_over_proposals < 
                                                 number_of_components_in_proposals[consider_idx])[0]
-                    is_proposal_rejected[arange((i+1),sub_proposal_indexes.size)[is_rejected_indices]] = True
-                else:
-                    self.accepting_proposals[type_id] = True
+                        is_proposal_rejected[arange((i+1),proposal_indexes.size)[is_rejected_indices]] = True
+                        self.weight[consider_idx[is_rejected_indices]] = 0.0
+
 
             # proposal accepted
             self.accepted_proposals.append(proposal_index)
@@ -271,7 +264,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 return
             # don't consider proposed projects for this site in the future (i.e. in further sampling)
             self.weight[proposals_parcel_ids == this_site] = 0.0
-            if self.weight[proposal_indexes[sub_proposal_indexes]].sum() == 0.0:
+            if self.weight[proposal_indexes].sum() == 0.0:
                 return
 
         ## TODO: because of demolition, this won't work
