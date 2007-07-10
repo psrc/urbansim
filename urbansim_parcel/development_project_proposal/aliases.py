@@ -17,12 +17,12 @@
 
 aliases = [
    "construction_cost_per_unit = development_project_proposal.disaggregate(urbansim_parcel.development_template.construction_cost_per_unit)",
-   "total_revenue = urbansim_parcel.development_project_proposal.units_proposed * development_project_proposal.unit_price_expected",
+   "total_revenue = (urbansim_parcel.development_project_proposal.units_proposed * development_project_proposal.unit_price_expected).astype(float32)",
    "unit_price = development_project_proposal.disaggregate(urbansim_parcel.parcel.unit_price)",
    "existing_units = development_project_proposal.disaggregate(urbansim_parcel.parcel.existing_units)",
    "acquisition_cost = urbansim_parcel.development_project_proposal.unit_price * urbansim_parcel.development_project_proposal.existing_units",
    "total_investment = urbansim_parcel.development_project_proposal.acquisition_cost + urbansim_parcel.development_project_proposal.demolition_cost + urbansim_parcel.development_project_proposal.construction_cost",
    "profit = urbansim_parcel.development_project_proposal.total_revenue - urbansim_parcel.development_project_proposal.total_investment",
    "building_sqft = development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.building_sqft)",
-   "number_of_components = development_project_proposal.number_of_agents(development_project_proposal_component)"
+   "number_of_components = (development_project_proposal.number_of_agents(development_project_proposal_component)).astype(int32)"
     ]

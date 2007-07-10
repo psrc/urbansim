@@ -21,7 +21,8 @@ class expected_rate_of_return_on_investment(Variable):
     results = (sale_price_expected - land_and_existing_building_price - demolishing_cost if any - construction_cost) 
     divided by (land_and_existing_building_price + demolishing_cost if any + construction_cost)
     """ 
-
+    _return_type = "float32"
+    
     def dependencies(self):
         return ["urbansim_parcel.development_project_proposal.total_investment",
                 "urbansim_parcel.development_project_proposal.profit",
