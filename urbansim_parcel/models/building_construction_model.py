@@ -121,18 +121,19 @@ class BuildingConstructionModel(Model):
                     else:
                         bnunit = "residential_units"
                         bunit = "non_residential_sqft"
-                    to_be_built_cumsum = cumsum(to_be_built[pidx])
+                    to_be_built_cumsum = cumsum(to_be_built[pidx]).astype("int32")
                     idx_to_be_built = where(to_be_built_cumsum > amount_built)[0]
                     new_buildings["parcel_id"] = concatenate((new_buildings["parcel_id"], 
-                                                              array(idx_to_be_built.size * [parcel_id])))
+                                                              array(idx_to_be_built.size * [parcel_id], dtype="int32")))
                     new_buildings[bunit] = concatenate((new_buildings[bunit], to_be_built[pidx][idx_to_be_built]))
-                    new_buildings[bnunit] = concatenate((new_buildings[bnunit], array(idx_to_be_built.size * [0])))
+                    new_buildings[bnunit] = concatenate((new_buildings[bnunit], array(idx_to_be_built.size * [0], dtype="int32")))
                     new_buildings["building_type_id"] = concatenate((new_buildings["building_type_id"], 
-                             array(idx_to_be_built.size * [this_building_type])))
+                             array(idx_to_be_built.size * [this_building_type], dtype="int32")))
                     new_buildings["sqft_per_unit"] = concatenate((new_buildings["sqft_per_unit"],
                                                                   sqft_per_unit[pidx][idx_to_be_built]))
                     new_buildings["land_area"] = concatenate((new_buildings["land_area"], 
-                                                              array(idx_to_be_built.size * [parcel_sqft[parcel_index]])))
+                                                              array(idx_to_be_built.size * [parcel_sqft[parcel_index]],
+                                                                    dtype=new_buildings["land_area"].dtype)))
                     if parcel_is_lut_vacant[parcel_index]:
                         parcel_lut[parcel_index] = component_land_use_types[pidx][idx_to_be_built][0]
                                                                   
@@ -150,5 +151,5 @@ class BuildingConstructionModel(Model):
         
         logger.log_status("%s new buildings built." % new_buildings["parcel_id"].size)
         # remove active proposals from the proposal set
-        development_proposal_set.remove_elements(active_idx)
+        # development_proposal_set.remove_elements(active_idx)
         return development_proposal_set

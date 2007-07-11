@@ -45,12 +45,16 @@ def create_from_proposals_and_template_components(proposal_dataset,
         comp_idx = where(template_ids_in_components == template_id)[0]
         if proposal_ids_in_comp.size == 0:
             proposal_ids_in_comp = resize(proposal_ids[prop_idx], comp_idx.size*proposal_ids[prop_idx].size)
-            component_ids_in_comp = resize(component_ids[comp_idx], proposal_ids[prop_idx].size*component_ids[comp_idx].size)
+            component_ids_in_comp = resize(component_ids[comp_idx[0]], proposal_ids[prop_idx].size)
+            for icomp in range(1, comp_idx.size):
+                component_ids_in_comp = concatenate((component_ids_in_comp, 
+                    resize(component_ids[comp_idx[icomp]], proposal_ids[prop_idx].size)))
         else:
             proposal_ids_in_comp = concatenate((proposal_ids_in_comp, 
                 resize(proposal_ids[prop_idx], comp_idx.size*proposal_ids[prop_idx].size)))
-            component_ids_in_comp = concatenate((component_ids_in_comp, 
-                resize(component_ids[comp_idx], proposal_ids[prop_idx].size*component_ids[comp_idx].size)))
+            for icomp in range(comp_idx.size):
+                component_ids_in_comp = concatenate((component_ids_in_comp, 
+                    resize(component_ids[comp_idx[icomp]], proposal_ids[prop_idx].size)))
         
     storage = StorageFactory().get_storage('dict_storage')
     storage.write_table(
