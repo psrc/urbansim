@@ -19,7 +19,7 @@ from opus_core.misc import unique_values
 from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset import DatasetSubset
 
-from numpy import where, arange, resize, array, cumsum, concatenate
+from numpy import where, arange, resize, array, cumsum, concatenate, round_
 
 class BuildingConstructionModel(Model):
     """Process any pre-scheduled development projects (those that have status 'active'). New buildings are 
@@ -121,7 +121,7 @@ class BuildingConstructionModel(Model):
                     else:
                         bnunit = "residential_units"
                         bunit = "non_residential_sqft"
-                    to_be_built_cumsum = cumsum(to_be_built[pidx]).astype("int32")
+                    to_be_built_cumsum = round_(cumsum(to_be_built[pidx])).astype("int32")
                     idx_to_be_built = where(to_be_built_cumsum > amount_built)[0]
                     new_buildings["parcel_id"] = concatenate((new_buildings["parcel_id"], 
                                                               array(idx_to_be_built.size * [parcel_id], dtype="int32")))
