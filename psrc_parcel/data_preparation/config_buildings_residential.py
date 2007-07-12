@@ -61,8 +61,10 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
                     'building': {},
                     #'development_project_proposal': {}
                 },
+            #"low_memory_mode": True,
             "datasets_to_cache_after_each_model": [
-                     'parcel', 'building', 'development_project_proposal', 'household', 'job'
+                     'parcel', 'building', 'development_project_proposal', 'household', 'job',
+                     'development_project_proposal_component'
                      ]
         }
         #use configuration in config as defaults and merge with config_changes
@@ -83,3 +85,4 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
                 #"'numpy.logical_or(parcel.land_use_type_id==26, numpy.logical_and(urbansim_parcel.parcel.is_residential_land_use_type, urbansim_parcel.parcel.vacant_land_area > 0))'"
         #self['models_configuration']['expected_sale_price_model']['controller']["prepare_for_run"]['arguments']["create_proposal_set"] = False
         self['models_configuration']['expected_sale_price_model']['controller']["run"]['arguments']["chunk_specification"] = "{'nchunks': 5}"
+        self['models_configuration']['building_construction_model']['controller']["run"]['arguments']["consider_amount_built_in_parcels"] = False
