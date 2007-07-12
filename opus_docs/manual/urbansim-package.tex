@@ -524,17 +524,17 @@ following arguments:
     'development_project_types':{
         'residential':{
             'units':'residential_units',
-            'categories':array([1,2,3,5,10,20]),
+            'categories':array([1, 2, 3, 5, 10, 20]),
             'residential':True,
             },
         'commercial':{
             'units':'commercial_sqft',
-            'categories':1000*array([1, 2, 5, 10]),
+            'categories': array([1000, 2000, 5000, 10000]),
             'residential':False,
             },
         'industrial':{
             'units':'industrial_sqft',
-            'categories':1000*array([1,2,5,10]),
+            'categories': array([1000, 2000, 5000, 10000]),
             'residential':False,
             },
         }
@@ -844,6 +844,12 @@ with data from table ``\%s_development_location_choice_model_coefficients''. \co
   Project Transition Model \modelsindex in its entry for this particular project type.
 \end{description}
 The ``\%s'' in the above character strings are replaced by project type.
+
+By default the model runs on submodels determined by the sizes of the projects. Specifically,
+the initialization method is called with the argument \verb|submodel_string=urbansim.development_project.size_category|
+(see \ref{sec:DPTM-configuration} for the definition of the categories). Note that $n$ numbers in
+the categories list correspond to $n+1$ submodels. For running the model on all projects without categorizing, 
+set the \verb|sub_model_id| field of the specification and coefficients table to $-2$.
 
 %
 \subsection{Development Event Transition Model}
