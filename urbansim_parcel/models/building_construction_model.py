@@ -27,7 +27,7 @@ class BuildingConstructionModel(Model):
     """
     model_name = "BuildingConstructionModel"
 
-    def run (self, development_proposal_set, building_dataset, dataset_pool):
+    def run (self, development_proposal_set, building_dataset, dataset_pool, consider_amount_built_in_parcels = True):
         if development_proposal_set.size() <= 0:
             logger.log_status("Proposal set is empty. Nothing to be constructed.")
             return development_proposal_set
@@ -65,7 +65,8 @@ class BuildingConstructionModel(Model):
         
         # determine existing units on parcels
         parcels = dataset_pool.get_dataset("parcel")
-        parcels.compute_variables(map(lambda x: "%s = parcel.aggregate(urbansim_parcel.building.%s)" % (x, x), unique_unit_names), 
+        parcels.compute_variables(["urbansim_parcel.parcel.vacant_land_area"] + 
+                                  map(lambda x: "%s = parcel.aggregate(urbansim_parcel.building.%s)" % (x, x), unique_unit_names), 
                                   dataset_pool=dataset_pool)
         parcel_is_lut_vacant = parcels.compute_variables(["urbansim_parcel.parcel.is_land_use_type_vacant"], 
                                   dataset_pool=dataset_pool)
@@ -96,7 +97,7 @@ class BuildingConstructionModel(Model):
         new_buildings["land_area"] = array([], dtype=building_dataset.get_attribute("land_area").dtype)
         
         sqft_per_unit = proposal_component_set.get_attribute("building_sqft_per_unit").astype(new_buildings["sqft_per_unit"].dtype)
-        parcel_sqft = parcels.get_attribute("parcel_sqft").astype(new_buildings["land_area"].dtype)
+        parcel_vacant_land_area = parcels.get_attribute("vacant_land_area").astype(new_buildings["land_area"].dtype)
         
         # iterate over building types that are unique over the involved proposals
         for itype in range(unique_building_types.size):
@@ -110,7 +111,10 @@ class BuildingConstructionModel(Model):
                 pidx = component_index[parcel_ids_in_components==parcel_id]
                 parcel_index = parcels.get_id_index(parcel_id)
                 # what is already built on this parcel
-                amount_built = parcels.get_attribute_by_index(unit_name, parcel_index)
+                if consider_amount_built_in_parcels:
+                    amount_built = parcels.get_attribute_by_index(unit_name, parcel_index)
+                else:
+                    amount_built = 0
                 # what is proposed on this parcel
                 amount_proposed = to_be_built[pidx].sum()
                 # build if needed
@@ -132,7 +136,7 @@ class BuildingConstructionModel(Model):
                     new_buildings["sqft_per_unit"] = concatenate((new_buildings["sqft_per_unit"],
                                                                   sqft_per_unit[pidx][idx_to_be_built]))
                     new_buildings["land_area"] = concatenate((new_buildings["land_area"], 
-                                                              array(idx_to_be_built.size * [parcel_sqft[parcel_index]],
+                                                              array(idx_to_be_built.size * [parcel_vacant_land_area[parcel_index]],
                                                                     dtype=new_buildings["land_area"].dtype)))
                     if parcel_is_lut_vacant[parcel_index]:
                         parcel_lut[parcel_index] = component_land_use_types[pidx][idx_to_be_built][0]
