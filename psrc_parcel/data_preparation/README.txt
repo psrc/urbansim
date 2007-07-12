@@ -24,6 +24,8 @@ II. Create new residential buildings
     (update 'cache_directory_root' and 'existing_cache_to_copy' to your local environment)
 
 2. Copy the resulting 'buildings' table to your cache directory (replace the existing one).
+   IMPORTANT: delete the attribute/file 'building_sqft.li4'! This is a computed attribute
+   and must be recomputed.
 
 Note: The procedure in Step 1. includes creating a proposal set which can be very time consuming. 
       If you pass the point where the proposal set is created and need to re-run the step, do the following:
