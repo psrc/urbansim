@@ -62,5 +62,6 @@ aliases = [
               "urbansim_parcel.parcel.plan_15",
               "urbansim_parcel.parcel.plan_16",
               "urbansim_parcel.parcel.plan_18",
-              "urbansim_parcel.parcel.plan_20")
+              "urbansim_parcel.parcel.plan_20"),
+       "used_land_area = (parcel.aggregate(building.land_area, function=sum)).astype(int32)"
            ]

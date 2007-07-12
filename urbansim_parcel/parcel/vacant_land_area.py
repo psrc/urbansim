@@ -23,7 +23,7 @@ class vacant_land_area(Variable):
     _return_type="int32"
     
     def dependencies(self):
-        return ["used_land_area = parcel.aggregate(building.land_area, function=sum)",
+        return [my_attribute_label("used_land_area"),
                 my_attribute_label("parcel_sqft")]
 
     def compute(self,  dataset_pool):
