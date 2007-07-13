@@ -17,7 +17,8 @@ from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from opus_core.configuration import Configuration
 from numpy import array
 import os
-
+from urbansim.configurations.household_location_choice_model_configuration_creator import HouseholdLocationChoiceModelConfigurationCreator
+from urbansim.configurations.employment_transition_model_configuration_creator import EmploymentTransitionModelConfigurationCreator
 from urbansim.configurations.employment_relocation_model_configuration_creator import EmploymentRelocationModelConfigurationCreator
 from urbansim.configurations.employment_location_choice_model_configuration_creator import EmploymentLocationChoiceModelConfigurationCreator
 
@@ -93,13 +94,18 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                 }
         
           },
-               'employment_relocation_model':
-                    EmploymentRelocationModelConfigurationCreator(
+
+         'employment_transition_model': 
+                  EmploymentTransitionModelConfigurationCreator(
+			location_id_name="building_id"
+			).execute(),
+ 
+        'employment_relocation_model': 
+                  EmploymentRelocationModelConfigurationCreator(
                                location_id_name = 'building_id',
-                                output_index = 'erm_index').execute(),
-                    
+                               output_index = 'erm_index').execute(),
                                        
-               'employment_location_choice_model': 
+         'employment_location_choice_model': 
                    EmploymentLocationChoiceModelConfigurationCreator(
                                 location_set = "building",
                                 input_index = 'erm_index',
@@ -107,6 +113,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                 agents_for_estimation_table = None, # will take standard jobs table 
                                 filter_for_estimation = "job.building_id",
                                 portion_to_unplace = 0,
+                                capacity_string = "urbansim_parcel.building.vacant_SSS_job_space",
                                 #estimation_size_agents = 0.2
                                 ).execute(),
                                        
@@ -342,7 +349,8 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                 "name": "DevelopmentProjectProposalRegressionModel",
                 "arguments": {"submodel_string": "'land_use_type_id=development_project_proposal.disaggregate(parcel.land_use_type_id)'", 
                               #"submodel_string": "'building_type_id=development_project_proposal.disaggregate(development_template.building_type_id)'", 
-                              "filter_attribute": "'urbansim_parcel.development_project_proposal.is_viable'",
+                              #"filter_attribute": "'urbansim_parcel.development_project_proposal.is_viable'",
+                              "filter_attribute": "'urbansim_parcel.development_project_proposal.is_size_fit'",
                               "outcome_attribute_name":"'ln_unit_price_expected'",
                               "dataset_pool": "dataset_pool"
                               },
@@ -367,6 +375,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                 "output":"development_project_proposal"  #get the development project proposal back
                     },
           },
+
          'development_proposal_choice_model': {
             "import": {"urbansim_parcel.models.development_project_proposal_sampling_model":
                        "DevelopmentProjectProposalSamplingModel"},
@@ -398,7 +407,19 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                    "dataset_pool": "dataset_pool"
                    }
                  }
-          }
+          },
+
+#        "household_location_choice_model": 
+#                  'HouseholdLocationChoiceModelConfigurationCreator(
+#                                location_set = "building",
+#                                sampler = "opus_core.samplers.weighted_sampler",
+#                                input_index = 'hrm_index',
+#                                submodel_string = None,
+#                                capacity_string = "urbansim_parcel.building.vacant_residential_units",
+#                                nchunks=12,
+#                                lottery_max_iterations=20
+#                                ).execute(),
+
         }
         
         for model in my_controller_configuration.keys():
@@ -411,21 +432,21 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         ##bldglcm_controller = Configuration()
         #
         #config["models_configuration"]['building_location_choice_model']["controller"].merge(bldglcm_controller)
-        
-        
+	
         #HLCM
         hlcm_controller = self["models_configuration"]["household_location_choice_model"]["controller"]
         hlcm_controller["init"]["arguments"]["location_set"] = "building"
         hlcm_controller["init"]["arguments"]["location_id_string"] = "'building_id'"
         hlcm_controller["init"]["arguments"]["estimate_config"] = {"weights_for_estimation_string":"building.residential_units"} #"urbansim.zone.vacant_residential_units"
-        hlcm_controller["init"]["arguments"]["run_config"] = {"capacity_string":"urbansim_parcel.building.vacant_residential_units"} #"urbansim.zone.vacant_residential_units"
+#       hlcm_controller["init"]["arguments"]["run_config"] = {"capacity_string":"urbansim_parcel.building.vacant_residential_units"}
+        hlcm_controller["init"]["arguments"]["capacity_string"] = "'urbansim_parcel.building.vacant_residential_units'"
         hlcm_controller["init"]["arguments"]['sample_size_locations']=30
         hlcm_controller["init"]["arguments"]['sampler']="'opus_core.samplers.weighted_sampler'"
         hlcm_controller["controller"]["init"]["arguments"]["submodel_string"] = 'None' #"'household_size'"
         hlcm_controller["prepare_for_estimate"]["arguments"]["join_datasets"] = 'True'
         hlcm_controller["prepare_for_estimate"]["arguments"]["index_to_unplace"] = 'None'
         #hlcm_controller["estimate"]["arguments"]["procedure"] = 'None'
-        self["models_configuration"]['household_location_choice_model']["controller"].merge(hlcm_controller)
+        models_configuration['household_location_choice_model']["controller"].replace(hlcm_controller)
         
         
         self["datasets_to_preload"] = {
