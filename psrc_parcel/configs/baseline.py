@@ -26,7 +26,7 @@ import os
 
 class Baseline(UrbansimParcelConfiguration):
     def __init__(self):
-        config = AbstractUrbansimConfiguration()
+        config = UrbansimParcelConfiguration()
 
         config_changes = {
             'description':'PSRC parcel baseline',
@@ -45,6 +45,7 @@ class Baseline(UrbansimParcelConfiguration):
                     'households',
                     'buildings',
                     'parcels',
+                    'gridcells',
                     'zones',
                     "jobs",
                     "households_for_estimation",
@@ -57,9 +58,9 @@ class Baseline(UrbansimParcelConfiguration):
                     'urbansim_constants',
                     "target_vacancies",
                     "home_based_employment_location_choice_model_coefficients",
-                    "home_based_employment_location_choice_model_coefficients",
-                    "non_home_based_employmen_location_choice_model_specification",
-                    "non_home_based_employmen_location_choice_model_specification",
+                    "home_based_employment_location_choice_model_specification",
+                    "non_home_based_employment_location_choice_model_coefficients",
+                    "non_home_based_employment_location_choice_model_specification",
                     "household_location_choice_model_coefficients",
                     "household_location_choice_model_specification",
                     "real_estate_price_model_coefficients",
@@ -98,14 +99,14 @@ class Baseline(UrbansimParcelConfiguration):
             'years':(2001, 2002),
             'models':[ # models are executed in the same order as in this list
 #                "process_pipeline_events",
-                "real_estate_price_model",
-                "expected_sale_price_model",
-                "development_proposal_choice_model",
-                "building_construction_model",
-                "household_transition_model",
-                "employment_transition_model",
-                "household_relocation_model",
-                "household_location_choice_model",
+#                "real_estate_price_model",
+#                "expected_sale_price_model",
+#                "development_proposal_choice_model",
+#                "building_construction_model",
+#                "household_transition_model",
+#                "employment_transition_model",
+#                "household_relocation_model",
+#                "household_location_choice_model",
                 "employment_relocation_model",
                 {"employment_location_choice_model":{'group_members': '_all_'}},
                 ],
@@ -126,7 +127,7 @@ class Baseline(UrbansimParcelConfiguration):
 #                    'person':{'package_name':'urbansim_parcel'},        
                     "building_type":{'package_name':'urbansim_parcel'},
                     'travel_data':{},
-
+                    "job_building_type":{}
                 }
         }
         #use configuration in config as defaults and merge with config_changes
