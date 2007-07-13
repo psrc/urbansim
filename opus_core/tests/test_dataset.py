@@ -164,9 +164,9 @@ class TestDataset(opus_unittest.OpusTestCase):
         
         attribute = 'little_endian'
         
-        location = os.path.join(opus_core.__path__[0], 'data')
+        location = os.path.join(opus_core.__path__[0], 'data', 'flt')
         storage = flt_storage(storage_location=location)
-        ds = Dataset(in_storage=storage, id_name=attribute, in_table_name='flt')
+        ds = Dataset(in_storage=storage, id_name=attribute, in_table_name='endians')
         
         self.assertAlmostEqual(11.0, ds.get_attribute_by_index(attribute, 0))
         self.assertEqual(None, ds.get_attribute_header(attribute))
