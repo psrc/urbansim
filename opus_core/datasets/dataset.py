@@ -24,6 +24,7 @@ from opus_core.misc import all_in_list
 from opus_core.misc import get_distinct_list
 from opus_core.variables.attribute_box import AttributeBox
 from opus_core.resources import Resources
+from opus_core.store.storage import Storage
 from opus_core.storage_factory import StorageFactory
 from opus_core.dataset_pool import DatasetPool
 from opus_core.variables.attribute_type import AttributeType
@@ -39,14 +40,14 @@ class Dataset(AbstractDataset):
             should be integers > 0.
         - n - number of individuals
         - list of attribute names
-        - a storage object that points to media where the dataset is stored.
+        - a in_storage object that points to media where the dataset is stored.
         - dataset name which determines the directory in which variables for this dataset are implemented.
 
     The class provides a method for accessing the data, called 'get_attribute(attribute_name)' which returns
     an array of values of the given attribute.
-    The class offers a method 'load_dataset' which reads the data from storage. If this method is not used,
+    The class offers a method 'load_dataset' which reads the data from in_storage. If this method is not used,
     the data are loaded as they are needed, i.e. when using 'get_attribute'. Note that a method 'load_dataset'
-    implemented for the given storage object is required.
+    implemented for the given in_storage object is required.
 
     Computed variables for the dataset are treated as attributes. They can be thought as additional columns in
     the n x m table. In order to differentiate them from fixed attributes, each attribute/variable (represented
@@ -60,7 +61,7 @@ class Dataset(AbstractDataset):
         (as a pair of argument_name:value). If not None, argument values given directly to the constructor overwrite
         the corresponding values in resources (in a local copy, thus not seen outside).
         'in_storage' is a Storage object and the constructor uses it to determine what attributes
-            are on storage (without loading them). These names are stored in '_primary_attribute_names'.
+            are on in_storage (without loading them). These names are stored in '_primary_attribute_names'.
         'id_name' is a list of strings that determine a unique identifiers of the dataset.
             If 'id_name' is an empty list, there will be a hidden unique identifier created (its name is given
             in the class constant 'hidden_id_name'). In that case, in_storage is not allowed to be None,
@@ -96,7 +97,7 @@ class Dataset(AbstractDataset):
 
     def get_attribute(self, name):
         """ Return an array of the (by the argument name) given attribute.
-        If it is not found, it is loaded from opus_core.store.storage (lazy loading principle)
+        If it is not found, it is loaded from opus_core.store.in_storage (lazy loading principle)
         or from cache if the attribute was previously cached."""
         if not isinstance(name, VariableName):
             attr_name = VariableName(name)
@@ -140,10 +141,10 @@ class Dataset(AbstractDataset):
         Thus, resources are overwritten by the given arguments (if not None).
         It is merged with self.resources and thus, entries that were given
         to the constructor do not need to be given here. It can also contain any other entries needed by
-        the corresponding storage module, since it is passed to the load_dataset method of the storage module.
+        the corresponding in_storage module, since it is passed to the load_dataset method of the in_storage module.
         The method loads data from a medium given by the entry 'in_storage'.
         The data are loaded in several chunks given by 'nchunks' (default is 1).
-        Argument 'in_table_name' determines the storage place (e.g. subdirectory, MySQL table, file name).
+        Argument 'in_table_name' determines the in_storage place (e.g. subdirectory, MySQL table, file name).
         Argument 'attributes' can be a list of attributes to be loaded or an integer code of the attributes type
         (PRIMARY, COMPUTED), or '*'. If the entry is missing or is '*', all attributes found on the medium are loaded.
         'lowercase' specifies if attribute names are supposed to be converted to lower case (default is True).
@@ -160,7 +161,7 @@ class Dataset(AbstractDataset):
         Each chunk reads also values of the id_name attribute. These are sorted and all other attributes are
         stored in this order.
 
-        Note that the corresponding storage module must have a method 'load_dataset'.
+        Note that the corresponding in_storage module must have a method 'load_dataset'.
         """
         #set defaults
         nchunks_default = 1
@@ -232,6 +233,23 @@ class Dataset(AbstractDataset):
                                                       version=0)
                 if local_resources["flush_after_each_chunk"]:
                     self.flush_dataset()
+            if table_name+".computed" in in_storage.get_table_names():
+                    data = in_storage.load_table(table_name = table_name+".computed", 
+                                                 column_names = Storage.ALL_COLUMNS, 
+                                                 id_name = self.get_non_hidden_id_name())
+                    
+                    for attr in data:
+                        if self.attribute_boxes.has_key(attr):
+                            if not (attr in self._id_names) or not self.attribute_boxes[attr].is_in_memory():
+                                self.attribute_boxes[attr].set_data(data[attr])
+                                self.attribute_boxes[attr].set_is_in_memory(True)
+                        elif not ((attr in self._id_names) and self.attribute_boxes.has_key(attr)): #do not store id_name every time
+                            self.attribute_boxes[attr] = AttributeBox(self,
+                                                          data[attr],
+                                                          variable_name=self.create_and_check_qualified_variable_name(attr),
+                                                          type=AttributeType.COMPUTED,
+                                                          header=None,
+                                                          version=0)
             if not id_name_stored:
                 try:
                     self.n = len(self.get_attribute(self.get_attribute_names()[0]))
@@ -274,7 +292,7 @@ class Dataset(AbstractDataset):
 
     def determine_stored_attribute_names(self, resources=None, in_storage=None,
                                               in_table_name=None, attribute_type=AttributeType.PRIMARY):
-        """Return name of attributes that are found on storage. The storage module must have a method
+        """Return name of attributes that are found on in_storage. The in_storage module must have a method
         'determine_field_names'.
         """
         place_default = ""
@@ -331,7 +349,7 @@ class Dataset(AbstractDataset):
 
         attributes = local_resources["attributes"]
         values = {}
-        attrtypes = {}
+        values_computed = {}
         if attributes == '*':
             attr_names = self.get_known_attribute_names()
         if isinstance(attributes, list) or isinstance(attributes, tuple):
@@ -341,21 +359,25 @@ class Dataset(AbstractDataset):
         elif attributes == AttributeType.PRIMARY:
             attr_names = self.get_primary_attribute_names()
 
-        for attr in attr_names:
-            values[attr] = ma.filled(self.get_attribute(attr),0.0)
-            attrtypes[attr] = self._get_attribute_type(attr)
-        local_resources.merge({"values":values,
-                        "attrtype":attrtypes,
-                        "id_name":self._id_names,
-                        "in_table_name": self._get_in_table_name_for_cache()
-                        })
+        for name in attr_names:
+            attribute = ma.filled(self.get_attribute(name),0.0)
+            if self._get_attribute_type(name) == AttributeType.COMPUTED:
+                values_computed[name] = attribute
+            else:
+                values[name] = attribute
+        local_resources.merge({"in_table_name": self._get_in_table_name_for_cache()})
         
         table_name = local_resources["in_table_name"]
-        table_data = local_resources["values"]
-        local_resources["out_storage"].write_table(
-            table_name=table_name,
-            table_data=table_data,
-            )
+        if len(values):
+            local_resources["out_storage"].write_table(
+                table_name=table_name,
+                table_data=values,
+                )
+        if len(values_computed):
+            local_resources["out_storage"].write_table(
+                table_name=table_name+".computed",
+                table_data=values_computed,
+                )
 
 class DatasetSubset(Dataset):
     """Class for viewing a subset of a Dataset object, identified by a list of indices."""
@@ -419,11 +441,11 @@ class DatasetTests(opus_unittest.OpusTestCase):
             )
         ds = Dataset(in_storage=storage, in_table_name='tests', id_name='id')
 
-        # Should only have attributes that exist in the storage.
+        # Should only have attributes that exist in the in_storage.
         self.assertEqual(Set(ds.get_primary_attribute_names()),
                          Set(['id','attr','attr2']))
 
-        # Should only have attributes that exist in the storage.
+        # Should only have attributes that exist in the in_storage.
         dataset_pool = DatasetPool(package_order=['opus_core'],
                                    storage=storage)
         ds = dataset_pool.get_dataset('test')
@@ -623,6 +645,72 @@ class DatasetTests(opus_unittest.OpusTestCase):
         self.assertEqual(corrmat[2,1] > 0, True,  msg="Error in correlation matrix")
         self.assertEqual(corrmat[2,1] < 1, True,  msg="Error in correlation matrix")
         
+    def test_get_primary_and_computed_attributes(self):
+        storage = StorageFactory().get_storage('dict_storage')
+
+        storage.write_table(
+            'tests',
+            {
+                'id':array([1,2,3]),
+                'attr':array([100,200,300]),
+                'attr2':array([11,22,33]),
+            }
+        )
+        storage.write_table(
+            'tests.computed',
+            {
+                'attr3':array([7,8,9]),
+                'attr4':array([45,46,47]),
+            }
+        )
+        ds = Dataset(in_storage=storage, in_table_name='tests', id_name='id')
+        ds.load_dataset()
+        # Should only have attributes that exist in the in_storage.
+        self.assertEqual(Set(ds.get_primary_attribute_names()),
+                         Set(['id','attr','attr2']))
+        self.assertEqual(Set(ds.get_computed_attribute_names()),
+                         Set(['attr3','attr4']))
+        
+#    def test_use_out_table_to_store_attributes(self):
+#        storage = StorageFactory().get_storage('dict_storage')
+#
+#        storage.write_table(
+#            'tests',
+#            {
+#                'id':array([1,2,3]),
+#                'attr':array([100,200,300]),
+#                'attr2':array([11,22,33]),
+#            }
+#        )
+#        self.assertEqual(["tests"], storage.get_table_names())
+#        ds = Dataset(in_storage=storage, in_table_name='tests', id_name='id')
+#        ds.load_dataset()
+#        ds.write_dataset(out_storage=storage, out_table_name="table2")
+#        self.assertEqual(Set(["tests", "table2"]), Set(storage.get_table_names()))
+         
+    def test_store_primary_and_computed_attributes(self):
+        in_storage = StorageFactory().get_storage('dict_storage')
+        out_storage = StorageFactory().get_storage('dict_storage')
+
+        in_storage.write_table(
+            'tests',
+            {
+                'id':array([1,2,3]),
+                'attr':array([100,200,300]),
+                'attr2':array([11,22,33]),
+            }
+        )
+        in_storage.write_table(
+            'tests.computed',
+            {
+                'attr3':array([7,8,9]),
+                'attr4':array([45,46,47]),
+            }
+        )
+        ds = Dataset(in_storage=in_storage, in_table_name='tests', id_name='id')
+        ds.load_dataset()
+        ds.write_dataset(out_storage=out_storage)
+        self.assertEqual(Set(['tests','tests.computed']),Set(out_storage.get_table_names()))
 
 if __name__ == '__main__':
     opus_unittest.main()
