@@ -8,6 +8,7 @@ III. Assign buildings to households
 IV.  Assign buildings to jobs with known parcel_id
 V.   Create new non-residential buildings to accommodate all jobs
 VI.  Assign buildings to remaining jobs
+VII. Post-process
 
 I. Create a 'jobs' table
 ****
@@ -101,3 +102,10 @@ VI.  Assign buildings to remaining jobs
 
 4. Export the 'jobs' table to the database.
   - Use: opus_core/tools/do_export_cache_to_mysql_database.py -c your_cache_directory/year -t jobs -d database_name.
+  
+VII. Post-process
+After all the preceding processes are done, computed attributes (e.g. zone_id in households) should be delete from 
+datasets such that they won't be treated as primary attributes and will be computed when needed.
+parcel_id, zone_id in households, possibly households_for_estimaiton
+parcel_id, zone_id in jobs and jobs_for_estimation
+parcel_id, zone_id in buildings (?)
