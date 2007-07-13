@@ -86,7 +86,7 @@ class Baseline(UrbansimParcelConfiguration):
             'input_configuration': DatabaseConfiguration(
                 host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
                 user_name     = os.environ.get('MYSQLUSERNAME',''),
-                password      = "urbo?!sauR", #os.environ.get('MYSQLPASSWORD',''),
+                password      = os.environ.get('MYSQLPASSWORD',''),
                 database_name = 'psrc_2005_parcel_baseyear',
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
