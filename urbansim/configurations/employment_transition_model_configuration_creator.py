@@ -73,7 +73,7 @@ class TestEmploymentTransitionModelConfigurationCreator(opus_unittest.OpusTestCa
                 'urbansim.models.employment_transition_model': 'EmploymentTransitionModel'
                 },
             'init': {
-                'arguments': {'debuglevel': 'debuglevel'},
+                'arguments': {'debuglevel': 'debuglevel', 'location_id_name': "'grid_id'"},
                 'name': 'EmploymentTransitionModel'
                 },
             'prepare_for_run': {
@@ -106,7 +106,7 @@ class TestEmploymentTransitionModelConfigurationCreator(opus_unittest.OpusTestCa
                 'urbansim.models.employment_transition_model': 'EmploymentTransitionModel'
                 },
             'init': {
-                'arguments': {'debuglevel': 9999},
+                'arguments': {'debuglevel': 9999, 'location_id_name': "'grid_id'"},
                 'name': 'EmploymentTransitionModel'
                 },
             'prepare_for_run': {
