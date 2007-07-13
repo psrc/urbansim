@@ -21,7 +21,7 @@ class EmploymentTransitionModelConfigurationCreator(HasStrictTraits):
     debuglevel = Trait('debuglevel', Str, Int)
     job_set = Str('job')
     job_building_types = Str('job_building_type')
-    
+    location_id_name = Str('grid_id')
     _model_name = 'employment_transition_model'
     
     def execute(self):
@@ -34,7 +34,9 @@ class EmploymentTransitionModelConfigurationCreator(HasStrictTraits):
                 'urbansim.models.%s' % self._model_name: 'EmploymentTransitionModel'
                 },
             'init': {
-                'arguments': {'debuglevel': self.debuglevel},
+                'arguments': {'debuglevel': self.debuglevel,
+                              'location_id_name': "'%s'" % self.location_id_name,
+                              },
                 'name': 'EmploymentTransitionModel'
                 },
             'prepare_for_run': {
