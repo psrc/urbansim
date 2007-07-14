@@ -21,8 +21,9 @@ class existing_units(Variable):
     _return_type = "int32"
     
     def dependencies(self):
-        return ["_unit_name=building.disaggregate(building_type.unit_name)",
-                "parcel_sqft=building.disaggregate(parcel.parcel_sqft)",
+        return [
+		"urbansim_parcel.building.unit_name",
+		"urbansim_parcel.building.parcel_sqft",
                 "urbansim_parcel.building.building_sqft",
                 "urbansim_parcel.building.residential_units"
                 ]
@@ -30,7 +31,7 @@ class existing_units(Variable):
     def compute(self,  dataset_pool):
         buildings = self.get_dataset()
         results = zeros(buildings.size(),dtype=self._return_type)
-        unit_names = buildings.get_attribute("_unit_name")
+        unit_names = buildings.get_attribute("unit_name")
         unique_unit_names = unique_values(unit_names)
         for unit_name in unique_unit_names:
             if unit_name.strip() == '':continue
