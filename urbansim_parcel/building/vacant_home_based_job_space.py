@@ -20,7 +20,7 @@ class vacant_home_based_job_space(Variable):
     """ number of job spaces that is vacant/unoccupied"""
     
     def dependencies(self):
-        return ["total_home_based_job_space=building.aggregate(psrc_parcel.household.minimum_persons_and_2)",
+        return [
                 "urbansim_parcel.building.number_of_home_based_jobs"
                 ]
 
