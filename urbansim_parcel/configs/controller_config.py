@@ -111,6 +111,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                 input_index = 'erm_index',
                                 estimation_weight_string = "pre_2001=building.year_built<=2000",
                                 agents_for_estimation_table = None, # will take standard jobs table 
+                                number_of_units_string = "urbansim_parcel.building.total_SSS_job_space",
                                 filter_for_estimation = "job.building_id",
                                 portion_to_unplace = 0,
                                 capacity_string = "urbansim_parcel.building.vacant_SSS_job_space",
@@ -425,7 +426,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         for model in my_controller_configuration.keys():
             if model not in self["models_configuration"].keys():
                 self["models_configuration"][model] = {}
-            models_configuration[model]['controller'] = my_controller_configuration[model]
+            self['models_configuration'][model]['controller'] = my_controller_configuration[model]
         
         #BLDGLCM
         #bldglcm_controller = config["models_configuration"]["building_location_choice_model"]["controller"]
