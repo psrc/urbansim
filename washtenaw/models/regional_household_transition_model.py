@@ -21,10 +21,9 @@ class RegionalHouseholdTransitionModel(HouseholdTransitionModel):
     """Creates and removes households from household_set. It runs the urbansim HTM with control totals for each region."""
 
     model_name = "Regional Household Transition Model"
-    location_id_name = "grid_id"
 
     def run(self, year, household_set, control_totals, characteristics, resources=None):
-        self._do_initilize_for_run(household_set)
+        self._do_initialize_for_run(household_set)
         control_totals.get_attribute("total_number_of_households") # to make sure they are loaded
         self.characteristics = characteristics
         self.all_categories = self.characteristics.get_attribute("characteristic")
@@ -53,8 +52,8 @@ class RegionalHouseholdTransitionModel(HouseholdTransitionModel):
             self.remove_households[last_remove_idx:self.remove_households.size] = all_households_index[households_index[self.remove_households[last_remove_idx:self.remove_households.size]]]
         return self._update_household_set(household_set)
 
-    def _do_initilize_for_run(self, household_set):
-        HouseholdTransitionModel._do_initilize_for_run(self, household_set)
+    def _do_initialize_for_run(self, household_set):
+        HouseholdTransitionModel._do_initialize_for_run(self, household_set)
         self.new_households["large_area_id"] = array([], dtype="int32")
 
 
