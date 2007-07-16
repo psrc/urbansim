@@ -52,8 +52,9 @@ class ControlTotalDataset(Dataset):
         self.what = what
         if (id_name == None) and (what == "household"): # determine id_name depending on the columns in the table
             id_names = resources["in_storage"].determine_field_names(resources)
-            if "year" in id_names:
-                id_names.remove("year")
+            for name in self.id_name_default[what]:
+                if name in id_names:
+                    id_names.remove(name)
             if "total_number_of_households" in id_names:
                 id_names.remove("total_number_of_households")
             resources.merge({"id_name":resources["id_name"] + id_names})

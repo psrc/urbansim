@@ -35,24 +35,50 @@ class HouseholdTransitionModel(Model):
         self.debug = DebugPrinter(debuglevel)
 
     def run(self, year, household_set, control_totals, characteristics, resources=None):
-        household_id_name = household_set.get_id_name()[0]
-        new_hhs = {
-           self.location_id_name:array([], dtype=household_set.get_data_type(self.location_id_name, int32)),
-           household_id_name:array([], dtype=household_set.get_data_type(household_id_name, int32))
-                   }
+        self._do_initilize_for_run(household_set)
         control_totals.get_attribute("total_number_of_households") # to make sure they are loaded
         self.characteristics = characteristics
         self.all_categories = self.characteristics.get_attribute("characteristic")
         self.all_categories = array(map(lambda x: x.lower(), self.all_categories))
         self.scaled_characteristic_names = get_distinct_names(self.all_categories).tolist()
-
-        idx = where(control_totals.get_attribute("year")==year)[0]
-        self.control_totals_for_this_year = DatasetSubset(control_totals, idx)
-        groups = self.control_totals_for_this_year.get_id_attribute()
         self.marginal_characteristic_names = copy(control_totals.get_id_name())
         index_year = self.marginal_characteristic_names.index("year")
         self.marginal_characteristic_names.remove("year")
+        idx = where(control_totals.get_attribute("year")==year)[0]
+        self.control_totals_for_this_year = DatasetSubset(control_totals, idx)
+        self._do_run_for_this_year(household_set)
+        return self._update_household_set(household_set)
+        
+    def _update_household_set(self, household_set):
+        household_set.remove_elements(self.remove_households)
+        household_set.add_elements(self.new_households, require_all_attributes=False)
+        difference = household_set.size()-self.household_size
+        self.debug.print_debug("Difference in number of households: %s"
+            " (original %s, new %s, created %s, deleted %s)"
+                % (difference,
+                   self.household_size,
+                   household_set.size(),
+                   self.new_households[self.household_id_name].size,
+                   self.remove_households.size),
+            3)
+        if self.location_id_name in household_set.get_attribute_names():
+            self.debug.print_debug("Number of unplaced households: %s"
+                % where(household_set.get_attribute(self.location_id_name) <=0)[0].size,
+                3)
+        return difference
 
+    def _do_initilize_for_run(self, household_set):
+        self.household_id_name = household_set.get_id_name()[0]
+        self.new_households = {
+           self.location_id_name:array([], dtype=household_set.get_data_type(self.location_id_name, int32)),
+           self.household_id_name:array([], dtype=household_set.get_data_type(self.household_id_name, int32))
+                   }
+        self.remove_households = array([], dtype='int32')
+        self.household_size = household_set.size()
+        self.max_id = household_set.get_id_attribute().max()
+        
+    def _do_run_for_this_year(self, household_set):
+        groups = self.control_totals_for_this_year.get_id_attribute()
         self.create_arrays_from_categories(household_set)
 
         all_characteristics = self.arrays_from_categories.keys()
@@ -66,7 +92,8 @@ class HouseholdTransitionModel(Model):
             max_bins = self.arrays_from_categories[attr].max()+1
             idx_shape.append(max_bins)
             number_of_combinations=number_of_combinations*max_bins
-            new_hhs[attr] = array([], dtype=household_set.get_data_type(attr, float32))
+            if attr not in self.new_households.keys():
+                self.new_households[attr] = array([], dtype=household_set.get_data_type(attr, float32))
             if attr in self.marginal_characteristic_names:
                 marginal_char_idx.append(i)
             else:
@@ -109,12 +136,7 @@ class HouseholdTransitionModel(Model):
                                                                 labels=household_categories+1,
                                                                 index = arange(number_of_combinations)+1))
 
-        max_id = household_set.get_id_attribute().max()
-        household_size = household_set.size()
-
-        remove_hhs = array([], dtype='int32')
         g=arange(marginal_char_idx.size)
-
 
         #iterate over marginal characteristics
         for group in groups:
@@ -122,7 +144,7 @@ class HouseholdTransitionModel(Model):
                 id = group
             else:
                 id = tuple(group.tolist())
-            group_element = control_totals.get_data_element_by_id(id)
+            group_element = self.control_totals_for_this_year.get_data_element_by_id(id)
             total = group_element.total_number_of_households
             for i in range(g.size):
                 g[i] = eval("group_element."+self.arrays_from_categories.keys()[marginal_char_idx[i]])
@@ -142,7 +164,7 @@ class HouseholdTransitionModel(Model):
                 sample_array, non_placed, size_non_placed = \
                     get_array_without_non_placed_agents(household_set, w, -1*diff,
                                                           self.location_id_name)
-                remove_hhs = concatenate((remove_hhs, non_placed, sample_noreplace(sample_array,
+                self.remove_households = concatenate((self.remove_households, non_placed, sample_noreplace(sample_array,
                                                                                    max(0,abs(diff)-size_non_placed))))
             if diff > 0: # households to be created
                 distr = number_of_households_in_categories[where(l)]
@@ -154,12 +176,12 @@ class HouseholdTransitionModel(Model):
                 sample_array = probsample_replace(arange(distr.size), diff,
                                                   prob_array=distr/float(distr.sum())) # indices of chosen bins
                 # assign grid_id and household_id
-                new_hhs[self.location_id_name] = concatenate((new_hhs[self.location_id_name],
-                                      zeros((diff,), dtype=new_hhs[self.location_id_name].dtype.type)))
-                new_max_id = max_id+diff
-                new_hhs[household_id_name]=concatenate((new_hhs[household_id_name],
-                                                                     arange(max_id+1, new_max_id+1)))
-                max_id = new_max_id
+                self.new_households[self.location_id_name] = concatenate((self.new_households[self.location_id_name],
+                                      zeros((diff,), dtype=self.new_households[self.location_id_name].dtype.type)))
+                new_max_id = self.max_id+diff
+                self.new_households[self.household_id_name]=concatenate((self.new_households[self.household_id_name],
+                                                                     arange(self.max_id+1, new_max_id+1)))
+                self.max_id = new_max_id
                 # assign marginal characteristics
                 for attr in self.marginal_characteristic_names:
                     value = eval("group_element."+attr)
@@ -167,8 +189,8 @@ class HouseholdTransitionModel(Model):
                         # get minimum and maximum for this attribute category
                         min_max = self.arrays_from_categories_mapping[attr][value]
                         if min_max[0] == min_max[1]: # if min == max
-                            new_hhs[attr]=concatenate((new_hhs[attr],
-                                   (resize(array([min_max[0]], dtype=new_hhs[attr].dtype.type), diff))))
+                            self.new_households[attr]=concatenate((self.new_households[attr],
+                                   (resize(array([min_max[0]], dtype=self.new_households[attr].dtype.type), diff))))
                         else: #sample
                             if (attr == "age_of_head"): # maximum sampled age is 100, minimum 15; TODO: get these from config
                                 rn = sample_replace(arange(max(15,int(min_max[0])),min(int(min_max[1]),100)+1), diff)
@@ -177,11 +199,11 @@ class HouseholdTransitionModel(Model):
                                 rn = sample_replace(arange(int(10*min_max[0]),int(10*min_max[1])+1,10),diff)
                             else:
                                 rn = sample_replace(arange(int(min_max[0]),int(min_max[1])+1), diff)
-                            new_hhs[attr]=concatenate((new_hhs[attr],
-                                                       rn.astype(new_hhs[attr].dtype.type)))
+                            self.new_households[attr]=concatenate((self.new_households[attr],
+                                                       rn.astype(self.new_households[attr].dtype.type)))
                     else: # attribute is not in the characteristics dataset
-                        new_hhs[attr]=concatenate((new_hhs[attr],
-                                               (resize(array([value], dtype=new_hhs[attr].dtype.type), diff))))
+                        self.new_households[attr]=concatenate((self.new_households[attr],
+                                               (resize(array([value], dtype=self.new_households[attr].dtype.type), diff))))
 
                 # iterate over non-marginal characteristics
                 for i in nonmarginal_char_idx:
@@ -192,8 +214,8 @@ class HouseholdTransitionModel(Model):
                                         sample_array))
                     is_min_equal_max = min_max[:,0] == min_max[:,1]
                     # assign those whose minimum equals maximum
-                    new_hhs[attr]=concatenate((new_hhs[attr],
-                                   min_max[is_min_equal_max,:][:,0].astype(new_hhs[attr].dtype.type)))
+                    self.new_households[attr]=concatenate((self.new_households[attr],
+                                   min_max[is_min_equal_max,:][:,0].astype(self.new_households[attr].dtype.type)))
                     # iterate over the remaining ones
                     w = where(logical_not(is_min_equal_max))[0]
                     if w.size > 0:
@@ -224,26 +246,11 @@ class HouseholdTransitionModel(Model):
                             else:
                                 rn = sample_replace(arange(int(this_min),int(this_max)+1),
                                     int(number_of_bins_in_each_category[j]))
-                            new_hhs[attr]=concatenate((new_hhs[attr],
-                                                       rn.astype(new_hhs[attr].dtype.type)))
+                            self.new_households[attr]=concatenate((self.new_households[attr],
+                                                       rn.astype(self.new_households[attr].dtype.type)))
                             j+=1
 
-        household_set.remove_elements(remove_hhs)
-        household_set.add_elements(new_hhs, require_all_attributes=False)
-        difference = household_set.size()-household_size
-        self.debug.print_debug("Difference in number of households: %s"
-            " (original %s, new %s, created %s, deleted %s)"
-                % (difference,
-                   household_size,
-                   household_set.size(),
-                   new_hhs[household_id_name].size,
-                   remove_hhs.size),
-            3)
-        if self.location_id_name in household_set.get_attribute_names():
-            self.debug.print_debug("Number of unplaced households: %s"
-                % where(household_set.get_attribute(self.location_id_name) <=0)[0].size,
-                3)
-        return difference
+
 
     def create_arrays_from_categories(self, household_set):
         self.arrays_from_categories = {}
@@ -332,16 +339,14 @@ def create_scaled_array(characteristics, agent_set):
             j+=1
     return (scaled_array, categories)
 
-
-
 from opus_core.tests import opus_unittest
-from urbansim.models.household_transition_model import HouseholdTransitionModel
 from opus_core.resources import Resources
 from numpy import array, logical_and
 from numpy import ma
 from urbansim.datasets.household_dataset import HouseholdDataset
 from urbansim.datasets.control_total_dataset import ControlTotalDataset
 from urbansim.datasets.household_characteristic_dataset import HouseholdCharacteristicDataset
+
 class Tests(opus_unittest.OpusTestCase):
 
     def setUp(self):
