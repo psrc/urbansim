@@ -35,7 +35,7 @@ class HouseholdTransitionModel(Model):
         self.debug = DebugPrinter(debuglevel)
 
     def run(self, year, household_set, control_totals, characteristics, resources=None):
-        self._do_initilize_for_run(household_set)
+        self._do_initialize_for_run(household_set)
         control_totals.get_attribute("total_number_of_households") # to make sure they are loaded
         self.characteristics = characteristics
         self.all_categories = self.characteristics.get_attribute("characteristic")
@@ -67,7 +67,7 @@ class HouseholdTransitionModel(Model):
                 3)
         return difference
 
-    def _do_initilize_for_run(self, household_set):
+    def _do_initialize_for_run(self, household_set):
         self.household_id_name = household_set.get_id_name()[0]
         self.new_households = {
            self.location_id_name:array([], dtype=household_set.get_data_type(self.location_id_name, int32)),

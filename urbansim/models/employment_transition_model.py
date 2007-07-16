@@ -21,6 +21,7 @@ from scipy.ndimage import sum as ndimage_sum
 from opus_core.sampling_toolbox import sample_noreplace, probsample_replace
 from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
+from opus_core.datasets.dataset import DatasetSubset
 
 class EmploymentTransitionModel(Model):
     """Creates and removes jobs from job_set."""
@@ -40,22 +41,29 @@ class EmploymentTransitionModel(Model):
         self.dataset_pool = self.create_dataset_pool(dataset_pool, ["urbansim", "opus_core"])
 
     def run(self, year, job_set, control_totals, job_building_types, data_objects=None, resources=None):
-        job_id_name = job_set.get_id_name()[0]
-        control_totals.get_attribute("total_home_based_employment") # to make sure they are loaded
-        control_totals.get_attribute("total_non_home_based_employment")
-        idx = where(control_totals.get_attribute("year")==year)
-        sectors = unique_values(control_totals.get_attribute_by_index("sector_id", idx))
-        max_id = job_set.get_id_attribute().max()
-        job_size = job_set.size()
-        new_jobs = {
+        self._do_initialize_for_run(job_set, job_building_types, data_objects)
+        idx = where(control_totals.get_attribute("year")==year)[0]
+        self.control_totals_for_this_year = DatasetSubset(control_totals, idx)
+        self._do_run_for_this_year(job_set)
+        return self._update_job_set(job_set)
+        
+    def _do_initialize_for_run(self, job_set, job_building_types, data_objects=None):
+        self.max_id = job_set.get_id_attribute().max()
+        self.job_size = job_set.size()
+        self.job_id_name = job_set.get_id_name()[0]
+        self.new_jobs = {
             self.location_id_name:array([], dtype=job_set.get_data_type(self.location_id_name, int32)),
             "sector_id":array([], dtype=job_set.get_data_type("sector_id", int32)),
-            job_id_name:array([], dtype=job_set.get_data_type(job_id_name, int32)),
+            self.job_id_name:array([], dtype=job_set.get_data_type(self.job_id_name, int32)),
             "building_type":array([], dtype=job_set.get_data_type("building_type", int8))
                     }
+        self.remove_jobs = array([], dtype=int32)
         if data_objects is not None:
             self.dataset_pool.add_datasets_if_not_included(data_objects)
         self.dataset_pool.add_datasets_if_not_included({job_building_types.get_dataset_name():job_building_types})
+        self.available_building_types = job_building_types.get_id_attribute()
+
+    def _compute_sector_variables(self, sectors, job_set):
         compute_resources = Resources({"debug":self.debug})
         job_set.compute_variables(
             map(lambda x: "%s.%s.is_in_employment_sector_%s_home_based"
@@ -66,13 +74,15 @@ class EmploymentTransitionModel(Model):
                 sectors) + ["is_non_home_based_job", "is_home_based_job"],
             dataset_pool = self.dataset_pool,
             resources = compute_resources)
-        remove_jobs = array([], dtype=int32)
+        
+    def _do_run_for_this_year(self, job_set):
         building_type = job_set.get_attribute("building_type")
-        available_building_types = job_building_types.get_id_attribute()
-
+        sectors = unique_values(self.control_totals_for_this_year.get_attribute("sector_id"))
+        self._compute_sector_variables(sectors, job_set)
         for sector in sectors:
-            total_hb_jobs = control_totals.get_data_element_by_id((year,sector)).total_home_based_employment
-            total_nhb_jobs = control_totals.get_data_element_by_id((year,sector)).total_non_home_based_employment
+            isector = where(self.control_totals_for_this_year.get_attribute("sector_id") == sector)[0]
+            total_hb_jobs = self.control_totals_for_this_year.get_attribute("total_home_based_employment")[isector]
+            total_nhb_jobs = self.control_totals_for_this_year.get_attribute("total_non_home_based_employment")[isector]
             is_in_sector_hb = job_set.get_attribute("is_in_employment_sector_%s_home_based" % sector)
             is_in_sector_nhb = job_set.get_attribute("is_in_employment_sector_%s_non_home_based" % sector)
             diff_hb = int(total_hb_jobs - is_in_sector_hb.astype(int8).sum())
@@ -82,73 +92,75 @@ class EmploymentTransitionModel(Model):
                 sample_array, non_placed, size_non_placed = \
                     get_array_without_non_placed_agents(job_set, w, -1*diff_hb,
                                                          self.location_id_name)
-                remove_jobs = concatenate((remove_jobs, non_placed,
+                self.remove_jobs = concatenate((self.remove_jobs, non_placed,
                                            sample_noreplace(sample_array, max(0,abs(diff_hb)-size_non_placed))))
             if diff_nhb < 0: # non home based jobs to be removed
                 w = where(is_in_sector_nhb == 1)[0]
                 sample_array, non_placed, size_non_placed = \
                     get_array_without_non_placed_agents(job_set, w, -1*diff_nhb,
                                                          self.location_id_name)
-                remove_jobs = concatenate((remove_jobs, non_placed,
+                self.remove_jobs = concatenate((self.remove_jobs, non_placed,
                                            sample_noreplace(sample_array, max(0,abs(diff_nhb)-size_non_placed))))
 
             if diff_hb > 0: # home based jobs to be created
-                new_jobs[self.location_id_name] = concatenate((new_jobs[self.location_id_name],
-                                   zeros((diff_hb,), dtype=new_jobs[self.location_id_name].dtype.type)))
-                new_jobs["sector_id"] = concatenate((new_jobs["sector_id"],
-                                   (resize(array([sector], dtype=new_jobs["sector_id"].dtype.type), diff_hb))))
+                self.new_jobs[self.location_id_name] = concatenate((self.new_jobs[self.location_id_name],
+                                   zeros((diff_hb,), dtype=self.new_jobs[self.location_id_name].dtype.type)))
+                self.new_jobs["sector_id"] = concatenate((self.new_jobs["sector_id"],
+                                   (resize(array([sector], dtype=self.new_jobs["sector_id"].dtype.type), diff_hb))))
                 if 1 in is_in_sector_hb:
                     building_type_distribution = array(ndimage_sum(is_in_sector_hb,
                                                                     labels=building_type,
-                                                                    index=available_building_types))
+                                                                    index=self.available_building_types))
                 else:
                     building_type_distribution = array(ndimage_sum(
                                                                 job_set.get_attribute("is_home_based_job"),
                                                                 labels=building_type,
-                                                                index=available_building_types))
+                                                                index=self.available_building_types))
                 sampled_building_types = probsample_replace(
-                    available_building_types, diff_hb, building_type_distribution/
+                    self.available_building_types, diff_hb, building_type_distribution/
                     float(building_type_distribution.sum()))
-                new_jobs["building_type"] = concatenate((new_jobs["building_type"],
-                            sampled_building_types.astype(new_jobs["building_type"].dtype.type)))
-                new_max_id = max_id + diff_hb
-                new_jobs[job_id_name] = concatenate((new_jobs[job_id_name],
-                                                     arange(max_id+1, new_max_id+1)))
-                max_id = new_max_id
+                self.new_jobs["building_type"] = concatenate((self.new_jobs["building_type"],
+                            sampled_building_types.astype(self.new_jobs["building_type"].dtype.type)))
+                new_max_id = self.max_id + diff_hb
+                self.new_jobs[self.job_id_name] = concatenate((self.new_jobs[self.job_id_name],
+                                                     arange(self.max_id+1, new_max_id+1)))
+                self.max_id = new_max_id
 
             if diff_nhb > 0: # non home based jobs to be created
-                new_jobs[self.location_id_name]=concatenate((new_jobs[self.location_id_name],
-                                     zeros((diff_nhb,), dtype=new_jobs[self.location_id_name].dtype.type)))
-                new_jobs["sector_id"]=concatenate((new_jobs["sector_id"],
-                                           (resize(array([sector], dtype=new_jobs["sector_id"].dtype.type), diff_nhb))))
+                self.new_jobs[self.location_id_name]=concatenate((self.new_jobs[self.location_id_name],
+                                     zeros((diff_nhb,), dtype=self.new_jobs[self.location_id_name].dtype.type)))
+                self.new_jobs["sector_id"]=concatenate((self.new_jobs["sector_id"],
+                                           (resize(array([sector], dtype=self.new_jobs["sector_id"].dtype.type), diff_nhb))))
                 if 1 in is_in_sector_nhb:
                     building_type_distribution = array(ndimage_sum(is_in_sector_nhb,
                                                                     labels=building_type,
-                                                                    index=available_building_types))
+                                                                    index=self.available_building_types))
                 else:
                     building_type_distribution = array(ndimage_sum(
                                                         job_set.get_attribute("is_non_home_based_job"),
                                                         labels=building_type,
-                                                        index=available_building_types))
+                                                        index=self.available_building_types))
                 sampled_building_types = probsample_replace(
-                    available_building_types, diff_nhb, building_type_distribution/
+                    self.available_building_types, diff_nhb, building_type_distribution/
                     float(building_type_distribution.sum()))
-                new_jobs["building_type"] = concatenate((new_jobs["building_type"],
-                                        sampled_building_types.astype(new_jobs["building_type"].dtype.type)))
-                new_max_id = max_id+diff_nhb
-                new_jobs[job_id_name]=concatenate((new_jobs[job_id_name], arange(max_id+1, new_max_id+1)))
-                max_id = new_max_id
+                self.new_jobs["building_type"] = concatenate((self.new_jobs["building_type"],
+                                        sampled_building_types.astype(self.new_jobs["building_type"].dtype.type)))
+                new_max_id = self.max_id+diff_nhb
+                self.new_jobs[self.job_id_name]=concatenate((self.new_jobs[self.job_id_name], arange(self.max_id+1, 
+                                                                                                     new_max_id+1)))
+                self.max_id = new_max_id
 
-        job_set.remove_elements(remove_jobs)
-        job_set.add_elements(new_jobs, require_all_attributes=False)
-        difference = job_set.size()-job_size
+    def _update_job_set(self, job_set):
+        job_set.remove_elements(self.remove_jobs)
+        job_set.add_elements(self.new_jobs, require_all_attributes=False)
+        difference = job_set.size()-self.job_size
         self.debug.print_debug("Difference in number of jobs: %s (original %s,"
             " new %s, created %s, deleted %s)"
                 % (difference,
-                   job_size,
+                   self.job_size,
                    job_set.size(),
-                   new_jobs[job_id_name].size,
-                   remove_jobs.size),
+                   self.new_jobs[self.job_id_name].size,
+                   self.remove_jobs.size),
             3)
         self.debug.print_debug("Number of unplaced jobs: %s"
             % where(job_set.get_attribute(self.location_id_name) <=0)[0].size,
