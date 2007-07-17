@@ -79,7 +79,7 @@ def create_from_proposals_and_template_components(proposal_dataset,
     return development_project_proposal_components
 
 from opus_core.tests import opus_unittest
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from development_project_proposal_dataset import create_from_parcel_and_development_template
 from numpy import array
 from numpy import ma

@@ -19,7 +19,7 @@ from numpy import array, where, arange
 from inspect import getmembers, isroutine
 from opus_core.model_component import ModelComponent
 from opus_core.logger import logger
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.session_configuration import SessionConfiguration
 
 class Model(ModelComponent):

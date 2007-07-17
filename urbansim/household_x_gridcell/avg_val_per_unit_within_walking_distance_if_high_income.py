@@ -22,7 +22,7 @@ class avg_val_per_unit_within_walking_distance_if_high_income(avg_val_per_unit_w
     hh_is_income = "is_high_income"
 
 from opus_core.tests import opus_unittest
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 from numpy import array
 from numpy import ma

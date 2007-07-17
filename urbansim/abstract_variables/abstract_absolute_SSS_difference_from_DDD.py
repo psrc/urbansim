@@ -59,7 +59,7 @@ from opus_core.store.attribute_cache import AttributeCache
 from opus_core.storage_factory import StorageFactory
 from opus_core.store.dict_storage import dict_storage
 from opus_core.session_configuration import SessionConfiguration
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 
 class TestFactory(object):
     """If you are using this variable (above), you can test that it works for

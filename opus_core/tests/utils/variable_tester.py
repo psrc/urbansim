@@ -15,9 +15,9 @@
 
 from numpy import ma
 
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
-from opus_core.dataset_factory import DatasetFactory
+from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.datasets.dataset import Dataset
 from opus_core.misc import opus_path_for_variable_from_module_path
 from opus_core.variables.variable_family_name_translator import VariableFamilyNameTranslator

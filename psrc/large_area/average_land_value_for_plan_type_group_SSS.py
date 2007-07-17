@@ -48,7 +48,7 @@ class average_land_value_for_plan_type_group_SSS(Variable):
 from numpy import array
 
 from opus_core.tests import opus_unittest
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 
 class Tests(opus_unittest.OpusTestCase):

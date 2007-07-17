@@ -25,7 +25,7 @@ class workerDDD_am_total_transit_time_walk_from_home_to_work(abstract_travel_tim
 
 from numpy import ma, array
 from opus_core.tests import opus_unittest
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 from opus_core.logger import logger
 

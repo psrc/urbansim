@@ -25,7 +25,7 @@ from numpy import array
 from opus_core.resources import Resources
 from opus_core.simulation_state import SimulationState
 from opus_core.storage_factory import StorageFactory
-from opus_core.dataset_factory import DatasetFactory
+from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.opus_package_info import package
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.session_configuration import SessionConfiguration

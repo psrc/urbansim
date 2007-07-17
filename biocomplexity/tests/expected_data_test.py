@@ -22,7 +22,7 @@ from numpy import array, sum
 from opus_core.logger import logger
 from opus_core.tests import opus_unittest
 from opus_core.storage_factory import StorageFactory
-from opus_core.dataset_pool  import DatasetPool
+from opus_core.datasets.dataset_pool  import DatasetPool
 
 from biocomplexity.datasets.land_cover_dataset import LandCoverDataset
 from biocomplexity.opus_package_info import package

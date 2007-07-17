@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from opus_core.dataset_factory import DatasetFactory
+from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.datasets.dataset import Dataset, DatasetSubset
 from opus_core.datasets.interaction_dataset import InteractionDataset
 from opus_core.specified_coefficients import SpecifiedCoefficients, SpecifiedCoefficientsFor1Submodel

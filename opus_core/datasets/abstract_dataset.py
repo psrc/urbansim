@@ -37,7 +37,7 @@ from opus_core.resources import Resources
 from opus_core.storage_factory import StorageFactory
 from opus_core.specified_coefficients import update_constants
 from opus_core.misc import unique_values, unique
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.variables.attribute_type import AttributeType
 from opus_core.simulation_state import SimulationState

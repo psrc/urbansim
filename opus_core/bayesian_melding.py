@@ -22,7 +22,7 @@ from opus_core.misc import load_from_text_file, write_to_text_file, try_transfor
 from opus_core.variables.variable_name import VariableName
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
-from opus_core.dataset_factory import DatasetFactory
+from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.resources import Resources
 from opus_core.session_configuration import SessionConfiguration

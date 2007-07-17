@@ -21,7 +21,7 @@ from opus_core.logger import logger
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.storage_factory import StorageFactory
-from opus_core.dataset_factory import DatasetFactory
+from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.session_configuration import SessionConfiguration
 
 from urbansim.model_coordinators.cache_mysql_data import CacheMysqlData

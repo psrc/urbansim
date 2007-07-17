@@ -33,7 +33,7 @@ class percent_minority_households_within_walking_distance_if_not_minority(Variab
                                             self.hh_is_minority, do_logical_not=True)    
 
 from opus_core.tests import opus_unittest
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 from numpy import array
 from numpy import ma

@@ -186,7 +186,7 @@ from urbansim.datasets.gridcell_dataset import GridcellDataset
 from urbansim.datasets.household_dataset import HouseholdDataset
 from urbansim.datasets.job_dataset import JobDataset
 from urbansim.datasets.target_vacancy_dataset import TargetVacancyDataset
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from urbansim.datasets.building_type_dataset import BuildingTypeDataset
 from urbansim.datasets.job_building_type_dataset import JobBuildingTypeDataset
 from urbansim.datasets.building_dataset import BuildingDataset

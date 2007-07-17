@@ -24,7 +24,7 @@ from opus_core.store.attribute_cache import AttributeCache
 from opus_core.simulation_state import SimulationState
 from opus_core.variables.attribute_type import AttributeType
 from opus_core.variables.lag_variable_parser import LagVariableParser
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.session_configuration import SessionConfiguration
 
 class LagVariable(Variable):

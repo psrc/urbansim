@@ -19,7 +19,7 @@ from numpy import array, int32, concatenate
 
 from opus_core.resources import Resources
 from opus_core.datasets.abstract_dataset import AbstractDataset
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.variables.variable_name import VariableName
 from opus_core.storage_factory import StorageFactory
 from opus_core.simulation_state import SimulationState

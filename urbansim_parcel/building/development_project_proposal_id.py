@@ -43,7 +43,7 @@ class development_project_proposal_id(Variable):
         self.do_check("x >= 0", values)
             
 from opus_core.tests import opus_unittest
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 from numpy import array
 from opus_core.tests.utils.variable_tester import VariableTester

@@ -44,7 +44,7 @@ class travel_time_weighted_access_to_employment_hbw_am_transit_walk(Variable):
 from numpy import ma
 
 from opus_core.tests import opus_unittest
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 
 class Tests(opus_unittest.OpusTestCase):

@@ -51,7 +51,7 @@ from numpy import array
 from numpy import ma
 
 from opus_core.simulation_state import SimulationState
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.storage_factory import StorageFactory

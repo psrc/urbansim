@@ -33,7 +33,7 @@ class household_size_and_ln_residential_units_within_walking_distance(Variable):
 
 from math import log
 from opus_core.tests import opus_unittest
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 from numpy import array
 from numpy import ma

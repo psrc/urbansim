@@ -31,7 +31,7 @@ from opus_core.resources import Resources
 from opus_core.model_group import ModelGroup
 from opus_core.fork_process import ForkProcess
 from opus_core.model_group import ModelGroupMember
-from opus_core.dataset_factory import DatasetFactory
+from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.simulation_state import SimulationState
 from opus_core.file_utilities import get_resources_from_file

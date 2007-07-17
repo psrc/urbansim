@@ -65,7 +65,7 @@ else:
     from urbansim.datasets.household_dataset import HouseholdDataset
     from psrc.datasets.household_x_parcel_dataset import HouseholdXParcelDataset
     from opus_core.storage_factory import StorageFactory
-    from opus_core.dataset_pool import DatasetPool
+    from opus_core.datasets.dataset_pool import DatasetPool
     
     class TestsHouseholdParcelWorkerDddTravelTimeHbwTransitFromWorkToHome(opus_unittest.OpusTestCase):
         variable_name = "transit_accessibility.household_x_parcel.worker2_travel_time_hbw_transit_from_work_to_home"

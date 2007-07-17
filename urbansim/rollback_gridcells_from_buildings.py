@@ -63,7 +63,7 @@ class RollbackGridcellsFromBuildingsTests(opus_unittest.OpusTestCase):
         from urbansim.datasets.gridcell_dataset import GridcellDataset
         from urbansim.datasets.building_dataset import BuildingDataset
         from urbansim.datasets.building_type_dataset import BuildingTypeDataset
-        from opus_core.dataset_pool import DatasetPool
+        from opus_core.datasets.dataset_pool import DatasetPool
         from numpy import arange
         
         storage = StorageFactory().get_storage('dict_storage')

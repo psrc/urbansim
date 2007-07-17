@@ -184,7 +184,7 @@ locations.get_dataset_name()
 locations.add_primary_attribute(name="percent_wetland",
                             data=[85,20,0,90,35,51,0,10,5])
 
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 dataset_pool = DatasetPool(package_order=['urbansim', 'opus_core'], storage=storage)
 dataset_pool.datasets_in_pool()
 hs = dataset_pool.get_dataset("household")

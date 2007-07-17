@@ -20,7 +20,7 @@ class cost_from_buildings_to_income_ratio(cost_to_income_ratio):
     gc_total_annual_rent = "total_annual_rent_from_buildings"        
 
 from opus_core.tests import opus_unittest
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 from numpy import array
 from numpy import ma

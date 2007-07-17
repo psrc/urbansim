@@ -26,7 +26,7 @@ from opus_core.variables.attribute_box import AttributeBox
 from opus_core.resources import Resources
 from opus_core.store.storage import Storage
 from opus_core.storage_factory import StorageFactory
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.variables.attribute_type import AttributeType
 from opus_core.variables.variable_name import VariableName
 

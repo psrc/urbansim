@@ -420,7 +420,7 @@ class VariableTests(opus_unittest.OpusTestCase):
         self.assert_(ma.allclose(array([.5, -1., 1.5, -1.]), result))
         
     def test_safely_divide_two_attributes(self):
-        from opus_core.dataset_pool import DatasetPool
+        from opus_core.datasets.dataset_pool import DatasetPool
         
         storage = StorageFactory().get_storage('dict_storage')        
         storage.write_table(

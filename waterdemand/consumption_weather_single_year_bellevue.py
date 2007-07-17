@@ -17,7 +17,7 @@ from numpy import where, logical_or, logical_and, ones, zeros, exp
 
 from opus_core.resources import Resources
 from opus_core.variables.attribute_type import AttributeType
-from opus_core.dataset_factory import DatasetFactory
+from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.storage_factory import StorageFactory
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache

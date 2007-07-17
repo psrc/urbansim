@@ -20,7 +20,7 @@ from opus_core.logger import logger
 from opus_core.store.opus_database import OpusDatabase
 from opus_core.storage_factory import StorageFactory
 from opus_core.sampling_toolbox import sample_noreplace, sample_replace, probsample_noreplace, probsample_replace
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.datasets.dataset import Dataset
 from opus_core.misc import unique_values, create_combination_indices
 from opus_core.variables.attribute_type import AttributeType

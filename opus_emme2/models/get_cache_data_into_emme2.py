@@ -17,7 +17,7 @@ from opus_emme2.sql_value_reader import SqlValueReader
 from opus_core.store.scenario_database import ScenarioDatabase
 from opus_core.resources import Resources
 from opus_core.simulation_state import SimulationState
-from opus_core.dataset_factory import DatasetFactory
+from opus_core.datasets.dataset_factory import DatasetFactory
 from psrc.travel_model_input_file_writer import TravelModelInputFileWriter
 from opus_core.logger import logger
 from opus_core.store.attribute_cache import AttributeCache

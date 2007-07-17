@@ -35,7 +35,7 @@ class is_generic_building_type_DDD(Variable):
 from opus_core.tests import opus_unittest
 from numpy import array
 from numpy import ma
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 
 

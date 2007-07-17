@@ -21,7 +21,7 @@ from shutil import rmtree
 
 from opus_core.logger import logger
 from opus_core.opus_package import OpusPackage
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.export_storage import ExportStorage
 from opus_core.storage_factory import StorageFactory
 from opus_core.simulation_state import SimulationState

@@ -18,7 +18,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.resources import Resources
 from opus_core.variables.variable_name import VariableName
 from opus_core.simulation_state import SimulationState
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.misc import unique_values
 from opus_core.logger import logger
 from numpy import arange, where, resize, zeros, array, logical_and, logical_or, concatenate
@@ -219,7 +219,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
     return proposals
     
 from opus_core.tests import opus_unittest
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from numpy import array
 from numpy import ma
 

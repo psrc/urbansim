@@ -23,7 +23,7 @@ from opus_core.logger import logger
 from opus_core.resources import Resources
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.storage_factory import StorageFactory
-from opus_core.dataset_factory import DatasetFactory
+from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.simulation_state import SimulationState
 from opus_core.variables.attribute_type import AttributeType
 from opus_core.cache.cache_mysql_data import CacheMysqlData as CoreCacheMysqlData

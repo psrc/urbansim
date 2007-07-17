@@ -23,7 +23,7 @@ class travel_time_hbw_am_drive_alone_from_home_to_work(abstract_travel_time_vari
 from numpy import array
 from numpy import ma
 from opus_core.tests import opus_unittest
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 
 
