@@ -593,19 +593,25 @@ class DatasetTests(opus_unittest.OpusTestCase):
                 'id1':array([6,8,2,20]),
                 'attr1':array([40,200,407,100]),
                 'attr3':array(["rrr", "t","YYYY", ""]),
+                'attr4':array([100, 200, 300, 150])
                 }
             )
 
-
+        
         ds1 = Dataset(in_storage=storage, in_table_name='dataset1', id_name='id1')
         ds2 = Dataset(in_storage=storage, in_table_name='dataset2', id_name='id1')
 
+        ds1.add_attribute(array([500, 600, 300, 10, 20]), 'attr4', metadata=AttributeType.COMPUTED)
+        
         ds1.join_by_rows(ds2, require_all_attributes=False, change_ids_if_not_unique=True)
 
         self.assertEqual(ds1.size(), 9, msg="Error in join_by_rows")
         self.assertEqual(ds1.get_attribute("attr1").sum(), 990, msg="Error in join_by_rows")
         self.assertEqual(ds1.get_id_attribute().max(), 9, msg="Error in join_by_rows")
         self.assertEqual(ds1.get_attribute("attr3")[7], "YYYY", msg="Error in join_by_rows")
+        self.assertEqual(ma.allequal(ds1.get_attribute("attr4"), 
+                                     array([500, 600, 300, 10, 20, 100, 200, 300, 150])), True, 
+                         msg="Error in join_by_rows")
 
 
     def test_has_attribute(self):

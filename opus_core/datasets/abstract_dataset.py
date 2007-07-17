@@ -1031,7 +1031,7 @@ class AbstractDataset(object):
             if attrname not in data.keys():
                 self.delete_one_attribute(attrname)
         data_size = data[data.keys()[0]].size
-        for attr in self.get_primary_attribute_names():
+        for attr in self.get_known_attribute_names():
             old_data = self.get_attribute(attr)
             if (not require_all_attributes) and (attr not in data.keys()):#missing attribute
                 if old_data.dtype.kind == 'S':
