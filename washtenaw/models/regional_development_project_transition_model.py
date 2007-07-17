@@ -17,6 +17,7 @@ from opus_core.misc import unique_values
 from opus_core.logger import logger
 from numpy import arange, array, where
 from opus_core.datasets.dataset import DatasetSubset
+from opus_core.variables.attribute_type import AttributeType
 from urbansim.models.development_project_transition_model import DevelopmentProjectTransitionModel
 
 class RegionalDevelopmentProjectTransitionModel( DevelopmentProjectTransitionModel ):
@@ -47,20 +48,13 @@ class RegionalDevelopmentProjectTransitionModel( DevelopmentProjectTransitionMod
                     target_vacancy_rate = target_non_residential_vacancy_rate
                 should_develop_units = int(round(max( 0, ( target_vacancy_rate * units_sum - vacant_units_sum ) /
                                              ( 1 - target_vacancy_rate ) )))
-                #logger.log_status(project_type + ": vacant units: %d, should be vacant: %f, sum units: %d"
-                #              % (vacant_units_sum, target_vacancy_rate * units_sum, units_sum))
-    
-                #if not should_develop_units:
-                #    logger.log_note(("Will not build any " + project_type + " units, because the current vacancy of %d units\n"
-                #                 + "is more than the %d units desired for the vacancy rate of %f.")
-                #                % (vacant_units_sum,
-                #                   target_vacancy_rate * units_sum,
-                #                   target_vacancy_rate))
                 #create projects
                 if should_develop_units > 0:
                     project_dataset = self._create_projects(should_develop_units, project_type, history_table,
                                                                    locations_for_this_area, units_sum, model_configuration, 
                                                                    resources)
+                    project_dataset.add_attribute(array(project_dataset.size()*[area]), "large_area_id", 
+                                                  metadata=AttributeType.PRIMARY)
                     if (project_type not in projects.keys()) or (projects[project_type] is None):
                         projects[project_type] = project_dataset
                         projects[project_type].add_submodel_categories()
@@ -222,9 +216,10 @@ class DPTMTests(StochasticTestCase):
                          "No industrial units should've been added/developed" )
 
     def test_development_with_nonzero_target_vacancy_and_equal_history( self ):
-        """Test basic cases, where current residential vacancy = 50%, target residential vacancy is 75%,
+        """Test basic cases, where current residential vacancy = 50%, target residential vacancy is 75% for area 1
+        and 0 for area 2,
         current non_residential vacancy is 75% (commercial), and target nonresidential vacancy is 50%.
-        Residential development projects should occur in area 1, and none for nonresidential"""
+        Residential development projects should occur in area 1, and none for area 2 and nonresidential."""
         self.storage._write_dataset(
             'target_vacancies',
             {
@@ -248,8 +243,10 @@ class DPTMTests(StochasticTestCase):
         is 0.75. add 10000 to numerator and denominator, and 15000 / 20000 = 0.75"""
         number_of_new_residential_units = results['residential'].get_attribute( 'residential_units' ).sum()
         self.assertEqual( number_of_new_residential_units, 10000,
-                         """Exactly 10000 residential units should've been added/developed.
-                         Instead, got %s""" % ( number_of_new_residential_units, ) )
+                         "Exactly 10000 residential units should've been added/developed. Instead, got %s" % ( 
+                                                                                      number_of_new_residential_units, ) )
+        self.assertEqual( 2 in results['residential'].get_attribute( 'large_area_id' ), False,
+                         "No residential units in area 2 should have been built.") 
 
         """Anytime the target vacancy rate is less than the current vacancy rate,
         no new development should occur."""
@@ -259,20 +256,19 @@ class DPTMTests(StochasticTestCase):
         self.assertEqual( results['industrial'], None,
                          "No industrial units should've been added/developed." )
 
-    def xtest_development_with_99_percent_target_vacancy_and_equal_history( self ):
-        """Not too different from the basic case above, just trying the other extreme.
-        Notice that a 100% target vacancy rate doesn't really make sense and is not possible unless
-        the current vacancy rate is also 100% (also not feasible)."""
+    def test_development_with_99_percent_target_vacancy_and_equal_history( self ):
+        """There is 99% vacancy in area 1 and 98% vacancy in area 2 for both, residential and non-residential development."""
         self.storage._write_dataset(
             'target_vacancies',
             {
-                "year":array( [2001] ),
-                "target_total_residential_vacancy":array( [0.99] ),
-                "target_total_non_residential_vacancy":array( [0.99] )
+                "year":array( [2001, 2001] ),
+                "target_total_residential_vacancy":array( [0.99, 0.98] ),
+                "target_total_non_residential_vacancy":array( [0.99, 0.80] ),
+                "large_area_id": array([1,2])
                 }
             )
 
-        dptm = DevelopmentProjectTransitionModel()
+        dptm = RegionalDevelopmentProjectTransitionModel()
         results = dptm.run(self.model_configuration,
                            self.dataset_pool.get_dataset('target_vacancy'),
                            self.dataset_pool.get_dataset('development_event_history'),
@@ -280,223 +276,35 @@ class DPTMTests(StochasticTestCase):
                            self.dataset_pool.get_dataset('gridcell'),
                            resources=self.compute_resources)
 
-        """20000 residential units should've been added because current ratio of
-        10000 unoccupied / 20000 total = 0.5, and target residential vacancy rate
-        is 0.75. add 20000 to numerator and denominator, and 30000 / 40000 = 0.75"""
-        number_of_new_residential_units = results['residential'].get_attribute( 'residential_units' ).sum()
-        self.assertEqual( number_of_new_residential_units, 980000,
-                         """Approximately 980000 residential units should've been added/developed.
-                         Instead, got %s""" % ( number_of_new_residential_units, ) )
+        """490,000 residential units should've been added to area 1 because current ratio of
+        5000 unoccupied / 10000 total = 0.5, and target residential vacancy rate
+        is 0.99. add 490,000 to numerator and denominator, and 495,000 / 500,000 = 0.99.
+        Analogously, 240,000 residential units should've been added to area 2.
+        """
+        idx_area1 = where(results['residential'].get_attribute( 'large_area_id' ) == 1)[0]
+        idx_area2 = where(results['residential'].get_attribute( 'large_area_id' ) == 2)[0]
+        number_of_new_residential_units1 = results['residential'].get_attribute( 'residential_units' )[idx_area1].sum()
+        number_of_new_residential_units2 = results['residential'].get_attribute( 'residential_units' )[idx_area2].sum()
+        self.assertEqual( number_of_new_residential_units1, 490000,
+                         """Approximately 490000 residential units should've been added/developed in area 1.
+                         Instead, got %s""" % ( number_of_new_residential_units1, ) )
+        self.assertEqual( number_of_new_residential_units2, 240000,
+                         """Approximately 490000 residential units should've been added/developed in area 1.
+                         Instead, got %s""" % ( number_of_new_residential_units1, ) )
 
-        new_commercial_sqft = results['commercial'].get_attribute( 'commercial_sqft' ).sum()
-        self.assertEqual( new_commercial_sqft, 24000000,
-                         """Approximately 24000000 commercial sqft should've been added/developed.
-                         Instead, got %s""" % ( new_commercial_sqft, ) )
+        idx_area1 = where(results['commercial'].get_attribute( 'large_area_id' ) == 1)[0]
+        idx_area2 = where(results['commercial'].get_attribute( 'large_area_id' ) == 2)[0]
+        new_commercial_sqft1 = results['commercial'].get_attribute( 'commercial_sqft' )[idx_area1].sum()
+        new_commercial_sqft2 = results['commercial'].get_attribute( 'commercial_sqft' )[idx_area2].sum()
+        self.assertEqual( new_commercial_sqft1, 12000000,
+                         """Approximately 12,000,000 commercial sqft should've been added/developed.
+                         Instead, got %s""" % ( new_commercial_sqft1, ) )
+        self.assertEqual( new_commercial_sqft2, 125000,
+                         """Approximately 125,000 commercial sqft should've been added/developed.
+                         Instead, got %s""" % ( new_commercial_sqft2, ) )
 
         self.assertEqual( results['industrial'], None,
                          "No industrial units should've been added/developed." )
-
-    def xtest_development_with_varied_history( self ):
-        """Tests the effectiveness of events history in influencing the new projects' sizes.
-        Creates 1000 industrial events in the history, and 999 of these added 6000
-        industrial sqft, and the last event added 500000 industrial sqft.
-        Since the target vacancy rate is 90%, we estimate approximately 250 industrial projects
-        to be spawned, each adding 6000 industrial sqft (to match the history).
-        (7500 * 100 + 6000*250) / (10000 * 100.0 + 6000*250)
-        """
-        def run_model():
-            storage = StorageFactory().get_storage('dict_storage')
-
-            storage._write_dataset(
-                'target_vacancies',
-                {
-                    "year":array( [2000] ),
-                    "target_total_residential_vacancy":array( [0.75] ),
-                    "target_total_non_residential_vacancy":array( [0.90] )
-                    }
-                )
-            storage._write_dataset(
-                'development_event_history',
-                {
-                    "grid_id":array( 10*range( 1, 100+1 ) ),
-                    "scheduled_year":array( 1000*[1999] ),
-
-                    "residential_units":array( 1000*[50] ),
-                    "commercial_sqft":array( 1000*[5000] ),
-                    "industrial_sqft":array( 999*[6000] + [500000] ),
-                    "governmental_sqft":array( 1000*[5000] ),
-
-                    "residential_improvement_value":array( 1000*[1000] ),
-                    "commercial_improvement_value":array( 1000*[1000] ),
-                    "industrial_improvement_value":array( 1000*[20000] ),
-                    "governmental_improvement_value":array( 1000*[1000] )
-                    }
-                )
-            storage._write_dataset(
-                'gridcells',
-                {
-                    "grid_id": arange( 1, 100+1 ),
-                    "residential_units":array( 100*[200] ),
-                    "commercial_sqft":array( 100*[10000] ),
-                    "commercial_sqft_per_job":array( 100*[100] ),
-                    "industrial_sqft":array( 100*[10000] ),
-                    "industrial_sqft_per_job":array( 100*[100] ),
-                    "residential_improvement_value":array( 100*[500000] ),
-                    "commercial_improvement_value":array( 100*[500000] ),
-                    "industrial_improvement_value":array( 100*[500000] )
-                    }
-                )
-            storage._write_dataset(
-                'households',
-                {
-                    "household_id":arange( 1, 10000+1 ),
-                    "grid_id":array( 100*range( 1, 100+1 ) )
-                    }
-                )
-            storage._write_dataset(
-                'jobs',
-                {
-                    "job_id":arange( 1, 2500+1 ),
-                    "grid_id":array( 25*range( 1, 100+1 ) ),
-                    "sector_id":array( 2500*[1] ),
-                    "home_based":array( 2500*[0] ),
-                    "building_type":array( 2500*[Constants._industrial_code] )
-                    }
-                )
-
-            dataset_pool = DatasetPool(package_order=['urbansim'],
-                                       storage=storage)
-            dptm = DevelopmentProjectTransitionModel()
-            results = dptm.run(self.model_configuration,
-                               dataset_pool.get_dataset('target_vacancy'),
-                               dataset_pool.get_dataset('development_event_history'),
-                               2000,
-                               self.dataset_pool.get_dataset('gridcell'),
-                               resources=Resources({"household":dataset_pool.get_dataset('household'),
-                                                    "job":dataset_pool.get_dataset('job'),
-                                                    "job_building_type": self.dataset_pool.get_dataset('job_building_type'),
-                                                    'urbansim_constant':self.dataset_pool.get_dataset('urbansim_constant')}) )
-            self.assertEqual( results['commercial'], None,
-                             "No commercial_sqft should've been added/developed." )
-            return results
-
-        def number_of_new_residential_units_from_model():
-            results = run_model()
-            return array(results['residential'].get_attribute( 'residential_units' ).sum())
-
-        self.run_stochastic_test(__file__, number_of_new_residential_units_from_model, array([20000]), 10)
-
-        def new_industrial_sqft_from_model():
-            results = run_model()
-            return array(results['industrial'].get_attribute( 'industrial_sqft' ).sum())
-
-        #self.run_stochastic_test(__file__, new_industrial_sqft_from_model, array([1500000]), 10)
-
-    def xtest_development_with_equal_history( self ):
-        """Tests development with both commercial and industrial jobs occupying equal amounts of space
-        in each gridcell, but the even history for each job type is different -
-        1000 events adding 6000 industrial sqft., and 1000 events adding 5000 commercial sqft.
-        The total sqft. added for each job type should be the same (1500000 sqft.), but the number of
-        projects and sqft./project should be different for each job type
-        """
-        storage = StorageFactory().get_storage('dict_storage')
-
-        storage._write_dataset(
-            'target_vacancies',
-            {
-                "year":array( [2000] ),
-                "target_total_residential_vacancy":array( [0.75] ),
-                "target_total_non_residential_vacancy":array( [0.90] )
-            }
-        )
-        storage._write_dataset(
-            'development_event_history',
-            {
-                "grid_id":array( 10*range( 1, 100+1 ) ),
-                "scheduled_year":array( 1000*[1999] ),
-
-                "residential_units":array( 1000*[50] ),
-                "commercial_sqft":array( 1000*[5000] ),
-                "industrial_sqft":array( 1000*[6000] ),
-                "governmental_sqft":array( 1000*[5000] ),
-
-                "residential_improvement_value":array( 1000*[1000] ),
-                "commercial_improvement_value":array( 1000*[1000] ),
-                "industrial_improvement_value":array( 1000*[20000] ),
-                "governmental_improvement_value":array( 1000*[1000] )
-            }
-        )
-        storage._write_dataset(
-            'gridcells',
-            {
-                "grid_id": arange( 1, 100+1 ),
-                "residential_units":array( 100*[200] ),
-                "commercial_sqft":array( 100*[10000] ),
-                "commercial_sqft_per_job":array( 100*[100] ),
-                "industrial_sqft":array( 100*[10000] ),
-                "industrial_sqft_per_job":array( 100*[100] ),
-                "residential_improvement_value":array( 100*[500000] ),
-                "commercial_improvement_value":array( 100*[500000] ),
-                "industrial_improvement_value":array( 100*[500000] )
-            }
-        )
-        storage._write_dataset(
-            'households',
-            {
-                "household_id":arange( 1, 10000+1 ),
-                "grid_id":array( 100*range( 1, 100+1 ) )
-            }
-        )
-        storage._write_dataset(
-            'jobs',
-            {
-                "job_id":arange( 1, 5000+1 ),
-                "grid_id":array( 50*range( 1, 100+1 ) ),
-                "sector_id":array( 5000*[1] ),
-                "home_based":array( 5000*[0] ),
-                "building_type":array( 2500*[Constants._industrial_code]
-                                       + 2500*[Constants._commercial_code] )
-            }
-        )
-
-        dataset_pool = DatasetPool(package_order=['urbansim'],
-                                   storage=storage)
-
-        dptm = DevelopmentProjectTransitionModel()
-        results = dptm.run(self.model_configuration,
-                           dataset_pool.get_dataset('target_vacancy'),
-                           dataset_pool.get_dataset('development_event_history'),
-                           2000,
-                           dataset_pool.get_dataset('gridcell'),
-                           resources=Resources({"household":dataset_pool.get_dataset('household'),
-                                                "job":dataset_pool.get_dataset('job'),
-                                                "job_building_type": self.dataset_pool.get_dataset('job_building_type'),
-                                                'urbansim_constant':self.dataset_pool.get_dataset('urbansim_constant')}) )
-
-        number_of_new_residential_units = results['residential'].get_attribute( 'residential_units' ).sum()
-        self.assertEqual( number_of_new_residential_units, 20000,
-                         """Approximately 20000 residential units should've been added/developed.
-                         Instead, got %s""" % ( number_of_new_residential_units, ) )
-
-        new_commercial_sqft = results['commercial'].get_attribute( 'commercial_sqft' ).sum()
-        self.assertEqual( new_commercial_sqft, 1500000,
-                         """Approximately 1500000 commercial sqft should've been added/developed.
-                         Instead, got %s""" % ( new_commercial_sqft, ) )
-
-        number_of_new_commercial_projects = results['commercial'].get_attribute( 'commercial_sqft' ).size
-        self.assertEqual( number_of_new_commercial_projects, 300,
-                         """Approximately 299 commercial sqft should've been added/developed.
-                         Instead, got %s""" % ( number_of_new_commercial_projects, ) )
-
-        number_of_new_industrial_projects = results['industrial'].get_attribute( 'industrial_sqft' ).size
-        self.assertEqual( number_of_new_industrial_projects, 250,
-                         """Approximately 249 industrial sqft should've been added/developed.
-                         Instead, got %s""" % ( number_of_new_industrial_projects, ) )
-
-        new_industrial_sqft = results['industrial'].get_attribute( 'industrial_sqft' ).sum()
-        self.assertEqual( new_industrial_sqft, 1500000,
-                         """Approximately 1500000 industrial sqft should've been added/developed.
-                         Instead, got %s""" % ( new_industrial_sqft, ) )
 
 if __name__=="__main__":
     opus_unittest.main()
