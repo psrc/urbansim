@@ -332,7 +332,7 @@ shows the data by traffic analysis zone.  The map shows ``jaggies''
 because of the resolution of the gridcells (150 x 150 meters) at
 this scale.
 
-See \url{http://www.urbansim.org/wiki/external/index.php/Indicators} for a
+See \url{http://www.urbansim.org/wiki/external/index.php/Eugene_indicators} for a
 partial list of indicators that are known to work on the Eugene-Springfield
 data.  Also, note that maps only
 work for indicators associated with a geography.  In the case of Eugene, this
@@ -341,7 +341,10 @@ You cannot, for instance,
 create a map for \verb|urbansim.household.is_minority|, since \verb|household|
 is not a geography.  You can, however, define and use a variable that links this
 information with a geography, such as done by 
-\verb|urbansim.gridcell.number_of_minority_households|.  
+\verb|urbansim.gridcell.number_of_minority_households|.  If you have a problem
+with generating a map at the gridcell level, try generating it at the zone
+level instead.  (Sometimes matplotlib seems to get overwhelmed by the amount of 
+data at the gridcell level.)
 
 \item Press ``Close'' to exit this tool.
 
