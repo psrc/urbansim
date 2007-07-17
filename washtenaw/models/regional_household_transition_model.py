@@ -270,7 +270,7 @@ class Tests(opus_unittest.OpusTestCase):
                      # area 2
                      3000.0/7500.0*5000.0, 1000.0/7500.0*5000.0, 1500.0/7500.0*5000.0, 2000.0/7500.0*5000.0,
                      1000.0/9000.0*5000.0, 2500.0/9000.0*5000.0, 1500.0/9000.0*5000.0, 4000.0/9000.0*5000.0]
-        self.assertEqual(ma.allclose(results, should_be, rtol=0.05),
+        self.assertEqual(ma.allclose(results, should_be, rtol=0.1),
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
 
     def get_count_all_groups(self, hh_set):
