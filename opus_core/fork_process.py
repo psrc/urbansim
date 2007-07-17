@@ -49,8 +49,9 @@ class ForkProcess(object):
                 python_cmd += ' > %s 2>&1' % log_file_path
         
             logger.log_status("Invoking: %s" % python_cmd)
-            if os.system(python_cmd):
-                raise StandardError("Problem with %s" % module_name)
+            exit_status = os.system(python_cmd)
+            if exit_status!=0:
+                raise StandardError("Child python process exited with failure.\nCalling module: %s\nSystem command: %s" % (module_name, python_cmd))
                 
         finally:
             if delete_temp_dir and os.path.exists(pickle_dir):
