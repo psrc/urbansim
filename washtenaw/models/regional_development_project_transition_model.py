@@ -15,7 +15,7 @@
 from opus_core.resources import Resources
 from opus_core.misc import unique_values
 from opus_core.logger import logger
-from numpy import arange, array, where, zeros, ones, float32, int32, concatenate
+from numpy import arange, array, where
 from opus_core.datasets.dataset import DatasetSubset
 from urbansim.models.development_project_transition_model import DevelopmentProjectTransitionModel
 
@@ -86,10 +86,8 @@ class RegionalDevelopmentProjectTransitionModel( DevelopmentProjectTransitionMod
     
 
     
-from numpy import ma
-
 from opus_core.tests import opus_unittest
-from opus_core.dataset_pool import DatasetPool
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 from opus_core.tests.stochastic_test_case import StochasticTestCase
 
