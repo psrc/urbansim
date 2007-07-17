@@ -14,6 +14,7 @@
 
 import os
 import sys
+import wx
 
 from time import strftime, localtime
 
@@ -24,6 +25,7 @@ from enthought.traits.ui.menu import Action, NoButtons
 
 from opus_core.fork_process import ForkProcess
 from opus_core.misc import create_import_for_camel_case_class
+from opus_core.indicator_framework.utilities import display_message_dialog
 
 
 class RunSimulationOnCacheConfig(HasTraits):
@@ -89,7 +91,14 @@ if __name__ == '__main__':
     config['years'] = (base_year+1, base_year+years_to_run)
 
     if not len(range(config['years'][0], config['years'][1]+1)) > 0:
-        print 'Nothing to simulate!'
+        display_message_dialog('No years to simulate!')
+        sys.exit(1)
+        
+    # sanity check on the cache directory -- make sure it includes a subdirectory whose name is the base year
+    base_year_directory = os.path.join(cache_dir, str(base_year))
+    if not os.path.exists(base_year_directory):
+        msg = 'Invalid cache directory: %s\nThe cache directory should have a subdirectory %d for the base year' % (cache_dir, base_year)
+        display_message_dialog(msg)
         sys.exit(1)
     
     ForkProcess().fork_new_process('opus_core.tools.start_run', resources=config)
