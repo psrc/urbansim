@@ -30,9 +30,10 @@ class DevelopmentProjectTransitionModel( Model ):
     location choice models.  The distribution of project sizes (amount of space, value of space) is
     determined by sampling from the projects in the development_event_history table.
     """
+    model_name = "Development Project Transition Model"
+    
     def __init__( self, debuglevel=0 ):
         self.debug = DebugPrinter( debuglevel )
-        self.model_name = "Development Project Transition Model"
 
     def pre_check( self, location_set, vacancy_table, types ):
         for type in types:
@@ -61,24 +62,13 @@ class DevelopmentProjectTransitionModel( Model ):
 
     def run( self, model_configuration, vacancy_table, history_table, year, location_set, resources=None ):
         self.pre_check( location_set, vacancy_table, model_configuration['development_project_types'])
-        target_residential_vacancy_rate = vacancy_table.get_data_element_by_id( year ).target_total_residential_vacancy
-        target_non_residential_vacancy_rate = vacancy_table.get_data_element_by_id( year ).target_total_non_residential_vacancy
-        compute_resources = Resources(resources)
-        compute_resources.merge({"debug":self.debug})
-
+        target_residential_vacancy_rate, target_non_residential_vacancy_rate = self._get_target_vacancy_rates(vacancy_table, year)
+        self._compute_vacancy_variables(location_set, model_configuration, resources)
         projects = {}
         for project_type in model_configuration['development_project_types']:
-            units_variable = model_configuration['development_project_types'][project_type]['units']
-            variable_for_vacancy = compute_resources.get(
-                                    "%s_vacant_variable" % project_type,
-                                    "urbansim.%s.vacant_%s" % (location_set.get_dataset_name(),
-                                                                     units_variable))
-            location_set.compute_variables([variable_for_vacancy],
-                                        resources = compute_resources)
-
             # determine current-year vacancy rates
-            vacant_units_sum = location_set.get_attribute(variable_for_vacancy).sum()
-            units_sum = float( location_set.get_attribute(units_variable).sum() )
+            vacant_units_sum = location_set.get_attribute(self.variable_for_vacancy[project_type]).sum()
+            units_sum = float( location_set.get_attribute(self.units_variable[project_type]).sum() )
             vacant_rate = self.safe_divide(vacant_units_sum, units_sum)
             if model_configuration['development_project_types'][project_type]['residential']:
                 target_vacancy_rate = target_residential_vacancy_rate
@@ -95,63 +85,81 @@ class DevelopmentProjectTransitionModel( Model ):
                             % (vacant_units_sum,
                                target_vacancy_rate * units_sum,
                                target_vacancy_rate))
-
-            average_improvement_value = None
-            if (project_type+"_improvement_value") in location_set.get_known_attribute_names():
-                average_improvement_value = self.safe_divide(
-                    location_set.get_attribute(project_type+"_improvement_value" ).sum(), units_sum)
-
             #create projects
             if should_develop_units > 0:
-                units_attribute = model_configuration['development_project_types'][project_type]['units']
-                categories = model_configuration['development_project_types'][project_type]['categories']
-                history_values = history_table.get_attribute(units_attribute)
-                history_values_without_zeros = history_values[where( history_values > 0 )]
-                #TODO: what happens if history has only zeroes?
-                mean_size = history_values_without_zeros.mean()
-                idx = array( [], dtype="int32" )
-                # Ensure that there are some development projects to choose from.
-                #TODO: should the 'int' in the following line be 'ceil'?
-                num_of_projects_to_select = max( 10, int( should_develop_units / mean_size ) )
-                while True:
-                    idx = concatenate( ( idx, randint( 0, history_values_without_zeros.size,
-                                                        num_of_projects_to_select ) ) )
-                    csum = history_values_without_zeros[idx].cumsum()
-                    idx1 = idx[csum <= should_develop_units]
-                    if idx1.size == 0: # at least one project should be selected
-                        idx = array([idx[0]], dtype="int32")
-                    else:
-                        idx = idx1
-                    if csum[-1] >= should_develop_units:
-                        break
-                data = {units_attribute: history_values_without_zeros[idx],
-                             "project_id": arange( idx.size ) + 1,
-                             location_set.get_id_name()[0]: zeros( ( idx.size, ), dtype=int32)}
-                if average_improvement_value is not None:
-                    data["improvement_value"] = (ones( ( idx.size, ))*average_improvement_value).astype(float32)
-
-                storage = StorageFactory().get_storage('dict_storage')
-
-                development_projects_table_name = 'development_projects'
-                storage._write_dataset(development_projects_table_name, data)
-
-                development_projects = DevelopmentProjectDataset(
-                    in_storage = storage,
-                    in_table_name = development_projects_table_name,
-                    categories = categories,
-                    resources = resources,
-                    what = project_type,
-                    attribute_name = units_attribute,
-                    )
-
-                projects[project_type] = development_projects
+                projects[project_type] = self._create_projects(should_develop_units, project_type, history_table,
+                                                               location_set, units_sum, model_configuration, resources)
                 projects[project_type].add_submodel_categories()
-
             else:
                 projects[project_type] = None
         return projects
 
+    def _get_target_vacancy_rates(self, vacancy_table, year):
+        target_residential_vacancy_rate = vacancy_table.get_data_element_by_id( year ).target_total_residential_vacancy
+        target_non_residential_vacancy_rate = vacancy_table.get_data_element_by_id( year ).target_total_non_residential_vacancy
+        return target_residential_vacancy_rate, target_non_residential_vacancy_rate
+    
+    def _compute_vacancy_variables(self, location_set, model_configuration, resources):
+        compute_resources = Resources(resources)
+        compute_resources.merge({"debug":self.debug})
+        self.units_variable = {}
+        self.variable_for_vacancy = {}
+        for project_type in model_configuration['development_project_types']:
+            self.units_variable[project_type] =  model_configuration['development_project_types'][project_type]['units']
+            self.variable_for_vacancy[project_type] = compute_resources.get(
+                                    "%s_vacant_variable" % project_type,
+                                    "urbansim.%s.vacant_%s" % (location_set.get_dataset_name(),
+                                                                     self.units_variable[project_type]))
+            location_set.compute_variables([self.variable_for_vacancy[project_type]],
+                                        resources = compute_resources)
+            
+    def _create_projects(self, should_develop_units, project_type, history_table, location_set, units_sum, model_configuration,
+                         resources=None):
+        average_improvement_value = None
+        if (project_type+"_improvement_value") in location_set.get_known_attribute_names():
+            average_improvement_value = self.safe_divide(
+                location_set.get_attribute(project_type+"_improvement_value" ).sum(), units_sum)
+        categories = model_configuration['development_project_types'][project_type]['categories']
+        history_values = history_table.get_attribute(self.units_variable[project_type])
+        history_values_without_zeros = history_values[where( history_values > 0 )]
+        #TODO: what happens if history has only zeroes?
+        mean_size = history_values_without_zeros.mean()
+        idx = array( [], dtype="int32" )
+        # Ensure that there are some development projects to choose from.
+        #TODO: should the 'int' in the following line be 'ceil'?
+        num_of_projects_to_select = max( 10, int( should_develop_units / mean_size ) )
+        while True:
+            idx = concatenate( ( idx, randint( 0, history_values_without_zeros.size,
+                                                num_of_projects_to_select ) ) )
+            csum = history_values_without_zeros[idx].cumsum()
+            idx1 = idx[csum <= should_develop_units]
+            if idx1.size == 0: # at least one project should be selected
+                idx = array([idx[0]], dtype="int32")
+            else:
+                idx = idx1
+            if csum[-1] >= should_develop_units:
+                break
+        data = {self.units_variable[project_type]: history_values_without_zeros[idx],
+                     "project_id": arange( idx.size ) + 1,
+                     location_set.get_id_name()[0]: zeros( ( idx.size, ), dtype=int32)}
+        if average_improvement_value is not None:
+            data["improvement_value"] = (ones( ( idx.size, ))*average_improvement_value).astype(float32)
 
+        storage = StorageFactory().get_storage('dict_storage')
+
+        development_projects_table_name = 'development_projects'
+        storage._write_dataset(development_projects_table_name, data)
+
+        return DevelopmentProjectDataset(
+            in_storage = storage,
+            in_table_name = development_projects_table_name,
+            categories = categories,
+            resources = resources,
+            what = project_type,
+            attribute_name = self.units_variable[project_type],
+            )
+
+    
 from numpy import ma
 
 from opus_core.tests import opus_unittest
