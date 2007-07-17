@@ -112,7 +112,10 @@ class MoreDatasetTests(opus_unittest.OpusTestCase):
         job_set.add_attribute(self.expected_sic_data, "sic", metadata=AttributeType.PRIMARY)
         job_set.flush_dataset()
         returned_sic_data = job_set.get_attribute("sic")
+        returned_id_data = job_set.get_attribute("job_id")
+        self.assert_(ma.allequal(returned_id_data,self.job_id))
         self.assert_(ma.allequal(returned_sic_data,self.expected_sic_data))
+        
                    
 
 class TestDataset(opus_unittest.OpusTestCase): 
