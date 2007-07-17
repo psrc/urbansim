@@ -11,7 +11,7 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 
-import os
+import os, sys
 import tempfile
 from shutil import rmtree
 
@@ -66,7 +66,7 @@ if does_database_server_exist_for_this_hostname(
             self.assert_(os.path.exists(os.path.join(cache_dir, '2000')))
             path = module_path_from_opus_path('opus_core.tools.delete_run')
             
-            cmd_template = 'python %(path)s --run-id=%(run_id)d --years-to-delete=%(years_to_delete)s --database=services_test --hostname=localhost'
+            cmd_template = sys.executable + ' %(path)s --run-id=%(run_id)d --years-to-delete=%(years_to_delete)s --database=services_test --hostname=localhost'
             
             # First just delete 2 years of data.
             python_cmd = cmd_template % {
@@ -114,7 +114,8 @@ if does_database_server_exist_for_this_hostname(
             self.assert_(os.path.exists(os.path.join(cache_dir, '2004')))
             
             # Now try to delete the rest of the years of data
-            python_cmd = 'python %(path)s --run-id=%(run_id)d --database=services_test --hostname=localhost' % {
+            python_cmd = '%(executable)s %(path)s --run-id=%(run_id)d --database=services_test --hostname=localhost' % {
+                'executable':sys.executable,
                 'path':path,
                 'run_id':self.resources['run_id']}
             # Close all log files so we can delete the cache.

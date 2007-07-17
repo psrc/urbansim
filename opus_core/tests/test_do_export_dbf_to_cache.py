@@ -14,7 +14,7 @@
 
 from opus_core.tests import opus_unittest
 
-import os
+import os, sys
 import tempfile
 
 from shutil import rmtree
@@ -46,7 +46,7 @@ class Tests(opus_unittest.TestCase):
         attribute_cache_directory = os.path.join(self.temp_dir, 'cache')
         cache_year = '2000'
         
-        cmd_format = 'python %s' % cacher_file_path
+        cmd_format = '%s %s' % (sys.executable, cacher_file_path)
         cmd_dict = {}
         for param in params_needed:
             cmd_format += (' --%s %%(%s)s' % (param, param))

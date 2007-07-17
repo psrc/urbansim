@@ -86,8 +86,8 @@ if __name__ == '__main__':
     
     from opus_core.tools.do_export_cache_to_mysql_database import __file__ as script_path
     
-    ev = ('python %s %s'
-        % (script_path, '-c %s -d %s -o %s -u %s -p %s' 
+    ev = ('%s %s %s'
+        % (sys.executable, script_path, '-c %s -d %s -o %s -u %s -p %s' 
             % (cache_dir, output_database, host_name, user_name, password)))
         
     print "Invoking command: %s" % ev

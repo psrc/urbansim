@@ -96,8 +96,8 @@ if __name__ == '__main__':
     
     from opus_core.tools.do_export_dbf_to_mysql_database import __file__ as script_path
     
-    ev = ('python %s %s'
-        % (script_path, '-c %s -d %s --table-name=%s -o %s -u %s -p %s' 
+    ev = ('%s %s %s'
+        % (sys.executable, script_path, '-c %s -d %s --table-name=%s -o %s -u %s -p %s' 
             % (dbf_file_path, output_database, output_table_name, host_name, user_name, password)))
         
     print "Invoking command: %s" % ev

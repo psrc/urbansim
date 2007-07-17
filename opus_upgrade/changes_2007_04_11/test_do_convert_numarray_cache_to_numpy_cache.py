@@ -13,6 +13,7 @@
 # 
 
 import os
+import sys
 import tempfile
 
 import numpy
@@ -134,7 +135,8 @@ class TestDoConvertNumarrayCacheToNumpyCache(opus_unittest.OpusTestCase):
         output_directory = self.temp_dir
         command_file_path = os.path.join(self.root_path, 'do_convert_numarray_cache_to_numpy_cache.py')
 
-        cmd = 'python %s --cache_files_directory %s --output_directory %s' % (
+        cmd = '%s %s --cache_files_directory %s --output_directory %s' % (
+            sys.executable,
             command_file_path,
             directory_to_copy,
             output_directory,

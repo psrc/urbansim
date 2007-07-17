@@ -15,7 +15,7 @@
 # test_scanner: IGNORE_THIS_FILE
 ### This file takes a long time to run, thus it is only run by NightlyFullTests.
 
-import os
+import os, sys
 
 from shutil import rmtree
 from tempfile import mkdtemp
@@ -40,8 +40,8 @@ class TestRunEstimation(opus_unittest.TestCase):
         cache_dir = mkdtemp(prefix='test_washtenaw_run_estimation_tmp')
         try:
             # Cache to a temporary folder.
-            ev = ('python "%s" --cache-directory="%s" washtenaw.tests.test_run_estimation_config'
-                % (create_baseyear_cache_script_path, cache_dir))
+            ev = ('%s "%s" --cache-directory="%s" washtenaw.tests.test_run_estimation_config'
+                % (sys.executable, create_baseyear_cache_script_path, cache_dir))
             logger.log_status("Invoking '%s'" % ev)
             return_code = os.system(ev)
             

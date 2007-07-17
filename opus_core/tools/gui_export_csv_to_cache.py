@@ -78,7 +78,8 @@ if __name__ == '__main__':
     
     from opus_core.tools.do_export_csv_to_cache import __file__ as script_path
     
-    ev = ('python %s %s' % (
+    ev = ('%s %s %s' % (
+              sys.executable,
               script_path, 
               ('--csv_directory=%s '
               '--attribute_cache_directory=%s '

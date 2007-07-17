@@ -15,7 +15,7 @@
 # test_scanner: IGNORE_THIS_FILE
 ### This file takes a long time to run, thus it is only run by NightlyFullTests.
 
-import os
+import os, sys
 
 from shutil import rmtree
 from tempfile import mkdtemp
@@ -42,8 +42,8 @@ class TestRunEstimation(opus_unittest.TestCase):
         cache_dir = mkdtemp(prefix='test_estimation_runner_tmp')
         try:
             # Cache to a temporary folder.
-            ev = ('python "%s" psrc.tests.test_run_estimation_config --cache-directory="%s"' 
-                % (create_baseyear_cache_script_path, cache_dir))
+            ev = ('%s "%s" psrc.tests.test_run_estimation_config --cache-directory="%s"' 
+                % (sys.executable, create_baseyear_cache_script_path, cache_dir))
             logger.log_status("Invoking '%s'" % ev)
             return_code = os.system(ev)
             
@@ -84,8 +84,9 @@ class TestRunEstimation(opus_unittest.TestCase):
                 except: 
                     model_unknown_boolean = ''
                 
-                ev = ('python "%s" "%s" %s %s %s %s'
-                    % (test_run_estimation_in_new_process_script_path,
+                ev = ('%s "%s" "%s" %s %s %s %s'
+                    % (sys.executable, 
+                       test_run_estimation_in_new_process_script_path,
                        cache_dir,
                        model_abbreviation,
                        model_verbose_name,

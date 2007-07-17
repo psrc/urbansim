@@ -57,8 +57,8 @@ if __name__ == '__main__':
     
     from opus_core.tools.do_export_cache_to_tab_delimited_files import __file__ as script_path
     
-    ev = ('python %s %s'
-        % (script_path, '-c %s -o %s' % (cache_dir, output_dir)))
+    ev = ('%s %s %s'
+        % (sys.executable, script_path, '-c %s -o %s' % (cache_dir, output_dir)))
         
     print "Invoking command: %s" % ev
     os.system(ev)

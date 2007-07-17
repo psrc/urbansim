@@ -12,9 +12,9 @@
 # other acknowledgments.
 # 
 
-import os
+import os, sys
 
 from opus_core.tools.gui_export_cache_to_mysql_database import __file__ as script_path
 
 
-os.system('python %s' % script_path)
+os.system('%s %s' % (sys.executable, script_path))

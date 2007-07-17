@@ -116,7 +116,7 @@ class Simulation(object):
         command = os.path.join(package_dir_path, "tools", "lc_convert_to_flt.py")        
         flt_directory_in = os.path.join(urbansim_cache_directory, str(current_year))
         flt_directory_out = os.path.join(output_directory, str(current_year))
-        status = os.system("python " + command + ' %d -i "%s" -o "%s"' % (current_year, flt_directory_in, flt_directory_out))
+        status = os.system(sys.executable + ' ' + command + ' %d -i "%s" -o "%s"' % (current_year, flt_directory_in, flt_directory_out))
         assert(status == 0, "generate output failed")
     
     def run(self, base_directory, urbansim_cache_directory, years, output_directory, temp_folder,
