@@ -155,5 +155,5 @@ class BuildingConstructionModel(Model):
         
         logger.log_status("%s new buildings built." % new_buildings["parcel_id"].size)
         # remove active proposals from the proposal set
-        # development_proposal_set.remove_elements(active_idx)
+        development_proposal_set.remove_elements(active_idx)
         return development_proposal_set
