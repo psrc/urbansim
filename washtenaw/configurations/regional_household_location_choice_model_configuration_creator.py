@@ -14,7 +14,7 @@
 
 from urbansim.configurations.household_location_choice_model_configuration_creator import HouseholdLocationChoiceModelConfigurationCreator as USHLCMCC
 
-class RegioanalHouseholdLocationChoiceModelConfigurationCreator(USHLCMCC):
+class RegionalHouseholdLocationChoiceModelConfigurationCreator(USHLCMCC):
 
     _model_name = 'regional_household_location_choice_model'
     
@@ -36,7 +36,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
         pass
         
     def test_defaults(self):
-        creator = HouseholdLocationChoiceModelConfigurationCreator()
+        creator = RegionalHouseholdLocationChoiceModelConfigurationCreator()
         
         expected = Configuration({
             'estimate': {
@@ -107,7 +107,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
         self.assertDictsEqual(result, expected)
         
     def test_with_arguments(self):
-        creator = HouseholdLocationChoiceModelConfigurationCreator(
+        creator = RegionalHouseholdLocationChoiceModelConfigurationCreator(
             agent_set = 'agent_set',
             debuglevel = 999,
             sampler = None,

@@ -29,12 +29,18 @@ class RegionalEmploymentLocationChoiceModel(EmploymentLocationChoiceModel):
                                                   dataset_pool=self.dataset_pool)
         self.choice_set.compute_variables(["washtenaw.%s.%s" % (self.choice_set.get_dataset_name(), self.large_area_id_name)],
                                                   dataset_pool=self.dataset_pool)
-        unique_large_areas = unique_values(large_areas[agents_index])
-        cond_array = zeros(agent_set.size(), dtype="bool8")
-        cond_array[agents_index] = True
-        for area in unique_large_areas:
-            new_index = where(logical_and(cond_array, large_areas == area))[0]
-            self.filter = "%s.%s == %s" % (self.choice_set.get_dataset_name(), self.large_area_id_name, area)
-            logger.log_status("ELCM for area %s" % area)
+        valid_large_area = where(large_areas[agents_index] > 0)[0]
+        if valid_large_area.size > 0:
+            unique_large_areas = unique_values(large_areas[agents_index][valid_large_area])
+            cond_array = zeros(agent_set.size(), dtype="bool8")
+            cond_array[agents_index[valid_large_area]] = True
+            for area in unique_large_areas:
+                new_index = where(logical_and(cond_array, large_areas == area))[0]
+                self.filter = "%s.%s == %s" % (self.choice_set.get_dataset_name(), self.large_area_id_name, area)
+                logger.log_status("ELCM for area %s" % area)
+                EmploymentLocationChoiceModel.run(self, specification, coefficients, agent_set, 
+                                                 agents_index=new_index, **kwargs)
+        no_large_area = where(large_areas[agents_index] <= 0)[0]
+        if no_large_area.size > 0: # run the ELCM for housseholds that don't have assigned large_area
             EmploymentLocationChoiceModel.run(self, specification, coefficients, agent_set, 
-                                             agents_index=new_index, **kwargs)
+                                                 agents_index=agents_index[no_large_area], **kwargs)
