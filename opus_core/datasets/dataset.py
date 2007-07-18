@@ -200,9 +200,10 @@ class Dataset(AbstractDataset):
         column_names = local_resources['attributes']
         nchunks = local_resources['nchunks']
         # determine set of attributes for each chunk (a list of nchunks lists)
-        chunked_attributes = in_storage.chunk_columns(table_name=table_name, 
-                                                      column_names=column_names,
-                                                      nchunks=nchunks)
+        chunked_attributes = self.chunk_columns(storage=in_storage,
+                                                   table_name=table_name, 
+                                                   column_names=column_names,
+                                                   nchunks=nchunks)
         nchunks = len(chunked_attributes)
 
         if chunked_attributes:
@@ -380,6 +381,40 @@ class Dataset(AbstractDataset):
                 table_name=table_name+".computed",
                 table_data=values_computed,
                 )
+            
+    @staticmethod
+    def chunk_columns(storage, table_name, column_names=Storage.ALL_COLUMNS, nchunks=1):
+        """Returns a nested list of columns using column_names as input. 
+        The list of column names is chunked into an even list nchunk elements
+        whereof each element is a list of columns.
+        e.g.: column_names=['col1','col2','col3','col4','col5'] and nchunks=3
+        returns [ ['col1','col2'],['col3','col4'],['col5'] ]
+        
+        if column_names is empty the method returns an empty list
+        if the number of chunks (nchunks) is higher than the number of 
+        column_names the method returns a list of number of column_names lists
+        with each column_name in its own list.
+        e.g.: column_names=['col1','col2','col3'] and nchunks=5
+        returns [ ['col1'],['col2'],['col3'] ]
+        """
+        
+        available_column_names = storage.get_column_names(table_name)
+        if table_name+'.computed' in storage.get_table_names():
+            available_column_names = available_column_names + storage.get_column_names(table_name+'.computed')
+            
+        column_names = storage._select_columns(column_names, available_column_names)
+        number_of_columns = len(column_names)
+        result = []
+        if number_of_columns>0:
+            chunksize = max(1,int(number_of_columns/nchunks)+1)
+            number_of_chunks = min(nchunks, number_of_columns)
+            lastchunk = number_of_columns - (number_of_chunks-1)*chunksize
+            
+            for i in range(number_of_chunks)[0:(number_of_chunks-1)]:
+                result = result + [column_names[i*chunksize:(i+1)*chunksize]]
+            result = result + \
+                [column_names[(number_of_columns-lastchunk):number_of_columns]]
+        return result
 
 class DatasetSubset(Dataset):
     """Class for viewing a subset of a Dataset object, identified by a list of indices."""
@@ -410,6 +445,16 @@ class DatasetSubset(Dataset):
         return self.index
 
 from opus_core.tests import opus_unittest
+
+class DummyStorage(Storage):
+        def get_column_names(self, table_name, lowercase=True):
+            if table_name is 'table_doc':
+                return ['col1','col2','col3','col4','col5']
+            if table_name is 'table_20':
+                return range(20)
+            if table_name is 'table_3':
+                return ['col1','col2','col3']
+            return []
 
 class DatasetTests(opus_unittest.OpusTestCase):
     def test_dataset_table_does_not_exist(self):
@@ -719,6 +764,42 @@ class DatasetTests(opus_unittest.OpusTestCase):
         ds.load_dataset()
         ds.write_dataset(out_storage=out_storage)
         self.assertEqual(Set(['tests','tests.computed']),Set(out_storage.get_table_names()))
+        
+    def test_chunk_columns_documentation(self):
+        storage = DummyStorage()
+        expected = [ ['col1','col2'],['col3','col4'],['col5'] ]
+        actual = Dataset.chunk_columns(storage=storage,
+                                       table_name='table_doc',
+                                      column_names=['col1','col2','col3','col4','col5'],
+                                      nchunks = 3)
+        self.assertEqual(expected, actual)
+        
+    def test_chunk_columns_20_columns_7_chunks(self):
+        storage = DummyStorage()
+        expected = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11], [12, 13, 14], [15, 16, 17], [18, 19]]
+        actual = Dataset.chunk_columns(storage=storage,
+                                       table_name='table_20',
+                                      column_names=Storage.ALL_COLUMNS,
+                                      nchunks = 7)
+        self.assertEqual(expected, actual)
+        
+    def test_chunk_columns_empty_column_list(self):
+        storage = DummyStorage()
+        expected = []
+        actual = Dataset.chunk_columns(storage=storage,
+                                       table_name='table_empty',
+                                      column_names=Storage.ALL_COLUMNS,
+                                      nchunks = 7)
+        self.assertEqual(expected, actual)
+        
+    def test_chunk_columns_to_many_chunks(self):
+        storage = DummyStorage()
+        expected = [ ['col1'],['col2'],['col3'] ]
+        actual = Dataset.chunk_columns(storage=storage,
+                                       table_name='table_3',
+                                      column_names=Storage.ALL_COLUMNS,
+                                      nchunks = 5)
+        self.assertEqual(expected, actual)
 
 if __name__ == '__main__':
     opus_unittest.main()

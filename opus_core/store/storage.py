@@ -73,39 +73,6 @@ class Storage(Storage_old):
         """
         raise NotImplementedError()
     
-    def chunk_columns(self, table_name, column_names=ALL_COLUMNS, nchunks=1):
-        """Returns a nested list of columns using column_names as input. 
-        The list of column names is chunked into an even list nchunk elements
-        whereof each element is a list of columns.
-        e.g.: column_names=['col1','col2','col3','col4','col5'] and nchunks=3
-        returns [ ['col1','col2'],['col3','col4'],['col5'] ]
-        
-        if column_names is empty the method returns an empty list
-        if the number of chunks (nchunks) is higher than the number of 
-        column_names the method returns a list of number of column_names lists
-        with each column_name in its own list.
-        e.g.: column_names=['col1','col2','col3'] and nchunks=5
-        returns [ ['col1'],['col2'],['col3'] ]
-        """
-        
-        available_column_names = self.get_column_names(table_name)
-        if table_name+'.computed' in self.get_table_names():
-            available_column_names = available_column_names + self.get_column_names(table_name+'.computed')
-            
-        column_names = self._select_columns(column_names, available_column_names)
-        number_of_columns = len(column_names)
-        result = []
-        if number_of_columns>0:
-            chunksize = max(1,int(number_of_columns/nchunks)+1)
-            number_of_chunks = min(nchunks, number_of_columns)
-            lastchunk = number_of_columns - (number_of_chunks-1)*chunksize
-            
-            for i in range(number_of_chunks)[0:(number_of_chunks-1)]:
-                result = result + [column_names[i*chunksize:(i+1)*chunksize]]
-            result = result + \
-                [column_names[(number_of_columns-lastchunk):number_of_columns]]
-        return result
-    
     def _get_column_size_and_names(self, table_data):
         column_names = table_data.keys()
         # Check that every column has the same number of items
@@ -289,16 +256,6 @@ class TestStorage(opus_unittest.OpusTestCase):
         
         self.assertRaises(AttributeError, self.storage._select_columns, requested_columns, available_columns, case_insensitive=True)
         
-class DummyStorage(Storage):
-        def get_column_names(self, table_name, lowercase=True):
-            if table_name is 'table_doc':
-                return ['col1','col2','col3','col4','col5']
-            if table_name is 'table_20':
-                return range(20)
-            if table_name is 'table_3':
-                return ['col1','col2','col3']
-            return []
-        
 class TestStorageInterface(opus_unittest.OpusTestCase):
     def setUp(self):
         self.storage = Storage()
@@ -321,38 +278,6 @@ class TestStorageInterface(opus_unittest.OpusTestCase):
                 'b': array([1, 2]),
                 }, 
             )
-        
-    def test_chunk_columns_documentation(self):
-        storage = DummyStorage()
-        expected = [ ['col1','col2'],['col3','col4'],['col5'] ]
-        actual = storage.chunk_columns(table_name='table_doc',
-                                      column_names=['col1','col2','col3','col4','col5'],
-                                      nchunks = 3)
-        self.assertEqual(expected, actual)
-        
-    def test_chunk_columns_20_columns_7_chunks(self):
-        storage = DummyStorage()
-        expected = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11], [12, 13, 14], [15, 16, 17], [18, 19]]
-        actual = storage.chunk_columns(table_name='table_20',
-                                      column_names=Storage.ALL_COLUMNS,
-                                      nchunks = 7)
-        self.assertEqual(expected, actual)
-        
-    def test_chunk_columns_empty_column_list(self):
-        storage = DummyStorage()
-        expected = []
-        actual = storage.chunk_columns(table_name='table_empty',
-                                      column_names=Storage.ALL_COLUMNS,
-                                      nchunks = 7)
-        self.assertEqual(expected, actual)
-        
-    def test_chunk_columns_to_many_chunks(self):
-        storage = DummyStorage()
-        expected = [ ['col1'],['col2'],['col3'] ]
-        actual = storage.chunk_columns(table_name='table_3',
-                                      column_names=Storage.ALL_COLUMNS,
-                                      nchunks = 5)
-        self.assertEqual(expected, actual)
         
 # TODO: uncomment this test once have faster way to run the assert.
 #    def test_assert_no_nones(self):
