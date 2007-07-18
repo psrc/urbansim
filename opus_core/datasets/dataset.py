@@ -215,8 +215,10 @@ class Dataset(AbstractDataset):
                         chunked_attributes[ichunk] = \
                               get_distinct_list(chunked_attributes[ichunk] + self._id_names)
                         
+                column_names = [name for name in chunked_attributes[ichunk] 
+                                if name in in_storage.get_column_names(table_name)]
                 data = in_storage.load_table(table_name = table_name, 
-                                             column_names = chunked_attributes[ichunk], 
+                                             column_names = column_names, 
                                              id_name = self.get_non_hidden_id_name())
                 
                 for attr in data:

@@ -29,7 +29,7 @@ class Storage(Storage_old):
         """
         Returns a list of the names of the tables in storage. 
         """
-        raise NotImplementedError()
+        return []
 
     # _load_dataset
     def load_table(self, table_name, column_names=ALL_COLUMNS, lowercase=True,
@@ -89,6 +89,8 @@ class Storage(Storage_old):
         """
         
         available_column_names = self.get_column_names(table_name)
+        if table_name+'.computed' in self.get_table_names():
+            available_column_names = available_column_names + self.get_column_names(table_name+'.computed')
             
         column_names = self._select_columns(column_names, available_column_names)
         number_of_columns = len(column_names)

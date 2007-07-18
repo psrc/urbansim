@@ -109,7 +109,7 @@ class MoreDatasetTests(opus_unittest.OpusTestCase):
     def test_flush_dataset_correct_data(self):
         job_set = Dataset(self.job_set_resources, dataset_name="jobs")
         job_set.add_attribute(self.job_id, "job_id", metadata=AttributeType.PRIMARY)
-        job_set.add_attribute(self.expected_sic_data, "sic", metadata=AttributeType.PRIMARY)
+        job_set.add_attribute(self.expected_sic_data, "sic", metadata=AttributeType.COMPUTED)
         job_set.flush_dataset()
         returned_sic_data = job_set.get_attribute("sic")
         returned_id_data = job_set.get_attribute("job_id")
