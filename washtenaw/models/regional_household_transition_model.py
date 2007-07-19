@@ -50,7 +50,9 @@ class RegionalHouseholdTransitionModel(HouseholdTransitionModel):
                                                   dtype="int32")))
             # transform indices of removing households into indices of the whole dataset
             self.remove_households[last_remove_idx:self.remove_households.size] = all_households_index[households_index[self.remove_households[last_remove_idx:self.remove_households.size]]]
-        return self._update_household_set(household_set)
+        self._update_household_set(household_set)
+        # return an index of new households
+        return arange(household_set.size()-self.new_households["large_area_id"].size, household_set.size())  
 
     def _do_initialize_for_run(self, household_set):
         HouseholdTransitionModel._do_initialize_for_run(self, household_set)

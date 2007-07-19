@@ -18,10 +18,10 @@ from washtenaw.configurations.regional_development_project_location_choice_model
 from washtenaw.configurations.home_based_regional_employment_location_choice_model_configuration_creator import HomeBasedRegionalEmploymentLocationChoiceModelConfigurationCreator
 from washtenaw.configurations.regional_household_location_choice_model_configuration_creator import RegionalHouseholdLocationChoiceModelConfigurationCreator
 from washtenaw.configurations.regional_employment_location_choice_model_configuration_creator import RegionalEmploymentLocationChoiceModelConfigurationCreator
-from urbansim.configurations.employment_transition_model_configuration_creator import EmploymentTransitionModelConfigurationCreator
-from urbansim.configurations.household_transition_model_configuration_creator import HouseholdTransitionModelConfigurationCreator
+from washtenaw.configurations.regional_employment_transition_model_configuration_creator import RegionalEmploymentTransitionModelConfigurationCreator
+from washtenaw.configurations.regional_household_transition_model_configuration_creator import RegionalHouseholdTransitionModelConfigurationCreator
 
-def ControllerConfiguration(Configuration):
+class ControllerConfiguration(Configuration):
     """ Contains controller entries that differ from the urbansim controllers.
     """
     def __init__(self):
@@ -35,7 +35,7 @@ def ControllerConfiguration(Configuration):
                         ).execute(),
                     }
         self['commercial_regional_development_project_location_choice_model'] = {
-                    'controller': RegioanlDevelopmentProjectLocationChoiceModelConfigurationCreator(
+                    'controller': RegionalDevelopmentProjectLocationChoiceModelConfigurationCreator(
                         project_type = 'commercial',
                         coefficients_table = 'commercial_development_location_choice_model_coefficients',
                         specification_table = 'commercial_development_location_choice_model_specification',
@@ -52,7 +52,6 @@ def ControllerConfiguration(Configuration):
                     }
         self['regional_development_project_transition_model'] =  {
                     'controller': RegionalDevelopmentProjectTransitionModelConfigurationCreator(
-                        debuglevel = debuglevel,
                         output_results = 'dptm_results',
                         ).execute(),
                     }
@@ -64,16 +63,17 @@ def ControllerConfiguration(Configuration):
                     }
         self['regional_employment_location_choice_model'] = {
                     'controller': RegionalEmploymentLocationChoiceModelConfigurationCreator(
-                        input_index = 'erm_index',
                         ).execute(),
                     }
         self['home_based_regional_employment_location_choice_model'] = {
                     'controller': HomeBasedRegionalEmploymentLocationChoiceModelConfigurationCreator(
-                        input_index = 'erm_index',
                         ).execute(),
                     }          
         self['regional_household_location_choice_model'] = {
                     'controller': RegionalHouseholdLocationChoiceModelConfigurationCreator(
-                        input_index = 'hrm_index',
                         ).execute(),
                     }
+        
+
+#if __name__ == '__main__':
+#    ControllerConfiguration()

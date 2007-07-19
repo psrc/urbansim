@@ -48,7 +48,9 @@ class RegionalEmploymentTransitionModel(EmploymentTransitionModel):
                                                   dtype="int32")))
             # transform indices of removing jobs into indices of the whole dataset
             self.remove_jobs[last_remove_idx:self.remove_jobs.size] = all_jobs_index[jobs_index[self.remove_jobs[last_remove_idx:self.remove_jobs.size]]]
-        return self._update_job_set(job_set)
+        self._update_job_set(job_set)
+        # return an index of new jobs
+        return arange(job_set.size()-self.new_jobs["large_area_id"].size, job_set.size())  
         
     def _do_initialize_for_run(self, job_set, job_building_types, data_objects):
         EmploymentTransitionModel._do_initialize_for_run(self, job_set, job_building_types, data_objects)

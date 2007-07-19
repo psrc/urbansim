@@ -22,6 +22,7 @@ class RegionalEmploymentTransitionModelConfigurationCreator(EmploymentTransition
         conf = EmploymentTransitionModelConfigurationCreator.execute(self)
         conf['import'] = {'washtenaw.models.%s' % self._model_name: 'RegionalEmploymentTransitionModel'}
         conf['init']['name'] = 'RegionalEmploymentTransitionModel'
+        conf['run']['output'] = 'regional_etm_index'
         return conf
 
 
@@ -57,7 +58,8 @@ class TestEmploymentTransitionModelConfigurationCreator(opus_unittest.OpusTestCa
                     'job_building_types': 'job_building_type',
                     'job_set': 'job',
                     'year': 'year'
-                    }
+                    },
+                'output': 'regional_etm_index'
                 }
             })
         

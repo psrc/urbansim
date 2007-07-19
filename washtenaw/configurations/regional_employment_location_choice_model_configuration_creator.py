@@ -12,10 +12,12 @@
 # other acknowledgments.
 # 
 
+from enthought.traits.api import Str
 from urbansim.configurations.employment_location_choice_model_configuration_creator import EmploymentLocationChoiceModelConfigurationCreator as USELCMCC
 
 class RegionalEmploymentLocationChoiceModelConfigurationCreator(USELCMCC):
 
+    input_index = Str('regional_etm_index')
     _model_name = 'regional_employment_location_choice_model'
     
     def execute(self):
@@ -98,7 +100,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
             'run': {
                 'arguments': {
                     'agent_set': 'job',
-                    'agents_index': 'erm_index',
+                    'agents_index': 'regional_etm_index',
                     'chunk_specification': "{'records_per_chunk':50000}",
                     'coefficients': 'coefficients',
                     'data_objects': 'datasets',

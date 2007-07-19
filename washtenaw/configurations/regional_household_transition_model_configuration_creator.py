@@ -22,6 +22,7 @@ class RegionalHouseholdTransitionModelConfigurationCreator(HouseholdTransitionMo
         conf = HouseholdTransitionModelConfigurationCreator.execute(self)
         conf['import'] = {'washtenaw.models.%s' % self._model_name: 'RegionalHouseholdTransitionModel'}
         conf['init']['name'] = 'RegionalHouseholdTransitionModel'
+        conf['run']['output'] = 'regional_htm_index'
         return conf
 
 
@@ -58,7 +59,8 @@ class TestHouseholdTransitionModelConfigurationCreator(opus_unittest.OpusTestCas
                     'control_totals': 'control_totals',
                     'household_set': 'household',
                     'year': 'year'
-                    }
+                    },
+                'output': 'regional_htm_index'
                 }
             })
         
