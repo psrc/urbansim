@@ -12,12 +12,13 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import Str
+from enthought.traits.api import Str, Int
 from urbansim.configurations.household_location_choice_model_configuration_creator import HouseholdLocationChoiceModelConfigurationCreator as USHLCMCC
 
 class RegionalHouseholdLocationChoiceModelConfigurationCreator(USHLCMCC):
 
     input_index = Str('regional_htm_index')
+    nchunks = Int(1)
     _model_name = 'regional_household_location_choice_model'
     
     def execute(self):
@@ -96,7 +97,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                 'arguments': {
                     'agent_set': 'household',
                     'agents_index': 'regional_htm_index',
-                    'chunk_specification': "{'nchunks':12}",
+                    'chunk_specification': "{'nchunks':1}",
                     'coefficients': 'coefficients',
                     'data_objects': 'datasets',
                     'debuglevel': 'debuglevel',

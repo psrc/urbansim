@@ -45,6 +45,8 @@ class RegionalHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
         if no_large_area.size > 0: # run the HLCM for housseholds that don't have assigned large_area
             HouseholdLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                                  agents_index=agents_index[no_large_area], **kwargs)
+        if "large_area_id" in agent_set.get_known_attribute_names():
+            agent_set.delete_one_attribute("large_area_id") # next time it must be recomputed (HTM sets it as primary attribute) 
 
 from opus_core.tests import opus_unittest
 from numpy import array, ma, arange, where, zeros, concatenate
@@ -95,6 +97,7 @@ class Test(StochasticTestCase):
 
         # check the individual gridcells
         def run_model():
+            households = HouseholdDataset(in_storage=storage, in_table_name='households')
             hlcm = RegionalHouseholdLocationChoiceModel(location_set=gridcells, compute_capacity_flag=False,
                     choices = "opus_core.random_choices_from_index", sample_size_locations = 4)
             hlcm.run(specification, coefficients, agent_set=households, debuglevel=1)
@@ -104,7 +107,6 @@ class Test(StochasticTestCase):
                 resources=Resources({"household":households}))
             result_area1 = gridcells.get_attribute_by_id("number_of_households", arange(ngcs_attr)+1)
             result_area2 = gridcells.get_attribute_by_id("number_of_households", arange(ngcs_attr+1, ngcs+1))
-            households.set_values_of_one_attribute(attribute="grid_id", values=hh_grid_ids) # unplace for the next run
             gridcells.delete_one_attribute("number_of_households")
             result = concatenate((result_area1, result_area2))
             return result

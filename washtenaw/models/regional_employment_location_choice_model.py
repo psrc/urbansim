@@ -44,3 +44,5 @@ class RegionalEmploymentLocationChoiceModel(EmploymentLocationChoiceModel):
         if no_large_area.size > 0: # run the ELCM for housseholds that don't have assigned large_area
             EmploymentLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                                  agents_index=agents_index[no_large_area], **kwargs)
+        if "large_area_id" in agent_set.get_known_attribute_names():
+            agent_set.delete_one_attribute("large_area_id") # next time it must be recomputed (ETM sets it as primary attribute) 

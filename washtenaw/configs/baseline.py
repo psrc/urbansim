@@ -136,11 +136,11 @@ class Baseline(GeneralConfiguration):
                 'regional_household_transition_model',
                 'regional_household_location_choice_model',
                 'regional_employment_transition_model',
-                {'regional_employment_location_choice_model': {'group_members': ['__all__']}},
+                {'regional_employment_location_choice_model': {'group_members': ['home_based', 'commercial', 'industrial']}},
                 'household_relocation_model',
                 'household_location_choice_model',
                 'employment_relocation_model',
-                {'employment_location_choice_model': {'group_members': ['__all__']}},
+                {'employment_location_choice_model': {'group_members': ['_all_']}},
                 'distribute_unplaced_jobs_model'
                 ],
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.

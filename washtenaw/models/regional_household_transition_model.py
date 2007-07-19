@@ -14,6 +14,7 @@
 from numpy import arange, array, where, logical_and, concatenate
 from opus_core.misc import get_distinct_names, unique_values
 from opus_core.datasets.dataset import DatasetSubset
+from opus_core.variables.attribute_type import AttributeType
 from urbansim.models.household_transition_model import HouseholdTransitionModel
 from copy import copy
 
@@ -51,8 +52,13 @@ class RegionalHouseholdTransitionModel(HouseholdTransitionModel):
             # transform indices of removing households into indices of the whole dataset
             self.remove_households[last_remove_idx:self.remove_households.size] = all_households_index[households_index[self.remove_households[last_remove_idx:self.remove_households.size]]]
         self._update_household_set(household_set)
+        idx_new_households = arange(household_set.size()-self.new_households["large_area_id"].size, household_set.size())
+        households_large_area_ids = household_set.compute_variables("washtenaw.household.large_area_id")
+        households_large_area_ids[idx_new_households] = self.new_households["large_area_id"]
+        household_set.delete_one_attribute("large_area_id")
+        household_set.add_attribute(households_large_area_ids, "large_area_id", metadata=AttributeType.PRIMARY)
         # return an index of new households
-        return arange(household_set.size()-self.new_households["large_area_id"].size, household_set.size())  
+        return idx_new_households
 
     def _do_initialize_for_run(self, household_set):
         HouseholdTransitionModel._do_initialize_for_run(self, household_set)

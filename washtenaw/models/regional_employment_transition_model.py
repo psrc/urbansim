@@ -16,6 +16,7 @@ from opus_core.misc import unique_values
 from numpy import arange, array, where, logical_and, concatenate
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import DatasetSubset
+from opus_core.variables.attribute_type import AttributeType
 from urbansim.models.employment_transition_model import EmploymentTransitionModel
 
 class RegionalEmploymentTransitionModel(EmploymentTransitionModel):
@@ -49,6 +50,11 @@ class RegionalEmploymentTransitionModel(EmploymentTransitionModel):
             # transform indices of removing jobs into indices of the whole dataset
             self.remove_jobs[last_remove_idx:self.remove_jobs.size] = all_jobs_index[jobs_index[self.remove_jobs[last_remove_idx:self.remove_jobs.size]]]
         self._update_job_set(job_set)
+        idx_new_jobs = arange(job_set.size()-self.new_jobs["large_area_id"].size, job_set.size())
+        jobs_large_area_ids = job_set.compute_variables("washtenaw.job.large_area_id")
+        jobs_large_area_ids[idx_new_jobs] = self.new_jobs["large_area_id"]
+        job_set.delete_one_attribute("large_area_id")
+        job_set.add_attribute(jobs_large_area_ids, "large_area_id", metadata=AttributeType.PRIMARY)
         # return an index of new jobs
         return arange(job_set.size()-self.new_jobs["large_area_id"].size, job_set.size())  
         

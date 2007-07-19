@@ -83,6 +83,9 @@ class RegionalDevelopmentProjectLocationChoiceModel(DevelopmentProjectLocationCh
                                                      debuglevel=debuglevel)
 
     def run(self, specification, coefficients, agent_set, agents_index=None,  **kwargs):
+        if agent_set is None:
+            logger.log_status("No development projects for this model.")
+            return None
         if agents_index is None:
             agents_index = arange(agent_set.size())
         large_areas = agent_set.compute_variables(["washtenaw.%s.%s" % (agent_set.get_dataset_name(), self.large_area_id_name)],
