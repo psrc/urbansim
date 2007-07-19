@@ -15,6 +15,7 @@
 from numpy import arange, logical_and, where, zeros
 from opus_core.misc import unique_values
 from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
+from opus_core.logger import logger
 from urbansim.models.development_project_location_choice_model import DevelopmentProjectLocationChoiceModel
 
 class RegionalDevelopmentProjectLocationChoiceModel(DevelopmentProjectLocationChoiceModel):
@@ -81,7 +82,7 @@ class RegionalDevelopmentProjectLocationChoiceModel(DevelopmentProjectLocationCh
                                                      estimate_config=estimate_config, 
                                                      debuglevel=debuglevel)
 
-    def run(self, specification, coefficients, agent_set, agents_index=None,  **kargs):
+    def run(self, specification, coefficients, agent_set, agents_index=None,  **kwargs):
         if agents_index is None:
             agents_index = arange(agent_set.size())
         large_areas = agent_set.compute_variables(["washtenaw.%s.%s" % (agent_set.get_dataset_name(), self.large_area_id_name)],
@@ -95,13 +96,13 @@ class RegionalDevelopmentProjectLocationChoiceModel(DevelopmentProjectLocationCh
             self.this_large_area = area
             new_index = where(logical_and(cond_array, large_areas == area))[0]
             logger.log_status("DPLCM for area %s" % area)
-            DevelopmentProjectLocationChoiceModel.run(self, specification, coefficients, agent_set, 
-                                             agents_index=new_index, **kwargs)
+            DevelopmentProjectLocationChoiceModel.run(self, specification=specification, coefficients=coefficients, 
+                                                      agent_set=agent_set, agents_index=new_index, **kwargs)
             
     def determine_units_capacity(self, agent_set, agents_index):
         """Filter the available capacity through the current large_area_id
         """
-        capacity = DevelopmentProjectLocationChoiceModel.determine_units_capacity(agent_set, agents_index)
+        capacity = DevelopmentProjectLocationChoiceModel.determine_units_capacity(self, agent_set, agents_index)
         is_large_area = self.choice_set.compute_variables(["%s.%s == %s" % (self.choice_set.get_dataset_name(), self.large_area_id_name, 
                                                             self.this_large_area)],
                                           dataset_pool=self.dataset_pool)

@@ -12,6 +12,7 @@
 # other acknowledgments.
 #
 
+import os
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.configurations.database_configuration import DatabaseConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
@@ -22,7 +23,7 @@ my_cache_config = CreatingBaseyearCacheConfiguration(
         cache_from_mysql = False,
         baseyear_cache = BaseyearCacheConfiguration(
             existing_cache_to_copy = '/Users/hana/urbansim_cache/washtenaw/cache_source_la',
-            years_to_cache = range(2000,2001)
+            #years_to_cache = range(2000,2001)
             ),
         cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
         tables_to_cache = Baseline.tables_to_cache,
@@ -35,7 +36,7 @@ my_configuration = {
                 password      = os.environ.get('MYSQLPASSWORD',''),
                 database_name = 'washtenaw_hana',
                 ),
-     'models': [
+#     'models': [
                 #'prescheduled_events',
                 #'events_coordinator',
                 #'residential_land_share_model',
@@ -47,14 +48,14 @@ my_configuration = {
                 #'development_event_transition_model',
                 #'events_coordinator',
                 #'residential_land_share_model',
-                'household_transition_model',
+#                'household_transition_model',
                 #'employment_transition_model',
                 #'household_relocation_model',
                 #'household_location_choice_model',
                 #'employment_relocation_model',
                 #{'employment_location_choice_model': {'group_members': ['industrial','commercial']}},
                 #'distribute_unplaced_jobs_model'
-                ],
+#                ],
     'cache_directory': None,
     #'cache_directory': '/Users/hana/urbansim_cache/washtenaw/cache_source_la',
     'remove_cache': False, # remove cache after finishing the simulation

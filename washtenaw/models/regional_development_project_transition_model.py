@@ -57,7 +57,6 @@ class RegionalDevelopmentProjectTransitionModel( DevelopmentProjectTransitionMod
                                                   metadata=AttributeType.PRIMARY)
                     if (project_type not in projects.keys()) or (projects[project_type] is None):
                         projects[project_type] = project_dataset
-                        projects[project_type].add_submodel_categories()
                     else:
                         projects[project_type].join_by_rows(project_dataset, change_ids_if_not_unique=True)
  
@@ -67,6 +66,7 @@ class RegionalDevelopmentProjectTransitionModel( DevelopmentProjectTransitionMod
             if projects[project_type] is None:
                 size = 0
             else:
+                projects[project_type].add_submodel_categories()
                 size = projects[project_type].size()
             logger.log_status("%s %s projects to be built" % (size, project_type))  
         return projects
