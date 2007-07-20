@@ -17,6 +17,9 @@ from urbansim.models.agent_location_choice_model import AgentLocationChoiceModel
 
 class HouseholdLocationChoiceModel(AgentLocationChoiceModel):
     
+    model_name = "Household Location Choice Model"
+    model_short_name = "HLCM"
+    
     def __init__(self, location_set,
             sampler = "opus_core.samplers.weighted_sampler", 
             utilities = "opus_core.linear_utilities", 
@@ -52,8 +55,8 @@ class HouseholdLocationChoiceModel(AgentLocationChoiceModel):
                     ("weights_for_estimation_string", estimation_weight_string)])         
     
         AgentLocationChoiceModel.__init__(self, location_set,
-                                        model_name="Household Location Choice Model", 
-                                        short_name="HLCM", 
+                                        model_name=self.model_name, 
+                                        short_name=self.model_short_name, 
                                         sampler=sampler, 
                                         utilities=utilities, 
                                         probabilities=probabilities, 
