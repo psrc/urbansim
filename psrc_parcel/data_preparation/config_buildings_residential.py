@@ -34,13 +34,15 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
             'description':'data preparation for PSRC parcel (buildings)',
             'cache_directory': None,
             'creating_baseyear_cache_configuration': CreatingBaseyearCacheConfiguration(
-                cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
+                #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
+                cache_directory_root = r'/urbansim_cache/psrc_parcel',
                 #cache_directory_root = r'/home/lmwang/urbansim_cache/psrc_parcel',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
-                    existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
+                    #existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
+                    existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/cache_source',
                     #existing_cache_to_copy = r'/home/lmwang/urbansim_cache/psrc_parcel/cache_source',
-                    years_to_cache = [2005]
+                    years_to_cache = [2000]
                     ),
                 cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
                 ),
@@ -48,8 +50,8 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
                 package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
                 package_order_exceptions={},
                 ),
-            'base_year':2005,
-            'years':(2006, 2006),
+            'base_year':2000,
+            'years':(2001, 2001),
             'models':[ # models are executed in the same order as in this list
                  "expected_sale_price_model",
                  "development_proposal_choice_model",

@@ -13,7 +13,7 @@
 #
 
 import os
-from numpy import array, where, logical_and, arange, ones, cumsum, zeros, alltrue, absolute, resize, any, floor, maximum
+from numpy import array, where, logical_and, arange, ones, cumsum, zeros, alltrue, absolute, resize, any, floor, maximum, int32
 from numpy.random import seed
 from scipy.ndimage import sum as ndimage_sum
 from opus_core.logger import logger
@@ -280,7 +280,8 @@ class AssignBuildingsToJobs:
         # sample building types
         sample_bt = probsample_replace(array([1,2]), idx_bt_missing.size, 
            array([idx_home_based.size, idx_non_home_based.size])/float(idx_home_based.size + idx_non_home_based.size))
-        building_types[idx_bt_missing] = sample_bt
+        # coerce to int32 (on a 64 bit machine, sample_bt will be of type int64)
+        building_types[idx_bt_missing] = sample_bt.astype(int32)
         job_dataset.modify_attribute(name="building_type", data = building_types) 
         
         job_dataset.write_dataset(out_table_name=jobs_table, out_storage=out_storage, attributes=AttributeType.PRIMARY)
@@ -301,8 +302,8 @@ if __name__ == '__main__':
     # input/output_cache is used only if FltStorage is uncommented.
     input_database_name = "psrc_2005_parcel_baseyear_change_20070613"
     output_database_name = "psrc_2005_data_workspace_hana"
-    input_cache =  "/Users/hana/urbansim_cache/psrc/cache_source_parcel/2005"
-    output_cache = "/Users/hana/urbansim_cache/psrc/cache_source_parcel"
+    input_cache =  "/urbansim_cache/psrc_parcel/cache_source/2000"
+    output_cache = "/urbansim_cache/psrc_parcel/tmp/2000"
     #instorage = MysqlStorage().get(input_database_name)
     #outstorage = MysqlStorage().get(output_database_name)
     instorage = FltStorage().get(input_cache)
