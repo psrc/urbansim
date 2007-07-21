@@ -20,3 +20,4 @@ class TestTests(opus_unittest.OpusTestCase):
 
 if __name__ == '__main__':
     opus_unittest.main()
+    
