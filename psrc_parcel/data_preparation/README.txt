@@ -108,4 +108,4 @@ After all the preceding processes are done, computed attributes (e.g. zone_id in
 datasets such that they won't be treated as primary attributes and will be computed when needed.
 parcel_id, zone_id in households, possibly households_for_estimaiton
 parcel_id, zone_id in jobs and jobs_for_estimation
-parcel_id, zone_id in buildings (?)
+zone_id in buildings
