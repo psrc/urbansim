@@ -68,8 +68,8 @@ class Baseline(GeneralConfiguration):
                     'land_price_model_specification',
                     'residential_land_share_model_coefficients',
                     'residential_land_share_model_specification',
-                    'plan_type_group_definitions',
-                    'plan_type_groups',
+#                    'plan_type_group_definitions',
+#                    'plan_type_groups',
                     'large_areas',
                     'household_characteristics_for_ht',
                     'development_types',
@@ -79,7 +79,7 @@ class Baseline(GeneralConfiguration):
                     'annual_relocation_rates_for_jobs',
                     'base_year',
                     'cities',
-                    #'development_events',
+                    'development_events_exogenous',
                     'development_type_groups',
                     'employment_adhoc_sector_group_definitions',
                     'employment_adhoc_sector_groups',
@@ -106,7 +106,7 @@ class Baseline(GeneralConfiguration):
         config = AbstractUrbansimConfiguration()
         
         config_changes = {
-            'description':'Washtenaw baseline',
+            'description':'Region Pilot Baseline',
             'input_configuration': DatabaseConfiguration(
                 host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
                 user_name     = os.environ.get('MYSQLUSERNAME',''),
@@ -170,8 +170,8 @@ class Baseline(GeneralConfiguration):
                 package_order=['washtenaw', 'urbansim', 'opus_core'],
                 package_order_exceptions={},
                 ),
-            'base_year':2000,
-            'years':(2001, 2001),
+            'base_year':2005,
+            'years':(2006, 2010),
             }
         config.merge(config_changes)
         self.merge(config)
