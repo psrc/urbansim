@@ -25,10 +25,10 @@
 		<move file="${basedir}/tutorials/run-eugene-model" tofile="${webdir}/docs/tutorials/run-eugene-model" />
 		<move file="${basedir}/tutorials/lorenz-curve.pdf" todir="${webdir}/docs/tutorials" />
 		<move file="${basedir}/tutorials/lorenz-curve" tofile="${webdir}/docs/tutorials/lorenz-curve" />
-		<move file="${basedir}/style" todir="${webdir}/docs" />
 		<move file="${basedir}/installation" todir="${webdir}/docs" />
 		<move file="${basedir}/indicators" todir="${webdir}/docs" />
 		<move file="${basedir}/urbansim3-to-4" todir="${webdir}/docs" />
+		<move file="${basedir}/style" todir="${webdir}/docs" />
 	</target>
 
 	<target name="cruisecontrol" depends="build-latex-docs, build-tutorials, copy-to-webserver" />
