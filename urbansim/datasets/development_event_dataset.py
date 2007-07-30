@@ -37,6 +37,7 @@ class DevelopmentEventTypeOfChange(object):
     ADD = 1
     DELETE = 2
     REPLACE = 3
+    available_change_types = {'A': ADD, 'D': DELETE, 'R': REPLACE}
 
 from opus_core.tests import opus_unittest
 import os

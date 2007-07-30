@@ -12,7 +12,7 @@
 # other acknowledgments.
 # 
 
-from numpy import where, clip
+from numpy import where, clip, ones
 from urbansim.datasets.development_event_dataset import DevelopmentEventTypeOfChange
 
 class RollbackGridcells(object):
@@ -20,17 +20,16 @@ class RollbackGridcells(object):
     to produce, and save to the urbansim cache, the data for gridcell 
     dataset prior to the baseyear.
     """
+    attributes_to_unroll = ['commercial_sqft', 'industrial_sqft', 'governmental_sqft', 'residential_units',
+                            'commercial_improvement_value', 'industrial_improvement_value',
+                            'governmental_improvement_value', 'residential_improvement_value']
+    
     def unroll_gridcells_for_one_year(self, gridcells, dev_event_history, year_of_gridcells):
         events_idx = where(dev_event_history.get_attribute('scheduled_year') == year_of_gridcells)[0]
         if events_idx.size > 0:
-            self._unroll_field('commercial_sqft', gridcells, dev_event_history, events_idx)
-            self._unroll_field('industrial_sqft', gridcells, dev_event_history, events_idx)
-            self._unroll_field('governmental_sqft', gridcells, dev_event_history, events_idx)
-            self._unroll_field('residential_units', gridcells, dev_event_history, events_idx)
-            self._unroll_field('residential_improvement_value', gridcells, dev_event_history, events_idx)
-            self._unroll_field('commercial_improvement_value', gridcells, dev_event_history, events_idx)
-            self._unroll_field('industrial_improvement_value', gridcells, dev_event_history, events_idx)
-            self._unroll_field('governmental_improvement_value', gridcells, dev_event_history, events_idx)
+            self._compute_change_type_code(dev_event_history, events_idx)
+            for attr in self.attributes_to_unroll:
+                self._unroll_field(attr, gridcells, dev_event_history, events_idx)
             self._unroll_development_type_id(gridcells, dev_event_history, events_idx)
         
     def _unroll_development_type_id(self, gridcells, dev_event_history, events_idx):
@@ -44,18 +43,31 @@ class RollbackGridcells(object):
         
     def _unroll_field(self, attr_name, gridcells, dev_event_history, events_idx):
         """Unroll the values for this field, based upon its change_type.
-        Currently only works for change_type of ADD.
-        TODO: Have this work for other change_type values.
         """
         grid_ids = dev_event_history.get_attribute('grid_id')[events_idx]
         grid_idx = gridcells.get_id_index(grid_ids)
         attr_values = gridcells.get_attribute_by_index(attr_name, grid_idx)
         change_amounts = dev_event_history.get_attribute(attr_name)[events_idx]
-        attr_values = clip(attr_values - change_amounts,
-                           0, attr_values.max())
+        change_type_codes = dev_event_history.get_attribute('%s_change_type_code' % attr_name)[events_idx]
+        idx_add = where(change_type_codes == DevelopmentEventTypeOfChange.ADD)[0]
+        idx_delete = where(change_type_codes == DevelopmentEventTypeOfChange.DELETE)[0]
+        idx_replace = where(change_type_codes == DevelopmentEventTypeOfChange.REPLACE)[0]
+        attr_values[idx_add] = clip(attr_values[idx_add] - change_amounts[idx_add],
+                           0, attr_values[idx_add].max())
+        attr_values[idx_delete] = attr_values[idx_delete] + change_amounts[idx_delete]
+        attr_values[idx_replace] = change_amounts[idx_replace]
         gridcells.set_values_of_one_attribute(attr_name, attr_values, index=grid_idx)
 
-    
+    def _compute_change_type_code(self, dev_event_history, events_idx):
+        for attr in self.attributes_to_unroll:
+            type_code_values = (DevelopmentEventTypeOfChange.ADD * ones(dev_event_history.size())).astype("int16")
+            if '%s_change_type' % attr in dev_event_history.get_known_attribute_names():
+                type_change = dev_event_history.get_attribute('%s_change_type' % attr)[events_idx]
+                for type_char, type_code in DevelopmentEventTypeOfChange.available_change_types.iteritems():
+                    this_code_idx = where(type_change == type_char)[0]
+                    type_code_values[events_idx[this_code_idx]] = type_code
+            dev_event_history.add_attribute(name='%s_change_type_code' % attr, data=type_code_values)
+            
 from opus_core.tests import opus_unittest
 
 from numpy import ma
@@ -97,8 +109,10 @@ class RollbackGridcellsTests(opus_unittest.OpusTestCase):
                 'grid_id':array([1,3,2,3]),
                 'starting_development_type_id':array([3,3,2,1]),
                 'commercial_sqft':array([10,20,30,40]),
+                'commercial_sqft_change_type':array(['A','A','A','A']),
+                'industrial_sqft':array([20,200,99,50]),
+                'industrial_sqft_change_type':array(['A','D','R','A']),
                 # Rest of this data is not used by unit tests, but is required for unrolling
-                'industrial_sqft':array([0,0,0,0]),
                 'governmental_sqft':array([0,0,0,0]),
                 'residential_units':array([0,0,0,0]),
                 'commercial_improvement_value':array([0,0,0,0]),
@@ -124,10 +138,10 @@ class RollbackGridcellsTests(opus_unittest.OpusTestCase):
         roller.unroll_gridcells_for_one_year(gridcells, dev_event_history, 1999)
         self.assert_(ma.allequal(gridcells.get_attribute('commercial_sqft'),
                               array([40,50,30])),
-                     'Unexpected results: expected %s; received %s' % 
+                     'Unexpected results for 1999: expected %s; received %s' % 
                      (array([40,50,30]), gridcells.get_attribute('commercial_sqft')))
         self.assert_(ma.allequal(gridcells.get_attribute('industrial_sqft'),
-                              array([100,100,100])))
+                              array([80,100,300])))
         self.assert_(ma.allequal(gridcells.get_attribute('development_type_id'),
                               array([3,3,3])))
         
@@ -135,7 +149,7 @@ class RollbackGridcellsTests(opus_unittest.OpusTestCase):
         self.assert_(ma.allequal(gridcells.get_attribute('commercial_sqft'),
                               array([40,20,0])))
         self.assert_(ma.allequal(gridcells.get_attribute('industrial_sqft'),
-                              array([100,100,100])))
+                              array([80,99,250])))
         self.assert_(ma.allequal(gridcells.get_attribute('development_type_id'),
                               array([3,2,1])))
                               
