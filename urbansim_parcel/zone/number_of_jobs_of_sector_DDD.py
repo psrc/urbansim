@@ -46,7 +46,7 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['sanfrancisco','urbansim'],
+            package_order=['urbansim'],
             test_data={
             'job':
             {"job_id":array([1,2,3,4,5]),
@@ -63,6 +63,9 @@ class Tests(opus_unittest.OpusTestCase):
         
         should_be = array([1, 2])
         instance_name = 'urbansim_parcel.zone.number_of_jobs_of_sector_4'
+        tester.test_is_equal_for_family_variable(self, should_be, instance_name)
+        instance_name = 'urbansim_parcel.zone.number_of_jobs_of_sector_3'
+        should_be = array([0, 1])
         tester.test_is_equal_for_family_variable(self, should_be, instance_name)
 
 if __name__=='__main__':

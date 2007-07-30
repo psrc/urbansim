@@ -24,10 +24,10 @@ class is_sector_DDD(Variable):
         Variable.__init__(self)    
     
     def dependencies(self):
-        return ["_is_of_sector = job.sector_id == %s" % self.sector_id]
+        return ["_is_of_sector_%s = job.sector_id == %s" % (self.sector_id, self.sector_id)]
         
     def compute(self,  dataset_pool):
-        return self.get_dataset().get_attribute("_is_of_sector")
+        return self.get_dataset().get_attribute("_is_of_sector_%s" % self.sector_id)
 
 from opus_core.tests import opus_unittest
 from opus_core.datasets.dataset_pool import DatasetPool
