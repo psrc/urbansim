@@ -129,7 +129,7 @@ class BuildingConstructionModel(Model):
                     idx_to_be_built = where(to_be_built_cumsum > amount_built)[0]
                     new_buildings["parcel_id"] = concatenate((new_buildings["parcel_id"], 
                                                               array(idx_to_be_built.size * [parcel_id], dtype="int32")))
-                    new_buildings[bunit] = concatenate((new_buildings[bunit], to_be_built[pidx][idx_to_be_built]))
+                    new_buildings[bunit] = concatenate((new_buildings[bunit], round_(to_be_built[pidx][idx_to_be_built]).astype(new_buildings[bunit].dtype)))
                     new_buildings[bnunit] = concatenate((new_buildings[bnunit], array(idx_to_be_built.size * [0], dtype="int32")))
                     new_buildings["building_type_id"] = concatenate((new_buildings["building_type_id"], 
                              array(idx_to_be_built.size * [this_building_type], dtype="int32")))
