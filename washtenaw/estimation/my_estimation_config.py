@@ -31,22 +31,22 @@ my_configuration = {
         host_name = os.environ.get('MYSQLHOSTNAME','localhost'),
         user_name = os.environ.get('MYSQLUSERNAME',''),
         password = os.environ.get('MYSQLPASSWORD',''),
-        database_name = "washtenaw_estimation_output",
+        database_name = "region_pilot_baseyear_estimation",
         ),
     'datasets_to_cache_after_each_model':[],
     'low_memory_mode':False,
-    'cache_directory':'/urbansim_cache/workshop/washtenaw_estimation', # change or leave out
+    'cache_directory':'/urbansim_cache/region_pilot_baseyear/cache_source', # change or leave out
     'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
         unroll_gridcells = True,
         cache_from_mysql = False,
         baseyear_cache = BaseyearCacheConfiguration(
-            existing_cache_to_copy = '/urbansim_cache/workshop/cache_source',
+            existing_cache_to_copy = '/urbansim_cache/region_pilot_baseyear/cache_source',
             #years_to_cache  = range(1996,2001)
             ),
         tables_to_cache = [],
         tables_to_cache_nchunks = {'gridcells':1},
         tables_to_copy_to_previous_years = {},
         ),
-    'base_year': 2000,
-    'years': (2000,2000),
+    'base_year': 2005,
+    'years': (2005,2005),
     }

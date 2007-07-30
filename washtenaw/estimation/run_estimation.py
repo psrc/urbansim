@@ -35,10 +35,10 @@ class EstimationRunner(object):
             logger.end_block()
         
 if __name__ == '__main__':
-    model_name = 'lpm'
+    #model_name = 'lpm'
     #model_name = 'hlcm'
     #model_name = 'elcm-industrial'
-    #model_name = 'elcm-commercial'
+    model_name = 'elcm-commercial'
     ###model_name = 'elcm-home_based'
     #model_name = 'dplcm-industrial'
     #model_name = 'dplcm-commercial'
