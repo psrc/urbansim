@@ -13,5 +13,5 @@
 #
 
 aliases = [
-      "large_area_id = job.disaggregate(zone.large_area_id, [gridcell])"     
+      "large_area_id = job.disaggregate(gridcell.large_area_id)"     
            ]
