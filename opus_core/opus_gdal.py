@@ -14,7 +14,6 @@
 
 import os
 from time import localtime, strftime, time
-import Numeric as numeric
 
 class OpusGDAL(object):
 
@@ -35,6 +34,7 @@ class OpusGDAL(object):
                             if unspecified, save to current directory and use time stamp as file name (without file extension).
         """
 
+        import Numeric as numeric
         import gdal.gdal as gdal
         import gdal.gdalnumeric as gdalnumeric
 
@@ -88,9 +88,11 @@ class VariableTests(opus_unittest.OpusTestCase):
         os.close(temp_hd)
         self.temp_dir, self.temp_file = os.path.split(temp_name)
 
-    try: import gdal
+    try:
+        import gdal
+        import Numeric as numeric
     except:
-        logger.log_warning("Could not import gdal library."
+        logger.log_warning("Could not import gdal library or Numeric (or both)."
             " Skipping test_input_numpy_array_output_geotiff.")
     else:
         def test_input_numpy_array_output_geotiff(self):
