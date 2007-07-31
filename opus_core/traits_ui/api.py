@@ -26,4 +26,4 @@
 try:
     from enthought.traits.ui.api import *
 except:
-    from enthougth.traits.api import *
+    from enthought.traits.api import *
