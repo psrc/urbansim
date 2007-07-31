@@ -16,10 +16,11 @@ from opus_core.resources import Resources
 from opus_core.misc import DebugPrinter
 from opus_core.storage_factory import StorageFactory
 from urbansim.datasets.development_project_dataset import DevelopmentProjectDataset
+from urbansim.datasets.development_event_dataset import DevelopmentEventTypeOfChange
 from opus_core.model import Model
 from numpy.random import randint
 from opus_core.logger import logger
-from numpy import arange, array, where, zeros, ones, float32, int32, concatenate
+from numpy import arange, array, where, zeros, ones, float32, int32, concatenate, logical_and
 
 class DevelopmentProjectTransitionModel( Model ):
     """
@@ -121,7 +122,10 @@ class DevelopmentProjectTransitionModel( Model ):
                 location_set.get_attribute(project_type+"_improvement_value" ).sum(), units_sum)
         categories = model_configuration['development_project_types'][project_type]['categories']
         history_values = history_table.get_attribute(self.units_variable[project_type])
-        history_values_without_zeros = history_values[where( history_values > 0 )]
+        type_code_values = history_table.get_change_type_code_attribute(self.units_variable[project_type])
+        # take only non-zero history values and those that don't represent demolished buildings 
+        history_values_without_zeros = history_values[logical_and( history_values > 0, 
+                                                                  type_code_values !=  DevelopmentEventTypeOfChange.DELETE)]
         #TODO: what happens if history has only zeroes?
         mean_size = history_values_without_zeros.mean()
         idx = array( [], dtype="int32" )

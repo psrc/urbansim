@@ -12,7 +12,7 @@
 # other acknowledgments.
 # 
 
-from numpy import where, clip, ones
+from numpy import where, clip
 from urbansim.datasets.development_event_dataset import DevelopmentEventTypeOfChange
 
 class RollbackGridcells(object):
@@ -27,7 +27,7 @@ class RollbackGridcells(object):
     def unroll_gridcells_for_one_year(self, gridcells, dev_event_history, year_of_gridcells):
         events_idx = where(dev_event_history.get_attribute('scheduled_year') == year_of_gridcells)[0]
         if events_idx.size > 0:
-            self._compute_change_type_code(dev_event_history, events_idx)
+            self._compute_change_type_code(dev_event_history)
             for attr in self.attributes_to_unroll:
                 self._unroll_field(attr, gridcells, dev_event_history, events_idx)
             self._unroll_development_type_id(gridcells, dev_event_history, events_idx)
@@ -58,15 +58,9 @@ class RollbackGridcells(object):
         attr_values[idx_replace] = change_amounts[idx_replace]
         gridcells.set_values_of_one_attribute(attr_name, attr_values, index=grid_idx)
 
-    def _compute_change_type_code(self, dev_event_history, events_idx):
+    def _compute_change_type_code(self, dev_event_history):
         for attr in self.attributes_to_unroll:
-            type_code_values = (DevelopmentEventTypeOfChange.ADD * ones(dev_event_history.size())).astype("int16")
-            if '%s_change_type' % attr in dev_event_history.get_known_attribute_names():
-                type_change = dev_event_history.get_attribute('%s_change_type' % attr)[events_idx]
-                for type_char, type_code in DevelopmentEventTypeOfChange.available_change_types.iteritems():
-                    this_code_idx = where(type_change == type_char)[0]
-                    type_code_values[events_idx[this_code_idx]] = type_code
-            dev_event_history.add_attribute(name='%s_change_type_code' % attr, data=type_code_values)
+            dev_event_history.get_change_type_code_attribute(attr)
             
 from opus_core.tests import opus_unittest
 

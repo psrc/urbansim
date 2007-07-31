@@ -12,7 +12,7 @@
 # other acknowledgments.
 # 
 
-from numpy import array, logical_and, logical_or, zeros, where, arange, concatenate
+from numpy import array, logical_and, logical_or, zeros, where, arange, concatenate, clip
 from numpy import ma
 from urbansim.datasets.gridcell_dataset import GridcellDataset
 from urbansim.datasets.development_type_dataset import DevelopmentTypeDataset
@@ -25,13 +25,7 @@ from opus_core.logger import logger
 
 class EventsCoordinator(Model):
     """Update the location_set to reflect the changes after the development_event_set.
-    
-    TODO: At the moment, the event coordinator assumes that *all* development events have
-    the same type_of_change for all attributes, for all events.  This restriction will 
-    change once we replace the development_events and development_event_history tables with 
-    the new gridcell_changes, job_changes, and development_constraint_changes tables.
     """
-    
     model_name = "events_coordinator"
 
     def _set_development_types_for_sqft_and_units(self, location_set, development_type_set, index=None):
@@ -59,7 +53,7 @@ class EventsCoordinator(Model):
              index = arange(location_set.size())
          
          units = location_set.get_attribute_by_index("residential_units", index)
-         location_set.compute_variables("urbansim.gridcell.non_residential_sqft")
+         location_set.compute_variables("urbansim.%s.non_residential_sqft" % location_set.get_dataset_name())
          nonres_sqft = location_set.get_attribute_by_index("non_residential_sqft", index)
          com_sqft = location_set.get_attribute_by_index("commercial_sqft", index)
          ind_sqft = location_set.get_attribute_by_index("industrial_sqft", index) 
@@ -124,8 +118,6 @@ class EventsCoordinator(Model):
         if not development_event_set: 
             return array([], dtype='int32'), array([], dtype='int32')
 
-        #dict use to calculate the change in improvement value, the dict is because 
-        #    the names are different in gridcell and development types
         improvement_values_to_change = {}
         attributes_to_change = []
         project_type_config = model_configuration['development_project_types']
@@ -133,84 +125,82 @@ class EventsCoordinator(Model):
             units_variable = project_type_config[project_type]['units']
             if units_variable in development_event_set.get_primary_attribute_names():
                 attributes_to_change.append(units_variable)
-                improvement_values_to_change['%s_improvement_value' % project_type] = units_variable
-            
-        development_event_set.load_dataset_if_not_loaded(attributes=attributes_to_change)
+                improvement_values_to_change[units_variable] = '%s_improvement_value' % project_type
+
         if not development_event_set.size(): 
             return array([], dtype='int32'), array([], dtype='int32')
-        location_set.load_dataset_if_not_loaded(attributes=(attributes_to_change 
-                                                            + improvement_values_to_change.keys()))
-        gc_idx, events_idx = array([], dtype='int32'), array([], dtype='int32')
-        for type_of_change in [DevelopmentEventTypeOfChange.DELETE,
-                               DevelopmentEventTypeOfChange.ADD,
-                               DevelopmentEventTypeOfChange.REPLACE]:
-            gc_idx_new, events_idx_new = self.process_events(model_configuration,
-                                                             location_set, development_event_set, 
+        location_set.load_dataset_if_not_loaded(attributes=(attributes_to_change))
+
+        return self.process_events(model_configuration, location_set, development_event_set, 
                                                              development_type_set,
-                                                             attributes_to_change, improvement_values_to_change,
-                                                             type_of_change, current_year)
-            gc_idx = concatenate((gc_idx, gc_idx_new))
-            events_idx = concatenate((events_idx, events_idx_new))
-        return unique_values(gc_idx), unique_values(events_idx)
+                                                             attributes_to_change, improvement_values_to_change, 
+                                                             current_year)
         
     def process_events(self, model_configuration, 
                        location_set, development_event_set, 
                        development_type_set, 
-                       attributes_to_change, improvement_values_to_change,
-                       type_of_change, year):
+                       attributes_to_change, improvement_values_to_change, year):
         """
         Process all events of this particular type_of_change for this year.
-        The default type_of_change, for when the development events do not have a 'type_of_change' attribute,
-        is DevelopmentEventTypeOfChange.ADD.  Return tuple of (set of gridcells modified,
+        The default type_of_change, for when the development events do not have a 'change_type' attribute,
+        is set in model_configuration or DevelopmentEventTypeOfChange.ADD.  Return tuple of (set of gridcells modified,
         indices of events processed).
         """
-        if 'type_of_change' in development_event_set.get_primary_attribute_names():
-            event_type_of_changes = development_event_set.get_attribute('type_of_change')
-        else:
-            default_type_of_change = model_configuration[self.model_name]['default_type_of_change']
-            event_type_of_changes = zeros(development_event_set.size()) + default_type_of_change
-        idx_of_events_to_process = where(logical_and(development_event_set.get_attribute("scheduled_year") == year,
-                                                     event_type_of_changes == type_of_change))[0]
-        if idx_of_events_to_process.size == 0:
+        idx_of_events_this_year = development_event_set.get_attribute("scheduled_year") == year
+        if idx_of_events_this_year.sum() == 0:
             return array([], dtype='int32'), array([], dtype='int32')
-        gc_idx_to_process = location_set.get_id_index(
-            development_event_set.get_attribute_by_index(location_set.get_id_name()[0], idx_of_events_to_process))
-        
-        if type_of_change == DevelopmentEventTypeOfChange.ADD:
-            type_of_change_str = 'add'
-        elif type_of_change == DevelopmentEventTypeOfChange.DELETE:
-            type_of_change_str = 'delete'
-        elif type_of_change == DevelopmentEventTypeOfChange.REPLACE:
-             type_of_change_str = 'replace'
-        logger.log_status('Processing %d %s events' % (len(gc_idx_to_process), type_of_change_str))
+        idx_of_events_to_process = zeros(development_event_set.size(), dtype='bool8')
+        gc_idx_to_process = zeros(location_set.size(), dtype='bool8')
+        location_ids_in_event_set = development_event_set.get_attribute(location_set.get_id_name()[0])
         
         for attribute_name in attributes_to_change:
             attribute_values = location_set.get_attribute(attribute_name)
-            if type_of_change == DevelopmentEventTypeOfChange.ADD:
-                attribute_values[gc_idx_to_process] = attribute_values[gc_idx_to_process] + \
-                                development_event_set.get_attribute_by_index(attribute_name, 
-                                                                              idx_of_events_to_process)
-            elif type_of_change == DevelopmentEventTypeOfChange.DELETE:
-                attribute_values[gc_idx_to_process] = 0
-            elif type_of_change == DevelopmentEventTypeOfChange.REPLACE:
-                attribute_values[gc_idx_to_process] = development_event_set.get_attribute_by_index(attribute_name, 
-                                                                                                    idx_of_events_to_process)
-
-            # TODO: DGS asks "Is this next statement necessary? The gridcell values are changed
-            # as a side-effect of changing the attribute_values, since dataset.get_attribute
-            # returns a reference, not a copy.
+            event_attribute_values = development_event_set.get_attribute(attribute_name)
+            event_type_of_changes = development_event_set.get_change_type_code_attribute(attribute_name,
+                                            default_value=model_configuration[self.model_name].get('default_type_of_change',
+                                                                                       DevelopmentEventTypeOfChange.ADD))
+            improvement_value_attribute = improvement_values_to_change[attribute_name]
+            improvement_values = location_set.get_attribute(improvement_value_attribute)
+            event_improvement_values = development_event_set.get_attribute(improvement_value_attribute)
+            idx_add = logical_and(idx_of_events_this_year, event_type_of_changes == DevelopmentEventTypeOfChange.ADD)
+            idx_delete = logical_and(idx_of_events_this_year, event_type_of_changes == DevelopmentEventTypeOfChange.DELETE)
+            idx_replace = logical_and(idx_of_events_this_year, event_type_of_changes == DevelopmentEventTypeOfChange.REPLACE)
+            logger.log_status('Processing %s: %d %s events, %d %s events, %d %s events.' % (attribute_name, 
+                            idx_add.sum(), DevelopmentEventTypeOfChange.info_string[DevelopmentEventTypeOfChange.ADD],
+                            idx_delete.sum(), DevelopmentEventTypeOfChange.info_string[DevelopmentEventTypeOfChange.DELETE],
+                            idx_replace.sum(), DevelopmentEventTypeOfChange.info_string[DevelopmentEventTypeOfChange.REPLACE],
+                                                                                            ))
+            idx_of_events_to_process = idx_of_events_to_process + idx_add + idx_delete + idx_replace
+            #add
+            gc_idx_to_process_add = location_set.get_id_index(location_ids_in_event_set[idx_add])
+            attribute_values[gc_idx_to_process_add] = attribute_values[gc_idx_to_process_add] + \
+                                                                            event_attribute_values[idx_add]
+            improvement_values[gc_idx_to_process_add] = improvement_values[gc_idx_to_process_add] + \
+                                            event_improvement_values[idx_add] * event_attribute_values[idx_add]
+            gc_idx_to_process[gc_idx_to_process_add] = True
+            #demolish
+            if idx_delete.sum() > 0:
+                gc_idx_to_process_delete = location_set.get_id_index(location_ids_in_event_set[idx_delete])
+                attribute_values[gc_idx_to_process_delete] = clip(attribute_values[gc_idx_to_process_delete] - \
+                                  event_attribute_values[idx_delete], 0, attribute_values[gc_idx_to_process_delete].max())
+                improvement_values[gc_idx_to_process_delete] = clip(improvement_values[gc_idx_to_process_delete] - \
+                                  event_improvement_values[idx_delete] * event_attribute_values[idx_delete], 0, 
+                                                                improvement_values[gc_idx_to_process_delete].max())
+                gc_idx_to_process[gc_idx_to_process_delete] = True
+            # replace
+            gc_idx_to_process_replace = location_set.get_id_index(location_ids_in_event_set[idx_replace])
+            attribute_values[gc_idx_to_process_replace] = event_attribute_values[idx_replace]
+            improvement_values[gc_idx_to_process_replace] = event_improvement_values[idx_replace] * \
+                                                                    event_attribute_values[idx_replace]
+            gc_idx_to_process[gc_idx_to_process_replace] = True
+            
             location_set.set_values_of_one_attribute(attribute_name, attribute_values)
-                
-        for improvement_value_name in improvement_values_to_change.keys():
-            attribute_values = location_set.get_attribute(improvement_value_name)
-            change = development_event_set.get_attribute_by_index(improvement_value_name, idx_of_events_to_process) * \
-                   development_event_set.get_attribute_by_index(improvement_values_to_change[improvement_value_name],
-                                                                 idx_of_events_to_process)
-            attribute_values[gc_idx_to_process] = change + attribute_values[gc_idx_to_process]
-            location_set.set_values_of_one_attribute(improvement_value_name, attribute_values)                    
-                
+            location_set.set_values_of_one_attribute(improvement_value_attribute, improvement_values)
+            
+                     
+        gc_idx_to_process = where(gc_idx_to_process)[0]
         self._set_development_types_for_sqft_and_units(location_set, development_type_set, gc_idx_to_process)
-        return gc_idx_to_process, idx_of_events_to_process
+        return gc_idx_to_process, where(idx_of_events_to_process)[0]
         
         
 from opus_core.tests import opus_unittest
@@ -354,7 +344,9 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
                 'residential_improvement_value': array([1, 3]),
                 'scheduled_year': array([2000, 2000]),
                 'grid_id': array([1,3]),
-                'type_of_change':array([type_of_change, type_of_change])
+                'residential_units_change_type_code':array([type_of_change, type_of_change]),
+                'commercial_sqft_change_type_code':array([type_of_change, type_of_change]),
+                'industrial_sqft_change_type_code':array([type_of_change, type_of_change])
                 }
             )                                        
         dev_events_set = DevelopmentEventDataset(in_storage=storage, in_table_name='dev_events')
@@ -365,7 +357,7 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
         
         return gridcell_set.get_attribute("residential_units")
         
-    def test_mix_of_type_of_changess(self):
+    def test_mix_of_type_of_changes(self):
         storage = StorageFactory().get_storage('dict_storage')
         
         gridcell_set = self._create_simple_gridcell_set()
@@ -380,7 +372,7 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
                 "residential_improvement_value":array([1, 2, 3]),
                 "scheduled_year":array([2000, 2000, 2000]),
                 "grid_id":array([1,2,3]),
-                "type_of_change":array([
+                "residential_units_change_type_code":array([
                     DevelopmentEventTypeOfChange.REPLACE, 
                     DevelopmentEventTypeOfChange.ADD, 
                     DevelopmentEventTypeOfChange.DELETE,
@@ -395,6 +387,45 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
         EventsCoordinator().run(self.model_configuration, gridcell_set, dev_events_set, dev_types_set, 2000)
                                 
         self.assert_(ma.allclose(gridcell_set.get_attribute("residential_units"), array( [10, 1+20, 0, 20]))) 
+        
+    def test_different_changes_for_different_units(self):
+        storage = StorageFactory().get_storage('dict_storage')
+        
+        gridcell_set = self._create_simple_gridcell_set()
+        
+        storage._write_dataset(out_table_name='dev_events',
+            values = {
+                "residential_units":array([10, 20, 6]),
+                "commercial_sqft":array([4, 11, 1]),
+                "industrial_sqft":array([0, 11, 0]),
+                "commercial_improvement_value":array([1, 2, 3]),
+                "industrial_improvement_value":array([1, 2, 3]),
+                "residential_improvement_value":array([3, 5, 7]),
+                "scheduled_year":array([2000, 2000, 2000]),
+                "grid_id":array([1,2,3]),
+                "residential_units_change_type_code":array([
+                    DevelopmentEventTypeOfChange.REPLACE, 
+                    DevelopmentEventTypeOfChange.ADD, 
+                    DevelopmentEventTypeOfChange.DELETE,
+                    ]),
+                "commercial_sqft_change_type_code":array([
+                    DevelopmentEventTypeOfChange.DELETE, 
+                    DevelopmentEventTypeOfChange.ADD, 
+                    DevelopmentEventTypeOfChange.REPLACE,
+                    ])
+                }
+            )
+                                        
+        dev_events_set = DevelopmentEventDataset(in_storage=storage, in_table_name='dev_events')
+        
+        dev_types_set = self._create_simple_development_types_set()
+        
+        EventsCoordinator().run(self.model_configuration, gridcell_set, dev_events_set, dev_types_set, 2000)
+                                
+        self.assert_(ma.allclose(gridcell_set.get_attribute("residential_units"), array( [10, 1+20, 6, 20])))
+        self.assert_(ma.allclose(gridcell_set.get_attribute("residential_improvement_value"), array( [30, 102, 0, 3])))
+        self.assert_(ma.allclose(gridcell_set.get_attribute("commercial_sqft"), array( [0, 12, 1, 4])))
+        self.assert_(ma.allclose(gridcell_set.get_attribute("commercial_improvement_value"), array( [0, 24, 3, 389]))) 
         
     def test_assignment_of_development_types_in_RAM(self):
         storage = StorageFactory().get_storage('dict_storage')

@@ -13,8 +13,15 @@
 #
 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
-from numpy import zeros, logical_or, logical_not
+from numpy import zeros, logical_or, logical_not, ones
 
+class DevelopmentEventTypeOfChange(object):
+    ADD = 1
+    DELETE = 2
+    REPLACE = 3
+    available_change_types = {'A': ADD, 'D': DELETE, 'R': REPLACE}
+    info_string = {ADD: 'add', DELETE: 'delete', REPLACE: 'replace'}
+    
 class DevelopmentEventDataset(UrbansimDataset):
     """Set of development events.
     """
@@ -33,12 +40,26 @@ class DevelopmentEventDataset(UrbansimDataset):
             filter = logical_or(filter, years==year)
         self.remove_elements(logical_not(filter))
 
-class DevelopmentEventTypeOfChange(object):
-    ADD = 1
-    DELETE = 2
-    REPLACE = 3
-    available_change_types = {'A': ADD, 'D': DELETE, 'R': REPLACE}
-
+    def translate_change_type_to_code(self, attribute, default_value=DevelopmentEventTypeOfChange.ADD):
+        """ Takes values in '%s_change_type' % attribute (which are expected to be characters contained in 
+        DevelopmentEventTypeOfChange.available_change_types.keys()) and translates them to numerical code
+        that corresponds to DevelopmentEventTypeOfChange.available_change_types.values().
+        If the dataset does not contain the change_type attribute, it returns the default_value.
+        """
+        type_code_values = (default_value * ones(self.size())).astype("int16")
+        if '%s_change_type' % attribute in self.get_known_attribute_names():
+            type_change = self.get_attribute('%s_change_type' % attribute)
+            for type_char, type_code in DevelopmentEventTypeOfChange.available_change_types.iteritems():
+                type_code_values[type_change == type_char] = type_code
+        return type_code_values
+                    
+    def get_change_type_code_attribute(self, attribute, default_value=DevelopmentEventTypeOfChange.ADD):
+        code_attr_name = '%s_change_type_code' % attribute
+        if not code_attr_name in self.get_known_attribute_names():
+            type_code_values = self.translate_change_type_to_code(attribute, default_value)
+            self.add_attribute(name=code_attr_name, data=type_code_values)
+        return self.get_attribute(code_attr_name)
+        
 from opus_core.tests import opus_unittest
 import os
 import shutil
