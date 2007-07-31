@@ -23,6 +23,11 @@ class RollbackGridcells(object):
     attributes_to_unroll = ['commercial_sqft', 'industrial_sqft', 'governmental_sqft', 'residential_units',
                             'commercial_improvement_value', 'industrial_improvement_value',
                             'governmental_improvement_value', 'residential_improvement_value']
+    # atributes that re-use the change type of other attributes
+    change_types_attributes = {'commercial_improvement_value': 'commercial_sqft', 
+                               'industrial_improvement_value': 'industrial_sqft',
+                               'governmental_improvement_value': 'governmental_sqft',
+                               'residential_improvement_value':'residential_units'}
     
     def unroll_gridcells_for_one_year(self, gridcells, dev_event_history, year_of_gridcells):
         events_idx = where(dev_event_history.get_attribute('scheduled_year') == year_of_gridcells)[0]
@@ -48,7 +53,8 @@ class RollbackGridcells(object):
         grid_idx = gridcells.get_id_index(grid_ids)
         attr_values = gridcells.get_attribute_by_index(attr_name, grid_idx)
         change_amounts = dev_event_history.get_attribute(attr_name)[events_idx]
-        change_type_codes = dev_event_history.get_attribute('%s_change_type_code' % attr_name)[events_idx]
+        change_attribute_name = '%s_change_type_code' % self.change_types_attributes.get(attr_name, attr_name)
+        change_type_codes = dev_event_history.get_attribute(change_attribute_name)[events_idx]
         idx_add = where(change_type_codes == DevelopmentEventTypeOfChange.ADD)[0]
         idx_delete = where(change_type_codes == DevelopmentEventTypeOfChange.DELETE)[0]
         idx_replace = where(change_type_codes == DevelopmentEventTypeOfChange.REPLACE)[0]
@@ -60,7 +66,7 @@ class RollbackGridcells(object):
 
     def _compute_change_type_code(self, dev_event_history):
         for attr in self.attributes_to_unroll:
-            dev_event_history.get_change_type_code_attribute(attr)
+            dev_event_history.get_change_type_code_attribute(self.change_types_attributes.get(attr, attr))
             
 from opus_core.tests import opus_unittest
 
