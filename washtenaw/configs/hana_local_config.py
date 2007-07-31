@@ -22,7 +22,7 @@ my_cache_config = CreatingBaseyearCacheConfiguration(
         cache_directory_root = '/Users/hana/urbansim_cache/washtenaw/runs',
         cache_from_mysql = False,
         baseyear_cache = BaseyearCacheConfiguration(
-            existing_cache_to_copy = '/Users/hana/urbansim_cache/washtenaw/cache_source_la',
+            existing_cache_to_copy = '/Users/hana/urbansim_cache/washtenaw/cache_source',
             #years_to_cache = range(2000,2001)
             ),
         cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
@@ -34,7 +34,7 @@ my_configuration = {
                 host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
                 user_name     = os.environ.get('MYSQLUSERNAME',''),
                 password      = os.environ.get('MYSQLPASSWORD',''),
-                database_name = 'washtenaw_hana',
+                database_name = 'region_pilot_baseyear',
                 ),
 #     'models': [
                 #'prescheduled_events',
@@ -48,21 +48,23 @@ my_configuration = {
                 #'development_event_transition_model',
                 #'events_coordinator',
                 #'residential_land_share_model',
-#                'household_transition_model',
-                #'employment_transition_model',
-                #'household_relocation_model',
-                #'household_location_choice_model',
-                #'employment_relocation_model',
-                #{'employment_location_choice_model': {'group_members': ['industrial','commercial']}},
-                #'distribute_unplaced_jobs_model'
+#                'regional_household_transition_model',
+#                'regional_household_location_choice_model',
+#                'regional_employment_transition_model',
+#                {'regional_employment_location_choice_model': {'group_members': ['home_based', 'commercial', 'industrial']}},
+#                'household_relocation_model',
+#                'household_location_choice_model',
+#                'employment_relocation_model',
+#                {'employment_location_choice_model': {'group_members': ['_all_']}},
+#                'distribute_unplaced_jobs_model'
 #                ],
-    'cache_directory': None,
-    #'cache_directory': '/Users/hana/urbansim_cache/washtenaw/cache_source_la',
+    #'cache_directory': None,
+    'cache_directory': '/Users/hana/urbansim_cache/washtenaw/cache_source',
     'remove_cache': False, # remove cache after finishing the simulation
     'creating_baseyear_cache_configuration': my_cache_config,
     'datasets_to_cache_after_each_model': [],
-    'base_year':2000,
-    'years':(2001, 2001),
+    'base_year':2005,
+    'years':(2006, 2006),
     'seed':1,#(1,1),
     'debuglevel': 10
     }

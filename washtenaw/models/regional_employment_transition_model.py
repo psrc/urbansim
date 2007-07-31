@@ -16,6 +16,7 @@ from opus_core.misc import unique_values
 from numpy import arange, array, where, logical_and, concatenate
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import DatasetSubset
+from opus_core.logger import logger
 from opus_core.variables.attribute_type import AttributeType
 from urbansim.models.employment_transition_model import EmploymentTransitionModel
 
@@ -38,6 +39,7 @@ class RegionalEmploymentTransitionModel(EmploymentTransitionModel):
         sectors = unique_values(control_totals.get_attribute("sector_id")[is_year])
         self._compute_sector_variables(sectors, job_set)
         for area in unique_large_areas:
+            logger.log_status("ETM for area %s" % area)
             idx = where(logical_and(is_year, large_area_ids == area))[0]
             self.control_totals_for_this_year = DatasetSubset(control_totals, idx)
             jobs_index = where(jobs_large_area_ids == area)[0]

@@ -15,6 +15,7 @@ from numpy import arange, array, where, logical_and, concatenate
 from opus_core.misc import get_distinct_names, unique_values
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.variables.attribute_type import AttributeType
+from opus_core.logger import logger
 from urbansim.models.household_transition_model import HouseholdTransitionModel
 from copy import copy
 
@@ -40,6 +41,7 @@ class RegionalHouseholdTransitionModel(HouseholdTransitionModel):
         is_year = control_totals.get_attribute("year")==year
         all_households_index = arange(household_set.size())
         for area in unique_large_areas:
+            logger.log_status("HTM for area %s" % area)
             idx = where(logical_and(is_year, large_area_ids == area))[0]
             self.control_totals_for_this_year = DatasetSubset(control_totals, idx)
             households_index = where(households_large_area_ids == area)[0]
