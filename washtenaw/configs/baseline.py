@@ -91,7 +91,6 @@ class Baseline(GeneralConfiguration):
                     'target_vacancies',
                     'jobs_for_estimation',
                     'households_for_estimation',
-                    'development_events_exogenous',
                     'job_building_types'
                     ]
     
@@ -175,7 +174,6 @@ class Baseline(GeneralConfiguration):
             }
         config.merge(config_changes)
         self.merge(config)
-        self.merge_with_controller()
         try:
             exec('from %s_local_config import my_configuration' % getuser())
             local_config = True
@@ -185,14 +183,6 @@ class Baseline(GeneralConfiguration):
         if local_config:
             self.merge(my_configuration)
         
-    def merge_with_controller(self):
-        controller = ControllerConfiguration()
-        self["models_configuration"].merge(controller)
-        self["models_configuration"]["household_transition_model"]["controller"]["import"] = {
-              "washtenaw.models.household_transition_model": "RegionalHouseholdTransitionModel" 
-            }
-        self["models_configuration"]["household_transition_model"]["controller"]["init"]["name"] = \
-            "RegionalHouseholdTransitionModel" 
             
-if __name__ == '__main__':
-    Baseline()
+#if __name__ == '__main__':
+#    Baseline()
