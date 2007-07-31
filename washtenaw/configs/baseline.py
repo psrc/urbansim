@@ -174,6 +174,7 @@ class Baseline(GeneralConfiguration):
             }
         config.merge(config_changes)
         self.merge(config)
+        self.merge_with_controller()
         try:
             exec('from %s_local_config import my_configuration' % getuser())
             local_config = True
@@ -182,7 +183,10 @@ class Baseline(GeneralConfiguration):
             local_config = False
         if local_config:
             self.merge(my_configuration)
-        
+      
+    def merge_with_controller(self):
+        controller = ControllerConfiguration()
+        self["models_configuration"].merge(controller)
             
 #if __name__ == '__main__':
-#    Baseline()
+#    c = Baseline()
