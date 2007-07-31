@@ -184,7 +184,7 @@ class ChoiceModel(ChunkModel):
         for submodel in self.model_interaction.get_submodels():
             self.model_interaction.prepare_data_for_simulation(submodel)
             coef[submodel] = self.model_interaction.get_submodel_coefficients(submodel)
-            self.debug.print_debug("   submodel: %s   nobs: %s" % (submodel, result.size), 5)
+            self.debug.print_debug("   submodel: %s   nobs: %s" % (submodel, self.observations_mapping[submodel].size), 5)
             if self.model_interaction.is_there_data(submodel): # observations for this submodel available
                 if index is not None:
                     self.run_config["index"] = take (index, indices=self.observations_mapping[submodel], axis=0)
