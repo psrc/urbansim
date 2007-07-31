@@ -13,7 +13,7 @@
 #
 
 # later update the ui import to:   from enthought.traits.ui.api import Item, Group, View
-from enthought.traits.api import Item, Group, View
+from opus_core.traits_ui.api import Item, Group, View
 
 
 class DatabaseConfigurationView(View):

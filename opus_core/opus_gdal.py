@@ -88,13 +88,6 @@ class VariableTests(opus_unittest.OpusTestCase):
         os.close(temp_hd)
         self.temp_dir, self.temp_file = os.path.split(temp_name)
 
-    try:
-        import gdal
-        import Numeric as numeric
-    except:
-        logger.log_warning("Could not import gdal library or Numeric (or both)."
-            " Skipping test_input_numpy_array_output_geotiff.")
-    else:
         def test_input_numpy_array_output_geotiff(self):
             from gdal.gdalconst import GA_ReadOnly
             import gdal.gdal as gdal
@@ -114,7 +107,11 @@ class VariableTests(opus_unittest.OpusTestCase):
         os.remove(os.path.join(self.temp_dir, self.temp_file))
 
 if __name__ == "__main__":
-    try: import gdal
-    except: print "Could not import gdal library."
+    try:
+        import gdal
+        import Numeric as numeric
+    except:
+        logger.log_warning("Could not import gdal library or Numeric (or both)."
+            " Skipping test_input_numpy_array_output_geotiff.")
     else:
         opus_unittest.main()

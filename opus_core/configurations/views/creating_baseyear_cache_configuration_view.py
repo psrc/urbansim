@@ -14,7 +14,7 @@
 
 from enthought.traits.api import Event, Bool
 # later update the ui import to:   from enthought.traits.ui.api import ButtonEditor, EnumEditor, Item, Group, View
-from enthought.traits.api import ButtonEditor, EnumEditor, Item, Group, View
+from opus_core.traits_ui.api import ButtonEditor, EnumEditor, Item, Group, View
 
 from opus_core.configurations.views.cache_location_view import CacheLocationView
 from opus_core.configurations.database_configuration import DatabaseConfiguration

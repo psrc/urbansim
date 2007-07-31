@@ -14,7 +14,7 @@
 
 from enthought.traits.api import Directory, Str, Password, Int
 # later update the ui import to:   from enthought.traits.ui.api import View, Group, Item
-from enthought.traits.api import View, Group, Item
+from opus_core.traits_ui.api import View, Group, Item
 
 from opus_core.tools.gui.command_gui import CommandGui
 from opus_core.tools.command.export_cache_table_to_sql_server_command import ExportCacheTableToSqlServerCommand

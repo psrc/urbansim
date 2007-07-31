@@ -14,7 +14,7 @@
 
 from enthought.traits.api import List, Instance
 # later update the ui import to:   from enthought.traits.ui.api import Item, Group, View
-from enthought.traits.api import Item, Group, View
+from opus_core.traits_ui.api import Item, Group, View
 
 from opus_core.configurations.table_specification import TableSpecification
 from opus_core.configurations.editors.list_view_editor import ListViewEditor

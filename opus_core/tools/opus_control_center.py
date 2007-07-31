@@ -14,7 +14,7 @@
 
 from enthought.traits.api import Button, Constant, HasTraits, Trait
 # later update the ui import to:   from enthought.traits.ui.api import Handler, Item, Group, View
-from enthought.traits.api import Handler, Item, Group, View
+from opus_core.traits_ui.api import Handler, Item, Group, View
 from enthought.traits.ui.menu import Action, Menu, MenuBar, CloseAction, HelpAction, NoButtons
 import wx
 import cPickle as pickle

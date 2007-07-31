@@ -13,7 +13,7 @@
 #
 
 from enthought.traits.api import Event
-from enthought.traits.api import Item, Group, View, ButtonEditor
+from opus_core.traits_ui.api import Item, Group, View, ButtonEditor
 # later update the ui import to:   from enthought.traits.ui.api import Item, Group, View, ButtonEditor
 
 

@@ -29,7 +29,7 @@ import wx
 from enthought.traits.api import Dict, List, Any, Bool, Undefined
 
 # later update the ui import to:   from enthought.traits.ui.api import View, Group, Item
-from enthought.traits.api import View, Group, Item
+from opus_core.traits_ui.api import View, Group, Item
 
 from enthought.traits.ui.wx.editor import EditorWithList
 from enthought.traits.ui.wx.constants import ReadonlyColor

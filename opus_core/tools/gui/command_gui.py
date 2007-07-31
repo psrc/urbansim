@@ -15,7 +15,7 @@
 try:
     from enthought.traits.api import Class, Long, Str, Int
     # later update the ui import to:   from enthought.traits.ui.api import Handler
-    from enthought.traits.api import Handler
+    from opus_core.traits_ui.api import Handler
     from enthought.traits.ui.menu import Action, CloseAction
 
 except ImportError:

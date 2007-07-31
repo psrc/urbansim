@@ -16,7 +16,7 @@ from opus_core.logger import logger
 try:
     import enthought.traits.ui
     from enthought.traits.api import HasTraits, Str
-    from enthought.traits.api import Item, View
+    from opus_core.traits_ui.api import Item, View
     # later update the ui import to:   from enthought.traits.ui.api import Item, View
 except:
     logger.log_warning('Could not load traits.ui. Skipping %s!' % __file__)

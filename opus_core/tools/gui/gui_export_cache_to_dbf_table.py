@@ -14,7 +14,7 @@
 
 from enthought.traits.api import HasTraits, Directory, Str, Int
 # later update the ui import to:   from enthought.traits.ui.api import View, Group, Item
-from enthought.traits.api import View, Group, Item
+from opus_core.traits_ui.api import View, Group, Item
 from enthought.traits.ui.menu import CloseAction
 
 class GuiExportDbfTableToCache(HasTraits):
