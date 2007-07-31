@@ -12,686 +12,378 @@
 # other acknowledgments.
 # 
 
+all_variables = [
+    'age = urbansim.gridcell.building_age',
+    'art = urbansim.gridcell.is_near_arterial',
+    'hwy = urbansim.gridcell.is_near_highway',
+    'hwydist = urbansim.gridcell.ln_distance_to_highway', 
+    'flood = urbansim.gridcell.is_in_floodplain', 
+    'stream = urbansim.gridcell.is_in_stream_buffer', 
+    'wet = urbansim.gridcell.is_in_wetland', 
+    'ln_land_val = urbansim.gridcell.ln_total_land_value', 
+    'lv_ac_wwd = urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 
+    'ln_impval = ln_total_improvement_value', 
+    'ln_nres_ival_sqft = ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)',
+    'ln_tot_val = urbansim.gridcell.ln_total_value', 
+    'ln_com_sqft = urbansim.gridcell.ln_commercial_sqft', 
+    'ln_com_sqft_wwd = urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 
+    'ln_ind_sqft = urbansim.gridcell.ln_industrial_sqft', 
+    'ln_ind_sqft_wwd = urbansim.gridcell.ln_industrial_sqft_within_walking_distance', 
+    'ln_res_units = urbansim.gridcell.ln_residential_units', 
+    'ln_res_units_wwd = urbansim.gridcell.ln_residential_units_within_walking_distance', 
+    'ln_nres_sqft_wwd = urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 
+    'pct_low_inc_wwd = urbansim.gridcell.percent_low_income_households_within_walking_distance', 
+    'pct_mid_inc_wwd = urbansim.gridcell.percent_mid_income_households_within_walking_distance', 
+    'pct_high_inc_wwd = urbansim.gridcell.percent_high_income_households_within_walking_distance', 
+    'ln_wk_acc_emp_1 = urbansim.gridcell.ln_work_access_to_employment_1', 
+    'ln_wk_acc_pop_1 = urbansim.gridcell.ln_work_access_to_population_1', 
+    'ln_pop_wwd = urbansim.gridcell.ln_total_population_within_walking_distance', 
+    'ln_emp_wwd = urbansim.gridcell.ln_total_employment_within_walking_distance', 
+    'ln_basic_emp_wwd = urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 
+    'ln_retail_emp_wwd = urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 
+    'ln_service_emp_wwd = urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 
+    'ln_same_sector_emp_wwd = urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance', 
+    'ln_same_sector_emp_faz = urbansim.job_x_gridcell.same_sector_jobs_in_faz', 
+    ]
+
 specification ={}
 
 specification['industrial'] = { #industrial
+"_definition_": all_variables,
 1:
     [
-    #('urbansim.gridcell.building_age', 'BAGE_BL'),
-    ('urbansim.gridcell.is_near_arterial', 'BART'),
-    #('urbansim.gridcell.is_near_highway', 'BHWY'),
-    #('urbansim.gridcell.ln_distance_to_highway', 'BLDHIW'),
-    #('urbansim.gridcell.is_in_floodplain', 'BFLOOD'),
-    #('urbansim.gridcell.is_in_stream_buffer', 'BSTREAM'),
-    #('urbansim.gridcell.is_in_wetland', 'BWET'),
-    #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
-    #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
-    #('ln_total_improvement_value', 'BLIMP'),
-    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
-    ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
-    #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
-    #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
-    #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
-    #('urbansim.gridcell.ln_industrial_sqft_within_walking_distance', 'BLSFIW'),
-    #('urbansim.gridcell.ln_residential_units', 'BLDU'),
-    #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
-    ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
-    #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
-    #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
-    #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
-    #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
-    #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
-    #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
-    #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
-    #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
-    ('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
-    ('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
-    ('urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance', 'BLE_SAW'),
-    #('urbansim.job_x_gridcell.same_sector_jobs_in_faz', 'BSECFAZ'),
-    #('urbansim.job_x_gridcell.ln_same_sector_jobs_in_faz', 'BLSECFAZ'),
-    #('psrc.gridcell.travel_time_hbw_am_drive_alone_to_129', "BTT_CBD"),
-    #('psrc.gridcell.trip_weighted_average_generalized_cost_hbw_to_work_am_drive_alone', "BCTW_SOV"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_drive_alone', "BTWT_DA"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_transit_walk', "BTWT_TW"), 
-
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
     ],
+
 2:
     [
-    #('urbansim.gridcell.building_age', 'BAGE_BL'),
-    ('urbansim.gridcell.is_near_arterial', 'BART'),
-    #('urbansim.gridcell.is_near_highway', 'BHWY'),
-    #('urbansim.gridcell.ln_distance_to_highway', 'BLDHIW'),
-    #('urbansim.gridcell.is_in_floodplain', 'BFLOOD'),
-    #('urbansim.gridcell.is_in_stream_buffer', 'BSTREAM'),
-    #('urbansim.gridcell.is_in_wetland', 'BWET'),
-    #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
-    #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
-    #('ln_total_improvement_value', 'BLIMP'),
-    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
-    ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
-    #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
-    #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
-    #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
-    #('urbansim.gridcell.ln_industrial_sqft_within_walking_distance', 'BLSFIW'),
-    #('urbansim.gridcell.ln_residential_units', 'BLDU'),
-    #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
-    ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
-    #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
-    #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
-    #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
-    #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
-    #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
-    #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
-    #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
-    #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
-    ('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
-    ('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
-    ('urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance', 'BLE_SAW'),
-    #('urbansim.job_x_gridcell.same_sector_jobs_in_faz', 'BSECFAZ'),
-    #('urbansim.job_x_gridcell.ln_same_sector_jobs_in_faz', 'BLSECFAZ'),
-    #('psrc.gridcell.travel_time_hbw_am_drive_alone_to_129', "BTT_CBD"),
-    #('psrc.gridcell.trip_weighted_average_generalized_cost_hbw_to_work_am_drive_alone', "BCTW_SOV"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_drive_alone', "BTWT_DA"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_transit_walk', "BTWT_TW"), 
-
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
     ],
+
 3:
     [
-    #('urbansim.gridcell.building_age', 'BAGE_BL'),
-    ('urbansim.gridcell.is_near_arterial', 'BART'),
-    #('urbansim.gridcell.is_near_highway', 'BHWY'),
-    #('urbansim.gridcell.ln_distance_to_highway', 'BLDHIW'),
-    #('urbansim.gridcell.is_in_floodplain', 'BFLOOD'),
-    #('urbansim.gridcell.is_in_stream_buffer', 'BSTREAM'),
-    #('urbansim.gridcell.is_in_wetland', 'BWET'),
-    #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
-    #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
-    #('ln_total_improvement_value', 'BLIMP'),
-    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
-    ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
-    #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
-    #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
-    #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
-    #('urbansim.gridcell.ln_industrial_sqft_within_walking_distance', 'BLSFIW'),
-    #('urbansim.gridcell.ln_residential_units', 'BLDU'),
-    #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
-    ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
-    #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
-    #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
-    #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
-    #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
-    #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
-    #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
-    #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
-    #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
-    ('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
-    ('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
-    ('urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance', 'BLE_SAW'),
-    #('urbansim.job_x_gridcell.same_sector_jobs_in_faz', 'BSECFAZ'),
-    #('urbansim.job_x_gridcell.ln_same_sector_jobs_in_faz', 'BLSECFAZ'),
-    #('psrc.gridcell.travel_time_hbw_am_drive_alone_to_129', "BTT_CBD"),
-    #('psrc.gridcell.trip_weighted_average_generalized_cost_hbw_to_work_am_drive_alone', "BCTW_SOV"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_drive_alone', "BTWT_DA"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_transit_walk', "BTWT_TW"), 
-
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
     ],
+
 4:
     [
-    #('urbansim.gridcell.building_age', 'BAGE_BL'),
-    ('urbansim.gridcell.is_near_arterial', 'BART'),
-    #('urbansim.gridcell.is_near_highway', 'BHWY'),
-    #('urbansim.gridcell.ln_distance_to_highway', 'BLDHIW'),
-    #('urbansim.gridcell.is_in_floodplain', 'BFLOOD'),
-    #('urbansim.gridcell.is_in_stream_buffer', 'BSTREAM'),
-    #('urbansim.gridcell.is_in_wetland', 'BWET'),
-    #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
-    #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
-    #('ln_total_improvement_value', 'BLIMP'),
-    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
-    ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
-    #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
-    #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
-    #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
-    #('urbansim.gridcell.ln_industrial_sqft_within_walking_distance', 'BLSFIW'),
-    #('urbansim.gridcell.ln_residential_units', 'BLDU'),
-    #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
-    ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
-    #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
-    #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
-    #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
-    #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
-    #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
-    #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
-    #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
-    #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
-    ('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
-    ('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
-    ('urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance', 'BLE_SAW'),
-    #('urbansim.job_x_gridcell.same_sector_jobs_in_faz', 'BSECFAZ'),
-    #('urbansim.job_x_gridcell.ln_same_sector_jobs_in_faz', 'BLSECFAZ'),
-    #('psrc.gridcell.travel_time_hbw_am_drive_alone_to_129', "BTT_CBD"),
-    #('psrc.gridcell.trip_weighted_average_generalized_cost_hbw_to_work_am_drive_alone', "BCTW_SOV"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_drive_alone', "BTWT_DA"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_transit_walk', "BTWT_TW"), 
-
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
     ],
+
 5:
     [
-    #('urbansim.gridcell.building_age', 'BAGE_BL'),
-    ('urbansim.gridcell.is_near_arterial', 'BART'),
-    #('urbansim.gridcell.is_near_highway', 'BHWY'),
-    #('urbansim.gridcell.ln_distance_to_highway', 'BLDHIW'),
-    #('urbansim.gridcell.is_in_floodplain', 'BFLOOD'),
-    #('urbansim.gridcell.is_in_stream_buffer', 'BSTREAM'),
-    #('urbansim.gridcell.is_in_wetland', 'BWET'),
-    #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
-    #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
-    #('ln_total_improvement_value', 'BLIMP'),
-    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
-    ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
-    #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
-    #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
-    #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
-    #('urbansim.gridcell.ln_industrial_sqft_within_walking_distance', 'BLSFIW'),
-    #('urbansim.gridcell.ln_residential_units', 'BLDU'),
-    #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
-    ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
-    #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
-    #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
-    #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
-    #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
-    #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
-    #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
-    #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
-    #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
-    #('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
-    ('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
-    ('urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance', 'BLE_SAW'),
-    #('urbansim.job_x_gridcell.same_sector_jobs_in_faz', 'BSECFAZ'),
-    #('urbansim.job_x_gridcell.ln_same_sector_jobs_in_faz', 'BLSECFAZ'),
-    #('psrc.gridcell.travel_time_hbw_am_drive_alone_to_129', "BTT_CBD"),
-    #('psrc.gridcell.trip_weighted_average_generalized_cost_hbw_to_work_am_drive_alone', "BCTW_SOV"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_drive_alone', "BTWT_DA"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_transit_walk', "BTWT_TW"), 
-
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
     ],
+
 6:
     [
-    #('urbansim.gridcell.building_age', 'BAGE_BL'),
-    ('urbansim.gridcell.is_near_arterial', 'BART'),
-    #('urbansim.gridcell.is_near_highway', 'BHWY'),
-    #('urbansim.gridcell.ln_distance_to_highway', 'BLDHIW'),
-    #('urbansim.gridcell.is_in_floodplain', 'BFLOOD'),
-    #('urbansim.gridcell.is_in_stream_buffer', 'BSTREAM'),
-    #('urbansim.gridcell.is_in_wetland', 'BWET'),
-    #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
-    #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
-    #('ln_total_improvement_value', 'BLIMP'),
-    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
-    ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
-    #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
-    #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
-    #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
-    #('urbansim.gridcell.ln_industrial_sqft_within_walking_distance', 'BLSFIW'),
-    #('urbansim.gridcell.ln_residential_units', 'BLDU'),
-    #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
-    ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
-    #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
-    #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
-    #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
-    #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
-    #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
-    #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
-    #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
-    #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
-    #('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
-    ('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
-    ('urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance', 'BLE_SAW'),
-    #('urbansim.job_x_gridcell.same_sector_jobs_in_faz', 'BSECFAZ'),
-    #('urbansim.job_x_gridcell.ln_same_sector_jobs_in_faz', 'BLSECFAZ'),
-    #('psrc.gridcell.travel_time_hbw_am_drive_alone_to_129', "BTT_CBD"),
-    #('psrc.gridcell.trip_weighted_average_generalized_cost_hbw_to_work_am_drive_alone', "BCTW_SOV"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_drive_alone', "BTWT_DA"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_transit_walk', "BTWT_TW"), 
-
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
     ],
+
 7:
     [
-    #('urbansim.gridcell.building_age', 'BAGE_BL'),
-    ('urbansim.gridcell.is_near_arterial', 'BART'),
-    #('urbansim.gridcell.is_near_highway', 'BHWY'),
-    #('urbansim.gridcell.ln_distance_to_highway', 'BLDHIW'),
-    #('urbansim.gridcell.is_in_floodplain', 'BFLOOD'),
-    #('urbansim.gridcell.is_in_stream_buffer', 'BSTREAM'),
-    #('urbansim.gridcell.is_in_wetland', 'BWET'),
-    #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
-    #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
-    #('ln_total_improvement_value', 'BLIMP'),
-    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
-    ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
-    #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
-    #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
-    #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
-    #('urbansim.gridcell.ln_industrial_sqft_within_walking_distance', 'BLSFIW'),
-    #('urbansim.gridcell.ln_residential_units', 'BLDU'),
-    #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
-    ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
-    #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
-    #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
-    #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
-    #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
-    #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
-    #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
-    #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
-    #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
-    #('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
-    ('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
-    ('urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance', 'BLE_SAW'),
-    #('urbansim.job_x_gridcell.same_sector_jobs_in_faz', 'BSECFAZ'),
-    #('urbansim.job_x_gridcell.ln_same_sector_jobs_in_faz', 'BLSECFAZ'),
-    #('psrc.gridcell.travel_time_hbw_am_drive_alone_to_129', "BTT_CBD"),
-    #('psrc.gridcell.trip_weighted_average_generalized_cost_hbw_to_work_am_drive_alone', "BCTW_SOV"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_drive_alone', "BTWT_DA"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_transit_walk', "BTWT_TW"), 
-
-    ],
-}
-specification['commercial'] = {  #commercial
-1:
-    [
-    #('urbansim.gridcell.building_age', 'BAGE_BL'),
-    ('urbansim.gridcell.is_near_arterial', 'BART'),
-    #('urbansim.gridcell.is_near_highway', 'BHWY'),
-    #('urbansim.gridcell.ln_distance_to_highway', 'BLDHIW'),
-    #('urbansim.gridcell.is_in_floodplain', 'BFLOOD'),
-    #('urbansim.gridcell.is_in_stream_buffer', 'BSTREAM'),
-    #('urbansim.gridcell.is_in_wetland', 'BWET'),
-    #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
-    #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
-    #('ln_total_improvement_value', 'BLIMP'),
-    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
-    ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
-    #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
-    #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
-    #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
-    #('urbansim.gridcell.ln_industrial_sqft_within_walking_distance', 'BLSFIW'),
-    #('urbansim.gridcell.ln_residential_units', 'BLDU'),
-    #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
-    ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
-    #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
-    #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
-    #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
-    #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
-    #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
-    #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
-    #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
-    #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
-    ('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
-    ('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
-    ('urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance', 'BLE_SAW'),
-    #('urbansim.job_x_gridcell.same_sector_jobs_in_faz', 'BSECFAZ'),
-    #('urbansim.job_x_gridcell.ln_same_sector_jobs_in_faz', 'BLSECFAZ'),
-#what is the zone number used for the cbd???
-    #('psrc.gridcell.travel_time_hbw_am_drive_alone_to_129', "BTT_CBD"),
-    #('psrc.gridcell.trip_weighted_average_generalized_cost_hbw_to_work_am_drive_alone', "BCTW_SOV"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_drive_alone', "BTWT_DA"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_transit_walk', "BTWT_TW"), 
-
-    ],
-2:
-    [
-    #('urbansim.gridcell.building_age', 'BAGE_BL'),
-    ('urbansim.gridcell.is_near_arterial', 'BART'),
-    ('urbansim.gridcell.is_near_highway', 'BHWY'),
-    #('urbansim.gridcell.ln_distance_to_highway', 'BLDHIW'),
-    #('urbansim.gridcell.is_in_floodplain', 'BFLOOD'),
-    #('urbansim.gridcell.is_in_stream_buffer', 'BSTREAM'),
-    #('urbansim.gridcell.is_in_wetland', 'BWET'),
-    #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
-    #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
-    #('ln_total_improvement_value', 'BLIMP'),
-    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
-    ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
-    #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
-    ('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
-    #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
-    #('urbansim.gridcell.ln_industrial_sqft_within_walking_distance', 'BLSFIW'),
-    #('urbansim.gridcell.ln_residential_units', 'BLDU'),
-    #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
-    ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
-    #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
-    #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
-    #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
-    #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
-    ('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
-    #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
-    #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
-    ('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
-    ('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
-    #('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
-    ('urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance', 'BLE_SAW'),
-    #('urbansim.job_x_gridcell.same_sector_jobs_in_faz', 'BSECFAZ'),
-    #('urbansim.job_x_gridcell.ln_same_sector_jobs_in_faz', 'BLSECFAZ'),
-    #('psrc.gridcell.travel_time_hbw_am_drive_alone_to_129', "BTT_CBD"),
-    #('psrc.gridcell.trip_weighted_average_generalized_cost_hbw_to_work_am_drive_alone', "BCTW_SOV"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_drive_alone', "BTWT_DA"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_transit_walk', "BTWT_TW"), 
-
-    ],
-3:
-    [
-    #('urbansim.gridcell.building_age', 'BAGE_BL'),
-    ('urbansim.gridcell.is_near_arterial', 'BART'),
-    ('urbansim.gridcell.is_near_highway', 'BHWY'),
-    #('urbansim.gridcell.ln_distance_to_highway', 'BLDHIW'),
-    #('urbansim.gridcell.is_in_floodplain', 'BFLOOD'),
-    #('urbansim.gridcell.is_in_stream_buffer', 'BSTREAM'),
-    #('urbansim.gridcell.is_in_wetland', 'BWET'),
-    #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
-    #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
-    #('ln_total_improvement_value', 'BLIMP'),
-    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
-    ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
-    #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
-    ('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
-    #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
-    #('urbansim.gridcell.ln_industrial_sqft_within_walking_distance', 'BLSFIW'),
-    #('urbansim.gridcell.ln_residential_units', 'BLDU'),
-    #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
-    ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
-    #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
-    #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
-    #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
-    #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
-    ('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
-    #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
-    #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
-    ('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
-    ('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
-    #('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
-    ('urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance', 'BLE_SAW'),
-    #('urbansim.job_x_gridcell.same_sector_jobs_in_faz', 'BSECFAZ'),
-    #('urbansim.job_x_gridcell.ln_same_sector_jobs_in_faz', 'BLSECFAZ'),
-    #('psrc.gridcell.travel_time_hbw_am_drive_alone_to_129', "BTT_CBD"),
-    #('psrc.gridcell.trip_weighted_average_generalized_cost_hbw_to_work_am_drive_alone', "BCTW_SOV"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_drive_alone', "BTWT_DA"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_transit_walk', "BTWT_TW"), 
-
-    ],
-4:
-    [
-    #('urbansim.gridcell.building_age', 'BAGE_BL'),
-    ('urbansim.gridcell.is_near_arterial', 'BART'),
-    ('urbansim.gridcell.is_near_highway', 'BHWY'),
-    #('urbansim.gridcell.ln_distance_to_highway', 'BLDHIW'),
-    #('urbansim.gridcell.is_in_floodplain', 'BFLOOD'),
-    #('urbansim.gridcell.is_in_stream_buffer', 'BSTREAM'),
-    #('urbansim.gridcell.is_in_wetland', 'BWET'),
-    #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
-    #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
-    #('ln_total_improvement_value', 'BLIMP'),
-    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
-    ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
-    #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
-    ('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
-    #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
-    #('urbansim.gridcell.ln_industrial_sqft_within_walking_distance', 'BLSFIW'),
-    #('urbansim.gridcell.ln_residential_units', 'BLDU'),
-    #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
-    ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
-    #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
-    #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
-    #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
-    #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
-    ('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
-    #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
-    #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
-    ('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
-    ('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
-    #('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
-    ('urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance', 'BLE_SAW'),
-    #('urbansim.job_x_gridcell.same_sector_jobs_in_faz', 'BSECFAZ'),
-    #('urbansim.job_x_gridcell.ln_same_sector_jobs_in_faz', 'BLSECFAZ'),
-    #('psrc.gridcell.travel_time_hbw_am_drive_alone_to_129', "BTT_CBD"),
-    #('psrc.gridcell.trip_weighted_average_generalized_cost_hbw_to_work_am_drive_alone', "BCTW_SOV"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_drive_alone', "BTWT_DA"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_transit_walk', "BTWT_TW"), 
-
-    ],
-5:
-    [
-    #('urbansim.gridcell.building_age', 'BAGE_BL'),
-    ('urbansim.gridcell.is_near_arterial', 'BART'),
-    ('urbansim.gridcell.is_near_highway', 'BHWY'),
-    #('urbansim.gridcell.ln_distance_to_highway', 'BLDHIW'),
-    #('urbansim.gridcell.is_in_floodplain', 'BFLOOD'),
-    #('urbansim.gridcell.is_in_stream_buffer', 'BSTREAM'),
-    #('urbansim.gridcell.is_in_wetland', 'BWET'),
-    #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
-    #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
-    #('ln_total_improvement_value', 'BLIMP'),
-    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
-    ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
-    #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
-    ('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
-    #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
-    #('urbansim.gridcell.ln_industrial_sqft_within_walking_distance', 'BLSFIW'),
-    #('urbansim.gridcell.ln_residential_units', 'BLDU'),
-    #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
-    ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
-    #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
-    #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
-    #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
-    #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
-    ('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
-    #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
-    #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
-    ('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
-    #('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
-    #('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
-    ('urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance', 'BLE_SAW'),
-    #('urbansim.job_x_gridcell.same_sector_jobs_in_faz', 'BSECFAZ'),
-    #('urbansim.job_x_gridcell.ln_same_sector_jobs_in_faz', 'BLSECFAZ'),
-    #('psrc.gridcell.travel_time_hbw_am_drive_alone_to_129', "BTT_CBD"),
-    #('psrc.gridcell.trip_weighted_average_generalized_cost_hbw_to_work_am_drive_alone', "BCTW_SOV"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_drive_alone', "BTWT_DA"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_transit_walk', "BTWT_TW"), 
-
-    ],
-6:
-    [
-    #('urbansim.gridcell.building_age', 'BAGE_BL'),
-    #('urbansim.gridcell.is_near_arterial', 'BART'),
-    #('urbansim.gridcell.is_near_highway', 'BHWY'),
-    #('urbansim.gridcell.ln_distance_to_highway', 'BLDHIW'),
-    #('urbansim.gridcell.is_in_floodplain', 'BFLOOD'),
-    #('urbansim.gridcell.is_in_stream_buffer', 'BSTREAM'),
-    #('urbansim.gridcell.is_in_wetland', 'BWET'),
-    #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
-    #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
-    #('ln_total_improvement_value', 'BLIMP'),
-    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
-    ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
-    #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
-    #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
-    #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
-    #('urbansim.gridcell.ln_industrial_sqft_within_walking_distance', 'BLSFIW'),
-    #('urbansim.gridcell.ln_residential_units', 'BLDU'),
-    #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
-    ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
-    #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
-    #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
-    #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
-    #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
-    #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
-    #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
-    #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
-    #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
-    #('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
-    #('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
-    ('urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance', 'BLE_SAW'),
-    #('urbansim.job_x_gridcell.same_sector_jobs_in_faz', 'BSECFAZ'),
-    #('urbansim.job_x_gridcell.ln_same_sector_jobs_in_faz', 'BLSECFAZ'),
-    #('psrc.gridcell.travel_time_hbw_am_drive_alone_to_129', "BTT_CBD"),
-    #('psrc.gridcell.trip_weighted_average_generalized_cost_hbw_to_work_am_drive_alone', "BCTW_SOV"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_drive_alone', "BTWT_DA"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_transit_walk', "BTWT_TW"), 
-
-    ],
-7:
-    [
-    #('urbansim.gridcell.building_age', 'BAGE_BL'),
-    #('urbansim.gridcell.is_near_arterial', 'BART'),
-    #('urbansim.gridcell.is_near_highway', 'BHWY'),
-    #('urbansim.gridcell.ln_distance_to_highway', 'BLDHIW'),
-    #('urbansim.gridcell.is_in_floodplain', 'BFLOOD'),
-    #('urbansim.gridcell.is_in_stream_buffer', 'BSTREAM'),
-    #('urbansim.gridcell.is_in_wetland', 'BWET'),
-    #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
-    #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
-    #('ln_total_improvement_value', 'BLIMP'),
-    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
-    ('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
-    #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
-    #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
-    #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
-    #('urbansim.gridcell.ln_industrial_sqft_within_walking_distance', 'BLSFIW'),
-    #('urbansim.gridcell.ln_residential_units', 'BLDU'),
-    #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
-    ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW'),
-    
-    #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
-    #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
-    #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
-    #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
-    #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
-    #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
-    #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
-    #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
-    #('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
-    #('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
-    ('urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance', 'BLE_SAW'),
-    #('urbansim.job_x_gridcell.same_sector_jobs_in_faz', 'BSECFAZ'),
-    #('urbansim.job_x_gridcell.ln_same_sector_jobs_in_faz', 'BLSECFAZ'),
-    #('psrc.gridcell.travel_time_hbw_am_drive_alone_to_129', "BTT_CBD"),
-    #('psrc.gridcell.trip_weighted_average_generalized_cost_hbw_to_work_am_drive_alone', "BCTW_SOV"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_drive_alone', "BTWT_DA"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_transit_walk', "BTWT_TW"), 
-
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
     ],
 
 8:
     [
-    #('urbansim.gridcell.building_age', 'BAGE_BL'),
-    #('urbansim.gridcell.is_near_arterial', 'BART'),
-    #('urbansim.gridcell.is_near_highway', 'BHWY'),
-    #('urbansim.gridcell.ln_distance_to_highway', 'BLDHIW'),
-    #('urbansim.gridcell.is_in_floodplain', 'BFLOOD'),
-    #('urbansim.gridcell.is_in_stream_buffer', 'BSTREAM'),
-    #('urbansim.gridcell.is_in_wetland', 'BWET'),
-    #('urbansim.gridcell.ln_total_land_value', 'BLTLV'),
-    #('urbansim.gridcell.ln_average_land_value_per_acre_within_walking_distance', 'BLALVAW'),
-    #('ln_total_improvement_value', 'BLIMP'),
-    #('ln(urbansim.gridcell.non_residential_improvement_value_per_sqft)', 'BLNIMPSQ'),
-    #('urbansim.gridcell.ln_total_value', 'BLTV'),
-    
-    #('urbansim.gridcell.ln_commercial_sqft', 'BLSFC'),
-    #('urbansim.gridcell.ln_commercial_sqft_within_walking_distance', 'BLSFCW'),
-    #('urbansim.gridcell.ln_industrial_sqft', 'BLSFI'),
-    #('urbansim.gridcell.ln_industrial_sqft_within_walking_distance', 'BLSFIW'),
-    #('urbansim.gridcell.ln_residential_units', 'BLDU'),
-    #('urbansim.gridcell.ln_residential_units_within_walking_distance', 'BLDUW'),
-    ('urbansim.gridcell.ln_total_nonresidential_sqft_within_walking_distance', 'BLNRSFW')
-    
-    #('urbansim.gridcell.percent_low_income_households_within_walking_distance', 'BPLIW'),
-    #('urbansim.gridcell.percent_mid_income_households_within_walking_distance', 'BPMIW'),
-    #('urbansim.gridcell.percent_high_income_households_within_walking_distance', 'BPHIW'),
-    
-    #('urbansim.gridcell.ln_work_access_to_employment_1', 'BLWAE_1'),
-    #('urbansim.gridcell.ln_work_access_to_population_1', 'BLWAP_1'),
-    
-    #('urbansim.gridcell.ln_total_population_within_walking_distance', 'BP_TW'),
-    #('urbansim.gridcell.ln_total_employment_within_walking_distance', 'BE_TW'),
-    
-    #('urbansim.gridcell.ln_basic_sector_employment_within_walking_distance', 'BLE_BW'),
-    #('urbansim.gridcell.ln_retail_sector_employment_within_walking_distance', 'BLE_REW'),
-    #('urbansim.gridcell.ln_service_sector_employment_within_walking_distance', 'BLE_SEW'),
-    #('urbansim.job_x_gridcell.ln_same_sector_employment_within_walking_distance', 'BLE_SAW'),
-    #('urbansim.job_x_gridcell.same_sector_jobs_in_faz', 'BSECFAZ'),
-    #('urbansim.job_x_gridcell.ln_same_sector_jobs_in_faz', 'BLSECFAZ'),
-    #('psrc.gridcell.travel_time_hbw_am_drive_alone_to_129', "BTT_CBD"),
-    #('psrc.gridcell.trip_weighted_average_generalized_cost_hbw_to_work_am_drive_alone', "BCTW_SOV"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_drive_alone', "BTWT_DA"),
-    #('psrc.gridcell.trip_weighted_average_time_hbw_to_work_am_transit_walk', "BTWT_TW"), 
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
 
-    ]
+9:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+10:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+11:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+12:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+13:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+14:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+15:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+16:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+}
+specification['commercial'] = {  #commercial
+"_definition_": all_variables,
+1:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+2:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+3:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+4:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+5:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+6:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+7:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+8:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+9:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+10:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+11:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+12:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+13:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+14:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+15:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+16:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
+}
+specification['home_based'] = {  #commercial
+"_definition_": all_variables,
+-2:
+    [
+    'art',
+    'hwy',
+    'ln_nres_sqft_wwd',
+    'ln_retail_emp_wwd',
+    'ln_service_emp_wwd',
+    'ln_same_sector_emp_wwd',
+    ],
+
 }
