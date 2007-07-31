@@ -904,15 +904,19 @@ id & name & home_based \\\hline
 \end{tabular}
 
 \section{Database Tables about Events}
+\label{sec:db-tables-events}
+These tables represent events in the real estate development. Events that are scheduled 
+to take place in the future are stored in the {\tt development_events_exogenous} table,
+events that occured prior to the base year are stored in the {\tt development_event_history} table.
 
-The change_typeS in these events are:
+Both tables can contain columns of the pattern ``{\it units}_{\tt change_type}''. Each value determines
+a type of change for that type of {\it units}. Possible values are:
 \begin{itemize} \tight
 \item ``A'' for Add
-\item ``N'' for No Change
 \item ``R'' for Replace
 \item ``D'' for Delete
-
 \end{itemize}
+If this column is missing for a certain type of units, the default value is ``A'' for all events.
 
 \subsection{The {\tt development_events_exogenous} table}
 
@@ -920,15 +924,15 @@ These development events are changes to grid cells which are scheduled to take
 place
 in the future. For any given year, it is possible to schedule any number of
 changes to the attributes of any number of gridcells. Each change represents
-that addition of the specified number of sqft, residential units, and
+that addition, subtruction or replacement of the specified number of sqft, residential units, and
 improvement values.  For example, if
 GridCell 23 is to grow by 200 residential units in 2008 (an apartment building
 is built), the table would include a row with scheduled_year = 2008, grid_id =
-23, and residential_units = 200.
+23, residential_units = 200, and residential_units_change_type = 'A'.
 
 The value in the ``improvement_value'' fields, below, are used to indicate how
 to change the associated improvement_value for this grid cell. Each event will
-add (improvement_value * (number
+add/subtract/replace (improvement_value * (number
 of units [or sqft] being built by this event)) to the current improvement value
 in
 this grid cell.  The units of the improvement is currency value, e.g. dollars.
@@ -939,11 +943,11 @@ this grid cell.  The units of the improvement is currency value, e.g. dollars.
 \hline
 grid_id & integer & Grid cell where the event takes place  \\
 \hline
-scheduled_year &short & Year where the event will be implemented  \\
+scheduled_year &short & Year in which the event will be implemented  \\
 \hline
 starting_development_type_id & integer & \emph{(optional) }
 This field is ignored. It is here so that the schema is the same for the
-\verb|development_events_exogenous| and verb|development_event_history| tables.   \\
+\verb|development_events_exogenous| and \verb|development_event_history| tables.   \\
 \hline
 ending_development_type_id & integer &  This grid cell's development type
 at the ending of the scheduled_year. Index into the \verb|development_types|
@@ -956,6 +960,14 @@ commercial_sqft & integer & \\
 industrial_sqft & integer & \\
 \hline
 governmental_sqft & integer & \\
+\hline
+residential_units_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+commercial_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+industrial_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+governmental_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
 \hline
 residential_improvement_value & integer & See description, above  \\
 \hline
@@ -974,24 +986,6 @@ fraction_residential_land_value & float & Fraction of residential land in this c
 \item fraction_residential_land_value must be between 0 and 1
 \item grid_id must be a valid id in the \verb|gridcells| table or zero
 \item development_type_id must be a valid index into the \verb|development_types| table or zero
-\item scheduled_year must be between absolute_min_year and absolute_max_year
-\item residential_units must be greater than or equal to zero and \textless{}=
-absolute_max_cell_residential_units
-\item commercial_sqft must be greater than or equal to zero and \textless{}=
-absolute_max_cell_sqft
-\item industrial_sqft must be greater than or equal to zero and \textless{}=
-absolute_max_cell_sqft
-\item governmental_sqft must be greater than or equal to zero and \textless{}=
-absolute_max_cell_sqft
-\item residential_improvement_value must be greater than or equal to zero and
-\textless{}= absolute_max_cell_dollars
-\item commercial_improvement_value must be greater than or equal to zeroand
-\textless{}= absolute_max_cell_dollars
-\item industrial_improvement_value must be greater than or equal to zero and
-\textless{}= absolute_max_cell_dollars
-\item governmental_improvement_value must be greater than or equal to zero and
-\textless{}= absolute_max_cell_dollars
-
 \end{itemize}
 
 
@@ -1014,7 +1008,7 @@ table, though with additional constraints, specified below.
 \hline
 grid_id & integer & Grid cell where the event takes place  \\
 \hline
-scheduled_year &short & Year where the event will be implemented  \\
+scheduled_year &short & Year in which the event was implemented  \\
 \hline
 starting_development_type_id & integer & \emph{(optional) }
 This will be the value of the development_type for this gridcell after
@@ -1027,6 +1021,14 @@ commercial_sqft & integer & \\
 industrial_sqft & integer & \\
 \hline
 governmental_sqft & integer & \\
+\hline
+residential_units_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+commercial_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+industrial_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+governmental_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
 \hline
 residential_improvement_value & integer & See description, above  \\
 \hline
@@ -1042,27 +1044,6 @@ governmental_improvement_value & integer & See description, above  \\
 \begin{itemize} \tight
 \item grid_id must be a valid id in the \verb|gridcells| table or zero
 \item development_type_id must be a valid index into the \verb|development_types| table or zero
-\item scheduled_year must be between absolute_min_year and absolute_max_year
-\item residential_units must be greater than or equal to zero and \textless{}=
-absolute_max_cell_residential_units
-\item commercial_sqft must be greater than or equal to zero and \textless{}=
-absolute_max_cell_sqft
-\item industrial_sqft must be greater than or equal to zero and \textless{}=
-absolute_max_cell_sqft
-\item governmental_sqft must be greater than or equal to zero and \textless{}=
-absolute_max_cell_sqft
-\item residential_improvement_value must be greater than or equal to zero and
-\textless{}= absolute_max_cell_dollars
-\item commercial_improvement_value must be greater than or equal to zeroand
-\textless{}= absolute_max_cell_dollars
-\item industrial_improvement_value must be greater than or equal to zero and
-\textless{}= absolute_max_cell_dollars
-\item governmental_improvement_value must be greater than or equal to zero and
-\textless{}= absolute_max_cell_dollars
-\item starting_development_type_id is ignored on input, and updated (to be the
-ending development type for that gridcell in that year) as the developer model
-estimation data writer runs. It must \emph{not} be a member of the
-vacant_undevelopable group.
 \end{itemize}
 
 In addition, the following will produce warnings:
