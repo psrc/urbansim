@@ -677,15 +677,16 @@ def try_transformation(data, transformation):
                 tdata = data
     return tdata
 
-def does_database_server_exist_for_this_hostname(module_name, hostname):
+def does_database_server_exist_for_this_hostname(module_name, hostname, log_on_failure=True):
     try:
         from MySQLdb import connect
         from MySQLdb import OperationalError
     except ImportError, e:
         if log_on_failure:
-            logger.log_warning('The tests will not be run for module:\n'
-                               '  %s\n'
-                               'since we cannot connect import the MySQLdb Python module.')
+            logger.log_warning('The tests will not be run for module:\n' 
+                               '  %s\n' 
+                               'since we cannot connect import the MySQLdb Python module.' 
+                               % module_name)
         return False
 
     if not 'MYSQLUSERNAME' in os.environ:
@@ -713,8 +714,8 @@ def does_database_server_exist_for_this_hostname(module_name, hostname):
             logger.log_warning('The tests will not be run for module:\n'
                                '  %s\n'
                                'since we cannot connect to database server on host %s '
-                               'with user %s.'
-                               % (module_name, hostname))
+                               ' with user %s.'
+                               % (module_name, hostname, os.environ['MYSQLUSERNAME']))
         return False
     return True
 
