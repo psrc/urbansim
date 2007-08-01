@@ -288,6 +288,20 @@ class TestDataset(opus_unittest.OpusTestCase):
         ds.compute_variables(["a_test_variable_with_two_dependencies"])
         self.assert_(ds.get_version("a_test_variable_with_two_dependencies")==1) # version does not change
         
+    def test_compute_variable_with_unknown_package(self):
+        storage = StorageFactory().get_storage('dict_storage')
+        
+        storage.write_table(
+            table_name='tests',
+            table_data={
+                'id':array([2,4]), 
+                'attr1':array([4,7]),
+                }
+            )
+        
+        ds = Dataset(in_storage=storage, in_table_name='tests', id_name='id', dataset_name='test')
+        
+        ds.compute_one_variable_with_unknown_package("attr1_times_2", package_order=["opus_core"])
         
 if __name__ == "__main__":
     opus_unittest.main()

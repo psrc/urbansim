@@ -1075,6 +1075,33 @@ class AbstractDataset(object):
         self._update_id_mapping()
         self.update_size()
 
+    def compute_one_variable_with_unknown_package(self, variable_name, dataset_pool=None, package_order=None):
+        """ Compute one variable where the package is unknown. It iterates over packages either in package_order
+            (which should be a list or None),
+            or (if package_order is None) over packages in dataset_pool._package_order.
+            'variable_name' must be an unqualified attribute name. The method extends it by 
+            a package name and the dataset name of self.
+        """
+        if (package_order is None) and (dataset_pool is None):
+            self._raise_error(ValueError,
+                              "Either package_order or dataset_pool must be not None.")
+        if package_order is None:
+            package_order = dataset_pool.get_package_order()
+            
+        result = None
+        for package in package_order:
+            full_variable_name = "%s.%s.%s" % (package, self.get_dataset_name(), variable_name)
+            try:
+                result = self.compute_variables([full_variable_name], dataset_pool=dataset_pool)
+                break
+            except:
+                pass
+        if result is None:
+            self._raise_error(StandardError, 
+                              "Computing variable %s failed for packages: %s. " % (variable_name, 
+                                                                                             "', '".join(package_order)))
+        return result
+        
     def _compute_one_variable(self, variable_name, dataset_pool, resources=None, quiet=False):
         """Compute variable given by the argument 'name'. The array of computed values is added to the class
         attribute 'set'. The argument resources (of type Resources)
