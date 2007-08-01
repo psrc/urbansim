@@ -73,7 +73,10 @@ class ControllerConfiguration(Configuration):
                     'controller': RegionalHouseholdLocationChoiceModelConfigurationCreator(
                         ).execute(),
                     }
-        
+        self['deletion_event_model'] = {
+                    'controller': DeletionEventModelConfigurationCreator(
+                        ).execute(),
+                    }
 
 #if __name__ == '__main__':
 #    ControllerConfiguration()
