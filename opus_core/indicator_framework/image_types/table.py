@@ -16,7 +16,7 @@ from opus_core.logger import logger
 import os, re, sys, time, traceback
 from copy import copy
 
-from numpy import newaxis, concatenate
+from numpy import newaxis, concatenate, rank
 
 from opus_core.indicator_framework.core import AbstractIndicator
 from opus_core.storage_factory import StorageFactory
