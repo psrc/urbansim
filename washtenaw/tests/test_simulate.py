@@ -65,7 +65,10 @@ if does_database_server_exist_for_this_hostname(
                         % self.temp_dir
                     )
     
-            
+        def xtest_prepare_for_simulation(self):
+            # do nothing, so that only the setUp procedure is run
+            pass
+        
         def xtest_simulation(self): # temporarily switched off, since the database data does not match the code for now
             """Checks that the simulation proceeds without caching.
             """

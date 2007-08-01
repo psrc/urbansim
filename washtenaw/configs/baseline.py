@@ -111,7 +111,7 @@ class Baseline(GeneralConfiguration):
                 host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
                 user_name     = os.environ.get('MYSQLUSERNAME',''),
                 password      = os.environ.get('MYSQLPASSWORD',''),
-                database_name = 'washtenaw',
+                database_name = 'washtenaw_class',
                 ),
             'models': [
                 'prescheduled_events',
