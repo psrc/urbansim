@@ -115,7 +115,7 @@ class EventsCoordinator(Model):
         indices of development events that were processed).
         """
         # need to load first before using development_event_set.size()
-        if not development_event_set: 
+        if not development_event_set or (development_event_set.size() == 0): 
             return array([], dtype='int32'), array([], dtype='int32')
 
         improvement_values_to_change = {}
@@ -126,10 +126,6 @@ class EventsCoordinator(Model):
             if units_variable in development_event_set.get_primary_attribute_names():
                 attributes_to_change.append(units_variable)
                 improvement_values_to_change[units_variable] = '%s_improvement_value' % project_type
-
-        if not development_event_set.size(): 
-            return array([], dtype='int32'), array([], dtype='int32')
-        location_set.load_dataset_if_not_loaded(attributes=(attributes_to_change))
 
         return self.process_events(model_configuration, location_set, development_event_set, 
                                                              development_type_set,
