@@ -21,9 +21,10 @@ from baseline import Baseline
 my_cache_config = CreatingBaseyearCacheConfiguration(
         cache_directory_root = '/Users/hana/urbansim_cache/washtenaw/runs',
         cache_from_mysql = False,
+        unroll_gridcells = False,
         baseyear_cache = BaseyearCacheConfiguration(
             existing_cache_to_copy = '/Users/hana/urbansim_cache/washtenaw/cache_source',
-            #years_to_cache = range(2000,2001)
+            years_to_cache = range(2005,2006)
             ),
         cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
         tables_to_cache = Baseline.tables_to_cache,
@@ -36,7 +37,7 @@ my_configuration = {
                 password      = os.environ.get('MYSQLPASSWORD',''),
                 database_name = 'region_pilot_baseyear',
                 ),
-#     'models': [
+     'models': [
                 #'prescheduled_events',
                 #'events_coordinator',
                 #'residential_land_share_model',
@@ -48,18 +49,20 @@ my_configuration = {
                 #'development_event_transition_model',
                 #'events_coordinator',
                 #'residential_land_share_model',
+                'deletion_event_model',
 #                'regional_household_transition_model',
 #                'regional_household_location_choice_model',
 #                'regional_employment_transition_model',
 #                {'regional_employment_location_choice_model': {'group_members': ['home_based', 'commercial', 'industrial']}},
+#                {'regional_employment_location_choice_model': {'group_members': ['home_based']}},
 #                'household_relocation_model',
 #                'household_location_choice_model',
 #                'employment_relocation_model',
 #                {'employment_location_choice_model': {'group_members': ['_all_']}},
 #                'distribute_unplaced_jobs_model'
-#                ],
-    #'cache_directory': None,
-    'cache_directory': '/Users/hana/urbansim_cache/washtenaw/cache_source',
+                ],
+    'cache_directory': None,
+    #'cache_directory': '/Users/hana/urbansim_cache/washtenaw/cache_source',
     'remove_cache': False, # remove cache after finishing the simulation
     'creating_baseyear_cache_configuration': my_cache_config,
     'datasets_to_cache_after_each_model': [],

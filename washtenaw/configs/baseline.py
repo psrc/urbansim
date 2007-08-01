@@ -27,7 +27,7 @@ from washtenaw.configs.controller_configuration import ControllerConfiguration
 
 # ATTENTION:
 #***********
-# Do not modify the file by adding your own local settings, such as directory names.
+# Do not modify this file by adding your own local settings, such as directory names.
 # Create a file called username_local_config.py in this directory 
 # and put your own setting in a dictionary called 'my_configuration' (see hana_local_config.py as an example).
 # This way people do not have to modify the Baseline configuration every time somebody else modifies it.
@@ -91,7 +91,8 @@ class Baseline(GeneralConfiguration):
                     'target_vacancies',
                     'jobs_for_estimation',
                     'households_for_estimation',
-                    'job_building_types'
+                    'job_building_types',
+                    'deletion_events'
                     ]
     
     tables_to_copy_to_previous_years = {
@@ -110,16 +111,8 @@ class Baseline(GeneralConfiguration):
                 host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
                 user_name     = os.environ.get('MYSQLUSERNAME',''),
                 password      = os.environ.get('MYSQLPASSWORD',''),
-                database_name = 'washtenaw_hana',
+                database_name = 'washtenaw',
                 ),
-            #'in_storage':StorageFactory().get_storage('mysql_storage',
-            #    storage_location = ScenarioDatabase(
-            #        hostname = os.environ.get('MYSQLHOSTNAME','localhost'),
-            #        username = os.environ.get('MYSQLUSERNAME',''),
-            #        password = os.environ.get('MYSQLPASSWORD',''),
-            #        database_name = 'washtenaw_hana',
-            #        )
-            #    ),
             'models': [
                 'prescheduled_events',
                 'events_coordinator',
@@ -132,6 +125,7 @@ class Baseline(GeneralConfiguration):
                 'development_event_transition_model',
                 'events_coordinator',
                 'residential_land_share_model',
+                #'deletion_event_model',
                 'regional_household_transition_model',
                 'regional_household_location_choice_model',
                 'regional_employment_transition_model',
@@ -163,7 +157,8 @@ class Baseline(GeneralConfiguration):
                 'job': {},
                 'job_building_type': {},
                 'target_vacancy': {},
-                'zone': {}
+                'zone': {},
+                'deletion_event': {}
                 },
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['washtenaw', 'urbansim', 'opus_core'],
