@@ -724,22 +724,22 @@ class DatasetTests(opus_unittest.OpusTestCase):
         self.assertEqual(Set(ds.get_computed_attribute_names()),
                          Set(['attr3','attr4']))
         
-#    def test_use_out_table_to_store_attributes(self):
-#        storage = StorageFactory().get_storage('dict_storage')
-#
-#        storage.write_table(
-#            'tests',
-#            {
-#                'id':array([1,2,3]),
-#                'attr':array([100,200,300]),
-#                'attr2':array([11,22,33]),
-#            }
-#        )
-#        self.assertEqual(["tests"], storage.get_table_names())
-#        ds = Dataset(in_storage=storage, in_table_name='tests', id_name='id')
-#        ds.load_dataset()
-#        ds.write_dataset(out_storage=storage, out_table_name="table2")
-#        self.assertEqual(Set(["tests", "table2"]), Set(storage.get_table_names()))
+    def test_use_out_table_to_store_attributes(self):
+        storage = StorageFactory().get_storage('dict_storage')
+
+        storage.write_table(
+            'tests',
+            {
+                'id':array([1,2,3]),
+                'attr':array([100,200,300]),
+                'attr2':array([11,22,33]),
+            }
+        )
+        self.assertEqual(["tests"], storage.get_table_names())
+        ds = Dataset(in_storage=storage, in_table_name='tests', id_name='id')
+        ds.load_dataset()
+        ds.write_dataset(out_storage=storage, out_table_name="table2")
+        self.assertEqual(Set(["tests", "table2"]), Set(storage.get_table_names()))
          
     def test_store_primary_and_computed_attributes(self):
         in_storage = StorageFactory().get_storage('dict_storage')
@@ -760,10 +760,10 @@ class DatasetTests(opus_unittest.OpusTestCase):
                 'attr4':array([45,46,47]),
             }
         )
-        ds = Dataset(in_storage=in_storage, in_table_name='tests', id_name='id')
+        ds = Dataset(in_storage=in_storage, in_table_name='tests', out_table_name="tests_out", id_name='id')
         ds.load_dataset()
         ds.write_dataset(out_storage=out_storage)
-        self.assertEqual(Set(['tests','tests.computed']),Set(out_storage.get_table_names()))
+        self.assertEqual(Set(['tests_out','tests_out.computed']),Set(out_storage.get_table_names()))
         
     def test_chunk_columns_documentation(self):
         storage = DummyStorage()
