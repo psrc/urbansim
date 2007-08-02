@@ -59,10 +59,6 @@ households.modify_attribute(name="location", data=[0,0], index=[0,1])
 households.get_attribute("location")
 households.get_data_element_by_id(5).location
 
-
-#
-# Uncomment to overwrite households.tab.
-#
 #households.write_dataset(out_storage=storage,
 #                             out_table_name="households_output")
 
