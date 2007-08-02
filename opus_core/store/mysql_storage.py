@@ -97,8 +97,10 @@ class mysql_storage(Storage, mysql_storage_old):
                 self._assert_no_nones(table_name, column_name, values)
             
                 dtype = column_type_map[column_name]
-                
-                result[column_name] = array(values, dtype=dtype)
+                try:
+                    result[column_name] = array(values, dtype=dtype)
+                except ValueError, msg:
+                    raise ValueError, "Error in table '%s' column '%s': %s" % (table_name, column_name, msg)
                     
         finally:
             conn.close()
