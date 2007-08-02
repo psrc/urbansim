@@ -31,14 +31,16 @@ from opus_core.variables.functions import *
 # these also need to be listed in the _named_constants class variable defined below
 from numpy import bool8, int8, uint8, int16, uint16, int32, uint32, int64, uint64
 from numpy import float32, float64, complex64, complex128, longlong
+# allow the where function to be used directly (without qualifying it as numpy.where)
+from numpy import where
 
 class AutogenVariableFactory(object):
     """Class for generating the information held in a VariableName, in particular 
     the automatically defined class.
     """
     
-    _named_constants = ["bool8", "int8", "uint8", "int16", "uint16", "int32", "uint32",
-        "int64", "uint64", "float32", "float64", "complex64", "complex128", "longlong"]
+    _named_constants = ["True", "False", "bool8", "int8", "uint8", "int16", "uint16", "int32", 
+        "uint32", "int64", "uint64", "float32", "float64", "complex64", "complex128", "longlong"]
     
     def __init__(self, expr):
         # expr is a string that is the expression being compiled into a variable
