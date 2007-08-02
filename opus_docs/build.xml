@@ -31,6 +31,6 @@
 		<move file="${basedir}/style" todir="${webdir}/docs" />
 	</target>
 
-	<target name="cruisecontrol" depends="build-latex-docs, build-tutorials, copy-to-webserver" />
+	<target name="cruisecontrol" />
 
 </project>
