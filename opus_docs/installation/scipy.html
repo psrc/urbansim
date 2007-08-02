@@ -50,12 +50,19 @@ instructions for installing this package:</p>
     This version is compatible with the latest Opus and UrbanSim.</li>
   <li>Unzip ndimage.zip.</li>
   <li>cd into the unzipped directory.</li>
-  <li>Build and install the package via a command like the following.&nbsp; The path after the --prefix parameter
-    is the location containing your Python's lib directory:</li>
+  <li>Make a temporary directory in which to install the code, say <tt>~/temp_install_dir</tt>.
+  <li>Build and install the package via a command like the following.&nbsp; (The path after the --prefix parameter
+    is the location containing the Python lib directory in which to install the code.)
+  <pre>python setup.py install --prefix=~/temp_install_dir</pre></li>
+  <li>Now move the directory <tt>~/temp_install_dir/lib/python2.5/site-packages/ndimage</tt> into the 
+    scipy directory in site-packages.  If your site-packages directory is at the example location above,
+    you should end up with an ndimage directory in this location: 
+    <tt>~home/python24/lib/python2.4/site-packages/scipy/ndimage</tt>
 </ol>
-<blockquote>
-  <pre>python setup.py install --prefix=~/home/python24</pre>
-</blockquote>
+
+<p>The reason for doing the last two steps rather than installing ndimage directly is that we want it 
+to be a subpackage under scipy rather than its own package at the top level.</p>
+
 <h3>Install scipy.stsci (rarely needed)</h3>
 <p>In rare cases, you may also want the stsci package.&nbsp; This package is not
 used by Opus or UrbanSim.&nbsp; You should only need this
