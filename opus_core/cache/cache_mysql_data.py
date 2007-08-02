@@ -21,7 +21,6 @@ from opus_core.datasets.dataset import Dataset
 from opus_core.store.scenario_database import ScenarioDatabase
 from opus_core.storage_factory import StorageFactory
 from opus_core.variables.attribute_type import AttributeType
-from opus_core.store.attribute_cache import AttributeCache
 from shutil import rmtree
 
 class CacheMysqlData(Model):

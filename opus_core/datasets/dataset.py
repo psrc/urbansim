@@ -322,7 +322,8 @@ class Dataset(AbstractDataset):
             if type not in (AttributeType.LAG, AttributeType.EXOGENOUS):
                 self.debug.print_debug("Flushing %s.%s" % (self.get_dataset_name(), short_name), 4)
                 #logger.log_status("Flushing %s.%s" % (self.get_dataset_name(), short_name))
-                self.write_dataset(attributes=[short_name], out_storage=self.attribute_cache)
+                self.write_dataset(attributes=[short_name], out_storage=self.attribute_cache, 
+                                   out_table_name=self._get_in_table_name_for_cache())
                 self.attribute_boxes[short_name].set_is_cached(True)
                 self.unload_one_attribute(short_name)
 
@@ -368,9 +369,8 @@ class Dataset(AbstractDataset):
                 values_computed[name] = attribute
             else:
                 values[name] = attribute
-        local_resources.merge({"in_table_name": self._get_in_table_name_for_cache()})
         
-        table_name = local_resources["in_table_name"]
+        table_name = local_resources["out_table_name"]
         if len(values):
             local_resources["out_storage"].write_table(
                 table_name=table_name,
