@@ -29,7 +29,7 @@ from opus_core.indicator_framework.image_types import Table, DatasetTable
 #cache_directory = r'D:\urbansim_cache\run_1454.2006_12_12_16_28'
 #run_description = '(run 1454 - travel data from quick travel model)'
 #cache_directory = r'D:\urbansim_cache\run_1090.2006_11_14_12_12'
-cache_directory = r'C:\cache\run_1090.2006_11_14_12_12'
+cache_directory = r'C:\urbansim_cache\converted_psrc_run'
 run_description = '(run 1453 - travel data from full travel model)'
 #cache_directory = r'Y:\urbansim_cache\run_1431.2006_12_08_09_45'
 #run_description = '(run 1431 - baseyear travel data from travel model run)'
@@ -41,7 +41,7 @@ run_description = '(run 1453 - travel data from full travel model)'
 source_data = SourceData(
     cache_directory = cache_directory,
     run_description = run_description,
-    years = [2010],
+    years = [2000],
     dataset_pool_configuration = DatasetPoolConfiguration(
         package_order=['psrc','urbansim','opus_core'],
         package_order_exceptions={},
@@ -434,11 +434,11 @@ multi_year_requests = [
 #        dataset_name = 'large_area',
 #        source_data = source_data,
 #        ),
-    Table(
-        attribute = 'psrc.large_area.average_land_value_for_plan_type_group_residential',
-        dataset_name = 'large_area',
-        source_data = source_data,
-        ),
+#    Table(
+#        attribute = 'psrc.large_area.average_land_value_for_plan_type_group_residential',
+#        dataset_name = 'large_area',
+#        source_data = source_data,
+#        ),
 #    Table(
 #        attribute = 'psrc.large_area.average_land_value_for_plan_type_group_non_residential',
 #        dataset_name = 'large_area',
