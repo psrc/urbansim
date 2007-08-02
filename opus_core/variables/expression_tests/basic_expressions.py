@@ -240,6 +240,22 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array( [False,True,True,False] )
         self.assertEqual( ma.allclose( result, should_be, rtol=1e-7), True, msg = "Error in test_condition")
 
+    def test_where(self):
+        # test using the numpy where function
+        expr = "where(opus_core.test_agent.income>4, 100, 200)"
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(
+            table_name='test_agents',
+            table_data={
+                "income":array([1,5,10,3]),
+                "id":array([1,3,4,10])
+                }
+            )
+        dataset = Dataset(in_storage=storage, in_table_name='test_agents', id_name="id", dataset_name="test_agent")
+        result = dataset.compute_variables([expr])
+        should_be = array( [200, 100, 100, 200] )
+        self.assertEqual( ma.allclose( result, should_be, rtol=1e-7), True, msg = "Error in test_where")
+
     def test_true_false(self):
         # make sure True and False can be used in an expression
         expr = "array([True, False, False])"
