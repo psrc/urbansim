@@ -22,8 +22,8 @@ class existing_units(Variable):
     
     def dependencies(self):
         return [
-		"urbansim_parcel.building.unit_name",
-		"urbansim_parcel.building.parcel_sqft",
+        "urbansim_parcel.building.unit_name",
+        "urbansim_parcel.building.parcel_sqft",
                 "urbansim_parcel.building.building_sqft",
                 "urbansim_parcel.building.residential_units"
                 ]

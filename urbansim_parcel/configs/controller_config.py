@@ -97,8 +97,8 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
 
          'employment_transition_model': 
                   EmploymentTransitionModelConfigurationCreator(
-			location_id_name="building_id"
-			).execute(),
+            location_id_name="building_id"
+            ).execute(),
  
         'employment_relocation_model': 
                   EmploymentRelocationModelConfigurationCreator(
@@ -433,7 +433,6 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         ##bldglcm_controller = Configuration()
         #
         #config["models_configuration"]['building_location_choice_model']["controller"].merge(bldglcm_controller)
-	
         #HLCM
         hlcm_controller = self["models_configuration"]["household_location_choice_model"]["controller"]
         hlcm_controller["init"]["arguments"]["location_set"] = "building"
