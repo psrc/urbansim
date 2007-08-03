@@ -159,7 +159,7 @@ class Baseline(GeneralConfiguration):
                 'job_building_type': {},
                 'target_vacancy': {},
                 'zone': {},
-                'deletion_event': {}
+                #'deletion_event': {}
                 },
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['washtenaw', 'urbansim', 'opus_core'],
