@@ -14,6 +14,7 @@
 
 import os
 from getpass import getuser
+from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
 from opus_core.store.scenario_database import ScenarioDatabase
 from opus_core.configurations.database_configuration import DatabaseConfiguration
@@ -174,7 +175,7 @@ class Baseline(GeneralConfiguration):
             exec('from %s_local_config import my_configuration' % getuser())
             local_config = True
         except:
-            logger.note("No user's settings found or error occured when loading.")
+            logger.log_note("No user's settings found or error occured when loading.")
             local_config = False
         if local_config:
             self.merge(my_configuration)
