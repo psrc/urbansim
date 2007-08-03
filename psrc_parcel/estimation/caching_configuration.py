@@ -63,8 +63,8 @@ class CachingConfiguration(Configuration):
             ]
 
         return {
-        #'cache_directory' : '/urbansim_cache/psrc_parcel_2005/cache_source', # change or leave out
-        'cache_directory' : '/workspace/urbansim_cache/psrc_parcel_lmwang/estimation/',
+        'cache_directory' : '/urbansim_cache/psrc_parcel/cache_source', # change or leave out
+        #'cache_directory' : '/workspace/urbansim_cache/psrc_parcel_lmwang/estimation/',
         'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
     #        cache_directory_root = '/tmp/urbcache/sandbox_runs/estimation',
             unroll_gridcells = False,
@@ -85,12 +85,12 @@ class CachingConfiguration(Configuration):
             user_name     = os.environ.get('MYSQLUSERNAME',''),
             password      = os.environ.get('MYSQLPASSWORD',''),
             #database_name = 'psrc_2005_parcel_baseyear_change_20070608',
-            database_name = 'psrc_2005_data_workspace_hana',
+            database_name = 'psrc_2005_parcel_baseyear',
             ),
         'dataset_pool_configuration': DatasetPoolConfiguration(
             package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
             package_order_exceptions={},
             ),
-        'base_year': 2005,
+        'base_year': 2000,
         }
 

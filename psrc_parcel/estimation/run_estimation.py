@@ -78,5 +78,5 @@ if __name__ == '__main__':
 
     from my_estimation_config import my_configuration
     er = EstimationRunner()
-    er.run_estimation(my_configuration, model, save_estimation_results=False, diagnose=False)
+    er.run_estimation(my_configuration, model, save_estimation_results=True, diagnose=False)
     

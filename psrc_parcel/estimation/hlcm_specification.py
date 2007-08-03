@@ -31,7 +31,7 @@ specification = {
             "ln_residential_units = ln(building.residential_units)",
             #"lnretempwa = ln(building.disaggregate(psrc.parcel.retail_sector_employment_within_walking_distance))",
             #"ln_emp_density=ln(building.disaggregate(psrc.zone.number_of_jobs_per_acre))",
-            "ln_avg_income =ln(building.disaggregate(urbansim.zone.average_income))",
+            "ln_avg_income =ln(building.disaggregate(urbansim_parcel.zone.average_income))",
             #"pct_low_income = building.disaggregate(psrc.parcel.percent_low_income_households_within_walking_distance)",
 
             #"cars_x_is_condo_residential = household.cars * urbansim.building.is_condo_residential",

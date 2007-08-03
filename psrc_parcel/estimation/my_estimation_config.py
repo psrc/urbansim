@@ -22,12 +22,12 @@ from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheC
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 
 my_configuration = {
-    'cache_directory' : '/urbansim_cache/psrc_parcel_lmwang/cache_source/', # change or leave out
+    'cache_directory' : '/urbansim_cache/psrc_parcel/cache_source/', # change or leave out
     'output_configuration': DatabaseConfiguration(
         host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
         user_name     = os.environ.get('MYSQLUSERNAME',''),
         password      = os.environ.get('MYSQLPASSWORD',''),
-        database_name = 'psrc_2005_parcel_baseyear_change_20070524',
+        database_name = 'psrc_2005_parcel_baseyear_change_20070802',
         ),
     'dataset_pool_configuration': DatasetPoolConfiguration(
         package_order=['psrc_parcel', 'psrc', 'urbansim_parcel', 'urbansim', 'opus_core'],
@@ -35,6 +35,6 @@ my_configuration = {
         ),
     'datasets_to_cache_after_each_model':[],
     'low_memory_mode':False,
-    'base_year': 2005,
-    'years': (2005,2005),                    
+    'base_year': 2000,
+    'years': (2000,2000),                    
     }
