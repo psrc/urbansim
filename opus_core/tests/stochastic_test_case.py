@@ -27,8 +27,7 @@ from opus_core.pstat import chisqprob
 from opus_core.misc import get_host_name, try_transformation
 from opus_core.store.mysql_database_server import MysqlDatabaseServer
 from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
-
-
+from opus_core.tests.utils.opus_test_runner import get_test_method_name
 
 class StochasticTestCase(opus_unittest.OpusTestCase):
     """A way to do statistically-grounded testing of stochastic system.
@@ -108,7 +107,7 @@ class StochasticTestCase(opus_unittest.OpusTestCase):
             'datetime':strftime("%Y-%m-%d %H:%M:%S", localtime()), # time.time()
             'host_name':get_host_name(),
             'file_path':self.file_path,
-            'method_name':self._TestCase__testMethodName,
+            'method_name': get_test_method_name(self),
             'significance_level':significance_level,
             'number_of_iterations':number_of_iterations,
             'statistic':self.type,

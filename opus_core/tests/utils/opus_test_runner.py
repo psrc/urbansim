@@ -26,9 +26,12 @@ def _get_centered_string(input_string, width):
         margin_len = int(diff/2)
         margin = ' ' * margin_len
         input_string = '%s%s' % (margin, input_string)
-    
     return input_string
     
+def get_test_method_name(test):   
+    # str(test) returns the method name followed by a space then the class name in parens
+    return str(test).split(' ')[0]
+ 
 class _OpusTextTestResult(TestResult):
     """A test result class that can print formatted text results to a stream.
 
@@ -65,7 +68,7 @@ class _OpusTextTestResult(TestResult):
             self.stream.writeln()
             self.stream.writeln(self.separator1)
             
-            methodName = logger._do_hide_error_and_warning_words(test._TestCase__testMethodName)
+            methodName = logger._do_hide_error_and_warning_words(get_test_method_name(test))
             methodClass = logger._do_hide_error_and_warning_words(_strclass(test.__class__))
             
             self.stream.writeln(_get_centered_string(methodClass, self.sep_len))
@@ -205,7 +208,7 @@ class _OpusXMLTestResult(TestResult):
 
     def startTest(self, test):
         TestResult.startTest(self, test)
-        methodName = test._TestCase__testMethodName
+        methodName = get_test_method_name(test)
         methodClass = _strclass(test.__class__)
         self._testcase_xml = self.xml.createElement('testcase')
         self._testcase_xml.setAttribute('classname', '%s' % methodClass)
