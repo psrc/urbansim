@@ -97,7 +97,7 @@ class lottery_choices(Choices):
                 choose_again = compress(choosers_out, choose_again)
 
             new_probability = ma.filled(new_probability,0.0)
-            out = sometrue(ma.filled(new_probability,0.0), axis=1) == 0
+            out = where(sometrue(ma.filled(new_probability,0.0), axis=1) == 0)[0]
             new_probability[out,0] = 1.0 # in order not to have all probs 0.
 
             new_choice = random_choices_from_index().run(new_probability, resources)
