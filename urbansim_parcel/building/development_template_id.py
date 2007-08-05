@@ -23,14 +23,14 @@ class development_template_id(Variable):
     ##TODO: what to do where a parcel was developed from multiple template (additive)
     def dependencies(self):
         return [my_attribute_label("land_area_sqft"),
-                "unit_name = development_template_component.disaggregate(building_component.unit_name)",
+                "_unit_name = development_template_component.disaggregate(building_component.unit_name)",
                 "sqft_per_unit = development_template_component.disaggregate(building_component.sqft_per_unit)",
                 "development_template.far"]
 
     def compute(self,  dataset_pool):
         template = dataset_pool.get_dataset("development_template")
         template_components = dataset_pool.get_dataset("development_template_component")
-        unit_names = template_components.get_attribute("unit_name")
+        unit_names = template_components.get_attribute("_unit_name")
         sqft_per_unit = template_components.get_attribute("sqft_per_unit")
         buildings = self.get_dataset()
         total_sqft = zeros(buildings.size(), dtype="int32")
@@ -53,33 +53,3 @@ class development_template_id(Variable):
 
     def post_check(self,  values, dataset_pool=None):
         self.do_check("x >= 0", values)
-
-if __name__=='__main__':
-    import unittest
-    from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numpy import array
-    from opus_core.resources import Resources
-    from urbansim_parcel.datasets.parcels import ParcelSet
-
-    class Tests(unittest.TestCase):
-        variable_name = "urbansim_parcel.parcel.lot_sf_per_unit"
-
-        def test_my_inputs(self):
-            resources = Resources({'data':
-                                   {"parcel_id":array([1,2,3,4,5]),
-                                    "residential_units":array([2,0,1,4,7]),
-                                    "lot_sf":array([1000,0,2000,1000,7000]),
-
-                                    },
-                                  })
-            parcels = ParcelSet(resources=resources, in_storage_type="RAM")
-
-            values = VariableTestToolbox().compute_variable(self.variable_name, \
-                {"parcel":parcels},
-                dataset = "parcel")
-            should_be = array([500, 0, 2000, 250, 1000])
-
-            self.assertEqual(ma.allclose(values, should_be), \
-                             True, msg = "Error in " + self.variable_name)
-
-    unittest.main()

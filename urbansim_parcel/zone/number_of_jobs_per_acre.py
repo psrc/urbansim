@@ -22,14 +22,12 @@ class number_of_jobs_per_acre(Variable):
     _return_type="int32"
 
     def dependencies(self):
-        return ["urbansim_parcel.job.zone_id", 
-                "number_of_jobs = zone.number_of_agents(job)",
+        return ["urbansim_parcel.zone.number_of_jobs",
                 "acres = zone.aggregate(parcel.parcel_sqft) / 43560.0 ",
-                "_number_of_jobs_per_acre = zone.number_of_jobs / zone.acres",
                 ]
 
     def compute(self, dataset_pool):
-        return self.get_dataset().get_attribute('_number_of_jobs_per_acre')
+        return self.get_dataset().get_attribute('number_of_jobs') / self.get_dataset().get_attribute('acres')
         
     def post_check(self, values, dataset_pool):
         size = self.get_dataset().get_attribute("number_of_jobs").sum()

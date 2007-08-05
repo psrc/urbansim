@@ -13,7 +13,7 @@
 #
 
 from opus_core.variables.variable import Variable
-#from variable_functions import my_attribute_label
+from variable_functions import my_attribute_label
 from numpy import where, zeros
 from opus_core.misc import unique_values
 
@@ -24,9 +24,9 @@ class existing_units(Variable):
     package_name = "urbansim_parcel"
     
     def dependencies(self):
-        return ["unit_name = parcel.disaggregate(land_use_type.unit_name)",
-                "building_sqft = parcel.aggregate(urbansim_parcel.building.building_sqft)",
-                "residential_units = parcel.aggregate(building.residential_units)",
+        return [my_attribute_label("unit_name"),
+                my_attribute_label("building_sqft"),
+                my_attribute_label("residential_units"),
                 ]
 
     def compute(self, dataset_pool):

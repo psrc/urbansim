@@ -18,16 +18,16 @@ from urbansim.functions import attribute_label
 
 class is_sector_DDD(Variable):
     """whether the job is of sector id DDD."""
-    _return_type="int32"
+
     def __init__(self, sector_id):
         self.sector_id = sector_id
         Variable.__init__(self)    
     
     def dependencies(self):
-        return ["_is_of_sector_%s = job.sector_id == %s" % (self.sector_id, self.sector_id)]
+        return [my_attribute_label("sector_id")]
         
     def compute(self,  dataset_pool):
-        return self.get_dataset().get_attribute("_is_of_sector_%s" % self.sector_id)
+        return self.get_dataset().get_attribute("sector_id") == self.sector_id
 
 from opus_core.tests import opus_unittest
 from opus_core.datasets.dataset_pool import DatasetPool

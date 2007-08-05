@@ -27,10 +27,10 @@ class number_of_jobs_of_sector_DDD(Variable):
         return [
                 "urbansim_parcel.job.is_sector_%s" % self.sector_id, 
                 "urbansim_parcel.job.zone_id", 
-                "_number_of_jobs_of_sector_%s = zone.aggregate(job.is_sector_%s)" % (self.sector_id, self.sector_id) ]
+                ]
 
     def compute(self,  dataset_pool):
-        return self.get_dataset().get_attribute("_number_of_jobs_of_sector_%s" % self.sector_id)
+        return self.get_dataset().sum_dataset_over_ids(dataset_pool.get_dataset('job'), "is_sector_%s" % self.sector_id)
 
     def post_check(self,  values, dataset_pool=None):
         size = dataset_pool.get_dataset("parcel").get_attribute("employment_of_sector_" + self.sector).sum()

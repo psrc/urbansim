@@ -19,8 +19,8 @@ from opus_core.misc import unique_values
 class units(Variable):
     """total number of units (residential_units or sqft, defined in building_types) """
     def dependencies(self):
-        return ["_unit_name=building.disaggregate(building_type.unit_name)",
-                "parcel_sqft=building.disaggregate(parcel.parcel_sqft)",
+        return ["urbansim_parcel.building.unit_name",
+                "urbansim_parcel.building.parcel_sqft",
                 ]
         
     def compute(self,  dataset_pool):

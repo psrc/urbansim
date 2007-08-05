@@ -449,7 +449,11 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         #hlcm_controller["estimate"]["arguments"]["procedure"] = 'None'
         models_configuration['household_location_choice_model']["controller"].replace(hlcm_controller)
         
-        
+        self['models_configuration']["employment_location_choice_model"]['controller']["import"] = \
+                {"urbansim_parcel.models.employment_location_choice_model" : "EmploymentLocationChoiceModel"}
+        #self['models_configuration']["home_based_employment_location_choice_model"]['controller']["import"] = \
+        #        {"urbansim_parcel.models.employment_location_choice_model" : "EmploymentLocationChoiceModel"}
+                
         self["datasets_to_preload"] = {
                 'zone':{},
                 'household':{},

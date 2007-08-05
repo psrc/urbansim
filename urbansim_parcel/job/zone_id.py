@@ -16,7 +16,7 @@ from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
 
 class zone_id(Variable):
-    """The taz id of this household. """
+    """The taz id of this job. """
    
     def dependencies(self):
         return [my_attribute_label("building_id"), "urbansim_parcel.building.zone_id"]
@@ -43,8 +43,8 @@ if __name__=='__main__':
                                                {"building_id":array([1,2,3,4,5]),
                                                 "zone_id":  array([2,1,2,3,1]),
                                                 },
-                                    "household":{ 
-                                                 "household_id": array([1,2,3,4,5]),
+                                    "job":{ 
+                                                 "job_id": array([1,2,3,4,5]),
                                                  "building_id": building_id
                                                  },
                                   })

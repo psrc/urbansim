@@ -21,8 +21,7 @@ class building_sqft(Variable):
     _return_type = "int32"
     
     def dependencies(self):
-        return ["_unit_name=building.disaggregate(building_type.unit_name)",
-                "_is_residential = building._unit_name == 'residential_units'",
+        return ["_is_residential = urbansim_parcel.building.unit_name == 'residential_units'",
                 my_attribute_label("residential_units"), my_attribute_label("non_residential_sqft"),
                 my_attribute_label("sqft_per_unit")
                 ]
