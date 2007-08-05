@@ -65,7 +65,7 @@ aliases = [
               "urbansim_parcel.parcel.plan_20"),
        "used_land_area = (parcel.aggregate(building.land_area, function=sum)).astype(int32)",
        "unit_name = parcel.disaggregate(land_use_type.unit_name)",
-       "building_sqft = parcel.aggregate(urbansim_parcel.building.building_sqft)",
-       "residential_units = parcel.aggregate(building.residential_units)",
-       "unit_price = (parcel.land_value + parcel.improvement_value) / urbansim_parcel.parcel.existing_units"
+       "building_sqft = (parcel.aggregate(urbansim_parcel.building.building_sqft)).astype(int32)",
+       "residential_units = (parcel.aggregate(building.residential_units)).astype(int32)",
+       "unit_price = (parcel.land_value + parcel.improvement_value) / (urbansim_parcel.parcel.existing_units).astype(float32)"
            ]
