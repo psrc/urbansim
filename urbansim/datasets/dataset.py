@@ -17,6 +17,7 @@ from opus_core.variables.attribute_type import AttributeType
 from opus_core.resource_factory import ResourceFactory
 from opus_core.misc import DebugPrinter
 from opus_core.store.storage import Storage
+from opus_core.session_configuration import SessionConfiguration
 
 class Dataset(CoreDataset):
     """Urbansim Dataset"""
@@ -39,7 +40,14 @@ class Dataset(CoreDataset):
             nchunks=None, 
             debuglevel=0
             ):
-        debug = DebugPrinter(debuglevel)
+        try: 
+            debug = SessionConfiguration().get('debuglevel', 0)
+        except:
+            debug = 0
+        debug = DebugPrinter(debug)
+        if debuglevel > debug.flag:
+            debug.flag = debuglevel
+            
         debug.print_debug("Creating object %s.%s" % (self.__class__.__module__, self.__class__.__name__), 2)
         
         resources = ResourceFactory().get_resources_for_dataset(
