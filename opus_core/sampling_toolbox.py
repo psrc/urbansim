@@ -268,7 +268,7 @@ def prob2dsample(source_array, sample_size, prob_array=None, exclude_index=None,
 
     p_array = prob_array
 
-    p_array_sum = p_array.sum()
+    p_array_sum = p_array.sum(dtype="float64")
     if not ma.allclose(p_array_sum, 1.0):
         if abs(1.0 - p_array_sum) > 0.01:
             # print this message only if it is a serious difference
