@@ -120,6 +120,7 @@ class Dataset(AbstractDataset):
                                   "Cannot find attribute '%s'." % name)
         elif not self.attribute_boxes[short_name].is_in_memory():
             if self.attribute_boxes[short_name].is_cached():
+                self.debug.print_debug("Loading %s.%s" % (self.get_dataset_name(), short_name), 8)
                 self.load_dataset(nchunks=1, attributes=[short_name], in_storage=self.attribute_cache,
                                   load_id_with_each_chunk=False)
             else:
@@ -221,6 +222,13 @@ class Dataset(AbstractDataset):
                 data = in_storage.load_table(table_name = table_name, 
                                              column_names = column_names, 
                                              id_name = self.get_non_hidden_id_name())
+                data_computed = {}
+                if table_name+".computed" in in_storage.get_table_names():
+                    column_names_computed = [name for name in chunked_attributes[ichunk] 
+                                if name in in_storage.get_column_names(table_name+".computed")]
+                    data_computed = in_storage.load_table(table_name = table_name+".computed", 
+                                                 column_names = column_names_computed, 
+                                                 id_name = self.get_non_hidden_id_name())
                 
                 for attr in data:
                     if self.attribute_boxes.has_key(attr):
@@ -234,25 +242,23 @@ class Dataset(AbstractDataset):
                                                       type=AttributeType.PRIMARY,
                                                       header=None,
                                                       version=0)
+
+                for attr in data_computed:
+                    if self.attribute_boxes.has_key(attr):
+                        if not (attr in self._id_names) or not self.attribute_boxes[attr].is_in_memory():
+                            self.attribute_boxes[attr].set_data(data_computed[attr])
+                            self.attribute_boxes[attr].set_is_in_memory(True)
+                    elif not ((attr in self._id_names) and self.attribute_boxes.has_key(attr)): #do not store id_name every time
+                        self.attribute_boxes[attr] = AttributeBox(self,
+                                                      data_computed[attr],
+                                                      variable_name=self.create_and_check_qualified_variable_name(attr),
+                                                      type=AttributeType.COMPUTED,
+                                                      header=None,
+                                                      version=0)
+                                                                        
                 if local_resources["flush_after_each_chunk"]:
                     self.flush_dataset()
-            if table_name+".computed" in in_storage.get_table_names():
-                    data = in_storage.load_table(table_name = table_name+".computed", 
-                                                 column_names = Storage.ALL_COLUMNS, 
-                                                 id_name = self.get_non_hidden_id_name())
-                    
-                    for attr in data:
-                        if self.attribute_boxes.has_key(attr):
-                            if not (attr in self._id_names) or not self.attribute_boxes[attr].is_in_memory():
-                                self.attribute_boxes[attr].set_data(data[attr])
-                                self.attribute_boxes[attr].set_is_in_memory(True)
-                        elif not ((attr in self._id_names) and self.attribute_boxes.has_key(attr)): #do not store id_name every time
-                            self.attribute_boxes[attr] = AttributeBox(self,
-                                                          data[attr],
-                                                          variable_name=self.create_and_check_qualified_variable_name(attr),
-                                                          type=AttributeType.COMPUTED,
-                                                          header=None,
-                                                          version=0)
+ 
             if not id_name_stored:
                 try:
                     self.n = len(self.get_attribute(self.get_attribute_names()[0]))
@@ -320,7 +326,7 @@ class Dataset(AbstractDataset):
         if short_name <> self.hidden_id_name:
             type = self._get_attribute_type(short_name)
             if type not in (AttributeType.LAG, AttributeType.EXOGENOUS):
-                self.debug.print_debug("Flushing %s.%s" % (self.get_dataset_name(), short_name), 4)
+                self.debug.print_debug("Flushing %s.%s" % (self.get_dataset_name(), short_name), 8)
                 #logger.log_status("Flushing %s.%s" % (self.get_dataset_name(), short_name))
                 self.write_dataset(attributes=[short_name], out_storage=self.attribute_cache, 
                                    out_table_name=self._get_in_table_name_for_cache())

@@ -16,6 +16,7 @@ import os
 from opus_core.store.storage import Storage
 from opus_core.store.flt_storage import flt_storage
 from opus_core.simulation_state import SimulationState
+from opus_core.misc import unique_values
 from opus_core.store.old.attribute_cache import AttributeCache as AttributeCache_old
 
 
@@ -90,7 +91,7 @@ class AttributeCache(Storage, AttributeCache_old):
     
     def get_years(self, table_name):
         columns = self._get_column_names_and_years(table_name)
-        return [column[1] for column in columns]
+        return unique_values(array([column[1] for column in columns]))
         
     def get_table_names(self):
         result = []

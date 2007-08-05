@@ -89,6 +89,12 @@ class Variable(object):
         self.dependencies_list = None
         self.dataset = None
         self.number_of_compute_runs = 0
+        try:
+            self.debug = SessionConfiguration().get('debuglevel', 0)
+        except:
+            self.debug = 0
+        if isinstance(self.debug, int):
+            self.debug = DebugPrinter(self.debug)
             
     def name(self):
         return self.__module__
@@ -143,9 +149,6 @@ class Variable(object):
         return values
         
     def compute_with_dependencies(self, dataset_pool, arguments={}):
-        self.debug = arguments.get("debug",  0)
-        if isinstance(self.debug, int):
-            self.debug = DebugPrinter(self.debug)
         self._solve_dependencies(dataset_pool)
         if self.should_check(arguments):
             self.debug.print_debug("Computing and checking " + self.__class__.__module__,3)
