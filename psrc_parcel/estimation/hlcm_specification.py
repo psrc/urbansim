@@ -86,7 +86,7 @@ specification = {
             "is_pre_1940 = building.year_built < 1940",
             
             #"ln_emp_15min_hbw_drive_alone = building.disaggregate(psrc.zone.ln_employment_within_15_minutes_travel_time_hbw_am_drive_alone)",
-            "ln_emp_40min_hbw_transit_walk = building.disaggregate(psrc.zone.ln_employment_within_40_minutes_travel_time_hbw_am_transit_walk)",
+            "ln_emp_40min_hbw_transit_walk = building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_40_minutes_travel_time_hbw_am_transit_walk))",
             #"gen_cost_wt_access_to_emp_hbw_drive_alone = building.disaggregate(psrc.zone.generalized_cost_weighted_access_to_employment_hbw_am_drive_alone)",
             "trip_wt_avg_time_hbw_drive_alone = building.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_drive_alone)",
             #"trip_wt_avg_time_hbw_transit_walk = building.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_transit_walk)",

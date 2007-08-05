@@ -435,6 +435,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         #config["models_configuration"]['building_location_choice_model']["controller"].merge(bldglcm_controller)
         #HLCM
         hlcm_controller = self["models_configuration"]["household_location_choice_model"]["controller"]
+        hlcm_controller["import"] = {"urbansim_parcel.models.household_location_choice_model" : "HouseholdLocationChoiceModel"}
         hlcm_controller["init"]["arguments"]["location_set"] = "building"
         hlcm_controller["init"]["arguments"]["location_id_string"] = "'building_id'"
         hlcm_controller["init"]["arguments"]["estimate_config"] = {"weights_for_estimation_string":"building.residential_units"} #"urbansim.zone.vacant_residential_units"
