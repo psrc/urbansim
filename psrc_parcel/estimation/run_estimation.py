@@ -74,9 +74,9 @@ class EstimationRunner(object):
 
 if __name__ == '__main__':
 #    model = ("REPM", "real_estate_price_model")
-#    model = ("HLCM", "household_location_choice_model")
+    model = ("HLCM", "household_location_choice_model")
 #    model = ("BLCM", "business_location_choice_model")
-    model = ("ELCM", "employment_location_choice_model", "home_based", False)
+#    model = ("ELCM", "employment_location_choice_model", "home_based", False)
 #    model = ("ELCM", "employment_location_choice_model", "non_home_based", False)
 #    model = ("BLDGLCM", "building_location_choice_model", "nonresidential", False)
 #    model = ("BLDGLCM", "building_location_choice_model", "residential", False)

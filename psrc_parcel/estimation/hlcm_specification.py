@@ -93,7 +93,7 @@ specification = {
             #"transit_mode_share_overall = building.disaggregate(psrc.zone.mode_split_transit_trips_over_all.py)",
             #"ln_number_of_jobs_within_walking_distance = ln(building.disaggregate(psrc.parcel.number_of_jobs_within_walking_distance))",
             #"gcdacbd=building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)",
-            "ln_residential_units_within_walking_distance = ln(building.disaggregate(psrc.parcel.residential_units_within_walking_distance))",
+            #"ln_residential_units_within_walking_distance = ln(building.disaggregate(psrc.parcel.residential_units_within_walking_distance))",
 
 #variables below need to be revised and tested
 
