@@ -116,7 +116,16 @@ class HouseholdTransitionModel(Model):
 
         def get_category(values):
             bins = map(lambda x, y: self.arrays_from_categories[x][int(y)], all_characteristics, values)
-            return categories_index_mapping[tuple(bins)]
+            try:
+                return categories_index_mapping[tuple(bins)]
+            except KeyError, msg: 
+                where_error = where(array(bins) == -1)[0]
+                if where_error.size > 0:
+                    raise KeyError, \
+                        "Invalid value of %s for attribute %s. It is not included in the characteristics groups." % (
+                                                                               array(values)[where_error], 
+                                                                               array(all_characteristics)[where_error])
+                raise KeyError, msg
 
         # the next array must be a copy of the household values, otherwise, it changes the original values
         values_array = reshape(array(household_set.get_attribute(all_characteristics[0])), (household_set.size(),1))
