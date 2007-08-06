@@ -443,9 +443,11 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         hlcm_controller["init"]["arguments"]["capacity_string"] = "'urbansim_parcel.building.vacant_residential_units'"
         hlcm_controller["init"]["arguments"]['sample_size_locations']=30
         hlcm_controller["init"]["arguments"]['sampler']="'opus_core.samplers.weighted_sampler'"
-        hlcm_controller["controller"]["init"]["arguments"]["submodel_string"] = 'None' #"'household_size'"
-        hlcm_controller["prepare_for_estimate"]["arguments"]["join_datasets"] = 'True'
-        hlcm_controller["prepare_for_estimate"]["arguments"]["index_to_unplace"] = 'None'
+        hlcm_controller["init"]["arguments"]["submodel_string"] = None #"'household_size'"
+        hlcm_controller["init"]["arguments"]["estimation_size_agents"] = 0.1
+        hlcm_controller["prepare_for_estimate"]["arguments"]["agents_for_estimation_table"] = None
+        hlcm_controller["prepare_for_estimate"]["arguments"]["join_datasets"] = True
+        hlcm_controller["prepare_for_estimate"]["arguments"]["index_to_unplace"] = None
         #hlcm_controller["estimate"]["arguments"]["procedure"] = 'None'
         models_configuration['household_location_choice_model']["controller"].replace(hlcm_controller)
                 
