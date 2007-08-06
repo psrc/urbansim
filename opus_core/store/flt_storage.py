@@ -163,7 +163,7 @@ class FltError(Exception):
     def __str__(self):
         return self.value
 
-
+import sys
 from opus_core.tests import opus_unittest
 from opus_core.opus_package import OpusPackage
 from opus_core.store.storage import TestStorageInterface
@@ -259,11 +259,16 @@ class StorageWriteTests(TestStorageInterface):
         table_data = {
             'int_column': expected,
             }
-        file_name = os.path.join(self.temp_dir, self.table_name, 'int_column.li4')
-        
+        if sys.byteorder=='little':
+            file_name = 'int_column.li4'
+            numpy_dtype = '<i4'
+        else:
+            file_name = 'int_column.bi4'
+            numpy_dtype = '>i4'
+        file_path = os.path.join(self.temp_dir, self.table_name, file_name)
         self.storage.write_table(self.table_name, table_data)
-        self.assert_(os.path.exists(file_name))
-        actual = numpy.fromfile(file_name, dtype='<i4')
+        self.assert_(os.path.exists(file_path))
+        actual = numpy.fromfile(file_path, dtype=numpy_dtype)
         self.assert_((expected==actual).all())
         
     def test_write_float_and_boolean_array(self):
@@ -273,16 +278,21 @@ class StorageWriteTests(TestStorageInterface):
             'float_column': expected_float,
             'bool_column': expected_bool,
             }
-        file_name = os.path.join(self.temp_dir, self.table_name, 'float_column.lf8')
+        if sys.byteorder=='little':
+            file_name = 'float_column.lf8'
+            numpy_ext = '<f8'
+        else:
+            file_name = 'float_column.bf8'
+            numpy_ext = '>f8'
+        file_path = os.path.join(self.temp_dir, self.table_name, file_name)
         self.storage.write_table(self.table_name, table_data)
-        self.assert_(os.path.exists(file_name))
-        actual = fromfile(file_name, '<f8')
+        self.assert_(os.path.exists(file_path))
+        actual = fromfile(file_path, numpy_ext)
         self.assert_((expected_float == actual).all())
-        
-        file_name = os.path.join(self.temp_dir, self.table_name, 'bool_column.ib1')
+        file_path = os.path.join(self.temp_dir, self.table_name, 'bool_column.ib1')
         self.storage.write_table(self.table_name, table_data)
-        self.assert_(os.path.exists(file_name))
-        actual = fromfile(file_name, '|b1')
+        self.assert_(os.path.exists(file_path))
+        actual = fromfile(file_path, '|b1')
         self.assert_((expected_bool == actual).all())
         
     def test_writing_column_to_file_when_file_of_same_column_name_and_different_type_already_exists(self):

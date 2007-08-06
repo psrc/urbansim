@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-import os 
+import os, sys
 
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.variables.attribute_type import AttributeType
@@ -80,10 +80,14 @@ class Tests(opus_unittest.OpusTestCase):
         cache_creator.create_attribute_cache_with_data(cache_directory, test_data)
         
         self.assert_(os.path.exists(cache_directory))
+        if sys.byteorder=='little':
+            filename = 'attr1.li4'
+        else:
+            filename = 'attr1.bi4'
         self.assert_(os.path.exists(os.path.join(cache_directory, 
                                                  str(year),
                                                  table_name,
-                                                 'attr1.li4'
+                                                 filename
                                              )))
     
 

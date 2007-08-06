@@ -73,7 +73,7 @@ try:
 except:
     pass
 else:
-    import os
+    import os, sys
     
     from sets import Set
     
@@ -112,7 +112,10 @@ else:
             self.assert_(os.path.exists(table_dir))
             
             actual = Set(os.listdir(table_dir))
-            expected = Set(['attribute1.li4', 'attribute2.li4'])
+            if sys.byteorder=='little':
+                expected = Set(['attribute1.li4', 'attribute2.li4'])
+            else:
+                expected = Set(['attribute1.bi4', 'attribute2.bi4'])
             self.assertEqual(expected, actual)
             
             exporter = ExportCacheToDbfTableCommand(

@@ -62,7 +62,7 @@ class ExportCacheTableToSqlServerCommand(Command):
     
 from opus_core.tests import opus_unittest
 
-import os
+import os, sys
 
 from sets import Set
 from shutil import rmtree
@@ -107,7 +107,10 @@ class TestExportCacheTableToSqlServerCommand(opus_unittest.TestCase):
         self.assert_(os.path.exists(table_dir))
         
         actual = Set(os.listdir(table_dir))
-        expected = Set(['attribute1.li4', 'attribute2.li4'])
+        if sys.byteorder=='little':
+            expected = Set(['attribute1.li4', 'attribute2.li4'])
+        else:
+            expected = Set(['attribute1.bi4', 'attribute2.bi4'])
         self.assertEqual(expected, actual)
         
         exporter = ExportCacheTableToSqlServerCommand(
@@ -165,7 +168,10 @@ class TestExportCacheTableToSqlServerCommand(opus_unittest.TestCase):
         self.assert_(os.path.exists(table_dir))
             
         actual = Set(os.listdir(table_dir))
-        expected = Set(['spam.li4', 'eggs.iS3'])
+        if sys.byteorder=='little':
+            expected = Set(['spam.li4', 'eggs.iS3'])
+        else:
+            expected = Set(['spam.bi4', 'eggs.iS3'])
         self.assertEqual(expected, actual)
                     
         exporter = ExportCacheTableToSqlServerCommand(
