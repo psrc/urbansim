@@ -127,7 +127,7 @@ class Model(ModelComponent):
         names = self.get_coefficient_names(submodel)
         if (names is not None) and (coefficient in names) and (data is not None):
             if is3d:
-                return data[:, names == coefficient, :].reshape((data.shape[0], data.shape[2]))
+                return data[:, :, names == coefficient].reshape((data.shape[0], data.shape[1]))
             return data[:, names == coefficient].reshape(data.shape[0])
         logger.log_warning("No coefficient %s exist for submodel %s." % (coefficient, submodel))
         return None
