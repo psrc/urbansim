@@ -111,7 +111,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                 input_index = 'erm_index',
                                 estimation_weight_string = "pre_2001=building.year_built<=2000",
                                 agents_for_estimation_table = None, # will take standard jobs table 
-                                estimation_size_agents = 0.2,
+                                #estimation_size_agents = 0.2,
                                 number_of_units_string = "urbansim_parcel.building.total_SSS_job_space",
                                 filter_for_estimation = "job.building_id",
                                 portion_to_unplace = 0,
