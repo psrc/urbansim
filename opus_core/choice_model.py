@@ -481,7 +481,7 @@ class ChoiceModel(ChunkModel):
         return prepare_specification_and_coefficients(*args, **kwargs)
 
     def get_data(self, coefficient, submodel=-2):
-        return ChunkModel.get_data(coefficient, submodel, is3d=True)
+        return ChunkModel.get_data(self, coefficient, submodel, is3d=True)
 
     def get_data_as_dataset(self, submodel=-2):
         """Like get_all_data, but the retuning value is a InteractionDataset containing attributes that
