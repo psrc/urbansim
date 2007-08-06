@@ -210,12 +210,11 @@ class BTMTests(StochasticTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         gridcells_table_name = 'gridcells'
-        storage._write_dataset(
-            out_table_name = gridcells_table_name,
-
 #            create 100 gridcells, each with 200 residential units and space for 100 commercial jobs,
 #            100 industrial jobs, and residential, industrial, and commercial value at $500,000 each
-            values = {
+        storage.write_table(
+            table_name=gridcells_table_name,
+            table_data={
                 "grid_id": arange( 1, 100+1 ),
                 "commercial_sqft_per_job":array( 100*[100] ),
                 "industrial_sqft_per_job":array( 100*[100] ),
@@ -227,11 +226,10 @@ class BTMTests(StochasticTestCase):
         self.gridcells = GridcellDataset(in_storage=storage, in_table_name=gridcells_table_name)
 
         buildings_table_name = 'buildings'
-        storage._write_dataset(
-            out_table_name = buildings_table_name,
-
 #            2000 buildings (1000 with 20 residential units each, 500 with 20 commercial job and 500 with 20 industrial job each)
-            values = {
+        storage.write_table(
+            table_name=buildings_table_name,
+            table_data={
                 "building_id":arange( 1, 2000+1 ), # 2000 buildings
                 "grid_id":array( 20*range( 1, 100+1 ), dtype=int32 ), # spread evenly across 100 gridcells
                 "building_type_id":array(1000*[self.sfhc] +
@@ -254,12 +252,11 @@ class BTMTests(StochasticTestCase):
         self.buildings = BuildingDataset(in_storage=storage, in_table_name=buildings_table_name)
 
         households_table_name = 'households'
-        storage._write_dataset(
-            out_table_name = households_table_name,
-
 #            create 10000 households, 100 in each of the 100 gridcells.
 #            there will initially be 100 vacant residential units in each gridcell then.
-            values = {
+        storage.write_table(
+            table_name=households_table_name,
+            table_data={
                 "household_id":arange( 1, 10000+1 ),
                 "grid_id":array( 100*range( 1, 100+1 ), dtype=int32 )
                 }
@@ -267,9 +264,9 @@ class BTMTests(StochasticTestCase):
         self.households = HouseholdDataset(in_storage=storage, in_table_name=households_table_name)
 
         building_types_table_name = 'building_types'
-        storage._write_dataset(
-            out_table_name = building_types_table_name,
-            values = {
+        storage.write_table(
+            table_name=building_types_table_name,
+            table_data={
                 "building_type_id":array([self.govc,self.comc,self.indc, self.sfhc, self.mfhc], dtype=int8),
                 "name": array(["governmental", "commercial", "industrial", "single_family","multiple_family"]),
                 "units": array(["governmental_sqft", "commercial_sqft", "industrial_sqft", "residential_units", "residential_units"]),
@@ -279,9 +276,9 @@ class BTMTests(StochasticTestCase):
         self.building_types = BuildingTypeDataset(in_storage=storage, in_table_name=building_types_table_name)
 
         job_building_types_table_name = 'job_building_types'
-        storage._write_dataset(
-            out_table_name = job_building_types_table_name,
-            values = {
+        storage.write_table(
+            table_name=job_building_types_table_name,
+            table_data={
                 "id":array([self.govc,self.comc,self.indc, self.sfhc, self.mfhc], dtype=int8),
                 "name": array(["governmental", "commercial", "industrial", "single_family","multiple_family"])
                 }
@@ -289,12 +286,11 @@ class BTMTests(StochasticTestCase):
         self.job_building_types = JobBuildingTypeDataset(in_storage=storage, in_table_name=job_building_types_table_name)
 
         jobs_table_name = 'jobs'
-        storage._write_dataset(
-            out_table_name = jobs_table_name,
-
 #            create 2500 commercial jobs and distribute them equally across the 100 gridcells,
 #            25 commercial buildings/gridcell
-            values = {
+        storage.write_table(
+            table_name=jobs_table_name,
+            table_data={
                 "job_id":arange( 1, 2500+1 ),
                 "grid_id":array( 25*range( 1, 100+1 ), dtype=int32 ),
                 "sector_id":array( 2500*[1], dtype=int32 ),
@@ -324,9 +320,9 @@ class BTMTests(StochasticTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         target_vacancies_table_name = 'target_vacancies'
-        storage._write_dataset(
-            out_table_name = target_vacancies_table_name,
-            values = {
+        storage.write_table(
+            table_name=target_vacancies_table_name,
+            table_data={
                 "year":array( [2000] ),
                 "target_total_commercial_vacancy":array( [0.0] )
                 }
@@ -352,9 +348,9 @@ class BTMTests(StochasticTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         target_vacancies_table_name = 'target_vacancies'
-        storage._write_dataset(
-            out_table_name = target_vacancies_table_name,
-            values = {
+        storage.write_table(
+            table_name=target_vacancies_table_name,
+            table_data={
                 "year":array( [2001], dtype=int32 ),
                 "target_total_single_family_vacancy":array( [0.75] ),
                 "target_total_commercial_vacancy":array( [0.50] )
@@ -401,8 +397,9 @@ class BTMTests(StochasticTestCase):
 
         storage = StorageFactory().get_storage('dict_storage')
 
-        storage._write_dataset(out_table_name='target_vacancies',
-            values = {
+        storage.write_table(
+            table_name='target_vacancies',
+            table_data={
                 'year':array([2001], dtype=int32),
                 'target_total_single_family_vacancy':array([0.99]),
                 'target_total_commercial_vacancy':array([0.99]),

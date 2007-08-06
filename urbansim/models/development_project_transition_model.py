@@ -20,7 +20,7 @@ from urbansim.datasets.development_event_dataset import DevelopmentEventTypeOfCh
 from opus_core.model import Model
 from numpy.random import randint
 from opus_core.logger import logger
-from numpy import arange, array, where, zeros, ones, float32, int32, concatenate, logical_and
+from numpy import arange, array, zeros, ones, float32, int32, concatenate, logical_and
 
 class DevelopmentProjectTransitionModel( Model ):
     """
@@ -70,7 +70,6 @@ class DevelopmentProjectTransitionModel( Model ):
             # determine current-year vacancy rates
             vacant_units_sum = location_set.get_attribute(self.variable_for_vacancy[project_type]).sum()
             units_sum = float( location_set.get_attribute(self.units_variable[project_type]).sum() )
-            vacant_rate = self.safe_divide(vacant_units_sum, units_sum)
             if model_configuration['development_project_types'][project_type]['residential']:
                 target_vacancy_rate = target_residential_vacancy_rate
             else:
@@ -152,7 +151,7 @@ class DevelopmentProjectTransitionModel( Model ):
         storage = StorageFactory().get_storage('dict_storage')
 
         development_projects_table_name = 'development_projects'
-        storage._write_dataset(development_projects_table_name, data)
+        storage.write_table(table_name=development_projects_table_name, table_data=data)
 
         return DevelopmentProjectDataset(
             in_storage = storage,
@@ -164,11 +163,8 @@ class DevelopmentProjectTransitionModel( Model ):
             )
 
     
-from numpy import ma
-
 from opus_core.tests import opus_unittest
 from opus_core.datasets.dataset_pool import DatasetPool
-from opus_core.storage_factory import StorageFactory
 from opus_core.tests.stochastic_test_case import StochasticTestCase
 
 from urbansim.constants import Constants
@@ -184,9 +180,9 @@ class DPTMTests(StochasticTestCase):
         no development, and thus, nothing will be sampled from the development_history"""
         self.storage = StorageFactory().get_storage('dict_storage')
 
-        self.storage._write_dataset(
-            'development_event_history',
-            {
+        self.storage.write_table(
+            table_name='development_event_history',
+            table_data={
                 "grid_id":arange( 1, 100+1 ),
                 "scheduled_year":array( 100*[1999] ),
                 "residential_units":array( 100*[50] ),
@@ -199,11 +195,11 @@ class DPTMTests(StochasticTestCase):
                 "governmental_improvement_value":array( 100*[1000] )
                 }
             )
-        self.storage._write_dataset(
-            'gridcells',
 #            create 100 gridcells, each with 200 residential units and space for 100 commercial jobs,
 #            100 industrial jobs, and residential, industrial, and commercial value at $500,000 each
-            {
+        self.storage.write_table(
+            table_name='gridcells',
+            table_data={
                 "grid_id": arange( 1, 100+1 ),
                 "residential_units":array( 100*[200] ),
                 "commercial_sqft":array( 100*[10000] ),
@@ -215,18 +211,18 @@ class DPTMTests(StochasticTestCase):
                 "industrial_improvement_value":array( 100*[500000] )
                 }
             )
-        self.storage._write_dataset(
-            'households',
 #            create 10000 households, 100 in each of the 100 gridcells.
 #            there will initially be 100 vacant residential units in each gridcell then.
-            {
+        self.storage.write_table(
+            table_name='households',
+            table_data={
                 "household_id":arange( 1, 10000+1 ),
                 "grid_id":array( 100*range( 1, 100+1 ) )
                 }
             )
-        self.storage._write_dataset(
-            'job_building_types',
-            {
+        self.storage.write_table(
+            table_name='job_building_types',
+            table_data={
                 "id":array([Constants._governmental_code,
                             Constants._commercial_code,
                             Constants._industrial_code,
@@ -235,11 +231,11 @@ class DPTMTests(StochasticTestCase):
                 "home_based": array([0, 0, 0, 1])
                 }
             )
-        self.storage._write_dataset(
 #            create 2500 commercial jobs and distribute them equally across the 100 gridcells,
 #            25 commercial jobs/gridcell
-            'jobs',
-            {
+        self.storage.write_table(
+            table_name='jobs',
+            table_data={
                 "job_id":arange( 1, 2500+1 ),
                 "grid_id":array( 25*range( 1, 100+1 ) ),
                 "sector_id":array( 2500*[1] ),
@@ -247,9 +243,9 @@ class DPTMTests(StochasticTestCase):
                 "building_type":array(2500*[Constants._commercial_code])
                 }
             )
-        self.storage._write_dataset(
-            'urbansim_constants',
-            {
+        self.storage.write_table(
+            table_name='urbansim_constants',
+            table_data={
                 "acres": array([105.0]),
             }
         )
@@ -282,9 +278,9 @@ class DPTMTests(StochasticTestCase):
         """specify that the target vacancies for the year 2000 should be 0% for both
         residential and non-residential. with these constrains, no new development projects
         should be spawned for any set of agents."""
-        self.storage._write_dataset(
-            'target_vacancies',
-            {
+        self.storage.write_table(
+            table_name='target_vacancies',
+            table_data={
                 "year":array( [2000] ),
                 "target_total_residential_vacancy":array( [0.0] ),
                 "target_total_non_residential_vacancy":array( [0.0] )
@@ -310,9 +306,9 @@ class DPTMTests(StochasticTestCase):
         """Test basic cases, where current residential vacancy = 50%, target residential vacancy is 75%,
         current non_residential vacancy is 75% (commercial), and target nonresidential vacancy is 50%.
         Residential development projects should occur, and none for nonresidential"""
-        self.storage._write_dataset(
-            'target_vacancies',
-            {
+        self.storage.write_table(
+            table_name='target_vacancies',
+            table_data={
                 "year":array( [2001] ),
                 "target_total_residential_vacancy":array( [0.75] ),
                 "target_total_non_residential_vacancy":array( [0.50] )
@@ -347,9 +343,9 @@ class DPTMTests(StochasticTestCase):
         """Not too different from the basic case above, just trying the other extreme.
         Notice that a 100% target vacancy rate doesn't really make sense and is not possible unless
         the current vacancy rate is also 100% (also not feasible)."""
-        self.storage._write_dataset(
-            'target_vacancies',
-            {
+        self.storage.write_table(
+            table_name='target_vacancies',
+            table_data={
                 "year":array( [2001] ),
                 "target_total_residential_vacancy":array( [0.99] ),
                 "target_total_non_residential_vacancy":array( [0.99] )
@@ -391,17 +387,17 @@ class DPTMTests(StochasticTestCase):
         def run_model():
             storage = StorageFactory().get_storage('dict_storage')
 
-            storage._write_dataset(
-                'target_vacancies',
-                {
+            storage.write_table(
+                table_name='target_vacancies',
+                table_data={
                     "year":array( [2000] ),
                     "target_total_residential_vacancy":array( [0.75] ),
                     "target_total_non_residential_vacancy":array( [0.90] )
                     }
                 )
-            storage._write_dataset(
-                'development_event_history',
-                {
+            storage.write_table(
+                table_name='development_event_history',
+                table_data={
                     "grid_id":array( 10*range( 1, 100+1 ) ),
                     "scheduled_year":array( 1000*[1999] ),
 
@@ -416,9 +412,9 @@ class DPTMTests(StochasticTestCase):
                     "governmental_improvement_value":array( 1000*[1000] )
                     }
                 )
-            storage._write_dataset(
-                'gridcells',
-                {
+            storage.write_table(
+                table_name='gridcells',
+                table_data={
                     "grid_id": arange( 1, 100+1 ),
                     "residential_units":array( 100*[200] ),
                     "commercial_sqft":array( 100*[10000] ),
@@ -430,16 +426,16 @@ class DPTMTests(StochasticTestCase):
                     "industrial_improvement_value":array( 100*[500000] )
                     }
                 )
-            storage._write_dataset(
-                'households',
-                {
+            storage.write_table(
+                table_name='households',
+                table_data={
                     "household_id":arange( 1, 10000+1 ),
                     "grid_id":array( 100*range( 1, 100+1 ) )
                     }
                 )
-            storage._write_dataset(
-                'jobs',
-                {
+            storage.write_table(
+                table_name='jobs',
+                table_data={
                     "job_id":arange( 1, 2500+1 ),
                     "grid_id":array( 25*range( 1, 100+1 ) ),
                     "sector_id":array( 2500*[1] ),
@@ -485,17 +481,17 @@ class DPTMTests(StochasticTestCase):
         """
         storage = StorageFactory().get_storage('dict_storage')
 
-        storage._write_dataset(
-            'target_vacancies',
-            {
+        storage.write_table(
+            table_name='target_vacancies',
+            table_data={
                 "year":array( [2000] ),
                 "target_total_residential_vacancy":array( [0.75] ),
                 "target_total_non_residential_vacancy":array( [0.90] )
             }
         )
-        storage._write_dataset(
-            'development_event_history',
-            {
+        storage.write_table(
+            table_name='development_event_history',
+            table_data={
                 "grid_id":array( 10*range( 1, 100+1 ) ),
                 "scheduled_year":array( 1000*[1999] ),
 
@@ -510,9 +506,9 @@ class DPTMTests(StochasticTestCase):
                 "governmental_improvement_value":array( 1000*[1000] )
             }
         )
-        storage._write_dataset(
-            'gridcells',
-            {
+        storage.write_table(
+            table_name='gridcells',
+            table_data={
                 "grid_id": arange( 1, 100+1 ),
                 "residential_units":array( 100*[200] ),
                 "commercial_sqft":array( 100*[10000] ),
@@ -524,16 +520,16 @@ class DPTMTests(StochasticTestCase):
                 "industrial_improvement_value":array( 100*[500000] )
             }
         )
-        storage._write_dataset(
-            'households',
-            {
+        storage.write_table(
+            table_name='households',
+            table_data={
                 "household_id":arange( 1, 10000+1 ),
                 "grid_id":array( 100*range( 1, 100+1 ) )
             }
         )
-        storage._write_dataset(
-            'jobs',
-            {
+        storage.write_table(
+            table_name='jobs',
+            table_data={
                 "job_id":arange( 1, 5000+1 ),
                 "grid_id":array( 50*range( 1, 100+1 ) ),
                 "sector_id":array( 5000*[1] ),

@@ -100,9 +100,9 @@ class Test(opus_unittest.OpusTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         gridcell_set_table_name = 'gridcell_set'
-        storage._write_dataset(
-            out_table_name = gridcell_set_table_name,
-            values = {
+        storage.write_table(
+            table_name=gridcell_set_table_name,
+            table_data={
                 "grid_id": array([], dtype='int32')
                 }
             )
@@ -122,8 +122,9 @@ class Test(opus_unittest.OpusTestCase):
     def test_housing_price_model(self):
         storage = StorageFactory().get_storage('dict_storage')
 
-        storage._write_dataset(out_table_name='gridcells',
-            values = {
+        storage.write_table(
+            table_name='gridcells',
+            table_data={
                 'percent_residential_within_walking_distance':array([30, 0, 90, 100]),
                 'gridcell_year_built':array([2002, 1968, 1880, 1921]),
                 'housing_price':array([0, 0, 0, 0]).astype(float32),

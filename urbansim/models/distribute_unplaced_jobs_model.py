@@ -60,16 +60,16 @@ class Test(opus_unittest.OpusTestCase):
             }
         
         jobs_table_name = 'jobs'        
-        storage._write_dataset(jobs_table_name, job_data)
+        storage.write_table(table_name=jobs_table_name, table_data=job_data)
         
         jobs = JobDataset(in_storage=storage, in_table_name=jobs_table_name)
         
         storage = StorageFactory().get_storage('dict_storage')
 
         building_types_table_name = 'building_types'        
-        storage._write_dataset(
-            out_table_name = building_types_table_name,
-            values = {
+        storage.write_table(
+            table_name=building_types_table_name,
+            table_data={
                 "grid_id":arange(3)+1
                 }
             )

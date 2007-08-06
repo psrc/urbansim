@@ -44,7 +44,6 @@ class CorrectLandValue(Model):
             
         #replace those cells with previous value where a dev type change and land value reduction
         replace_idx = where(logical_and(change_indicator, reduction_indicator))
-        replace_values = previous_total_land_value[replace_idx]
         new_residential_land_value = previous_residential_land_value[replace_idx]
         new_nonresidential_land_value = previous_nonresidential_land_value[replace_idx]
         dataset.modify_attribute("residential_land_value", new_residential_land_value, index[replace_idx])
@@ -53,7 +52,7 @@ class CorrectLandValue(Model):
     
 
 from opus_core.tests import opus_unittest
-from numpy import array, ma, float32
+from numpy import array, ma
 from urbansim.datasets.gridcell_dataset import GridcellDataset
 from opus_core.coefficients import Coefficients
 from opus_core.equation_specification import EquationSpecification 
@@ -71,9 +70,9 @@ class Test(opus_unittest.OpusTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         gridcell_set_table_name = 'gridcell_set'        
-        storage._write_dataset(
-            out_table_name = gridcell_set_table_name,
-            values = {
+        storage.write_table(
+            table_name=gridcell_set_table_name,
+            table_data={
                 "percent_residential_within_walking_distance":array([30, 0, 90, 100]),
                 "gridcell_year_built":array([2002, 1968, 1880, 1921]),
                 "fraction_residential_land":array([0.5, 0.1, 0.3, 0.9]),

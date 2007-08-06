@@ -121,9 +121,9 @@ class Test(opus_unittest.OpusTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         jobs_table_name = 'building_types'        
-        storage._write_dataset(
-            out_table_name = jobs_table_name,
-            values = {
+        storage.write_table(
+            table_name=jobs_table_name,
+            table_data={
                 "job_id": arange(11750)+1,
                 "sector_id": array(7000*[15]+3000*[1]+1750*[15]),
                 "grid_id":array(4000*[1]+2000*[2]+1000*[3]+1000*[1]+1000*[2]+1000*[3]+1750*[-1])
@@ -132,9 +132,9 @@ class Test(opus_unittest.OpusTestCase):
         jobs = JobDataset(in_storage=storage, in_table_name=jobs_table_name)
         
         gridcells_table_name = 'gridcells'        
-        storage._write_dataset(
-            out_table_name = gridcells_table_name,
-            values = {"grid_id":arange(3)+1}
+        storage.write_table(
+            table_name=gridcells_table_name,
+            table_data={"grid_id":arange(3)+1}
             )
         gridcells = GridcellDataset(in_storage=storage, in_table_name=gridcells_table_name)
         

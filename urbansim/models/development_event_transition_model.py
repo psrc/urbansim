@@ -15,8 +15,7 @@
 from opus_core.misc import DebugPrinter, unique_values
 from urbansim.datasets.development_event_dataset import DevelopmentEventDataset
 from opus_core.model import Model
-from numpy import where, ones, zeros, array, transpose, int32, concatenate
-from time import time
+from numpy import where, ones, zeros, array, int32, concatenate
 from opus_core.storage_factory import StorageFactory
 
 
@@ -66,7 +65,7 @@ class DevelopmentEventTransitionModel(Model):
         storage = StorageFactory().get_storage('dict_storage')
 
         eventset_table_name = 'development_events_generated'        
-        storage._write_dataset(eventset_table_name, result_data)
+        storage.write_table(table_name=eventset_table_name, table_data=result_data)
 
         eventset = DevelopmentEventDataset(
             in_storage = storage, 

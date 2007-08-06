@@ -92,9 +92,9 @@ class Test(opus_unittest.OpusTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         gridcell_set_table_name = 'gridcell_set'
-        storage._write_dataset(
-            out_table_name = gridcell_set_table_name,
-            values = {
+        storage.write_table(
+            table_name=gridcell_set_table_name,
+            table_data={
                 "residential_units":array([1000, 0, 10, 500]),
                 "development_type_id":array([8, 17, 4, 8]),
                 "grid_id": array([1,2,3,4])

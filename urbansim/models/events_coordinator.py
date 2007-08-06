@@ -209,9 +209,9 @@ from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 class EventsCoordinatorTests(opus_unittest.OpusTestCase):
     def setUp(self):
         self.storage = dict_storage()
-        self.storage._write_dataset(
-            out_table_name = 'development_type_groups', 
-            values = {
+        self.storage.write_table(
+            table_name='development_type_groups', 
+            table_data={
                 "group_id":array([1,2,3,4]),
                 "name":array(['residential', 'commercial', 
                                       'industrial', 'governmental']), 
@@ -231,8 +231,9 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
     def _create_simple_gridcell_set(self):
         storage = StorageFactory().get_storage('dict_storage')
         
-        storage._write_dataset(out_table_name='gridcells',
-            values = {
+        storage.write_table(
+            table_name='gridcells',
+            table_data={
                 'residential_units': array([2, 1, 12, 20]),
                 'commercial_sqft': array([3, 1,  0, 4]),
                 'industrial_sqft': array([0, 10, 0, 4]),
@@ -250,8 +251,9 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
     def _create_simple_development_event_set(self):
         storage = StorageFactory().get_storage('dict_storage')
         
-        storage._write_dataset(out_table_name='dev_events',
-            values = {
+        storage.write_table(
+            table_name='dev_events',
+            table_data={
                 "residential_units": array([2,  0,  11]),
                 "commercial_sqft": array( [0,  11, 0]),
                 "industrial_sqft": array( [0,  11, 0]),
@@ -292,7 +294,7 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
                 'max_sqft':array( [10, 50, 10]),
                 }
                                                
-        storage._write_dataset(out_table_name='dev_types', values=dev_type_data)
+        storage.write_table(table_name='dev_types', table_data=dev_type_data)
                                                
         return mock_developmenttype(in_storage=storage, in_table_name='dev_types', other_in_table_names=[], use_groups=False)   
 
@@ -330,8 +332,9 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
         
         gridcell_set = self._create_simple_gridcell_set()
                                         
-        storage._write_dataset(out_table_name='dev_events',
-            values = {
+        storage.write_table(
+            table_name='dev_events',
+            table_data={
                 'residential_units': array([10, 30]),
                 'commercial_sqft': array( [0,  0]),
                 'industrial_sqft': array( [0,  0]),
@@ -358,8 +361,9 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
         
         gridcell_set = self._create_simple_gridcell_set()
         
-        storage._write_dataset(out_table_name='dev_events',
-            values = {
+        storage.write_table(
+            table_name='dev_events',
+            table_data={
                 "residential_units":array([10, 20, 30]),
                 "commercial_sqft":array([0, 11, 0]),
                 "industrial_sqft":array([0, 11, 0]),
@@ -389,8 +393,9 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
         
         gridcell_set = self._create_simple_gridcell_set()
         
-        storage._write_dataset(out_table_name='dev_events',
-            values = {
+        storage.write_table(
+            table_name='dev_events',
+            table_data={
                 "residential_units":array([10, 20, 6]),
                 "commercial_sqft":array([4, 11, 1]),
                 "industrial_sqft":array([0, 11, 0]),
@@ -426,8 +431,9 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
     def test_assignment_of_development_types_in_RAM(self):
         storage = StorageFactory().get_storage('dict_storage')
         
-        storage._write_dataset(out_table_name='gridcells',
-            values = {
+        storage.write_table(
+            table_name='gridcells',
+            table_data={
                 'residential_units':array([2, 1, 12, 20]), 
                 'industrial_sqft':array([0, 10, 0, 4]), 
                 'commercial_sqft':array([3, 1,  0, 4]), 

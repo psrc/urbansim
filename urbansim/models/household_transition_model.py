@@ -397,13 +397,13 @@ class Tests(opus_unittest.OpusTestCase):
 
         storage = StorageFactory().get_storage('dict_storage')
 
-        storage._write_dataset('hh_set', self.households_data)
+        storage.write_table(table_name='hh_set', table_data=self.households_data)
         hh_set = HouseholdDataset(in_storage=storage, in_table_name='hh_set')
 
-        storage._write_dataset('hct_set', annual_household_control_totals_data)
+        storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
         hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what="household", id_name="year")
 
-        storage._write_dataset('hc_set', self.household_characteristics_for_ht_data)
+        storage.write_table(table_name='hc_set', table_data=self.household_characteristics_for_ht_data)
         hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
 
         model = HouseholdTransitionModel()
@@ -446,13 +446,13 @@ class Tests(opus_unittest.OpusTestCase):
 
         storage = StorageFactory().get_storage('dict_storage')
 
-        storage._write_dataset('hh_set', self.households_data)
+        storage.write_table(table_name='hh_set', table_data=self.households_data)
         hh_set = HouseholdDataset(in_storage=storage, in_table_name='hh_set')
 
-        storage._write_dataset('hct_set', annual_household_control_totals_data)
+        storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
         hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what="household", id_name="year")
 
-        storage._write_dataset('hc_set', self.household_characteristics_for_ht_data)
+        storage.write_table(table_name='hc_set', table_data=self.household_characteristics_for_ht_data)
         hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
 
         model = HouseholdTransitionModel()
@@ -489,13 +489,13 @@ class Tests(opus_unittest.OpusTestCase):
 
         storage = StorageFactory().get_storage('dict_storage')
 
-        storage._write_dataset('hh_set', self.households_data)
+        storage.write_table(table_name='hh_set', table_data=self.households_data)
         hh_set = HouseholdDataset(in_storage=storage, in_table_name='hh_set')
 
-        storage._write_dataset('hct_set', annual_household_control_totals_data)
+        storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
         hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what='household', id_name=['year' ,'age_of_head'])
 
-        storage._write_dataset('hc_set', self.household_characteristics_for_ht_data)
+        storage.write_table(table_name='hc_set', table_data=self.household_characteristics_for_ht_data)
         hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
 
         model = HouseholdTransitionModel()
@@ -536,20 +536,21 @@ class Tests(opus_unittest.OpusTestCase):
             "persons": array([0,1,0,1,0,1,0,1]),
             "total_number_of_households": array([4000, 5000, 1000, 3000, 0, 6000, 3000, 8000])
             }
+        #size of columns was not even, removed last element of min and max
         household_characteristics_for_ht_data = {
             "characteristic": array(2*['age_of_head'] + 2*['income'] + 2*['persons']),
-            "min": array([0, 50, 0, 40000, 0, 3, 4]),
-            "max": array([49, 100, 39999, -1, 2, 3, -1])
+            "min": array([0, 50, 0, 40000, 0, 3]), #4
+            "max": array([49, 100, 39999, -1, 2, 3]) #-1
             }
         storage = StorageFactory().get_storage('dict_storage')
 
-        storage._write_dataset('hh_set', self.households_data)
+        storage.write_table(table_name='hh_set', table_data=self.households_data)
         hh_set = HouseholdDataset(in_storage=storage, in_table_name='hh_set')
 
-        storage._write_dataset('hct_set', annual_household_control_totals_data)
+        storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
         hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what='household', id_name=['year' ,'age_of_head', 'income', 'persons'])
 
-        storage._write_dataset('hc_set', household_characteristics_for_ht_data)
+        storage.write_table(table_name='hc_set', table_data=household_characteristics_for_ht_data)
         hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
 
         # unplace some households
@@ -610,13 +611,13 @@ class Tests(opus_unittest.OpusTestCase):
             }
         storage = StorageFactory().get_storage('dict_storage')
 
-        storage._write_dataset('hh_set', households_data)
+        storage.write_table(table_name='hh_set', table_data=households_data)
         hh_set = HouseholdDataset(in_storage=storage, in_table_name='hh_set')
 
-        storage._write_dataset('hct_set', annual_household_control_totals_data)
+        storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
         hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what='household', id_name=['year' ,'income'])
 
-        storage._write_dataset('hc_set', household_characteristics_for_ht_data)
+        storage.write_table(table_name='hc_set', table_data=household_characteristics_for_ht_data)
         hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
 
         model = HouseholdTransitionModel(debuglevel=3)
@@ -698,14 +699,14 @@ class Tests(opus_unittest.OpusTestCase):
             }
         storage = StorageFactory().get_storage('dict_storage')
 
-        storage._write_dataset('hh_set', households_data)
+        storage.write_table(table_name='hh_set', table_data=households_data)
         hh_set = HouseholdDataset(in_storage=storage, in_table_name='hh_set')
 
-        storage._write_dataset('hct_set', annual_household_control_totals_data)
+        storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
         hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what='household',
                                       id_name=['year' ,'age_of_head'])
 
-        storage._write_dataset('hc_set', household_characteristics_for_ht_data)
+        storage.write_table(table_name='hc_set', table_data=household_characteristics_for_ht_data)
         hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
 
         model = HouseholdTransitionModel(debuglevel=3)

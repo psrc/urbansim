@@ -142,9 +142,9 @@ class Test(opus_unittest.OpusTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         gridcell_set_table_name = 'gridcell_set'
-        storage._write_dataset(
-            out_table_name = gridcell_set_table_name,
-            values = {"grid_id": array([], dtype='int32')}
+        storage.write_table(
+            table_name=gridcell_set_table_name,
+            table_data={"grid_id": array([], dtype='int32')}
             )
         gridcell_set = GridcellDataset(in_storage=storage, in_table_name=gridcell_set_table_name)
 
@@ -161,9 +161,9 @@ class Test(opus_unittest.OpusTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         gridcell_set_table_name = 'gridcell_set'
-        storage._write_dataset(
-            out_table_name = gridcell_set_table_name,
-            values = {
+        storage.write_table(
+            table_name=gridcell_set_table_name,
+            table_data={
                 "percent_residential_within_walking_distance":array([30, 0, 90, 100]),
                 "gridcell_year_built":array([2002, 1968, 1880, 1921]),
                 "fraction_residential_land":array([0.5, 0.1, 0.3, 0.9]),
@@ -191,9 +191,9 @@ class Test(opus_unittest.OpusTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         gridcell_set_table_name = 'gridcell_set'
-        storage._write_dataset(
-            out_table_name = gridcell_set_table_name,
-            values = {
+        storage.write_table(
+            table_name=gridcell_set_table_name,
+            table_data={
                 "residential_land_value":array([100, 1e+50, 800, 0], dtype=float32),
                 "nonresidential_land_value":array([1e+100, 0, 20, 0], dtype=float32),
                 "grid_id": array([1,2,3,4])
