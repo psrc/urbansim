@@ -14,7 +14,7 @@
 
 from numpy import arange, zeros, logical_and, where
 from opus_core.logger import logger
-from urbansim.models.employment_location_choice_model import EmploymentLocationChoiceModel
+from psrc_parcel.models.employment_location_choice_model import EmploymentLocationChoiceModel
 
 class EmploymentLocationChoiceModelByZones(EmploymentLocationChoiceModel):
         
@@ -26,7 +26,7 @@ class EmploymentLocationChoiceModelByZones(EmploymentLocationChoiceModel):
         zone_ids = zones.get_id_attribute()
         agents_zones = agent_set.get_attribute(zones.get_id_name()[0])
         orig_filter = self.filter
-        for zone_id in zone_ids:
+        for zone_id in zone_ids: #[879:zone_ids.size]:
             new_index = where(logical_and(cond_array, agents_zones == zone_id))[0]
             if orig_filter is not None:
                 self.filter = "(building.zone_id == %s) * %s" % (zone_id, orig_filter)
@@ -36,7 +36,7 @@ class EmploymentLocationChoiceModelByZones(EmploymentLocationChoiceModel):
             EmploymentLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                               agents_index=new_index, **kwargs)
             agent_set.flush_dataset()
-            self.choice_set.flush_dataset()
+            # self.choice_set.flush_dataset()
         # set the right parcels
         parcels = agent_set.compute_variables(["job.disaggregate(building.parcel_id)"],
                                               dataset_pool = self.dataset_pool)

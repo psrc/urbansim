@@ -14,7 +14,7 @@
 
 from numpy import arange, zeros, logical_and, where
 from opus_core.logger import logger
-from urbansim.models.household_location_choice_model import HouseholdLocationChoiceModel
+from psrc_parcel.models.household_location_choice_model import HouseholdLocationChoiceModel
 
 class HouseholdLocationChoiceModelByZones(HouseholdLocationChoiceModel):
         

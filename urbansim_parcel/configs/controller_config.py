@@ -111,6 +111,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                 input_index = 'erm_index',
                                 estimation_weight_string = "pre_2001=building.year_built<=2000",
                                 agents_for_estimation_table = None, # will take standard jobs table 
+                                estimation_size_agents = 0.2,
                                 number_of_units_string = "urbansim_parcel.building.total_SSS_job_space",
                                 filter_for_estimation = "job.building_id",
                                 portion_to_unplace = 0,
@@ -435,7 +436,6 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         #config["models_configuration"]['building_location_choice_model']["controller"].merge(bldglcm_controller)
         #HLCM
         hlcm_controller = self["models_configuration"]["household_location_choice_model"]["controller"]
-        hlcm_controller["import"] = {"urbansim_parcel.models.household_location_choice_model" : "HouseholdLocationChoiceModel"}
         hlcm_controller["init"]["arguments"]["location_set"] = "building"
         hlcm_controller["init"]["arguments"]["location_id_string"] = "'building_id'"
         hlcm_controller["init"]["arguments"]["estimate_config"] = {"weights_for_estimation_string":"building.residential_units"} #"urbansim.zone.vacant_residential_units"
@@ -448,11 +448,6 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         hlcm_controller["prepare_for_estimate"]["arguments"]["index_to_unplace"] = 'None'
         #hlcm_controller["estimate"]["arguments"]["procedure"] = 'None'
         models_configuration['household_location_choice_model']["controller"].replace(hlcm_controller)
-        
-        self['models_configuration']["employment_location_choice_model"]['controller']["import"] = \
-                {"urbansim_parcel.models.employment_location_choice_model" : "EmploymentLocationChoiceModel"}
-        #self['models_configuration']["home_based_employment_location_choice_model"]['controller']["import"] = \
-        #        {"urbansim_parcel.models.employment_location_choice_model" : "EmploymentLocationChoiceModel"}
                 
         self["datasets_to_preload"] = {
                 'zone':{},

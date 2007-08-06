@@ -31,11 +31,15 @@ class Baseline(UrbansimParcelConfiguration):
         config_changes = {
             'description':'PSRC parcel baseline',
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
+            #'cache_directory':r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
+            #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
             cache_directory_root = r'/urbansim_cache/psrc_parcel',
             #cache_directory_root = r'/workspace/urbansim_cache/psrc_parcel',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
+                    #existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
+                    #years_to_cache = [2000]
                     existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/cache_source',
                     #existing_cache_to_copy = r'/workspace/urbansim_cache/psrc_parcel/estimation',
                     ),
@@ -133,5 +137,9 @@ class Baseline(UrbansimParcelConfiguration):
         #use configuration in config as defaults and merge with config_changes
 #        config = merge_resources_with_defaults(config_changes, config)
         config.replace(config_changes)
-        self.merge(config)
 
+        config['models_configuration']["household_location_choice_model"]["controller"]["import"] = \
+                {"psrc_parcel.models.household_location_choice_model" : "HouseholdLocationChoiceModel"}
+        config['models_configuration']["employment_location_choice_model"]['controller']["import"] = \
+                {"psrc_parcel.models.employment_location_choice_model" : "EmploymentLocationChoiceModel"}
+        self.merge(config)
