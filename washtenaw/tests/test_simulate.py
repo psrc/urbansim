@@ -41,6 +41,8 @@ if does_database_server_exist_for_this_hostname(
             self.simulation = RunSimulationFromMysql()
             run_configuration = Baseline()
             run_configuration['creating_baseyear_cache_configuration'].cache_directory_root = self.temp_dir
+            run_configuration['creating_baseyear_cache_configuration'].tables_to_cache = ["development_events"]
+            run_configuration['input_configuration'].database_name = "washtenaw_class"
             run_configuration['seed'] = 1,#(1,1)  # always start with same random seed
             self.simulation.prepare_for_simulation(run_configuration)
             self.completed_without_error = False
@@ -66,7 +68,7 @@ if does_database_server_exist_for_this_hostname(
                     )
     
         def xtest_prepare_for_simulation(self):
-            # do nothing, so that only the setUp procedure is run
+            # do nothing, so that only the setUp procedure runs
             pass
         
         def xtest_simulation(self): # temporarily switched off, since the database data does not match the code for now
