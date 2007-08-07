@@ -24,4 +24,5 @@ aliases = [
    "occupied_building_sqft_by_non_home_based_jobs = building.aggregate(job.sqft * urbansim.job.is_building_type_non_home_based)",
    "total_home_based_job_space=building.aggregate(psrc_parcel.household.minimum_persons_and_2)",
    "building_type_name = building.disaggregate(building_type.building_type_name)",
+   "is_residential = building.disaggregate(building_type.unit_name == 'residential_units')"
            ]

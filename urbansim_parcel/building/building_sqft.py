@@ -14,26 +14,27 @@
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
-from numpy import zeros, where, logical_not
+from numpy import zeros, where
 
 class building_sqft(Variable):
     """total number of sqft for each building """
     _return_type = "int32"
     
     def dependencies(self):
-        return ["_is_residential = urbansim_parcel.building.unit_name == 'residential_units'",
-                my_attribute_label("residential_units"), my_attribute_label("non_residential_sqft"),
+        return [my_attribute_label("residential_units"), my_attribute_label("non_residential_sqft"),
                 my_attribute_label("sqft_per_unit")
                 ]
         
     def compute(self,  dataset_pool):
         buildings = self.get_dataset()
         results = zeros(buildings.size(),dtype=self._return_type)
-        is_residential = buildings.get_attribute("_is_residential")
-        results[is_residential] = ((buildings.get_attribute("residential_units") * \
-                                        buildings.get_attribute("sqft_per_unit"))[is_residential]).astype(self._return_type)
-        is_not_residential = logical_not(is_residential)
-        results[is_not_residential] = (buildings.get_attribute("non_residential_sqft")[is_not_residential]).astype(self._return_type)
+        residential_units = buildings.get_attribute("residential_units")
+        sqft = buildings.get_attribute("non_residential_sqft")
+        where_residential = where(residential_units > 0)[0]
+        where_sqft = where(sqft > 0)[0]
+        results[where_residential] = ((residential_units * \
+                                        buildings.get_attribute("sqft_per_unit"))[where_residential]).astype(self._return_type)
+        results[where_sqft] = results[where_sqft] + (sqft[where_sqft]).astype(self._return_type)
         return results
     
     def post_check(self,  values, dataset_pool=None):
