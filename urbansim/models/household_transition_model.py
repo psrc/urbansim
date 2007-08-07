@@ -539,8 +539,8 @@ class Tests(opus_unittest.OpusTestCase):
         #size of columns was not even, removed last element of min and max
         household_characteristics_for_ht_data = {
             "characteristic": array(2*['age_of_head'] + 2*['income'] + 2*['persons']),
-            "min": array([0, 50, 0, 40000, 0, 3]), #4
-            "max": array([49, 100, 39999, -1, 2, 3]) #-1
+            "min": array([0, 50, 0, 40000, 0, 3]),
+            "max": array([49, 100, 39999, -1, 2, -1]) 
             }
         storage = StorageFactory().get_storage('dict_storage')
 
