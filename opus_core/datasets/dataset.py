@@ -322,16 +322,17 @@ class Dataset(AbstractDataset):
     def _do_flush_attribute(self, name):
         if not isinstance(name, VariableName):
             name = VariableName(name)
-
         short_name = name.get_alias()
         if short_name <> self.hidden_id_name:
             type = self._get_attribute_type(short_name)
             if type not in (AttributeType.LAG, AttributeType.EXOGENOUS):
                 self.debug.print_debug("Flushing %s.%s" % (self.get_dataset_name(), short_name), 8)
-                #logger.log_status("Flushing %s.%s" % (self.get_dataset_name(), short_name))
-                self.write_dataset(attributes=[short_name], out_storage=self.attribute_cache, 
-                                   out_table_name=self._get_in_table_name_for_cache())
-                self.attribute_boxes[short_name].set_is_cached(True)
+                # anonymous attributes (i.e. ones with an autogen short name) still get unloaded but
+                # aren't written out to the cache -- they will need to be recomputed if needed later
+                if not is_anonymous_autogen_name(short_name):
+                    self.write_dataset(attributes=[short_name], out_storage=self.attribute_cache, 
+                                       out_table_name=self._get_in_table_name_for_cache())
+                    self.attribute_boxes[short_name].set_is_cached(True)
                 self.unload_one_attribute(short_name)
 
     def write_dataset(self, resources = None, attributes=None, out_storage=None,
@@ -373,7 +374,9 @@ class Dataset(AbstractDataset):
         for name in attr_names:
             attribute = ma.filled(self.get_attribute(name),0.0)
             if self._get_attribute_type(name) == AttributeType.COMPUTED:
-                values_computed[name] = attribute
+                # don't write out anonymous attributes
+                if not is_anonymous_autogen_name(name):
+                    values_computed[name] = attribute
             else:
                 values[name] = attribute
         
@@ -748,7 +751,7 @@ class DatasetTests(opus_unittest.OpusTestCase):
         ds.write_dataset(out_storage=storage, out_table_name="table2")
         self.assertEqual(Set(["tests", "table2"]), Set(storage.get_table_names()))
          
-    def skip_test_write_dataset(self):
+    def test_write_dataset(self):
         # check that variables for expressions with an alias are written out, and that
         # anonymous expressions (with no alias) are not written out
         in_storage = StorageFactory().get_storage('dict_storage')
@@ -767,8 +770,11 @@ class DatasetTests(opus_unittest.OpusTestCase):
         ds.write_dataset(out_storage=out_storage)
         # only the variable with the alias should be in out_storage
         self.assertEqual(out_storage.get_column_names('tests_out.computed'), ['a'])
+        stored = out_storage.load_table('tests_out.computed')['a']
+        should_be = array([1000, 2000, 3000])
+        self.assert_(ma.allclose(stored, should_be, rtol=1e-6), "Error in test_write_dataset")
         
-    def skip_test_flush_dataset(self):
+    def test_flush_dataset(self):
         # check that variables for expressions are flushed from the dataset, and that
         # anonymous expressions (with no alias) are not written out
         in_storage = StorageFactory().get_storage('dict_storage')
@@ -790,9 +796,9 @@ class DatasetTests(opus_unittest.OpusTestCase):
         ds.flush_dataset()
         box1 = ds.attribute_boxes[autogen_name]
         box2 = ds.attribute_boxes['a']
-        self.assert_(box1.is_cached())
+        self.assert_(not box1.is_cached())
         self.assert_(not box1.is_in_memory())
-        self.assert_(not box2.is_cached())
+        self.assert_(box2.is_cached())
         self.assert_(not box2.is_in_memory())
 
     def test_store_primary_and_computed_attributes(self):
