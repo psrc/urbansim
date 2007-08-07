@@ -325,14 +325,13 @@ class Dataset(AbstractDataset):
         short_name = name.get_alias()
         if short_name <> self.hidden_id_name:
             type = self._get_attribute_type(short_name)
-            if type not in (AttributeType.LAG, AttributeType.EXOGENOUS):
+            if (type not in (AttributeType.LAG, AttributeType.EXOGENOUS)) and (not is_anonymous_autogen_name(short_name)):
                 self.debug.print_debug("Flushing %s.%s" % (self.get_dataset_name(), short_name), 8)
                 # anonymous attributes (i.e. ones with an autogen short name) still get unloaded but
                 # aren't written out to the cache -- they will need to be recomputed if needed later
-                if not is_anonymous_autogen_name(short_name):
-                    self.write_dataset(attributes=[short_name], out_storage=self.attribute_cache, 
-                                       out_table_name=self._get_in_table_name_for_cache())
-                    self.attribute_boxes[short_name].set_is_cached(True)
+                self.write_dataset(attributes=[short_name], out_storage=self.attribute_cache, 
+                                   out_table_name=self._get_in_table_name_for_cache())
+                self.attribute_boxes[short_name].set_is_cached(True)
                 self.unload_one_attribute(short_name)
 
     def write_dataset(self, resources = None, attributes=None, out_storage=None,
@@ -797,7 +796,7 @@ class DatasetTests(opus_unittest.OpusTestCase):
         box1 = ds.attribute_boxes[autogen_name]
         box2 = ds.attribute_boxes['a']
         self.assert_(not box1.is_cached())
-        self.assert_(not box1.is_in_memory())
+        self.assert_(box1.is_in_memory())
         self.assert_(box2.is_cached())
         self.assert_(not box2.is_in_memory())
 
