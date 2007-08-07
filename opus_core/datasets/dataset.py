@@ -29,6 +29,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.variables.attribute_type import AttributeType
 from opus_core.variables.variable_name import VariableName
+from opus_core.variables.variable_name import is_anonymous_autogen_name
 
 class Dataset(AbstractDataset):
     """
@@ -747,6 +748,53 @@ class DatasetTests(opus_unittest.OpusTestCase):
         ds.write_dataset(out_storage=storage, out_table_name="table2")
         self.assertEqual(Set(["tests", "table2"]), Set(storage.get_table_names()))
          
+    def skip_test_write_dataset(self):
+        # check that variables for expressions with an alias are written out, and that
+        # anonymous expressions (with no alias) are not written out
+        in_storage = StorageFactory().get_storage('dict_storage')
+        out_storage = StorageFactory().get_storage('dict_storage')
+        in_storage.write_table(
+            'tests',
+            {
+                'id':array([1,2,3]),
+                'attr':array([100,200,300]),
+            }
+        )
+        ds = Dataset(in_storage=in_storage, in_table_name='tests', out_table_name="tests_out", id_name='id')
+        ds.load_dataset()
+        # compute two variables, one with an alias and one without
+        ds.compute_variables(["2*attr", "a=10*attr"])
+        ds.write_dataset(out_storage=out_storage)
+        # only the variable with the alias should be in out_storage
+        self.assertEqual(out_storage.get_column_names('tests_out.computed'), ['a'])
+        
+    def skip_test_flush_dataset(self):
+        # check that variables for expressions are flushed from the dataset, and that
+        # anonymous expressions (with no alias) are not written out
+        in_storage = StorageFactory().get_storage('dict_storage')
+        out_storage = StorageFactory().get_storage('dict_storage')
+        in_storage.write_table(
+            'tests',
+            {
+                'id':array([1,2,3]),
+                'attr':array([100,200,300]),
+            }
+        )
+        ds = Dataset(in_storage=in_storage, in_table_name='tests', out_table_name="tests_out", id_name='id')
+        ds.load_dataset()
+        # compute two variables, one with an alias and one without
+        expr1 = "2*attr"
+        expr2 = "a=10*attr"
+        ds.compute_variables([expr1, expr2])
+        autogen_name = VariableName(expr1).get_short_name()
+        ds.flush_dataset()
+        box1 = ds.attribute_boxes[autogen_name]
+        box2 = ds.attribute_boxes['a']
+        self.assert_(box1.is_cached())
+        self.assert_(not box1.is_in_memory())
+        self.assert_(not box2.is_cached())
+        self.assert_(not box2.is_in_memory())
+
     def test_store_primary_and_computed_attributes(self):
         in_storage = StorageFactory().get_storage('dict_storage')
         out_storage = StorageFactory().get_storage('dict_storage')

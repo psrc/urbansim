@@ -17,7 +17,7 @@ import parser
 from types import TupleType
 from opus_core.variables.variable import Variable
 from opus_core.datasets.interaction_dataset import InteractionDataset
-from opus_core.variables.variable_name import VariableName
+from opus_core.variables.variable_name import VariableName, autogenvar_prefix
 from opus_core.variables.dummy_name import DummyName
 from opus_core.variables.dummy_dataset import DummyDataset, make_aggregation_call
 from opus_core.variables.parsetree_functions import parsetree_to_string, parsetree_substitute
@@ -181,7 +181,7 @@ class AutogenVariableFactory(object):
             counter = getattr(AutogenVariableFactory, '_autogen_counter')
         else:
             counter = 0
-        classname = 'autogenvar' + str(counter)
+        classname = autogenvar_prefix + str(counter)
         counter = counter+1
         setattr(AutogenVariableFactory, '_autogen_counter', counter)
         # now build up a string 'classexpr' that will be used to define the new class

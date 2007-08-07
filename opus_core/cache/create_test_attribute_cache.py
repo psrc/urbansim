@@ -15,7 +15,6 @@
 import os, sys
 
 from opus_core.store.attribute_cache import AttributeCache
-from opus_core.variables.attribute_type import AttributeType
 from opus_core.simulation_state import SimulationState
 from opus_core.resources import Resources
 
