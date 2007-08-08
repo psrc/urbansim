@@ -43,7 +43,7 @@ class EstimationRunner(object):
             conf = config(type, add_member_prefix)
             run_configuration = conf.get_configuration()
             run_configuration["models_configuration"][conf.model_name]["controller"].replace(
-                                                                 baseline_config["models_configuration"][self.model[1]]["controller"])
+                                                                 baseline_config["models_configuration"][conf.model_name]["controller"])
             run_configuration = conf.get_updated_configuration_from_module(
                                      run_configuration, "psrc_parcel.estimation.%s" % self.spec_file)
 
@@ -74,10 +74,10 @@ class EstimationRunner(object):
 
 if __name__ == '__main__':
 #    model = ("REPM", "real_estate_price_model")
-    model = ("HLCM", "household_location_choice_model")
+#    model = ("HLCM", "household_location_choice_model")
 #    model = ("BLCM", "business_location_choice_model")
-#    model = ("ELCM", "employment_location_choice_model", "home_based", False)
-#    model = ("ELCM", "employment_location_choice_model", "non_home_based", False)
+#    model = ("ELCM", "employment_location_choice_model", "home_based", True)
+    model = ("ELCM", "employment_location_choice_model", "non_home_based", False)
 #    model = ("BLDGLCM", "building_location_choice_model", "nonresidential", False)
 #    model = ("BLDGLCM", "building_location_choice_model", "residential", False)
 

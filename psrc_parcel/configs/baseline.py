@@ -142,4 +142,6 @@ class Baseline(UrbansimParcelConfiguration):
                 {"psrc_parcel.models.household_location_choice_model" : "HouseholdLocationChoiceModel"}
         config['models_configuration']["employment_location_choice_model"]['controller']["import"] = \
                 {"psrc_parcel.models.employment_location_choice_model" : "EmploymentLocationChoiceModel"}
+        config['models_configuration']["home_based_employment_location_choice_model"]['controller']["import"] = \
+                {"psrc_parcel.models.employment_location_choice_model" : "EmploymentLocationChoiceModel"}
         self.merge(config)
