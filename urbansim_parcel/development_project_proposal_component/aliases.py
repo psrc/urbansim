@@ -18,4 +18,5 @@
 aliases = [
    "building_sqft_per_unit = development_project_proposal_component.disaggregate(development_template_component.building_sqft_per_unit)",
    "percent_building_sqft = development_project_proposal_component.disaggregate(development_template_component.percent_building_sqft)",
+   "is_residential=development_project_proposal_component.disaggregate(building_type.unit_name == 'residential_units')"
    ]

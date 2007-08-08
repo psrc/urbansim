@@ -23,8 +23,7 @@ class vacant_residential_units(Variable):
     
     def dependencies(self):
         return ["urbansim_parcel.building.residential_units", 
-                "urbansim_parcel.building.number_of_households", 
-                my_attribute_label("building_id")]
+                "urbansim_parcel.building.number_of_households"]
 
     def compute(self,  dataset_pool):
         return clip_to_zero_if_needed(

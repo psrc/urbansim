@@ -168,14 +168,23 @@ class Estimator(object):
 #                    self.specification = self.model_system.vardict[key]
 
     def get_data(self, coefficient, submodel=-2):
-        return self.model_system.run_year_namespace["model"].get_data(coefficient, submodel)
+        return self.get_model().get_data(coefficient, submodel)
 
     def get_coefficient_names(self, submodel=-2):
-        return self.model_system.run_year_namespace["model"].get_coefficient_names(submodel)
+        return self.get_model().get_coefficient_names(submodel)
 
     def get_data_as_dataset(self, submodel=-2):
-        return self.model_system.run_year_namespace["model"].get_data_as_dataset(submodel)
+        return self.get_model().get_data_as_dataset(submodel)
 
+    def get_model(self):
+        return self.model_system.run_year_namespace["model"]
+        
+    def get_choice_set_index(self): # works only for choice models
+        return self.get_model().model_interaction.interaction_datasets[0].get_index(2)
+        
+    def get_agent_set_index(self): # works only for choice models
+        return self.get_model().model_interaction.interaction_datasets[0].get_index(1)
+        
     def cleanup(self, remove_cache=True):
         """Use this only if you don't want to reestimate."""
         self.simulation_state.remove_singleton(delete_cache=remove_cache)

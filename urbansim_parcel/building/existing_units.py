@@ -13,7 +13,7 @@
 # 
 
 from opus_core.variables.variable import Variable
-from numpy import zeros, where
+from numpy import zeros, logical_not
 from opus_core.misc import unique_values
 
 class existing_units(Variable):
@@ -22,22 +22,20 @@ class existing_units(Variable):
     
     def dependencies(self):
         return [
-        "urbansim_parcel.building.unit_name",
-        "urbansim_parcel.building.parcel_sqft",
                 "urbansim_parcel.building.building_sqft",
-                "urbansim_parcel.building.residential_units"
+                "urbansim_parcel.building.residential_units",
+                "urbansim_parcel.building.are_units_building_sqft"
                 ]
         
     def compute(self,  dataset_pool):
         buildings = self.get_dataset()
-        results = zeros(buildings.size(),dtype=self._return_type)
-        unit_names = buildings.get_attribute("unit_name")
-        unique_unit_names = unique_values(unit_names)
-        for unit_name in unique_unit_names:
-            if unit_name.strip() == '':continue
-            uw = where(unit_names == unit_name)[0]
-            results[uw] = buildings.get_attribute(unit_name)[uw].astype(self._return_type)
-        return results
+        result = zeros(buildings.size(),dtype=self._return_type)
+        is_sqft = buildings.get_attribute("are_units_building_sqft")
+        residential_units = buildings.get_attribute("residential_units")
+        where_residential = logical_not(is_sqft)
+        result[where_residential] = residential_units[where_residential].astype(self._return_type)
+        result[is_sqft] = buildings.get_attribute("building_sqft")[is_sqft].astype(self._return_type)
+        return result
     
     def post_check(self,  values, dataset_pool=None):
         self.do_check("x >= 0", values)
@@ -57,23 +55,14 @@ class Tests(opus_unittest.OpusTestCase):
             'building':
             {
                 'building_id': array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                'building_type_id':array([1, 1, 1, 1, 2, 2, 2, 3, 3, 3]),
-                'parcel_id':       array([1, 1, 2, 3, 1, 2, 3, 4, 4, 4]),
-                'residential_units': array([7, 2, 3, 0, 2, 3, 4, 1, 0, 0]),
-                'building_sqft': array([19, 2000, 310, 400, 27, 223, 58, 0, 0, 0])               
+                'residential_units':    array([0,   2,   3,   0,   2,   3,  4, 1, 0, 5]),
+                'sqft_per_unit':        array([0,   2,   2,   0,   10,  5,  2,20, 0, 20]),
+                'non_residential_sqft': array([19,  0, 310, 400,   0, 223, 58, 0, 0, 0])               
                 },           
-            "building_type":{
-                'building_type_id':  array([1, 2, 3]),
-                'unit_name':         array(['building_sqft', 'residential_units', 'parcel_sqft'])
-            },
-            "parcel":{
-                'parcel_id':   array([1, 2, 3, 4]),
-                'parcel_sqft': array([1000, 3000, 4000, 3400])
-            },                    
         }
         )
         
-        should_be = array([19, 2000, 310, 400, 2, 3, 4, 3400, 3400, 3400])
+        should_be = array([19, 2, 316, 400, 2, 223+15, 8+58, 1, 0, 5])
         
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 
