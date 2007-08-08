@@ -113,9 +113,6 @@ class Tests(ExpectedDataTest):
     def test_on_expected_data(self):
         self.do_test_on_expected_data(["relative_x","relative_y","lct"],
                                       element_atol=0.3)
-        
-    def test_test(self):
-        self.assert_(False)
 
 
 if __name__ == "__main__":            
