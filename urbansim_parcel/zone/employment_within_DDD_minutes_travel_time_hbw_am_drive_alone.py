@@ -13,12 +13,14 @@
 #
 
 from variable_functions import my_attribute_label
-from psrc.zone.employment_within_DDD_minutes_travel_time_hbw_am_transit_walk import employment_within_DDD_minutes_travel_time_hbw_am_transit_walk as psrc_employment_within_DDD_minutes_travel_time_hbw_am_transit_walk
+from psrc.zone.employment_within_DDD_minutes_travel_time_hbw_am_drive_alone import employment_within_DDD_minutes_travel_time_hbw_am_drive_alone as psrc_employment_within_DDD_minutes_travel_time_hbw_am_drive_alone
 
-class employment_within_DDD_minutes_travel_time_hbw_am_transit_walk(psrc_employment_within_DDD_minutes_travel_time_hbw_am_transit_walk):
-    """See doc for the parent class.
+class employment_within_DDD_minutes_travel_time_hbw_am_drive_alone(psrc_employment_within_DDD_minutes_travel_time_hbw_am_drive_alone):
+    """total number of jobs for zones within DDD minutes travel time,
+    The travel time used is for the home-based-work am trips by auto with
+    drive-alone.
     """
 
     def dependencies(self):
-        return ["psrc.travel_data.am_total_transit_time_walk",
+        return ["psrc.travel_data.am_single_vehicle_to_work_travel_time",
                 my_attribute_label("number_of_jobs")]

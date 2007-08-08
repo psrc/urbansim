@@ -25,11 +25,10 @@ class population_per_acre(Variable):
                 "urbansim_parcel.household.zone_id",
                 "population = zone.aggregate(household.persons)",
                 "acres = zone.aggregate(parcel.parcel_sqft) / 43560.0 ",
-                "_population_per_acre = zone.population / zone.acres",
                 ]
 
     def compute(self,  dataset_pool):
-        return self.get_dataset().get_attribute('_population_per_acre')
+        return self.get_dataset().get_attribute('population') / self.get_dataset().get_attribute('acres')
 
     def post_check(self,  values, dataset_pool=None):
         size = dataset_pool.get_dataset("parcel").get_attribute("population").sum()

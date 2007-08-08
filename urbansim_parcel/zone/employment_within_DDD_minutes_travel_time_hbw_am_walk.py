@@ -13,12 +13,12 @@
 #
 
 from variable_functions import my_attribute_label
-from psrc.zone.employment_within_DDD_minutes_travel_time_hbw_am_transit_walk import employment_within_DDD_minutes_travel_time_hbw_am_transit_walk as psrc_employment_within_DDD_minutes_travel_time_hbw_am_transit_walk
+from psrc.zone.employment_within_DDD_minutes_travel_time_hbw_am_walk import employment_within_DDD_minutes_travel_time_hbw_am_walk as psrc_employment_within_DDD_minutes_travel_time_hbw_am_walk
 
-class employment_within_DDD_minutes_travel_time_hbw_am_transit_walk(psrc_employment_within_DDD_minutes_travel_time_hbw_am_transit_walk):
+class employment_within_DDD_minutes_travel_time_hbw_am_walk(psrc_employment_within_DDD_minutes_travel_time_hbw_am_walk):
     """See doc for the parent class.
     """
 
     def dependencies(self):
-        return ["psrc.travel_data.am_total_transit_time_walk",
+        return ["psrc.travel_data.am_walk_time_in_minutes",
                 my_attribute_label("number_of_jobs")]
