@@ -14,30 +14,27 @@
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
-from numpy import where, zeros
-from opus_core.misc import unique_values
+from numpy import zeros
 
 class existing_units(Variable):
-    """total number of units (residential units or sqft), which are defined by building_types
+    """total number of units (residential units or sqft), which are defined by land_use_types
     """
     _return_type = "int32"
-    package_name = "urbansim_parcel"
     
     def dependencies(self):
         return [my_attribute_label("unit_name"),
                 my_attribute_label("building_sqft"),
                 my_attribute_label("residential_units"),
+                my_attribute_label("parcel_sqft"),
                 ]
 
     def compute(self, dataset_pool):
         parcels = self.get_dataset()
         unit_name = parcels.get_attribute("unit_name")
-        results = zeros(parcels.size())
-        for name in unique_values(unit_name):
-            if name not in parcels.get_known_attribute_names():
-                parcels.compute_variables("%s.parcel.%s" % (self.package_name, name), dataset_pool)
-            w = where(unit_name == name)[0]
-            results[w] = parcels.get_attribute(name)[w]
+        results = zeros(parcels.size(), dtype=self._return_type)
+        for name in ["building_sqft", "parcel_sqft", "residential_units"]:
+            w = unit_name == name
+            results[w] = parcels.get_attribute(name)[w].astype(self._return_type)
         return results
 
     def post_check(self, values, dataset_pool):
