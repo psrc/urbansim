@@ -16,6 +16,7 @@ from urbansim.configurations.development_project_location_choice_model_configura
 
 class RegionalDevelopmentProjectLocationChoiceModelConfigurationCreator(USDPLCMCC):
      
+    records_per_chunk = Int(1000)
     def execute(self):
         conf = USDPLCMCC.execute(self)
         conf['import'] = {'washtenaw.models.regional_development_project_location_choice_model': 

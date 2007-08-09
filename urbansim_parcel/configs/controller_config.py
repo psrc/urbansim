@@ -113,12 +113,12 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                 estimation_weight_string = "pre_2001=building.year_built<=2000",
                                 agents_for_estimation_table = None, # will take standard jobs table 
                                 estimation_size_agents = 0.01,
-                                number_of_units_string = "urbansim_parcel.building.total_SSS_job_space",
+                                number_of_units_string = "total_SSS_job_space",
                                 filter = "building.non_residential_sqft",
                                 filter_for_estimation = "job.building_id",
                                 portion_to_unplace = 0,
-                                capacity_string = "urbansim_parcel.building.vacant_SSS_job_space",
-                                #estimation_size_agents = 0.2
+                                capacity_string = "vacant_SSS_job_space",
+                                variable_package = "urbansim_parcel"
                                 ).execute(),
                                        
             'home_based_employment_location_choice_model': 
@@ -128,12 +128,12 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                 estimation_weight_string = "pre_2001=building.year_built<=2000",
                                 agents_for_estimation_table = None, # will take standard jobs table 
                                 estimation_size_agents = 0.2,
-                                number_of_units_string = "urbansim_parcel.building.total_SSS_job_space",
+                                number_of_units_string = "total_SSS_job_space",
                                 filter = "numpy.logical_and(building.residential_units, building.sqft_per_unit)", 
                                 filter_for_estimation = "numpy.logical_and(job.building_id>0, job.disaggregate(building.sqft_per_unit>0))",
                                 portion_to_unplace = 0,
-                                capacity_string = "urbansim_parcel.building.vacant_SSS_job_space",
-                                #estimation_size_agents = 0.2
+                                capacity_string = "vacant_SSS_job_space",
+                                variable_package = "urbansim_parcel"
                                 ).execute(),
                                        
           "business_transition_model" : {
@@ -457,11 +457,13 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         hlcm_controller["init"]["arguments"]["location_id_string"] = "'building_id'"
         hlcm_controller["init"]["arguments"]["estimate_config"] = {"weights_for_estimation_string":"building.residential_units"} #"urbansim.zone.vacant_residential_units"
 #       hlcm_controller["init"]["arguments"]["run_config"] = {"capacity_string":"urbansim_parcel.building.vacant_residential_units"}
-        hlcm_controller["init"]["arguments"]["capacity_string"] = "'urbansim_parcel.building.vacant_residential_units'"
+        hlcm_controller["init"]["arguments"]["capacity_string"] = "'vacant_residential_units'"
         hlcm_controller["init"]["arguments"]['sample_size_locations']=30
         hlcm_controller["init"]["arguments"]['sampler']="'opus_core.samplers.weighted_sampler'"
         hlcm_controller["init"]["arguments"]["submodel_string"] = None #"'household_size'"
         hlcm_controller["init"]["arguments"]["estimation_size_agents"] = 0.005
+        hlcm_controller["init"]["arguments"]["number_of_units_string"] = None
+        hlcm_controller["init"]["arguments"]["variable_package"] = "'urbansim_parcel'"
         hlcm_controller["init"]["arguments"]["filter"] = "'numpy.logical_and(building.residential_units, building.sqft_per_unit)'"
         hlcm_controller["prepare_for_estimate"]["arguments"]["agents_for_estimation_table"] = None
         hlcm_controller["prepare_for_estimate"]["arguments"]["filter"] = "'numpy.logical_and(household.building_id>0, household.disaggregate(building.sqft_per_unit>0))'" # filtering out agents for estimation with valid location

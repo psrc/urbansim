@@ -69,7 +69,8 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'compute_capacity_flag': True,
                     'number_of_units_string': "'total_number_of_possible_SSS_jobs'",
                     'run_config': {'agent_units_string': None,
-                                   'lottery_max_iterations': 3}
+                                   'lottery_max_iterations': 3},
+                     'variable_package': "'urbansim'"
                     },
                 'name': 'RegionalEmploymentLocationChoiceModel'
                 },
