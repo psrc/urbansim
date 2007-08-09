@@ -37,6 +37,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
     agent_units_string = Trait(None, None, Str)
     number_of_units_string = Trait('total_number_of_possible_SSS_jobs', None, Str)
     lottery_max_iterations = Int(3)
+    variable_package = Trait("urbansim", Str, Str)
     
     input_index = Str('erm_index')
     
@@ -89,7 +90,8 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
                     'compute_capacity_flag': self.compute_capacity_flag,
                     'number_of_units_string': get_string_or_None(self.number_of_units_string), 
                     'run_config': {'agent_units_string': get_string_or_None(self.agent_units_string),
-                                   'lottery_max_iterations': self.lottery_max_iterations}
+                                   'lottery_max_iterations': self.lottery_max_iterations},
+                    'variable_package': "'%s'" % self.variable_package
                     },
                 'name': 'EmploymentLocationChoiceModel'
                 },
@@ -173,7 +175,8 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'compute_capacity_flag': True,
                     'number_of_units_string': "'total_number_of_possible_SSS_jobs'",
                     'run_config': {'agent_units_string': None,
-                                   'lottery_max_iterations': 3}
+                                   'lottery_max_iterations': 3},
+                    'variable_package': "'urbansim'"
                     },
                 'name': 'EmploymentLocationChoiceModel'
                 },
@@ -265,7 +268,8 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'compute_capacity_flag': False,
                     'number_of_units_string': "'total_number_of_possible_SSS_jobs'",
                     'run_config': {'agent_units_string': None,
-                                   'lottery_max_iterations': 20}
+                                   'lottery_max_iterations': 20},
+                    'variable_package': "'urbansim'"
                     },
                 'name': 'EmploymentLocationChoiceModel'
                 },

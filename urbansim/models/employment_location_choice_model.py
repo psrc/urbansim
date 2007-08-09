@@ -36,7 +36,8 @@ class EmploymentLocationChoiceModel(AgentLocationChoiceModelMember):
             filter = None,
             submodel_string = "sector_id", location_id_string = None,
             demand_string = None, # if not None, the aggregate demand for locations will be stored in this attribute
-            run_config = None, estimate_config=None, debuglevel=0, dataset_pool=None):
+            run_config = None, estimate_config=None, debuglevel=0, dataset_pool=None,
+            variable_package="urbansim"):
         """ 'group_member' is of type ModelGroupMember. All SSS in variable names are replaced by the group member name.
         """
         group_member_name = group_member.get_member_name()
@@ -81,4 +82,5 @@ class EmploymentLocationChoiceModel(AgentLocationChoiceModelMember):
                                         location_id_string=location_id_string,
                                         run_config=run_config, 
                                         estimate_config=estimate_config, 
-                                        debuglevel=debuglevel, dataset_pool=dataset_pool)
+                                        debuglevel=debuglevel, dataset_pool=dataset_pool,
+                                        variable_package=variable_package)

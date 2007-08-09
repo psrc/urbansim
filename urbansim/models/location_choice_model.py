@@ -103,6 +103,8 @@ class LocationChoiceModel(ChoiceModel):
         self.run_config = run_config.merge_with_defaults(self.run_config)
         if data_objects is not None:
             self.dataset_pool.add_datasets_if_not_included(data_objects)
+        self.dataset_pool.add_datasets_if_not_included({agent_set.get_dataset_name():agent_set})
+        
         if self.location_id_string is not None:
             agent_set.compute_variables(self.location_id_string, dataset_pool=self.dataset_pool)
         if self.run_config.get("agent_units_string", None): # used when agents take different amount of capacity from the total capacity
@@ -197,11 +199,10 @@ class LocationChoiceModel(ChoiceModel):
     def determine_units_capacity(self, agent_set, agents_index):
         """Return capacity for each location.
         """
-        resources = Resources({agent_set.get_dataset_name():agent_set, "debug":self.debug})
         if self.capacity_string is None:
             return None
         
-        capacity = self.choice_set.compute_variables(self.capacity_string, dataset_pool=self.dataset_pool, resources=resources)
+        capacity = self.choice_set.compute_variables(self.capacity_string, dataset_pool=self.dataset_pool)
         return capacity
 
     def determine_units_capacity_for_estimation(self, agent_set, agents_index):

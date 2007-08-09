@@ -29,6 +29,7 @@ class HouseholdLocationChoiceModelConfigurationCreator(HasStrictTraits):
     nchunks = Int(12)
     agents_for_estimation_table_name = Str('households_for_estimation')
     number_of_units_string = Trait('residential_units', None, Str)
+    number_of_agents_string = Trait('number_of_households', None, Str)
     lottery_max_iterations = Int(3)
     
     coefficients_table = Str('household_location_choice_model_coefficients')
@@ -66,6 +67,7 @@ class HouseholdLocationChoiceModelConfigurationCreator(HasStrictTraits):
                     'sample_size_locations': self.sample_size_locations,
                     'capacity_string': get_string_or_None(self.capacity_string),
                     'number_of_units_string': get_string_or_None(self.number_of_units_string),
+                    'number_of_agents_string': get_string_or_None(self.number_of_agents_string),
                     'run_config': {'lottery_max_iterations': self.lottery_max_iterations}
                     },
                 'name': 'HouseholdLocationChoiceModel'
@@ -145,6 +147,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'sample_size_locations': 30,
                     'capacity_string': "'vacant_residential_units'",
                     'number_of_units_string': "'residential_units'",
+                    'number_of_agents_string': "'number_of_households'",
                     'run_config': {'lottery_max_iterations': 3}
                     },
                 'name': 'HouseholdLocationChoiceModel'
@@ -230,6 +233,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'sample_size_locations': 2000,
                     'capacity_string': "'vacant_residential_units'",
                     'number_of_units_string': "'residential_units'",
+                    'number_of_agents_string': "'number_of_households'",
                     'run_config': {'lottery_max_iterations': 20}
                     },
                 'name': 'HouseholdLocationChoiceModel'

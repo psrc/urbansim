@@ -87,7 +87,7 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModelMember):
         # create full names from (possibly) short names
         tmpdict = Resources({"filter": filter, "max": developable_maximum_unit_variable,
                              "min": developable_minimum_unit_variable})
-        self.add_prefix_to_variable_names(["filter", "max", "min"], location_set, tmpdict)
+        self.add_prefix_to_variable_names(["filter", "max", "min"], location_set, resources=tmpdict)
         filter = tmpdict["filter"]
         if tmpdict["max"]:
             self.developable_maximum_unit_variable = VariableName(tmpdict["max"])
