@@ -34,10 +34,12 @@ class ConfigJobs(UrbansimParcelConfiguration):
             'description':'data preparation for PSRC parcel',
             'cache_directory': None,
             'creating_baseyear_cache_configuration': CreatingBaseyearCacheConfiguration(
+         		#cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
                 cache_directory_root = r'/urbansim_cache/psrc_parcel',
                 #cache_directory_root = r'/workspace/urbansim_cache/psrc_parcel',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
+           		   #existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
                     existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/cache_source',
                     #existing_cache_to_copy = r'/workspace/urbansim_cache/psrc_parcel/estimation',
                     years_to_cache = [2000]
@@ -72,7 +74,7 @@ class ConfigJobs(UrbansimParcelConfiguration):
                                 sampler = None,
                                 capacity_string = "urbansim_parcel.building.vacant_non_home_based_job_space",
                                 number_of_units_string = None,
-                                lottery_max_iterations=20
+                                lottery_max_iterations=30
                                 ).execute()
         self['models_configuration']['home_based_employment_location_choice_model'] = {}
         self['models_configuration']['home_based_employment_location_choice_model']['controller'] = \
@@ -82,7 +84,7 @@ class ConfigJobs(UrbansimParcelConfiguration):
                                 sampler = None,
                                 capacity_string = "building.aggregate(psrc_parcel.household.minimum_persons_and_2)",
                                 number_of_units_string = None,
-                                lottery_max_iterations=20
+                                lottery_max_iterations=30
                                 ).execute()
         self['models_configuration']['employment_relocation_model']['controller'] = \
                     EmploymentRelocationModelConfigurationCreator(
