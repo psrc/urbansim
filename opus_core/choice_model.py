@@ -494,7 +494,7 @@ class ChoiceModel(ChunkModel):
             return None
         dataset_data = {}
         for i in range(names.size):
-            dataset_data[names[i]] = all_data[:, i, :].reshape((all_data.shape[0], all_data.shape[2]))
+            dataset_data[names[i]] = all_data[:, :, i].reshape((all_data.shape[0], all_data.shape[1]))
         storage = StorageFactory().get_storage('dict_storage')
         storage._write_dataset('dataset', dataset_data)
         ds = Dataset(in_storage=storage, in_table_name='dataset', id_name=[])

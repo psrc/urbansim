@@ -572,7 +572,7 @@ class AbstractDataset(object):
                         self.compute_variables([item], resources=resources)
                 s = self.attribute_sum(short_name)
                 values = self.get_attribute(short_name)
-                logger.log_status("%25s\t%8s\t%8s\t%9g\t%7g\t%7g" %(short_name, round(s/float(self.size()),2), round(ndimage.standard_deviation(values),2),
+                logger.log_status("%25s\t%8s\t%8s\t%9g\t%7g\t%7g" %(short_name, round(values.mean(),2), round(ndimage.standard_deviation(values),2),
                     s, values.min(), values.max()))
         logger.log_status("\nSize:", self.size(), " records")
         logger.log_status("identifiers: ")
