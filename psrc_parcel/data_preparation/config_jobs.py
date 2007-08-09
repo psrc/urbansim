@@ -13,18 +13,12 @@
 #
 
 #from urbansim.estimation.config import config
-from opus_core.configurations.database_configuration import DatabaseConfiguration
 from urbansim_parcel.configs.controller_config import UrbansimParcelConfiguration
-from urbansim.configs.general_configuration import GeneralConfiguration
-from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from psrc_parcel.configs.employment_location_choice_model_by_zones_configuration_creator import EmploymentLocationChoiceModelByZonesConfigurationCreator
 from urbansim.configurations.employment_relocation_model_configuration_creator import EmploymentRelocationModelConfigurationCreator
-from opus_core.resources import merge_resources_with_defaults
-from numpy import array
-import os
 
 class ConfigJobs(UrbansimParcelConfiguration):
     def __init__(self):
@@ -34,12 +28,12 @@ class ConfigJobs(UrbansimParcelConfiguration):
             'description':'data preparation for PSRC parcel',
             'cache_directory': None,
             'creating_baseyear_cache_configuration': CreatingBaseyearCacheConfiguration(
-         		#cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
+                 #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
                 cache_directory_root = r'/urbansim_cache/psrc_parcel',
                 #cache_directory_root = r'/workspace/urbansim_cache/psrc_parcel',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
-           		   #existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
+                      #existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
                     existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/cache_source',
                     #existing_cache_to_copy = r'/workspace/urbansim_cache/psrc_parcel/estimation',
                     years_to_cache = [2000]
