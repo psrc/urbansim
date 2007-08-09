@@ -66,8 +66,8 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                                                            self.dataset_pool.get_dataset('development_template_component'))
         
         self.dataset_pool.replace_dataset(proposal_component_set.get_dataset_name(), proposal_component_set)
-        proposal_component_set.flush_dataset_if_low_memory_mode()
-        dataset.flush_dataset_if_low_memory_mode()
+        #proposal_component_set.flush_dataset_if_low_memory_mode()
+        #dataset.flush_dataset_if_low_memory_mode()
         
         result = RegressionModel.run(self, specification, coefficients, dataset, 
                                          index, chunk_specification, data_objects,
@@ -133,6 +133,6 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                                                             spec_replace_module_variable_pair[1]))
             specification.replace_variables(spec_replacement)
             
-        parcels.flush_dataset_if_low_memory_mode()
+        #parcels.flush_dataset_if_low_memory_mode()
         return (proposal_set, specification, coefficients)
         

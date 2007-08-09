@@ -52,7 +52,8 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                 "name": "RealEstatePriceModel",
                 "arguments": {"submodel_string": "'land_use_type_id'",
                               "outcome_attribute": "'ln_unit_price=ln(urbansim_parcel.parcel.unit_price)'",
-                              "filter_attribute": "'numpy.logical_or(parcel.aggregate(urbansim_parcel.building.building_sqft), urbansim_parcel.parcel.is_land_use_type_vacant)'"
+                              "filter_attribute": "'numpy.logical_or(parcel.aggregate(urbansim_parcel.building.building_sqft), urbansim_parcel.parcel.is_land_use_type_vacant)'",
+                              "dataset_pool": "dataset_pool"
                               },
                 },
             "prepare_for_run": {
