@@ -74,14 +74,18 @@ class sql_storage(Storage):
         return table_data
         
         
-    def write_table(self, table_name, table_data):
+    def write_table(self, table_name, table_data, overwrite_existing = True):
         table_length, _ = self._get_column_size_and_names(table_data)
         
         columns = []
         for column_name, column_data in table_data.iteritems():
-            columns.append(Column(column_name, self._get_sql_alchemy_type_from_numpy_dtype(column_data.dtype)))
+            columns.append(Column(column_name, 
+                                  self._get_sql_alchemy_type_from_numpy_dtype(column_data.dtype)))
         
         table = Table(table_name, self._metadata, *columns)
+        
+        if overwrite_existing:
+            table.drop(checkfirst = True)
         
         connection = self._engine.connect()
         try:
