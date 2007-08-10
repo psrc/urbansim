@@ -334,7 +334,7 @@ def sample_choice(prob_array, method="MC"):
         raise RuntimeError, "prob_array must be a 2d array"
 
     rows, columns = prob_array.shape
-    if not ma.allclose(sum(prob_array, axis=1, dtype=float32), ones((rows,))):
+    if not ma.allclose(sum(prob_array, axis=1, dtype=float64), ones((rows,))):
         raise RuntimeError, "prob_array must add up to 1 for each row"
 
     if method.lower() == "mc":
