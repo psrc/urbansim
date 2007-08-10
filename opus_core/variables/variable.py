@@ -24,7 +24,7 @@ from opus_core.variables.attribute_box import AttributeBox
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.storage_factory import StorageFactory
 
-from numpy import longlong, int32
+from numpy import longlong, int32, int64
 
 
 class Variable(object):
@@ -490,7 +490,10 @@ class VariableTests(opus_unittest.OpusTestCase):
         dataset.compute_variables("opus_core.tests.a_test_variable")
         self.assert_("a_dependent_variable" in dataset.get_attributes_in_memory())
         self.assert_("a_test_variable" in dataset.get_attributes_in_memory())
-        self.assertEqual(values.dtype.type, int32)
+        # The type of values will be int32 on a 32-bit machine, and int64 on a 64 bit machine
+        # Ideally we'd test for the machine type, but for the moment we allow either result
+        # in this test.
+        self.assert_(values.dtype.type==int32 or values.dtype.type==int64)
         
     def test_casting(self):
         storage = StorageFactory().get_storage('dict_storage')
