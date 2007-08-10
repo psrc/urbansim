@@ -12,11 +12,12 @@
 # other acknowledgments.
 # 
 
+from enthought.traits.api import Int
 from urbansim.configurations.development_project_location_choice_model_configuration_creator import DevelopmentProjectLocationChoiceModelConfigurationCreator as USDPLCMCC
 
 class RegionalDevelopmentProjectLocationChoiceModelConfigurationCreator(USDPLCMCC):
      
-    records_per_chunk = int(1000)
+    records_per_chunk = Int(1000)
     def execute(self):
         conf = USDPLCMCC.execute(self)
         conf['import'] = {'washtenaw.models.regional_development_project_location_choice_model': 
@@ -88,7 +89,7 @@ class TestDevelopmentProjectLocationChoiceModelConfigurationCreator(opus_unittes
             'run': {
                 'arguments': {
                     'agent_set': "dptm_results['project_type']",
-                    'chunk_specification': "{'records_per_chunk':300}",
+                    'chunk_specification': "{'records_per_chunk':1000}",
                     'coefficients': 'coefficients',
                     'data_objects': 'datasets',
                     'debuglevel': 'debuglevel',
