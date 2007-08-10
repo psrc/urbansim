@@ -26,6 +26,8 @@ specification = {
             "ln_avg_building_sf_per_unit = ln(urbansim_parcel.building.building_sqft_per_unit)",
 #            "ln_avg_value_per_unit = ln(building.disaggregate(urbansim_parcel.parcel.unit_price)/building.residential_units)",
             "ln_value_per_unit = ln(urbansim_parcel.building.unit_price)",
+#            "ln_value_per_unit = ln(urbansim_parcel.building.unit_price*urbansim_parcel.building.building_sqft_per_unit)",
+
             #"ln_parcel_sf = ln(building.disaggregate(parcel.parcel_sqft))",
             "ln_parcel_sf_per_unit = ln(urbansim_parcel.building.parcel_sqft_per_unit)",
             "ln_residential_units = ln(building.residential_units)",
@@ -63,6 +65,7 @@ specification = {
             "income_x_ln_parcel_sf_per_unit = household.income * ln(urbansim_parcel.building.parcel_sqft_per_unit)",
             #"income_x_ln_residential_units = household.income * ln(building.residential_units)",
             #"income_x_sqft_bedroom = (household.income * (urbansim_parcel.building.building_sqft / urbansim_parcel.building.number_of_bedrooms))",
+            "income_x_avg_income = household.income * building.disaggregate(urbansim_parcel.zone.average_income)",
 
             #"persons_x_is_condo_residential = household.persons * urbansim.building.is_condo_residential",
             #"persons_x_is_multi_family_residential = household.persons * urbansim.building.is_multi_family_residential",
@@ -87,6 +90,7 @@ specification = {
             
             #"ln_emp_15min_hbw_drive_alone = building.disaggregate(psrc.zone.ln_employment_within_15_minutes_travel_time_hbw_am_drive_alone)",
             "ln_emp_40min_hbw_transit_walk = building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_40_minutes_travel_time_hbw_am_transit_walk))",
+            "ln_emp_10min_hbw_walk = building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_walk))",
             #"gen_cost_wt_access_to_emp_hbw_drive_alone = building.disaggregate(psrc.zone.generalized_cost_weighted_access_to_employment_hbw_am_drive_alone)",
             "trip_wt_avg_time_hbw_drive_alone = building.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_drive_alone)",
             #"trip_wt_avg_time_hbw_transit_walk = building.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_transit_walk)",
