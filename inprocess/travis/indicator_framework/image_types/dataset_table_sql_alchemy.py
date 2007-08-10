@@ -44,7 +44,7 @@ class DatasetTableSQLAlchemy(AbstractIndicator):
         self.store = sql_storage(
             protocol = self.protocol, 
             username = self.username, 
-            password = self.password, 
+            password = password, 
             hostname = self.hostname, 
             database_name = self.database_name
         )
@@ -53,15 +53,16 @@ class DatasetTableSQLAlchemy(AbstractIndicator):
         return True
     
     def get_file_extension(self):
-        return self.output_type
+        return ''
                 
     def get_visualization_shorthand(self):
-        return 'dataset_table'
+        return 'dataset_table_sql_alchemy'
 
     def get_additional_metadata(self):
-        return  [('attributes',self.attributes),
-                 ('output_type',self.output_type),
-                 ('exclude_condition',self.exclude_condition)]
+        return  [('protocol',self.protocol),
+                 ('database_name',self.database_name),
+                 ('username',self.username),
+                 ('hostname',self.hostname)]
     
     def get_file_name(self, 
                       year, 
@@ -72,7 +73,7 @@ class DatasetTableSQLAlchemy(AbstractIndicator):
         if extension is None:
             extension = self.get_file_extension()
             
-        file_name = '%s__dataset_table__%s__%i'%(
+        file_name = '%s__%s__%i'%(
             self.dataset_name,
             self.name,
             year)
@@ -130,10 +131,6 @@ class DatasetTableSQLAlchemy(AbstractIndicator):
         self.store.write_table(table_name = table_name,
                                table_data = attribute_vals)             
         
-#        self.store.write_table(
-#            table_name=self.get_file_name(year = year, suppress_extension_addition = True),
-#            table_data=attribute_vals,
-#            )
 
         return self.get_file_path(year = year)
     
