@@ -261,7 +261,7 @@ indicators = [
 
 
 if __name__ == '__main__':
-    from opus_core.indicator_framework import IndicatorFactory
+    from opus_core.indicator_framework.core import IndicatorFactory
 
     IndicatorFactory().create_indicators(
         indicators = indicators,
