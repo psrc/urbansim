@@ -66,8 +66,8 @@ class BuildingConstructionModel(Model):
         
         # determine existing units on parcels
         parcels = dataset_pool.get_dataset("parcel")
-        parcels.compute_variables(["urbansim_parcel.parcel.vacant_land_area"] + 
-                                  map(lambda x: "%s = parcel.aggregate(urbansim_parcel.building.%s)" % (x, x), unique_unit_names), 
+        parcels.compute_variables(["urbansim_parcel.parcel.vacant_land_area"] + ["urbansim_parcel.parcel.residential_units"] + 
+                                  map(lambda x: "urbansim_parcel.parcel.%s" % (x, x), unique_unit_names), 
                                   dataset_pool=dataset_pool)
         parcel_is_lut_vacant = parcels.compute_variables(["urbansim_parcel.parcel.is_land_use_type_vacant"], 
                                   dataset_pool=dataset_pool)
