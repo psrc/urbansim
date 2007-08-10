@@ -92,7 +92,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                     dataset_pool=self.dataset_pool)
         target_vacancy = self.dataset_pool.get_dataset('target_vacancy')
         target_vacancy.compute_variables(['type_name=target_vacancy.disaggregate(building_type.building_type_name)',
-                                          'unit_name=target_vacancy.disaggregate(building_type.unit_name)'],
+                                          'unit_name=target_vacancy.disaggregate(building_type.unit_name)',
+                                          'is_residential = target_vacancy.disaggregate(building_type.is_residential)'],
                                          dataset_pool=self.dataset_pool)
         current_target_vacancy = DatasetSubset(target_vacancy, index=where(target_vacancy.get_attribute("year")==current_year)[0])
 
@@ -139,7 +140,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
             # consider proposals in order of the highest weights
             self.consider_proposals(idx[isorted], current_target_vacancy)
 
-        # consider proposed and tentative proposals
+        # consider tentative proposals
         for status in [self.proposal_set.id_tentative]:
             idx = where(logical_and(self.proposal_set.get_attribute("status_id") == status, is_proposal_eligible))[0]
             if idx.size <= 0:
@@ -152,7 +153,9 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 sampled_proposal_indexes = probsample_noreplace(proposal_ids[idx], n, 
                                                 prob_array=self.weight[idx]/float(self.weight[idx].sum()),
                                                 exclude_index=None, return_indices=True)
-                self.consider_proposals(arange(self.proposal_set.size())[idx[sampled_proposal_indexes]],
+                # sort according to the weights
+                isorted = self.weight[idx[sampled_proposal_indexes]].argsort()[range(sampled_proposal_indexes.size-1,-1,-1)]
+                self.consider_proposals(arange(self.proposal_set.size())[idx[sampled_proposal_indexes[isorted]]],
                                         current_target_vacancy
                                        )
 
@@ -171,6 +174,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         type_ids = target_vacancy.get_attribute("building_type_id")
         type_names = target_vacancy.get_attribute("type_name")
         unit_names = target_vacancy.get_attribute("unit_name")
+        is_residential = target_vacancy.get_attribute("is_residential")
         buildings = self.dataset_pool.get_dataset("building")
         building_type_ids = buildings.get_attribute("building_type_id")
         for index in arange(target_vacancy.size()):
@@ -179,6 +183,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
             unit_name = unit_names[index]  #vacancy by type, could be residential, non-residential, or by building_type
             target = self.target_vacancies[type_id]           
             is_matched_type = building_type_ids == type_id
+            if is_residential[index]:
+                unit_name = "residential_units"
             self.existing_units[type_id] = buildings.get_attribute(unit_name)[is_matched_type].astype("float32").sum()
             self.occupied_units[type_id] = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type].astype("float32").sum()
             self.proposed_units[type_id] = 0

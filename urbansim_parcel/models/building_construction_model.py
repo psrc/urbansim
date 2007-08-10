@@ -61,6 +61,7 @@ class BuildingConstructionModel(Model):
         unique_building_types = unique_values(building_type_id)
         index_in_building_types = building_type_set.get_id_index(unique_building_types)
         unit_names = unit_names[index_in_building_types]
+        is_residential = building_type_set.get_attribute("is_residential")[index_in_building_types]==1
         unique_unit_names = unique_values(unit_names)
         
         # determine existing units on parcels
@@ -103,6 +104,8 @@ class BuildingConstructionModel(Model):
         for itype in range(unique_building_types.size):
             this_building_type = unique_building_types[itype]
             unit_name = unit_names[itype]
+            if is_residential[itype]:
+                unit_name = 'residential_units'
             component_index = where(building_type_id == this_building_type)[0]
             parcel_ids_in_components = proposal_component_set.get_attribute_by_index("parcel_id", component_index)
             unique_parcels = unique_values(parcel_ids_in_components)
