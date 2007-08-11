@@ -74,16 +74,12 @@ except:
     pass
 else:
     import os, sys
-    
     from sets import Set
-    
     from shutil import rmtree
     from tempfile import mkdtemp
-    
-    from numpy import array
-    
+    from numpy import array, int32
     from dbfpy.dbf import Dbf as _dbf_class
-
+    from opus_core.tests.utils.cache_extension_replacements import replacements
     
     class FunctionalTests(opus_unittest.OpusTestCase):
         def setUp(self):
@@ -102,8 +98,8 @@ else:
             table_name = 'foo'
             
             values = {
-                'attribute1': array([1,2,3]),
-                'attribute2': array([4,5,6]),
+                'attribute1': array([1,2,3], dtype=int32),
+                'attribute2': array([4,5,6], dtype=int32),
                 }
             
             storage.write_table(table_name, values)
@@ -112,10 +108,7 @@ else:
             self.assert_(os.path.exists(table_dir))
             
             actual = Set(os.listdir(table_dir))
-            if sys.byteorder=='little':
-                expected = Set(['attribute1.li4', 'attribute2.li4'])
-            else:
-                expected = Set(['attribute1.bi4', 'attribute2.bi4'])
+            expected = Set(['attribute1.%(endian)si4' % replacements, 'attribute2.%(endian)si4' % replacements])
             self.assertEqual(expected, actual)
             
             exporter = ExportCacheToDbfTableCommand(
