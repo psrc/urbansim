@@ -520,10 +520,9 @@ def _log_sql(sql_query, show_output=False):
 
 
 
-from opus_core.tests import opus_unittest
-
 import os
-
+from numpy import int32, int64
+from opus_core.tests import opus_unittest
 from opus_core.logger import logger
 
 
@@ -556,8 +555,8 @@ class OpusDatabaseTest(opus_unittest.OpusTestCase):
         mysql_types = [FIELD_TYPE.LONG, FIELD_TYPE.LONGLONG]
 
         expected_result = {
-            'id2':array([4,5]),
-            'attr2':array([6L,7L]),
+            'id2':array([4,5], dtype=int32),
+            'attr2':array([6, 7], dtype=int64),
             }
         actual_result = db._make_dictionary(resultlist, column_names, mysql_types)
 

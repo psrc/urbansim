@@ -167,10 +167,8 @@ import sys
 from opus_core.tests import opus_unittest
 from opus_core.opus_package import OpusPackage
 from opus_core.store.storage import TestStorageInterface
-
-from numpy import array
-from numpy import fromfile
-
+from opus_core.tests.utils.cache_extension_replacements import replacements
+from numpy import array, fromfile, int32
 from shutil import rmtree
 from tempfile import mkdtemp
 
@@ -214,7 +212,7 @@ class StorageTests(opus_unittest.OpusTestCase):
         
     def test_load_table(self):
         expected = {
-            'city_id': array([3, 1, 2]),
+            'city_id': array([3, 1, 2], dtype=int32),
             'city_name': array(['Unknown', 'Eugene', 'Springfield']),
             }
         actual = self.storage.load_table('cities')
@@ -259,12 +257,10 @@ class StorageWriteTests(TestStorageInterface):
         table_data = {
             'int_column': expected,
             }
-        if sys.byteorder=='little':
-            file_name = 'int_column.li4'
-            numpy_dtype = '<i4'
-        else:
-            file_name = 'int_column.bi4'
-            numpy_dtype = '>i4'
+        # file_name is e.g. 'int_column.li4' for a little-endian 32 bit machine
+        file_name = 'int_column.%(endian)si%(bytes)u' % replacements
+        # numpy_dtype is e.g. '<i4' for a little-endian 32 bit machine
+        numpy_dtype = '%(numpy_endian)si%(bytes)u' % replacements
         file_path = os.path.join(self.temp_dir, self.table_name, file_name)
         self.storage.write_table(self.table_name, table_data)
         self.assert_(os.path.exists(file_path))

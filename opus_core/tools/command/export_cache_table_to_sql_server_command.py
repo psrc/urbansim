@@ -61,14 +61,12 @@ class ExportCacheTableToSqlServerCommand(Command):
     
     
 from opus_core.tests import opus_unittest
-
+from opus_core.tests.utils.cache_extension_replacements import replacements
 import os, sys
-
 from sets import Set
 from shutil import rmtree
 from tempfile import mkdtemp
-
-from numpy import array
+from numpy import array, int32
 
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.session_configuration import SessionConfiguration
@@ -98,8 +96,8 @@ class TestExportCacheTableToSqlServerCommand(opus_unittest.TestCase):
         SimulationState().set_current_time(2000)
         
         values = {
-                'attribute1': array([1,2,3]),
-                'attribute2': array([4,5,6]),
+                'attribute1': array([1,2,3], dtype=int32),
+                'attribute2': array([4,5,6], dtype=int32),
                 }
         storage.write_table('foo', values)
             
@@ -107,10 +105,7 @@ class TestExportCacheTableToSqlServerCommand(opus_unittest.TestCase):
         self.assert_(os.path.exists(table_dir))
         
         actual = Set(os.listdir(table_dir))
-        if sys.byteorder=='little':
-            expected = Set(['attribute1.li4', 'attribute2.li4'])
-        else:
-            expected = Set(['attribute1.bi4', 'attribute2.bi4'])
+        expected = Set(['attribute1.%(endian)si4' % replacements, 'attribute2.%(endian)si4' % replacements])
         self.assertEqual(expected, actual)
         
         exporter = ExportCacheTableToSqlServerCommand(
@@ -159,7 +154,7 @@ class TestExportCacheTableToSqlServerCommand(opus_unittest.TestCase):
         
         SimulationState().set_current_time(2001)
         values = {
-                'spam': array([7,8,9]),
+                'spam': array([7,8,9], dtype=int32),
                 'eggs': array(['a','ab','abc']),
                 }
         storage.write_table('bar', values)
@@ -168,10 +163,7 @@ class TestExportCacheTableToSqlServerCommand(opus_unittest.TestCase):
         self.assert_(os.path.exists(table_dir))
             
         actual = Set(os.listdir(table_dir))
-        if sys.byteorder=='little':
-            expected = Set(['spam.li4', 'eggs.iS3'])
-        else:
-            expected = Set(['spam.bi4', 'eggs.iS3'])
+        expected = Set(['spam.%(endian)si4' % replacements, 'eggs.iS3'])
         self.assertEqual(expected, actual)
                     
         exporter = ExportCacheTableToSqlServerCommand(

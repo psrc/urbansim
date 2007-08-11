@@ -294,7 +294,7 @@ class delimited_storage(Storage, delimited_storage_old):
     
 from opus_core.tests import opus_unittest
 from opus_core.store.storage import TestStorageInterface
-
+from opus_core.tests.utils.cache_extension_replacements import replacements
 from sets import Set
 from shutil import rmtree
 from tempfile import mkdtemp
@@ -546,9 +546,8 @@ class TestDelimitedStorage(TestStorageInterface):
         self.assert_(self.storage.has_table('foo'))
         
     def test_get_header_information_in_table(self):
-        dummy_column_names, column_types = self.storage._delimited_storage__get_header_information_from_table(self.table_name)
-        
-        expected_column_types = ['i4', 'f8', 'S1']
+        dummy_column_names, column_types = self.storage._delimited_storage__get_header_information_from_table(self.table_name)      
+        expected_column_types = ['i%(bytes)u'%replacements, 'f8', 'S1']
         self.assertEqual(column_types, expected_column_types)
         
     def test_column_name_and_type_pattern(self):
@@ -599,14 +598,12 @@ class TestDelimitedStorage(TestStorageInterface):
             )
         expected_header_information = ['f8', 'f8', 'S']
         self.assertEqual(expected_header_information, inferred_header_information)
-
         self.storage.write_table(
             table_name = 'foo',
             table_data = {
                 'bar': array([], dtype='int32'),
                 }
             )
-
         self.assertRaises(OpusError, self.storage._delimited_storage__infer_header_information_in_table,
             table_name = 'foo', 
             )
@@ -615,11 +612,9 @@ class TestDelimitedStorage(TestStorageInterface):
         # Header information exists:
         column_names, column_types = self.storage._get_header_information(self.table_name)
         expected_column_names = ['attribute1', 'attribute2', 'attribute3']
-        expected_column_types = ['i4', 'f8', 'S1']
-        
+        expected_column_types = ['i%(bytes)u'%replacements, 'f8', 'S1']
         self.assertEqual(expected_column_names, column_names)
         self.assertEqual(expected_column_types, column_types)
-        
         # Make a file with no header information:
         file_path = self.storage._get_file_path_for_table('foo')
         foo = open(file_path, 'wb')
@@ -627,14 +622,11 @@ class TestDelimitedStorage(TestStorageInterface):
            foo.write("attribute1,attribute2,attribute3\n1,1.1,a")
            # attribute1,attribute2,attribute3
            # 1,1.1,a
-        
         finally:
             foo.close()
-
         column_names, column_types = self.storage._get_header_information('foo')
         expected_column_names = ['attribute1', 'attribute2', 'attribute3']
         expected_column_types = ['f8', 'f8', 'S']
-        
         self.assertEqual(expected_column_names, column_names)
         self.assertEqual(expected_column_types, column_types)
         

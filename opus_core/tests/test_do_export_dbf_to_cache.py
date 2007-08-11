@@ -13,14 +13,10 @@
 
 
 from opus_core.tests import opus_unittest
-
-import os, sys
-import tempfile
-
+import os, sys, tempfile
 from shutil import rmtree
-
 from opus_core.opus_package import OpusPackage
-
+from opus_core.tests.utils.cache_extension_replacements import replacements
 
 class Tests(opus_unittest.TestCase):
     def setUp(self):
@@ -72,22 +68,14 @@ class Tests(opus_unittest.TestCase):
         
         # Are the computed attributes there?
         attribute_dir = os.path.join(attribute_cache_directory, cache_year, table_name)
-        
-        files_to_check_endian_template = [
-            'dummyfloat.%sf8',
-            'dummyint.%si4',
-            'keyid.%si4',
-            ]
+        # The file extensions will depend on whether the architecture is 32 or 64 bit, and on
+        # whether it is little-endian or big-endian.
+        file_templates = ['dummyfloat.%(endian)sf8', 'dummyint.%(endian)si%(bytes)u', 'keyid.%(endian)si%(bytes)u']
         files_in_dir = os.listdir(attribute_dir)
-        for file_endian_template in files_to_check_endian_template:
-            if ((not os.path.exists(os.path.join(attribute_dir, file_endian_template%'l'))) and
-                    (not os.path.exists(os.path.join(attribute_dir, file_endian_template%'b')))):
-                self.fail("Neither attribute '%s' nor '%s' exist in %s." % (
-                    file_endian_template%'l',
-                    file_endian_template%'b',
-                    attribute_dir
-                    ))
-        
+        for template in file_templates:
+            f = template%replacements
+            if not os.path.exists(os.path.join(attribute_dir, f)):
+                self.fail("Didn't find attribute '%s' in %s." % (f, attribute_dir))
 
 if __name__ == "__main__":
         opus_unittest.main()

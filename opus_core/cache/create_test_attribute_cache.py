@@ -45,10 +45,9 @@ class CreateTestAttributeCache(object):
                 flt_storage.write_table(table_name=dataset_name, table_data=attributes)
 
 from opus_core.tests import opus_unittest
-
+from opus_core.tests.utils.cache_extension_replacements import replacements
 from shutil import rmtree
 from tempfile import mkdtemp
-
 from numpy import array
 
 class Tests(opus_unittest.OpusTestCase):
@@ -79,10 +78,8 @@ class Tests(opus_unittest.OpusTestCase):
         cache_creator.create_attribute_cache_with_data(cache_directory, test_data)
         
         self.assert_(os.path.exists(cache_directory))
-        if sys.byteorder=='little':
-            filename = 'attr1.li4'
-        else:
-            filename = 'attr1.bi4'
+        # filename is e.g. attr1.li4 for little-endian 32 bit architecture
+        filename = 'attr1.%(endian)si%(bytes)u' % replacements
         self.assert_(os.path.exists(os.path.join(cache_directory, 
                                                  str(year),
                                                  table_name,

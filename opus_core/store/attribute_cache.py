@@ -142,6 +142,7 @@ class AttributeCache(Storage, AttributeCache_old):
 
 from opus_core.tests import opus_unittest
 from opus_core.opus_package import OpusPackage
+from numpy import int32
 
 class AttributeCacheTests(opus_unittest.OpusTestCase):
     def setUp(self):
@@ -218,7 +219,7 @@ class AttributeCacheTests(opus_unittest.OpusTestCase):
     def test_load_table_with_two_columns_1980(self):
         SimulationState().set_current_time(1980)
         expected = {
-            'city_id': array([3, 1, 2]),
+            'city_id': array([3, 1, 2], dtype=int32),
             'city_name': array(['Unknown', 'Eugene', 'Springfield']),
             }
         actual = self.storage.load_table('cities')
@@ -227,7 +228,7 @@ class AttributeCacheTests(opus_unittest.OpusTestCase):
     def test_load_table_with_two_columns_1981_one_column_unchanged_from_1980(self):
         SimulationState().set_current_time(1981)
         expected = {
-            'city_id': array([3, 1, 2]),
+            'city_id': array([3, 1, 2], dtype=int32),
             'city_name': array(['NotUnknownAnymore', 'Eugene', 'Springfield']),
             }
         actual = self.storage.load_table('cities')
@@ -235,9 +236,7 @@ class AttributeCacheTests(opus_unittest.OpusTestCase):
         
     def test_load_one_attribute(self):
         SimulationState().set_current_time(1980)
-        expected = {
-            'city_id': array([3, 1, 2])
-            }
+        expected = {'city_id': array([3, 1, 2], dtype=int32)}
         actual = self.storage.load_table('cities', column_names=['city_id'])
         self.assertDictsEqual(expected, actual)
         
@@ -246,6 +245,7 @@ from shutil import rmtree
 from tempfile import mkdtemp
 from numpy import array
 import numpy
+from opus_core.tests.utils.cache_extension_replacements import replacements
         
 class AttributeCacheWriteTests(opus_unittest.OpusTestCase):
     def setUp(self):
@@ -262,15 +262,12 @@ class AttributeCacheWriteTests(opus_unittest.OpusTestCase):
     def test_write(self):
         year = 1980
         SimulationState().set_current_time(year)
-        expected = array([100, 70])
-        table_data = {
-            'int_column': expected,
-            }
-        file_name = os.path.join(self.temp_dir, '%s' % year,  self.table_name, 'int_column.li4')
-        
+        expected = array([100, 70], dtype=int32)
+        table_data = {'int_column': expected}
+        full_name = os.path.join(self.temp_dir, '%s' % year,  self.table_name, 'int_column.li4')
         self.storage.write_table(self.table_name, table_data)
-        self.assert_(os.path.exists(file_name))
-        actual = numpy.fromfile(file_name, dtype='<i4')
+        self.assert_(os.path.exists(full_name))
+        actual = numpy.fromfile(full_name, dtype='<i4')
         self.assert_((expected==actual).all())
         
 class TestAttributeCacheGetTableNames(opus_unittest.OpusTestCase):

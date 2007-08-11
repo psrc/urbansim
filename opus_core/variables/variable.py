@@ -24,7 +24,7 @@ from opus_core.variables.attribute_box import AttributeBox
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.storage_factory import StorageFactory
 
-from numpy import longlong, int32, int64
+from numpy import longlong, int32
 
 
 class Variable(object):
@@ -406,8 +406,8 @@ def get_dependency_datasets(variables, dataset, quiet=False):
 
 from opus_core.tests import opus_unittest
 from opus_core.simulation_state import SimulationState
-
-from numpy import int8
+import platform
+from numpy import int8, int64
 
 class VariableTests(opus_unittest.OpusTestCase):
     def test_safely_divide_two_arrays(self):
@@ -491,9 +491,10 @@ class VariableTests(opus_unittest.OpusTestCase):
         self.assert_("a_dependent_variable" in dataset.get_attributes_in_memory())
         self.assert_("a_test_variable" in dataset.get_attributes_in_memory())
         # The type of values will be int32 on a 32-bit machine, and int64 on a 64 bit machine
-        # Ideally we'd test for the machine type, but for the moment we allow either result
-        # in this test.
-        self.assert_(values.dtype.type==int32 or values.dtype.type==int64)
+        if platform.architecture()[0]=='64bit':
+            self.assertEqual(values.dtype.type, int64)
+        else:
+            self.assertEqual(values.dtype.type, int32)
         
     def test_casting(self):
         storage = StorageFactory().get_storage('dict_storage')

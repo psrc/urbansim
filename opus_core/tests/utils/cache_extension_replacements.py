@@ -25,8 +25,10 @@ replacements = {}
 
 if sys.byteorder=='little':
     replacements['endian'] = 'l'
+    replacements['numpy_endian'] = '<'
 else:
     replacements['endian'] = 'b'
+    replacements['numpy_endian'] = '>'
     
 if platform.architecture()[0]=='64bit':
     replacements['bytes'] = 8

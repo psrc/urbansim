@@ -261,15 +261,12 @@ class delimited_storage(Storage):
     
     
 from opus_core.tests import opus_unittest
-
 from sets import Set
 from shutil import rmtree
 from tempfile import mkdtemp
-
 from numpy import array
-
 from opus_core.resources import Resources
-
+from opus_core.tests.utils.cache_extension_replacements import replacements
 
 class TestDelimitedStorage(opus_unittest.OpusTestCase):
     def setUp(self):
@@ -427,7 +424,7 @@ class TestDelimitedStorage(opus_unittest.OpusTestCase):
     def test_get_header_information_in_table(self):
         attribute_names, attribute_types = self.storage._delimited_storage__get_header_information_from_table(self.table_name)
         
-        expected_attribute_types = ['i4', 'f8', 'S1']
+        expected_attribute_types = ['i%(bytes)u'%replacements, 'f8', 'S1']
         self.assertEqual(attribute_types, expected_attribute_types)
         
     def test_attribute_name_and_type_pattern(self):
@@ -496,7 +493,7 @@ class TestDelimitedStorage(opus_unittest.OpusTestCase):
         # Header information exists:
         attribute_names, attribute_types = self.storage._get_header_information(self.table_name)
         expected_attribute_names = ['attribute1', 'attribute2', 'attribute3']
-        expected_attribute_types = ['i4', 'f8', 'S1']
+        expected_attribute_types = ['i%(bytes)u'%replacements, 'f8', 'S1']
         
         self.assertEqual(expected_attribute_names, attribute_names)
         self.assertEqual(expected_attribute_types, attribute_types)
