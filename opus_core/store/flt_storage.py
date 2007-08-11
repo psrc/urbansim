@@ -212,7 +212,7 @@ class StorageTests(opus_unittest.OpusTestCase):
         
     def test_load_table(self):
         expected = {
-            'city_id': array([3, 1, 2], dtype=int32),
+            'city_id': array([3, 1, 2], dtype='<i4'),
             'city_name': array(['Unknown', 'Eugene', 'Springfield']),
             }
         actual = self.storage.load_table('cities')

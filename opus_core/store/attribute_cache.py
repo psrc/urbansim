@@ -219,7 +219,7 @@ class AttributeCacheTests(opus_unittest.OpusTestCase):
     def test_load_table_with_two_columns_1980(self):
         SimulationState().set_current_time(1980)
         expected = {
-            'city_id': array([3, 1, 2], dtype=int32),
+            'city_id': array([3, 1, 2], dtype='<i4'),
             'city_name': array(['Unknown', 'Eugene', 'Springfield']),
             }
         actual = self.storage.load_table('cities')
@@ -228,7 +228,7 @@ class AttributeCacheTests(opus_unittest.OpusTestCase):
     def test_load_table_with_two_columns_1981_one_column_unchanged_from_1980(self):
         SimulationState().set_current_time(1981)
         expected = {
-            'city_id': array([3, 1, 2], dtype=int32),
+            'city_id': array([3, 1, 2], dtype='<i4'),
             'city_name': array(['NotUnknownAnymore', 'Eugene', 'Springfield']),
             }
         actual = self.storage.load_table('cities')
@@ -236,7 +236,7 @@ class AttributeCacheTests(opus_unittest.OpusTestCase):
         
     def test_load_one_attribute(self):
         SimulationState().set_current_time(1980)
-        expected = {'city_id': array([3, 1, 2], dtype=int32)}
+        expected = {'city_id': array([3, 1, 2], dtype='<i4')}
         actual = self.storage.load_table('cities', column_names=['city_id'])
         self.assertDictsEqual(expected, actual)
         
@@ -264,10 +264,12 @@ class AttributeCacheWriteTests(opus_unittest.OpusTestCase):
         SimulationState().set_current_time(year)
         expected = array([100, 70], dtype=int32)
         table_data = {'int_column': expected}
-        full_name = os.path.join(self.temp_dir, '%s' % year,  self.table_name, 'int_column.li4')
+        # file name will be e.g. 'int_column.li4' for a little-endian machine
+        full_name = os.path.join(self.temp_dir, str(year),  self.table_name, 'int_column.%(endian)si4'%replacements)
         self.storage.write_table(self.table_name, table_data)
         self.assert_(os.path.exists(full_name))
-        actual = numpy.fromfile(full_name, dtype='<i4')
+        # dtype will be e.g. '<i4' for a little-endian machine
+        actual = numpy.fromfile(full_name, dtype='%(numpy_endian)si4' % replacements)
         self.assert_((expected==actual).all())
         
 class TestAttributeCacheGetTableNames(opus_unittest.OpusTestCase):

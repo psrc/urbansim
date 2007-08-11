@@ -198,8 +198,10 @@ from opus_core.misc import does_test_database_server_exist
 if does_test_database_server_exist(module_name=__name__):
     class TestMysqlStorage(opus_unittest.OpusTestCase):
         def setUp(self):
-            self.database_name = 'test_mysql_storage_%s' % get_host_name()
-
+            # for the Macintosh, the hostname may have embedded '-' characters, which will upset MySQL 
+            # when used as part of a database name
+            h = get_host_name().replace('-', '_')
+            self.database_name = 'test_mysql_storage_%s' % h
             try:
                 self.db_server = self.get_database_server_for_host('localhost')
             except:
@@ -208,7 +210,6 @@ if does_test_database_server_exist(module_name=__name__):
                 except:
                     self.db_server = None
                     return
-
             self.db_server.drop_database(self.database_name)
             self.db_server.create_database(self.database_name)
 
