@@ -129,7 +129,7 @@ class weighted_sampler(Sampler):
 
 
 from opus_core.tests import opus_unittest
-from numpy import array, all, alltrue, not_equal, equal, repeat
+from numpy import array, all, alltrue, not_equal, equal, repeat, int32
 from opus_core.datasets.dataset import Dataset
 from opus_core.storage_factory import StorageFactory
 
@@ -180,7 +180,9 @@ class Test(opus_unittest.OpusTestCase):
                                         self.households.get_attribute("grid_id")[index1],UNPLACED_ID)
                 chosen_choice_index = resize(array([UNPLACED_ID], dtype="int32"), index1.shape)
                 w = where(sample_results[1]>=0)[0]
-                chosen_choice_index[w] = sampler[w, sample_results[1][w]]
+                # for 64 bit machines, need to coerce the type to int32 -- on a
+                # 32 bit machine the astype(int32) doesn't do anything
+                chosen_choice_index[w] = sampler[w, sample_results[1][w]].astype(int32)
                 assert alltrue(equal(placed_agents_index, chosen_choice_index))
                 sampler = sampler[:,1:]
             assert alltrue([x in index2 for x in sampler.ravel()])
@@ -208,7 +210,7 @@ class Test(opus_unittest.OpusTestCase):
 
                 chosen_choice_index = resize(array([UNPLACED_ID], dtype="int32"), index1.shape)
                 w = where(chosen_choices>=0)[0]
-                chosen_choice_index[w] = sampled_index[w, chosen_choices[w]]
+                chosen_choice_index[w] = sampled_index[w, chosen_choices[w]].astype(int32)
                 assert alltrue(equal(placed_agents_index, chosen_choice_index))
                 sampled_index = sampled_index[:,1:]
             assert alltrue([x in index2 for x in sampled_index.ravel()])
