@@ -428,12 +428,12 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(ma.allclose(results, should_be, rtol=0.05),
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
         # check the types of the attributes
-        self.assertEqual(hh_set.get_attribute("age_of_head").dtype.char, "l",
-                         "Error in data type of the new household set. Should be: 'l', is: %s" % hh_set.get_attribute("age_of_head").dtype.char)
-        self.assertEqual(hh_set.get_attribute("income").dtype.char, "l",
-                         "Error in data type of the new household set. Should be: 'l', is: %s" % hh_set.get_attribute("income").dtype.char)
-        self.assertEqual(hh_set.get_attribute("persons").dtype.char, "b",
-                         "Error in data type of the new household set. Should be: 'b', is: %s" % hh_set.get_attribute("persons").dtype.char)
+        self.assertEqual(hh_set.get_attribute("age_of_head").dtype, int32,
+                         "Error in data type of the new household set. Should be: int32, is: %s" % str(hh_set.get_attribute("age_of_head").dtype))
+        self.assertEqual(hh_set.get_attribute("income").dtype, int32,
+                         "Error in data type of the new household set. Should be: int32, is: %s" % str(hh_set.get_attribute("income").dtype))
+        self.assertEqual(hh_set.get_attribute("persons").dtype, int8,
+                         "Error in data type of the new household set. Should be: int8, is: %s" % str(hh_set.get_attribute("persons").dtype))
 
     def test_same_distribution_after_household_subtraction(self):
         """Using the control_totals and no marginal characteristics,

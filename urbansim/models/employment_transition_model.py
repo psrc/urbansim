@@ -15,8 +15,8 @@
 from opus_core.resources import Resources
 from opus_core.misc import DebugPrinter, unique_values
 from opus_core.model import Model
-from numpy import arange, array, where, int8, zeros, ones, compress, int8, concatenate, resize
-from numpy import logical_not, int32
+from numpy import arange, array, where, zeros, ones, compress, concatenate, resize
+from numpy import logical_not, int8, int32
 from scipy.ndimage import sum as ndimage_sum
 from opus_core.sampling_toolbox import sample_noreplace, probsample_replace
 from opus_core.logger import logger
@@ -418,10 +418,10 @@ class Tests(StochasticTestCase):
         self.run_stochastic_test(__file__, run_model, expected_results, 10)
 
         # check data types
-        self.assertEqual(jobs_set.get_attribute("sector_id").dtype.char, "l",
-             "Error in data type of the new job set. Should be: 'l', is: %s" % jobs_set.get_attribute("sector_id").dtype.char)
-        self.assertEqual(jobs_set.get_attribute("building_type").dtype.char, "b",
-             "Error in data type of the new job set. Should be: 'b', is: %s" % jobs_set.get_attribute("building_type").dtype.char)
+        self.assertEqual(jobs_set.get_attribute("sector_id").dtype, int32,
+             "Error in data type of the new job set. Should be: int32, is: %s" % str(jobs_set.get_attribute("sector_id").dtype))
+        self.assertEqual(jobs_set.get_attribute("building_type").dtype, int8,
+             "Error in data type of the new job set. Should be: int8, is: %s" % str(jobs_set.get_attribute("building_type").dtype))
 
     def test_unplaced_jobs_after_job_addition(self):
         """The initial jobs table is now adjusted to include 2000 unplaced jobs.
