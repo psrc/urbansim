@@ -14,7 +14,8 @@
 
 # open a traits-based GUI for editing PSRC indicator requests
 
-from opus_core.indicator_framework.traits.traits_indicator_handler import TraitsIndicatorHandler
+from opus_core.indicator_framework.traits.traits_indicator_handler \
+    import TraitsIndicatorHandler
 
 try:
     import wingdbstub
