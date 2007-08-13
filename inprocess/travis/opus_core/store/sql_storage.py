@@ -54,7 +54,6 @@ class sql_storage(Storage):
             bind = connection_string
         )
         self._engine = self._metadata.get_engine()
-        self._engine.echo = True
         
     def get_storage_location(self):
         return str(self._engine.url)
@@ -101,7 +100,6 @@ class sql_storage(Storage):
             transaction = connection.begin()
             try:
                 try:
-                    pass
                     table.create()
                 except Exception, e:
                     raise NameError('Failed to create table, possibly due to an illegal column name.\n(Original error: %s)' % e)
@@ -112,7 +110,8 @@ class sql_storage(Storage):
                         row_data[column_name] = column_data[row]
                     
                     try:
-                        table.insert(values = row_data.values()).execute()
+                        values = row_data.values()
+                        table.insert(values = values).execute()
                     except Exception, e:
                         raise ValueError('Failed to insert data into table, possibly due to incorrect data type.\n(Original error: %s)\nData to be inserted: %s' % (e, row_data))
                 
