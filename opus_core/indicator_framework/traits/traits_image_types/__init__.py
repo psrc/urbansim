@@ -11,8 +11,3 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 # 
-
-from opus_core.indicator_framework.traits.traits_image_types.traits_map import TraitsMap
-from opus_core.indicator_framework.traits.traits_image_types.traits_chart import TraitsChart
-from opus_core.indicator_framework.traits.traits_image_types.traits_table import TraitsTable
-from opus_core.indicator_framework.traits.traits_image_types.traits_lorenz import TraitsLorenz
