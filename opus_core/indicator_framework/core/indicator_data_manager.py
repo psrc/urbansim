@@ -13,7 +13,7 @@
 
 import re
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.indicator_framework.core import SourceData
+from opus_core.indicator_framework.core.source_data import SourceData
 
 class IndicatorDataManager:
     
@@ -155,8 +155,9 @@ class IndicatorDataManager:
     def _create_indicator(self, indicator_class, params, non_constructor_attributes, source_data_params):
         source_data = SourceData(**source_data_params)
         params['source_data'] = source_data
+        module = self._get_module_from_indicator_class(indicator_class)
         
-        exec('from opus_core.indicator_framework.image_types import %s'%indicator_class)
+        exec('from opus_core.indicator_framework.image_types.%s import %s'%(module, indicator_class))
         indicator = locals()[indicator_class](**params)
         
         for attr, value in non_constructor_attributes.items():
@@ -174,10 +175,20 @@ class IndicatorDataManager:
         name = name_re.match(line).group()[1:-1]
         value = value_re.search(line).group()[1:-1]
         return (name, value)
-
+    
+    def _get_module_from_indicator_class(self, indicator_class):
+        modules = {
+           'DatasetTable': 'dataset_table',
+           'GeotiffMap': 'geotiff_map',
+           'Map': 'matplotlib_map',
+           'Chart': 'matplotlib_chart',
+           'LorenzCurve': 'matplotlib_lorenzcurve',
+           'Table': 'table'
+        }
+        return modules[indicator_class]
+    
 from opus_core.tests import opus_unittest
 from opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
-from opus_core.indicator_framework.core import SourceData
 import os
 
 class Tests(AbstractIndicatorTest):  
@@ -231,7 +242,7 @@ class Tests(AbstractIndicatorTest):
   
     def test__read_write_metadata(self):
         try:
-            from opus_core.indicator_framework.image_types import Table
+            from opus_core.indicator_framework.image_types.table import Table
         except: 
             raise
         else:

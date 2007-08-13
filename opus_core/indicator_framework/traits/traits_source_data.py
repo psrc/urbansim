@@ -24,7 +24,7 @@ else:
     from opus_core.configurations.abstract_configuration import AbstractConfiguration
     from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
     
-    from opus_core.indicator_framework.core import SourceData
+    from opus_core.indicator_framework.core.source_data import SourceData
     
     class TraitsSourceData(AbstractConfiguration):
         """Configuration information for computing a set of indicators.  This uses the
@@ -72,7 +72,7 @@ else:
             source_data.comparison_cache_directory = self.temp_cache_path2
             source_data.run_description = 'test'
             
-            from opus_core.indicator_framework.core import SourceData
+            from opus_core.indicator_framework.core.source_data import SourceData
             correct = SourceData(cache_directory = self.temp_cache_path,
                                  comparison_cache_directory = self.temp_cache_path2,
                                  run_description = 'test',

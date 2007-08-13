@@ -12,9 +12,4 @@
 # other acknowledgments.
 # 
 
-from gui_utilities import display_message_dialog
-from indicator_meta_data import IndicatorMetaData
-from integrity_error import IntegrityError
-
-
 

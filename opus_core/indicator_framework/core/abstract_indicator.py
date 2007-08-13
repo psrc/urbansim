@@ -26,8 +26,8 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.logger import logger
 
 from opus_core.indicator_framework.utilities.gui_utilities import display_message_dialog
-from opus_core.indicator_framework.core import IndicatorDataManager
-from opus_core.indicator_framework.core import SourceData
+from opus_core.indicator_framework.core.indicator_data_manager import IndicatorDataManager
+from opus_core.indicator_framework.core.source_data import SourceData
 from opus_core.indicator_framework.utilities.integrity_error import IntegrityError
 
 from numpy import array, subtract, concatenate
@@ -392,7 +392,6 @@ class AbstractIndicator(object):
 
 from opus_core.tests import opus_unittest
 from opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
-from opus_core.indicator_framework.core import SourceData
         
 class Tests(AbstractIndicatorTest):                
     def test__get_indicator_path(self):

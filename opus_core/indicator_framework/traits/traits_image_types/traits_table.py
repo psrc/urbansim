@@ -21,7 +21,7 @@ try:
 except:
     logger.log_warning('Could not load traits.ui. Skipping %s!' % __file__)
 else:
-    from opus_core.indicator_framework.image_types import Table
+    from opus_core.indicator_framework.image_types.table import Table
     from opus_core.indicator_framework.traits.traits_abstract_indicator \
         import TraitsAbstractIndicator
     
@@ -50,7 +50,7 @@ else:
             
     from opus_core.tests \
         import opus_unittest
-    from opus_core.indicator_framework.core \
+    from opus_core.indicator_framework.core.source_data \
         import SourceData
     from opus_core.configurations.dataset_pool_configuration \
         import DatasetPoolConfiguration

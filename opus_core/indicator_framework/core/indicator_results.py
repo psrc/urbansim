@@ -21,9 +21,9 @@ from opus_core.logger import logger
 import cPickle as pickle
 
 from opus_core.indicator_framework.utilities.indicator_meta_data import IndicatorMetaData
-from opus_core.indicator_framework.core import IndicatorDataManager
-from opus_core.indicator_framework.core import SourceData
-from opus_core.indicator_framework.core import AbstractIndicator
+from opus_core.indicator_framework.core.indicator_data_manager import IndicatorDataManager
+from opus_core.indicator_framework.core.source_data import SourceData
+from opus_core.indicator_framework.core.abstract_indicator import AbstractIndicator
 
 
 class IndicatorResults(object):

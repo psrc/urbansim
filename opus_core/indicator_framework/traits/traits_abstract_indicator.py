@@ -22,7 +22,7 @@ except:
     logger.log_warning('Could not load traits.ui. Skipping %s!' % __file__)
 else:
     from opus_core.indicator_framework.utilities.gui_utilities import display_message_dialog
-    from opus_core.indicator_framework.core import AbstractIndicator
+    from opus_core.indicator_framework.core.abstract_indicator import AbstractIndicator
     from opus_core.variables.variable_name import VariableName
     
     class TraitsAbstractIndicator(HasTraits):
@@ -110,7 +110,7 @@ else:
         import AbstractIndicator    
     from opus_core.tests \
         import opus_unittest
-    from opus_core.indicator_framework.core \
+    from opus_core.indicator_framework.core.source_data \
         import SourceData
     from opus_core.configurations.dataset_pool_configuration \
         import DatasetPoolConfiguration

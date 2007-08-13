@@ -29,7 +29,8 @@ else:
     import cPickle as pickle
     from copy import copy
     
-    from opus_core.indicator_framework.core import IndicatorFactory
+    from opus_core.indicator_framework.core.indicator_factory \
+        import IndicatorFactory
     from opus_core.indicator_framework.traits.traits_source_data \
         import TraitsSourceData
     from opus_core.indicator_framework.traits.traits_abstract_indicator \
