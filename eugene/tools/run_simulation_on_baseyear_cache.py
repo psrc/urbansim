@@ -25,7 +25,7 @@ from enthought.traits.ui.menu import Action, NoButtons
 
 from opus_core.fork_process import ForkProcess
 from opus_core.misc import create_import_for_camel_case_class
-from opus_core.indicator_framework.utilities import display_message_dialog
+from opus_core.indicator_framework.utilities.gui_utilities import display_message_dialog
 
 
 class RunSimulationOnCacheConfig(HasTraits):
