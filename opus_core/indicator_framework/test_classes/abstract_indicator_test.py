@@ -14,7 +14,7 @@
 
 from opus_core.tests import opus_unittest
 from opus_core.indicator_framework.core import SourceData
-from opus_core.indicator_framework.test_classes import TestWithAttributeData
+from opus_core.indicator_framework.test_classes.test_with_attribute_data import TestWithAttributeData
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 
 class AbstractIndicatorTest(TestWithAttributeData):

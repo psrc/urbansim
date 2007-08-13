@@ -43,8 +43,8 @@ else:
     from opus_core.indicator_framework.traits.traits_image_types.traits_Lorenz \
         import TraitsLorenz
     
-    from opus_core.indicator_framework.utilities import display_message_dialog
-    from opus_core.indicator_framework.utilities import IntegrityError
+    from opus_core.indicator_framework.utilities.gui_utilities import display_message_dialog
+    from opus_core.indicator_framework.utilities.integrity_error import IntegrityError
     
     class TraitsIndicatorHandler(Handler):
         """Handler for creating indicators."""

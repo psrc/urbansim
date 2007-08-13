@@ -25,10 +25,10 @@ from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.logger import logger
 
-from opus_core.indicator_framework.utilities import display_message_dialog
+from opus_core.indicator_framework.utilities.gui_utilities import display_message_dialog
 from opus_core.indicator_framework.core import IndicatorDataManager
 from opus_core.indicator_framework.core import SourceData
-from opus_core.indicator_framework.utilities import IntegrityError
+from opus_core.indicator_framework.utilities.integrity_error import IntegrityError
 
 from numpy import array, subtract, concatenate
 

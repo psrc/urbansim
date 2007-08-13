@@ -20,7 +20,7 @@ from time import strftime, localtime
 from opus_core.logger import logger
 import cPickle as pickle
 
-from opus_core.indicator_framework.utilities import IndicatorMetaData
+from opus_core.indicator_framework.utilities.indicator_meta_data import IndicatorMetaData
 from opus_core.indicator_framework.core import IndicatorDataManager
 from opus_core.indicator_framework.core import SourceData
 from opus_core.indicator_framework.core import AbstractIndicator
@@ -239,7 +239,7 @@ from opus_core.tests import opus_unittest
 import tempfile
 import shutil
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.indicator_framework.test_classes import TestWithAttributeData
+from opus_core.indicator_framework.test_classes.test_with_attribute_data import TestWithAttributeData
 
 class IndicatorResultsTests(TestWithAttributeData):
     def setUp(self):

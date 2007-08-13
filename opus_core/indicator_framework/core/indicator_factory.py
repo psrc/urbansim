@@ -18,7 +18,7 @@ from time import strftime,localtime
 
 from opus_core.indicator_framework.core import SourceData
 from opus_core.indicator_framework.core import IndicatorResults
-from opus_core.indicator_framework.utilities import display_message_dialog
+from opus_core.indicator_framework.utilities.gui_utilities import display_message_dialog
 
 from opus_core.logger import logger
 
