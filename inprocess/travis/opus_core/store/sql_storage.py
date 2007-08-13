@@ -16,7 +16,7 @@ from numpy import array, dtype
 
 try:
     import sqlalchemy
-    from sqlalchemy import create_engine, Table, Column, BoundMetaData
+    from sqlalchemy import create_engine, Table, Column, MetaData
     from sqlalchemy.types import Integer, Float, String, DECIMAL
     
 except ImportError:
@@ -41,16 +41,20 @@ class sql_storage(Storage):
         else:
             port_string = ''
         
-        self._engine = create_engine('%s://%s:%s@%s%s/%s' % (
+        connection_string = '%s://%s:%s@%s%s/%s' % (
             protocol,
             username,
             password,
             hostname,
             port_string,
             database_name
-            ))
-            
-        self._metadata = BoundMetaData(self._engine)
+            )     
+        
+        self._metadata = MetaData(
+            bind = connection_string
+        )
+        self._engine = self._metadata.get_engine()
+        self._engine.echo = True
         
     def get_storage_location(self):
         return str(self._engine.url)
@@ -79,11 +83,16 @@ class sql_storage(Storage):
         
         columns = []
         for column_name, column_data in table_data.iteritems():
+            col_type = self._get_sql_alchemy_type_from_numpy_dtype(column_data.dtype)
             columns.append(Column(column_name, 
-                                  self._get_sql_alchemy_type_from_numpy_dtype(column_data.dtype)))
-        
+                                  col_type))
+            if column_data.dtype == 'i':
+                table_data[column_name] = [int(cell) for cell in column_data]
+            elif column_data.dtype == 'f':
+                table_data[column_name] = [float(cell) for cell in column_data]
+            
+            
         table = Table(table_name, self._metadata, *columns)
-        
         if overwrite_existing:
             table.drop(checkfirst = True)
         
@@ -92,6 +101,7 @@ class sql_storage(Storage):
             transaction = connection.begin()
             try:
                 try:
+                    pass
                     table.create()
                 except Exception, e:
                     raise NameError('Failed to create table, possibly due to an illegal column name.\n(Original error: %s)' % e)
@@ -102,7 +112,7 @@ class sql_storage(Storage):
                         row_data[column_name] = column_data[row]
                     
                     try:
-                        table.insert().execute(**row_data)
+                        table.insert(values = row_data.values()).execute()
                     except Exception, e:
                         raise ValueError('Failed to insert data into table, possibly due to incorrect data type.\n(Original error: %s)\nData to be inserted: %s' % (e, row_data))
                 
