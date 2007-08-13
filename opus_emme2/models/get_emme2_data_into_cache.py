@@ -108,7 +108,7 @@ if __name__ == "__main__":
                          package_order_exceptions=resources['dataset_pool_configuration'].package_order_exceptions,                              
                          in_storage=AttributeCache())
 
-    logger.enable_memory_logging()
+#    logger.enable_memory_logging()
     GetEmme2DataIntoCache().run(resources, options.year)    
     #from opus_core.configuration import Configuration
     #config = Configuration({
