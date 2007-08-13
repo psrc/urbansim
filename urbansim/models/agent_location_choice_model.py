@@ -18,6 +18,7 @@ from opus_core.sampling_toolbox import probsample_noreplace, sample_noreplace
 from opus_core.datasets.dataset import Dataset
 from numpy import where, arange, concatenate, array, ndarray, zeros, resize
 from opus_core.resources import Resources
+from opus_core.misc import unique_values
 from numpy import ma
 from opus_core.logger import logger
 
@@ -139,13 +140,19 @@ class AgentLocationChoiceModel(LocationChoiceModel):
         to be removed."""
         if capacity is None:
             return array([], dtype='int32')
-        overfilled = where(capacity < 0)[0]
+        index_valid_agents_locations = where(agents_locations > 0)[0]
+        valid_agents_locations = agents_locations[index_valid_agents_locations]
+        index_consider_capacity = unique_values(self.choice_set.get_id_index(valid_agents_locations))
+        capacity_of_affected_locations = capacity[index_consider_capacity]
+        overfilled = where(capacity_of_affected_locations < 0)[0]
         movers = array([], dtype='int32')
+        choice_ids = self.choice_set.get_id_attribute()
         for loc in overfilled:
-            agents_to_move = where(agents_locations == self.choice_set.get_id_attribute()[loc])[0]
+            agents_to_move = where(valid_agents_locations == choice_ids[index_consider_capacity[loc]])[0]
             if agents_to_move.size > 0:
-                n = int(-1*capacity[loc])
-                sampled_agents = probsample_noreplace(agents_to_move, min(n, agents_to_move.size))
+                n = int(-1*capacity_of_affected_locations[loc])
+                sampled_agents = probsample_noreplace(index_valid_agents_locations[agents_to_move], 
+                                                      min(n, agents_to_move.size))
                 movers = concatenate((movers, sampled_agents))
         return movers
 
