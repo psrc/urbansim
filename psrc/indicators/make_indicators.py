@@ -18,7 +18,7 @@
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.indicator_framework.core import SourceData
 
-from opus_core.indicator_framework.image_types import Map, Chart, GeotiffMap, ArcGeotiffMap, LorenzCurve
+from opus_core.indicator_framework.image_types import Map, Chart, GeotiffMap, LorenzCurve
 from opus_core.indicator_framework.image_types import Table, DatasetTable
 
 #some cache_directories and run descriptions
