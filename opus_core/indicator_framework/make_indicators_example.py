@@ -16,7 +16,7 @@
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.indicator_framework.core import SourceData
-from opus_core.indicator_framework.image_types import Map, GeotiffMap, ArcGeotiffMap
+from opus_core.indicator_framework.image_types import Map, GeotiffMap
 from opus_core.indicator_framework.image_types import Chart, LorenzCurve
 from opus_core.indicator_framework.image_types import Table, DatasetTable
 '''-------------------------
@@ -137,7 +137,7 @@ GeotiffMap
 ArcGeotiffMap
     A wrapper for a GeotiffMap indicator. The GeotiffMap is 
     created and then ArcMap is launched and another image 
-    is produced. Requires ArcMap.
+    is produced. Requires ArcMap. This indicator type is no longer supported.
 --------------
     package:
         The package that has the region-specific templates and 
@@ -247,17 +247,6 @@ indicators = [
    ),
    ]
 
-#   ArcGeotiffMap(
-#       source_data = source_data,
-#       dataset_name = 'gridcell',
-#       attribute = 'urbansim.gridcell.number_of_jobs', 
-#       #prototype_dataset = r'c:/indicator/images/idgrid.tif', 
-#       layer_file = r'D:/ArcMap_automation/6_RedClassBreaks_noZeroValues.lyr', 
-#       transparency = 0, 
-#       exit_after_export = True, 
-#       export_type = 'jpg', 
-#       package = 'package',
-#    ), 
 
 
 if __name__ == '__main__':

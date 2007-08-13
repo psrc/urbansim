@@ -16,7 +16,6 @@ from opus_core.indicator_framework.image_types.matplotlib_map import Map
 from opus_core.indicator_framework.image_types.matplotlib_chart import Chart
 from opus_core.indicator_framework.image_types.table import Table
 from opus_core.indicator_framework.image_types.geotiff_map import GeotiffMap
-from opus_core.indicator_framework.image_types.arcgeotiff_map import ArcGeotiffMap
 from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
 from opus_core.indicator_framework.image_types.matplotlib_lorenzcurve import LorenzCurve
 
