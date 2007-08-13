@@ -14,7 +14,7 @@
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
-from numpy import zeros, where, logical_not
+from numpy import zeros, where, logical_not, int32
 
 class building_sqft(Variable):
     """total number of sqft for each building """
@@ -31,10 +31,10 @@ class building_sqft(Variable):
         buildings = self.get_dataset()
         results = zeros(buildings.size(),dtype=self._return_type)
         is_residential = buildings.get_attribute("_is_residential")
-        results[is_residential] = (buildings.get_attribute("residential_units") * \
-                                        buildings.get_attribute("sqft_per_unit"))[is_residential]
+        results[is_residential] = (buildings.get_attribute("residential_units") *
+                                        buildings.get_attribute("sqft_per_unit"))[is_residential].astype(self._return_type)
         is_not_residential = logical_not(is_residential)
-        results[is_not_residential] = buildings.get_attribute("non_residential_sqft")[is_not_residential]
+        results[is_not_residential] = buildings.get_attribute("non_residential_sqft")[is_not_residential].astype(self._return_type)
         return results
     
     def post_check(self,  values, dataset_pool=None):

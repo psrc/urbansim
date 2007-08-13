@@ -32,7 +32,7 @@ class nonresidential_building_sqft(Variable):
         buildings = self.get_dataset()
         results = zeros(buildings.size(), dtype=self._return_type)
         w = where(buildings.get_attribute("_class_name")=="nonresidential")[0]
-        results[w] = buildings.get_attribute("building_sqft")[w]
+        results[w] = buildings.get_attribute("building_sqft")[w].astype(self._return_type)
         return results
 
 from opus_core.tests import opus_unittest

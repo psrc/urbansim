@@ -190,15 +190,15 @@ class ChoiceModel(ChunkModel):
                     self.run_config["index"] = take (index, indices=self.observations_mapping[submodel], axis=0)
                 coefficients = coef[submodel].get_coefficient_values()
                 res = self.simulate_submodel(self.get_all_data(submodel), coefficients, submodel)
-                restmp = res
+                restmp = res.astype(int32)
                 res_positive_idx = where(res>=0)[0]
                 if index is not None:
                     if index.shape[1] <> coef[submodel].nequations():
                         restmp[res_positive_idx] = array(map(lambda x:
-                            index[x,coef[submodel].get_equations_index()[res[x]]], res_positive_idx))
+                            index[x,coef[submodel].get_equations_index()[res[x]]], res_positive_idx)).astype(int32)
                 else:
-                    restmp[res_positive_idx] = coef[submodel].get_equations_index()[res[res_positive_idx]]
-                result[self.observations_mapping[submodel]] = restmp.astype(int32)
+                    restmp[res_positive_idx] = coef[submodel].get_equations_index()[res[res_positive_idx]].astype(int32)
+                result[self.observations_mapping[submodel]] = restmp
         return result
 
     def simulate_submodel(self, data, coefficients, submodel=0):
