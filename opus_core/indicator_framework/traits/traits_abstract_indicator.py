@@ -106,7 +106,7 @@ else:
             years.sort()
             return years
                     
-    from opus_core.indicator_framework.core \
+    from opus_core.indicator_framework.core.abstract_indicator \
         import AbstractIndicator    
     from opus_core.tests \
         import opus_unittest

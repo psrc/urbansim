@@ -41,7 +41,7 @@ else:
         import TraitsChart
     from opus_core.indicator_framework.traits.traits_image_types.traits_table \
         import TraitsTable
-    from opus_core.indicator_framework.traits.traits_image_types.traits_Lorenz \
+    from opus_core.indicator_framework.traits.traits_image_types.traits_lorenz \
         import TraitsLorenz
     
     from opus_core.indicator_framework.utilities.gui_utilities import display_message_dialog
