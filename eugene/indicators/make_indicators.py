@@ -21,7 +21,6 @@ from opus_core.indicator_framework.image_types import Map
 from opus_core.indicator_framework.image_types import Chart
 from opus_core.indicator_framework.image_types import Table
 from opus_core.indicator_framework.image_types import GeotiffMap
-from opus_core.indicator_framework.image_types import ArcGeotiffMap
 from opus_core.indicator_framework.image_types import DatasetTable
 
 #some cache_directories and run descriptions
