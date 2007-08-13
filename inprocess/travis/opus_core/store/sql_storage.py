@@ -104,17 +104,18 @@ class sql_storage(Storage):
                 except Exception, e:
                     raise NameError('Failed to create table, possibly due to an illegal column name.\n(Original error: %s)' % e)
                 
+                rows_to_insert = []
                 for row in range(table_length):
                     row_data = {}
                     for column_name, column_data in table_data.iteritems():
                         row_data[column_name] = column_data[row]
-                    
-                    try:
-                        values = row_data.values()
-                        table.insert(values = values).execute()
-                    except Exception, e:
-                        raise ValueError('Failed to insert data into table, possibly due to incorrect data type.\n(Original error: %s)\nData to be inserted: %s' % (e, row_data))
+                    rows_to_insert.append(row_data)
                 
+                try:
+                    table.insert().execute(*rows_to_insert)
+                except Exception, e:
+                    raise ValueError('Failed to insert data into table, possibly due to incorrect data type.\n(Original error: %s)\nData to be inserted: %s' % (e, row_data))
+            
                 transaction.commit()
                 
             except:
