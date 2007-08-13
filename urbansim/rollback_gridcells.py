@@ -52,16 +52,16 @@ class RollbackGridcells(object):
         grid_ids = dev_event_history.get_attribute('grid_id')[events_idx]
         grid_idx = gridcells.get_id_index(grid_ids)
         attr_values = gridcells.get_attribute_by_index(attr_name, grid_idx)
-        change_amounts = dev_event_history.get_attribute(attr_name)[events_idx].astype(int32)
+        change_amounts = dev_event_history.get_attribute(attr_name)[events_idx]
         change_attribute_name = '%s_change_type_code' % self.change_types_attributes.get(attr_name, attr_name)
         change_type_codes = dev_event_history.get_attribute(change_attribute_name)[events_idx]
         idx_add = where(change_type_codes == DevelopmentEventTypeOfChange.ADD)[0]
         idx_delete = where(change_type_codes == DevelopmentEventTypeOfChange.DELETE)[0]
         idx_replace = where(change_type_codes == DevelopmentEventTypeOfChange.REPLACE)[0]
-        attr_values[idx_add] = clip(attr_values[idx_add] - change_amounts[idx_add],
+        attr_values[idx_add] = clip(attr_values[idx_add] - change_amounts[idx_add].astype(int32),
                            0, attr_values[idx_add].max())
-        attr_values[idx_delete] = attr_values[idx_delete] + change_amounts[idx_delete]
-        attr_values[idx_replace] = change_amounts[idx_replace]
+        attr_values[idx_delete] = attr_values[idx_delete] + change_amounts[idx_delete].astype(int32)
+        attr_values[idx_replace] = change_amounts[idx_replace].astype(int32)
         gridcells.set_values_of_one_attribute(attr_name, attr_values, index=grid_idx)
 
     def _compute_change_type_code(self, dev_event_history):
