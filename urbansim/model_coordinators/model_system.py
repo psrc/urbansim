@@ -562,7 +562,7 @@ if __name__ == "__main__":
                          in_storage=AttributeCache())
 
     s = ModelSystem()
-    logger.enable_memory_logging()
+#    logger.enable_memory_logging()
     if not resources.get("log_to_stdout", True):
         logger.disable_std_out()
     if resources.has_key("only_convert_large_datasets_from_mysql_to_flt"):

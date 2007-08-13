@@ -134,7 +134,7 @@ if __name__ == "__main__":
     r = get_resources_from_file(options.resources_file_name)
     resources = Resources(get_resources_from_file(options.resources_file_name))
 
-    logger.enable_memory_logging()
+#    logger.enable_memory_logging()
     SessionConfiguration(new_instance=True,
                          package_order=resources['dataset_pool_configuration'].package_order,
                          package_order_exceptions=resources['dataset_pool_configuration'].package_order_exceptions,
