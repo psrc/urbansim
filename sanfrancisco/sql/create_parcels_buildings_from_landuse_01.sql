@@ -12,7 +12,7 @@ create table parcels_01 select
 mapblklot, mapblklot as blklot, block_num, lot_num, from_st, to_st, street as street_name, type as street_type, odd_even,
 '' as neighorhood, taz, dbiusetype as use_type, landuse, land_val as land_value,
 zoning, height_lim as heightlimit, far as far_allowed, census_tra as census_tract, shape_length as perimeter, shape_area as area,
-mips_possible, cie_possible, med_possible, ret_possible, vis_possible, pdr_possible
+mips_possible as mips_possible, cie_possible as cie_possible, med_possible, ret_possible, vis_possible, pdr_possible
 from luse01;
 
 create table buildings_01 select
@@ -43,6 +43,13 @@ update buildings_01 set unit_price = (land_value + structure_value) / residentia
 
 update buildings_01 set unit_price = 0 where unit_price is null;
 update buildings_01 set building_use_id = 0 where building_use_id is null;
+update parcels_01 set mips_possible = 0 where mips_possible is null;
+update parcels_01 set cie_possible = 0 where cie_possible is null;
+update parcels_01 set med_possible = 0 where med_possible is null;
+update parcels_01 set ret_possible = 0 where ret_possible is null;
+update parcels_01 set vis_possible = 0 where vis_possible is null;
+update parcels_01 set pdr_possible = 0 where pdr_possible is null;
+
 
 #create second backup just to be sure...
 drop table if exists buildings_backup_20070813_02;
