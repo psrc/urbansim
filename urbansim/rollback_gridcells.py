@@ -12,7 +12,7 @@
 # other acknowledgments.
 # 
 
-from numpy import where, clip
+from numpy import where, clip, int32
 from urbansim.datasets.development_event_dataset import DevelopmentEventTypeOfChange
 
 class RollbackGridcells(object):
@@ -52,7 +52,7 @@ class RollbackGridcells(object):
         grid_ids = dev_event_history.get_attribute('grid_id')[events_idx]
         grid_idx = gridcells.get_id_index(grid_ids)
         attr_values = gridcells.get_attribute_by_index(attr_name, grid_idx)
-        change_amounts = dev_event_history.get_attribute(attr_name)[events_idx]
+        change_amounts = dev_event_history.get_attribute(attr_name)[events_idx].astype(int32)
         change_attribute_name = '%s_change_type_code' % self.change_types_attributes.get(attr_name, attr_name)
         change_type_codes = dev_event_history.get_attribute(change_attribute_name)[events_idx]
         idx_add = where(change_type_codes == DevelopmentEventTypeOfChange.ADD)[0]
