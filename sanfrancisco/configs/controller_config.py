@@ -41,7 +41,7 @@ my_controller_configuration = {
         "name": "RealEstatePriceModel",
         "outcome_attribute":"'ln_unit_price=ln(building.unit_price)'",
         "arguments": {"submodel_string": "'building_use_id'",
-                      "filter_attribute": "'valid'"}, # None},
+                      "filter_attribute": None}, # "'valid'"}, # 
         },
     "prepare_for_run": {
         "name": "prepare_for_run",
