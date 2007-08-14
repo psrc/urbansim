@@ -37,7 +37,7 @@ class Baseline(UrbansimParcelConfiguration):
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     #existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
-                    #years_to_cache = [2000]
+                    years_to_cache = [2000],
                     existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/cache_source',
                     #existing_cache_to_copy = r'/workspace/urbansim_cache/psrc_parcel/estimation',
                     ),
@@ -116,7 +116,8 @@ class Baseline(UrbansimParcelConfiguration):
                 'flush_dataset_to_cache_after_each_model':False,
                 'flush_variables':False,
                 'low_memory_run':False,
-                'datasets_to_cache_after_each_model':["parcel", "building"],
+                'datasets_to_cache_after_each_model':["parcel", "building", 'household', 'job', 
+                                                      'development_project_proposal'],
                 'unroll_gridcells':False,
                 "datasets_to_preload":{
                     'zone':{},
