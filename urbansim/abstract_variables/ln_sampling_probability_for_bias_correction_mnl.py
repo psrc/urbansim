@@ -21,13 +21,13 @@ class ln_sampling_probability_for_bias_correction_mnl(Variable):
     for weighting alternatives in the model. It doesn't need to be normalized, that is done within the function.
     """
     def __init__(self, weights_attribute):
-        self.weights_attribute = weights_attribute
+        self.weights_attribute_name = weights_attribute
         Variable.__init__(self)
         
     def dependencies_to_add(self, dataset_name, package="urbansim"):
         """Will be added to the dependencies from the compute method, because before that we don't 
         know the dataset name."""
-        self.weights_attribute = VariableName("%s.%s.%s" % (package, dataset_name, self.weights_attribute))
+        self.weights_attribute = VariableName("%s.%s.%s" % (package, dataset_name, self.weights_attribute_name))
         return [self.weights_attribute.get_expression(),
                 "_normalized_weights = %s/float(sum(%s))" % (self.weights_attribute.get_expression(), self.weights_attribute.get_expression()),
                 "_log_weights = ln(%s._normalized_weights)" % self.weights_attribute.get_dataset_name(),
