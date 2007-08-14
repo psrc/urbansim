@@ -34,7 +34,7 @@ class ParcelDataset(UrbansimDataset):
             dataset_pool,
             index = None,
             recompute_flag = False,
-            variable_package_name="pag_parcel.parcel"
+            variable_package_name="urbansim_parcel.parcel"
             ):
         """
         calculate the min and max development capacity given by constraints.

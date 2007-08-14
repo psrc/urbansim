@@ -53,7 +53,7 @@ source_data = SourceData(
 single_year_requests = [
 
     Table(
-        attribute = 'pag_parcel.parcel.unit_price',
+        attribute = 'urbansim_parcel.parcel.unit_price',
         dataset_name = 'parcel',
         source_data = source_data,
         ),

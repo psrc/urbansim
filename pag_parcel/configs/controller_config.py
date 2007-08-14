@@ -29,9 +29,9 @@ models_configuration["business_location_choice_model"] = {
                      "specification_table":"business_location_choice_model_specification",
                      "coefficients_table":"business_location_choice_model_coefficients",
                      "compute_capacity_flag":True,
-                     "capacity_string":"pag_parcel.building.building_sqft",
+                     "capacity_string":"urbansim_parcel.building.building_sqft",
                      "number_of_agents_string":"business.sqft",
-                     "number_of_units_string":"pag_parcel.building.vacant_building_sqft",
+                     "number_of_units_string":"urbansim_parcel.building.vacant_building_sqft",
    }
 
 my_controller_configuration = {
@@ -41,8 +41,8 @@ my_controller_configuration = {
     "init": {
         "name": "RealEstatePriceModel",
         "arguments": {"submodel_string": "'land_use_type_id'",
-                      "outcome_attribute": "'ln_unit_price=ln(pag_parcel.parcel.unit_price)'",
-                      "filter_attribute": "'numpy.logical_or(parcel.aggregate(pag_parcel.building.building_sqft), pag_parcel.parcel.is_land_use_type_vacant)'"
+                      "outcome_attribute": "'ln_unit_price=ln(urbansim_parcel.parcel.unit_price)'",
+                      "filter_attribute": "'numpy.logical_or(parcel.aggregate(urbansim_parcel.building.building_sqft), urbansim_parcel.parcel.is_land_use_type_vacant)'"
                       },
         },
     "prepare_for_run": {
@@ -66,7 +66,7 @@ my_controller_configuration = {
         "name": "prepare_for_estimate",
         "arguments": {"specification_storage": "base_cache_storage",
                       "specification_table": "'real_estate_price_model_specification'",
-                      "filter_variable":"'pag_parcel.parcel.unit_price'",
+                      "filter_variable":"'urbansim_parcel.parcel.unit_price'",
                       "dataset": "parcel",
                       "threshold": 1},
         "output": "(specification, index)"
@@ -74,7 +74,7 @@ my_controller_configuration = {
     "estimate": {
         "arguments": {
                       "specification": "specification",
-                      "outcome_attribute": "'ln_unit_price=ln(pag_parcel.parcel.unit_price)'",
+                      "outcome_attribute": "'ln_unit_price=ln(urbansim_parcel.parcel.unit_price)'",
                       "dataset": "parcel",
                       "index": "index",
                       "data_objects": "datasets",
@@ -146,7 +146,7 @@ my_controller_configuration = {
                       "short_name":"'BLCM'",
                       "choices":"'urbansim.lottery_choices'",
                       "submodel_string":"'business.building_use_id'",
-                      "filter": "'pag_parcel.building.building_sqft'",
+                      "filter": "'urbansim_parcel.building.building_sqft'",
                       "location_id_string":"'building_id'",
                       "run_config":"models_configuration['business_location_choice_model']",
                       "estimate_config":"models_configuration['business_location_choice_model']"
@@ -227,9 +227,9 @@ my_controller_configuration = {
                         #"filter" : None,
                         #"developable_maximum_unit_variable" : "'UNITS_capacity'", #"developable_maximum_UNITS",
                         #"developable_minimum_unit_variable" : None, # None means don't consider any minimum. For default, set it to empty string
-                        #"agents_grouping_attribute":"'pag_parcel.building.building_class_id'",
-                        #"estimate_config" : {'weights_for_estimation_string':"'pag_parcel.parcel.uniform_capacity'"},
-                        #"run_config":{"agent_units_string" : "pag_parcel.building.building_size"}
+                        #"agents_grouping_attribute":"'urbansim_parcel.building.building_class_id'",
+                        #"estimate_config" : {'weights_for_estimation_string':"'urbansim_parcel.parcel.uniform_capacity'"},
+                        #"run_config":{"agent_units_string" : "urbansim_parcel.building.building_size"}
                         #}
                     #},
                 #"prepare_for_run": {
@@ -393,7 +393,7 @@ hlcm_controller = config["models_configuration"]["household_location_choice_mode
 hlcm_controller["init"]["arguments"]["location_set"] = "building"
 hlcm_controller["init"]["arguments"]["location_id_string"] = "'building_id'"
 hlcm_controller["init"]["arguments"]["estimate_config"] = {"weights_for_estimation_string":"building.residential_units"} #"urbansim.zone.vacant_residential_units"
-hlcm_controller["init"]["arguments"]["run_config"] = {"capacity_string":"pag_parcel.building.vacant_residential_units"} #"urbansim.zone.vacant_residential_units"
+hlcm_controller["init"]["arguments"]["run_config"] = {"capacity_string":"urbansim_parcel.building.vacant_residential_units"} #"urbansim.zone.vacant_residential_units"
 hlcm_controller["init"]["arguments"]['sample_size_locations']=30
 hlcm_controller["init"]["arguments"]['sampler']="'opus_core.samplers.weighted_sampler'"
 hlcm_controller["controller"]["init"]["arguments"]["submodel_string"] =  None #"'household_size'"
