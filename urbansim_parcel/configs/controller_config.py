@@ -455,7 +455,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         hlcm_controller = self["models_configuration"]["household_location_choice_model"]["controller"]
         hlcm_controller["init"]["arguments"]["location_set"] = "building"
         hlcm_controller["init"]["arguments"]["location_id_string"] = "'building_id'"
-        hlcm_controller["init"]["arguments"]["estimate_config"] = {"weights_for_estimation_string":"building.residential_units"} #"urbansim.zone.vacant_residential_units"
+        hlcm_controller["init"]["arguments"]["estimate_config"] = {"weights_for_estimation_string":"building.vacant_residential_units"}
         hlcm_controller["init"]["arguments"]["capacity_string"] = "'vacant_residential_units'"
         hlcm_controller["init"]["arguments"]['sample_size_locations']=30
         hlcm_controller["init"]["arguments"]['sampler']="'opus_core.samplers.weighted_sampler'"
