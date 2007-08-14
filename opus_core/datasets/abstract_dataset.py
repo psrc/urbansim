@@ -579,6 +579,14 @@ class AbstractDataset(object):
         for idname in self.get_id_name():
             logger.log_status("\t", idname, " in range ", self.get_attribute(idname).min(), "-", self.get_attribute(idname).max())
 
+    def itemsize_in_memory(self):
+        """Get number of bytes of attributes that are in in memory."""
+        result = 0
+        n = self.size()
+        for attr in self.get_attributes_in_memory():
+            result += n*self.get_attribute(attr).dtype.itemsize
+        return result
+    
     def get_dataset_name(self):
         """Determines the subdirectory in which variables for the dataset are implemented.
         """
@@ -2072,6 +2080,7 @@ class DatasetTests(opus_unittest.OpusTestCase):
         # Ignores id valuse not in household_grid_id
         values = gridcell.aggregate_over_ids(ids=array([1,2,9,9,9,9]), what=array([1,10,100,1000,0,0]), function='sum')
         self.assert_(allclose(array([1,10,0]), values))
+        
 
 if __name__ == '__main__':
     opus_unittest.main()

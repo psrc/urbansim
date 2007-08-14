@@ -142,6 +142,11 @@ class DatasetPool(object):
 
         return dataset
 
+    def info_itemsize_in_memory(self):
+        """Prints out itemsize of attributes in memory of loaded datasets."""
+        print "In-memory itemsize of datasets:"
+        for name, dataset in self._loaded_datasets.iteritems():
+            print "%s: %s" % (name, dataset.itemsize_in_memory())
 
 import os
 from opus_core.tests import opus_unittest

@@ -860,5 +860,37 @@ class DatasetTests(opus_unittest.OpusTestCase):
                                       nchunks = 5)
         self.assertEqual(expected, actual)
 
+    def test_itemsize_in_memory(self):
+        in_storage = StorageFactory().get_storage('dict_storage')
+        in_storage.write_table(
+            'tests',
+            {
+                'id':array([1,2,3]),
+                'int16attr':array([5,2,3], dtype="int16"),
+                'float64attr':array([11,22,33], dtype="float64"),
+                'boolattr': array([0,1,0], dtype="bool8"),
+                'strattr': array(['123456', '12', '1234'])
+             
+            }
+        )
+        ds = Dataset(in_storage=in_storage, in_table_name='tests', id_name='id')
+        # only id is loaded (int32)
+        self.assertEqual(12, ds.itemsize_in_memory())
+        # load the boolattr into memory
+        ds.get_attribute('boolattr')
+        self.assertEqual(12+3, ds.itemsize_in_memory())
+        # check that nothing more is loaded and everything stays the same
+        self.assertEqual(12+3, ds.itemsize_in_memory())
+        # load other attributes
+        ds.get_attribute('float64attr')
+        self.assertEqual(12+3+24, ds.itemsize_in_memory())
+        ds.get_attribute('int16attr')
+        self.assertEqual(12+3+24+6, ds.itemsize_in_memory())
+        ds.get_attribute('strattr')
+        self.assertEqual(12+3+24+6+18, ds.itemsize_in_memory())
+        # flush one attribute
+        ds.flush_attribute("float64attr")
+        self.assertEqual(12+3+6+18, ds.itemsize_in_memory())
+        
 if __name__ == '__main__':
     opus_unittest.main()
