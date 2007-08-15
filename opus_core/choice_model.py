@@ -12,6 +12,7 @@
 # other acknowledgments.
 #
 
+import gc
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.datasets.dataset import Dataset, DatasetSubset
 from opus_core.datasets.interaction_dataset import InteractionDataset
@@ -561,6 +562,12 @@ class ModelInteraction:
                                                          self.choice_sets[i].get_dataset_name())
 
     def create_interaction_datasets(self, agents_index, choice_set_index):
+        # free memory of existing interaction sets
+        for i in self.interaction_datasets.keys():
+            if isinstance(self.interaction_datasets[i], InteractionDataset):
+                self.interaction_datasets[i].unload_all_attributes()
+                gc.collect()
+                
         self.interaction_resources = Resources({"debug":self.model.debug})
         for i in range(self.number_of_choice_sets):
             index = choice_set_index.get(i, None)
@@ -594,6 +601,11 @@ class ModelInteraction:
                                                            resources = self.interaction_resources)
 
     def prepare_data_for_simulation(self, submodel):
+        # free up memory from previous chunks
+        if submodel in self.data.keys():
+            del self.data[submodel]
+            gc.collect()
+            
         self.data[submodel] = {}
         self.submodel_coefficients[submodel] = {}
         for i in range(self.number_of_choice_sets):
