@@ -33,6 +33,8 @@ class StartRunOptionGroup(GenericOptionGroup):
                                 help="Directory containing data to put in new cache.")
         self.parser.add_option("--years-to-cache", dest="years_to_cache", default=None, 
                                 help="List of years of data to take from the directory-to-cache (default is all years).")                   
+        self.parser.add_option("--run-as-single-process", dest="run_as_single_process", default=False, 
+                                help="Determines if multiple processes may be used.")                   
 
 if __name__ == "__main__":
     try: import wingdbstub
@@ -42,7 +44,8 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     run_manager = option_group.get_run_manager(options)
-
+    run_as_multiprocess = not options.run_as_single_process
+    
     if options.pickled_resource_file is not None:
         f = file(options.pickled_resource_file, 'r')
         try:
@@ -72,4 +75,4 @@ if __name__ == "__main__":
         if options.years_to_cache is not None:
             config['creating_baseyear_cache_configuration'].baseyear_cache.years_to_cache = eval(options.years_to_cache)
 
-    run_manager.run_run(config)
+    run_manager.run_run(config, run_as_multiprocess = run_as_multiprocess)
