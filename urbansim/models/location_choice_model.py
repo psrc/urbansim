@@ -128,9 +128,9 @@ class LocationChoiceModel(ChoiceModel):
         # move movers out
         id_name = self.choice_set.get_id_name()[0]
         if  (id_name not in agent_set.get_known_attribute_names()):
-            agent_set.add_attribute(name=id_name, data=resize(array([-1.0]), agent_set.size()))
+            agent_set.add_attribute(name=id_name, data=resize(array([-1]), agent_set.size()))
         else:
-            agent_set.set_values_of_one_attribute(id_name,resize(array([-1.0]), agents_index.size), agents_index)
+            agent_set.set_values_of_one_attribute(id_name,resize(array([-1]), agents_index.size), agents_index)
 
         self.capacity = None
         if self.compute_capacity_flag:
