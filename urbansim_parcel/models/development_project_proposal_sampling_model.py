@@ -86,7 +86,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         buildings.compute_variables([
                                     "occupied_building_sqft=urbansim_parcel.building.occupied_building_sqft_by_jobs",
                                     "urbansim_parcel.building.existing_units",
-                                    "occupied_residential_units = building.number_of_agents(household)",
+                                    "occupied_residential_units = urbansim_parcel.building.number_of_households",
                                     #"occupied_parcel_sqft = urbansim_parcel.building.occupied_building_sqft",
                                     ],
                                     dataset_pool=self.dataset_pool)
@@ -158,6 +158,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 self.consider_proposals(arange(self.proposal_set.size())[idx[sampled_proposal_indexes[isorted]]],
                                         current_target_vacancy
                                        )
+                self.weight[sampled_proposal_indexes] = 0
 
         # set status of accepted proposals to 'active'
         self.proposal_set.modify_attribute(name="status_id", data=self.proposal_set.id_active,
