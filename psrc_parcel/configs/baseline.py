@@ -98,9 +98,9 @@ class Baseline(UrbansimParcelConfiguration):
 #            'models_configuration':models_configuration,
 
             'base_year':2000,
-            'years':(2001, 2005),
+            'years':(2001, 2030),
             'models':[ # models are executed in the same order as in this list
-                #"process_pipeline_events",
+                ##"process_pipeline_events",
                 "real_estate_price_model",
                 "expected_sale_price_model",
                 "development_proposal_choice_model",
