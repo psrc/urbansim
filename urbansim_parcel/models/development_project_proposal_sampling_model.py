@@ -158,7 +158,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 self.consider_proposals(arange(self.proposal_set.size())[idx[sampled_proposal_indexes[isorted]]],
                                         current_target_vacancy
                                        )
-                self.weight[sampled_proposal_indexes] = 0
+                self.weight[idx[sampled_proposal_indexes]] = 0
 
         # set status of accepted proposals to 'active'
         self.proposal_set.modify_attribute(name="status_id", data=self.proposal_set.id_active,
