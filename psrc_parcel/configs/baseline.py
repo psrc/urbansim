@@ -14,8 +14,11 @@
 
 #from urbansim.estimation.config import config
 from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.configuration import Configuration
 from urbansim_parcel.configs.controller_config import UrbansimParcelConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
+from urbansim.configurations.household_relocation_model_configuration_creator import HouseholdRelocationModelConfigurationCreator
+from urbansim.configurations.employment_relocation_model_configuration_creator import EmploymentRelocationModelConfigurationCreator
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.resources import merge_resources_with_defaults
@@ -98,7 +101,7 @@ class Baseline(UrbansimParcelConfiguration):
 #            'models_configuration':models_configuration,
 
             'base_year':2000,
-            'years':(2001, 2030),
+            'years':(2000, 2030),
             'models':[ # models are executed in the same order as in this list
                 #"process_pipeline_events",
                 "real_estate_price_model",
@@ -112,7 +115,13 @@ class Baseline(UrbansimParcelConfiguration):
                 "employment_relocation_model",
                 {"employment_location_choice_model":{'group_members': '_all_'}},
                 ],
-
+            'models_in_year': {2000: [               
+                 "household_relocation_model_for_2000",
+                "household_location_choice_model_for_2000",
+                "employment_relocation_model_for_2000",
+                {"employment_location_choice_model":{'group_members': '_all_'}}
+                                       ]
+                                       },
                 'flush_dataset_to_cache_after_each_model':False,
                 'flush_variables':False,
                 'low_memory_run':False,
@@ -143,4 +152,22 @@ class Baseline(UrbansimParcelConfiguration):
                 {"psrc_parcel.models.employment_location_choice_model" : "EmploymentLocationChoiceModel"}
         config['models_configuration']["home_based_employment_location_choice_model"]['controller']["import"] = \
                 {"psrc_parcel.models.employment_location_choice_model" : "EmploymentLocationChoiceModel"}
+        config['models_configuration']['household_relocation_model_for_2000'] = {}
+        config['models_configuration']['household_relocation_model_for_2000']['controller'] = \
+                    HouseholdRelocationModelConfigurationCreator(
+                               location_id_name = 'building_id',
+                               probabilities = None,
+                               rate_table=None,
+                               output_index = 'hrm_index').execute()
+        config['models_configuration']['household_location_choice_model_for_2000'] = Configuration(
+                                   config['models_configuration']['household_location_choice_model']                                        
+                                                                                                   )
+        config['models_configuration']['household_location_choice_model_for_2000']['controller']['run']['arguments']['chunk_specification'] = "{'nchunks':1}"
+        config['models_configuration']['employment_relocation_model_for_2000'] = {}
+        config['models_configuration']['employment_relocation_model_for_2000']['controller'] = \
+                    EmploymentRelocationModelConfigurationCreator(
+                               location_id_name = 'building_id',
+                               probabilities = None,
+                               rate_table=None,
+                               output_index = 'erm_index').execute()
         self.merge(config)
