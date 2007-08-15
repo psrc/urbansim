@@ -90,6 +90,9 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                     #"occupied_parcel_sqft = urbansim_parcel.building.occupied_building_sqft",
                                     ],
                                     dataset_pool=self.dataset_pool)
+        parcels = self.dataset_pool.get_dataset('parcel')
+        parcels.compute_variables(['urbansim_parcel.parcel.building_sqft', 'urbansim_parcel.parcel.residential_units'],
+                                  dataset_pool=self.dataset_pool)
         target_vacancy = self.dataset_pool.get_dataset('target_vacancy')
         target_vacancy.compute_variables(['type_name=target_vacancy.disaggregate(building_type.building_type_name)',
                                           'unit_name=target_vacancy.disaggregate(building_type.unit_name)',
@@ -129,6 +132,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         is_proposal_eligible = logical_and(sum_is_accepted_type_over_proposals == number_of_components_in_proposals,
                                      sum_of_units_proposed > 0)
 
+        logger.log_status("Sampling from %s eligible proposals." % is_proposal_eligible.sum())
         # consider planned proposals (they are not sampled)
         for status in [self.proposal_set.id_planned, self.proposal_set.id_proposed]:
             if self.weight.sum() == 0.0:
@@ -138,7 +142,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 continue
             isorted = self.weight[idx].argsort()[range(idx.size-1,-1,-1)]
             # consider proposals in order of the highest weights
-            self.consider_proposals(idx[isorted], current_target_vacancy)
+            self.consider_proposals(idx[isorted], current_target_vacancy, build_only_in_empty_parcel=False)
 
         # consider tentative proposals
         for status in [self.proposal_set.id_tentative]:
@@ -149,7 +153,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 if self.weight[idx].sum() == 0.0:
                     break
             #    raise RuntimeError, "Running out of proposals; there aren't any proposals with non-zero weight"
-                n = minimum((self.weight[idx] > 0).sum(), n)
+                idx = idx[self.weight[idx] > 0]
+                n = minimum(idx.size, n)
                 sampled_proposal_indexes = probsample_noreplace(proposal_ids[idx], n, 
                                                 prob_array=self.weight[idx]/float(self.weight[idx].sum()),
                                                 exclude_index=None, return_indices=True)
@@ -164,6 +169,10 @@ class DevelopmentProjectProposalSamplingModel(Model):
         self.proposal_set.modify_attribute(name="status_id", data=self.proposal_set.id_active,
                                           index=array(self.accepted_proposals, dtype='int32'))
         logger.log_status("Status of %s development proposals set to active." % len(self.accepted_proposals))
+        logger.log_status("Target/existing vacancy rates (reached using eligible proposals) by building type:")
+        for type_id in self.existing_units.keys():
+            units_stock = self.existing_units[type_id] - self.demolished_units[type_id] + self.proposed_units[type_id]
+            logger.log_status("%s: %s" % (type_id, (units_stock - self.occupied_units[type_id]) / float(units_stock)))
         # delete all tentative (not accepted) proposals from the proposal set
         self.proposal_set.remove_elements(where(
                     self.proposal_set.get_attribute("status_id") == self.proposal_set.id_tentative)[0])
@@ -178,6 +187,9 @@ class DevelopmentProjectProposalSamplingModel(Model):
         is_residential = target_vacancy.get_attribute("is_residential")
         buildings = self.dataset_pool.get_dataset("building")
         building_type_ids = buildings.get_attribute("building_type_id")
+        parcels = self.dataset_pool.get_dataset('parcel')
+        self.units_built = {}
+        self.units_built_pointer = {}
         for index in arange(target_vacancy.size()):
             type_id = type_ids[index]
             type_name = type_names[index]
@@ -193,8 +205,12 @@ class DevelopmentProjectProposalSamplingModel(Model):
             vr = (self.existing_units[type_id] - self.occupied_units[type_id]) / float(self.existing_units[type_id])
             if vr < target:
                 self.accepting_proposals[type_id] = True
+                if unit_name not in self.units_built.keys():
+                    self.units_built[unit_name] = parcels.get_attribute_by_index(unit_name, 
+                                                        parcels.get_id_index(self.proposal_set.get_attribute('parcel_id')))
+                self.units_built_pointer[type_id] = self.units_built[unit_name]
 
-    def consider_proposals(self, proposal_indexes, target_vacancy):
+    def consider_proposals(self, proposal_indexes, target_vacancy, build_only_in_empty_parcel=True):
         #buildings = self.dataset_pool.get_dataset("building")
         #building_site = buildings.get_attribute("parcel_id")
 
@@ -239,6 +255,9 @@ class DevelopmentProjectProposalSamplingModel(Model):
                     #occupied_units[affected_building] = 0
             for itype_id in range(component_types.size): #
                 type_id = component_types[itype_id]
+                if build_only_in_empty_parcel and self.units_built_pointer[type_id][proposal_indexes[i]] > 0: # don't build anything in a parcel that has units built
+                    is_proposal_rejected[i] = True
+                    break
                 # this loop is only needed when a proposal could provide units from more than 1 generic building types
 
                 #if pro_rated[i]:
@@ -262,9 +281,9 @@ class DevelopmentProjectProposalSamplingModel(Model):
                         is_proposal_rejected[arange((i+1),proposal_indexes.size)[is_rejected_indices]] = True
                         self.weight[consider_idx[is_rejected_indices]] = 0.0
 
-
-            # proposal accepted
-            self.accepted_proposals.append(proposal_index)
+            if not is_proposal_rejected[i]:
+                # proposal accepted
+                self.accepted_proposals.append(proposal_index)
             # reject all pending proposals for this site
             is_proposal_rejected[proposal_site == this_site] = True
             if is_proposal_rejected.sum() == is_proposal_rejected.size:
