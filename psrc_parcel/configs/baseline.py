@@ -100,7 +100,7 @@ class Baseline(UrbansimParcelConfiguration):
             'base_year':2000,
             'years':(2001, 2030),
             'models':[ # models are executed in the same order as in this list
-                ##"process_pipeline_events",
+                #"process_pipeline_events",
                 "real_estate_price_model",
                 "expected_sale_price_model",
                 "development_proposal_choice_model",
@@ -117,7 +117,7 @@ class Baseline(UrbansimParcelConfiguration):
                 'flush_variables':False,
                 'low_memory_run':False,
                 'datasets_to_cache_after_each_model':["parcel", "building", 'household', 'job', 
-                                                      'development_project_proposal'],
+                                                      'development_project_proposal', 'travel_data'],
                 'unroll_gridcells':False,
                 "datasets_to_preload":{
                     'zone':{},
