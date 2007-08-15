@@ -13,8 +13,7 @@
 #
 
 from opus_core.variables.variable import Variable
-#from variable_functions import my_attribute_label
-from numpy import where
+from numpy import where, round_
 
 class units_proposed(Variable):
     """total units proposed (residential units, and/or non residential sqft) for the proposed developmentt project,
@@ -25,7 +24,7 @@ class units_proposed(Variable):
 
     def dependencies(self):
         return [
-                "land_area_taken = urbansim_parcel.development_project_proposal.land_area_taken",
+                "urbansim_parcel.development_project_proposal.land_area_taken",
                 "density = development_project_proposal.disaggregate(urbansim_parcel.development_template.density)",
                 "density_convertor = development_project_proposal.disaggregate(urbansim_parcel.development_template.density_converter)",  # land area is in sqft
                 "usable_ratio = (1- development_project_proposal.disaggregate(development_template.percent_land_overhead) / 100.0).astype(float32)",
@@ -33,8 +32,8 @@ class units_proposed(Variable):
 
     def compute(self, dataset_pool):
         ds = self.get_dataset()
-        return ds.get_attribute("land_area_taken") * ds.get_attribute("usable_ratio") * \
-                            ds.get_attribute("density") * ds.get_attribute("density_convertor")
+        return round_(ds.get_attribute("land_area_taken") * ds.get_attribute("usable_ratio") * 
+                            ds.get_attribute("density") * ds.get_attribute("density_convertor"))
 
     def post_check(self, values, dataset_pool):
         self.do_check("x >= 0", values)
@@ -72,9 +71,9 @@ class Tests(opus_unittest.OpusTestCase):
                 "template_id":array([1,  2,  3,  4, 2,  3, 4, 1, 2, 3,  4])
             }
         })
-        should_be = array([0, 0,  0,            0,
-                              36-1, 80*self.ACRE, 200,  # equals to 35 instead of 36 because of truncation of decimal places
-                           1, 36-1, 80*self.ACRE, 400]) # when convert numpy.array from float to int
+        should_be = array([1, 0,  0,            0,
+                              36, 80*self.ACRE, 200,  
+                           1, 36, 80*self.ACRE, 400]) 
 
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 
