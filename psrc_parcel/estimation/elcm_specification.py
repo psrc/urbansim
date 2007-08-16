@@ -14,6 +14,8 @@
 
 
 all_variables = [
+     ("bias_hb = urbansim_parcel.job_x_building.ln_sampling_probability_for_bias_correction_mnl_vacant_home_based_job_space", "bias", 1),
+     ("bias_nhb = urbansim_parcel.job_x_building.ln_sampling_probability_for_bias_correction_mnl_vacant_non_home_based_job_space", "bias", 1),
     "distance_to_hwy = building.disaggregate(psrc.parcel.distance_to_highway_in_gridcell)",
     "is_near_highway = building.disaggregate(psrc.parcel.is_near_highway_in_gridcell)",    
     "distance_to_art = building.disaggregate(psrc.parcel.distance_to_arterial_in_gridcell)",
@@ -75,6 +77,7 @@ specification["home_based"] = {
     "_definition_": all_variables,                               
     -2:   #Home-based
             [
+     "bias_hb",
     "ln_unit_price",      
 #    "urbansim_parcel.building.age_masked",
     "lnsqftunit",
@@ -95,6 +98,7 @@ specification["non_home_based"] = {
     "_definition_": all_variables,                                   
         1:   
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_1",
     "ln_unit_price",
@@ -116,6 +120,7 @@ specification["non_home_based"] = {
 
         2:
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_2",
     "ln_unit_price",
@@ -136,6 +141,7 @@ specification["non_home_based"] = {
    ],
         3:
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_3",
     "ln_unit_price",
@@ -156,6 +162,7 @@ specification["non_home_based"] = {
    ],
         4:
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_4",
     "ln_unit_price",
@@ -176,6 +183,7 @@ specification["non_home_based"] = {
    ],
         5:
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_5",
     "ln_unit_price",
@@ -196,6 +204,7 @@ specification["non_home_based"] = {
    ],
         6:
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_6",
     "ln_unit_price",
@@ -216,6 +225,7 @@ specification["non_home_based"] = {
    ],
         7:
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_7",
     "ln_unit_price",
@@ -236,6 +246,7 @@ specification["non_home_based"] = {
    ],
         8:
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_8",
     "ln_unit_price",
@@ -256,6 +267,7 @@ specification["non_home_based"] = {
    ],
         9:
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_9",
     "ln_unit_price",
@@ -276,6 +288,7 @@ specification["non_home_based"] = {
    ],
         10:
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_10",
     "ln_unit_price",
@@ -296,6 +309,7 @@ specification["non_home_based"] = {
    ],
         11:
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_11",
     "ln_unit_price",
@@ -316,6 +330,7 @@ specification["non_home_based"] = {
    ],
         12:
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_12",
     "ln_unit_price",
@@ -336,6 +351,7 @@ specification["non_home_based"] = {
    ],
         13:
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_13",
     "ln_unit_price",
@@ -356,6 +372,7 @@ specification["non_home_based"] = {
    ],
         14:
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_14",
     "ln_unit_price",
@@ -376,6 +393,7 @@ specification["non_home_based"] = {
    ],
         15:
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_15",
     "ln_unit_price",
@@ -396,6 +414,7 @@ specification["non_home_based"] = {
    ],
         16:
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_16",
     "ln_unit_price",
@@ -416,6 +435,7 @@ specification["non_home_based"] = {
    ],
         17:
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_17",
     "ln_unit_price",
@@ -436,6 +456,7 @@ specification["non_home_based"] = {
    ],
         18:
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_18",
     "ln_unit_price",
@@ -456,6 +477,7 @@ specification["non_home_based"] = {
    ],
         19:
             [
+     "bias_nhb",
     "ln_invfar",
     "ln_zone_empden_19",
     "ln_unit_price",

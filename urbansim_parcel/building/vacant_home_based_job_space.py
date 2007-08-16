@@ -20,13 +20,14 @@ class vacant_home_based_job_space(Variable):
     """ number of job spaces that is vacant/unoccupied"""
     
     def dependencies(self):
-        return ["total_home_based_job_space=building.aggregate(psrc_parcel.household.minimum_persons_and_2)",
+        return ["total_home_based_job_space=building.aggregate(urbansim_parcel.household.minimum_persons_and_2)",
                 "urbansim_parcel.building.number_of_home_based_jobs"
                 ]
 
     def compute(self,  dataset_pool):
         buildings = self.get_dataset() 
-        return clip_to_zero_if_needed(buildings.get_attribute("total_home_based_job_space") - buildings.get_attribute("number_of_home_based_jobs"))
+        return clip_to_zero_if_needed(buildings.get_attribute("total_home_based_job_space") - 
+                                      buildings.get_attribute("number_of_home_based_jobs"))
         
     def post_check(self,  values, dataset_pool=None):
         self.do_check("x >= 0", values)
