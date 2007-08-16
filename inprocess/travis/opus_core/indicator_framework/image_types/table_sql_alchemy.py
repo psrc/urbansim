@@ -22,7 +22,7 @@ from opus_core.indicator_framework.core.abstract_indicator import AbstractIndica
 from opus_core.storage_factory import StorageFactory
 from inprocess.travis.opus_core.store.sql_storage import sql_storage
 
-class Table(AbstractIndicator):
+class TableSQLAlchemy(AbstractIndicator):
 
     def __init__(self, source_data, dataset_name, attribute, 
                  years = None, operation = None, name = None,
