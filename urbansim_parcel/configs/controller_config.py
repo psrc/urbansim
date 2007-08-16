@@ -119,7 +119,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                 portion_to_unplace = 0,
                                 capacity_string = "vacant_SSS_job_space",
                                 variable_package = "urbansim_parcel",
-                                lottery_max_iterations = 7
+                                lottery_max_iterations = 10
                                 ).execute(),
                                        
             'home_based_employment_location_choice_model': 
