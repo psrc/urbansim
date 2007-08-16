@@ -26,13 +26,13 @@ class DatasetTableSQLAlchemy(AbstractIndicator):
                  exclude_condition = None, 
                  protocol = 'mysql',
                  database_name = None,
-                 username = None,
-                 hostname = None,
+                 user_name = None,
+                 host_name = None,
                  password = None):
         
         self.protocol = protocol
-        self.username = username
-        self.hostname = hostname
+        self.user_name = user_name
+        self.host_name = host_name
         self.database_name = database_name
         
         self.attributes = attributes
@@ -43,9 +43,9 @@ class DatasetTableSQLAlchemy(AbstractIndicator):
         
         self.store = sql_storage(
             protocol = self.protocol, 
-            username = self.username, 
+            user_name = self.user_name, 
             password = self.password, 
-            hostname = self.hostname, 
+            host_name = self.host_name, 
             database_name = self.database_name
         )
         
@@ -53,15 +53,16 @@ class DatasetTableSQLAlchemy(AbstractIndicator):
         return True
     
     def get_file_extension(self):
-        return self.output_type
+        return None
                 
     def get_visualization_shorthand(self):
         return 'dataset_table'
 
     def get_additional_metadata(self):
-        return  [('attributes',self.attributes),
-                 ('output_type',self.output_type),
-                 ('exclude_condition',self.exclude_condition)]
+        return  [('protocol',self.protocol),
+                 ('user_name',self.user_name),
+                 ('host_name',self.host_name),
+                 ('database_name',self.database_name)]
     
     def get_file_name(self, 
                       year, 
