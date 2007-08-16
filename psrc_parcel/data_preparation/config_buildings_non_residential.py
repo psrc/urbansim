@@ -34,10 +34,12 @@ class ConfigBuildingsNonResidential(UrbansimParcelConfiguration):
             'description':'data preparation for PSRC parcel (buildings)',
             'cache_directory': None,
             'creating_baseyear_cache_configuration': CreatingBaseyearCacheConfiguration(
+         	   #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
                 cache_directory_root = r'/urbansim_cache/psrc_parcel',
                 #cache_directory_root = r'/workspace/urbansim_cache/psrc_parcel',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
+                    #existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
                     existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/cache_source',
                     #existing_cache_to_copy = r'/workspace/urbansim_cache/psrc_parcel/estimation',
                     years_to_cache = [2000]
@@ -49,7 +51,7 @@ class ConfigBuildingsNonResidential(UrbansimParcelConfiguration):
                 package_order_exceptions={},
                 ),
             'base_year':2000,
-            'years':(2001, 2001),
+            'years':(2000, 2000),
             'models':[ # models are executed in the same order as in this list
                  "expected_sale_price_model",
                  "development_proposal_choice_model",

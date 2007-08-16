@@ -46,6 +46,7 @@ class FltStorage:
         return storage
     
 class AssignBuildingsToJobs:
+    minimum_sqft = 25
     def run(self, in_storage, out_storage, dataset_pool_storage, jobs_table="jobs", 
             zone_averages_table="building_sqft_per_job"):
         """
@@ -106,6 +107,7 @@ class AssignBuildingsToJobs:
         
         jobs_sqft = job_dataset.get_attribute_by_index("sqft", job_index_non_home_based).astype("float32")
         jobs_zones = job_dataset.get_attribute_by_index("zone_id", job_index_non_home_based)
+        new_jobs_sqft = jobs_sqft.copy()
         
         # find sector -> building_type distribution
         sector_index_mapping = {}
@@ -174,6 +176,8 @@ class AssignBuildingsToJobs:
                 taken[draw] = taken[draw] + this_jobs_sqft_table[draw,imax_req]
                 building_ids[job_index_non_home_based[idx_in_jobs[imax_req]]] = bldg_ids_in_bldgs[idx_in_bldgs[draw]]
                 probcomb[:,imax_req] = 0
+                new_jobs_sqft[job_index_non_home_based[idx_in_jobs[imax_req]]] = max(this_jobs_sqft_table[draw,imax_req], 
+                                                                                     self.minimum_sqft)
             
         logger.log_status("%s non home based jobs (out of %s nhb jobs) were placed." % (
                                                                 (building_ids[job_index_non_home_based]>0).sum(),
@@ -182,10 +186,10 @@ class AssignBuildingsToJobs:
         logger.log_status("Unplaced due to zero distribution: %s" % counter_zero_distr)
         
         job_dataset.modify_attribute(name="building_id", data = building_ids)
+        job_dataset.modify_attribute(name="sqft", data = new_jobs_sqft)
         
         # re-classify unplaced non-home based jobs to home-based if parcels contain residential buildings
-        bldgs_unit_names = building_dataset.compute_variables([
-                               "building.disaggregate(building_type.unit_name)"], 
+        bldgs_is_residential = building_dataset.compute_variables(["urbanim_parcel.building.is_residential"], 
                                                            dataset_pool=dataset_pool)
         is_now_considered = logical_and(parcel_ids > 0, building_ids <= 0)
         job_index_non_home_based_unplaced = where(logical_and(is_now_considered, building_types == 2))[0]
@@ -196,7 +200,7 @@ class AssignBuildingsToJobs:
             if idx_in_bldgs.size <= 0:
                 continue
             idx_in_jobs = where(parcel_ids[job_index_non_home_based_unplaced] == parcel)[0]
-            where_residential = where(bldgs_unit_names[idx_in_bldgs] == "residential_units")[0]
+            where_residential = where(bldgs_is_residential[idx_in_bldgs])[0]
             if where_residential.size > 0:
                 building_types[job_index_non_home_based_unplaced[idx_in_jobs]] = 1 # set to home-based jobs
             elif non_res_sqft[idx_in_bldgs].sum() <= 0:
@@ -297,11 +301,14 @@ class AssignBuildingsToJobs:
         
         
 if __name__ == '__main__':
+    from unroll_jobs_from_establishments import CreateBuildingSqftPerJobDataset
     # Uncomment the right instorage and outstorage.
     # input/output_database_name is used only if MysqlStorage is uncommented.
     # input/output_cache is used only if FltStorage is uncommented.
     input_database_name = "psrc_2005_parcel_baseyear_change_20070613"
     output_database_name = "psrc_2005_data_workspace_hana"
+    #input_cache =  "/Users/hana/urbansim_cache/psrc/cache_source_parcel/2000"
+    #output_cache = "/Users/hana/urbansim_cache/psrc/cache_source_parcel/after_step_4"
     input_cache =  "/urbansim_cache/psrc_parcel/cache_source/2000"
     output_cache = "/urbansim_cache/psrc_parcel/tmp/2000"
     #instorage = MysqlStorage().get(input_database_name)
@@ -310,5 +317,5 @@ if __name__ == '__main__':
     outstorage = FltStorage().get(output_cache)
     pool_storage = instorage
     AssignBuildingsToJobs().run(instorage, outstorage, dataset_pool_storage=pool_storage)
-
+    CreateBuildingSqftPerJobDataset().run(in_storage=outstorage, out_storage=outstorage)
             
