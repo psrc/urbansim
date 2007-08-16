@@ -78,26 +78,38 @@ class delimited_storage(Storage, delimited_storage_old):
     def get_storage_location(self):
         return self._output_directory
     
-    def write_table(self, table_name, table_data):
+    def write_table(self, 
+                    table_name, 
+                    table_data, 
+                    fixed_column_order = None,
+                    append_type_info = True):
+        
         if not os.path.exists(self._output_directory):
             os.makedirs(self._output_directory)
         
         file_path = self._get_file_path_for_table(table_name)
         
         column_size, column_names = self._get_column_size_and_names(table_data)
-        column_names.sort()
+        
+        if fixed_column_order is None:
+            column_names.sort()
+        else:
+            column_names = fixed_column_order
         
         header = []
         values = []
         for column_name in column_names:
             column_type = table_data[column_name].dtype.str
 
-            column_header = ('%s:%s%s' 
-                % (column_name, 
-                   table_data[column_name].dtype.kind,
-                   table_data[column_name].dtype.itemsize))
+            if append_type_info:
+                column_header = ('%s:%s%s' 
+                    % (column_name, 
+                       table_data[column_name].dtype.kind,
+                       table_data[column_name].dtype.itemsize))
+            else:
+                column_header = column_name
+                
             header.append(column_header)
-            
             values.append(table_data[column_name])
         
         output = open(file_path, 'wb')
