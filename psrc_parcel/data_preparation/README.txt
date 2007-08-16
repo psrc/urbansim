@@ -11,13 +11,17 @@ VI.  Assign buildings to remaining jobs
 VII. Post-process
 VIII.Exporting resulting tables to database
 
-I. Create a 'jobs' table
+Note: Make sure that buildings built after 2000 are removed from the buildings table
+
+I. Create a 'jobs' table and 'building_sqft_per_job' table
 ****
 1. Run the script unroll_jobs_from_establishments.py
   - choose appropriate settings in the __main__ part
   - recommended: instorage set to MysqlStorage (where the business table lives),
                  outstorage set to FltStorage (where your cache data is)
   - The script creates a 'jobs' table and writes it out into the outstorage.
+  - In addition, the scripts creates a 'building_sqft_per_job' table and writes it out into the outstorage. 
+    It needs the 'buildings' table on outstorage.
            
 II. Create new residential buildings
 ****
@@ -67,8 +71,6 @@ Note: We assume that the 'jobs' table have already assigned buildings from one-b
   - recommended: instorage set to FltStorage (where your 'jobs' table is, e.g. the cache directory),
                  pool_storage set equal to instorage (where all your data is cached), 
                  outstorage set to FltStorage (some other directory)
-    (Note: it also needs the table "building_sqft_per_job" on instorage, so one needs to cache it
-    prior to running this script, if the instorage is Flt)
   - The script assigns building_id to jobs where possible and writes out the 'jobs' table into the outstorage.
   - It also imputes non_residential_sqft to buildings where needed and writes out the 'buildings' table 
       into the outstorage.
