@@ -123,6 +123,9 @@ else:
             return result
         
         def write_table(self, table_name, table_data):
+            if not os.path.exists(self._directory):
+                os.makedirs(self._directory)
+                
             dbf_file_name = self._get_file_path_for_table(table_name)
             db = _dbf_class(dbf_file_name, new=True)
             number_of_rows, column_names = self._get_column_size_and_names(table_data)
