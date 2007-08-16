@@ -12,17 +12,20 @@
 # other acknowledgments.
 #
 
-from numpy import where, concatenate, newaxis
+from numpy import where, concatenate, newaxis, clip
 from opus_core.variables.variable import Variable
 
 class occupied_building_sqft_by_jobs(Variable):
-    """sum of jobs sqft per building"""
+    """Sum of jobs sqft per building. If job sqft is <= 0, it is replaced by zone-building_type average.
+        Result is clipped between 0 and building.building_sqft.
+    """
 
     _return_type="int32"
 
     def dependencies(self):
         return ["urbansim_parcel.job.building_id",
-                "urbansim_parcel.job.sqft"]
+                "urbansim_parcel.job.sqft",
+                "urbansim_parcel.building.building_sqft"]
 
     def compute(self,  dataset_pool):
         jobs = dataset_pool.get_dataset("job")
@@ -30,7 +33,8 @@ class occupied_building_sqft_by_jobs(Variable):
         sqft = jobs.get_attribute('sqft')
         where_zero = where(sqft <= 0)[0]
         if where_zero.size == 0:
-            return buildings.sum_over_ids(jobs.get_attribute('building_id'), sqft)
+            return clip(buildings.sum_over_ids(jobs.get_attribute('building_id'), sqft), 0,
+                        buildings.get_attribute("building_sqft"))
         self.add_and_solve_dependencies(["urbansim_parcel.job.zone_id",
                 "bldgs_building_type_id = job.disaggregate(building.building_type_id)", 
                 "building_sqft_per_job.building_sqft_per_job"], dataset_pool=dataset_pool)
@@ -39,14 +43,16 @@ class occupied_building_sqft_by_jobs(Variable):
         try:
             sqft_per_job = dataset_pool.get_dataset("building_sqft_per_job")
         except:
-            return buildings.sum_over_ids(jobs.get_attribute('building_id'), sqft)
+            return clip(buildings.sum_over_ids(jobs.get_attribute('building_id'), sqft), 0 ,
+                        buildings.get_attribute("building_sqft"))
         
         ids = concatenate((zones[:,newaxis],type_ids[:,newaxis]), axis=1)
         index = sqft_per_job.try_get_id_index(ids)
         building_sqft_per_job = sqft_per_job.get_attribute("building_sqft_per_job")[index]
         building_sqft_per_job[where(index==-1)] = 0
         sqft[where_zero] = building_sqft_per_job[where_zero].astype(sqft.dtype)
-        return buildings.sum_over_ids(jobs.get_attribute('building_id'), sqft)
+        return clip(buildings.sum_over_ids(jobs.get_attribute('building_id'), sqft), 0,
+                    buildings.get_attribute("building_sqft"))
 
     def post_check(self,  values, dataset_pool=None):
         size = dataset_pool.get_dataset("job").get_attribute("sqft").sum()
@@ -68,19 +74,20 @@ if __name__=='__main__':
             "building":{"building_id":         array([1,2,3]),
                        "zone_id":              array([1,2,3]),
                        "building_type_id":     array([1,3,1]),
+                       "building_sqft":        array([10, 900, 30])
                 },
             "building_sqft_per_job":{
                        "zone_id":              array([1,  1, 1,  2, 2, 2,  3, 3]),
                        "building_type_id":     array([1,  2, 3,  1, 2, 3,  1, 3]),
                        "building_sqft_per_job":array([100,50,200,80,60,500,20,10]),
                 },  
-             "job": {"job_id":      array([1,2,3,4, 5, 6]),
-                     "sqft":        array([0,1,4,0, 2, 5]),
-                     "building_id": array([2,1,3,2, 1, 2])
+             "job": {"job_id":      array([1,2,3,4, 5, 6, 7]),
+                     "sqft":        array([0,1,4,0, 2, 5, 0]),
+                     "building_id": array([2,1,3,2, 1, 2, 3])
                                },
                        }
                                     )
-            should_be = array([1+2,500+500+5,4])
+            should_be = array([1+2,900,4+20])
             tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 
     unittest.main()
