@@ -13,10 +13,11 @@
 #
 
 import os
-from numpy import array, arange, cumsum, resize
+from numpy import array, arange, cumsum, resize, clip, logical_and
 from opus_core.logger import logger
 from opus_core.store.opus_database import OpusDatabase
 from opus_core.storage_factory import StorageFactory
+from opus_core.datasets.dataset_pool import DatasetPool
 from urbansim_parcel.datasets.business_dataset import BusinessDataset
 from urbansim.datasets.job_dataset import JobDataset
 
@@ -40,8 +41,12 @@ class FltStorage:
         return storage
     
 class UnrollJobsFromEstablishments:
+    
+    minimum_sqft = 25
+    maximum_sqft = 2000
+    
     def run(self, in_storage, out_storage, business_table="business", jobs_table="jobs"):
-        
+        logger.log_status("Unrolling %s table." % business_table)
         # get attributes from the establisments table
         business_dataset = BusinessDataset(in_storage=in_storage, in_table_name=business_table)
         business_sizes = business_dataset.get_attribute("jobs00").astype("int32")
@@ -51,6 +56,7 @@ class UnrollJobsFromEstablishments:
         parcel_ids = business_dataset.get_attribute("parcel_id")
         home_based = business_dataset.get_attribute("home_based")
         building_sqft = business_dataset.get_attribute("building_sqft_10vac")
+        building_sqft[building_sqft <= 0] = 0
         join_flags = business_dataset.get_attribute("join_flag")
         taz_est = business_dataset.get_attribute("taz_est")
         impute_sqft_flag = business_dataset.get_attribute("impute_building_sqft_flag")
@@ -79,14 +85,15 @@ class UnrollJobsFromEstablishments:
             jobs_data["parcel_id"][start_index:end_index] = parcel_ids[i]
             jobs_data["zone_id"][start_index:end_index] = tazes[i]
             jobs_data["building_type"][start_index:end_index] = home_based[i]
-            jobs_data["sqft"][start_index:end_index] = building_sqft[i]/float(business_sizes[i]) # sqft per employee
+            jobs_data["sqft"][start_index:end_index] = round((building_sqft[i]-building_sqft[i]/10.0)/float(business_sizes[i])) # sqft per employee
             jobs_data["join_flag"][start_index:end_index] = join_flags[i]
             jobs_data["taz_est"][start_index:end_index] = taz_est[i]
             jobs_data["impute_building_sqft_flag"][start_index:end_index]  = impute_sqft_flag[i]
             start_index = end_index
             
         jobs_data["job_id"] = arange(total_size)+1
-        
+        jobs_data["sqft"] = clip(jobs_data["sqft"], 0, self.maximum_sqft)
+        jobs_data["sqft"][logical_and(jobs_data["sqft"]>0, jobs_data["sqft"]<self.minimum_sqft)] = self.minimum_sqft
         # create jobs table and write it out
         storage = StorageFactory().get_storage('dict_storage')
         storage.write_table(
@@ -98,18 +105,27 @@ class UnrollJobsFromEstablishments:
         job_dataset.write_dataset(out_table_name=jobs_table, out_storage=out_storage)
         logger.log_status("Created %s jobs." % job_dataset.size())
         
-
+class CreateBuildingSqftPerJobDataset:
+    def run(self, in_storage, out_storage):
+        logger.log_status("Creating building_sqft_per_job table.")
+        from urbansim_parcel.datasets.building_sqft_per_job_dataset import create_building_sqft_per_job_dataset
+        dataset_pool = DatasetPool(storage=in_storage, package_order=['psrc_parcel', 'urbanism_parcel', 'urbansim'] )
+        ds = create_building_sqft_per_job_dataset(dataset_pool)
+        logger.log_status("Write building_sqft_per_job table.")
+        ds.write_dataset(out_storage=out_storage)
 
 if __name__ == '__main__':
     #business_table = "est00_match_bldg2005_flag123457_flag12bldg"
     business_table = "businesses"
-    input_database_name = "psrc_2005_parcel_baseyear_change_hyungtai"
+    #input_database_name = "psrc_2005_parcel_baseyear_change_hyungtai"
+    input_database_name = "psrc_2005_parcel_baseyear_change_20070713"
     #input_database_name = "psrc_2005_data_workspace_hana"
     output_database_name = "psrc_2005_data_workspace_hana"
     input_cache = "/Users/hana/urbansim_cache/psrc/cache_source/2000"
-    output_cache = "/Users/hana/urbansim_cache/psrc/cache_source_parcel/2005"
+    output_cache = "/Users/hana/urbansim_cache/psrc/data_preparation/stepI/2000"
     instorage = MysqlStorage().get(input_database_name)
     #outstorage = MysqlStorage().get(output_database_name)
     #instorage = FltStorage().get(input_cache)
     outstorage = FltStorage().get(output_cache)
     UnrollJobsFromEstablishments().run(instorage, outstorage, business_table=business_table)
+    CreateBuildingSqftPerJobDataset().run(in_storage=outstorage, out_storage=outstorage)

@@ -32,6 +32,7 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
 
         config_changes = {
             'description':'data preparation for PSRC parcel (buildings)',
+            'flush_variables': False,
             'cache_directory': None,
             'creating_baseyear_cache_configuration': CreatingBaseyearCacheConfiguration(
                 #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
@@ -51,7 +52,7 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
                 package_order_exceptions={},
                 ),
             'base_year':2000,
-            'years':(2001, 2001),
+            'years':(2000, 2000),
             'models':[ # models are executed in the same order as in this list
                  "expected_sale_price_model",
                  "development_proposal_choice_model",
