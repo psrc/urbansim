@@ -80,17 +80,16 @@ class AgentLocationChoiceModel(LocationChoiceModel):
             
         unplaced = arange(agents_index.size)
         id_name = self.choice_set.get_id_name()[0]
-
         for run in range(maximum_runs):
+            unplaced_size_before_model = unplaced.size
             choices = LocationChoiceModel.run(self, specification, coefficients, agent_set,
                     agents_index[unplaced], chunk_specification, debuglevel=debuglevel)
             if run == 0:
                 all_choices=choices
             else:
                 all_choices[unplaced]=choices
-            unplaced_size_after_model = where(all_choices <= 0)[0].size
             unplaced = self.get_movers_from_overfilled_locations(agent_set, agents_index)
-            if (unplaced.size <= 0) or (unplaced_size_after_model == unplaced.size):
+            if (unplaced.size <= 0) or (unplaced_size_before_model == unplaced.size):
                 break
             agent_set.set_values_of_one_attribute(id_name, -1, agents_index[unplaced])
         return all_choices
