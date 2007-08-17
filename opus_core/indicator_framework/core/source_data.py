@@ -24,36 +24,21 @@ from opus_core.indicator_framework.utilities.integrity_error import IntegrityErr
 class SourceData(object):
     """Configuration information for computing a set of indicators. """
     
-    cache_directory = ''
-    comparison_cache_directory = ''
-    
-    run_description = ''
-    
-    years = []
-    
     def __init__(self, 
                  dataset_pool_configuration,
                  cache_directory, 
-                 comparison_cache_directory = None,
+                 comparison_cache_directory = '',
                  years = [],
-                 run_description = None):
+                 run_description = ''):
         
         self.dataset_pool_configuration = dataset_pool_configuration
         self.years = years            
         self.cache_directory = cache_directory
-        if comparison_cache_directory is not None:
-            self.comparison_cache_directory = comparison_cache_directory
-        if run_description is not None:
-            self.run_description = run_description         
+        self.comparison_cache_directory = comparison_cache_directory
+        self.run_description = run_description         
             
-        self._check_integrity()                    
-    
-    def get_indicator_directory(self, create_if_does_not_exist = True):
-        indicators_directory = os.path.join(self.cache_directory, 'indicators')
-        if create_if_does_not_exist and not os.path.exists(indicators_directory):
-            os.makedirs(indicators_directory)
-        return indicators_directory
-    
+        self._check_integrity()
+            
     def get_run_description(self):
         if self.run_description == '':
             self.run_description = self.cache_directory
@@ -137,11 +122,6 @@ class TestSourceData(TestWithAttributeData):
                 package_order_exceptions={},
             )
         )
-        
-    def test__get_indicator_directory(self):
-        output = self.source_data.get_indicator_directory()
-        expected = os.path.join(self.source_data.cache_directory,'indicators')
-        self.assertEqual(output,expected)
 
     def test__write_self_to_metadata(self):
         self.source_data.comparison_cache_directory = self.temp_cache_path2

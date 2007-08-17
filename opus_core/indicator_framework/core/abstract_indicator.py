@@ -29,6 +29,7 @@ from opus_core.indicator_framework.utilities.gui_utilities import display_messag
 from opus_core.indicator_framework.core.indicator_data_manager import IndicatorDataManager
 from opus_core.indicator_framework.core.source_data import SourceData
 from opus_core.indicator_framework.utilities.integrity_error import IntegrityError
+from opus_core.indicator_framework.storage_location.database import Database
 
 from numpy import array, subtract, concatenate
 
@@ -36,19 +37,32 @@ class AbstractIndicator(object):
     
     def __init__(self, source_data, dataset_name, attribute, 
                  years = None, operation = None, name = None,
-                 suppress_file_extension_addition = False ):
+                 suppress_file_extension_addition = False,
+                 storage_location = None, can_write_to_db = False):
 
         self.dataset_name = dataset_name 
         self.attribute = attribute
         self.operation = operation
         self.source_data = source_data
         self.suppress_file_extension_addition = suppress_file_extension_addition
-
-        self.name = name
-        if self.name == None:
-            self.name = self.get_attribute_alias()
+        
+        cache_directory = self.source_data.cache_directory
+        
+        if storage_location is None:
+            storage_location = os.path.join(cache_directory, 'indicators')
+        self.storage_location = storage_location
+                
+        storage_location_is_db = isinstance(storage_location, Database)
+        if not can_write_to_db and storage_location_is_db:
+            raise "Error: Invalid storage_location specified. Must be a path to the output directory."
+        
+        self.write_to_file = not storage_location_is_db
+        
+        if name is None:
+            name = self.get_attribute_alias()
             if self.operation is not None:
-                self.name = '%s_%s'%(self.operation,self.name)
+                name = '%s_%s'%(self.operation,name)
+        self.name = name
         
         if years is None:
             self.years = self.source_data.years
@@ -70,11 +84,16 @@ class AbstractIndicator(object):
             
         self.data_manager = IndicatorDataManager()
         
-        cache_directory = self.source_data.cache_directory
         self._set_cache_directory(cache_directory)
         
         self._check_integrity()
 
+    def get_storage_location(self):
+        return self.storage_location
+    
+    def write_to_file(self):
+        return self.write_to_file
+    
     def _check_integrity(self):
         #do all years exist in cache dirs?
         cross_scenario_comparison = self.source_data.comparison_cache_directory != ''
@@ -330,6 +349,9 @@ class AbstractIndicator(object):
                       extension = None, 
                       suppress_extension_addition = False):
         
+        if not self.write_to_file:
+            return None
+        
         '''returns the file name for the outputted indicator'''
         if extension == None:
             extension = self.get_file_extension()
@@ -351,15 +373,15 @@ class AbstractIndicator(object):
         return file_name
     
     def get_file_path(self, year = None):
-        indicator_directory = self.source_data.get_indicator_directory()
-        file_name = self.get_file_name(
-            year)
-        return os.path.join(indicator_directory, file_name)
+        if self.write_to_file:
+            file_name = self.get_file_name(year)
+            return os.path.join(self.storage_location, file_name)
+        else:
+            return None
         
     def _handle_indicator_error(self, e, display_error_box = False):
         ''' sends alert to various forums if there's an error '''
                  
-        #TODO: improve error message
         message = ('Failed to generate indicator "%s"! Check the indicator log '
                 'in the indicators directory of the "%s" cache for further '
                 'details.\nError: %s.' % (self.name, self.source_data.cache_directory, e))
@@ -469,6 +491,7 @@ class Tests(AbstractIndicatorTest):
         
         table.create(False)
         path = table.get_file_path()
+
         f = open(path)
         f.readline() #chop off header
     

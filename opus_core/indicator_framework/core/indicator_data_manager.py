@@ -24,12 +24,20 @@ class IndicatorDataManager:
         VERSION = 1.0
         '''Writes to a file information about this indicator'''
 
+        if not indicator.write_to_file:
+            return
+        
         lines = []
         class_name = indicator.__class__.__name__
         
         lines.append('<version>%.1f</version>'%VERSION)
         lines.append('<%s>'%class_name)
-        basic_attributes = ['dataset_name','years','date_computed', 'name', 'operation']
+        basic_attributes = ['dataset_name',
+                            'years',
+                            'date_computed', 
+                            'name', 
+                            'operation',
+                            'storage_location']
         if class_name != 'DatasetTable':
             basic_attributes.append('attribute')
         for basic_attr in basic_attributes:
@@ -48,8 +56,7 @@ class IndicatorDataManager:
         
         #write to metadata file
         file = indicator.get_file_name(year = year, extension = 'meta')
-        path = os.path.join(source_data.get_indicator_directory(),
-                            file)
+        path = os.path.join(indicator.get_storage_location(), file)
         f = open(path, 'w')
         output = '\n'.join(lines)
         f.write(output)
@@ -203,12 +210,14 @@ class Tests(AbstractIndicatorTest):
         else:
             table = Table(
                 source_data = self.cross_scenario_source_data,
-                attribute = 'opus_core.test.population',
+                attribute = 'opus_core.test.attribute',
                 dataset_name = 'test',
                 output_type = 'tab',
                 years = [1980,1981] # Indicators are not actually being computed, so the years don't matter here.
             )
             
+            table.create(False)
+            table.date_computed = None
             output = self.data_manager._export_indicator_to_file(
                  indicator = table,
                  source_data = self.cross_scenario_source_data,
@@ -220,9 +229,10 @@ class Tests(AbstractIndicatorTest):
                 '\t<dataset_name>test</dataset_name>',
                 '\t<years>[1980, 1981]</years>',
                 '\t<date_computed>None</date_computed>',
-                '\t<name>population</name>',
+                '\t<name>attribute</name>',
                 '\t<operation>None</operation>',
-                '\t<attribute>opus_core.test.population</attribute>',
+                '\t<storage_location>%s</storage_location>'%os.path.join(self.temp_cache_path, 'indicators'),
+                '\t<attribute>opus_core.test.attribute</attribute>',
                 '\t<output_type>tab</output_type>',
                 '\t<source_data>',
                 '\t\t<cache_directory>%s</cache_directory>'%self.temp_cache_path,
@@ -249,23 +259,23 @@ class Tests(AbstractIndicatorTest):
             
             table = Table(
                 source_data = self.source_data,
-                attribute = 'opus_core.test.population',
+                attribute = 'opus_core.test.attribute',
                 dataset_name = 'test',
                 output_type = 'tab',
                 years = [1980,1981] # Indicators are not actually being computed, so the years don't matter here.
             )
             
-#            table.create(False)
+            table.create(False)
             self.data_manager._export_indicator_to_file(indicator = table,
                                                         source_data = self.source_data,
                                                         year = None)
             
             metadata_file = table.get_file_name(extension = 'meta')
-            metadata_path = os.path.join(self.source_data.get_indicator_directory(),
+            metadata_path = os.path.join(table.get_storage_location(),
                                          metadata_file)
             self.assertEqual(os.path.exists(metadata_path), True)
             
-            expected_path = 'test__tab__population.meta'
+            expected_path = 'test__tab__attribute.meta'
             self.assertEqual(metadata_file,expected_path)
             
             new_table = self.data_manager._import_indicator_from_file(metadata_path)

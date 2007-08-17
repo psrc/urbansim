@@ -36,29 +36,42 @@ class IndicatorFactory(object):
             return
         
         source_data = indicators[0].source_data
-        indicators_directory = source_data.get_indicator_directory()
-        if not os.path.exists(indicators_directory):
-            os.makedirs(indicators_directory)
+        
             
-        ### TODO: Get rid of this junk and get a better logging system
-        log_file_path = os.path.join(indicators_directory,'indicators.log')
+        log_file_path = os.path.join(source_data.cache_directory, 'indicators.log')
         logger.enable_file_logging(log_file_path, 'a')
         logger.log_status('\n%s BEGIN %s %s' 
             % ('='*29, strftime('%Y_%m_%d_%H_%M', localtime()), '='*29))
     
-        #create indicators
+        ####### create indicators #########
         for indicator in indicators:
             indicator.create(display_error_box = display_error_box)
+        ###################################
         
         logger.log_status('%s END %s %s\n' 
             % ('='*30, strftime('%Y_%m_%d_%H_%M', localtime()), '='*30))
         logger.disable_file_logging(log_file_path)
     
+        results_page_path = self._write_results(indicators, 
+                                                source_data, 
+                                                file_name_for_indicator_results,
+                                                display_error_box)
+        
+        if show_results:
+            self.show_results(results_page_path)
+            
+        return results_page_path
+    
+    def _write_results(self,
+                       indicators, 
+                       source_data, 
+                       file_name_for_indicator_results,
+                       display_error_box):
+        
         #generate a static html page for browsing outputted indicators and store the path to the html
         results_page_path = None
-      
+        results = IndicatorResults()
         try:            
-            results = IndicatorResults()
             results_page_path = results.create_page(
                 source_data = source_data,
                 page_name = file_name_for_indicator_results,
@@ -70,14 +83,15 @@ class IndicatorFactory(object):
             logger.enable_hidden_error_and_warning_words()
             logger.log_warning(message)
             logger.disable_hidden_error_and_warning_words()
-        else:
-            if show_results:
-                webbrowser.open_new("file://" + results_page_path)
-        
+    
         if results_page_path is not None:        
             results_page_path = 'file://' + results_page_path
+            
         return results_page_path
-
+    
+    def show_results(self, path):
+        webbrowser.open_new(path)
+        
 # unit tests
 from opus_core.tests import opus_unittest
 from opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest

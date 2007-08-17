@@ -20,28 +20,44 @@ from numpy import newaxis, concatenate, rank
 
 from opus_core.indicator_framework.core.abstract_indicator import AbstractIndicator
 from opus_core.storage_factory import StorageFactory
+from opus_core.indicator_framework.storage_location.database import Database
 
 class Table(AbstractIndicator):
 
     def __init__(self, source_data, dataset_name, attribute, 
                  years = None, operation = None, name = None,
-                 #decimal_places = 4,
-                 output_type = 'csv'):
+                 output_type = 'csv',
+                 storage_location = None):
         
-        if output_type not in ['dbf', 'csv', 'tab']:
-            raise "table output type needs to be either dbf, csv, or tab"
+        if output_type == 'sql' and not isinstance(storage_location, Database): 
+            raise "If Table output_type is 'sql', a Database object must be passed as storage_location."
+        elif output_type in ['dbf', 'csv', 'tab'] and \
+               storage_location is not None and \
+               not isinstance(storage_location,str):
+            raise "If Table output_type is %s, storage_location must be a path to the output directory"%output_type
+        elif output_type not in ['dbf', 'csv', 'tab']:
+            raise "Table output_type must be either dbf, csv, tab, or sql"
 
-        AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, operation, name)
+        AbstractIndicator.__init__(self, source_data, dataset_name, attribute, 
+                                   years, operation, name,
+                                   storage_location, can_write_to_db = True)
         
         self.output_type = output_type
-        #self.decimal_places = decimal_places
-        
+        kwargs = {}
+        if self.output_type == 'sql':
+            kwargs['protocol'] = storage_location.protocol
+            kwargs['username'] = storage_location.username
+            kwargs['password'] = storage_location.password
+            kwargs['hostname'] = storage_location.hostname
+            kwargs['database_name'] = storage_location.database_name
+        else:
+            kwargs['storage_location'] = self.get_storage_location()
+                
         self.store = StorageFactory().get_storage(
-            type = self.output_type + '_storage',
-            storage_location = self.source_data.get_indicator_directory(),
-            #digits_to_right_of_decimal = self.decimal_places
+            type = '%s_storage'%(self.output_type),
+            **kwargs
         )
-        
+                
     def is_single_year_indicator_image_type(self):
         return False
     
@@ -53,13 +69,13 @@ class Table(AbstractIndicator):
             return 'table'
         elif self.output_type == 'tab':
             return 'tab'
-        else:
+        elif self.output_type == 'dbf':
             return 'dbf'
-
+        elif self.output_type == 'sql':
+            return 'sql'
+        
     def get_additional_metadata(self):
-        return  [
-                 #('decimal_places',self.decimal_places),
-                 ('output_type',self.output_type)]
+        return  [('output_type',self.output_type)]
         
     def _create_indicator(self, years):
         """Create a table for the given indicator, save it to the cache
@@ -93,17 +109,17 @@ class Table(AbstractIndicator):
             cols.append(header)
             cur_index += 1
         
-        write_resources = {
-           'out_table_name':self.get_file_name(suppress_extension_addition=True),
-           'values':attribute_vals,
-           'fixed_column_ordering':cols,
-           'append_type_info':False
-           }
-                 
-        self.store.write_dataset(write_resources)  
-
+        kwargs = {}
+        if self.output_type in ['csv','tab']:
+            kwargs['fixed_column_order'] = cols
+            kwargs['append_type_info'] = False
+            
+        table_name = self.get_file_name(suppress_extension_addition=True)
+        self.store.write_table(table_name = table_name, 
+                               table_data = attribute_vals, 
+                               **kwargs)
+        
         return self.get_file_path()
-
 
 from opus_core.tests import opus_unittest
 from opus_core.indicator_framework.core.source_data import SourceData

@@ -40,7 +40,12 @@ class IndicatorResults(object):
         self.show_error_dialog = show_error_dialog
         self.data_manager = IndicatorDataManager()
         
-    def create_page(self, source_data, indicators, page_name = 'indicator_results.html'):
+    def create_page(self, 
+                    source_data, 
+                    indicators, 
+                    output_directory = None,
+                    page_name = 'indicator_results.html'):
+        
         """  Generates the html page based on information about precomputed indicators.
         
              The file path to the generated html page is returned.
@@ -54,7 +59,6 @@ class IndicatorResults(object):
         #stores the html that is built up over the course of execution
         html = []
         
-        indicator_directory = source_data.get_indicator_directory()
         self.indicator_documentation_mapping = {}
         
         html.append( self._output_header() )
@@ -65,11 +69,20 @@ class IndicatorResults(object):
         html.append( self._start_table() )
         
         #load previously computed indicators
-        try:
-            indicators = self.data_manager.import_indicators(
-                             indicator_directory = indicator_directory)
-        except: 
-            indicators = []
+        indicator_dirs = []
+        for i in indicators:
+            if i.write_to_file():
+                dir = i.get_storage_location()
+                if not dir in indicator_dirs:
+                    indicator_dirs.append(dir)
+            
+        indicators = []
+        for dir in indicator_dirs: 
+            try:
+                indicators += self.data_manager.import_indicators(
+                                 indicator_directory = dir)
+            except: 
+                pass
         
         rows = []
         self._output_body(source_data, indicators, rows)
@@ -88,8 +101,11 @@ class IndicatorResults(object):
         html.append( self._end_table() )
         html.append( self._end_page() )
 
+        if output_directory is None:
+            output_directory = indicator_dirs[0]
+            
         file = open(os.path.join(
-                         indicator_directory, 
+                         output_directory, 
                          page_name),
                          'w')   
         file.write(''.join(html))

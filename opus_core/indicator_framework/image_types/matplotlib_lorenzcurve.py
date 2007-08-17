@@ -29,8 +29,11 @@ class LorenzCurve(AbstractIndicator):
 
     def __init__(self, source_data, dataset_name, 
                  attribute = None, 
-                 years = None, operation = None, name = None, scale=None):
-        AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, operation, name)
+                 years = None, operation = None, name = None, scale = None,
+                 storage_location = None):
+        AbstractIndicator.__init__(self, source_data, dataset_name, attribute, 
+                                   years, operation, name,
+                                   storage_location)
         self._values = None
         self._ginicoeff = None
 

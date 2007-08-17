@@ -32,8 +32,12 @@ else:
     
         def __init__(self, source_data, dataset_name, 
                      attribute = None, 
-                     years = None, operation = None, name = None):
-            AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, operation, name)
+                     years = None, operation = None, name = None,
+                     storage_location = None):
+            
+            AbstractIndicator.__init__(self, source_data, dataset_name, 
+                                       attribute, years, operation, name,
+                                       storage_location)
     
         def is_single_year_indicator_image_type(self):
             return False
@@ -114,6 +118,7 @@ else:
     
     class Tests(AbstractIndicatorTest):
             
+        #breaks under 2.5 and matplotlib .90
         def test_create_indicator(self):
             
             indicator_path = os.path.join(self.temp_cache_path, 'indicators')

@@ -17,30 +17,49 @@ from numpy import array, logical_and, logical_not
 from opus_core.indicator_framework.core.abstract_indicator import AbstractIndicator
 from opus_core.variables.variable_name import VariableName
 from opus_core.storage_factory import StorageFactory
+from opus_core.indicator_framework.storage_location.database import Database
 
 class DatasetTable(AbstractIndicator):
 
     def __init__(self, source_data, dataset_name, attributes, 
                  name, years = None, operation = None, 
-                 exclude_condition = None, output_type = 'tab'):
+                 exclude_condition = None, output_type = 'tab',
+                 storage_location = None):
         
-        if output_type not in ['dbf', 'csv', 'tab']:
-            raise "table output type needs to be either dbf, csv, or tab"
+        if output_type == 'sql' and not isinstance(storage_location, Database): 
+            raise "If DatasetTable output_type is 'sql', a Database object must be passed as storage_location."
+        elif output_type in ['dbf', 'csv', 'tab'] and \
+               storage_location is not None and \
+               not isinstance(storage_location,str):
+            raise "If DatasetTable output_type is %s, storage_location must be a path to the output directory"%output_type
+        elif output_type not in ['dbf', 'csv', 'tab']:
+            raise "DatasetTable output_type needs to be either dbf, csv, tab, or sql"
         
         self.attributes = attributes
         self.output_type = output_type
         self.exclude_condition = exclude_condition
         self.name = name
         
-        AbstractIndicator.__init__(self, source_data, dataset_name, '', years, operation, name)
+        AbstractIndicator.__init__(self, source_data, dataset_name, 
+                                   '', years, operation, name,
+                                   storage_location, can_write_to_db = True)
         
         self.output_type = output_type
-        storage_factory = StorageFactory()
-        
-        self.store = storage_factory.get_storage(
-            type = self.output_type + '_storage',
-            storage_location = self.source_data.get_indicator_directory())
-        
+        kwargs = {}
+        if self.output_type == 'sql':
+            kwargs['protocol'] = storage_location.protocol
+            kwargs['username'] = storage_location.username
+            kwargs['password'] = storage_location.password
+            kwargs['hostname'] = storage_location.hostname
+            kwargs['database_name'] = storage_location.database_name
+        else:
+            kwargs['storage_location'] = self.get_storage_location()
+                
+        self.store = StorageFactory().get_storage(
+            type = '%s_storage'%(self.output_type),
+            **kwargs
+        )
+                
     def is_single_year_indicator_image_type(self):
         return True
     
@@ -118,23 +137,19 @@ class DatasetTable(AbstractIndicator):
         for i in range(len(col_titles)):
             attribute_vals[col_titles[i]] = cols[i]
         
+        kwargs = {}
+        if self.output_type in ['csv','tab']:
+            kwargs['fixed_column_order'] = col_titles
+            kwargs['append_type_info'] = False
+            
+        table_name = self.get_file_name(year = year,
+                                        suppress_extension_addition=True)
+        self.store.write_table(table_name = table_name, 
+                               table_data = attribute_vals, 
+                               **kwargs)
         
-        write_resources = {
-           'out_table_name':self.get_file_name(year, suppress_extension_addition=True),
-           'values':attribute_vals,
-           'fixed_column_ordering':col_titles,
-           'append_type_info':False
-           }
-                 
-        self.store.write_dataset(write_resources)               
-        
-#        self.store.write_table(
-#            table_name=self.get_file_name(year = year, suppress_extension_addition = True),
-#            table_data=attribute_vals,
-#            )
-
         return self.get_file_path(year = year)
-    
+
     def _conditionally_eliminate_rows(self, data, id_columns, exclude_condition):
         '''eliminates all the rows where all the data values match the exclude_condition
            

@@ -32,13 +32,22 @@ class GeotiffMap(AbstractIndicator):
                  operation = None, 
                  name = None,
                  package = None,
-                 prototype_dataset = None):
-        AbstractIndicator.__init__(self, source_data, dataset_name, attribute, years, operation, name)
+                 prototype_dataset = None,
+                 storage_location = None):
+        
+        AbstractIndicator.__init__(self, source_data, 
+                                   dataset_name, attribute, 
+                                   years, operation, name,
+                                   storage_location)
+        
+        
         
         if prototype_dataset is None:
             dir = directory_path_from_opus_path('%s.indicators.geotiff_files'%package)
             #todo: check indicator package and find appropriate prototype image
             prototype_dataset = os.path.join(dir,'idgrid.tif')
+            if not os.path.exists(prototype_dataset):
+                raise 'Error: %s does not exist. Cannot compute GeotiffMap'%prototype_dataset
         
         self.prototype_dataset = prototype_dataset
         
@@ -66,7 +75,7 @@ class GeotiffMap(AbstractIndicator):
               )
         
         file_name = self.get_file_name(year = year)   
-        indicator_directory = self.source_data.get_indicator_directory()
+        indicator_directory = self.get_storage_location()
         
         OpusGDAL().input_numpy_array_output_geotiff(
              values_in_2d_array,
