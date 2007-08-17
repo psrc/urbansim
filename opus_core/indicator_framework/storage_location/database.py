@@ -21,8 +21,15 @@ class Database(object):
     variables; if the system environment vars are absent some reasonable 
     alternative is used."""
 
-    def __init__(self, protocol, host_name = None, user_name = None, password = None):
+    def __init__(self, 
+                 protocol, 
+                 database_name,
+                 host_name = None, 
+                 user_name = None, 
+                 password = None):
+        
         self.protocol = protocol 
+        self.database_name = database_name
         
         if host_name is None:
             self.host_name = os.environ.get('%sHOSTNAME'%protocol.upper(),'localhost')
