@@ -23,6 +23,7 @@ from opus_core.indicator_framework.image_types.table import Table
 from opus_core.indicator_framework.image_types.geotiff_map import GeotiffMap
 from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
 from opus_core.indicator_framework.image_types.matplotlib_lorenzcurve import LorenzCurve
+from opus_core.indicator_framework.storage_location.database import Database
 
 #some cache_directories and run descriptions
 #cache_directory = r'Y:/urbansim_cache/run_1090.2006_11_14_12_12'
