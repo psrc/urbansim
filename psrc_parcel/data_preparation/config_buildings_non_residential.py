@@ -34,7 +34,7 @@ class ConfigBuildingsNonResidential(UrbansimParcelConfiguration):
             'description':'data preparation for PSRC parcel (buildings)',
             'cache_directory': None,
             'creating_baseyear_cache_configuration': CreatingBaseyearCacheConfiguration(
-         	   #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
+                #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
                 cache_directory_root = r'/urbansim_cache/psrc_parcel',
                 #cache_directory_root = r'/workspace/urbansim_cache/psrc_parcel',
                 cache_from_mysql = False,
