@@ -81,10 +81,11 @@ def create_from_proposals_and_template_components(proposal_dataset,
 from opus_core.tests import opus_unittest
 from opus_core.datasets.dataset_pool import DatasetPool
 from development_project_proposal_dataset import create_from_parcel_and_development_template
-from numpy import array
+from numpy import array, int32
 from numpy import ma
 
 class Tests(opus_unittest.OpusTestCase):
+    ACRE = 43560
     def setUp(self):
         storage = StorageFactory().get_storage('dict_storage')
 
@@ -92,6 +93,12 @@ class Tests(opus_unittest.OpusTestCase):
             table_name='development_templates',
             table_data={
                 'template_id': array([1,2,3]),
+                'building_type_id': array([1, 1, 2]),
+                "density_type":  array(['units_per_acre', 'units_per_acre', 'far']),                
+                'density':array([0.6, 2.0, 10]),
+                'percent_land_overhead':array([0, 10, 20]),
+                'land_sqft_min': array([0, 10, 4],dtype=int32) * self.ACRE,
+                'land_sqft_max': array([2, 20, 8],dtype=int32) * self.ACRE
             }
         )
         storage.write_table(
@@ -105,15 +112,16 @@ class Tests(opus_unittest.OpusTestCase):
             table_name='parcels',
             table_data={
                 "parcel_id": array([1,   2,    3]),
+                "vacant_land_area": array([1, 50,  200],dtype=int32)* self.ACRE,
             }
         )
         storage.write_table(
             table_name='development_project_proposal_components',
             table_data={
-                "proposal_component_id": arange(18)+1,
-                "proposal_id":array([1,  1, 2, 3, 3,3, 4,4, 5,  6, 6,6,7, 7,8, 9, 9,9]),
-                "template_id":array([1,  1, 2, 3, 3,3, 1,1, 2,  3,3,3,  1, 1, 2, 3,3,3]),
-                "component_id": array([1,2,3,4,5,6,1,2,3,4,5,6,1,2,3,4,5,6])
+                "proposal_component_id": arange(14)+1,
+                "proposal_id":array([1,  1, 2, 3, 3,3, 5,  6, 6,6,   8, 9, 9,9]),
+                "template_id":array([1,  1, 2, 3, 3,3, 2,  3, 3,3,   2, 3,3,3]),
+                "component_id": array([1,2,3,4,5,6, 3,4,5,6,3,4,5,6])
             }
         )
 
@@ -122,7 +130,8 @@ class Tests(opus_unittest.OpusTestCase):
         parcels = self.dataset_pool.get_dataset('parcel')
         templates = self.dataset_pool.get_dataset('development_template')
         template_components = self.dataset_pool.get_dataset('development_template_component')
-        proposals = create_from_parcel_and_development_template(parcels, templates, resources=None)
+        proposals = create_from_parcel_and_development_template(parcels, templates, 
+                                                                dataset_pool=self.dataset_pool, resources=None)
         self.proposal_components = create_from_proposals_and_template_components(proposals, template_components)
 
     def test_create(self):

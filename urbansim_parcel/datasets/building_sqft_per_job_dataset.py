@@ -28,7 +28,7 @@ class BuildingSqftPerJobDataset(UrbansimDataset):
         UrbansimDataset.__init__(self, **kwargs)
         
 
-def create_building_sqft_per_job_dataset(dataset_pool):
+def create_building_sqft_per_job_dataset(dataset_pool, minimum_median=25, maximum_median=2000):
     buildings = dataset_pool.get_dataset('building')
     jobs = dataset_pool.get_dataset('job')
     job_sqft = jobs.get_attribute('sqft')
@@ -51,7 +51,7 @@ def create_building_sqft_per_job_dataset(dataset_pool):
             if (is_bt.sum() > 0) and sqft_of_jobs[is_bt].sum() > 0:
                 result_zone.append(zone)
                 result_bt.append(bt)
-                mid = round(median(job_sqft[is_valid][is_bt[job_building_index]]))
+                mid = min(maximum_median, max(minimum_median, round(median(job_sqft[is_valid][is_bt[job_building_index]]))))
                 result_sqft.append(mid)
                 
     storage = StorageFactory().get_storage('dict_storage')

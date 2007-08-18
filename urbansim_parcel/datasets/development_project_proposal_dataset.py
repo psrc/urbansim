@@ -213,6 +213,12 @@ def create_from_parcel_and_development_template(parcel_dataset,
     
     proposals = _create_project_proposals(proposal_parcel_ids, proposal_template_ids)
     proposals = _subset_by_filter(proposals)
+    # eliminate proposals with zero units_proposed
+    units_proposed = proposals.compute_variables(["urbansim_parcel.development_project_proposal.units_proposed"],
+                                                 dataset_pool = dataset_pool)
+    where_up_greater_zero = where(units_proposed > 0)[0]
+    if where_up_greater_zero.size > 0:
+        proposals.subset_by_index(where_up_greater_zero, flush_attributes_if_not_loaded=False)
     
     logger.log_status("proposal set created with %s proposals." % proposals.size())
     #proposals.flush_dataset_if_low_memory_mode()
@@ -220,10 +226,11 @@ def create_from_parcel_and_development_template(parcel_dataset,
     
 from opus_core.tests import opus_unittest
 from opus_core.datasets.dataset_pool import DatasetPool
-from numpy import array
+from numpy import array, int32
 from numpy import ma
 
 class Tests(opus_unittest.OpusTestCase):
+    ACRE = 43560
     def setUp(self):
         storage = StorageFactory().get_storage('dict_storage')
 
@@ -232,13 +239,20 @@ class Tests(opus_unittest.OpusTestCase):
             table_data={
                 'template_id': array([1,2,3,4]),
                 'project_size': array([0, 1999, 2000, 10]),
+                'building_type_id': array([1, 1, 2, 3]),
+                "density_type":  array(['units_per_acre', 'units_per_acre', 'far',  'units_per_acre']),                
+                'density':array([0.6, 2.0, 10, 5]),
+                'percent_land_overhead':array([0, 10, 0, 20]),
+                'land_sqft_min': array([0, 10, 4, 30],dtype=int32) * self.ACRE,
+                'land_sqft_max': array([2, 20, 8, 100],dtype=int32) * self.ACRE
             }
         )
         storage.write_table(
             table_name='parcels',
             table_data={
                 "parcel_id": array([1,   2,    3]),
-                "lot_size":  array([0,   2005, 23])
+                "lot_size":  array([0,   2005, 23]),
+                "vacant_land_area": array([1, 50,  200],dtype=int32)* self.ACRE,
             }
         )
         storage.write_table(
@@ -246,22 +260,26 @@ class Tests(opus_unittest.OpusTestCase):
             table_data={
                 "proposal_id":array([1,  2,  3,  4, 5,  6, 7, 8, 9, 10, 11, 12]),
                 "parcel_id":  array([1,  2,  3,  1, 2, 3,  1, 2, 3, 1, 2, 3 ]),
-                "template_id":array([1,  1,  1,  2, 2, 2,  3, 3, 3, 4, 4, 4])
+                "template_id":array([1,  1,  1,  2, 2, 2,  3, 3, 3, 4, 4, 4]),
+                "units_proposed": array([1, 1, 1, 0, 36, 36, 0, 3484800, 3484800,0, 200, 400])
             }
         )
 
-        self.dataset_pool = DatasetPool(package_order=['urbansim_parcel'],
+        self.dataset_pool = DatasetPool(package_order=['urbansim_parcel', 'urbansim'],
                                    storage=storage)
         parcels = self.dataset_pool.get_dataset('parcel')
         templates = self.dataset_pool.get_dataset('development_template')
-        self.dataset = create_from_parcel_and_development_template(parcels, templates, resources=None)
+        self.dataset = create_from_parcel_and_development_template(parcels, templates, dataset_pool=self.dataset_pool,
+                                                                   resources=None)
 
     def test_create(self):
         proposals = self.dataset_pool.get_dataset("development_project_proposal")
-
-        self.assert_(ma.allequal(self.dataset.get_id_attribute(), proposals.get_id_attribute()))
-        self.assert_(ma.allequal(self.dataset.get_attribute("parcel_id"), proposals.get_attribute("parcel_id")))
-        self.assert_(ma.allequal(self.dataset.get_attribute("template_id"), proposals.get_attribute("template_id")))
+        where_valid_units = where(proposals.get_attribute("units_proposed") > 0)[0]
+        self.assert_(ma.allequal(self.dataset.get_id_attribute(), proposals.get_id_attribute()[where_valid_units]))
+        self.assert_(ma.allequal(self.dataset.get_attribute("parcel_id"), 
+                                 proposals.get_attribute("parcel_id")[where_valid_units]))
+        self.assert_(ma.allequal(self.dataset.get_attribute("template_id"), 
+                                 proposals.get_attribute("template_id")[where_valid_units]))
 
 
     def test_compute(self):
@@ -269,9 +287,7 @@ class Tests(opus_unittest.OpusTestCase):
         self.dataset.compute_variables("development_template.project_size",
                               dataset_pool=self.dataset_pool)
         values = self.dataset.get_attribute("project_size")
-        
-        #should_be = array([0, 1999, 2000, 10, 0, 1999, 2000, 10, 0, 1999, 2000, 10])
-        should_be = array([0, 0,  0, 1999, 1999, 1999, 2000, 2000, 2000, 10, 10, 10])
+        should_be = array([0, 0,  0, 1999,  1999, 2000, 2000, 10, 10])
         
         self.assert_(ma.allequal( values, should_be),
                      msg = "Error in " + "development_template.project_size")
@@ -280,7 +296,7 @@ class Tests(opus_unittest.OpusTestCase):
                               dataset_pool=self.dataset_pool)
         values = self.dataset.get_attribute("lot_size")
         #should_be = array([0, 0,  0, 0,  2005, 2005,2005,2005, 23, 23, 23, 23])
-        should_be = array([0, 2005, 23, 0, 2005, 23, 0, 2005, 23, 0, 2005, 23])        
+        should_be = array([0, 2005, 23, 2005, 23,  2005, 23, 2005, 23])        
         self.assert_(ma.allequal( values, should_be),
                      msg = "Error in " + "parcel.lot_size")
 

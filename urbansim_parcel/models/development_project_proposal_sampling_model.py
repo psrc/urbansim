@@ -66,15 +66,12 @@ class DevelopmentProjectProposalSamplingModel(Model):
 #            self.weight = self.weight * proposal_set.get_attribute(filter_attribute)
 
 
-    def run(self, n=500, run_config=None, debuglevel=0):
+    def run(self, n=500, run_config=None, current_year=None, debuglevel=0):
         """
         n - sample n proposals at a time, evaluate them one by one
         """
-
-#        if data_objects is not None:
-#            self.dataset_pool.add_datasets_if_not_included(data_objects)
-
-        current_year = SimulationState().get_current_time()
+        if current_year is None:
+            current_year = SimulationState().get_current_time()
 
         self.proposal_component_set.compute_variables([
             'urbansim_parcel.development_project_proposal_component.units_proposed'],
