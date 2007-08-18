@@ -112,7 +112,7 @@ class CreateBuildingSqftPerJobDataset:
         logger.log_status("Creating building_sqft_per_job table.")
         from urbansim_parcel.datasets.building_sqft_per_job_dataset import create_building_sqft_per_job_dataset
         dataset_pool = DatasetPool(storage=in_storage, package_order=['psrc_parcel', 'urbanism_parcel', 'urbansim'] )
-        ds = create_building_sqft_per_job_dataset(dataset_pool, minimum_median, maximum_median)
+        ds = create_building_sqft_per_job_dataset(dataset_pool, self.minimum_median, self.maximum_median)
         logger.log_status("Write building_sqft_per_job table.")
         ds.write_dataset(out_storage=out_storage)
 
