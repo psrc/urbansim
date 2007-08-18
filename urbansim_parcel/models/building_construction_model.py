@@ -27,7 +27,8 @@ class BuildingConstructionModel(Model):
     """
     model_name = "BuildingConstructionModel"
 
-    def run (self, development_proposal_set, building_dataset, dataset_pool, consider_amount_built_in_parcels = True):
+    def run (self, development_proposal_set, building_dataset, dataset_pool, consider_amount_built_in_parcels = True,
+             current_year=None):
         if development_proposal_set.size() <= 0:
             logger.log_status("Proposal set is empty. Nothing to be constructed.")
             return development_proposal_set
@@ -44,6 +45,9 @@ class BuildingConstructionModel(Model):
             logger.log_status("No new buildings built.")
             return development_proposal_set
         
+        if current_year is None:
+            current_year = SimulationState().get_current_time()
+            
         active_proposal_set = DatasetSubset(development_proposal_set, active_idx)
         
         # create proposal_component_set from the active proposals
@@ -146,8 +150,7 @@ class BuildingConstructionModel(Model):
                                                                   
         # add created buildings to the existing building dataset
         new_buildings["building_id"] = max_building_id + arange(1, new_buildings["parcel_id"].size+1)
-        new_buildings['year_built'] = resize(array([SimulationState().get_current_time()], dtype="int32"), 
-                                             new_buildings["parcel_id"].size)
+        new_buildings['year_built'] = resize(array([current_year], dtype="int32"), new_buildings["parcel_id"].size)
         building_dataset.add_elements(new_buildings, require_all_attributes=False)
         if "zone_id" in building_dataset.get_known_attribute_names():
             zone_ids = building_dataset.compute_variables(['building.disaggregate(parcel.zone_id)'], dataset_pool=dataset_pool)
