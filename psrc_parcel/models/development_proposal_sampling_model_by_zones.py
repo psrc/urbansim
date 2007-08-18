@@ -12,9 +12,10 @@
 # other acknowledgments.
 #
 
-from numpy import arange, zeros, logical_and, where, logical_not, logical_or
+from numpy import arange, zeros, logical_and, where, logical_not, logical_or, array
 from opus_core.logger import logger
 from opus_core.misc import clip_to_zero_if_needed
+from opus_core.simulation_state import SimulationState
 from urbansim_parcel.models.development_project_proposal_sampling_model import DevelopmentProjectProposalSamplingModel
 from opus_core.datasets.dataset import DatasetSubset
 
@@ -60,6 +61,9 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         zone_ids = zones.get_id_attribute()
         # keep copy of the weights
         original_weight = self.weight.copy()
+        # this is a hack - we want buildings to be built in 2000, but the simulation is running for 2001
+        start_year = SimulationState().get_current_time() - 1
+        self.proposal_set.modify_attribute(name="start_year", data=array(self.proposal_set.size()*[start_year]))
         
         for zone_index in range(zone_ids.size):
             self.zone = zone_ids[zone_index]

@@ -82,7 +82,6 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
         self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["zones"] = 'zone'
         self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["type"] = "'residential'"
         self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["n"] = 50 #at zonal level the number of proposals needed is smaller
-        self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["current_year"] = 2000
         self['models_configuration']['expected_sale_price_model']['controller']["init"]['arguments']["filter_attribute"] = "'urbansim_parcel.development_project_proposal.is_size_fit'"
         self['models_configuration']['expected_sale_price_model']['controller']["prepare_for_run"]['arguments']["parcel_filter"] = \
                 "'numpy.logical_and(numpy.logical_or(urbansim_parcel.parcel.is_residential_land_use_type, numpy.logical_and(parcel.land_use_type_id==26, urbansim_parcel.parcel.is_residential_plan_type)), urbansim_parcel.parcel.vacant_land_area > 0)'"
@@ -90,3 +89,5 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
         #self['models_configuration']['expected_sale_price_model']['controller']["prepare_for_run"]['arguments']["create_proposal_set"] = False
         self['models_configuration']['expected_sale_price_model']['controller']["run"]['arguments']["chunk_specification"] = "{'nchunks': 5}"
         self['models_configuration']['building_construction_model']['controller']["run"]['arguments']["consider_amount_built_in_parcels"] = False
+        self['models_configuration']['building_construction_model']['controller']['run']['arguments']["current_year"] = 2000
+        
