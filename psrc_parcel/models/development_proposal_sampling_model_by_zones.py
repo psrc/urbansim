@@ -160,19 +160,22 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             self.demolished_units[type_id] = 0
             self.existing_units[type_id] = buildings.get_attribute(unit_name)[is_matched_type*is_in_right_zone].astype("float32").sum()
             self.occupied_units[type_id] = 0
-            if unit_name == "residential_units":
-                if self.type["residential"]:
-                    self.occupied_units[type_id] = int(self.existing_units[type_id]/self.existing_to_occupied_ratio_residential)
-                vr = (self.existing_units[type_id] - self.occupied_units[type_id]) / float(self.existing_units[type_id])
+            if self.existing_units[type_id] == 0:
+                vr = 0
             else:
-                if self.type["non_residential"]:
-                    already_occupied = buildings.get_attribute("occupied_building_sqft_by_non_home_based_jobs")[is_matched_type*is_in_right_zone].sum()
-                    remaining_existing_units = clip_to_zero_if_needed(self.existing_units[type_id] - already_occupied)
-                    self.occupied_units[type_id] = int(remaining_existing_units/self.existing_to_occupied_ratio_non_residential)
-                    vr = (self.existing_units[type_id] - (self.occupied_units[type_id]+already_occupied)) / float(self.existing_units[type_id])
-                    self.existing_units[type_id] = remaining_existing_units
-                else:
+                if unit_name == "residential_units":
+                    if self.type["residential"]:
+                        self.occupied_units[type_id] = int(self.existing_units[type_id]/self.existing_to_occupied_ratio_residential)
                     vr = (self.existing_units[type_id] - self.occupied_units[type_id]) / float(self.existing_units[type_id])
+                else:
+                    if self.type["non_residential"]:
+                        already_occupied = buildings.get_attribute("occupied_building_sqft_by_non_home_based_jobs")[is_matched_type*is_in_right_zone].sum()
+                        remaining_existing_units = clip_to_zero_if_needed(self.existing_units[type_id] - already_occupied)
+                        self.occupied_units[type_id] = int(remaining_existing_units/self.existing_to_occupied_ratio_non_residential)
+                        vr = (self.existing_units[type_id] - (self.occupied_units[type_id]+already_occupied)) / float(self.existing_units[type_id])
+                        self.existing_units[type_id] = remaining_existing_units
+                    else:
+                        vr = (self.existing_units[type_id] - self.occupied_units[type_id]) / float(self.existing_units[type_id])
                     
             if vr < target:
                 self.accepting_proposals[type_id] = True
