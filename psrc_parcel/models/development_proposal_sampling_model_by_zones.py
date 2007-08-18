@@ -133,10 +133,13 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         type_ids = target_vacancy.get_attribute("building_type_id")
         type_names = target_vacancy.get_attribute("type_name")
         unit_names = target_vacancy.get_attribute("unit_name")
+        is_residential = target_vacancy.get_attribute("is_residential")
         buildings = self.dataset_pool.get_dataset("building")
         building_type_ids = buildings.get_attribute("building_type_id")
         building_zone_ids = buildings.get_attribute("zone_id")
-        
+        parcels = self.dataset_pool.get_dataset('parcel')
+        self.units_built = {}
+        self.units_built_pointer = {}
         for index in arange(target_vacancy.size()):
             ##TODO allow target vacancies to vary across zones/sub region geographies
             #zone_id = target_vacancy.get_attribute_by_index("zone_id", index)
@@ -146,6 +149,8 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             unit_name = unit_names[index] #vacancy by type, could be residential, non-residential, or by building_type
             target = self.target_vacancies[type_id]
             is_matched_type = building_type_ids == type_id
+            if is_residential[index]:
+                unit_name = "residential_units"
             is_in_right_zone = building_zone_ids == self.zone 
             self.proposed_units[type_id] = 0
             self.demolished_units[type_id] = 0
@@ -167,3 +172,8 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
                     
             if vr < target:
                 self.accepting_proposals[type_id] = True
+                if unit_name not in self.units_built.keys():
+                    self.units_built[unit_name] = parcels.get_attribute_by_index(unit_name, 
+                                                        parcels.get_id_index(self.proposal_set.get_attribute('parcel_id')))
+                self.units_built_pointer[type_id] = self.units_built[unit_name]
+                

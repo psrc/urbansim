@@ -42,8 +42,8 @@ class FltStorage:
     
 class UnrollJobsFromEstablishments:
     
-    minimum_sqft = 25
-    maximum_sqft = 2000
+    minimum_sqft = 1
+    maximum_sqft = 4000
     
     def run(self, in_storage, out_storage, business_table="business", jobs_table="jobs"):
         logger.log_status("Unrolling %s table." % business_table)
@@ -106,11 +106,13 @@ class UnrollJobsFromEstablishments:
         logger.log_status("Created %s jobs." % job_dataset.size())
         
 class CreateBuildingSqftPerJobDataset:
+    minimum_median = 25
+    maximum_median = 2000
     def run(self, in_storage, out_storage):
         logger.log_status("Creating building_sqft_per_job table.")
         from urbansim_parcel.datasets.building_sqft_per_job_dataset import create_building_sqft_per_job_dataset
         dataset_pool = DatasetPool(storage=in_storage, package_order=['psrc_parcel', 'urbanism_parcel', 'urbansim'] )
-        ds = create_building_sqft_per_job_dataset(dataset_pool)
+        ds = create_building_sqft_per_job_dataset(dataset_pool, minimum_median, maximum_median)
         logger.log_status("Write building_sqft_per_job table.")
         ds.write_dataset(out_storage=out_storage)
 
