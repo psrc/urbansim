@@ -35,12 +35,12 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
             'flush_variables': False,
             'cache_directory': None,
             'creating_baseyear_cache_configuration': CreatingBaseyearCacheConfiguration(
-                #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
+                #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/data_preparation/stepII',
                 cache_directory_root = r'/urbansim_cache/psrc_parcel',
                 #cache_directory_root = r'/home/lmwang/urbansim_cache/psrc_parcel',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
-                    #existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
+                    #existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/data_preparation/cache',
                     existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/cache_source',
                     #existing_cache_to_copy = r'/home/lmwang/urbansim_cache/psrc_parcel/cache_source',
                     years_to_cache = [2000]
@@ -52,7 +52,7 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
                 package_order_exceptions={},
                 ),
             'base_year':2000,
-            'years':(2000, 2000),
+            'years':(2001, 2001),
             'models':[ # models are executed in the same order as in this list
                  "expected_sale_price_model",
                  "development_proposal_choice_model",
@@ -82,6 +82,7 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
         self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["zones"] = 'zone'
         self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["type"] = "'residential'"
         self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["n"] = 50 #at zonal level the number of proposals needed is smaller
+        self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["current_year"] = 2000
         self['models_configuration']['expected_sale_price_model']['controller']["init"]['arguments']["filter_attribute"] = "'urbansim_parcel.development_project_proposal.is_size_fit'"
         self['models_configuration']['expected_sale_price_model']['controller']["prepare_for_run"]['arguments']["parcel_filter"] = \
                 "'numpy.logical_and(numpy.logical_or(urbansim_parcel.parcel.is_residential_land_use_type, numpy.logical_and(parcel.land_use_type_id==26, urbansim_parcel.parcel.is_residential_plan_type)), urbansim_parcel.parcel.vacant_land_area > 0)'"
