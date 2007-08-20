@@ -117,8 +117,6 @@ else:
     from opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
     
     class Tests(AbstractIndicatorTest):
-            
-        #breaks under 2.5 and matplotlib .90
         def test_create_indicator(self):
             
             indicator_path = os.path.join(self.temp_cache_path, 'indicators')
