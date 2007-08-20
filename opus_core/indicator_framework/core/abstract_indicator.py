@@ -57,7 +57,10 @@ class AbstractIndicator(object):
             raise "Error: Invalid storage_location specified. Must be a path to the output directory."
         
         self.write_to_file = not storage_location_is_db
-        
+        if self.write_to_file: 
+            if not os.path.exists(self.storage_location):
+                os.mkdir(self.storage_location)
+                
         if name is None:
             name = self.get_attribute_alias()
             if self.operation is not None:
