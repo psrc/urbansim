@@ -20,4 +20,5 @@ aliases = [
            "is_industrial=building.disaggregate(building_type.building_type_name =='industrial')",
            "is_office=building.disaggregate(building_type.building_type_name =='office')",
            "is_mixed_use=building.disaggregate(building_type.building_type_name =='mixed_use')",
+           "parcel_sqft_per_unit=safe_array_divide(building.disaggregate(parcel.parcel_sqft),building.residential_units)",
            ]
