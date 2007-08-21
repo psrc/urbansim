@@ -99,7 +99,7 @@ class AssignBuildingsToJobs:
                                                                      dataset_pool=dataset_pool)
         # non_home_based jobs
         unique_parcels = unique_values(parcel_ids[job_index_non_home_based])
-        job_building_types = job_dataset.compute_variables(["job.disaggregate(building.building_type_id)"], 
+        job_building_types = job_dataset.compute_variables(["bldgs_building_type_id = job.disaggregate(building.building_type_id)"], 
                                                            dataset_pool=dataset_pool)
         where_valid_jbt = where(logical_and(job_building_types>0, building_types == 2))[0]                     
         building_type_dataset = dataset_pool.get_dataset("building_type")
@@ -132,6 +132,7 @@ class AssignBuildingsToJobs:
         zone_bt_lookup = zeros((zone_ids_in_zad.max()+1, bt_in_zad.max()+1)) 
         for i in range(zone_average_dataset.size()):
             zone_bt_lookup[zone_ids_in_zad[i], bt_in_zad[i]] = sqft_in_zad[i]
+        zone_bt_lookup[where(zone_bt_lookup<=0)] = zone_bt_lookup.mean() # for missing values take the whole region mean
         counter_zero_capacity = 0
         counter_zero_distr = 0
         # iterate over parcels
