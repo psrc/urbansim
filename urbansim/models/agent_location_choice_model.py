@@ -78,6 +78,8 @@ class AgentLocationChoiceModel(LocationChoiceModel):
                         "number_of_agents_string",
                         "%s.number_of_agents(%s)" % (self.choice_set.get_dataset_name(), agent_set.get_dataset_name()))
             
+        if self.number_of_units_string is None:
+            maximum_runs = 1
         unplaced = arange(agents_index.size)
         id_name = self.choice_set.get_id_name()[0]
         for run in range(maximum_runs):
