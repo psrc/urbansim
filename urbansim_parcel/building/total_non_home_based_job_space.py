@@ -18,7 +18,7 @@ from numpy import ma, float32, newaxis, concatenate, where
 from opus_core.misc import unique_values
 
 class total_non_home_based_job_space(Variable):
-    """ total number of jobs a given can accommodate"""
+    """ total number of non-home-based jobs a given building can accommodate"""
     
     def dependencies(self):
         return ["building_sqft_per_job.building_sqft_per_job",

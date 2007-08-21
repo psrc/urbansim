@@ -14,21 +14,26 @@
 
 from opus_core.variables.variable import Variable
 from variable_functions import my_attribute_label
-from opus_core.misc import clip_to_zero_if_needed
+from numpy import ma, float32, newaxis, concatenate, where
+from opus_core.misc import unique_values
 
-class vacant_home_based_job_space(Variable):
-    """ number of job spaces that is vacant/unoccupied"""
+class total_home_based_job_space(Variable):
+    """ total number of home-based jobs a given building can accommodate.
+    The job space of buildings is determined from sizes of the households living there 
+    (for each household the minimum of number of members and 2 is taken). 
+    An exception are multi-family buildings for which the job_space is 50.
+    """
     
     def dependencies(self):
-        return ["urbansim_parcel.building.total_home_based_job_space",
-                "urbansim_parcel.building.number_of_home_based_jobs"
-                ]
-
+        return ["sum_minimum_persons_and_2=building.aggregate(urbansim_parcel.household.minimum_persons_and_2)",
+                "urbansim.building.is_multi_family_residential"]
+                
     def compute(self,  dataset_pool):
-        buildings = self.get_dataset() 
-        return clip_to_zero_if_needed(buildings.get_attribute("total_home_based_job_space") - 
-                                      buildings.get_attribute("number_of_home_based_jobs"))
-        
+        buildings = self.get_dataset()
+        job_space = buildings.get_attribute("sum_minimum_persons_and_2").copy()
+        job_space[buildings.get_attribute("is_multi_family_residential").astype("bool8")] = 50
+        return job_space
+
     def post_check(self,  values, dataset_pool=None):
         self.do_check("x >= 0", values)
 
@@ -44,14 +49,14 @@ class Tests(opus_unittest.OpusTestCase):
             __file__,
             package_order=['urbansim_parcel','urbansim'],
             test_data={
-            "building":{"building_id":         array([1,2,3,4,5,6,7,8,9,10]),
-                       "total_home_based_job_space": array([1,1,2,2,1,3,3,3,2,2]),
-                       "number_of_home_based_jobs":  array([1,3,1,2,2,1,2,3,2,4])
-                },                
+            "building":{"building_id":                array([1,2,3,4,5,6,7,8,9,10]),
+                       "sum_minimum_persons_and_2":   array([1,1,2,2,1,2,2,1,2,2]),
+                       "is_multi_family_residential": array([0,0,0,1,1,0,1,0,0,0], dtype="bool8"),
+                },    
         }
         )
         
-        should_be = array([0, 0, 1, 0, 0, 2, 1, 0, 0, 0])
+        should_be = array([1,1,2,50,50,2,50,1,2,2])
         
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 
