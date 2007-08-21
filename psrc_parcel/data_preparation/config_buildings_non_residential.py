@@ -51,7 +51,7 @@ class ConfigBuildingsNonResidential(UrbansimParcelConfiguration):
                 package_order_exceptions={},
                 ),
             'base_year':2000,
-            'years':(2000, 2000),
+            'years':(2001, 2001),
             'models':[ # models are executed in the same order as in this list
                  "expected_sale_price_model",
                  "development_proposal_choice_model",
@@ -78,7 +78,10 @@ class ConfigBuildingsNonResidential(UrbansimParcelConfiguration):
                         "DevelopmentProposalSamplingModelByZones"
         self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["zones"] = 'zone'
         self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["type"] = "'non_residential'"
+        self['models_configuration']['expected_sale_price_model']['controller']["init"]['arguments']["filter_attribute"] = "'urbansim_parcel.development_project_proposal.is_size_fit'"
         self['models_configuration']['expected_sale_price_model']['controller']["prepare_for_run"]['arguments']["parcel_filter"] = \
             "'numpy.logical_and(numpy.logical_or(numpy.logical_not(urbansim_parcel.parcel.is_residential_land_use_type), numpy.logical_and(parcel.land_use_type_id==26, urbansim_parcel.parcel.is_non_residential_plan_type)), urbansim_parcel.parcel.vacant_land_area > 0)'"
                 #"'numpy.logical_or(parcel.land_use_type_id==26, numpy.logical_and(urbansim_parcel.parcel.is_residential_land_use_type, urbansim_parcel.parcel.vacant_land_area > 0))'"
+        self['models_configuration']['building_construction_model']['controller']["run"]['arguments']["consider_amount_built_in_parcels"] = False
+        self['models_configuration']['building_construction_model']['controller']['run']['arguments']["current_year"] = 2000
                 
