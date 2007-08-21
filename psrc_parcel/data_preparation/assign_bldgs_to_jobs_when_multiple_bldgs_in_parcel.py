@@ -194,7 +194,7 @@ class AssignBuildingsToJobs:
         job_dataset.modify_attribute(name="sqft", data = new_jobs_sqft)
         
         # re-classify unplaced non-home based jobs to home-based if parcels contain residential buildings
-        bldgs_is_residential = building_dataset.compute_variables(["urbanim_parcel.building.is_residential"], 
+        bldgs_is_residential = building_dataset.compute_variables(["urbansim_parcel.building.is_residential"], 
                                                            dataset_pool=dataset_pool)
         is_now_considered = logical_and(parcel_ids > 0, building_ids <= 0)
         job_index_non_home_based_unplaced = where(logical_and(is_now_considered, building_types == 2))[0]
