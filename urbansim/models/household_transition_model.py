@@ -76,6 +76,9 @@ class HouseholdTransitionModel(Model):
         self.remove_households = array([], dtype='int32')
         self.household_size = household_set.size()
         self.max_id = household_set.get_id_attribute().max()
+        self.arrays_from_categories = {}
+        self.arrays_from_categories_mapping = {}
+
         
     def _do_run_for_this_year(self, household_set):
         groups = self.control_totals_for_this_year.get_id_attribute()
@@ -262,6 +265,11 @@ class HouseholdTransitionModel(Model):
 
 
     def create_arrays_from_categories(self, household_set):
+        # cleanup in case there was a previous run
+        for attr in self.arrays_from_categories.keys():
+            del self.arrays_from_categories[attr]  
+            del self.arrays_from_categories_mapping[attr]
+            
         self.arrays_from_categories = {}
         self.arrays_from_categories_mapping = {}
 
