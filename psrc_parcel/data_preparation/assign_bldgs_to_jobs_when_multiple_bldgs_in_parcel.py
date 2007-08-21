@@ -191,7 +191,6 @@ class AssignBuildingsToJobs:
         logger.log_status("Unplaced due to zero distribution: %s" % counter_zero_distr)
         
         job_dataset.modify_attribute(name="building_id", data = building_ids)
-        job_dataset.modify_attribute(name="sqft", data = new_jobs_sqft)
         
         # re-classify unplaced non-home based jobs to home-based if parcels contain residential buildings
         bldgs_is_residential = building_dataset.compute_variables(["urbansim_parcel.building.is_residential"], 
@@ -229,10 +228,13 @@ class AssignBuildingsToJobs:
                     non_res_sqft[idx_in_bldgs[draw]] += this_jobs_sqft_table[draw,ijob]
                     imputed_sqft += this_jobs_sqft_table[draw,ijob]
                     building_ids[job_index_non_home_based_unplaced[idx_in_jobs[ijob]]] = bldg_ids_in_bldgs[idx_in_bldgs[draw]]
+                    new_jobs_sqft[job_index_non_home_based[idx_in_jobs[ijob]]] = int(min(self.maximum_sqft, max(round(this_jobs_sqft_table[draw,ijob]), 
+                                                                                     self.minimum_sqft)))
                     
         building_dataset.modify_attribute(name="non_residential_sqft", data = non_res_sqft)
         job_dataset.modify_attribute(name="building_id", data = building_ids)
-        job_dataset.modify_attribute(name="building_type", data = building_types)        
+        job_dataset.modify_attribute(name="building_type", data = building_types)
+        job_dataset.modify_attribute(name="sqft", data = new_jobs_sqft)
         
         old_nhb_size = job_index_non_home_based.size
         job_index_home_based = where(logical_and(is_considered, building_types == 1))[0]
@@ -244,17 +246,14 @@ class AssignBuildingsToJobs:
         # home_based jobs
         unique_parcels = unique_values(parcel_ids[job_index_home_based])
         capacity_in_buildings = building_dataset.compute_variables([
-                          "building.aggregate(psrc_parcel.household.minimum_persons_and_2)"],
+                          "urbansim_parcel.building.vacant_home_based_job_space"],
                              dataset_pool=dataset_pool)
-        capacity_in_buildings[bldg_types_in_bldgs==12] = 50 # in multi-family houses is higher capacity
-        occupied = building_dataset.compute_variables(["urbansim_parcel.building.number_of_jobs"],
-                                                                     dataset_pool=dataset_pool)
         parcels_with_exceeded_capacity = []
         # iterate over parcels
         for parcel in unique_parcels:
             idx_in_bldgs = where(parcel_ids_in_bldgs == parcel)[0]
             idx_in_jobs = where(parcel_ids[job_index_home_based] == parcel)[0]
-            capacity = capacity_in_buildings[idx_in_bldgs] - occupied[idx_in_bldgs]
+            capacity = capacity_in_buildings[idx_in_bldgs]
             if capacity.sum() <= 0:
                 continue
             probcomb = ones((idx_in_bldgs.size, idx_in_jobs.size))
@@ -295,15 +294,8 @@ class AssignBuildingsToJobs:
         
         job_dataset.write_dataset(out_table_name=jobs_table, out_storage=out_storage, attributes=AttributeType.PRIMARY)
         building_dataset.write_dataset(out_table_name='buildings', out_storage=out_storage, attributes=AttributeType.PRIMARY)
-        logger.log_status("Done.")
-#        idx = where(building_ids[job_index_non_home_based]<=0)[0]
-#        unique_parcels = unique_values(parcel_ids[job_index_non_home_based[idx]])
-#        rescapacity=[]
-#        for parcel in unique_parcels:
-#            idx_in_bldgs = where(parcel_ids_in_bldgs == parcel)[0]
-#            rescapacity.append(non_res_sqft[idx_in_bldgs] - occupied[idx_in_bldgs])
-#        print array(rescapacity).max()            
-        
+        logger.log_status("Assigning building_id to jobs done.")
+
         
 if __name__ == '__main__':
     from unroll_jobs_from_establishments import CreateBuildingSqftPerJobDataset
