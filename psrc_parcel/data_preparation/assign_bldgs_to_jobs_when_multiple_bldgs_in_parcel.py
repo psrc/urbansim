@@ -25,6 +25,7 @@ from opus_core.datasets.dataset import Dataset
 from opus_core.misc import unique_values, create_combination_indices
 from opus_core.variables.attribute_type import AttributeType
 from urbansim.datasets.job_dataset import JobDataset
+from unroll_jobs_from_establishments import UnrollJobsFromEstablishments
 
 class DB_settings(object):
     db_host_name='trondheim.cs.washington.edu'
@@ -46,7 +47,8 @@ class FltStorage:
         return storage
     
 class AssignBuildingsToJobs:
-    minimum_sqft = 1
+    minimum_sqft = UnrollJobsFromEstablishments.minimum_sqft
+    
     def run(self, in_storage, out_storage, dataset_pool_storage, jobs_table="jobs", 
             zone_averages_table="building_sqft_per_job"):
         """
