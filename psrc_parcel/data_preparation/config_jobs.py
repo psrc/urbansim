@@ -28,13 +28,13 @@ class ConfigJobs(UrbansimParcelConfiguration):
             'description':'data preparation for PSRC parcel',
             'cache_directory': None,
             'creating_baseyear_cache_configuration': CreatingBaseyearCacheConfiguration(
-                 #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
-                cache_directory_root = r'/urbansim_cache/psrc_parcel',
+                cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
+                #cache_directory_root = r'/urbansim_cache/psrc_parcel',
                 #cache_directory_root = r'/workspace/urbansim_cache/psrc_parcel',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
-                      #existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
-                    existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/cache_source',
+                  existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
+                    #existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/cache_source',
                     #existing_cache_to_copy = r'/workspace/urbansim_cache/psrc_parcel/estimation',
                     years_to_cache = [2000]
                     ),
@@ -48,7 +48,7 @@ class ConfigJobs(UrbansimParcelConfiguration):
             'years':(2001, 2001),
             'models':[ # models are executed in the same order as in this list
                  "employment_relocation_model",
-                {"employment_location_choice_model": {"group_members": "_all_"}},
+                {"employment_location_choice_model": {"group_members": "_all_" }},
                 ],
             "datasets_to_preload":{
                     'zone':{},
@@ -76,7 +76,7 @@ class ConfigJobs(UrbansimParcelConfiguration):
                                 location_set = "building",
                                 input_index = 'erm_index',
                                 sampler = None,
-                                capacity_string = "building.aggregate(psrc_parcel.household.minimum_persons_and_2)",
+                                capacity_string = "urbansim_parcel.building.vacant_home_based_job_space",
                                 number_of_units_string = None,
                                 lottery_max_iterations=30
                                 ).execute()
