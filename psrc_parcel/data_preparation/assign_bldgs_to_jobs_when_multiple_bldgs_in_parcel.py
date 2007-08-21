@@ -110,7 +110,7 @@ class AssignBuildingsToJobs:
         
         jobs_sqft = job_dataset.get_attribute_by_index("sqft", job_index_non_home_based).astype("float32")
         jobs_zones = job_dataset.get_attribute_by_index("zone_id", job_index_non_home_based)
-        new_jobs_sqft = jobs_sqft.copy()
+        new_jobs_sqft = job_dataset.get_attribute("sqft").copy()
         
         # find sector -> building_type distribution
         sector_index_mapping = {}
@@ -310,10 +310,10 @@ if __name__ == '__main__':
     # input/output_cache is used only if FltStorage is uncommented.
     input_database_name = "psrc_2005_parcel_baseyear_change_20070613"
     output_database_name = "psrc_2005_data_workspace_hana"
-    #input_cache =  "/Users/hana/urbansim_cache/psrc/cache_source_parcel/2000"
-    #output_cache = "/Users/hana/urbansim_cache/psrc/cache_source_parcel/after_step_4"
-    input_cache =  "/urbansim_cache/psrc_parcel/cache_source/2000"
-    output_cache = "/urbansim_cache/psrc_parcel/tmp/2000"
+    input_cache =  "/Users/hana/urbansim_cache/psrc/data_preparation/cache/2000"
+    output_cache = "/Users/hana/urbansim_cache/psrc/data_preparation/stepIV"
+    #input_cache =  "/urbansim_cache/psrc_parcel/cache_source/2000"
+    #output_cache = "/urbansim_cache/psrc_parcel/tmp/2000"
     #instorage = MysqlStorage().get(input_database_name)
     #outstorage = MysqlStorage().get(output_database_name)
     instorage = FltStorage().get(input_cache)
