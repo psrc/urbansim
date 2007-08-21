@@ -30,7 +30,7 @@ II. Create new residential buildings
     (update 'cache_directory_root' and 'existing_cache_to_copy' to your local environment)
 
 2. Copy the resulting 'buildings' table to your cache directory (replace the existing one).
-   IMPORTANT: delete the attribute/file 'building_sqft.li4'! This is a computed attribute
+   IMPORTANT: delete the attribute/file 'building_sqft.li4' (if it exists)! This is a computed attribute
    and must be recomputed.
 
 Note: The procedure in Step 1. includes creating a proposal set which can be very time consuming. 
@@ -74,8 +74,10 @@ Note: We assume that the 'jobs' table have already assigned buildings from one-b
   - The script assigns building_id to jobs where possible and writes out the 'jobs' table into the outstorage.
   - It also imputes non_residential_sqft to buildings where needed and writes out the 'buildings' table 
       into the outstorage.
+  - It modifies the table 'building_sqft_per_job' and writes it out into outstorage.
   
-2. Copy the 'jobs' and 'buildings' tables from outstorage into your cache directory (replace the existing ones).
+2. Copy the 'jobs', 'buildings' and 'building_sqft_per_job' tables from outstorage into your cache directory 
+   (replace the existing ones).
   
 V. Create new non-residential buildings
 ****

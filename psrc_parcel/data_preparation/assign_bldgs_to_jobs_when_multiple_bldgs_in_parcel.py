@@ -46,15 +46,15 @@ class FltStorage:
         return storage
     
 class AssignBuildingsToJobs:
-    minimum_sqft = 25
+    minimum_sqft = 1
     def run(self, in_storage, out_storage, dataset_pool_storage, jobs_table="jobs", 
             zone_averages_table="building_sqft_per_job"):
         """
         Algorithm:
             1. For all non_home_based jobs that have parcel_id assigned but no building_id, try
                 to choose a building from all buildings in that parcel. Draw the building with probabilities
-                given by the sector-building_type distribution. The job sizes are temporarily 
-                fitted into the available space.
+                given by the sector-building_type distribution. The job sizes are
+                fitted into the available space (the attribute job.sqft is updated).
             2. For all non_home_based jobs for which no building was found in step 1, check
                 if the parcel has residential buildings. In such a case, re-assign the jobs to be
                 home-based.
@@ -69,6 +69,7 @@ class AssignBuildingsToJobs:
                 For multi-family buildings the capacity is 50.
             4. Assign a building type to jobs that have missing building type. It is sampled 
                 from the regional-wide distribution of home based and non-home based jobs.
+            5. Update the table 'building_sqft_per_job' using the updated job.sqft.
         'in_storage' should contain the jobs table and the zone_averages_table. The 'dataset_pool_storage'
         should contain all other tables needed (buildings, households, building_types). 
         """
