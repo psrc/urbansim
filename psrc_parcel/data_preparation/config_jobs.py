@@ -23,7 +23,7 @@ from urbansim.configurations.employment_relocation_model_configuration_creator i
 class ConfigJobs(UrbansimParcelConfiguration):
     def __init__(self):
         config = UrbansimParcelConfiguration()
-
+ 
         config_changes = {
             'description':'data preparation for PSRC parcel',
             'cache_directory': None,
