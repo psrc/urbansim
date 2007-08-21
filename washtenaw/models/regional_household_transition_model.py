@@ -41,18 +41,22 @@ class RegionalHouseholdTransitionModel(HouseholdTransitionModel):
         is_year = control_totals.get_attribute("year")==year
         all_households_index = arange(household_set.size())
         for area in unique_large_areas:
-            logger.log_status("HTM for area %s" % area)
             idx = where(logical_and(is_year, large_area_ids == area))[0]
             self.control_totals_for_this_year = DatasetSubset(control_totals, idx)
             households_index = where(households_large_area_ids == area)[0]
             households_for_this_area = DatasetSubset(household_set, households_index)
+            logger.log_status("HTM for area %s (currently %s households)" % (area, households_for_this_area.size()))
             last_remove_idx = self.remove_households.size
             self._do_run_for_this_year(households_for_this_area)
+            add_hhs_size = self.new_households[self.location_id_name].size-self.new_households["large_area_id"].size
+            logger.log_status("add %s, remove %s, total %s" % (add_hhs_size, last_remove_idx-self.remove_households.size,
+                                                               households_for_this_area.size()+add_hhs_size-
+                                                               (last_remove_idx-self.remove_households.size)))
             self.new_households["large_area_id"] = concatenate((self.new_households["large_area_id"],
-                                            array((self.new_households[self.location_id_name].size-self.new_households["large_area_id"].size)*[area], 
-                                                  dtype="int32")))
+                                            array(add_hhs_size*[area], dtype="int32")))
             # transform indices of removing households into indices of the whole dataset
             self.remove_households[last_remove_idx:self.remove_households.size] = all_households_index[households_index[self.remove_households[last_remove_idx:self.remove_households.size]]]
+            
         self._update_household_set(household_set)
         idx_new_households = arange(household_set.size()-self.new_households["large_area_id"].size, household_set.size())
         households_large_area_ids = household_set.compute_variables("washtenaw.household.large_area_id")
