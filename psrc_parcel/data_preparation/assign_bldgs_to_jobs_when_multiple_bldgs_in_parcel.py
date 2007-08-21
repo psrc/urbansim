@@ -179,8 +179,8 @@ class AssignBuildingsToJobs:
                 taken[draw] = taken[draw] + this_jobs_sqft_table[draw,imax_req]
                 building_ids[job_index_non_home_based[idx_in_jobs[imax_req]]] = bldg_ids_in_bldgs[idx_in_bldgs[draw]]
                 probcomb[:,imax_req] = 0
-                new_jobs_sqft[job_index_non_home_based[idx_in_jobs[imax_req]]] = max(this_jobs_sqft_table[draw,imax_req], 
-                                                                                     self.minimum_sqft)
+                new_jobs_sqft[job_index_non_home_based[idx_in_jobs[imax_req]]] = int(max(round(this_jobs_sqft_table[draw,imax_req]), 
+                                                                                     self.minimum_sqft))
             
         logger.log_status("%s non home based jobs (out of %s nhb jobs) were placed." % (
                                                                 (building_ids[job_index_non_home_based]>0).sum(),
