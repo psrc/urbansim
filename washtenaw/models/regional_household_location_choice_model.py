@@ -42,10 +42,15 @@ class RegionalHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
                                                  agents_index=new_index, **kwargs)
         no_large_area = where(large_areas[agents_index] <= 0)[0]
         if no_large_area.size > 0: # run the HLCM for housseholds that don't have assigned large_area
-            HouseholdLocationChoiceModel.run(self, specification, coefficients, agent_set, 
+            self.filter = None
+            logger.log_status("HLCM for households with no area assigned")
+            choices = HouseholdLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                                  agents_index=agents_index[no_large_area], **kwargs)
-        if "large_area_id" in agent_set.get_known_attribute_names():
-            agent_set.delete_one_attribute("large_area_id") # next time it must be recomputed (HTM sets it as primary attribute) 
+            where_valid_choice = where(choices > 0)[0]
+            choices_index = self.choice_set.get_id_index(choices[where_valid_choice])
+            chosen_large_areas = self.choice_set.get_attribute_by_index(self.large_area_id_name, choices_index)
+            agent_set.modify_attribute(name=self.large_area_id_name, data=chosen_large_areas, 
+                                       index=no_large_area[where_valid_choice])
 
 from opus_core.tests import opus_unittest
 from numpy import array, ma, arange, where, zeros, concatenate

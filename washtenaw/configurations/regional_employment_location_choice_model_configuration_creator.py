@@ -19,7 +19,7 @@ class RegionalEmploymentLocationChoiceModelConfigurationCreator(USELCMCC):
 
     input_index = Str('erm_index')
     lottery_max_iterations = Int(5)
-    maximum_runs = Int(3)
+    maximum_runs = Int(2)
     _model_name = 'regional_employment_location_choice_model'
     
     def execute(self):
@@ -109,7 +109,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'data_objects': 'datasets',
                     'debuglevel': 'debuglevel',
                     'specification': 'specification',
-                     'maximum_runs': 3
+                     'maximum_runs': 2
                     }
                 }
             })

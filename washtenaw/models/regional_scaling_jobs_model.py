@@ -39,3 +39,14 @@ class RegionalScalingJobsModel(ScalingJobsModel):
                 self.filter = "%s.%s == %s" % (location_set.get_dataset_name(), self.large_area_id_name, area)
                 logger.log_status("SJM for area %s" % area)
                 ScalingJobsModel.run(self, location_set, agent_set, agents_index=new_index, **kwargs)
+
+        no_large_area = where(large_areas[agents_index] <= 0)[0]
+        if no_large_area.size > 0: # run the model for jobs that don't have assigned large_area
+            self.filter = None
+            logger.log_status("SJM for jobs with no area assigned")
+            choices = ScalingJobsModel.run(self, location_set, agent_set, agents_index=agents_index[no_large_area], **kwargs)
+            where_valid_choice = where(choices > 0)[0]
+            choices_index = location_set.get_id_index(choices[where_valid_choice])
+            chosen_large_areas = location_set.get_attribute_by_index(self.large_area_id_name, choices_index)
+            agent_set.modify_attribute(name=self.large_area_id_name, data=chosen_large_areas, 
+                                       index=no_large_area[where_valid_choice])
