@@ -30,11 +30,12 @@ class ScalingJobsModel(Model):
     model_name = "Scaling Jobs Model"
     variable_package = "urbansim"
     
-    def __init__(self, group_member=None, agents_grouping_attribute = 'job.building_type', debuglevel=0,
+    def __init__(self, group_member=None, agents_grouping_attribute = 'job.building_type', filter = None, debuglevel=0,
                  dataset_pool=None):
         self.group_member = group_member
         if self.group_member:
             self.group_member.set_agents_grouping_attribute(agents_grouping_attribute)
+        self.filter = filter
         self.dataset_pool = self.create_dataset_pool(dataset_pool, ["urbansim", "opus_core"])
         self.debug = DebugPrinter(debuglevel)
      
@@ -81,9 +82,15 @@ class ScalingJobsModel(Model):
             self.dataset_pool.add_datasets_if_not_included(data_objects)
         self.dataset_pool.add_datasets_if_not_included({agent_set.get_dataset_name():agent_set})
         location_set.compute_variables(compute_variables, dataset_pool=self.dataset_pool)
+        if self.filter is None:
+            location_index = arange(location_set.size())
+        else:
+            filter_values = location_set.compute_variables([self.filter], dataset_pool=self.dataset_pool)
+            location_index = where(filter_values > 0)[0]
+        location_subset = DatasetSubset(location_set, location_index)
         i=0
         for sector in sectors:
-            distr = location_set.get_attribute(variables[i])
+            distr = location_subset.get_attribute(variables[i])
             if ma.allclose(distr.sum(), 0):
                 uniform_prob = 1.0/distr.size
                 distr = resize(array([uniform_prob], dtype='float64'), distr.size)
@@ -91,7 +98,7 @@ class ScalingJobsModel(Model):
 #                random_sample = sample(location_set.get_attribute("grid_id"), k=int(counts[i]), \
 #                                   probabilities = distr)
             distr = distr/float(distr.sum())
-            random_sample = probsample_replace(location_set.get_id_attribute(), size=int(counts[i]), 
+            random_sample = probsample_replace(location_subset.get_id_attribute(), size=int(counts[i]), 
                                        prob_array=distr)
             idx = where(sector_ids == sector)[0]
             #modify job locations

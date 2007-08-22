@@ -13,7 +13,7 @@
 # 
 
 from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
-
+from opus_core.misc import get_string_or_None
 from opus_core.configuration import Configuration
 
 
@@ -21,7 +21,7 @@ class GovernmentalEmploymentLocationChoiceModelConfigurationCreator(HasStrictTra
     agent_set = Str('job')
     location_set = Str('gridcell')
     debuglevel = Trait('debuglevel', Str, Int)
-    
+    filter = Trait(None, None, Str)
     input_index = Str('erm_index')
     
     def execute(self):        
@@ -29,6 +29,7 @@ class GovernmentalEmploymentLocationChoiceModelConfigurationCreator(HasStrictTra
             'import': {'urbansim.models.scaling_jobs_model': 'ScalingJobsModel'},
             'init': {
                 'arguments': {'debuglevel': self.debuglevel,
+                              'filter': get_string_or_None(self.filter),
                               'dataset_pool': 'dataset_pool'},
                 'name': 'ScalingJobsModel'
                 },
@@ -60,6 +61,7 @@ class TestGovernmentalEmploymentLocationChoiceModelConfigurationCreator(opus_uni
             'import': {'urbansim.models.scaling_jobs_model': 'ScalingJobsModel'},
             'init': {
                 'arguments': {'debuglevel': 'debuglevel',
+                              'filter': None,
                               'dataset_pool': 'dataset_pool'},
                 'name': 'ScalingJobsModel',
                 },
@@ -88,6 +90,7 @@ class TestGovernmentalEmploymentLocationChoiceModelConfigurationCreator(opus_uni
             'import': {'urbansim.models.scaling_jobs_model': 'ScalingJobsModel'},
             'init': {
                 'arguments': {'debuglevel': 9999,
+                              'filter': None,
                               'dataset_pool': 'dataset_pool'},
                 'name': 'ScalingJobsModel',
                 },
