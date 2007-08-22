@@ -31,6 +31,7 @@ class HouseholdLocationChoiceModelConfigurationCreator(HasStrictTraits):
     number_of_units_string = Trait('residential_units', None, Str)
     number_of_agents_string = Trait('number_of_households', None, Str)
     lottery_max_iterations = Int(3)
+    maximum_runs = Int(5)
     
     coefficients_table = Str('household_location_choice_model_coefficients')
     specification_table = Str('household_location_choice_model_specification')
@@ -105,7 +106,8 @@ class HouseholdLocationChoiceModelConfigurationCreator(HasStrictTraits):
                     'coefficients': _coefficients,
                     'data_objects': 'datasets',
                     'debuglevel': self.debuglevel,
-                    'specification': _specification
+                    'specification': _specification,
+                    'maximum_runs': self.maximum_runs
                     }
                 }
             })
@@ -185,7 +187,8 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'coefficients': 'coefficients',
                     'data_objects': 'datasets',
                     'debuglevel': 'debuglevel',
-                    'specification': 'specification'
+                    'specification': 'specification',
+                    'maximum_runs': 5
                     }
                 }
             })
@@ -271,7 +274,8 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'coefficients': 'coefficients',
                     'data_objects': 'datasets',
                     'debuglevel': 999,
-                    'specification': 'specification'
+                    'specification': 'specification',
+                    'maximum_runs': 5
                     }
                 }
             })

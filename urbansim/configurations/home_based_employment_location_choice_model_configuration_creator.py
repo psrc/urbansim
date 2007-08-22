@@ -32,7 +32,7 @@ class HomeBasedEmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits
     
     coefficients_table = Str('employment_location_choice_model_coefficients')
     specification_table = Str('employment_location_choice_model_specification')
-    
+    maximum_runs = Int(5)
     input_index = Str('erm_index')
         
     _model_name = 'home_based_employment_location_choice_model'
@@ -110,6 +110,7 @@ class HomeBasedEmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits
                     'data_objects': 'datasets',
                     'debuglevel': self.debuglevel,
                     'specification': _specification,
+                    'maximum_runs': self.maximum_runs
                     }
                 }
             })
@@ -185,7 +186,8 @@ class TestHomeBasedEmploymentLocationChoiceModelConfigurationCreator(opus_unitte
                     'coefficients': 'coefficients',
                     'data_objects': 'datasets',
                     'debuglevel': 'debuglevel',
-                    'specification': 'specification'
+                    'specification': 'specification',
+                    'maximum_runs': 5
                     }
                 }
             })
@@ -268,7 +270,8 @@ class TestHomeBasedEmploymentLocationChoiceModelConfigurationCreator(opus_unitte
                     'coefficients': 'coefficients',
                     'data_objects': 'datasets',
                     'debuglevel': 9999,
-                    'specification': 'specification'
+                    'specification': 'specification',
+                    'maximum_runs': 5
                     }
                 }
             })

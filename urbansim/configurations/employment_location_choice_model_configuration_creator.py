@@ -38,7 +38,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
     number_of_units_string = Trait('total_number_of_possible_SSS_jobs', None, Str)
     lottery_max_iterations = Int(3)
     variable_package = Trait("urbansim", Str, Str)
-    
+    maximum_runs = Int(5)
     input_index = Str('erm_index')
     
     coefficients_table = Str('employment_location_choice_model_coefficients')
@@ -128,6 +128,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
                     'data_objects': 'datasets',
                     'debuglevel': self.debuglevel,
                     'specification': _specification,
+                    'maximum_runs': self.maximum_runs
                     }
                 }
             })
@@ -212,7 +213,8 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'coefficients': 'coefficients',
                     'data_objects': 'datasets',
                     'debuglevel': 'debuglevel',
-                    'specification': 'specification'
+                    'specification': 'specification',
+                    'maximum_runs': 5
                     }
                 }
             })
@@ -305,7 +307,8 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'coefficients': 'coefficients',
                     'data_objects': 'datasets',
                     'debuglevel': 8888,
-                    'specification': 'specification'
+                    'specification': 'specification',
+                    'maximum_runs': 5
                     }
                 }
             })
