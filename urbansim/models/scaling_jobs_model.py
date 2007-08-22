@@ -30,10 +30,12 @@ class ScalingJobsModel(Model):
     model_name = "Scaling Jobs Model"
     variable_package = "urbansim"
     
-    def __init__(self, group_member=None, agents_grouping_attribute = 'job.building_type', debuglevel=0):
+    def __init__(self, group_member=None, agents_grouping_attribute = 'job.building_type', debuglevel=0,
+                 dataset_pool=None):
         self.group_member = group_member
         if self.group_member:
             self.group_member.set_agents_grouping_attribute(agents_grouping_attribute)
+        self.dataset_pool = self.create_dataset_pool(dataset_pool, ["urbansim", "opus_core"])
         self.debug = DebugPrinter(debuglevel)
      
     def run(self, location_set, agent_set, agents_index=None, data_objects=None,
@@ -75,10 +77,10 @@ class ScalingJobsModel(Model):
         variables = map(lambda x: "number_of_jobs_of_sector_"+str(int(x)), sectors)
         compute_variables = map(lambda var: self.variable_package + "." + 
             location_set.get_dataset_name()+ "." + var, variables)
-        compute_resources=Resources({"debug":self.debug})
-        compute_resources.merge(data_objects)
-        compute_resources.merge({agent_set.get_dataset_name():agent_set})
-        location_set.compute_variables(compute_variables, resources=compute_resources)
+        if data_objects is not None:
+            self.dataset_pool.add_datasets_if_not_included(data_objects)
+        self.dataset_pool.add_datasets_if_not_included({agent_set.get_dataset_name():agent_set})
+        location_set.compute_variables(compute_variables, dataset_pool=self.dataset_pool)
         i=0
         for sector in sectors:
             distr = location_set.get_attribute(variables[i])

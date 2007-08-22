@@ -24,13 +24,12 @@ class GovernmentalEmploymentLocationChoiceModelConfigurationCreator(HasStrictTra
     
     input_index = Str('erm_index')
     
-    _model_name = 'home_based_employment_location_choice_model'
-    
     def execute(self):        
         return Configuration({
             'import': {'urbansim.models.scaling_jobs_model': 'ScalingJobsModel'},
             'init': {
-                'arguments': {'debuglevel': self.debuglevel},
+                'arguments': {'debuglevel': self.debuglevel,
+                              'dataset_pool': 'dataset_pool'},
                 'name': 'ScalingJobsModel'
                 },
             'run': {
@@ -60,8 +59,9 @@ class TestGovernmentalEmploymentLocationChoiceModelConfigurationCreator(opus_uni
         expected = Configuration({
             'import': {'urbansim.models.scaling_jobs_model': 'ScalingJobsModel'},
             'init': {
-                'arguments': {'debuglevel': 'debuglevel'},
-                'name': 'ScalingJobsModel'
+                'arguments': {'debuglevel': 'debuglevel',
+                              'dataset_pool': 'dataset_pool'},
+                'name': 'ScalingJobsModel',
                 },
             'run': {
                 'arguments': {
@@ -87,8 +87,9 @@ class TestGovernmentalEmploymentLocationChoiceModelConfigurationCreator(opus_uni
         expected = Configuration({
             'import': {'urbansim.models.scaling_jobs_model': 'ScalingJobsModel'},
             'init': {
-                'arguments': {'debuglevel': 9999},
-                'name': 'ScalingJobsModel'
+                'arguments': {'debuglevel': 9999,
+                              'dataset_pool': 'dataset_pool'},
+                'name': 'ScalingJobsModel',
                 },
             'run': {
                 'arguments': {

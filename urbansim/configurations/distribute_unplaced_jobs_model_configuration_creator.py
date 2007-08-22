@@ -30,7 +30,8 @@ class DistributeUnplacedJobsModelConfigurationCreator(HasStrictTraits):
                 'urbansim.models.%s' % self._model_name: 'DistributeUnplacedJobsModel'
                 },
             'init': {
-                'arguments': {'debuglevel': self.debuglevel},
+                'arguments': {'debuglevel': self.debuglevel,
+                              'dataset_pool': 'dataset_pool'},
                 'name': 'DistributeUnplacedJobsModel'
                 },
             'run': {
@@ -61,7 +62,8 @@ class TestDistributeUnplacedJobsModelConfigurationCreator(opus_unittest.OpusTest
                 'urbansim.models.distribute_unplaced_jobs_model': 'DistributeUnplacedJobsModel'
                 },
             'init': {
-                'arguments': {'debuglevel': 'debuglevel'},
+                'arguments': {'debuglevel': 'debuglevel',
+                              'dataset_pool': 'dataset_pool'},
                 'name': 'DistributeUnplacedJobsModel'
                 },
             'run': {
@@ -88,7 +90,8 @@ class TestDistributeUnplacedJobsModelConfigurationCreator(opus_unittest.OpusTest
                 'urbansim.models.distribute_unplaced_jobs_model': 'DistributeUnplacedJobsModel'
                 },
             'init': {
-                'arguments': {'debuglevel': 9999},
+                'arguments': {'debuglevel': 9999,
+                              'dataset_pool': 'dataset_pool'},
                 'name': 'DistributeUnplacedJobsModel'
                 },
             'run': {
