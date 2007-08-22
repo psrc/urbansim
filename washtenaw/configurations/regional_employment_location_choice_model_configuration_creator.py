@@ -17,7 +17,7 @@ from urbansim.configurations.employment_location_choice_model_configuration_crea
 
 class RegionalEmploymentLocationChoiceModelConfigurationCreator(USELCMCC):
 
-    input_index = Str('regional_etm_index')
+    input_index = Str('erm_index')
     _model_name = 'regional_employment_location_choice_model'
     
     def execute(self):
@@ -101,7 +101,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
             'run': {
                 'arguments': {
                     'agent_set': 'job',
-                    'agents_index': 'regional_etm_index',
+                    'agents_index': 'erm_index',
                     'chunk_specification': "{'records_per_chunk':50000}",
                     'coefficients': 'coefficients',
                     'data_objects': 'datasets',

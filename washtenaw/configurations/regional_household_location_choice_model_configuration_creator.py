@@ -17,7 +17,7 @@ from urbansim.configurations.household_location_choice_model_configuration_creat
 
 class RegionalHouseholdLocationChoiceModelConfigurationCreator(USHLCMCC):
 
-    input_index = Str('regional_htm_index')
+    input_index = Str('hrm_index')
     nchunks = Int(1)
     number_of_units_string = Trait(None, None, Str)
     number_of_agents_string = Trait(None, None, Str)
@@ -78,7 +78,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'agents_for_estimation_storage': 'base_cache_storage',
                     'agents_for_estimation_table': "'households_for_estimation'",
                     'data_objects': 'datasets',
-                    'index_to_unplace': 'regional_htm_index',
+                    'index_to_unplace': 'hrm_index',
                     'join_datasets': 'True',
                     'portion_to_unplace': 1/12.0,
                     'specification_storage': 'base_cache_storage',
@@ -100,7 +100,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
             'run': {
                 'arguments': {
                     'agent_set': 'household',
-                    'agents_index': 'regional_htm_index',
+                    'agents_index': 'hrm_index',
                     'chunk_specification': "{'nchunks':1}",
                     'coefficients': 'coefficients',
                     'data_objects': 'datasets',
