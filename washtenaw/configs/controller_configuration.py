@@ -18,6 +18,7 @@ from washtenaw.configurations.regional_development_project_location_choice_model
 from washtenaw.configurations.home_based_regional_employment_location_choice_model_configuration_creator import HomeBasedRegionalEmploymentLocationChoiceModelConfigurationCreator
 from washtenaw.configurations.regional_household_location_choice_model_configuration_creator import RegionalHouseholdLocationChoiceModelConfigurationCreator
 from washtenaw.configurations.regional_employment_location_choice_model_configuration_creator import RegionalEmploymentLocationChoiceModelConfigurationCreator
+from washtenaw.configurations.governmental_regional_employment_location_choice_model_configuration_creator import GovernmentalRegionalEmploymentLocationChoiceModelConfigurationCreator
 from washtenaw.configurations.regional_employment_transition_model_configuration_creator import RegionalEmploymentTransitionModelConfigurationCreator
 from washtenaw.configurations.regional_household_transition_model_configuration_creator import RegionalHouseholdTransitionModelConfigurationCreator
 from washtenaw.configurations.deletion_event_model_configuration_creator import DeletionEventModelConfigurationCreator
@@ -72,7 +73,11 @@ class ControllerConfiguration(Configuration):
         self['home_based_regional_employment_location_choice_model'] = {
                     'controller': HomeBasedRegionalEmploymentLocationChoiceModelConfigurationCreator(
                         ).execute(),
-                    }          
+                    }
+        self['governmental_regional_employment_location_choice_model'] = {
+                    'controller': GovernmentalRegionalEmploymentLocationChoiceModelConfigurationCreator(
+                        ).execute(),
+                    }
         self['regional_household_location_choice_model'] = {
                     'controller': RegionalHouseholdLocationChoiceModelConfigurationCreator(
                         ).execute(),

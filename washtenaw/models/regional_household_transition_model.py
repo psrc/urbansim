@@ -49,9 +49,10 @@ class RegionalHouseholdTransitionModel(HouseholdTransitionModel):
             last_remove_idx = self.remove_households.size
             self._do_run_for_this_year(households_for_this_area)
             add_hhs_size = self.new_households[self.location_id_name].size-self.new_households["large_area_id"].size
-            logger.log_status("add %s, remove %s, total %s" % (add_hhs_size, last_remove_idx-self.remove_households.size,
-                                                               households_for_this_area.size()+add_hhs_size-
-                                                               (last_remove_idx-self.remove_households.size)))
+            remove_hhs_size = self.remove_households.size-last_remove_idx
+            logger.log_status("add %s, remove %s, total %s" % (add_hhs_size, remove_hhs_size,
+                                                               households_for_this_area.size()+add_hhs_size-remove_hhs_size
+                                                               ))
             self.new_households["large_area_id"] = concatenate((self.new_households["large_area_id"],
                                             array(add_hhs_size*[area], dtype="int32")))
             # transform indices of removing households into indices of the whole dataset

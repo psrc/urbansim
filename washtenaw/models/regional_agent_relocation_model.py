@@ -23,10 +23,9 @@ class RegionalAgentRelocationModel(AgentRelocationModel):
     
     large_area_id_name = "large_area_id"
     
-    def run(self, agent_set, dataset_pool=None, **kwargs):
+    def run(self, agent_set, **kwargs):
 
-        large_areas = agent_set.compute_variables(["washtenaw.%s.%s" % (agent_set.get_dataset_name(), self.large_area_id_name)],
-                                                  dataset_pool=dataset_pool)
+        large_areas = agent_set.get_attribute(self.large_area_id_name)
         valid_large_area = where(large_areas > 0)[0]
         if valid_large_area.size > 0:
             unique_large_areas = unique_values(large_areas[valid_large_area])

@@ -126,14 +126,14 @@ class Baseline(GeneralConfiguration):
                 'development_event_transition_model',
                 'events_coordinator',
                 'residential_land_share_model',
-                'deletion_event_model',
+                #'deletion_event_model',
                 'regional_household_transition_model',
                 'regional_household_relocation_model',
                 'regional_household_location_choice_model',
                 'regional_employment_transition_model',
                 'regional_employment_relocation_model',
-                {'regional_employment_location_choice_model': {'group_members': ['home_based', 'industrial', 'commercial']}},
-                #'regional_distribute_unplaced_jobs_model'
+                {'regional_employment_location_choice_model': {'group_members': ['_all_']}},
+                'regional_distribute_unplaced_jobs_model'
                 ],
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(

@@ -19,8 +19,9 @@ class RegionalHouseholdLocationChoiceModelConfigurationCreator(USHLCMCC):
 
     input_index = Str('hrm_index')
     nchunks = Int(1)
-    number_of_units_string = Trait(None, None, Str)
-    number_of_agents_string = Trait(None, None, Str)
+    #number_of_units_string = Trait(None, None, Str)
+    #number_of_agents_string = Trait(None, None, Str)
+    lottery_max_iterations = Int(5)
     
     _model_name = 'regional_household_location_choice_model'
     

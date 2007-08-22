@@ -39,16 +39,19 @@ class RegionalEmploymentTransitionModel(EmploymentTransitionModel):
         sectors = unique_values(control_totals.get_attribute("sector_id")[is_year])
         self._compute_sector_variables(sectors, job_set)
         for area in unique_large_areas:
-            logger.log_status("ETM for area %s" % area)
             idx = where(logical_and(is_year, large_area_ids == area))[0]
             self.control_totals_for_this_year = DatasetSubset(control_totals, idx)
             jobs_index = where(jobs_large_area_ids == area)[0]
             jobs_for_this_area = DatasetSubset(job_set, jobs_index)
+            logger.log_status("ETM for area %s (currently %s jobs)" % (area, jobs_for_this_area.size()))
             last_remove_idx = self.remove_jobs.size
             self._do_run_for_this_year(jobs_for_this_area)
+            add_jobs_size = self.new_jobs[self.location_id_name].size-self.new_jobs["large_area_id"].size
+            remove_jobs_size = self.remove_jobs.size-last_remove_idx
+            logger.log_status("add %s, remove %s, total %s" % (add_jobs_size, remove_jobs_size,
+                                                               jobs_for_this_area.size()+add_jobs_size-remove_jobs_size))
             self.new_jobs["large_area_id"] = concatenate((self.new_jobs["large_area_id"],
-                    array((self.new_jobs[self.location_id_name].size-self.new_jobs["large_area_id"].size)*[area], 
-                                                  dtype="int32")))
+                    array(add_jobs_size*[area], dtype="int32")))
             # transform indices of removing jobs into indices of the whole dataset
             self.remove_jobs[last_remove_idx:self.remove_jobs.size] = all_jobs_index[jobs_index[self.remove_jobs[last_remove_idx:self.remove_jobs.size]]]
         self._update_job_set(job_set)

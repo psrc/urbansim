@@ -17,7 +17,7 @@ from urbansim.configurations.home_based_employment_location_choice_model_configu
 
 class HomeBasedRegionalEmploymentLocationChoiceModelConfigurationCreator(HomeBasedEmploymentLocationChoiceModelConfigurationCreator):    
     
-    input_index = Str('regional_etm_index')
+    input_index = Str('erm_index')
     _model_name = 'home_based_regional_employment_location_choice_model'
     
     def execute(self):
