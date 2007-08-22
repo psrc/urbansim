@@ -206,10 +206,8 @@ class LocationChoiceModel(ChoiceModel):
         return capacity
 
     def determine_units_capacity_for_estimation(self, agent_set, agents_index):
-        resources = Resources({agent_set.get_dataset_name():agent_set, "debug":self.debug})
         try:
-            self.choice_set.compute_variables(self.capacity_string_for_estimation, dataset_pool=self.dataset_pool,
-                                               resources=resources)
+            self.choice_set.compute_variables(self.capacity_string_for_estimation, dataset_pool=self.dataset_pool)
             return self.choice_set.get_attribute(self.capacity_string_for_estimation)
         except:
             logger.log_warning("Computing capacity for estimation failed (%s)" % self.capacity_string_for_estimation)
@@ -226,8 +224,7 @@ class LocationChoiceModel(ChoiceModel):
         weight_string = self.estimate_config.get("weights_for_estimation_string", None)
         if weight_string == None:
             return (None, None)
-        resources = Resources({"debug":self.debug})
-        self.choice_set.compute_variables([weight_string], dataset_pool=self.dataset_pool, resources=resources)
+        self.choice_set.compute_variables([weight_string], dataset_pool=self.dataset_pool)
         weight_name = VariableName(weight_string)
         return (self.choice_set.get_attribute(weight_name.get_alias()), None)
 
@@ -356,8 +353,7 @@ class LocationChoiceModel(ChoiceModel):
         else:
             submodel_filter = filter
         if isinstance(submodel_filter, str):
-            resources = Resources({"debug":self.debug})
-            self.choice_set.compute_variables([submodel_filter], dataset_pool=self.dataset_pool, resources=resources)
+            self.choice_set.compute_variables([submodel_filter], dataset_pool=self.dataset_pool)
             filter_name = VariableName(submodel_filter)
             my_filter = greater(self.choice_set.get_attribute(filter_name.get_alias()), 0)
         else:
