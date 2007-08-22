@@ -152,7 +152,7 @@ class ChoiceModel(ChunkModel):
         index = self.get_choice_index(agent_set, agents_index, agentsubset)
         nchoices = self.get_choice_set_size()
         
-        self.debug.print_debug("Choice set size: " + str(nchoices),4)
+        self.debug.print_debug("Choice set size: " + str(nchoices), 2)
         
         if isinstance(index, ndarray):
             if (index.size <= 0) or ((index.ndim > 1) and (index.shape[1]<=0)):
@@ -285,7 +285,7 @@ class ChoiceModel(ChunkModel):
         if agents_index is not None:
             agents_for_estimation_idx = agents_index[agents_for_estimation_idx]
 
-        self.debug.print_debug("Number of agents for estimation: " + str(agents_for_estimation_idx.size),4)
+        self.debug.print_debug("Number of agents for estimation: " + str(agents_for_estimation_idx.size),2)
         if agents_for_estimation_idx.size <= 0:
             self.debug.print_debug("Nothing to be done.",4)
             return None
@@ -300,7 +300,7 @@ class ChoiceModel(ChunkModel):
             self.get_choice_index_for_estimation_and_selected_choice(agent_set,
                         agents_for_estimation_idx, estimation_set, submodels)
 
-        self.debug.print_debug("Choice set size: " + str(nchoices),4)
+        self.debug.print_debug("Choice set size: " + str(nchoices),2)
 
         # create interaction set
         self.model_interaction.create_interaction_datasets(agents_for_estimation_idx, {0: index})
