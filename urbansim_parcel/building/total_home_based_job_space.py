@@ -13,9 +13,7 @@
 # 
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
-from numpy import ma, float32, newaxis, concatenate, where
-from opus_core.misc import unique_values
+from numpy import minimum
 
 class total_home_based_job_space(Variable):
     """ total number of home-based jobs a given building can accommodate.
@@ -26,12 +24,14 @@ class total_home_based_job_space(Variable):
     
     def dependencies(self):
         return ["sum_minimum_persons_and_2=building.aggregate(urbansim_parcel.household.minimum_persons_and_2)",
-                "urbansim.building.is_multi_family_residential"]
+                "urbansim.building.is_multi_family_residential",
+                "urbansim_parcel.building.residential_units"]
                 
     def compute(self,  dataset_pool):
         buildings = self.get_dataset()
         job_space = buildings.get_attribute("sum_minimum_persons_and_2").copy()
-        job_space[buildings.get_attribute("is_multi_family_residential").astype("bool8")] = 50
+        is_mf = buildings.get_attribute("is_multi_family_residential").astype("bool8")
+        job_space[is_mf] = minimum(50, buildings.get_attribute("residential_units")[is_mf])
         return job_space
 
     def post_check(self,  values, dataset_pool=None):
@@ -52,11 +52,12 @@ class Tests(opus_unittest.OpusTestCase):
             "building":{"building_id":                array([1,2,3,4,5,6,7,8,9,10]),
                        "sum_minimum_persons_and_2":   array([1,1,2,2,1,2,2,1,2,2]),
                        "is_multi_family_residential": array([0,0,0,1,1,0,1,0,0,0], dtype="bool8"),
+                        "residential_units":          array([2,4,1,100,49,4,10,7,6,0])
                 },    
         }
         )
         
-        should_be = array([1,1,2,50,50,2,50,1,2,2])
+        should_be = array([1,1,2,50,49,2,10,1,2,2])
         
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 
