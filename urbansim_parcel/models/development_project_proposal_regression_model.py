@@ -13,6 +13,7 @@
 # 
 
 from opus_core.resources import Resources
+from opus_core.datasets.dataset import DatasetSubset
 from opus_core.regression_model import RegressionModel
 from urbansim_parcel.datasets.development_project_proposal_dataset import DevelopmentProjectProposalDataset
 from urbansim_parcel.datasets.development_project_proposal_dataset import create_from_parcel_and_development_template
@@ -96,6 +97,10 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         specification, coefficients = RegressionModel.prepare_for_run(self, **kwargs)
         try:
             existing_proposal_set = dataset_pool.get_dataset('development_project_proposal')
+            #load proposals whose status_id are not of id_tentative or id_not_available
+            available_idx = where(logical_and(existing_proposal_set.get_attribute("status_id") != development_proposal_set.id_tentative,
+                                              existing_proposal_set.get_attribute("status_id") != development_proposal_set.id_not_available))[0]
+            existing_proposal_set = DatasetSubset(existing_proposal_set, available_idx)
         except:
             existing_proposal_set = None
             

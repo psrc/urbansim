@@ -161,6 +161,8 @@ class BuildingConstructionModel(Model):
         
         logger.log_status("%s new buildings built." % new_buildings["parcel_id"].size)
         # remove active proposals from the proposal set
-        development_proposal_set.remove_elements(active_idx)
+#        development_proposal_set.remove_elements(active_idx)
+        # alternatively, set status_id of active proposals to id_not_available
+        development_proposal_set.set_values_of_one_attribute("status_id", development_proposal_set.id_not_available, index=active_idx)
         dataset_pool._remove_dataset(proposal_component_set.get_dataset_name())
         return development_proposal_set

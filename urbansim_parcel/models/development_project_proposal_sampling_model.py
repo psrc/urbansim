@@ -172,8 +172,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
             if units_stock > 0:
                 logger.log_status("%s: %s" % (type_id, (units_stock - self.occupied_units[type_id]) / float(units_stock)))
         # delete all tentative (not accepted) proposals from the proposal set
-        self.proposal_set.remove_elements(where(
-                    self.proposal_set.get_attribute("status_id") == self.proposal_set.id_tentative)[0])
+#        self.proposal_set.remove_elements(where(
+#                    self.proposal_set.get_attribute("status_id") == self.proposal_set.id_tentative)[0])
 #        schedule_development_projects = self.schedule_accepted_proposals()
         
         return self.proposal_set  #schedule_development_projects
