@@ -1,0 +1,366 @@
+<ui version="4.0" >
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>974</width>
+    <height>744</height>
+   </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Maximum" hsizetype="Maximum" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle" >
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <layout class="QGridLayout" >
+    <item row="0" column="0" >
+     <widget class="QDockWidget" name="dockWidget_4" >
+      <property name="windowTitle" >
+       <string>Query</string>
+      </property>
+      <widget class="QWidget" name="dockWidgetContents_4" >
+       <widget class="QWidget" name="layoutWidget" >
+        <property name="geometry" >
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>601</width>
+          <height>650</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" >
+         <item>
+          <widget class="QLabel" name="label" >
+           <property name="text" >
+            <string>Query Area:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTextEdit" name="textEdit_3" />
+         </item>
+         <item>
+          <widget class="QLabel" name="label_2" >
+           <property name="text" >
+            <string>Query Results:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTableWidget" name="tableWidget_2" />
+         </item>
+         <item>
+          <widget class="QLabel" name="label_3" >
+           <property name="text" >
+            <string>Server Messages</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTextEdit" name="textEdit_4" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>16777215</width>
+             <height>75</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>974</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile" >
+    <property name="title" >
+     <string>File</string>
+    </property>
+    <widget class="QMenu" name="menuOpen_Database" >
+     <property name="title" >
+      <string>Open Database Server Connection</string>
+     </property>
+     <addaction name="actionCurrent_Database_Connections" />
+     <addaction name="separator" />
+     <addaction name="actionTrondheim_2" />
+     <addaction name="actionAarhus_SDE" />
+     <addaction name="actionAarhus_PostGIS" />
+     <addaction name="separator" />
+     <addaction name="actionConfigure_Database_Server_Connections" />
+    </widget>
+    <addaction name="actionOpen_OPUS_Cache" />
+    <addaction name="menuOpen_Database" />
+    <addaction name="actionOpen_a_Shapefile" />
+   </widget>
+   <addaction name="menuFile" />
+  </widget>
+  <widget class="QStatusBar" name="statusbar" />
+  <widget class="QDockWidget" name="dockWidget" >
+   <property name="cursor" >
+    <cursorShape>ArrowCursor</cursorShape>
+   </property>
+   <property name="allowedAreas" >
+    <set>Qt::LeftDockWidgetArea|Qt::NoDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle" >
+    <string>Database Server (trondheim)</string>
+   </property>
+   <attribute name="dockWidgetArea" >
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents" >
+    <layout class="QGridLayout" >
+     <item row="0" column="0" colspan="2" >
+      <widget class="QTreeWidget" name="treeWidget" >
+       <column>
+        <property name="text" >
+         <string>Databases</string>
+        </property>
+       </column>
+       <column>
+        <property name="text" >
+         <string>Datatype</string>
+        </property>
+       </column>
+       <item>
+        <property name="text" >
+         <string>psrc_parcel</string>
+        </property>
+        <property name="text" >
+         <string>database</string>
+        </property>
+        <item>
+         <property name="text" >
+          <string>table 01</string>
+         </property>
+         <property name="text" >
+          <string>table</string>
+         </property>
+         <item>
+          <property name="text" >
+           <string>column 01</string>
+          </property>
+          <property name="text" >
+           <string>integer</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>column 02</string>
+          </property>
+          <property name="text" >
+           <string>varchar(20)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>column 03</string>
+          </property>
+          <property name="text" >
+           <string>double</string>
+          </property>
+         </item>
+        </item>
+        <item>
+         <property name="text" >
+          <string>table 02</string>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+        </item>
+       </item>
+       <item>
+        <property name="text" >
+         <string>mag_parcel</string>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>pag_parcel</string>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="1" column="0" >
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="1" >
+      <widget class="QPushButton" name="pushButton" >
+       <property name="text" >
+        <string>Refresh</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_2" >
+   <property name="allowedAreas" >
+    <set>Qt::LeftDockWidgetArea|Qt::NoDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle" >
+    <string>OPUS Navigation</string>
+   </property>
+   <attribute name="dockWidgetArea" >
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2" >
+    <layout class="QVBoxLayout" >
+     <item>
+      <widget class="QPushButton" name="pushButton_8" >
+       <property name="text" >
+        <string>Data Management</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_7" >
+       <property name="text" >
+        <string>Model Development</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_9" >
+       <property name="text" >
+        <string>Scenario Management</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_10" >
+       <property name="text" >
+        <string>Indicators, Analysis, and Reports</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="actionBLAH" >
+   <property name="text" >
+    <string>BLAH</string>
+   </property>
+  </action>
+  <action name="actionOPUS_Navigator" >
+   <property name="text" >
+    <string>OPUS Navigator</string>
+   </property>
+  </action>
+  <action name="actionOpen_OPUS_Cache" >
+   <property name="text" >
+    <string>Open OPUS Cache...</string>
+   </property>
+  </action>
+  <action name="actionRecent_Databases" >
+   <property name="text" >
+    <string>Recent Databases:</string>
+   </property>
+  </action>
+  <action name="actionTrondheim" >
+   <property name="text" >
+    <string>MySQL</string>
+   </property>
+  </action>
+  <action name="actionPostGIS" >
+   <property name="text" >
+    <string>PostGIS</string>
+   </property>
+  </action>
+  <action name="actionArcSDE" >
+   <property name="text" >
+    <string>ArcSDE</string>
+   </property>
+  </action>
+  <action name="actionAdd_New_Database_Connection" >
+   <property name="text" >
+    <string>Add New Database Server Connection...</string>
+   </property>
+  </action>
+  <action name="actionCurrent_Database_Connections" >
+   <property name="text" >
+    <string>Current Database Server Connections:</string>
+   </property>
+  </action>
+  <action name="actionTrondheim_2" >
+   <property name="text" >
+    <string>trondheim</string>
+   </property>
+  </action>
+  <action name="actionAarhus_SDE" >
+   <property name="text" >
+    <string>aarhus SDE</string>
+   </property>
+  </action>
+  <action name="actionAarhus_PostGIS" >
+   <property name="text" >
+    <string>aarhus PostGIS</string>
+   </property>
+  </action>
+  <action name="actionConfigure_Database_Server_Connections" >
+   <property name="text" >
+    <string>Add/Delete Database Server Connections...</string>
+   </property>
+  </action>
+  <action name="actionOpen_a_Shapefile" >
+   <property name="text" >
+    <string>Open a Shapefile...</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,654 @@
+<ui version="4.0" >
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>862</width>
+    <height>664</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>MainWindow</string>
+  </property>
+  <property name="autoFillBackground" >
+   <bool>true</bool>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <widget class="QDockWidget" name="dockWidget" >
+    <property name="geometry" >
+     <rect>
+      <x>280</x>
+      <y>460</y>
+      <width>541</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="windowTitle" >
+     <string>Log Window</string>
+    </property>
+    <widget class="QWidget" name="dockWidgetContents" >
+     <widget class="QTextBrowser" name="textBrowser" >
+      <property name="geometry" >
+       <rect>
+        <x>-10</x>
+        <y>0</y>
+        <width>561</width>
+        <height>131</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QFrame" name="frame" >
+    <property name="geometry" >
+     <rect>
+      <x>0</x>
+      <y>20</y>
+      <width>271</width>
+      <height>601</height>
+     </rect>
+    </property>
+    <property name="acceptDrops" >
+     <bool>true</bool>
+    </property>
+    <property name="autoFillBackground" >
+     <bool>false</bool>
+    </property>
+    <property name="frameShape" >
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow" >
+     <enum>QFrame::Raised</enum>
+    </property>
+    <property name="midLineWidth" >
+     <number>1</number>
+    </property>
+    <widget class="QToolBox" name="toolBox" >
+     <property name="geometry" >
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>271</width>
+       <height>601</height>
+      </rect>
+     </property>
+     <property name="whatsThis" >
+      <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Data Manager&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+     </property>
+     <property name="autoFillBackground" >
+      <bool>true</bool>
+     </property>
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="page" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>271</width>
+        <height>477</height>
+       </rect>
+      </property>
+      <attribute name="label" >
+       <string>Data Manager</string>
+      </attribute>
+      <widget class="QTreeWidget" name="treeWidget_2" >
+       <property name="geometry" >
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>271</width>
+         <height>361</height>
+        </rect>
+       </property>
+       <column>
+        <property name="text" >
+         <string/>
+        </property>
+       </column>
+       <item>
+        <property name="text" >
+         <string>Database</string>
+        </property>
+        <item>
+         <property name="text" >
+          <string>Table</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Relation</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>View</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Test</string>
+         </property>
+        </item>
+       </item>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="page_2" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>271</width>
+        <height>477</height>
+       </rect>
+      </property>
+      <attribute name="label" >
+       <string>Model Manager</string>
+      </attribute>
+      <widget class="QTreeWidget" name="treeWidget_3" >
+       <property name="geometry" >
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>256</width>
+         <height>331</height>
+        </rect>
+       </property>
+       <column>
+        <property name="text" >
+         <string/>
+        </property>
+       </column>
+       <item>
+        <property name="text" >
+         <string>Model System</string>
+        </property>
+        <item>
+         <property name="text" >
+          <string>Model</string>
+         </property>
+         <item>
+          <property name="text" >
+           <string>Configuration</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>Specification</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>Coefficients</string>
+          </property>
+         </item>
+        </item>
+       </item>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="page_3" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>271</width>
+        <height>477</height>
+       </rect>
+      </property>
+      <attribute name="label" >
+       <string>Run Manager</string>
+      </attribute>
+      <widget class="QTreeWidget" name="treeWidget_4" >
+       <property name="geometry" >
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>256</width>
+         <height>331</height>
+        </rect>
+       </property>
+       <column>
+        <property name="text" >
+         <string/>
+        </property>
+       </column>
+       <item>
+        <property name="text" >
+         <string>Scenario Configuration</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Run Configuration</string>
+        </property>
+       </item>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="page_4" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>271</width>
+        <height>477</height>
+       </rect>
+      </property>
+      <attribute name="label" >
+       <string>Results Manager</string>
+      </attribute>
+      <widget class="QTreeWidget" name="treeWidget_5" >
+       <property name="geometry" >
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>256</width>
+         <height>291</height>
+        </rect>
+       </property>
+       <column>
+        <property name="text" >
+         <string/>
+        </property>
+       </column>
+       <item>
+        <property name="text" >
+         <string>Indicator Set</string>
+        </property>
+        <item>
+         <property name="text" >
+          <string>Table</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Chart</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Map</string>
+         </property>
+        </item>
+       </item>
+      </widget>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QDockWidget" name="dockWidget_2" >
+    <property name="geometry" >
+     <rect>
+      <x>280</x>
+      <y>20</y>
+      <width>541</width>
+      <height>401</height>
+     </rect>
+    </property>
+    <property name="windowTitle" >
+     <string>Map Window</string>
+    </property>
+    <widget class="QWidget" name="dockWidgetContents_2" >
+     <widget class="QGraphicsView" name="graphicsView" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>541</width>
+        <height>381</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>862</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <property name="defaultUp" >
+    <bool>true</bool>
+   </property>
+   <widget class="QMenu" name="menuFile" >
+    <property name="title" >
+     <string>Project</string>
+    </property>
+    <addaction name="actionOpen_Project" />
+    <addaction name="actionSave_Project" />
+    <addaction name="actionSave_Project_As" />
+    <addaction name="separator" />
+    <addaction name="separator" />
+    <addaction name="actionPreferences" />
+   </widget>
+   <widget class="QMenu" name="menuData" >
+    <property name="title" >
+     <string>Data</string>
+    </property>
+    <widget class="QMenu" name="menuQuery" >
+     <property name="title" >
+      <string>Query</string>
+     </property>
+     <addaction name="actionSelect" />
+     <addaction name="actionUpdate" />
+     <addaction name="separator" />
+     <addaction name="actionAlter_Table" />
+     <addaction name="actionCreate_Table" />
+     <addaction name="actionDrop_Table" />
+    </widget>
+    <widget class="QMenu" name="menuPlot" >
+     <property name="title" >
+      <string>Plot</string>
+     </property>
+     <addaction name="actionHistogram" />
+     <addaction name="actionScatterplot" />
+     <addaction name="actionMap" />
+    </widget>
+    <widget class="QMenu" name="menuEdit" >
+     <property name="title" >
+      <string>Edit</string>
+     </property>
+     <addaction name="actionTable" />
+     <addaction name="actionTable_Schema_2" />
+     <addaction name="actionFeature" />
+    </widget>
+    <widget class="QMenu" name="menuBrowse" >
+     <property name="title" >
+      <string>Browse</string>
+     </property>
+     <addaction name="actionTable_2" />
+     <addaction name="actionTable_Schema" />
+     <addaction name="actionView" />
+    </widget>
+    <widget class="QMenu" name="menuValidate" >
+     <property name="title" >
+      <string>Validate</string>
+     </property>
+     <widget class="QMenu" name="menuMissing_Data" >
+      <property name="title" >
+       <string>Missing Data</string>
+      </property>
+      <addaction name="actionAnalyze" />
+     </widget>
+     <widget class="QMenu" name="menuOutliers" >
+      <property name="title" >
+       <string>Outliers</string>
+      </property>
+      <addaction name="actionAnalyze_2" />
+      <addaction name="actionImpute" />
+     </widget>
+     <addaction name="menuMissing_Data" />
+     <addaction name="menuOutliers" />
+    </widget>
+    <widget class="QMenu" name="menuGeoprocess" >
+     <property name="title" >
+      <string>Geoprocess</string>
+     </property>
+     <addaction name="actionBuffer" />
+     <addaction name="actionUnion" />
+     <addaction name="actionIntersect" />
+     <addaction name="actionIdentity" />
+     <addaction name="actionSequence" />
+    </widget>
+    <addaction name="menuBrowse" />
+    <addaction name="menuEdit" />
+    <addaction name="menuQuery" />
+    <addaction name="menuPlot" />
+    <addaction name="menuValidate" />
+    <addaction name="menuGeoprocess" />
+   </widget>
+   <widget class="QMenu" name="menuGeoprocessing" >
+    <property name="title" >
+     <string>Window</string>
+    </property>
+    <addaction name="actionMap_2" />
+    <addaction name="actionChart" />
+    <addaction name="actionTable_3" />
+    <addaction name="actionModel" />
+   </widget>
+   <widget class="QMenu" name="menuModel" >
+    <property name="title" >
+     <string>Model</string>
+    </property>
+    <addaction name="actionLoad" />
+    <addaction name="actionNew" />
+    <addaction name="actionEdit_2" />
+    <addaction name="actionSave" />
+    <addaction name="actionSpecify" />
+    <addaction name="actionEstimate" />
+    <addaction name="actionSimulate" />
+    <addaction name="actionDiagnose" />
+   </widget>
+   <addaction name="menuFile" />
+   <addaction name="menuData" />
+   <addaction name="menuModel" />
+   <addaction name="menuGeoprocessing" />
+  </widget>
+  <widget class="QStatusBar" name="statusbar" >
+   <property name="autoFillBackground" >
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="toolBar" >
+   <property name="windowTitle" >
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>LeftToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <action name="actionOpen_Project" >
+   <property name="text" >
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionSave_Project" >
+   <property name="text" >
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionSave_Project_As" >
+   <property name="text" >
+    <string>Save As</string>
+   </property>
+  </action>
+  <action name="actionPreferences" >
+   <property name="text" >
+    <string>Preferences</string>
+   </property>
+  </action>
+  <action name="actionSelect" >
+   <property name="text" >
+    <string>Select</string>
+   </property>
+  </action>
+  <action name="actionUpdate" >
+   <property name="text" >
+    <string>Update</string>
+   </property>
+  </action>
+  <action name="actionAlter_Table" >
+   <property name="text" >
+    <string>Alter Table</string>
+   </property>
+  </action>
+  <action name="actionCreate_Table" >
+   <property name="text" >
+    <string>Create Table</string>
+   </property>
+  </action>
+  <action name="actionDrop_Table" >
+   <property name="text" >
+    <string>Drop Table</string>
+   </property>
+  </action>
+  <action name="actionHistogram" >
+   <property name="text" >
+    <string>Histogram</string>
+   </property>
+  </action>
+  <action name="actionScatterplot" >
+   <property name="text" >
+    <string>Scatterplot</string>
+   </property>
+  </action>
+  <action name="actionMap" >
+   <property name="text" >
+    <string>Map</string>
+   </property>
+  </action>
+  <action name="actionTable" >
+   <property name="text" >
+    <string>Table Data</string>
+   </property>
+  </action>
+  <action name="actionFeature" >
+   <property name="text" >
+    <string>Feature</string>
+   </property>
+  </action>
+  <action name="actionTable_2" >
+   <property name="text" >
+    <string>Table Data</string>
+   </property>
+  </action>
+  <action name="actionView" >
+   <property name="text" >
+    <string>View</string>
+   </property>
+  </action>
+  <action name="actionSummary" >
+   <property name="text" >
+    <string>Summary</string>
+   </property>
+  </action>
+  <action name="actionAnalyze" >
+   <property name="text" >
+    <string>Analyze</string>
+   </property>
+  </action>
+  <action name="actionAnalyze_2" >
+   <property name="text" >
+    <string>Analyze</string>
+   </property>
+  </action>
+  <action name="actionImpute" >
+   <property name="text" >
+    <string>Impute</string>
+   </property>
+  </action>
+  <action name="actionMap_2" >
+   <property name="text" >
+    <string>Map</string>
+   </property>
+  </action>
+  <action name="actionChart" >
+   <property name="text" >
+    <string>Chart</string>
+   </property>
+  </action>
+  <action name="actionTable_3" >
+   <property name="text" >
+    <string>Table</string>
+   </property>
+  </action>
+  <action name="actionModel" >
+   <property name="text" >
+    <string>Model</string>
+   </property>
+  </action>
+  <action name="actionScenario" >
+   <property name="text" >
+    <string>Scenario</string>
+   </property>
+  </action>
+  <action name="actionTable_Schema" >
+   <property name="text" >
+    <string>Table Schema</string>
+   </property>
+  </action>
+  <action name="actionTable_Schema_2" >
+   <property name="text" >
+    <string>Table Schema</string>
+   </property>
+  </action>
+  <action name="actionBuffer" >
+   <property name="text" >
+    <string>Buffer</string>
+   </property>
+  </action>
+  <action name="actionUnion" >
+   <property name="text" >
+    <string>Union</string>
+   </property>
+  </action>
+  <action name="actionIntersect" >
+   <property name="text" >
+    <string>Intersect</string>
+   </property>
+  </action>
+  <action name="actionIdentity" >
+   <property name="text" >
+    <string>Identity</string>
+   </property>
+  </action>
+  <action name="actionLoad" >
+   <property name="text" >
+    <string>Load Existing</string>
+   </property>
+  </action>
+  <action name="actionNew" >
+   <property name="text" >
+    <string>New Model</string>
+   </property>
+  </action>
+  <action name="actionEdit_2" >
+   <property name="text" >
+    <string>Edit Model</string>
+   </property>
+  </action>
+  <action name="actionSave" >
+   <property name="text" >
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionSpecify" >
+   <property name="text" >
+    <string>Specify</string>
+   </property>
+  </action>
+  <action name="actionEstimate" >
+   <property name="text" >
+    <string>Estimate</string>
+   </property>
+  </action>
+  <action name="actionSimulate" >
+   <property name="text" >
+    <string>Simulate</string>
+   </property>
+  </action>
+  <action name="actionDiagnose" >
+   <property name="text" >
+    <string>Diagnose</string>
+   </property>
+  </action>
+  <action name="actionSequence" >
+   <property name="text" >
+    <string>Sequence</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
