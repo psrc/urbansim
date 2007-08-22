@@ -12,12 +12,13 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import Str
+from enthought.traits.api import Str, Int
 from urbansim.configurations.employment_location_choice_model_configuration_creator import EmploymentLocationChoiceModelConfigurationCreator as USELCMCC
 
 class RegionalEmploymentLocationChoiceModelConfigurationCreator(USELCMCC):
 
     input_index = Str('erm_index')
+    lottery_max_iterations = Int(5)
     _model_name = 'regional_employment_location_choice_model'
     
     def execute(self):
@@ -69,7 +70,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'compute_capacity_flag': True,
                     'number_of_units_string': "'total_number_of_possible_SSS_jobs'",
                     'run_config': {'agent_units_string': None,
-                                   'lottery_max_iterations': 3},
+                                   'lottery_max_iterations': 5},
                      'variable_package': "'urbansim'"
                     },
                 'name': 'RegionalEmploymentLocationChoiceModel'

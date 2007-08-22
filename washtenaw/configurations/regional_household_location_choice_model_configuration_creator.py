@@ -22,6 +22,7 @@ class RegionalHouseholdLocationChoiceModelConfigurationCreator(USHLCMCC):
     #number_of_units_string = Trait(None, None, Str)
     #number_of_agents_string = Trait(None, None, Str)
     lottery_max_iterations = Int(5)
+    records_per_chunk = Int(50000)
     
     _model_name = 'regional_household_location_choice_model'
     
@@ -29,6 +30,7 @@ class RegionalHouseholdLocationChoiceModelConfigurationCreator(USHLCMCC):
         conf = USHLCMCC.execute(self)
         conf['import'] = {'washtenaw.models.%s' % self._model_name: 'RegionalHouseholdLocationChoiceModel'}
         conf['init']['name'] = 'RegionalHouseholdLocationChoiceModel'
+        conf['run']['arguments']['chunk_specification'] = "{'records_per_chunk':%s}" % self.records_per_chunk
         return conf
 
  
@@ -67,9 +69,9 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'location_set': 'gridcell',
                     'sample_size_locations': 30,
                     'capacity_string': "'vacant_residential_units'",
-                    'number_of_units_string': None,
-                    'number_of_agents_string': None,
-                    'run_config': {'lottery_max_iterations': 3}
+                    'number_of_units_string': "'residential_units'",
+                    'number_of_agents_string': "'number_of_households'",
+                    'run_config': {'lottery_max_iterations': 5}
                     },
                 'name': 'RegionalHouseholdLocationChoiceModel'
                 },
@@ -102,7 +104,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                 'arguments': {
                     'agent_set': 'household',
                     'agents_index': 'hrm_index',
-                    'chunk_specification': "{'nchunks':1}",
+                    'chunk_specification': "{'records_per_chunk':50000}",
                     'coefficients': 'coefficients',
                     'data_objects': 'datasets',
                     'debuglevel': 'debuglevel',
