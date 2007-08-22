@@ -11,17 +11,18 @@ VI.  Assign buildings to remaining jobs
 VII. Post-process
 VIII.Exporting resulting tables to database
 
-Note: Make sure that buildings built after 2000 are removed from the buildings table
+Note: Make sure that buildings built after 2000.
 
 I. Create a 'jobs' table and 'building_sqft_per_job' table
 ****
 1. Run the script unroll_jobs_from_establishments.py
   - choose appropriate settings in the __main__ part
   - recommended: instorage set to MysqlStorage (where the business table lives),
-                 outstorage set to FltStorage (where your cache data is)
-  - The script creates a 'jobs' table and writes it out into the outstorage.
-  - In addition, the scripts creates a 'building_sqft_per_job' table and writes it out into the outstorage. 
-    It needs the 'buildings' table on outstorage.
+                 outstorage set to FltStorage (where your cache data is; must contain the 'buildings' table)
+  - The script creates a 'jobs' table by unrolling the business table, removes jobs with non-existing buildings, 
+    and writes the 'jobs' table out into the outstorage.
+  - In addition, the scripts creates a 'building_sqft_per_job' table from the existing jobs 
+    and writes it out into the outstorage.
            
 II. Create new residential buildings
 ****
@@ -114,6 +115,7 @@ zone_id in buildings (will be re-computed from parcel_id)
 
 VIII. Exporting resulting tables to database
 ****
-Export the following tables from your baseyear cache to the database: 'households', 'buildings', 'jobs'
+Export the following tables from your baseyear cache to the database: 'households', 'buildings', 'jobs', 
+'building_sqft_per_job'
   - For each table use:
     python opus_core/tools/do_export_cache_to_mysql_database.py -c your_cache_directory/year -t table_name -d database_name

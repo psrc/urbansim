@@ -13,13 +13,14 @@
 #
 
 import os
-from numpy import array, arange, cumsum, resize, clip, logical_and
+from numpy import array, arange, cumsum, resize, clip, logical_and, where
 from opus_core.logger import logger
 from opus_core.store.opus_database import OpusDatabase
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_pool import DatasetPool
 from urbansim_parcel.datasets.business_dataset import BusinessDataset
 from urbansim.datasets.job_dataset import JobDataset
+from urbansim.datasets.building_dataset import BuildingDataset
 
 class DB_settings(object):
     db_host_name='trondheim.cs.washington.edu'
@@ -101,9 +102,17 @@ class UnrollJobsFromEstablishments:
                 table_data=jobs_data
                 )
         job_dataset = JobDataset(in_storage=storage)
+        self.delete_jobs_with_non_existing_buildings(job_dataset, out_storage)
         logger.log_status("Write jobs table.")
         job_dataset.write_dataset(out_table_name=jobs_table, out_storage=out_storage)
         logger.log_status("Created %s jobs." % job_dataset.size())
+    
+    def delete_jobs_with_non_existing_buildings(self, jobs, in_storage):
+        buildings = BuildingDataset(in_storage=in_storage)
+        index = buildings.try_get_id_index(jobs.get_attribute(buildings.get_id_name()[0]))
+        logger.log_status("%s jobs have non-existing locations and will be deleted." % where(index < 0)[0].size)
+        jobs.subset_by_index(where(index >= 0)[0], flush_attributes_if_not_loaded=False)
+
         
 class CreateBuildingSqftPerJobDataset:
     minimum_median = 25
@@ -115,7 +124,7 @@ class CreateBuildingSqftPerJobDataset:
         ds = create_building_sqft_per_job_dataset(dataset_pool, self.minimum_median, self.maximum_median)
         logger.log_status("Write building_sqft_per_job table.")
         ds.write_dataset(out_storage=out_storage)
-
+    
 if __name__ == '__main__':
     #business_table = "est00_match_bldg2005_flag123457_flag12bldg"
     business_table = "businesses"
