@@ -97,10 +97,10 @@ class Baseline(GeneralConfiguration):
                     ]
     
     tables_to_copy_to_previous_years = {
-                    'development_type_group_definitions': 1990,
-                    'development_type_groups': 1990,
-                    'development_types': 1990,
-                    'urbansim_constants': 1990,
+                    'development_type_group_definitions': 1994,
+                    'development_type_groups': 1994,
+                    'development_types': 1994,
+                    'urbansim_constants': 1994,
                     }
     
     def __init__(self):
@@ -126,16 +126,14 @@ class Baseline(GeneralConfiguration):
                 'development_event_transition_model',
                 'events_coordinator',
                 'residential_land_share_model',
-                #'deletion_event_model',
+                'deletion_event_model',
                 'regional_household_transition_model',
+                'regional_household_relocation_model',
                 'regional_household_location_choice_model',
                 'regional_employment_transition_model',
-                {'regional_employment_location_choice_model': {'group_members': ['home_based', 'commercial', 'industrial']}},
-                'household_relocation_model',
-                'household_location_choice_model',
-                'employment_relocation_model',
-                {'employment_location_choice_model': {'group_members': ['_all_']}},
-                'distribute_unplaced_jobs_model'
+                'regional_employment_relocation_model',
+                {'regional_employment_location_choice_model': {'group_members': ['home_based', 'industrial', 'commercial']}},
+                #'regional_distribute_unplaced_jobs_model'
                 ],
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(

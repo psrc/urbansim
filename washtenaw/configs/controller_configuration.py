@@ -21,6 +21,9 @@ from washtenaw.configurations.regional_employment_location_choice_model_configur
 from washtenaw.configurations.regional_employment_transition_model_configuration_creator import RegionalEmploymentTransitionModelConfigurationCreator
 from washtenaw.configurations.regional_household_transition_model_configuration_creator import RegionalHouseholdTransitionModelConfigurationCreator
 from washtenaw.configurations.deletion_event_model_configuration_creator import DeletionEventModelConfigurationCreator
+from washtenaw.configurations.regional_household_relocation_model_configuration_creator import RegionalHouseholdRelocationModelConfigurationCreator
+from washtenaw.configurations.regional_employment_relocation_model_configuration_creator import RegionalEmploymentRelocationModelConfigurationCreator
+from washtenaw.configurations.regional_distribute_unplaced_jobs_model_configuration_creator import RegionalDistributeUnplacedJobsModelConfigurationCreator
 
 class ControllerConfiguration(Configuration):
     """ Contains controller entries that differ from the urbansim controllers.
@@ -72,6 +75,18 @@ class ControllerConfiguration(Configuration):
                     }          
         self['regional_household_location_choice_model'] = {
                     'controller': RegionalHouseholdLocationChoiceModelConfigurationCreator(
+                        ).execute(),
+                                                            }
+        self['regional_household_relocation_model'] = {
+                    'controller': RegionalHouseholdRelocationModelConfigurationCreator(
+                        ).execute(),
+                    }
+        self['regional_employment_relocation_model'] = {
+                    'controller': RegionalEmploymentRelocationModelConfigurationCreator(
+                        ).execute(),
+                    }
+        self['regional_distribute_unplaced_jobs_model'] = {
+                    'controller': RegionalDistributeUnplacedJobsModelConfigurationCreator(
                         ).execute(),
                     }
         self['deletion_event_model'] = {
