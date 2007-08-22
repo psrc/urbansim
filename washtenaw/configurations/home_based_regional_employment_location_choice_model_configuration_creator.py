@@ -12,12 +12,13 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import Str
+from enthought.traits.api import Str, Int
 from urbansim.configurations.home_based_employment_location_choice_model_configuration_creator import HomeBasedEmploymentLocationChoiceModelConfigurationCreator
 
 class HomeBasedRegionalEmploymentLocationChoiceModelConfigurationCreator(HomeBasedEmploymentLocationChoiceModelConfigurationCreator):    
     
     input_index = Str('erm_index')
+    maximum_runs = Int(3)
     _model_name = 'home_based_regional_employment_location_choice_model'
     
     def execute(self):
@@ -94,12 +95,13 @@ class TestHomeBasedEmploymentLocationChoiceModelConfigurationCreator(opus_unitte
             'run': {
                 'arguments': {
                     'agent_set': 'job',
-                    'agents_index': 'regional_etm_index',
+                    'agents_index': 'erm_index',
                     'chunk_specification': "{'records_per_chunk':50000}",
                     'coefficients': 'coefficients',
                     'data_objects': 'datasets',
                     'debuglevel': 'debuglevel',
-                    'specification': 'specification'
+                    'specification': 'specification',
+                    'maximum_runs': 3
                     }
                 }
             })

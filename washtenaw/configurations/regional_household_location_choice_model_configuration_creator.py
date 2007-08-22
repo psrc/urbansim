@@ -23,6 +23,7 @@ class RegionalHouseholdLocationChoiceModelConfigurationCreator(USHLCMCC):
     #number_of_agents_string = Trait(None, None, Str)
     lottery_max_iterations = Int(5)
     records_per_chunk = Int(50000)
+    maximum_runs = Int(3)
     
     _model_name = 'regional_household_location_choice_model'
     
@@ -108,7 +109,8 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'coefficients': 'coefficients',
                     'data_objects': 'datasets',
                     'debuglevel': 'debuglevel',
-                    'specification': 'specification'
+                    'specification': 'specification',
+                    'maximum_runs': 3
                     }
                 }
             })

@@ -38,7 +38,7 @@ my_configuration = {
                 password      = os.environ.get('MYSQLPASSWORD',''),
                 database_name = 'region_pilot_baseyear',
                 ),
-     'models': [
+ #    'models': [
                 #'prescheduled_events',
                 #'events_coordinator',
                 #'residential_land_share_model',
@@ -54,11 +54,11 @@ my_configuration = {
                 #'regional_household_transition_model',
                 #'regional_household_relocation_model',
                 #'regional_household_location_choice_model',
-                'regional_employment_transition_model',
-                'regional_employment_relocation_model',
-                {'regional_employment_location_choice_model': {'group_members': ['_all_']}},
-                'regional_distribute_unplaced_jobs_model'
-                ],
+#                'regional_employment_transition_model',
+#                'regional_employment_relocation_model',
+#                {'regional_employment_location_choice_model': {'group_members': ['_all_']}},
+#                'regional_distribute_unplaced_jobs_model'
+#                ],
     #'cache_directory': None,
     'cache_directory': '/Users/hana/urbansim_cache/washtenaw/cache_source',
     'remove_cache': False, # remove cache after finishing the simulation
