@@ -33,7 +33,7 @@ class DatasetTable(AbstractIndicator):
                storage_location is not None and \
                not isinstance(storage_location,str):
             raise "If DatasetTable output_type is %s, storage_location must be a path to the output directory"%output_type
-        elif output_type not in ['dbf', 'csv', 'tab']:
+        elif output_type not in ['dbf', 'csv', 'tab', 'sql']:
             raise "DatasetTable output_type needs to be either dbf, csv, tab, or sql"
         
         self.attributes = attributes
@@ -49,13 +49,14 @@ class DatasetTable(AbstractIndicator):
         kwargs = {}
         if self.output_type == 'sql':
             kwargs['protocol'] = storage_location.protocol
-            kwargs['username'] = storage_location.username
+            kwargs['username'] = storage_location.user_name
             kwargs['password'] = storage_location.password
-            kwargs['hostname'] = storage_location.hostname
+            kwargs['hostname'] = storage_location.host_name
             kwargs['database_name'] = storage_location.database_name
         else:
             kwargs['storage_location'] = self.get_storage_location()
                 
+        print kwargs
         self.store = StorageFactory().get_storage(
             type = '%s_storage'%(self.output_type),
             **kwargs

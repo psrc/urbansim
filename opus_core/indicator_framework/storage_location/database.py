@@ -30,7 +30,7 @@ class Database(object):
         
         self.protocol = protocol 
         self.database_name = database_name
-        
+            
         if host_name is None:
             self.host_name = os.environ.get('%sHOSTNAME'%protocol.upper(),'localhost')
         else:
@@ -42,6 +42,6 @@ class Database(object):
             self.user_name = user_name
         
         if password is None:
-            self.env_password = os.environ.get('%sPASSWORD'%protocol.upper(),'')
+            self.password = os.environ.get('%sPASSWORD'%protocol.upper(),'')
         else:
             self.password = password

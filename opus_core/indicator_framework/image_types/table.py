@@ -35,7 +35,7 @@ class Table(AbstractIndicator):
                storage_location is not None and \
                not isinstance(storage_location,str):
             raise "If Table output_type is %s, storage_location must be a path to the output directory"%output_type
-        elif output_type not in ['dbf', 'csv', 'tab']:
+        elif output_type not in ['dbf', 'csv', 'tab', 'sql']:
             raise "Table output_type must be either dbf, csv, tab, or sql"
 
         AbstractIndicator.__init__(self, source_data, dataset_name, attribute, 
@@ -46,9 +46,9 @@ class Table(AbstractIndicator):
         kwargs = {}
         if self.output_type == 'sql':
             kwargs['protocol'] = storage_location.protocol
-            kwargs['username'] = storage_location.username
+            kwargs['username'] = storage_location.user_name
             kwargs['password'] = storage_location.password
-            kwargs['hostname'] = storage_location.hostname
+            kwargs['hostname'] = storage_location.host_name
             kwargs['database_name'] = storage_location.database_name
         else:
             kwargs['storage_location'] = self.get_storage_location()
