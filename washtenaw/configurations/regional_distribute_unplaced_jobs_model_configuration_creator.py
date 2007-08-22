@@ -45,7 +45,8 @@ class TestDistributeUnplacedJobsModelConfigurationCreator(opus_unittest.OpusTest
                 'washtenaw.models.regional_distribute_unplaced_jobs_model': 'RegionalDistributeUnplacedJobsModel'
                 },
             'init': {
-                'arguments': {'debuglevel': 'debuglevel'},
+                'arguments': {'debuglevel': 'debuglevel',
+                              'dataset_pool': 'dataset_pool'},
                 'name': 'RegionalDistributeUnplacedJobsModel'
                 },
             'run': {
