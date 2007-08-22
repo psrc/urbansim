@@ -61,7 +61,7 @@ class AgentRelocationModel(Model):
         # add unplaced agents
         unplaced_agents = where(agent_set.get_attribute(self.location_id_name) <= 0)[0]
         movers_indices = unique_values(concatenate((movers_indices, unplaced_agents)))
-        self.debug.print_debug("Number of movers: " + str(movers_indices.size), 3)
+        self.debug.print_debug("Number of movers: " + str(movers_indices.size), 2)
         return movers_indices
 
     def prepare_for_run(self, what=None, rate_storage=None, rate_table=None, sample_rates=False,
