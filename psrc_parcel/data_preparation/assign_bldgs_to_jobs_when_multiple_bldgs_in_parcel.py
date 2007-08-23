@@ -50,8 +50,7 @@ class AssignBuildingsToJobs:
     minimum_sqft = UnrollJobsFromEstablishments.minimum_sqft
     maximum_sqft = UnrollJobsFromEstablishments.maximum_sqft
     
-    def run(self, in_storage, out_storage, dataset_pool_storage, jobs_table="jobs", 
-            zone_averages_table="building_sqft_per_job"):
+    def run(self, in_storage, out_storage, dataset_pool_storage, jobs_table="jobs"):
         """
         Algorithm:
             1. For all non_home_based jobs that have parcel_id assigned but no building_id, try
@@ -123,16 +122,11 @@ class AssignBuildingsToJobs:
             sector_bt_distribution[isector,:] = sector_bt_distribution[isector,:]/sector_bt_distribution[isector,:].sum()
             sector_index_mapping[unique_sectors[isector]] = isector
                
-        # create a lookup table for zonal average per building type of sqft per employee 
-        zone_average_dataset = Dataset(in_storage=in_storage, id_name=[], dataset_name="building_sqft_per_job", 
-                                       in_table_name=zone_averages_table)
-        zone_ids_in_zad = zone_average_dataset.get_attribute("zone_id").astype("int32")
-        bt_in_zad = zone_average_dataset.get_attribute("building_type_id")
-        sqft_in_zad = zone_average_dataset.get_attribute("building_sqft_per_job")
-        zone_bt_lookup = zeros((zone_ids_in_zad.max()+1, bt_in_zad.max()+1)) 
-        for i in range(zone_average_dataset.size()):
-            zone_bt_lookup[zone_ids_in_zad[i], bt_in_zad[i]] = sqft_in_zad[i]
-        zone_bt_lookup[where(zone_bt_lookup<=0)] = zone_bt_lookup.mean() # for missing values take the whole region mean
+        # create a lookup table for zonal average per building type of sqft per employee
+        zone_average_dataset = dataset_pool.get_dataset("building_sqft_per_job")
+        zone_bt_lookup = zone_average_dataset.get_building_sqft_as_table(job_dataset.get_attribute("zone_id").max(),
+                                                                         available_building_types.max())
+
         counter_zero_capacity = 0
         counter_zero_distr = 0
         # iterate over parcels
