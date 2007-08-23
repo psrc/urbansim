@@ -50,7 +50,7 @@ class DummyDataset(object):
             result = dataset.aggregate_dataset_over_ids(ds, attribute_name=dependent_attribute)
         else:
             result = dataset.aggregate_dataset_over_ids(ds, function=function_name, attribute_name=dependent_attribute)
-        self._var.add_dependencies([ds._get_attribute_box(dataset.get_id_name()[0])])
+        self._var.add_and_solve_dependencies([ds._get_attribute_box(dataset.get_id_name()[0])], dataset_pool=self._dataset_pool)
         return self._coerce_result(result, dataset)
 
     def aggregate_all(self, aggr_var, function=None):
@@ -87,7 +87,7 @@ class DummyDataset(object):
             dependent_attribute = VariableName(expr).get_alias()
         ds = self._dataset_pool.get_dataset(disaggregated_dataset)
         result = dataset.get_join_data(ds, dependent_attribute)
-        self._var.add_dependencies([dataset._get_attribute_box(ds.get_id_name()[0])])
+        self._var.add_and_solve_dependencies([dataset._get_attribute_box(ds.get_id_name()[0])], dataset_pool=self._dataset_pool)
         return self._coerce_result(result, dataset)
     
     def number_of_agents(self, agent_name):
@@ -96,7 +96,7 @@ class DummyDataset(object):
         id_name = dataset.get_id_name()[0]
         if id_name not in agents.get_attribute_names(): # attribute not loaded yet
             agents.get_attribute(id_name)
-        self._var.add_dependencies([agents._get_attribute_box(id_name)])
+        self._var.add_and_solve_dependencies([agents._get_attribute_box(id_name)], dataset_pool=self._dataset_pool)
         result = dataset.sum_dataset_over_ids(agents, constant=1)
         return self._coerce_result(result, dataset)
     

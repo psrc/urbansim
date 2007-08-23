@@ -282,11 +282,17 @@ class TestDataset(opus_unittest.OpusTestCase):
         ds.modify_attribute("a_dependent_variable", array([1,1]))
         self.assert_(ds.get_version("a_dependent_variable")==2) # version=2
         
-        ds.compute_variables(["a_test_variable_with_two_dependencies"])
+        ds.compute_variables(["opus_core.tests.a_test_variable_with_two_dependencies"])
         self.assert_(ds.get_version("a_test_variable_with_two_dependencies")==1)
         
-        ds.compute_variables(["a_test_variable_with_two_dependencies"])
+        ds.compute_variables(["opus_core.tests.a_test_variable_with_two_dependencies"])
         self.assert_(ds.get_version("a_test_variable_with_two_dependencies")==1) # version does not change
+        
+        autogen_variable = "my_var = 3 * opus_core.tests.a_dependent_variable"
+        ds.compute_variables([autogen_variable])
+        self.assert_(ds.get_version("my_var")==0)
+        ds.compute_variables([autogen_variable])
+        self.assert_(ds.get_version("my_var")==0)
         
     def test_compute_variable_with_unknown_package(self):
         storage = StorageFactory().get_storage('dict_storage')

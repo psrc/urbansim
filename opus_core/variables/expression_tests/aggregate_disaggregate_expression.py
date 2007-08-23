@@ -269,6 +269,31 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array([40, 80, 40, 80])
         self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in disaggregate")
         
+    def test_versioning_with_disaggregate(self):
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name='zones',
+            table_data={
+                'id':array([1,2,3,4]),
+                'id2':array([1,2,1,2])
+                }
+            )
+        storage.write_table(table_name='faz',
+            table_data={
+                'my_variable':array([4,8]), 
+                'id2':array([1,2])
+                }
+            )
+        ds = Dataset(in_storage=storage, in_table_name='zones', id_name="id", dataset_name="myzone")
+        ds2 = Dataset(in_storage=storage, in_table_name='faz', id_name="id2", dataset_name="myfaz")
+        dataset_pool = DatasetPool()
+        dataset_pool._add_dataset('myzone', ds)
+        dataset_pool._add_dataset('myfaz', ds2)
+        ds.modify_attribute("id2", array([2,1,2,1])) # should have version 1
+        ds.compute_variables(["my_var = myzone.disaggregate(10.0*myfaz.my_variable)"], dataset_pool=dataset_pool)
+        self.assert_(ds.get_version("my_var")==0)
+        ds.compute_variables(["my_var = myzone.disaggregate(10.0*myfaz.my_variable)"], dataset_pool=dataset_pool)
+        self.assert_(ds.get_version("my_var")==0) # version should stay the same, i.e. it should not recompute
+ 
     def test_disaggregate_fully_qualified_variable(self):
         storage = StorageFactory().get_storage('dict_storage')
         storage.write_table(table_name='zones',
