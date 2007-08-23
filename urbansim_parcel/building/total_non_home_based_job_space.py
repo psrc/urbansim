@@ -13,12 +13,12 @@
 # 
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
-from numpy import ma, float32, newaxis, concatenate, where
-from opus_core.misc import unique_values
+from numpy import ma
 
 class total_non_home_based_job_space(Variable):
     """ total number of non-home-based jobs a given building can accommodate"""
+    
+    _return_type = "int32"
     
     def dependencies(self):
         return ["building_sqft_per_job.building_sqft_per_job",
@@ -29,24 +29,18 @@ class total_non_home_based_job_space(Variable):
 
     def compute(self,  dataset_pool):
         sqft_per_job = dataset_pool.get_dataset("building_sqft_per_job")
-#        building_types = unique_vlaues(sqft_per_job.get_attribute("building_type_id"))
         buildings = self.get_dataset()
         zones = buildings.get_attribute("zone_id")
         type_ids = buildings.get_attribute("building_type_id")
         non_residential_sqft = buildings.get_attribute("non_residential_sqft")
-        
-        ids = concatenate((zones[:,newaxis],type_ids[:,newaxis]), axis=1)
-        index = sqft_per_job.try_get_id_index(ids)
-        building_sqft_per_job = sqft_per_job.get_attribute("building_sqft_per_job")[index]
-        building_sqft_per_job[where(index==-1)] = 0
+        building_sqft_per_job_table = sqft_per_job.get_building_sqft_as_table(zones.max(), type_ids.max())
+        building_sqft_per_job = building_sqft_per_job_table[zones, type_ids]
         return ma.filled(ma.masked_where(building_sqft_per_job==0, non_residential_sqft / building_sqft_per_job), 0)
 
     def post_check(self,  values, dataset_pool=None):
         self.do_check("x >= 0", values)
 
 from opus_core.tests import opus_unittest
-from opus_core.datasets.dataset_pool import DatasetPool
-from opus_core.storage_factory import StorageFactory
 from numpy import array
 from opus_core.tests.utils.variable_tester import VariableTester
 
@@ -68,9 +62,9 @@ class Tests(opus_unittest.OpusTestCase):
                 },                
         }
         )
-        
-        should_be = array([1000/100, 2000/200, 2000/80, 1000/60, 7000/50, 0/200, 0,
-                           5000/10, 4000/60, 0])
+        # mean over "building_sqft_per_job" is 127.5
+        should_be = array([1000/100., 2000/200., 2000/80., 1000/60., 7000/50., 0/200, 3000/127.5 ,
+                           5000/10., 4000/60., 6000/127.5]).astype("int32")
         
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 

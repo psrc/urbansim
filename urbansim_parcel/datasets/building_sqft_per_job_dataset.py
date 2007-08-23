@@ -12,7 +12,7 @@
 # other acknowledgments.
 # 
 
-from numpy import where, ones, logical_and, array, median
+from numpy import where, ones, logical_and, array, median, resize
 from opus_core.misc import unique_values
 from opus_core.storage_factory import StorageFactory
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
@@ -27,7 +27,20 @@ class BuildingSqftPerJobDataset(UrbansimDataset):
     def __init__(self, id_values=None, **kwargs):
         UrbansimDataset.__init__(self, **kwargs)
         
-
+    def get_building_sqft_as_table(self, zone_max=0, building_type_max=0):
+        """Return a 2-d array (zone.max x buildong_type.max) filled with values from 
+         the 'building_sqft_per_job' attribute. Missing combinations are filled with 
+         the mean over all values. zone_max and building_type_max are optional maximum values
+         for the dimensions of the table.
+         """
+        zone_ids = self.get_attribute("zone_id").astype("int32")
+        bts = self.get_attribute("building_type_id")
+        sqft = self.get_attribute("building_sqft_per_job")
+        table = resize(array([sqft.mean()]), (max(zone_ids.max(), zone_max) + 1, 
+                                              max(bts.max(), building_type_max) + 1))
+        table[zone_ids, bts] = sqft
+        return table
+    
 def create_building_sqft_per_job_dataset(dataset_pool, minimum_median=25, maximum_median=2000):
     buildings = dataset_pool.get_dataset('building')
     jobs = dataset_pool.get_dataset('job')
