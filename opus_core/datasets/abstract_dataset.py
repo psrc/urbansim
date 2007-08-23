@@ -20,7 +20,7 @@ import os
 from sets import Set
 from glob import glob
 
-from numpy import array, where, float32, int32, sort, argsort, reshape, dtype
+from numpy import array, where, float32, int32, sort, argsort, reshape, dtype, any
 from numpy import zeros, arange, ones, clip, ndarray, concatenate, searchsorted, resize
 from numpy import compress, transpose, logical_and, ma
 from scipy import ndimage
@@ -292,6 +292,11 @@ class AbstractDataset(object):
         if ids.ndim > 1:
             return array(map(lambda x: self.try_id_mapping(tuple(x), return_value_if_not_found), ids))
         try: # it might be faster if all values are found
+            if any(ids <= 0): # do not consider negative or zero ids
+                result = resize(array([return_value_if_not_found], dtype="int32"), ids.size)
+                idx = where(ids > 0)[0]
+                result[idx] = self.get_id_index(ids[idx])
+                return result
             return self.get_id_index(ids)
         except:
             return array(map(lambda x: self.try_id_mapping(x, return_value_if_not_found), ids))
@@ -410,6 +415,7 @@ class AbstractDataset(object):
         if self.id_mapping_type is None:
             self._create_id_mapping()
         else:
+            del self.id_mapping
             if self.id_mapping_type == "A":
                 if ids.size > 0:
                     self.id_mapping_shift = ids.min()
@@ -795,6 +801,7 @@ class AbstractDataset(object):
                                                 type=metadata)
         if metadata == AttributeType.PRIMARY:
             self._add_to_primary_attribute_names(short_name)
+            
         self.__increment_version(short_name)
         return self.get_version(short_name)
 
@@ -1152,6 +1159,10 @@ class AbstractDataset(object):
         if attribute_box is None:
             attribute_box = self._get_attribute_box(variable_name)
         attribute_box.set_variable_instance(variable)
+        version_of_dependent_variables = variable.get_highest_version_of_dependencies()
+        if new_version < version_of_dependent_variables:
+            attribute_box.set_version(version_of_dependent_variables)
+            return version_of_dependent_variables
         return new_version
 
     def _prepare_dataset_pool_for_variable(self, dataset_pool=None, resources=None):

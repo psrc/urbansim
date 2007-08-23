@@ -332,14 +332,20 @@ class Variable(object):
     def are_dependent_variables_up_to_date(self, version):
         result = []  
         all_dependencies_list = self.get_all_dependencies()
-        for i in range(len(all_dependencies_list)): 
-            variable, version = all_dependencies_list[i]
+        for variable, version  in all_dependencies_list:
             if isinstance(variable, AttributeBox):
                 result.append(variable.is_version(version))
             else: # of type VariableName (means variable wasn't used yet)
                 result.append(False)
         return result
         
+    def get_highest_version_of_dependencies(self):
+        dependencies_list = self.get_current_dependencies()
+        if len(dependencies_list) <= 0:
+            return 0
+        versions = array(map(lambda x: x[1], dependencies_list))
+        return versions.max()
+    
     def set_dataset(self, dataset):
         self.dataset = dataset
     

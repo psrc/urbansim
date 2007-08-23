@@ -123,6 +123,10 @@ class InteractionDataset(Dataset):
             variable = attribute_box.get_variable_instance()
             my_attribute_box = self._get_attribute_box(variable_name)
             my_attribute_box.set_variable_instance(variable)
+            version_of_dependent_variables = variable.get_highest_version_of_dependencies()
+            if new_version < version_of_dependent_variables:
+                my_attribute_box.set_version(version_of_dependent_variables)
+                return version_of_dependent_variables
         return new_version
 
     def get_owner_dataset_and_index(self, dataset_name):
