@@ -1159,10 +1159,6 @@ class AbstractDataset(object):
         if attribute_box is None:
             attribute_box = self._get_attribute_box(variable_name)
         attribute_box.set_variable_instance(variable)
-        version_of_dependent_variables = variable.get_highest_version_of_dependencies()
-        if new_version < version_of_dependent_variables:
-            attribute_box.set_version(version_of_dependent_variables)
-            return version_of_dependent_variables
         return new_version
 
     def _prepare_dataset_pool_for_variable(self, dataset_pool=None, resources=None):
