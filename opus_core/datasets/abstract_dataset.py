@@ -415,12 +415,12 @@ class AbstractDataset(object):
         if self.id_mapping_type is None:
             self._create_id_mapping()
         else:
-            del self.id_mapping
             if self.id_mapping_type == "A":
                 if ids.size > 0:
                     self.id_mapping_shift = ids.min()
                 else:
                     self.id_mapping_shift = 0
+                del self.id_mapping
                 self.id_mapping = do_id_mapping_array_from_array(ids)
             else:
                 self.id_mapping.clear()
