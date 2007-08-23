@@ -28,5 +28,5 @@ aliases = [
    "parcel_sqft_per_unit=safe_array_divide(building.disaggregate(parcel.parcel_sqft),building.residential_units)",
    "building_sqft_per_unit=safe_array_divide(urbansim_parcel.building.building_sqft,building.residential_units)",
    "unit_price = building.disaggregate(urbansim_parcel.parcel.unit_price)",
-   
+   "zone_id = building.disaggregate(parcel.zone_id)"
            ]

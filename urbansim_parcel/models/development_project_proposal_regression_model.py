@@ -98,8 +98,8 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         try:
             existing_proposal_set = dataset_pool.get_dataset('development_project_proposal')
             #load proposals whose status_id are not of id_tentative or id_not_available
-            available_idx = where(logical_and(existing_proposal_set.get_attribute("status_id") != development_proposal_set.id_tentative,
-                                              existing_proposal_set.get_attribute("status_id") != development_proposal_set.id_not_available))[0]
+            available_idx = where(logical_and(existing_proposal_set.get_attribute("status_id") != DevelopmentProjectProposalDataset.id_tentative,
+                                              existing_proposal_set.get_attribute("status_id") != DevelopmentProjectProposalDataset.id_not_available))[0]
             existing_proposal_set = DatasetSubset(existing_proposal_set, available_idx)
         except:
             existing_proposal_set = None
