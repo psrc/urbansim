@@ -24,8 +24,11 @@ from luse01;
 create index blklot_index on parcels_01 (blklot);
 create index blklot_index on buildings_01 (blklot);
 
-alter table parcels_01 add parcel_id int auto_increment primary key;
-alter table buildings_01 add building_id int auto_increment primary key;
+alter table parcels_01 add parcel_id int;
+alter table buildings_01 add building_id int;
+
+update parcels_01 p1, parcels_00 p0 set p1.parcel_id=p0.parcel_id where p0.blklot=p1.blklot;
+update buildings_01 b1, buildings_00 b0 set b1.building_id=b0.building_id where b0.blklot=b1.blklot;
 
 
 alter table buildings_01 add building_use_id int, add parcel_id int, add unit_price double;
