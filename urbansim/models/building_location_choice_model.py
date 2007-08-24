@@ -221,17 +221,23 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModelMember):
                                                         agent_set, agents_index, agents_locations):
         """Agents with the smallest number of units should move again.
         """
-        unique_locations = unique_values(agents_locations[agents_locations > 0])
-        index_locations_in_choice_set = self.choice_set.try_get_id_index(unique_locations)
-        overfilled = where(capacity[index_locations_in_choice_set] < 0)[0]
+        if capacity is None:
+            return array([], dtype='int32')
+        index_valid_agents_locations = where(agents_locations > 0)[0]
+        valid_agents_locations = agents_locations[index_valid_agents_locations].astype("int32")
+        unique_locations = unique_values(valid_agents_locations).astype("int32")
+        index_consider_capacity = self.choice_set.get_id_index(unique_locations)
+        capacity_of_affected_locations = capacity[index_consider_capacity]
+        overfilled = where(capacity_of_affected_locations < 0)[0]
         movers = array([], dtype='int32')
-        indexed_individuals = DatasetSubset(agent_set, agents_index)
+        indexed_individuals = DatasetSubset(agent_set, agents_index[index_valid_agents_locations])
         ordered_agent_indices = self.get_agents_order(indexed_individuals)
         sizes = indexed_individuals.get_attribute(self.units_full_name)[ordered_agent_indices]
+        choice_ids = self.choice_set.get_id_attribute()
         for loc in overfilled:
-            agents_to_move = where(agents_locations[ordered_agent_indices] == unique_locations[loc])[0]
+            agents_to_move = where(valid_agents_locations == choice_ids[index_consider_capacity[loc]])[0]
             if agents_to_move.size > 0:
-                n = int(-1*capacity[index_locations_in_choice_set][loc])
+                n = int(-1*capacity_of_affected_locations[loc])
                 this_sizes = sizes[agents_to_move]
                 csum = this_sizes[arange(this_sizes.size-1,-1,-1)].cumsum() # ordered increasingly
                 csum = csum[arange(csum.size-1, -1,-1)] # ordered back decreasingly
