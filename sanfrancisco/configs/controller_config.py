@@ -222,14 +222,15 @@ my_controller_configuration = {
                         "location_set" : "parcel",
                         "submodel_string" : "'building.building_use_id'",
                         "capacity_string" : "'UNITS_capacity'",
-                        "filter" : None,
+                        "filter" : None, # will be set internally
                         "number_of_agents_string":"'sanfrancisco.parcel.UNITS'",
                         "number_of_units_string":"'sanfrancisco.parcel.UNITS_capacity'",
                         "developable_maximum_unit_variable" : "'UNITS_capacity'", #"developable_maximum_UNITS",
                         "developable_minimum_unit_variable" : None, # None means don't consider any minimum. For default, set it to empty string
                         "agents_grouping_attribute":"'sanfrancisco.building.building_class_id'",
                         "estimate_config" : {'weights_for_estimation_string': None}, #"'sanfrancisco.parcel.uniform_capacity'"},
-                        "run_config":{"agent_units_string" : "sanfrancisco.building.building_size"}
+                        "run_config":{"agent_units_string" : "sanfrancisco.building.building_size"},
+                        "dataset_pool": "dataset_pool" 
                         }
                     },
                 "prepare_for_run": {

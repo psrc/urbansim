@@ -22,10 +22,30 @@ from opus_core.datasets.dataset import Dataset
 
 class BuildingLocationChoiceModel(UrbansimBuildingLocationChoiceModel):
 
-#    def get_weights_for_sampling_locations(self, agent_set, agents_index, data_objects=None):
-#        where_developable = where(self.apply_filter(self.filter, None, agent_set, agents_index, data_objects=data_objects))[0]
-#        weight_array = ones((where_developable.size), dtype=int8) #.astype(bool8)
-#        return (weight_array, where_developable)
+    def __init__(self, *args, **kargs):
+        UrbansimBuildingLocationChoiceModel.__init__(self, *args, **kargs)
+        self._set_filter_dictionary()
+            
+    def _set_filter_dictionary(self):
+        building_use_set = self.dataset_pool.get_dataset('building_use')
+        building_use_ids = building_use_set.get_attribute('building_use_id')
+        building_use_prefix = building_use_set.get_attribute('building_use')
+        self.filter_for_submodels = {}
+        for i in range(building_use_set.size()):
+            self.filter_for_submodels[building_use_ids[i]] = VariableName("parcel.%s_possible" % building_use_prefix[i].lower())
+            
+    def get_weights_for_sampling_locations(self, agent_set, agents_index):
+        weight_array, where_developable = UrbansimBuildingLocationChoiceModel.get_weights_for_sampling_locations(
+                                                                                 self, agent_set, agents_index)
+        # multiply by filter for submodels
+        building_use_ids = agent_set.get_attribute_by_index('building_use_id', agents_index)
+        for submodel, filter_variable in self.filter_for_submodels.iteritems():
+            if filter_variable.get_alias() in self.choice_set.get_known_attribute_names():
+                values = self.choice_set.get_attribute(filter_variable)[where_developable].astype("bool8")
+                index = where(building_use_ids == submodel)[0]
+                weight_array[index, :] = weight_array[index, :] * values
+        
+        return (weight_array, where_developable)
 
     def get_weights_for_sampling_locations_for_estimation(self, agent_set, agents_index):
         if self.run_config.get("agent_units_string", "sanfrancisco.building.building_size"): # needs to be corrected

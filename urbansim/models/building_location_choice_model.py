@@ -54,7 +54,7 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModelMember):
             submodel_string = "size_category_SSS", # Put here None, if no submodels should be used.
             nrecords_per_chunk_for_estimation_sampling = 1000, # put here None, if everything in 1 chunk
             location_id_string = None,
-            run_config = None, estimate_config=None, debuglevel=0):
+            run_config = None, estimate_config=None, debuglevel=0, dataset_pool=None, variable_package = "urbansim"):
         """ 'group_member' is of type ModelGroupMember.
         """
         group_member_name = group_member.get_member_name()
@@ -87,7 +87,7 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModelMember):
         # create full names from (possibly) short names
         tmpdict = Resources({"filter": filter, "max": developable_maximum_unit_variable,
                              "min": developable_minimum_unit_variable})
-        self.add_prefix_to_variable_names(["filter", "max", "min"], location_set, resources=tmpdict)
+        self.add_prefix_to_variable_names(["filter", "max", "min"], location_set, variable_package, resources=tmpdict)
         filter = tmpdict["filter"]
         if tmpdict["max"]:
             self.developable_maximum_unit_variable = VariableName(tmpdict["max"])
@@ -135,7 +135,9 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModelMember):
                                         location_id_string=location_id_string,
                                         run_config=run_config,
                                         estimate_config=estimate_config,
-                                        debuglevel=debuglevel)
+                                        debuglevel=debuglevel,
+                                        dataset_pool=dataset_pool,
+                                        variable_package=variable_package)
 
 
     def run(self, *args, **kargs):
@@ -215,11 +217,10 @@ class BuildingLocationChoiceModel(AgentLocationChoiceModelMember):
         """
         return argsort(movers.get_attribute(self.units_full_name))[arange(movers.size()-1,-1,-1)]
 
-    def choose_agents_to_move_from_overfilled_locations(self, number_of_units, number_of_agents,
+    def choose_agents_to_move_from_overfilled_locations(self, capacity,
                                                         agent_set, agents_index, agents_locations):
         """Agents with the smallest number of units should move again.
         """
-        capacity = number_of_units - number_of_agents
         unique_locations = unique_values(agents_locations[agents_locations > 0])
         index_locations_in_choice_set = self.choice_set.try_get_id_index(unique_locations)
         overfilled = where(capacity[index_locations_in_choice_set] < 0)[0]
