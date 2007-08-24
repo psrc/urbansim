@@ -152,7 +152,7 @@ class AgentLocationChoiceModel(LocationChoiceModel):
             agents_to_move = where(valid_agents_locations == choice_ids[index_consider_capacity[loc]])[0]
             if agents_to_move.size > 0:
                 n = int(-1*capacity_of_affected_locations[loc])
-                sampled_agents = probsample_noreplace(agents_index[index_valid_agents_locations[agents_to_move]], 
+                sampled_agents = probsample_noreplace(index_valid_agents_locations[agents_to_move], 
                                                       min(n, agents_to_move.size))
                 movers = concatenate((movers, sampled_agents))
         return movers
