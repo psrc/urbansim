@@ -443,7 +443,7 @@ class ModelSystem(object):
     def run_multiprocess(self, resources):
         resources = Resources(resources)
         self._merge_resources_with_defaults(resources)
-
+        profiler_name = resources.get("profile_filename", None)
         if resources['cache_directory'] is not None:
             cache_directory = resources['cache_directory']
         else:
@@ -476,6 +476,8 @@ class ModelSystem(object):
                     resources['years'] = (year, year)
                     resources['seed'] = seed_array[iyear], # was: (seed_array[iyear], seed_array[iyear+nyears])
                     logger.disable_file_logging(log_file)
+                    if profiler_name is not None:
+                        resources["profile_filename"] = "%s_%s" % (profiler_name, year) # add year to the profile name
                     ForkProcess().fork_new_process(
                         'urbansim.model_coordinators.model_system', resources)
                     logger.enable_file_logging(log_file, verbose=False)
@@ -491,6 +493,8 @@ class ModelSystem(object):
 
             iyear +=1
 
+        if profiler_name is not None: # insert original value
+            resources["profile_filename"] = profiler_name
         logger.log_status("Done running simulation for years %d thru %d" % (start_year, end_year))
 
     def _run_models_in_separate_processes(self, year_models_dict, year, resources):
@@ -565,11 +569,23 @@ if __name__ == "__main__":
 #    logger.enable_memory_logging()
     if not resources.get("log_to_stdout", True):
         logger.disable_std_out()
+        
+    profiler = None
+    if resources.get("profile_filename", None) is not None:
+        import hotshot
+        profiler = hotshot.Profile(resources.get("profile_filename"))
+        
     if resources.has_key("only_convert_large_datasets_from_mysql_to_flt"):
         self._merge_resources_with_defaults(resources)
         s.cache_baseyear_data_from_mysql(resources)
     else:
-        s.run(resources)
+        if profiler is None:
+            s.run(resources)
+        else:
+            profiler.run("s.run(resources)")
+            logger.log_status('Profiling data stored in %s. Use the python module hotshot to view them.' % 
+                                  resources.get("profile_filename"))
+            profiler.close()
 
     if options.delete_resources_file_directory:
         dir = os.path.split(options.resources_file_name)[0]
