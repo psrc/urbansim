@@ -11,7 +11,7 @@ create table annual_household_control_totals
   (year int, total_number_of_households int);
 
 create table annual_business_control_totals
-  (year int, sector_it int, total_number_of_businesses int);
+  (year int, sector_id int, total_number_of_businesses int);
 
 load data local infile 'Z:/Research/Projects/San Francisco/data/Control Totals/annual_household_control_totals.csv'
   into table annual_household_control_totals
