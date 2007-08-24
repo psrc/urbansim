@@ -102,7 +102,7 @@ class UnrollJobsFromEstablishments:
                 table_data=jobs_data
                 )
         job_dataset = JobDataset(in_storage=storage)
-        self.delete_jobs_with_non_existing_buildings(job_dataset, out_storage)
+        #self.delete_jobs_with_non_existing_buildings(job_dataset, out_storage)
         logger.log_status("Write jobs table.")
         job_dataset.write_dataset(out_table_name=jobs_table, out_storage=out_storage)
         logger.log_status("Created %s jobs." % job_dataset.size())
