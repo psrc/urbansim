@@ -224,7 +224,8 @@ my_controller_configuration = {
                         "capacity_string" : "'UNITS_capacity'",
                         "filter" : None, # will be set internally
                         "number_of_agents_string":"'sanfrancisco.parcel.UNITS'",
-                        "number_of_units_string":"'sanfrancisco.parcel.UNITS_capacity'",
+                        #"number_of_units_string":"'sanfrancisco.parcel.UNITS_capacity'",
+                        "number_of_units_string":None,
                         "developable_maximum_unit_variable" : "'UNITS_capacity'", #"developable_maximum_UNITS",
                         "developable_minimum_unit_variable" : None, # None means don't consider any minimum. For default, set it to empty string
                         "agents_grouping_attribute":"'sanfrancisco.building.building_class_id'",
