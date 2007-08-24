@@ -109,9 +109,11 @@ class UnrollJobsFromEstablishments:
     
     def delete_jobs_with_non_existing_buildings(self, jobs, in_storage):
         buildings = BuildingDataset(in_storage=in_storage)
-        index = buildings.try_get_id_index(jobs.get_attribute(buildings.get_id_name()[0]))
+        building_ids = jobs.get_attribute(buildings.get_id_name()[0])
+        valid_building_ids_idx = where(building_ids > 0)[0]
+        index = buildings.try_get_id_index(building_ids[valid_building_ids_idx])
         logger.log_status("%s jobs have non-existing locations and will be deleted." % where(index < 0)[0].size)
-        jobs.subset_by_index(where(index >= 0)[0], flush_attributes_if_not_loaded=False)
+        jobs.subset_by_index(valid_building_ids_idx[index >= 0], flush_attributes_if_not_loaded=False)
 
         
 class CreateBuildingSqftPerJobDataset:
