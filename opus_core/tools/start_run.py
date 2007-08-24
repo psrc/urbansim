@@ -34,7 +34,10 @@ class StartRunOptionGroup(GenericOptionGroup):
         self.parser.add_option("--years-to-cache", dest="years_to_cache", default=None, 
                                 help="List of years of data to take from the directory-to-cache (default is all years).")                   
         self.parser.add_option("--run-as-single-process", dest="run_as_single_process", default=False, 
-                                help="Determines if multiple processes may be used.")                   
+                                help="Determines if multiple processes may be used.")
+        self.parser.add_option("-p", "--profile", dest="profile_filename", default=None, 
+                                help="Turn on code profiling. Output data are in python hotshot format.")
+        
 
 if __name__ == "__main__":
     try: import wingdbstub
@@ -75,4 +78,7 @@ if __name__ == "__main__":
         if options.years_to_cache is not None:
             config['creating_baseyear_cache_configuration'].baseyear_cache.years_to_cache = eval(options.years_to_cache)
 
+    if options.profile_filename is not None:
+        config["profile_filename"] = options.profile_filename
+ 
     run_manager.run_run(config, run_as_multiprocess = run_as_multiprocess)
