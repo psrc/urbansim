@@ -1,1 +1,1 @@
-python C:\opus_workspace\opus_core\tools\start_run.py sanfrancisco.configs.baseline
+python C:\opus_workspace\opus_core\tools\start_run.py -c sanfrancisco.configs.baseline
