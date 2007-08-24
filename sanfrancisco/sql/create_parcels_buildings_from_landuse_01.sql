@@ -10,7 +10,7 @@ drop table if exists parcels_01;
 
 create table parcels_01 select
 mapblklot, mapblklot as blklot, block_num, lot_num, from_st, to_st, street as street_name, type as street_type, odd_even,
-'' as neighorhood, taz, dbiusetype as use_type, landuse, land_val as land_value,
+'' as neighorhood, taz2007 as zone_id, dbiusetype as use_type, landuse, land_val as land_value,
 zoning, height_lim as heightlimit, far as far_allowed, census_tra as census_tract, shape_length as perimeter, shape_area as area,
 mips_possible as mips_possible, cie_possible as cie_possible, med_possible, ret_possible, vis_possible, pdr_possible
 from luse01;
