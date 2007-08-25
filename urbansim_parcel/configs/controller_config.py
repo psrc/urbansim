@@ -111,11 +111,11 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                 location_set = "building",
                                 input_index = 'erm_index',
                                 estimation_weight_string = "vacant_SSS_job_space", #"pre_2001=building.year_built<=2000",
-                                agents_for_estimation_table = None, # will take standard jobs table 
-                                estimation_size_agents = 0.01,
+                                agents_for_estimation_table = None, #"jobs_for_estimation", #None, # will take standard jobs table 
+                                estimation_size_agents = 0.05,
                                 number_of_units_string = "total_SSS_job_space",
                                 filter = "building.non_residential_sqft",
-                                filter_for_estimation = "job.building_id",
+                                filter_for_estimation = "numpy.logical_and(job.building_id>0,job.join_flag<3)",
                                 portion_to_unplace = 0,
                                 capacity_string = "vacant_SSS_job_space",
                                 variable_package = "urbansim_parcel",
