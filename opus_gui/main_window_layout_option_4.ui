@@ -1,0 +1,277 @@
+<ui version="4.0" >
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1096</width>
+    <height>719</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>OPUS GUI</string>
+  </property>
+  <property name="windowIcon" >
+   <iconset>../../cuspa/sandbox/travis/installer/logos/urbansim_logo.BMP</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <widget class="QSplitter" name="splitter" >
+    <property name="geometry" >
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>1071</width>
+      <height>651</height>
+     </rect>
+    </property>
+    <property name="orientation" >
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <widget class="QTreeWidget" name="treeWidget" >
+     <property name="contextMenuPolicy" >
+      <enum>Qt::ActionsContextMenu</enum>
+     </property>
+     <property name="acceptDrops" >
+      <bool>true</bool>
+     </property>
+     <property name="autoFillBackground" >
+      <bool>true</bool>
+     </property>
+     <property name="midLineWidth" >
+      <number>1</number>
+     </property>
+     <property name="editTriggers" >
+      <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="tabKeyNavigation" >
+      <bool>true</bool>
+     </property>
+     <property name="dragEnabled" >
+      <bool>true</bool>
+     </property>
+     <property name="dragDropOverwriteMode" >
+      <bool>true</bool>
+     </property>
+     <property name="dragDropMode" >
+      <enum>QAbstractItemView::DragDrop</enum>
+     </property>
+     <property name="alternatingRowColors" >
+      <bool>true</bool>
+     </property>
+     <property name="selectionMode" >
+      <enum>QAbstractItemView::MultiSelection</enum>
+     </property>
+     <property name="iconSize" >
+      <size>
+       <width>1</width>
+       <height>1</height>
+      </size>
+     </property>
+     <property name="autoExpandDelay" >
+      <number>1</number>
+     </property>
+     <property name="indentation" >
+      <number>20</number>
+     </property>
+     <property name="sortingEnabled" >
+      <bool>true</bool>
+     </property>
+     <property name="animated" >
+      <bool>true</bool>
+     </property>
+     <property name="allColumnsShowFocus" >
+      <bool>true</bool>
+     </property>
+     <property name="columnCount" >
+      <number>1</number>
+     </property>
+     <column>
+      <property name="text" >
+       <string>Object</string>
+      </property>
+     </column>
+     <item>
+      <property name="text" >
+       <string>Project Template</string>
+      </property>
+      <item>
+       <property name="text" >
+        <string>Scenario</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Model System</string>
+       </property>
+       <item>
+        <property name="text" >
+         <string>Parcel Allocation Model System</string>
+        </property>
+        <item>
+         <property name="text" >
+          <string>Submodels</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Real Estate Price Model</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Household Transition Model</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Household Location Choice Model</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Employment Transition Model</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Employment Location Choice Model</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Development Project Proposal Model</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Building Construction Model</string>
+         </property>
+        </item>
+       </item>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Data</string>
+       </property>
+       <item>
+        <property name="text" >
+         <string>Target Geodatabase</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Initial Data</string>
+        </property>
+        <item>
+         <property name="text" >
+          <string>Zone to Zone Travel Data</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Real Estate Prices</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Parcels</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Households by Zone by Sector</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Existing Land Use</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Employment by Zone by Sector</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Business Establishments</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Buildings</string>
+         </property>
+        </item>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Data Quality Tests</string>
+        </property>
+       </item>
+      </item>
+     </item>
+     <item>
+      <property name="text" >
+       <string>MAG Project</string>
+      </property>
+      <item>
+       <property name="text" >
+        <string>Model System</string>
+       </property>
+       <item>
+        <property name="text" >
+         <string>New Sub Item</string>
+        </property>
+       </item>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Data</string>
+       </property>
+      </item>
+     </item>
+    </widget>
+    <widget class="QFrame" name="frame" >
+     <property name="frameShape" >
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1096</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuProject" >
+    <property name="title" >
+     <string>Project</string>
+    </property>
+    <addaction name="actionOpen" />
+    <addaction name="actionSave" />
+   </widget>
+   <addaction name="menuProject" />
+  </widget>
+  <widget class="QStatusBar" name="statusbar" />
+  <action name="actionOpen" >
+   <property name="text" >
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionSave" >
+   <property name="text" >
+    <string>Save</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
