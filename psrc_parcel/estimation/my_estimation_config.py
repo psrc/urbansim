@@ -27,7 +27,7 @@ my_configuration = {
         host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
         user_name     = os.environ.get('MYSQLUSERNAME',''),
         password      = os.environ.get('MYSQLPASSWORD',''),
-        database_name = 'psrc_2005_parcel_baseyear_change_20070802',
+        database_name = 'psrc_2005_parcel_baseyear_change_20070824',
         ),
     'dataset_pool_configuration': DatasetPoolConfiguration(
         package_order=['psrc_parcel', 'psrc', 'urbansim_parcel', 'urbansim', 'opus_core'],

@@ -73,8 +73,8 @@ class EstimationRunner(object):
         plot_correlation_diagnose('correlation_submodel_%s' % submodel)
 
 if __name__ == '__main__':
-    model = ("REPM", "real_estate_price_model")
-#    model = ("HLCM", "household_location_choice_model")
+#    model = ("REPM", "real_estate_price_model")
+    model = ("HLCM", "household_location_choice_model")
 #    model = ("ELCM", "employment_location_choice_model", "home_based", True)
 #    model = ("ELCM", "employment_location_choice_model", "non_home_based", False)
 
