@@ -126,6 +126,7 @@ class Baseline(UrbansimParcelConfiguration):
                 'flush_variables':False,
                 'low_memory_run':False,
                 'datasets_to_cache_after_each_model':["parcel", "building", 'household', 'job', 
+                                                      'development_project_proposal_component',  #to be cached for diagnostic purpose (lmwang)
                                                       'development_project_proposal', 'travel_data'],
                 'unroll_gridcells':False,
                 "datasets_to_preload":{
