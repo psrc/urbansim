@@ -50,7 +50,7 @@ DatasetTable(
       'urbansim_parcel.zone.population',
       'urbansim_parcel.zone.number_of_jobs',                     
     ],
-    exclude_condition = '==0' 
+    #exclude_condition = '==0' #exclude_condition now accepts opus expressions
 ),
 ]
 from opus_core.indicator_framework.core.indicator_factory import IndicatorFactory
