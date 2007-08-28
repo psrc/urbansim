@@ -56,7 +56,6 @@ class DatasetTable(AbstractIndicator):
         else:
             kwargs['storage_location'] = self.get_storage_location()
                 
-        print kwargs
         self.store = StorageFactory().get_storage(
             type = '%s_storage'%(self.output_type),
             **kwargs
@@ -116,12 +115,12 @@ class DatasetTable(AbstractIndicator):
         for attribute_name in self.attributes:
             if attribute_name not in id_attributes:
                 non_id_attributes.append(attribute_name)
-   
-        attributes = id_attributes + non_id_attributes   
+                 
         id_columns = [i for i in range(len(id_attributes))]
     
         cols = []
         col_titles = []
+        attributes = id_attributes + non_id_attributes
         
         for attribute_name in attributes:
             attribute_vals = self._get_indicator(attribute_name, year)
@@ -130,10 +129,12 @@ class DatasetTable(AbstractIndicator):
             col_titles.append(variable_name)
         
         if self.exclude_condition is not None:
+            exclude_mask = self._get_indicator(self.exclude_condition, year)
+            
             cols = self._conditionally_eliminate_rows(
                 cols,
                 id_columns,
-                self.exclude_condition)
+                exclude_mask)
         
         attribute_vals = {}
         for i in range(len(col_titles)):
@@ -152,30 +153,27 @@ class DatasetTable(AbstractIndicator):
         
         return self.get_file_path(year = year)
 
-    def _conditionally_eliminate_rows(self, data, id_columns, exclude_condition):
+    def _conditionally_eliminate_rows(self, data, id_columns, exclude_mask):
         '''eliminates all the rows where all the data values match the exclude_condition
            
            data -- an array of arrays 
            id_columns -- the columns which should be ignored when deciding to eliminate a row
-           exclude_condition -- the condition which determines whether a value can be eliminated
+           exclude_mask -- the mask to be applied to the cols
         '''
         
-        if exclude_condition is None:
-            return data
-        
-        data_columns = [c for c in range(len(data)) if c not in id_columns]
-        mask = None
-        
-        for col in data_columns:
-            col_data = data[col]
-            mask_cmd = 'col_data %s' % exclude_condition
-            masked_col = eval(mask_cmd)
-            if mask is None:
-                mask = masked_col
-            else:
-                mask = logical_and(mask, masked_col)
+#        data_columns = [c for c in range(len(data)) if c not in id_columns]
+#        mask = None
+#        
+#        for col in data_columns:
+#            col_data = data[col]
+#            mask_cmd = 'col_data %s' % exclude_condition
+#            masked_col = eval(mask_cmd)
+#            if mask is None:
+#                mask = masked_col
+#            else:
+#                mask = logical_and(mask, masked_col)
                 
-        mask = logical_not(mask)
+        mask = logical_not(exclude_mask)
         new_data = []
         for col in data:
             new_col = col[mask]
@@ -213,6 +211,34 @@ class Tests(AbstractIndicatorTest):
         self.assert_(os.path.exists(os.path.join(indicator_path, 'test__dataset_table____1980.tab')))
         self.assert_(os.path.exists(os.path.join(indicator_path, 'test__dataset_table____1980.meta')))
 
+    def test_conditionally_eliminate_rows_through_create_indicator(self):
+        
+        indicator_path = os.path.join(self.temp_cache_path, 'indicators')
+        self.assert_(not os.path.exists(indicator_path))
+        
+        table = DatasetTable(
+                  source_data = self.source_data,
+                  name = '',
+                  dataset_name = 'test', 
+                  attributes = ['opus_core.test.attribute', 
+                                'opus_core.test.attribute2'],
+                  output_type = 'tab',
+                  exclude_condition = 'opus_core.test.attribute<7'
+        )
+        
+        table.create(False)
+        
+        fpath = os.path.join(indicator_path, 'test__dataset_table____1980.tab')
+        self.assert_(os.path.exists(indicator_path))
+        self.assert_(os.path.exists(fpath))
+        self.assert_(os.path.exists(os.path.join(indicator_path, 'test__dataset_table____1980.meta')))
+
+        expected = 'id\tattribute\tattribute2\n3\t7\t70\n4\t8\t80\n'
+        f = open(fpath)
+        output = ''.join(f.readlines())
+        self.assertEqual(expected,output)
+        
+
     def test__conditionally_eliminate_rows(self):
         
         dataset_table = DatasetTable(
@@ -228,17 +254,19 @@ class Tests(AbstractIndicatorTest):
           array([1,2,1,2]),#id 2
           array([0,2,0,4])
           ]
-
+        exclude_mask = array([0,0,0,0])
         actual_output = dataset_table._conditionally_eliminate_rows(
             data, 
             id_columns=[0,3],
-            exclude_condition=None)        
+            exclude_mask = exclude_mask)        
+        
         self.assert_(ma.allequal(actual_output,data))
         
+        exclude_mask = array([0,0,1,0])
         actual_output = dataset_table._conditionally_eliminate_rows(
             data, 
             id_columns=[0,3],
-            exclude_condition='==0')
+            exclude_mask = exclude_mask)
         
         desired_output = [
           array([1,1,2]),
@@ -251,6 +279,45 @@ class Tests(AbstractIndicatorTest):
         self.assertEqual(len(actual_output), len(desired_output))
         for col in range(len(actual_output)):
             self.assert_(ma.allclose(actual_output[col], desired_output[col]))
+            
+#    def test__conditionally_eliminate_rows(self):
+#        
+#        dataset_table = DatasetTable(
+#             source_data = self.source_data, 
+#             attributes = [], 
+#             dataset_name = 'test',
+#             name = 'test')
+#        
+#        data = [
+#          array([1,1,2,2]),#id 1
+#          array([1,2,0,0]),
+#          array([1,2,0,0]),
+#          array([1,2,1,2]),#id 2
+#          array([0,2,0,4])
+#          ]
+#
+#        actual_output = dataset_table._conditionally_eliminate_rows(
+#            data, 
+#            id_columns=[0,3],
+#            exclude_condition=None)        
+#        self.assert_(ma.allequal(actual_output,data))
+#        
+#        actual_output = dataset_table._conditionally_eliminate_rows(
+#            data, 
+#            id_columns=[0,3],
+#            exclude_condition='==0')
+#        
+#        desired_output = [
+#          array([1,1,2]),
+#          array([1,2,0]),
+#          array([1,2,0]),
+#          array([1,2,2]),
+#          array([0,2,4])
+#          ]
+#        
+#        self.assertEqual(len(actual_output), len(desired_output))
+#        for col in range(len(actual_output)):
+#            self.assert_(ma.allclose(actual_output[col], desired_output[col]))
                                 
 if __name__ == '__main__':
     opus_unittest.main()

@@ -123,8 +123,8 @@ DatasetTable
         Each attribute will be a column in the resulting table.
     exclude_condition:
         Determines the condition under which certain rows 
-        are not included in the result. For example, if 
-        all the values in the row are zero, set this to "==0".
+        are not included in the result. This is an indicator expression.
+        For example, "urbansim.gridcell.population>0".
         This field is optional.
         
 --------------
@@ -221,7 +221,7 @@ indicators = [
          'urbansim.zone.population',
          'urbansim.zone.industrial_sqft',                     
        ],
-       exclude_condition = '==0' 
+       exclude_condition = 'urbansim.zone.population<100' #this accepts any opus expression
    ),
 
    #Expression example
