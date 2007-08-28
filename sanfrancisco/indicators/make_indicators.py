@@ -65,7 +65,7 @@ single_year_requests = [
                      'sector_6_employment=tract2000.aggregate(sanfrancisco.building.employment_of_sector_6, intermediates=[parcel])',
                      'total_employment=tract2000.aggregate(sanfrancisco.building.employment, intermediates=[parcel])',
        ],
-       exclude_condition = '==0' 
+       #exclude_condition = '==0' #exclude_condition now accepts opus expressions
    ),
 
        DatasetTable(
@@ -92,7 +92,7 @@ single_year_requests = [
                      'sector_6_employment=zone.aggregate(sanfrancisco.building.employment_of_sector_6, intermediates=[parcel])',
                      'total_employment=zone.aggregate(sanfrancisco.building.employment, intermediates=[parcel])',
        ],
-       exclude_condition = '==0' 
+       #exclude_condition = '==0' #exclude_condition now accepts opus expressions
 ),
 
     ]
