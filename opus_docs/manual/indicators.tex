@@ -440,8 +440,9 @@ A DatasetTable object accepts the following parameters:
 \tight
 \item \code{attributes} is the the fully qualified opus path of the indicator.
 \item \code{exclude_condition} determines the condition under which certain rows 
-are not included in the result. For example, if all the values in the row 
-are zero, set this to "==0". This field is optional.
+are not included in the result. This is an indicator expression.
+For example, "urbansim.gridcell.population>0" will eliminate all rows 
+where the population is greater than zero. This field is optional.
 \end{itemize}
 
 An example:
