@@ -64,7 +64,7 @@ single_year_requests = [
 #         'urbansim.zone.population',
 #         'urbansim.zone.industrial_sqft',                     
 #       ],
-#       exclude_condition = '==0' 
+#       #exclude_condition = '==0' #exclude_condition now accepts opus expressions
 #   ),
    
 #    Map(
