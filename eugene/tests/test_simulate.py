@@ -28,8 +28,6 @@ from urbansim.simulation.run_simulation_from_mysql import RunSimulationFromMysql
 class SimulationTest(opus_unittest.OpusTestCase):
     
     def setUp(self):
-        print 'here'
-        return
         self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
         self.simulation = RunSimulationFromMysql()
         run_configuration = Baseline()
@@ -51,8 +49,6 @@ class SimulationTest(opus_unittest.OpusTestCase):
     def test_simulation(self):
         """Checks that the simulation proceeds without caching.
         """
-        print 'test_simulation'
-        return
         self.simulation.run_simulation()
         logger.disable_file_logging()
         self.completed_without_error = True
