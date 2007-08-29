@@ -16,6 +16,8 @@ from opus_core.logger import logger
 
 
 class ExportStorage(object):
+    '''Manages the transfer of data from one storage object to another.'''
+    
     def export(self, in_storage, out_storage):
         
         ### TODO: get_dataset_names is not part of the standard Storage interface!
