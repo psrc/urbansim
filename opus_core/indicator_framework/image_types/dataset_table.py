@@ -233,11 +233,16 @@ class Tests(AbstractIndicatorTest):
         self.assert_(os.path.exists(fpath))
         self.assert_(os.path.exists(os.path.join(indicator_path, 'test__dataset_table____1980.meta')))
 
-        expected = 'id\tattribute\tattribute2\n3\t7\t70\n4\t8\t80\n'
-        f = open(fpath)
-        output = ''.join(f.readlines())
-        self.assertEqual(expected,output)
+
+        expected_r1 = [3,7,70]
+        expected_r2 = [4,8,80]
         
+        f = open(fpath)
+        f.readline() #don't care about header
+        output_r1 = [int(c) for c in f.readline().split('\t')]
+        output_r2 = [int(c) for c in f.readline().split('\t')]
+        self.assertEqual(expected_r1,output_r1)
+        self.assertEqual(expected_r2,output_r2)
 
     def test__conditionally_eliminate_rows(self):
         
