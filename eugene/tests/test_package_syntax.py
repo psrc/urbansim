@@ -21,7 +21,6 @@ class TestPackageSyntax(opus_unittest.OpusTestCase):
             'eugene', 
             file_names_that_do_not_need_gpl = 
                 ['wingdbstub.py', 'ez_setup.py', 'path.py'])
-        raise
         
         
 if __name__ == "__main__":
