@@ -36,6 +36,7 @@ class RegionalDevelopmentProjectTransitionModel( DevelopmentProjectTransitionMod
         for area in unique_large_areas:
             location_index = where(locations_large_area_ids == area)[0]
             locations_for_this_area = DatasetSubset(location_set, location_index)
+            logger.log_status("DPLCM for area %s", area)
             target_residential_vacancy_rate, target_non_residential_vacancy_rate = self._get_target_vacancy_rates(vacancy_table, year, area)
             for project_type in model_configuration['development_project_types']:
                 # determine current-year vacancy rates
@@ -48,6 +49,8 @@ class RegionalDevelopmentProjectTransitionModel( DevelopmentProjectTransitionMod
                     target_vacancy_rate = target_non_residential_vacancy_rate
                 should_develop_units = int(round(max( 0, ( target_vacancy_rate * units_sum - vacant_units_sum ) /
                                              ( 1 - target_vacancy_rate ) )))
+                logger.log_status(project_type + ": vacant units: %d, should be vacant: %f, sum units: %d, will develop: %d"
+                          % (vacant_units_sum, target_vacancy_rate * units_sum, units_sum, should_develop_units))
                 #create projects
                 if should_develop_units > 0:
                     project_dataset = self._create_projects(should_develop_units, project_type, history_table,
