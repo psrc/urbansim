@@ -12,10 +12,14 @@
 # other acknowledgments.
 # 
 
+# Modify for win
+RM = rm -f
+#RM = del
+
 all:
-	cd Main; $(MAKE)
+	$(MAKE) -C Main
 
 clean:
-	rm -f *.pyc
-	rm -f *~
-	cd Main; $(MAKE) clean
+	$(RM) *.pyc
+	$(RM) *~
+	$(MAKE) -C Main clean

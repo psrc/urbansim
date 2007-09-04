@@ -12,13 +12,16 @@
 # other acknowledgments.
 # 
 
+# Modify to RM = del for win
+RM = rm -f
+#RM = del
 
 all: opusMain_ui.py opusMain_rc.py
 
 clean:
-	rm -f opusMain_ui.py opusMain_rc.py
-	rm -f *.pyc
-	rm -f *~
+	$(RM) opusMain_ui.py opusMain_rc.py
+	$(RM) *.pyc
+	$(RM) *~
 
 opusMain_ui.py: opusMain.ui
 	pyuic4 -o opusMain_ui.py opusMain.ui
