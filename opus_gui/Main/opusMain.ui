@@ -50,7 +50,7 @@
        <property name="currentIndex" >
         <number>0</number>
        </property>
-       <widget class="QWidget" name="datamanger_page" >
+       <widget class="QWidget" name="datamanager_page" >
         <property name="geometry" >
          <rect>
           <x>0</x>
@@ -110,8 +110,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>96</width>
-          <height>79</height>
+          <width>402</width>
+          <height>475</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -253,9 +253,9 @@
       </widget>
       <widget class="QTabWidget" name="tabWidget" >
        <property name="currentIndex" >
-        <number>0</number>
+        <number>1</number>
        </property>
-       <widget class="QWidget" name="tab_5" >
+       <widget class="QWidget" name="tab_detailView" >
         <attribute name="title" >
          <string>Detail View</string>
         </attribute>
@@ -282,7 +282,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tab_2" >
+       <widget class="QWidget" name="tab_mapView" >
         <attribute name="title" >
          <string>Map View</string>
         </attribute>
@@ -313,7 +313,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tab" >
+       <widget class="QWidget" name="tab_trendView" >
         <attribute name="title" >
          <string>Trend View</string>
         </attribute>
@@ -420,12 +420,12 @@ p, li { white-space: pre-wrap; }
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tab_3" >
+       <widget class="QWidget" name="tab_modelFlow" >
         <attribute name="title" >
          <string>Model Flow</string>
         </attribute>
        </widget>
-       <widget class="QWidget" name="tab_4" >
+       <widget class="QWidget" name="tab_runStatus" >
         <attribute name="title" >
          <string>Run Status</string>
         </attribute>
