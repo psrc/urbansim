@@ -1,9 +1,0 @@
-<RCC>
-    <qresource prefix="/Images" >
-        <file>Images/mActionAddLayer.png</file>
-        <file>Images/mActionAddRasterLayer.png</file>
-        <file>Images/mActionPan.png</file>
-        <file>Images/mActionZoomIn.png</file>
-        <file>Images/mActionZoomOut.png</file>
-    </qresource>
-</RCC>
