@@ -1,0 +1,544 @@
+<ui version="4.0" >
+ <author>Aaron Racicot</author>
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>902</width>
+    <height>648</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>OpusGui</string>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <layout class="QGridLayout" >
+    <property name="margin" >
+     <number>9</number>
+    </property>
+    <property name="spacing" >
+     <number>6</number>
+    </property>
+    <item row="0" column="0" >
+     <widget class="QSplitter" name="splitter" >
+      <property name="frameShape" >
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="orientation" >
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QToolBox" name="toolBox" >
+       <property name="enabled" >
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy" >
+        <sizepolicy>
+         <hsizetype>5</hsizetype>
+         <vsizetype>5</vsizetype>
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="baseSize" >
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="currentIndex" >
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="datamanger_page" >
+        <property name="geometry" >
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>402</width>
+          <height>475</height>
+         </rect>
+        </property>
+        <attribute name="label" >
+         <string>Data Manager</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>9</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QTreeWidget" name="treeWidget_2" >
+           <column>
+            <property name="text" >
+             <string/>
+            </property>
+           </column>
+           <item>
+            <property name="text" >
+             <string>Database</string>
+            </property>
+            <item>
+             <property name="text" >
+              <string>Table</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Relation</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>View</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Test</string>
+             </property>
+            </item>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="modelmanager_page" >
+        <property name="geometry" >
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>96</width>
+          <height>79</height>
+         </rect>
+        </property>
+        <attribute name="label" >
+         <string>Model Manager</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>9</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QTreeWidget" name="treeWidget_3" >
+           <column>
+            <property name="text" >
+             <string/>
+            </property>
+           </column>
+           <item>
+            <property name="text" >
+             <string>Model System</string>
+            </property>
+            <item>
+             <property name="text" >
+              <string>Model</string>
+             </property>
+             <item>
+              <property name="text" >
+               <string>Configuration</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Specification</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Coefficients</string>
+              </property>
+             </item>
+            </item>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="runmanager_page" >
+        <property name="geometry" >
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>96</width>
+          <height>79</height>
+         </rect>
+        </property>
+        <attribute name="label" >
+         <string>Run Manager</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>9</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QTreeWidget" name="treeWidget_4" >
+           <column>
+            <property name="text" >
+             <string/>
+            </property>
+           </column>
+           <item>
+            <property name="text" >
+             <string>Scenario Configuration</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Run Configuration</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="resultsmanager_page" >
+        <property name="geometry" >
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>96</width>
+          <height>79</height>
+         </rect>
+        </property>
+        <attribute name="label" >
+         <string>Results Manager</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>9</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QTreeWidget" name="treeWidget_5" >
+           <column>
+            <property name="text" >
+             <string/>
+            </property>
+           </column>
+           <item>
+            <property name="text" >
+             <string>Indicator Set</string>
+            </property>
+            <item>
+             <property name="text" >
+              <string>Table</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Chart</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Map</string>
+             </property>
+            </item>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QTabWidget" name="tabWidget" >
+       <property name="currentIndex" >
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="tab_5" >
+        <attribute name="title" >
+         <string>Detail View</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>9</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QGroupBox" name="groupBox_3" >
+           <property name="title" >
+            <string>Details Pane #1</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QGroupBox" name="groupBox_4" >
+           <property name="title" >
+            <string>Details Pane #2</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab_2" >
+        <attribute name="title" >
+         <string>Map View</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>9</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QFrame" name="frameMap" >
+           <property name="sizePolicy" >
+            <sizepolicy>
+             <hsizetype>5</hsizetype>
+             <vsizetype>5</vsizetype>
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="frameShape" >
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow" >
+            <enum>QFrame::Raised</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab" >
+        <attribute name="title" >
+         <string>Trend View</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>9</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="1" column="0" >
+          <widget class="QGroupBox" name="groupBox_2" >
+           <property name="title" >
+            <string>Trend View</string>
+           </property>
+           <layout class="QGridLayout" >
+            <property name="margin" >
+             <number>9</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item row="0" column="0" >
+             <widget class="QFrame" name="frame" >
+              <property name="frameShape" >
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow" >
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QGridLayout" >
+               <property name="margin" >
+                <number>9</number>
+               </property>
+               <property name="spacing" >
+                <number>6</number>
+               </property>
+               <item row="0" column="0" >
+                <widget class="QTextEdit" name="textEdit" >
+                 <property name="minimumSize" >
+                  <size>
+                   <width>100</width>
+                   <height>100</height>
+                  </size>
+                 </property>
+                 <property name="baseSize" >
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="html" >
+                  <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:15pt; font-weight:600; font-style:italic; text-decoration: underline;">An Image or Trend Graph&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="0" >
+          <widget class="QGroupBox" name="groupBox" >
+           <property name="title" >
+            <string>Model Selection Matrix</string>
+           </property>
+           <layout class="QGridLayout" >
+            <property name="margin" >
+             <number>9</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item row="0" column="0" >
+             <widget class="QTableWidget" name="tableWidget" >
+              <row>
+               <property name="text" >
+                <string>Foo</string>
+               </property>
+              </row>
+              <row>
+               <property name="text" >
+                <string>Bar</string>
+               </property>
+              </row>
+              <column>
+               <property name="text" >
+                <string>Test1</string>
+               </property>
+              </column>
+              <column>
+               <property name="text" >
+                <string>Test2</string>
+               </property>
+              </column>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab_3" >
+        <attribute name="title" >
+         <string>Model Flow</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="tab_4" >
+        <attribute name="title" >
+         <string>Run Status</string>
+        </attribute>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>902</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuModel_Manager" >
+    <property name="title" >
+     <string>Model Manager</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuRun_Manager" >
+    <property name="title" >
+     <string>Run Manager</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuProject" >
+    <property name="title" >
+     <string>Project</string>
+    </property>
+    <addaction name="separator" />
+    <addaction name="separator" />
+   </widget>
+   <widget class="QMenu" name="menuUtilities" >
+    <property name="title" >
+     <string>Utilities</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuMap" >
+    <property name="title" >
+     <string>Map</string>
+    </property>
+    <addaction name="mpActionAddRasterLayer" />
+    <addaction name="mpActionAddVectorLayer" />
+    <addaction name="separator" />
+    <addaction name="mpActionZoomIn" />
+    <addaction name="mpActionZoomOut" />
+    <addaction name="mpActionPan" />
+   </widget>
+   <widget class="QMenu" name="menuData_Manager" >
+    <property name="title" >
+     <string>Data Manager</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuResults_Manager" >
+    <property name="title" >
+     <string>Results Manager</string>
+    </property>
+   </widget>
+   <addaction name="menuProject" />
+   <addaction name="menuData_Manager" />
+   <addaction name="menuModel_Manager" />
+   <addaction name="menuRun_Manager" />
+   <addaction name="menuResults_Manager" />
+   <addaction name="menuMap" />
+   <addaction name="menuUtilities" />
+  </widget>
+  <widget class="QStatusBar" name="statusbar" />
+  <action name="mpActionZoomOut" >
+   <property name="icon" >
+    <iconset resource="opusMain.qrc" >:/Images/Images/mActionZoomOut.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Zoom Out</string>
+   </property>
+  </action>
+  <action name="mpActionPan" >
+   <property name="icon" >
+    <iconset resource="opusMain.qrc" >:/Images/Images/mActionPan.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Pan</string>
+   </property>
+  </action>
+  <action name="mpActionAddRasterLayer" >
+   <property name="icon" >
+    <iconset resource="opusMain.qrc" >:/Images/Images/mActionAddRasterLayer.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Add Raster Layer</string>
+   </property>
+  </action>
+  <action name="mpActionZoomIn" >
+   <property name="icon" >
+    <iconset resource="opusMain.qrc" >:/Images/Images/mActionZoomIn.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Zoom In</string>
+   </property>
+  </action>
+  <action name="mpActionAddVectorLayer" >
+   <property name="icon" >
+    <iconset resource="opusMain.qrc" >:/Images/Images/mActionAddLayer.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Add Vector Layer</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="opusMain.qrc" />
+ </resources>
+ <connections/>
+</ui>
