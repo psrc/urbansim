@@ -317,7 +317,21 @@ class Dataset(AbstractDataset):
 
         # check obligatory entries
         local_resources.check_obligatory_keys(["in_storage"])
-        return local_resources["in_storage"].determine_field_names(local_resources, attribute_type)
+        table_name = local_resources['in_table_name']
+        computed_table_name = table_name + '.computed'
+        store = local_resources['in_storage']
+        
+        if not store.table_exists(table_name) and not store.table_exists(computed_table_name):
+            raise Exception, '%s and %s does not exist'%(table_name, computed_table_name)
+        
+        attribute_names = []
+        if ((attribute_type == AttributeType.PRIMARY or attribute_type == Storage.ALL_COLUMNS) \
+            and store.table_exists(table_name)):
+            attribute_names += store.get_column_names(table_name)
+        if ((attribute_type == AttributeType.COMPUTED or attribute_type == Storage.ALL_COLUMNS) \
+            and store.table_exists(computed_table_name)):
+            attribute_names += store.get_column_names(computed_table_name) 
+        return attribute_names
 
     def _do_flush_attribute(self, name):
         if not isinstance(name, VariableName):
@@ -466,16 +480,10 @@ class DummyStorage(Storage):
             return []
 
 class DatasetTests(opus_unittest.OpusTestCase):
+
     def test_dataset_table_does_not_exist(self):
         storage = StorageFactory().get_storage('dict_storage')
-
-        storage.write_table(
-            'tests',
-            {
-                'id':array([1,2,3]),
-            }
-        )
-
+        
         self.assertRaises(Exception,
                           Dataset,
                           in_storage = storage,
@@ -824,6 +832,36 @@ class DatasetTests(opus_unittest.OpusTestCase):
         ds.write_dataset(out_storage=out_storage)
         self.assertEqual(Set(['tests_out','tests_out.computed']),Set(out_storage.get_table_names()))
         
+    def test_determine_stored_attribute_names(self):
+        in_storage = StorageFactory().get_storage('dict_storage')
+
+        in_storage.write_table(
+            'tests',
+            {
+                'id':array([1,2,3]),
+                'attr':array([100,200,300]),
+                'attr2':array([11,22,33]),
+            }
+        )
+        in_storage.write_table(
+            'tests.computed',
+            {
+                'attr3':array([7,8,9]),
+                'attr4':array([45,46,47]),
+            }
+        )       
+        ds = Dataset(in_storage=in_storage, in_table_name='tests', id_name='id')
+        
+        expected_attrs = sorted(['id', 'attr', 'attr2'])
+        attribute_type = AttributeType.PRIMARY
+        attrs = ds.determine_stored_attribute_names(attribute_type = attribute_type)
+        self.assertEqual(expected_attrs, sorted(attrs))
+        
+        expected_attrs = sorted(['attr3', 'attr4'])
+        attribute_type = AttributeType.COMPUTED
+        attrs = ds.determine_stored_attribute_names(attribute_type = attribute_type)
+        self.assertEqual(expected_attrs, sorted(attrs))
+                
     def test_chunk_columns_documentation(self):
         storage = DummyStorage()
         expected = [ ['col1','col2'],['col3','col4'],['col5'] ]

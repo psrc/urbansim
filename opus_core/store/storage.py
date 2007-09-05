@@ -66,6 +66,14 @@ class Storage(Storage_old):
         self._get_column_size_and_names(table_data)
         raise NotImplementedError()
 
+    #TODO: be more principled here...
+    def table_exists(self, table_name):
+        try:
+            self.get_column_names(table_name)
+        except:
+            return False
+        return True
+        
     # _determine_field_names
     def get_column_names(self, table_name, lowercase=True):
         """
