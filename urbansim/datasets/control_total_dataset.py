@@ -25,7 +25,7 @@ class ControlTotalDataset(Dataset):
                         "employment":["year", "sector_id"]}
 
     def __init__(self, resources=None, what="household", in_storage=None,
-            in_table_name=None, attributes=None, out_storage=None,
+            in_table_name=None, out_storage=None,
             out_table_name=None, id_name=None, nchunks=None, debuglevel=0):
         debug = DebugPrinter(debuglevel)
         debug.print_debug("Creating ControlTotalDataset object for "+what+".",2)
@@ -42,16 +42,16 @@ class ControlTotalDataset(Dataset):
             in_storage=in_storage,
             out_storage=out_storage,
             in_table_name_pair=(in_table_name,in_table_name_default),
-            attributes_pair=(attributes,attributes_default),
+            attributes_pair=(None, attributes_default),
             out_table_name_pair=(out_table_name, out_table_name_default),
             id_name_pair=(id_name,self.id_name_default[what]),
             nchunks_pair=(nchunks,nchunks_default),
             debug_pair=(debug,None)
             )
-
+        table_name = resources["in_table_name"]
         self.what = what
         if (id_name == None) and (what == "household"): # determine id_name depending on the columns in the table
-            id_names = resources["in_storage"].determine_field_names(resources)
+            id_names = resources["in_storage"].get_column_names(table_name)
             for name in self.id_name_default[what]:
                 if name in id_names:
                     id_names.remove(name)
@@ -59,7 +59,7 @@ class ControlTotalDataset(Dataset):
                 id_names.remove("total_number_of_households")
             resources.merge({"id_name":resources["id_name"] + id_names})
 
-        Dataset.__init__(self,resources = resources)
+        Dataset.__init__(self, resources = resources)
 
     def sample_control_totals(self, variance, base_year=None, cache_storage=None, multiplicator=1):
         """ Sample control totals with given variance (multiplied by the given multiplicator)
