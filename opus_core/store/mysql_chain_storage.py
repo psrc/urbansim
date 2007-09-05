@@ -127,7 +127,9 @@ from opus_core.store.mysql_database_server import MysqlDatabaseServer
 
 class TestMysqlChainStorage(opus_unittest.OpusTestCase):
     def setUp(self):
-        db_server = MysqlDatabaseServer(DatabaseServerConfiguration())
+        db_server = MysqlDatabaseServer(DatabaseServerConfiguration(
+            host_name = os.environ.get('MYSQLHOSTNAMEFORTESTS','localhost')
+        ))
         
         db_server.drop_database('database_a')
         db_server.create_database('database_a')
@@ -179,7 +181,8 @@ class TestMysqlChainStorage(opus_unittest.OpusTestCase):
     
     def _get_mysql_chain_storage_for_localhost_database(self, database_name):
         return mysql_chain_storage(
-            hostname = os.environ['MYSQLHOSTNAMEFORTESTS'],
+                                   
+            hostname = os.environ.get('MYSQLHOSTNAME','localhost'),
             username = os.environ['MYSQLUSERNAME'],
             password = os.environ['MYSQLPASSWORD'],
             database_name = database_name,
