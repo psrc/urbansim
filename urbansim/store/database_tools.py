@@ -21,7 +21,7 @@ from opus_core.configurations.database_server_configuration import DatabaseServe
 
 class DB_defaults(object):
     db='database_tools_temp_db'
-    host_name='localhost'
+    host_name=os.environ.get('MYSQLHOSTNAMEFORTESTS', 'localhost')
     user_name=os.environ['MYSQLUSERNAME']
     password =os.environ['MYSQLPASSWORD']
 
