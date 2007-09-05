@@ -161,11 +161,12 @@ coef.summary()
 
 from opus_core.datasets.dataset import Dataset
 dstorage = StorageFactory().get_storage('dict_storage')
-dstorage._write_dataset(out_table_name='gridcells',
-                       values= {'id':array([1,2,3,4]),
-                                'distance_to_cbd':array([2,4,6,8])
-                               }
-                     )
+dstorage.write_table(
+    table_name = 'gridcells',
+    table_data = {'id':array([1,2,3,4]),
+             'distance_to_cbd':array([2,4,6,8])
+             })
+
 ds = Dataset(in_storage=dstorage, in_table_name='gridcells',
              id_name='id', dataset_name='gridcell')
 
@@ -237,11 +238,11 @@ specification = EquationSpecification(
 
 # Aggregate, disaggregate
 dstorage = StorageFactory().get_storage('dict_storage')
-dstorage._write_dataset(out_table_name='neighborhoods',
-                       values={"nbh_id":array([1,2,3])}
+dstorage.write_table(table_name='neighborhoods',
+                     table_data={"nbh_id":array([1,2,3])}
                       )
-dstorage._write_dataset(out_table_name='zones',
-                       values={"zone_id":array([1,2,3,4,5]),
+dstorage.write_table(table_name='zones',
+                     table_data={"zone_id":array([1,2,3,4,5]),
                                 "nbh_id":array([3,3,1,2,1]),
                                 }
                       )
@@ -309,8 +310,8 @@ class MyChunkModel(ChunkModel):
 from numpy import arange, array
 from opus_core.storage_factory import StorageFactory
 storage = StorageFactory().get_storage('dict_storage')
-storage._write_dataset(out_table_name='dataset',
-                   values={'id':arange(100000)+1,
+storage.write_table(table_name='dataset',
+                   table_data={'id':arange(100000)+1,
                            'means':array(50000*[0]+50000*[10]),
                            'variances':array(50000*[1]+50000*[5])
                           }
