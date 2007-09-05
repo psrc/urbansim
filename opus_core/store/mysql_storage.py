@@ -253,7 +253,7 @@ else:
     from sets import Set
     
     from opus_core.store.storage import TestStorageInterface
-    from opus_core.configurations.database_server_configuration import LocalhostDatabaseServerConfiguration
+    from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
     from opus_core.store.mysql_database_server import MysqlDatabaseServer
     
     from numpy import array
@@ -273,7 +273,7 @@ else:
     
     class FunctionalTestsForMysqlStorage(opus_unittest.TestCase):
         def setUp(self):
-            db_server = MysqlDatabaseServer(LocalhostDatabaseServerConfiguration())
+            db_server = MysqlDatabaseServer(DatabaseServerConfiguration())
             
             db_server.drop_database('database_a')
             db_server.create_database('database_a')
@@ -293,12 +293,12 @@ else:
             database.DoQuery('INSERT INTO table_a4 (tinyint_col, int_col, bigint_col) VALUES (1,2,3)')
         
         def tearDown(self):
-            db_server = MysqlDatabaseServer(LocalhostDatabaseServerConfiguration())
+            db_server = MysqlDatabaseServer(DatabaseServerConfiguration())
             
             db_server.drop_database('database_a')
         
         def _get_mysql_storage_for_localhost_database(self, database_name):
-            localhost_database_server_configuration = LocalhostDatabaseServerConfiguration()
+            localhost_database_server_configuration = DatabaseServerConfiguration()
             return mysql_storage(
                 hostname = localhost_database_server_configuration.host_name,
                 username = localhost_database_server_configuration.user_name,

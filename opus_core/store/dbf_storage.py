@@ -334,7 +334,7 @@ else:
             self.assertDictsEqual(actual, expected, msg='expected and actual dictionarys not equal! \n actual=   %s  \n'
                                   'expected= %s' %(actual,expected))
     
-        def test__determine_field_names(self):
+        def test_get_column_names(self):
             expected = ['keyid', 'works']
             actual = self.storage.get_column_names(table_name='test_logical')
             

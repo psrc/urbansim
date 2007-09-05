@@ -101,20 +101,6 @@ class mysql_storage(Storage):
                 total_row_count = total_row_count + 1
             self.get_database_connection().DoMultiInsertsFromResultListInto(out_table_name, inputlist)
 
-    def determine_field_names(self, load_resources, attributes='*'):
-        load_resources.check_obligatory_keys(['in_table_name'])
-
-        in_table_name = load_resources['in_table_name']
-
-        return self._determine_field_names(in_table_name=in_table_name)
-
-    def _determine_field_names(self, in_table_name):
-        query = self.make_query("show_fields_from_table", in_table_name)
-        results = self.get_database_connection().GetResultsFromQuery(query)
-        attnames = map(lambda x: x[0].lower(), results[1:])
-
-        return attnames
-
     def make_query(self, type, arglist):
         if type == "all_fields_from_one_table":
             return self.Query[type] +  arglist

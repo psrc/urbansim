@@ -26,14 +26,6 @@ class dict_storage(Storage):
     def _write_dataset(self, out_table_name, values):
         self._mystorage[out_table_name] = copy.deepcopy(values)
 
-    def _determine_field_names(self, in_table_name):
-        return self._mystorage[in_table_name].keys()
-    
-        
-    def determine_field_names(self, load_resources, attributes='*'):
-        in_table_name = load_resources['in_table_name']
-        return self._determine_field_names(in_table_name=in_table_name)
-
     def write_dataset(self, write_resources):
         out_table_name = write_resources['out_table_name']
         values = write_resources['values']
@@ -67,14 +59,6 @@ class DictStorageTests(opus_unittest.OpusTestCase):
             expected_internal_storage[self.table_name].keys())
         self.assertEqual(self.storage._mystorage.keys(), expected_internal_storage.keys())
         
-    def test_determine_field_names(self):
-        self.storage._mystorage = {self.table_name:{self.id_name:None, self.attr_name:None}}
-        
-        expected_field_names = self.storage._mystorage[self.table_name].keys()
-        
-        field_names = self.storage._determine_field_names(self.table_name)
-        
-        self.assertEqual(field_names, expected_field_names)
         
 if __name__ == '__main__':
     opus_unittest.main()

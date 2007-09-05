@@ -137,29 +137,6 @@ else:
                 db.close()
                 
             self._short_names = short_names
-        
-        def determine_field_names(self, load_resources):
-            in_table_name = load_resources['in_table_name']
-            lowercase = load_resources.get('lowercase', True)
-            
-            return self._determine_field_names(
-                in_table_name = in_table_name,
-                lowercase = lowercase,
-                )
-        
-        def _determine_field_names(self, in_table_name, lowercase=True):
-            dbf = self._get_dbf_for_table(in_table_name)
-            
-            available_column_names = []
-            for field_descriptor in dbf.header.fields:
-                column_name = field_descriptor.name
-                
-                if lowercase:
-                    column_name = column_name.lower()
-                    
-                available_column_names.append(column_name)
-                
-            return available_column_names
     
         def _get_file_path_for_table(self, table_name):
             filename = '%s.dbf' % (table_name)
@@ -246,21 +223,6 @@ else:
             self.assertDictsNotEqual({'a':1,'b':2},{'a':1,'b':4})
             self.assertDictsNotEqual({'a':1},{'a':1,'b':2})     
             self.assertDictsNotEqual({'a':1,'b':2},{'a':1})  
-                    
-        def test_determine_field_names(self):
-            expected = ['keyid', 'works']
-            actual = self.storage.determine_field_names(Resources({
-                'in_table_name': 'test_logical',
-                }))
-            self.assertEqual(expected, actual)
-            
-            self.assertRaises(
-                NameError, 
-                self.storage.determine_field_names, 
-                Resources({
-                    'in_table_name': 'idonotexist',
-                    })
-                )
             
     class DbfStorageWriteTests(opus_unittest.OpusTestCase):
         def setUp(self):

@@ -38,9 +38,7 @@ class sql_server_storage(Storage, sql_server_storage_old):
         
     load_dataset expects database_name to be the name of an existing
         database, with the in_table_name table exists.
-        
-    determine_field_names expects database_name to be the name of an 
-        existing database where the in_table_name table exists.
+
     """
     # hook for unit tests
     _pymssql = pymssql_module # If None, pymssql could not be imported

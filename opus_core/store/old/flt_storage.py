@@ -31,17 +31,17 @@ class flt_storage(Storage):
     def __init__(self, storage_location):
         self._base_directory = storage_location
 
-    def determine_field_names(self, load_resources, attributes=None):
+    def x_determine_field_names(self, load_resources, attributes=None):
         in_table_name = load_resources.get('in_table_name', '')
         lowercase = load_resources.get('lowercase', False)
 
         if attributes is None:
             attributes = load_resources.get('attributes', '*')
             
-        return self._determine_field_names(in_table_name=in_table_name, 
+        return self._x_determine_field_names(in_table_name=in_table_name, 
             attributes=attributes, lowercase=lowercase)
     
-    def _determine_field_names(self, in_table_name='', attributes='*', lowercase=True):
+    def _x_determine_field_names(self, in_table_name='', attributes='*', lowercase=True):
         file_paths = self._get_file_paths_for_stored_attributes(in_table_name)
         
         vars = []
@@ -153,7 +153,7 @@ class flt_storage(Storage):
                 if not os.path.isdir(os.path.join(base_dir, dir_name)):
                     continue
                     
-                field_names = self._determine_field_names(in_table_name=dir_name)
+                field_names = self._x_determine_field_names(in_table_name=dir_name)
                 if field_names:
                     valid_dirs.append(dir_name)
             

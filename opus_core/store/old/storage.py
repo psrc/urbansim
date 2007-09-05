@@ -31,40 +31,6 @@ class Storage(object):
         """
         raise NotImplementedError, "Storage method 'write_dataset' not implemented."
         
-    def determine_field_names(self, load_resources=None):
-        raise NotImplementedError, "Storage method 'determine_field_names' not implemented."
-
-    def chunk_fields(self, load_resources=None):
-        """Returns a nested list where i-th nest is a list of attributes for i-th chunk. 
-        'load_resources' is of type 'Resources'. Its entry 'attributes' should be either a list of attribute names
-        or type (PRIMARY,COMPUTED) or '*' for all attributes. If it is not a list, the Storage object 
-        is expected to have a method 'determine_field_names' that takes an object of class 'Resources' as 
-        an argument and returns a list of attributes of the dataset. 
-        """
-        if not isinstance(load_resources, Resources):
-            load_resources=Resources()
-            
-        if load_resources.is_in("attributes"):
-            attributes = load_resources["attributes"]
-        else:
-            attributes = '*'
-        if not isinstance(attributes, list):
-            attributes = self.determine_field_names(load_resources)
-        l = len(attributes)
-        if l<=0:
-            logger.log_warning("No attributes to be loaded.")
-            return []
-        nchunks = 1 # default
-        if load_resources.is_in("nchunks"):        
-            nchunks = load_resources["nchunks"]
-        
-        nchunks = min(nchunks, l)
-        chunksize = max(1,int(l/nchunks))
-        lastchunk = l - (nchunks-1)*chunksize
-        result = []
-        for i in range(nchunks)[0:(nchunks-1)]:
-            result = result + [attributes[i*chunksize:(i+1)*chunksize]]
-        return result + [attributes[(l-lastchunk):l]]    
 
     def _select_attributes(self, requested_attributes, available_attributes,
                            case_insensitive=False):

@@ -125,23 +125,6 @@ class delimited_storage(Storage):
         finally:
             output.close()
         
-    def determine_field_names(self, load_resources, attributes=None):
-        in_table_name = load_resources['in_table_name']
-        lowercase = load_resources.get('lowercase', True)
-        
-        return self._determine_field_names(
-            in_table_name = in_table_name,
-            lowercase = lowercase,
-            )
-        
-    def _determine_field_names(self, in_table_name, lowercase=True):
-        available_attribute_names, available_attribute_types = self._get_header_information(in_table_name)
-            
-        if lowercase:
-            available_attribute_names = self._lower_case(available_attribute_names)
-            
-        return available_attribute_names
-        
     def has_table(self, table_name):
         return os.path.exists(self._get_file_path_for_table(table_name))
     
@@ -314,28 +297,6 @@ class TestDelimitedStorage(opus_unittest.OpusTestCase):
         if os.path.exists(base_location):
             rmtree(base_location)
         
-    def test__determine_field_names(self):
-        expected = ['attribute1', 'attribute2', 'attribute3']
-        actual = self.storage._determine_field_names(in_table_name=self.table_name)
-        
-        self.assertEqual(expected, actual)
-        
-        self.assertRaises(NameError, self.storage._determine_field_names, in_table_name='idonotexist')
-    
-    def test_determine_field_names(self):
-        expected = ['attribute1', 'attribute2', 'attribute3']
-        actual = self.storage.determine_field_names(Resources({
-            'in_table_name': self.table_name,
-            }))
-        self.assertEqual(expected, actual)
-        
-        self.assertRaises(
-            NameError, 
-            self.storage.determine_field_names, 
-            Resources({
-                'in_table_name': 'idonotexist',
-                })
-            )
         
     def test_get_index_map(self):
         actual = self.storage._get_index_map(

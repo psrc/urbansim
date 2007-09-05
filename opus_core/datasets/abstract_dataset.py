@@ -501,7 +501,7 @@ class AbstractDataset(object):
             self.flush_dataset()
 
     def get_cache_directory(self):
-        return self.attribute_cache._get_cache_directory()
+        return self.attribute_cache.get_storage_location()
 
     def remove_cache_directory(self):
         self.attribute_cache.simulation_state.remove_base_cache_directory()

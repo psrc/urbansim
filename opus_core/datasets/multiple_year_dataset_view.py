@@ -26,6 +26,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.variables.attribute_type import AttributeType
 from opus_core.session_configuration import SessionConfiguration
+from opus_core.store.storage import Storage
 
 class MultipleYearDatasetView(AbstractDataset):
     """
@@ -69,10 +70,8 @@ class MultipleYearDatasetView(AbstractDataset):
             primary_attributes_from_other_years = None
             for year in years_to_merge:
                 SimulationState().set_current_time(year)
-                primary_attributes_for_this_year = attribute_cache.determine_field_names(Resources({
-                    'in_table_name': in_table_name, 
-                    'attributes': AttributeType.PRIMARY})
-                    )
+                primary_attributes_for_this_year = attribute_cache.get_column_names(table_name = in_table_name)
+                
                 if primary_attributes_from_other_years is None:
                     primary_attributes_from_other_years = primary_attributes_for_this_year
                 else:
@@ -104,10 +103,15 @@ class MultipleYearDatasetView(AbstractDataset):
         if in_storage is None and resources is not None:
             in_storage = resources['in_storage']
         
-        if attributes == '*':
-            attributes = in_storage._determine_field_names(
-                in_table_name=in_table_name,
-                attributes=attributes)
+        if attributes == Storage.ALL_COLUMNS:
+            attributes = []
+            if in_storage.table_exists(in_table_name):
+                attributes += in_storage.get_column_names(
+                    table_name = in_table_name)
+                
+            if in_storage.table_exists(in_table_name + '.computed'):
+                attributes += in_storage.get_column_names(
+                    table_name = in_table_name + '.computed')
                 
         for attribute_name in attributes:
             values = self._get_attribute_for_year(self.name_of_dataset_to_merge, 

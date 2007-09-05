@@ -497,7 +497,8 @@ class ChoiceModel(ChunkModel):
         for i in range(names.size):
             dataset_data[names[i]] = all_data[:, :, i].reshape((all_data.shape[0], all_data.shape[1]))
         storage = StorageFactory().get_storage('dict_storage')
-        storage._write_dataset('dataset', dataset_data)
+        storage.write_table(table_name = 'dataset', 
+                            table_data = dataset_data)
         ds = Dataset(in_storage=storage, in_table_name='dataset', id_name=[])
         return ds
 
@@ -723,8 +724,9 @@ if __name__=="__main__":
         def test_do_nothing_if_no_agents(self):
             storage = StorageFactory().get_storage('dict_storage')
 
-            storage._write_dataset(out_table_name='households',
-                values = {
+            storage.write_table(
+                table_name = 'households',
+                table_data = {
                     "household_id": arange(10000)+1,
                     "autos": array(10000*[-1])
                     }
@@ -771,7 +773,9 @@ if __name__=="__main__":
             def run_model():
                 storage = StorageFactory().get_storage('dict_storage')
 
-                storage._write_dataset(out_table_name='households', values=household_data)
+                storage.write_table(
+                    table_name = 'households', 
+                    table_data = household_data)
 
                 households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
 
@@ -813,7 +817,9 @@ if __name__=="__main__":
                 'choice_id':array(1250*[1] + 1250*[2] + 1250*[3] + 1250*[4] + 10*[4] + 2490*[3] + 10*[1] + 2490*[2])
                 }
 
-            storage._write_dataset(out_table_name='households', values=household_data)
+            storage.write_table(
+                table_name = 'households', 
+                table_data = household_data)
 
             # create households
             households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
@@ -840,7 +846,9 @@ if __name__=="__main__":
             def run_model():
                 storage = StorageFactory().get_storage('dict_storage')
 
-                storage._write_dataset(out_table_name='households', values=household_data)
+                storage.write_table(
+                    table_name = 'households', 
+                    table_data = household_data)
 
                 households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
                 cm = ChoiceModel(choice_set=modes, choices = "opus_core.random_choices")

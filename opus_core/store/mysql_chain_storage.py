@@ -38,9 +38,9 @@ class mysql_chain_storage(Storage):
         mysql_storage_for_database = self._get_mysql_storage_for_table(table_name)
         return mysql_storage_for_database.get_column_names(table_name)
         
-    def determine_field_names(self, load_resources, attributes='*'):
-        in_table_name = load_resources['in_table_name']
-        return self.get_column_names(in_table_name)
+#    def determine_field_names(self, load_resources, attributes='*'):
+#        in_table_name = load_resources['in_table_name']
+#        return self.get_column_names(in_table_name)
     
     def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True, id_name=None):
         mysql_storage_for_database = self._get_mysql_storage_for_table(table_name)
@@ -121,13 +121,13 @@ from sets import Set
 
 from numpy import array
 
-from opus_core.configurations.database_server_configuration import LocalhostDatabaseServerConfiguration
+from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core.store.mysql_database_server import MysqlDatabaseServer
 
 
 class TestMysqlChainStorage(opus_unittest.OpusTestCase):
     def setUp(self):
-        db_server = MysqlDatabaseServer(LocalhostDatabaseServerConfiguration())
+        db_server = MysqlDatabaseServer(DatabaseServerConfiguration())
         
         db_server.drop_database('database_a')
         db_server.create_database('database_a')
@@ -179,7 +179,7 @@ class TestMysqlChainStorage(opus_unittest.OpusTestCase):
     
     def _get_mysql_chain_storage_for_localhost_database(self, database_name):
         return mysql_chain_storage(
-            hostname = 'localhost',
+            hostname = os.environ['MYSQLHOSTNAMEFORTESTS'],
             username = os.environ['MYSQLUSERNAME'],
             password = os.environ['MYSQLPASSWORD'],
             database_name = database_name,

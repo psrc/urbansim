@@ -50,12 +50,23 @@ class AttributeCache(Storage, AttributeCache_old):
         AttributeCache_old.__init__(self, cache_directory)
         """cache_location is the directory containing the year directories."""
         self._cache_location = cache_directory
+        self._flt_storage_per_year = {}
         
     def get_storage_location(self):
         if self._cache_location is None:
             return SimulationState().get_cache_directory()
         else:
             return self._cache_location
+    
+    def get_flt_storage_for_year(self, year):
+        """Returns a flt_storage object for this year of this cache.
+        """
+        if year is None:
+            return None
+        if year not in self._flt_storage_per_year.keys():
+            base_directory = os.path.join(self.get_storage_location(), str(year))
+            self._flt_storage_per_year[year] = flt_storage(storage_location=base_directory)
+        return self._flt_storage_per_year[year]
     
     def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True,
             id_name=None # Not used for this storage, but required for SQL-based storages

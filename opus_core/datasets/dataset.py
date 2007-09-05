@@ -302,8 +302,7 @@ class Dataset(AbstractDataset):
 
     def determine_stored_attribute_names(self, resources=None, in_storage=None,
                                               in_table_name=None, attribute_type=AttributeType.PRIMARY):
-        """Return name of attributes that are found on in_storage. The in_storage module must have a method
-        'determine_field_names'.
+        """Return name of attributes that are found on in_storage.
         """
         place_default = ""
         lower_default = 1

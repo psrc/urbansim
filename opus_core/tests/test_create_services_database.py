@@ -12,6 +12,7 @@
 # other acknowledgments.
 # 
 
+import os
 from opus_core.tests import opus_unittest
 
 from opus_core.fork_process import ForkProcess
@@ -40,7 +41,7 @@ if does_test_database_server_exist(module_name=__file__):
             
             ForkProcess().fork_new_process('opus_core.tools.create_services_database', resources=None, 
                                            optional_args='--database %s --hostname %s' % (
-                                               self.database_name, 'localhost'))
+                                               self.database_name, os.environ['MYSQLHOSTNAMEFORTESTS']))
                                                
             self.assert_(db.table_exists('run_activity'))
     
@@ -48,7 +49,7 @@ if does_test_database_server_exist(module_name=__file__):
             """Should create run_activity table if the database doesn't exist."""
             ForkProcess().fork_new_process('opus_core.tools.create_services_database', resources=None, 
                                            optional_args='--database %s --hostname %s' % (
-                                               self.database_name, 'localhost'))
+                                               self.database_name, os.environ['MYSQLHOSTNAMEFORTESTS']))
             db = self.db_server.get_database('mysql')
             results = db.GetResultsFromQuery('show databases')
             for database in results:

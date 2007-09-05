@@ -170,7 +170,7 @@ else:
             self.assertEqual(9, 
                              command._get_exporter().out_storage._digits_to_right_of_decimal)
             self.assertEqual('a-cache-directory', 
-                             command._get_exporter().in_storage._get_cache_directory())
+                             command._get_exporter().in_storage.get_storage_location())
             self.assertEqual(1000,
                              command._get_exporter().time_of_export_dataset)
             self.assertEqual(-99, 

@@ -36,8 +36,6 @@ class sql_server_storage(Storage):
     load_dataset expects database_name to be the name of an existing
         database, with the in_table_name table exists.
         
-    determine_field_names expects database_name to be the name of an 
-        existing database where the in_table_name table exists.
     """
     # hook for unit tests
     _pymssql = pymssql_module # If None, pymssql could not be imported
@@ -55,35 +53,6 @@ class sql_server_storage(Storage):
         self._database_name = database_name
         
         self._print_status_chunk_size = print_status_chunk_size
-
-    def determine_field_names(self, load_resources):
-        in_table_name = load_resources['in_table_name']
-        
-        return self._determine_field_names(in_table_name=in_table_name)
-
-    def _determine_field_names(self, in_table_name):
-        logger.start_block("MS SQL Server - reading field names for table '%s'" 
-            % in_table_name)
-        
-        try:
-            conn = self._get_connection()
-            try:
-                cursor = conn.cursor()
-                
-                try:
-                    cursor.execute('SELECT TOP 0 * FROM %s' % in_table_name)
-                except:
-                    raise NameError("Could not access table '%s'" % in_table_name)
-                
-                return [
-                    column_name 
-                    for column_name, column_type, none1, none2, none3, none4, none5 in cursor.description
-                    ]
-                
-            finally:
-                conn.close()
-        finally:
-            logger.end_block()
 
     def write_dataset(self, write_resources):
         out_table_name = write_resources['out_table_name']
@@ -476,65 +445,6 @@ class TestSqlServerStorage(opus_unittest.OpusTestCase):
         
         self.assert_(mock_conn._closed)
         
-    def test__determine_field_names(self):
-        expected_field_names = ['attribute1', 'attribute2'] 
-        actual_field_names = self.storage._determine_field_names(in_table_name='foo')
-            
-        self.assertConnectionHasCorrectParameters()
-    
-        mock_conn = self.storage._pymssql._last_connection
-        
-        self.assert_(not mock_conn._committed)
-        
-        self.assert_(mock_conn._closed)
-
-        actual_queries = mock_conn._cursor._executed_queries
-        expected_queries = [
-            "SELECT TOP 0 * FROM foo",
-            ]
-        self.assertEqual(expected_queries, actual_queries)
-    
-        self.assertEqual(actual_field_names, expected_field_names)
-        
-        # Check again with a different table name and attribute names.
-        expected_field_names = ['attribute3', 'attribute4'] 
-        actual_field_names = self.storage._determine_field_names(in_table_name='foobar')
-    
-        mock_conn = self.storage._pymssql._last_connection
-
-        actual_queries = mock_conn._cursor._executed_queries
-        expected_queries = [
-            "SELECT TOP 0 * FROM foobar",
-            ]
-        self.assertEqual(expected_queries, actual_queries)
-        
-        self.assert_(mock_conn._closed)
-    
-        self.assertEqual(actual_field_names, expected_field_names)
-        
-        # What if we ask for a table that does not exist?
-        self.assertRaises(NameError, self.storage._determine_field_names, in_table_name='idonotexist')
-
-    
-    def test_determine_field_names(self):
-        expected_field_names = ['attribute3', 'attribute4'] 
-        actual_field_names = self.storage.determine_field_names(Resources({
-            'in_table_name':'foobar',
-            }))
-            
-        self.assertConnectionHasCorrectParameters()
-        
-        self.assertEqual(actual_field_names, expected_field_names)
-        
-        expected_field_names = ['attribute1', 'attribute2'] 
-        actual_field_names = self.storage.determine_field_names(Resources({
-            'in_table_name':'foo',
-            }))
-        self.assertEqual(actual_field_names, expected_field_names)
-        
-        self.assertRaises(NameError, self.storage.determine_field_names, Resources({
-            'in_table_name':'idonotexist',
-            }))
         
 if __name__ == '__main__':
     opus_unittest.main()
