@@ -127,8 +127,9 @@ from opus_core.store.mysql_database_server import MysqlDatabaseServer
 
 class TestMysqlChainStorage(opus_unittest.OpusTestCase):
     def setUp(self):
+        host_name = os.environ.get('MYSQLHOSTNAMEFORTESTS','localhost')
         db_server = MysqlDatabaseServer(DatabaseServerConfiguration(
-            host_name = os.environ.get('MYSQLHOSTNAMEFORTESTS','localhost')
+            host_name = host_name
         ))
         
         db_server.drop_database('database_a')
@@ -136,7 +137,7 @@ class TestMysqlChainStorage(opus_unittest.OpusTestCase):
         database = db_server.get_database('database_a')
         database.DoQuery('CREATE TABLE table_a1 (a INT)')
         database.DoQuery('CREATE TABLE scenario_information (parent_database_url varchar(255))')
-        database.DoQuery('INSERT INTO scenario_information (parent_database_url) VALUES ("jdbc:mysql://localhost/database_b")')
+        database.DoQuery('INSERT INTO scenario_information (parent_database_url) VALUES ("jdbc:mysql://%s/database_b")'%host_name)
         
         db_server.drop_database('database_b')
         db_server.create_database('database_b')
@@ -146,7 +147,7 @@ class TestMysqlChainStorage(opus_unittest.OpusTestCase):
         database.DoQuery('INSERT INTO table_b1 (a, b, c) VALUES (400, 500, 600)')
         database.DoQuery('CREATE TABLE table_b2 (a INT)')
         database.DoQuery('CREATE TABLE scenario_information (parent_database_url varchar(255))')
-        database.DoQuery('INSERT INTO scenario_information (parent_database_url) VALUES ("jdbc:mysql://localhost/database_c")')
+        database.DoQuery('INSERT INTO scenario_information (parent_database_url) VALUES ("jdbc:mysql://%s/database_c")'%host_name)
         
         db_server.drop_database('database_c')
         db_server.create_database('database_c')
