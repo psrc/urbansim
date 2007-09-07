@@ -58,22 +58,13 @@ changes to functionality, changes to data requirements, and changes to
 the
 external API.&nbsp;&nbsp;</p>
 
-
 <p>If you have questions, please send them to
 bugs at urbansim dot org.&nbsp;&nbsp;</p>
 
-
-<p><span style="background-color: rgb(255, 255, 153);">Note:
-the upgrade scripts linked from
-this page run with the latest version of the code from our <a href="subversion.html">subversion repository</a>.&nbsp;
-They are not guaranteed to work with older versions.&nbsp; Thus, to
-use them
-either (a) upgrade to the latest version, or (b) use the
-version of the scripts
-in the opus_upgrade directory in your local copy of the system.&nbsp;
-The opus_upgrade
-was only included in Opus/UrbanSim versions after 9 October 2006.</span></p>
-
+<p>The upgrade scripts referenced on this page are available from our <a href="subversion.html">subversion repository</a>
+in the <tt>opus_upgrade</tt> project.  If you aren't using
+the latest version of the code in the repository, be sure to check out the revision of <tt>opus_upgrade</tt> corresponding
+to the revision of the other packages that you are using.</p>
 
 <h2>Changes since 23 April 2007 (Opus version 4.1)</h2>
 
@@ -180,31 +171,13 @@ extension includes the number of characters used for each value.&nbsp; For
   </li>
 
   <li>Attribute caches produced by the numarray version of Opus will not work
-    with the numpy-based Opus.&nbsp; However, we do provide a <a href="../../opus_upgrade/changes_2007_04_11/readme.html">cache
-conversion tool found here</a> that will create a new cache containing all of
-    the data as an old cache but stored with the new format and file names.</li>
-
-  <li>Our Opus packages are now version 4.1.</li>
-
-  <li>Each Opus package now has the standard __version__ property, e.g. from
-    Python you can:</li>
+    with the numpy-based Opus.&nbsp; However, we do provide a cache
+    conversion tool that will create a new cache containing all of
+    the data as an old cache but stored with the new format and file names
+    (see <tt>opus_upgrade/changes_2007_04_11/readme.html</tt>).</li>
 
 </ul>
 
-<blockquote>
-  
-  <pre>&gt;&gt;&gt; import opus_core<br>&gt;&gt;&gt; opus_core.__version__<br>'4.1.0819 (from cvs)'<br>&gt;&gt;&gt;</pre>
-
-</blockquote>
-
-<ul>
-
-  <li>The version number (above) now includes the build number (e.g.
-    0819).&nbsp; If "(from cvs)" appears in the version, the code was
-    taken directly from our CVS repository (versus being installed by an
-    installer).&nbsp;</li>
-
-</ul>
 
 
 <p>Internally, the code has been changed in many, many ways (see Section 2.7 of
@@ -666,14 +639,13 @@ second name begins.</li>
 
 
 <p>To update the specification tables in your database to use the
-new names, use
-the <a href="../../opus_upgrade/changes_2006_11_16_interaction_set_changes/readme.html">upgrade
-scripts located here</a>.</p>
-
+new names, use the upgrade
+scripts (see <tt>opus_upgrade/changes_2006_11_16_interaction_set_changes/readme.html</tt>).</p>
 
 <p>If your models use the "building_types" and "buildings"
-table, use the <a href="../../opus_upgrade/changes_2006_09_26/readme.html">upgrade
-scripts located here to add these tables to your dataset</a>.</p>
+table, use the upgrade
+scripts located here to add these tables to your dataset:
+ <tt>opus_upgrade/changes_2006_09_26/readme.html</tt>.</p>
 
 
 <h4>2 November 2006</h4>
@@ -937,11 +909,9 @@ were merged into one model group (called 'Employment Location Choice
 Model')
 with several members (submodels). This allows easy extension to other
 types of ELCMs.
-<p>Use
-<a href="../../opus_upgrade/elcm_changes_2006_09_20/readme.html">the
-upgrade
-scripts located here</a> to update your database to work with
-these changes.</p>
+<p>Use the
+upgrade scripts located here to update your database to work with
+these changes: <tt>opus_upgrade/elcm_changes_2006_09_20/readme.html</tt>.</p>
 
 
 <p>Here
@@ -1512,8 +1482,8 @@ before 11 August 2006.</li>
 Python code.</li>
 
 
-  <li>Use the <a href="../../opus_upgrade/changes_2006_08_11/using_convert_databases.html">database
-conversion tool</a> at to change your variable_name entries in
+  <li>Use the database conversion tool
+ <tt>opus_upgrade/changes_2006_08_11/using_convert_databases.html</tt> to change your variable_name entries in
 your database specification tables (e.g. in
 land_price_model_specification).&nbsp; This tool will:
     
