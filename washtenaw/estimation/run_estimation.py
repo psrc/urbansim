@@ -19,7 +19,7 @@ from urbansim.estimation.estimation_runner import EstimationRunner as UrbansimEs
 
 
 class EstimationRunner(object):
-    def run_estimation(self, estimation_config, model_name, save_estimation_results=False):
+    def run_estimation(self, estimation_config, model_name, save_estimation_results=True):
         logger.start_block('Estimating %s' % model_name)
         try:
             estimator = UrbansimEstimationRunner(
@@ -38,11 +38,11 @@ if __name__ == '__main__':
     #model_name = 'lpm'
     #model_name = 'hlcm'
     #model_name = 'elcm-industrial'
-    model_name = 'elcm-commercial'
+    #model_name = 'elcm-commercial'
     ###model_name = 'elcm-home_based'
     #model_name = 'dplcm-industrial'
     #model_name = 'dplcm-commercial'
-    #model_name = 'dplcm-residential'
+    model_name = 'dplcm-residential'
     #model_name = 'rlsm'
 
     from washtenaw.estimation.my_estimation_config import my_configuration

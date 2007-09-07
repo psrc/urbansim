@@ -248,7 +248,7 @@ specification['commercial'] = {  #commercial
     'art',
     'hwy',
     'ln_nres_sqft_wwd',
-    'ln_retail_emp_wwd',
+    #'ln_retail_emp_wwd',
     'ln_service_emp_wwd',
     'ln_same_sector_emp_wwd',
     ],

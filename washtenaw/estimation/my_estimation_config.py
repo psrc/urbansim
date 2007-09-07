@@ -25,22 +25,22 @@ my_configuration = {
         host_name = os.environ.get('MYSQLHOSTNAME','localhost'),
         user_name = os.environ.get('MYSQLUSERNAME',''),
         password = os.environ.get('MYSQLPASSWORD',''),
-        database_name = "washtenaw_class", #change
+        database_name = "semcog_baseyear", #change
         ),
     'output_configuration':DatabaseConfiguration(
         host_name = os.environ.get('MYSQLHOSTNAME','localhost'),
         user_name = os.environ.get('MYSQLUSERNAME',''),
         password = os.environ.get('MYSQLPASSWORD',''),
-        database_name = "region_pilot_baseyear_estimation",
+        database_name = "semcog_baseyear_estimation",
         ),
     'datasets_to_cache_after_each_model':[],
     'low_memory_mode':False,
-    'cache_directory':'/urbansim_cache/region_pilot_baseyear/cache_source', # change or leave out
+    'cache_directory':'/urbansim_cache/semcog/cache_source', # change or leave out
     'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
         unroll_gridcells = True,
         cache_from_mysql = False,
         baseyear_cache = BaseyearCacheConfiguration(
-            existing_cache_to_copy = '/urbansim_cache/region_pilot_baseyear/cache_source',
+            existing_cache_to_copy = '/urbansim_cache/semcog/cache_source',
             #years_to_cache  = range(1996,2001)
             ),
         tables_to_cache = [],
