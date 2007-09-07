@@ -19,10 +19,10 @@ from urbansim.configurations.creating_baseyear_cache_configuration import Creati
 from baseline import Baseline
 
 my_cache_config = CreatingBaseyearCacheConfiguration(
-        cache_directory_root = '/urbansim_cache/region_pilot_baseyear/runs',
+        cache_directory_root = '/urbansim_cache/semcog/runs',
         cache_from_mysql = False,
         baseyear_cache = BaseyearCacheConfiguration(
-            existing_cache_to_copy = '/urbansim_cache/region_pilot_baseyear/cache_source',
+            existing_cache_to_copy = '/urbansim_cache/semcog/cache_source',
             #years_to_cache = range(2000,2001)
             ),
         cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
@@ -35,7 +35,7 @@ my_configuration = {
                 host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
                 user_name     = os.environ.get('MYSQLUSERNAME',''),
                 password      = os.environ.get('MYSQLPASSWORD',''),
-                database_name = 'region_pilot_baseyear',
+                database_name = 'semcog_baseyear',
                 ),
 #     'models': [
                 #'prescheduled_events',
