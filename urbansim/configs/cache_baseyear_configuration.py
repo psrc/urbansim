@@ -45,10 +45,9 @@ class CacheBaseyearConfiguration(Configuration):
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
                 cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
                 tables_to_cache = [
+                    # tables needed for a standard set of UrbanSim models
                     'annual_employment_control_totals',
                     'annual_household_control_totals',
-                    'buildings',
-                    'building_types',
                     'development_event_history',
                     'gridcells',
                     'households',
@@ -56,7 +55,6 @@ class CacheBaseyearConfiguration(Configuration):
                     'jobs',
                     'travel_data',
                     'zones',
-                    'counties',
                     'commercial_development_location_choice_model_coefficients',
                     'commercial_development_location_choice_model_specification',
                     'commercial_employment_location_choice_model_coefficients',
@@ -79,7 +77,6 @@ class CacheBaseyearConfiguration(Configuration):
                     'residential_land_share_model_specification',
                     'plan_type_group_definitions',
                     'plan_type_groups',
-                    'large_areas',
                     'household_characteristics_for_ht',
                     'development_types',
                     'development_type_group_definitions',
@@ -87,7 +84,6 @@ class CacheBaseyearConfiguration(Configuration):
                     'annual_relocation_rates_for_households',
                     'annual_relocation_rates_for_jobs',
                     'base_year',
-                    'cities',
                     'development_events',
                     'development_type_groups',
                     'employment_adhoc_sector_group_definitions',
@@ -98,10 +94,16 @@ class CacheBaseyearConfiguration(Configuration):
                     'plan_types',
                     'race_names',
                     'target_vacancies',
+                    'development_events_exogenous',
+                    #
+                    # tables not needed for a standard set of medels
                     'jobs_for_estimation',
                     'households_for_estimation',
-                    'development_events_exogenous',
-                    'job_building_types',
+                    'counties',
+                    'cities',
+                    'large_areas',
+                    'buildings',
+                    'building_types',
                     'persons'
                     ],
                 tables_to_cache_nchunks = {'gridcells':1},
