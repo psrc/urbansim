@@ -1199,6 +1199,33 @@ In a production run of UrbanSim, the model \modelsindex runs with the following 
   Section~\ref{sec:household-tables} for the table structure).
 \end{description}
 
+\subsubsection{Troubleshooting}
+\index{troubleshooting!urbansim models!Household Transition Model}
+%
+\begin{description}
+\item{Problem:} The resulting number of households after running the model is different than the control totals. 
+\item{Possible cause:} 
+There is a mismatch between data in the control totals table and the characteristics table. 
+For example, the indexing of groups in the control totals table starts with 1 instead of 0. Check 
+carefully these two tables.
+\item{Problem:} In the first simulation year the model deletes and creates a large amount of households.
+\item{Cause:} The distribution of the actual households characteristics in the base year is very different 
+from the control totals. Consider the example above and suppose that the actual number of households in the base year in the 
+six marginal categories is 200000, 50000, 20000, 360000, 10000, 100000. The control totals for year 2006 are 
+100100, 230000, 10000, 150000, 250000, 5000  (as given in the table above). The model changes the household 
+set according to differences in these categories, which are -99900,  180000,  -10000, -210000,  240000,  -95000. 
+As a result, even if the total number of households changed only by 5100 households (from 740000 in the base year 
+to 745100 in year 2006), there were 414900 households deleted and 420000 new households created, which is far more 
+than the half of all households.
+\item{Problem:} The model fails with an \code{KeyError}.
+\item{Possible cause:} Some households contain values that do not fit in any of the groups given by the marginal and 
+scaled characteristics. Check especially categories where you have non-zero minima or finite maxima. For example,
+one has the number 18 as minimum for ``age_of_head'' in the characteristics table, but the households table contains 
+records with smaller values than 18. The model must be able to put each household into one of the defined groups.
+\item{Problem:} The model fails with an error about a missing attribute.
+\item{Cause:} There are marginal or scaled characteristics that are not contained in the households table.
+Compare the control totals table and the characteristics table to the attributes of households.
+\end{description}
 
 %
 \subsection{Employment Transition Model}
@@ -1304,7 +1331,15 @@ In a production run of UrbanSim, the model \modelsindex runs with the following 
   for the table structure).
 \end{description}
 
-
+\subsubsection{Troubleshooting}
+\index{troubleshooting!urbansim models!Employment Transition Model}
+%
+\begin{description}
+\item{Problem:} In the first simulation year the model deletes and creates a large amount of jobs.
+\item{Cause:} The distribution of the actual job sectors in the base year is very different 
+from the control totals. See an analogous example in the Troubleshooting section of the Household Transition 
+Model (\ref{sec:household-transition-model}).
+\end{description}
 
 %
 \subsection{Agent Relocation Model}

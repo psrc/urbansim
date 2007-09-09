@@ -28,10 +28,6 @@ database.
 \item[output database] -- optional repository for simulation results.
 \end{description}
 
-Most database tables are optional. The required set of tables is determined by
-the variables \variablesindex used by the models.  This can be found by looking at the models'
-specification tables.
-
 \section{Input Database Design: Baseyear and Scenario Databases}
 \label{urbansim-database-tables-baseyear-scenario-db}
 
@@ -108,7 +104,7 @@ scenario's parent database.
 
 The only required table in the scenario database is the
 \verb|scenario_information| table (see Sec.~\ref{urbansim-database-tables-scenario-inforamtion}).
-This table points to a baseyear database, or
+This table points to its parent, i.e. to a baseyear database, or
 to another scenario database.
 
 In addition, the scenario database may include any other tables for data that
@@ -134,11 +130,6 @@ Here are some guidelines on database design:
 databases, database tables, and database columns. This avoids problems when
 moving database between different operating systems (e.g. between Windows \windowsindex and
 Linux). \linuxindex
-\item The \verb|tables_to_cache| entry of the \verb|run_configuration| in
-\verb|urbansim.configs.base_config| lists the tables required for the models \modelsindex used in
-the Puget Sound region.  (This information \emph{should} be in the
-\package{psrc} \psrcindex package, not the \package{urbansim} package; we will fix this in
-the future.)
 \item Avoid overly abbreviated names.  While very short names were required by
 some other systems, UrbanSim itself has no limit on the length of names. Most
 database system allow database names, table names and column names to be 32
@@ -164,7 +155,7 @@ int24 & int32 \\
 long & int32 \\
 longlong & int64 \\
 float & float32 \\
-double & float32 \emph{(this should be float64)} \\
+double & float64 \\
 decimal & float64 \\
 \end{tabular}
 
@@ -179,8 +170,8 @@ int8 & int(8) \\
 int16 & int(16) \\
 int32 & int(32) \\
 int64 & int(64) \\
-float32 & double \\
-float64 & decimal \\
+float32 & float \\
+float64 & double \\
 \end{tabular}
 
 Note that these conversions are not symmetrical, since multiple
@@ -188,15 +179,22 @@ database types map onto a single Python type.  The result is that
 when written back to the database, the column types may change from
 that of the input database table.
 
-\section{What Tables are Used by a Model?}
+\section{What Tables are Used in UrbanSim?}
+%
+Most database tables are optional. The required set of tables is determined by the set of models configured for
+a run. Details can be found in the description of the particular models in Section~\ref{sec:urbansim-models}. 
 
-\section{Miscellaneous Database Tables}
+Additionally, some tables and various attributes of tables are determined by 
+the variables \variablesindex used by the models.  This can be found by looking at the models'
+specification tables.
 
-This section provides some information about some of the input database tables.
-For each table, it defines the table's schema followed by a list of rules that
-should be true for the entries in the table.
+The \verb|tables_to_cache| argument of
+\verb|urbansim.configs.cache_baseyear_configuration| lists the tables required for the standard set of models \modelsindex 
+in a production run of UrbanSim. Additional tables can be used in post-processing, for example for creating
+indicators.
 
-\subsection{Coefficient and Specification tables}
+
+\section{Coefficients and Specification Tables}
 
 The UrbanSim models \modelsindex are configured through user specified
 variables and coefficients. \coefficientsindex The coefficients should be
@@ -218,7 +216,64 @@ are \verb|land_price_model_coefficients| and
 All coefficient tables share the same schema, as do all
 specification tables. The schemas are:
 
-\subsubsection{Coefficient table}
+
+\subsection{Specification table}
+
+\begin{tabular}{|l|l|p{4.5in}|}
+
+\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\\hline 
+variable_name \variablesindex & varchar & A legitimate specification for an Opus variable (see below).\\\hline 
+coefficient_name \coefficientsindex & varchar & Name of a coefficient connected to this variable.\\\hline
+sub_model_id & integer & \emph{(optional)} Defines the submodel, if the model
+contains submodels. If the model does not have multiple submodels, use ``-2'' for this field, or leave it out.\\\hline
+equation_id & integer & \emph{(optional)} If a submodel has multiple equations, this field
+contains an id identifying which equation this row applies to.  If a model does
+not have multiple equations, use ``-2'' for this field, or leave it out. \\\hline
+fixed_value & double & \emph{(optional)} If a coefficient should have a fixed value for an estimation,
+it should be set in this column. All values that are not equal to 0 are considered as fixed values.\\
+\hline
+\end{tabular}
+
+\begin{itemize} \tight
+\item Values of the sub_model_id column are
+determined by the \verb|submodel_string| parameter of the model, see e.g. initialization of \class{ChoiceModel} 
+(\ref{sec:choice-model})
+or \class{RegressionModel} (\ref{sec:regression-model}). Specifically, the values of the sub_model_id column must 
+exist in the \verb|submodel_string| attribute of the model's dataset.
+The employment location choice models, for instance, define submodels by
+employment sectors, so the values of this field are the
+\verb|sector_id| values
+of the jobs dataset. 
+\item Each combination of (sub_model_id, coefficient_name) \coefficientsindex
+must exist in the model's coefficients table.
+\item Each combination of (sub_model_id, equation_id, variable_name) \variablesindex must be unique.
+\item If fixed_value is non-zero in at least one row of the table, set the remaining values to 0. Currently, fixed_value 
+are considered only in the estimation of \class{ChoiceModel}.
+\item Specific models \modelsindex have additional requirements: see Developer Model \modelsindex and Non-home-based Employment Location Choice Model. \modelsindex
+\end{itemize}
+
+A legitimate specification for an Opus variable may be one of the following:
+
+\begin{itemize}
+
+\item The word \verb|constant| indicating a value specific to this combination
+of (sub_model_id, equation_id).
+
+\item The name of a primary attribute of a dataset, specified as a period-separated
+tuple of dataset name, attribute name, .e.g.
+\verb|gridcell.percent_slope|.
+
+\item The name of a dataset attribute, specified as a period-separated triple of
+Opus package name, dataset name, attribute name, .e.g. \verb|urbansim.gridcell.population|.
+
+\item Any Opus expression as described in~\ref{sec:opus-core-expressions}.
+ 
+\item Any word preceeded by '__' will be considered as a special parameter without a relation to an Opus variable.
+It can be used for estimating additional parameters.
+\end{itemize}
+
+\subsection{Coefficient table}
 
 \begin{tabular}{|l|l|p{4.5in}|}
 
@@ -226,14 +281,14 @@ specification tables. The schemas are:
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
 
 \hline
-sub_model_id & integer &  Identifier for a submodel, if used by the model, or
--2 if not used by this model. \\
-
-\hline
 coefficient_name & varchar & Unique name of a coefficient  \\
 
 \hline
 estimate & double & The estimated value of this coefficient \\
+
+\hline
+sub_model_id & integer &  \emph{(optional)} Identifier for a submodel, or
+-2 if not used. \\
 
 \hline
 standard_error & double & \emph{(optional) }
@@ -255,163 +310,7 @@ UrbanSim.   \\
 \end{tabular}
 
 \begin{itemize} \tight
-\item sub_model_id must be in the appropriate cross-reference table for each
-model.
-\item Each combination of (sub_model_id, coefficient_name) must be unique.
-\end{itemize}
-
-\subsubsection{Specification table}
-
-\begin{tabular}{|l|l|p{4.5in}|}
-
-\hline
-\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\\hline 
-variable_name \variablesindex & varchar & \\\hline 
-coefficient_name \coefficientsindex & varchar & \\\hline
-sub_model_id & integer & \emph{(optional)} Defines the submodel, if the model
-contains submodels. If the model does not have multiple submodels, use ``-2'' for this field, or leave it out.\\\hline
-equation_id & integer & \emph{(optional)} If a submodel has multiple equations, this field
-contains an id identifying which equation this row applies to.  If a model does
-not have multiple equations, use ``-2'' for this field, or leave it out. \\\hline
-fixed_value & double & \emph{(optional)} If a coefficient should have a fixed value for an estimation,
-it should be set in this column. All values that are not equal to 0 are considered as fixed values.\\
-\hline
-\end{tabular}
-
-\begin{itemize} \tight
-\item Values of the sub_model_id column are
-determined by the \verb|submodel_string| parameter of the model, see e.g. initialization of \class{ChoiceModel} 
-(\ref{sec:choice-model})
-or \class{RegressionModel} (\ref{sec:regression-model}). Specifically, the values of the sub_model_id column must 
-exist in the \verb|submodel_string| attribute of the model's dataset.
-The employment location choice models, for instance, define submodels by
-employment sectors, so the values of this field are the
-\verb|sector_id| values
-of the jobs dataset. 
-
-\item Each combination of (sub_model_id, coefficient_name) \coefficientsindex
-must exist in the model's coefficients table.
-\item variable_name must be a legitimate specification for an Opus variable.
-\item Each combination of (sub_model_id, equation_id, variable_name) \variablesindex must be unique.
-\item If fixed_value is non-zero in at least one row of the table, set the remaining values to 0. Currently, fixed_value 
-are considered only in the estimation of \class{ChoiceModel}.
-\item Specific models \modelsindex have additional requirements: see Developer Model \modelsindex and Non-home-based Employment Location Choice Model. \modelsindex
-\end{itemize}
-
-A legitimate specification for an Opus variable may be one of the following:
-
-\begin{itemize}
-
-\item The word \verb|constant| indicating a value specific to this combination
-of (sub_model_id, equation_id).
-
-\item The name of a primary attribute of a dataset, specified as a period-separated
-tuple of dataset name, attribute name, .e.g.
-\verb|gridcell.percent_slope|.
-
-\item The name of a dataset attribute, specified as a period-separated triple of
-Opus package name, dataset name, attribute name, .e.g. \verb|urbansim.gridcell.population|.
-
-\item Any word preceeded by '__' will be considered as a special parameter without a relation to an Opus variable.
-It can be used for estimating additional parameters.
-\end{itemize}
-
-\subsection{The {\tt development_constraints} table}
-
-This table defines rules that restrict the possible development types a
-developer can create on a particular grid cell.  Each row defines one rule.
-Development is not allowed on any gridcell that matches any of these rules.  A
-gridcell matches a rule if the attribute values for the gridcell match all of
-the values in the rule (rule columns with the value ``-1'' are ignored when
-determining a match).
-
-\begin{tabular}{|l|l|p{3.5in}|}
-
-\hline
-\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
-
-\hline constraint_id & integer & Unique rule identification number  \\
-
-\hline \emph{name-of-a-gridcell-attribute} & integer or float &  Value for this
-attribute, or ``-1'' if this attribute is not part of the constraint (e.g.
-\emph{don't care}) \\
-
-\hline min_units & integer & Minimum number of residential units for a gridcell.
-A development project may only be placed on this gridcell if it will result in
-this gridcell containing at least this number of residential units. \\
-
-\hline max_units & integer & Maximum number of residential units for a gridcell.
-A development project may only be placed on this gridcell if it will result in
-this gridcell containing at most this number of residential units. \\
-
-\hline min_commercial_sqft & integer & Minimum number of commercial
-sqft. for a gridcell.  A development project may only be placed on
-this gridcell if it will
-result in this gridcell containing at least this number of commercial sqft. \\
-
-\hline max_commercial_sqft & integer & Maximum number of commercial
-sqft. for a gridcell. A development project may only be placed on
-this gridcell if it will
-result in this gridcell containing at most this number of commercial sqft. \\
-
-\hline min_industrial_sqft & integer & Minimum number of industrial
-sqft. for a gridcell.  A development project may only be placed on
-this gridcell if it will
-result in this gridcell containing at least this number of industrial sqft. \\
-
-\hline max_industrial_sqft & integer & Maximum number of industrial
-sqft. for a gridcell. A development project may only be placed on
-this gridcell if it will
-result in this gridcell containing at most this number of industrial sqft. \\
-
-\hline
-\end{tabular}
-
-\begin{itemize}
-\tight
-\item constraint_id must be a unique positive integer.
-
-\item \emph{name-of-a-gridcell-attribute} is the name of a gridcell attribute,
-e.g. \verb|city_id| or \verb|is_in_wetland|.  The set of available attribute
-names is determined by the set of numeric column names on the gridcell table.
-
-\item Within each \emph{min_}/\emph{max_} pair, the max must be greater than or
-equal to the min, e.g., \verb|min_units| $<=$ \verb|max_units|.
-
-\end{itemize}
-
-\subsection{The {\tt target_vacancies} table}
-\label{sec:table-target-vacancies}
-
-The \verb|target_vacancies| table is used by the developer project transition
-model. It gives the model information about acceptable vacancy rates. The table
-has one row for each year the simulation runs. Each row gives target values for
-the residential and nonresidential vacancies for that year, which are defined
-below.  Only data after the base year is used.
-
-\begin{tabular}{|l|l|l|}
-
-\hline
-\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
-
-\hline year & integer & Year of the simulation for which the vacancy
-targets
-apply  \\
-
-\hline target_total_residential_vacancy & float & Ratio of unused residential
-units to total residential units  \\
-
-\hline target_total_non_residential_vacancy & float & Ratio of unused
-nonresidential sqft to total nonresidential sqft  \\
-
-\hline
-\end{tabular}
-
-\begin{itemize}
-\tight
-\item There must be exactly one row for each year to be simulated.
-\item target_total_residential_vacancy must be between 0 and 1, inclusive.
-\item target_total_non_residential_vacancy must be between 0 and 1, inclusive.
+\item Each combination of (sub_model_id, coefficient_name) must be unique and must exist in the model's specification table.
 \end{itemize}
 
 \section{Database Tables about Development Types}
@@ -436,20 +335,9 @@ Groups and non-overlapping-groups are used in the computation of the variables \
 in the models, so to fully understand them requires understanding the model \modelsindex
 definitions.
 
-\subsection{Example}
-
-In the prose below, we use the following example: let R1-R3 be in the
-``residential'' group in the ``dynamic_land_use_variables''
-non-overlapping-group, M4-M5 be in the ``mixed_use'' group in the
-``dynamic_land_use_variables'' non-overlapping-group, and C1-C9 be in the
-``commercial'' group in the ``dynamic_land_use_variables'' \variablesindex
-non-overlapping-group. Also let R3 and M5 be in the
-``high_density_residential'' group, and ``M5'' and ``C4'' be in the
-``noisy_commercial'' group.
-
 \subsection{The {\tt development_types} table}
 
-See above. Each row defines one DevelopmentType.
+Each row defines one development type.
 
 \begin{tabular}{|l|l|l|}
 
@@ -478,8 +366,7 @@ type.  \\
 
 \begin{itemize}
 \tight
-\item development_type_id must be unique and greater than zero.
-\item We recommend that development_type_ids start at 1 and be sequential.
+\item development_type_id must be unique and greater than zero. We recommend that it starts at 1 and is sequential.
 \item min_units must be \textgreater{}= 0.
 \item max_units must be \textgreater{}= min_units.
 \item min_sqft must be \textgreater{}= 0.
@@ -491,7 +378,7 @@ space.  A grid cell should only be able to be in a single development type.
 \subsection{The {\tt development_type_groups} table}
 \label{sec:development-tables-type-groups}
 
-See above. Each row defines one development type group, but not the group's
+Each row defines one development type group, but not the group's
 membership - the memberships are defined in the \verb|development_type_group_definitions| table.
 
 \begin{tabular}{|l|l|l|}
@@ -533,8 +420,46 @@ table contain these entries.
 UrbanSim requires some non-overlapping-groups and requires those to have
 certain groups within them, though they may have additional groups as well.
 
-The example above would involve these two tables: (note: R1=1, R2=2, R3=3,
-M4=4, M5=5, C4=9, etc)
+\subsection{The {\tt development_type_group_definitions} table}
+
+This table defines the set of \verb|development_types| in each
+development type group. Each row defines one ``belongs to'' relationship (a
+particular development type that ``belongs to'' a particular
+development type group).
+
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+
+\hline
+development_type_id & integer & Index into the development_types table  \\
+\hline
+group_id & integer & Index into the \verb|development_type_groups| table  \\
+\hline
+
+\end{tabular}
+
+\begin{itemize}
+\tight
+\item development_type_id must be a valid index into the \verb|development_types| table
+\item group_id must be a valid index into the \verb|development_type_groups| table
+\item The combination of development_type_id and group_id must be unique
+
+\end{itemize}
+
+\subsection{Example}
+
+Let R1-R3 be in the
+``residential'' group in the ``dynamic_land_use_variables''
+non-overlapping-group, M4-M5 be in the ``mixed_use'' group in the
+``dynamic_land_use_variables'' non-overlapping-group, and C1-C9 be in the
+``commercial'' group in the ``dynamic_land_use_variables'' \variablesindex
+non-overlapping-group. Also let R3 and M5 be in the
+``high_density_residential'' group, and ``M5'' and ``C4'' be in the
+``noisy_commercial'' group.
+
+This example would involve these two tables: (note: R1=1, R2=2, R3=3,
+M4=4, M5=5, C1=6, \ldots, C4=9, etc)
 
 \begin{center}
 \begin{tabular}{c}
@@ -609,32 +534,256 @@ Note that:
 ``noisy_commericial''.
 \end{itemize}
 
-\subsection{The {\tt development_type_group_definitions} table}
 
-This table defines the set of \verb|development_types| in each
-development type group. Each row defines one ``belongs to'' relationship (a
-particular development type that ``belongs to'' a particular
-development type group).
+\section{Database Tables about Development Events}
+\label{sec:db-tables-events}
+These tables represent events in the real estate development. Events that are scheduled 
+to take place in the future are stored in the {\tt development_events_exogenous} table,
+events that occured prior to the base year are stored in the {\tt development_event_history} table.
 
-\begin{tabular}{|l|l|l|}
+Both tables can contain columns of the pattern ``{\it units}_{\tt change_type}''. Each value determines
+a type of change for that type of {\it units}. Possible values are:
+\begin{itemize} \tight
+\item ``A'' for Add
+\item ``R'' for Replace
+\item ``D'' for Delete
+\end{itemize}
+If this column is missing for a certain type of units, the default value is ``A'' for all events.
+
+\subsection{The {\tt development_events_exogenous} table}
+
+These development events are changes to grid cells which are scheduled to take
+place
+in the future. For any given year, it is possible to schedule any number of
+changes to the attributes of any number of gridcells. Each change represents
+that addition, subtruction or replacement of the specified number of sqft, residential units, and
+improvement values.  For example, if
+GridCell 23 is to grow by 200 residential units in 2008 (an apartment building
+is built), the table would include a row with scheduled_year = 2008, grid_id =
+23, residential_units = 200, and residential_units_change_type = 'A'.
+
+The value in the ``improvement_value'' fields, below, are used to indicate how
+to change the associated improvement_value for this grid cell. Each event will
+add/subtract/replace (improvement_value * (number
+of units [or sqft] being built by this event)) to the current improvement value
+in
+this grid cell.  The units of the improvement is currency value, e.g. dollars.
+
+\begin{tabular}{|p{2in}|l|p{3.5in}|}
 \hline
 \textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
-
 \hline
-development_type_id & integer & Index into the development_types table  \\
+grid_id & integer & Grid cell where the event takes place  \\
 \hline
-group_id & integer & Index into the \verb|development_type_groups| table  \\
+scheduled_year &short & Year in which the event will be implemented  \\
+\hline
+starting_development_type_id & integer & \emph{(optional) }
+This field is ignored. It is here so that the schema is the same for the
+\verb|development_events_exogenous| and \verb|development_event_history| tables.   \\
+\hline
+ending_development_type_id & integer &  This grid cell's development type
+at the ending of the scheduled_year. Index into the \verb|development_types|
+table   \\
+\hline
+residential_units & integer & \\
+\hline
+commercial_sqft & integer & \\
+\hline
+industrial_sqft & integer & \\
+\hline
+governmental_sqft & integer & \\
+\hline
+residential_units_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+commercial_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+industrial_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+governmental_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+residential_improvement_value & integer & See description, above  \\
+\hline
+commercial_improvement_value & integer & See description, above  \\
+\hline
+industrial_improvement_value & integer & See description, above  \\
+\hline
+governmental_improvement_value & integer & See description, above  \\
+\hline
+fraction_residential_land_value & float & Fraction of residential land in this cell  \\
 \hline
 
 \end{tabular}
 
+\begin{itemize} \tight
+\item fraction_residential_land_value must be between 0 and 1
+\item grid_id must be a valid id in the \verb|gridcells| table or zero
+\item development_type_id must be a valid index into the \verb|development_types| table or zero
+\end{itemize}
+
+
+\subsection{The {\tt development_event_history} table}
+\label{sec:table-development-event-history}
+
+The development event history records the development events that occurred
+prior to the base year. It is used by the development project transition model~(\ref{sec:development-project-transition-model}),
+and for ``unrolling'' the baseyear to create versions of the gridcell data for
+prior years.
+
+This table uses a subset of the schema used for
+\verb|development_events_exogenous|.  It
+can be considered an extension back in time of the \verb|development_events_exogenous|
+table, though with additional constraints, specified below.
+
+\begin{tabular}{|p{2in}|l|p{3.5in}|}
+\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+\hline
+grid_id & integer & Grid cell where the event takes place  \\
+\hline
+scheduled_year &short & Year in which the event was implemented  \\
+\hline
+starting_development_type_id & integer & \emph{(optional) }
+This will be the value of the development_type for this gridcell after
+``unrolling'' this development event. \\
+\hline
+residential_units & integer & \\
+\hline
+commercial_sqft & integer & \\
+\hline
+industrial_sqft & integer & \\
+\hline
+governmental_sqft & integer & \\
+\hline
+residential_units_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+commercial_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+industrial_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+governmental_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
+\hline
+residential_improvement_value & integer & See description, above  \\
+\hline
+commercial_improvement_value & integer & See description, above  \\
+\hline
+industrial_improvement_value & integer & See description, above  \\
+\hline
+governmental_improvement_value & integer & See description, above  \\
+\hline
+
+\end{tabular}
+
+\begin{itemize} \tight
+\item grid_id must be a valid id in the \verb|gridcells| table or zero
+\item development_type_id must be a valid index into the \verb|development_types| table or zero
+\end{itemize}
+
+In addition, the following will produce warnings:
+\begin{itemize} \tight
+\item Warn if scheduled_year is greater than or equal to the base year. Such
+entries will not be used.
+\end{itemize}
+
+\section{Development Constraints and Target Vacancies}
+%
+\subsection{The {\tt development_constraints} table}
+
+This table defines rules that restrict the possible development types a
+developer can create on a particular grid cell.  Each row defines one rule.
+Development is not allowed on any gridcell that matches any of these rules.  A
+gridcell matches a rule if the attribute values for the gridcell match all of
+the values in the rule (rule columns with the value ``-1'' are ignored when
+determining a match).
+
+\begin{tabular}{|l|l|p{3.5in}|}
+
+\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+
+\hline constraint_id & integer & Unique rule identification number  \\
+
+\hline \emph{name-of-a-gridcell-attribute} & integer or float &  Value for this
+attribute, or ``-1'' if this attribute is not part of the constraint (e.g.
+\emph{don't care}) \\
+
+\hline min_units & integer & Minimum number of residential units for a gridcell.
+A development project may only be placed on this gridcell if it will result in
+this gridcell containing at least this number of residential units. \\
+
+\hline max_units & integer & Maximum number of residential units for a gridcell.
+A development project may only be placed on this gridcell if it will result in
+this gridcell containing at most this number of residential units. \\
+
+\hline min_commercial_sqft & integer & Minimum number of commercial
+sqft. for a gridcell.  A development project may only be placed on
+this gridcell if it will
+result in this gridcell containing at least this number of commercial sqft. \\
+
+\hline max_commercial_sqft & integer & Maximum number of commercial
+sqft. for a gridcell. A development project may only be placed on
+this gridcell if it will
+result in this gridcell containing at most this number of commercial sqft. \\
+
+\hline min_industrial_sqft & integer & Minimum number of industrial
+sqft. for a gridcell.  A development project may only be placed on
+this gridcell if it will
+result in this gridcell containing at least this number of industrial sqft. \\
+
+\hline max_industrial_sqft & integer & Maximum number of industrial
+sqft. for a gridcell. A development project may only be placed on
+this gridcell if it will
+result in this gridcell containing at most this number of industrial sqft. \\
+
+\hline
+\end{tabular}
+
 \begin{itemize}
 \tight
-\item development_type_id must be a valid index into the \verb|development_types| table
-\item group_id must be a valid index into the \verb|development_type_groups| table
-\item The combination of development_type_id and group_id must be unique
+\item constraint_id must be a unique positive integer.
+
+\item \emph{name-of-a-gridcell-attribute} is the name of a gridcell attribute,
+e.g. \verb|city_id| or \verb|is_in_wetland|.  The set of available attribute
+names is determined by the set of numeric column names on the gridcell table.
+
+\item Within each \emph{min_}/\emph{max_} pair, the max must be greater than or
+equal to the min, e.g., \verb|min_units| $<=$ \verb|max_units|.
 
 \end{itemize}
+
+\subsection{The {\tt target_vacancies} table}
+\label{sec:table-target-vacancies}
+
+The \verb|target_vacancies| table is used by the development project transition
+model~(\ref{sec:development-project-transition-model}). It gives the model information about acceptable vacancy rates. The table
+has one row for each year the simulation runs. Each row gives target values for
+the residential and nonresidential vacancies for that year, which are defined
+below.  Only data after the base year is used.
+
+\begin{tabular}{|l|l|l|}
+
+\hline
+\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
+
+\hline year & integer & Year of the simulation for which the vacancy
+targets
+apply  \\
+
+\hline target_total_residential_vacancy & float & Ratio of unused residential
+units to total residential units  \\
+
+\hline target_total_non_residential_vacancy & float & Ratio of unused
+nonresidential sqft to total nonresidential sqft  \\
+
+\hline
+\end{tabular}
+
+\begin{itemize}
+\tight
+\item There must be exactly one row for each year to be simulated.
+\item target_total_residential_vacancy must be between 0 and 1, inclusive.
+\item target_total_non_residential_vacancy must be between 0 and 1, inclusive.
+\end{itemize}
+
 
 \section{Database Tables about Employment}
 \label{sec:employment-tables}
@@ -903,154 +1052,6 @@ id & name & home_based \\\hline
 4 & home_based & 1 \\\hline
 \end{tabular}
 
-\section{Database Tables about Events}
-\label{sec:db-tables-events}
-These tables represent events in the real estate development. Events that are scheduled 
-to take place in the future are stored in the {\tt development_events_exogenous} table,
-events that occured prior to the base year are stored in the {\tt development_event_history} table.
-
-Both tables can contain columns of the pattern ``{\it units}_{\tt change_type}''. Each value determines
-a type of change for that type of {\it units}. Possible values are:
-\begin{itemize} \tight
-\item ``A'' for Add
-\item ``R'' for Replace
-\item ``D'' for Delete
-\end{itemize}
-If this column is missing for a certain type of units, the default value is ``A'' for all events.
-
-\subsection{The {\tt development_events_exogenous} table}
-
-These development events are changes to grid cells which are scheduled to take
-place
-in the future. For any given year, it is possible to schedule any number of
-changes to the attributes of any number of gridcells. Each change represents
-that addition, subtruction or replacement of the specified number of sqft, residential units, and
-improvement values.  For example, if
-GridCell 23 is to grow by 200 residential units in 2008 (an apartment building
-is built), the table would include a row with scheduled_year = 2008, grid_id =
-23, residential_units = 200, and residential_units_change_type = 'A'.
-
-The value in the ``improvement_value'' fields, below, are used to indicate how
-to change the associated improvement_value for this grid cell. Each event will
-add/subtract/replace (improvement_value * (number
-of units [or sqft] being built by this event)) to the current improvement value
-in
-this grid cell.  The units of the improvement is currency value, e.g. dollars.
-
-\begin{tabular}{|p{2in}|l|p{3.5in}|}
-\hline
-\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
-\hline
-grid_id & integer & Grid cell where the event takes place  \\
-\hline
-scheduled_year &short & Year in which the event will be implemented  \\
-\hline
-starting_development_type_id & integer & \emph{(optional) }
-This field is ignored. It is here so that the schema is the same for the
-\verb|development_events_exogenous| and \verb|development_event_history| tables.   \\
-\hline
-ending_development_type_id & integer &  This grid cell's development type
-at the ending of the scheduled_year. Index into the \verb|development_types|
-table   \\
-\hline
-residential_units & integer & \\
-\hline
-commercial_sqft & integer & \\
-\hline
-industrial_sqft & integer & \\
-\hline
-governmental_sqft & integer & \\
-\hline
-residential_units_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
-\hline
-commercial_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
-\hline
-industrial_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
-\hline
-governmental_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
-\hline
-residential_improvement_value & integer & See description, above  \\
-\hline
-commercial_improvement_value & integer & See description, above  \\
-\hline
-industrial_improvement_value & integer & See description, above  \\
-\hline
-governmental_improvement_value & integer & See description, above  \\
-\hline
-fraction_residential_land_value & float & Fraction of residential land in this cell  \\
-\hline
-
-\end{tabular}
-
-\begin{itemize} \tight
-\item fraction_residential_land_value must be between 0 and 1
-\item grid_id must be a valid id in the \verb|gridcells| table or zero
-\item development_type_id must be a valid index into the \verb|development_types| table or zero
-\end{itemize}
-
-
-\subsection{The {\tt development_event_history} table}
-\label{sec:table-development-event-history}
-
-The development event history records the development events that occurred
-prior to the base year. It is used by the developer project transition model,
-and for ``unrolling'' the baseyear to create versions of the gridcell data for
-prior years.
-
-This table uses a subset of the schema used for
-\verb|development_events_exogenous|.  It
-can be considered an extension back in time of the \verb|development_events_exogenous|
-table, though with additional constraints, specified below.
-
-\begin{tabular}{|p{2in}|l|p{3.5in}|}
-\hline
-\textbf{Column Name} & \textbf{Data Type} & \textbf{Description} \\
-\hline
-grid_id & integer & Grid cell where the event takes place  \\
-\hline
-scheduled_year &short & Year in which the event was implemented  \\
-\hline
-starting_development_type_id & integer & \emph{(optional) }
-This will be the value of the development_type for this gridcell after
-``unrolling'' this development event. \\
-\hline
-residential_units & integer & \\
-\hline
-commercial_sqft & integer & \\
-\hline
-industrial_sqft & integer & \\
-\hline
-governmental_sqft & integer & \\
-\hline
-residential_units_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
-\hline
-commercial_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
-\hline
-industrial_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
-\hline
-governmental_sqft_change_type & char & \emph{(optional) } see \ref{sec:db-tables-events}\\
-\hline
-residential_improvement_value & integer & See description, above  \\
-\hline
-commercial_improvement_value & integer & See description, above  \\
-\hline
-industrial_improvement_value & integer & See description, above  \\
-\hline
-governmental_improvement_value & integer & See description, above  \\
-\hline
-
-\end{tabular}
-
-\begin{itemize} \tight
-\item grid_id must be a valid id in the \verb|gridcells| table or zero
-\item development_type_id must be a valid index into the \verb|development_types| table or zero
-\end{itemize}
-
-In addition, the following will produce warnings:
-\begin{itemize} \tight
-\item Warn if scheduled_year is greater than or equal to the base year. Such
-entries will not be used.
-\end{itemize}
 
 \section{Database Tables about Geographies}
 
@@ -1664,7 +1665,7 @@ characteristics:
 age_of_head & Age, in years, of head of household  & \emph{user-configurable}
 \\
 \hline
-cars &Number of cars in household; must be 0, 1, 2, or 3+ & \emph{user-configurable}
+cars &Number of cars in household & \emph{user-configurable}
 \\
 \hline
 children &Number of children in the household & \emph{user-configurable}
