@@ -55,6 +55,19 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.layout = QVBoxLayout(self.widgetMap)
     self.layout.addWidget(self.canvas)
 
+    # Link in the map tools
+    QObject.connect(self.mpActionZoomIn, SIGNAL("triggered()"), self.zoomIn)
+    QObject.connect(self.mpActionZoomOut, SIGNAL("triggered()"), self.zoomOut)
+    QObject.connect(self.mpActionPan, SIGNAL("triggered()"), self.pan)
+
+    # Map tools
+    self.toolPan = QgsMapToolPan(self.canvas)
+    self.toolPan.setAction(self.mpActionPan)
+    self.toolZoomIn = QgsMapToolZoom(self.canvas, False)
+    self.toolZoomIn.setAction(self.mpActionZoomIn)
+    self.toolZoomOut = QgsMapToolZoom(self.canvas, True)
+    self.toolZoomOut.setAction(self.mpActionZoomOut)
+    
     ##### Lets test out a simple map
     self.layers = []
     f = "Data/st99_d00.shp"
@@ -126,3 +139,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     #debugString = QString("toolBoxChanged signal captured - Name = " + item.objectName())
     #self.statusbar.showMessage(debugString)
     
+  # Signal handeler for zoom in button
+  def zoomIn(self):
+    self.canvas.setMapTool(self.toolZoomIn)
+
+  # Signal handeler for zoom out button
+  def zoomOut(self):
+    self.canvas.setMapTool(self.toolZoomOut)
+
+  # Signal handeler for pan button
+  def pan(self):
+    self.canvas.setMapTool(self.toolPan)

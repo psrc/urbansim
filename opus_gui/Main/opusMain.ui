@@ -55,7 +55,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>485</width>
+          <width>402</width>
           <height>475</height>
          </rect>
         </property>
@@ -461,17 +461,6 @@ p, li { white-space: pre-wrap; }
      <string>Utilities</string>
     </property>
    </widget>
-   <widget class="QMenu" name="menuMap" >
-    <property name="title" >
-     <string>Map</string>
-    </property>
-    <addaction name="mpActionAddRasterLayer" />
-    <addaction name="mpActionAddVectorLayer" />
-    <addaction name="separator" />
-    <addaction name="mpActionZoomIn" />
-    <addaction name="mpActionZoomOut" />
-    <addaction name="mpActionPan" />
-   </widget>
    <widget class="QMenu" name="menuData_Manager" >
     <property name="title" >
      <string>Data Manager</string>
@@ -481,6 +470,14 @@ p, li { white-space: pre-wrap; }
     <property name="title" >
      <string>Results Manager</string>
     </property>
+   </widget>
+   <widget class="QMenu" name="menuMap" >
+    <property name="title" >
+     <string>Map</string>
+    </property>
+    <addaction name="mpActionZoomIn" />
+    <addaction name="mpActionZoomOut" />
+    <addaction name="mpActionPan" />
    </widget>
    <addaction name="menuProject" />
    <addaction name="menuData_Manager" />
