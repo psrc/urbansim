@@ -55,7 +55,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>402</width>
+          <width>485</width>
           <height>475</height>
          </rect>
         </property>
@@ -110,8 +110,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>402</width>
-          <height>475</height>
+          <width>96</width>
+          <height>79</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -253,8 +253,34 @@
       </widget>
       <widget class="QTabWidget" name="tabWidget" >
        <property name="currentIndex" >
-        <number>1</number>
+        <number>0</number>
        </property>
+       <widget class="QWidget" name="tab_mapView" >
+        <attribute name="title" >
+         <string>Map View</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>9</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QWidget" native="1" name="widgetMap" >
+           <property name="minimumSize" >
+            <size>
+             <width>100</width>
+             <height>100</height>
+            </size>
+           </property>
+           <property name="autoFillBackground" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
        <widget class="QWidget" name="tab_detailView" >
         <attribute name="title" >
          <string>Detail View</string>
@@ -277,37 +303,6 @@
           <widget class="QGroupBox" name="groupBox_4" >
            <property name="title" >
             <string>Details Pane #2</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tab_mapView" >
-        <attribute name="title" >
-         <string>Map View</string>
-        </attribute>
-        <layout class="QGridLayout" >
-         <property name="margin" >
-          <number>9</number>
-         </property>
-         <property name="spacing" >
-          <number>6</number>
-         </property>
-         <item row="0" column="0" >
-          <widget class="QFrame" name="frameMap" >
-           <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>5</hsizetype>
-             <vsizetype>5</vsizetype>
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="frameShape" >
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow" >
-            <enum>QFrame::Raised</enum>
            </property>
           </widget>
          </item>

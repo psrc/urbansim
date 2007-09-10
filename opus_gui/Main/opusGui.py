@@ -34,15 +34,57 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
   def __init__(self):
     QMainWindow.__init__(self)
-
+    
     # required by Qt4 to initialize the UI
     self.setupUi(self)
-
+    
     # We need to initialize the window sizes
     self.splitter.setSizes([150,700])
-
-    debugString = QString("Startup Done...")
+    
+    # create map canvas
+    self.canvas = QgsMapCanvas(self.widgetMap)
+    self.canvas.setCanvasColor(Qt.yellow)
+    self.canvas.enableAntiAliasing(True)
+    self.canvas.useQImageToRender(False)
+    self.canvas.show()
+    self.canvas.parentWin = self
+    debugString = QString("Finished Loading Canvas...")
     self.statusbar.showMessage(debugString)
+    
+    # lay our widgets out in the main window
+    self.layout = QVBoxLayout(self.widgetMap)
+    self.layout.addWidget(self.canvas)
+
+    ##### Lets test out a simple map
+    self.layers = []
+    f = "Data/st99_d00.shp"
+    f_string = QString(f)
+    info = QFileInfo(QString(f))
+    
+    # create layer
+    layer = QgsVectorLayer(QString(f), info.completeBaseName(), "ogr")
+    
+    if not layer.isValid():
+      # Deal with the error
+      debugString = QString("Error Loading Layer...")
+      self.statusbar.showMessage(debugString)
+      return
+    QgsMapLayerRegistry.instance().addMapLayer(layer)
+    
+    # set extent to the extent of our layer
+    self.canvas.setExtent(layer.extent())
+    
+    # Set the transparency for the layer
+    #layer.setTransparency(190)
+    
+    # set the map canvas layer set
+    cl = QgsMapCanvasLayer(layer)
+    self.layers.insert(0,cl)
+    self.canvas.setLayerSet(self.layers)
+    
+    
+    debugString = QString("Startup Done...")
+    #self.statusbar.showMessage(debugString)
 
     # Build a list of the default list of tabs
     self.tabWidgetList = {}
@@ -70,7 +112,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     item = self.toolBox.widget(index)
     if (item.objectName() == "datamanager_page"):
       # Data Manager
-      self.updateTabs(("tab_detailView","tab_mapView"))
+      self.updateTabs(("tab_mapView","tab_detailView"))
     elif (item.objectName() == "modelmanager_page"):
       # Model Manager
       self.updateTabs(("tab_detailView","tab_mapView","tab_modelFlow"))
@@ -81,6 +123,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
       # Result Manager
       self.updateTabs(("tab_detailView","tab_mapView","tab_trendView"))
 
-    debugString = QString("toolBoxChanged signal captured - Name = " + item.objectName())
-    self.statusbar.showMessage(debugString)
+    #debugString = QString("toolBoxChanged signal captured - Name = " + item.objectName())
+    #self.statusbar.showMessage(debugString)
     
