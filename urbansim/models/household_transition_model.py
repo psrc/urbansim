@@ -300,8 +300,9 @@ class HouseholdTransitionModel(Model):
             max_of_attr = maxs[idx].max()
             self.arrays_from_categories[attr] = resize(array([-1], dtype='int32'), int(max_of_attr)+1)
             self.arrays_from_categories_mapping[attr] = zeros((idx.size,2))
+            sortidx = mins[idx].argsort() # the categories must be sorted
             j=0
-            for i in idx:
+            for i in idx[sortidx]:
                 self.arrays_from_categories[attr][mins[i]:(maxs[i]+1)] = j
                 self.arrays_from_categories_mapping[attr][j,:] = array([mins[i], maxs[i]])
                 j+=1
@@ -389,8 +390,8 @@ class Tests(opus_unittest.OpusTestCase):
             }
         self.household_characteristics_for_ht_data = {
             "characteristic": array(2*['age_of_head'] + 2*['income'] + 2*['persons']),
-            "min": array([0, 50, 0, 40000, 0, 3]),
-            "max": array([49, 100, 39999, -1, 2, -1])
+            "min": array([50, 0, 0, 40000, 0, 3]), # the first and second category of age_of_head is switched to test a row invariance 
+            "max": array([100, 49, 39999, -1, 2, -1])
             }
 
     def test_same_distribution_after_household_addition(self):
@@ -606,10 +607,10 @@ class Tests(opus_unittest.OpusTestCase):
 
         household_characteristics_for_ht_data = {
             "characteristic": array(4*['income']),
-            "min": array([0, 40000, 70000, 120000]),
-            "max": array([39999, 69999, 119999, -1])
+            "min": array([0, 40000, 120000, 70000]), # category 120000 has index 3 and category 70000 has index 2 
+            "max": array([39999, 69999, -1, 119999]) # (testing row invariance)
             }
-
+        hc_sorted_index = array([0,1,3,2])
         households_data = {
             "household_id":arange(20000)+1,
             "grid_id": array(19950*[1] + 50*[0]),
@@ -638,11 +639,14 @@ class Tests(opus_unittest.OpusTestCase):
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
 
         results = zeros(hc_set.size(), dtype=int32)
-        results[0] = where(hh_set.get_attribute('income') <= hc_set.get_attribute("max")[0], 1,0).sum()
+        results[0] = where(hh_set.get_attribute('income') <= 
+                                            hc_set.get_attribute("max")[hc_sorted_index[0]], 1,0).sum()
         for i in range(1, hc_set.size()-1):
-            results[i] = logical_and(where(hh_set.get_attribute('income') >= hc_set.get_attribute("min")[i], 1,0),
-                                 where(hh_set.get_attribute('income') <= hc_set.get_attribute("max")[i], 1,0)).sum()
-        results[hc_set.size()-1] = where(hh_set.get_attribute('income') >= hc_set.get_attribute("min")[hc_set.size()-1], 1,0).sum()
+            results[i] = logical_and(where(hh_set.get_attribute('income') >= 
+                                           hc_set.get_attribute("min")[hc_sorted_index[i]], 1,0),
+                                     where(hh_set.get_attribute('income') <= 
+                                           hc_set.get_attribute("max")[hc_sorted_index[i]], 1,0)).sum()
+        results[-1] = where(hh_set.get_attribute('income') >= hc_set.get_attribute("min")[hc_sorted_index[-1]], 1,0).sum()
         should_be = hct_set.get_attribute("total_number_of_households")[0:4]
         self.assertEqual(ma.allclose(results, should_be, rtol=1e-6),
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
@@ -655,11 +659,14 @@ class Tests(opus_unittest.OpusTestCase):
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
 
         results = zeros(hc_set.size(), dtype=int32)
-        results[0] = where(hh_set.get_attribute('income') <= hc_set.get_attribute("max")[0], 1,0).sum()
+        results[0] = where(hh_set.get_attribute('income') <= 
+                                            hc_set.get_attribute("max")[hc_sorted_index[0]], 1,0).sum()
         for i in range(1, hc_set.size()-1):
-            results[i] = logical_and(where(hh_set.get_attribute('income') >= hc_set.get_attribute("min")[i], 1,0),
-                                 where(hh_set.get_attribute('income') <= hc_set.get_attribute("max")[i], 1,0)).sum()
-        results[hc_set.size()-1] = where(hh_set.get_attribute('income') >= hc_set.get_attribute("min")[hc_set.size()-1], 1,0).sum()
+            results[i] = logical_and(where(hh_set.get_attribute('income') >= 
+                                           hc_set.get_attribute("min")[hc_sorted_index[i]], 1,0),
+                                     where(hh_set.get_attribute('income') <= 
+                                           hc_set.get_attribute("max")[hc_sorted_index[i]], 1,0)).sum()
+        results[-1] = where(hh_set.get_attribute('income') >= hc_set.get_attribute("min")[hc_sorted_index[-1]], 1,0).sum()
         should_be = hct_set.get_attribute("total_number_of_households")[4:8]
         self.assertEqual(ma.allclose(results, should_be, rtol=1e-6),
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
@@ -672,11 +679,13 @@ class Tests(opus_unittest.OpusTestCase):
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
 
         results = zeros(hc_set.size(), dtype=int32)
-        results[0] = where(hh_set.get_attribute('income') <= hc_set.get_attribute("max")[0], 1,0).sum()
+        results[0] = where(hh_set.get_attribute('income') <= hc_set.get_attribute("max")[hc_sorted_index[0]], 1,0).sum()
         for i in range(1, hc_set.size()-1):
-            results[i] = logical_and(where(hh_set.get_attribute('income') >= hc_set.get_attribute("min")[i], 1,0),
-                                 where(hh_set.get_attribute('income') <= hc_set.get_attribute("max")[i], 1,0)).sum()
-        results[hc_set.size()-1] = where(hh_set.get_attribute('income') >= hc_set.get_attribute("min")[hc_set.size()-1], 1,0).sum()
+            results[i] = logical_and(where(hh_set.get_attribute('income') >= 
+                                           hc_set.get_attribute("min")[hc_sorted_index[i]], 1,0),
+                                     where(hh_set.get_attribute('income') <= 
+                                           hc_set.get_attribute("max")[hc_sorted_index[i]], 1,0)).sum()
+        results[-1] = where(hh_set.get_attribute('income') >= hc_set.get_attribute("min")[hc_sorted_index[-1]], 1,0).sum()
         should_be = hct_set.get_attribute("total_number_of_households")[8:13]
         self.assertEqual(ma.allclose(results, should_be, rtol=1e-6),
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
