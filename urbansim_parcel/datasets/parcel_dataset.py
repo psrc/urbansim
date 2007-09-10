@@ -16,7 +16,9 @@ from urbansim.datasets.dataset import Dataset as UrbansimDataset
 from opus_core.misc import unique_values
 from numpy import arange, logical_and, logical_or, alltrue
 from numpy import reshape, repeat, ones, zeros, where
-from numpy import ma
+from numpy import maximum, minimum
+from opus_core.logger import logger
+from opus_core.variables.variable_name import VariableName
 
 class ParcelDataset(UrbansimDataset):
 
@@ -49,21 +51,17 @@ class ParcelDataset(UrbansimDataset):
         attributes_with_prefix = map(lambda attr: "%s.%s" % (variable_package_name, attr),
                                         attributes)
         self.compute_variables(attributes_with_prefix, dataset_pool=dataset_pool)
+        attributes = map(lambda attr: VariableName(attr), attributes)
+        
         if index == None:
             index = arange(self.size())
-        # constraints are specified for each generic_land use_type, 
-        development_constraints_array = ones((constraints.size(),index.size), dtype='bool8')
-        for attr in attributes:
-            values = self.get_attribute_by_index(attr, index)
-            constr = reshape(constraints.get_attribute(attr), (constraints.size(),1))
-            constr = repeat(constr, index.size, axis=1)
-            tmp = logical_or(constr == values, constr < 0)
-            development_constraints_array = logical_and(development_constraints_array, tmp)
 
         self.development_constraints = {"index": index}
 #        building_types = dataset_pool.get_dataset("building_type")
         type_ids = constraints.get_attribute("generic_land_use_type_id")
         constraint_types = constraints.get_attribute("constraint_type")
+        constraint_minimum = constraints.get_attribute("minimum")
+        constraint_maximum = constraints.get_attribute("maximum")
         #initialize results, set max to the max value found in constraints for each type
         for type_id in unique_values(type_ids):
             w_this_type = where(type_ids == type_id)
@@ -72,30 +70,61 @@ class ParcelDataset(UrbansimDataset):
                 self.development_constraints[type_id].update({ constraint_type : zeros((index.size,2), dtype="float32") })
                 w_this_type_and_constraint_type = where( logical_and(type_ids == type_id, constraint_types == constraint_type ) )
                 # initialize the maximum value, because minimum of maximum value below need to have this initial value to work
-                type_constraint_max = constraints.get_attribute("maximum")[w_this_type_and_constraint_type].max()
+                type_constraint_max = constraint_maximum[w_this_type_and_constraint_type].max()
                 self.development_constraints[type_id][constraint_type][:, 1] = type_constraint_max
 
-        for iconstr in range(constraints.size()):
+        self.development_constraints_array = None
+        self.large_constraint_array = False
+        
+        logger.log_status("Matching %s development constraints to %s parcels." % (constraints.size(), index.size))
+        for iconstr in xrange(constraints.size()):
             type_id = type_ids[iconstr]
             constraint_type = constraint_types[iconstr]
-            w = where(development_constraints_array[iconstr,:])[0]
+            w = where(self._get_one_constraint(iconstr, constraints, index, attributes))[0]
             if w.size > 0: #has at least 1 match
                 ##TODO: this may be problematic when given building type and constraint type of 
                 ## a parcel doesn't match to any row of the constraints table, it'll use the max value
                 ## of the building type and constraint type
                 self.development_constraints[type_id][constraint_type][w,0] = \
-                    ma.maximum(self.development_constraints[type_id][constraint_type][w,0],
-                        constraints.get_attribute_by_index("minimum", iconstr))
+                    maximum(self.development_constraints[type_id][constraint_type][w,0],
+                        constraint_minimum[iconstr])
                 self.development_constraints[type_id][constraint_type][w,1] = \
-                    ma.minimum(self.development_constraints[type_id][constraint_type][w,1],
-                        constraints.get_attribute_by_index("maximum", iconstr))
+                    minimum(self.development_constraints[type_id][constraint_type][w,1],
+                        constraint_maximum[iconstr])
 
+        del self.development_constraints_array
         return self.development_constraints
 
+    def _get_one_constraint(self, iconstr, constraints, index, attributes):
+        if self.development_constraints_array is None:
+            try:
+                self.development_constraints_array = ones((constraints.size(),index.size), dtype='bool8')
+                for attr in attributes:
+                    values = self.get_attribute_by_index(attr, index)
+                    constr = reshape(constraints.get_attribute(attr), (constraints.size(),1))
+                    constr = repeat(constr, index.size, axis=1)
+                    tmp = logical_or(constr == values, constr < 0)
+                    self.development_constraints_array = logical_and(self.development_constraints_array, tmp)
+            except (MemoryError, ValueError):
+                self.large_constraint_array=True
+                self.development_constraints_array = ones(index.size, dtype='bool8')
+                
+        if not self.large_constraint_array:
+            return self.development_constraints_array[iconstr,:]
+        
+        self.development_constraints_array[:] = True
+        for attr in attributes:
+            values = self.get_attribute(attr)[index]
+            constr = constraints.get_attribute(attr)[iconstr]
+            self.development_constraints_array = logical_and(self.development_constraints_array, 
+                                                             logical_or(constr == values, constr < 0))
+        return self.development_constraints_array
+            
 from opus_core.tests import opus_unittest
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
 from numpy import array
+from numpy import ma
 
 class Tests(opus_unittest.OpusTestCase):
     def test_get_development_constraints(self):
