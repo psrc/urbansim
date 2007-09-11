@@ -409,7 +409,7 @@ class AbstractIndicator(object):
             results = ma.filled( numerator / denominator )
             
         elif operation == 'change':
-            baseyear_values, years_found = self._get_indicator_for_years(attribute, [2000,])
+            baseyear_values, years_found = self._get_indicator_for_years(self.attribute, [2000,])
             results = values[0] - baseyear_values[0,]
             
         return results
