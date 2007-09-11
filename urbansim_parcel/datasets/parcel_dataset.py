@@ -76,7 +76,7 @@ class ParcelDataset(UrbansimDataset):
         self.development_constraints_array = None
         self.large_constraint_array = False
         
-        logger.log_status("Matching %s development constraints to %s parcels." % (constraints.size(), index.size))
+        logger.start_block("Matching %s development constraints to %s parcels" % (constraints.size(), index.size))
         for iconstr in xrange(constraints.size()):
             type_id = type_ids[iconstr]
             constraint_type = constraint_types[iconstr]
@@ -91,7 +91,7 @@ class ParcelDataset(UrbansimDataset):
                 self.development_constraints[type_id][constraint_type][w,1] = \
                     minimum(self.development_constraints[type_id][constraint_type][w,1],
                         constraint_maximum[iconstr])
-
+        logger.end_block()
         del self.development_constraints_array
         return self.development_constraints
 
