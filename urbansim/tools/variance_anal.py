@@ -41,7 +41,7 @@ def run_ALCM(niter):
         
     gridcells_table_name = 'gridcells'        
     storage._write_dataset(
-        out_table_name = jgridcells_table_name,
+        out_table_name = gridcells_table_name,
         values = {
             'grid_id': arange(ngcs)+1, 
             'cost':array(ngcs_attr*[100]+ngcs_noattr*[1000])
