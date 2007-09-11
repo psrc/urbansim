@@ -29,12 +29,12 @@ from opus_core.indicator_framework.storage_location.database import Database
 
 
 run_description = '(baseline 08/09/2007)'
-cache_directory = r'/urbansim_cache/psrc_parcel/run_3375.2007_08_09_10_40/'
+cache_directory = r'/urbansim_cache/psrc_parcel/runs/run_3616.2007_09_10_11_34/'
 
 source_data = SourceData(
     cache_directory = cache_directory,
     run_description = run_description,
-    years = [2001,2005],
+    years = [2001,2008],
     dataset_pool_configuration = DatasetPoolConfiguration(
         package_order=['psrc_parcel','urbansim_parcel','urbansim','opus_core'],
         package_order_exceptions={},
@@ -45,12 +45,30 @@ indicators=[
 DatasetTable(
     source_data = source_data,
     dataset_name = 'zone',
-    name = 'pop_and_emp_sqft',
+    name = 'pop_and_emp_change',
+    operation = 'change',
     attributes = [ 
-      'urbansim_parcel.zone.population',
-      'urbansim_parcel.zone.number_of_jobs',                     
+      'zone.aggregate(urbansim_parcel.population)',
+      'zone.aggregate(urbansim_parcel.number_of_households)',
+      'zone.aggregate(urbansim_parcel.number_of_jobs)',
+      'zone.aggregate(building.residential_units, intermediates=[parcel])',
+      'zone.aggregate(building.nonresidential_sqft, intermediates=[parcel])'
     ],
     #exclude_condition = '==0' #exclude_condition now accepts opus expressions
+),
+
+DatasetTable(
+    #source_data = source_data,
+    dataset_name = 'alldata',
+    name =  'number_of_jobs',
+    operation = 'change',
+    source_data = source_data,    attributes = [
+        'alldata.aggregate_all(urbansim_parcel.population)',
+        'alldata.aggregate_all(urbansim_parcel.number_of_households)',
+        'alldata.aggregate_all(urbansim_parcel.number_of_jobs)',
+        'alldata.aggregate_all(building.residential_units, intermediates=[parcel])',
+        'alldata.aggregate_all(building.nonresidential_sqft, intermediates=[parcel])'
+    ],
 ),
 ]
 from opus_core.indicator_framework.core.indicator_factory import IndicatorFactory
