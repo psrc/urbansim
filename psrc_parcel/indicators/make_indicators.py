@@ -34,7 +34,7 @@ cache_directory = r'/urbansim_cache/psrc_parcel/runs/run_3616.2007_09_10_11_34/'
 source_data = SourceData(
     cache_directory = cache_directory,
     run_description = run_description,
-    years = [2001,2008],
+    years = [2000,2005,2010],
     dataset_pool_configuration = DatasetPoolConfiguration(
         package_order=['psrc_parcel','urbansim_parcel','urbansim','opus_core'],
         package_order_exceptions={},
@@ -42,34 +42,67 @@ source_data = SourceData(
 )
 
 indicators=[
-DatasetTable(
+
+#Chart(
+    #source_data = source_data,
+    #dataset_name = 'building',
+    #attribute = 'alldata.aggregate_all(building.residential_units)',
+    #),  
+
+Table(
     source_data = source_data,
     dataset_name = 'zone',
-    name = 'pop_and_emp_change',
-    operation = 'change',
-    attributes = [ 
-      'zone.aggregate(urbansim_parcel.population)',
-      'zone.aggregate(urbansim_parcel.number_of_households)',
-      'zone.aggregate(urbansim_parcel.number_of_jobs)',
-      'zone.aggregate(building.residential_units, intermediates=[parcel])',
-      'zone.aggregate(building.nonresidential_sqft, intermediates=[parcel])'
-    ],
-    #exclude_condition = '==0' #exclude_condition now accepts opus expressions
+    name = 'population',
+    #operation = 'change',
+    attribute = 'urbansim_parcel.zone.population',
 ),
 
-DatasetTable(
-    #source_data = source_data,
-    dataset_name = 'alldata',
-    name =  'number_of_jobs',
-    operation = 'change',
-    source_data = source_data,    attributes = [
-        'alldata.aggregate_all(urbansim_parcel.population)',
-        'alldata.aggregate_all(urbansim_parcel.number_of_households)',
-        'alldata.aggregate_all(urbansim_parcel.number_of_jobs)',
-        'alldata.aggregate_all(building.residential_units, intermediates=[parcel])',
-        'alldata.aggregate_all(building.nonresidential_sqft, intermediates=[parcel])'
-    ],
+Table(
+    source_data = source_data,
+    dataset_name = 'zone',
+    name = 'households',
+    #operation = 'change',
+    attribute = 'zone.aggregate(urbansim_parcel.number_of_households)',
 ),
+
+Table(
+    source_data = source_data,
+    dataset_name = 'zone',
+    name = 'jobs',
+    #operation = 'change',
+    attribute = 'zone.aggregate(urbansim_parcel.number_of_jobs)',
+),
+
+Table(
+    source_data = source_data,
+    dataset_name = 'zone',
+    name = 'residential_units',
+    #operation = 'change',
+    attribute = 'zone.aggregate(building.residential_units, intermediates=[parcel])',
+),
+
+Table(
+    source_data = source_data,
+    dataset_name = 'zone',
+    name = 'nonresidential_sqft',
+    #operation = 'change',
+    attribute = 'zone.aggregate(building.nonresidential_sqft, intermediates=[parcel])'
+),
+
+
+#DatasetTable(
+    ##source_data = source_data,
+    #dataset_name = 'alldata',
+    #name =  'number_of_jobs',
+    #operation = 'change',
+    #source_data = source_data,    attributes = [
+        #'alldata.aggregate_all(urbansim_parcel.parcel.population)',
+        ##'alldata.aggregate_all(urbansim_parcel.number_of_households)',
+        ##'alldata.aggregate_all(urbansim_parcel.number_of_jobs)',
+        ##'alldata.aggregate_all(building.residential_units, intermediates=[parcel])',
+        ##'alldata.aggregate_all(building.nonresidential_sqft, intermediates=[parcel])'
+    #],
+#),
 ]
 from opus_core.indicator_framework.core.indicator_factory import IndicatorFactory
 
