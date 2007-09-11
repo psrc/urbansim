@@ -433,7 +433,16 @@ class Tests(AbstractIndicatorTest):
 
     def test__output_types(self):
         from opus_core.indicator_framework.image_types.table import Table
-        for output_type in ['dbf','csv','tab']:
+        
+        output_types = ['csv','tab']
+        try:        
+            import dbfpy
+        except ImportError:
+            pass
+        else:
+            output_types.append('dbf')
+            
+        for output_type in output_types:
             table = Table(
                 source_data = self.cross_scenario_source_data,
                 attribute = 'opus_core.test.attribute',

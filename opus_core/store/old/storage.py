@@ -42,65 +42,6 @@ class TestStorage(opus_unittest.OpusTestCase):
     def tearDown(self):
         pass
         
-    def test__select_attributes_case_sensitive(self):
-        requested_attributes = ['A', 'b']
-        available_attributes = ['A', 'b', 'c']
-        expected_result = ['A', 'b']
-        
-        actual_result = self.storage._select_attributes(requested_attributes, available_attributes)
-        
-        self.assertEqual(expected_result, actual_result)
-        
-        requested_attributes = ['a']
-        available_attributes = ['A']
-        
-        self.assertRaises(AttributeError, self.storage._select_attributes, requested_attributes, available_attributes)
-        
-    def test__select_attributes_raise_attribute_error_case_sensitive(self):
-        requested_attributes = ['a', 'b']
-        available_attributes = ['b', 'c']
-        
-        self.assertRaises(AttributeError, self.storage._select_attributes, requested_attributes, available_attributes)
-        
-    def test__select_attributes_case_insensitive(self):
-        requested_attributes = ['a', 'B']
-        available_attributes = ['A', 'b', 'c']
-        expected_result = ['a', 'B']
-        
-        actual_result = self.storage._select_attributes(requested_attributes, available_attributes, case_insensitive=True)
-        
-        self.assertEqual(expected_result, actual_result)
-        
-        requested_attributes = ['a', 'B']
-        available_attributes = ['b', 'c']
-        
-        self.assertRaises(AttributeError, self.storage._select_attributes, requested_attributes, available_attributes, case_insensitive=True)
-        
-        requested_attributes = ['a']
-        available_attributes = ['a', 'A']
-        
-        self.assertRaises(AttributeError, self.storage._select_attributes, requested_attributes, available_attributes, case_insensitive=True)
-    
-    def test_get_python_type_from_numpy_type(self):
-        self.assertEqual(self.storage._get_python_type_from_numpy_type('int32'), int)
-        self.assertEqual(self.storage._get_python_type_from_numpy_type('string8'), str)
-        
-        self.assertRaises(KeyError, self.storage._get_python_type_from_numpy_type, 'int3333')
-        
-    def test_get_numpy_type_from_python_type(self):
-        self.assertEqual(self.storage._get_numpy_type_from_python_type(int), 'int32')
-        
-        self.assertRaises(KeyError, self.storage._get_numpy_type_from_python_type, dict)
-        
-    def test__lower_case(self):
-        expected = ['foo', 'bar', 'teststring']
-        actual = self.storage._lower_case(['foo', 'BAR', 'TestString'])
-        self.assertEqual(expected, actual)
-        
-        expected = 'foo'
-        actual = self.storage._lower_case('FOO')
-        self.assertEqual(expected, actual)
-
     
 if __name__ == '__main__':
     opus_unittest.main()

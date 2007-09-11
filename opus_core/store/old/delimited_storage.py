@@ -128,38 +128,6 @@ class delimited_storage(Storage):
     def has_table(self, table_name):
         return os.path.exists(self._get_file_path_for_table(table_name))
     
-    def _get_index_map(self, attributes, available_attribute_names):
-        """
-        Returns a list whose entries are either None or an index.
-        If the value is None, it means that that entry in 
-        available_attribute_names was not requested.
-        If the value is an index, it means that the location of the 
-        requested attribute name is at that index location in
-        the available_attribute_names list.
-        
-        attributes may be:
-            '*' - include all attributes
-            'a_name' - include just the attribute named 'a_name'
-            ['a', 'b'] - include just the attributes 'a' and 'b'.
-        """
-        attribute_names = self._select_attributes(attributes, available_attribute_names)        
-        
-        attribute_index = {}
-        for i in range(len(available_attribute_names)):
-            attribute_index[available_attribute_names[i]] = i
-            
-        index_map = []
-        for attribute_name in attribute_names:
-            try:
-                index = attribute_index[attribute_name]
-            except KeyError:
-                raise AttributeError("Attribute '%s' is not available." 
-                    % attribute_name)
-                
-            index_map.append(index)
-            
-        return index_map
-    
     def _get_file_path_for_table(self, table_name):
         filename = '%s.%s' % (table_name, self._file_extension)
         return os.path.join(self._output_directory, filename)
@@ -297,41 +265,6 @@ class TestDelimitedStorage(opus_unittest.OpusTestCase):
         if os.path.exists(base_location):
             rmtree(base_location)
         
-        
-    def test_get_index_map(self):
-        actual = self.storage._get_index_map(
-            attributes = ['b', 'd'],
-            available_attribute_names = ['a', 'b', 'c', 'd', 'e'],
-            )
-        expected = [1, 3]
-        self.assertEqual(expected, actual)
-        
-        actual = self.storage._get_index_map(
-            attributes = '*',
-            available_attribute_names = ['a', 'b', 'c', 'd', 'e'],
-            )
-        expected = range(len(['a', 'b', 'c', 'd', 'e']))
-        self.assertEqual(expected, actual)        
-        
-        actual = self.storage._get_index_map(
-            attributes = 'c',
-            available_attribute_names = ['a', 'b', 'c', 'd', 'e'],
-            )
-        expected = [2]
-        self.assertEqual(expected, actual)         
-        
-        actual = self.storage._get_index_map(
-            attributes = ['a', 'e'],
-            available_attribute_names = ['a', 'b', 'c', 'd', 'e'],
-            )
-        expected = [0, 4]
-        self.assertEqual(expected, actual)
-        
-        self.assertRaises(AttributeError, self.storage._get_index_map,
-            attributes = ['z'],
-            available_attribute_names = ['a', 'b', 'c', 'd', 'e'],
-            )
-            
     def test_QUOTE_properties(self):
         try:
             self.storage.QUOTE_MINIMAL
