@@ -35,13 +35,13 @@ from numpy import array, subtract, concatenate
 
 class AbstractIndicator(object):
     
-    def __init__(self, source_data, dataset_name, attribute, 
+    def __init__(self, source_data, dataset_name, attributes, 
                  years = None, operation = None, name = None,
                  suppress_file_extension_addition = False,
                  storage_location = None, can_write_to_db = False):
 
         self.dataset_name = dataset_name 
-        self.attribute = attribute
+        self.attributes = attributes
         self.operation = operation
         self.source_data = source_data
         self.suppress_file_extension_addition = suppress_file_extension_addition
@@ -61,11 +61,8 @@ class AbstractIndicator(object):
             if not os.path.exists(self.storage_location):
                 os.mkdir(self.storage_location)
                 
-        if name is None:
-            name = self.get_attribute_alias()
-            if self.operation is not None:
-                name = '%s_%s'%(self.operation,name)
         self.name = name
+        self.name = self.get_indicator_name(year = None)
         
         if years is None:
             self.years = self.source_data.years
@@ -112,10 +109,11 @@ class AbstractIndicator(object):
                                          (year, self.source_data.comparison_cache_directory))
                     
         '''package does not exist'''
-        if self.attribute != '':
-            package = VariableName(self.attribute).get_package_name()
-            if package != None and package not in self.package_order:
-                raise IntegrityError('Package %s is not available'%package)
+        for attribute in self.attributes:
+            if attribute != '':
+                package = VariableName(attribute).get_package_name()
+                if package != None and package not in self.package_order:
+                    raise IntegrityError('Package %s is not available'%package)
             
         '''dataset does not exist'''     
         try:
@@ -215,17 +213,18 @@ class AbstractIndicator(object):
     
     ####### Helper methods for indicator computations #############
 
-    def _get_indicator_for_years(self, attribute, years):
+    def _get_indicator_for_years(self, years, wrap = True):
         """Returns results, years_found where results is a numpy array of the
         depedent data, and years_found is a Python list of the years that had data 
         in the cache.
         """
+        years_found = set()
         results = []
-        years_found = []
+        
         for year in years:
-            result = self._get_indicator(attribute, year)
+            result = self._get_indicator(year = year, wrap = wrap)
             results.append(result)
-            years_found.append(year)
+            years_found.add(year)
             
         #if sizes of the results differ across years, fill in missing data
         #TODO: investigate the use of lag variables to account for this issue
@@ -235,45 +234,57 @@ class AbstractIndicator(object):
             for year in range(len(results)):
                 filler = [-1 for i in range(max_size - len(results[year]))]
                 results[year] = concatenate((results[year],filler))
-                
-        return array(results), years_found
+                    
+        return array(results), list(years_found)
 
-    def _get_indicator(self, attribute, year):
-        if attribute is None:
-            attribute = self.get_attribute_alias(year)
-        
-        attribute = attribute.replace('DDDD',repr(year))
-        
-        indicator_vals = self._get_indicator_helper(attribute, year)
-        
-        #handle cross-scenario indicator comparisons
+    def _get_indicator(self, year, attributes = None, wrap = True):
+        if attributes is None: 
+            attributes = self.attributes
+            
+        attribute_values_for_year = []
         id_attributes = self._get_dataset(year).get_id_name()
         cache_dir2 = self.source_data.comparison_cache_directory
-        if cache_dir2 != '' and attribute not in id_attributes:
-            short_name = VariableName(attribute).get_alias()
+        
+        for attribute in attributes:        
+            year_replaced_attribute = attribute.replace('DDDD',repr(year))
             
-            #save cache_dir's dataset
-            old_dataset_state = copy(self.dataset_state)
-            old_dataset = copy(self._get_dataset(year))
+            indicator_vals = self._get_indicator_helper(attribute, year)
             
-            #compute values for cache_dir2 and get the difference
-            self._set_cache_directory(cache_dir2)
-            indicator_vals2 = self._get_indicator_helper(attribute, year)
-            indicator_vals = indicator_vals - indicator_vals2
-            
-            #reload cache_dir's dataset with the proper values in the attribute
-            old_dataset.set_values_of_one_attribute(short_name, indicator_vals)
-            self._set_dataset(old_dataset, old_dataset_state)
-        return indicator_vals
+            #handle cross-scenario indicator comparisons
+            if cache_dir2 != '' and attribute not in id_attributes:
+                short_name = VariableName(year_replaced_attribute).get_alias()
+                
+                #save cache_dir's dataset
+                old_dataset_state = copy(self.dataset_state)
+                old_dataset = copy(self._get_dataset(year))
+                
+                #compute values for cache_dir2 and get the difference
+                self._set_cache_directory(cache_dir2)
+                indicator_vals2 = self._get_indicator_helper(attribute, year)
+                indicator_vals = indicator_vals - indicator_vals2
+                
+                #reload cache_dir's dataset with the proper values in the attribute
+                old_dataset.set_values_of_one_attribute(short_name, indicator_vals)
+                self._set_dataset(old_dataset, old_dataset_state)
+            attribute_values_for_year.append(indicator_vals)
+        
+        if wrap:
+            return array(attribute_values_for_year)
+        elif len(attribute_values_for_year) > 1:
+            raise 'no wrap specified, but multiple attributes'
+        else:
+            return attribute_values_for_year[0]
             
 
     def _get_indicator_helper(self, attribute, year):
-        indicator_vals = self._compute_indicator(attribute, year)
+        year_replaced_attribute = attribute.replace('DDDD',repr(year))
+        
+        indicator_vals = self._compute_indicator(year_replaced_attribute, year)
         if self.operation is not None and not self.in_expression:
             #TODO: clean up this code with new style expressions in mind
             self.in_expression = True
             try:
-                indicator_vals = self.perform_operation(self.operation, indicator_vals)
+                indicator_vals = self.perform_operation(attribute, self.operation, indicator_vals)
                 dataset = self._get_dataset(year = year)
                 dataset.add_attribute(indicator_vals, self.name)
             finally:
@@ -295,7 +306,7 @@ class AbstractIndicator(object):
         if self.dataset_state['current_cache_directory'] != dataset_state['current_cache_directory']:
             self._set_cache_directory(dataset_state['current_cache_directory'])
         if self.dataset_state['year'] != dataset_state['year']:
-            SimuluationState().set_current_time(dataset_state['year'])
+            SimulationState().set_current_time(dataset_state['year'])
             
         self.dataset = dataset
         self.dataset_state = dataset_state
@@ -336,16 +347,29 @@ class AbstractIndicator(object):
             
         return self.dataset
     
-    def get_attribute_alias(self, year = None):
-        #TODO: less hacky way to do this
-        if self.attribute[:10] == 'autogenvar':
-            alias = VariableName(self.attribute).get_squished_expression()
+    def get_indicator_name(self, year = None):
+        if self.name is None:
+            alias_names = [self.get_attribute_alias(attribute, year) \
+                                for attribute in self.attributes]
+            name = '__'.join(alias_names)
         else:
-            alias = VariableName(self.attribute).get_alias()
+            name = self.name
+            
+        if self.operation is not None:
+            name = '%s_%s'%(self.operation, name)
+            
+        return name
+            
+    def get_attribute_alias(self, attribute, year = None):
+        #TODO: less hacky way to do this
+        if attribute[:10] == 'autogenvar':
+            alias = VariableName(attribute).get_squished_expression()
+        else:
+            alias = VariableName(attribute).get_alias()
         
         if year is not None:
             alias = alias.replace('DDDD',repr(year))
-           
+    
         return alias
     
     def get_file_name(self, year = None, 
@@ -393,7 +417,7 @@ class AbstractIndicator(object):
         if display_error_box:
             display_message_dialog(message)
 
-    def perform_operation(self, operation, values = None):
+    def perform_operation(self, attribute, operation, values = None):
         results = None
         
         if operation == 'size':
@@ -402,14 +426,18 @@ class AbstractIndicator(object):
             results = dataset.size()
             
         elif operation == 'percent_change':
-            baseyear_values, years_found = self._get_indicator_for_years(self.attribute, [2000,])
+            baseyear_values = self._get_indicator(2000, 
+                                                  attributes=[attribute],
+                                                  wrap = False)
             numerator = ( values[0] - baseyear_values[0,]) * 100
             denominator = ma.masked_where(baseyear_values[0,]==0, 
                                           baseyear_values[0,].astype(float32), 0.0)
             results = ma.filled( numerator / denominator )
             
         elif operation == 'change':
-            baseyear_values, years_found = self._get_indicator_for_years(self.attribute, [2000,])
+            baseyear_values = self._get_indicator(2000, 
+                                                  attributes=[attribute],
+                                                  wrap = False)
             results = values[0] - baseyear_values[0,]
             
         return results

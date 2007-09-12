@@ -26,7 +26,7 @@ class Map(AbstractIndicator):
                  scale = None,
                  storage_location = None):
         AbstractIndicator.__init__(self, source_data, dataset_name, 
-                                   attribute, years, operation, name,
+                                   [attribute], years, operation, name,
                                    storage_location)
         self.scale = scale
 
@@ -46,7 +46,7 @@ class Map(AbstractIndicator):
         """Create a map for the given indicator, save it to the cache
         directory's 'indicators' sub-directory.
         """
-        
+
         values = self._get_indicator(self.attribute, year)
         
         min_value = None; max_value = None
@@ -54,7 +54,8 @@ class Map(AbstractIndicator):
         if self.scale is not None:
             min_value, max_value = self.scale
           
-        attribute_short = self.get_attribute_alias(year)
+        attribute_alias = self.get_attribute_alias(year)
+        attribute_short = attribute_alias
         #special handling for dram/empal variable name (ending with year)
         if re.search('_\d+$', attribute_short):
             attribute_short = re.compile('_\d+$').sub('', attribute_short)
@@ -63,12 +64,10 @@ class Map(AbstractIndicator):
         if self.run_description is not None:
             title += '\n' + self.run_description
         
-        file_path = self.get_file_path(year = year)          
-    
-        var_name = self.get_attribute_alias(year)
+        file_path = self.get_file_path(year = year) 
             
         dataset = self._get_dataset(year)  
-        dataset.plot_map(var_name, my_title=title, file=file_path,
+        dataset.plot_map(attribute_alias, my_title=title, file=file_path,
                          filter='urbansim.gridcell.is_fully_in_water',
                          min_value=min_value, max_value=max_value)
         

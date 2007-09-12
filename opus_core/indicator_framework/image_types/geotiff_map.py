@@ -36,7 +36,7 @@ class GeotiffMap(AbstractIndicator):
                  storage_location = None):
         
         AbstractIndicator.__init__(self, source_data, 
-                                   dataset_name, attribute, 
+                                   dataset_name, [attribute], 
                                    years, operation, name,
                                    storage_location)
         
@@ -66,7 +66,7 @@ class GeotiffMap(AbstractIndicator):
     def _create_indicator(self, year):
         """Create a geotiff image for the given indicator"""            
  
-        values = self._get_indicator(self.attribute, year)
+        values = self._get_indicator(year, wrap = False)
         
         dataset = self._get_dataset(year = year)
         values_in_2d_array = dataset.get_2d_attribute(

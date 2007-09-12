@@ -12,7 +12,7 @@
 # other acknowledgments.
 # 
 
-from numpy import array, logical_and, logical_not
+from numpy import array, logical_and, logical_not, concatenate, newaxis, rank
 
 
 from opus_core.indicator_framework.core.abstract_indicator import AbstractIndicator
@@ -36,13 +36,12 @@ class DatasetTable(AbstractIndicator):
         elif output_type not in ['dbf', 'csv', 'tab', 'sql']:
             raise "DatasetTable output_type needs to be either dbf, csv, tab, or sql"
         
-        self.attributes = attributes
         self.output_type = output_type
         self.exclude_condition = exclude_condition
         self.name = name
         
         AbstractIndicator.__init__(self, source_data, dataset_name, 
-                                   '', years, operation, name,
+                                   attributes, years, operation, name,
                                    storage_location, can_write_to_db = True)
         
         self.output_type = output_type
@@ -71,34 +70,8 @@ class DatasetTable(AbstractIndicator):
         return 'dataset_table'
 
     def get_additional_metadata(self):
-        return  [('attributes',self.attributes),
-                 ('output_type',self.output_type),
+        return  [('output_type',self.output_type),
                  ('exclude_condition',self.exclude_condition)]
-    
-    def get_file_name(self, 
-                      year, 
-                      extension = None,
-                      suppress_extension_addition = False):
-        '''returns the file name for the outputted indicator'''
-        
-        if extension is None:
-            extension = self.get_file_extension()
-            
-        file_name = '%s__dataset_table__%s__%i'%(
-            self.dataset_name,
-            self.name,
-            year)
-        
-        if not suppress_extension_addition:
-            file_name += '.%s'%extension
-                
-        return file_name
-    
-    def get_attribute_alias(self, year = None):
-        alias = self.name
-        if year is not None:
-            alias = self.name.replace('DDDD',repr(year))
-        return alias
       
     def _create_indicator(self, year):
         '''Creates a table with a column for each attribute specified in the arguments
@@ -108,28 +81,24 @@ class DatasetTable(AbstractIndicator):
         '''
 
         dataset = self._get_dataset(year)
-        
-        id_attributes = dataset.get_id_name()
-        non_id_attributes = []
 
-        for attribute_name in self.attributes:
-            if attribute_name not in id_attributes:
-                non_id_attributes.append(attribute_name)
-                 
-        id_columns = [i for i in range(len(id_attributes))]
-    
-        cols = []
-        col_titles = []
-        attributes = id_attributes + non_id_attributes
+        id_attributes = dataset.get_id_attribute()
+        id_cols = dataset.get_id_name()
+        id_columns = [i for i in range(len(id_cols))]
         
-        for attribute_name in attributes:
-            attribute_vals = self._get_indicator(attribute_name, year)
-            cols.append(attribute_vals)
-            variable_name = VariableName(attribute_name).get_alias()
-            col_titles.append(variable_name)
+        col_titles = id_cols + [VariableName(attribute_name).get_alias() 
+                        for attribute_name in self.attributes]
+        
+        cols = self._get_indicator(year)
+        if id_attributes.size == 1 and rank(cols) == 1:
+            cols = concatenate((id_attributes, cols))[:, newaxis]
+        else:
+            cols = concatenate((id_attributes[newaxis,:], cols))
         
         if self.exclude_condition is not None:
-            exclude_mask = self._get_indicator(self.exclude_condition, year)
+            exclude_mask = self._get_indicator(year, 
+                                               attributes = [self.exclude_condition],
+                                               wrap = False)
             
             cols = self._conditionally_eliminate_rows(
                 cols,
@@ -160,18 +129,6 @@ class DatasetTable(AbstractIndicator):
            id_columns -- the columns which should be ignored when deciding to eliminate a row
            exclude_mask -- the mask to be applied to the cols
         '''
-        
-#        data_columns = [c for c in range(len(data)) if c not in id_columns]
-#        mask = None
-#        
-#        for col in data_columns:
-#            col_data = data[col]
-#            mask_cmd = 'col_data %s' % exclude_condition
-#            masked_col = eval(mask_cmd)
-#            if mask is None:
-#                mask = masked_col
-#            else:
-#                mask = logical_and(mask, masked_col)
                 
         mask = logical_not(exclude_mask)
         new_data = []
@@ -285,44 +242,6 @@ class Tests(AbstractIndicatorTest):
         for col in range(len(actual_output)):
             self.assert_(ma.allclose(actual_output[col], desired_output[col]))
             
-#    def test__conditionally_eliminate_rows(self):
-#        
-#        dataset_table = DatasetTable(
-#             source_data = self.source_data, 
-#             attributes = [], 
-#             dataset_name = 'test',
-#             name = 'test')
-#        
-#        data = [
-#          array([1,1,2,2]),#id 1
-#          array([1,2,0,0]),
-#          array([1,2,0,0]),
-#          array([1,2,1,2]),#id 2
-#          array([0,2,0,4])
-#          ]
-#
-#        actual_output = dataset_table._conditionally_eliminate_rows(
-#            data, 
-#            id_columns=[0,3],
-#            exclude_condition=None)        
-#        self.assert_(ma.allequal(actual_output,data))
-#        
-#        actual_output = dataset_table._conditionally_eliminate_rows(
-#            data, 
-#            id_columns=[0,3],
-#            exclude_condition='==0')
-#        
-#        desired_output = [
-#          array([1,1,2]),
-#          array([1,2,0]),
-#          array([1,2,0]),
-#          array([1,2,2]),
-#          array([0,2,4])
-#          ]
-#        
-#        self.assertEqual(len(actual_output), len(desired_output))
-#        for col in range(len(actual_output)):
-#            self.assert_(ma.allclose(actual_output[col], desired_output[col]))
                                 
 if __name__ == '__main__':
     opus_unittest.main()

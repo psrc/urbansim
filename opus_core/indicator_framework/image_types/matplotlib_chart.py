@@ -36,7 +36,7 @@ else:
                      storage_location = None):
             
             AbstractIndicator.__init__(self, source_data, dataset_name, 
-                                       attribute, years, operation, name,
+                                       [attribute], years, operation, name,
                                        storage_location)
     
         def is_single_year_indicator_image_type(self):
@@ -53,8 +53,8 @@ else:
             directory's 'indicators' sub-directory.
             """
                 
-            values, years = self._get_indicator_for_years(self.attribute, 
-                                                                 years)
+            values, years = self._get_indicator_for_years(years,
+                                                          wrap = False)
             
             dataset = self._get_dataset(years[-1])
     
@@ -65,7 +65,7 @@ else:
                 values = values[:, newaxis]
     
             clf()
-            chart_title = self.get_attribute_alias()
+            chart_title = self.get_attribute_alias(self.attributes[0])
             if self.run_description is not None:
                 chart_title += '\n' + self.run_description
             title(chart_title)        

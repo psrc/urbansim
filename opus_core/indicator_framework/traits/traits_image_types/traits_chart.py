@@ -77,7 +77,7 @@ else:
                           years = [1980])
             
             self.assertEqual(correct.dataset_name, returned.dataset_name)
-            self.assertEqual(correct.attribute, returned.attribute)
+            self.assertEqual(correct.attributes, returned.attributes)
             self.assertEqual(correct.name, returned.name)
             
     if __name__ == '__main__':

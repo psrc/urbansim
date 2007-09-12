@@ -38,7 +38,7 @@ class Table(AbstractIndicator):
         elif output_type not in ['dbf', 'csv', 'tab', 'sql']:
             raise "Table output_type must be either dbf, csv, tab, or sql"
 
-        AbstractIndicator.__init__(self, source_data, dataset_name, attribute, 
+        AbstractIndicator.__init__(self, source_data, dataset_name, [attribute], 
                                    years, operation, name,
                                    storage_location, can_write_to_db = True)
         
@@ -81,12 +81,12 @@ class Table(AbstractIndicator):
         """Create a table for the given indicator, save it to the cache
         directory's 'indicators' sub-directory.
         """
-        results, years_found = self._get_indicator_for_years(self.attribute, 
-                                                             years)
+        results, years_found = self._get_indicator_for_years(years,
+                                                             wrap = False)
         
         dataset = self._get_dataset(years[-1])
         
-        attribute_name_short = self.get_attribute_alias()
+        attribute_name_short = self.get_attribute_alias(self.attributes[0])
         
         id_attribute = dataset.get_id_attribute()
         if id_attribute.size == 1 and rank(results) == 1:

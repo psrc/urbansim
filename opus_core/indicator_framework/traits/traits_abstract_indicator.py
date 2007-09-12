@@ -77,6 +77,8 @@ else:
             logger.log_warning('_detraitify should be overridden by child indicator')
             detraits_dict = {}
             self._detraitify(detraits_dict, source_data)
+            detraits_dict['attributes'] = [detraits_dict['attribute']]
+            del detraits_dict['attribute']
             new_indicator = AbstractIndicator(**detraits_dict)
             return new_indicator
 
@@ -135,12 +137,12 @@ else:
             returned = indicator.detraitify(source_data = source_data)
 
             correct = AbstractIndicator(dataset_name = 'test',
-                                        attribute = 'my_attribute',
+                                        attributes = ['my_attribute'],
                                         name = 'my_name',
                                         source_data = source_data,
                                         years = [1980, 1981, 1982])
             self.assertEqual(correct.dataset_name, returned.dataset_name)
-            self.assertEqual(correct.attribute, returned.attribute)
+            self.assertEqual(correct.attributes, returned.attributes)
             self.assertEqual(correct.name, returned.name)
             
         def test_detraitify2(self):
@@ -158,12 +160,12 @@ else:
                              ))
             returned = indicator.detraitify(source_data = source_data)
             correct = AbstractIndicator(dataset_name = 'test',
-                                        attribute = 'my_attribute',
+                                        attributes = ['my_attribute'],
                                         source_data = source_data,
                                         years = [1980,1982]
                                         )
             self.assertEqual(correct.dataset_name, returned.dataset_name)
-            self.assertEqual(correct.attribute, returned.attribute)
+            self.assertEqual(correct.attributes, returned.attributes)
             self.assertEqual(correct.name, returned.name)
 
         def test__get_indicator_years(self):

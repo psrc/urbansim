@@ -31,7 +31,7 @@ class LorenzCurve(AbstractIndicator):
                  attribute = None, 
                  years = None, operation = None, name = None, scale = None,
                  storage_location = None):
-        AbstractIndicator.__init__(self, source_data, dataset_name, attribute, 
+        AbstractIndicator.__init__(self, source_data, dataset_name, [attribute], 
                                    years, operation, name,
                                    storage_location)
         self._values = None
@@ -54,7 +54,8 @@ class LorenzCurve(AbstractIndicator):
         save it to the cache directory's 'indicators' sub-directory.
         """
         
-        attribute_short = self.get_attribute_alias(year)
+        attribute_short = self.get_attribute_alias(attribute = self.attributes[0],
+                                                   year = year)
         
         title = attribute_short + ' ' + str(year)
         if self.run_description is not None:
@@ -62,12 +63,11 @@ class LorenzCurve(AbstractIndicator):
 
         # Do calculation
         # Make fresh copy with dtype float64 to avoid overflows
-        self._values = array(self._get_indicator(self.attribute, year).astype('float64'))
+        self._values = array(self._get_indicator(year, wrap = False).astype('float64'))
         self._compute_lorenz()
         
         file_path = self.get_file_path(year = year)
-        var_name = self.get_attribute_alias(year)
-        self._plot(var_name, file_path );
+        self._plot(attribute_short, file_path );
         
         return file_path
     

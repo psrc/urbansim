@@ -21,10 +21,6 @@ class IndicatorMetaData(object):
     def get_indicator_documentation_URL(cls):
         return r'http://www.urbansim.org/docs/indicators/'
     
-    def get_single_year_indicator_image_type_map(cls):
-        '''returns a list of all the image types whose indicators must be output per year.'''
-        return ['map','openev_map','geotiff','arcmap','dataset_table']
-    
     def get_indicators_in_categories(cls):
         '''returns a breakdown of indicators into multiple categories'''
         
@@ -279,4 +275,3 @@ class IndicatorMetaData(object):
     get_indicator_info = classmethod(get_indicator_info)
     get_indicator_documentation_URL = classmethod(get_indicator_documentation_URL)
     get_indicators_in_categories = classmethod(get_indicators_in_categories)
-    get_single_year_indicator_image_type_map = classmethod(get_single_year_indicator_image_type_map)

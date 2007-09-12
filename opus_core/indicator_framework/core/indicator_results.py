@@ -12,19 +12,11 @@
 # other acknowledgments.
 #
 
-from opus_core.logger import logger
 import os
-from sets import Set
-
-from time import strftime, localtime
-from opus_core.logger import logger
-import cPickle as pickle
 
 from opus_core.indicator_framework.utilities.indicator_meta_data import IndicatorMetaData
 from opus_core.indicator_framework.core.indicator_data_manager import IndicatorDataManager
 from opus_core.indicator_framework.core.source_data import SourceData
-from opus_core.indicator_framework.core.abstract_indicator import AbstractIndicator
-
 
 class IndicatorResults(object):
     """  Takes the descriptions and locations of precomputed indicators 
@@ -186,18 +178,21 @@ class IndicatorResults(object):
         return ''.join(html)
         
     def _get_doc_link(self, indicator):
-        try:
-            attribute_alias = indicator.get_attribute_alias()
-            url = self._get_documentation_url(attribute_alias)
-        except: 
-            url = None
+        urls = []
+        for attribute in indicator.attributes:
+            try:
+                attribute_alias = indicator.get_attribute_alias(attribute)
+                url = self._get_documentation_url(attribute_alias)
+            except: 
+                url = None
+                
+            if url is None: 
+                url = indicator.name
+            else:
+                url = self._get_link(url,indicator.name)
+            urls.append(url)
             
-        if url is None: 
-            url = indicator.name
-        else:
-            url = self._get_link(url,indicator.name)
-            
-        return url
+        return ';'.join(urls)
     
     def _get_link(self,url,name):
         url = url.replace('\\\\','/////').replace('\\','/')
@@ -326,7 +321,6 @@ class IndicatorResultsTests(TestWithAttributeData):
                     dataset_name = 'test'
                 ),
             ]
-            attribute_name = 'population'
             
             image_type = requests[0].get_visualization_shorthand()
             (dataset,name) = (requests[0].dataset_name, 
@@ -377,6 +371,11 @@ class IndicatorResultsTests(TestWithAttributeData):
                 rqst.source_data = self.source_data
             rows = []
             self.i_results._output_body(self.source_data, requests, rows, test = True)
+            
+            for i in range(len(output)):
+                if output[i] != rows[i]:
+                    print output[i]
+                    print rows[i]
             #print ''
             #for l in output: print l
             #for l in rows: print l

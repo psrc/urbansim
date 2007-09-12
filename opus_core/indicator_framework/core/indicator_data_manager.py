@@ -37,9 +37,9 @@ class IndicatorDataManager:
                             'date_computed', 
                             'name', 
                             'operation',
-                            'storage_location']
-        if class_name != 'DatasetTable':
-            basic_attributes.append('attribute')
+                            'storage_location',
+                            'attributes']
+        
         for basic_attr in basic_attributes:
             attr_value = indicator.__getattribute__(basic_attr)
             lines.append('\t<%s>%s</%s>'%(basic_attr,
@@ -163,7 +163,11 @@ class IndicatorDataManager:
         source_data = SourceData(**source_data_params)
         params['source_data'] = source_data
         module = self._get_module_from_indicator_class(indicator_class)
-        
+
+        if indicator_class != 'dataset_table':
+            params['attribute'] = params['attributes'][0]
+            del params['attributes']
+                    
         exec('from opus_core.indicator_framework.image_types.%s import %s'%(module, indicator_class))
         indicator = locals()[indicator_class](**params)
         
@@ -232,7 +236,7 @@ class Tests(AbstractIndicatorTest):
                 '\t<name>attribute</name>',
                 '\t<operation>None</operation>',
                 '\t<storage_location>%s</storage_location>'%os.path.join(self.temp_cache_path, 'indicators'),
-                '\t<attribute>opus_core.test.attribute</attribute>',
+                '\t<attributes>[\'opus_core.test.attribute\']</attributes>',
                 '\t<output_type>tab</output_type>',
                 '\t<source_data>',
                 '\t\t<cache_directory>%s</cache_directory>'%self.temp_cache_path,
@@ -246,7 +250,8 @@ class Tests(AbstractIndicatorTest):
             
             for i in range(len(output)):
                 if expected[i] != output[i]:
-                    print expected[i], output[i]
+                    print expected[i]
+                    print output[i]
                     
             self.assertEqual(output,expected)
   
@@ -279,13 +284,12 @@ class Tests(AbstractIndicatorTest):
             self.assertEqual(metadata_file,expected_path)
             
             new_table = self.data_manager._import_indicator_from_file(metadata_path)
-            for attr in ['attribute','dataset_name',
+            for attr in ['attributes','dataset_name',
                          'output_type','date_computed',
                          'years']:
                 old_val = table.__getattribute__(attr)
                 new_val = new_table.__getattribute__(attr)
                 self.assertEqual(old_val,new_val)
-            
             self.assertEqual(table.source_data.cache_directory,
                              new_table.source_data.cache_directory)
             self.assertEqual(table.source_data.dataset_pool_configuration.package_order,
