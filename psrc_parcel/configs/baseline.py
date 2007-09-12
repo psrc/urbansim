@@ -84,6 +84,8 @@ class Baseline(UrbansimParcelConfiguration):
                     'development_template_components',
                     'development_constraints',
                     "building_sqft_per_job",
+                    "fazes",
+                    "large_areas",
                     ],
                 tables_to_cache_nchunks={'parcels': 1},
                 unroll_gridcells = False
