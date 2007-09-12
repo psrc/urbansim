@@ -785,6 +785,10 @@ Suppose we have four locations with distance to cbd 2, 4, 6 and 8
 respectively. We create a location dataset \datasetindex using
 a storage type `dict'\index{Storage!dict}.
 This type of storage is useful when we want to pass data directly without storing them on a physical storage media.
+
+%write_dataset conversion error
+%this is out of date - fix it
+
 \begin{verbatim}
 >>> dstorage = StorageFactory().get_storage('dict_storage')
 >>> dstorage._write_dataset(out_table_name='gridcells',

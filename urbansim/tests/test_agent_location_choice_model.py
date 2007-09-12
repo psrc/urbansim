@@ -36,9 +36,9 @@ class Test(StochasticTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         households_table_name = 'households'
-        storage._write_dataset(
-            out_table_name = households_table_name,
-            values = {
+        storage.write_table(
+            table_name = households_table_name,
+            table_data = {
                 "household_id": arange(10000)+1,
                 "grid_id": array(10000*[-1])
                 }
@@ -46,9 +46,9 @@ class Test(StochasticTestCase):
         households = HouseholdDataset(in_storage=storage, in_table_name=households_table_name)
 
         gridcells_table_name = 'gridcells'
-        storage._write_dataset(
-            out_table_name = gridcells_table_name,
-            values = {
+        storage.write_table(
+            table_name = gridcells_table_name,
+            table_data = {
                 "grid_id": arange(100)+1,
                 "cost":array(50*[100]+50*[1000])
                 }
@@ -97,8 +97,8 @@ class Test(StochasticTestCase):
             'cost':array(ngcs_attr*[100]+ngcs_noattr*[1000])
             }
 
-        storage._write_dataset(out_table_name='households', values=household_data)
-        storage._write_dataset(out_table_name='gridcells', values=gridcell_data)
+        storage.write_table(table_name = 'households', table_data = household_data)
+        storage.write_table(table_name = 'gridcells', table_data = gridcell_data)
 
         households = HouseholdDataset(in_storage=storage, in_table_name='households')
         gridcells = GridcellDataset(in_storage=storage, in_table_name='gridcells')
@@ -130,10 +130,10 @@ class Test(StochasticTestCase):
         def run_model_2():
             storage = StorageFactory().get_storage('dict_storage')
 
-            storage._write_dataset(out_table_name='households', values=household_data)
+            storage.write_table(table_name = 'households', table_data = household_data)
             households = HouseholdDataset(in_storage=storage, in_table_name='households')
 
-            storage._write_dataset(out_table_name='gridcells', values=gridcell_data)
+            storage.write_table(table_name = 'gridcells', table_data = gridcell_data)
             gridcells = GridcellDataset(in_storage=storage, in_table_name='gridcells')
 
             hlcm = HouseholdLocationChoiceModelCreator().get_model(location_set=gridcells, compute_capacity_flag=False,
@@ -158,8 +158,8 @@ class Test(StochasticTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         #create households
-        storage._write_dataset(out_table_name='households',
-            values = {
+        storage.write_table(table_name='households',
+            table_data = {
                 'household_id': arange(10000)+1,
                 'grid_id': array(10000*[-1])
                 }
@@ -167,8 +167,8 @@ class Test(StochasticTestCase):
         households = HouseholdDataset(in_storage=storage, in_table_name='households')
 
         # create gridcells
-        storage._write_dataset(out_table_name='gridcells',
-            values = {
+        storage.write_table(table_name='gridcells',
+            table_data = {
                 'grid_id': arange(100)+1,
                 'attractiveness':array(99*[2000]+[1])
                 }
@@ -196,8 +196,8 @@ class Test(StochasticTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         #create households
-        storage._write_dataset(out_table_name='households',
-            values = {
+        storage.write_table(table_name='households',
+            table_data = {
                 'household_id': arange(10000)+1,
                 'grid_id': array(100*range(100))+1
                 }
@@ -205,8 +205,8 @@ class Test(StochasticTestCase):
         households = HouseholdDataset(in_storage=storage, in_table_name='households')
 
         # create gridcells
-        storage._write_dataset(out_table_name='gridcells',
-            values = {
+        storage.write_table(table_name='gridcells',
+            table_data = {
                 'grid_id': arange(100)+1,
                 'residential_units':array(100*[100])
                 }
@@ -237,15 +237,15 @@ class Test(StochasticTestCase):
         the unplaced agents were placed, and the number of available spaces has decreased"""
         storage = StorageFactory().get_storage('dict_storage')
 
-        storage._write_dataset(out_table_name='households',
-            values = {
+        storage.write_table(table_name='households',
+            table_data = {
                 'grid_id': array(2000*[0] + 5000*[1]),
                 'household_id': arange(7000)+1
                 }
             )
 
-        storage._write_dataset(out_table_name='gridcells',
-            values = {
+        storage.write_table(table_name='gridcells',
+            table_data= {
                 'residential_units':array(50*[10000]),
                 'grid_id':  arange(50)+1
                 }
@@ -291,16 +291,16 @@ class Test(StochasticTestCase):
         """
         storage = StorageFactory().get_storage('dict_storage')
 
-        storage._write_dataset(out_table_name='job_building_types',
-            values = {
+        storage.write_table(table_name='job_building_types',
+            table_data = {
                 'id':array([2,1]),
                 'name': array(['commercial', 'industrial'])
                 }
             )
         job_building_types = JobBuildingTypeDataset(in_storage=storage, in_table_name='job_building_types')
 
-        storage._write_dataset(out_table_name='jobs',
-            values = {
+        storage.write_table(table_name='jobs',
+            table_data = {
                 'job_id': arange(1001)+1,
                 'grid_id': array([0]*1001),
                 'building_type': array([1]*1000 + [2])
@@ -308,8 +308,8 @@ class Test(StochasticTestCase):
             )
         jobs = JobDataset(in_storage=storage, in_table_name='jobs')
 
-        storage._write_dataset(out_table_name='gridcells',
-            values = {
+        storage.write_table(table_name='gridcells',
+            table_data = {
                 'grid_id': arange(50)+1,
                 'commercial_sqft': array([1000]*50),
                 'commercial_sqft_per_job': array([100]*50)
@@ -375,10 +375,10 @@ class Test(StochasticTestCase):
         def run_model1():
             storage = StorageFactory().get_storage('dict_storage')
 
-            storage._write_dataset(out_table_name='households', values=household_data)
+            storage.write_table(table_name = 'households', table_data = household_data)
             households = HouseholdDataset(in_storage=storage, in_table_name='households')
 
-            storage._write_dataset(out_table_name='gridcells', values=gridcell_data)
+            storage.write_table(table_name = 'gridcells', table_data = gridcell_data)
             gridcells = GridcellDataset(in_storage=storage, in_table_name='gridcells')
 
             hlcm = HouseholdLocationChoiceModelCreator().get_model(location_set=gridcells, compute_capacity_flag=False,
@@ -396,10 +396,10 @@ class Test(StochasticTestCase):
         def run_model2():
             storage = StorageFactory().get_storage('dict_storage')
 
-            storage._write_dataset(out_table_name='households', values=household_data)
+            storage.write_table(table_name = 'households', table_data = household_data)
             households = HouseholdDataset(in_storage=storage, in_table_name='households')
 
-            storage._write_dataset(out_table_name='gridcells', values=gridcell_data)
+            storage.write_table(table_name = 'gridcells', table_data = gridcell_data)
             gridcells = GridcellDataset(in_storage=storage, in_table_name='gridcells')
 
             hlcm = HouseholdLocationChoiceModelCreator().get_model(location_set=gridcells, compute_capacity_flag=False,

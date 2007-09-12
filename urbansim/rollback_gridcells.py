@@ -84,9 +84,9 @@ class RollbackGridcellsTests(opus_unittest.OpusTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         gridcells_table_name = 'gridcells'        
-        storage._write_dataset(
-            out_table_name = gridcells_table_name,
-            values = {
+        storage.write_table(
+            table_name = gridcells_table_name,
+            table_data = {
                 'grid_id':array([1,2,3]),
                 'development_type_id':array([3,3,3]),
                 'commercial_sqft':array([50,50,50]),
@@ -102,9 +102,9 @@ class RollbackGridcellsTests(opus_unittest.OpusTestCase):
             )
 
         dev_event_history_table_name = 'dev_event_history'        
-        storage._write_dataset(
-            out_table_name = dev_event_history_table_name,
-            values = {
+        storage.write_table(
+            table_name = dev_event_history_table_name,
+            table_data = {
                 'scheduled_year':array([1999,1999,1998,1998]),
                 'grid_id':array([1,3,2,3]),
                 'starting_development_type_id':array([3,3,2,1]),

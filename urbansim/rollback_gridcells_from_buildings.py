@@ -69,9 +69,9 @@ class RollbackGridcellsFromBuildingsTests(opus_unittest.OpusTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         gridcells_table_name = 'gridcells'        
-        storage._write_dataset(
-            out_table_name = gridcells_table_name,
-            values = {
+        storage.write_table(
+            table_name = gridcells_table_name,
+            table_data = {
                 'grid_id':array([1,2,3]),
                 'commercial_sqft':array([50,50,50]),
                 'industrial_sqft':array([100,100,100]),
@@ -85,9 +85,9 @@ class RollbackGridcellsFromBuildingsTests(opus_unittest.OpusTestCase):
             )
 
         building_table_name = 'buildings'        
-        storage._write_dataset(
-            out_table_name = building_table_name,
-            values = {
+        storage.write_table(
+            table_name = building_table_name,
+            table_data = {
                 'building_id': arange(6)+1, 
                 'year_built':array([1999,1999,1998,1998,1998,1999]),
                 'grid_id':array([1,3,2,3,1,1]),
@@ -98,9 +98,9 @@ class RollbackGridcellsFromBuildingsTests(opus_unittest.OpusTestCase):
                 },
             )
         building_types_table_name = 'building_types'        
-        storage._write_dataset(
-            out_table_name = building_types_table_name,
-            values = {
+        storage.write_table(
+            table_name = building_types_table_name,
+            table_data = {
                     'building_type_id':array([1,2,3,4]), 
                     'name': array(['industrial', 'commercial', 'residential', 'governmental'])
                     }

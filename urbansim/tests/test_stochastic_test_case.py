@@ -46,8 +46,8 @@ class Test(StochasticTestCase):
         ngrids = 10
         
         #create households
-        storage._write_dataset(out_table_name='households',
-            values = {
+        storage.write_table(table_name='households',
+            table_data = {
                 'household_id': arange(nhouseholds)+1, 
                 'grid_id': array(nhouseholds*[-1])
                 }
@@ -55,8 +55,8 @@ class Test(StochasticTestCase):
         households = HouseholdDataset(in_storage=storage, in_table_name='households')
             
         # create gridcells
-        storage._write_dataset(out_table_name='gridcells',
-            values = {
+        storage.write_table(table_name = 'gridcells',
+            table_data = {
                 'grid_id': arange(ngrids)+1,
                 'cost':array(ngrids/2*[100] + ngrids/2*[1000])
                 }

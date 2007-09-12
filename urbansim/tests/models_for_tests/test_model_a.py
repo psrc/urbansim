@@ -29,7 +29,7 @@ class TestModelA(Model):
         
         results['test_attribute'] = results['test_attribute'] + 1
         
-        input_storage._write_dataset(table_name, results)
+        input_storage.write_table(table_name = table_name, table_data = results)
 
 
 from opus_core.tests import opus_unittest
@@ -44,9 +44,9 @@ class test_model_a_tests(opus_unittest.OpusTestCase):
         table_name = 'test_db'
             
         input_storage = StorageFactory().get_storage('dict_storage')
-        input_storage._write_dataset(
-            table_name,
-            values = {
+        input_storage.write_table(
+            table_name = table_name,
+            table_data = {
                 'test_attribute': array([0,6,1]),
                 }
             )

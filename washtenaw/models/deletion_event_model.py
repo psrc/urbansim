@@ -85,22 +85,22 @@ from washtenaw.datasets.deletion_event_dataset import DeletionEventDataset
 class DeletionEventsTests(opus_unittest.OpusTestCase):
     def setUp(self):
         self.storage = StorageFactory().get_storage('dict_storage')
-        self.storage._write_dataset(out_table_name='gridcells',
-            values = {
+        self.storage.write_table(table_name='gridcells',
+            table_data = {
                 'grid_id': arange(10) + 1
                 }
             )
         # There are 10 jobs in each gridcell 
-        self.storage._write_dataset(out_table_name='jobs',
-            values = {
+        self.storage.write_table(table_name='jobs',
+            table_data = {
                 'job_id': arange(100) + 1,
                 'grid_id': array(10*[arange(10)+1]).ravel()
                 }
             )
     def _add_households_to_storage(self):
         # There are 10 households in gridcell 1 and 30 households in gridcell 3
-        self.storage._write_dataset(out_table_name='households',
-            values = {
+        self.storage.write_table(table_name = 'households',
+            table_data = {
                 'household_id': arange(50) + 1,
                 'grid_id': array(10*[1] + 30*[3] + 10*[-1])
                 }
@@ -112,8 +112,8 @@ class DeletionEventsTests(opus_unittest.OpusTestCase):
     def _create_simple_deletion_event_set(self):
         storage = StorageFactory().get_storage('dict_storage')
         
-        storage._write_dataset(out_table_name='events', 
-               values = {
+        storage.write_table(table_name = 'events', 
+               table_data = {
                 "scheduled_year": array([2000, 2000, 2001, 2001]),
                 "grid_id": array([10, 5, 3, 5]),
                 "number_of_jobs": array([20, 5, 0, 3])
@@ -124,8 +124,8 @@ class DeletionEventsTests(opus_unittest.OpusTestCase):
     def _create_full_deletion_event_set(self):
         storage = StorageFactory().get_storage('dict_storage')
         
-        storage._write_dataset(out_table_name='events', 
-               values = {
+        storage.write_table(table_name = 'events', 
+               table_data = {
                 "scheduled_year": array([2000, 2000, 2001, 2001, 2001]),
                 "grid_id": array([1, 5, 3, 5, 2]),
                 "number_of_jobs": array([3, 5, 0, 3, -2]),

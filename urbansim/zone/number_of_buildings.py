@@ -44,15 +44,15 @@ class Tests(opus_unittest.OpusTestCase):
     def test(self):
         storage = StorageFactory().get_storage('dict_storage')        
         
-        storage._write_dataset(
-            'zones',
-            {
+        storage.write_table(
+            table_name = 'zones',
+            table_data = {
                 'zone_id': array([1,2,3,4,5]),
             }
         )
-        storage._write_dataset(
-            'buildings',
-            {
+        storage.write_table(
+            table_name = 'buildings',
+            table_data = {
                 'building_id': array([1, 2, 3, 4, 5, 6]),
                 'zone_id': array([1, 2, 3, 4, 2, 2]),
             }

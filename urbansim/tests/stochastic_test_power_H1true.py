@@ -52,10 +52,10 @@ if __name__=="__main__":
             
             storage = StorageFactory().get_storage('dict_storage')
       
-            storage._write_dataset('households', household_data)
+            storage.write_table(table_name = 'households', table_data = household_data)
             households = HouseholdDataset(in_storage=storage, in_table_name='households')
                    
-            storage._write_dataset('gridcells', gridcell_data)
+            storage.write_table(table_name = 'gridcells', table_data = gridcell_data)
             gridcells = HouseholdDataset(in_storage=storage, in_table_name='gridcells')
                         
             # create coefficients and specification

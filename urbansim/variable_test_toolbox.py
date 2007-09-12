@@ -84,7 +84,7 @@ class VariableTestToolbox(object):
                     data[self.id_names[key]] = arange(1, len(data_dictionary[key][data_dictionary[key].keys()[0]])+1) # add id array
                 
                 id_name = self.id_names[key]
-                storage._write_dataset(out_table_name='data', values=data)
+                storage.write_table(table_name = 'data', table_data = data)
                 
                 if key == "gridcell":
                     gc = GridcellDataset(in_storage=storage, in_table_name='data')

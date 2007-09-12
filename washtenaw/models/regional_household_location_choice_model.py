@@ -89,8 +89,8 @@ class Test(StochasticTestCase):
             'large_area_id': lareas            
             }
 
-        storage._write_dataset(out_table_name='households', values=household_data)
-        storage._write_dataset(out_table_name='gridcells', values=gridcell_data)
+        storage.write_table(table_name = 'households', table_data = household_data)
+        storage.write_table(table_name = 'gridcells', table_data = gridcell_data)
 
         households = HouseholdDataset(in_storage=storage, in_table_name='households')
         gridcells = GridcellDataset(in_storage=storage, in_table_name='gridcells')

@@ -168,9 +168,9 @@ from numpy import array, isscalar
 class ConstantsTests(opus_unittest.OpusTestCase):
     def testLoadTable(self):
         storage = StorageFactory().get_storage('dict_storage')
-        storage._write_dataset(
-            'urbansim_constants',
-            {
+        storage.write_table(
+            table_name = 'urbansim_constants',
+            table_data = {
                 'young_age':array([30,])
             }
         )

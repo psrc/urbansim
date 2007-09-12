@@ -93,9 +93,9 @@ class Tests(StochasticTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         job_building_types_table_name = 'job_building_types'
-        storage._write_dataset(
-            out_table_name = job_building_types_table_name,
-            values = {
+        storage.write_table(
+            table_name = job_building_types_table_name,
+            table_data = {
                 "id":array([govc,comc,indc,hbc]),
                 "name": array(["governmental", "commercial", "industrial", "home_based"]),
                 "home_based": array([0, 0, 0, 1])
@@ -137,11 +137,11 @@ class Tests(StochasticTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         jobs_set_table_name = 'jobs_set'
-        storage._write_dataset(jobs_set_table_name, self.jobs_data)
+        storage.write_table(table_name = jobs_set_table_name, table_data = self.jobs_data)
         jobs_set = JobDataset(in_storage=storage, in_table_name=jobs_set_table_name)
 
         ect_set_table_name = 'ect_set'
-        storage._write_dataset(ect_set_table_name, self.annual_employment_control_totals_data)
+        storage.write_table(table_name = ect_set_table_name, table_data = self.annual_employment_control_totals_data)
         ect_set = ControlTotalDataset(in_storage=storage, in_table_name=ect_set_table_name, what="employment")
 
         model = RegionalEmploymentTransitionModel()
@@ -159,9 +159,9 @@ class Tests(StochasticTestCase):
             storage = StorageFactory().get_storage('dict_storage')
 
             jobs_set_table_name = 'jobs_set'
-            storage._write_dataset(
-                out_table_name = jobs_set_table_name,
-                values = self.jobs_data,
+            storage.write_table(
+                table_name = jobs_set_table_name,
+                table_data = self.jobs_data,
                 )
 
             jobs_set = JobDataset(in_storage=storage, in_table_name=jobs_set_table_name)
@@ -180,9 +180,9 @@ class Tests(StochasticTestCase):
             storage = StorageFactory().get_storage('dict_storage')
 
             jobs_set_table_name = 'jobs_set'
-            storage._write_dataset(
-                out_table_name = jobs_set_table_name,
-                values = self.jobs_data,
+            storage.write_table(
+                table_name = jobs_set_table_name,
+                table_data = self.jobs_data,
                 )
 
             jobs_set = JobDataset(in_storage=storage, in_table_name=jobs_set_table_name)
@@ -219,9 +219,9 @@ class Tests(StochasticTestCase):
         storage = StorageFactory().get_storage('dict_storage')
 
         jobs_set_table_name = 'jobs_set'
-        storage._write_dataset(
-            out_table_name = jobs_set_table_name,
-            values = self.jobs_data,
+        storage.write_table(
+            table_name = jobs_set_table_name,
+            table_data = self.jobs_data,
             )
         jobs_set = JobDataset(in_storage=storage, in_table_name=jobs_set_table_name)
 
@@ -229,9 +229,9 @@ class Tests(StochasticTestCase):
         annual_employment_control_totals_data["total_non_home_based_employment"] = array([5750, 1400, 4000, 1600])
 
         ect_set_table_name = 'ect_set'
-        storage._write_dataset(
-            out_table_name = ect_set_table_name,
-            values = annual_employment_control_totals_data,
+        storage.write_table(
+            table_name = ect_set_table_name,
+            table_data = annual_employment_control_totals_data,
             )
         ect_set = ControlTotalDataset(in_storage=storage, in_table_name=ect_set_table_name, what="employment")
 

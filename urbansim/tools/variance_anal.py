@@ -31,18 +31,18 @@ def run_ALCM(niter):
     storage = StorageFactory().get_storage('dict_storage')
 
     households_table_name = 'households'        
-    storage._write_dataset(
-        out_table_name = households_table_name,
-        values = {
+    storage.write_table(
+        table_name = households_table_name,
+        table_data = {
             'household_id': arange(nhhs)+1, 
             'grid_id': hh_grid_ids
             }
         )
         
     gridcells_table_name = 'gridcells'        
-    storage._write_dataset(
-        out_table_name = gridcells_table_name,
-        values = {
+    storage.write_table(
+        table_name = gridcells_table_name,
+        table_data = {
             'grid_id': arange(ngcs)+1, 
             'cost':array(ngcs_attr*[100]+ngcs_noattr*[1000])
             }
@@ -86,9 +86,9 @@ def run_HTM(niter):
         storage = StorageFactory().get_storage('dict_storage')
 
         hc_set_table_name = 'hc_set'        
-        storage._write_dataset(
-            out_table_name = hc_set_table_name,
-            values = {
+        storage.write_table(
+            table_name = hc_set_table_name,
+            table_data = {
                 'characteristic': array(4*['income']+4*['age_of_head']), 
                 'min':array([0,1001,5001, 10001, 0, 31, 41, 61]), 
                 'max':array([1000, 5000, 10000,-1, 30, 40, 60, -1])
@@ -96,18 +96,18 @@ def run_HTM(niter):
             )
             
         hct_set_table_name = 'hct_set'        
-        storage._write_dataset(
-            out_table_name = hct_set_table_name,
-            values = {
+        storage.write_table(
+            table_name = hct_set_table_name,
+            table_data = {
                 'year':array([2000]), 
                 'total_number_of_households':array([should_nhhs])
                 },
             )
             
         households_table_name = 'households'        
-        storage._write_dataset(
-            out_table_name = households_table_name,
-            values = {
+        storage.write_table(
+            table_name = households_table_name,
+            table_data = {
                 'age_of_head': array(nhhsg/2*[18]+(nhhsg-nhhsg/2)*[35] +
                     nhhsg/2*[30] + (nhhsg-nhhsg/2)*[40] +
                     nhhsg/2*[38] + (nhhsg-nhhsg/2)*[65] + 

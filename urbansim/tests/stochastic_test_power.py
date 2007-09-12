@@ -55,10 +55,10 @@ if __name__=="__main__":
             
             storage = StorageFactory().get_storage('dict_storage')
       
-            storage._write_dataset('households', household_data)
+            storage.write_table(table_name = 'households', table_data = household_data)
             households = HouseholdDataset(in_storage=storage, in_table_name='households')
                    
-            storage._write_dataset('gridcells', gridcell_data)
+            storage.write_table(table_name = 'gridcells', table_data = gridcell_data)
             gridcells = HouseholdDataset(in_storage=storage, in_table_name='gridcells')
             
             # create coefficients and specification
@@ -131,13 +131,13 @@ if __name__=="__main__":
             
             storage = StorageFactory().get_storage('dict_storage')
            
-            storage._write_dataset('hc_set', household_characteristics_for_ht_data)
+            storage.write_table(table_name = 'hc_set', table_data = household_characteristics_for_ht_data)
             hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
 
-            storage._write_dataset('hct_set', annual_household_control_totals_data)
+            storage.write_table(table_name = 'hct_set', table_data = annual_household_control_totals_data)
             hct_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hct_set')
             
-            storage._write_dataset('households', household_data)
+            storage.write_table(table_name = 'households', table_data = household_data)
             households = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='households')
 
             income = households.get_attribute("income")
@@ -149,7 +149,7 @@ if __name__=="__main__":
             expected_results = array([age[idx1].mean(), age[idx2].mean(), age[idx3].mean(), age[idx4].mean()]) 
                   
             def run_model():
-                storage._write_dataset('households', household_data)
+                storage.write_table(table_name = 'households', table_data = household_data)
                 households = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='households')
 
                 model = HouseholdTransitionModel()
@@ -206,13 +206,13 @@ if __name__=="__main__":
             
             storage = StorageFactory().get_storage('dict_storage')
            
-            storage._write_dataset('hc_set', household_characteristics_for_ht_data)
+            storage.write_table(table_name = 'hc_set', table_data = household_characteristics_for_ht_data)
             hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
 
-            storage._write_dataset('hct_set', annual_household_control_totals_data)
+            storage.write_table(table_name = 'hct_set', table_data = annual_household_control_totals_data)
             hct_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hct_set')
             
-            storage._write_dataset('households', household_data)
+            storage.write_table(table_name = 'households', table_data = household_data)
             households = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='households')
 
             income = households.get_attribute("income")
@@ -224,7 +224,7 @@ if __name__=="__main__":
             expected_results = array([age[idx1].mean(), age[idx2].mean(), age[idx3].mean(), age[idx4].mean()]) 
                   
             def run_model():
-                storage._write_dataset('households', household_data)
+                storage.write_table(table_name = 'households', table_data = household_data)
                 households = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='households')
             
                 model = HouseholdTransitionModel()
