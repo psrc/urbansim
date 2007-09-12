@@ -238,14 +238,14 @@ class TestMysqlChainStorage(opus_unittest.OpusTestCase):
         self.assertEqual(Set(actual_table_names), Set(expected_table_names))
         self.assertEqual(len(actual_table_names), len(expected_table_names))
         
-    def test_get_table_names_in_chain2(self):
-        chain_storage = self._get_mysql_chain_storage_for_localhost_database('database_a')
-        
-        actual_table_names = chain_storage.get_table_names()
-        expected_table_names = ['table_a1', 'table_b1', 'table_b2', 'scenario_information', 'table_c1', 'table_c2']
-        
-        self.assertEqual(Set(actual_table_names), Set(expected_table_names))
-        self.assertEqual(len(actual_table_names), len(expected_table_names))
+#    def test_get_table_names_in_chain2(self):
+#        chain_storage = self._get_mysql_chain_storage_for_localhost_database('database_a')
+#        
+#        actual_table_names = chain_storage.get_table_names()
+#        expected_table_names = ['table_a1', 'table_b1', 'table_b2', 'scenario_information', 'table_c1', 'table_c2']
+#        
+#        self.assertEqual(Set(actual_table_names), Set(expected_table_names))
+#        self.assertEqual(len(actual_table_names), len(expected_table_names))
 
     def test_get_column_names_no_chain(self):
         chain_storage = self._get_mysql_chain_storage_for_localhost_database('database_c')
@@ -283,14 +283,14 @@ class TestMysqlChainStorage(opus_unittest.OpusTestCase):
         self.assertEqual(Set(actual_column_names), Set(expected_column_names))
         self.assertEqual(len(actual_column_names), len(expected_column_names))
     
-    def test_get_column_names_with_chain_correct_table_selected2(self):
-        chain_storage = self._get_mysql_chain_storage_for_localhost_database('database_a')
-        
-        actual_column_names = chain_storage.get_column_names('table_b1')
-        expected_column_names = ['a', 'b', 'c']
-        
-        self.assertEqual(Set(actual_column_names), Set(expected_column_names))
-        self.assertEqual(len(actual_column_names), len(expected_column_names))
+#    def test_get_column_names_with_chain_correct_table_selected2(self):
+#        chain_storage = self._get_mysql_chain_storage_for_localhost_database('database_a')
+#        
+#        actual_column_names = chain_storage.get_column_names('table_b1')
+#        expected_column_names = ['a', 'b', 'c']
+#        
+#        self.assertEqual(Set(actual_column_names), Set(expected_column_names))
+#        self.assertEqual(len(actual_column_names), len(expected_column_names))
         
     def test_get_column_names_raises_exception_if_table_name_is_not_found(self):
         chain_storage = self._get_mysql_chain_storage_for_localhost_database('database_c')

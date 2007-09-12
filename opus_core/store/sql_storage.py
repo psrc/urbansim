@@ -54,6 +54,7 @@ class sql_storage(Storage):
             bind = connection_string
         )
         self._engine = self._metadata.get_engine()
+        #self._metadata.reflect()
         
     def get_storage_location(self):
         return str(self._engine.url)
@@ -76,7 +77,9 @@ class sql_storage(Storage):
         
         return table_data
         
-        
+    def table_exists(self, table_name):
+        return table_name in [t.name for t in self._metadata.tables]
+    
     def write_table(self, table_name, table_data, overwrite_existing = True):
         table_length, _ = self._get_column_size_and_names(table_data)
         
@@ -376,17 +379,17 @@ else:
             db.DoQuery('CREATE TABLE bar (foo INT, boo INT, fooboobar INT)')
             db.DoQuery('INSERT INTO bar (foo, boo, fooboobar) VALUES (1,1,1)')
                 
-            expected_table_names = ['bee', 'baz', 'foobeebaz']
-            actual_table_names = self.storage.get_column_names('foo')
+            expected_column_names = ['bee', 'baz', 'foobeebaz']
+            actual_column_names = self.storage.get_column_names('foo')
                 
-            self.assertEqual(Set(expected_table_names), Set(actual_table_names))
-            self.assertEqual(len(expected_table_names), len(actual_table_names))
+            self.assertEqual(Set(expected_column_names), Set(actual_column_names))
+            self.assertEqual(len(expected_column_names), len(actual_column_names))
             
-            expected_table_names = ['foo', 'boo', 'fooboobar']
-            actual_table_names = self.storage.get_column_names('bar')
+            expected_column_names = ['foo', 'boo', 'fooboobar']
+            actual_column_names = self.storage.get_column_names('bar')
                 
-            self.assertEqual(Set(expected_table_names), Set(actual_table_names))
-            self.assertEqual(len(expected_table_names), len(actual_table_names))
+            self.assertEqual(Set(expected_column_names), Set(actual_column_names))
+            self.assertEqual(len(expected_column_names), len(actual_column_names))
             
         def test_load_table_returns_a_table_with_the_given_table_name_and_data(self):
             db = self.db_server.get_database(self.database_name)
