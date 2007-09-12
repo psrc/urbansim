@@ -543,11 +543,11 @@ def quantile(values, probs):
     sorted_values = sort(values)
     return sorted_values[maximum((probs*values.size-1).astype("int32"),0)]
 
-def unique_values(input_array):
+def unique_values(input_array, sort_values=True):
     """return unique elements of input_array
     input_array - a sortable numpy array or list object
     """
-    from numpy import array, ndarray, sort
+    from numpy import array, ndarray, sort, where
 
     if isinstance(input_array, ndarray):
         if input_array.ndim <> 1:
@@ -575,8 +575,18 @@ def unique_values(input_array):
                 t[lasti] = last = t[i]
                 lasti += 1
             i += 1
-    return t[:lasti]
-
+    if sort_values:
+        return t[:lasti]
+    else:
+        if isinstance(input_array, ndarray):
+            unsorted_index = [where(input_array==v)[0][0] for v in t[:lasti]]
+            unsorted_index.sort()
+            return input_array[unsorted_index]
+        else:
+            unsorted_index = [input_array.index(v) for v in t[:lasti]]
+            unsorted_index.sort()
+            return [input_array[n] for n in unsorted_index]
+       
 def get_host_name():
     """Get the host name of this computer in a platform-independent manner."""
     fullname = socket.gethostname()
@@ -950,6 +960,16 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
                     self.assert_(os.path.exists(path))
         finally:
             shutil.rmtree(temp_dir)
+
+    def test_unique_values(self):
+        from numpy import array, ma
+
+        a = array([0.01, 0.1, 0.01, 0.2, 0.1, 0.5, 0.08])
+        self.assertEqual(ma.allequal(unique_values(a), array([0.01, 0.08, 0.1, 0.2, 0.5])), True)
+        self.assertEqual(ma.allequal(unique_values(a, sort_values=False), array([0.01, 0.1, 0.2, 0.5, 0.08])), True)
+        b = [0.01, 0.1, 0.01, 0.2, 0.1, 0.5, 0.08]
+        self.assertEqual(unique_values(b), [0.01, 0.08, 0.1, 0.2, 0.5])
+        self.assertEqual(unique_values(b, sort_values=False), [0.01, 0.1, 0.2, 0.5, 0.08])
 
 if __name__ == "__main__":
     opus_unittest.main()
