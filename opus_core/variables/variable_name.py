@@ -42,10 +42,8 @@ class VariableName(object):
         self._expression = expression
         # squished is a copy of the expression with whitespace removed
         # by using this in the cache we make expressions equivalent that differ only by whitespace
-        squished = ''
-        for c in expression:
-            if not c.isspace():
-                squished = squished + c
+        squished = expression.replace(' ', '')
+
         self._squished_expression = squished
         if squished not in self._cache:
             # put the import here to avoid a circular import at the top level

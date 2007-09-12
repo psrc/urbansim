@@ -71,18 +71,18 @@ class IndicatorFactory(object):
         #generate a static html page for browsing outputted indicators and store the path to the html
         results_page_path = None
         results = IndicatorResults()
-        try:            
-            results_page_path = results.create_page(
-                source_data = source_data,
-                page_name = file_name_for_indicator_results,
-                indicators = indicators)
-        except:
-            message = 'failed to generate indicator results page'
-            if display_error_box:
-                display_message_dialog(message)
-            logger.enable_hidden_error_and_warning_words()
-            logger.log_warning(message)
-            logger.disable_hidden_error_and_warning_words()
+#        try:            
+        results_page_path = results.create_page(
+            source_data = source_data,
+            page_name = file_name_for_indicator_results,
+            indicators = indicators)
+#        except:
+#            message = 'failed to generate indicator results page'
+#            if display_error_box:
+#                display_message_dialog(message)
+#            logger.enable_hidden_error_and_warning_words()
+#            logger.log_warning(message)
+#            logger.disable_hidden_error_and_warning_words()
     
         if results_page_path is not None:        
             results_page_path = 'file://' + results_page_path

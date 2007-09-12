@@ -71,15 +71,16 @@ class IndicatorDataManager:
         '''scans the indicator directory for indicator meta files and 
            recreates the indicators'''
         import fnmatch
-        files = [os.path.join(indicator_directory, f) for f in os.listdir(indicator_directory)]
+        files = [os.path.join(indicator_directory, f) 
+                    for f in os.listdir(indicator_directory) 
+                        if fnmatch.fnmatch(f,'*.meta')]
         indicators = []
         for f in files:
-            if fnmatch.fnmatch(f,'*.meta'):
-                try:
-                     indicator = self._import_indicator_from_file(f) 
-                     indicators.append(indicator)
-                except:
-                    pass
+            try:
+                 indicator = self._import_indicator_from_file(f) 
+                 indicators.append(indicator)
+            except:
+                pass
         return indicators        
     
     '''not in use yet'''
@@ -161,10 +162,15 @@ class IndicatorDataManager:
         
     def _create_indicator(self, indicator_class, params, non_constructor_attributes, source_data_params):
         source_data = SourceData(**source_data_params)
+        
+        for k,v in params.items():
+            if v=='None':
+                params[k] = None
+                
         params['source_data'] = source_data
         module = self._get_module_from_indicator_class(indicator_class)
 
-        if indicator_class != 'dataset_table':
+        if indicator_class != 'DatasetTable':
             params['attribute'] = params['attributes'][0]
             del params['attributes']
                     

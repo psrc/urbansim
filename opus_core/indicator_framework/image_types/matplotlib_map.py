@@ -47,20 +47,17 @@ class Map(AbstractIndicator):
         directory's 'indicators' sub-directory.
         """
 
-        values = self._get_indicator(self.attribute, year)
+        values = self._get_indicator(year, wrap = False)
         
         min_value = None; max_value = None
             
         if self.scale is not None:
             min_value, max_value = self.scale
           
-        attribute_alias = self.get_attribute_alias(year)
-        attribute_short = attribute_alias
-        #special handling for dram/empal variable name (ending with year)
-        if re.search('_\d+$', attribute_short):
-            attribute_short = re.compile('_\d+$').sub('', attribute_short)
+        attribute_alias = self.get_attribute_alias(attribute = self.attributes[0], 
+                                                   year=year)
             
-        title = attribute_short + ' ' + str(year)
+        title = self.name + ' ' + str(year)
         if self.run_description is not None:
             title += '\n' + self.run_description
         

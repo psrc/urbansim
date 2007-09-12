@@ -187,12 +187,13 @@ class IndicatorResults(object):
                 url = None
                 
             if url is None: 
-                url = indicator.name
+                url = indicator.get_file_name(suppress_extension_addition=True)
             else:
-                url = self._get_link(url,indicator.name)
+                url = self._get_link(url,
+                                     indicator.get_file_name(suppress_extension_addition=True))
             urls.append(url)
             
-        return ';'.join(urls)
+        return '<br>'.join(urls)
     
     def _get_link(self,url,name):
         url = url.replace('\\\\','/////').replace('\\','/')

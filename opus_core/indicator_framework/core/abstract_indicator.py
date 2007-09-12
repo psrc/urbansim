@@ -13,7 +13,7 @@
 # other acknowledgments.
 # 
 
-import os, sys, re
+import os
 from time import strftime, localtime, time
 from copy import copy
 from gc import collect
@@ -27,7 +27,6 @@ from opus_core.logger import logger
 
 from opus_core.indicator_framework.utilities.gui_utilities import display_message_dialog
 from opus_core.indicator_framework.core.indicator_data_manager import IndicatorDataManager
-from opus_core.indicator_framework.core.source_data import SourceData
 from opus_core.indicator_framework.utilities.integrity_error import IntegrityError
 from opus_core.indicator_framework.storage_location.database import Database
 
@@ -278,28 +277,26 @@ class AbstractIndicator(object):
 
     def _get_indicator_helper(self, attribute, year):
         year_replaced_attribute = attribute.replace('DDDD',repr(year))
+        name = VariableName(year_replaced_attribute)
         
-        indicator_vals = self._compute_indicator(year_replaced_attribute, year)
+        indicator_vals = self._compute_indicator(name, year)
         if self.operation is not None and not self.in_expression:
             #TODO: clean up this code with new style expressions in mind
             self.in_expression = True
             try:
                 indicator_vals = self.perform_operation(attribute, self.operation, indicator_vals)
                 dataset = self._get_dataset(year = year)
-                dataset.add_attribute(indicator_vals, self.name)
+                dataset.add_attribute(indicator_vals, name)
             finally:
                 self.in_expression = False
             
         return indicator_vals
 
-    def _compute_indicator(self, attribute, year):
-        attribute = attribute.replace('DDDD',repr(year))
-        
-        short_name = VariableName(attribute).get_alias()
+    def _compute_indicator(self, name, year):        
         dataset = self._get_dataset(year = year)
-        if short_name not in dataset.get_known_attribute_names():
-            dataset.compute_variables(attribute)
-        v = dataset.get_attribute(short_name)
+        if name.get_alias() not in dataset.get_known_attribute_names():
+            dataset.compute_variables(name)
+        v = dataset.get_attribute(name.get_alias())
         return v
             
     def _set_dataset(self, dataset, dataset_state):
@@ -355,20 +352,20 @@ class AbstractIndicator(object):
         else:
             name = self.name
             
-        if self.operation is not None:
+        if self.operation is not None and name.find(self.operation) == -1:
             name = '%s_%s'%(self.operation, name)
             
         return name
             
     def get_attribute_alias(self, attribute, year = None):
+        if year is not None:
+            attribute = attribute.replace('DDDD',repr(year))
+            
         #TODO: less hacky way to do this
         if attribute[:10] == 'autogenvar':
             alias = VariableName(attribute).get_squished_expression()
         else:
             alias = VariableName(attribute).get_alias()
-        
-        if year is not None:
-            alias = alias.replace('DDDD',repr(year))
     
         return alias
     
@@ -392,7 +389,7 @@ class AbstractIndicator(object):
                                   short_name
                                   )
         
-        if self.is_single_year_indicator_image_type():
+        if year is not None and self.is_single_year_indicator_image_type():
             file_name += '__%i'%year
         
         if not suppress_extension_addition:
@@ -429,16 +426,16 @@ class AbstractIndicator(object):
             baseyear_values = self._get_indicator(2000, 
                                                   attributes=[attribute],
                                                   wrap = False)
-            numerator = ( values[0] - baseyear_values[0,]) * 100
-            denominator = ma.masked_where(baseyear_values[0,]==0, 
-                                          baseyear_values[0,].astype(float32), 0.0)
+            numerator = ( values - baseyear_values) * 100
+            denominator = ma.masked_where(baseyear_values==0, 
+                                          baseyear_values.astype(float32), 0.0)
             results = ma.filled( numerator / denominator )
             
         elif operation == 'change':
             baseyear_values = self._get_indicator(2000, 
                                                   attributes=[attribute],
                                                   wrap = False)
-            results = values[0] - baseyear_values[0,]
+            results = values - baseyear_values
             
         return results
 
