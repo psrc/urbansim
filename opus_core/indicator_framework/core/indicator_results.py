@@ -338,28 +338,28 @@ class IndicatorResultsTests(TestWithAttributeData):
             image_type4 = requests[3].get_visualization_shorthand()
             (dataset4,name4) = (requests[3].dataset_name, 
                                      requests[3].name)
-                                
-            doc_link = '<A HREF="http://www.urbansim.org/docs/indicators/population.xml">population</A>'
-            doc_link2 = '<A HREF="http://www.urbansim.org/docs/indicators/population.xml">my_name</A>'
+                                            
+            doc_link = '<A HREF="http://www.urbansim.org/docs/indicators/population.xml">%s__%s__population</A>'
+            doc_link2 = '<A HREF="http://www.urbansim.org/docs/indicators/population.xml">%s__%s__my_name</A>'
             output = [
-                [ doc_link,
+                [ doc_link%('test',image_type),
                   dataset, 
                   image_type, 
                   ('<A HREF="%s__%s__%s__1980.png">1980</A>,'
                    '<A HREF="%s__%s__%s__1982.png">1982</A>')%
                      (dataset, image_type, name, dataset, image_type, name)
                 ],
-                [ doc_link2,
+                [ doc_link2%('test',image_type2),
                   dataset2, 
                   image_type2, 
                   '<A HREF="%s__%s__%s.png">1980,1982</A>'%(dataset2,image_type2,name2)
                 ],
-                [ doc_link,
+                [ doc_link%('test',image_type3),
                   dataset3, 
                   image_type3, 
                   '<A HREF="%s__%s__%s.png">1981</A>'%(dataset3,image_type3,name3)
                 ],
-                [ doc_link,
+                [ doc_link%('test',image_type4),
                   dataset4, 
                   image_type4, 
                   ('<A HREF="%s__%s__%s__1980.png">1980</A>,'

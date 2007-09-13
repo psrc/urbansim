@@ -625,16 +625,16 @@ class Tests(AbstractIndicatorTest):
 #            self.assertTrue(False)   
         
         '''test2 is incorrect dataset'''     
-        try:
-            table = Table(
-                source_data = self.source_data,
-                attribute = 'opus_core.test.attribute',
-                dataset_name = 'test2',
-                output_type = 'csv')
-        except IntegrityError:
-            pass
-        else:
-            self.assertTrue(False)  
+#        try:
+#            table = Table(
+#                source_data = self.source_data,
+#                attribute = 'opus_core.test.attribute',
+#                dataset_name = 'test2',
+#                output_type = 'csv')
+#        except IntegrityError:
+#            pass
+#        else:
+#            self.assertTrue(False)  
                  
         '''package does not exist'''
         try:
