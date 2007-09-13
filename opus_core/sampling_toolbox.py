@@ -152,7 +152,7 @@ def probsample_noreplace(source_array, sample_size, prob_array=None,
 #         if not sometrue(dup_indicator):
 #             return sampled_index
 
-        uniqueidx = unique1d(proposed_index, retindx=True)[0]
+        uniqueidx = unique1d(proposed_index, True)[0]
         valid_index = proposed_index[sort(uniqueidx)]
         #valid_index = unique_values(proposed_index)
         #import pdb; pdb.set_trace()
