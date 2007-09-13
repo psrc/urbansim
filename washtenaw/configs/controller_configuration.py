@@ -21,7 +21,8 @@ from washtenaw.configurations.regional_employment_location_choice_model_configur
 from washtenaw.configurations.governmental_regional_employment_location_choice_model_configuration_creator import GovernmentalRegionalEmploymentLocationChoiceModelConfigurationCreator
 from washtenaw.configurations.regional_employment_transition_model_configuration_creator import RegionalEmploymentTransitionModelConfigurationCreator
 from washtenaw.configurations.regional_household_transition_model_configuration_creator import RegionalHouseholdTransitionModelConfigurationCreator
-from washtenaw.configurations.deletion_event_model_configuration_creator import DeletionEventModelConfigurationCreator
+from washtenaw.configurations.jobs_event_model_configuration_creator import JobsEventModelConfigurationCreator
+from washtenaw.configurations.households_event_model_configuration_creator import HouseholdsEventModelConfigurationCreator
 from washtenaw.configurations.regional_household_relocation_model_configuration_creator import RegionalHouseholdRelocationModelConfigurationCreator
 from washtenaw.configurations.regional_employment_relocation_model_configuration_creator import RegionalEmploymentRelocationModelConfigurationCreator
 from washtenaw.configurations.regional_distribute_unplaced_jobs_model_configuration_creator import RegionalDistributeUnplacedJobsModelConfigurationCreator
@@ -94,8 +95,12 @@ class ControllerConfiguration(Configuration):
                     'controller': RegionalDistributeUnplacedJobsModelConfigurationCreator(
                         ).execute(),
                     }
-        self['deletion_event_model'] = {
-                    'controller': DeletionEventModelConfigurationCreator(
+        self['jobs_event_model'] = {
+                    'controller': JobsEventModelConfigurationCreator(
+                        ).execute(),
+                    }
+        self['households_event_model'] = {
+                    'controller': HouseholdsEventModelConfigurationCreator(
                         ).execute(),
                     }
 

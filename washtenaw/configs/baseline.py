@@ -93,7 +93,8 @@ class Baseline(GeneralConfiguration):
                     'jobs_for_estimation',
                     'households_for_estimation',
                     'job_building_types',
-                    'deletion_events'
+                    'jobs_events',
+                    'households_events'
                     ]
     
     tables_to_copy_to_previous_years = {
@@ -127,7 +128,8 @@ class Baseline(GeneralConfiguration):
                 'development_event_transition_model',
                 'events_coordinator',
                 'residential_land_share_model',
-                #'deletion_event_model',
+                #'jobs_event_model',
+                #'households_event_model',
                 'regional_household_transition_model',
                 'regional_household_relocation_model',
                 'regional_household_location_choice_model',
@@ -158,7 +160,9 @@ class Baseline(GeneralConfiguration):
                 'job_building_type': {},
                 'target_vacancy': {},
                 'zone': {},
-                #'deletion_event': {}
+                #'jobs_event': {},
+                #'households_event': {},
+                
                 },
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['washtenaw', 'urbansim', 'opus_core'],
