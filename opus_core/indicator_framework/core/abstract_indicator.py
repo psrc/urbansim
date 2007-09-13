@@ -159,8 +159,8 @@ class AbstractIndicator(object):
             except Exception, e:
                 self._handle_indicator_error(e, display_error_box)
         
-#        del self.dataset
-        SessionConfiguration().get_dataset_pool().remove_all_datasets()
+        del self.dataset
+#        SessionConfiguration().get_dataset_pool().remove_all_datasets()
         collect()
                 
     ####### Abstract methods that need to be overridden by child classes ############
