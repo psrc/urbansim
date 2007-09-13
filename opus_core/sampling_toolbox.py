@@ -96,7 +96,7 @@ def probsample_noreplace(source_array, sample_size, prob_array=None,
             return source_array
 
     if sample_size <= 0:
-        logger.log_warning("sample_size is %s. Nothing is sampled." % sample_size)
+        #logger.log_warning("sample_size is %s. Nothing is sampled." % sample_size)
         return array([], dtype='i')
     
     if prob_array is None:
