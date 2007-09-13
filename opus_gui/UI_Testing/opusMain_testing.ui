@@ -1,0 +1,652 @@
+<ui version="4.0" >
+ <author>Aaron Racicot</author>
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>902</width>
+    <height>648</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>OpusGui</string>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <layout class="QGridLayout" >
+    <property name="leftMargin" >
+     <number>9</number>
+    </property>
+    <property name="topMargin" >
+     <number>9</number>
+    </property>
+    <property name="rightMargin" >
+     <number>9</number>
+    </property>
+    <property name="bottomMargin" >
+     <number>9</number>
+    </property>
+    <property name="horizontalSpacing" >
+     <number>6</number>
+    </property>
+    <property name="verticalSpacing" >
+     <number>6</number>
+    </property>
+    <item row="0" column="0" >
+     <widget class="QSplitter" name="splitter" >
+      <property name="frameShape" >
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="orientation" >
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QToolBox" name="toolBox" >
+       <property name="enabled" >
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="baseSize" >
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="currentIndex" >
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="datamanager_page" >
+        <property name="geometry" >
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>405</width>
+          <height>478</height>
+         </rect>
+        </property>
+        <attribute name="label" >
+         <string>Data Manager</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <property name="leftMargin" >
+          <number>9</number>
+         </property>
+         <property name="topMargin" >
+          <number>9</number>
+         </property>
+         <property name="rightMargin" >
+          <number>9</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>9</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QTreeWidget" name="treeWidget_2" >
+           <column>
+            <property name="text" >
+             <string/>
+            </property>
+           </column>
+           <item>
+            <property name="text" >
+             <string>Database Server Connections</string>
+            </property>
+            <item>
+             <property name="text" >
+              <string>Connection01 (Trondhem:MySQL)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Connection02 (Aarhus:PostGresSQL)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Connection03 (Aarhus:MS SQL)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Connection04 (Aarhus:ArcSDE)</string>
+             </property>
+            </item>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Databases</string>
+            </property>
+            <item>
+             <property name="text" >
+              <string>base_year</string>
+             </property>
+             <item>
+              <property name="text" >
+               <string>parcels</string>
+              </property>
+              <item>
+               <property name="text" >
+                <string>assessor_parcel_id</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>improvement_value</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>New Item</string>
+               </property>
+              </item>
+             </item>
+             <item>
+              <property name="text" >
+               <string>jobs</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>buildings</string>
+              </property>
+             </item>
+            </item>
+            <item>
+             <property name="text" >
+              <string>scenario01</string>
+             </property>
+            </item>
+           </item>
+           <item>
+            <property name="text" >
+             <string>OPUS Data</string>
+            </property>
+            <item>
+             <property name="text" >
+              <string>D:\opus_data</string>
+             </property>
+             <item>
+              <property name="text" >
+               <string>Scenario01</string>
+              </property>
+              <item>
+               <property name="text" >
+                <string>2000</string>
+               </property>
+               <item>
+                <property name="text" >
+                 <string>parcels</string>
+                </property>
+                <item>
+                 <property name="text" >
+                  <string>improvement_value (INT)</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>parcel_id (INT)</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>assessor_parcel_id (STRING(15))</string>
+                 </property>
+                </item>
+               </item>
+               <item>
+                <property name="text" >
+                 <string>buildings</string>
+                </property>
+               </item>
+               <item>
+                <property name="text" >
+                 <string>households</string>
+                </property>
+               </item>
+               <item>
+                <property name="text" >
+                 <string>jobs</string>
+                </property>
+               </item>
+              </item>
+              <item>
+               <property name="text" >
+                <string>2001</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>2002</string>
+               </property>
+              </item>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Scenario02</string>
+              </property>
+             </item>
+            </item>
+            <item>
+             <property name="text" >
+              <string>X:\opus_data_archive</string>
+             </property>
+            </item>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Data Processing</string>
+            </property>
+            <item>
+             <property name="text" >
+              <string>ProcessingSequence01</string>
+             </property>
+             <item>
+              <property name="text" >
+               <string>Query01</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Query02</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>PythonScript01</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Test01</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Geoprocessing01</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Test02</string>
+              </property>
+             </item>
+            </item>
+            <item>
+             <property name="text" >
+              <string>ProcessingSequence02</string>
+             </property>
+            </item>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Other Data</string>
+            </property>
+            <item>
+             <property name="text" >
+              <string>C:\shapefiles</string>
+             </property>
+             <item>
+              <property name="text" >
+               <string>zones.shp</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>arterials.shp</string>
+              </property>
+             </item>
+            </item>
+            <item>
+             <property name="text" >
+              <string>D:\working</string>
+             </property>
+             <item>
+              <property name="text" >
+               <string>census_sf3_data.csv</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>data_table.txt</string>
+              </property>
+             </item>
+            </item>
+           </item>
+           <item>
+            <property name="text" >
+             <string>OPUS Schemas</string>
+            </property>
+            <item>
+             <property name="text" >
+              <string>Schema01</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Schema02</string>
+             </property>
+            </item>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="modelmanager_page" >
+        <property name="geometry" >
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>98</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <attribute name="label" >
+         <string>Model Manager</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <property name="leftMargin" >
+          <number>9</number>
+         </property>
+         <property name="topMargin" >
+          <number>9</number>
+         </property>
+         <property name="rightMargin" >
+          <number>9</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>9</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QTreeWidget" name="treeWidget_3" >
+           <column>
+            <property name="text" >
+             <string/>
+            </property>
+           </column>
+           <item>
+            <property name="text" >
+             <string>Model System</string>
+            </property>
+            <item>
+             <property name="text" >
+              <string>Model</string>
+             </property>
+             <item>
+              <property name="text" >
+               <string>Configuration</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Specification</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Coefficients</string>
+              </property>
+             </item>
+            </item>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="runmanager_page" >
+        <property name="geometry" >
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>98</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <attribute name="label" >
+         <string>Run Manager</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <property name="leftMargin" >
+          <number>9</number>
+         </property>
+         <property name="topMargin" >
+          <number>9</number>
+         </property>
+         <property name="rightMargin" >
+          <number>9</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>9</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QTreeWidget" name="treeWidget_4" >
+           <column>
+            <property name="text" >
+             <string/>
+            </property>
+           </column>
+           <item>
+            <property name="text" >
+             <string>Scenario Configuration</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Run Configuration</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="resultsmanager_page" >
+        <property name="geometry" >
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>98</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <attribute name="label" >
+         <string>Results Manager</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <property name="leftMargin" >
+          <number>9</number>
+         </property>
+         <property name="topMargin" >
+          <number>9</number>
+         </property>
+         <property name="rightMargin" >
+          <number>9</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>9</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QTreeWidget" name="treeWidget_5" >
+           <column>
+            <property name="text" >
+             <string/>
+            </property>
+           </column>
+           <item>
+            <property name="text" >
+             <string>Indicator Set</string>
+            </property>
+            <item>
+             <property name="text" >
+              <string>Table</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Chart</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Map</string>
+             </property>
+            </item>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QTabWidget" name="tabWidget" >
+       <property name="currentIndex" >
+        <number>1</number>
+       </property>
+       <widget class="QWidget" name="tab_mapView" >
+        <attribute name="title" >
+         <string>Map View</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <property name="leftMargin" >
+          <number>9</number>
+         </property>
+         <property name="topMargin" >
+          <number>9</number>
+         </property>
+         <property name="rightMargin" >
+          <number>9</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>9</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QWidget" native="1" name="widgetMap" >
+           <property name="minimumSize" >
+            <size>
+             <width>100</width>
+             <height>100</height>
+            </size>
+           </property>
+           <property name="autoFillBackground" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab_runStatus" >
+        <attribute name="title" >
+         <string>Run Status</string>
+        </attribute>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>902</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuProject" >
+    <property name="title" >
+     <string>Project</string>
+    </property>
+    <addaction name="separator" />
+    <addaction name="separator" />
+   </widget>
+   <widget class="QMenu" name="menuMap" >
+    <property name="title" >
+     <string>Map</string>
+    </property>
+    <addaction name="mpActionZoomIn" />
+    <addaction name="mpActionZoomOut" />
+    <addaction name="mpActionPan" />
+   </widget>
+   <addaction name="menuProject" />
+   <addaction name="menuMap" />
+  </widget>
+  <widget class="QStatusBar" name="statusbar" />
+  <action name="mpActionZoomOut" >
+   <property name="icon" >
+    <iconset/>
+   </property>
+   <property name="text" >
+    <string>Zoom Out</string>
+   </property>
+  </action>
+  <action name="mpActionPan" >
+   <property name="icon" >
+    <iconset/>
+   </property>
+   <property name="text" >
+    <string>Pan</string>
+   </property>
+  </action>
+  <action name="mpActionAddRasterLayer" >
+   <property name="icon" >
+    <iconset/>
+   </property>
+   <property name="text" >
+    <string>Add Raster Layer</string>
+   </property>
+  </action>
+  <action name="mpActionZoomIn" >
+   <property name="icon" >
+    <iconset/>
+   </property>
+   <property name="text" >
+    <string>Zoom In</string>
+   </property>
+  </action>
+  <action name="mpActionAddVectorLayer" >
+   <property name="icon" >
+    <iconset/>
+   </property>
+   <property name="text" >
+    <string>Add Vector Layer</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="opusMain.qrc" />
+ </resources>
+ <connections/>
+</ui>
