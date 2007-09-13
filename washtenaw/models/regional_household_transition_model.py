@@ -250,7 +250,7 @@ class Tests(opus_unittest.OpusTestCase):
         storage.write_table(table_name = 'hct_set', table_data = annual_household_control_totals_data)
         hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what='household')
 
-        storage.write_tab;e(table_name = 'hc_set', table_data = self.household_characteristics_for_ht_data)
+        storage.write_table(table_name = 'hc_set', table_data = self.household_characteristics_for_ht_data)
         hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
 
         model = RegionalHouseholdTransitionModel()
