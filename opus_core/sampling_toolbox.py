@@ -17,7 +17,7 @@ import copy
 from numpy import array, asarray, arange, zeros, ones, concatenate, sum, resize
 from numpy import sometrue, where, equal, not_equal, ndarray
 from numpy import reshape, sort, searchsorted, repeat, argsort
-from numpy import float32, float64, newaxis, rank, take, alltrue, ma, argmax
+from numpy import float32, float64, newaxis, rank, take, alltrue, ma, argmax, unique1d
 from opus_core.misc import ncumsum, unique_values
 from opus_core.logger import logger
 from numpy.random import uniform, randint
@@ -152,7 +152,9 @@ def probsample_noreplace(source_array, sample_size, prob_array=None,
 #         if not sometrue(dup_indicator):
 #             return sampled_index
 
-        valid_index = unique_values(proposed_index)
+        uniqueidx = unique1d(proposed_index, retindx=True)[0]
+        valid_index = proposed_index[sort(uniqueidx)]
+        #valid_index = unique_values(proposed_index)
         #import pdb; pdb.set_trace()
         sampled_index = concatenate((sampled_index, valid_index))
         if valid_index.size == to_be_sampled:
