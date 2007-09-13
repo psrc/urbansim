@@ -155,9 +155,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 sampled_proposal_indexes = probsample_noreplace(proposal_ids[idx], n, 
                                                 prob_array=self.weight[idx]/float(self.weight[idx].sum()),
                                                 exclude_index=None, return_indices=True)
-                # sort according to the weights
-                isorted = self.weight[idx[sampled_proposal_indexes]].argsort()[range(sampled_proposal_indexes.size-1,-1,-1)]
-                self.consider_proposals(arange(self.proposal_set.size())[idx[sampled_proposal_indexes[isorted]]],
+                self.consider_proposals(arange(self.proposal_set.size())[idx[sampled_proposal_indexes]],
                                         current_target_vacancy
                                        )
                 self.weight[idx[sampled_proposal_indexes]] = 0
