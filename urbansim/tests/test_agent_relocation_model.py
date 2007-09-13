@@ -54,13 +54,13 @@ class Tests(StochasticTestCase):
         storage = StorageFactory().get_storage('dict_storage')
         
         storage.write_table(table_name = 'households', 
-            values = {
+            table_data = {
                 'household_id': array([], dtype='int32')
                 }
             )
         hh_set = HouseholdDataset(in_storage=storage, in_table_name='households')
         
-        storage.write_table(table_name = 'rates', values=self.annual_relocation_rates_for_households_data)            
+        storage.write_table(table_name = 'rates', table_data =self.annual_relocation_rates_for_households_data)            
         hh_rateset = RateDataset(in_storage=storage, in_table_name='rates', what="households")
 
         hrm_resources = Resources({"rate":hh_rateset})
@@ -97,10 +97,10 @@ class Tests(StochasticTestCase):
         """        
         storage = StorageFactory().get_storage('dict_storage')
  
-        storage.write_table(table_name = 'households', values=self.household_data)
+        storage.write_table(table_name = 'households', table_data =self.household_data)
         hh_set = HouseholdDataset(in_storage=storage, in_table_name='households')
         
-        storage.write_table(table_name = 'rates', values=self.annual_relocation_rates_for_households_data)
+        storage.write_table(table_name = 'rates', table_data =self.annual_relocation_rates_for_households_data)
         hh_rateset = RateDataset(in_storage=storage, in_table_name='rates', what="households")
 
         hrm_resources = Resources({"rate":hh_rateset})
@@ -122,7 +122,7 @@ class Tests(StochasticTestCase):
         annual_relocation_rates_for_households_data['probability_of_relocating'] = array(4*[0.0])
         
         storage.write_table(table_name = 'households', table_data = self.household_data)
-        storage.write_table(table_name = 'rates', values = annual_relocation_rates_for_households_data)
+        storage.write_table(table_name = 'rates', table_data = annual_relocation_rates_for_households_data)
       
         hh_set = HouseholdDataset(in_storage=storage, in_table_name='households')
         hh_rateset = RateDataset(in_storage=storage, in_table_name='rates', what='households')
@@ -145,8 +145,8 @@ class Tests(StochasticTestCase):
         annual_relocation_rates_for_households_data = self.annual_relocation_rates_for_households_data
         annual_relocation_rates_for_households_data['probability_of_relocating'] = array([0.0, 0.1,0.5,1.0])
         
-        storage.write_table(table_name = 'households', values=self.household_data)
-        storage.write_table(table_name = 'rates', values=annual_relocation_rates_for_households_data)
+        storage.write_table(table_name = 'households', table_data =self.household_data)
+        storage.write_table(table_name = 'rates', table_data =annual_relocation_rates_for_households_data)
         
         hh_set = HouseholdDataset(in_storage=storage, in_table_name='households')
         hh_rateset = RateDataset(in_storage=storage, in_table_name='rates', what='households')
@@ -196,7 +196,7 @@ class Tests(StochasticTestCase):
         job_grid_ids = array(100*[1]+100*[2]+100*[3]+400*[1]+200*[2]+100*[3]+20*[-1])
         
         storage.write_table(table_name = 'jobs',
-            values = {
+            table_data = {
                 'job_id': arange(1020)+1,
                 'sector_id': array(300*[1]+700*[2]+10*[1]+10*[2]),
                 'grid_id': job_grid_ids,
@@ -206,7 +206,7 @@ class Tests(StochasticTestCase):
         
         # create gridcells
         storage.write_table(table_name = 'gridcells',
-            values = {
+            table_data = {
                 'grid_id':arange(3)+1,
                 }
             )
@@ -214,7 +214,7 @@ class Tests(StochasticTestCase):
         
         # create rate set with rate 0 for jobs of sector 1 and 0.5 for jobs of sector 2
         storage.write_table(table_name = 'rates',
-            values = {
+            table_data = {
                 'sector_id':array([1,2]), 
                 'job_relocation_probability':array([0,0.5]),
                 }
@@ -264,7 +264,7 @@ class Tests(StochasticTestCase):
         storage = StorageFactory().get_storage('dict_storage')
         
         storage.write_table(table_name = 'jobs',
-             values = {
+             table_data = {
                 'job_id': arange(1000)+1,
                 'grid_id': array(500*[1] + 300*[2] + 200*[3]),
                 'sector_id': array(100*[1] + 400*[2] + 100*[1] + 200*[2] + 100*[1] + 100*[2])
@@ -272,7 +272,7 @@ class Tests(StochasticTestCase):
             )
             
         storage.write_table(table_name = 'rates',
-            values = {
+            table_data = {
                 'sector_id':array([1,2]),
                 'job_relocation_probability':array([0.5, 0.5])
                 }
