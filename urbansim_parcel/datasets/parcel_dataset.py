@@ -36,7 +36,8 @@ class ParcelDataset(UrbansimDataset):
             dataset_pool,
             index = None,
             recompute_flag = False,
-            variable_package_name="urbansim_parcel.parcel"
+            variable_package_name="urbansim_parcel.parcel",
+            consider_constraints_as_rules=False,
             ):
         """
         calculate the min and max development capacity given by constraints.
@@ -60,18 +61,25 @@ class ParcelDataset(UrbansimDataset):
 #        building_types = dataset_pool.get_dataset("building_type")
         type_ids = constraints.get_attribute("generic_land_use_type_id")
         constraint_types = constraints.get_attribute("constraint_type")
+        if consider_constraints_as_rules:
+            generic_types = dataset_pool.get_dataset('generic_land_use_type')
+            all_types = generic_types.get_id_attribute()
+            all_unique_constraint_types = unique_values(constraint_types)
+            
         constraint_minimum = constraints.get_attribute("minimum")
         constraint_maximum = constraints.get_attribute("maximum")
+        type_constraint_max = {}
         #initialize results, set max to the max value found in constraints for each type
         for type_id in unique_values(type_ids):
             w_this_type = where(type_ids == type_id)
             self.development_constraints[type_id] = {}
+            type_constraint_max[type_id] = {}
             for constraint_type in unique_values(constraint_types[w_this_type]):
                 self.development_constraints[type_id].update({ constraint_type : zeros((index.size,2), dtype="float32") })
                 w_this_type_and_constraint_type = where( logical_and(type_ids == type_id, constraint_types == constraint_type ) )
+                if w_this_type_and_constraint_type[0].size > 0:
                 # initialize the maximum value, because minimum of maximum value below need to have this initial value to work
-                type_constraint_max = constraint_maximum[w_this_type_and_constraint_type].max()
-                self.development_constraints[type_id][constraint_type][:, 1] = type_constraint_max
+                    type_constraint_max[type_id][constraint_type] = constraint_maximum[w_this_type_and_constraint_type].max()
 
         self.development_constraints_array = None
         self.large_constraint_array = False
@@ -81,16 +89,23 @@ class ParcelDataset(UrbansimDataset):
             type_id = type_ids[iconstr]
             constraint_type = constraint_types[iconstr]
             w = where(self._get_one_constraint(iconstr, constraints, index, attributes))[0]
-            if w.size > 0: #has at least 1 match
-                ##TODO: this may be problematic when given building type and constraint type of 
-                ## a parcel doesn't match to any row of the constraints table, it'll use the max value
-                ## of the building type and constraint type
+            if w.size > 0: 
                 self.development_constraints[type_id][constraint_type][w,0] = \
                     maximum(self.development_constraints[type_id][constraint_type][w,0],
                         constraint_minimum[iconstr])
                 self.development_constraints[type_id][constraint_type][w,1] = \
-                    minimum(self.development_constraints[type_id][constraint_type][w,1],
-                        constraint_maximum[iconstr])
+                    minimum(type_constraint_max[type_id][constraint_type],
+                            constraint_maximum[iconstr])
+                
+        if consider_constraints_as_rules:
+            for type_id in all_types:
+                if not self.development_constraints.has_key(type_id):
+                    self.development_constraints[type_id] = {}
+                for constraint_type in all_unique_constraint_types:
+                    if not self.development_constraints[type_id].has_key(constraint_type):
+                        self.development_constraints[type_id].update({ constraint_type : zeros((index.size,2), dtype="float32") })
+                    
+
         logger.end_block()
         del self.development_constraints_array
         return self.development_constraints
@@ -174,9 +189,9 @@ class Tests(opus_unittest.OpusTestCase):
                                      [0,  1]]
                                      ),                              
                            },
-                      2:{"unit_per_acre":array([[0, 0.4],  #ideally [0, 0]
+                      2:{"unit_per_acre":array([[0, 0],
                                                 [0, 0.4],
-                                                [0, 0.4]]     #ideally [0, 0]
+                                                [0, 0]]
                                                ),
                          "far":array([[2,10],
                                      [0, 100],
@@ -184,7 +199,7 @@ class Tests(opus_unittest.OpusTestCase):
                                      )         
                           }
                      }
-        
+
         for bt, ct in should_be.iteritems():
             for key, should_be_value in ct.iteritems():
                 self.assert_(bt in values)

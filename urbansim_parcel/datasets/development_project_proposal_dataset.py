@@ -111,6 +111,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
                                                 development_template_dataset,
                                                 parcel_index=None,
                                                 filter_attribute=None,
+                                                consider_constraints_as_rules=True,
                                                 template_opus_path="urbansim_parcel.development_template",
                                                 dataset_pool=None,
                                                 resources=None):
@@ -182,7 +183,8 @@ def create_from_parcel_and_development_template(parcel_dataset,
         development_template_dataset.compute_variables(map(lambda x: "%s.%s" % (template_opus_path, x), constraint_types), dataset_pool)
             
         parcel_dataset.get_development_constraints(constraints, dataset_pool, 
-                                                   index=index1)
+                                                   index=index1, 
+                                                   consider_constraints_as_rules=consider_constraints_as_rules)
         generic_land_use_type_ids = development_template_dataset.compute_variables("urbansim_parcel.development_template.generic_land_use_type_id",
                                                        dataset_pool=dataset_pool)       
     parcel_ids = parcel_dataset.get_id_attribute()
@@ -193,7 +195,6 @@ def create_from_parcel_and_development_template(parcel_dataset,
     for i_template in range(development_template_dataset.size()):
         this_template_id = template_ids[i_template]
         fit_indicator = array(index1.size*[True], dtype="bool8")
-
         if has_constraint_dataset:
             generic_land_use_type_id = generic_land_use_type_ids[i_template]
             for constraint_type, constraint in parcel_dataset.development_constraints[generic_land_use_type_id].iteritems():
@@ -202,11 +203,10 @@ def create_from_parcel_and_development_template(parcel_dataset,
                     continue
                 min_constraint = constraint[:, 0]
                 max_constraint = constraint[:, 1]
-                
-                fit_indicator = logical_and(fit_indicator,
+                fit_indicator = logical_and(fit_indicator, 
                                             logical_and(template_attribute >= min_constraint,
-                                                        template_attribute <= max_constraint)
-                                           )
+                                                        template_attribute <= max_constraint))
+                                           
                 
         proposal_parcel_ids = concatenate((proposal_parcel_ids, parcel_ids[index1[fit_indicator]]))
         proposal_template_ids = concatenate( (proposal_template_ids, array( [this_template_id] * where(fit_indicator)[0].size )) )
