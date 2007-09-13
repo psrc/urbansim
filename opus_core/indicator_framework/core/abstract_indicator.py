@@ -115,10 +115,10 @@ class AbstractIndicator(object):
                     raise IntegrityError('Package %s is not available'%package)
             
         '''dataset does not exist'''     
-        try:
-            dataset = self._get_dataset(year = self.years[0])
-        except:
-            raise IntegrityError('Dataset %s is not available'%self.dataset_name)
+#        try:
+#            dataset = self._get_dataset(year = self.years[0])
+#        except:
+#            raise IntegrityError('Dataset %s is not available'%self.dataset_name)
         
         '''attribute is not available for this dataset'''
 #        this is disabled because it is unclear how expressions would work
@@ -159,7 +159,8 @@ class AbstractIndicator(object):
             except Exception, e:
                 self._handle_indicator_error(e, display_error_box)
         
-        del self.dataset
+#        del self.dataset
+        SessionConfiguration().get_dataset_pool().remove_all_datasets()
         collect()
                 
     ####### Abstract methods that need to be overridden by child classes ############
@@ -296,7 +297,7 @@ class AbstractIndicator(object):
         dataset = self._get_dataset(year = year)
         if name.get_alias() not in dataset.get_known_attribute_names():
             dataset.compute_variables(name)
-        v = dataset.get_attribute(name.get_alias())
+        v = dataset.get_attribute(name)
         return v
             
     def _set_dataset(self, dataset, dataset_state):
@@ -456,6 +457,63 @@ class Tests(AbstractIndicatorTest):
         
         self.assertEqual(returned_path, expected_path)            
 
+    def test_dataset_attribute_correctly_computed(self):
+        from opus_core.indicator_framework.image_types.table import Table
+        table = Table(
+            source_data = self.source_data,
+            attribute = 'opus_core.test.attribute',
+            dataset_name = 'test',
+            output_type = 'tab',
+            years = [1980, 1981, 1983])
+
+        vals = table._get_indicator(year = 1980,
+                                    wrap = False)
+        
+        vals_diff = table._get_indicator(year = 1983, 
+                                         wrap = False)
+        
+        self.assertFalse(list(vals)==list(vals_diff))
+        
+        vals2 = table._get_indicator(year = 1980,
+                                     wrap = False)
+           
+        self.assertTrue(list(vals)==list(vals2))     
+
+        vals1981 = table._get_indicator(year = 1981,
+                                        wrap = False) 
+        self.assertTrue(list(vals) == list(vals1981))
+
+    def test_dataset_attribute_correctly_computed_multiyear(self):
+        from opus_core.indicator_framework.image_types.table import Table
+        table = Table(
+            source_data = self.source_data,
+            attribute = 'opus_core.test.attribute',
+            dataset_name = 'test',
+            output_type = 'tab',
+            years = [1980, 1981, 1983])
+
+        vals = table._get_indicator_for_years(years = [1980,1983], wrap=False)
+        vals_same = table._get_indicator_for_years(years = [1980,1983], wrap=False)
+        
+        v1 = [list([list(e) for e in v if not isinstance(e,int)]) for v in vals]
+        v2 = [list([list(e) for e in v if not isinstance(e,int)]) for v in vals_same]
+        self.assertTrue(v1==v2)    
+        
+        table2 = Table(
+            source_data = self.source_data,
+            attribute = 'opus_core.test.attribute',
+            dataset_name = 'test',
+            output_type = 'tab',
+            years = [1980, 1981, 1983])                        
+
+        vals2 = table2._get_indicator_for_years(years = [1980,1983], wrap=False)
+        vals_same2 = table2._get_indicator_for_years(years = [1980,1983], wrap=False)
+        
+        v3 = [list([list(e) for e in v if not isinstance(e,int)]) for v in vals2]
+        v4 = [list([list(e) for e in v if not isinstance(e,int)]) for v in vals_same2]
+        self.assertTrue(v3==v4)    
+        self.assertTrue(v1==v4)  
+                
     def test__output_types(self):
         from opus_core.indicator_framework.image_types.table import Table
         

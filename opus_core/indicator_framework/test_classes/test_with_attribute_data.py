@@ -37,9 +37,16 @@ class TestWithAttributeData(opus_unittest.OpusTestCase):
         
         years = [1980, 1981, 1982]
         for year in years:
-            self.add_attributes(year)
+            self.add_attributes(year, self.attribute_vals,
+                                self.attribute_vals2)
+
+        self.attribute_vals_diff = array([10,12,14,16])
+        self.attribute_vals2_diff = array([100,120,140,160])
         
-    def add_attributes(self, year):
+        self.add_attributes(1983, self.attribute_vals_diff,
+                            self.attribute_vals2_diff)        
+        
+    def add_attributes(self, year, attribute_vals, attribute_vals2):
         dir = os.path.join(self.temp_cache_path, repr(year))
         storage = StorageFactory().get_storage('flt_storage', storage_location=dir)
         
@@ -47,8 +54,8 @@ class TestWithAttributeData(opus_unittest.OpusTestCase):
            'out_table_name': 'tests',
            'values': {
                'id': self.id_vals,
-               'attribute': self.attribute_vals,
-               'attribute2': self.attribute_vals2,
+               'attribute': attribute_vals,
+               'attribute2': attribute_vals2,
                },
            'attrtype':{
                'id': AttributeType.PRIMARY,

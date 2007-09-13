@@ -37,8 +37,11 @@ class IndicatorDataManager:
                             'date_computed', 
                             'name', 
                             'operation',
-                            'storage_location',
-                            'attributes']
+                            'storage_location']
+        
+        attrs = '[\'' + '\';\''.join(indicator.attributes) + '\']'
+        lines.append('\t<attributes>%s</attributes>'%(
+                                     attrs))
         
         for basic_attr in basic_attributes:
             attr_value = indicator.__getattribute__(basic_attr)
@@ -132,7 +135,7 @@ class IndicatorDataManager:
                     if value == 'None' or value == '[]':
                         value = []
                     else: 
-                        value = [attr.strip().replace("'",'') for attr in value[1:-1].split(',')]
+                        value = [attr.strip().replace("'",'') for attr in value[1:-1].split(';')]
                 
                 if in_source_data:
                     if name == 'package_order':
@@ -236,13 +239,13 @@ class Tests(AbstractIndicatorTest):
             expected = [
                 '<version>1.0</version>',          
                 '<Table>',
+                '\t<attributes>[\'opus_core.test.attribute\']</attributes>',
                 '\t<dataset_name>test</dataset_name>',
                 '\t<years>[1980, 1981]</years>',
                 '\t<date_computed>None</date_computed>',
                 '\t<name>attribute</name>',
                 '\t<operation>None</operation>',
                 '\t<storage_location>%s</storage_location>'%os.path.join(self.temp_cache_path, 'indicators'),
-                '\t<attributes>[\'opus_core.test.attribute\']</attributes>',
                 '\t<output_type>tab</output_type>',
                 '\t<source_data>',
                 '\t\t<cache_directory>%s</cache_directory>'%self.temp_cache_path,
