@@ -103,10 +103,12 @@ class BuildingConstructionModel(Model):
         
         sqft_per_unit = proposal_component_set.get_attribute("building_sqft_per_unit").astype(new_buildings["sqft_per_unit"].dtype)
         parcel_vacant_land_area = parcels.get_attribute("vacant_land_area").astype(new_buildings["land_area"].dtype)
+        number_of_new_buildings = {}
         
         # iterate over building types that are unique over the involved proposals
         for itype in range(unique_building_types.size):
             this_building_type = unique_building_types[itype]
+            number_of_new_buildings[this_building_type] = 0
             unit_name = unit_names[itype]
             if is_residential[itype]:
                 unit_name = 'residential_units'
@@ -145,6 +147,7 @@ class BuildingConstructionModel(Model):
                     new_buildings["land_area"] = concatenate((new_buildings["land_area"], 
                                                               array(idx_to_be_built.size * [parcel_vacant_land_area[parcel_index]],
                                                                     dtype=new_buildings["land_area"].dtype)))
+                    number_of_new_buildings[this_building_type] += idx_to_be_built.size
                     if parcel_is_lut_vacant[parcel_index]:
                         parcel_lut[parcel_index] = component_land_use_types[pidx][idx_to_be_built][0]
                                                                   
@@ -160,6 +163,8 @@ class BuildingConstructionModel(Model):
             building_dataset.modify_attribute(name="county", data=county_ids)
         
         logger.log_status("%s new buildings built." % new_buildings["parcel_id"].size)
+        for type_id in number_of_new_buildings.keys():
+            logger.log_status("building type %s: %s" % (type_id, number_of_new_buildings[type_id]))
         # remove active proposals from the proposal set
 #        development_proposal_set.remove_elements(active_idx)
         # alternatively, set status_id of active proposals to id_not_available
