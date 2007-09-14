@@ -149,10 +149,9 @@ class EquationSpecification(object):
 
         local_resources.merge({"values":values, 'valuetypes': types, "drop_table_flag":1})
         
-        self.out_storage.write_dataset(local_resources)
-#        self.out_storage.write_table(table_name=local_resources["out_table_name"],
-#            table_data=values,
-#            )
+        self.out_storage.write_table(table_name = local_resources['out_table_name'],
+            table_data=local_resources['values']
+            )
 
     def shrink(self, variables):
         """ Shrink all arrays of class attributes to those elements that correspond to given variables.

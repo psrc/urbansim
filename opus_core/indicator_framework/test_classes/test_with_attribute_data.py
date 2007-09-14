@@ -50,20 +50,12 @@ class TestWithAttributeData(opus_unittest.OpusTestCase):
         dir = os.path.join(self.temp_cache_path, repr(year))
         storage = StorageFactory().get_storage('flt_storage', storage_location=dir)
         
-        storage.write_dataset(Resources({
-           'out_table_name': 'tests',
-           'values': {
-               'id': self.id_vals,
-               'attribute': attribute_vals,
-               'attribute2': attribute_vals2,
-               },
-           'attrtype':{
-               'id': AttributeType.PRIMARY,
-               'attribute': AttributeType.PRIMARY,
-               'attribute2': AttributeType.PRIMARY, 
-               }
-           }))
-        
+        storage.write_table(table_name = 'tests',
+            table_data = {'id': self.id_vals,
+                'attribute': attribute_vals,
+                'attribute2': attribute_vals2,}
+        )
+
         copytree(dir,  os.path.join(self.temp_cache_path2, repr(year)))
                 
     def tearDown(self):

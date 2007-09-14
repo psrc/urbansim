@@ -137,10 +137,8 @@ class Coefficients(object):
         local_resources.merge({"values":values, 'valuetypes': types, "drop_table_flag":1,
                                "attrtype":attrtypes})
         
-        self.out_storage.write_dataset(local_resources)
-#        self.out_storage.write_table(table_name=local_resources["out_table_name"],
-#            table_data=values,
-#            )
+        self.out_storage.write_table(table_name=local_resources['out_table_name'],
+            table_data = local_resources['values'])       
 
     def create_coefficient_attributes (self):
         self.create_default_coefficient_names()

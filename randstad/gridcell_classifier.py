@@ -113,20 +113,18 @@ if __name__ == "__main__":
             storage = StorageFactory().get_storage('dict_storage')
 
             gridcells_table_name = 'gridcells'
-            storage.write_dataset(
-                Resources({
-                    'out_table_name':gridcells_table_name,
-                    'values':{
-                        'grid_id': array([1,2,3]),
-                        'residential_units':array([0,8,12]),
-                        'commercial_sqft':array([0,0,0]),
-                        'industrial_sqft':array([0,0,0]),
-                        'governmental_sqft':array([0,0,0])
-                        },
-                    })
+            
+            storage.write_table(table_name = gridcells_table_name, 
+                table_data = {'grid_id': array([1,2,3]),
+                              'residential_units':array([0,8,12]),
+                                'commercial_sqft':array([0,0,0]),
+                               'industrial_sqft':array([0,0,0]),
+                               'governmental_sqft':array([0,0,0])
+                             }
                 )
 
             devtypes_table_name = 'devtypes'
+            #write_dataset conversion error
             storage.write_dataset(
                 Resources({
                     'out_table_name':devtypes_table_name,
@@ -155,7 +153,7 @@ if __name__ == "__main__":
 
         def test_closest_devtype_sqft(self):
             storage = StorageFactory().get_storage('dict_storage')
-
+            #write_dataset conversion error
             gridcells_table_name = 'gridcells'
             storage.write_dataset(
                 Resources({
@@ -170,6 +168,7 @@ if __name__ == "__main__":
                     })
                 )
 
+            #write_dataset conversion error
             devtypes_table_name = 'devtypes'
             storage.write_dataset(
                 Resources({
@@ -200,6 +199,7 @@ if __name__ == "__main__":
         def test_closest_devtype_units_and_sqft(self):
             storage = StorageFactory().get_storage('dict_storage')
 
+            #write_dataset conversion error
             gridcells_table_name = 'gridcells'
             storage.write_dataset(
                 Resources({
@@ -215,6 +215,8 @@ if __name__ == "__main__":
                 )
 
             devtypes_table_name = 'devtypes'
+            
+            #write_dataset conversion error
             storage.write_dataset(
                 Resources({
                     'out_table_name':devtypes_table_name,
@@ -245,6 +247,8 @@ if __name__ == "__main__":
             storage = StorageFactory().get_storage('dict_storage')
 
             gridcells_table_name = 'gridcells'
+            
+            #write_dataset conversion error            
             storage.write_dataset(
                 Resources({
                     'out_table_name':gridcells_table_name,
@@ -259,6 +263,7 @@ if __name__ == "__main__":
                 )
 
             devtypes_table_name = 'devtypes'
+            #write_dataset conversion error            
             storage.write_dataset(
                 Resources({
                     'out_table_name':devtypes_table_name,
@@ -289,6 +294,7 @@ if __name__ == "__main__":
             storage = StorageFactory().get_storage('dict_storage')
 
             gridcells_table_name = 'gridcells'
+            #write_dataset conversion error
             storage.write_dataset(
                 Resources({
                     'out_table_name':gridcells_table_name,
@@ -303,6 +309,7 @@ if __name__ == "__main__":
                 )
 
             devtypes_table_name = 'devtypes'
+            #write_dataset conversion error            
             storage.write_dataset(
                 Resources({
                     'out_table_name':devtypes_table_name,
