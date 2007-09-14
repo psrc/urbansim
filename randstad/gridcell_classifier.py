@@ -124,18 +124,16 @@ if __name__ == "__main__":
                 )
 
             devtypes_table_name = 'devtypes'
-            #write_dataset conversion error
-            storage.write_dataset(
-                Resources({
-                    'out_table_name':devtypes_table_name,
-                    'values':{
+            
+            storage.write_table(
+                    table_name = devtypes_table_name,
+                    table_data = {
                         'development_type_id': array([1,2]),
                         'min_units':array([0,10]),
                         'min_commercial_sqft':array([0,0]),
                         'min_industrial_sqft':array([0,0]),
                         'min_governmental_sqft':array([0,0])
-                        },
-                    })
+                        }
                 )
 
             gridcells = GridcellDataset(in_storage=storage, in_table_name=gridcells_table_name)
@@ -153,34 +151,29 @@ if __name__ == "__main__":
 
         def test_closest_devtype_sqft(self):
             storage = StorageFactory().get_storage('dict_storage')
-            #write_dataset conversion error
+            
             gridcells_table_name = 'gridcells'
-            storage.write_dataset(
-                Resources({
-                    'out_table_name':gridcells_table_name,
-                    'values':{
+            storage.write_table(
+                table_name = gridcells_table_name,
+                    table_data = {
                         'grid_id': array([1,2,3]),
                         'residential_units':array([0,0,0]),
                         'commercial_sqft':array([300,700,900]),
                         'industrial_sqft':array([0,0,0]),
                         'governmental_sqft':array([0,0,0])
-                        },
-                    })
+                        }
                 )
 
-            #write_dataset conversion error
             devtypes_table_name = 'devtypes'
-            storage.write_dataset(
-                Resources({
-                    'out_table_name':devtypes_table_name,
-                    'values':{
+            storage.write_table(
+                table_name = devtypes_table_name,
+                    table_data = {
                         'development_type_id': array([1,2]),
                         'min_units':array([0,0]),
                         'min_commercial_sqft':array([500,1000]),
                         'min_industrial_sqft':array([0,0]),
                         'min_governmental_sqft':array([0,0])
                         },
-                    })
                 )
 
             gridcells = GridcellDataset(in_storage=storage, in_table_name=gridcells_table_name)
@@ -199,35 +192,30 @@ if __name__ == "__main__":
         def test_closest_devtype_units_and_sqft(self):
             storage = StorageFactory().get_storage('dict_storage')
 
-            #write_dataset conversion error
+
             gridcells_table_name = 'gridcells'
-            storage.write_dataset(
-                Resources({
-                    'out_table_name':gridcells_table_name,
-                    'values':{
+            storage.write_table(
+                    table_name = gridcells_table_name,
+                    table_data = {
                         'grid_id': array([1,2,3,4]),
                         'residential_units':array([0,0,0,1]),
                         'commercial_sqft':array([300,700,900,900]),
                         'industrial_sqft':array([0,0,0,0]),
                         'governmental_sqft':array([0,0,0,0])
-                        },
-                    })
+                        },                    
                 )
 
             devtypes_table_name = 'devtypes'
             
-            #write_dataset conversion error
-            storage.write_dataset(
-                Resources({
-                    'out_table_name':devtypes_table_name,
-                    'values':{
+            storage.write_table(
+                     table_name = devtypes_table_name,
+                     table_data = {
                         'development_type_id': array([1,2,3]),
                         'min_units':array([1,0,0]),
                         'min_commercial_sqft':array([500,0,1000]),
                         'min_industrial_sqft':array([0,0,0]),
                         'min_governmental_sqft':array([0,0,0])
                         },
-                    })
                 )
 
             gridcells = GridcellDataset(in_storage=storage, in_table_name=gridcells_table_name)
@@ -248,33 +236,27 @@ if __name__ == "__main__":
 
             gridcells_table_name = 'gridcells'
             
-            #write_dataset conversion error            
-            storage.write_dataset(
-                Resources({
-                    'out_table_name':gridcells_table_name,
-                    'values':{
+            storage.write_table(
+                    table_name = gridcells_table_name,
+                    table_data = {
                         'grid_id': array([1,2,3]),
                         'residential_units':array([0,8,12]),
                         'commercial_sqft':array([0,0,0]),
                         'industrial_sqft':array([0,0,0]),
                         'governmental_sqft':array([0,0,0])
-                        },
-                    })
-                )
+                        }
+               )
 
             devtypes_table_name = 'devtypes'
-            #write_dataset conversion error            
-            storage.write_dataset(
-                Resources({
-                    'out_table_name':devtypes_table_name,
-                    'values':{
+            storage.write_table(
+                    table_name = devtypes_table_name,
+                    table_data = {
                         'development_type_id': array([1,2]),
                         'min_units':array([0,10]),
                         'min_commercial_sqft':array([0,0]),
                         'min_industrial_sqft':array([0,0]),
                         'min_governmental_sqft':array([0,0])
-                        },
-                    })
+                        }
                 )
 
             gridcells = GridcellDataset(in_storage=storage, in_table_name=gridcells_table_name)
@@ -294,33 +276,27 @@ if __name__ == "__main__":
             storage = StorageFactory().get_storage('dict_storage')
 
             gridcells_table_name = 'gridcells'
-            #write_dataset conversion error
-            storage.write_dataset(
-                Resources({
-                    'out_table_name':gridcells_table_name,
-                    'values':{
+            storage.write_table(
+                    table_name = gridcells_table_name,
+                    table_data = {
                         'grid_id': array([1,2,3,4]),
                         'residential_units':array([0,0,0,1]),
                         'commercial_sqft':array([300,700,900,900]),
                         'industrial_sqft':array([0,0,0,0]),
                         'governmental_sqft':array([0,0,0,0])
-                        },
-                    })
-                )
+                        }
+              )
 
             devtypes_table_name = 'devtypes'
-            #write_dataset conversion error            
-            storage.write_dataset(
-                Resources({
-                    'out_table_name':devtypes_table_name,
-                    'values':{
+            storage.write_table(
+                    table_name = devtypes_table_name,
+                    table_data = {
                         'development_type_id': array([1,2,3]),
                         'min_units':array([1,0,0]),
                         'min_commercial_sqft':array([500,0,1000]),
                         'min_industrial_sqft':array([0,0,0]),
                         'min_governmental_sqft':array([0,0,0])
-                        },
-                    })
+                        }
                 )
 
             gridcells = GridcellDataset(in_storage=storage, in_table_name=gridcells_table_name)
