@@ -74,17 +74,18 @@ class DevelopmentProjectProposalSamplingModel(Model):
             current_year = SimulationState().get_current_time()
 
         self.proposal_component_set.compute_variables([
-            'urbansim_parcel.development_project_proposal_component.units_proposed'],
+            'urbansim_parcel.development_project_proposal_component.units_proposed',
+            'urbansim_parcel.development_project_proposal_component.is_residential'],
                                         dataset_pool=self.dataset_pool)
         self.proposal_set.compute_variables([
-            'urbansim_parcel.development_project_proposal.number_of_components'],
+            'urbansim_parcel.development_project_proposal.number_of_components',
+            'development_project_proposal.disaggregate(parcel.zone_id)'],
                                         dataset_pool=self.dataset_pool)
         buildings = self.dataset_pool.get_dataset("building")
         buildings.compute_variables([
-                                    "occupied_building_sqft=urbansim_parcel.building.occupied_building_sqft_by_jobs",
-                                    "urbansim_parcel.building.existing_units",
-                                    "occupied_residential_units = urbansim_parcel.building.number_of_households",
-                                    #"occupied_parcel_sqft = urbansim_parcel.building.occupied_building_sqft",
+                                "occupied_units_for_jobs = urbansim_parcel.building.number_of_non_home_based_jobs",
+                                "units_for_jobs = urbansim_parcel.building.total_non_home_based_job_space",
+                                "occupied_residential_units = urbansim_parcel.building.number_of_households",
                                     ],
                                     dataset_pool=self.dataset_pool)
         parcels = self.dataset_pool.get_dataset('parcel')
@@ -92,7 +93,6 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                   dataset_pool=self.dataset_pool)
         target_vacancy = self.dataset_pool.get_dataset('target_vacancy')
         target_vacancy.compute_variables(['type_name=target_vacancy.disaggregate(building_type.building_type_name)',
-                                          'unit_name=target_vacancy.disaggregate(building_type.unit_name)',
                                           'is_residential = target_vacancy.disaggregate(building_type.is_residential)'],
                                          dataset_pool=self.dataset_pool)
         current_target_vacancy = DatasetSubset(target_vacancy, index=where(target_vacancy.get_attribute("year")==current_year)[0])
@@ -120,6 +120,11 @@ class DevelopmentProjectProposalSamplingModel(Model):
             
         self.check_vacancy_rates(current_target_vacancy)  #initialize self.accepting_proposal based on current vacancy rate
 
+        sqft_per_job = self.dataset_pool.get_dataset("building_sqft_per_job")
+        zones_of_proposals = self.proposal_set.get_attribute("zone_id")
+        self.building_sqft_per_job_table = sqft_per_job.get_building_sqft_as_table(zones_of_proposals.max(), 
+                                                                                   tv_building_types.max())
+        
         # consider only those proposals that have all components of accepted type and sum of proposed units > 0
         is_accepted_type = self.accepting_proposals[components_building_type_ids]
         sum_is_accepted_type_over_proposals = array(ndimage.sum(is_accepted_type, labels = proposal_ids_in_component_set, 
@@ -179,7 +184,6 @@ class DevelopmentProjectProposalSamplingModel(Model):
     def check_vacancy_rates(self, target_vacancy):
         type_ids = target_vacancy.get_attribute("building_type_id")
         type_names = target_vacancy.get_attribute("type_name")
-        unit_names = target_vacancy.get_attribute("unit_name")
         is_residential = target_vacancy.get_attribute("is_residential")
         buildings = self.dataset_pool.get_dataset("building")
         building_type_ids = buildings.get_attribute("building_type_id")
@@ -189,11 +193,14 @@ class DevelopmentProjectProposalSamplingModel(Model):
         for index in arange(target_vacancy.size()):
             type_id = type_ids[index]
             type_name = type_names[index]
-            unit_name = unit_names[index]  #vacancy by type, could be residential, non-residential, or by building_type
             target = self.target_vacancies[type_id]           
             is_matched_type = building_type_ids == type_id
             if is_residential[index]:
                 unit_name = "residential_units"
+                parcel_unit_name = unit_name
+            else:
+                unit_name = "units_for_jobs"
+                parcel_unit_name = "building_sqft"
             self.existing_units[type_id] = buildings.get_attribute(unit_name)[is_matched_type].astype("float32").sum()
             self.occupied_units[type_id] = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type].astype("float32").sum()
             self.proposed_units[type_id] = 0
@@ -201,10 +208,10 @@ class DevelopmentProjectProposalSamplingModel(Model):
             vr = (self.existing_units[type_id] - self.occupied_units[type_id]) / float(self.existing_units[type_id])
             if vr < target:
                 self.accepting_proposals[type_id] = True
-                if unit_name not in self.units_built.keys():
-                    self.units_built[unit_name] = parcels.get_attribute_by_index(unit_name, 
+                if parcel_unit_name not in self.units_built.keys():
+                    self.units_built[parcel_unit_name] = parcels.get_attribute_by_index(parcel_unit_name, 
                                                         parcels.get_id_index(self.proposal_set.get_attribute('parcel_id')))
-                self.units_built_pointer[type_id] = self.units_built[unit_name]
+                self.units_built_pointer[type_id] = self.units_built[parcel_unit_name]
 
     def consider_proposals(self, proposal_indexes, target_vacancy, build_only_in_empty_parcel=True):
         #buildings = self.dataset_pool.get_dataset("building")
@@ -221,8 +228,9 @@ class DevelopmentProjectProposalSamplingModel(Model):
         proposal_ids = self.proposal_set.get_id_attribute()
         proposal_ids_in_component_set = self.proposal_component_set.get_attribute("proposal_id")
         all_units_proposed = self.proposal_component_set.get_attribute("units_proposed")
+        is_component_residential = self.proposal_component_set.get_attribute("is_residential")
         number_of_components_in_proposals = self.proposal_set.get_attribute("number_of_components")
-        
+        zones_of_proposals = self.proposal_set.get_attribute("zone_id")
         is_proposal_rejected = zeros(proposal_indexes.size, dtype=bool8)
         proposal_site = proposals_parcel_ids[proposal_indexes]
         
@@ -238,7 +246,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
             proposal_index_in_component_set = where(proposal_ids_in_component_set == proposal_ids[proposal_index])[0]
             units_proposed = all_units_proposed[proposal_index_in_component_set]
             component_types = components_building_type_ids[proposal_index_in_component_set]
-
+            is_this_component_residential = is_component_residential[proposal_index_in_component_set]
             this_site = proposal_site[i]
             if False: #proposal_construction_type[i] == 'R':
                 ##TODO:if it's a redevelopment project,demolish existing buildings of this site
@@ -260,7 +268,12 @@ class DevelopmentProjectProposalSamplingModel(Model):
                     #self.proposed_units[type_id] += round(unit_proposed / years[i])
                     ##TODO: handle pro-rated projects
                 #else:
-                self.proposed_units[type_id] += units_proposed[itype_id]
+                if is_this_component_residential[itype_id]:
+                    self.proposed_units[type_id] += units_proposed[itype_id]
+                else: # translate from building_sqft to number of jobs
+                    self.proposed_units[type_id] += units_proposed[itype_id] / \
+                                                    self.building_sqft_per_job_table[zones_of_proposals[proposal_indexes[i]], type_id]
+                
                 units_stock = self.existing_units[type_id] - self.demolished_units[type_id] + self.proposed_units[type_id]
                 vr = (units_stock - self.occupied_units[type_id]) / float(units_stock)
                 if vr >= self.target_vacancies[type_id]:
