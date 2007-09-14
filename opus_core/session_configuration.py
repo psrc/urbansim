@@ -81,17 +81,6 @@ class SessionConfiguration(Singleton, GeneralResources):
             return exception[object_name]
         return None 
             
-    def _open_db_connection(self, base, database_configuration, database_name):     
-        from opus_core.store.opus_database import OpusDatabase      
-        
-        connection = self.get(base, None)
-        if not isinstance(connection, OpusDatabase):
-            connection = OpusDatabase(hostname=database_configuration.host_name, 
-                                      username=database_configuration.user_name, 
-                                      password=database_configuration.password,
-                                      database_name=database_name)
-            self.add(base, connection)
-            
     def set_in_storage(self, in_storage):
         if self._in_storage != in_storage:
             self.get_dataset_pool().remove_all_datasets()
