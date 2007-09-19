@@ -142,20 +142,18 @@ from inprocess.travis.opus_core.configurations.database_server_configuration \
     import DatabaseServerConfiguration
 
 class Tests(opus_unittest.OpusTestCase):
-    def setUp(self):
+        
+    def get_mysql_server(self):
         server_config = DatabaseServerConfiguration(
             protocol = 'mysql',
             test = True)
-        self.mysql_db_server = DatabaseServer(server_config) 
-
+        return DatabaseServer(server_config) 
+    
+    def get_postgres_server(self):
         server_config = DatabaseServerConfiguration(
             protocol = 'postgres',
             test = True)
-        self.postgres_db_server = DatabaseServer(server_config) 
-        
-    def tearDown(self):
-        self.mysql_db_server.close()
-        self.postgres_db_server.close()
+        return DatabaseServer(server_config) 
     
     def helper_create_drop_and_has_database(self, db_server):
         db_name = 'test_database_server'
@@ -168,10 +166,24 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertFalse(db_server.has_database(db_name))
                 
     def test_mysql_create_drop_and_has_database(self):
-        self.helper_create_drop_and_has_database(self.mysql_db_server)
+        try:
+            import MySQLdb
+        except:
+            pass
+        else:
+            server = self.get_mysql_server()
+            self.helper_create_drop_and_has_database(server)
+            server.close()
         
     def test_postgres_create_drop_and_has_database(self):
-        self.helper_create_drop_and_has_database(self.postgres_db_server)
+        try:
+            import psycopg2
+        except:
+            pass
+        else:
+            server = self.get_postgres_server()
+            self.helper_create_drop_and_has_database(server)
+            server.close()
                                  
 if __name__ == '__main__':
     opus_unittest.main()
