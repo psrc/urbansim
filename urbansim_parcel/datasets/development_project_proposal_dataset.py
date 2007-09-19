@@ -203,6 +203,13 @@ def create_from_parcel_and_development_template(parcel_dataset,
                     continue
                 min_constraint = constraint[:, 0]
                 max_constraint = constraint[:, 1]
+                ## treat -1 as a constant for unconstrainted
+                if min_constraint == -1:
+                    min_constraint = template_attribute.min()
+                
+                if max_constraint == -1:
+                    max_constraint = template_attribute.max()
+
                 fit_indicator = logical_and(fit_indicator, 
                                             logical_and(template_attribute >= min_constraint,
                                                         template_attribute <= max_constraint))
