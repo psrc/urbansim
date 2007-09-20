@@ -14,8 +14,6 @@
 
 from opus_core.opus_error import OpusError
 from opus_core.logger import logger
-from inprocess.travis.opus_core.exception.database_import_exception import DatabaseImportException
-from inprocess.travis.opus_core.exception.cant_connect_to_database_exception import CantConnectToDatabaseException
 from sqlalchemy.schema import MetaData
 from sqlalchemy import create_engine
 
@@ -36,19 +34,13 @@ class DatabaseServer(object):
         self.user_name = database_server_configuration.user_name
         self.password = database_server_configuration.password
         
-        try:
-            engine = create_engine(self.get_connection_string())
-            self.metadata = MetaData(
-                bind = engine
-            )      
-        except Exception, e:
-            raise DatabaseImportException(e)    
-                
-        try:
-            self.cursor = engine.connect()
-            self.show_output = False
-        except Exception, e:
-            raise CantConnectToDatabaseException(e)
+        engine = create_engine(self.get_connection_string())
+        self.metadata = MetaData(
+            bind = engine
+        ) 
+
+        self.cursor = engine.connect()
+        self.show_output = False
 
     def get_connection_string(self):
         return '%s://%s:%s@%s'%(self.protocol, self.user_name, self.password, self.host_name) 
