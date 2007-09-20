@@ -12,6 +12,8 @@
 # other acknowledgments.
 #
 
+#DISCLAIMER: THIS FILE IS DEPRECATED
+
 import os
 from sets import Set
 from opus_core.model import Model
