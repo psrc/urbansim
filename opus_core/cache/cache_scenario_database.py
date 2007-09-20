@@ -32,7 +32,7 @@ class CacheScenarioDatabase(Model):
         logger.log_status("Caching large SQL tables to: " + config['cache_directory'])
         self.show_output = show_output
         
-        import pydevd;pydevd.settrace()
+        #import pydevd;pydevd.settrace()
         
         #protocol defaults to mysql
         server_configuration = DatabaseServerConfiguration(
