@@ -11,6 +11,8 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 
+#DISCLAIMER: THIS FILE IS OUT OF DATE AND NEEDS SIGNIFICANT MODIFICATIONS 
+#            TO MAKE IT WORK
 print "Create MySQL connection"
 from urbansim.store.scenario_database import ScenarioDatabase
 
