@@ -201,14 +201,16 @@ def create_from_parcel_and_development_template(parcel_dataset,
                 template_attribute = development_template_dataset.get_attribute(constraint_type)[i_template]  #density converted to constraint variable name
                 if template_attribute == 0:
                     continue
-                min_constraint = constraint[:, 0]
-                max_constraint = constraint[:, 1]
+                min_constraint = constraint[:, 0].copy()
+                max_constraint = constraint[:, 1].copy()
                 ## treat -1 as a constant for unconstrainted
-                if min_constraint == -1:
-                    min_constraint = template_attribute.min()
+                w_unconstr = min_constraint == -1
+		if w_unconstr.any():
+                    min_constraint[w_unconstr] = template_attribute.min()
                 
-                if max_constraint == -1:
-                    max_constraint = template_attribute.max()
+                w_unconstr = max_constraint == -1
+		if w_unconstr.any():
+                    max_constraint[w_unconstr] = template_attribute.max()
 
                 fit_indicator = logical_and(fit_indicator, 
                                             logical_and(template_attribute >= min_constraint,
