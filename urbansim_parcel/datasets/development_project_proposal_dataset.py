@@ -203,7 +203,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
                     continue
                 min_constraint = constraint[:, 0].copy()
                 max_constraint = constraint[:, 1].copy()
-                ## treat -1 as a constant for unconstrainted
+                ## treat -1 as unconstrainted
                 w_unconstr = min_constraint == -1
 		if w_unconstr.any():
                     min_constraint[w_unconstr] = template_attribute.min()
@@ -215,7 +215,15 @@ def create_from_parcel_and_development_template(parcel_dataset,
                 fit_indicator = logical_and(fit_indicator, 
                                             logical_and(template_attribute >= min_constraint,
                                                         template_attribute <= max_constraint))
-                                           
+                
+                if constraint_type == "units_per_acre":
+                    res_units_capacity = parcel_dataset.get_attribute("parcel_sqft")[index1] * max_constraint / 43560.0 
+                else:
+                    non_res_capacity = parcel_dataset.get_attribute("parcel_sqft")[index1] * max_constraint
+                
+                logger.log_status("template_id %s max total residential capacity %s, %s of them fit constraints " % (this_template_id, res_units_capacity.sum(), (res_units_capacity * fit_indicator).sum() ))
+                logger.log_status("template_id %s max total non residential capacity %s, %s of them fit constraints " % (this_template_id, non_res_capacity.sum(), (non_res_capacity * fit_indicator).sum() ))
+                                  
                 
         proposal_parcel_ids = concatenate((proposal_parcel_ids, parcel_ids[index1[fit_indicator]]))
         proposal_template_ids = concatenate( (proposal_template_ids, array( [this_template_id] * where(fit_indicator)[0].size )) )
