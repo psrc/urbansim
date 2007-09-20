@@ -57,6 +57,9 @@ class DevelopmentProjectProposalSamplingModel(Model):
         else:
             self.weight = ones(self.proposal_set.size(), dtype="float64")  #equal weight
 
+        self.proposal_set.compute_variables("zone_id=development_project_proposal.disaggregate(parcel.zone_id)", 
+                                            dataset_pool=self.dataset_pool)
+
         ## TODO: handling of filter_attribute
 #        if filter_attribute is not None:
 #            if filter_attribute not in proposal_set.get_known_attribute_names():
@@ -109,7 +112,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         all_units_proposed = self.proposal_component_set.get_attribute("units_proposed")
         number_of_components_in_proposals = self.proposal_set.get_attribute("number_of_components")
         
-        self.accepting_proposals = zeros(components_building_type_ids.max()+1, dtype='bool8')  #whether accepting new proposals, for each building type
+        self.accepting_proposals = zeros(current_target_vacancy.get_attribute("building_type_id").max()+1, dtype='bool8')  #whether accepting new proposals, for each building type
         self.accepted_proposals = [] # index of accepted proposals
 
         self.target_vacancies = {}
@@ -173,7 +176,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         for type_id in self.existing_units.keys():
             units_stock = self.existing_units[type_id] - self.demolished_units[type_id] + self.proposed_units[type_id]
             if units_stock > 0:
-                logger.log_status("%s: %s" % (type_id, (units_stock - self.occupied_units[type_id]) / float(units_stock)))
+                logger.log_status("%s: %s (units existing:%s  occupied:%s  proposed:%s  demolished:%s)" % (type_id, (units_stock - self.occupied_units[type_id]) / float(units_stock), self.existing_units[type_id], self.occupied_units[type_id], self.proposed_units[type_id], self.demolished_units[type_id]))
         # delete all tentative (not accepted) proposals from the proposal set
 #        self.proposal_set.remove_elements(where(
 #                    self.proposal_set.get_attribute("status_id") == self.proposal_set.id_tentative)[0])
