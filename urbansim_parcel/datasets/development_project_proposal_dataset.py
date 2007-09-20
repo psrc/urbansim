@@ -218,11 +218,10 @@ def create_from_parcel_and_development_template(parcel_dataset,
                 
                 if constraint_type == "units_per_acre":
                     res_units_capacity = parcel_dataset.get_attribute("parcel_sqft")[index1] * max_constraint / 43560.0 
+                    logger.log_status("template_id %s max total residential capacity %s, %s of them fit constraints " % (this_template_id, res_units_capacity.sum(), (res_units_capacity * fit_indicator).sum() ))
                 else:
                     non_res_capacity = parcel_dataset.get_attribute("parcel_sqft")[index1] * max_constraint
-                
-                logger.log_status("template_id %s max total residential capacity %s, %s of them fit constraints " % (this_template_id, res_units_capacity.sum(), (res_units_capacity * fit_indicator).sum() ))
-                logger.log_status("template_id %s max total non residential capacity %s, %s of them fit constraints " % (this_template_id, non_res_capacity.sum(), (non_res_capacity * fit_indicator).sum() ))
+                    logger.log_status("template_id %s max total non residential capacity %s, %s of them fit constraints " % (this_template_id, non_res_capacity.sum(), (non_res_capacity * fit_indicator).sum() ))
                                   
                 
         proposal_parcel_ids = concatenate((proposal_parcel_ids, parcel_ids[index1[fit_indicator]]))
