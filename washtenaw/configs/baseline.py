@@ -159,7 +159,7 @@ class Baseline(GeneralConfiguration):
                 'job_building_type': {},
                 'target_vacancy': {},
                 'zone': {},
-                #'jobs_event': {},
+                'jobs_event': {},
                 #'households_event': {},
                 
                 },
