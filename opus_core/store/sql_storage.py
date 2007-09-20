@@ -27,7 +27,10 @@ from opus_core.store.storage import Storage
 
 
 class sql_storage(Storage):
-    def __init__(self, protocol, username, password, hostname, database_name, port=None):
+    def __init__(self, protocol, 
+                 username, password, hostname, 
+                 database_name, port=None,
+                 reflect = True):
         """
         protocol: 'sqlite', 'mysql', 'postgres', 'oracle', 'mssql', or 'firebird'
           - A corresponding module must be installed
@@ -50,18 +53,20 @@ class sql_storage(Storage):
             database_name
             )     
         
+        self._engine = create_engine(connection_string)
         self._metadata = MetaData(
-            bind = connection_string
+            bind = self._engine
         )
-        self._engine = self._metadata.get_engine()
-        #self._metadata.reflect()
+        if reflect:
+            self._metadata.reflect()
         
     def get_storage_location(self):
         return str(self._engine.url)
-        
+      
+    #TODO: this method should respect the column_names parameter  
     def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True, id_name=None):
         table = Table(table_name, self._metadata, autoload=True)
-        
+            
         query_results = table.select().execute()
             
         table_data = dict([(column, []) for column in query_results.keys])
@@ -77,9 +82,7 @@ class sql_storage(Storage):
         
         return table_data
         
-    def table_exists(self, table_name):
-        return table_name in [t.name for t in self._metadata.tables]
-    
+        
     def write_table(self, table_name, table_data, overwrite_existing = True):
         table_length, _ = self._get_column_size_and_names(table_data)
         
@@ -92,7 +95,6 @@ class sql_storage(Storage):
                 table_data[column_name] = [int(cell) for cell in column_data]
             elif column_data.dtype == 'f':
                 table_data[column_name] = [float(cell) for cell in column_data]
-            
             
         table = Table(table_name, self._metadata, *columns)
         if overwrite_existing:
@@ -115,7 +117,8 @@ class sql_storage(Storage):
                     rows_to_insert.append(row_data)
                 
                 try:
-                    table.insert().execute(*rows_to_insert)
+                    connection.execute(table.insert(), rows_to_insert)
+                    #table.insert().execute(*rows_to_insert)
                 except Exception, e:
                     raise ValueError('Failed to insert data into table, possibly due to incorrect data type.\n(Original error: %s)\nData to be inserted: %s' % (e, row_data))
             
@@ -213,6 +216,7 @@ else:
                 password = 'password',
                 hostname = 'hostname',
                 database_name = 'database_name',
+                reflect = False
                 )
                 
             expected_url = 'mysql://username:password@hostname/database_name'
@@ -228,6 +232,7 @@ else:
                 hostname = 'hostname',
                 database_name = 'database_name',
                 port = 9999,
+                reflect = False
                 )
                 
             expected_url = 'sqlite://username:password@hostname:9999/database_name'
@@ -379,17 +384,17 @@ else:
             db.DoQuery('CREATE TABLE bar (foo INT, boo INT, fooboobar INT)')
             db.DoQuery('INSERT INTO bar (foo, boo, fooboobar) VALUES (1,1,1)')
                 
-            expected_column_names = ['bee', 'baz', 'foobeebaz']
-            actual_column_names = self.storage.get_column_names('foo')
+            expected_table_names = ['bee', 'baz', 'foobeebaz']
+            actual_table_names = self.storage.get_column_names('foo')
                 
-            self.assertEqual(Set(expected_column_names), Set(actual_column_names))
-            self.assertEqual(len(expected_column_names), len(actual_column_names))
+            self.assertEqual(Set(expected_table_names), Set(actual_table_names))
+            self.assertEqual(len(expected_table_names), len(actual_table_names))
             
-            expected_column_names = ['foo', 'boo', 'fooboobar']
-            actual_column_names = self.storage.get_column_names('bar')
+            expected_table_names = ['foo', 'boo', 'fooboobar']
+            actual_table_names = self.storage.get_column_names('bar')
                 
-            self.assertEqual(Set(expected_column_names), Set(actual_column_names))
-            self.assertEqual(len(expected_column_names), len(actual_column_names))
+            self.assertEqual(Set(expected_table_names), Set(actual_table_names))
+            self.assertEqual(len(expected_table_names), len(actual_table_names))
             
         def test_load_table_returns_a_table_with_the_given_table_name_and_data(self):
             db = self.db_server.get_database(self.database_name)
