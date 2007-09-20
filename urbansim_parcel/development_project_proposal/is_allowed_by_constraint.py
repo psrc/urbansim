@@ -59,8 +59,16 @@ class is_allowed_by_constraint(Variable):
             building_type_id = generic_land_use_type_ids[i_template]
             for constraint_type, constraint in parcels.development_constraints[building_type_id].iteritems():                
                 template_attribute = templates.get_attribute(constraint_type)[i_template]  #density converted to constraint variable name           
-                min_constraint = constraint[:, 0][parcel_index] 
-                max_constraint = constraint[:, 1][parcel_index] 
+                min_constraint = constraint[:, 0][parcel_index].copy() 
+                max_constraint = constraint[:, 1][parcel_index].copy()
+                ## treat -1 as a constant for unconstrainted
+                w_unconstr = min_constraint == -1
+                if w_unconstr.any():
+                    min_constraint[w_unconstr] = template_attribute.min()
+
+                w_unconstr = max_constraint == -1
+                if w_unconstr.any():
+                    max_constraint[w_unconstr] = template_attribute.max()
                 
                 fit_indicator = logical_and(fit_indicator,
                                             logical_and(template_attribute >= min_constraint,
