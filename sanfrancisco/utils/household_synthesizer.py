@@ -24,7 +24,6 @@ from opus_core.store.opus_database import OpusDatabase
 #from opus_core.resources import Resources
 #from opus_core.services.run_server.misc import create_datasets_from_flt
 #from sandbox.progress import ProgressMeter
-#from opus_core.services.run_server.scenario_database import ScenarioDatabase
 #from opus_core.store.opus_database import OpusDatabase
 
 class HouseholdSynthesizer(object):
