@@ -205,11 +205,11 @@ def create_from_parcel_and_development_template(parcel_dataset,
                 max_constraint = constraint[:, 1].copy()
                 ## treat -1 as unconstrainted
                 w_unconstr = min_constraint == -1
-		if w_unconstr.any():
+                if w_unconstr.any():
                     min_constraint[w_unconstr] = template_attribute.min()
                 
                 w_unconstr = max_constraint == -1
-		if w_unconstr.any():
+                if w_unconstr.any():
                     max_constraint[w_unconstr] = template_attribute.max()
 
                 fit_indicator = logical_and(fit_indicator, 
