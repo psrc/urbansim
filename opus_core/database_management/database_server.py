@@ -125,7 +125,7 @@ class DatabaseServer(object):
         
 
 from opus_core.tests import opus_unittest
-from inprocess.travis.opus_core.configurations.database_server_configuration \
+from opus_core.database_management.database_server_configuration \
     import DatabaseServerConfiguration
 
 class Tests(opus_unittest.OpusTestCase):
