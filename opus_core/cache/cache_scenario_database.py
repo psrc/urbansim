@@ -158,7 +158,7 @@ class CacheScenarioDatabase(Model):
                 if match == None :
                     raise ValueError("parent database url is not a MySQL JDBC url" )
                 next_database_name = match.group(1)
-                table_mapping = self._get_table_mapping(next_database_name)
+                table_mapping = self._get_table_mapping(next_database_name, table_mapping)
                 
             database.close()
             
