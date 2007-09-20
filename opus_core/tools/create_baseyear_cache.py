@@ -13,8 +13,6 @@
 #
 
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
-from opus_core.services.run_server.run_manager import RunManager
-from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.logger import logger
 from opus_core.misc import create_import_for_class
 from opus_core.misc import get_config_from_opus_path
@@ -30,9 +28,7 @@ class CreateBaseyearCacheOptionGroup(GenericOptionGroup):
                                 help="Cache directory.")
         
 class CreateBaseyearCache(object):
-    def run(self, config):
-        run_manager = RunManager()
-        
+    def run(self, config):        
         if config['cache_directory'] is None:
             raise KeyError('The cache directory must be defined at the '
                 'command line or in the given configuration. Use '
