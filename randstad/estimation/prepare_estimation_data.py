@@ -12,8 +12,7 @@
 # other acknowledgments.
 #
 
-from opus_core.cache.cache_mysql_data import CacheMysqlData
-from opus_core.session_configuration import SessionConfiguration
+from opus_core.cache.cache_scenario_database import CacheScenarioDatabase
 
 """
 This script creates a new urbansim_cache and populates it with all 
@@ -23,5 +22,5 @@ Once the cache is there, you can keep reusing it, e.g. for estimation.
 """
 
 from randstad.estimation.estimation_config import config
-CacheMysqlData().run(config, unroll_gridcells=False)
+CacheScenarioDatabase().run(config, unroll_gridcells=False)
 
