@@ -16,7 +16,6 @@ import os
 from getpass import getuser
 from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
-from opus_core.store.scenario_database import ScenarioDatabase
 from opus_core.configurations.database_configuration import DatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
