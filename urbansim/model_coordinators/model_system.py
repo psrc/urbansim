@@ -31,14 +31,10 @@ from opus_core.resources import Resources
 from opus_core.model_group import ModelGroup
 from opus_core.fork_process import ForkProcess
 from opus_core.model_group import ModelGroupMember
-from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.simulation_state import SimulationState
 from opus_core.file_utilities import get_resources_from_file
-from opus_core.store.scenario_database import ScenarioDatabase
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
 from opus_core.session_configuration import SessionConfiguration
-from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
 
 # TODO: This file has syntax errors, is it working?
 class ModelSystem(object):
@@ -511,17 +507,13 @@ if __name__ == "__main__":
         import hotshot
         profiler = hotshot.Profile(resources.get("profile_filename"))
         
-    if resources.has_key("only_convert_large_datasets_from_mysql_to_flt"):
-        self._merge_resources_with_defaults(resources)
-        s.cache_baseyear_data_from_mysql(resources)
+    if profiler is None:
+        s.run(resources)
     else:
-        if profiler is None:
-            s.run(resources)
-        else:
-            profiler.run("s.run(resources)")
-            logger.log_status('Profiling data stored in %s. Use the python module hotshot to view them.' % 
-                                  resources.get("profile_filename"))
-            profiler.close()
+        profiler.run("s.run(resources)")
+        logger.log_status('Profiling data stored in %s. Use the python module hotshot to view them.' % 
+                              resources.get("profile_filename"))
+        profiler.close()
 
     if options.delete_resources_file_directory:
         dir = os.path.split(options.resources_file_name)[0]
