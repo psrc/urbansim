@@ -80,7 +80,7 @@ class DatabaseServer(object):
         If the database contains a 'scenario_information' table and the argument 'scenario' is True, 
         return a ScenarioDatabase object.  Else return an OpusDatabase object.
         """
-        from inprocess.travis.opus_core.database_management.opus_database import OpusDatabase
+        from opus_core.database_management.opus_database import OpusDatabase
         database = OpusDatabase(
                 database_server_configuration = self.config,
                 database_name=database_name)

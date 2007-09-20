@@ -17,9 +17,7 @@ import sys, re
 from numpy import array
 from numpy import rec
 
-from inprocess.travis.opus_core.exception.database_import_exception import DatabaseImportException
-from inprocess.travis.opus_core.exception.cant_connect_to_database_exception import CantConnectToDatabaseException
-from inprocess.travis.opus_core.configurations.database_server_configuration import DatabaseServerConfiguration 
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration 
 
 from sqlalchemy.schema import MetaData, Column, Table
 from sqlalchemy.types import Integer, SmallInteger, \
@@ -52,14 +50,11 @@ class OpusDatabase(object):
         self.password = database_server_configuration.password
         self.database_name = database_name
         
-        try:
-            self.engine = create_engine(self.get_connection_string())
-            self.metadata = MetaData(
-                bind = self.engine,
-                reflect = True
-            )      
-        except Exception, e:
-            raise DatabaseImportException(e)    
+        self.engine = create_engine(self.get_connection_string())
+        self.metadata = MetaData(
+            bind = self.engine,
+            reflect = True
+        )  
         
         self.show_output = False
 
@@ -232,7 +227,7 @@ from opus_core.tests import opus_unittest
 from opus_core.logger import logger
 
 
-from inprocess.travis.opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server import DatabaseServer
 
 class OpusDatabaseTest(opus_unittest.OpusTestCase):
     def setUp(self):
