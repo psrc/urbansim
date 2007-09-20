@@ -26,8 +26,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.simulation_state import SimulationState
 from opus_core.variables.attribute_type import AttributeType
-from opus_core.cache.cache_mysql_data import CacheMysqlData as CoreCacheMysqlData
-
+from opus_core.cache.cache_scenario_database import CacheScenarioDatabase
 from urbansim.datasets.job_dataset import JobDataset
 from urbansim.datasets.zone_dataset import ZoneDataset
 from urbansim.datasets.gridcell_dataset import GridcellDataset
@@ -71,7 +70,7 @@ class CacheMysqlData(Model):
         if debuglevel is None:
             debuglevel = config.get('debuglevel', 3)
 
-        CoreCacheMysqlData().run(config)
+        CacheScenarioDatabase().run(config)
         
         self.prepare_data_before_baseyear(
             cache_directory,
@@ -103,7 +102,6 @@ class CacheMysqlData(Model):
     def _initialize_previous_years(self, attribute_cache, 
                                    base_year,
                                    creating_baseyear_cache_configuration):
-        factory = DatasetFactory()
         simulation_state = SimulationState()
         cache_directory = simulation_state.get_cache_directory()
 
