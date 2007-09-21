@@ -19,6 +19,7 @@ from opus_core.configuration import Configuration
 
 class JobsEventModelConfigurationCreator(HasStrictTraits):
     location_set = Str('gridcell')
+    agent_set = Str('job')
     agent_event_set = Str('jobs_event')
     
     _model_name = 'agent_event_model'
@@ -33,6 +34,7 @@ class JobsEventModelConfigurationCreator(HasStrictTraits):
                 'arguments': {
                     'location_set': self.location_set,
                     'agent_event_set': self.agent_event_set,
+                    'agent_set':self.agent_set,
                     'current_year': 'year',
                     'dataset_pool': 'dataset_pool'
                     }
