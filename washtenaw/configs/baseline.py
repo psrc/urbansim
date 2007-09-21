@@ -127,7 +127,7 @@ class Baseline(GeneralConfiguration):
                 'development_event_transition_model',
                 'events_coordinator',
                 'residential_land_share_model',
-                #'jobs_event_model',
+                'jobs_event_model',
                 #'households_event_model',
                 'regional_household_transition_model',
                 'regional_household_relocation_model',
