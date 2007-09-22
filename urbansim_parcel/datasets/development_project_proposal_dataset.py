@@ -19,7 +19,7 @@ from opus_core.resources import Resources
 from opus_core.variables.variable_name import VariableName
 from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset_pool import DatasetPool
-from opus_core.misc import unique_values
+from opus_core.misc import unique_values, DebugPrinter
 from opus_core.logger import logger
 from numpy import arange, where, resize, zeros, array, logical_and, logical_or, concatenate
 
@@ -122,6 +122,10 @@ def create_from_parcel_and_development_template(parcel_dataset,
     otherwise, create a proposal dataset with Cartesian product of parcels x templates 
     """
 
+    debug = resources.get("debug",  0)
+    if not isinstance(debug, DebugPrinter):
+        debug = DebugPrinter(debug)
+
     if parcel_index is not None and parcel_index.size <= 0:
         logger.log_warning("parcel index for creating development proposals is of size 0. No proposals will be created.")
         return None
@@ -216,13 +220,13 @@ def create_from_parcel_and_development_template(parcel_dataset,
                                             logical_and(template_attribute >= min_constraint,
                                                         template_attribute <= max_constraint))
                 
+
                 if constraint_type == "units_per_acre":
                     res_units_capacity = parcel_dataset.get_attribute("parcel_sqft")[index1] * max_constraint / 43560.0 
-                    logger.log_status("template_id %s max total residential capacity %s, %s of them fit constraints " % (this_template_id, res_units_capacity.sum(), (res_units_capacity * fit_indicator).sum() ))
+                    debug.print_debug("template_id %s (GLU ID %s) max total residential capacity %s, %s of them fit constraints " % (this_template_id, generic_land_use_type_id, res_units_capacity.sum(), (res_units_capacity * fit_indicator).sum() ), 12)
                 else:
                     non_res_capacity = parcel_dataset.get_attribute("parcel_sqft")[index1] * max_constraint
-                    logger.log_status("template_id %s max total non residential capacity %s, %s of them fit constraints " % (this_template_id, non_res_capacity.sum(), (non_res_capacity * fit_indicator).sum() ))
-                                  
+                    debug.print_debug("template_id %s (GLU ID %s) max total non residential capacity %s, %s of them fit constraints " % (this_template_id, generic_land_use_type_id, non_res_capacity.sum(), (non_res_capacity * fit_indicator).sum() ), 12)
                 
         proposal_parcel_ids = concatenate((proposal_parcel_ids, parcel_ids[index1[fit_indicator]]))
         proposal_template_ids = concatenate( (proposal_template_ids, array( [this_template_id] * where(fit_indicator)[0].size )) )

@@ -57,9 +57,6 @@ class DevelopmentProjectProposalSamplingModel(Model):
         else:
             self.weight = ones(self.proposal_set.size(), dtype="float64")  #equal weight
 
-        self.proposal_set.compute_variables("zone_id=development_project_proposal.disaggregate(parcel.zone_id)", 
-                                            dataset_pool=self.dataset_pool)
-
         ## TODO: handling of filter_attribute
 #        if filter_attribute is not None:
 #            if filter_attribute not in proposal_set.get_known_attribute_names():
@@ -82,7 +79,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                         dataset_pool=self.dataset_pool)
         self.proposal_set.compute_variables([
             'urbansim_parcel.development_project_proposal.number_of_components',
-            'development_project_proposal.disaggregate(parcel.zone_id)'],
+            'zone_id=development_project_proposal.disaggregate(parcel.zone_id)'],
                                         dataset_pool=self.dataset_pool)
         buildings = self.dataset_pool.get_dataset("building")
         buildings.compute_variables([
