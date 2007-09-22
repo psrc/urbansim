@@ -380,7 +380,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                 },
             "prepare_for_run": {
                 "name": "prepare_for_run",
-                "arguments": {"parcel_filter":"'has_vacant_land=parcel.vacant_land_area > 0'",
+                "arguments": {"parcel_filter":"'has_vacant_land=urbansim_parcel.parcel.vacant_land_area > 0'",
                               "specification_storage": "base_cache_storage",
                               "specification_table": "'real_estate_price_model_specification'",
                                "coefficients_storage": "base_cache_storage",
