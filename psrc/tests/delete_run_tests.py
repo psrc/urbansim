@@ -120,7 +120,7 @@ if does_database_server_exist_for_this_hostname(
             self.assert_(os.path.exists(os.path.join(cache_dir, '2004')))
             
             # Now try to delete the rest of the years of data
-            python_cmd = '%(executable)s %(path)s --run-id=%(run_id)d --database=services_test --hostname=localhost' % {
+            python_cmd = '%(executable)s %(path)s --run-id=%(run_id)d --database=services_test --hostname=%(host_name)s' % {
                 'executable':sys.executable,
                 'path':path,
                 'run_id':self.resources['run_id'],
