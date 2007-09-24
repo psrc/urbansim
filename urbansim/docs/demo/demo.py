@@ -23,7 +23,6 @@ from opus_core.coefficients import Coefficients
 from opus_core.equation_specification import EquationSpecification
 from opus_core.resources import Resources
 from opus_core.storage_factory import StorageFactory
-from opus_core.store.scenario_database import ScenarioDatabase
 from opus_core.session_configuration import SessionConfiguration
 
 from urbansim.datasets.household_dataset import HouseholdDataset
@@ -122,12 +121,14 @@ agents_psrc = HouseholdDataset(in_storage = StorageFactory().get_storage('flt_st
     in_table_name = "hh")
 agents_psrc.summary()
 
-dbcon = ScenarioDatabase(hostname=os.environ['MYSQLHOSTNAME'],
-                         username=os.environ['MYSQLUSERNAME'],
-                         password=os.environ['MYSQLPASSWORD'],
-                         database_name="PSRC_2000_baseyear")
+dbcon = []
                      
-storage = StorageFactory().get_storage('mysql_storage', storage_location=dbcon)
+storage = StorageFactory().get_storage(
+    'mysql_storage',
+    hostname=os.environ['MYSQLHOSTNAME'],
+    username=os.environ['MYSQLUSERNAME'],
+    password=os.environ['MYSQLPASSWORD'],
+    database_name="PSRC_2000_baseyear")
 
 coefficients = Coefficients(in_storage=storage)
 coefficients.load(in_table_name="household_location_choice_model_coefficients")
@@ -160,7 +161,14 @@ result = hlcm_psrc.run(specification, coef, agents_psrc,
                        agents_index=sample(range(agents_psrc.size()), 500),
                        debuglevel=4)
 
-zones_psrc = ZoneDataset(in_storage = StorageFactory().get_storage('mysql_storage', storage_location = dbcon))
+storage = StorageFactory().get_storage(
+    'mysql_storage',
+    hostname=os.environ['MYSQLHOSTNAME'],
+    username=os.environ['MYSQLUSERNAME'],
+    password=os.environ['MYSQLPASSWORD'],
+    database_name="PSRC_2000_baseyear")
+
+zones_psrc = ZoneDataset(in_storage = storage)
 hlcm_psrc_zones = HouseholdLocationChoiceModelCreator().get_model(
     location_set = zones_psrc,
     sampler = "opus_core.samplers.weighted_sampler", 
