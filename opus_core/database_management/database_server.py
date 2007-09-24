@@ -76,9 +76,6 @@ class DatabaseServer(object):
     def get_database(self, database_name):
         """
         Returns an object connecting to this database on this database server.
-        
-        If the database contains a 'scenario_information' table and the argument 'scenario' is True, 
-        return a ScenarioDatabase object.  Else return an OpusDatabase object.
         """
         from opus_core.database_management.opus_database import OpusDatabase
         database = OpusDatabase(
