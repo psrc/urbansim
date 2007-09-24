@@ -47,6 +47,8 @@ class CacheScenarioDatabase(Model):
             base_scenario_database_name = base_scenario_database_name                                                         
         )
         
+        self.database_server = DatabaseServer(server_configuration)
+        
         database_to_table_mapping = scenario_database_manager.get_database_to_table_mapping()
         
         self.tables_to_cache = config['creating_baseyear_cache_configuration'].tables_to_cache

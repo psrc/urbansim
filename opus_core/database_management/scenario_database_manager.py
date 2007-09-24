@@ -23,7 +23,6 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 from opus_core.database_management.database_server import DatabaseServer
 from sqlalchemy import select
-from opus_core.database_management.opus_database import _log_sql
 
 class ScenarioDatabaseManager(Model):
     """Extract a flattened scenario database to the cache.
@@ -65,7 +64,6 @@ class ScenarioDatabaseManager(Model):
             query = select(
                 columns = [scenario_info_table.c.PARENT_DATABASE_URL]               
             )
-            _log_sql(repr(query), self.show_output)
             results = database.engine.execute(query)
             next_database_name = results.fetchone()
             if next_database_name == () or next_database_name[0] == '':
