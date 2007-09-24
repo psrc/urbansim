@@ -19,10 +19,8 @@ from shutil import rmtree
 
 from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
-from opus_core.tests.utils.database_server_configuration_for_tests import DatabaseServerConfigurationForTests
-
-from opus_emme2.sql_value_reader import SqlValueReader
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 from psrc.travel_model_input_file_writer import TravelModelInputFileWriter
 
@@ -33,7 +31,11 @@ if does_test_database_server_exist(module_name=__name__):
         def setUp(self):
             self.database_name = 'test_travel_model_input_file_writer'
             
-            self.db_server = MysqlDatabaseServer(DatabaseServerConfigurationForTests())
+            self.dbconfig = DatabaseServerConfiguration(
+                 protocol = 'mysql',
+                 test = True)
+            
+            self.db_server = DatabaseServer(self.dbconfig)
             
             self.db_server.drop_database(self.database_name)
             self.db_server.create_database(self.database_name)
@@ -56,14 +58,24 @@ if does_test_database_server_exist(module_name=__name__):
             from urbansim.datasets.gridcell_dataset import GridcellDataset
             from urbansim.datasets.job_dataset import JobDataset
             from urbansim.datasets.household_dataset import HouseholdDataset
-            in_storage = StorageFactory().get_storage('mysql_storage', storage_location=self.database)
+            from urbansim.datasets.constant_taz_column_dataset import ConstantTazColumnDataset
+            
+            in_storage = StorageFactory().get_storage(
+                  'mysql_storage',
+                  hostname = self.dbconfig.host_name,
+                  username = self.dbconfig.user_name,
+                  password = self.dbconfig.password,
+                  database_name = self.database_name)
+            
             gc_set = GridcellDataset(in_storage=in_storage, in_table_name='gridcells_exported')
             job_set = JobDataset(in_storage=in_storage, in_table_name='jobs_exported')
             hh_set = HouseholdDataset(in_storage=in_storage, in_table_name='households_exported')
+            taz_col_set = ConstantTazColumnDataset(in_storage=in_storage, in_table_name='constant_taz_columns')
             
-            TravelModelInputFileWriter().create_tripgen_travel_model_input_file(gc_set, job_set, hh_set, 
-                                                                                SqlValueReader(self.database, 'constant_taz_columns'),
-                                                                                self.tempdir_path, 2000)
+            TravelModelInputFileWriter().create_tripgen_travel_model_input_file(
+                gc_set, job_set, hh_set, taz_col_set,
+                self.tempdir_path, 2000)
+            
             logger.log_status('tazdata path: ', self.tempdir_path)
             # expected values - data format: {zone:{column_value:value}}
             expected_tazdata = {1:{101: 19.9, 

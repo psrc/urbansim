@@ -37,7 +37,7 @@ class TravelModelInputFileWriter(object):
         self.upper_mid_income_hh_by_taz = zeros((array_demension,))
         self.upper_income_hh_by_taz  = zeros((array_demension,))
 
-    def create_tripgen_travel_model_input_file(self, gridcell_set, job_set, household_set, constant_taz_reader,
+    def create_tripgen_travel_model_input_file(self, gridcell_set, job_set, household_set, taz_col_set,
                                                current_emme2_tripgen_dir, current_year):
         """Writes to the an emme2 input file in the tripgen/inputtg/TAZDATA.MA2.
            If the datasets need to select by year, assumes the attibutes have already been loaded.
@@ -82,9 +82,9 @@ class TravelModelInputFileWriter(object):
                                                           hh_income[hh_in_this_zone] < upper_median)).sum()
             self.upper_income_hh_by_taz[zone] = (hh_income[hh_in_this_zone] >= upper_median).sum()
 
-        self._write_to_file(constant_taz_reader, current_emme2_tripgen_dir, current_year, max_zone_id)
+        self._write_to_file(taz_col_set, current_emme2_tripgen_dir, current_year, max_zone_id)
 
-    def _write_to_file(self, constant_taz_reader, current_emme2_tripgen_dir, current_year, max_zone_id):
+    def _write_to_file(self, taz_col_set, current_emme2_tripgen_dir, current_year, max_zone_id):
         logger.start_block("Writing to emme2 input file")
         try:
             newfile = open(os.path.join(current_emme2_tripgen_dir, 'inputtg', 'TAZDATA.MA2'), 'w')
@@ -97,11 +97,17 @@ m matrix="hhemp"
                 tm_year = self._decade_floor(current_year)
                 line_template = "%4d    %3d: %8.2f \n"
                 for taz_id in range(1,max_zone_id+1):
-                    pctmf = constant_taz_reader.get_value('pctmf', taz=taz_id, year=tm_year)
-                    gqi = constant_taz_reader.get_value('gqi', taz=taz_id, year=tm_year)
-                    gqn = constant_taz_reader.get_value('gqn', taz=taz_id, year=tm_year)
-                    fteuniv = constant_taz_reader.get_value('fteuniv', taz=taz_id, year=tm_year)
-                    density = constant_taz_reader.get_value('den', taz=taz_id, year=tm_year)
+                    pctmf = taz_col_set.get_attribute_by_id('pctmf',id=(taz_id,tm_year))
+                    gqi = taz_col_set.get_attribute_by_id('gqi',id=(taz_id,tm_year))
+                    gqn = taz_col_set.get_attribute_by_id('gqn',id=(taz_id,tm_year))
+                    fteuniv = taz_col_set.get_attribute_by_id('fteuniv',id=(taz_id,tm_year))
+                    density = taz_col_set.get_attribute_by_id('den',id=(taz_id,tm_year))
+                    
+#                    pctmf = constant_taz_reader.get_value('pctmf', taz=taz_id, year=tm_year)
+#                    gqi = constant_taz_reader.get_value('gqi', taz=taz_id, year=tm_year)
+#                    gqn = constant_taz_reader.get_value('gqn', taz=taz_id, year=tm_year)
+#                    fteuniv = constant_taz_reader.get_value('fteuniv', taz=taz_id, year=tm_year)
+#                    density = constant_taz_reader.get_value('den', taz=taz_id, year=tm_year)
         
                     newfile.write(line_template % (taz_id, 101, pctmf))
                     newfile.write(line_template % (taz_id, 102, self.low_income_hh_by_taz[taz_id]))

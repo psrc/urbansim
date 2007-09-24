@@ -97,6 +97,7 @@ class Baseline(GeneralConfiguration):
                     'job_building_types',
                     'persons',
                     'persons_for_estimation',
+                    'constant_taz_columns'
                     ],
                 tables_to_cache_nchunks = {'gridcells': 4},
                 tables_to_copy_to_previous_years = {
