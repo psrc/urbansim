@@ -24,7 +24,7 @@ from opus_core.services.run_server.run_manager import RunManager
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.services.run_server.run_activity import RunActivity
 from opus_core.store.mysql_database_server import MysqlDatabaseServer
-from opus_core.configurations.database_server_configuration import LocalhostDatabaseServerConfiguration
+from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.misc import does_database_server_exist_for_this_hostname
 from opus_core.session_configuration import SessionConfiguration
@@ -40,7 +40,7 @@ def _create_services_test_database():
     """Creates the 'services_test' database on localhost.
     Returns database.
     """
-    db_server = MysqlDatabaseServer(LocalhostDatabaseServerConfiguration())
+    db_server = MysqlDatabaseServer(DatabaseServerConfiguration())
     db_server.drop_database('services_test')
     db_server.create_database('services_test')
     services_database = db_server.get_database('services_test')
@@ -53,7 +53,7 @@ def _create_services_test_database():
 def _drop_services_test_database():
     """Drops the 'services_test' database on localhost.
     """
-    db_server = MysqlDatabaseServer(LocalhostDatabaseServerConfiguration())
+    db_server = MysqlDatabaseServer(DatabaseServerConfiguration())
     db_server.drop_database('services_test')
     
 def _do_run_simple_test_run(caller, temp_dir, services_database, end_year=None):
