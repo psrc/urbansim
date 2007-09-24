@@ -14,10 +14,7 @@
 
 import os
 
-
-from opus_core.configuration import Configuration
 from opus_core.storage_factory import StorageFactory
-from opus_core.store.scenario_database import ScenarioDatabase
 from opus_core.configurations.database_configuration import DatabaseConfiguration
 from opus_core.misc import does_database_server_exist_for_this_hostname
 
@@ -30,14 +27,13 @@ if does_database_server_exist_for_this_hostname(
         hostname = os.environ.get('MYSQLHOSTNAME','localhost')):
     
     psrc_config = {
-        'in_storage':StorageFactory().get_storage('mysql_storage',
-            storage_location = ScenarioDatabase(
-                hostname = os.environ.get('MYSQLHOSTNAME','localhost'),
-                username = os.environ.get('MYSQLUSERNAME',''),
-                password = os.environ.get('MYSQLPASSWORD',''),
-                database_name = 'PSRC_2000_baseyear',            
-                )
-            ),
+        'in_storage':StorageFactory().get_storage(
+            type='mysql_storage', 
+            hostname = os.environ.get('MYSQLHOSTNAME','localhost'),
+            username = os.environ.get('MYSQLUSERNAME',''),
+            password = os.environ.get('MYSQLPASSWORD',''),
+            database_name = 'PSRC_2000_baseyear'),
+            
         'input_configuration': DatabaseConfiguration(
             host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
             user_name     = os.environ.get('MYSQLUSERNAME',''),
