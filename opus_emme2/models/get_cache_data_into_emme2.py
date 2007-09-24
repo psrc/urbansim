@@ -13,8 +13,6 @@
 # 
 
 from opus_core.session_configuration import SessionConfiguration
-from opus_emme2.sql_value_reader import SqlValueReader
-from opus_core.store.scenario_database import ScenarioDatabase
 from opus_core.resources import Resources
 from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset_factory import DatasetFactory
@@ -49,14 +47,13 @@ class GetCacheDataIntoEmme2(AbstractEmme2TravelModel):
                                                 arguments=arguments)
         job_set = DatasetFactory().get_dataset('job', package='urbansim', 
                                                arguments=arguments)
+        taz_col_set = DatasetFactory().get_dataset('constant_taz_column', package='urbansim', 
+                                               arguments=arguments)
+        
         self._call_input_file_writer(config, year, gc_set, job_set, zone_set, hh_set)
 
-    def _call_input_file_writer(self, config, year, gc_set, job_set, zone_set, hh_set):
-        scenario_db = ScenarioDatabase(config['input_configuration'].host_name,
-                                       config['input_configuration'].user_name, 
-                                       config['input_configuration'].password,
-                                       config['input_configuration'].database_name)
-        constant_taz_reader = SqlValueReader(scenario_db, 'constant_taz_columns')
+    def _call_input_file_writer(self, config, year, gc_set, job_set, zone_set, hh_set, taz_col_set):
+        taz_col_set.load_dataset()
         gc_set.load_dataset(attributes=['grid_id', 'zone_id'])
         job_set.load_dataset(attributes=['job_id', 'sector_id', 'grid_id'])
         hh_set.load_dataset(attributes=['household_id', 'income', 'grid_id'])
@@ -66,7 +63,7 @@ class GetCacheDataIntoEmme2(AbstractEmme2TravelModel):
         tripgen_dir = self.get_emme2_dir(config, year, 'tripgen')
         logger.log_status('tripgen dir: %s' % tripgen_dir)
         tm_file_writer.create_tripgen_travel_model_input_file(gc_set, job_set, hh_set,
-                                                              constant_taz_reader,
+                                                              taz_col_set,
                                                               tripgen_dir,
                                                               year)
     
