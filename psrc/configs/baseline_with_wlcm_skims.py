@@ -15,7 +15,6 @@
 import os
 
 from opus_core.storage_factory import StorageFactory
-from opus_core.store.scenario_database import ScenarioDatabase
 from opus_core.configurations.database_configuration import DatabaseConfiguration
 
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
@@ -25,12 +24,10 @@ from psrc.config.wlcm_config import run_configuration as config
 config_changes = {
     'description':'baseline with wlcm and skims',
     'in_storage':StorageFactory().get_storage('mysql_storage',
-        storage_location = ScenarioDatabase(
             hostname = os.environ.get('MYSQLHOSTNAME','localhost'),
             username = os.environ.get('MYSQLUSERNAME',''),
             password = os.environ.get('MYSQLPASSWORD',''),
             database_name = 'PSRC_2000_baseyear',
-            )
         ),
     'cache_directory':None, ### TODO: Set this cache_directory to something useful.
     'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(

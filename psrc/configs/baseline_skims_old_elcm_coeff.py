@@ -15,7 +15,6 @@
 import os
 
 from opus_core.storage_factory import StorageFactory
-from opus_core.store.scenario_database import ScenarioDatabase
 from opus_core.configurations.database_configuration import DatabaseConfiguration
 
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
@@ -27,12 +26,10 @@ config = AbstractUrbansimConfiguration()
 config_changes = {
     'description':'baseline with skims using old coefficients',
     'in_storage':StorageFactory().get_storage('mysql_storage',
-        storage_location = ScenarioDatabase(
             hostname = os.environ.get('MYSQLHOSTNAME','localhost'),
             username = os.environ.get('MYSQLUSERNAME',''),
             password = os.environ.get('MYSQLPASSWORD',''),
             database_name = 'PSRC_2000_baseyear_old_elcm_coeff',            
-            )
         ),
     'cache_directory':None, ### TODO: Set this cache_directory to something useful.
     'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
