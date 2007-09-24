@@ -75,7 +75,7 @@ class CacheScenarioDatabase(Model):
         """Loads cache with all tables from this database.
         """
         database = self.database_server.get_database(database_name)
-        in_storage = StorageFactory().build_storage_for_dataset(
+        in_storage = StorageFactory().get_storage(
             type='mysql_storage', 
             hostname = config['input_configuration'].host_name,
             username = config['input_configuration'].user_name,
