@@ -21,8 +21,8 @@ from opus_core.datasets.dataset import Dataset
 from opus_core.storage_factory import StorageFactory
 
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.scenario_database_manager import ScenarioDatabaseManager
 from opus_core.database_management.database_server import DatabaseServer
-from sqlalchemy import select
 from opus_core.database_management.opus_database import _log_sql
 
 class CacheScenarioDatabase(Model):
@@ -40,26 +40,22 @@ class CacheScenarioDatabase(Model):
             user_name = config['input_configuration'].user_name,
             password = config['input_configuration'].password
         )
-        
         base_scenario_database_name = config['input_configuration'].database_name
-        self.database_server = DatabaseServer(server_configuration)
+        
+        scenario_database_manager = ScenarioDatabaseManager(
+            server_configuration = server_configuration, 
+            base_scenario_database_name = base_scenario_database_name                                                         
+        )
+        
+        database_to_table_mapping = scenario_database_manager.get_database_to_table_mapping()
+        
         self.tables_to_cache = config['creating_baseyear_cache_configuration'].tables_to_cache
-        table_mapping = self._get_table_mapping(
-            scenario_database_name = base_scenario_database_name,
-            table_mapping = {})
                 
         simulation_state = SimulationState()
         if 'low_memory_run' in config:
             simulation_state.set_low_memory_run(config['low_memory_run'])
         simulation_state.set_cache_directory(config['cache_directory'])
         simulation_state.set_current_time(config['base_year'])
-
-        database_to_table_mapping = {}
-        for table_name, database_name in table_mapping.items():
-            if database_name not in database_to_table_mapping:
-                database_to_table_mapping[database_name] = [table_name]
-            else:
-                database_to_table_mapping[database_name].append(table_name)
                   
         self.tables_cached = Set()      
         for database_name, tables in database_to_table_mapping.items():
@@ -125,41 +121,3 @@ class CacheScenarioDatabase(Model):
             
         finally:
             logger.end_block()
-
-    def _get_table_mapping(self, scenario_database_name, table_mapping):
-        database = self.database_server.get_database(scenario_database_name)
-        
-        tables_in_database = database.get_tables_in_database()
-        relevant_tables = [table_name for table_name in tables_in_database 
-                                if table_name not in table_mapping]
-        
-        for table_name in relevant_tables:
-            table_mapping[table_name] = scenario_database_name 
-            logger.log_status('Found: ' + scenario_database_name + "." + table_name,
-                              tags=['database'], verbosity_level=3)
-        
-        #TODO: there's no reason to have the parent database url store JDBC
-        #      It should just be a database name
-        if 'scenario_information' in tables_in_database:
-            scenario_info_table = database.get_table('scenario_information')
-            query = select(
-                columns = [scenario_info_table.c.PARENT_DATABASE_URL]               
-            )
-            _log_sql(repr(query), self.show_output)
-            results = database.engine.execute(query)
-            next_database_name = results.fetchone()
-            if next_database_name == () or next_database_name[0] == '':
-                next_database_name = None
-            else:
-                next_database_name = next_database_name[0]
-            
-            if next_database_name is not None:                
-                match = re.search("jdbc:mysql://[^/]*/(.*)", next_database_name)
-                if match == None :
-                    raise ValueError("parent database url is not a MySQL JDBC url" )
-                next_database_name = match.group(1)
-                table_mapping = self._get_table_mapping(next_database_name, table_mapping)
-                
-            database.close()
-            
-        return table_mapping
