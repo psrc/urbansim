@@ -12,10 +12,11 @@
 # other acknowledgments.
 #
 
-
-import os
 from psrc.configs.baseline import Baseline
-from urbansim.flatten_scenario_database_chain import FlattenScenarioDatabaseChain
+from opus_core.database_management.flatten_scenario_database_chain \
+    import FlattenScenarioDatabaseChain
+from opus_core.database_management.database_server_configuration \
+    import DatabaseServerConfiguration
 
 """
 This utility creates a new flattened database containing the
@@ -23,18 +24,19 @@ necessary files from the scenario database chain pointed to by
 PSRC_2000_baseyear.
 """
 
+server_config = DatabaseServerConfiguration()
+
 run_configuration = Baseline()
 config = {
     'tables_to_copy':run_configuration['creating_baseyear_cache_configuration'].tables_to_cache,
-    'from_host_name':'trondheim.cs.washington.edu',
+    'from_host_name':server_config.host_name,
     'from_database_name':'PSRC_2000_baseyear',
-    'from_user_name':os.environ['MYSQLUSERNAME'],
-    'from_password':os.environ['MYSQLPASSWORD'],
-    'to_host_name':'trondheim.cs.washington.edu',
+    'from_user_name':server_config.user_name,
+    'from_password':server_config.password,
+    'to_host_name':server_config.host_name,
     'to_database_name':'PSRC_2000_baseyear_flattened',
-    'to_user_name':os.environ['MYSQLUSERNAME'],
-    'to_password':os.environ['MYSQLPASSWORD'],
-    'mode':'sql',
+    'to_user_name':server_config.user_name,
+    'to_password':server_config.password,
     }
 copier = FlattenScenarioDatabaseChain()
 copier.copy_scenario_database(config)

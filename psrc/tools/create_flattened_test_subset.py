@@ -12,29 +12,30 @@
 # other acknowledgments.
 #
 
-
-import os
-from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from psrc.configs.subset_configuration import SubsetConfiguration
-from urbansim.flatten_scenario_database_chain import FlattenScenarioDatabaseChain
-
+from opus_core.database_management.flatten_scenario_database_chain \
+    import FlattenScenarioDatabaseChain
+from opus_core.database_management.database_server_configuration \
+    import DatabaseServerConfiguration
+    
 """
 This utility creates, on localhost, a flattened copy of the subset 
 test database chain located on trondheim..
 """
+server_config_to = DatabaseServerConfiguration(host_name = 'localhost')
+server_config_from = DatabaseServerConfiguration()
 
 run_configuration = SubsetConfiguration()
 config = {
     'tables_to_copy':run_configuration['creating_baseyear_cache_configuration'].tables_to_cache,
-    'from_host_name':'trondheim.cs.washington.edu',
+    'from_host_name':server_config_from.host_name,
     'from_database_name':run_configuration['input_configuration'].database_name,
-    'from_user_name':os.environ['MYSQLUSERNAME'],
-    'from_password':os.environ['MYSQLPASSWORD'],
-    'to_host_name':'localhost',
+    'from_user_name':server_config_from.user_name,
+    'from_password':server_config_from.password,
+    'to_host_name':server_config_to.host_name,
     'to_database_name':run_configuration['input_configuration'].database_name,
-    'to_user_name':os.environ['MYSQLUSERNAME'],
-    'to_password':os.environ['MYSQLPASSWORD'],
-    'mode':'python',
+    'to_user_name':server_config_to.user_name,
+    'to_password':server_config_from.password,
     }
 copier = FlattenScenarioDatabaseChain()
 copier.copy_scenario_database(config)
