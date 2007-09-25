@@ -15,7 +15,6 @@
 import copy
 
 from opus_core.store.old.storage import Storage
-from opus_core.store.scenario_database import ScenarioDatabase
 
 class mysql_storage(Storage):
     Query = {}
@@ -151,12 +150,7 @@ class mysql_storage(Storage):
             self.database_connection
 
         except: # Support for pickling/unpickling
-            self.database_connection = ScenarioDatabase(
-                hostname = self._hostname,
-                username = self._username,
-                password = self._password,
-                database_name = self._db
-                )
+            raise
 
         return self.database_connection
 

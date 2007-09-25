@@ -21,18 +21,7 @@ class StorageFactory(object):
         """'type' determines the name of Storage subclass (mysql_storage, flt_storage, ...). There has to be a module 
         of that name that contains a class of the same name. 'resources' is passed to the constructor of the 
         Storage class. The argument 'subdir' gives the name of a subdirectory in which the storage class resides.
-        """
-        # Temporary hack to use mysql_chain_storage when needed
-        from opus_core.store.scenario_database import ScenarioDatabase
-        if type == 'mysql_storage' and 'storage_location' in kwargs and isinstance(kwargs['storage_location'], ScenarioDatabase):
-            type = 'mysql_chain_storage'
-            scenario_database = kwargs['storage_location']
-            kwargs['hostname'] = scenario_database.hostname
-            kwargs['username'] = scenario_database.username
-            kwargs['password'] = scenario_database.password
-            kwargs['database_name'] = scenario_database.database_name
-            del kwargs['storage_location']
-        
+        """        
         if subdir:
             module_name  = package + "." + subdir + "." + type 
         else:

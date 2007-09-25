@@ -15,7 +15,6 @@
 from opus_core.opus_error import OpusError
 from opus_core.store.opus_database import OpusDatabase
 from opus_core.store.database_server import DatabaseServer
-from opus_core.store.scenario_database import ScenarioDatabase
 from opus_core.logger import logger
 from opus_core.exception.mysqldb_import_exception import MySqlDbImportException
 from opus_core.exception.cant_connect_to_mysql_exception import CantConnectToMySqlException
@@ -63,22 +62,14 @@ class MysqlDatabaseServer(DatabaseServer):
 
     def get_database(self, database_name, scenario=True):
         """
-        Returns an object connecting to this database on this database server.
-        
-        If the database contains a 'scenario_information' table and the argument 'scenario' is True, 
-        return a ScenarioDatabase object.  Else return an OpusDatabase object.
+        Returns an OpusDatabase object connecting to this database on this database server.
         """
         self.database = OpusDatabase(hostname=self.host_name, 
                                      username=self.user_name, 
                                      password=self.password,
                                      database_name=database_name)
         if scenario and self.database.table_exists('scenario_information'):
-            # This is a scenario database, so return one of those objects
-            self.database.close()
-            self.database = ScenarioDatabase(hostname = self.host_name, 
-                                             username = self.user_name, 
-                                             password = self.password,
-                                             database_name = database_name)
+            raise
         return self.database
         
     def has_database(self, database_name):
