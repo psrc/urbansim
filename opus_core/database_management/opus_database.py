@@ -75,20 +75,19 @@ class OpusDatabase(object):
             query = an SQL statement, possibly containing $$.table_name terms
         """
         engine = self.engine
-        preprocessed_query = self.convert_to_mysql_datatype(query)
+        preprocessed_query = convert_to_mysql_datatype(query)
         _log_sql(preprocessed_query, self.show_output)
         engine.execute(preprocessed_query)
 
     def GetResultsFromQuery(self, query):
         """
         Returns records from query, as a list, the first element of which is a list of field names
-                Before executing the statement, it substitutes for an term of the form
-        "$$.table_name" the correct database for where the table is stored.
+
         Args:
             query = query to execute, possibly containing $$.table_name terms
         """
         engine = self.engine
-        preprocessed_query = self.convert_to_mysql_datatype(query)
+        preprocessed_query = convert_to_mysql_datatype(query)
         _log_sql(preprocessed_query, self.show_output)
         result = engine.execute(preprocessed_query)
         
@@ -177,19 +176,19 @@ class OpusDatabase(object):
         
         return filter_data[type_class.__class__]                
         
-    def convert_to_mysql_datatype(self, query):
-        filter_data = {"INTEGER" : "int(11)",
-                       "SHORT" : "smallint(6)",
-                       "FLOAT" : "float",
-                       "DOUBLE" : "double",
-                       "VARCHAR" : "varchar(255)",
-                       "BOOLEAN" : "tinyint(4)",
-                       "TINYTEXT" : "tinytext",
-                       "MEDIUMTEXT" : "mediumtext"}
+def convert_to_mysql_datatype(query):
+    filter_data = {"INTEGER" : "int(11)",
+                   "SHORT" : "smallint(6)",
+                   "FLOAT" : "float",
+                   "DOUBLE" : "double",
+                   "VARCHAR" : "varchar(255)",
+                   "BOOLEAN" : "tinyint(4)",
+                   "TINYTEXT" : "tinytext",
+                   "MEDIUMTEXT" : "mediumtext"}
 
-        for old, new in filter_data.iteritems():
-            query = query.replace(old, new)
-        return query
+    for old, new in filter_data.iteritems():
+        query = query.replace(old, new)
+    return query
 
     '''need to replace this one...'''
 #    def DoQueries(self, sql_statements):

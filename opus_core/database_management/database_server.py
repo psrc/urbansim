@@ -49,6 +49,19 @@ class DatabaseServer(object):
         if show_output == True:
             logger.log_status("SQL: " + sql_query, tags=["database"], verbosity_level=3)            
         
+    def DoQuery(self, query):
+        """
+        Executes an SQL statement that changes data in some way.
+        Does not return data.
+        Args;
+            query = an SQL statement, possibly containing $$.table_name terms
+        """
+        from opus_core.database_management.opus_database import convert_to_mysql_datatype, _log_sql
+        engine = self.engine
+        preprocessed_query = convert_to_mysql_datatype(query)
+        _log_sql(preprocessed_query, self.show_output)
+        engine.execute(preprocessed_query)
+        
     def create_database(self, database_name):
         """
         Create a database on this database server.
