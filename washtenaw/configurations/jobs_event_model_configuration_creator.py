@@ -64,6 +64,7 @@ class TestDeletionEventModelConfigurationCreator(opus_unittest.OpusTestCase):
                 'arguments': {
                     'location_set': 'gridcell',
                     'agent_event_set': 'jobs_event',
+                    'agent_set':'job',
                     'current_year': 'year',
                     'dataset_pool': 'dataset_pool'
                     }
