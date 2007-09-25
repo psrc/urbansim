@@ -122,6 +122,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
     otherwise, create a proposal dataset with Cartesian product of parcels x templates 
     """
 
+    resources = Resources(resources)
     debug = resources.get("debug",  0)
     if not isinstance(debug, DebugPrinter):
         debug = DebugPrinter(debug)
