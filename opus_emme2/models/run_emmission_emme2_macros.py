@@ -12,14 +12,9 @@
 # other acknowledgments.
 # 
 
-from urbansim.datasets.travel_data_dataset import TravelDataDataset
-from opus_core.store.mysql_storage import mysql_storage
-from urbansim.datasets.zone_dataset import ZoneDataset
 from opus_core.resources import Resources
 from numpy import array, float32, ones
-from os.path import join
 import os
-from opus_core.logger import logger
 from opus_emme2.models.abstract_emme2_travel_model import AbstractEmme2TravelModel
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.session_configuration import SessionConfiguration

@@ -13,14 +13,9 @@
 # 
 
 from opus_core.session_configuration import SessionConfiguration
-from urbansim.datasets.travel_data_dataset import TravelDataDataset
-from opus_core.store.mysql_storage import mysql_storage
 from opus_core.store.flt_storage import flt_storage
-from urbansim.datasets.zone_dataset import ZoneDataset
-from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.resources import Resources
 from numpy import array, float32, ones
-from os.path import join
 import os
 from opus_core.logger import logger
 from opus_emme2.models.abstract_emme2_travel_model import AbstractEmme2TravelModel
@@ -56,7 +51,6 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
         logger.start_block('Getting matricies from emme2')
         try:
             next_year = year + 1
-            flt_dir_for_this_year = os.path.join(cache_directory, str(year))
             flt_dir_for_next_year = os.path.join(cache_directory, str(next_year))
             if not os.path.exists(flt_dir_for_next_year):
                 os.mkdir(flt_dir_for_next_year)
