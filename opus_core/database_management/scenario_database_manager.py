@@ -12,19 +12,14 @@
 # other acknowledgments.
 #
 
-import os, re
-from sets import Set
-from opus_core.model import Model
+import re
 from opus_core.logger import logger
-from opus_core.simulation_state import SimulationState
-from opus_core.datasets.dataset import Dataset
-from opus_core.storage_factory import StorageFactory
 
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 from opus_core.database_management.database_server import DatabaseServer
 from sqlalchemy import select
 
-class ScenarioDatabaseManager(Model):
+class ScenarioDatabaseManager(object):
     """Extract a flattened scenario database to the cache.
     """
     def __init__(self, server_configuration, base_scenario_database_name):
