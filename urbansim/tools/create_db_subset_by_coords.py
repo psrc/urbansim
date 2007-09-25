@@ -13,26 +13,20 @@
 #
 
 
-import os
 import sys
 
 from copy import copy
 from optparse import Option, OptionParser, OptionValueError
-
-import MySQLdb
-
 from opus_core.logger import logger
-from opus_core.store.scenario_database import ScenarioDatabase
 
 
 class GenerateDBSubsetByCoords(object):
-    def make_database_subset(self, db, output_db_name, low_point, high_point):
+    def make_database_subset(self, db_server, db, output_db_name, low_point, high_point):
         commands_to_execute = ("""
 drop database if exists %(output_database_name)s ; 
 create database %(output_database_name)s ; use %(output_database_name)s ;
 
 create table scenario_information as select * from %(input_database_name)s.scenario_information; 
-update scenario_information set parent_database_url = 'jdbc:mysql://%(db_host_name)s/%(input_database_name)s';
 
 create table gridcells as select * from $$.gridcells 
     where relative_x >= %(low_x)s and relative_x <= %(high_x)s and
@@ -87,18 +81,16 @@ update annual_household_control_totals set total_number_of_households = total_nu
                 'high_y': high_point.y,
                 "output_database_name":output_db_name, 
                 "input_database_name":db.database_name, 
-                "db_host_name":db.host,
+                "db_host_name":db.host_name,
                 }
             )
          
-        commands_to_execute = commands_to_execute.replace('\n', ' ')
+        commands_to_execute = commands_to_execute.replace('\n', ' ').replace('$$.','')
         command_list = str.split(commands_to_execute, ';')
         for command in command_list:
             command = command.strip()
             logger.log_status(command)
-            db.DoQuery(command)
-            
-        db.close()
+            db_server.DoQuery(command)
         logger.log_status('\n* %s created successfully! *' % output_db_name)
 
 
@@ -186,32 +178,32 @@ if __name__=='__main__':
                 )
             )
        
+    from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+    from opus_core.database_management.flatten_scenario_database_chain import FlattenScenarioDatabaseChain
+    from opus_core.database_management.database_server import DatabaseServer
+    
     hostname = options.host
-    if hostname is None:
-        try:
-            hostname = os.environ['MYSQLHOSTNAME']
-        except:
-            hostname = 'localhost'
-       
     username = options.username
-    if username is None:
-        try:
-            username = os.environ['MYSQLUSERNAME']
-        except:
-            username = ''
-            
     password = options.password
-    if password is None:
-        try:
-            password = os.environ['MYSQLPASSWORD']
-        except:
-            password = ''
+    
+    db_server_config = DatabaseServerConfiguration(
+        host_name = hostname,
+        user_name = username,
+        password = password                                        
+    )
+    db_server = DatabaseServer(db_server_config)
+    flatten_db_config = {
+        'db_server_config_from':db_server_config,
+        'from_database_name':input_db_name,
+        'db_server_config_to':db_server_config,
+        'to_database_name':'temporary_flattened_scenario_database',
+        }
+    
+    FlattenScenarioDatabaseChain().copy_scenario_database(flatten_db_config)
 
-    db = ScenarioDatabase(
-        hostname = hostname,
-        username = username,
-        password = password,
-        database_name = input_db_name,
-        )
+    db = db_server.get_database('temporary_flattened_scenario_database')
 
-    GenerateDBSubsetByCoords().make_database_subset(db, output_db_name, low_point, high_point)
+    GenerateDBSubsetByCoords().make_database_subset(db_server, db, output_db_name, low_point, high_point)
+    
+    db.close()
+    db_server.drop_database('temporary_flattened_scenario_database')

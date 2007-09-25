@@ -12,19 +12,12 @@
 # other acknowledgments.
 #
 
-from opus_core.store.scenario_database import ScenarioDatabase
 import os
 import sys
-import MySQLdb
 from opus_core.logger import logger
 
 class GenerateDBSubsetByCityOrCounty(object):
-    def make_database_subset(self, subset_type, name):
-        con = ScenarioDatabase(hostname = DB_server_settings.db_host_name, 
-                               username = DB_server_settings.db_user_name,
-                               password = DB_server_settings.db_password,
-                               database_name = DB_settings.input_database_name)
-         
+    def make_database_subset(self, db_server, db, output_db_name, subset_type, name):
         name = name.lower()
         subset_type = subset_type.lower()
             
@@ -39,7 +32,7 @@ class GenerateDBSubsetByCityOrCounty(object):
             return
             
         #Get the city or county id
-        list_of_subsets = con.GetResultsFromQuery("SELECT * FROM $$." + subset_type)
+        list_of_subsets = db.GetResultsFromQuery("SELECT * FROM " + subset_type)
         id = -1
         for c in list_of_subsets:
             if c[1].lower() == name:
@@ -54,7 +47,6 @@ class GenerateDBSubsetByCityOrCounty(object):
         create database %(output_database_name)s ; use %(output_database_name)s ;
         
         create table scenario_information as select * from %(input_database_name)s.scenario_information; 
-        update scenario_information set parent_database_url = 'jdbc:mysql://%(db_host_name)s/%(input_database_name)s';
         
         create table gridcells as select * from $$.gridcells where %(id_name)s = %(id)s; 
         create index gridcells_grid_id on gridcells (grid_id);
@@ -118,18 +110,20 @@ class GenerateDBSubsetByCityOrCounty(object):
         
         update annual_household_control_totals set total_number_of_households = total_number_of_households * (
         (select count(*) from households) / (select count(*) from $$.households))""" % \
-                            {"output_database_name":DB_settings.output_database_name, "id":str(id),  
-                             "id_name":id_name, "input_database_name":DB_settings.input_database_name, "db_host_name":DB_server_settings.db_host_name}
+                            {"output_database_name":output_db_name, 
+                             "id":str(id),  
+                             "id_name":id_name, 
+                             "input_database_name":db.database_name, 
+                             "db_host_name":db.host_name}
         
-        commands_to_execute = commands_to_execute.replace('\n', ' ')
+        commands_to_execute = commands_to_execute.replace('\n', ' ').replace('$$.','')
         command_list = str.split(commands_to_execute, ';')
         for command in command_list:
             command = command.strip()
             logger.log_status(command)
-            con.DoQuery(command)
+            db_server.DoQuery(command)
             
-        con.close()
-        logger.log_status(DB_settings.output_database_name + ' created successfully!')
+        logger.log_status(output_db_name + ' created successfully!')
          
 if __name__=='__main__':
     if len(sys.argv) == 4 and sys.argv[2].lower() in ["city", "county"]:
@@ -137,20 +131,34 @@ if __name__=='__main__':
         city_or_county = sys.argv[2].lower()
         name = sys.argv[3]
         
-        class DB_server_settings(object):
-            db_host_name = hostname
-            db_user_name = os.environ['MYSQLUSERNAME']
-            db_password = os.environ['MYSQLPASSWORD']    
+        input_db_name = "PSRC_2000_baseyear"
+    
+        subset_type = city_or_county 
+        output_db_name = input_db_name + '_' + name
+    
+        from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+        from opus_core.database_management.flatten_scenario_database_chain import FlattenScenarioDatabaseChain
+        from opus_core.database_management.database_server import DatabaseServer
         
-        class DB_settings(object):
-            input_database_name = "PSRC_2000_baseyear"
-            output_database_name = ''
+        db_server_config = DatabaseServerConfiguration(
+            host_name = hostname,                                  
+        )
+        db_server = DatabaseServer(db_server_config)
+        flatten_db_config = {
+            'db_server_config_from':db_server_config,
+            'from_database_name':input_db_name,
+            'db_server_config_to':db_server_config,
+            'to_database_name':'temporary_flattened_scenario_database',
+            }
         
-        if len(sys.argv) > 2 and (city_or_county.lower() == "city" or city_or_county.lower() == "county"):
-            subset_type = city_or_county 
-            name = name
-            DB_settings.output_database_name = DB_settings.input_database_name + '_' + name
-            GenerateDBSubsetByCityOrCounty().make_database_subset(subset_type, name)
+        FlattenScenarioDatabaseChain().copy_scenario_database(flatten_db_config)
+    
+        db = db_server.get_database('temporary_flattened_scenario_database')
+    
+        GenerateDBSubsetByCityOrCounty().make_database_subset(db_server, db, output_db_name, subset_type, name)
+        
+        db.close()
+        db_server.drop_database('temporary_flattened_scenario_database')        
         
     else:
         print "usage: \n create_database_subset_by_city_or_county.py hostname city/county name"

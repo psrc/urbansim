@@ -11,21 +11,13 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 #
-
-from opus_core.store.scenario_database import ScenarioDatabase
-import os
 import sys
-import MySQLdb
 from opus_core.logger import logger
 
 class GenerateDBSubsetBySampling(object):
-    def make_database_subset(self, proportion=1.0):
-        con = ScenarioDatabase(hostname = DB_server_settings.db_host_name,
-                               username = DB_server_settings.db_user_name, 
-                               password = DB_server_settings.db_password,
-                               database_name = DB_settings.input_database_name)
-               
-        number_of_gridcells = con.GetResultsFromQuery("""select count(*) from $$.gridcells""")[1][0]
+    def make_database_subset(self, db_server, db, output_db_name, proportion=1.0):
+                
+        number_of_gridcells = db.GetResultsFromQuery("""select count(*) from gridcells""")[1][0]
         number_of_gridcells = number_of_gridcells * proportion
              
         commands_to_execute = \
@@ -33,7 +25,6 @@ class GenerateDBSubsetBySampling(object):
         create database %(output_database_name)s ; use %(output_database_name)s ;
         
         create table scenario_information as select * from %(input_database_name)s.scenario_information; 
-        update scenario_information set parent_database_url = 'jdbc:mysql://%(db_host_name)s/%(input_database_name)s';
         
         create table gridcells as (select * from $$.gridcells order by rand() limit %(number_of_gridcells)i) ; 
         create index gridcells_grid_id on gridcells (grid_id);
@@ -73,20 +64,19 @@ class GenerateDBSubsetBySampling(object):
         
         update annual_household_control_totals set total_number_of_households = total_number_of_households * (
         (select count(*) from households) / (select count(*) from $$.households))""" % \
-                            {"output_database_name":DB_settings.output_database_name, 
-                             "input_database_name":DB_settings.input_database_name, 
-                             "db_host_name":DB_server_settings.db_host_name,
+                            {"output_database_name":output_db_name, 
+                             "input_database_name":db.database_name, 
+                             "db_host_name":db.host_name,
                              "number_of_gridcells": number_of_gridcells}
         
-        commands_to_execute = commands_to_execute.replace('\n', ' ')
+        commands_to_execute = commands_to_execute.replace('\n', ' ').replace('$$.','')
         command_list = str.split(commands_to_execute, ';')
         for command in command_list:
             command = command.strip()
             logger.log_status(command)
-            con.DoQuery(command)
+            db_server.DoQuery(command)
             
-        con.close()
-        logger.log_status(DB_settings.output_database_name + ' created successfully!')
+        logger.log_status(output_db_name + ' created successfully!')
          
 if __name__=='__main__':
     if len(sys.argv) == 3:
@@ -94,19 +84,33 @@ if __name__=='__main__':
         except: pass
         hostname = sys.argv[1]
         proportion = float(sys.argv[2])
+        input_db_name = "PSRC_2000_baseyear"
+        output_db_name = input_db_name + '_sampled_' + str(int(100*proportion)) + '_percent'
         
-        class DB_server_settings(object):
-            db_host_name = hostname
-            db_user_name = os.environ['MYSQLUSERNAME']
-            db_password = os.environ['MYSQLPASSWORD']    
+        from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+        from opus_core.database_management.flatten_scenario_database_chain import FlattenScenarioDatabaseChain
+        from opus_core.database_management.database_server import DatabaseServer
         
-        class DB_settings(object):
-            input_database_name = "PSRC_2000_baseyear"
-            #output_database_name = 'PSRC_2000_baseyear_sampled_10_percent'
-
-        DB_settings.output_database_name = DB_settings.input_database_name + '_sampled_' + str(int(100*proportion)) + '_percent'
-        GenerateDBSubsetBySampling().make_database_subset(proportion)
+        db_server_config = DatabaseServerConfiguration(
+            host_name = hostname,                                  
+        )
+        db_server = DatabaseServer(db_server_config)
+        flatten_db_config = {
+            'db_server_config_from':db_server_config,
+            'from_database_name':input_db_name,
+            'db_server_config_to':db_server_config,
+            'to_database_name':'temporary_flattened_scenario_database',
+            }
         
+        FlattenScenarioDatabaseChain().copy_scenario_database(flatten_db_config)
+    
+        db = db_server.get_database('temporary_flattened_scenario_database')
+    
+        GenerateDBSubsetBySampling().make_database_subset(db_server, db, output_db_name, proportion)
+        
+        db.close()
+        db_server.drop_database('temporary_flattened_scenario_database') 
+                
     else:
         print "usage: \n create_database_subset_by_sampling.py proportion"
         print "       ex: python create_database_subset_by_sampling.py 0.5"
