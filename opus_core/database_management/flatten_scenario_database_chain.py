@@ -56,10 +56,14 @@ class FlattenScenarioDatabaseChain(object):
     
         cross_db_operations = CrossDatabaseOperations()
         
+        #by default, copy all tables
+        if tables_to_copy == []:
+            tables_to_copy = table_mapping.values()
+            
         for database_name, tables in table_mapping.items():
             database_in = db_server_from.get_database(database_name)
             for table in tables:
-                if table not in tables_to_copy:
+                if table not in tables_to_copy and tables_to_copy != []:
                     continue
                 
                 logger.start_block("Copying table '%s' from database '%s'" 
@@ -78,21 +82,14 @@ class FlattenScenarioDatabaseChain(object):
         database_out.close()
 
     def copy_scenario_database(self, config):
+        db_server_config_to = config['db_server_config_to']                                                   
+        db_server_config_from = config['db_server_config_from'] 
+        
         logger.start_block("Copying tables from database chain starting at '%s' on '%s'\nto database '%s' on '%s'"
                            % (config['to_database_name'], 
-                              config['from_host_name'], 
+                              db_server_config_from.host_name, 
                               config['to_database_name'], 
-                              config['to_host_name']))
-        
-        db_server_config_to = DatabaseServerConfiguration(
-           host_name = config['to_host_name'],
-           user_name = config['to_user_name'],
-           password = config['to_password'])
-                                                             
-        db_server_config_from = DatabaseServerConfiguration(
-           host_name = config['from_host_name'],
-           user_name = config['from_user_name'],
-           password = config['from_password'])        
+                             db_server_config_to.host_name))
         
         try:
             self._create_db_from_chain_via_python(
@@ -100,6 +97,6 @@ class FlattenScenarioDatabaseChain(object):
                  to_database_name=config['to_database_name'],
                  db_server_config_from = db_server_config_from,
                  from_database_name=config['from_database_name'],
-                 tables_to_copy=config['tables_to_copy'])
+                 tables_to_copy=config.get('tables_to_copy', []))
         finally:
             logger.end_block()
