@@ -161,7 +161,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                                 prob_array=self.weight[idx]/float(self.weight[idx].sum()),
                                                 exclude_index=None, return_indices=True)
                 self.consider_proposals(arange(self.proposal_set.size())[idx[sampled_proposal_indexes]],
-                                        current_target_vacancy
+                                        current_target_vacancy,
+                                        build_only_in_empty_parcel=False
                                        )
                 self.weight[idx[sampled_proposal_indexes]] = 0
 
