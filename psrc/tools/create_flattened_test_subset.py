@@ -28,14 +28,10 @@ server_config_from = DatabaseServerConfiguration()
 run_configuration = SubsetConfiguration()
 config = {
     'tables_to_copy':run_configuration['creating_baseyear_cache_configuration'].tables_to_cache,
-    'from_host_name':server_config_from.host_name,
+    'db_server_config_from':server_config_from,
     'from_database_name':run_configuration['input_configuration'].database_name,
-    'from_user_name':server_config_from.user_name,
-    'from_password':server_config_from.password,
-    'to_host_name':server_config_to.host_name,
+    'db_server_config_to':server_config_to,
     'to_database_name':run_configuration['input_configuration'].database_name,
-    'to_user_name':server_config_to.user_name,
-    'to_password':server_config_from.password,
     }
 copier = FlattenScenarioDatabaseChain()
 copier.copy_scenario_database(config)
