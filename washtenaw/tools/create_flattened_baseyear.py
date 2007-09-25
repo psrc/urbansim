@@ -29,14 +29,10 @@ server_config = DatabaseServerConfiguration()
 run_configuration = Baseline()
 config = {
     'tables_to_copy':run_configuration['creating_baseyear_cache_configuration'].tables_to_cache,
-    'from_host_name':server_config.host_name,
+    'db_server_config_from':server_config,
     'from_database_name':'wastenaw_baseyear',
-    'from_user_name':server_config.user_name,
-    'from_password':server_config.password,
-    'to_host_name':server_config.host_name,
-    'to_database_name':'washtenaw_flattened',
-    'to_user_name':server_config.user_name,
-    'to_password':server_config.password,
+    'db_server_config_to':server_config,
+    'to_database_name':'washtenaw_flattened'
     }
 
 copier = FlattenScenarioDatabaseChain()
