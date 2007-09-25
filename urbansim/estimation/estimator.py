@@ -127,7 +127,7 @@ class Estimator(object):
 
             output_db = db_server.get_database(database_name,
                                                scenario=False)
-            out_storage = StorageFactory().build_storage_for_dataset(type='mysql_storage',
+            out_storage = StorageFactory().build_storage_for_dataset(type='sql_storage',
                 storage_location=output_db)
         else:
             raise StandardError, "No output_configuration given."

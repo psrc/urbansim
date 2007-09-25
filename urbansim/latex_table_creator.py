@@ -15,13 +15,9 @@
 """
 
 import os
-import string
-from opus_core.logger import logger
 from urbansim.model_coordinators.model_system import ModelSystem
 from opus_core.storage_factory import StorageFactory
-from opus_core.store.attribute_cache import AttributeCache
 from opus_core.choice_model import prepare_specification_and_coefficients
-from opus_core.equation_specification import EquationSpecification
 from opus_core.configuration import Configuration
 
 class LatexTableCreator(object):
@@ -33,7 +29,7 @@ class LatexTableCreator(object):
         config = Configuration(config)
         model_system = ModelSystem()
         input_db, output_db = model_system._get_database_connections(config)
-        mysql_storage = StorageFactory().get_storage('mysql_storage', storage_location=input_db)
+        sql_storage = StorageFactory().get_storage('sql_storage', storage_location=input_db)
         #TODO: only do the next stuff if this model has coefficients
         if 'controller' not in config['models_configuration'][model_name]:
             return
@@ -44,9 +40,9 @@ class LatexTableCreator(object):
         specification_table_name = config['models_configuration'][model_name].get('specification_table', None)
         coefficents_table_name = config['models_configuration'][model_name].get('coefficients_table', None)
         (specification, coefficients) = prepare_specification_and_coefficients(
-            specification_storage=mysql_storage,
+            specification_storage=sql_storage,
             specification_table=specification_table_name,
-            coefficients_storage=mysql_storage,
+            coefficients_storage=sql_storage,
             coefficients_table=coefficents_table_name)
 
         self.create_latex_table_for_coefficients_for_model(coefficients, model_name, dir)

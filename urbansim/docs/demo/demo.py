@@ -124,7 +124,7 @@ agents_psrc.summary()
 dbcon = []
                      
 storage = StorageFactory().get_storage(
-    'mysql_storage',
+    'sql_storage',
     hostname=os.environ['MYSQLHOSTNAME'],
     username=os.environ['MYSQLUSERNAME'],
     password=os.environ['MYSQLPASSWORD'],
@@ -162,7 +162,7 @@ result = hlcm_psrc.run(specification, coef, agents_psrc,
                        debuglevel=4)
 
 storage = StorageFactory().get_storage(
-    'mysql_storage',
+    'sql_storage',
     hostname=os.environ['MYSQLHOSTNAME'],
     username=os.environ['MYSQLUSERNAME'],
     password=os.environ['MYSQLPASSWORD'],
