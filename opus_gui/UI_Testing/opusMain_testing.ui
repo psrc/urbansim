@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>902</width>
-    <height>658</height>
+    <width>742</width>
+    <height>918</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -65,8 +65,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>405</width>
-          <height>488</height>
+          <width>465</width>
+          <height>748</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -129,7 +129,7 @@
             </property>
             <item>
              <property name="text" >
-              <string>base_year</string>
+              <string>base_year_db</string>
              </property>
              <item>
               <property name="text" >
@@ -143,11 +143,6 @@
               <item>
                <property name="text" >
                 <string>improvement_value</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>New Item</string>
                </property>
               </item>
              </item>
@@ -164,7 +159,7 @@
             </item>
             <item>
              <property name="text" >
-              <string>scenario01</string>
+              <string>scenario01_db</string>
              </property>
             </item>
            </item>
@@ -190,17 +185,17 @@
                 </property>
                 <item>
                  <property name="text" >
-                  <string>improvement_value (INT)</string>
+                  <string>improvement_value</string>
                  </property>
                 </item>
                 <item>
                  <property name="text" >
-                  <string>parcel_id (INT)</string>
+                  <string>parcel_id</string>
                  </property>
                 </item>
                 <item>
                  <property name="text" >
-                  <string>assessor_parcel_id (STRING(15))</string>
+                  <string>assessor_parcel_id</string>
                  </property>
                 </item>
                </item>
@@ -347,8 +342,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>405</width>
-          <height>488</height>
+          <width>98</width>
+          <height>80</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -414,8 +409,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>405</width>
-          <height>488</height>
+          <width>98</width>
+          <height>80</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -466,8 +461,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>405</width>
-          <height>488</height>
+          <width>98</width>
+          <height>80</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -526,7 +521,7 @@
       </widget>
       <widget class="QTabWidget" name="tabWidget" >
        <property name="currentIndex" >
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_mapView" >
         <attribute name="title" >
@@ -566,11 +561,6 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tab_runStatus" >
-        <attribute name="title" >
-         <string>Run Status</string>
-        </attribute>
-       </widget>
       </widget>
      </widget>
     </item>
@@ -581,7 +571,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>902</width>
+     <width>742</width>
      <height>21</height>
     </rect>
    </property>
