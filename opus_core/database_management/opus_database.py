@@ -78,6 +78,7 @@ class OpusDatabase(object):
         preprocessed_query = convert_to_mysql_datatype(query)
         _log_sql(preprocessed_query, self.show_output)
         engine.execute(preprocessed_query)
+        self.metadata.reflect()
 
     def GetResultsFromQuery(self, query):
         """
@@ -90,6 +91,7 @@ class OpusDatabase(object):
         preprocessed_query = convert_to_mysql_datatype(query)
         _log_sql(preprocessed_query, self.show_output)
         result = engine.execute(preprocessed_query)
+        self.metadata.reflect()
         
         results = result.fetchall()
         resultlist = list(map(lambda x: list(x), results))
