@@ -26,7 +26,7 @@ class flt_storage(Storage, flt_storage_old):
             self._name = name
             
         def get_name(self):
-            return self._name
+            return str(self._name)
         
         def get_type(self):
             extension_position = self._name.rfind('.')+1
