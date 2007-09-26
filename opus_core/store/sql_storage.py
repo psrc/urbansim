@@ -17,7 +17,7 @@ from numpy import array, dtype
 try:
     import sqlalchemy
     from sqlalchemy import create_engine, Table, Column, MetaData
-    from sqlalchemy.types import Integer, Float, String, DECIMAL
+    from sqlalchemy.types import Integer, Numeric, String, Float
     
 except ImportError:
     sqlalchemy = None
@@ -27,9 +27,11 @@ from opus_core.store.storage import Storage
 
 
 class sql_storage(Storage):
-    def __init__(self, protocol, 
+    def __init__(self,  
                  username, password, hostname, 
-                 database_name, port=None,
+                 database_name, 
+                 protocol = 'mysql',
+                 port=None,
                  reflect = True):
         """
         protocol: 'sqlite', 'mysql', 'postgres', 'oracle', 'mssql', or 'firebird'
@@ -59,31 +61,55 @@ class sql_storage(Storage):
         )
         if reflect:
             self._metadata.reflect()
+            
+        for i in self._metadata.table_iterator():
+            print i.name
         
     def get_storage_location(self):
         return str(self._engine.url)
       
-    #TODO: this method should respect the column_names parameter  
+    #TODO: what is id_name supposed to do? 
     def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True, id_name=None):
+        self._metadata.reflect()
+        
         table = Table(table_name, self._metadata, autoload=True)
             
         query_results = table.select().execute()
             
-        table_data = dict([(column, []) for column in query_results.keys])
+        table_data = {}
+        
+        available_column_names = self.get_column_names(table_name, lowercase)
+        final_cols = self._select_columns(column_names, available_column_names)  
                 
         for row in query_results:
             for column in query_results.keys:
-                table_data[column].append(row[column])
+                if lowercase:
+                    col_name = column.lower()
+                else:
+                    col_name = column
+                
+                if col_name in final_cols:
+                    if col_name not in table_data:
+                        table_data[col_name] = [row[column]]
+                    else:
+                        table_data[col_name].append(row[column])
         
         for column in table.columns:
-            type = self._get_numpy_dtype_from_sql_alchemy_type(column.type)
-            
-            table_data[column.name] = array(table_data[column.name], dtype=type)
-        
+            if lowercase:
+                col_name = column.name.lower()
+            else:
+                col_name = column.name
+                
+            if col_name in final_cols:
+                col_type = self._get_numpy_dtype_from_sql_alchemy_type(column.type)
+                table_data[col_name] = array(table_data[col_name], dtype=col_type)
+                        
         return table_data
         
         
     def write_table(self, table_name, table_data, overwrite_existing = True):
+        self._metadata.reflect()
+        
         table_length, _ = self._get_column_size_and_names(table_data)
         
         columns = []
@@ -132,14 +158,22 @@ class sql_storage(Storage):
             connection.close()
 
     def get_column_names(self, table_name, lowercase=True):
-        table = Table(table_name, self._metadata, autoload=True)
+        self._metadata.reflect()
+        if table_name not in self._metadata.tables:
+            raise
         
-        return [column.name 
-            for column in table.columns]
+        table = self._metadata.tables[table_name]
+        
+        if lowercase:
+            col_names = [column.name.lower() for column in table.columns]
+        else:
+            col_names = [column.name for column in table.columns]
+        return col_names
     
     def get_table_names(self):
-        return [table.name
-            for table in self._metadata.table_iterator()]
+        self._metadata.reflect()
+        tables = [table.name for table in self._metadata.table_iterator()]
+        return tables
     
     def _get_sql_alchemy_type_from_numpy_dtype(self, column_dtype):
         mapping = {
@@ -154,7 +188,7 @@ class sql_storage(Storage):
         if isinstance(column_type, Integer) or column_type == Integer:
             return dtype('i')
         
-        if isinstance(column_type, Float) or column_type == Float:
+        if isinstance(column_type, Numeric) or column_type == Float:
             return dtype('f')
         
         if isinstance(column_type, String) or column_type == String:
