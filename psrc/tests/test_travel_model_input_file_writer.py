@@ -61,7 +61,7 @@ if does_test_database_server_exist(module_name=__name__):
             from urbansim.datasets.constant_taz_column_dataset import ConstantTazColumnDataset
             
             in_storage = StorageFactory().get_storage(
-                  'mysql_storage',
+                  'sql_storage',
                   hostname = self.dbconfig.host_name,
                   username = self.dbconfig.user_name,
                   password = self.dbconfig.password,
