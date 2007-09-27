@@ -18,7 +18,7 @@ class StorageFactory(object):
     """ Class for creating a Storage object. 
     """        
     def get_storage(self, type, subdir='store', package='opus_core', **kwargs):
-        """'type' determines the name of Storage subclass (mysql_storage, flt_storage, ...). There has to be a module 
+        """'type' determines the name of Storage subclass (sql_storage, flt_storage, ...). There has to be a module 
         of that name that contains a class of the same name. 'resources' is passed to the constructor of the 
         Storage class. The argument 'subdir' gives the name of a subdirectory in which the storage class resides.
         """        
