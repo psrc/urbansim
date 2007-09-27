@@ -48,7 +48,8 @@ class OpusSyntaxChecker(object):
                 files_with_tab.append(py_file_name)
                 
         if files_with_no_license or files_with_tab:
-            raise SyntaxError("Please fix reported syntax problems with python files.")
+            files_with_problems = files_with_no_license+files_with_tab
+            raise SyntaxError("Please fix reported syntax problems with python files: %s."%(','.join(files_with_problems)))
 
     def _has_tabs(self, file_name):
         f=open(file_name)
