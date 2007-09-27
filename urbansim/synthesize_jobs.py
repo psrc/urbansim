@@ -13,6 +13,8 @@
 # 
 
 from opus_core.misc import sample
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 class SynthesizeJobs(object):
     def synthesize_employment_data(self, config):
@@ -42,8 +44,13 @@ class SynthesizeJobs(object):
             building_types += [type]
             building_ids += [id]
             home_based += [home]
-                       
-        db_server = MysqlDatabaseServer(config['db_config'])
+                    
+        config = DatabaseServerConfiguration(
+            host_name = config['db_config'].host_name,
+            user_name = config['db_config'].user_name,
+            password = config['db_config'].password
+        )           
+        db_server = DatabaseServer(config['db_config'])
         
         db_server.create_database(output_db_name)
         

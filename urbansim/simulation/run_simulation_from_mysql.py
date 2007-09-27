@@ -22,9 +22,9 @@ from opus_core.singleton import Singleton
 from opus_core.fork_process import ForkProcess
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
+from opus_core.database_management.database_server import DatabaseServer
 from opus_core.session_configuration import SessionConfiguration
-from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 from urbansim.model_coordinators.model_system import ModelSystem
 
@@ -48,7 +48,12 @@ class RunSimulationFromMysql:
         
         # Create output database (normally done by run manager)
         if 'output_configuration' in self.config:
-            db_server = MysqlDatabaseServer(self.config['output_configuration'])
+            config = DatabaseServerConfiguration(
+                host_name = self.config['output_configuration'].host_name,
+                user_name = self.config['output_configuration'].user_name,
+                password = self.config['output_configuration'].password
+            )
+            db_server = DatabaseServer(config)
             db_server.drop_database(self.config['output_configuration'].database_name)
             db_server.create_database(self.config['output_configuration'].database_name)
                    
@@ -74,7 +79,12 @@ class RunSimulationFromMysql:
         if os.path.exists(cache_dir):
             rmtree(cache_dir)
         if remove_output_database and ('output_configuration' in self.config):
-            db_server = MysqlDatabaseServer(self.config['output_configuration'])
+            config = DatabaseServerConfiguration(
+                host_name = self.config['output_configuration'].host_name,
+                user_name = self.config['output_configuration'].user_name,
+                password = self.config['output_configuration'].password
+            )
+            db_server = DatabaseServer(config)
             db_server.drop_database(self.config['output_configuration'].database_name)
 
     def prepare_and_run(self, run_configuration, simulation_instance=None, remove_cache=True):

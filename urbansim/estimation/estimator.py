@@ -23,7 +23,8 @@ from opus_core.store.attribute_cache import AttributeCache
 from opus_core.datasets.dataset import Dataset
 from opus_core.equation_specification import EquationSpecification
 from opus_core.storage_factory import StorageFactory
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 from opus_core.session_configuration import SessionConfiguration
 
 from urbansim.model_coordinators.model_system import ModelSystem
@@ -119,7 +120,12 @@ class Estimator(object):
         if out_storage:
             pass
         elif 'output_configuration' in self.config:
-            db_server = MysqlDatabaseServer(self.config["output_configuration"])
+            config = DatabaseServerConfiguration(
+                host_name = self.config['output_configuration'].host_name,
+                user_name = self.config['output_configuration'].user_name,
+                password = self.config['output_configuration'].password
+            )
+            db_server = DatabaseServer(config)
             database_name = self.config["output_configuration"].database_name
 
             if not db_server.has_database(database_name):
