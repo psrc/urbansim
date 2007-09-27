@@ -107,7 +107,14 @@ if does_database_server_exist_for_this_hostname(
             history_id = run_activity.storage.GetResultsFromQuery("SELECT max(run_id) FROM run_activity")[1][0]
             statuses = run_activity.storage.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
                                                            % history_id)[1:]
-            self.assertEqual(statuses, [['started'], ['done']])
+                                                           
+            expected = [['started'], ['done']]
+            for i in expected:
+                self.assertTrue(i in statuses)
+                
+            self.assertEqual(len(statuses), len(expected))
+            
+            self.assertEqual(statuses, )
     
             db_config = DatabaseServerConfiguration()
             
@@ -118,7 +125,13 @@ if does_database_server_exist_for_this_hostname(
                                      skip_urbansim=False)
             statuses = run_activity.storage.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
                                                            % history_id)[1:]
-            self.assertEqual(statuses, [['started'], ['done'], ['restarted in 2001'], ['done']])
+                                                           
+            expected = [['started'], ['done'], ['restarted in 2001'], ['done']]
+            
+            for i in expected:
+                self.assertTrue(i in statuses)
+                
+            self.assertEqual(len(statuses), len(expected))
     
             # Restaring without running urbansim should not re-run that year.
             # TODO: test that no models are run this time.
@@ -129,7 +142,11 @@ if does_database_server_exist_for_this_hostname(
                                      skip_urbansim=True)
             statuses = run_activity.storage.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
                                                            % history_id)[1:]
-            self.assertEqual(statuses, [['started'], ['done'], ['restarted in 2001'], ['done'], ['restarted in 2002'], ['done']])
+            expected = [['started'], ['done'], ['restarted in 2001'], ['done'], ['restarted in 2002'], ['done']]
+            for i in expected:
+                self.assertTrue(i in statuses)
+                
+            self.assertEqual(len(statuses), len(expected))
 
 if __name__ == "__main__":
     try: import wingdbstub
