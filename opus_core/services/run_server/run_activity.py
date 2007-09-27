@@ -16,7 +16,7 @@ from time import localtime, strftime, time
 
 from opus_core.misc import get_host_name
 from opus_core.services.run_server.available_runs import AvailableRuns
-
+from sqlalchemy.sql import insert
 
 class RunActivity(object):
     """Abstraction that represents a log of the run runs and information about when/where 
@@ -54,48 +54,18 @@ class RunActivity(object):
         pickled_resources = 'NULL'
         if resources is not None:
             pickled_resources = pickle.dumps(resources)
-                            
-        from MySQLdb import escape_string
-        data = [(
-            {}, 
-            {"run_id":history_id, 
+                             
+        values = {"run_id":history_id, 
              "run_name":"'%s'" % resources.get('description', "No description"),
              "status":"'%s'" % status,
              "processor_name":"'%s'" % get_host_name(), 
              "date_time":strftime("'%Y-%m-%d %H:%M:%S'", localtime()),
-             "resources":"'%s'" % escape_string(pickled_resources),
-             }
-            )]
+             "resources":"'%s'" % pickled_resources,
+             }        
 
-        next_id = 1
-        values_of_fields_list = []
-        
-        for number_dict, field_names_and_values_dict in data:
-            keylist = field_names_and_values_dict.keys()
-            
-            if number_dict:
-                number_of = number_dict["number_of"]
-            
-            names_of_fields = ",".join(keylist)
-            
-            def field_value(self, key):
-                value = field_names_and_values_dict[key]
-                if value == None:
-                    return 'null'
-                else:
-                    return str(value)
-            values_of_fields = ",".join( map(lambda key: field_value(self, key), keylist))
-            
-            if number_dict:
-                for tally in range(0, number_of):
-                    values_of_fields_list.append("(" + values_of_fields + ")")
-            else:
-                values_of_fields_list.append("(" + values_of_fields + ")")
-
-        sql_insert = """INSERT INTO %s (%s) VALUES %s;""" \
-                     % ("run_activity", names_of_fields, ",".join(values_of_fields_list))
-                    
-        self.storage.cursor.execute(sql_insert)
+        run_activity_table = self.storage.get_table('run_activity')
+        qry = run_activity_table.insert(values = values)
+        self.storage.engine.execute(qry)
     
 
         if self.available_runs.has_run(history_id):
