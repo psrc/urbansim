@@ -106,7 +106,7 @@ class OpusDatabase(object):
         t = self.get_table(table_name)
         schema = {}
         for col in t.columns:
-            schema[col.name] = self.inverse_type_mapper(col.type)
+            schema[col.name] = inverse_type_mapper(col.type)
         
         return schema    
 
@@ -125,7 +125,7 @@ class OpusDatabase(object):
         
         columns = []
         for col_name, type_val in table_schema.items():
-            col = Column(col_name, self.type_mapper(type_val))
+            col = Column(col_name, type_mapper(type_val))
             columns.append(col)
             
         new_table = Table(
@@ -155,28 +155,28 @@ class OpusDatabase(object):
         """Returns a list of the tables in this database chain."""
         return self.metadata.tables.keys()
                                             
-    def type_mapper(self, type_val):
-        filter_data = {"INTEGER" : Integer,
-                       "SHORT" : SmallInteger,
-                       "FLOAT" : Float,
-                       "DOUBLE" : Numeric,
-                       "VARCHAR" : VARCHAR(255),
-                       "BOOLEAN" : Boolean,
-                       "TINYTEXT" : VARCHAR(255),
-                       "MEDIUMTEXT" : CLOB}
-        
-        return filter_data[type_val]     
+def type_mapper(type_val):
+    filter_data = {"INTEGER" : Integer,
+                   "SHORT" : SmallInteger,
+                   "FLOAT" : Float,
+                   "DOUBLE" : Numeric,
+                   "VARCHAR" : VARCHAR(255),
+                   "BOOLEAN" : Boolean,
+                   "TINYTEXT" : VARCHAR(255),
+                   "MEDIUMTEXT" : CLOB}
     
-    def inverse_type_mapper(self, type_class):
-        filter_data = {Integer: "INTEGER",
-                       SmallInteger: "SHORT",
-                       Float: "FLOAT",
-                       Numeric: "DOUBLE",
-                       VARCHAR: "VARCHAR",
-                       Boolean: "BOOLEAN",
-                       CLOB: "MEDIUMTEXT"}
-        
-        return filter_data[type_class.__class__]                
+    return filter_data[type_val]     
+
+def inverse_type_mapper(type_class):
+    filter_data = {Integer: "INTEGER",
+                   SmallInteger: "SHORT",
+                   Float: "FLOAT",
+                   Numeric: "DOUBLE",
+                   VARCHAR: "VARCHAR",
+                   Boolean: "BOOLEAN",
+                   CLOB: "MEDIUMTEXT"}
+    
+    return filter_data[type_class.__class__]                
         
 def convert_to_mysql_datatype(query):
     filter_data = {"INTEGER" : "int(11)",
