@@ -78,17 +78,6 @@ class Tests(ExpectedDataTest):
         self.assert_(ma.allclose(values, should_be, rtol=1E-5), 
                      msg = "Error in " + self.variable_name)
 
-#    def atest_on_expected_data(self):
-#        from urbansim.datasets.gridcell_dataset import GridcellDataset
-#        from opus_core.store.scenario_database import ScenarioDatabase
-#        import os
-#        Con = ScenarioDatabase(hostname='localhost', 
-#                               username=os.environ['MYSQLUSERNAME'],
-#                               password=os.environ['MYSQLPASSWORD'], 
-#                               database_name='psrc_urbansim_test') 
-#        gridcells = GridcellDataset(in_storage=StorageFactory().get_storage('mysql_storage', storage_location=Con))
-#        self.do_test_on_expected_data(["lct","devgrid_id", "land_cover_grid_id_index"], {"gridcell":gridcells})
-
 
 if __name__ == "__main__":
     opus_unittest.main()
