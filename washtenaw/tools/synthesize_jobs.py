@@ -46,7 +46,7 @@ config = {
         ),
     
     'store':{
-        'type':'mysql_storage',
+        'type':'sql_storage',
         'host_name':'trondheim.cs.washington.edu',
         'user_name':os.environ['MYSQLUSERNAME'], 
         'password':os.environ['MYSQLPASSWORD'],
