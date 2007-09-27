@@ -25,7 +25,7 @@ config = AbstractUrbansimConfiguration()
 
 config_changes = {
     'description':'simulation with elcm only',
-    'in_storage':StorageFactory().get_storage('mysql_storage',
+    'in_storage':StorageFactory().get_storage('sql_storage',
             hostname = 'trondheim.cs.washington.edu',
             username = os.environ.get('MYSQLUSERNAME',''),
             password = os.environ.get('MYSQLPASSWORD',''),

@@ -25,7 +25,7 @@ config = AbstractUrbansimConfiguration()
 
 my_configuration = {
     'description':'baseline with no travel model',
-    'in_storage':StorageFactory().get_storage('mysql_storage',
+    'in_storage':StorageFactory().get_storage('sql_storage',
             hostname = 'localhost',
             username = os.environ.get('MYSQLUSERNAME',''),
             password = os.environ.get('MYSQLPASSWORD',''),

@@ -32,7 +32,7 @@ class PullTravelDataAfterQuickTmRun(GeneralConfiguration):
         
         config_changes = {
             'description':'baseline with travel model',
-            'in_storage':StorageFactory().get_storage('mysql_storage',
+            'in_storage':StorageFactory().get_storage('sql_storage',
                     hostname = os.environ.get('MYSQLHOSTNAME','localhost'),
                     username = os.environ.get('MYSQLHOSTNAME',''),
                     password = os.environ.get('MYSQLHOSTNAME',''),

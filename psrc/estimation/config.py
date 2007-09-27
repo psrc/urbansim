@@ -28,7 +28,7 @@ if does_database_server_exist_for_this_hostname(
     
     psrc_config = {
         'in_storage':StorageFactory().get_storage(
-            type='mysql_storage', 
+            type='sql_storage', 
             hostname = os.environ.get('MYSQLHOSTNAME','localhost'),
             username = os.environ.get('MYSQLUSERNAME',''),
             password = os.environ.get('MYSQLPASSWORD',''),

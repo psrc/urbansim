@@ -25,7 +25,7 @@ config = AbstractUrbansimConfiguration()
 
 config_changes = {
     'description':'constrained king county capacity baseline with full travel model',
-    'in_storage':StorageFactory().get_storage('mysql_storage',
+    'in_storage':StorageFactory().get_storage('sql_storage',
             hostname = os.environ.get('MYSQLHOSTNAME','localhost'),
             username = os.environ.get('MYSQLUSERNAME',''),
             password = os.environ.get('MYSQLPASSWORD',''),

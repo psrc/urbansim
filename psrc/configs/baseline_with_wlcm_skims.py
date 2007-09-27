@@ -23,7 +23,7 @@ from psrc.config.wlcm_config import run_configuration as config
 
 config_changes = {
     'description':'baseline with wlcm and skims',
-    'in_storage':StorageFactory().get_storage('mysql_storage',
+    'in_storage':StorageFactory().get_storage('sql_storage',
             hostname = os.environ.get('MYSQLHOSTNAME','localhost'),
             username = os.environ.get('MYSQLUSERNAME',''),
             password = os.environ.get('MYSQLPASSWORD',''),

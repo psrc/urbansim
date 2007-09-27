@@ -39,7 +39,7 @@ class ExpandPersons(object):
                                    password=config['output_configuration'].password,
                                    database_name=config['output_configuration'].database_name)
             out_storage = StorageFactory().build_storage_for_dataset(
-                type='mysql_storage', storage_location=out_con)
+                type='sql_storage', storage_location=out_con)
         else:
             out_storage = StorageFactory().build_storage_for_dataset(type='flt_storage',
                 storage_location=os.path.join(config['cache_directory'], str(config['base_year']+1)))
