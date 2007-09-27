@@ -17,10 +17,15 @@ from numpy import array, dtype
 try:
     import sqlalchemy
     from sqlalchemy import create_engine, Table, Column, MetaData
-    from sqlalchemy.types import Integer, Numeric, String, Float
-    
+    from sqlalchemy.types import Integer, Numeric, String, Float, Boolean    
+	
 except ImportError:
     sqlalchemy = None
+    
+try:
+    from sqlalchemy.databases.mysql import MSBigInteger
+except:
+    pass
     
 
 from opus_core.store.storage import Storage
@@ -61,9 +66,6 @@ class sql_storage(Storage):
         )
         if reflect:
             self._metadata.reflect()
-            
-        for i in self._metadata.table_iterator():
-            print i.name
         
     def get_storage_location(self):
         return str(self._engine.url)
@@ -80,30 +82,26 @@ class sql_storage(Storage):
         
         available_column_names = self.get_column_names(table_name, lowercase)
         final_cols = self._select_columns(column_names, available_column_names)  
-                
-        for row in query_results:
-            for column in query_results.keys:
-                if lowercase:
-                    col_name = column.lower()
-                else:
-                    col_name = column
-                
-                if col_name in final_cols:
-                    if col_name not in table_data:
-                        table_data[col_name] = [row[column]]
-                    else:
-                        table_data[col_name].append(row[column])
         
+        col_data = {}
         for column in table.columns:
             if lowercase:
                 col_name = column.name.lower()
             else:
                 col_name = column.name
-                
+            
             if col_name in final_cols:
                 col_type = self._get_numpy_dtype_from_sql_alchemy_type(column.type)
-                table_data[col_name] = array(table_data[col_name], dtype=col_type)
-                        
+                col_data[col_name] = (column, col_type)
+                table_data[col_name] = []
+                
+        for row in query_results.fetchall():
+            for col_name, (column, col_type) in col_data.items():
+                table_data[col_name].append(row[column])
+                    
+        for col_name, (column, col_type) in col_data.items():
+            table_data[col_name] = array(table_data[col_name], dtype=col_type)
+                       
         return table_data
         
         
@@ -180,19 +178,28 @@ class sql_storage(Storage):
             'i':Integer,
             'f':Float,
             'S':String,
+            'b':Boolean
             }
         
         return mapping[column_dtype.kind]
         
     def _get_numpy_dtype_from_sql_alchemy_type(self, column_type):
-        if isinstance(column_type, Integer) or column_type == Integer:
+        try:
+            if isinstance(column_type, MSBigInteger):
+                return dtype('int64')
+        except: pass        
+            
+        if isinstance(column_type, Integer):
             return dtype('i')
         
-        if isinstance(column_type, Numeric) or column_type == Float:
+        if isinstance(column_type, Numeric):
             return dtype('f')
         
-        if isinstance(column_type, String) or column_type == String:
+        if isinstance(column_type, String):
             return dtype('S')
+        
+        if isinstance(column_type, Boolean):
+            return dtype('b')        
 
         raise ValueError('Unrecognized column type: %s' % column_type)
         
@@ -362,15 +369,15 @@ else:
             
         def test_get_numpy_dtype_from_sql_alchemy_type(self):
             expected_numpy_type = dtype('i')
-            actual_numpy_type = self.storage._get_numpy_dtype_from_sql_alchemy_type(Integer)
+            actual_numpy_type = self.storage._get_numpy_dtype_from_sql_alchemy_type(Integer())
             self.assertEqual(expected_numpy_type, actual_numpy_type)
             
             expected_numpy_type = dtype('f')
-            actual_numpy_type = self.storage._get_numpy_dtype_from_sql_alchemy_type(Float)
+            actual_numpy_type = self.storage._get_numpy_dtype_from_sql_alchemy_type(Float())
             self.assertEqual(expected_numpy_type, actual_numpy_type)
             
             expected_numpy_type = dtype('S')
-            actual_numpy_type = self.storage._get_numpy_dtype_from_sql_alchemy_type(String)
+            actual_numpy_type = self.storage._get_numpy_dtype_from_sql_alchemy_type(String())
             self.assertEqual(expected_numpy_type, actual_numpy_type)
             
         
