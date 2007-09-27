@@ -39,11 +39,12 @@ class HouseholdSynthesizer(object):
                              in_storage=AttributeCache())
         
         if 'output_configuration' in config:
-            out_con=OpusDatabase(hostname=config['output_configuration'].host_name,
-                                   username=config['output_configuration'].user_name,
-                                   password=config['output_configuration'].password,
-                                   database_name=config['output_configuration'].database_name)
-            out_storage = StorageFactory().get_storage('mysql_storage', storage_location=out_con)
+            out_storage = StorageFactory().get_storage(
+               'sql_storage', 
+               hostname=config['output_configuration'].host_name,
+               username=config['output_configuration'].user_name,
+               password=config['output_configuration'].password,
+               database_name=config['output_configuration'].database_name)
         else:
             output_cache = os.path.join(config['cache_directory'], str(config['base_year']+1))
             out_storage = StorageFactory().get_storage('flt_storage', storage_location=output_cache)
