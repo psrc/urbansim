@@ -166,6 +166,7 @@ def type_mapper(type_val):
                    "VARCHAR" : VARCHAR(255),
                    "BOOLEAN" : Boolean,
                    "TINYTEXT" : VARCHAR(255),
+                   "TEXT" : CLOB,
                    "MEDIUMTEXT" : CLOB,
                    "LONGTEXT": CLOB,
                    "DATETIME": DateTime}
