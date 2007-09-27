@@ -125,9 +125,9 @@ class flt_storage(Storage, flt_storage_old):
         unused_column_size, column_names = self._get_column_size_and_names(table_data)
 
         for column_name in column_names:
-            type = table_data[column_name].dtype.str
+            col_type = table_data[column_name].dtype.str
                     
-            column_file = self.storage_file.new_storage_file(column_name, type, dir)
+            column_file = self.storage_file.new_storage_file(column_name, col_type, dir)
             
             existing_files_of_this_name = glob(os.path.join(dir, '%s.*' % column_name))
 
@@ -139,7 +139,7 @@ class flt_storage(Storage, flt_storage_old):
                 raise FltError(message)   
             
             for existing_file_name in existing_files_of_this_name:
-                os.remove(existing_file_name)
+                os.remove(existing_file_name)            
             table_data[column_name].tofile(column_file.get_name())
     
 #    def _get_base_directory(self):
