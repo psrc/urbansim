@@ -13,13 +13,8 @@
 # 
 
 #from urbansim.datasets.travel_data_daset import TravelDataDataset
-from opus_core.store.opus_database import OpusDatabase
-from opus_core.store.mysql_storage import mysql_storage
-from opus_core.store.flt_storage import flt_storage
-from urbansim.datasets.zone_dataset import ZoneDataset
 from opus_core.resources import Resources
 from numpy import array, float32, ones
-from os.path import join
 import os
 from opus_core.logger import logger
 from travel_model.models.abstract_travel_model import AbstractTravelModel
@@ -45,12 +40,10 @@ class GetTravelModelDataIntoCache(AbstractTravelModel):
         
         logger.start_block('Getting matrices from travel model')
         next_year = year + 1
-        flt_dir_for_this_year = os.path.join(cache_directory, str(year))
         flt_dir_for_next_year = os.path.join(cache_directory, str(next_year))
         if not os.path.exists(flt_dir_for_next_year):
             os.mkdir(flt_dir_for_next_year)
 
-        attribute_cache = AttributeCache()
         dataset_pool = SessionConfiguration().get_dataset_pool()
         zone_set = dataset_pool.get_dataset('zone')
 
