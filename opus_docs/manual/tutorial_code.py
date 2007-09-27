@@ -33,8 +33,8 @@ storage = StorageFactory().get_storage('tab_storage',
 #connection = OpusDatabase(hostname = os.environ["MYSQLHOSTNAME"],
 #                              username = os.environ["MYSQLUSERNAME"],
 #                              password = os.environ["MYSQLPASSWORD"],
-#                              #database_name = "mydatabase")
-#storage = StorageFactory().get_storage('mysql_storage',
+#                              database_name = "mydatabase")
+#storage = StorageFactory().get_storage('sql_storage',
 #        storage_location = connection)
 from urbansim.datasets.household_dataset import HouseholdDataset
 households = HouseholdDataset(in_storage = storage,
