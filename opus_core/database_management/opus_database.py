@@ -23,7 +23,7 @@ from sqlalchemy.schema import MetaData, Column, Table
 from sqlalchemy.types import Integer, SmallInteger, \
                              Numeric, Float, \
                              VARCHAR, TEXT, String, CHAR, CLOB, \
-                             Boolean 
+                             Boolean, DateTime
 from sqlalchemy import create_engine
 
 ### TODO: Add unit tests.
@@ -135,13 +135,16 @@ class OpusDatabase(object):
         )
         
         new_table.create(checkfirst = True)
+        self.metadata.reflect()
 
     def drop_table(self, table_name):
         if self.table_exists(table_name):
             t = self.metadata.tables[table_name]
             t.drop(bind = self.engine)
+            self.metadata.reflect()
                 
     def table_exists(self, table_name):
+        self.metadata.reflect()
         if not table_name in self.metadata.tables:
             return False
         t = self.metadata.tables[table_name]
@@ -163,7 +166,9 @@ def type_mapper(type_val):
                    "VARCHAR" : VARCHAR(255),
                    "BOOLEAN" : Boolean,
                    "TINYTEXT" : VARCHAR(255),
-                   "MEDIUMTEXT" : CLOB}
+                   "MEDIUMTEXT" : CLOB,
+                   "LONGTEXT": CLOB,
+                   "DATETIME": DateTime}
     
     return filter_data[type_val]     
 
@@ -174,7 +179,8 @@ def inverse_type_mapper(type_class):
                    Numeric: "DOUBLE",
                    VARCHAR: "VARCHAR",
                    Boolean: "BOOLEAN",
-                   CLOB: "MEDIUMTEXT"}
+                   CLOB: "MEDIUMTEXT",
+                   DateTime: "DATETIME"}
     
     return filter_data[type_class.__class__]                
         
