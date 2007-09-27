@@ -74,7 +74,7 @@ class CacheScenarioDatabase(Model):
         """
         database = self.database_server.get_database(database_name)
         in_storage = StorageFactory().get_storage(
-            type='mysql_storage', 
+            type='sql_storage', 
             hostname = config['input_configuration'].host_name,
             username = config['input_configuration'].user_name,
             password = config['input_configuration'].password,
@@ -106,13 +106,14 @@ class CacheScenarioDatabase(Model):
                 
                 table = database.get_table(table_name)
                 
-                id_name = [primary_key.name for primary_key in table.primary_key]
-                
+                id_name = [primary_key.name for primary_key in table.primary_key]                    
+
                 dataset = Dataset(resources=config, 
                                   in_storage=in_storage,
                                   out_storage=flt_storage,
                                   in_table_name=table_name,
                                   id_name = id_name)
+
                 nchunks = config['creating_baseyear_cache_configuration'].tables_to_cache_nchunks.get(table_name, 1)
                 current_time = SimulationState().get_current_time()
                 SimulationState().set_current_time(base_year)
