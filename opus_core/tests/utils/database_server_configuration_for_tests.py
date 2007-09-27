@@ -14,7 +14,7 @@
 
 import os
 
-from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 
 class DatabaseServerConfigurationForTests(DatabaseServerConfiguration):

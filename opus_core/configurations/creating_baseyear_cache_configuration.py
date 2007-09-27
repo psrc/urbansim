@@ -30,9 +30,6 @@ from enthought.traits.api import Undefined
 from enthought.traits.api import DictStrInt
 from enthought.traits.api import HasStrictTraits
 
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
-from opus_core.configurations.cache_location import CacheLocation
-from opus_core.configurations.table_specification import TableSpecification
 from opus_core.configurations.database_configuration import DatabaseConfiguration
 from opus_core.configurations.table_cache_configuration import TableCacheConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration

@@ -16,7 +16,7 @@ import os
 from opus_core.tests import opus_unittest
 
 from opus_core.fork_process import ForkProcess
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
+from opus_core.database_management.database_server import DatabaseServer
 
 from opus_core.misc import does_test_database_server_exist
 from opus_core.tests.utils.database_server_configuration_for_tests import DatabaseServerConfigurationForTests
@@ -26,7 +26,7 @@ if does_test_database_server_exist(module_name=__file__):
     class Test(opus_unittest.OpusTestCase):
         def setUp(self):
             self.database_name = '__test_services_code__'
-            self.db_server = MysqlDatabaseServer(DatabaseServerConfigurationForTests())
+            self.db_server = DatabaseServer(DatabaseServerConfigurationForTests())
             self.db_server.drop_database(self.database_name)
             
         def tearDown(self):
@@ -50,10 +50,7 @@ if does_test_database_server_exist(module_name=__file__):
             ForkProcess().fork_new_process('opus_core.tools.create_services_database', resources=None, 
                                            optional_args='--database %s --hostname %s' % (
                                                self.database_name, os.environ['MYSQLHOSTNAMEFORTESTS']))
-            db = self.db_server.get_database('mysql')
-            results = db.GetResultsFromQuery('show databases')
-            for database in results:
-                print database
+
             self.assert_(self.db_server.has_database(self.database_name))
             db = self.db_server.get_database(self.database_name)
             self.assert_(db.table_exists('run_activity'))

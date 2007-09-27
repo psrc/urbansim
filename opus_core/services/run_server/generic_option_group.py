@@ -18,8 +18,8 @@ from optparse import OptionParser, OptionGroup
 
 from opus_core.services.run_server.run_manager import RunManager
 from opus_core.services.run_server.run_activity import RunActivity
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
-from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 class GenericOptionGroup:
     def __init__(self, usage="python %prog [options]", description=""):
@@ -75,11 +75,9 @@ class GenericOptionGroup:
         
         config = DatabaseServerConfiguration(
             host_name = options.host_name,
-            user_name = os.environ['MYSQLUSERNAME'],
-            password = os.environ['MYSQLPASSWORD'],
             )
         try:
-            db_server = MysqlDatabaseServer(config)
+            db_server = DatabaseServer(config)
             return db_server
         except:
             # Cannot connect to database server

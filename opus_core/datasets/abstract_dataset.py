@@ -2028,8 +2028,6 @@ class AbstractDataset(object):
 
 
 from opus_core.tests import opus_unittest
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
-from opus_core.configurations.database_server_configuration import LocalhostDatabaseServerConfiguration
 
 class DatasetTests(opus_unittest.OpusTestCase):
     def test_exceptions(self):

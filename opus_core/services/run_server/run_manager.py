@@ -19,8 +19,8 @@ from opus_core.fork_process import ForkProcess
 from opus_core.configuration import Configuration
 from opus_core.store.opus_database import OpusDatabase
 from opus_core.store.utils.cache_flt_data import CacheFltData
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
-
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 class RunManager(object):
     """An abstraction representing a simulation manager that automatically logs
@@ -142,7 +142,12 @@ class RunManager(object):
                 
             # Create brand-new output database (deletes any prior contents)
             if 'output_configuration' in run_resources:
-                db_server = MysqlDatabaseServer(run_resources['output_configuration'])
+                db_config = DatabaseServerConfiguration(
+                    host_name = run_resources['output_configuration'].host_name,
+                    user_name = run_resources['output_configuration'].user_name,
+                    password = run_resources['output_configuration'].password                                        
+                )
+                db_server = DatabaseServer(db_config)
                 db_server.drop_database(run_resources["output_configuration"].database_name)
                 db_server.create_database(run_resources["output_configuration"].database_name)                
             

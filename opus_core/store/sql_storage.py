@@ -216,8 +216,8 @@ else:
     from sets import Set
 
     from opus_core.store.storage import TestStorageInterface
-    from opus_core.store.mysql_database_server import MysqlDatabaseServer
-    from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
+    from opus_core.database_management.database_server import DatabaseServer
+    from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
     class SQLStorageTest(TestStorageInterface):
         """
@@ -229,7 +229,7 @@ else:
             
             config = DatabaseServerConfiguration()
 
-            self.db_server = MysqlDatabaseServer(config)
+            self.db_server = DatabaseServer(config)
             
             self.db_server.drop_database(self.database_name)
             self.db_server.create_database(self.database_name)
@@ -293,7 +293,7 @@ else:
                 
             expected_results = [['id', 'a'], [1,4], [2,5], [3,6]]
             
-            #Verify the data through a MysqlDatabaseServer database connection
+            #Verify the data through a DatabaseServer database connection
             db = self.db_server.get_database(self.database_name)
             
             try:
@@ -330,7 +330,7 @@ else:
                 
             expected_results = [['int_data', 'float_data', 'string_data'], [1,1.1,'bar'], [2,2.2,'foo']]
             
-            # Verify the data through a MysqlDatabaseServer database connection
+            # Verify the data through a DatabaseServer database connection
             db = self.db_server.get_database(self.database_name)
             
             try:

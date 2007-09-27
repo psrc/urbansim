@@ -21,7 +21,7 @@ from opus_core.logger import logger
 from opus_core.export_storage import ExportStorage
 from opus_core.store.flt_storage import flt_storage
 from opus_core.store.sql_storage import sql_storage
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
+from opus_core.database_management.database_server import DatabaseServer
 from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
 
 
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     table_name = options.table_name
     
     logger.log_status('Initializing database...')
-    db_server = MysqlDatabaseServer(DatabaseServerConfiguration(
+    db_server = DatabaseServer(DatabaseServerConfiguration(
             host_name = host_name,
             user_name = user_name,
             password = password,

@@ -25,8 +25,8 @@ from opus_core.variables.variable import ln
 from opus_core.logger import logger
 from opus_core.pstat import chisqprob
 from opus_core.misc import get_host_name, try_transformation
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
-from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 from opus_core.tests.utils.opus_test_runner import get_test_method_name
 
 class StochasticTestCase(opus_unittest.OpusTestCase):
@@ -124,7 +124,7 @@ class StochasticTestCase(opus_unittest.OpusTestCase):
             password = os.environ['MYSQLPASSWORD'],
             )
         try:
-            db_server = MysqlDatabaseServer(config)
+            db_server = DatabaseServer(config)
             db = db_server.get_database('stochastic_test_case')
             db.DoQuery(sql)
         except:

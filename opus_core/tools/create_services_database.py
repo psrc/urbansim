@@ -26,7 +26,7 @@ class CreateServicesDBOptionGroup(GenericOptionGroup):
 if __name__ == "__main__":
     try: import wingdbstub
     except: pass
-    
+        
     option_group = CreateServicesDBOptionGroup()
     parser = option_group.parser
     (options, args) = parser.parse_args()
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     if args:
         parser.print_help()
         sys.exit(1)
-
+    
     db_server = option_group.get_database_server(options)
     if not db_server.has_database(options.database_name):
         db_server.create_database(options.database_name)
