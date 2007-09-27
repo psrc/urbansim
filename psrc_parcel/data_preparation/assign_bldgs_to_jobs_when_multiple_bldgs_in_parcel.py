@@ -34,11 +34,12 @@ class DB_settings(object):
 
 class MysqlStorage:
     def get(self, database):
-        con = OpusDatabase(hostname = DB_settings.db_host_name,
-                               username = DB_settings.db_user_name,
-                               password = DB_settings.db_password,
-                               database_name = database)
-        storage = StorageFactory().get_storage('mysql_storage', storage_location=con)
+        storage = StorageFactory().get_storage(
+            'sql_storage',
+            hostname = DB_settings.db_host_name,
+            username = DB_settings.db_user_name,
+            password = DB_settings.db_password,
+            database_name = database)
         return storage
 
 class FltStorage:
