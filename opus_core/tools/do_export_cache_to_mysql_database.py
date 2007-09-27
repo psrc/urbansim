@@ -20,7 +20,7 @@ from optparse import OptionParser
 from opus_core.logger import logger
 from opus_core.export_storage import ExportStorage
 from opus_core.store.flt_storage import flt_storage
-from opus_core.store.mysql_storage import mysql_storage
+from opus_core.store.sql_storage import sql_storage
 from opus_core.store.mysql_database_server import MysqlDatabaseServer
 from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
 
@@ -91,8 +91,12 @@ if __name__ == '__main__':
    
     input_storage = flt_storage(storage_location = cache_path)
     
-    output_storage = mysql_storage(storage_location=db)
-    
+    output_storage = sql_storage(
+                        username = user_name,
+                        password = password,
+                        hostname = host_name,
+                        database_name = database_name)
+        
     logger.start_block('Exporting cache to mysql...')
     try:
         if table_name is None:

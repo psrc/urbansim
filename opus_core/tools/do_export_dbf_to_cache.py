@@ -20,7 +20,6 @@ from optparse import OptionParser
 from opus_core.logger import logger
 from opus_core.export_storage import ExportStorage
 from opus_core.store.dbf_storage import dbf_storage
-from opus_core.store.mysql_storage import mysql_storage
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration

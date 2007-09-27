@@ -367,13 +367,6 @@ class Tests(opus_unittest.OpusTestCase):
         variables = ("x = y.disaggregate(mydataset.my_variable, intermediates=[myfaz])",
                      "z = y.disaggregate(mydataset.my_variable, intermediates=[myfaz, myzone])")
         coefficients = ('c1', 'c2')
-        #db_host_name='localhost'
-        #db_user_name=os.environ['MYSQLUSERNAME']
-        #db_password =os.environ['MYSQLPASSWORD']
-        #database = "test_database"
-        #con = OpusDatabase(hostname=db_host_name, username=db_user_name,
-        #               password=db_password, database_name=database)
-        #storage = StorageFactory().get_storage('mysql_storage', storage_location=con)
         storage = StorageFactory().get_storage('dict_storage')
         specification = EquationSpecification(variables, coefficients)
         specification.write(out_storage=storage, out_table_name="spec")
