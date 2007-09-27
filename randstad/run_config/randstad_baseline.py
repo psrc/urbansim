@@ -171,7 +171,6 @@ my_run_configuration = {
 
 run_configuration.merge(my_run_configuration)
 
-#run_configuration["models_configuration"]["household_transition_model"]["controller"]["prepare_for_run"]["arguments"]["storage"]='mysql_storage'
 run_configuration['models_configuration']["household_location_choice_model"]['controller']['run']['arguments']['chunk_specification'] = "{'nchunks':1}"
 
 from opus_core.tests import opus_unittest
