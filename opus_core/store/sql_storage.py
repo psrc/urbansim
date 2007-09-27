@@ -18,7 +18,6 @@ try:
     import sqlalchemy
     from sqlalchemy import create_engine, Table, Column, MetaData
     from sqlalchemy.types import Integer, Numeric, String, Float, Boolean    
-	
 except ImportError:
     sqlalchemy = None
     
