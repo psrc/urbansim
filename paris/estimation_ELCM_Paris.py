@@ -12,6 +12,9 @@
 # other acknowledgments.
 #
 
+#DISCLAIMER: THIS FILE IS OUT OF DATE AND NEEDS SIGNIFICANT MODIFICATIONS 
+#            TO MAKE IT WORK
+
 import os
 from urbansim.datasets.gridcell_dataset import GridcellDataset
 from urbansim.datasets.job_dataset import JobDataset

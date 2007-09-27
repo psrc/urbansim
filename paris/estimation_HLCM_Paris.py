@@ -12,6 +12,9 @@
 # other acknowledgments.
 #
 
+#DISCLAIMER: THIS FILE IS OUT OF DATE AND NEEDS SIGNIFICANT MODIFICATIONS 
+#            TO MAKE IT WORK
+
 from urbansim.models.household_location_choice_model_creator import HouseholdLocationChoiceModelCreator
 from opus_core.equation_specification import EquationSpecification
 from urbansim.datasets.household_dataset import HouseholdDataset
