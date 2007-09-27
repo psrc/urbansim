@@ -12,14 +12,12 @@
 # other acknowledgments.
 #
 
-import os
 from opus_core.tests import opus_unittest
 import tempfile
 
 from shutil import rmtree
 
 from opus_core.logger import logger
-from opus_core.misc import get_distinct_list
 from opus_core.variables.variable_name import VariableName
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.datasets.dataset_factory import DatasetFactory
