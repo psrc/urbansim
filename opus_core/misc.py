@@ -548,7 +548,7 @@ def unique_values(input_array, sort_values=True):
     input_array - a sortable numpy array or list object
     """
     from numpy import array, ndarray, sort, where
-
+    import copy
     if isinstance(input_array, ndarray):
         if input_array.ndim <> 1:
             input_array = input_array.ravel()
