@@ -41,183 +41,54 @@
 <!-- HEAD BANNER ENDS HERE -->
 <h1>Installing Opus &amp; UrbanSim on Windows</h1>
 
-
-
-
-
 <p>These following instructions are for installing Opus &amp; UrbanSim on
 Windows.&nbsp; These installation directions have been tested with Windows XP
 and Intel processors. </p>
 
-
-
-
 <ol>
 
+  <li><a href="#python">Install Python</a></li>
 
-
-
-  <li><a href="#python">Install Python and Python libraries</a></li>
-
-
-
+  <li><a href="#libraries">Install Python libraries</a></li>
 
   <li>(optional) <a href="#mysql">Install MySQL</a></li>
 
-
-
-
   <li><a href="#opus">Install Opus and UrbanSim</a></li>
-
 
   <li><a href="#environment">Define Environment Variables for Opus and UrbanSim</a></li>
 
-
-
-
   <li><a href="#test">Testing your installation</a></li>
-
-
-
 
   <li>(optional)&nbsp;<a href="#create_package">Creating your own Opus package</a></li>
 
-
-
-
 </ol>
-
 
 
 
 <h2>Step 1: <a name="python">Installing Python</a></h2>
 
-
-
-
 <p>Opus and UrbanSim are implemented in Python, making heavy use of numerical
 Python packages and other software.&nbsp; Currently, Opus and UrbanSim are known
-to work on either Python 2.4 or Python 2.5.&nbsp; The <a href="http://www.python.org">official
+to work on Python 2.5.&nbsp; The <a href="http://www.python.org">official
 Python website</a> includes documentation, downloads, and much else.</p>
 
 
+<h3>For Python 2.5.1</h3>
 
+<p>Download and install the Python 2.5.1 Windows installer from 
+<a href="http://www.python.org/download/">http://www.python.org/download/</a>.</p>
 
-<h3>For Python 2.4.3</h3>
 
 
+<h2> <a name="libraries">Step 2: Installing Python Libraries</h2>
 
-
-<p>You can either use the Python Enthought Edition to install Python and almost
-all of the required Python packages (option #1) or install the individual
-packages by hand (option #2).</p>
-
-
-
-
-<h4>Option 1: (recommended)&nbsp;</h4>
-
-
-
-
-<ol>
-
-
-
-
-  <li>Download and install the Python Enthought Edition &ndash; Python
-    2.4.3 for Windows Enhanced Python Distribution from <a href="http://code.enthought.com/enthon/">http://code.enthought.com/enthon/</a>.&nbsp;
-    This will install Python and nearly all of UrbanSim's <i>required</i> Python
-    packages, as well as several other useful Python packages.
-  </li>
-
-
-
-
-  <li>Upgrade your <b>numpy</b> (<a href="http://numpy.scipy.org/">http://numpy.scipy.org/</a>)
-    package to at least version 1.0.1.&nbsp; This is a fast array-processing library used throughout Opus.
-  </li>
-
-
-  <li>Install <b>SQLAlchemy 0.4</b> (<a href="http://www.sqlachemy.org">http://www.sqlalchemy.org</a>);
-    This package allows programmatic access to a variety of database engines.  <br>
-    
-    
-    <i>This will probably require you to update SetupTools (<a href="http://pypi.python.org/pypi/setuptools">http://pypi.python.org/pypi/setuptools</a>) to the most recent version.  Be sure to delete the old setup tools files (in C:\Python24\Lib\site-packages) before you install the new version.</i>
-  </li>
-
-  <li>Install <b>scipy 0.5.2</b> (<a href="http://www.scipy.org/">http://www.scipy.org/</a>);
-    this is an open-source software for mathematics, science, and engineering.&nbsp;
-    Opus needs the scipy.ndimage package.&nbsp;&nbsp;<i><br>
-
-
-
-
-    (If you have
-    trouble installing scipy you can <a href="scipy.html">install just the
-    ndimage packages</a>.)</i></li>
-
-
-
-
-  <li>If you are using MySQL, install <b>MySQL-python 1.2.0</b> (<a href="http://sourceforge.net/projects/mysql-python">http://sourceforge.net/projects/mysql-python</a>).&nbsp;
-    This provides our connection from Python to MySQL.</li>
-
-
-
-
-  <li>If you are using R, install <b>RPy</b> (<a href="http://rpy.sourceforge.net/">http://rpy.sourceforge.net/</a>).&nbsp;
-    This is a Python interface for the statistical programming language R (tested
-    with version 0.4.6).</li>
-
-
-
-
-  <li>If you need to use .dbf files (for example, those produced by ArcGIS),
-      install <b>dbfpy</b> (<a href="http://sourceforge.net/projects/dbfpy">http://sourceforge.net/projects/dbfpy</a>).</li>
-
-
-
-
-</ol>
-
-
-
-
-<h4>Option 2:</h4>
-
-
-
-
-<p>Install everything yourself.&nbsp;&nbsp;</p>
-
-
-
-
-<ol>
-
-
-
-
-  <li>Download and install Python 2.4.3
-  </li>
-
-
-
-
-      <li>Download and install the packages from the
+<p>Opus and Urbansim require a number of python packages, and make optional use of 
+several others.  Download and install them from the
         list of <a href="python_packages.html">required, recommended and
-        optional Python packages</a>.
-  </li>
+        optional Python packages</a>.  Many packages have multiple versions.  Be sure
+	to pick the ones designed for use with Windows and Python 2.5.1.</p>
 
-
-
-
-</ol>
-
-
-
-<h2>(optional) <a name="mysql">Step 2: Installing MySQL</a></h2>
+<h2>(optional) <a name="mysql">Step 3: Installing MySQL</a></h2>
 
 <p>MySQL is an efficient, open-source SQL database.  You don't need it to run the
 basic Eugene tutorial, although for serious use with your own dataset you will want
@@ -271,8 +142,7 @@ Administrator</a>. These are both available as binaries.</p>
 
 
 
-
-<h2>Step 3: <a name="opus">Installing Opus and UrbanSim</a></h2>
+<h2>Step 5: <a name="opus">Installing Opus and UrbanSim</a></h2>
 
 
 <p>There are two options for getting the Opus/UrbanSim code: as a zip
@@ -521,7 +391,7 @@ user variable appropriately.</p>
 
 
 
-<h2>Step 5: <a name="test">Testing your installation</a></h2>
+<h2>Step 6: <a name="test">Testing your installation</a></h2>
 
 
 
@@ -532,7 +402,7 @@ installation.</p>
 
 
 
-<h2>Step 6: <a name="create_package">(optional)
+<h2>Step 7: <a name="create_package">(optional)
 Creating your own Opus package</a></h2>
 
 
