@@ -1,0 +1,69 @@
+<ui version="4.0" >
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>286</width>
+    <height>248</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget" />
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>286</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="defaultUp" >
+    <bool>true</bool>
+   </property>
+   <widget class="QMenu" name="menuBrowse" >
+    <property name="title" >
+     <string>Table</string>
+    </property>
+    <addaction name="actionEdit" />
+    <addaction name="actionSchema" />
+    <addaction name="actionExport" />
+    <addaction name="actionSummary" />
+    <addaction name="actionSchema_2" />
+   </widget>
+   <addaction name="menuBrowse" />
+  </widget>
+  <widget class="QStatusBar" name="statusbar" />
+  <action name="actionEdit" >
+   <property name="text" >
+    <string>Browse</string>
+   </property>
+  </action>
+  <action name="actionSchema" >
+   <property name="text" >
+    <string>Edit</string>
+   </property>
+  </action>
+  <action name="actionExport" >
+   <property name="text" >
+    <string>Export</string>
+   </property>
+  </action>
+  <action name="actionSummary" >
+   <property name="text" >
+    <string>Summary</string>
+   </property>
+  </action>
+  <action name="actionSchema_2" >
+   <property name="text" >
+    <string>Schema</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
