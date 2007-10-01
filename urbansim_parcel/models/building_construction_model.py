@@ -19,7 +19,7 @@ from opus_core.misc import unique_values
 from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset import DatasetSubset
 
-from numpy import where, arange, resize, array, cumsum, concatenate, round_
+from numpy import where, arange, resize, array, cumsum, concatenate, round_, any
 
 class BuildingConstructionModel(Model):
     """Process any pre-scheduled development projects (those that have status 'active'). New buildings are 
@@ -152,7 +152,8 @@ class BuildingConstructionModel(Model):
                         parcel_lut[parcel_index] = component_land_use_types[pidx][idx_to_be_built][0]
                                                                   
         # add created buildings to the existing building dataset
-        new_buildings["building_id"] = max_building_id + arange(1, new_buildings["parcel_id"].size+1)
+        buildings_id_name = building_dataset.get_id_name()[0]
+        new_buildings[buildings_id_name] = max_building_id + arange(1, new_buildings["parcel_id"].size+1)
         new_buildings['year_built'] = resize(array([current_year], dtype="int32"), new_buildings["parcel_id"].size)
         building_dataset.add_elements(new_buildings, require_all_attributes=False)
         if "zone_id" in building_dataset.get_known_attribute_names():
@@ -161,10 +162,21 @@ class BuildingConstructionModel(Model):
         if "county" in building_dataset.get_known_attribute_names():
             county_ids = building_dataset.compute_variables(['building.disaggregate(parcel.county)'], dataset_pool=dataset_pool)
             building_dataset.modify_attribute(name="county", data=county_ids)
-        
+            
         logger.log_status("%s new buildings built." % new_buildings["parcel_id"].size)
         for type_id in number_of_new_buildings.keys():
             logger.log_status("building type %s: %s" % (type_id, number_of_new_buildings[type_id]))
+            
+        # remove occupants from demolished buildings
+        for agent_name in ['household', 'job']:            
+            agents = dataset_pool.get_dataset(agent_name)
+            location_ids = agents.get_attribute(buildings_id_name)
+            id_index_in_buildings = building_dataset.try_get_id_index(location_ids)
+            if any(id_index_in_buildings < 0):
+                idx = where(id_index_in_buildings < 0)[0]
+                agents.modify_attribute(name=buildings_id_name, data=idx.size*[-1], index = idx)
+                logger.log_status("%s %ss removed from demolished buildings." % idx.size, agent_name)
+
         # remove active proposals from the proposal set
 #        development_proposal_set.remove_elements(active_idx)
         # alternatively, set status_id of active proposals to id_not_available
