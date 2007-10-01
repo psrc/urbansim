@@ -91,9 +91,12 @@ class DevelopmentProjectProposalSamplingModel(Model):
         parcels = self.dataset_pool.get_dataset('parcel')
         parcels.compute_variables(['urbansim_parcel.parcel.building_sqft', 'urbansim_parcel.parcel.residential_units'],
                                   dataset_pool=self.dataset_pool)
+        self.variables_for_computing_vacancies = {
+                      "residential": "residential_units",
+                      "non_residential": "units_for_jobs"
+        }
         target_vacancy = self.dataset_pool.get_dataset('target_vacancy')
-        target_vacancy.compute_variables(['type_name=target_vacancy.disaggregate(building_type.building_type_name)',
-                                          'is_residential = target_vacancy.disaggregate(building_type.is_residential)'],
+        target_vacancy.compute_variables(['is_residential = target_vacancy.disaggregate(building_type.is_residential)'],
                                          dataset_pool=self.dataset_pool)
         current_target_vacancy = DatasetSubset(target_vacancy, index=where(target_vacancy.get_attribute("year")==current_year)[0])
 
@@ -184,7 +187,6 @@ class DevelopmentProjectProposalSamplingModel(Model):
 
     def check_vacancy_rates(self, target_vacancy):
         type_ids = target_vacancy.get_attribute("building_type_id")
-        type_names = target_vacancy.get_attribute("type_name")
         is_residential = target_vacancy.get_attribute("is_residential")
         buildings = self.dataset_pool.get_dataset("building")
         building_type_ids = buildings.get_attribute("building_type_id")
@@ -193,17 +195,17 @@ class DevelopmentProjectProposalSamplingModel(Model):
         self.units_built_pointer = {}
         for index in arange(target_vacancy.size()):
             type_id = type_ids[index]
-            type_name = type_names[index]
             target = self.target_vacancies[type_id]           
             is_matched_type = building_type_ids == type_id
             if is_residential[index]:
-                unit_name = "residential_units"
+                unit_name = self.variables_for_computing_vacancies["residential"]
                 parcel_unit_name = unit_name
             else:
-                unit_name = "units_for_jobs"
+                unit_name = self.variables_for_computing_vacancies["non_residential"]
                 parcel_unit_name = "building_sqft"
+                
             self.existing_units[type_id] = buildings.get_attribute(unit_name)[is_matched_type].astype("float32").sum()
-            self.occupied_units[type_id] = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type].astype("float32").sum()
+            self.occupied_units[type_id] = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type].astype("float32").sum()          
             self.proposed_units[type_id] = 0
             self.demolished_units[type_id] = 0
             vr = (self.existing_units[type_id] - self.occupied_units[type_id]) / float(self.existing_units[type_id])
