@@ -24,7 +24,7 @@ from psrc.configs.subset_configuration import SubsetConfiguration
 from psrc.tests.test_run_manager import _do_run_simple_test_run
 from psrc.tests.test_run_manager import _create_services_test_database
 from psrc.tests.test_run_manager import _drop_services_test_database
-from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 if does_database_server_exist_for_this_hostname(
         module_name = __name__, 
