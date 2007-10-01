@@ -109,6 +109,9 @@ if does_database_server_exist_for_this_hostname(
                                                            % history_id)[1:]
                                                            
             expected = [['started'], ['done']]
+            print 'expected: ',expected
+            print 'output: ', statuses
+            
             for i in expected:
                 self.assertTrue(i in statuses)
                 
@@ -121,6 +124,7 @@ if does_database_server_exist_for_this_hostname(
                                      services_host_name= db_config.host_name,
                                      services_database_name='services_test',
                                      skip_urbansim=False)
+            
             statuses = run_activity.storage.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
                                                            % history_id)[1:]
                                                            
@@ -140,7 +144,12 @@ if does_database_server_exist_for_this_hostname(
                                      skip_urbansim=True)
             statuses = run_activity.storage.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
                                                            % history_id)[1:]
-            expected = [['started'], ['done'], ['restarted in 2001'], ['done'], ['restarted in 2002'], ['done']]
+                                                           
+            expected = [['started'], ['done'], ['restarted in 2001'], ['done'], ['restarted in 2002'], ['done']]       
+                                                    
+            print 'expected: ',expected
+            print 'output: ', statuses
+
             for i in expected:
                 self.assertTrue(i in statuses)
                 
