@@ -113,9 +113,7 @@ if does_database_server_exist_for_this_hostname(
                 self.assertTrue(i in statuses)
                 
             self.assertEqual(len(statuses), len(expected))
-            
-            self.assertEqual(statuses, )
-    
+                
             db_config = DatabaseServerConfiguration()
             
             runs_manager.restart_run(history_id,
