@@ -22,7 +22,7 @@ from opus_core.export_storage import ExportStorage
 from opus_core.store.flt_storage import flt_storage
 from opus_core.store.sql_storage import sql_storage
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 
 if __name__ == '__main__':
