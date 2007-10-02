@@ -687,17 +687,9 @@ def try_transformation(data, transformation):
                 tdata = data
     return tdata
 
-def does_database_server_exist_for_this_hostname(module_name, hostname, log_on_failure=True):
-    try:
-        from MySQLdb import connect
-        from MySQLdb import OperationalError
-    except ImportError, e:
-        if log_on_failure:
-            logger.log_warning('The tests will not be run for module:\n' 
-                               '  %s\n' 
-                               'since we cannot connect import the MySQLdb Python module.' 
-                               % module_name)
-        return False
+def does_database_server_exist_for_this_hostname(module_name, hostname, protocol='mysql', log_on_failure=True):
+    from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+    from opus_core.database_management.database_server import DatabaseServer
 
     if not 'MYSQLUSERNAME' in os.environ:
         if log_on_failure:
@@ -706,40 +698,47 @@ def does_database_server_exist_for_this_hostname(module_name, hostname, log_on_f
                                'since the MYSQLUSERNAME environment variable is not defined.'
                                % module_name)
         return False
+    user_name = os.environ['%sUSERNAME'%protocol.upper()]
 
-    if not 'MYSQLPASSWORD' in os.environ:
+    if not '%sPASSWORD'%protocol.upper() in os.environ:
         if log_on_failure:
             logger.log_warning('The tests will not be run for module:\n'
                                '  %s\n'
                                'since the MYSQLPASSWORD environment variable is not defined.'
                                % module_name)
         return False
+    password = os.environ['%sPASSWORD'%protocol.upper()]
 
-    try:
-        connect(host = hostname,
-                user = os.environ['MYSQLUSERNAME'],
-                passwd = os.environ['MYSQLPASSWORD'])
-    except OperationalError, e:
-        if log_on_failure:
-            logger.log_warning('The tests will not be run for module:\n'
-                               '  %s\n'
-                               'since we cannot connect to database server on host %s '
-                               ' with user %s.'
-                               % (module_name, hostname, os.environ['MYSQLUSERNAME']))
-        return False
+ #   try:
+    db_config = DatabaseServerConfiguration(
+        host_name = hostname,
+        user_name = user_name,
+        password = password,
+        protocol = protocol
+    )
+    db_server = DatabaseServer(db_config)
+        
+#    except:
+#        if log_on_failure:
+#            logger.log_warning('The tests will not be run for module:\n'
+#                               '  %s\n'
+#                               'since we cannot connect to database server on host %s '
+#                               ' with user %s.'
+#                               % (module_name, hostname, os.environ['%sUSERNAME'%protocol.upper()]))
+#        return False
     return True
 
-def does_test_database_server_exist(module_name, log_on_failure=True, logger=logger):
-    if 'MYSQLHOSTNAMEFORTESTS' in os.environ:
+def does_test_database_server_exist(module_name, protocol = 'mysql', log_on_failure=True, logger=logger):
+    if '%sHOSTNAMEFORTESTS'%(protocol.upper()) in os.environ:
         return True
 
     if log_on_failure:
         logger.log_warning('The tests will not be run for module:\n'
             '  %s\n'
-            'since the MYSQLHOSTNAMEFORTESTS environment variable has\n'
+            'since the %sHOSTNAMEFORTESTS environment variable has\n'
             'not been defined.  See documentation for how to define\n'
             'a connection to a database server for tests.'
-                % module_name)
+                % (module_name,protocol.upper()))
 
     return False
 
