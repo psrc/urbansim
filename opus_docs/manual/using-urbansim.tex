@@ -305,7 +305,7 @@ run_configuration = {
         cache_directory_root = 'd:/urbansim_cache',
 
         # mandatory
-        cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
+        cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
 
         cache_from_mysql = False, # default: True
 
@@ -363,9 +363,9 @@ run_configuration = {
 The \verb|'model_system'| entry is the full Opus path to the model system that
 will be used by the run manager to run/estimate a set of models.
 
-The \verb|'cache_mysql_data'| entry is the full Opus path to the class to use to
+The \verb|'cache_scenario_database'| entry is the full Opus path to the class to use to
 create a baseyear cache from the baseyear data in the MySQL database.  The
-\verb|'urbansim.model_coordinators.cache_mysql_data'| version creates  both the
+\verb|'urbansim.model_coordinators.cache_scenario_database'| version creates  both the
 baseyear cache, and unrolls the gridcell data to populate prior years with the
 gridcell dataset (see Section~\ref{sec:run-manager-tasks}).
 
