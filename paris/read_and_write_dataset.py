@@ -1,4 +1,3 @@
-from opus_core.store.opus_database import OpusDatabase
 import os
 from opus_core.storage_factory import StorageFactory
 from urbansim.datasets.gridcell_dataset import GridcellDataset
@@ -8,6 +7,9 @@ from urbansim.datasets.zone_dataset import ZoneDataset
 from urbansim.datasets.neighborhood_dataset import NeighborhoodDataset
 from urbansim.datasets.job_dataset import JobDataset
 from paris.paris_settings import ParisSettings
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+
 #
 # Miscellaneous stuff for manually testing and for generating flt binary databases
 #
@@ -22,12 +24,17 @@ class ReadWriteADataset(object):
 class GridcellsReadMySQLWriteFlt(object):
     """Reads Gridcells from MySQL and writes them to disk."""
     def __init__(self):
+        db_config = DatabaseServerConfiguration(
+            host_name=settings.get_db_host_name(),
+            user_name=settings.get_db_user_name(),
+            password=settings.get_db_password()                                           
+        )
+        db_server = DatabaseServer(db_config)
+        db = db_server.get_database(settings.db)
+        
         in_storage = StorageFactory().get_storage(
             'sql_storage',
-            hostname=settings.get_db_host_name(),
-            username=settings.get_db_user_name(),
-            password=settings.get_db_password(),
-            database_name=settings.db)
+            storage_location = db)
         
         gcs = GridcellDataset(in_storage=in_storage, nchunks=5)
         print "Read and Write GridcellDataset."

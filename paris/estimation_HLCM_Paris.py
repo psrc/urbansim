@@ -131,7 +131,7 @@ class HLCMEstimator(Estimator):
         SessionConfiguration()['info_file'] = info_file
         
         if self.save_estimation_results:
-            out_storage = StorageFactory().build_storage_for_dataset(type='mysql_storage', 
+            out_storage = StorageFactory().build_storage_for_dataset(type='sql_storage', 
                 storage_location=self.out_con)
         
         if spec_py is not None:
@@ -142,7 +142,7 @@ class HLCMEstimator(Estimator):
             self.specification, variables, coefficents, submodels = self.load_specification_from_variable(
                                                      spec_var)
         else:
-            in_storage = StorageFactory().build_storage_for_dataset(type='mysql_storage', 
+            in_storage = StorageFactory().build_storage_for_dataset(type='sql_storage', 
                 storage_location=self.in_con)
             self.specification = EquationSpecification(in_storage=in_storage)
             self.specification.load(in_table_name="household_location_choice_model_specification")

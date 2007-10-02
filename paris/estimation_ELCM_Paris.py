@@ -82,7 +82,7 @@ class Paris_simulation(object):
                            password=DB_settings.db_password,
                            database_name=This_Settings.outputdb)
             
-        estimation_set = JobDataset(in_storage=StorageFactory().get_storage('mysql_storage', storage_location=dbcon),
+        estimation_set = JobDataset(in_storage=StorageFactory().get_storage('sql_storage', storage_location=dbcon),
             in_place="jobs_for_estimation")
 
         result = elcm.estimate(specification, agent_set=estimation_set, data_objects=data_objects,
