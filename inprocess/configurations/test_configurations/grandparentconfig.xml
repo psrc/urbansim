@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+<description>this is the grandparent</description>
+<year><int>1980</int></year>
+<modelname>widgetmodel</modelname>
+</configuration>

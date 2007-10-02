@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+<parent><file>grandparentconfig.xml</file></parent>
+<description>this is the parent</description>
+<year><int>2000</int></year>
+</configuration>

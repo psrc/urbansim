@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        
+        
+<!-- this configuration has a bunch of comments 
+   and whitespace -->
+<configuration>
+<description>a test configuration</description>
+  <!-- another comment -->
+  
+</configuration>

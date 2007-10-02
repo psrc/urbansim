@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+<parent><oldconfig path="urbansim.configs.general_configuration">GeneralConfiguration</oldconfig></parent>
+<years><tuple><int>1980</int><int>1990</int></tuple></years>
+</configuration>
