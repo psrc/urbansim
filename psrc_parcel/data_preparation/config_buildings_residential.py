@@ -45,7 +45,7 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
                     #existing_cache_to_copy = r'/home/lmwang/urbansim_cache/psrc_parcel/cache_source',
                     years_to_cache = [2000]
                     ),
-                cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
+                cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],

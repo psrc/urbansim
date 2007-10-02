@@ -44,7 +44,7 @@ class Baseline(UrbansimParcelConfiguration):
                     existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/cache_source',
                     #existing_cache_to_copy = r'/workspace/urbansim_cache/psrc_parcel/estimation',
                     ),
-                cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
+                cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
                     #'business',
                     'households',
