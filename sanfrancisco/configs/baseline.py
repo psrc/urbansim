@@ -37,7 +37,7 @@ class Baseline(GeneralConfiguration):
                 baseyear_cache = BaseyearCacheConfiguration(
                     existing_cache_to_copy = r'\urbansim_cache\sanfrancisco\cache_source',
                     ),                
-                cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
+                cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
                     'business',
                     'households',
