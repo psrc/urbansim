@@ -72,7 +72,9 @@ class XMLConfiguration(Configuration):
             return
         if node.nodeType!=node.ELEMENT_NODE:
             raise ValueError, 'internal error - argument is not an element node'
-        result_dict[node.tagName] = self._convert_node_to_data(self._get_single_child(node))
+        # temporary hack - convert the dictionary keys to strings.
+        # After we remove traits we can leave them as unicode (so take out the str() call)
+        result_dict[str(node.tagName)] = self._convert_node_to_data(self._get_single_child(node))
             
     def _convert_node_to_data(self, node):
         # convert 'node' to the corresponding Python data, and return the data
@@ -190,12 +192,12 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(config, {'description': 'a test configuration'})
         
     def test_str_and_unicode(self):
-        # check that the keys in the config dictionary are unicode, and that
+        # check that the keys in the config dictionary are str, and that
         # the str and unicode tags are working correctly
         f = os.path.join(self.test_configs, 'strings.xml')
         config = XMLConfiguration(f)
         for k in config.keys():
-            self.assert_(type(k) is unicode)
+            self.assert_(type(k) is str)
         self.assert_(type(config['s']) is str)
         self.assert_(type(config['u']) is unicode)
         
