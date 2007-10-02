@@ -13,22 +13,19 @@
 # 
 
 import os
-
-from opus_core.storage_factory import StorageFactory
 from opus_core.configurations.database_configuration import DatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
-from urbansim.configs.general_configuration import GeneralConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 
 
-class Baseline(GeneralConfiguration):
+class Baseline(AbstractUrbansimConfiguration):
     """Eugene's baseline configuration.
     """
     def __init__(self):
-        config = AbstractUrbansimConfiguration()
+        AbstractUrbansimConfiguration.__init__(self)
         
         config_changes = {
             'description':'Eugene baseline',
@@ -139,5 +136,5 @@ class Baseline(GeneralConfiguration):
                 package_order_exceptions={},
                 ),
             }
-        config.merge(config_changes)
-        self.merge(config)
+        self.merge(config_changes)
+        
