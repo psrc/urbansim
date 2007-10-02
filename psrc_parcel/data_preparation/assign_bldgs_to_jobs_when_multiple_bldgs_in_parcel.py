@@ -17,7 +17,6 @@ from numpy import array, where, logical_and, arange, ones, cumsum, zeros, alltru
 from numpy.random import seed
 from scipy.ndimage import sum as ndimage_sum
 from opus_core.logger import logger
-from opus_core.store.opus_database import OpusDatabase
 from opus_core.storage_factory import StorageFactory
 from opus_core.sampling_toolbox import sample_noreplace, sample_replace, probsample_noreplace, probsample_replace
 from opus_core.datasets.dataset_pool import DatasetPool
@@ -26,6 +25,8 @@ from opus_core.misc import unique_values, create_combination_indices
 from opus_core.variables.attribute_type import AttributeType
 from urbansim.datasets.job_dataset import JobDataset
 from unroll_jobs_from_establishments import UnrollJobsFromEstablishments
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 class DB_settings(object):
     db_host_name='trondheim.cs.washington.edu'
@@ -34,12 +35,17 @@ class DB_settings(object):
 
 class MysqlStorage:
     def get(self, database):
+        db_config = DatabaseServerConfiguration(
+            host_name = DB_settings.db_host_name,
+            user_name = DB_settings.db_user_name,
+            password = DB_settings.db_password                                              
+        )
+        db_server = DatabaseServer(db_config)
+        db = db_server.get_database(database)
+        
         storage = StorageFactory().get_storage(
             'sql_storage',
-            hostname = DB_settings.db_host_name,
-            username = DB_settings.db_user_name,
-            password = DB_settings.db_password,
-            database_name = database)
+            storage_location = db)
         return storage
 
 class FltStorage:

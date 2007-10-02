@@ -21,6 +21,8 @@ from opus_core.datasets.dataset_pool import DatasetPool
 from urbansim_parcel.datasets.business_dataset import BusinessDataset
 from urbansim.datasets.job_dataset import JobDataset
 from urbansim.datasets.building_dataset import BuildingDataset
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 class DB_settings(object):
     db_host_name='trondheim.cs.washington.edu'
@@ -29,12 +31,17 @@ class DB_settings(object):
 
 class MysqlStorage:
     def get(self, database):
+        db_config = DatabaseServerConfiguration(
+            host_name = DB_settings.db_host_name,
+            user_name = DB_settings.db_user_name,
+            password = DB_settings.db_password                                              
+        )
+        db_server = DatabaseServer(db_config)
+        db = db_server.get_database(database)
+        
         storage = StorageFactory().get_storage(
-           'sql_storage',
-           hostname = DB_settings.db_host_name,
-           username = DB_settings.db_user_name,
-           password = DB_settings.db_password,
-           database_name = database)
+            'sql_storage',
+            storage_location = db)
         return storage
 
 class FltStorage:
