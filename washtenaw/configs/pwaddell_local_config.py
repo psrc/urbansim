@@ -25,7 +25,7 @@ my_cache_config = CreatingBaseyearCacheConfiguration(
             existing_cache_to_copy = '/urbansim_cache/semcog/cache_source',
             #years_to_cache = range(2000,2001)
             ),
-        cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
+        cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
         tables_to_cache = Baseline.tables_to_cache,
         tables_to_copy_to_previous_years = Baseline.tables_to_copy_to_previous_years,
     )

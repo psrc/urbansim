@@ -144,7 +144,7 @@ class Baseline(GeneralConfiguration):
                  baseyear_cache = BaseyearCacheConfiguration(
                     existing_cache_to_copy = "/urbansim_cache/washtenaw/cache_source",
                     ),
-                cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
+                cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = self.tables_to_cache,
                 tables_to_cache_nchunks = {'gridcells': 1},
                 tables_to_copy_to_previous_years = self.tables_to_copy_to_previous_years,

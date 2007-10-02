@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from urbansim.model_coordinators.cache_mysql_data import CacheMysqlData
+from urbansim.model_coordinators.cache_scenario_database import CacheScenarioDatabase
 from opus_core.session_configuration import SessionConfiguration
 
 """
@@ -23,5 +23,5 @@ Once the cache is there, you can keep reusing it, e.g. for estimation.
 """
 
 from washtenaw.estimation.my_estimation_config import run_configuration
-CacheMysqlData().run(run_configuration)
+CacheScenarioDatabase().run(run_configuration)
 

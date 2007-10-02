@@ -38,7 +38,7 @@ my_configuration_general = {
     'low_memory_mode':False,
     'cache_directory':'/urbansim_cache/workshop/washtenaw_estimation', # change or leave out
     'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-        cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
+        cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
         unroll_gridcells = True,
         cache_from_mysql = False,
         baseyear_cache = BaseyearCacheConfiguration(
