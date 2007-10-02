@@ -92,11 +92,8 @@ if __name__ == '__main__':
     input_storage = flt_storage(storage_location = cache_path)
     
     output_storage = sql_storage(
-                        username = user_name,
-                        password = password,
-                        hostname = host_name,
-                        database_name = database_name)
-        
+                        storage_location = db)
+            
     logger.start_block('Exporting cache to mysql...')
     try:
         if table_name is None:

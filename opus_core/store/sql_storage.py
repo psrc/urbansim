@@ -16,7 +16,7 @@ from numpy import array, dtype
 
 try:
     import sqlalchemy
-    from sqlalchemy import create_engine, Table, Column, MetaData
+    from sqlalchemy import Table, Column
     from sqlalchemy.types import Integer, Numeric, String, Float, Boolean    
 except ImportError:
     sqlalchemy = None
@@ -32,11 +32,7 @@ from opus_core.store.storage import Storage
 
 class sql_storage(Storage):
     def __init__(self,  
-                 username, password, hostname, 
-                 database_name, 
-                 protocol = 'mysql',
-                 port=None,
-                 reflect = True):
+                 storage_location):
         """
         protocol: 'sqlite', 'mysql', 'postgres', 'oracle', 'mssql', or 'firebird'
           - A corresponding module must be installed
@@ -45,35 +41,16 @@ class sql_storage(Storage):
             raise ImportError('The sqlalchemy Python module must be installed '
                 'before using sql_storage. See http://www.sqlalchemy.org/')
         
-        if port is not None:
-            port_string = ':%s' % port
-        else:
-            port_string = ''
-        
-        connection_string = '%s://%s:%s@%s%s/%s' % (
-            protocol,
-            username,
-            password,
-            hostname,
-            port_string,
-            database_name
-            )     
-        
-        self._engine = create_engine(connection_string)
-        self._metadata = MetaData(
-            bind = self._engine
-        )
-        if reflect:
-            self._metadata.reflect()
+        self._my_db = storage_location
         
     def get_storage_location(self):
-        return str(self._engine.url)
+        return str(self._my_db.engine.url)
       
     #TODO: what is id_name supposed to do? 
     def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True, id_name=None):
-        self._metadata.reflect()
+        self._my_db.metadata.reflect()
         
-        table = Table(table_name, self._metadata, autoload=True)
+        table = Table(table_name, self._my_db.metadata, autoload=True)
             
         query_results = table.select().execute()
             
@@ -105,7 +82,7 @@ class sql_storage(Storage):
         
         
     def write_table(self, table_name, table_data, overwrite_existing = True):
-        self._metadata.reflect()
+        self._my_db.metadata.reflect()
         
         table_length, _ = self._get_column_size_and_names(table_data)
         
@@ -119,11 +96,11 @@ class sql_storage(Storage):
             elif column_data.dtype == 'f':
                 table_data[column_name] = [float(cell) for cell in column_data]
             
-        table = Table(table_name, self._metadata, *columns)
+        table = Table(table_name, self._my_db.metadata, *columns)
         if overwrite_existing:
             table.drop(checkfirst = True)
         
-        connection = self._engine.connect()
+        connection = self._my_db.engine.connect()
         try:
             transaction = connection.begin()
             try:
@@ -155,11 +132,11 @@ class sql_storage(Storage):
             connection.close()
 
     def get_column_names(self, table_name, lowercase=True):
-        self._metadata.reflect()
-        if table_name not in self._metadata.tables:
+        self._my_db.metadata.reflect()
+        if table_name not in self._my_db.metadata.tables:
             raise
         
-        table = self._metadata.tables[table_name]
+        table = self._my_db.metadata.tables[table_name]
         
         if lowercase:
             col_names = [column.name.lower() for column in table.columns]
@@ -168,8 +145,8 @@ class sql_storage(Storage):
         return col_names
     
     def get_table_names(self):
-        self._metadata.reflect()
-        tables = [table.name for table in self._metadata.table_iterator()]
+        self._my_db.metadata.reflect()
+        tables = [table.name for table in self._my_db.metadata.table_iterator()]
         return tables
     
     def _get_sql_alchemy_type_from_numpy_dtype(self, column_dtype):
@@ -218,29 +195,30 @@ else:
     from opus_core.store.storage import TestStorageInterface
     from opus_core.database_management.database_server import DatabaseServer
     from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
-
+    from opus_core.database_management.opus_database import OpusDatabase
+    
     class SQLStorageTest(TestStorageInterface):
         """
         Uses MySQL and sqlite for these tests.
         """
         def setUp(self):
             self.database_name = 'test_database'
-            protocol = 'mysql'
+            self.protocol = 'mysql'
             
             config = DatabaseServerConfiguration()
-
+            self.username = config.user_name
+            self.hostname = config.host_name
+            self.password = config.password 
+            
             self.db_server = DatabaseServer(config)
             
             self.db_server.drop_database(self.database_name)
             self.db_server.create_database(self.database_name)
 
             # Use MySQL to test this.
+            db = self.db_server.get_database(self.database_name)
             self.storage = sql_storage(
-                protocol = protocol,
-                username = config.user_name,
-                password = config.password,
-                hostname = config.host_name,
-                database_name = self.database_name,
+                storage_location = db
                 )
             
         def tearDown(self):
@@ -249,36 +227,12 @@ else:
             
             self.db_server.close()
         
-        def test_get_storage_location_returns_database_url_built_from_the_constructor_arguments_not_including_port(self):
-            storage = sql_storage(
-                protocol = 'mysql',
-                username = 'username',
-                password = 'password',
-                hostname = 'hostname',
-                database_name = 'database_name',
-                reflect = False
-                )
-                
-            expected_url = 'mysql://username:password@hostname/database_name'
-            actual_url = storage.get_storage_location()
-            
-            self.assertEqual(expected_url, actual_url)
-            
-        def test_get_storage_location_returns_database_url_built_from_the_constructor_arguments_including_port(self):
-            storage = sql_storage(
-                protocol = 'sqlite',
-                username = 'username',
-                password = 'password',
-                hostname = 'hostname',
-                database_name = 'database_name',
-                port = 9999,
-                reflect = False
-                )
-                
-            expected_url = 'sqlite://username:password@hostname:9999/database_name'
-            actual_url = storage.get_storage_location()
-            
-            self.assertEqual(expected_url, actual_url)
+#        def test_get_storage_location_returns_database_url_built_from_the_constructor_arguments_not_including_port(self):
+#                
+#            expected_url = '%s://%s:%s@%s/%s'%(self.protocol,self.username, self.password, self.hostname, self.database_name)
+#            actual_url = self.storage.get_storage_location()
+#            
+#            self.assertEqual(expected_url, actual_url)
             
         def test_write_table_creates_a_table_with_the_given_table_name_and_data(self):
             from MySQLdb import ProgrammingError, OperationalError
