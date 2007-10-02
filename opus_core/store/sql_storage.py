@@ -195,7 +195,6 @@ else:
     from opus_core.store.storage import TestStorageInterface
     from opus_core.database_management.database_server import DatabaseServer
     from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
-    from opus_core.database_management.opus_database import OpusDatabase
     
     class SQLStorageTest(TestStorageInterface):
         """
