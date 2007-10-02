@@ -51,20 +51,20 @@ class CreatingBaseyearCacheConfigurationView(View):
             TableCacheConfigurationView(cbcc.table_cache_configuration))
             
         cbcc.add_trait('load_table_specifications_from_input_source', Event(editor=ButtonEditor()))
-        cbcc.add_trait('_cache_mysql_data', Bool)
+        cbcc.add_trait('_cache_scenario_database', Bool)
         
-        if cbcc.cache_mysql_data == 'opus_core.cache.cache_mysql_data':
-            cbcc._cache_mysql_data = False
+        if cbcc.cache_scenario_database == 'opus_core.cache.cache_scenario_database':
+            cbcc._cache_scenario_database = False
         else:
-            cbcc._cache_mysql_data = True
+            cbcc._cache_scenario_database = True
         
-        def on_cache_mysql_data(event):
+        def on_cache_scenario_database(event):
             if event is False:
-                cbcc.cache_mysql_data = 'opus_core.cache.cache_mysql_data'
+                cbcc.cache_scenario_database = 'opus_core.cache.cache_scenario_database'
             else:
-                cbcc.cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data'
+                cbcc.cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database'
             
-        cbcc.on_trait_event(on_cache_mysql_data, '_cache_mysql_data')
+        cbcc.on_trait_event(on_cache_scenario_database, '_cache_scenario_database')
                     
         View.__init__(self,
             Group(
@@ -76,7 +76,7 @@ class CreatingBaseyearCacheConfigurationView(View):
                     Group('50', Item('cache_from_mysql', label='Remote input source', style='custom', help=self.cache_from_mysql_help), orientation='horizontal'),
                     Group(
                         Group('50',
-                            Item('_cache_mysql_data', label='Unroll gridcells', show_label=True, help=self.cache_mysql_help),
+                            Item('_cache_scenario_database', label='Unroll gridcells', show_label=True, help=self.cache_mysql_help),
                             orientation='horizontal',
                             ),
                         Item('input_configuration', style='custom', help=self.input_configuration_help),
@@ -118,7 +118,7 @@ if __name__ == '__main__':
     
     
     cbcc = CreatingBaseyearCacheConfiguration(
-        cache_mysql_data = 'opus_core.cache.cache_mysql_data',
+        cache_scenario_database = 'opus_core.cache.cache_scenario_database',
         cache_from_mysql = True,
         cache_location = CacheLocation(
             cache_directory_root = os.path.join('path', 'to', 'cache', 'root'),

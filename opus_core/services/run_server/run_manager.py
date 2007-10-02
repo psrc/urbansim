@@ -136,7 +136,7 @@ class RunManager(object):
             # Create baseyear cache
             if run_resources['creating_baseyear_cache_configuration'].cache_from_mysql:
                 ForkProcess().fork_new_process(
-                    run_resources['creating_baseyear_cache_configuration'].cache_mysql_data, run_resources)
+                    run_resources['creating_baseyear_cache_configuration'].cache_scenario_database, run_resources)
             else:
                 CacheFltData().run(run_resources)
                 

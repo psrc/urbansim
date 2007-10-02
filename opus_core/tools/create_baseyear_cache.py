@@ -35,10 +35,10 @@ class CreateBaseyearCache(object):
                 '--cache-directory to specify a cache directory to use.')
         
         exec(create_import_for_class(
-            config['creating_baseyear_cache_configuration'].cache_mysql_data,
-            'CacheMysqlData'))
+            config['creating_baseyear_cache_configuration'].cache_scenario_database,
+            'CacheScenarioDatabase'))
         
-        CacheMysqlData().run(config)
+        CacheScenarioDatabase().run(config)
         logger.log_status("Database %s cached to %s" % (config['input_configuration'].database_name,
                            config['cache_directory']))
                            

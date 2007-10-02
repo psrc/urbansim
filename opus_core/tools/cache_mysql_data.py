@@ -39,5 +39,5 @@ SessionConfiguration(new_instance=True,
                      in_storage=AttributeCache())
 
 #logger.enable_memory_logging()
-exec(create_import_for_class(resources['creating_baseyear_cache_configuration'].cache_mysql_data, 'CacheMysqlData'))
-CacheMysqlData().run(resources)
+exec(create_import_for_class(resources['creating_baseyear_cache_configuration'].cache_scenario_database, 'CacheScenarioDatabase'))
+CacheScenarioDatabase().run(resources)

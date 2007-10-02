@@ -74,11 +74,8 @@ class CacheScenarioDatabase(Model):
         """
         database = self.database_server.get_database(database_name)
         in_storage = StorageFactory().get_storage(
-            type='sql_storage', 
-            hostname = config['input_configuration'].host_name,
-            username = config['input_configuration'].user_name,
-            password = config['input_configuration'].password,
-            database_name = database_name)
+            type='sql_storage',
+            storage_location = database)
         
         for table_name in tables:
             if table_name in self.tables_to_cache:

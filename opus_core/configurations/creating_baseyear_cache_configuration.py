@@ -46,7 +46,7 @@ class CreatingBaseyearCacheConfiguration(HasStrictTraits):
     cache_directory_root = Str
     cache_from_mysql = Bool
     baseyear_cache = Instance(BaseyearCacheConfiguration)
-    cache_mysql_data = Str
+    cache_scenario_database = Str
     tables_to_cache = ListStr
     tables_to_cache_nchunks = DictStrInt
     tables_to_copy_to_previous_years = DictStrInt
@@ -58,7 +58,7 @@ class CreatingBaseyearCacheConfiguration(HasStrictTraits):
 #===============================================================================
     def __init__(self,
             cache_directory_root = mktemp(prefix='opus_tmp'),
-            cache_mysql_data = 'opus_core.cache.cache_mysql_data',
+            cache_scenario_database = 'opus_core.cache.cache_scenario_database',
             cache_from_mysql = True,
             baseyear_cache = Undefined,
             tables_to_cache = [],
@@ -79,7 +79,7 @@ class CreatingBaseyearCacheConfiguration(HasStrictTraits):
                 
         self.cache_directory_root = cache_directory_root
         self.cache_from_mysql = cache_from_mysql
-        self.cache_mysql_data = cache_mysql_data
+        self.cache_scenario_database = cache_scenario_database
         self.tables_to_cache = tables_to_cache
         self.tables_to_cache_nchunks = tables_to_cache_nchunks
         self.tables_to_copy_to_previous_years = tables_to_copy_to_previous_years
@@ -104,7 +104,7 @@ class CreatingBaseyearCacheConfigurationTests(opus_unittest.OpusTestCase):
         pass
     
     def test_creating_baseyear_cache_configuration(self):
-        expected_cache_mysql_data = 'opus_core.store.cache_mysql_data'
+        expected_cache_scenario_database = 'opus_core.store.cache_scenario_database'
         expected_cache_directory_root = os.path.join('path','to','cache')
         expected_cache_from_mysql = True
         expected_baseyear_cache = BaseyearCacheConfiguration(
@@ -124,7 +124,7 @@ class CreatingBaseyearCacheConfigurationTests(opus_unittest.OpusTestCase):
             }
         
         cbcc = CreatingBaseyearCacheConfiguration(
-            cache_mysql_data = expected_cache_mysql_data,
+            cache_scenario_database = expected_cache_scenario_database,
             cache_directory_root = expected_cache_directory_root,
             cache_from_mysql = expected_cache_from_mysql,
             baseyear_cache = expected_baseyear_cache,
@@ -133,7 +133,7 @@ class CreatingBaseyearCacheConfigurationTests(opus_unittest.OpusTestCase):
             tables_to_copy_to_previous_years = expected_tables_to_copy_to_previous_years,
             )
         
-        self.assertEqual(cbcc.cache_mysql_data, expected_cache_mysql_data)
+        self.assertEqual(cbcc.cache_scenario_database, expected_cache_scenario_database)
         self.assertEqual(cbcc.cache_directory_root, expected_cache_directory_root)
         self.assertEqual(cbcc.cache_from_mysql, expected_cache_from_mysql)
         self.assertEqual(cbcc.baseyear_cache, expected_baseyear_cache)
