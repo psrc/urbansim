@@ -25,7 +25,6 @@ from opus_core.database_management.database_server_configuration import Database
 #from opus_core.resources import Resources
 #from opus_core.services.run_server.misc import create_datasets_from_flt
 #from sandbox.progress import ProgressMeter
-#from opus_core.store.opus_database import OpusDatabase
 
 class HouseholdSynthesizer(object):
     """This class assign household from zone (taz) to building. It may only work for the purpose of sanfrancisco project"""
