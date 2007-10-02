@@ -44,7 +44,7 @@ class PullTravelDataAfterQuickTmRun(GeneralConfiguration):
                 cache_from_mysql = True,
                 baseyear_cache = BaseyearCacheConfiguration(
                                  r'D:\urbansim_cache\run_1417.2006_12_08_01_50'),
-                cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
+                cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
                     'annual_employment_control_totals',
                     'annual_household_control_totals',

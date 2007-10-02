@@ -36,7 +36,7 @@ class BaselineCopiedTravelData(GeneralConfiguration):
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
                 cache_directory_root = '/urbansim_cache/psrc/gridcell_run_set', #'/projects/urbansim5/urbansim_cache/psrc_gridcell',
                 cache_from_mysql = True,
-                cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',                
+                cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',                
                 tables_to_cache = [
                     'annual_employment_control_totals',
                     'annual_household_control_totals',

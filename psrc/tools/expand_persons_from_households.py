@@ -24,7 +24,7 @@ from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfi
 
 from numpy import array, arange
 
-from urbansim.model_coordinators.cache_mysql_data import CacheMysqlData
+from urbansim.model_coordinators.cache_scenario_database import CacheScenarioDatabase
 
 from psrc.datasets.person_dataset import PersonDataset
 
@@ -56,7 +56,7 @@ class ExpandPersons(object):
         
         if not os.path.exists(os.path.join(config['cache_directory'], str(config['base_year']))):
             #raise RuntimeError, "datasets uncached; run prepare_estimation_data.py first"
-            CacheMysqlData().run(config, unroll_gridcells=False)
+            CacheScenarioDatabase().run(config, unroll_gridcells=False)
 
         for dataset_name in config['datasets_to_preload']:
             SessionConfiguration().get_dataset_from_pool(dataset_name)

@@ -48,7 +48,7 @@ if does_database_server_exist_for_this_hostname(
             ),
         'cache_directory':'/tmp/urbansim_cache/psrc_gridcell',
         'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-            cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
+            cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
             tables_to_cache = [
                 'annual_employment_control_totals',
                 'annual_household_control_totals',

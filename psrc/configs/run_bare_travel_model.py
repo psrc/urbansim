@@ -35,7 +35,7 @@ class ModelConfig(GeneralConfiguration):
 
             'cache_directory':cache_directory,
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-                cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
+                cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 unroll_gridcells = False,
                 tables_to_cache = [],
                 tables_to_copy_to_previous_years = {},
