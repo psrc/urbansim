@@ -94,10 +94,9 @@ class OpusDatabase(object):
         self.metadata.reflect()
         
         results = result.fetchall()
-        resultlist = list(map(lambda x: list(x), results))
-        print 'resultlist = list comprehension: ', resultlist == [list(row) for row in results]
-        print 'descriptionlist = list comprehension: ', [map(lambda x: x[0], result.cursor.cursor.description)] == [d[0] for d in result.cursor.cursor.description]
-        return [map(lambda x: x[0], result.cursor.cursor.description)] + resultlist
+        resultlist = [list(row) for row in results]
+        
+        return [[d[0] for d in result.cursor.cursor.description]] + resultlist
 
 
     def get_schema_from_table(self, table_name):
