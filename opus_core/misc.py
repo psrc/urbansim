@@ -709,23 +709,23 @@ def does_database_server_exist_for_this_hostname(module_name, hostname, protocol
         return False
     password = os.environ['%sPASSWORD'%protocol.upper()]
 
- #   try:
-    db_config = DatabaseServerConfiguration(
-        host_name = hostname,
-        user_name = user_name,
-        password = password,
-        protocol = protocol
-    )
-    db_server = DatabaseServer(db_config)
-        
-#    except:
-#        if log_on_failure:
-#            logger.log_warning('The tests will not be run for module:\n'
-#                               '  %s\n'
-#                               'since we cannot connect to database server on host %s '
-#                               ' with user %s.'
-#                               % (module_name, hostname, os.environ['%sUSERNAME'%protocol.upper()]))
-#        return False
+    try:
+        db_config = DatabaseServerConfiguration(
+            host_name = hostname,
+            user_name = user_name,
+            password = password,
+            protocol = protocol
+        )
+        db_server = DatabaseServer(db_config)
+            
+    except:
+        if log_on_failure:
+            logger.log_warning('The tests will not be run for module:\n'
+                               '  %s\n'
+                               'since we cannot connect to database server on host %s '
+                               ' with user %s.'
+                               % (module_name, hostname, os.environ['%sUSERNAME'%protocol.upper()]))
+        return False
     return True
 
 def does_test_database_server_exist(module_name, protocol = 'mysql', log_on_failure=True, logger=logger):
