@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
 
-<!-- For now, just get the old-style parent configuration.  The  Eugene baseline
-configuration apparently inherits from both GeneralConfiguration and
-AbstractUrbansimConfiguration, but AbstractUrbansimConfiguration also inherits
-from GeneralConfiguration, so this version just has AbstractUrbansimConfiguration
-as the parent.  Ugh.  -->
+<!-- For now, just get the old-style parent configuration.  -->
 <parent>
 <oldconfig path="urbansim.configs.base_configuration">AbstractUrbansimConfiguration</oldconfig>
 </parent>
