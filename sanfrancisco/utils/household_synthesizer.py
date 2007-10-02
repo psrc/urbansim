@@ -20,7 +20,8 @@ from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.storage_factory import StorageFactory
 from opus_core.store.attribute_cache import AttributeCache
-from opus_core.store.opus_database import OpusDatabase
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 #from opus_core.resources import Resources
 #from opus_core.services.run_server.misc import create_datasets_from_flt
 #from sandbox.progress import ProgressMeter
@@ -38,13 +39,17 @@ class HouseholdSynthesizer(object):
                              package_order_exceptions=config['dataset_pool_configuration'].package_order_exceptions,
                              in_storage=AttributeCache())
         
+        db_config = DatabaseServerConfiguration(
+               host_name=config['output_configuration'].host_name,
+               user_name=config['output_configuration'].user_name,
+               password=config['output_configuration'].password                                               
+        )
+        db_server = DatabaseServer(db_config)
+        db = db_server.get_database(config['output_configuration'].database_name)
         if 'output_configuration' in config:
             out_storage = StorageFactory().get_storage(
                'sql_storage', 
-               hostname=config['output_configuration'].host_name,
-               username=config['output_configuration'].user_name,
-               password=config['output_configuration'].password,
-               database_name=config['output_configuration'].database_name)
+               storage_location = db)
         else:
             output_cache = os.path.join(config['cache_directory'], str(config['base_year']+1))
             out_storage = StorageFactory().get_storage('flt_storage', storage_location=output_cache)
