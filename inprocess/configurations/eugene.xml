@@ -72,7 +72,7 @@ Eugene's baseline configuration (adapted from the Python dictionary version in e
       <existing_cache_to_copy>c:/urbansim_cache/run_962.2006_11_07_08_50</existing_cache_to_copy>
     </class>
   </baseyear_cache>
-  <cache_mysql_data>urbansim.model_coordinators.cache_mysql_data</cache_mysql_data>
+  <cache_scenario_database>urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
   <tables_to_cache>
     <list>
     <str>annual_employment_control_totals</str>
