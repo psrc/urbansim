@@ -162,8 +162,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
 
     def setUp(self):
         # find the directory containing the test xml configurations
-        sandboxdir = __import__('sandbox').__path__[0]
-        self.test_configs = os.path.join(sandboxdir, 'borning', 'configurations', 'test_configurations')
+        inprocessdir = __import__('inprocess').__path__[0]
+        self.test_configs = os.path.join(inprocessdir, 'configurations', 'test_configurations')
 
     def test_types(self):
         f = os.path.join(self.test_configs, 'manytypes.xml')
