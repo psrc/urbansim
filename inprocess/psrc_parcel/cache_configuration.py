@@ -59,7 +59,7 @@ class CacheConfiguration(Configuration):
             baseyear_cache = BaseyearCacheConfiguration(
                 existing_cache_to_copy = r'D:/urbansim_cache/full_psrc',
                 ),
-            cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
+            cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
             tables_to_cache = tables_to_cache,
             tables_to_cache_nchunks = {
                 'parcels':8,
