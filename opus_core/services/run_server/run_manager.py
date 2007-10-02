@@ -17,7 +17,6 @@ from time import localtime, strftime
 from opus_core.logger import logger
 from opus_core.fork_process import ForkProcess
 from opus_core.configuration import Configuration
-from opus_core.store.opus_database import OpusDatabase
 from opus_core.store.utils.cache_flt_data import CacheFltData
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
@@ -45,10 +44,14 @@ class RunManager(object):
         """Returns the resources for this run_id, as stored in the run_activity table.
         """
 #        import pdb; pdb.set_trace()
-        db = OpusDatabase(hostname=services_host_name, 
-                          username=services_user_name, 
-                          password=services_password, 
-                          database_name=services_database_name)
+        db_config = DatabaseServerConfiguration(
+            host_name=services_host_name, 
+            user_name=services_user_name, 
+            password=services_password                                   
+        )
+        db_server = DatabaseServer(db_config)
+        db = db_server.get_database(services_database_name)
+                
         run_resources = db.GetResultsFromQuery("SELECT resources FROM run_activity WHERE status='started' and run_id = %s" % run_id)
         db.close()
         if len(run_resources) == 1:
@@ -181,10 +184,11 @@ class RunManager(object):
                     skip_cache_cleanup=False):
         """Restart the specified run."""
 
-        run_resources = self.create_run_resources_from_history(services_host_name=services_host_name,
-                                                                   services_database_name=services_database_name,
-                                                                   run_id=history_id,
-                                                                   restart_year=restart_year)
+        run_resources = self.create_run_resources_from_history(
+           services_host_name=services_host_name,
+           services_database_name=services_database_name,
+           run_id=history_id,
+           restart_year=restart_year)
         try:
 
             model_system = run_resources.get('model_system', None)
@@ -230,11 +234,14 @@ class RunManager(object):
     def get_processor_name(self,run_id, services_host_name, services_user_name, services_password, services_database_name = "services"):
         """ returns the name of the server where these run was processed"""
 
-
-        db = OpusDatabase(hostname=services_host_name, 
-                          username=services_user_name, 
-                          password=services_password, 
-                          database_name=services_database_name)
+        db_config = DatabaseServerConfiguration(
+            host_name=services_host_name, 
+            user_name=services_user_name, 
+            password=services_password                                   
+        )
+        db_server = DatabaseServer(db_config)
+        db = db_server.get_database(services_database_name)
+        
         results = db.GetResultsFromQuery("SELECT processor_name FROM run_activity WHERE run_id = %i"% run_id)
         db.close()
 
@@ -242,10 +249,14 @@ class RunManager(object):
 
     def get_name_for_id(self,run_id, services_host_name, services_user_name, services_password, services_database_name = "services"):
         """ returns the name given to this scenario run"""
-        db = OpusDatabase(hostname=services_host_name, 
-                          username=services_user_name, 
-                          password=services_password, 
-                          database_name=services_database_name)
+        db_config = DatabaseServerConfiguration(
+            host_name=services_host_name, 
+            user_name=services_user_name, 
+            password=services_password                                   
+        )
+        db_server = DatabaseServer(db_config)
+        db = db_server.get_database(services_database_name)
+
         results = db.GetResultsFromQuery("SELECT run_name FROM run_activity WHERE run_id = %i"% run_id)
         db.close()
 
