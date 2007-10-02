@@ -22,13 +22,18 @@ from opus_core.datasets.dataset import DatasetSubset
 from numpy import where, arange, resize, array, cumsum, concatenate, round_, any
 
 class BuildingConstructionModel(Model):
-    """Process any pre-scheduled development projects (those that have status 'active'). New buildings are 
+    """Process any (pre-)scheduled development projects (those that have status 'active'). New buildings are 
     created according to the corresponding velocity function. The velocity function dataset is taken from dataset_pool.
+    Buildings contained in the buildings_to_be_demolished list are removed from the building_set and any households
+    and jobs placed in those buildings are unplaced.
     """
     model_name = "BuildingConstructionModel"
 
-    def run (self, development_proposal_set, building_dataset, dataset_pool, consider_amount_built_in_parcels = True,
-             current_year=None):
+    def run (self, development_proposal_set, building_dataset, dataset_pool, buildings_to_be_demolished=[], 
+             consider_amount_built_in_parcels = True, current_year=None):
+        
+        self.demolish_buildings(buildings_to_be_demolished, building_dataset, dataset_pool)
+
         if development_proposal_set.size() <= 0:
             logger.log_status("Proposal set is empty. Nothing to be constructed.")
             return development_proposal_set
@@ -167,7 +172,24 @@ class BuildingConstructionModel(Model):
         for type_id in number_of_new_buildings.keys():
             logger.log_status("building type %s: %s" % (type_id, number_of_new_buildings[type_id]))
             
+        # remove active proposals from the proposal set
+#        development_proposal_set.remove_elements(active_idx)
+        # alternatively, set status_id of active proposals to id_not_available
+        development_proposal_set.set_values_of_one_attribute("status_id", development_proposal_set.id_not_available, index=active_idx)
+        dataset_pool._remove_dataset(proposal_component_set.get_dataset_name())
+        return development_proposal_set
+    
+    def demolish_buildings(self, buildings_to_be_demolished, building_dataset, dataset_pool):
+        if isinstance(buildings_to_be_demolished, list):
+            buildings_to_be_demolished = array(buildings_to_be_demolished)
+            
+        if buildings_to_be_demolished.size <= 0:
+            return
+        
+        building_dataset.remove_elements(building_dataset.get_id_index(buildings_to_be_demolished))
+        logger.log_status("%s buildings demolished." % buildings_to_be_demolished.size)
         # remove occupants from demolished buildings
+        buildings_id_name = building_dataset.get_id_name()[0]
         for agent_name in ['household', 'job']:            
             agents = dataset_pool.get_dataset(agent_name)
             location_ids = agents.get_attribute(buildings_id_name)
@@ -175,11 +197,4 @@ class BuildingConstructionModel(Model):
             if any(id_index_in_buildings < 0):
                 idx = where(id_index_in_buildings < 0)[0]
                 agents.modify_attribute(name=buildings_id_name, data=idx.size*[-1], index = idx)
-                logger.log_status("%s %ss removed from demolished buildings." % idx.size, agent_name)
-
-        # remove active proposals from the proposal set
-#        development_proposal_set.remove_elements(active_idx)
-        # alternatively, set status_id of active proposals to id_not_available
-        development_proposal_set.set_values_of_one_attribute("status_id", development_proposal_set.id_not_available, index=active_idx)
-        dataset_pool._remove_dataset(proposal_component_set.get_dataset_name())
-        return development_proposal_set
+                logger.log_status("%s %ss removed from demolished buildings." % (idx.size, agent_name))
