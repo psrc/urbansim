@@ -26,16 +26,19 @@ us_path = urbansim.__path__[0]
 from opus_core.storage_factory import StorageFactory
 storage = StorageFactory().get_storage('tab_storage',
     storage_location = os.path.join(us_path, "data/tutorial"))
-# Alternative - mysql storage
+# Alternative - sql storage
 #import os
-#from opus_core.store.opus_database import OpusDatabase
 #from opus_core.storage_factory import StorageFactory
-#connection = OpusDatabase(hostname = os.environ["MYSQLHOSTNAME"],
-#                              username = os.environ["MYSQLUSERNAME"],
-#                              password = os.environ["MYSQLPASSWORD"],
-#                              database_name = "mydatabase")
+#db_config = DatabaseServerConfiguration(
+#    host_name = os.environ["MYSQLHOSTNAME"],
+#    user_name = os.environ["MYSQLUSERNAME"],
+#    password = os.environ["MYSQLPASSWORD"],                                
+#)
+#db_server = DatabaseServer(db_config)
+#db = db_server.get_database('mydatabase')
+
 #storage = StorageFactory().get_storage('sql_storage',
-#        storage_location = connection)
+#        storage_location = db)
 from urbansim.datasets.household_dataset import HouseholdDataset
 households = HouseholdDataset(in_storage = storage,
     in_table_name = "households", id_name="household_id")
