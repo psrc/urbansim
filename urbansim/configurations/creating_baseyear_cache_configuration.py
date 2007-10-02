@@ -30,14 +30,14 @@ class CreatingBaseyearCacheConfiguration(CoreCreatingBaseyearCacheConfiguration)
     def __init__(self, 
             unroll_gridcells=True,
             cache_directory_root = mktemp(prefix='urbansim_tmp'),
-            cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
+            cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
             *args, **kwargs
             ):
         self.unroll_gridcells = unroll_gridcells
         
         CoreCreatingBaseyearCacheConfiguration.__init__(self,
             cache_directory_root = cache_directory_root,
-            cache_mysql_data = cache_mysql_data,
+            cache_scenario_database = cache_scenario_database,
             *args, **kwargs
             )
         
@@ -53,7 +53,7 @@ class TestCreatingBaseyearCacheConfiguration(opus_unittest.OpusTestCase):
         pass
         
     def test_creating_baseyear_cache_configuration(self):
-        expected_cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data'
+        expected_cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database'
         expected_cache_directory_root = os.path.join('path','to','cache')
         expected_cache_from_mysql = True
         expected_baseyear_cache = BaseyearCacheConfiguration(
@@ -74,7 +74,7 @@ class TestCreatingBaseyearCacheConfiguration(opus_unittest.OpusTestCase):
         expected_unroll_gridcells = True
         
         cbcc = CreatingBaseyearCacheConfiguration(
-            cache_mysql_data = expected_cache_mysql_data,
+            cache_scenario_database = expected_cache_scenario_database,
             cache_directory_root = expected_cache_directory_root,
             cache_from_mysql = expected_cache_from_mysql,
             baseyear_cache = expected_baseyear_cache,
@@ -84,7 +84,7 @@ class TestCreatingBaseyearCacheConfiguration(opus_unittest.OpusTestCase):
             unroll_gridcells = expected_unroll_gridcells,
             )
         
-        self.assertEqual(cbcc.cache_mysql_data, expected_cache_mysql_data)
+        self.assertEqual(cbcc.cache_scenario_database, expected_cache_scenario_database)
         self.assertEqual(cbcc.cache_directory_root, expected_cache_directory_root)
         self.assertEqual(cbcc.cache_from_mysql, expected_cache_from_mysql)
         self.assertEqual(cbcc.baseyear_cache, expected_baseyear_cache)

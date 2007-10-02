@@ -70,7 +70,7 @@ class TestGridcellUnrolling(opus_unittest.OpusTestCase):
         rmtree(self.temp_dir)
         
     def test_gridcell_unrolling(self):
-        """Checks that the unrolling of the gridcells by CacheMysqlData worked correctly.
+        """Checks that the unrolling of the gridcells by CacheScenarioDatabase worked correctly.
         """
         cache_directory = SimulationState().get_cache_directory()
         gridcells = SessionConfiguration().get_dataset_from_pool('gridcell')

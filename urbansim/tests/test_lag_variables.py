@@ -24,7 +24,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.session_configuration import SessionConfiguration
 
-from urbansim.model_coordinators.cache_mysql_data import CacheMysqlData
+from urbansim.model_coordinators.cache_scenario_database import CacheScenarioDatabase
 from urbansim.data.test_cache_configuration import TestCacheConfiguration
         
 class TestLagVariables(opus_unittest.OpusTestCase):
@@ -46,7 +46,7 @@ class TestLagVariables(opus_unittest.OpusTestCase):
         copytree(os.path.join(creating_baseyear_cache_configuration.baseyear_cache.existing_cache_to_copy, 
                               str(self.base_year)),
                  os.path.join(cache_directory, str(self.base_year)))
-        cacher = CacheMysqlData()
+        cacher = CacheScenarioDatabase()
         cacher.prepare_data_before_baseyear(cache_directory, self.base_year, creating_baseyear_cache_configuration)
         
         self.config['cache_directory'] = cache_directory

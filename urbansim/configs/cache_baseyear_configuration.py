@@ -43,7 +43,7 @@ class CacheBaseyearConfiguration(Configuration):
         config = {
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-                cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
+                cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
                     # tables needed for a standard set of UrbanSim models
                     'annual_employment_control_totals',

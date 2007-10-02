@@ -26,7 +26,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.simulation_state import SimulationState
 from opus_core.variables.attribute_type import AttributeType
-from opus_core.cache.cache_scenario_database import CacheScenarioDatabase
+from opus_core.cache.cache_scenario_database import CacheScenarioDatabase as CoreCacheScenarioDatabase
 from urbansim.datasets.job_dataset import JobDataset
 from urbansim.datasets.zone_dataset import ZoneDataset
 from urbansim.datasets.gridcell_dataset import GridcellDataset
@@ -37,7 +37,7 @@ from urbansim.model_coordinators.unroll_gridcells import UnrollGridcells
 from opus_core.session_configuration import SessionConfiguration
 
 
-class CacheMysqlData(Model):
+class CacheScenarioDatabase(Model):
     """Get data from MySQL into urbansim cache.  This includes
     the large database tables and lag data.
     """
@@ -70,7 +70,7 @@ class CacheMysqlData(Model):
         if debuglevel is None:
             debuglevel = config.get('debuglevel', 3)
 
-        CacheScenarioDatabase().run(config)
+        CoreCacheScenarioDatabase().run(config)
         
         self.prepare_data_before_baseyear(
             cache_directory,
@@ -137,4 +137,4 @@ if __name__ == "__main__":
                          package_order=resources['dataset_pool_configuration'].package_order,
                          package_order_exceptions=resources['dataset_pool_configuration'].package_order_exceptions,
                          in_storage=AttributeCache())
-    CacheMysqlData().run(resources)
+    CacheScenarioDatabase().run(resources)

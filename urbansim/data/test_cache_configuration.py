@@ -69,7 +69,7 @@ class TestCacheConfiguration(GeneralConfiguration):
                 baseyear_cache = BaseyearCacheConfiguration(
                     existing_cache_to_copy = cache_directory,
                     ),
-                cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
+                cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
                     'annual_employment_control_totals',
                     'annual_household_control_totals',

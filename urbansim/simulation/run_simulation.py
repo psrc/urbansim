@@ -44,7 +44,7 @@ class RunSimulation(object):
                              in_storage=AttributeCache())
         
         if config['creating_baseyear_cache_configuration'].cache_from_mysql:
-            ForkProcess().fork_new_process(self.config['creating_baseyear_cache_configuration'].cache_mysql_data, self.config)
+            ForkProcess().fork_new_process(self.config['creating_baseyear_cache_configuration'].cache_scenario_database, self.config)
         else:
             CacheFltData().run(self.config)
 
