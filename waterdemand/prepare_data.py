@@ -21,7 +21,7 @@ from numpy import where
 import os
 
 #step 1. unroll gridcell from 2000 to 1990
-from urbansim.model_coordinators.cache_mysql_data import CacheMysqlData
+from urbansim.model_coordinators.cache_scenario_database import CacheScenarioDatabase
 from opus_core.configuration import Configuration
 
 def rm_rf(path):
@@ -57,7 +57,7 @@ if __name__ == '__main__':
     #        'jobs', 
         ]})
     
-    #CacheMysqlData().run(gridcell_config)
+    #CacheScenarioDatabase().run(gridcell_config)
     
     # step 2 cache water demand data by 
     dbcon = ScenarioDatabase(hostname = os.environ['MYSQLHOSTNAME'],
