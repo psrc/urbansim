@@ -17,7 +17,6 @@ import os
 from opus_core.configuration import Configuration
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.simulation_state import SimulationState
-from opus_core.store.opus_database import OpusDatabase
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.storage_factory import StorageFactory
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
@@ -28,20 +27,28 @@ from urbansim.model_coordinators.cache_scenario_database import CacheScenarioDat
 
 from psrc.datasets.person_dataset import PersonDataset
 
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+
 
 class ExpandPersons(object):
     """This class creates a persons table from households by inserting 1 record for each worker in a household"""
     ## TODO: Is this class in use?
     def __init__(self, config):
         if 'output_configuration' in config:
-            out_con = OpusDatabase(hostname=config['output_configuration'].host_name,
-                                   username=config['output_configuration'].user_name,
-                                   password=config['output_configuration'].password,
-                                   database_name=config['output_configuration'].database_name)
+            config = AbstractUrbansimConfiguration()
+            db_config = DatabaseServerConfiguration(
+                host_name=config['output_configuration'].host_name,
+                user_name=config['output_configuration'].user_name,
+                password=config['output_configuration'].password                                                    
+            )
+            db_server = DatabaseServer(db_config)
+            db = db_server.get_database(config['output_configuration'].database_name)
+        
             out_storage = StorageFactory().build_storage_for_dataset(
-                type='sql_storage', storage_location=out_con)
+                type='sql_storage', storage_location=db)
         else:
-            out_storage = StorageFactory().build_storage_for_dataset(type='flt_storage',
+            out_storage = StorageFactory().get_storage(type='flt_storage',
                 storage_location=os.path.join(config['cache_directory'], str(config['base_year']+1)))
 
         simulation_state = SimulationState()

@@ -19,18 +19,19 @@ from opus_core.configurations.database_configuration import DatabaseConfiguratio
 
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 
 config = AbstractUrbansimConfiguration()
+db_server = DatabaseServer(DatabaseServerConfiguration())
+db = db_server.get_database('PSRC_2000_baseyear')
 
 config_changes = {
     'description':'simulation with elcm only',
     'in_storage':StorageFactory().get_storage('sql_storage',
-            hostname = 'trondheim.cs.washington.edu',
-            username = os.environ.get('MYSQLUSERNAME',''),
-            password = os.environ.get('MYSQLPASSWORD',''),
-            database_name = 'PSRC_2000_baseyear',
-        ),
+            storage_location = db
+                ),
     'cache_directory':None, ### TODO: Set this cache_directory to something useful.
     'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
         cache_directory_root = 'd:/urbansim_cache',

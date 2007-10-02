@@ -21,29 +21,33 @@ from opus_core.misc import does_database_server_exist_for_this_hostname
 from urbansim.configs.estimation_base_config import run_configuration as config
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+
 
 if does_database_server_exist_for_this_hostname(
         module_name = __name__, 
         hostname = os.environ.get('MYSQLHOSTNAME','localhost')):
+
+    db_config = DatabaseServerConfiguration()
+    db_server = DatabaseServer(db_config)
+    db = db_server.get_database('PSRC_2000_baseyear')
     
     psrc_config = {
         'in_storage':StorageFactory().get_storage(
             type='sql_storage', 
-            hostname = os.environ.get('MYSQLHOSTNAME','localhost'),
-            username = os.environ.get('MYSQLUSERNAME',''),
-            password = os.environ.get('MYSQLPASSWORD',''),
-            database_name = 'PSRC_2000_baseyear'),
+            storage_location = db),
             
         'input_configuration': DatabaseConfiguration(
-            host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
-            user_name     = os.environ.get('MYSQLUSERNAME',''),
-            password      = os.environ.get('MYSQLPASSWORD',''),
+            host_name     = db_config.host_name,
+            user_name     = db_config.user_name,
+            password      = db_config.password,
             database_name = 'PSRC_2000_baseyear',
             ),
         'output_configuration': DatabaseConfiguration(
-            host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
-            user_name     = os.environ.get('MYSQLUSERNAME',''),
-            password      = os.environ.get('MYSQLPASSWORD',''),
+            host_name     = db_config.host_name,
+            user_name     = db_config.user_name,
+            password      = db_config.password,
             database_name = 'PSRC_2000_estimation_output',
             ),
         'cache_directory':'/tmp/urbansim_cache/psrc_gridcell',

@@ -22,6 +22,8 @@ from urbansim.configs.general_configuration import GeneralConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 
 class PullTravelDataAfterQuickTmRun(GeneralConfiguration):
@@ -29,14 +31,13 @@ class PullTravelDataAfterQuickTmRun(GeneralConfiguration):
     """
     def __init__(self):
         config = AbstractUrbansimConfiguration()
-        
+        db_server = DatabaseServer(DatabaseServerConfiguration())
+        db = db_server.get_database('PSRC_2000_baseyear')
+                
         config_changes = {
             'description':'baseline with travel model',
             'in_storage':StorageFactory().get_storage('sql_storage',
-                    hostname = os.environ.get('MYSQLHOSTNAME','localhost'),
-                    username = os.environ.get('MYSQLHOSTNAME',''),
-                    password = os.environ.get('MYSQLHOSTNAME',''),
-                    database_name = 'PSRC_2000_baseyear',                    
+                    storage_location = db
                 ),
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(

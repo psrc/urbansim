@@ -62,10 +62,7 @@ if does_test_database_server_exist(module_name=__name__):
             
             in_storage = StorageFactory().get_storage(
                   'sql_storage',
-                  hostname = self.dbconfig.host_name,
-                  username = self.dbconfig.user_name,
-                  password = self.dbconfig.password,
-                  database_name = self.database_name)
+                  storage_location = self.database)
             
             gc_set = GridcellDataset(in_storage=in_storage, in_table_name='gridcells_exported')
             job_set = JobDataset(in_storage=in_storage, in_table_name='jobs_exported')
