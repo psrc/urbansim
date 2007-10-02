@@ -56,11 +56,11 @@ class RunActivity(object):
             pickled_resources = pickle.dumps(resources)
                              
         values = {"run_id":history_id, 
-             "run_name":"'%s'" % resources.get('description', "No description"),
-             "status":"'%s'" % status,
-             "processor_name":"'%s'" % get_host_name(), 
+             "run_name":'%s' % resources.get('description', "No description"),
+             "status":'%s' % status,
+             "processor_name":'%s' % get_host_name(), 
              "date_time":strftime("'%Y-%m-%d %H:%M:%S'", localtime()),
-             "resources":"'%s'" % pickled_resources,
+             "resources":'%s' % pickled_resources,
              }        
 
         run_activity_table = self.storage.get_table('run_activity')
