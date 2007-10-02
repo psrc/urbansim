@@ -131,9 +131,9 @@ class Estimator(object):
             if not db_server.has_database(database_name):
                 db_server.create_database(database_name)
 
-            output_db = db_server.get_database(database_name,
-                                               scenario=False)
-            out_storage = StorageFactory().build_storage_for_dataset(type='sql_storage',
+            output_db = db_server.get_database(database_name)
+            out_storage = StorageFactory().get_storage(
+                type='sql_storage',
                 storage_location=output_db)
         else:
             raise StandardError, "No output_configuration given."

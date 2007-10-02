@@ -31,6 +31,9 @@ from urbansim.datasets.zone_dataset import ZoneDataset
 from urbansim.datasets.job_dataset import JobDataset
 from urbansim.models.household_location_choice_model_creator import HouseholdLocationChoiceModelCreator
 
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+
 
 # Datasets
 ##########
@@ -122,13 +125,17 @@ agents_psrc = HouseholdDataset(in_storage = StorageFactory().get_storage('flt_st
 agents_psrc.summary()
 
 dbcon = []
-                     
+
+config = DatabaseServerConfiguration(
+    host_name=os.environ['MYSQLHOSTNAME'],
+    user_name=os.environ['MYSQLUSERNAME'],
+    password=os.environ['MYSQLPASSWORD'])
+server = DatabaseServer(config)
+db = server.get_database('PSRC_2000_baseyear')
+                   
 storage = StorageFactory().get_storage(
     'sql_storage',
-    hostname=os.environ['MYSQLHOSTNAME'],
-    username=os.environ['MYSQLUSERNAME'],
-    password=os.environ['MYSQLPASSWORD'],
-    database_name="PSRC_2000_baseyear")
+    storage_location = db)
 
 coefficients = Coefficients(in_storage=storage)
 coefficients.load(in_table_name="household_location_choice_model_coefficients")
@@ -163,10 +170,7 @@ result = hlcm_psrc.run(specification, coef, agents_psrc,
 
 storage = StorageFactory().get_storage(
     'sql_storage',
-    hostname=os.environ['MYSQLHOSTNAME'],
-    username=os.environ['MYSQLUSERNAME'],
-    password=os.environ['MYSQLPASSWORD'],
-    database_name="PSRC_2000_baseyear")
+    storage_location = db)
 
 zones_psrc = ZoneDataset(in_storage = storage)
 hlcm_psrc_zones = HouseholdLocationChoiceModelCreator().get_model(
