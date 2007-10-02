@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1127</width>
-    <height>950</height>
+    <width>950</width>
+    <height>991</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -58,15 +58,15 @@
         </size>
        </property>
        <property name="currentIndex" >
-        <number>3</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="datamanager_page" >
         <property name="geometry" >
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>869</width>
-          <height>780</height>
+          <width>529</width>
+          <height>821</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -100,7 +100,7 @@
            </column>
            <column>
             <property name="text" >
-             <string>Value</string>
+             <string>Type</string>
             </property>
            </column>
            <item>
@@ -631,8 +631,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>869</width>
-          <height>780</height>
+          <width>529</width>
+          <height>821</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -666,7 +666,7 @@
            </column>
            <column>
             <property name="text" >
-             <string>Value</string>
+             <string>Type</string>
             </property>
            </column>
            <item>
@@ -1120,6 +1120,14 @@
               <property name="text" >
                <string/>
               </property>
+              <item>
+               <property name="text" >
+                <string>Specification</string>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
              </item>
             </item>
             <item>
@@ -1162,8 +1170,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>869</width>
-          <height>780</height>
+          <width>98</width>
+          <height>80</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -1197,7 +1205,7 @@
            </column>
            <column>
             <property name="text" >
-             <string>Value</string>
+             <string>Type</string>
             </property>
            </column>
            <item>
@@ -1364,8 +1372,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>869</width>
-          <height>780</height>
+          <width>529</width>
+          <height>821</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -1399,7 +1407,7 @@
            </column>
            <column>
             <property name="text" >
-             <string>Value</string>
+             <string>Type</string>
             </property>
            </column>
            <item>
@@ -1556,11 +1564,16 @@
       </widget>
       <widget class="QTabWidget" name="tabWidget" >
        <property name="currentIndex" >
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_2" >
         <attribute name="title" >
-         <string>Workspace</string>
+         <string>Editor</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="tab" >
+        <attribute name="title" >
+         <string>Python Shell</string>
         </attribute>
        </widget>
        <widget class="QWidget" name="tab_mapView" >
@@ -1601,9 +1614,9 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tab" >
+       <widget class="QWidget" name="tab_3" >
         <attribute name="title" >
-         <string>Python Shell</string>
+         <string>Log</string>
         </attribute>
        </widget>
       </widget>
@@ -1616,7 +1629,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1127</width>
+     <width>950</width>
      <height>21</height>
     </rect>
    </property>
