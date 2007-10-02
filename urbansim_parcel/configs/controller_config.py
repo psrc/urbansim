@@ -130,7 +130,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                 input_index = 'erm_index',
                                 estimation_weight_string = "vacant_home_based_job_space", #"pre_2001=building.year_built<=2000",
                                 agents_for_estimation_table = None, # will take standard jobs table 
-                                estimation_size_agents = 0.2,
+                                estimation_size_agents = 0.4,
                                 number_of_units_string = None,
                                 filter = "numpy.logical_and(building.residential_units, building.sqft_per_unit)", 
                                 filter_for_estimation = "numpy.logical_and(job.building_id>0, job.disaggregate(building.sqft_per_unit>0))",
@@ -413,7 +413,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
             "run": {
                 "arguments": {'n':500,  # sample 500 proposal at a time, evaluate them one by one
                               },
-                "output":"development_project_proposal"
+                "output":"(development_project_proposal, demolished_buildings)"
                     },
           },
                                        
@@ -427,7 +427,8 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                 "arguments": {
                    "development_proposal_set": "development_project_proposal",
                    "building_dataset": "building",
-                   "dataset_pool": "dataset_pool"
+                   "dataset_pool": "dataset_pool",
+                   "buildings_to_be_demolished": "demolished_buildings"
                    }
                  }
           },
