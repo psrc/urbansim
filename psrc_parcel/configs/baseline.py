@@ -86,6 +86,7 @@ class Baseline(UrbansimParcelConfiguration):
                     "building_sqft_per_job",
                     "fazes",
                     "large_areas",
+                    "demolition_cost_per_sqft",
                     ],
                 tables_to_cache_nchunks={'parcels': 1},
                 unroll_gridcells = False
