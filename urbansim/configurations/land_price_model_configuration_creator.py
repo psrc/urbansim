@@ -23,6 +23,7 @@ class LandPriceModelConfigurationCreator(HasStrictTraits):
     nchunks = Int(1)
     threshold = Int(1000)
     n_simulated_years = Str("year-resources['base_year']")
+    estimation_procedure = Str("opus_core.estimate_linear_regression")
     
     coefficients_table = Str('land_price_model_coefficients')
     specification_table = Str('land_price_model_specification')
@@ -44,6 +45,7 @@ class LandPriceModelConfigurationCreator(HasStrictTraits):
                     'debuglevel': self.debuglevel,
                     'index': _index,
                     'specification': _specification,
+                    'procedure': "'%s'" % self.estimation_procedure
                     },
                 'output': '(%s, _)' % _coefficients
                 },
@@ -105,7 +107,8 @@ class TestLandPriceModelConfigurationCreator(opus_unittest.OpusTestCase):
                     'dataset': 'gridcell',
                     'debuglevel': 4,
                     'index': 'index',
-                    'specification': 'specification'
+                    'specification': 'specification',
+                    'procedure': "'opus_core.estimate_linear_regression'"
                     },
                 'output': '(coefficients, _)'
                 },
@@ -167,7 +170,8 @@ class TestLandPriceModelConfigurationCreator(opus_unittest.OpusTestCase):
                     'dataset': 'dataset',
                     'debuglevel': 9999,
                     'index': 'index',
-                    'specification': 'specification'
+                    'specification': 'specification',
+                    'procedure': "'opus_core.estimate_linear_regression'"
                     },
                 'output': '(coefficients, _)'
                 },
