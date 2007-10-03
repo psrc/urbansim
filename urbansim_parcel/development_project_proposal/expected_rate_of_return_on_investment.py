@@ -61,7 +61,20 @@ class Tests(opus_unittest.OpusTestCase):
             {
                 'template_id': array([1,2,3,4]),
                 'construction_cost_per_unit': array([200000, 200, 90, 100000])
-            },                
+            },
+            'building':
+            {
+                "building_id":       array([500,   500,    1000000]),
+                "building_type_id":  array([1,   2,    3]),
+                "building_sqft":     array([500,   500,    1000000]),
+                "parcel_id":        array([1,   2,    3]),
+            },
+            'demolition_cost_per_sqft':
+            {
+                "building_type_id":        array([1,   2,    3]),
+                "demolition_cost_per_sqft":       array([500,   500,    1000000]),
+            },
+            
             'parcel':
             {
                 "parcel_id":        array([1,   2,    3]),
@@ -75,7 +88,7 @@ class Tests(opus_unittest.OpusTestCase):
                 "template_id":array([1,  2, 3, 4,  2,  3, 4, 1,  2, 3, 4]),
                 "unit_price_expected":array([360000/200.0, 400000/1500.0, 400000/2000.0, 200000/3000.0, 330000/1000.0, 420000/4000.0, 
                                                 480000/500.0, 1400000/350.0, 4600000/8000.0, 200000000/1000000.0, 1000000/3500.0]),
-                #"land_area_taken":array([100, 50, 20, 200, 200, 80, 600, 1, 2, 70, 0.5]),
+                "is_redevelopment":array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
                 "units_proposed":array([1, 1500, 2000, 8, 1000, 4000, 3, 2, 8000, 1000000, 4]),
                 "building_sqft": array([200, 1500, 2000, 3000, 1000, 4000, 500, 350, 8000, 1000000, 3500])
                 
