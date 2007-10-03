@@ -726,8 +726,8 @@ def does_database_server_exist_for_this_hostname(module_name, hostname, protocol
                                ' with user %s.'
                                % (module_name, hostname, os.environ['%sUSERNAME'%protocol.upper()]))
         return False
-    finally:
-        db_server.close()
+    #finally:
+    #    db_server.close()
     return True
 
 def does_test_database_server_exist(module_name, protocol = 'mysql', log_on_failure=True, logger=logger):
