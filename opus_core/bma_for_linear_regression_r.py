@@ -12,8 +12,6 @@
 # other acknowledgments.
 #
 from rpy import r, set_default_mode, NO_CONVERSION
-#from rpy import *
-from Numeric import array as numpy_array
 from numpy import zeros, float32, swapaxes, array
 from opus_core.misc import check_dimensions
 from opus_core.logger import logger
@@ -58,7 +56,7 @@ class bma_for_linear_regression_r(object):
         #return {}
         set_default_mode(NO_CONVERSION)
         r.library("BMA")
-        d = r.data_frame(x=numpy_array(data),y=numpy_array(outcome))
+        d = r.data_frame(x=data,y=outcome)
         expression = "y ~ x.1"
         for i in range(2,nvar+1):
             expression=expression+" + x."+str(i)

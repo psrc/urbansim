@@ -11,8 +11,8 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 #
-from rpy import *
-from Numeric import array as numpy_array
+
+from rpy import r, set_default_mode, NO_CONVERSION, BASIC_CONVERSION
 from numpy import zeros, float32, swapaxes
 from opus_core.misc import check_dimensions
 
@@ -50,7 +50,7 @@ class estimate_linear_regression_r(object):
         logger.log_status(coef_names_array)
         outcome = resources["outcome"]
         set_default_mode(NO_CONVERSION)
-        d = r.data_frame(x=numpy_array(data),y=numpy_array(outcome))
+        d = r.data_frame(x=data,y=outcome)
         expression = "y ~ x.1"
         for i in range(2,nvar+1):
             expression=expression+" + x."+str(i)

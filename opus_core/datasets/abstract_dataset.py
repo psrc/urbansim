@@ -1290,11 +1290,10 @@ class AbstractDataset(object):
         """Create a histogram of the attribute given by 'name'. rpy module required.
         """
         from rpy import r
-        from Numeric import array as numpy_array
         if breaks is None:
             breaks = "Sturges"
-        r.hist(numpy_array(self.get_attribute(name)),breaks=breaks, main=main, xlab=name, prob=prob)
-        r.lines(r.density(numpy_array(self.get_attribute(name))))
+        r.hist(self.get_attribute(name),breaks=breaks, main=main, xlab=name, prob=prob)
+        r.lines(r.density(self.get_attribute(name)))
 
     def r_scatter(self, name_x, name_y, main="", npoints=None):
         """Create a scatter plot of the attributes given by 'name_x' (x-axis) and 'name_y' (y-axis) and display its correlation coefficient.
@@ -1302,7 +1301,6 @@ class AbstractDataset(object):
         rpy module required.
         """
         from rpy import r
-        from Numeric import array as numpy_array
         reg = self.correlation_coefficient(name_x, name_y)
         logger.log_status("Correlation coefficient: ", reg)
         v1 = self.get_attribute(name_x)
@@ -1311,7 +1309,7 @@ class AbstractDataset(object):
             index = randint(0,self.size(), size=npoints)
             v1 = v1[index]
             v2 = v2[index]
-        r.plot(numpy_array(v1),numpy_array(v2), main=main,
+        r.plot(v1,v2, main=main,
             xlab=name_x, ylab=name_y)
 
     def r_image(self, name, main="", xlab="x", ylab="y", min_value=None, max_value=None, file=None):
@@ -1339,11 +1337,10 @@ class AbstractDataset(object):
         xlen = data.shape[0]
         ylen = data.shape[1]
         from rpy import r
-        from Numeric import array as numpy_array # rpy does not work with numpy arrays
         r.library("fields")
         if file:
             r.postscript(file)
-        r.image_plot(z=numpy_array(data), x=r.seq(1,xlen), y=r.seq(1,ylen),
+        r.image_plot(z=data, x=r.seq(1,xlen), y=r.seq(1,ylen),
                 xlab=xlab, ylab=ylab, main=main, sub=name,
                 col=r.c('white', r.rainbow(150)[20:150]))
 
