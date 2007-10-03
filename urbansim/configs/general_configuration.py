@@ -148,7 +148,6 @@ class GeneralConfiguration(Configuration):
                 'land_price_model': {
                     'controller': LandPriceModelConfigurationCreator(
                         debuglevel = debuglevel,
-                        estimation_procedure = "opus_core.estimate_linear_regression_r"
                         ).execute(),
                     },
                 'development_project_transition_model': {
