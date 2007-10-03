@@ -18,7 +18,8 @@ from opus_core.regression_model import RegressionModel
 from urbansim_parcel.datasets.development_project_proposal_dataset import DevelopmentProjectProposalDataset
 from urbansim_parcel.datasets.development_project_proposal_dataset import create_from_parcel_and_development_template
 from urbansim_parcel.datasets.development_project_proposal_component_dataset import create_from_proposals_and_template_components
-from numpy import exp, arange, logical_and, zeros, where, array, float32, int16
+from numpy import exp, arange, logical_and, zeros, ones, where, array, float32, int16
+from opus_core.variables.attribute_type import AttributeType
 import re
 
 class DevelopmentProjectProposalRegressionModel(RegressionModel):
@@ -88,7 +89,8 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         
         return dataset
     
-    def prepare_for_run(self, dataset_pool, parcel_filter=None, create_proposal_set=True,
+    def prepare_for_run(self, dataset_pool, parcel_filter_for_new_development=None, 
+                        parcel_filter_for_redevelopment=None, create_proposal_set=True,
                         spec_replace_module_variable_pair=None, **kwargs):
         """create development project proposal dataset from parcels and development templates.
         spec_replace_module_variable_pair is a tuple with two elements: module name, variable within the module
@@ -107,23 +109,49 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         parcels = dataset_pool.get_dataset('parcel')
         templates = dataset_pool.get_dataset('development_template')
         
-        if parcel_filter is not None:
-            parcels.compute_variables(parcel_filter)
-            index1 = where(parcels.get_attribute(parcel_filter))[0]
+        if parcel_filter_for_new_development is not None:
+            parcels.compute_variables(parcel_filter_for_new_development)
+            index1 = where(parcels.get_attribute(parcel_filter_for_new_development))[0]
         else:
             index1 = None
             
         if create_proposal_set:
-    #        from opus_core.misc import sample
-    #        from opus_core.datasets.dataset import DatasetSubset
-    #        n = parcels.size()
-    #        index1=sample(arange(n), int(n*0.001))
-                    
-            proposal_set = create_from_parcel_and_development_template(parcels, templates, 
+            proposal_set = create_from_parcel_and_development_template( parcels, templates, 
                                                               filter_attribute=self.filter,
                                                               parcel_index = index1,
                                                               dataset_pool=dataset_pool,
-                                                              resources = kwargs.get("resources", None))
+                                                              resources = kwargs.get("resources", None) )
+            proposal_set.add_attribute( zeros(proposal_set.size(), dtype=int16), "is_redevelopment", AttributeType.PRIMARY )
+
+            if parcel_filter_for_redevelopment is not None:
+                buildings = dataset_pool.get_dataset('building')
+                land_area = buildings.get_attribute("land_area")
+                parcels.compute_variables(parcel_filter_for_redevelopment)
+                index1 = where( parcels.get_attribute( parcel_filter_for_redevelopment) )[0]
+                parcel_ids = parcel.get_attribute("parcel_id")
+                demolished_buildings_index = array([], type="int32")
+                ###set land_area of buildings satisfying redevelopment_filter to 0
+                ###so that the proposal filter (is_size_fit) is computed on the whole parcel_sqft
+                for i in index1:
+                    demolished_buildings_index = concatenate((demolished_buildings_index, 
+                                                              where( buildings.get_attribute( "parcel_id" ) == parcel_ids[i] )[0]
+                                                              ))
+                    
+                buildings.set_values_of_one_attribute("land_area", zeros(demolished_buildings_index.size), 
+                                                     index=demolished_buildings_index )
+                dataset_pool.replace_dataset("building", buildings)
+                redev_proposal_set = create_from_parcel_and_development_template(parcels, templates, 
+                                                                  filter_attribute=self.filter,
+                                                                  parcel_index = index1,
+                                                                  dataset_pool=dataset_pool,
+                                                                  resources = kwargs.get("resources", None))
+                
+                redev_proposal_set.add_attribute( ones(proposal_set.size(), dtype=int16), "is_redevelopment", AttributeType.PRIMARY)
+                proposal_set.join_by_rows(redev_proposal_set, require_all_attributes=False, change_ids_if_not_unique=True)
+                ###roll back land_area of buildings
+                buildings.set_values_of_one_attribute("land_area", land_area[demolished_buildings_index], 
+                                                     index=demolished_buildings_index )
+                dataset_pool.replace_dataset("building", buildings)
         
             if existing_proposal_set is not None: # add existing proposals to the created ones
                 proposal_set.join_by_rows(existing_proposal_set, require_all_attributes=False, change_ids_if_not_unique=True)

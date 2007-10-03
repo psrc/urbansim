@@ -135,7 +135,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         sum_of_units_proposed = array(ndimage.sum(all_units_proposed, labels = proposal_ids_in_component_set, 
                                                           index = proposal_ids))
         is_proposal_eligible = logical_and(sum_is_accepted_type_over_proposals == number_of_components_in_proposals,
-                                     sum_of_units_proposed > 0)
+                                           sum_of_units_proposed > 0)
 
         logger.log_status("Sampling from %s eligible proposals." % is_proposal_eligible.sum())
         # consider planned proposals (they are not sampled)
@@ -156,8 +156,9 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 continue
             while (True in self.accepting_proposals):
                 if self.weight[idx].sum() == 0.0:
+                    logger.log_warning("Running out of proposals; there aren't any proposals with non-zero weight")
                     break
-            #    raise RuntimeError, "Running out of proposals; there aren't any proposals with non-zero weight"
+                
                 idx = idx[self.weight[idx] > 0]
                 n = minimum(idx.size, n)
                 sampled_proposal_indexes = probsample_noreplace(proposal_ids[idx], n, 
@@ -178,12 +179,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
             units_stock = self.existing_units[type_id] - self.demolished_units[type_id] + self.proposed_units[type_id]
             if units_stock > 0:
                 logger.log_status("%s: %s (units existing:%s  occupied:%s  proposed:%s  demolished:%s)" % (type_id, (units_stock - self.occupied_units[type_id]) / float(units_stock), self.existing_units[type_id], self.occupied_units[type_id], self.proposed_units[type_id], self.demolished_units[type_id]))
-        # delete all tentative (not accepted) proposals from the proposal set
-#        self.proposal_set.remove_elements(where(
-#                    self.proposal_set.get_attribute("status_id") == self.proposal_set.id_tentative)[0])
-#        schedule_development_projects = self.schedule_accepted_proposals()
         
-        return self.proposal_set  #schedule_development_projects
+        return (self.proposal_set, self.demolished_buildings) 
 
     def check_vacancy_rates(self, target_vacancy):
         type_ids = target_vacancy.get_attribute("building_type_id")
@@ -217,8 +214,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 self.units_built_pointer[type_id] = self.units_built[parcel_unit_name]
 
     def consider_proposals(self, proposal_indexes, target_vacancy, build_only_in_empty_parcel=True):
-        #buildings = self.dataset_pool.get_dataset("building")
-        #building_site = buildings.get_attribute("parcel_id")
+        buildings = self.dataset_pool.get_dataset("building")
+        building_site = buildings.get_attribute("parcel_id")
 
         proposals_parcel_ids = self.proposal_set.get_attribute("parcel_id")
         
@@ -236,7 +233,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         zones_of_proposals = self.proposal_set.get_attribute("zone_id")
         is_proposal_rejected = zeros(proposal_indexes.size, dtype=bool8)
         proposal_site = proposals_parcel_ids[proposal_indexes]
-        
+        is_redevelopment = self.proposal_set.get_attribute_by_index("is_redevelopment", proposal_indexes)
         for i in range(proposal_indexes.size):
             if not (True in self.accepting_proposals):
                 # if none of the types is accepting_proposals, exit
@@ -251,32 +248,29 @@ class DevelopmentProjectProposalSamplingModel(Model):
             component_types = components_building_type_ids[proposal_index_in_component_set]
             is_this_component_residential = is_component_residential[proposal_index_in_component_set]
             this_site = proposal_site[i]
-            if False: #proposal_construction_type[i] == 'R':
-                ##TODO:if it's a redevelopment project,demolish existing buildings of this site
-                affected_building = where(building_site==this_site)[0]
-                self.demolished_buildings = concatenate((self.demolished_buildings, affected_building))
-                for type in existing_units.keys():
-                    self.demolished_units[type] += existing_units[type][affected_building].sum() #demolish affected buildings
-                    #existing_units[affected_building] = 0
-                    #moving_agents += occupied_units[affected_building].sum()
-                    #occupied_units[affected_building] = 0
+            
+            if is_redevelopment[i]:  #redevelopment proposal           
+                affected_building_index = where(building_site==this_site)[0]
+                self.demolished_buildings = concatenate( (self.demolished_buildings,  buildings.get_id_attribute()[affected_building_index]) )
+                for this_building in affected_building_index:
+                    this_building_type = buildings.get_attribute("building_type_id")[this_building] 
+                    self.existing_units[this_building_type] -= buildings.get_attribute("existing_units", this_building)
+                    self.demolished_units[this_building_type] += buildings.get_attribute("existing_units", this_building)    #demolish affected buildings
+#                self.occupied_units[type_id] = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type].astype("float32").sum()          
+                
             for itype_id in range(component_types.size): #
+                # this loop is only needed when a proposal could provide units from more than 1 generic building types
                 type_id = component_types[itype_id]
                 if build_only_in_empty_parcel and self.units_built_pointer[type_id][proposal_indexes[i]] > 0: # don't build anything in a parcel that has units built
                     is_proposal_rejected[i] = True
                     break
-                # this loop is only needed when a proposal could provide units from more than 1 generic building types
 
-                #if pro_rated[i]:
-                    #self.proposed_units[type_id] += round(unit_proposed / years[i])
-                    ##TODO: handle pro-rated projects
-                #else:
                 if is_this_component_residential[itype_id]:
                     self.proposed_units[type_id] += units_proposed[itype_id]
-                else: # translate from building_sqft to number of jobs
+                else: # translate from building_sqft to number of job spaces
                     self.proposed_units[type_id] += units_proposed[itype_id] / \
                                                     self.building_sqft_per_job_table[zones_of_proposals[proposal_indexes[i]], type_id]
-                
+                                
                 units_stock = self.existing_units[type_id] - self.demolished_units[type_id] + self.proposed_units[type_id]
                 vr = (units_stock - self.occupied_units[type_id]) / float(units_stock)
                 if vr >= self.target_vacancies[type_id]:
@@ -303,10 +297,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
             # don't consider proposed projects for this site in the future (i.e. in further sampling)
             self.weight[proposals_parcel_ids == this_site] = 0.0
             if self.weight[proposal_indexes].sum() == 0.0:
+                logger.log_warning("Running out of proposals; there aren't any proposals with non-zero weight")
                 return
-
-        ## TODO: because of demolition, this won't work
-        ## a type reaching target vacancy rates may become less than target
 
     def schedule_accepted_proposals(self):
         ##TODO: handle demolished buildings in self.demolished_buildings
@@ -347,52 +339,3 @@ class DevelopmentProjectProposalSamplingModel(Model):
             dataset_name = 'building_exogeneous',
             )
         ##TODO: flush dataset
-
-
-#    def estimate(self, *args, **kargs):
-#        agent_set = kargs["agent_set"]
-#        data_objects = kargs.get("data_objects", {})
-#        data_objects[agent_set.get_dataset_name()] = agent_set
-#        estimate_config = kargs.get("estimate_config", {})
-#        return LocationChoiceModel.estimate(self, *args, **kargs)
-#
-#    def prepare_for_estimate(self, specification_dict = None, specification_storage=None,
-#                              specification_table=None, #agent_set=None,
-#                              agents_for_estimation_storage=None,
-#                              agents_for_estimation_table=None,
-#                              filter_attribute=None, location_id_variable=None,
-#                              data_objects={}):
-#
-#        """similar to prepare_for_estimation method of AgentLocationChoiceModel
-#         agent_set is not needed because agents are virtual investors
-#        """
-#        from urbansim.estimation.estimator import get_specification_for_estimation
-#        specification = get_specification_for_estimation(specification_dict,
-#                                                          specification_storage,
-#                                                          specification_table)
-#
-#        #def prepare_for_estimate(self, agent_set, specification_dict=None, specification_storage=None,
-#                                  #specification_table=None, urbansim_constant=None,
-#                                  #location_id_variable=None, dataset_pool=None, **kwargs):
-#    #        Return index of buildings that are younger than 'recent_years'+2"""
-#        #if location_id_variable:
-#            #agent_set.compute_variables(location_id_variable, dataset_pool=dataset_pool)
-#        if agents_for_estimation_storage is not None:
-#            estimation_set = Dataset(in_storage = agents_for_estimation_storage,
-#                                     in_table_name=agents_for_estimation_table,
-#                                     id_name='building_id',
-#                                     dataset_name='building')
-#            if location_id_variable:  #map buildings to proposed development project, proposal_id
-#                estimation_set.compute_variables(location_id_variable, resources=Resources(data_objects))
-#                # needs to be a primary attribute because of the join method below
-#                #estimation_set.add_primary_attribute(estimation_set.get_attribute(location_id_variable), VariableName(location_id_variable).alias())
-#            if filter_attribute:
-#                estimation_set.compute_variables(filter_attribute, resources=Resources(data_objects))
-#                index = where(estimation_set.get_attribute(filter_attribute) > 0)[0]
-#                estimation_set.subset_by_index(index, flush_attributes_if_not_loaded=False)
-#        else:
-#            raise DataError, 'agents_for_estimation_storage unspecified, which must be a subset of buildings.'
-#
-#        return (specification, estimation_set)
-
-

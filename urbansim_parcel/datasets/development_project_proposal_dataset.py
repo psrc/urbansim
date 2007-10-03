@@ -180,6 +180,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
     has_constraint_dataset = True
     try:
         constraints = dataset_pool.get_dataset("development_constraint") 
+        constraints.load_dataset_if_not_loaded()
     except:
         has_constraint_dataset = False
 
