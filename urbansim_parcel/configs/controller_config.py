@@ -381,7 +381,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
             "prepare_for_run": {
                 "name": "prepare_for_run",
                 "arguments": {"parcel_filter_for_new_development":"'has_vacant_land=urbansim_parcel.parcel.vacant_land_area > 0'",
-                              "parcel_filter_for_redevelopment":"'low_improvement_ratio=parcel.improvement_value / ( parcel.unit_price * urbansim_parcel.parcel.existing_units ) < 0.1'",
+                              "parcel_filter_for_redevelopment":"'low_improvement_ratio=parcel.improvement_value / ( urbansim_parcel.parcel.unit_price * urbansim_parcel.parcel.existing_units ) < 0.1'",
                               "specification_storage": "base_cache_storage",
                               "specification_table": "'real_estate_price_model_specification'",
                                "coefficients_storage": "base_cache_storage",
