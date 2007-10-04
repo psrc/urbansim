@@ -251,7 +251,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                     if this_building_type in self.existing_units.keys():
                         self.existing_units[this_building_type] -= buildings_existing_units[this_building]
                         self.demolished_units[this_building_type] += buildings_existing_units[this_building]    #demolish affected buildings
-                        self.demolished_buildings = concatenate( (self.demolished_buildings,  building_ids[this_building]))
+                        self.demolished_buildings = concatenate( (self.demolished_buildings,  array(building_ids[this_building])))
 #                self.occupied_units[type_id] = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type].astype("float32").sum()          
                 
             for itype_id in range(component_types.size): #
