@@ -18,7 +18,7 @@ from opus_core.regression_model import RegressionModel
 from urbansim_parcel.datasets.development_project_proposal_dataset import DevelopmentProjectProposalDataset
 from urbansim_parcel.datasets.development_project_proposal_dataset import create_from_parcel_and_development_template
 from urbansim_parcel.datasets.development_project_proposal_component_dataset import create_from_proposals_and_template_components
-from numpy import exp, arange, logical_and, zeros, ones, where, array, float32, int16
+from numpy import exp, arange, logical_and, zeros, ones, where, array, float32, int16, concatenate
 from opus_core.variables.attribute_type import AttributeType
 import re
 
@@ -128,8 +128,8 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                 land_area = buildings.get_attribute("land_area")
                 parcels.compute_variables(parcel_filter_for_redevelopment)
                 index1 = where( parcels.get_attribute( parcel_filter_for_redevelopment) )[0]
-                parcel_ids = parcel.get_attribute("parcel_id")
-                demolished_buildings_index = array([], type="int32")
+                parcel_ids = parcels.get_attribute("parcel_id")
+                demolished_buildings_index = array([], dtype="int32")
                 ###set land_area of buildings satisfying redevelopment_filter to 0
                 ###so that the proposal filter (is_size_fit) is computed on the whole parcel_sqft
                 for i in index1:
