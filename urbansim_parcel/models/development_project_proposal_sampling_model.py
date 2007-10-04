@@ -86,6 +86,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                 "occupied_units_for_jobs = urbansim_parcel.building.number_of_non_home_based_jobs",
                                 "units_for_jobs = urbansim_parcel.building.total_non_home_based_job_space",
                                 "occupied_residential_units = urbansim_parcel.building.number_of_households",
+                                "urbansim_parcel.building.existing_units"
                                     ],
                                     dataset_pool=self.dataset_pool)
         parcels = self.dataset_pool.get_dataset('parcel')
@@ -147,7 +148,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 continue
             isorted = self.weight[idx].argsort()[range(idx.size-1,-1,-1)]
             # consider proposals in order of the highest weights
-            self.consider_proposals(idx[isorted], current_target_vacancy, build_only_in_empty_parcel=False)
+            self.consider_proposals(idx[isorted], current_target_vacancy)
 
         # consider tentative proposals
         for status in [self.proposal_set.id_tentative]:
@@ -165,8 +166,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                                 prob_array=self.weight[idx]/float(self.weight[idx].sum()),
                                                 exclude_index=None, return_indices=True)
                 self.consider_proposals(arange(self.proposal_set.size())[idx[sampled_proposal_indexes]],
-                                        current_target_vacancy,
-                                        build_only_in_empty_parcel=False
+                                        current_target_vacancy
                                        )
                 self.weight[idx[sampled_proposal_indexes]] = 0
 
@@ -188,18 +188,14 @@ class DevelopmentProjectProposalSamplingModel(Model):
         buildings = self.dataset_pool.get_dataset("building")
         building_type_ids = buildings.get_attribute("building_type_id")
         parcels = self.dataset_pool.get_dataset('parcel')
-        self.units_built = {}
-        self.units_built_pointer = {}
         for index in arange(target_vacancy.size()):
             type_id = type_ids[index]
             target = self.target_vacancies[type_id]           
             is_matched_type = building_type_ids == type_id
             if is_residential[index]:
                 unit_name = self.variables_for_computing_vacancies["residential"]
-                parcel_unit_name = unit_name
             else:
                 unit_name = self.variables_for_computing_vacancies["non_residential"]
-                parcel_unit_name = "building_sqft"
                 
             self.existing_units[type_id] = buildings.get_attribute(unit_name)[is_matched_type].astype("float32").sum()
             self.occupied_units[type_id] = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type].astype("float32").sum()          
@@ -208,12 +204,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
             vr = (self.existing_units[type_id] - self.occupied_units[type_id]) / float(self.existing_units[type_id])
             if vr < target:
                 self.accepting_proposals[type_id] = True
-                if parcel_unit_name not in self.units_built.keys():
-                    self.units_built[parcel_unit_name] = parcels.get_attribute_by_index(parcel_unit_name, 
-                                                        parcels.get_id_index(self.proposal_set.get_attribute('parcel_id')))
-                self.units_built_pointer[type_id] = self.units_built[parcel_unit_name]
 
-    def consider_proposals(self, proposal_indexes, target_vacancy, build_only_in_empty_parcel=True):
+    def consider_proposals(self, proposal_indexes, target_vacancy):
         buildings = self.dataset_pool.get_dataset("building")
         building_site = buildings.get_attribute("parcel_id")
 
@@ -234,6 +226,9 @@ class DevelopmentProjectProposalSamplingModel(Model):
         is_proposal_rejected = zeros(proposal_indexes.size, dtype=bool8)
         proposal_site = proposals_parcel_ids[proposal_indexes]
         is_redevelopment = self.proposal_set.get_attribute_by_index("is_redevelopment", proposal_indexes)
+        buildings_existing_units = buildings.get_attribute("existing_units")
+        building_ids = buildings.get_id_attribute()
+        
         for i in range(proposal_indexes.size):
             if not (True in self.accepting_proposals):
                 # if none of the types is accepting_proposals, exit
@@ -251,20 +246,18 @@ class DevelopmentProjectProposalSamplingModel(Model):
             
             if is_redevelopment[i]:  #redevelopment proposal           
                 affected_building_index = where(building_site==this_site)[0]
-                self.demolished_buildings = concatenate( (self.demolished_buildings,  buildings.get_id_attribute()[affected_building_index]) )
                 for this_building in affected_building_index:
-                    this_building_type = buildings.get_attribute("building_type_id")[this_building] 
-                    self.existing_units[this_building_type] -= buildings.get_attribute("existing_units", this_building)
-                    self.demolished_units[this_building_type] += buildings.get_attribute("existing_units", this_building)    #demolish affected buildings
+                    this_building_type = buildings.get_attribute("building_type_id")[this_building]
+                    if this_building_type in self.existing_units.keys():
+                        self.existing_units[this_building_type] -= buildings_existing_units[this_building]
+                        self.demolished_units[this_building_type] += buildings_existing_units[this_building]    #demolish affected buildings
+                        self.demolished_buildings = concatenate( (self.demolished_buildings,  building_ids[this_building]))
 #                self.occupied_units[type_id] = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type].astype("float32").sum()          
                 
             for itype_id in range(component_types.size): #
                 # this loop is only needed when a proposal could provide units from more than 1 generic building types
                 type_id = component_types[itype_id]
-                if build_only_in_empty_parcel and self.units_built_pointer[type_id][proposal_indexes[i]] > 0: # don't build anything in a parcel that has units built
-                    is_proposal_rejected[i] = True
-                    break
-
+   
                 if is_this_component_residential[itype_id]:
                     self.proposed_units[type_id] += units_proposed[itype_id]
                 else: # translate from building_sqft to number of job spaces

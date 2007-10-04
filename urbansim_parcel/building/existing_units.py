@@ -24,16 +24,16 @@ class existing_units(Variable):
         return [
                 "urbansim_parcel.building.building_sqft",
                 "urbansim_parcel.building.residential_units",
-                "urbansim_parcel.building.are_units_building_sqft"
+                "urbansim_parcel.building.is_residential"
                 ]
         
     def compute(self,  dataset_pool):
         buildings = self.get_dataset()
         result = zeros(buildings.size(),dtype=self._return_type)
-        is_sqft = buildings.get_attribute("are_units_building_sqft")
+        is_res = buildings.get_attribute("is_residential")>0
+        is_sqft = logical_not(is_res)
         residential_units = buildings.get_attribute("residential_units")
-        where_residential = logical_not(is_sqft)
-        result[where_residential] = residential_units[where_residential].astype(self._return_type)
+        result[is_res] = residential_units[is_res].astype(self._return_type)
         result[is_sqft] = buildings.get_attribute("building_sqft")[is_sqft].astype(self._return_type)
         return result
     
@@ -57,7 +57,8 @@ class Tests(opus_unittest.OpusTestCase):
                 'building_id': array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                 'residential_units':    array([0,   2,   3,   0,   2,   3,  4, 1, 0, 5]),
                 'sqft_per_unit':        array([0,   2,   2,   0,   10,  5,  2,20, 0, 20]),
-                'non_residential_sqft': array([19,  0, 310, 400,   0, 223, 58, 0, 0, 0])               
+                'non_residential_sqft': array([19,  0, 310, 400,   0, 223, 58, 0, 0, 0]),
+                'is_residential':       array([0,   1,   0,   0,   1,  0,   0, 1, 1, 1], dtype="bool8")
                 },           
         }
         )

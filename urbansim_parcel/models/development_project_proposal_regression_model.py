@@ -125,33 +125,26 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
 
             if parcel_filter_for_redevelopment is not None:
                 buildings = dataset_pool.get_dataset('building')
-                land_area = buildings.get_attribute("land_area")
-                parcels.compute_variables(parcel_filter_for_redevelopment)
-                index1 = where( parcels.get_attribute( parcel_filter_for_redevelopment) )[0]
-                parcel_ids = parcels.get_attribute("parcel_id")
-                demolished_buildings_index = array([], dtype="int32")
-                ###set land_area of buildings satisfying redevelopment_filter to 0
-                ###so that the proposal filter (is_size_fit) is computed on the whole parcel_sqft
-                for i in index1:
-                    demolished_buildings_index = concatenate((demolished_buildings_index, 
-                                                              where( buildings.get_attribute( "parcel_id" ) == parcel_ids[i] )[0]
-                                                              ))
-                    
+                land_area = buildings.get_attribute("land_area").copy()
+                parcels.compute_variables(parcel_filter_for_redevelopment, dataset_pool=dataset_pool)
+                is_redevelopment = parcels.get_attribute( parcel_filter_for_redevelopment) > 0
+                buildings_parcel_ids = buildings.get_attribute( "parcel_id" )
+                index_in_parcels = parcels.get_id_index(buildings_parcel_ids)
+                demolished_buildings_index = where(is_redevelopment[index_in_parcels])[0]                   
                 buildings.set_values_of_one_attribute("land_area", zeros(demolished_buildings_index.size), 
                                                      index=demolished_buildings_index )
-                dataset_pool.replace_dataset("building", buildings)
                 redev_proposal_set = create_from_parcel_and_development_template(parcels, templates, 
                                                                   filter_attribute=self.filter,
-                                                                  parcel_index = index1,
+                                                                  parcel_index = where(is_redevelopment)[0],
                                                                   dataset_pool=dataset_pool,
                                                                   resources = kwargs.get("resources", None))
                 
-                redev_proposal_set.add_attribute( ones(proposal_set.size(), dtype=int16), "is_redevelopment", AttributeType.PRIMARY)
+                redev_proposal_set.add_attribute( ones(redev_proposal_set.size(), dtype=int16), "is_redevelopment", AttributeType.PRIMARY)
                 proposal_set.join_by_rows(redev_proposal_set, require_all_attributes=False, change_ids_if_not_unique=True)
                 ###roll back land_area of buildings
                 buildings.set_values_of_one_attribute("land_area", land_area[demolished_buildings_index], 
                                                      index=demolished_buildings_index )
-                dataset_pool.replace_dataset("building", buildings)
+
         
             if existing_proposal_set is not None: # add existing proposals to the created ones
                 proposal_set.join_by_rows(existing_proposal_set, require_all_attributes=False, change_ids_if_not_unique=True)
