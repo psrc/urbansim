@@ -44,16 +44,9 @@ class GetCacheDataIntoTravelModel(AbstractTravelModel):
         self.create_travel_model_input_file(config, year, zone_set, dataset_pool,
                                             *args, **kwargs)
 
-    def prepare_for_run(self, travel_model_input_variables_storage=None,
-                        travel_model_input_variables_table=None,
-                        travel_model_constant_columns_storage=None,
-                        travel_model_constant_columns_table=None,):
-
-        if travel_model_input_variables_storage is not None and travel_model_input_variables_table is not None:
-            tm_input_variables = Dataset(in_storage=travel_model_input_variables_storage,
-                                         in_table_name=travel_model_input_variables_table,
-                                         id_name='column_id')
-            return tm_input_variables        
+    def prepare_for_run(self, *args, **kwargs):
+        ##not implemented
+        return        
 
     def create_travel_model_input_file(self, *args, **kwargs):
         """"""

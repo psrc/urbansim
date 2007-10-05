@@ -30,7 +30,7 @@ class GetTravelModelDataIntoCache(AbstractTravelModel):
     def run(self, config, year, *args, **kwargs):
         """This is the main entry point.  It gets the appropriate values from the 
         travel_model_configuration part of this config, and then copies the specified 
-        TransCAD matrices into the specified travel_data variable names.  Results in
+        data into the specified travel_data variable names.  Results in
         a new travel_data cache for year+1.
         """
         cache_directory = config['cache_directory']
@@ -38,7 +38,7 @@ class GetTravelModelDataIntoCache(AbstractTravelModel):
         simulation_state.set_current_time(year)
         simulation_state.set_cache_directory(cache_directory)
         
-        logger.start_block('Getting matrices from travel model')
+        logger.start_block('Getting data from travel model')
         next_year = year + 1
         flt_dir_for_next_year = os.path.join(cache_directory, str(next_year))
         if not os.path.exists(flt_dir_for_next_year):

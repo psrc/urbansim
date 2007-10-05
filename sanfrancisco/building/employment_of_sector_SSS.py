@@ -25,7 +25,7 @@ class employment_of_sector_SSS(Variable):
         
     def dependencies(self):
         return [
-                "_employment_of_sector_%s = sanfrancisco.business.is_of_sector_%s * sanfrancisco.business.employment" % (self.sector, self.sector),
+                "_employment_of_sector_%s = ( sanfrancisco.business.is_of_sector_%s * sanfrancisco.business.employment ).astype(int32)" % (self.sector, self.sector),
                 "_employment_of_sector_%s = building.aggregate(business._employment_of_sector_%s)" % (self.sector, self.sector)
                 ]
 
