@@ -213,8 +213,6 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 self.accepting_proposals[type_id] = True
 
     def consider_proposals(self, proposal_indexes, target_vacancy):
-        buildings = self.dataset_pool.get_dataset("building")
-        building_site = buildings.get_attribute("parcel_id")
 
         proposals_parcel_ids = self.proposal_set.get_attribute("parcel_id")
         
@@ -233,7 +231,10 @@ class DevelopmentProjectProposalSamplingModel(Model):
         is_proposal_rejected = zeros(proposal_indexes.size, dtype=bool8)
         proposal_site = proposals_parcel_ids[proposal_indexes]
         is_redevelopment = self.proposal_set.get_attribute_by_index("is_redevelopment", proposal_indexes)
-        buildings_existing_units = buildings.get_attribute("existing_units")
+        buildings = self.dataset_pool.get_dataset("building")
+        building_site = buildings.get_attribute("parcel_id")
+        building_existing_units = buildings.get_attribute("existing_units")
+        building_type_ids = buildings.get_attribute("building_type_id")
         building_ids = buildings.get_id_attribute()
         
         for i in range(proposal_indexes.size):
@@ -254,11 +255,12 @@ class DevelopmentProjectProposalSamplingModel(Model):
             if is_redevelopment[i]:  #redevelopment proposal           
                 affected_building_index = where(building_site==this_site)[0]
                 for this_building in affected_building_index:
-                    this_building_type = buildings.get_attribute("building_type_id")[this_building]
+                    this_building_type = building_type_ids[this_building]
                     if this_building_type in self.existing_units.keys():
-                        self.existing_units[this_building_type] -= buildings_existing_units[this_building]
-                        self.demolished_units[this_building_type] += buildings_existing_units[this_building]    #demolish affected buildings
-                        self.demolished_buildings = concatenate( (self.demolished_buildings,  array([building_ids[this_building]] )))
+                        self.demolished_units[this_building_type] += building_existing_units[this_building]    #demolish affected buildings                        
+                        #self.existing_units[this_building_type] -= building_existing_units[this_building]     #existing units should not change, 
+                                                                                                               #otherwise, it's double counting
+                    self.demolished_buildings = concatenate( (self.demolished_buildings,  array([building_ids[this_building]] )))
 #                self.occupied_units[type_id] = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type].astype("float32").sum()          
                 
             for itype_id in range(component_types.size): #
