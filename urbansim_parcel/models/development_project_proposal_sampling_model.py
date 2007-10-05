@@ -178,7 +178,14 @@ class DevelopmentProjectProposalSamplingModel(Model):
         for type_id in self.existing_units.keys():
             units_stock = self.existing_units[type_id] - self.demolished_units[type_id] + self.proposed_units[type_id]
             if units_stock > 0:
-                logger.log_status("%s: %s (units existing:%s  occupied:%s  proposed:%s  demolished:%s)" % (type_id, (units_stock - self.occupied_units[type_id]) / float(units_stock), self.existing_units[type_id], self.occupied_units[type_id], self.proposed_units[type_id], self.demolished_units[type_id]))
+                logger.log_status("%s(%s): %s (units existing:%s  occupied:%s  proposed:%s  demolished:%s)" %  \
+                                              ( type_id,
+                                                building_types.get_attribute_by_id("building_type_name", type_id),
+                                                (units_stock - self.occupied_units[type_id]) / float(units_stock),
+                                                int(self.existing_units[type_id]),
+                                                int(self.occupied_units[type_id]),
+                                                int(self.proposed_units[type_id]),
+                                                int(self.demolished_units[type_id]) )
         
         return (self.proposal_set, self.demolished_buildings) 
 
