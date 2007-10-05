@@ -1,0 +1,227 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head>
+<style>BODY, P, DIV, H1, H2, H3, H4, H5, H6, ADDRESS, OL, UL, LI, TITLE, TD, OPTION, SELECT 
+{ 
+ font-family: Times New Roman 
+}
+BODY, P, DIV, ADDRESS, OL, UL, LI, TITLE, TD, OPTION, SELECT  
+{  
+  font-size: 12.0pt; 
+  margin-top:0pt;  
+  margin-bottom:0pt;  
+} 
+BODY, P
+{
+  margin-left:0pt; 
+  margin-right:0pt;
+}
+BODY
+{
+  background: white;
+  margin: 6px;
+  padding: 0px;
+}
+h6 { font-size: 10pt }
+h5 { font-size: 11pt }
+h4 { font-size: 12pt }
+h3 { font-size: 13pt }
+h2 { font-size: 14pt }
+h1 { font-size: 16pt }
+blockquote { padding: 10px; border: 1px #DDDDDD dashed }
+a img {	border: 0; }
+table.zeroBorder {
+	border-width: 1px 1px 1px 1px;
+	border-style: dotted dotted dotted dotted;
+	border-color: gray gray gray gray;
+}
+table.zeroBorder th {
+	border-width: 1px 1px 1px 1px;
+	border-style: dotted dotted dotted dotted;
+	border-color: gray gray gray gray;
+}
+table.zeroBorder td {
+	border-width: 1px 1px 1px 1px;
+	border-style: dotted dotted dotted dotted;
+	border-color: gray gray gray gray;
+}
+.hiddenStyle {
+		visibility: hidden; 
+		position: absolute;
+		z-Index: 1;
+		paddingRight: 0;
+		background: white
+	}
+.misspell { background-image: url('/images/misspell.gif'); background-repeat: repeat-x; background-position: bottom }
+@media screen {
+.pb { border-top: 1px dashed #C0C0C0; border-bottom: 1px dashed #C0C0C0 }
+.writely-comment { font-size: 9pt; line-height: 1.4em; padding: 1px; border: 1px dashed #C0C0C0 }
+}
+@media print {
+.pb { border-top: 0px; border-bottom: 0px }
+.writely-comment { display: none }
+}
+@media screen,print {
+.pb { height: 1px }
+}
+</style></head>
+<body revision='dfv7qdvv_1hd57r2:1'>
+<P ALIGN=CENTER CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  <FONT SIZE=4><B>TransCAD travel model and urbansim interface for
+  SEMCOG</B></FONT>
+</P>
+<P ALIGN=CENTER CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  <BR>
+</P>
+<P ALIGN=CENTER CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  02/01/2007
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  <BR>
+  1. Install TransCAD version 4.8 build 500 from transcad4.8build500.zip (if you
+  already have TransCAD with the exact build installed, you don't have to redo
+  it). Start TransCAD, in Edit menu select Preferences, and then in System tab,
+  uncheck "Warn me when starting a second instance of TransCAD". The setting is
+  for the code to start TransCAD program, which the travel model macro requires
+  to be running, without waiting for the user to intervene.<BR>
+  <BR>
+  2. Unzip travel models from semcog_baseline.zip to C:\semcog_baseline with
+  directory structure. (If you unzip to different place, you’ll need to change
+  your travel model configuration in step 6.2.) This zip file is created from
+  the 2005 and 2010 travel models you provided. You can add additional travel
+  model directories for other years in C:\semcog_baseline, using naming
+  convention CoreEAxx, with xx being the last two digits of the year. (Again,
+  you can use different names, but changes to travel model configuration is
+  needed as instructed in step 6.1) The macros subdirectory contains the UI
+  database files for SEMCOG travel model, which are provided to us by Caliper;
+  they can be saved to different place, with changes to travel model
+  configuration properly (step 6.1).
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  <BR>
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  3. Unzip database_tables.zip to your baseyear mysql database. Backup your
+  original tables before doing this, or you can put these files in a scenario
+  database and add a scenario_information table to point to your baseyear
+  database (more document on this:
+  http://www.urbansim.org/Download/files/opus-1.0beta1/userguide/node218.html).
+  Files in the zip file includes a few changes made to development_type_groups,
+  employment_adhoc_sector_groups, employment_adhoc_sector_group_definitions, and
+  zones in mysql MyISAM table format, if you want them in a different format,
+  let me know and I can provide them.
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  <BR>
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  4. Install python extension for COM programming pywin32. The extension for
+  python2.4 is uploaded. If you’re using a different python version, down the
+  proper file from
+  <FONT COLOR=#0000ff><U><A HREF=http://sourceforge.net/projects/pywin32/ TARGET=_blank>http://sourceforge.net/projects/pywin32/</A></U></FONT>
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  <BR>
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  5. Install the interface scripts in scripts.zip. Unzip travel_model directory
+  to place parallel to washtenaw directory in your workspace, and unzip
+  washtenaw\transcad as a new subdirectory of your washtenaw directory. Unzip
+  files in washtenaw\configs to your washtenaw\configs. You may not want to
+  overwrite baseline.py in the directory if it works well for you. You can
+  compare the difference and make change to your baseline.py manually.
+  Basically, I only appended
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  <BR>
+</P>
+<P CLASS=western STYLE="MARGIN-LEFT:0.5in; MARGIN-BOTTOM:0pt">
+  ‘employment_sector_group’:{},
+</P>
+<P CLASS=western STYLE="MARGIN-LEFT:0.5in; MARGIN-BOTTOM:0pt">
+  ‘employment_sector’:{},
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  <BR>
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  to the end of datasets_to_preload dictionary (and a comma to the end of the
+  line preceding them).
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  <BR>
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  6. Make changes to travel model configuration and urbansim run configuration
+  to fit your environment.
+</P>
+<P CLASS=western STYLE="MARGIN-LEFT:0.5in; MARGIN-BOTTOM:0pt">
+  1.) Open create_travel_model_configuration.py in washtenaw\transcad in an
+  editor. This file contains configuration for travel model not specific to
+  urbansim runs. At the beginning, it sets up the directories to transcad
+  program, SEMCOG project ini file, and UI database file.
+</P>
+<P CLASS=western STYLE="MARGIN-LEFT:0.5in; MARGIN-BOTTOM:0pt">
+  The following section specifies what variables are transferred between
+  urbansim and travel model and the name mapping. Theoretically it allows any
+  variables in data exchange between urbansim and travel model, however the
+  TransCAD macro provided to us is hard-coded and only the current variable
+  setup works.
+</P>
+<P CLASS=western STYLE="MARGIN-LEFT:0.5in; MARGIN-BOTTOM:0pt">
+  The section that follows indicates names of the macro for each functionality;
+  usually nothing needs to be changed here.
+</P>
+<P CLASS=western STYLE="MARGIN-LEFT:0.5in; MARGIN-BOTTOM:0pt">
+  _add_models function specifies what steps (models) to run in a travel model
+  cycle. The names are self-explaining; if for any reason you want to skip a
+  step you can comment it out.
+</P>
+<P CLASS=western STYLE="MARGIN-LEFT:0.5in; MARGIN-BOTTOM:0pt">
+  _add_year function specifies in which year to run the travel model and which
+  data directory to use. I added year 2001 and 2002 to get a quick start for
+  test, in production run you may want to comment them out. If you’re using
+  directory name other than CoreEAxx, you’ll need to change the corresponding
+  directory name.
+</P>
+<P CLASS=western STYLE="MARGIN-LEFT:0.5in; MARGIN-BOTTOM:0pt">
+  <BR>
+</P>
+<P CLASS=western STYLE="MARGIN-LEFT:0.5in; MARGIN-BOTTOM:0pt">
+  2.) Open travel_model_only.py in washtenaw\configs in an editor. This is a run
+  configuration class derived from baseline but only run travel model for two
+  years; make sure your baseline configuration works. The bottom part of the
+  configuration adds travel_model_configuration created by
+  create_travel_model_configuration.py we just edited to run configuration. We
+  just need to edit the name of the directory that contains travel model data
+  here. You can add travel model configuration to the baseline just following
+  baseline_with_travel_model.py.
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  <BR>
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  7. Start a test run with travel_model_only configuration. In a command shell,
+  change directory to opus_core\tools and type the following:
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  <BR>
+</P>
+<P CLASS=western STYLE="TEXT-INDENT:0.5in; MARGIN-BOTTOM:0pt">
+  python start_run.py -c washtenaw.configs.travel_model_only
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  <BR>
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  It computes and passes zonal variables to travel model, runs the travel model,
+  and then extracts data from travel model matrices and writes them to
+  travel_data in cache_directory of next year.
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  <BR>
+</P>
+<P CLASS=western STYLE=MARGIN-BOTTOM:0pt>
+  Problem, suggestion and comment, send an email to lmwang@gmail.com.
+</P></body>
+</html>
