@@ -185,7 +185,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                                 int(self.existing_units[type_id]),
                                                 int(self.occupied_units[type_id]),
                                                 int(self.proposed_units[type_id]),
-                                                int(self.demolished_units[type_id]) )
+                                                int(self.demolished_units[type_id]) ))
         
         return (self.proposal_set, self.demolished_buildings) 
 
