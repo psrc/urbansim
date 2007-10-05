@@ -173,6 +173,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
         # set status of accepted proposals to 'active'
         self.proposal_set.modify_attribute(name="status_id", data=self.proposal_set.id_active,
                                           index=array(self.accepted_proposals, dtype='int32'))
+        building_types = self.dataset_pool.get_dataset("building_type")
         logger.log_status("Status of %s development proposals set to active." % len(self.accepted_proposals))
         logger.log_status("Target/existing vacancy rates (reached using eligible proposals) by building type:")
         for type_id in self.existing_units.keys():
