@@ -198,3 +198,39 @@ class BuildingConstructionModel(Model):
                 idx = where(id_index_in_buildings < 0)[0]
                 agents.modify_attribute(name=buildings_id_name, data=idx.size*[-1], index = idx)
                 logger.log_status("%s %ss removed from demolished buildings." % (idx.size, agent_name))
+                
+from opus_core.tests import opus_unittest
+from opus_core.storage_factory import StorageFactory
+from opus_core.datasets.dataset_pool import DatasetPool
+from numpy import arange, array, all
+
+class BuildingConstructionModelTest(opus_unittest.OpusTestCase):
+    def test_demolition(self):
+        household_data = {
+            'household_id': arange(10)+1,
+            'building_id': array([10, 3, 6, 150, 10, 10, -1, 5, 3, 3])
+            }
+        job_data = {
+            'job_id': arange(5)+1,
+            'building_id': array([180, 145, 10, 180, 179])
+        }
+        building_data = {
+            'building_id': arange(200)+1,
+            }
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name = 'households', table_data = household_data)
+        storage.write_table(table_name = 'buildings', table_data = building_data)
+        storage.write_table(table_name = 'jobs', table_data = job_data)
+        dataset_pool = DatasetPool(storage = storage, package_order = ['urbansim_parcel', 'urbansim'])
+        
+        demolish_buildings = array([10, 3, 180])
+        BCM = BuildingConstructionModel()
+        BCM.demolish_buildings(demolish_buildings, dataset_pool.get_dataset('building'), dataset_pool)
+        self.assertEqual(all(dataset_pool.get_dataset('household').get_attribute('building_id') ==
+                                  array([-1, -1, 6, 150, -1, -1, -1, 5, -1, -1])), True)
+        self.assertEqual(all(dataset_pool.get_dataset('job').get_attribute('building_id') ==
+                                  array([-1, 145, -1, -1, 179])), True)
+        self.assertEqual(dataset_pool.get_dataset('building').size()==197, True)
+        
+if __name__=="__main__":
+    opus_unittest.main()
