@@ -54,12 +54,12 @@ class RunActivity(object):
         pickled_resources = 'NULL'
         if resources is not None:
             pickled_resources = pickle.dumps(resources)
-                             
+        
         values = {"run_id":history_id, 
              "run_name":'%s' % resources.get('description', "No description"),
              "status":'%s' % status,
              "processor_name":'%s' % get_host_name(), 
-             "date_time":strftime("'%Y-%m-%d %H:%M:%S'", localtime()),
+             "date_time":strftime('%Y-%m-%d %H:%M:%S', localtime()),
              "resources":'%s' % pickled_resources,
              }        
 
