@@ -28,7 +28,8 @@ except:
     
 
 from opus_core.store.storage import Storage
-
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 class sql_storage(Storage):
     def __init__(self,  
@@ -41,16 +42,23 @@ class sql_storage(Storage):
             raise ImportError('The sqlalchemy Python module must be installed '
                 'before using sql_storage. See http://www.sqlalchemy.org/')
         
-        self._my_db = storage_location
+        self.database_name = storage_location.database_name
+        self.database_server_config = storage_location.database_server_config
+        
+        #we cannot store the database directly because it cannot be pickled
+        #self._my_db = storage_location
         
     def get_storage_location(self):
-        return str(self._my_db.engine.url)
+        db = DatabaseServer(self.database_server_config).get_database(self.database_name)
+        storage_location = str(db.engine.url)
+        db.close()
+        return storage_location
       
     #TODO: what is id_name supposed to do? 
     def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True, id_name=None):
-        self._my_db.metadata.reflect()
+        db = DatabaseServer(self.database_server_config).get_database(self.database_name)
         
-        table = Table(table_name, self._my_db.metadata, autoload=True)
+        table = Table(table_name, db.metadata, autoload=True)
             
         query_results = table.select().execute()
             
@@ -82,7 +90,7 @@ class sql_storage(Storage):
         
         
     def write_table(self, table_name, table_data, overwrite_existing = True):
-        self._my_db.metadata.reflect()
+        db = DatabaseServer(self.database_server_config).get_database(self.database_name)
         
         table_length, _ = self._get_column_size_and_names(table_data)
         
@@ -96,11 +104,11 @@ class sql_storage(Storage):
             elif column_data.dtype == 'f':
                 table_data[column_name] = [float(cell) for cell in column_data]
             
-        table = Table(table_name, self._my_db.metadata, *columns)
+        table = Table(table_name, db.metadata, *columns)
         if overwrite_existing:
             table.drop(checkfirst = True)
         
-        connection = self._my_db.engine.connect()
+        connection = db.engine.connect()
         try:
             transaction = connection.begin()
             try:
@@ -132,11 +140,11 @@ class sql_storage(Storage):
             connection.close()
 
     def get_column_names(self, table_name, lowercase=True):
-        self._my_db.metadata.reflect()
-        if table_name not in self._my_db.metadata.tables:
+        db = DatabaseServer(self.database_server_config).get_database(self.database_name)
+        if table_name not in db.metadata.tables:
             raise
         
-        table = self._my_db.metadata.tables[table_name]
+        table = db.metadata.tables[table_name]
         
         if lowercase:
             col_names = [column.name.lower() for column in table.columns]
@@ -145,8 +153,8 @@ class sql_storage(Storage):
         return col_names
     
     def get_table_names(self):
-        self._my_db.metadata.reflect()
-        tables = [table.name for table in self._my_db.metadata.table_iterator()]
+        db = DatabaseServer(self.database_server_config).get_database(self.database_name)
+        tables = [table.name for table in db.metadata.table_iterator()]
         return tables
     
     def _get_sql_alchemy_type_from_numpy_dtype(self, column_dtype):
