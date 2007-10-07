@@ -34,12 +34,12 @@ class DatabaseServer(object):
         self.user_name = database_server_configuration.user_name
         self.password = database_server_configuration.password
         
-        engine = create_engine(self.get_connection_string())
+        self.engine = create_engine(self.get_connection_string())
         self.metadata = MetaData(
-            bind = engine
+            bind = self.engine
         ) 
 
-        self.cursor = engine.connect()
+        self.cursor = self.engine.connect()
         self.show_output = False
 
     def get_connection_string(self):
@@ -132,6 +132,9 @@ class DatabaseServer(object):
     def close(self):
         """Explicitly close the connection, without waiting for object deallocation"""
         self.cursor.close()
+        self.engine.dispose()
+        del self.engine
+        del self.metadata
         
 
 from opus_core.tests import opus_unittest

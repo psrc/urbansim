@@ -48,15 +48,25 @@ class sql_storage(Storage):
         #we cannot store the database directly because it cannot be pickled
         #self._my_db = storage_location
         
-    def get_storage_location(self):
-        db = DatabaseServer(self.database_server_config).get_database(self.database_name)
-        storage_location = str(db.engine.url)
+    def _get_db(self):
+        db_server = DatabaseServer(self.database_server_config)
+        db = db_server.get_database(self.database_name)
+        db_server.close()
+        return db
+    
+    def _dispose_db(self, db):
         db.close()
+        del db
+        
+    def get_storage_location(self):
+        db = self._get_db()
+        storage_location = str(db.engine.url)
+        self._dispose_db(db)
         return storage_location
       
     #TODO: what is id_name supposed to do? 
     def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True, id_name=None):
-        db = DatabaseServer(self.database_server_config).get_database(self.database_name)
+        db = self._get_db()
         
         table = Table(table_name, db.metadata, autoload=True)
             
@@ -86,11 +96,12 @@ class sql_storage(Storage):
         for col_name, (column, col_type) in col_data.items():
             table_data[col_name] = array(table_data[col_name], dtype=col_type)
                        
+        self._dispose_db(db)
         return table_data
         
         
     def write_table(self, table_name, table_data, overwrite_existing = True):
-        db = DatabaseServer(self.database_server_config).get_database(self.database_name)
+        db = self._get_db()
         
         table_length, _ = self._get_column_size_and_names(table_data)
         
@@ -138,9 +149,10 @@ class sql_storage(Storage):
                 
         finally:
             connection.close()
+            self._dispose_db(db)
 
     def get_column_names(self, table_name, lowercase=True):
-        db = DatabaseServer(self.database_server_config).get_database(self.database_name)
+        db = self._get_db()
         if table_name not in db.metadata.tables:
             raise
         
@@ -150,11 +162,14 @@ class sql_storage(Storage):
             col_names = [column.name.lower() for column in table.columns]
         else:
             col_names = [column.name for column in table.columns]
+            
+        self._dispose_db(db)
         return col_names
     
     def get_table_names(self):
-        db = DatabaseServer(self.database_server_config).get_database(self.database_name)
+        db = self._get_db()
         tables = [table.name for table in db.metadata.table_iterator()]
+        self._dispose_db(db)
         return tables
     
     def _get_sql_alchemy_type_from_numpy_dtype(self, column_dtype):
