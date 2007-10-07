@@ -49,6 +49,7 @@ class OpusDatabase(object):
         self.user_name = database_server_configuration.user_name
         self.password = database_server_configuration.password
         self.database_name = database_name
+        self.database_server_config = database_server_configuration
         
         self.engine = create_engine(self.get_connection_string())
         self.metadata = MetaData(
@@ -64,6 +65,8 @@ class OpusDatabase(object):
     def close(self):
         """Explicitly close the connection, without waiting for object deallocation"""
         self.engine.dispose()
+        self.engine = None
+        self.metadata = None
         
     def DoQuery(self, query):
         """
