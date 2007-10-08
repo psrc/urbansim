@@ -17,8 +17,8 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 # QGIS bindings for mapping functions
-#from qgis.core import *
-#from qgis.gui import *
+from qgis.core import *
+from qgis.gui import *
 
 # Custom Tools
 
@@ -41,19 +41,19 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     # We need to initialize the window sizes
     self.splitter.setSizes([150,700])
     
-#    # create map canvas
-#    self.canvas = QgsMapCanvas(self.widgetMap)
-#    self.canvas.setCanvasColor(Qt.yellow)
-#    self.canvas.enableAntiAliasing(True)
-#    self.canvas.useQImageToRender(False)
-#    self.canvas.show()
-#    self.canvas.parentWin = self
-#    debugString = QString("Finished Loading Canvas...")
-#    self.statusbar.showMessage(debugString)
+    # create map canvas
+    self.canvas = QgsMapCanvas(self.widgetMap)
+    self.canvas.setCanvasColor(Qt.yellow)
+    self.canvas.enableAntiAliasing(True)
+    self.canvas.useQImageToRender(False)
+    self.canvas.show()
+    self.canvas.parentWin = self
+    debugString = QString("Finished Loading Canvas...")
+    self.statusbar.showMessage(debugString)
     
     # lay our widgets out in the main window
     self.layout = QVBoxLayout(self.widgetMap)
-    #self.layout.addWidget(self.canvas)
+    self.layout.addWidget(self.canvas)
 
     # Link in the map tools
     QObject.connect(self.mpActionZoomIn, SIGNAL("triggered()"), self.zoomIn)
@@ -61,54 +61,54 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     QObject.connect(self.mpActionPan, SIGNAL("triggered()"), self.pan)
 
     # Map tools
-#    self.toolPan = QgsMapToolPan(self.canvas)
-#    self.toolPan.setAction(self.mpActionPan)
-#    self.toolZoomIn = QgsMapToolZoom(self.canvas, False)
-#    self.toolZoomIn.setAction(self.mpActionZoomIn)
-#    self.toolZoomOut = QgsMapToolZoom(self.canvas, True)
-#    self.toolZoomOut.setAction(self.mpActionZoomOut)
+    self.toolPan = QgsMapToolPan(self.canvas)
+    self.toolPan.setAction(self.mpActionPan)
+    self.toolZoomIn = QgsMapToolZoom(self.canvas, False)
+    self.toolZoomIn.setAction(self.mpActionZoomIn)
+    self.toolZoomOut = QgsMapToolZoom(self.canvas, True)
+    self.toolZoomOut.setAction(self.mpActionZoomOut)
     
     ##### Lets test out a simple map
-#    self.layers = []
-#    f = "Data/st99_d00.shp"
-#    f_string = QString(f)
-#    info = QFileInfo(QString(f))
-#    
-#    # create layer
-#    layer = QgsVectorLayer(QString(f), info.completeBaseName(), "ogr")
-#    
-#    if not layer.isValid():
-#      # Deal with the error
-#      debugString = QString("Error Loading Layer...")
-#      self.statusbar.showMessage(debugString)
-#      return
-#    QgsMapLayerRegistry.instance().addMapLayer(layer)
-#    
-#    # set extent to the extent of our layer
-#    self.canvas.setExtent(layer.extent())
+    self.layers = []
+    f = "Data/st99_d00.shp"
+    f_string = QString(f)
+    info = QFileInfo(QString(f))
+    
+    # create layer
+    layer = QgsVectorLayer(QString(f), info.completeBaseName(), "ogr")
+    
+    if not layer.isValid():
+      # Deal with the error
+      debugString = QString("Error Loading Layer...")
+      self.statusbar.showMessage(debugString)
+      return
+    QgsMapLayerRegistry.instance().addMapLayer(layer)
+    
+    # set extent to the extent of our layer
+    self.canvas.setExtent(layer.extent())
     
     # Set the transparency for the layer
     #layer.setTransparency(190)
     
     # set the map canvas layer set
-#    cl = QgsMapCanvasLayer(layer)
-#    self.layers.insert(0,cl)
-#    self.canvas.setLayerSet(self.layers)
-#    
-#    
-#    debugString = QString("Startup Done...")
-#    #self.statusbar.showMessage(debugString)
-#
-#    # Build a list of the default list of tabs
-#    self.tabWidgetList = {}
-#    for tabIndex in range(self.tabWidget.count()):
-#      self.tabWidgetList[str(self.tabWidget.widget(tabIndex).objectName())] = \
-#      self.tabWidget.widget(tabIndex)
-#    # Init to the first in toolbox by default
-#    self.toolBoxChanged(0)
-#    
-#    QObject.connect(self.toolBox, SIGNAL("currentChanged(int)"),
-#                    self.toolBoxChanged)
+    cl = QgsMapCanvasLayer(layer)
+    self.layers.insert(0,cl)
+    self.canvas.setLayerSet(self.layers)
+    
+    
+    debugString = QString("Startup Done...")
+    #self.statusbar.showMessage(debugString)
+
+    # Build a list of the default list of tabs
+    self.tabWidgetList = {}
+    for tabIndex in range(self.tabWidget.count()):
+      self.tabWidgetList[str(self.tabWidget.widget(tabIndex).objectName())] = \
+      self.tabWidget.widget(tabIndex)
+    # Init to the first in toolbox by default
+    self.toolBoxChanged(0)
+    
+    QObject.connect(self.toolBox, SIGNAL("currentChanged(int)"),
+                    self.toolBoxChanged)
   
   def updateTabs(self, listOfTabs):
     # Here we can update to show current tabs
