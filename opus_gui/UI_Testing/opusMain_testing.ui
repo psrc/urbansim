@@ -58,19 +58,19 @@
         </size>
        </property>
        <property name="currentIndex" >
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="datamanager_page" >
         <property name="geometry" >
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>529</width>
-          <height>781</height>
+          <width>511</width>
+          <height>763</height>
          </rect>
         </property>
         <attribute name="label" >
-         <string>Data Manager</string>
+         <string>Data</string>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -625,6 +625,187 @@
              </property>
             </item>
            </item>
+           <item>
+            <property name="text" >
+             <string>Variables</string>
+            </property>
+            <property name="icon" >
+             <iconset resource="opusMain.qrc" >:/Images/Images/bullet_black.png</iconset>
+            </property>
+            <property name="text" >
+             <string/>
+            </property>
+            <item>
+             <property name="text" >
+              <string>urbansim_parcel</string>
+             </property>
+             <property name="text" >
+              <string/>
+             </property>
+             <item>
+              <property name="text" >
+               <string>parcel</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/folder_database.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+              <item>
+               <property name="text" >
+                <string>vacant_land_area</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/chart_line.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>travel_time_to_cbd</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/chart_line.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>number_of_households</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/chart_line.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+             </item>
+             <item>
+              <property name="text" >
+               <string>building</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/folder_database.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+              <item>
+               <property name="text" >
+                <string>demolition_cost</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/chart_line.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>number_of_households</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/chart_line.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>vacant_building_sqft</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/chart_line.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+             </item>
+             <item>
+              <property name="text" >
+               <string>household</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/folder_database.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+              <item>
+               <property name="text" >
+                <string>persons</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/chart_line.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>parcel_id</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/chart_line.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+             </item>
+            </item>
+            <item>
+             <property name="text" >
+              <string>mag_parcel</string>
+             </property>
+             <property name="text" >
+              <string/>
+             </property>
+             <item>
+              <property name="text" >
+               <string>parcel</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/folder_database.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>taz</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/folder_database.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>building</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/folder_database.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+            </item>
+           </item>
           </widget>
          </item>
         </layout>
@@ -634,12 +815,12 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>529</width>
-          <height>781</height>
+          <width>511</width>
+          <height>763</height>
          </rect>
         </property>
         <attribute name="label" >
-         <string>Model Manager</string>
+         <string>Models</string>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -665,9 +846,6 @@
            <column>
             <property name="text" >
              <string>Name</string>
-            </property>
-            <property name="icon" >
-             <iconset>Images/bullet_black.png</iconset>
             </property>
            </column>
            <column>
@@ -710,7 +888,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
                </property>
                <property name="text" >
-                <string>run</string>
+                <string/>
                </property>
               </item>
               <item>
@@ -721,7 +899,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
                </property>
                <property name="text" >
-                <string>run</string>
+                <string/>
                </property>
               </item>
               <item>
@@ -732,7 +910,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
                </property>
                <property name="text" >
-                <string>run</string>
+                <string/>
                </property>
               </item>
               <item>
@@ -743,7 +921,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
                </property>
                <property name="text" >
-                <string>run</string>
+                <string/>
                </property>
               </item>
               <item>
@@ -754,7 +932,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
                </property>
                <property name="text" >
-                <string>run</string>
+                <string/>
                </property>
               </item>
               <item>
@@ -765,7 +943,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
                </property>
                <property name="text" >
-                <string>run</string>
+                <string/>
                </property>
               </item>
               <item>
@@ -776,7 +954,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
                </property>
                <property name="text" >
-                <string>run</string>
+                <string/>
                </property>
               </item>
               <item>
@@ -787,7 +965,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
                </property>
                <property name="text" >
-                <string>run</string>
+                <string/>
                </property>
               </item>
               <item>
@@ -798,7 +976,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
                </property>
                <property name="text" >
-                <string>run</string>
+                <string/>
                </property>
               </item>
               <item>
@@ -809,7 +987,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
                </property>
                <property name="text" >
-                <string>run</string>
+                <string/>
                </property>
               </item>
               <item>
@@ -820,7 +998,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
                </property>
                <property name="text" >
-                <string>run</string>
+                <string/>
                </property>
               </item>
               <item>
@@ -831,7 +1009,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
                </property>
                <property name="text" >
-                <string>run</string>
+                <string/>
                </property>
               </item>
               <item>
@@ -842,7 +1020,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
                </property>
                <property name="text" >
-                <string>run</string>
+                <string/>
                </property>
               </item>
               <item>
@@ -853,7 +1031,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
                </property>
                <property name="text" >
-                <string>run</string>
+                <string/>
                </property>
               </item>
               <item>
@@ -864,7 +1042,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
                </property>
                <property name="text" >
-                <string>run</string>
+                <string/>
                </property>
               </item>
               <item>
@@ -875,7 +1053,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
                </property>
                <property name="text" >
-                <string>run</string>
+                <string/>
                </property>
               </item>
               <item>
@@ -886,7 +1064,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
                </property>
                <property name="text" >
-                <string>run</string>
+                <string/>
                </property>
               </item>
               <item>
@@ -897,7 +1075,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
                </property>
                <property name="text" >
-                <string>run</string>
+                <string/>
                </property>
               </item>
              </item>
@@ -1030,23 +1208,7 @@
                <property name="text" >
                 <string/>
                </property>
-               <item>
-                <property name="text" >
-                 <string>Specification</string>
-                </property>
-                <property name="text" >
-                 <string/>
-                </property>
-               </item>
               </item>
-             </item>
-             <item>
-              <property name="text" >
-               <string>Sampling Models</string>
-              </property>
-              <property name="text" >
-               <string/>
-              </property>
              </item>
              <item>
               <property name="text" >
@@ -1057,7 +1219,142 @@
               </property>
               <item>
                <property name="text" >
-                <string>Excel Based</string>
+                <string>2000 Employment</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/excel.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Airport Model</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/excel.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Assumptions</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/excel.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Base Data</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/excel.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>College Model</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/excel.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>DES Forecast</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/excel.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Employment Model</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/excel.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Final PPH and OCC</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/excel.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Group Quarters Model</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/excel.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Household Model</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/excel.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Seasonal Model</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/excel.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>SkyHarbor Model</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/excel.png</iconset>
+               </property>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Transient Model</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/excel.png</iconset>
                </property>
                <property name="text" >
                 <string/>
@@ -1068,164 +1365,214 @@
            </item>
            <item>
             <property name="text" >
-             <string>Eugene</string>
+             <string>Eugene - Gridcell</string>
             </property>
             <property name="icon" >
              <iconset resource="opusMain.qrc" >:/Images/Images/bullet_black.png</iconset>
             </property>
             <property name="text" >
-             <string/>
-            </property>
-           </item>
-           <item>
-            <property name="text" >
-             <string>AZ-SMART MAG</string>
-            </property>
-            <property name="icon" >
-             <iconset resource="opusMain.qrc" >:/Images/Images/bullet_black.png</iconset>
-            </property>
-            <property name="text" >
-             <string/>
-            </property>
-           </item>
-           <item>
-            <property name="text" >
-             <string>AZ-SMART PAG</string>
-            </property>
-            <property name="icon" >
-             <iconset resource="opusMain.qrc" >:/Images/Images/bullet_black.png</iconset>
-            </property>
-            <property name="text" >
-             <string/>
-            </property>
-           </item>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="runmanager_page" >
-        <property name="geometry" >
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>529</width>
-          <height>781</height>
-         </rect>
-        </property>
-        <attribute name="label" >
-         <string>Run Manager</string>
-        </attribute>
-        <layout class="QGridLayout" >
-         <property name="leftMargin" >
-          <number>9</number>
-         </property>
-         <property name="topMargin" >
-          <number>9</number>
-         </property>
-         <property name="rightMargin" >
-          <number>9</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>9</number>
-         </property>
-         <property name="horizontalSpacing" >
-          <number>6</number>
-         </property>
-         <property name="verticalSpacing" >
-          <number>6</number>
-         </property>
-         <item row="0" column="0" >
-          <widget class="QTreeWidget" name="treeWidget_4" >
-           <column>
-            <property name="text" >
-             <string>Name</string>
-            </property>
-           </column>
-           <column>
-            <property name="text" >
-             <string>Type</string>
-            </property>
-           </column>
-           <item>
-            <property name="text" >
-             <string>scenario_configuration</string>
-            </property>
-            <property name="text" >
-             <string/>
-            </property>
-           </item>
-           <item>
-            <property name="text" >
-             <string>base_scenario</string>
-            </property>
-            <property name="icon" >
-             <iconset resource="opusMain.qrc" >:/Images/Images/accept.png</iconset>
-            </property>
-            <property name="text" >
-             <string/>
+             <string>Model System</string>
             </property>
             <item>
              <property name="text" >
-              <string>base_year_cache</string>
-             </property>
-             <property name="icon" >
-              <iconset resource="opusMain.qrc" >:/Images/Images/folder_database.png</iconset>
-             </property>
-             <property name="text" >
-              <string>c:/urbansim_cache/run_962.2006_11_07_08_50</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>years_to_run</string>
-             </property>
-             <property name="icon" >
-              <iconset resource="opusMain.qrc" >:/Images/Images/calendar_view_day.png</iconset>
+              <string>Models</string>
              </property>
              <property name="text" >
               <string/>
              </property>
              <item>
               <property name="text" >
-               <string>start_year</string>
-              </property>
-              <property name="text" >
-               <string>2000</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>end_year</string>
-              </property>
-              <property name="text" >
-               <string>2030</string>
-              </property>
-             </item>
-            </item>
-            <item>
-             <property name="text" >
-              <string>model_system_configuration</string>
-             </property>
-             <property name="icon" >
-              <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
-             </property>
-             <property name="text" >
-              <string>urbansim_base_configuration</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>indicator_sets</string>
-             </property>
-             <property name="text" >
-              <string/>
-             </property>
-             <item>
-              <property name="text" >
-               <string>standard_indicator_set</string>
+               <string>Prescheduled Events</string>
               </property>
               <property name="icon" >
-               <iconset resource="opusMain.qrc" >:/Images/Images/table_multiple.png</iconset>
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Events Coordinator</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Residential Land Share Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Land Price Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Development Project Transition Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Residential Development Project Location Choice Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Commercial Development Project Location Choice Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Industrial Development Project Location Choice Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Development Event Transition Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Events Coordinator</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Residential Land Share Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Household Transition Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Employment Transition Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Household Relocation Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Household Location Choice Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Employment Relocation Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Employment Location Choice Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Distrubute Unplaced Jobs Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
               </property>
               <property name="text" >
                <string/>
@@ -1235,70 +1582,131 @@
            </item>
            <item>
             <property name="text" >
-             <string>no_ugb_scenario</string>
+             <string>MAG - Parcel</string>
             </property>
             <property name="icon" >
-             <iconset resource="opusMain.qrc" >:/Images/Images/exclamation.png</iconset>
+             <iconset resource="opusMain.qrc" >:/Images/Images/bullet_black.png</iconset>
             </property>
             <property name="text" >
-             <string/>
+             <string>Model System</string>
             </property>
             <item>
              <property name="text" >
-              <string>base_year_cache</string>
-             </property>
-             <property name="icon" >
-              <iconset resource="opusMain.qrc" >:/Images/Images/exclamation.png</iconset>
-             </property>
-             <property name="text" >
-              <string>?</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>years_to_run</string>
-             </property>
-             <property name="icon" >
-              <iconset resource="opusMain.qrc" >:/Images/Images/calendar_view_day.png</iconset>
+              <string>Models</string>
              </property>
              <property name="text" >
               <string/>
              </property>
              <item>
               <property name="text" >
-               <string>start_year</string>
+               <string>Real Estate Price Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
               </property>
               <property name="text" >
-               <string>2000</string>
+               <string/>
               </property>
              </item>
              <item>
               <property name="text" >
-               <string>end_year</string>
+               <string>Expected Sale Price Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
               </property>
               <property name="text" >
-               <string>2030</string>
+               <string/>
               </property>
              </item>
-            </item>
-            <item>
-             <property name="text" >
-              <string>model_system_configuration</string>
-             </property>
-             <property name="icon" >
-              <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
-             </property>
-             <property name="text" >
-              <string>urbansim_base_configuration</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>indicator_sets</string>
-             </property>
-             <property name="text" >
-              <string/>
-             </property>
+             <item>
+              <property name="text" >
+               <string>Development Proposal Choice Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Building Construction Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Household Transition Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Employment Transition Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Household Relocation Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Household Location Choice Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Employment Relocation Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>Employment Location Choice Model</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
             </item>
            </item>
           </widget>
@@ -1310,12 +1718,12 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>529</width>
-          <height>781</height>
+          <width>511</width>
+          <height>763</height>
          </rect>
         </property>
         <attribute name="label" >
-         <string>Results Manager</string>
+         <string>Indicators</string>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -1493,6 +1901,214 @@
                <string/>
               </property>
              </item>
+            </item>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="runmanager_page" >
+        <property name="geometry" >
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>511</width>
+          <height>763</height>
+         </rect>
+        </property>
+        <attribute name="label" >
+         <string>Scenarios</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <property name="leftMargin" >
+          <number>9</number>
+         </property>
+         <property name="topMargin" >
+          <number>9</number>
+         </property>
+         <property name="rightMargin" >
+          <number>9</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>9</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QTreeWidget" name="treeWidget_4" >
+           <column>
+            <property name="text" >
+             <string>Name</string>
+            </property>
+           </column>
+           <column>
+            <property name="text" >
+             <string>Type</string>
+            </property>
+           </column>
+           <item>
+            <property name="text" >
+             <string>scenario_configuration</string>
+            </property>
+            <property name="text" >
+             <string/>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>base_scenario</string>
+            </property>
+            <property name="icon" >
+             <iconset resource="opusMain.qrc" >:/Images/Images/accept.png</iconset>
+            </property>
+            <property name="text" >
+             <string/>
+            </property>
+            <item>
+             <property name="text" >
+              <string>base_year_cache</string>
+             </property>
+             <property name="icon" >
+              <iconset resource="opusMain.qrc" >:/Images/Images/folder_database.png</iconset>
+             </property>
+             <property name="text" >
+              <string>c:/urbansim_cache/run_962.2006_11_07_08_50</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>years_to_run</string>
+             </property>
+             <property name="icon" >
+              <iconset resource="opusMain.qrc" >:/Images/Images/calendar_view_day.png</iconset>
+             </property>
+             <property name="text" >
+              <string/>
+             </property>
+             <item>
+              <property name="text" >
+               <string>start_year</string>
+              </property>
+              <property name="text" >
+               <string>2000</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>end_year</string>
+              </property>
+              <property name="text" >
+               <string>2030</string>
+              </property>
+             </item>
+            </item>
+            <item>
+             <property name="text" >
+              <string>model_system_configuration</string>
+             </property>
+             <property name="icon" >
+              <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+             </property>
+             <property name="text" >
+              <string>MAG - Parcel</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>indicator_sets</string>
+             </property>
+             <property name="icon" >
+              <iconset resource="opusMain.qrc" >:/Images/Images/table_multiple.png</iconset>
+             </property>
+             <property name="text" >
+              <string/>
+             </property>
+             <item>
+              <property name="text" >
+               <string>standard_indicator_set</string>
+              </property>
+              <property name="icon" >
+               <iconset resource="opusMain.qrc" >:/Images/Images/table_multiple.png</iconset>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </item>
+            </item>
+           </item>
+           <item>
+            <property name="text" >
+             <string>no_ugb_scenario</string>
+            </property>
+            <property name="icon" >
+             <iconset resource="opusMain.qrc" >:/Images/Images/exclamation.png</iconset>
+            </property>
+            <property name="text" >
+             <string/>
+            </property>
+            <item>
+             <property name="text" >
+              <string>base_year_cache</string>
+             </property>
+             <property name="icon" >
+              <iconset resource="opusMain.qrc" >:/Images/Images/exclamation.png</iconset>
+             </property>
+             <property name="text" >
+              <string>?</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>years_to_run</string>
+             </property>
+             <property name="icon" >
+              <iconset resource="opusMain.qrc" >:/Images/Images/calendar_view_day.png</iconset>
+             </property>
+             <property name="text" >
+              <string/>
+             </property>
+             <item>
+              <property name="text" >
+               <string>start_year</string>
+              </property>
+              <property name="text" >
+               <string>2000</string>
+              </property>
+             </item>
+             <item>
+              <property name="text" >
+               <string>end_year</string>
+              </property>
+              <property name="text" >
+               <string>2030</string>
+              </property>
+             </item>
+            </item>
+            <item>
+             <property name="text" >
+              <string>model_system_configuration</string>
+             </property>
+             <property name="icon" >
+              <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+             </property>
+             <property name="text" >
+              <string>?</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>indicator_sets</string>
+             </property>
+             <property name="icon" >
+              <iconset resource="opusMain.qrc" >:/Images/Images/table_multiple.png</iconset>
+             </property>
+             <property name="text" >
+              <string/>
+             </property>
             </item>
            </item>
           </widget>
