@@ -19,8 +19,8 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 # QGIS bindings for mapping functions
-from qgis.core import *
-from qgis.gui import *
+#from qgis.core import *
+#from qgis.gui import *
 
 # General system includes
 import sys
@@ -43,8 +43,8 @@ def main(argv):
   app.setStyle(QString("plastique"))
   
   # initialize qgis libraries
-  QgsApplication.setPrefixPath(qgis_prefix, True)
-  QgsApplication.initQgis()
+  #QgsApplication.setPrefixPath(qgis_prefix, True)
+  #QgsApplication.initQgis()
 
   # create main window
   wnd = OpusGui()
@@ -57,7 +57,7 @@ def main(argv):
   retval = app.exec_()
   
   # We got an exit signal so time to clean up
-  QgsApplication.exitQgis()
+  #QgsApplication.exitQgis()
   
   sys.exit(retval)
 
