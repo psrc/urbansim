@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<datasets_to_preload>
+<list>
+<dict selected="True"><gridcell><nchunks><int>2</int></nchunks></gridcell></dict>
+<dict selected="True"><household><nchunks><int>1</int></nchunks></household></dict>
+<dict selected="True"><job><nchunks><int>1</int></nchunks></job></dict>
+<dict selected="True"><zone><nchunks><int>1</int></nchunks></zone></dict>
+<dict selected="True"><development_type><nchunks><int>1</int></nchunks></development_type></dict>
+<dict selected="True"><target_vacancy><nchunks><int>1</int></nchunks></target_vacancy></dict>
+<dict selected="True"><development_event_history><nchunks><int>1</int></nchunks></development_event_history></dict>
+<dict selected="True"><development_constraint><nchunks><int>1</int></nchunks></development_constraint></dict>
+<dict selected="True"><job_building_type><nchunks><int>1</int></nchunks></job_building_type></dict>
+<dict selected="True"><vacant_land_and_building_type><nchunks><int>1</int></nchunks></vacant_land_and_building_type></dict>
+<dict selected="True"><urbansim_constant><nchunks><int>1</int></nchunks></urbansim_constant></dict>
+</list>
+</datasets_to_preload>

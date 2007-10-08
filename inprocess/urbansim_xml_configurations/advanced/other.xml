@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<model_system><str>urbansim.model_coordinators.model_system</str></model_system>
+<debuglevel><int>4</int></debuglevel>
+<flush_variables><bool>False</bool></flush_variables>
+<seed><int>0</int></seed>
+<chunk_specification><dict><nchunks><int>1</int></nchunks></dict></chunk_specification>
+<dataset_pool_configuration>
+<class name="DatasetPoolConfiguration" path="opus_core.configurations.dataset_pool_configuration">
+  <package_order>
+    <list>
+    <str>urbansim</str>
+    <str>opus_core</str>
+    </list>
+  </package_order>
+  <package_order_exceptions><dict></dict></package_order_exceptions>
+</class>
+</dataset_pool_configuration>

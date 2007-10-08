@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<services_configuration>
+<class name="ServicesConfigurationCreator" path="urbansim.configurations.services_configuration_creator">
+  <host_name>localhost</host_name>
+  <user_name>urbansim</user_name>
+  <db_password><None/></db_password>
+  <database_name>services</database_name>
+</class>
+</services_configuration>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<base_year>
+<int>2000</int>
+</base_year>
+
+<years>
+<tuple>
+<int>2001</int>
+<int>2030</int>
+</tuple>
+</years>

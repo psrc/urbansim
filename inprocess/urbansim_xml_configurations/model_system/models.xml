@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<models>
+<list>
+<str selected="True">prescheduled_events</str>
+<str selected="True">events_coordinator</str>
+<str selected="True">residential_land_share_model</str>
+<str selected="True">land_price_model</str>
+<str selected="True">development_project_transition_model</str>
+<str selected="True">residential_development_project_location_choice_model</str>
+<str selected="True">commercial_development_project_location_choice_model</str>
+<str selected="True">industrial_development_project_location_choice_model</str>
+<str selected="True">development_event_transition_model</str>
+<str selected="True">events_coordinator</str>
+<str selected="True">residential_land_share_model</str>
+<str selected="True">household_transition_model</str>
+<str selected="True">employment_transition_model</str>
+<str selected="True">household_relocation_model</str>
+<str selected="True">household_location_choice_model</str>
+<str selected="True">employment_relocation_model</str>
+<dict> 
+  <employment_location_choice_model>
+    <dict><group_members>_all_</group_members></dict>
+  </employment_location_choice_model>
+</dict>
+<str selected="True">distribute_unplaced_jobs_model</str>
+</list>
+</models>

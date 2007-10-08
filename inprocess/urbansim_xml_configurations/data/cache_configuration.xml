@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<cache_directory><None/></cache_directory>
+
+<creating_baseyear_cache_configuration>
+<class name="CreatingBaseyearCacheConfiguration" path="urbansim.configurations.creating_baseyear_cache_configuration">
+  <cache_scenario_database>urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
+  <tables_to_cache>
+    <list>
+    <str>annual_employment_control_totals</str>
+    <str>annual_household_control_totals</str>
+    <str>development_event_history</str>
+    <str>gridcells</str>
+    <str>households</str>
+    <str>job_building_types</str>
+    <str>jobs</str>
+    <str>travel_data</str>
+    <str>zones</str>
+    <str>fazes</str>
+    <str>commercial_development_location_choice_model_coefficients</str>
+    <str>commercial_development_location_choice_model_specification</str>
+    <str>commercial_employment_location_choice_model_coefficients</str>
+    <str>commercial_employment_location_choice_model_specification</str>
+    <str>home_based_employment_location_choice_model_specification</str>
+    <str>home_based_employment_location_choice_model_coefficients</str>
+    <str>industrial_employment_location_choice_model_coefficients</str>
+    <str>industrial_employment_location_choice_model_specification</str>
+    <str>industrial_development_location_choice_model_coefficients</str>
+    <str>industrial_development_location_choice_model_specification</str>
+    <str>residential_development_location_choice_model_coefficients</str>
+    <str>residential_development_location_choice_model_specification</str>
+    <str>urbansim_constants</str>
+    <str>household_location_choice_model_coefficients</str>
+    <str>household_location_choice_model_specification</str>
+    <str>land_price_model_coefficients</str>
+    <str>land_price_model_specification</str>
+    <str>residential_land_share_model_coefficients</str>
+    <str>residential_land_share_model_specification</str>
+    <str>plan_type_group_definitions</str>
+    <str>plan_type_groups</str>
+    <str>household_characteristics_for_ht</str>
+    <str>development_types</str>
+    <str>development_type_group_definitions</str>
+    <str>development_constraints</str>
+    <str>annual_relocation_rates_for_households</str>
+    <str>annual_relocation_rates_for_jobs</str>
+    <str>base_year</str>
+    <str>development_events</str>
+    <str>development_type_groups</str>
+    <str>employment_adhoc_sector_group_definitions</str>
+    <str>employment_adhoc_sector_groups</str>
+    <str>employment_events</str>
+    <str>employment_sectors</str>
+    <str>land_use_events</str>
+    <str>plan_types</str>
+    <str>race_names</str>
+    <str>target_vacancies</str>
+    <str>development_events_exogenous</str>
+    <str selected="False">jobs_for_estimation</str>
+    <str selected="False">households_for_estimation</str>
+    <str selected="False">buildings</str>
+    <str selected="False">building_types</str>
+    <str selected="False">counties</str>
+    <str selected="False">cities</str>
+    <str selected="False">large_areas</str>
+    </list>
+  </tables_to_cache>
+  <tables_to_cache_nchunks>
+    <dict><gridcells><int>1</int></gridcells></dict>
+  </tables_to_cache_nchunks>
+  <tables_to_copy_to_previous_years>
+    <dict>
+    </dict>
+  </tables_to_copy_to_previous_years>
+</class>
+</creating_baseyear_cache_configuration>

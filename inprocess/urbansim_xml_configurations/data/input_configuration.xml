@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<input_configuration>
+<class name="DatabaseConfiguration" path="opus_core.configurations.database_configuration">
+  <host_name><None/></host_name>
+  <user_name><None/></user_name>
+  <password><None/></password>
+  <database_name><None/></database_name>
+</class>
+</input_configuration>
