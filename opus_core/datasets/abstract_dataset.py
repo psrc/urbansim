@@ -22,7 +22,7 @@ from glob import glob
 
 from numpy import array, where, float32, int32, sort, argsort, reshape, dtype, any
 from numpy import zeros, arange, ones, clip, ndarray, concatenate, searchsorted, resize
-from numpy import compress, transpose, logical_and, ma
+from numpy import compress, transpose, logical_and, ma, isscalar
 from scipy import ndimage
 from numpy.random import randint
 from numpy import ma
@@ -255,7 +255,7 @@ class AbstractDataset(object):
         """
         self._ensure_id_attribute_is_loaded() # Must have the id attributes loaded for the id_mapping to find them.
 
-        if isinstance(id,int) or isinstance(id,long) or isinstance(id, tuple):
+        if isscalar(id) or isinstance(id, tuple):
             return self._get_one_id_index(id)
 
         ids = id
