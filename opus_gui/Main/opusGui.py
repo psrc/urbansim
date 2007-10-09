@@ -24,7 +24,7 @@ from qgis.gui import *
 
 # UI specific includes
 from opusMain_ui import Ui_MainWindow
-
+from Util.pythonGui import OpusPythonShell
 # General system includes
 import sys
 
@@ -39,7 +39,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.setupUi(self)
     
     # We need to initialize the window sizes
-    self.splitter.setSizes([150,700])
+    self.splitter.setSizes([350,500])
     
     # create map canvas
     self.canvas = QgsMapCanvas(self.widgetMap)
@@ -95,6 +95,12 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.layers.insert(0,cl)
     self.canvas.setLayerSet(self.layers)
     
+    self.pythonGui = OpusPythonShell(self.pythonWidget,self.pythonLineEdit,self.__dict__)
+    self.pythonLayout = QGridLayout(self.pythonWidget)
+    self.pythonLayout.setMargin(9)
+    self.pythonLayout.setSpacing(6)
+    self.pythonLayout.setObjectName("pythonLayout")
+    self.pythonLayout.addWidget(self.pythonGui)
     
     debugString = QString("Startup Done...")
     #self.statusbar.showMessage(debugString)
@@ -102,14 +108,19 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     # Build a list of the default list of tabs
     self.tabWidgetList = {}
     for tabIndex in range(self.tabWidget.count()):
-      self.tabWidgetList[str(self.tabWidget.widget(tabIndex).objectName())] = \
+      self.tabWidgetList[str(self.tabWidget.tabText(tabIndex))] = \
       self.tabWidget.widget(tabIndex)
     # Init to the first in toolbox by default
     self.toolBoxChanged(0)
     
     QObject.connect(self.toolBox, SIGNAL("currentChanged(int)"),
                     self.toolBoxChanged)
-  
+
+    self.datamanager_tree.resizeColumnToContents(0)
+    self.modelmanager_tree.resizeColumnToContents(0)
+    self.runmanager_tree.resizeColumnToContents(0)
+    self.resultsmanager_tree.resizeColumnToContents(0)
+    
   def updateTabs(self, listOfTabs):
     # Here we can update to show current tabs
     for index in range(self.tabWidget.count()):
@@ -125,16 +136,20 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     item = self.toolBox.widget(index)
     if (item.objectName() == "datamanager_page"):
       # Data Manager
-      self.updateTabs(("tab_mapView","tab_detailView"))
+      self.updateTabs(("Editor","Map View","Python Console","Log View"))
+      #self.updateTabs(("tab_editorView","tab_mapView","tab_pythonView","tab_logView"))
     elif (item.objectName() == "modelmanager_page"):
       # Model Manager
-      self.updateTabs(("tab_detailView","tab_mapView","tab_modelFlow"))
+      self.updateTabs(("Editor","Map View","Python Console","Log View"))
+      #self.updateTabs(("tab_editorView","tab_mapView","tab_pythonView","tab_logView"))
     elif (item.objectName() == "runmanager_page"):
       # Run Manager
-      self.updateTabs(("tab_detailView","tab_mapView","tab_runStatus"))
+      self.updateTabs(("Editor","Map View","Python Console","Log View"))
+      #self.updateTabs(("tab_editorView","tab_mapView","tab_pythonView","tab_logView"))
     elif (item.objectName() == "resultsmanager_page"):
       # Result Manager
-      self.updateTabs(("tab_detailView","tab_mapView","tab_trendView"))
+      self.updateTabs(("Map View","Python Console","Log View"))
+      #self.updateTabs(("tab_mapView","tab_pythonView","tab_logView"))
 
     #debugString = QString("toolBoxChanged signal captured - Name = " + item.objectName())
     #self.statusbar.showMessage(debugString)
