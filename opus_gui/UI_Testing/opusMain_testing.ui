@@ -65,8 +65,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>511</width>
-          <height>763</height>
+          <width>532</width>
+          <height>783</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -815,8 +815,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>511</width>
-          <height>763</height>
+          <width>96</width>
+          <height>79</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -1718,8 +1718,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>511</width>
-          <height>763</height>
+          <width>96</width>
+          <height>79</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -1912,8 +1912,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>511</width>
-          <height>763</height>
+          <width>96</width>
+          <height>79</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -2118,7 +2118,7 @@
       </widget>
       <widget class="QTabWidget" name="tabWidget" >
        <property name="currentIndex" >
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_2" >
         <attribute name="title" >
@@ -2184,7 +2184,7 @@
      <x>0</x>
      <y>0</y>
      <width>950</width>
-     <height>21</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject" >
@@ -2193,8 +2193,17 @@
     </property>
     <addaction name="separator" />
     <addaction name="separator" />
+    <addaction name="actionOpen" />
+    <addaction name="actionSave" />
+    <addaction name="actionSave_As" />
+   </widget>
+   <widget class="QMenu" name="menuPreferences" >
+    <property name="title" >
+     <string>Preferences</string>
+    </property>
    </widget>
    <addaction name="menuProject" />
+   <addaction name="menuPreferences" />
   </widget>
   <widget class="QStatusBar" name="statusbar" />
   <action name="mpActionZoomOut" >
@@ -2235,6 +2244,21 @@
    </property>
    <property name="text" >
     <string>Add Vector Layer</string>
+   </property>
+  </action>
+  <action name="actionOpen" >
+   <property name="text" >
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionSave" >
+   <property name="text" >
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionSave_As" >
+   <property name="text" >
+    <string>Save As</string>
    </property>
   </action>
  </widget>
