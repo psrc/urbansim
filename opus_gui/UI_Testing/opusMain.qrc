@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/Images" >
+        <file>Images/SQL.png</file>
         <file>Images/accept.png</file>
         <file>Images/application_side_tree.png</file>
         <file>Images/bullet_black.png</file>
@@ -16,6 +17,7 @@
         <file>Images/exclamation.png</file>
         <file>Images/folder.png</file>
         <file>Images/folder_database.png</file>
+        <file>Images/hammer_closeup.png</file>
         <file>Images/layers.png</file>
         <file>Images/mActionAddLayer.png</file>
         <file>Images/mActionAddRasterLayer.png</file>
@@ -29,5 +31,6 @@
         <file>Images/table_go.png</file>
         <file>Images/table_lightning.png</file>
         <file>Images/table_multiple.png</file>
+        <file>Images/text_list_numbers.png</file>
     </qresource>
 </RCC>
