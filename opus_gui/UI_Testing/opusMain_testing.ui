@@ -611,7 +611,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/hammer_closeup.png</iconset>
                </property>
                <property name="text" >
-                <string>ArcGIS Geoprocessor</string>
+                <string>ArcGIS</string>
                </property>
               </item>
               <item>
@@ -622,7 +622,7 @@
                 <iconset resource="opusMain.qrc" >:/Images/Images/hammer_closeup.png</iconset>
                </property>
                <property name="text" >
-                <string>ArcGIS Geoprocessor</string>
+                <string>ArcGIS</string>
                </property>
               </item>
              </item>
@@ -674,6 +674,39 @@
               <property name="text" >
                <string/>
               </property>
+              <item>
+               <property name="text" >
+                <string>Change Field Name</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/SQL.png</iconset>
+               </property>
+               <property name="text" >
+                <string>SQL</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Change Field Type</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/SQL.png</iconset>
+               </property>
+               <property name="text" >
+                <string>SQL</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Change Table Name</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/SQL.png</iconset>
+               </property>
+               <property name="text" >
+                <string>SQL</string>
+               </property>
+              </item>
              </item>
              <item>
               <property name="text" >
@@ -682,6 +715,28 @@
               <property name="text" >
                <string/>
               </property>
+              <item>
+               <property name="text" >
+                <string>Create Mock Parcels</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/hammer_closeup.png</iconset>
+               </property>
+               <property name="text" >
+                <string>ArcGIS</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Export Feature Class Table to DB</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/hammer_closeup.png</iconset>
+               </property>
+               <property name="text" >
+                <string>ArcGIS</string>
+               </property>
+              </item>
              </item>
              <item>
               <property name="text" >
@@ -690,6 +745,50 @@
               <property name="text" >
                <string/>
               </property>
+              <item>
+               <property name="text" >
+                <string>Check For Outliers</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/python_script.png</iconset>
+               </property>
+               <property name="text" >
+                <string>Python</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Descriptive Statistics</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/python_script.png</iconset>
+               </property>
+               <property name="text" >
+                <string>Python</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Scatterplot</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/python_script.png</iconset>
+               </property>
+               <property name="text" >
+                <string>Python</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Histogram</string>
+               </property>
+               <property name="icon" >
+                <iconset resource="opusMain.qrc" >:/Images/Images/python_script.png</iconset>
+               </property>
+               <property name="text" >
+                <string>Python</string>
+               </property>
+              </item>
              </item>
             </item>
            </item>
