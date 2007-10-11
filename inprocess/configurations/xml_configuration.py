@@ -14,6 +14,7 @@
 
 import os
 import xml.dom.minidom
+from numpy import array
 from opus_core.configuration import Configuration
 
 class XMLConfiguration(Configuration):
@@ -109,6 +110,10 @@ class XMLConfiguration(Configuration):
                 return False
             else:
                 raise ValueError, 'malformed xml - expected a string representing a boolean'
+        elif node.tagName=='array':
+            # the data should be a string such as '[100, 300]'
+            # use eval to turn this into a list, and then turn it into a numpy array
+            return array(eval(node.firstChild.data))
         elif node.tagName=='dict':
             result_dict = {}
             for child in node.childNodes:
@@ -159,6 +164,7 @@ class XMLConfiguration(Configuration):
         return inst
 
 import os
+from numpy import ma
 from opus_core.tests import opus_unittest
 class XMLConfigurationTests(opus_unittest.OpusTestCase):
 
@@ -200,6 +206,14 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
             self.assert_(type(k) is str)
         self.assert_(type(config['s']) is str)
         self.assert_(type(config['u']) is unicode)
+
+    def test_array(self):
+        # check that the keys in the config dictionary are str, and that
+        # the str and unicode tags are working correctly
+        f = os.path.join(self.test_configs, 'array.xml')
+        config = XMLConfiguration(f)
+        should_be = array([100, 300]) 
+        self.assert_(ma.allclose(config['arraytest'], should_be, rtol=1e-6))
         
     def test_xml_inheritance(self):
         # test inheritance with a chain of xml configurations
