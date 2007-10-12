@@ -16,7 +16,7 @@ from numpy import array, dtype
 
 try:
     import sqlalchemy
-    from sqlalchemy import Table, Column
+    from sqlalchemy import Table, Column, select
     from sqlalchemy.types import Integer, Numeric, String, Float, Boolean    
 except ImportError:
     sqlalchemy = None
@@ -70,14 +70,13 @@ class sql_storage(Storage):
         
         table = Table(table_name, db.metadata, autoload=True)
             
-        query_results = table.select().execute()
-            
-        table_data = {}
-        
         available_column_names = self.get_column_names(table_name, lowercase)
-        final_cols = self._select_columns(column_names, available_column_names)  
+        final_cols = self._select_columns(column_names, available_column_names) 
         
         col_data = {}
+        selectable_columns = []
+        table_data = {}
+
         for column in table.columns:
             if lowercase:
                 col_name = column.name.lower()
@@ -88,8 +87,19 @@ class sql_storage(Storage):
                 col_type = self._get_numpy_dtype_from_sql_alchemy_type(column.type)
                 col_data[col_name] = (column, col_type)
                 table_data[col_name] = []
-                
-        for row in query_results.fetchall():
+                selectable_columns.append(column)
+                         
+        query = select(
+            columns = selectable_columns
+        )        
+        
+        print 'selecting %s'%','.join(final_cols)
+        query_results = db.engine.execute(query)
+        
+        print 'extracting rows'
+        while True:
+            row = query_results.fetchone()
+            if row is None: break
             for col_name, (column, col_type) in col_data.items():
                 table_data[col_name].append(row[column])
                     
