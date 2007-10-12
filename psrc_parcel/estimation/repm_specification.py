@@ -13,6 +13,7 @@
 # 
 
 all_variables = [
+    "unit_price = urbansim_parcel.parcel.unit_price",
     "hwy600 = psrc.parcel.distance_to_highway_in_gridcell<600",
     "hwy1000 = psrc.parcel.distance_to_highway_in_gridcell<1000",
     "hwy2000 = psrc.parcel.distance_to_highway_in_gridcell<2000",
@@ -242,7 +243,8 @@ specification = {
     "constant",
     "ln_bldgage",
     "lnsqft",
-    "ln_invfar",
+    #"ln_invfar",
+    "lnlotsqft",
     "lnempden",
     "lngcdacbd",
     "lnpopden",
