@@ -14,6 +14,7 @@
 import pickle
 from opus_core.general_resources import GeneralResources
 from opus_core.configuration import Configuration
+from sqlalchemy.sql import select
 
 class RunState(GeneralResources):
     """ Object that centralizes data about each run """
@@ -47,36 +48,69 @@ class RunState(GeneralResources):
         else:
             resources['end_year'] =  None
              
-        results = self.database.GetResultsFromQuery("SELECT processor_name,run_name from run_activity where run_id = %i"% run_id)
-        resources['processor_name'] = results[1][0]
-        resources['run_name'] = results[1][1]        
-        resources['full_cache_dirname'] = self.get_full_cache_dirname(info['cache_directory'],resources['processor_name'])    
+        run_activity = self.database.get_table('run_activity')
+        query = select(
+            columns = [run_activity.c.processor_name,
+                       run_activity.c.run_name],
+            whereclause = run_activity.c.run_id==run_id               
+        )
+        results = self.database.engine.execute(query).fetchone()
+        resources['processor_name'] = results[0]
+        resources['run_name'] = results[1]        
+        resources['full_cache_dirname'] = self.get_full_cache_dirname(
+            info['cache_directory'],
+            resources['processor_name'])    
 
         self.status = status
         self.run_id = run_id
         
         pickled_info = pickle.dumps(resources)
         self.update(resources)  
-        exists = self.database.GetResultsFromQuery("SELECT run_id from available_runs WHERE run_id  = %s" % self.run_id)
-        from MySQLdb import escape_string
-        if len(exists) > 1:
-            self.database.DoQuery("UPDATE available_runs set info = '%s',status = '%s' where run_id = %s" % (
-                escape_string(pickled_info),
-                self.status,
-                self.run_id))
-        else:
-            self.database.DoQuery("INSERT INTO available_runs(run_id,info,status) values(%s,'%s','%s')" % (
-                run_id,
-                escape_string(pickled_info),
-                status))
+        
+        available_runs = self.database.get_table('available_runs')
+                
+        query = select(
+            columns = [available_runs.c.run_id],
+            whereclause = available_runs.c.run_id==int(self.run_id))
 
+        exists = len(self.database.engine.execute(query).fetchall()) > 1
+        
+        if exists:
+            values = {
+                available_runs.c.info: pickled_info,
+                available_runs.c.status: self.status
+            }
+            
+            query = available_runs.update(
+                whereclause = available_runs.c.run_id == int(self.run_id),
+                values = values
+            )
+
+        else:
+            values = {
+                available_runs.c.run_id: run_id,
+                available_runs.c.info: pickled_info,
+                available_runs.c.status: self.status
+            }
+            query = available_runs.insert(
+                values = values           
+            )
+            
+        self.database.engine.execute(query)
+
+        #TODO: return self? this doesn't make too much sense...
         return self
 
     def get_run_state(self,run_id):
         """ get row from available runs """
-        results = self.database.GetResultsFromQuery("SELECT info,status FROM available_runs WHERE run_id = %s" % run_id)
-        info = results[1][0]
-        self.status  = results[1][1]
+        
+        available_runs = self.database.get_table('available_runs')
+        query = select(
+            columns = [available_runs.c.info,
+                       available_runs.c.status],
+            whereclause = available_runs.c.run_id==int(self.run_id))
+        
+        info, self.status = self.database.engine.execute(query).fetchone()
         self.run_id = run_id
         self.update(Configuration(pickle.loads(info)))
         return self
@@ -88,11 +122,20 @@ class RunState(GeneralResources):
         self['years']  = years_cached
         copy  =self.copy()
         pickled_info = pickle.dumps(copy)  
-        from MySQLdb import escape_string
-        self.database.DoQuery("UPDATE available_runs set info = '%s',status = '%s' where run_id = %s" % 
-                              (escape_string(pickled_info),
-                               self.status,
-                               self.run_id))
+        
+        available_runs = self.database.get_table('available_runs')
+
+        values = {
+            available_runs.c.info: pickled_info,
+            available_runs.c.status: self.status
+        }
+        
+        query = available_runs.update(
+            whereclause = available_runs.c.run_id == int(self.run_id),
+            values = values
+        )
+        
+        self.database.engine.execute(query)
         
     def _get_years_available_in_cache(self,years,cache_dirname,processor_name):    
         """ Returns the subset of these years that actually have a directory in their respective

@@ -20,6 +20,7 @@ from opus_core.configuration import Configuration
 from opus_core.store.utils.cache_flt_data import CacheFltData
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from sqlalchemy.sql import select, and_
 
 class RunManager(object):
     """An abstraction representing a simulation manager that automatically logs
@@ -33,14 +34,11 @@ class RunManager(object):
     def set_run_activity(self, run_activity):
         self.run_activity = run_activity
 
-    def get_base_year(self, baseyear_db):
-        return baseyear_db.GetResultsFromQuery("SELECT year FROM $$.base_year")[1][0]
-
     def get_resources_for_run_id_from_history(self, run_id,
                                           services_host_name='localhost',
                                           services_database_name='services',
-                                          services_user_name=os.environ.get('MYSQLUSERNAME', None),
-                                          services_password=os.environ.get('MYSQLPASSWORD', None)):
+                                          services_user_name=None,
+                                          services_password=None):
         """Returns the resources for this run_id, as stored in the run_activity table.
         """
 #        import pdb; pdb.set_trace()
@@ -52,13 +50,20 @@ class RunManager(object):
         db_server = DatabaseServer(db_config)
         db = db_server.get_database(services_database_name)
                 
-        run_resources = db.GetResultsFromQuery("SELECT resources FROM run_activity WHERE status='started' and run_id = %s" % run_id)
-        db.close()
-        if len(run_resources) == 1:
+        run_activity = db.get_table('run_activity')
+        query = select(
+            columns = [run_activity.c.resources],
+            whereclause = and_(
+                            run_activity.c.status=='started',
+                            run_activity.c.run_id==int(run_id)))
+        
+        run_resources = db.engine.execute(query).fetchone()
+        
+        if not run_resources:
             raise StandardError("run_id %s doesn't exist host = %s database = %s" % (run_id, services_host_name, services_database_name))
 
-        return Configuration(pickle.loads(run_resources[1][0]))
-
+        db.close()
+        return Configuration(pickle.loads(run_resources[0]))
 
     def create_run_resources_from_history(self,
                                           services_host_name='localhost',
@@ -242,10 +247,16 @@ class RunManager(object):
         db_server = DatabaseServer(db_config)
         db = db_server.get_database(services_database_name)
         
-        results = db.GetResultsFromQuery("SELECT processor_name FROM run_activity WHERE run_id = %i"% run_id)
+        run_activity = db.get_table('run_activity')
+        query = select(
+            columns = [run_activity.c.processor_name],
+            whereclause = run_activity.c.run_id==run_id)
+        
+        results = db.engine.execute(query).fetchone()
         db.close()
+        db_server.close()
 
-        return results[1][0]
+        return results[0]
 
     def get_name_for_id(self,run_id, services_host_name, services_user_name, services_password, services_database_name = "services"):
         """ returns the name given to this scenario run"""
@@ -257,10 +268,18 @@ class RunManager(object):
         db_server = DatabaseServer(db_config)
         db = db_server.get_database(services_database_name)
 
+        run_activity = db.get_table('run_activity')
+        query = select(
+            columns = [run_activity.c.run_name],
+            whereclause = run_activity.c.run_id==run_id)
+        
+        results = db.engine.execute(query).fetchone()
+        
         results = db.GetResultsFromQuery("SELECT run_name FROM run_activity WHERE run_id = %i"% run_id)
         db.close()
+        db_server.close()
 
-        return results[1][0]
+        return results[0]
 
 def insert_auto_generated_cache_directory_if_needed(config):
     """Auto-generate a cache directory based upon current date-time."""

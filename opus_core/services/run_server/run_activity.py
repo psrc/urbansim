@@ -16,7 +16,7 @@ from time import localtime, strftime, time
 
 from opus_core.misc import get_host_name
 from opus_core.services.run_server.available_runs import AvailableRuns
-from sqlalchemy.sql import insert
+from sqlalchemy.sql import insert, func, select
 
 class RunActivity(object):
     """Abstraction that represents a log of the run runs and information about when/where 
@@ -34,10 +34,15 @@ class RunActivity(object):
         
     def get_new_history_id(self):
         """Returns a unique run_id for a new run_activity trail."""
-        last_id = self.storage.GetResultsFromQuery("SELECT MAX(run_id) FROM run_activity")
+        run_activity = self.storage.get_table('run_activity')
+        query = select(
+            columns = [func.max(run_activity.c.run_id),
+                       func.count(run_activity.c.run_id)]
+        )
+        last_id, cnt = self.storage.engine.execute(query).fetchone()
         
-        if last_id[1][0]:
-            run_id = int(last_id[1][0]) + 1
+        if cnt > 0:
+            run_id = last_id + 1
         else:
             run_id = 1
 
@@ -67,7 +72,6 @@ class RunActivity(object):
         qry = run_activity_table.insert(values = values)
         self.storage.engine.execute(qry)
     
-
         if self.available_runs.has_run(history_id):
             self.available_runs.update_status_for_run(history_id,status)
         else:

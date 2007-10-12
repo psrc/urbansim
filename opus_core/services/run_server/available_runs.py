@@ -25,8 +25,9 @@ class AvailableRuns(object):
         self.storage = storage
         if not self.storage.table_exists("available_runs"):
             tt_schema = TableTypeSchema()
-            self.storage.create_table("available_runs", 
-                                            tt_schema.get_table_schema("available_runs"))
+            self.storage.create_table(
+                "available_runs", 
+                tt_schema.get_table_schema("available_runs"))
     
     def close_connection(self):
         self.storage.close()
@@ -47,8 +48,10 @@ class AvailableRuns(object):
         while os.path.exists(cache_dirname):
             shutil.rmtree(cache_dirname)
         
-        self.storage.DoQuery("DELETE FROM available_runs WHERE run_id = %s" % run_id)
-   
+        available_runs = self.storage.get_table('available_runs')
+        query = available_runs.delete(available_runs.c.run_id==int(run_id))
+        self.storage.engine.execute(query)
+           
     def delete_year_dirs_in_cache(self, run_id, years_to_delete=None):
         """ only removes the years cache and leaves the indicator, changes status to partial"""
         run_state = RunState(self.storage).get_run_state(run_id)
@@ -85,13 +88,25 @@ class AvailableRuns(object):
 
     def has_run(self,run_id):
         """ return True iff this run is available"""
-        results = self.storage.GetResultsFromQuery("SELECT * from available_runs WHERE run_id = %s " % run_id)
-        return len(results) > 1
+        from sqlalchemy.sql import select
+        available_runs = self.storage.get_table('available_runs')
+                
+        query = select(
+            columns = [available_runs.c.run_id],
+            whereclause = available_runs.c.run_id==int(run_id))
+
+        exists = len(self.storage.engine.execute(query).fetchall()) > 1
+        
+        return exists
 
     def update_status_for_run(self,run_id,status):
         """ updates status on the database"""
-        self.storage.DoQuery("UPDATE available_runs SET status = '%s' WHERE run_id = %s" % (status,run_id))
-        
+        available_runs = self.storage.get_table('available_runs')
+        values = {available_runs.c.status:status}
+        query = available_runs.update(
+            available_runs.c.run_id==int(run_id),
+            values = values)
+        self.storage.engine.execute(query)        
 
 from opus_core.tests import opus_unittest
 
