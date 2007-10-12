@@ -18,11 +18,10 @@ from opus_core.configuration import Configuration
 
 
 class LandPriceModelConfigurationCreator(HasStrictTraits):
-    debuglevel = Trait(4, Str, Int)
+    debuglevel = Trait('debuglevel', Str, Int)
     dataset = Str('gridcell')
     nchunks = Int(1)
     threshold = Int(1000)
-    n_simulated_years = Str("year-resources['base_year']")
     estimation_procedure = Str("opus_core.estimate_linear_regression")
     
     coefficients_table = Str('land_price_model_coefficients')
@@ -80,7 +79,7 @@ class LandPriceModelConfigurationCreator(HasStrictTraits):
                     'data_objects': 'datasets',
                     'dataset': self.dataset,
                     'debuglevel': self.debuglevel,
-                    'n_simulated_years': '%s' % self.n_simulated_years,
+                    'n_simulated_years': "year-base_year",
                     'specification': _specification,
                     }
                 }
@@ -105,7 +104,7 @@ class TestLandPriceModelConfigurationCreator(opus_unittest.OpusTestCase):
                 'arguments': {
                     'data_objects': 'datasets',
                     'dataset': 'gridcell',
-                    'debuglevel': 4,
+                    'debuglevel': 'debuglevel',
                     'index': 'index',
                     'specification': 'specification',
                     'procedure': "'opus_core.estimate_linear_regression'"
@@ -142,8 +141,8 @@ class TestLandPriceModelConfigurationCreator(opus_unittest.OpusTestCase):
                     'coefficients': 'coefficients',
                     'data_objects': 'datasets',
                     'dataset': 'gridcell',
-                    'debuglevel': 4,
-                    'n_simulated_years': "year-resources['base_year']",
+                    'debuglevel': 'debuglevel',
+                    'n_simulated_years': "year-base_year",
                     'specification': 'specification'
                     }
                 }
@@ -158,7 +157,6 @@ class TestLandPriceModelConfigurationCreator(opus_unittest.OpusTestCase):
             dataset = 'dataset',
             nchunks = 8888,
             threshold = 7777,
-            n_simulated_years = 'n_simulated_years',
             coefficients_table = 'coefficients_table',
             specification_table = 'specification_table',
             )
@@ -206,7 +204,7 @@ class TestLandPriceModelConfigurationCreator(opus_unittest.OpusTestCase):
                     'data_objects': 'datasets',
                     'dataset': 'dataset',
                     'debuglevel': 9999,
-                    'n_simulated_years': 'n_simulated_years',
+                    'n_simulated_years': 'year-base_year',
                     'specification': 'specification'
                     }
                 }

@@ -19,11 +19,11 @@ from opus_core.configuration import Configuration
 
 class ResidentialLandShareModelConfigurationCreator(HasStrictTraits):
     dataset = Str('gridcell')
-    debuglevel = Trait(4, Str, Int)
+    debuglevel = Trait('debuglevel', Str, Int)
     
     coefficients_table = Str('residential_land_share_model_coefficients')
     specification_table = Str('residential_land_share_model_specification')
-    
+    estimation_procedure = Str("opus_core.estimate_linear_regression")
     input_changed_indices = Str('changed_indices')
     
     _model_name = 'residential_land_share_model'
@@ -42,7 +42,8 @@ class ResidentialLandShareModelConfigurationCreator(HasStrictTraits):
                     'dataset': self.dataset,
                     'debuglevel': self.debuglevel,
                     'index': _index,
-                    'specification': _specification
+                    'specification': _specification,
+                    'procedure': "'%s'" % self.estimation_procedure
                     },
                 'output': '(%s, _)' % _coefficients
                 },
@@ -100,9 +101,10 @@ class TestResidentialLandShareModelConfiguration(opus_unittest.OpusTestCase):
                 'arguments': {
                     'data_objects': 'datasets',
                     'dataset': 'gridcell',
-                    'debuglevel': 4,
+                    'debuglevel': 'debuglevel',
                     'index': 'index',
-                    'specification': 'specification'
+                    'specification': 'specification',
+                    'procedure': "'opus_core.estimate_linear_regression'"
                     },
                 'output': '(coefficients, _)'
                 },
@@ -134,7 +136,7 @@ class TestResidentialLandShareModelConfiguration(opus_unittest.OpusTestCase):
                     'coefficients': 'coefficients',
                     'data_objects': 'datasets',
                     'dataset': 'gridcell',
-                    'debuglevel': 4,
+                    'debuglevel': 'debuglevel',
                     'index': 'changed_indices',
                     'specification': 'specification'
                     }
@@ -160,7 +162,8 @@ class TestResidentialLandShareModelConfiguration(opus_unittest.OpusTestCase):
                     'dataset': 'dataset',
                     'debuglevel': -5,
                     'index': 'index',
-                    'specification': 'specification'
+                    'specification': 'specification',
+                    'procedure': "'opus_core.estimate_linear_regression'"
                     },
                 'output': '(coefficients, _)'
                 },
