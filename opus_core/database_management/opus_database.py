@@ -202,22 +202,22 @@ def convert_to_mysql_datatype(query):
     return query
 
     '''need to replace this one...'''
-#    def DoQueries(self, sql_statements):
-#        """Iterate through a string of multiple (more than one) mysql statements
-#        and execute each statement as a query.
-#        Does not return data.
-#        Args:
-#            sql_statements = triple-quoted string of multiple sql statements
-#                             (separated by a semicolon, of course)
-#        """
-#        statements = sql_statements.split(";")
-#        for query in statements :
-#            query = query.strip()
-#            if query:
-#                cursor = self.db.cursor()
-#                preprocessed_query = self.convert_to_mysql_datatype(preprocessed_query)
-#                _log_sql(preprocessed_query, self.show_output)
-#                cursor.execute(preprocessed_query)
+    def DoQueries(self, sql_statements):
+        """Iterate through a string of multiple (more than one) mysql statements
+        and execute each statement as a query.
+        Does not return data.
+        Args:
+            sql_statements = triple-quoted string of multiple sql statements
+                             (separated by a semicolon, of course)
+        """
+        statements = sql_statements.split(";")
+        for query in statements :
+            query = query.strip()
+            if query:
+                cursor = self.db.cursor()
+                preprocessed_query = self.convert_to_mysql_datatype(query)
+                _log_sql(preprocessed_query, self.show_output)
+                cursor.execute(preprocessed_query)
 
 ########## Logging utility functions from Bjorn's old globals.py #####################
 def _log(s) :
