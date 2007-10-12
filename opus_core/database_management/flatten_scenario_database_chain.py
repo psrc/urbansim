@@ -38,9 +38,6 @@ class FlattenScenarioDatabaseChain(object):
                                          to_database_name, 
                                          tables_to_copy=[]
                                         ):
-        """Copy a UrbanSim sytle database chain from 
-        one MySQL server to another MySQL server."""
-
                 
         db_server_from = DatabaseServer(db_server_config_from)
         db_server_to = DatabaseServer(db_server_config_to)
@@ -80,6 +77,8 @@ class FlattenScenarioDatabaseChain(object):
             
         self._fix_scenario_information_table(database_out)            
         database_out.close()
+        db_server_from.close()
+        db_server_to.close()
 
     def copy_scenario_database(self, config):
         db_server_config_to = config['db_server_config_to']                                                   
