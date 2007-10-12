@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<land_price_model>
+<class name="LandPriceModelConfigurationCreator" 
+          path="urbansim.configurations.land_price_model_configuration_creator">
+<dataset>gridcell</dataset>
+<nchunks>1</nchunks>
+<threshold>1000</threshold>
+<estimation_procedure>opus_core.estimate_linear_regression</estimation_procedure>
+<coefficients_table>land_price_model_coefficients</coefficients_table>
+<specification_table>land_price_model_specification</specification_table>
+</land_price_model>

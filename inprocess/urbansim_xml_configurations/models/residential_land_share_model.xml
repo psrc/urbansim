@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<residential_land_share_model>
+<class name="ResidentialLandShareModelConfigurationCreator" 
+          path="urbansim.configurations.residential_land_share_model_configuration_creator">
+<dataset>gridcell</dataset>    
+<coefficients_table>residential_land_share_model_coefficients<coefficients_table>
+<specification_table>residential_land_share_model_specification</specification_table>
+<estimation_procedure>opus_core.estimate_linear_regression</estimation_procedure>
+<input_changed_indices>changed_indices<input_changed_indices>
+</residential_land_share_model>

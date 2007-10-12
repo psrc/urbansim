@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<prescheduled_events>
+<class name="PrescheduledEventsConfigurationCreator" 
+          path="urbansim.configurations.prescheduled_events_configuration_creator">
+<output_events>development_events</output_events>
+</prescheduled_events>
