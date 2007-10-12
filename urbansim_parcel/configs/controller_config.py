@@ -77,7 +77,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                 "name": "prepare_for_estimate",
                 "arguments": {"specification_storage": "base_cache_storage",
                               "specification_table": "'real_estate_price_model_specification'",
-                              "filter_variable":"'urbansim_parcel.parcel.unit_price'",
+                              "filter_variable":"'numpy.logical_and(urbansim_parcel.parcel.unit_price>0.01,urbanasim_parcel.parcel.unit_price<1000,urbansim_parcel.parcel.existing_units>100)'",
                               "dataset": "parcel",
                               "threshold": 1},
                 "output": "(specification, index)"
@@ -465,13 +465,13 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         hlcm_controller["init"]["arguments"]["capacity_string"] = "'vacant_residential_units'"
         hlcm_controller["init"]["arguments"]['sample_size_locations']=30
         hlcm_controller["init"]["arguments"]['sampler']="'opus_core.samplers.weighted_sampler'"
-        hlcm_controller["init"]["arguments"]["submodel_string"] = None #"'household_size'"
-        hlcm_controller["init"]["arguments"]["estimation_size_agents"] = 0.005
+        hlcm_controller["init"]["arguments"]["submodel_string"] = "'urbansim.household.income_category'"
+        hlcm_controller["init"]["arguments"]["estimation_size_agents"] = None
         #hlcm_controller["init"]["arguments"]["number_of_units_string"] = None
         hlcm_controller["init"]["arguments"]["variable_package"] = "'urbansim_parcel'"
         hlcm_controller["init"]["arguments"]["run_config"] = "{'lottery_max_iterations': 7}"
         hlcm_controller["init"]["arguments"]["filter"] = "'numpy.logical_and(building.residential_units, building.sqft_per_unit)'"
-        hlcm_controller["prepare_for_estimate"]["arguments"]["agents_for_estimation_table"] = None
+        hlcm_controller["prepare_for_estimate"]["arguments"]["agents_for_estimation_table"] = "'households_for_estimation'"
         hlcm_controller["prepare_for_estimate"]["arguments"]["filter"] = "'numpy.logical_and(household.building_id>0, household.disaggregate(building.sqft_per_unit>0))'" # filtering out agents for estimation with valid location
         hlcm_controller["prepare_for_estimate"]["arguments"]["join_datasets"] = True
         hlcm_controller["prepare_for_estimate"]["arguments"]["index_to_unplace"] = None
