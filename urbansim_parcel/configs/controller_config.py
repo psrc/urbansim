@@ -470,7 +470,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         #hlcm_controller["init"]["arguments"]["number_of_units_string"] = None
         hlcm_controller["init"]["arguments"]["variable_package"] = "'urbansim_parcel'"
         hlcm_controller["init"]["arguments"]["run_config"] = "{'lottery_max_iterations': 7}"
-        hlcm_controller["init"]["arguments"]["filter"] = "'numpy.logical_and(building.residential_units, building.sqft_per_unit)'"
+        hlcm_controller["init"]["arguments"]["filter"] = "'numpy.logical_and(numpy.logical_and(building.residential_units, building.sqft_per_unit), numpy.logical_and(urbansim_parcel.building.unit_price > 50, urbansim_parcel.building.unit_price<100000))'"
         hlcm_controller["prepare_for_estimate"]["arguments"]["agents_for_estimation_table"] = "'households_for_estimation'"
         hlcm_controller["prepare_for_estimate"]["arguments"]["filter"] = "'numpy.logical_and(household.building_id>0, household.disaggregate(building.sqft_per_unit>0))'" # filtering out agents for estimation with valid location
         hlcm_controller["prepare_for_estimate"]["arguments"]["join_datasets"] = True
