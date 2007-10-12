@@ -1,0 +1,59 @@
+<residential_development_project_location_choice_model>
+<parent><file>parents/development_project_location_choice_model.xml</file></parent>
+
+<init>
+  <arguments>
+    <model_configuration>
+      <developable_maximum_unit_variable_full_name>
+        urbansim.gridcell.developable_maximum_residential_units
+      </developable_maximum_unit_variable_full_name>
+      <developable_minimum_unit_variable_full_name>
+        urbansim.gridcell.developable_minimum_residential_units
+      </developable_minimum_unit_variable_full_name>
+      <residential><bool>True</bool></residential>
+      <units>residential_units</units>
+    </model_configuration>
+      <project_type>
+      residential
+    </project_type>
+  </arguments>
+</init>
+
+<prepare_for_run>
+  <arguments>
+    <coefficients_table>
+      <str>residential_development_location_choice_model_coefficients</str>
+    </coefficients_table>
+    <specification_table>
+      <str>residential_development_location_choice_model_specification</str>
+    </specification_table>	
+  </arguments>
+</prepare_for_run>
+
+<run>
+  <arguments>
+    <agent_set> 
+        dptm_results['residential']
+    </agent_set>
+  </arguments>
+</run>
+
+<prepare_for_estimate>
+   <arguments>
+      <categories>
+        <array>
+                 <int>1</int>
+                 <int>2</int>
+                 <int>3</int>  
+                 <int>5</int>
+                 <int>10</int>
+                 <int>20</int> 
+        </array>
+      </categories>
+    <specification_table>
+        <str>residential_development_location_choice_model_specification</str>
+    </specification_table>
+  </arguments>
+</prepare_for_estimate>
+
+</residential_development_project_location_choice_model>
