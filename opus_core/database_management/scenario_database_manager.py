@@ -59,20 +59,20 @@ class ScenarioDatabaseManager(object):
             query = select(
                 columns = [scenario_info_table.c.PARENT_DATABASE_URL]               
             )
-            results = database.engine.execute(query)
-            next_database_name = results.fetchone()
+            next_database_name = database.engine.execute(query).fetchone()
             if next_database_name == () or next_database_name[0] == '':
                 next_database_name = None
             else:
                 next_database_name = next_database_name[0]
             
+            database.close()
             if next_database_name is not None:                
                 match = re.search("jdbc:mysql://[^/]*/(.*)", next_database_name)
                 if match == None :
                     raise ValueError("parent database url is not a MySQL JDBC url" )
                 next_database_name = match.group(1)
                 table_mapping = self._get_table_mapping(next_database_name, table_mapping)
-                
+        else:
             database.close()
             
         return table_mapping
