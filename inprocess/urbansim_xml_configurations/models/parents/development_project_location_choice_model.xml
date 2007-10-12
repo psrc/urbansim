@@ -1,110 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <development_project_location_choice_model>
-<import>
-  <urbansim.models.development_project_location_choice_model_creator>
-    DevelopmentProjectLocationChoiceModelCreator
-  </urbansim.models.development_project_location_choice_model_creator>
-</import>
+<class name="DevelopmentProjectLocationChoiceModelConfigurationCreator" 
+          path="urbansim.configurations.development_project_location_choice_model_configuration_creator">
+          
+#must be set by children
+<project_type></project_type>
+<coefficients_table></coefficients_table>
+<specification_table></specification_table>
 
-<init>
-  <name>
-    DevelopmentProjectLocationChoiceModelCreator().get_model
-  </name>
-  <arguments>
-    <location_set>
-      gridcell
-    </location_set>
-    <submodel_string>
-      <str>
-        size_category
-      </str>
-    </submodel_string>
-  </arguments>
-</init>
+# default values for all children
+<records_per_chunk>300</records_per_chunk>
+<location_set>gridcell</location_set>
+<events_for_estimation_table>development_event_history</events_for_estimation_table>
+<submodel_string>size_category</submodel_string>
 
-<prepare_for_run>
-  <arguments>
-    <coefficient_storage>
-      base_cache_storage
-    </coefficient_storage>
-    <specification_storage>
-      base_cache_storage
-    </specification_storage>
-  </arguments>
-  <name>
-    prepare_for_run
-  </name>
-  <output>
-    <tuple>
-        <item>
-          specification
-        </item>
-        <item>
-          coefficients
-        </item>
-    </tuple
-  </output>
-</prepare_for_run>
-
-<run>
-  <arguments>
-    <specification> specification </specification>
-    <coefficients> coefficients </coefficients>
-    <chunk_specification> 
-      <records_per_chunk><int>300</int></records_per_chunk>
-    </chunk_specification> 
-    <data_objects> datasets </data_objects>
-    <debuglevel> debuglevel </debuglevel>
-  <arguments>
- </run>
- 
- <prepare_for_estimate>
-   <arguments>
-     <base_year>base_year</base_year>
-     <events_for_estimation_storage> base_cache_storage </events_for_estimation_storage>
-     <events_for_estimation_table><str>development_event_history</str></events_for_estimation_table>
-     <specification_table>project_type_development_location_choice_model_specification</specification_table>
-     <urbansim_constant>urbansim_constant</urbansim_constant>
-  </arguments>
-  <name>
-    prepare_for_estimate
-  </name>
-  <output>
-    <tuple>
-      <item>
-        specification
-      </item>
-      <item>
-        projects
-      </item>
-    </tuple>
-  </output>
-</prepare_for_estimate>
-
-<estimate>
-  <arguments>
-    <agent_set>
-      projects
-    </agent_set>
-    <specification>
-      specification
-    </specification>	
-    <data_objects>
-      datasets
-    </data_objects>
-    <debuglevel>
-      debuglevel
-    </debuglevel>
-  <output>
-    <tuple>
-      <item>
-        coefficients
-      </item>
-      <item>
-        dummy
-      </item>
-    </tuple>
-  </output>
-                
 </development_project_location_choice_model>
