@@ -96,10 +96,8 @@ class sql_storage(Storage):
             columns = selectable_columns
         )        
         
-        print 'selecting %s'%','.join(final_cols)
         query_results = db.engine.execute(query)
         
-        print 'extracting rows'
         while True:
             row = query_results.fetchone()
             if row is None: break
@@ -268,7 +266,8 @@ else:
 #            actual_url = self.storage.get_storage_location()
 #            
 #            self.assertEqual(expected_url, actual_url)
-            
+
+       
         def test_write_table_creates_a_table_with_the_given_table_name_and_data(self):
             from MySQLdb import ProgrammingError, OperationalError
                    
@@ -456,7 +455,18 @@ else:
             actual_data = self.storage.load_table('bar')
             
             self.assertDictsEqual(expected_data, actual_data)
+
+        def test_load_table_returns_nothing_when_no_cols_specified(self):
+            db = self.db_server.get_database(self.database_name)
             
+            db.DoQuery('CREATE TABLE bar (d INT, e FLOAT, f TEXT)')
+            db.DoQuery('INSERT INTO bar (d, e, f) VALUES (4,5.5,"6")')
+            
+            expected_data = {}
+            
+            actual_data = self.storage.load_table('bar', column_names = [])
+            
+            self.assertDictsEqual(expected_data, actual_data)            
     
     if __name__ == '__main__':
         opus_unittest.main()
