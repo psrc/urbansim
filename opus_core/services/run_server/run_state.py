@@ -108,7 +108,7 @@ class RunState(GeneralResources):
         query = select(
             columns = [available_runs.c.info,
                        available_runs.c.status],
-            whereclause = available_runs.c.run_id==int(self.run_id))
+            whereclause = available_runs.c.run_id==int(run_id))
         
         info, self.status = self.database.engine.execute(query).fetchone()
         self.run_id = run_id
