@@ -73,6 +73,9 @@ class sql_storage(Storage):
         available_column_names = self.get_column_names(table_name, lowercase)
         final_cols = self._select_columns(column_names, available_column_names) 
         
+        if final_cols == []:
+            return {}
+        
         col_data = {}
         selectable_columns = []
         table_data = {}
