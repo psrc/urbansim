@@ -275,7 +275,6 @@ class RunManager(object):
         
         results = db.engine.execute(query).fetchone()
         
-        results = db.GetResultsFromQuery("SELECT run_name FROM run_activity WHERE run_id = %i"% run_id)
         db.close()
         db_server.close()
 
