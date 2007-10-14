@@ -15,7 +15,7 @@
 import sys
 
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
-from opus_core.table_type_schema import TableTypeSchema
+from opus_core.database_management.table_type_schema import TableTypeSchema
 from opus_core.logger import logger
 
 class CreateServicesDBOptionGroup(GenericOptionGroup):

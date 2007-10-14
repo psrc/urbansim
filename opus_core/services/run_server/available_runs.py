@@ -14,7 +14,7 @@
 import os, pickle, shutil, sys
 
 from opus_core.logger import logger
-from opus_core.table_type_schema import TableTypeSchema
+from opus_core.database_management.table_type_schema import TableTypeSchema
 from opus_core.services.run_server.run_state import RunState
 
 class AvailableRuns(object):
