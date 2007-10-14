@@ -148,10 +148,6 @@ class OpusDatabase(object):
         t = self.metadata.tables[table_name]
         return t.exists()
 
-    '''this method is unused right now...'''
-    def get_results_from_query(self, query):
-        return self.GetResultsFromQuery(query)[1:]
-
     def get_tables_in_database(self):
         """Returns a list of the tables in this database chain."""
         return self.metadata.tables.keys()
@@ -196,24 +192,6 @@ def convert_to_mysql_datatype(query):
     for old, new in filter_data.iteritems():
         query = query.replace(old, new)
     return query
-
-    '''need to replace this one...'''
-    def DoQueries(self, sql_statements):
-        """Iterate through a string of multiple (more than one) mysql statements
-        and execute each statement as a query.
-        Does not return data.
-        Args:
-            sql_statements = triple-quoted string of multiple sql statements
-                             (separated by a semicolon, of course)
-        """
-        statements = sql_statements.split(";")
-        for query in statements :
-            query = query.strip()
-            if query:
-                cursor = self.db.cursor()
-                preprocessed_query = self.convert_to_mysql_datatype(query)
-                _log_sql(preprocessed_query, self.show_output)
-                cursor.execute(preprocessed_query)
 
 ########## Logging utility functions from Bjorn's old globals.py #####################
 def _log(s) :
