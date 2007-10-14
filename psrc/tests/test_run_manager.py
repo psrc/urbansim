@@ -19,7 +19,7 @@ from shutil import rmtree
 
 from opus_core.logger import logger
 from opus_core.tests import opus_unittest
-from opus_core.table_type_schema import TableTypeSchema
+from opus_core.database_management.table_type_schema import TableTypeSchema
 from opus_core.services.run_server.run_manager import RunManager
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.services.run_server.run_activity import RunActivity
