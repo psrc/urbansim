@@ -28,14 +28,7 @@ from sqlalchemy import create_engine
 
 ### TODO: Add unit tests.
 class OpusDatabase(object):
-    """Base class for OPUS databases.
-
-    This class supports 'database chaining', where tables in a database shadow
-    tables in a 'parent' database (specified in the database's scenario_information table).
-    This provides a mechanism for version control in databases, and allows simulations
-    to use data from specific versions of tables - which makes it easier to update tables
-    without changing what existing runs see.
-    """
+    """Represents a connection a database, administered through sqlalchemy."""
 
     def __init__(self, database_server_configuration, database_name,
                  show_output=False) :
