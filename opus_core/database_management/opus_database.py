@@ -34,9 +34,7 @@ class OpusDatabase(object):
     tables in a 'parent' database (specified in the database's scenario_information table).
     This provides a mechanism for version control in databases, and allows simulations
     to use data from specific versions of tables - which makes it easier to update tables
-    without changing what existing runs see.  Queries including a $$. as the table name,
-    e.g. "select * from $$.jobs", are pre-processed to replace the $$ with the name of the
-    database containing the table.
+    without changing what existing runs see.
     """
 
     def __init__(self, database_server_configuration, database_name,
@@ -71,11 +69,9 @@ class OpusDatabase(object):
     def DoQuery(self, query):
         """
         Executes an SQL statement that changes data in some way.
-        Before executing the statement, it substitutes for an term of the form
-        "$$.table_name" the correct database for where the table is stored.
         Does not return data.
         Args;
-            query = an SQL statement, possibly containing $$.table_name terms
+            query = an SQL statement
         """
         engine = self.engine
         preprocessed_query = convert_to_mysql_datatype(query)
@@ -88,7 +84,7 @@ class OpusDatabase(object):
         Returns records from query, as a list, the first element of which is a list of field names
 
         Args:
-            query = query to execute, possibly containing $$.table_name terms
+            query = query to execute
         """
         engine = self.engine
         preprocessed_query = convert_to_mysql_datatype(query)

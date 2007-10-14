@@ -54,7 +54,7 @@ class DatabaseServer(object):
         Executes an SQL statement that changes data in some way.
         Does not return data.
         Args;
-            query = an SQL statement, possibly containing $$.table_name terms
+            query = a SQL statement
         """
         from opus_core.database_management.opus_database import convert_to_mysql_datatype, _log_sql
         engine = self.engine
