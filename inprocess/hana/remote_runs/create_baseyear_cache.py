@@ -25,5 +25,5 @@ if __name__ == "__main__":
                       help="Name of file containing resources")
     (options, args) = parser.parse_args()
     resources = Resources(get_resources_from_file(options.resources_file_name))
-    RunManager().create_baeyear_cache(resources)
+    RunManager().create_baseyear_cache(resources)
 
