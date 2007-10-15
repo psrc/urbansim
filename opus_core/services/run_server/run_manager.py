@@ -280,6 +280,13 @@ class RunManager(object):
 
         return results[0]
 
+    def create_baseyear_cache(self, resources):
+        if resources['creating_baseyear_cache_configuration'].cache_from_mysql:
+            ForkProcess().fork_new_process(
+                resources['creating_baseyear_cache_configuration'].cache_scenario_database, resources)
+        else:
+            CacheFltData().run(resources)
+            
 def insert_auto_generated_cache_directory_if_needed(config):
     """Auto-generate a cache directory based upon current date-time."""
     cache_directory_root = config['creating_baseyear_cache_configuration'].cache_directory_root
