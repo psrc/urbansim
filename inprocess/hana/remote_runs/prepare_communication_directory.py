@@ -20,6 +20,6 @@ if __name__ == "__main__":
     parser.add_option("-d", "--directory", dest="communication_path", action="store", type="string",
                       help="Name of directory for communication between processes. It will be deleted and newly created.")
     (options, args) = parser.parse_args()
-
-    shutil.rmtree('%s' % options.communication_path)
-    os.makedirs('%s' % options.communication_path)
+   #shutil.rmtree('%s' % options.communication_path)
+    if not os.path.exists(options.communication_path):
+        os.makedirs('%s' % options.communication_path)
