@@ -14,7 +14,7 @@
 import sys
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
 from opus_core.resources import Resources
-
+from opus_core.file_utilities import get_resources_from_file
 from opus_core.services.run_server.run_manager import RunManager
 
 if __name__ == "__main__":
