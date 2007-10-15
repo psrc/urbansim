@@ -92,11 +92,7 @@ class RunManager(CoreRunManager):
             cache_directory = run_resources['cache_directory']
 
         # Create baseyear cache
-        if run_resources['creating_baseyear_cache_configuration'].cache_from_mysql:
-            ForkProcess().fork_new_process(
-                run_resources['creating_baseyear_cache_configuration'].cache_scenario_database, run_resources)
-        else:
-            CacheFltData().run(run_resources)
+        self.create_baseyear_cache(run_resources)
             
         # Make the cache_directory if it doesn't exist (doesn't include per-year directories).
         if not os.path.exists(cache_directory):
