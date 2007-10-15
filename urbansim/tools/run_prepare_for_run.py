@@ -22,7 +22,7 @@ if __name__ == "__main__":
     """Written for running the prepare_for_run method as a process"""
     option_group = GenericOptionGroup()
     parser = option_group.parser
-    self.parser.add_option("-c", "--configuration-path", dest="configuration_path", default=None, 
+    parser.add_option("-c", "--configuration-path", dest="configuration_path", default=None, 
                                help="Opus path to Python module defining configuration.")
     (options, args) = parser.parse_args()
     config = get_config_from_opus_path(options.configuration_path)
