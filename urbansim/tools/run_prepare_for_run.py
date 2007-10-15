@@ -11,7 +11,7 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 
-import os
+import sys
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
 from opus_core.services.run_server.run_activity import RunActivity
 from opus_core.misc import get_config_from_opus_path
@@ -35,4 +35,4 @@ if __name__ == "__main__":
         run_manager = RunManager(run_activity)
 
     history_id = run_manager.prepare_for_run(config)
-    os._exit(history_id)
+    sys.exit(history_id)
