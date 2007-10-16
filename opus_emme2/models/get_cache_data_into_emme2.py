@@ -68,12 +68,7 @@ class GetCacheDataIntoEmme2(AbstractEmme2TravelModel):
         self._call_input_file_writer(config, year, job_set, zone_set, hh_set, taz_col_set)
 
     def _call_input_file_writer(self, config, year, job_set, zone_set, hh_set, taz_col_set):
-        taz_col_set.load_dataset()
-        zone_set.load_dataset()
-        job_set.load_dataset(attributes=['job_id', 'sector_id', '%s' % zone_set.get_id_name()[0]])
-        hh_set.load_dataset(attributes=['household_id', 'income', '%s' % zone_set.get_id_name()[0]])
         max_zone_id = zone_set.get_id_attribute().max()
-        
         tm_file_writer = TravelModelInputFileWriter()
         tripgen_dir = self.get_emme2_dir(config, year, 'tripgen')
         logger.log_status('tripgen dir: %s' % tripgen_dir)
