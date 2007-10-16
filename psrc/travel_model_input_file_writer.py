@@ -40,7 +40,7 @@ class TravelModelInputFileWriter(object):
     def create_tripgen_travel_model_input_file(self, job_set, household_set, taz_col_set, max_zone_id,
                                                current_emme2_tripgen_dir, current_year):
         """Writes to the an emme2 input file in the tripgen/inputtg/TAZDATA.MA2.
-           If the datasets need to select by year, assumes the attibutes have already been loaded.
+           If the datasets need to select by year.
                The attributes needed are:
                    job_set: job_id, zone_id, sector_id
                    household_set: household_id, zone_id, income
@@ -85,8 +85,11 @@ class TravelModelInputFileWriter(object):
 
     def _write_to_file(self, taz_col_set, current_emme2_tripgen_dir, current_year, max_zone_id):
         logger.start_block("Writing to emme2 input file")
+        full_path = os.path.join(current_emme2_tripgen_dir, 'inputtg')
+        if not os.path.exists(full_path):
+            os.makedirs('%s' % full_path)
         try:
-            newfile = open(os.path.join(current_emme2_tripgen_dir, 'inputtg', 'TAZDATA.MA2'), 'w')
+            newfile = open(os.path.join(full_path, 'TAZDATA.MA2'), 'w')
             try:
                 newfile.write(r"""c  from
 c  prepared: %s

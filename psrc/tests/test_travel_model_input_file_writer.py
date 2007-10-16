@@ -45,7 +45,6 @@ if does_test_database_server_exist(module_name=__name__):
             self.create_constant_taz_columns_table(self.database)
             self.create_households_table(self.database)
             self.tempdir_path = tempfile.mkdtemp(prefix='opus_tmp')
-            os.makedirs(os.path.join(self.tempdir_path, 'inputtg'))
     
         def tearDown(self):
             self.database.close()
@@ -102,11 +101,7 @@ if does_test_database_server_exist(module_name=__name__):
                     self.assertAlmostEqual(real_tazdata[zone][col_var], expected_tazdata[zone][col_var], 3,\
                                            "zone %d, column variable %d did not match up."%(zone, col_var))
         
-        def create_gridcells_table(self, database):
-            database.DoQuery("drop table if exists gridcells_exported")
-            database.DoQuery("create table gridcells_exported (grid_id int(11), zone_id int(11), year int(11))")
-            database.DoQuery("insert into gridcells_exported values(1, 1, 2000), (2, 1, 2000), (3, 2, 2000), (4, 2, 2000), (5, 2, 2000)")
-            
+
         def create_households_table(self, database):
             database.DoQuery("drop table if exists households_exported")
             database.DoQuery("create table households_exported (household_id int(11), zone_id int(11), income int(11), year int(11))")
