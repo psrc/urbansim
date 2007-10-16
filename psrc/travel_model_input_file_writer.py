@@ -81,7 +81,7 @@ class TravelModelInputFileWriter(object):
                                                           hh_income[hh_in_this_zone] < upper_median)).sum()
             self.upper_income_hh_by_taz[zone] = (hh_income[hh_in_this_zone] >= upper_median).sum()
 
-        self._write_to_file(taz_col_set, current_emme2_tripgen_dir, current_year, max_zone_id)
+        return self._write_to_file(taz_col_set, current_emme2_tripgen_dir, current_year, max_zone_id)
 
     def _write_to_file(self, taz_col_set, current_emme2_tripgen_dir, current_year, max_zone_id):
         logger.start_block("Writing to emme2 input file")
@@ -177,6 +177,7 @@ m matrix="hhemp"
                 newfile.close()
         finally:
             logger.end_block()
+        return os.path.join(full_path, 'TAZDATA.MA2')
 
     def _decade_floor(self, year):
         return int(round(year - 5, -1))

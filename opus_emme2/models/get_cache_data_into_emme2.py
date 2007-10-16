@@ -12,6 +12,7 @@
 # other acknowledgments.
 # 
 
+from shutil import copy
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.resources import Resources
 from opus_core.simulation_state import SimulationState
@@ -65,17 +66,20 @@ class GetCacheDataIntoEmme2(AbstractEmme2TravelModel):
                                                                                  intermediates_string)], 
                                      dataset_pool=dataset_pool)
         
-        self._call_input_file_writer(config, year, job_set, zone_set, hh_set, taz_col_set)
+        return self._call_input_file_writer(config, year, job_set, zone_set, hh_set, taz_col_set)
 
     def _call_input_file_writer(self, config, year, job_set, zone_set, hh_set, taz_col_set):
         max_zone_id = zone_set.get_id_attribute().max()
         tm_file_writer = TravelModelInputFileWriter()
         tripgen_dir = self.get_emme2_dir(config, year, 'tripgen')
         logger.log_status('tripgen dir: %s' % tripgen_dir)
-        tm_file_writer.create_tripgen_travel_model_input_file(job_set, hh_set,
+        resulting_files = []
+        filename = tm_file_writer.create_tripgen_travel_model_input_file(job_set, hh_set,
                                                               taz_col_set, max_zone_id,
                                                               tripgen_dir,
                                                               year)
+        resulting_files.append(filename)
+        return resulting_files
     
 if __name__ == "__main__":
     try: import wingdbstub
@@ -87,10 +91,15 @@ if __name__ == "__main__":
                       help="Name of file containing resources")
     parser.add_option("-y", "--year", dest="year", action="store", type="int",
                       help="Year in which to 'run' the travel model")
+    parser.add_option("-cp", "--copy", dest="destination_directory", action="store", type="string", default=None,
+                      help="Copy resulting files into this directory.")
     (options, args) = parser.parse_args()
     
     r = get_resources_from_file(options.resources_file_name)
     resources = Resources(get_resources_from_file(options.resources_file_name))
 
 #    logger.enable_memory_logging()
-    GetCacheDataIntoEmme2().run(resources, options.year)
+    files = GetCacheDataIntoEmme2().run(resources, options.year)
+    if options.destination_directory is not None:
+        for file in files:
+            copy(file, options.destination_directory)
