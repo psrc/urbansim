@@ -13,8 +13,8 @@
 #
 
 import os
-import xml.dom.minidom
 from numpy import array
+from PyQt4 import QtCore, QtXml
 from opus_core.configuration import Configuration
 
 class XMLConfiguration(Configuration):
@@ -25,17 +25,25 @@ class XMLConfiguration(Configuration):
     def __init__(self, filename):
         """initialize this configuration from the contents of the xml file named by 'filename' """
         super(XMLConfiguration, self).__init__()
-        root = xml.dom.minidom.parse(filename)
-        configNode = root.documentElement
-        if configNode.nodeType!=configNode.ELEMENT_NODE or configNode.tagName!='configuration':
+        f = QtCore.QFile(filename)
+        is_ok = f.open(QtCore.QIODevice.ReadOnly)
+        if not is_ok:
+            raise 
+        doc = QtXml.QDomDocument()
+        doc.setContent(f)
+        configNode = doc.documentElement()
+        if not configNode.isElement() or configNode.tagName()!='configuration':
             raise ValueError, "malformed xml - expected to find a root element named 'configuration'"
         changes = {}
-        for node in configNode.childNodes:
-            if node.nodeType==node.ELEMENT_NODE and node.tagName=='parent':
-                self._process_parent(node, filename)
+        node = configNode.firstChild()
+        while not node.isNull():
+            if node.isElement() and node.toElement().tagName()=='parent':
+               self._process_parent(node, filename)
             else:
                 self._add_to_dict(node, changes)
+            node = node.nextSibling()
         self.merge(changes)
+        f.close()
         
     def _process_parent(self, node, filename):
         # Process a node specifying the parent configuration.  This may be defined using either 
@@ -48,8 +56,9 @@ class XMLConfiguration(Configuration):
         children = self._get_good_children(node)
         if len(children)!=1:
             raise ValueError, 'ill-formed parent node - should have just one child'
-        if children[0].tagName=='file':
-            parentfilename = children[0].firstChild.data
+        tag = children[0].toElement().tagName()
+        if tag=='file':
+            parentfilename = str(children[0].firstChild().toText().data())
             # dir is the path to the directory containing the xml file named by filename
             # if the parent file name is relative, find it relative to dir (join will ignore
             # dir if the parent file name is absolute)
@@ -57,9 +66,9 @@ class XMLConfiguration(Configuration):
             fullpath = os.path.join(dir, parentfilename)
             parent = XMLConfiguration(fullpath)
             self.merge(parent)
-        elif children[0].tagName=='oldconfig':
-            path = children[0].getAttribute('path')
-            class_name = children[0].firstChild.data
+        elif tag=='oldconfig':
+            path = str(children[0].attributes().namedItem('path').toAttr().value())
+            class_name = str(children[0].firstChild().toText().data())
             # if the node doesn't have a 'path' attribute, the getAttribute method returns ''
             parent = self._make_instance(class_name, path)
             self.merge(parent)
@@ -69,78 +78,96 @@ class XMLConfiguration(Configuration):
     def _add_to_dict(self, node, result_dict):
         # 'node' should be an element node representing a key-value pair to be added to 
         # the dictionary 'result_dict' (unless it's a comment or whitespace)
-        if self._is_node_to_ignore(node):
-            return
-        if node.nodeType!=node.ELEMENT_NODE:
-            raise ValueError, 'internal error - argument is not an element node'
-        # temporary hack - convert the dictionary keys to strings.
-        # After we remove traits we can leave them as unicode (so take out the str() call)
-        result_dict[str(node.tagName)] = self._convert_node_to_data(self._get_single_child(node))
+        if self._is_good_node(node):
+            # make the dictionary keys be strings 
+            # (later should they be turned into unicode instead??)
+            key = str(node.toElement().tagName())
+            result_dict[key] = self._convert_node_to_data(self._get_single_child(node))
             
     def _convert_node_to_data(self, node):
         # convert 'node' to the corresponding Python data, and return the data
-        if node.nodeType==node.TEXT_NODE:
-            return node.data
+        if node.isText():
+            # the data will be a QString - convert this to a regular Python string
+            # (later we might want to make it unicode)
+            return str(node.toText().data())
         # if it's not a text node, it needs to be an element
-        if node.nodeType!=node.ELEMENT_NODE:
+        if not node.isElement():
             raise ValueError, 'malformed xml - expected an element node'
+        element = node.toElement()
         # branch on the element's tag to determine the type of the return data
-        if node.tagName=='None':
+        if element.tagName()=='None':
             return None
-        elif node.tagName=='int':
-            return int(node.firstChild.data)
-        elif node.tagName=='float':
-            return float(node.firstChild.data)
-        elif node.tagName=='str':
-            return str(node.firstChild.data)
-        elif node.tagName=='unicode':
-            return unicode(node.firstChild.data)
-        elif node.tagName=='list' or node.tagName=='tuple':
-            goodnodes = filter(lambda n: not self._is_node_to_ignore(n), node.childNodes)
-            result_list = map(lambda n: self._convert_node_to_data(n), goodnodes)
-            if node.tagName=='tuple':
+        elif element.tagName()=='int':
+            return int(node.firstChild().toText().data())
+        elif element.tagName()=='float':
+            return float(node.firstChild().toText().data())
+        elif element.tagName()=='str':
+            return str(node.firstChild().toText().data())
+        elif element.tagName()=='unicode':
+            return unicode(node.firstChild().toText().data())
+        elif element.tagName()=='list' or element.tagName()=='tuple':
+            n = element.firstChild()
+            result_list = []
+            while not n.isNull():
+                if self._is_good_node(n):
+                    result_list.append(self._convert_node_to_data(n))
+                n = n.nextSibling()
+            if element.tagName()=='tuple':
                 return tuple(result_list)
             else:
                 return result_list
-        elif node.tagName=='bool':
-            b = node.firstChild.data
+        elif element.tagName()=='bool':
+            b = element.firstChild().toText().data()
             if b=='True':
                 return True
             elif b=='False':
                 return False
             else:
                 raise ValueError, 'malformed xml - expected a string representing a boolean'
-        elif node.tagName=='array':
+        elif element.tagName()=='array':
             # the data should be a string such as '[100, 300]'
             # use eval to turn this into a list, and then turn it into a numpy array
-            return array(eval(node.firstChild.data))
-        elif node.tagName=='dict':
+            return array(eval(str(node.firstChild().nodeValue())))
+        elif element.tagName()=='dict':
             result_dict = {}
-            for child in node.childNodes:
+            child = node.firstChild()
+            while not child.isNull():
                 self._add_to_dict(child, result_dict)
+                child = child.nextSibling()
             return result_dict
-        elif node.tagName=='class':
-            class_name = node.getAttribute('name')
-            path = node.getAttribute('path')
-            unicode_keyword_args = {}
-            for child in node.childNodes:
-                self._add_to_dict(child, unicode_keyword_args)
+        elif element.tagName()=='class':
+            class_name = str(node.attributes().namedItem('name').toAttr().value())
+            path = str(node.attributes().namedItem('path').toAttr().value())
             keyword_args = {}
-            for k, v in unicode_keyword_args.items():
-                keyword_args[str(k)] = v
+            child = node.firstChild()
+            while not child.isNull():
+                self._add_to_dict(child, keyword_args)
+                child = child.nextSibling()
             return self._make_instance(class_name, path, keyword_args)
         else:
             raise ValueError, 'malformed xml - unknown tag name %s' % node.tagName
             
-    def _is_node_to_ignore(self, node):
-        """return True if this node should be ignored"""
-        return node.nodeType==node.COMMENT_NODE \
-          or (node.nodeType==node.TEXT_NODE and node.data.strip()=='') \
-          or (node.nodeType==node.ELEMENT_NODE and node.getAttribute('selected')=='False') 
+    def _is_good_node(self, node):
+        """Return True if this node should be processed, False if this node should be ignored.  
+        It should be ignored if it's a comment, just whitespace, or has the attribute selected=False """
+        if node.isComment():
+            return False
+        elif node.isText() and node.toText().data().trimmed().isEmpty():
+            return False
+        elif node.attributes().namedItem('selected').toAttr().value()=='False':
+            return False
+        else:
+            return True
 
     def _get_good_children(self, node):
         # return the children of 'node', skipping comments and whitespace
-        return filter(lambda n: not self._is_node_to_ignore(n), node.childNodes)
+        good = []
+        n = node.firstChild()
+        while not n.isNull():
+            if self._is_good_node(n):
+                good.append(n)
+            n = n.nextSibling()
+        return good
 
     def _get_single_child(self, node):
         # node should have exactly one child other than comments or whitespace.  Return that child.
@@ -247,4 +274,3 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
             
 if __name__ == '__main__':
     opus_unittest.main()
-            
