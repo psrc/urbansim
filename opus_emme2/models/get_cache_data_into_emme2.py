@@ -52,8 +52,8 @@ class GetCacheDataIntoEmme2(AbstractEmme2TravelModel):
             if len_locations_to_disaggregate > 1:
                 intermediates_string = ", intermediates=["
                 for i in range(1, len_locations_to_disaggregate):
-                    intermediates_string = "%s, " % locations_to_disaggregate[i]
-                intermediates_string = "]"
+                    intermediates_string = "%s%s, " % (intermediates_string, locations_to_disaggregate[i])
+                intermediates_string = "%s]" % intermediates_string
             else:
                 intermediates_string = ""
             hh_set.compute_variables(['%s = household.disaggregate(%s.%s %s)' % (zone_set.get_id_name()[0],
