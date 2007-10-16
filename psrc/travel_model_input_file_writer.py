@@ -37,15 +37,14 @@ class TravelModelInputFileWriter(object):
         self.upper_mid_income_hh_by_taz = zeros((array_demension,))
         self.upper_income_hh_by_taz  = zeros((array_demension,))
 
-    def create_tripgen_travel_model_input_file(self, gridcell_set, job_set, household_set, taz_col_set,
+    def create_tripgen_travel_model_input_file(self, job_set, household_set, taz_col_set, max_zone_id,
                                                current_emme2_tripgen_dir, current_year):
         """Writes to the an emme2 input file in the tripgen/inputtg/TAZDATA.MA2.
            If the datasets need to select by year, assumes the attibutes have already been loaded.
                The attributes needed are:
-                   gridcell_set: grid_id, zone_id
-                   job_set: job_id, grid_id, sector_id
+                   job_set: job_id, zone_id, sector_id
+                   household_set: household_id, zone_id, income
         """
-        max_zone_id = int(max(gridcell_set.get_attribute('zone_id')))
         logger.log_status("max_zone_id = ", max_zone_id)
         self._init_tazdata(max_zone_id)
 
@@ -54,11 +53,11 @@ class TravelModelInputFileWriter(object):
         median_income = median(hh_income)
         lower_median = median(hh_income[where(hh_income<median_income)])
         upper_median = median(hh_income[where(hh_income>median_income)])
-        hh_zones = household_set.get_join_data(gridcell_set, name='zone_id')
+        hh_zones = household_set.get_attribute('zone_id')
 
         # setup for calculating other data
         zones = array(range(1, max_zone_id+1))
-        job_zones = job_set.get_join_data(gridcell_set, name='zone_id')
+        job_zones = job_set.get_attribute('zone_id')
         job_sector_ids = job_set.get_attribute("sector_id")
 
         logger.log_status("calculating entries for emme2 input file")

@@ -15,7 +15,8 @@
 def create_travel_model_configuration(travel_model_dir_name,
                                       mode='full',
                                       years_to_run=None,
-                                      emme2_batch_file='QUICKRUN.bat'):
+                                      emme2_batch_file='QUICKRUN.bat',
+                                      locations_to_disaggregate = ['gridcell']):
     """Returns a travel model configuration for a travel model located
     at this directory.
     
@@ -29,6 +30,7 @@ def create_travel_model_configuration(travel_model_dir_name,
     years_to_run, if specified, indicates what travel model bank set to use
     for which year.  It is a dictionary with key=year and value=name of
     travel model directory containing the banks, e.g. '2000_06'.
+    'locations_to_disaggregate is a list of dataset names over which zone_id of households and jobs will be determined.
     """
     
     """ emme2_matricies and emmission_emme2_macros should be passed in as parameters
@@ -126,7 +128,8 @@ def create_travel_model_configuration(travel_model_dir_name,
                         
     travel_model_configuration = {
         'matrix_variable_map':emme2_matricies,
-        'emmission_emme2_macros':emmission_emme2_macros
+        'emmission_emme2_macros':emmission_emme2_macros,
+        'locations_to_disaggregate': locations_to_disaggregate
         }
 
     _add_models(travel_model_configuration, mode)
@@ -167,6 +170,7 @@ def _add_models(travel_model_configuration, mode):
 def _add_years(travel_model_configuration, travel_model_dir_name, years_to_run, emme2_batch_file):
     if years_to_run is None:
         years_to_run = {
+            2000:'2000_06',
             2005:'2000_06',
             2010:'2010_06',
             2015:'2010_06',
