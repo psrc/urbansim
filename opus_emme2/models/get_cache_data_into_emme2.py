@@ -45,7 +45,7 @@ class GetCacheDataIntoEmme2(AbstractEmme2TravelModel):
         zone_set = dataset_pool.get_dataset('zone')
         job_set = dataset_pool.get_dataset('job')
         taz_col_set = dataset_pool.get_dataset('constant_taz_column')
-        locations_to_disaggregate = config['locations_to_disaggregate']
+        locations_to_disaggregate = config['travel_model_configuration']['locations_to_disaggregate']
         len_locations_to_disaggregate = len(locations_to_disaggregate)
         if len_locations_to_disaggregate > 0:
             primary_location = locations_to_disaggregate[0]
