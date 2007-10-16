@@ -24,7 +24,7 @@ class BaselineWithSkims(Baseline):
         config.replace(config_changes)
         
         from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
-        travel_model_configuration = create_travel_model_configuration('baseline_travel_model_psrc', mode='skims')
+        travel_model_configuration = create_travel_model_configuration('baseline_travel_model_psrc', mode='null')
         config['travel_model_configuration'] = travel_model_configuration
-        
+        config['travel_model_configuration']['locations_to_disaggregate'] = ['parcel', 'building']
         self.merge(config)
