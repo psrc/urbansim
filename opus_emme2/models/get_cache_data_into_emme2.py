@@ -35,35 +35,50 @@ class GetCacheDataIntoEmme2(AbstractEmme2TravelModel):
         simulation_state.set_cache_directory(cache_directory)
         simulation_state.set_current_time(year)
         attribute_cache = AttributeCache()
-        SessionConfiguration(new_instance=True,
-                             in_storage=AttributeCache())
-                             
-        arguments = {'in_storage':attribute_cache}
-        gc_set = DatasetFactory().get_dataset('gridcell', package='urbansim', 
-                                              arguments=arguments)
-        hh_set = DatasetFactory().get_dataset('household', package='urbansim', 
-                                              arguments=arguments)
-        zone_set = DatasetFactory().get_dataset('zone', package='urbansim', 
-                                                arguments=arguments)
-        job_set = DatasetFactory().get_dataset('job', package='urbansim', 
-                                               arguments=arguments)
-        taz_col_set = DatasetFactory().get_dataset('constant_taz_column', package='urbansim', 
-                                               arguments=arguments)
-        
-        self._call_input_file_writer(config, year, gc_set, job_set, zone_set, hh_set, taz_col_set)
+        sc = SessionConfiguration(new_instance=True,
+                                  package_order=config['dataset_pool_configuration'].package_order,
+                                  package_order_exceptions=config['dataset_pool_configuration'].package_order_exceptions, 
+                                  in_storage=attribute_cache)
+        dataset_pool = sc.get_dataset_pool()
 
-    def _call_input_file_writer(self, config, year, gc_set, job_set, zone_set, hh_set, taz_col_set):
+        hh_set = dataset_pool.get_dataset('household')
+        zone_set = dataset_pool.get_dataset('zone')
+        job_set = dataset_pool.get_dataset('job')
+        taz_col_set = dataset_pool.get_dataset('constant_taz_column')
+        locations_to_disaggregate = config['locations_to_disaggregate']
+        len_locations_to_disaggregate = len(locations_to_disaggregate)
+        if len_locations_to_disaggregate > 0:
+            primary_location = locations_to_disaggregate[0]
+            if len_locations_to_disaggregate > 1:
+                intermediates_string = ", intermediates=["
+                for i in range(1, len_locations_to_disaggregate):
+                    intermediates_string = "%s, " % locations_to_disaggregate[i]
+                intermediates_string = "]"
+            else:
+                intermediates_string = ""
+            hh_set.compute_variables(['%s = household.disaggregate(%s.%s %s)' % (zone_set.get_id_name()[0],
+                                                                              primary_location, zone_set.get_id_name()[0],
+                                                                                 intermediates_string)], 
+                                     dataset_pool=dataset_pool)
+            job_set.compute_variables(['%s = job.disaggregate(%s.%s %s)' % (zone_set.get_id_name()[0],
+                                                                              primary_location, zone_set.get_id_name()[0],
+                                                                                 intermediates_string)], 
+                                     dataset_pool=dataset_pool)
+        
+        self._call_input_file_writer(config, year, job_set, zone_set, hh_set, taz_col_set)
+
+    def _call_input_file_writer(self, config, year, job_set, zone_set, hh_set, taz_col_set):
         taz_col_set.load_dataset()
-        gc_set.load_dataset(attributes=['grid_id', 'zone_id'])
-        job_set.load_dataset(attributes=['job_id', 'sector_id', 'grid_id'])
-        hh_set.load_dataset(attributes=['household_id', 'income', 'grid_id'])
         zone_set.load_dataset()
+        job_set.load_dataset(attributes=['job_id', 'sector_id', '%s' % zone_set.get_id_name()[0]])
+        hh_set.load_dataset(attributes=['household_id', 'income', '%s' % zone_set.get_id_name()[0]])
+        max_zone_id = zone_set.get_id_attribute().max()
         
         tm_file_writer = TravelModelInputFileWriter()
         tripgen_dir = self.get_emme2_dir(config, year, 'tripgen')
         logger.log_status('tripgen dir: %s' % tripgen_dir)
-        tm_file_writer.create_tripgen_travel_model_input_file(gc_set, job_set, hh_set,
-                                                              taz_col_set,
+        tm_file_writer.create_tripgen_travel_model_input_file(job_set, hh_set,
+                                                              taz_col_set, max_zone_id,
                                                               tripgen_dir,
                                                               year)
     
@@ -81,11 +96,6 @@ if __name__ == "__main__":
     
     r = get_resources_from_file(options.resources_file_name)
     resources = Resources(get_resources_from_file(options.resources_file_name))
-    
-    SessionConfiguration(new_instance=True,
-                         package_order=resources['dataset_pool_configuration'].package_order,
-                         package_order_exceptions=resources['dataset_pool_configuration'].package_order_exceptions,                              
-                         in_storage=AttributeCache())
 
 #    logger.enable_memory_logging()
     GetCacheDataIntoEmme2().run(resources, options.year)
