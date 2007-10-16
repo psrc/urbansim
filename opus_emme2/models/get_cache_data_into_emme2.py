@@ -91,7 +91,7 @@ if __name__ == "__main__":
                       help="Name of file containing resources")
     parser.add_option("-y", "--year", dest="year", action="store", type="int",
                       help="Year in which to 'run' the travel model")
-    parser.add_option("-cp", "--copy", dest="destination_directory", action="store", type="string", default=None,
+    parser.add_option("-d", "--dest", dest="destination_directory", action="store", type="string", default=None,
                       help="Copy resulting files into this directory.")
     (options, args) = parser.parse_args()
     
