@@ -50,7 +50,7 @@ class GetCacheDataIntoEmme2(AbstractEmme2TravelModel):
         taz_col_set = DatasetFactory().get_dataset('constant_taz_column', package='urbansim', 
                                                arguments=arguments)
         
-        self._call_input_file_writer(config, year, gc_set, job_set, zone_set, hh_set)
+        self._call_input_file_writer(config, year, gc_set, job_set, zone_set, hh_set, taz_col_set)
 
     def _call_input_file_writer(self, config, year, gc_set, job_set, zone_set, hh_set, taz_col_set):
         taz_col_set.load_dataset()
