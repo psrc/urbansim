@@ -32,14 +32,16 @@ class Baseline(UrbansimParcelConfiguration):
         config_changes = {
             'description':'PSRC parcel baseline',
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
-            #'cache_directory':r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
+            #'cache_directory':r'/Users/hana/urbansim_cache/psrc/cache_source_parcel', 
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-            #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
-            cache_directory_root = r'/urbansim_cache/psrc_parcel',
-            #cache_directory_root = r'/workspace/urbansim_cache/psrc_parcel',
+               #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
+               #cache_directory_root = r'/home/hana/urbansim_cache/psrc/parcel',
+               cache_directory_root = r'/urbansim_cache/psrc_parcel',
+               #cache_directory_root = r'/workspace/urbansim_cache/psrc_parcel',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     #existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
+                    #existing_cache_to_copy = r'/home/hana/urbansim_cache/psrc/cache_source_parcel',
                     years_to_cache = [2000],
                     existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/cache_source',
                     #existing_cache_to_copy = r'/workspace/urbansim_cache/psrc_parcel/estimation',
@@ -87,6 +89,7 @@ class Baseline(UrbansimParcelConfiguration):
                     "fazes",
                     "large_areas",
                     "demolition_cost_per_sqft",
+                    'constant_taz_columns'
                     ],
                 tables_to_cache_nchunks={'parcels': 1},
                 unroll_gridcells = False
@@ -96,6 +99,7 @@ class Baseline(UrbansimParcelConfiguration):
                 user_name     = os.environ.get('MYSQLUSERNAME',''),
                 password      = os.environ.get('MYSQLPASSWORD',''),
                 database_name = 'psrc_2005_parcel_baseyear',
+                #database_name = 'psrc_2005_parcel_baseyear_change_20070913',
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
