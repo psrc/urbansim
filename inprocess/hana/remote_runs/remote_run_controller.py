@@ -94,8 +94,8 @@ class RemoteRun:
     
             self.run_id = self.run_manager.run_activity.get_new_history_id()
             head, tail = os.path.split(config['cache_directory'])
-            config['cache_directory'] =  os.path.join(head, 'run_' +str(self.run_id)+'.'+tail)
-            config['remote_tmp_path'] = os.path.join(self.remote_tmp_path_root, str(self.run_id))
+            config['cache_directory'] =  '%s/run_%s.%s' % (head, self.run_id, tail)
+            config['remote_tmp_path'] = '%s/%s' % (self.remote_tmp_path_root, self.run_id)
             self.remote_communication_path = config['remote_tmp_path']
             
             #create directory on the remote machine for communication
@@ -157,7 +157,7 @@ class RemoteRun:
             python_script_full_name = self.remote_opus_path
             parts = python_script.split('.')
             for part in parts:
-                python_script_full_name = os.path.join(python_script_full_name, part)
+                python_script_full_name = "%s/%s" % (python_script_full_name, part)
             python_script_full_name = python_script_full_name + '.py'
         else:
             python_script_full_name = python_script
