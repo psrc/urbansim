@@ -239,10 +239,12 @@ This is a Python interface for the statistical programming language R
 by ArcGIS), install <b>dbfpy</b> (<a href="http://sourceforge.net/projects/dbfpy">http://sourceforge.net/projects/dbfpy</a>).</li>
 
  	<li>If you are using MySQL, download <b>MySQL-python</b> (<a href="http://sourceforge.net/projects/mysql-python">http://sourceforge.net/projects/mysql-python</a>).
-  
-  	
+    	
 </ul>
 
+<p>You may get the following error after building and installing MySQL-python 1.2.2 on 10.3.9:
+<i><br>ImportError: dlcompat: dyld: /Library/Frameworks/Python.framework/Versions/2.5/Resources/Python.app/Contents/MacOS/Python can't open library: /usr/local/mysql/lib/mysql/libmysqlclient_r.15.dylib  (No such file or directory, errno = 2)</i>
+<br>This may happen because the library it is looking for is in /usr/local/mysql/lib/, and not in a subfolder called mysql.  Moving the files or creating aliases should fix the problem.</p>
 
 <h2>Step 4: <a name="opus">Installing Opus and
 UrbanSim</a></h2>
