@@ -168,9 +168,32 @@ def inverse_type_mapper(type_class):
                    VARCHAR: "VARCHAR",
                    Boolean: "BOOLEAN",
                    CLOB: "MEDIUMTEXT",
-                   DateTime: "DATETIME"}
+                   DateTime: "DATETIME",
+                   String: "VARCHAR"}
     
-    return filter_data[type_class.__class__]                
+    try:
+        my_type = filter_data[type_class.__class__] 
+    except:
+        if isinstance(type_class, VARCHAR):
+            my_type = "VARCHAR"
+        elif isinstance(type_class, CLOB):
+            my_type = "MEDIUMTEXT"
+        elif isinstance(type_class, Boolean):
+            my_type = "BOOLEAN"
+        elif isinstance(type_class, SmallInteger):
+            my_type = "SHORT"
+        elif isinstance(type_class, Float):
+            my_type = "FLOAT"
+        elif isinstance(type_class, DateTime):
+            my_type = "DATETIME"
+        elif isinstance(type_class, Numeric):
+            my_type = "DOUBLE"
+        elif isinstance(type_class, String):
+            my_type = "VARCHAR"
+        if isinstance(type_class, Integer):
+            my_type = "INTEGER"
+    
+    return my_type               
         
 def convert_to_mysql_datatype(query):
     filter_data = {"INTEGER" : "int(11)",
