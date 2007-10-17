@@ -67,7 +67,7 @@ class XMLConfiguration(Configuration):
             parent = XMLConfiguration(fullpath)
             self.merge(parent)
         elif tag=='oldconfig':
-            path = str(children[0].attributes().namedItem('path').toAttr().value())
+            path = str(children[0].attributes().namedItem('path').nodeValue())
             class_name = str(children[0].firstChild().toText().data())
             # if the node doesn't have a 'path' attribute, the getAttribute method returns ''
             parent = self._make_instance(class_name, path)
@@ -136,8 +136,8 @@ class XMLConfiguration(Configuration):
                 child = child.nextSibling()
             return result_dict
         elif element.tagName()=='class':
-            class_name = str(node.attributes().namedItem('name').toAttr().value())
-            path = str(node.attributes().namedItem('path').toAttr().value())
+            class_name = str(node.attributes().namedItem('name').nodeValue())
+            path = str(node.attributes().namedItem('path').nodeValue())
             keyword_args = {}
             child = node.firstChild()
             while not child.isNull():
@@ -154,7 +154,7 @@ class XMLConfiguration(Configuration):
             return False
         elif node.isText() and node.toText().data().trimmed().isEmpty():
             return False
-        elif node.attributes().namedItem('selected').toAttr().value()=='False':
+        elif node.attributes().namedItem('selected').nodeValue()=='False':
             return False
         else:
             return True
