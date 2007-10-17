@@ -233,6 +233,7 @@ class RemoteRun:
                     bank_dir = tm.get_emme2_dir(travel_model_resources, this_end_year, "bank%i" % x)
                     self.copy_file_to_remote_host("%s/*_one_matrix.txt" % bank_dir, subdirectory="bank%i" % x)
                     
+                travel_model_resources['cache_directory'] = urbansim_resources['cache_directory']
                 self.run_remote_python_process('opus_emme2.models.get_emme2_data_into_cache', 
                            '-y %d --matrix_directory=%s' % (this_end_year, self.remote_communication_path),
                            config=travel_model_resources, is_opus_path=True
