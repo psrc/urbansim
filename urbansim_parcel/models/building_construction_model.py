@@ -108,7 +108,9 @@ class BuildingConstructionModel(Model):
         
         sqft_per_unit = proposal_component_set.get_attribute("building_sqft_per_unit").astype(new_buildings["sqft_per_unit"].dtype)
         parcel_vacant_land_area = parcels.get_attribute("vacant_land_area").astype(new_buildings["land_area"].dtype)
+        template_ids = proposal_component_set.get_attribute("template_id")
         number_of_new_buildings = {}
+        number_of_new_buildings_by_template_id = {}
         
         # iterate over building types that are unique over the involved proposals
         for itype in range(unique_building_types.size):
@@ -155,6 +157,11 @@ class BuildingConstructionModel(Model):
                     number_of_new_buildings[this_building_type] += idx_to_be_built.size
                     if parcel_is_lut_vacant[parcel_index]:
                         parcel_lut[parcel_index] = component_land_use_types[pidx][idx_to_be_built][0]
+                    # count number of buildings by template ids
+                    for icomp in range(pidx.size):
+                        if template_ids[pidx[icomp]] not in number_of_new_buildings_by_template_id.keys():
+                            number_of_new_buildings_by_template_id[template_ids[pidx[icomp]]] = 0
+                        number_of_new_buildings_by_template_id[template_ids[pidx[icomp]]] += 1
                                                                   
         # add created buildings to the existing building dataset
         buildings_id_name = building_dataset.get_id_name()[0]
@@ -171,7 +178,8 @@ class BuildingConstructionModel(Model):
         logger.log_status("%s new buildings built." % new_buildings["parcel_id"].size)
         for type_id in number_of_new_buildings.keys():
             logger.log_status("building type %s: %s" % (type_id, number_of_new_buildings[type_id]))
-            
+        logger.log_status("Number of new buildings by template ids:")
+        logger.log_status(number_of_new_buildings_by_template_id)
         # remove active proposals from the proposal set
 #        development_proposal_set.remove_elements(active_idx)
         # alternatively, set status_id of active proposals to id_not_available
