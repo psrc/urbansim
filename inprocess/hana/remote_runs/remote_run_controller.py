@@ -136,14 +136,14 @@ class RemoteRun:
             os.makedirs('%s' % local_directory)
         logger.log_status("Copy %s:%s/%s to %s" % (self.hostname, 
                         self.remote_communication_path, file, local_directory))
-        os.system("%s -v -l %s -pw %s %s:%s/%s %s" % \
+        os.system("%s -l %s -pw %s %s:%s/%s %s" % \
                        (self.pscp, self.username, self.password, self.hostname, 
                         self.remote_communication_path, file, local_directory))
         
     def copy_file_to_remote_host(self, file, subdirectory=''):
         logger.log_status("Copy %s to %s:%s/%s" % (file, self.hostname, 
                         self.remote_communication_path, subdirectory))
-        os.system("%s -v -l %s -pw %s %s %s:%s/%s" % \
+        os.system("%s -l %s -pw %s %s %s:%s/%s" % \
                        (self.pscp, self.username, self.password, file, self.hostname, 
                         self.remote_communication_path, subdirectory))
         
@@ -163,7 +163,7 @@ class RemoteRun:
             python_script_full_name = python_script
         logger.log_status("Running on %s: %s %s %s %s" % (self.hostname, self.python_command, python_script_full_name, 
                     script_options, cmd_postfix))
-        os.system("%s -v -ssh -l %s -pw %s %s %s %s %s %s" % \
+        os.system("%s -ssh -l %s -pw %s %s %s %s %s %s" % \
                    (self.plink, self.username, self.password, self.hostname, self.python_command, python_script_full_name, 
                     script_options, cmd_postfix))
             
@@ -177,9 +177,7 @@ class RemoteRun:
         #remote_cache_directory = os.path.join(remote_cache_directory_root, tail)
         local_cache_directory = os.path.join(self.local_cache_directory_root, tail)
     
-        travel_model_resources = None
-        if urbansim_resources.has_key('travel_model_configuration'):
-            travel_model_resources = Configuration(urbansim_resources)
+        travel_model_resources = Configuration(urbansim_resources)
         
         #urbansim_resources['cache_directory'] = remote_cache_directory
         travel_model_resources['cache_directory'] = local_cache_directory
