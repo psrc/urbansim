@@ -23,7 +23,7 @@ def write_resources_to_file(filename, resources):
     for key in resources.keys():
         loc_resources[key]=resources[key]
         
-    f = open(filename,'w')
+    f = open(filename,'wb')
     try:
         pickle.dump(loc_resources, f)
     finally:
@@ -31,7 +31,7 @@ def write_resources_to_file(filename, resources):
     
 def get_resources_from_file(filename):
     """Given a filename of a file containing a dictionary, this will load the dictionary from the file."""
-    return Configuration(pickle.load(open(filename, "r")))
+    return Configuration(pickle.load(open(filename, "rb")))
     
 def get_resources_from_string(resources_string):
     """Given a string containing a dictionary, this will load the dictionary from the file."""
