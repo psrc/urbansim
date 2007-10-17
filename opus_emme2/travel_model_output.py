@@ -55,13 +55,13 @@ class TravelModelOutput(object):
                                                      matrix_attribute_name_map[matrix_name], bank_path, matrices_created)
         return travel_data_set
            
-    def _get_matrix_into_data_file(self, matrix_name, max_zone_id, bank_path):
+    def _get_matrix_into_data_file(self, matrix_name, max_zone_id, bank_path, file_name="_one_matrix.txt"):
         """
         Get from the emme/2 data bank, this matrix's data for zones
         1 .. max_zone_id.
         """
         temp_macro_file_name = get_temp_file_name()
-        macro = self._create_emme2_macro_to_extract_this_matrix(matrix_name, max_zone_id)
+        macro = self._create_emme2_macro_to_extract_this_matrix(matrix_name, max_zone_id, file_name)
         try:
             f = open(temp_macro_file_name, "w")
             f.write(macro)
@@ -103,7 +103,10 @@ class TravelModelOutput(object):
         try:
             if not matrices_created:
                 self._get_matrix_into_data_file(matrix_name, max_zone_id, bank_path)
-            file_contents = self._get_emme2_data_from_file(join(bank_path, "_one_matrix.txt"))
+                file_name = "_one_matrix.txt"
+            else:
+                file_name = "%s_one_matrix.txt" % matrix_name
+            file_contents = self._get_emme2_data_from_file(join(bank_path, file_name))
             
             travel_data_set.add_primary_attribute(data=zeros(travel_data_set.size(), dtype=float32), name=attribute_name)
             for line in file_contents:
@@ -122,7 +125,7 @@ class TravelModelOutput(object):
         f.close()
         return filter(lambda line: len(line) > 0 and str.isdigit(line[0]), file_contents)
                 
-    def _create_emme2_macro_to_extract_this_matrix(self, matrix_name, max_zone_id):
+    def _create_emme2_macro_to_extract_this_matrix(self, matrix_name, max_zone_id, file_name="_one_matrix.txt"):
         """Return an emme/2 macrot that will extract this matrix's values."""
         emme2_macro = """
 ~/ one_matrix.dat
@@ -146,7 +149,7 @@ q
         return emme2_macro % {
             "matrix_name":matrix_name, 
             "max_zone_id":max_zone_id, 
-            "output_file_name":"_one_matrix.txt",
+            "output_file_name":file_name,
             }
         
 #================================================================================

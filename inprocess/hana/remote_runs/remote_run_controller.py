@@ -188,16 +188,16 @@ class RemoteRun:
             if type(key) == int:
                 if key >= start_year and key <= end_year:
                     travel_model_years.append(key)
+        if end_year not in travel_model_years:
+            travel_model_years.append(end_year)
         travel_model_years.sort()
         
         this_start_year = start_year
         for travel_model_year in travel_model_years:
             this_end_year = travel_model_year
-            if this_start_year >= this_end_year:
-                if this_end_year == end_year:
-                    sys.exit(1) #run finished
-                else:
-                    this_end_year = end_year
+            if this_end_year > end_year:
+                sys.exit(1) #run finished
+
             urbansim_resources['years'] = (this_start_year, this_end_year)
                 
             self.run_manager.run_activity.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % self.run_id)        
@@ -206,44 +206,45 @@ class RemoteRun:
             #self.run_remote_python_process("%s/urbansim/tools/restart_run.py" % self.remote_opus_path, 
             #                               "%s %s --skip-cache-cleanup --skip-travel-model" % (self.run_id, this_start_year))                   
                     
-            if travel_model_resources is not None:
-                # run travel models
-                max_zone_id = 0
-                if travel_model_resources['travel_model_configuration'].has_key(this_end_year):
-                    tm = AbstractEmme2TravelModel()
-                    for full_model_path in travel_model_resources['travel_model_configuration']['models']:
-                        if full_model_path in self.remote_travel_models:
-                            # run this model remotely
-                            travel_model_resources['cache_directory'] = urbansim_resources['cache_directory']
-                            self.run_remote_python_process(full_model_path, 
-                                                           '-y %d -d %s' % (this_end_year, self.remote_communication_path),
-                                                           config=travel_model_resources,
-                                                           is_opus_path=True)
-                            tripgen_dir = tm.get_emme2_dir(travel_model_resources, this_end_year, 'tripgen')
-                            max_zone_id = self.copy_file_from_remote_host_and_get_max_zone('TAZDATA.MA2', '%s/inputtg' % tripgen_dir)
-                            #max_zone_id = 938
-                            travel_model_resources['cache_directory'] = local_cache_directory
-                        else:
-                            optional_args='-y %d' % this_end_year
-                            if full_model_path == 'opus_emme2.models.get_emme2_data_into_cache':
-                                optional_args='-m -z %s -y %d' % (max_zone_id, this_end_year)
-                            ForkProcess().fork_new_process(full_model_path, 
-                                                           travel_model_resources, optional_args=optional_args)
-                    for x in [1,2,3]:
-                        bank_dir = tm.get_emme2_dir(travel_model_resources, this_end_year, "bank%i" % x)
-                        self.copy_file_to_remote_host("%s/*_one_matrix.txt" % bank_dir, subdirectory="bank%i" % x)
-                        
-                    self.run_remote_python_process('opus_emme2.models.get_emme2_data_into_cache', 
-                               '-y %d --matrix_directory=%s' % (this_end_year, self.remote_communication_path),
-                               config=travel_model_resources, is_opus_path=True
-                                                   )
+
+            # run travel models
+            max_zone_id = 0
+            if travel_model_resources['travel_model_configuration'].has_key(this_end_year):
+                tm = AbstractEmme2TravelModel()
+                for full_model_path in travel_model_resources['travel_model_configuration']['models']:
+                    if full_model_path in self.remote_travel_models:
+                        # run this model remotely
+                        travel_model_resources['cache_directory'] = urbansim_resources['cache_directory']
+                        self.run_remote_python_process(full_model_path, 
+                                                       '-y %d -d %s' % (this_end_year, self.remote_communication_path),
+                                                       config=travel_model_resources,
+                                                       is_opus_path=True)
+                        tripgen_dir = tm.get_emme2_dir(travel_model_resources, this_end_year, 'tripgen')
+                        max_zone_id = self.copy_file_from_remote_host_and_get_max_zone('TAZDATA.MA2', '%s/inputtg' % tripgen_dir)
+                        #max_zone_id = 938
+                        travel_model_resources['cache_directory'] = local_cache_directory
+                    else:
+                        optional_args='-y %d' % this_end_year
+                        if full_model_path == 'opus_emme2.models.get_emme2_data_into_cache':
+                            optional_args='-m -z %s -y %d' % (max_zone_id, this_end_year)
+                        ForkProcess().fork_new_process(full_model_path, 
+                                                       travel_model_resources, optional_args=optional_args)
+                for x in [1,2,3]:
+                    bank_dir = tm.get_emme2_dir(travel_model_resources, this_end_year, "bank%i" % x)
+                    self.copy_file_to_remote_host("%s/*_one_matrix.txt" % bank_dir, subdirectory="bank%i" % x)
+                    
+                self.run_remote_python_process('opus_emme2.models.get_emme2_data_into_cache', 
+                           '-y %d --matrix_directory=%s' % (this_end_year, self.remote_communication_path),
+                           config=travel_model_resources, is_opus_path=True
+                                               )
                     
     
-            if not os.path.exists(os.path.join(self.local_cache_directory, str(this_end_year+1))):
-                raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
-                                    (this_end_year+1, self.local_cache_directory)
+            #if not os.path.exists(os.path.join(self.local_cache_directory_root, str(this_end_year+1))):
+            #    raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
+            #                        (this_end_year+1, self.local_cache_directory)
                 
             this_start_year = travel_model_year + 1  #next run starting from the next year of the travel model year
+            
 if __name__ == "__main__":
     option_group = OptionGroup()
     parser = option_group.parser
@@ -263,8 +264,8 @@ if __name__ == "__main__":
         username = options.user
     password = getpass.getpass('Password for %s@%s: ' % (username, hostname))
 
-    #try: import wingdbstub
-    #except: pass
+    try: import wingdbstub
+    except: pass
     db = option_group.get_services_database(options)
     run = RemoteRun(hostname, username, password, options.host_name, options.database_name, db)
     run.prepare_for_run(options.configuration_path, options.run_id)
