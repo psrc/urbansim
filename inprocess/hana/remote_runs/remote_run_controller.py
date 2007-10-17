@@ -26,6 +26,7 @@ from opus_core.services.run_server.run_manager import insert_auto_generated_cach
 from opus_core.file_utilities import write_resources_to_file
 from opus_core.misc import module_path_from_opus_path
 from opus_core.fork_process import ForkProcess
+from opus_core.logger import logger
 from numpy import arange, where, logical_and
 from tempfile import mkdtemp
 from opus_emme2.models.abstract_emme2_travel_model import AbstractEmme2TravelModel
@@ -133,11 +134,15 @@ class RemoteRun:
     def copy_file_from_remote_host(self, file, local_directory):
         if not os.path.exists(local_directory):
             os.makedirs('%s' % local_directory)
+        logger.log_status("Copy %s:%s/%s to %s" % (self.hostname, 
+                        self.remote_communication_path, file, local_directory))
         os.system("%s -v -l %s -pw %s %s:%s/%s %s" % \
                        (self.pscp, self.username, self.password, self.hostname, 
                         self.remote_communication_path, file, local_directory))
         
     def copy_file_to_remote_host(self, file, subdirectory=''):
+        logger.log_status("Copy %s to %s:%s/%s" % (file, self.hostname, 
+                        self.remote_communication_path, subdirectory))
         os.system("%s -v -l %s -pw %s %s %s:%s/%s" % \
                        (self.pscp, self.username, self.password, file, self.hostname, 
                         self.remote_communication_path, subdirectory))
@@ -156,6 +161,8 @@ class RemoteRun:
             python_script_full_name = python_script_full_name + '.py'
         else:
             python_script_full_name = python_script
+        logger.log_status("Running on %s: %s %s %s %s" % (self.hostname, self.python_command, python_script_full_name, 
+                    script_options, cmd_postfix))
         os.system("%s -v -ssh -l %s -pw %s %s %s %s %s %s" % \
                    (self.plink, self.username, self.password, self.hostname, self.python_command, python_script_full_name, 
                     script_options, cmd_postfix))
@@ -210,13 +217,13 @@ class RemoteRun:
                         if full_model_path in self.remote_travel_models:
                             # run this model remotely
                             travel_model_resources['cache_directory'] = urbansim_resources['cache_directory']
-                            #self.run_remote_python_process(full_model_path, 
-                            #                               '-y %d -d %s' % (this_end_year, self.remote_communication_path),
-                            #                               config=travel_model_resources,
-                            #                               is_opus_path=True)
-                            #tripgen_dir = tm.get_emme2_dir(travel_model_resources, this_end_year, 'tripgen')
-                            #max_zone_id = self.copy_file_from_remote_host_and_get_max_zone('TAZDATA.MA2', '%s/inputtg' % tripgen_dir)
-                            max_zone_id = 938
+                            self.run_remote_python_process(full_model_path, 
+                                                           '-y %d -d %s' % (this_end_year, self.remote_communication_path),
+                                                           config=travel_model_resources,
+                                                           is_opus_path=True)
+                            tripgen_dir = tm.get_emme2_dir(travel_model_resources, this_end_year, 'tripgen')
+                            max_zone_id = self.copy_file_from_remote_host_and_get_max_zone('TAZDATA.MA2', '%s/inputtg' % tripgen_dir)
+                            #max_zone_id = 938
                             travel_model_resources['cache_directory'] = local_cache_directory
                         else:
                             optional_args='-y %d' % this_end_year
