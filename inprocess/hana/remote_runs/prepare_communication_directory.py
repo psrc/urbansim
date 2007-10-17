@@ -23,3 +23,6 @@ if __name__ == "__main__":
    #shutil.rmtree('%s' % options.communication_path)
     if not os.path.exists(options.communication_path):
         os.makedirs('%s' % options.communication_path)
+    for x in [1,2,3]:
+        if not os.path.exists("bank%s" % x):
+            os.makedirs('bank%s' % x)

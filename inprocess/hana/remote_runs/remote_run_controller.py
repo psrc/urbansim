@@ -28,6 +28,7 @@ from opus_core.misc import module_path_from_opus_path
 from opus_core.fork_process import ForkProcess
 from numpy import arange, where, logical_and
 from tempfile import mkdtemp
+from opus_emme2.models.abstract_emme2_travel_model import AbstractEmme2TravelModel
 
 class OptionGroup(GenericOptionGroup):
     def __init__(self):
@@ -65,7 +66,7 @@ class RemoteRun:
     #remote_cache_directory_root = '/projects/null/urbansim5/urbansim_cache/' #the ending slash is critical    
     remote_cache_directory_root = '/home/hana/urbansim_cache/psrc/parcel/'
     remote_opus_path = "/home/hana/opus"
-    remote_tmp_path = '/home/hana/urbansim_tmp'
+    remote_tmp_path_root = '/home/hana/urbansim_tmp'
     script_path = 'inprocess/hana/remote_runs'
     remote_travel_models = ['opus_emme2.models.get_cache_data_into_emme2']
     
@@ -76,6 +77,7 @@ class RemoteRun:
         self.services_hostname = services_hostname
         self.services_database = services_database
         self.services_dbname = services_dbname
+        self.remote_communication_path = None
         
     def prepare_for_run(self, configuration_path, run_id=None):
         run_activity = RunActivity(self.services_database)
@@ -92,7 +94,8 @@ class RemoteRun:
             self.run_id = self.run_manager.run_activity.get_new_history_id()
             head, tail = os.path.split(config['cache_directory'])
             config['cache_directory'] =  os.path.join(head, 'run_' +str(self.run_id)+'.'+tail)
-            config['remote_tmp_path'] = os.path.join(self.remote_tmp_path, str(self.run_id))
+            config['remote_tmp_path'] = os.path.join(self.remote_tmp_path_root, str(self.run_id))
+            self.remote_communication_path = config['remote_tmp_path']
             
             #create directory on the remote machine for communication
             self.run_remote_python_process("%s/%s/prepare_communication_directory.py" % (self.remote_opus_path, 
@@ -116,14 +119,33 @@ class RemoteRun:
         pickle_file_path = os.path.join(pickle_dir, 'resources.pickle')
         write_resources_to_file(pickle_file_path, config)
         # copy configuration as resources.pickle to the remote machine
-        os.system("%s -v -l %s -pw %s %s %s:%s" % \
-                       (self.pscp, self.username, self.password, pickle_file_path, self.hostname, 
-                        config['remote_tmp_path']))
+        self.copy_file_to_remote_host(pickle_file_path)
+        
+    def copy_file_from_remote_host_and_get_max_zone(self, file, local_directory):
+        self.copy_file_from_remote_host(file, local_directory)
+        f = open("%s/%s" % (local_directory, file), 'r')
+        file_contents = f.readlines()
+        f.close()
+        last_line = file_contents[-1]
+        elements = last_line.split('   ')
+        return int(elements[0])
+        
+    def copy_file_from_remote_host(self, file, local_directory):
+        if not os.path.exists(local_directory):
+            os.makedirs('%s' % local_directory)
+        os.system("%s -v -l %s -pw %s %s:%s/%s %s" % \
+                       (self.pscp, self.username, self.password, self.hostname, 
+                        self.remote_communication_path, file, local_directory))
+        
+    def copy_file_to_remote_host(self, file, subdirectory=''):
+        os.system("%s -v -l %s -pw %s %s %s:%s/%s" % \
+                       (self.pscp, self.username, self.password, file, self.hostname, 
+                        self.remote_communication_path, subdirectory))
         
     def run_remote_python_process(self, python_script, script_options="", config=None, is_opus_path=False):
         if config is not None:
             self.copy_resources_to_remote_host(config)
-            cmd_postfix = "-r %s/resources.pickle" % config['remote_tmp_path']
+            cmd_postfix = "-r %s/resources.pickle" % self.remote_communication_path
         else:
             cmd_postfix = ""
         if is_opus_path:
@@ -181,19 +203,36 @@ class RemoteRun:
                     
             if travel_model_resources is not None:
                 # run travel models
+                max_zone_id = 0
                 if travel_model_resources['travel_model_configuration'].has_key(this_end_year):
+                    tm = AbstractEmme2TravelModel()
                     for full_model_path in travel_model_resources['travel_model_configuration']['models']:
                         if full_model_path in self.remote_travel_models:
                             # run this model remotely
                             travel_model_resources['cache_directory'] = urbansim_resources['cache_directory']
-                            self.run_remote_python_process(full_model_path, 
-                                                           '-y %d' % this_end_year,
-                                                           config=travel_model_resources,
-                                                           is_opus_path=True)
+                            #self.run_remote_python_process(full_model_path, 
+                            #                               '-y %d -d %s' % (this_end_year, self.remote_communication_path),
+                            #                               config=travel_model_resources,
+                            #                               is_opus_path=True)
+                            #tripgen_dir = tm.get_emme2_dir(travel_model_resources, this_end_year, 'tripgen')
+                            #max_zone_id = self.copy_file_from_remote_host_and_get_max_zone('TAZDATA.MA2', '%s/inputtg' % tripgen_dir)
+                            max_zone_id = 938
                             travel_model_resources['cache_directory'] = local_cache_directory
                         else:
+                            optional_args='-y %d' % this_end_year
+                            if full_model_path == 'opus_emme2.models.get_emme2_data_into_cache':
+                                optional_args='-m -z %s -y %d' % (max_zone_id, this_end_year)
                             ForkProcess().fork_new_process(full_model_path, 
-                                                           travel_model_resources, optional_args='-y %d' % this_end_year)
+                                                           travel_model_resources, optional_args=optional_args)
+                    for x in [1,2,3]:
+                        bank_dir = tm.get_emme2_dir(travel_model_resources, this_end_year, "bank%i" % x)
+                        self.copy_file_to_remote_host("%s/*_one_matrix.txt" % bank_dir, subdirectory="bank%i" % x)
+                        
+                    self.run_remote_python_process('opus_emme2.models.get_emme2_data_into_cache', 
+                               '-y %d --matrix_directory=%s' % (this_end_year, self.remote_communication_path),
+                               config=travel_model_resources, is_opus_path=True
+                                                   )
+                    
     
             if not os.path.exists(os.path.join(self.local_cache_directory, str(this_end_year+1))):
                 raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
