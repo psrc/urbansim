@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusMain.ui'
 #
-# Created: Thu Oct 11 15:11:06 2007
+# Created: Tue Oct 16 22:32:22 2007
 #      by: PyQt4 UI code generator 4.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -38,7 +38,7 @@ class Ui_MainWindow(object):
         self.toolBox.setObjectName("toolBox")
 
         self.datamanager_page = QtGui.QWidget()
-        self.datamanager_page.setGeometry(QtCore.QRect(0,0,434,475))
+        self.datamanager_page.setGeometry(QtCore.QRect(0,0,434,447))
         self.datamanager_page.setObjectName("datamanager_page")
 
         self.gridlayout1 = QtGui.QGridLayout(self.datamanager_page)
@@ -94,40 +94,54 @@ class Ui_MainWindow(object):
         self.gridlayout4.addWidget(self.resultsmanager_tree,0,0,1,1)
         self.toolBox.addItem(self.resultsmanager_page,"")
 
+        self.treeTestPage = QtGui.QWidget()
+        self.treeTestPage.setGeometry(QtCore.QRect(0,0,96,26))
+        self.treeTestPage.setObjectName("treeTestPage")
+
+        self.gridlayout5 = QtGui.QGridLayout(self.treeTestPage)
+        self.gridlayout5.setMargin(9)
+        self.gridlayout5.setSpacing(6)
+        self.gridlayout5.setObjectName("gridlayout5")
+
+        self.treeTestPageWidget = QtGui.QWidget(self.treeTestPage)
+        self.treeTestPageWidget.setObjectName("treeTestPageWidget")
+        self.gridlayout5.addWidget(self.treeTestPageWidget,0,0,1,1)
+        self.toolBox.addItem(self.treeTestPage,"")
+
         self.tabWidget = QtGui.QTabWidget(self.splitter)
         self.tabWidget.setObjectName("tabWidget")
 
         self.tab_editorView = QtGui.QWidget()
         self.tab_editorView.setObjectName("tab_editorView")
 
-        self.gridlayout5 = QtGui.QGridLayout(self.tab_editorView)
-        self.gridlayout5.setMargin(9)
-        self.gridlayout5.setSpacing(6)
-        self.gridlayout5.setObjectName("gridlayout5")
+        self.gridlayout6 = QtGui.QGridLayout(self.tab_editorView)
+        self.gridlayout6.setMargin(9)
+        self.gridlayout6.setSpacing(6)
+        self.gridlayout6.setObjectName("gridlayout6")
         self.tabWidget.addTab(self.tab_editorView,"")
 
         self.tab_mapView = QtGui.QWidget()
         self.tab_mapView.setObjectName("tab_mapView")
 
-        self.gridlayout6 = QtGui.QGridLayout(self.tab_mapView)
-        self.gridlayout6.setMargin(9)
-        self.gridlayout6.setSpacing(6)
-        self.gridlayout6.setObjectName("gridlayout6")
+        self.gridlayout7 = QtGui.QGridLayout(self.tab_mapView)
+        self.gridlayout7.setMargin(9)
+        self.gridlayout7.setSpacing(6)
+        self.gridlayout7.setObjectName("gridlayout7")
 
         self.widgetMap = QtGui.QWidget(self.tab_mapView)
         self.widgetMap.setMinimumSize(QtCore.QSize(100,100))
         self.widgetMap.setAutoFillBackground(True)
         self.widgetMap.setObjectName("widgetMap")
-        self.gridlayout6.addWidget(self.widgetMap,0,0,1,1)
+        self.gridlayout7.addWidget(self.widgetMap,0,0,1,1)
         self.tabWidget.addTab(self.tab_mapView,"")
 
         self.tab_pythonView = QtGui.QWidget()
         self.tab_pythonView.setObjectName("tab_pythonView")
 
-        self.gridlayout7 = QtGui.QGridLayout(self.tab_pythonView)
-        self.gridlayout7.setMargin(9)
-        self.gridlayout7.setSpacing(6)
-        self.gridlayout7.setObjectName("gridlayout7")
+        self.gridlayout8 = QtGui.QGridLayout(self.tab_pythonView)
+        self.gridlayout8.setMargin(9)
+        self.gridlayout8.setSpacing(6)
+        self.gridlayout8.setObjectName("gridlayout8")
 
         self.pythonLineWidget = QtGui.QWidget(self.tab_pythonView)
 
@@ -150,11 +164,11 @@ class Ui_MainWindow(object):
         self.pythonLineEdit = QtGui.QLineEdit(self.pythonLineWidget)
         self.pythonLineEdit.setObjectName("pythonLineEdit")
         self.hboxlayout.addWidget(self.pythonLineEdit)
-        self.gridlayout7.addWidget(self.pythonLineWidget,1,0,1,1)
+        self.gridlayout8.addWidget(self.pythonLineWidget,1,0,1,1)
 
         self.pythonWidget = QtGui.QWidget(self.tab_pythonView)
         self.pythonWidget.setObjectName("pythonWidget")
-        self.gridlayout7.addWidget(self.pythonWidget,0,0,1,1)
+        self.gridlayout8.addWidget(self.pythonWidget,0,0,1,1)
         self.tabWidget.addTab(self.tab_pythonView,"")
 
         self.tab_logView = QtGui.QWidget()
@@ -839,6 +853,7 @@ class Ui_MainWindow(object):
         item126.setText(0,QtGui.QApplication.translate("MainWindow", "Maps", None, QtGui.QApplication.UnicodeUTF8))
         item126.setText(1,"")
         self.toolBox.setItemText(self.toolBox.indexOf(self.resultsmanager_page), QtGui.QApplication.translate("MainWindow", "Results Manager", None, QtGui.QApplication.UnicodeUTF8))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.treeTestPage), QtGui.QApplication.translate("MainWindow", "Tree Test Page", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_editorView), QtGui.QApplication.translate("MainWindow", "Editor", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_mapView), QtGui.QApplication.translate("MainWindow", "Map View", None, QtGui.QApplication.UnicodeUTF8))
         self.pythonLabel.setText(QtGui.QApplication.translate("MainWindow", ">>>", None, QtGui.QApplication.UnicodeUTF8))

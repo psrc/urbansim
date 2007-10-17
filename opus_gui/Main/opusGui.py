@@ -15,6 +15,7 @@
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4.QtXml import *
 
 # QGIS bindings for mapping functions
 from qgis.core import *
@@ -25,6 +26,7 @@ from qgis.gui import *
 # UI specific includes
 from opusMain_ui import Ui_MainWindow
 from Util.pythonGui import OpusPythonShell
+from Config.opusDataModel import OpusDataModel
 # General system includes
 import sys
 
@@ -120,7 +122,49 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.modelmanager_tree.resizeColumnToContents(0)
     self.runmanager_tree.resizeColumnToContents(0)
     self.resultsmanager_tree.resizeColumnToContents(0)
+
+    # Play with the new tree view here
+    self.configFile = QFile("./config.xml")
+    if self.configFile.open(QIODevice.ReadWrite):
+      self.doc = QDomDocument()
+      self.doc.setContent(self.configFile)
+      # Close the file and re-open with truncation
+      self.configFile.close()
+      self.configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
+      indentSize = 2
+      out = QTextStream(self.configFile)
+      self.doc.save(out, indentSize)
+      self.model = OpusDataModel(self.doc, self)
+      self.view = QTreeView(self)
+      self.view.setModel(self.model)
+      self.gridlayout5.addWidget(self.view)
+      self.view.setColumnWidth(0,250)
+      # Hook up to the mousePressEvent and pressed
+      QObject.connect(self.view, SIGNAL("pressed(const QModelIndex &)"), self.processPressed)
+      self.view.setContextMenuPolicy(Qt.CustomContextMenu)
+      QObject.connect(self.view, SIGNAL("customContextMenuRequested(const QPoint &)"), self.processCustomMenu)
+    else:
+      print "Error reading config"
     
+
+  def processCustomMenu(self, position):
+    print "Right mouse click custom menu requested"
+    if self.view.indexAt(position).isValid():
+      if self.view.indexAt(position).internalPointer().node().nodeValue() != "":
+        print "right mouse requested was for ", self.view.indexAt(position).internalPointer().node().nodeValue()
+      elif self.view.indexAt(position).internalPointer().node().toElement().tagName() != "":
+        print "right mouse requested was for ", self.view.indexAt(position).internalPointer().node().toElement().tagName()
+    return
+  
+  def processPressed(self, index):
+    print "Pressed Event Captured"
+    if index.isValid():
+      if index.internalPointer().node().nodeValue() != "":
+        print "left mouse requested was for ", index.internalPointer().node().nodeValue()
+      elif index.internalPointer().node().toElement().tagName() != "":
+        print "left mouse requested was for ", index.internalPointer().node().toElement().tagName()
+    return
+
   def updateTabs(self, listOfTabs):
     # Here we can update to show current tabs
     for index in range(self.tabWidget.count()):
