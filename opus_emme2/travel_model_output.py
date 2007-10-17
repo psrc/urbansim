@@ -25,11 +25,12 @@ class TravelModelOutput(object):
     A class to access the output of emme/2 travel models.
     Can be used to get the values of any matrix in an emme/2 data bank.
     """
-    def get_travel_data_set(self, zone_set, matrix_attribute_name_map, bank_path, out_storage=None):
+    def get_travel_data_set(self, zone_set, matrix_attribute_name_map, bank_path, out_storage=None, matrices_created=False):
         """
         Returns a new travel data set containing the given set of emme/2 matrices 
         populated from the emme/2 data bank.  The columns in the travel data set are 
         those given in the attribute name of the map.
+        If matrices_created is True, it is assumed that the matrices files are already created in the bank_path.
         """
         # Compute the from and to zone sets
         nzones = zone_set.size()
@@ -51,7 +52,7 @@ class TravelModelOutput(object):
         max_zone_id = zone_set.get_id_attribute().max()
         for matrix_name in matrix_attribute_name_map.keys():
             self._put_one_matrix_into_travel_data_set(travel_data_set, max_zone_id, matrix_name, 
-                                                     matrix_attribute_name_map[matrix_name], bank_path)
+                                                     matrix_attribute_name_map[matrix_name], bank_path, matrices_created)
         return travel_data_set
            
     def _get_matrix_into_data_file(self, matrix_name, max_zone_id, bank_path):
@@ -91,7 +92,8 @@ class TravelModelOutput(object):
             os.chdir(prior_cwd)
             logger.end_block()
             
-    def _put_one_matrix_into_travel_data_set(self, travel_data_set, max_zone_id, matrix_name, attribute_name, bank_path):
+    def _put_one_matrix_into_travel_data_set(self, travel_data_set, max_zone_id, matrix_name, attribute_name, bank_path,
+                                             matrices_created=False):
         """
         Adds to the given travel_data_set the data for the given matrix
         that is in the emme/2 data bank.
@@ -99,7 +101,8 @@ class TravelModelOutput(object):
         logger.start_block('Copying data for matrix %s into variable %s' %
                            (matrix_name, attribute_name))
         try:
-            self._get_matrix_into_data_file(matrix_name, max_zone_id, bank_path)
+            if not matrices_created:
+                self._get_matrix_into_data_file(matrix_name, max_zone_id, bank_path)
             file_contents = self._get_emme2_data_from_file(join(bank_path, "_one_matrix.txt"))
             
             travel_data_set.add_primary_attribute(data=zeros(travel_data_set.size(), dtype=float32), name=attribute_name)
