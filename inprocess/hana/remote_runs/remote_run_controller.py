@@ -176,7 +176,7 @@ class RemoteRun:
         self.run_remote_python_process('%s/%s/write_last_urbansim_year.py' % (self.remote_opus_path, self.script_path), 
                                        '-d %s -o %s/last_year.txt' % (config['cache_directory'], self.remote_communication_path))
         self.copy_file_from_remote_host('last_year.txt', self.local_output_path)
-        last_year = load_from_text_file('%s/last_year.txt' % self.local_output_path)
+        last_year = load_from_text_file('%s/last_year.txt' % self.local_output_path, convert_to_float=True)[0]
         if last_year < config['years'][1]:
             logger.log_warning("urbansim finished in year %d" % last_year)
             return False
@@ -208,8 +208,8 @@ class RemoteRun:
             self.run_manager.run_activity.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % self.run_id)        
             self.run_manager.run_activity.add_row_to_history(self.run_id, urbansim_resources, "started")
             
-            #self.run_remote_python_process("%s/urbansim/tools/restart_run.py" % self.remote_opus_path, 
-            #                               "%s %s --skip-cache-cleanup --skip-travel-model" % (self.run_id, this_start_year))                   
+            self.run_remote_python_process("%s/urbansim/tools/restart_run.py" % self.remote_opus_path, 
+                                           "%s %s --skip-cache-cleanup --skip-travel-model" % (self.run_id, this_start_year))                   
             if not self.has_urbansim_finished(urbansim_resources):
                 raise StandardError, "There was an error in the urbansim run."
 
