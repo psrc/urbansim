@@ -167,6 +167,10 @@ class RemoteRun:
                    (self.plink, self.username, self.password, self.hostname, self.python_command, python_script_full_name, 
                     script_options, cmd_postfix))
             
+    def check_urbansim_run_status(self, config):
+        self.run_remote_python_process('write_last_urbansim year.py', '-d %s -o %s' % (config['cache_directory'],
+                                       self.remote_communication_path))
+        
     def run(self, start_year, end_year, configuration_path, run_id=None):
         config = self.prepare_for_run(configuration_path, run_id)
         self._do_run(start_year, end_year, config)
@@ -182,7 +186,7 @@ class RemoteRun:
         if end_year not in travel_model_years:
             travel_model_years.append(end_year)
         travel_model_years.sort()
-        
+        local_output_path = os.path.join(self.local_output_path_root, str(self.run_id))
         this_start_year = start_year
         for travel_model_year in travel_model_years:
             this_end_year = travel_model_year
@@ -216,10 +220,9 @@ class RemoteRun:
                         if full_model_path == 'opus_emme2.models.get_emme2_data_into_cache':
                             optional_args='%s -m -z %s' % (optional_args, max_zone_id)
                         elif full_model_path == 'opus_emme2.models.run_travel_model':
-                            local_output_path = os.path.join(self.local_output_path_root, str(self.run_id), str(this_end_year))
                             if not os.path.exists(local_output_path):
                                 os.makedirs('%s' % local_output_path)
-                            optional_args='%s -o %s' % (optional_args, local_output_path)
+                            optional_args='%s -o %s' % (optional_args, os.path.join(local_output_path,'emme2_%d_log.txt' % this_end_year))
                         ForkProcess().fork_new_process(full_model_path, 
                                                        travel_model_resources, optional_args=optional_args)
                 for x in [1,2,3]:
