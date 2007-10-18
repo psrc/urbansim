@@ -17,6 +17,7 @@ import pickle
 import copy
 import getpass
 from opus_core.misc import get_config_from_opus_path
+from opus_core.misc import load_from_text_file
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
 from opus_core.services.run_server.run_activity import RunActivity
 from opus_core.configuration import Configuration
@@ -60,11 +61,11 @@ class RemoteRun:
     #default_hostname = "aalborg"
     default_hostname = "faloorum6.csss.washington.edu"
     default_username = getpass.getuser()
-    #remote_cache_directory_root = '/projects/null/urbansim5/urbansim_cache/' #the ending slash is critical    
-    remote_cache_directory_root = '/home/hana/urbansim_cache/psrc/parcel/'
+
     remote_opus_path = "/home/hana/opus"
     remote_communication_path_root = '/home/hana/urbansim_tmp'
-    local_output_path_root = 'c:/hana/runs' # for output of the travel model
+    #local_output_path_root = 'c:/hana/runs' # for output of the travel model
+    local_output_path_root = '/Users/hana/tmp'
     script_path = 'inprocess/hana/remote_runs'
     remote_travel_models = ['opus_emme2.models.get_cache_data_into_emme2']
     
@@ -113,6 +114,10 @@ class RemoteRun:
                                                             "SELECT * from run_activity WHERE run_id = %s " % self.run_id)
             if not len(results) > 1:
                 raise StandardError, "run_id %s doesn't exist in run_activity table." % self.run_id
+            
+        self.local_output_path = os.path.join(self.local_output_path_root, str(self.run_id))
+        if not os.path.exists(self.local_output_path):
+            os.makedirs('%s' % self.local_output_path)
         return config
             
     def copy_resources_to_remote_host(self, config):
@@ -167,9 +172,15 @@ class RemoteRun:
                    (self.plink, self.username, self.password, self.hostname, self.python_command, python_script_full_name, 
                     script_options, cmd_postfix))
             
-    def check_urbansim_run_status(self, config):
-        self.run_remote_python_process('write_last_urbansim year.py', '-d %s -o %s' % (config['cache_directory'],
-                                       self.remote_communication_path))
+    def has_urbansim_finished(self, config):
+        self.run_remote_python_process('%s/%s/write_last_urbansim_year.py' % (self.remote_opus_path, self.script_path), 
+                                       '-d %s -o %s/last_year.txt' % (config['cache_directory'], self.remote_communication_path))
+        self.copy_file_from_remote_host('last_year.txt', self.local_output_path)
+        last_year = load_from_text_file('%s/last_year.txt' % self.local_output_path)
+        if last_year < config['years'][1]:
+            logger.log_warning("urbansim finished in year %d" % last_year)
+            return False
+        return True
         
     def run(self, start_year, end_year, configuration_path, run_id=None):
         config = self.prepare_for_run(configuration_path, run_id)
@@ -186,7 +197,6 @@ class RemoteRun:
         if end_year not in travel_model_years:
             travel_model_years.append(end_year)
         travel_model_years.sort()
-        local_output_path = os.path.join(self.local_output_path_root, str(self.run_id))
         this_start_year = start_year
         for travel_model_year in travel_model_years:
             this_end_year = travel_model_year
@@ -198,9 +208,10 @@ class RemoteRun:
             self.run_manager.run_activity.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % self.run_id)        
             self.run_manager.run_activity.add_row_to_history(self.run_id, urbansim_resources, "started")
             
-            self.run_remote_python_process("%s/urbansim/tools/restart_run.py" % self.remote_opus_path, 
-                                           "%s %s --skip-cache-cleanup --skip-travel-model" % (self.run_id, this_start_year))                   
-                    
+            #self.run_remote_python_process("%s/urbansim/tools/restart_run.py" % self.remote_opus_path, 
+            #                               "%s %s --skip-cache-cleanup --skip-travel-model" % (self.run_id, this_start_year))                   
+            if not self.has_urbansim_finished(urbansim_resources):
+                raise StandardError, "There was an error in the urbansim run."
 
             # run travel models
             max_zone_id = 0
@@ -220,9 +231,7 @@ class RemoteRun:
                         if full_model_path == 'opus_emme2.models.get_emme2_data_into_cache':
                             optional_args='%s -m -z %s' % (optional_args, max_zone_id)
                         elif full_model_path == 'opus_emme2.models.run_travel_model':
-                            if not os.path.exists(local_output_path):
-                                os.makedirs('%s' % local_output_path)
-                            optional_args='%s -o %s' % (optional_args, os.path.join(local_output_path,'emme2_%d_log.txt' % this_end_year))
+                            optional_args='%s -o %s' % (optional_args, os.path.join(self.local_output_path,'emme2_%d_log.txt' % this_end_year))
                         ForkProcess().fork_new_process(full_model_path, 
                                                        travel_model_resources, optional_args=optional_args)
                 for x in [1,2,3]:

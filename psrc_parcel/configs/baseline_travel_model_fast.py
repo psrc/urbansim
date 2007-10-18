@@ -27,4 +27,5 @@ class BaselineTravelModelFast(Baseline):
         travel_model_configuration = create_travel_model_configuration('baseline_travel_model_psrc_fast', mode='full')
         config['travel_model_configuration'] = travel_model_configuration
         config['travel_model_configuration']['locations_to_disaggregate'] = ['parcel', 'building']
+        del config['travel_model_configuration'][2000]
         self.merge(config)
