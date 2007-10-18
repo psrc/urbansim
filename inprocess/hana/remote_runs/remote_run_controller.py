@@ -18,7 +18,6 @@ import copy
 import getpass
 from opus_core.misc import get_config_from_opus_path
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
-from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.services.run_server.run_activity import RunActivity
 from opus_core.configuration import Configuration
 from urbansim.tools.run_manager import RunManager
@@ -31,10 +30,10 @@ from numpy import arange, where, logical_and
 from tempfile import mkdtemp
 from opus_emme2.models.abstract_emme2_travel_model import AbstractEmme2TravelModel
 
-class OptionGroup(GenericOptionGroup):
+class RemoteRunOptionGroup(GenericOptionGroup):
     def __init__(self):
         GenericOptionGroup.__init__(self, usage="python %prog [options]",
-            description="Control urbansim and travle model to run on different computers, tailored for PSRC runs ")
+            description="Control urbansim and travel model to run on different computers, tailored for PSRC runs ")
         self.parser.add_option("-c", "--configuration-path", dest="configuration_path", default=None, 
                                help="Opus path to Python module defining run_configuration.")
         self.parser.add_option("--start-year", dest="start_year", default=2000, type="int",
@@ -58,16 +57,13 @@ class RemoteRun:
         pscp = 'pscp'
         
     python_command = "mosrun -h python" 
-    #local_cache_directory_root = 'U:/psrc_parcel/'
-    local_cache_directory_root = '/Users/hana/urbansim_cache/psrc/parcel/'
-
     #default_hostname = "aalborg"
     default_hostname = "faloorum6.csss.washington.edu"
     default_username = getpass.getuser()
     #remote_cache_directory_root = '/projects/null/urbansim5/urbansim_cache/' #the ending slash is critical    
     remote_cache_directory_root = '/home/hana/urbansim_cache/psrc/parcel/'
     remote_opus_path = "/home/hana/opus"
-    remote_tmp_path_root = '/home/hana/urbansim_tmp'
+    remote_communication_path_root = '/home/hana/urbansim_tmp'
     script_path = 'inprocess/hana/remote_runs'
     remote_travel_models = ['opus_emme2.models.get_cache_data_into_emme2']
     
@@ -86,6 +82,9 @@ class RemoteRun:
     
         if run_id is not None:
             self.run_id = run_id
+            config = self.run_manager.get_resources_for_run_id_from_history(services_host_name=self.services_hostname,
+                                                                       services_database_name=self.services_dbname,
+                                                                       run_id=self.run_id)
         else:
             opus_path = configuration_path
     
@@ -95,13 +94,12 @@ class RemoteRun:
             self.run_id = self.run_manager.run_activity.get_new_history_id()
             head, tail = os.path.split(config['cache_directory'])
             config['cache_directory'] =  '%s/run_%s.%s' % (head, self.run_id, tail)
-            config['remote_tmp_path'] = '%s/%s' % (self.remote_tmp_path_root, self.run_id)
-            self.remote_communication_path = config['remote_tmp_path']
+            self.remote_communication_path = '%s/%s' % (self.remote_communication_path_root, self.run_id)
             
             #create directory on the remote machine for communication
             self.run_remote_python_process("%s/%s/prepare_communication_directory.py" % (self.remote_opus_path, 
                                                                                          self.script_path),
-                                           "-d %s" % config['remote_tmp_path'])
+                                           "-d %s" % self.remote_communication_path)
     
             # create the baseyear cache on remote machine
             self.run_remote_python_process("%s/%s/create_baseyear_cache.py" % (self.remote_opus_path, self.script_path),
@@ -114,6 +112,7 @@ class RemoteRun:
                                                             "SELECT * from run_activity WHERE run_id = %s " % self.run_id)
             if not len(results) > 1:
                 raise StandardError, "run_id %s doesn't exist in run_activity table." % self.run_id
+        return config
             
     def copy_resources_to_remote_host(self, config):
         pickle_dir = mkdtemp()
@@ -167,21 +166,12 @@ class RemoteRun:
                    (self.plink, self.username, self.password, self.hostname, self.python_command, python_script_full_name, 
                     script_options, cmd_postfix))
             
-    def run(self, start_year, end_year):
-        urbansim_resources = self.run_manager.get_resources_for_run_id_from_history(services_host_name=self.services_hostname,
-                                                                       services_database_name=self.services_dbname,
-                                                                       run_id=self.run_id)
-        #TODO: is this line necessary?
-        #urbansim_resources['flt_directory'] = os.path.join(urbansim_resources['cache_directory'], str(restart_year - 1))
-        head, tail = os.path.split(urbansim_resources['cache_directory'])
-        #remote_cache_directory = os.path.join(remote_cache_directory_root, tail)
-        local_cache_directory = os.path.join(self.local_cache_directory_root, tail)
-    
-        travel_model_resources = Configuration(urbansim_resources)
+    def run(self, start_year, end_year, configuration_path, run_id=None):
+        config = self.prepare_for_run(configuration_path, run_id)
+        self._do_run(start_year, end_year, config)
         
-        #urbansim_resources['cache_directory'] = remote_cache_directory
-        travel_model_resources['cache_directory'] = local_cache_directory
-    
+    def _do_run(self, start_year, end_year, urbansim_resources):
+        travel_model_resources = Configuration(urbansim_resources)
         #only keep sorted travel model years falls into years range
         travel_model_years = []
         for key in travel_model_resources['travel_model_configuration'].keys():
@@ -214,15 +204,12 @@ class RemoteRun:
                 for full_model_path in travel_model_resources['travel_model_configuration']['models']:
                     if full_model_path in self.remote_travel_models:
                         # run this model remotely
-                        travel_model_resources['cache_directory'] = urbansim_resources['cache_directory']
                         self.run_remote_python_process(full_model_path, 
                                                        '-y %d -d %s' % (this_end_year, self.remote_communication_path),
                                                        config=travel_model_resources,
                                                        is_opus_path=True)
                         tripgen_dir = tm.get_emme2_dir(travel_model_resources, this_end_year, 'tripgen')
                         max_zone_id = self.copy_file_from_remote_host_and_get_max_zone('TAZDATA.MA2', '%s/inputtg' % tripgen_dir)
-                        #max_zone_id = 938
-                        travel_model_resources['cache_directory'] = local_cache_directory
                     else:
                         optional_args='-y %d' % this_end_year
                         if full_model_path == 'opus_emme2.models.get_emme2_data_into_cache':
@@ -233,21 +220,15 @@ class RemoteRun:
                     bank_dir = tm.get_emme2_dir(travel_model_resources, this_end_year, "bank%i" % x)
                     self.copy_file_to_remote_host("%s/*_one_matrix.txt" % bank_dir, subdirectory="bank%i" % x)
                     
-                travel_model_resources['cache_directory'] = urbansim_resources['cache_directory']
                 self.run_remote_python_process('opus_emme2.models.get_emme2_data_into_cache', 
                            '-y %d --matrix_directory=%s' % (this_end_year, self.remote_communication_path),
                            config=travel_model_resources, is_opus_path=True
                                                )
                     
-    
-            #if not os.path.exists(os.path.join(self.local_cache_directory_root, str(this_end_year+1))):
-            #    raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
-            #                        (this_end_year+1, self.local_cache_directory)
-                
             this_start_year = travel_model_year + 1  #next run starting from the next year of the travel model year
             
 if __name__ == "__main__":
-    option_group = OptionGroup()
+    option_group = RemoteRunOptionGroup()
     parser = option_group.parser
     (options, args) = parser.parse_args()
     
@@ -269,8 +250,7 @@ if __name__ == "__main__":
     except: pass
     db = option_group.get_services_database(options)
     run = RemoteRun(hostname, username, password, options.host_name, options.database_name, db)
-    run.prepare_for_run(options.configuration_path, options.run_id)
-    run.run(options.start_year, options.end_year)
+    run.run(options.start_year, options.end_year, options.configuration_path, options.run_id)
  
  
 
