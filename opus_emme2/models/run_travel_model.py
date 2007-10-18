@@ -25,7 +25,7 @@ class RunTravelModel(AbstractEmme2TravelModel):
     """Run the travel model.
     """
 
-    def run(self, config, year):
+    def run(self, config, year, output_file=None):
         """Runs the emme2 executables, using appropriate info from config. 
         Assumes the emme2 input files are present. 
         Raise an exception if the emme2 run fails. 
@@ -33,9 +33,11 @@ class RunTravelModel(AbstractEmme2TravelModel):
         emme2_dir = self.get_emme2_dir(config, year)
         logger.log_status('Using emme2 dir %s for year %d' % (emme2_dir, year))
         os.chdir(emme2_dir)
-        cache_directory = config['cache_directory']
         emme2_batch_file_path = config['travel_model_configuration'][year]['emme2_batch_file_name']
-        log_file_path = os.path.join(cache_directory, 'emme2_%d_log.txt' % year)
+        if output_file is None:
+            log_file_path = os.path.join(config['cache_directory'], 'emme2_%d_log.txt' % year)
+        else:
+            log_file_path = output_file
         cmd = """cmd /c "%(emme2_batch_file_name)s" > %(log_file_path)s""" % {
             'emme2_batch_file_name':emme2_batch_file_path, 
             'log_file_path':log_file_path,
@@ -57,6 +59,8 @@ if __name__ == "__main__":
                       help="Name of file containing resources")
     parser.add_option("-y", "--year", dest="year", action="store", type="int",
                       help="Year in which to 'run' the travel model")
+    parser.add_option("-o", "--output-file", dest="output_file", action="store", type="string",
+                      help="Output log file. If not given, it is written into urbansim cache directory.")
     (options, args) = parser.parse_args()
    
     r = get_resources_from_file(options.resources_file_name)
@@ -68,4 +72,4 @@ if __name__ == "__main__":
                          in_storage=AttributeCache())
 
 #    logger.enable_memory_logging()
-    RunTravelModel().run(resources, options.year)
+    RunTravelModel().run(resources, options.year, options.output_file)

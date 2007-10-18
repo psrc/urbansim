@@ -64,6 +64,7 @@ class RemoteRun:
     remote_cache_directory_root = '/home/hana/urbansim_cache/psrc/parcel/'
     remote_opus_path = "/home/hana/opus"
     remote_communication_path_root = '/home/hana/urbansim_tmp'
+    local_output_path_root = 'c:/hana/runs' # for output of the travel model
     script_path = 'inprocess/hana/remote_runs'
     remote_travel_models = ['opus_emme2.models.get_cache_data_into_emme2']
     
@@ -213,7 +214,12 @@ class RemoteRun:
                     else:
                         optional_args='-y %d' % this_end_year
                         if full_model_path == 'opus_emme2.models.get_emme2_data_into_cache':
-                            optional_args='-m -z %s -y %d' % (max_zone_id, this_end_year)
+                            optional_args='%s -m -z %s' % (optional_args, max_zone_id)
+                        elif full_model_path == 'opus_emme2.models.run_travel_model':
+                            local_output_path = os.join.path(self.local_output_path_root, self.run_id, this_end_year)
+                            if not os.path.exists(local_output_path):
+                                os.makedirs('%s' % local_output_path)
+                            optional_args='%s -o %s' % (optional_args, local_output_path)
                         ForkProcess().fork_new_process(full_model_path, 
                                                        travel_model_resources, optional_args=optional_args)
                 for x in [1,2,3]:
