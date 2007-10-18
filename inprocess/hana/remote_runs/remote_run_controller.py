@@ -32,14 +32,14 @@ from tempfile import mkdtemp
 from opus_emme2.models.abstract_emme2_travel_model import AbstractEmme2TravelModel
 
 class RemoteRunOptionGroup(GenericOptionGroup):
-    def __init__(self):
+    def __init__(self, **kwargs):
         GenericOptionGroup.__init__(self, usage="python %prog [options]",
             description="Control urbansim and travel model to run on different computers, tailored for PSRC runs ")
         self.parser.add_option("-c", "--configuration-path", dest="configuration_path", default=None, 
                                help="Opus path to Python module defining run_configuration.")
-        self.parser.add_option("--start-year", dest="start_year", default=2000, type="int",
+        self.parser.add_option("--start-year", dest="start_year", default=None,
                                help="start year (inclusive)")
-        self.parser.add_option("--end-year", dest="end_year", default=2030, type="int",
+        self.parser.add_option("--end-year", dest="end_year", default=None,
                                help="end year (inclusive)")
         self.parser.add_option("--run-id", dest="run_id", default=None, 
                                help="which run_id to run, None to start a new run")
@@ -198,11 +198,15 @@ class RemoteRun:
         return load_from_text_file('%s/last_year.txt' % self.local_output_path, convert_to_float=True)[0]
         
     def run(self, start_year, end_year, configuration_path, run_id=None):
-        config = self.prepare_for_run(configuration_path=configuration_path, run_id=run_id)
+        config = self.prepare_for_run(configuration_path=configuration_path, run_id=run_id)    
         self._do_run(start_year, end_year, config)
         
     def _do_run(self, start_year, end_year, urbansim_resources):
         travel_model_resources = Configuration(urbansim_resources)
+        if start_year is None:
+            start_year = travel_model_resources['years'][0]
+        if end_year is None:
+            end_year = travel_model_resources['years'][1]
         #only keep sorted travel model years falls into years range
         travel_model_years = []
         if not self.skip_travel_model:

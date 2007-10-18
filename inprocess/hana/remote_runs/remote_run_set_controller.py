@@ -12,6 +12,7 @@
 # other acknowledgments.
 #
 
+import getpass
 from numpy.random import seed, randint
 from opus_core.misc import load_table_from_text_file, write_table_to_text_file
 from opus_core.misc import get_config_from_opus_path
@@ -37,8 +38,8 @@ class RemoteRunSet(RemoteRun):
             root_seed = config.get("seed", 1)
             seed(root_seed)
             # generate different seed for each run (each seed contains 1 number)
-            seed_array = randint(1,2**30, number_of_runs)
-            for irun in range(number_of_runs):
+            seed_array = randint(1,2**30, self.number_of_runs)
+            for irun in range(self.number_of_runs):
                 config['seed']= (seed_array[irun],)
                 RemoteRun.prepare_for_run(self, config=config)
                 self.run_ids_dict[self.run_id] = 0
@@ -61,7 +62,11 @@ class RemoteRunSet(RemoteRun):
             config = self.run_manager.get_resources_for_run_id_from_history(services_host_name=self.services_hostname,
                                                                        services_database_name=self.services_dbname,
                                                                        run_id=self.run_id)
-            RemoteRun._do_run(self, finished_year+1, end_year, config)
+            if start_year is None:
+                this_start_year = config['years'][0]
+            else:
+                this_start_year = start_year
+            RemoteRun._do_run(self, max(this_start_year, finished_year+1), end_year, config)
             self.run_ids[self.run_id] = self.get_urbansim_last_year(config)
             self.write_into_run_id_file()
             
@@ -91,6 +96,7 @@ if __name__ == "__main__":
     try: import wingdbstub
     except: pass
     db = option_group.get_services_database(options)
-    run = RemoteRunSet(hostname, username, password, options.host_name, options.database_name, db)
+    run = RemoteRunSet(hostname, username, password, options.host_name, options.database_name, db,
+                       options.skip_travel_model, options.skip_urbansim)
     run.run(options.start_year, options.end_year, options.configuration_path, options.run_id_file)
         
