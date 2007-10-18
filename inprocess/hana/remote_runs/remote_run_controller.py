@@ -216,7 +216,7 @@ class RemoteRun:
                         if full_model_path == 'opus_emme2.models.get_emme2_data_into_cache':
                             optional_args='%s -m -z %s' % (optional_args, max_zone_id)
                         elif full_model_path == 'opus_emme2.models.run_travel_model':
-                            local_output_path = os.path.join(self.local_output_path_root, self(self.run_id), str(this_end_year))
+                            local_output_path = os.path.join(self.local_output_path_root, str(self.run_id), str(this_end_year))
                             if not os.path.exists(local_output_path):
                                 os.makedirs('%s' % local_output_path)
                             optional_args='%s -o %s' % (optional_args, local_output_path)
