@@ -38,7 +38,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
     number_of_units_string = Trait('total_number_of_possible_SSS_jobs', None, Str)
     lottery_max_iterations = Int(3)
     variable_package = Trait("urbansim", Str, Str)
-    maximum_runs = Int(5)
+    maximum_runs = Int(3)
     input_index = Str('erm_index')
     
     coefficients_table = Str('employment_location_choice_model_coefficients')
