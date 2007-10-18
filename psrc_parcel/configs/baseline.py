@@ -171,6 +171,7 @@ class Baseline(UrbansimParcelConfiguration):
                                    config['models_configuration']['household_location_choice_model']                                        
                                                                                                    )
         config['models_configuration']['household_location_choice_model_for_2000']['controller']['run']['arguments']['chunk_specification'] = "{'nchunks':1}"
+        config['models_configuration']['household_location_choice_model_for_2000']['controller']['run']['arguments']['maximum_runs'] = 1
         config['models_configuration']['employment_relocation_model_for_2000'] = {}
         config['models_configuration']['employment_relocation_model_for_2000']['controller'] = \
                     EmploymentRelocationModelConfigurationCreator(
