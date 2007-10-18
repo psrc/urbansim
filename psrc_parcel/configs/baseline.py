@@ -12,7 +12,6 @@
 # other acknowledgments.
 #
 
-#from urbansim.estimation.config import config
 from opus_core.configurations.database_configuration import DatabaseConfiguration
 from opus_core.configuration import Configuration
 from urbansim_parcel.configs.controller_config import UrbansimParcelConfiguration
@@ -26,9 +25,10 @@ from numpy import array
 import os
 
 class Baseline(UrbansimParcelConfiguration):
+    multiple_runs = False
+    
     def __init__(self):
         config = UrbansimParcelConfiguration()
-
         config_changes = {
             'description':'PSRC parcel baseline',
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
@@ -150,8 +150,6 @@ class Baseline(UrbansimParcelConfiguration):
                     "job_building_type":{}
                 }
         }
-        #use configuration in config as defaults and merge with config_changes
-#        config = merge_resources_with_defaults(config_changes, config)
         config.replace(config_changes)
 
         config['models_configuration']["household_location_choice_model"]["controller"]["import"] = \
@@ -179,4 +177,9 @@ class Baseline(UrbansimParcelConfiguration):
                                probabilities = None,
                                rate_table=None,
                                output_index = 'erm_index').execute()
+ 
+        if self.multiple_runs:
+            from multiple_runs_modification import MultipleRunsModification
+            MultipleRunsModification().modify_configuration(config)
+            
         self.merge(config)

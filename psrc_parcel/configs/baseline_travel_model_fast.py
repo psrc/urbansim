@@ -15,6 +15,7 @@
 from baseline import Baseline
 
 class BaselineTravelModelFast(Baseline):
+    multiple_runs=True
     def __init__(self):
         config = Baseline()
         
@@ -29,3 +30,6 @@ class BaselineTravelModelFast(Baseline):
         config['travel_model_configuration']['locations_to_disaggregate'] = ['parcel', 'building']
         del config['travel_model_configuration'][2000]
         self.merge(config)
+
+#if __name__ == "__main__":
+#    config = BaselineTravelModelFast()
