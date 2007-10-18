@@ -193,8 +193,8 @@ class RemoteRun:
             self.run_manager.run_activity.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % self.run_id)        
             self.run_manager.run_activity.add_row_to_history(self.run_id, urbansim_resources, "started")
             
-            #self.run_remote_python_process("%s/urbansim/tools/restart_run.py" % self.remote_opus_path, 
-            #                               "%s %s --skip-cache-cleanup --skip-travel-model" % (self.run_id, this_start_year))                   
+            self.run_remote_python_process("%s/urbansim/tools/restart_run.py" % self.remote_opus_path, 
+                                           "%s %s --skip-cache-cleanup --skip-travel-model" % (self.run_id, this_start_year))                   
                     
 
             # run travel models
