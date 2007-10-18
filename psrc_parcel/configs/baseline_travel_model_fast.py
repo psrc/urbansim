@@ -14,17 +14,17 @@
 
 from baseline import Baseline
 
-class BaselineWithSkims(Baseline):
+class BaselineTravelModelFast(Baseline):
     def __init__(self):
         config = Baseline()
         
         config_changes = {
-            'description':'baseline with skims',
+            'description':'baseline travel model fast',
         }
         config.replace(config_changes)
         
         from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
-        travel_model_configuration = create_travel_model_configuration('baseline_travel_model_psrc', mode='skims')
+        travel_model_configuration = create_travel_model_configuration('baseline_travel_model_psrc_fast', mode='full')
         config['travel_model_configuration'] = travel_model_configuration
         config['travel_model_configuration']['locations_to_disaggregate'] = ['parcel', 'building']
         self.merge(config)
