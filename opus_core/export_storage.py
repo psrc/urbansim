@@ -21,7 +21,7 @@ class ExportStorage(object):
     def export(self, in_storage, out_storage):
         
         ### TODO: get_dataset_names is not part of the standard Storage interface!
-        dataset_names = in_storage.get_dataset_names()
+        dataset_names = in_storage.get_table_names()
         
         logger.start_block('Exporting tables')
         logger.log_status("Reading tables from '%s'" % in_storage.get_storage_location())

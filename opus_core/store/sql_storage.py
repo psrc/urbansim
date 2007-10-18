@@ -113,7 +113,7 @@ class sql_storage(Storage):
         
     def write_table(self, table_name, table_data, overwrite_existing = True):
         db = self._get_db()
-        
+        chunk_size = 1000
         table_length, _ = self._get_column_size_and_names(table_data)
         
         columns = []
@@ -132,31 +132,28 @@ class sql_storage(Storage):
         
         connection = db.engine.connect()
         try:
-            transaction = connection.begin()
             try:
-                try:
-                    table.create()
-                except Exception, e:
-                    raise NameError('Failed to create table, possibly due to an illegal column name.\n(Original error: %s)' % e)
-                
-                rows_to_insert = []
-                for row in range(table_length):
-                    row_data = {}
-                    for column_name, column_data in table_data.iteritems():
-                        row_data[column_name] = column_data[row]
-                    rows_to_insert.append(row_data)
-                
-                try:
+                table.create()
+            except Exception, e:
+                raise NameError('Failed to create table, possibly due to an illegal column name.\n(Original error: %s)' % e)
+
+            transaction = connection.begin()
+            try:                
+                last_row = -1
+                while last_row < table_length -1:
+                    rows_to_insert = []
+                    for row in range(last_row + 1, min(last_row + 1 + chunk_size, table_length)):
+                        row_data = {}
+                        for column_name in table_data.keys():
+                            row_data[column_name] = table_data[column_name][row]
+                        rows_to_insert.append(row_data)
+                    last_row = row
                     connection.execute(table.insert(), rows_to_insert)
-                    #table.insert().execute(*rows_to_insert)
-                except Exception, e:
-                    raise ValueError('Failed to insert data into table, possibly due to incorrect data type.\n(Original error: %s)\nData to be inserted: %s' % (e, row_data))
-            
+        
                 transaction.commit()
-                
             except:
                 transaction.rollback()
-                raise
+                raise 
                 
         finally:
             connection.close()
