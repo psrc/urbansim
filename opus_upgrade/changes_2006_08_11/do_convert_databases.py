@@ -17,8 +17,8 @@ import os
 from optparse import OptionParser
 from classes.convert_databases import ConvertDatabase
 
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
-from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 
 def main():
@@ -86,15 +86,25 @@ def main():
         
     elif len(options.tables) > 1:
         print "Converting tables in database %s on host %s" % (options.databases[0], options.host)
-        db_server = MysqlDatabaseServer(db_config)
+        dbconfig = DatabaseServerConfiguration(
+            host_name = db_config.host_name,
+            user_name = db_config.user_name,
+            password = db_config.password                                       
+        )
+        db_server = DatabaseServer(dbconfig)
         db = db_server.get_database(options.databases[0])
         
         ConvertDatabase().convert_database(db, options.tables, options.backup, options.postfix)
         print "Done."
     
     else:
+        dbconfig = DatabaseServerConfiguration(
+            host_name = db_config.host_name,
+            user_name = db_config.user_name,
+            password = db_config.password                                       
+        )
         print "Converting table %s in database %s on host %s" % (options.tables[0], options.databases[0], options.host)
-        db_server = MysqlDatabaseServer(db_config)
+        db_server = DatabaseServer(dbconfig)
         db = db_server.get_database(options.databases[0])
         
         ConvertDatabase().convert_table(db, options.tables[0], options.backup, options.postfix)

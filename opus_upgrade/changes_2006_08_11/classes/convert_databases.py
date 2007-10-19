@@ -14,8 +14,8 @@
 
 import os
 
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
-
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 class ConvertDatabase(object):
     def convert_databases(self, db_config, config):
@@ -28,7 +28,12 @@ class ConvertDatabase(object):
         try: backup_postfix = config['backup_postfix']
         except KeyError: backup_postfix = '_old'
         
-        db_server = MysqlDatabaseServer(db_config)
+        dbconfig = DatabaseServerConfiguration(
+            host_name = db_config.host_name,
+            user_name = db_config.user_name,
+            password = db_config.password                                       
+        )
+        db_server = DatabaseServer(dbconfig)
         
         for db_name in databases:
             db = db_server.get_database(db_name)
@@ -83,7 +88,7 @@ class ConvertDatabase(object):
 
 
 from opus_core.tests import opus_unittest
-from opus_core.configurations.database_server_configuration import LocalhostDatabaseServerConfiguration
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 class TestConvertDatabases(opus_unittest.OpusTestCase):
     def setUp(self):
@@ -145,7 +150,8 @@ class TestConvertDatabases(opus_unittest.OpusTestCase):
             'backup_postfix':'_old',
             }
             
-        self.db_server = MysqlDatabaseServer(LocalhostDatabaseServerConfiguration())
+            
+        self.db_server = DatabaseServer(DatabaseServerConfiguration())
         
         self.dbs = []
         for db_name in self.test_db_names:
@@ -261,7 +267,7 @@ class TestConvertDatabases(opus_unittest.OpusTestCase):
 
                                
     def test_convert_databases(self):
-        ConvertDatabase().convert_databases(LocalhostDatabaseServerConfiguration(), self.config)
+        ConvertDatabase().convert_databases(DatabaseServerConfiguration(), self.config)
         
         for db_name in self.config['databases']:
             db = self.db_server.get_database(db_name)
