@@ -65,9 +65,15 @@ class RegressionModelWithAdditionConstantVariation(RegressionModel):
             initial_error = original_data - outcome
             dataset.add_primary_attribute(name=initial_error_name, data=zeros(dataset.size(), dtype="float32"))
             exclude_missing_values = self.run_config.get("exclude_missing_values_from_initial_error", False)
+            exclude_outliers = self.run_config.get("exclude_outliers_from_initial_error", False)
             if exclude_missing_values:
                 missing_value = self.run_config.get("outcome_attribute_missing_value", 0)
                 initial_error[original_data == missing_value] = 0
+            if exclude_outliers:
+                outlier_low = self.run_config.get("outlier_is_less_than", 0)
+                initial_error[original_data < outlier_low] = 0
+                outlier_high = self.run_config.get("outlier_is_greater_than", original_data.max())
+                initial_error[original_data > outlier_high] = 0
             dataset.set_values_of_one_attribute(initial_error_name, initial_error, index)
         else:
             initial_error = dataset.get_attribute_by_index(initial_error_name, index)
