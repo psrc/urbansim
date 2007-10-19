@@ -99,3 +99,42 @@ class FlattenScenarioDatabaseChain(object):
                  tables_to_copy=config.get('tables_to_copy', []))
         finally:
             logger.end_block()
+
+from optparse import OptionParser
+
+if __name__ == '__main__':
+    """
+    Flattens the full scenario database chain.
+    """
+        
+    parser = OptionParser()
+        
+    parser.add_option("-o", "--host", dest="host_name", type="string",
+        help="The database host (default: 'localhost').")
+    parser.add_option("-u", "--username", dest="user_name", type="string",
+        help="The database connection password (default: from environment"
+            " variable, then nothing).")
+    parser.add_option("-p", "--password", dest="password", type="string",
+        help="The database connection password (default: from environment"
+            " variable, then nothing).")
+    parser.add_option("-f", "--from_database", dest="from_database_name", 
+        type="string", help="The database to flatten. (REQUIRED)")
+    parser.add_option("-t", "--to_database", dest="to_database_name", 
+        type="string", help="The new database to create. (REQUIRED)")
+            
+    (options, args) = parser.parse_args()
+    
+    server_config = DatabaseServerConfiguration(
+        host_name = options.host_name,
+        user_name = options.user_name,
+        password = options.password
+    )
+    
+    config = {
+        'db_server_config_from':server_config,
+        'from_database_name':options.from_database_name,
+        'db_server_config_to':server_config,
+        'to_database_name':options.to_database_name,
+        }
+    copier = FlattenScenarioDatabaseChain()
+    copier.copy_scenario_database(config)
