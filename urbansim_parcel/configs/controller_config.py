@@ -15,7 +15,7 @@
 #from urbansim.estimation.config import config
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from opus_core.configuration import Configuration
-from numpy import array
+from numpy import array, log
 import os
 from urbansim.configurations.household_location_choice_model_configuration_creator import HouseholdLocationChoiceModelConfigurationCreator
 from urbansim.configurations.employment_transition_model_configuration_creator import EmploymentTransitionModelConfigurationCreator
@@ -70,14 +70,14 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                               "coefficients":"coefficients",
                               "dataset": "parcel",
                               "data_objects": "datasets",
-                              "run_config": "Resources({'exclude_missing_values_from_initial_error': True})"
+                              "run_config": "Resources({'exclude_outliers_from_initial_error': True, 'outlier_is_less_than': %s, 'outlier_is_greater_than': %s})" % (log(0.01), log(100000))
                               }
                     },
             "prepare_for_estimate": {
                 "name": "prepare_for_estimate",
                 "arguments": {"specification_storage": "base_cache_storage",
                               "specification_table": "'real_estate_price_model_specification'",
-                              "filter_variable":"'numpy.logical_and(urbansim_parcel.parcel.unit_price>0.01,urbanasim_parcel.parcel.unit_price<1000,urbansim_parcel.parcel.existing_units>100)'",
+                              "filter_variable":"'numpy.logical_and(urbansim_parcel.parcel.unit_price>0.01,urbansim_parcel.parcel.unit_price<1000,urbansim_parcel.parcel.existing_units>100)'",
                               "dataset": "parcel",
                               "threshold": 1},
                 "output": "(specification, index)"
