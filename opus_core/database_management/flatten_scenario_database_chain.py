@@ -60,7 +60,7 @@ class FlattenScenarioDatabaseChain(object):
         for database_name, tables in table_mapping.items():
             database_in = db_server_from.get_database(database_name)
             for table in tables:
-                if table not in tables_to_copy and tables_to_copy != []:
+                if table not in tables_to_copy:
                     continue
                 
                 logger.start_block("Copying table '%s' from database '%s'" 
