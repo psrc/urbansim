@@ -13,14 +13,21 @@
 # 
 
 from opus_core.logger import logger
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+
 
 
 class CreateJobBuildingTypesTable(object):
     def create_building_types_table(self, db_config, db_name):
         table_name = 'job_building_types'
-        
-        db_server = MysqlDatabaseServer(db_config)
+
+        dbconfig = DatabaseServerConfiguration(
+            host_name = db_config.host_name,
+            user_name = db_config.user_name,
+            password = db_config.password                                       
+        )
+        db_server = DatabaseServer(dbconfig)
         
         try:
             db = db_server.get_database(db_name)
@@ -47,15 +54,12 @@ class CreateJobBuildingTypesTable(object):
 import os    
 from opus_core.tests import opus_unittest
 
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
-from opus_core.configurations.database_server_configuration import LocalhostDatabaseServerConfiguration
-
 
 class TestCreateJobBuildingTypesTable(opus_unittest.OpusTestCase):
     def setUp(self):
         self.db_name = 'test_create_table'
         
-        self.db_server = MysqlDatabaseServer(LocalhostDatabaseServerConfiguration())
+        self.db_server = DatabaseServer(DatabaseServerConfiguration())
         
         self.db_server.drop_database(self.db_name)
         self.db_server.create_database(self.db_name)
@@ -77,7 +81,7 @@ class TestCreateJobBuildingTypesTable(opus_unittest.OpusTestCase):
         
     def test_create_table(self):
         CreateJobBuildingTypesTable().create_building_types_table(
-            LocalhostDatabaseServerConfiguration(), self.db_name)
+            DatabaseServerConfiguration(), self.db_name)
         
         try:
             self.db.DoQuery('select * from job_building_types;')
@@ -87,7 +91,7 @@ class TestCreateJobBuildingTypesTable(opus_unittest.OpusTestCase):
             
     def test_values(self):
         CreateJobBuildingTypesTable().create_building_types_table(
-            LocalhostDatabaseServerConfiguration(), self.db_name)
+            DatabaseServerConfiguration(), self.db_name)
         
         expected_results = [
             ['id', 'name', 'home_based'],

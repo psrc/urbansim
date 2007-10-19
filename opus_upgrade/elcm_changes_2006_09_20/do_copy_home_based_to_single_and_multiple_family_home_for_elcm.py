@@ -17,10 +17,10 @@ import sys
 
 from optparse import OptionParser
 
-from classes.copy_table import CopyTable
+from opus_core.database_management.cross_database_operations import CrossDatabaseOperations
 
-from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
-
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.database_server import DatabaseServer
     
 parser = OptionParser()
     
@@ -36,14 +36,6 @@ parser.add_option("-d", "--database", dest="database",
     type="string", help="The database to convert. (REQUIRED)")
     
 (options, args) = parser.parse_args()
-
-if options.host == None: options.host = 'localhost'
-if options.username == None: 
-    try: options.username = os.environ['MYSQLUSERNAME']
-    except: options.username = ''
-if options.password == None: 
-    try: options.password = os.environ['MYSQLPASSWORD']
-    except: options.password = ''
     
 if options.database == None: 
         parser.print_help()
@@ -54,18 +46,22 @@ config = DatabaseServerConfiguration(
     user_name = options.username,
     password = options.password,
     )
+db_server = DatabaseServer(config)
+db = db_server.get_database(options.database)
+cdo = CrossDatabaseOperations()
 
-CopyTable().copy_table(config, options.database, 
-    'employment_home_based_location_choice_model_specification', 
-    'single_family_home_elcm_specification')
-CopyTable().copy_table(config, options.database, 
-    'employment_home_based_location_choice_model_specification', 
-    'multiple_family_home_elcm_specification')
-CopyTable().copy_table(config, options.database, 
-    'employment_home_based_location_choice_model_coefficients', 
-    'single_family_home_elcm_coefficients')
-CopyTable().copy_table(config, options.database, 
-    'employment_home_based_location_choice_model_coefficients', 
-    'multiple_family_home_elcm_coefficients')
+cdo.copy_table('employment_home_based_location_choice_model_specification', 
+               db, db, 
+               'single_family_home_elcm_specification')
 
-print 'Done.'
+cdo.copy_table('employment_home_based_location_choice_model_specification', 
+               db, db, 
+               'multiple_family_home_elcm_specification')
+
+cdo.copy_table('employment_home_based_location_choice_model_coefficients', 
+               db, db, 
+               'single_family_home_elcm_coefficients')
+
+cdo.copy_table('employment_home_based_location_choice_model_coefficients', 
+               db, db, 
+               'multiple_family_home_elcm_coefficients')

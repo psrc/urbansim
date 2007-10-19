@@ -20,7 +20,7 @@ from warnings import filterwarnings
 
 from classes.create_building_types_table import CreateBuildingTypesTable
 
-from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
     
 parser = OptionParser()

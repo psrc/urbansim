@@ -15,14 +15,16 @@
 import re
 
 from opus_core.logger import logger
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+
 
 
 class RenameBySwappingEmploymentAndCommercialOrIndustrialOrHomeBasedForElcm(object):
     def rename_by_swapping_employment_and_commercial_or_industrial_or_home_based_for_elcm(self, 
             db_config, db_name):
                 
-        db_server = MysqlDatabaseServer(db_config)
+        db_server = DatabaseServer(db_config)
         
         try:
             db = db_server.get_database(db_name)
@@ -52,7 +54,7 @@ class RenameBySwappingEmploymentAndCommercialOrIndustrialOrHomeBasedForElcm(obje
         for new_name, old_name in new_tables:
             logger.log_status('Renaming %s to %s.' % (old_name, new_name))
             db.drop_table(new_name)
-            db.DoQuery('CREATE TABLE %s SELECT * FROM $$.%s;' 
+            db.DoQuery('CREATE TABLE %s SELECT * FROM %s;' 
                 % (new_name, old_name))
             # Rename old table, if it is in the same database.
             # If it is in a database further down the chain, don't rename it.
@@ -64,14 +66,14 @@ class RenameBySwappingEmploymentAndCommercialOrIndustrialOrHomeBasedForElcm(obje
 import os    
 from opus_core.tests import opus_unittest
 
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
-from opus_core.configurations.database_server_configuration import LocalhostDatabaseServerConfiguration
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 class TestRenameBySwappingEmploymentAndCommercialOrIndustrialForElcm(opus_unittest.OpusTestCase):
     def setUp(self):
         self.db_name = 'test_rename_commercial_and_industrial'
         
-        self.db_server = MysqlDatabaseServer(LocalhostDatabaseServerConfiguration())
+        self.db_server = DatabaseServer(DatabaseServerConfiguration())
         
         self.db_server.drop_database(self.db_name)
         self.db_server.create_database(self.db_name)
@@ -122,7 +124,7 @@ class TestRenameBySwappingEmploymentAndCommercialOrIndustrialForElcm(opus_unitte
     def test_rename_tables(self):
         r = RenameBySwappingEmploymentAndCommercialOrIndustrialOrHomeBasedForElcm()
         r.rename_by_swapping_employment_and_commercial_or_industrial_or_home_based_for_elcm(
-            LocalhostDatabaseServerConfiguration(), self.db_name)
+            DatabaseServerConfiguration(), self.db_name)
         
         for table in self.output_tables + self.other_tables:
             if not self.db.table_exists(table):

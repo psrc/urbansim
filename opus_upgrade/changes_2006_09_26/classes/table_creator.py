@@ -13,13 +13,20 @@
 # 
 
 from opus_core.logger import logger
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+
 
 class TableCreator(object):
     """Shared functionality for update scripts that need to create a table.
     """
     def _get_db(self, db_config, db_name):
-        db_server = MysqlDatabaseServer(db_config)
+        dbconfig = DatabaseServerConfiguration(
+            host_name = db_config.host_name,
+            user_name = db_config.user_name,
+            password = db_config.password                                       
+        )
+        db_server = DatabaseServer(dbconfig)
         
         try:
             return db_server.get_database(db_name)
@@ -31,7 +38,7 @@ class TableCreator(object):
             if db.table_exists(table_name):
                 # create backup of table.
                 db.DoQuery('DROP TABLE IF EXISTS %s_bak;' % table_name)
-                db.DoQuery('create table %s_bak select * from $$.%s;' % (table_name, table_name))
+                db.DoQuery('create table %s_bak select * from %s;' % (table_name, table_name))
         except:
             pass
         
@@ -45,15 +52,11 @@ class TableCreator(object):
 import os        
 from opus_core.tests import opus_unittest
 
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
-from opus_core.configurations.database_server_configuration import LocalhostDatabaseServerConfiguration
-
-
 class Tests(opus_unittest.OpusTestCase):
     def setUp(self):
         self.db_name = 'test_create_table'
         
-        self.db_server = MysqlDatabaseServer(LocalhostDatabaseServerConfiguration())
+        self.db_server = DatabaseServer(DatabaseServerConfiguration())
         
         self.db_server.drop_database(self.db_name)
         self.db_server.create_database(self.db_name)
@@ -74,7 +77,7 @@ class Tests(opus_unittest.OpusTestCase):
         
     def test_create_table(self):
         creator = TableCreator()
-        db = creator._get_db(LocalhostDatabaseServerConfiguration(), self.db_name)
+        db = creator._get_db(DatabaseServerConfiguration(), self.db_name)
         self.assert_(not db.table_exists('test_table'))
         self.assert_(not db.table_exists('test_table_bak'))
         

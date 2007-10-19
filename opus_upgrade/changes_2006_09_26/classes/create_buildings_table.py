@@ -36,7 +36,7 @@ class CreateBuildingsTable(TableCreator):
                 residential_units, 
                 0 as sqft,
                 residential_improvement_value as improvement_value
-            from $$.gridcells 
+            from gridcells 
             where
                 residential_units > 0;
             
@@ -48,7 +48,7 @@ class CreateBuildingsTable(TableCreator):
                 0 as residential_units, 
                 commercial_sqft as sqft,
                 commercial_improvement_value as improvement_value
-            from $$.gridcells 
+            from gridcells 
             where
                 commercial_sqft > 0;
             
@@ -60,7 +60,7 @@ class CreateBuildingsTable(TableCreator):
                 0 as residential_units, 
                 industrial_sqft as sqft,
                 industrial_improvement_value as improvement_value
-            from $$.gridcells 
+            from gridcells 
             where  
                 industrial_sqft > 0;
             
@@ -72,7 +72,7 @@ class CreateBuildingsTable(TableCreator):
                 0 as residential_units, 
                 governmental_sqft as sqft,
                 governmental_improvement_value as improvement_value
-            from $$.gridcells 
+            from gridcells 
             where  
                 governmental_sqft > 0;
             

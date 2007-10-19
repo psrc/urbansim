@@ -20,31 +20,23 @@ from warnings import filterwarnings
 
 from classes.create_buildings_table import CreateBuildingsTable
 
-from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
     
 parser = OptionParser()
     
 parser.add_option("-o", "--host", dest="host", type="string",
-    help="The mysql host (default: 'localhost').")
+    help="The database host (default: 'localhost').")
 parser.add_option("-u", "--username", dest="username", type="string",
-    help="The mysql connection password (default: MYSQLUSERNAME environment"
+    help="The database connection password (default: environment"
         " variable, then nothing).")
 parser.add_option("-p", "--password", dest="password", type="string",
-    help="The mysql connection password (default: MYSQLPASSWORD environment"
+    help="The database connection password (default: environment"
         " variable, then nothing).")
 parser.add_option("-d", "--database", dest="database", 
     type="string", help="The database to convert. (REQUIRED)")
     
 (options, args) = parser.parse_args()
-
-if options.host == None: options.host = 'localhost'
-if options.username == None: 
-    try: options.username = os.environ['MYSQLUSERNAME']
-    except: options.username = ''
-if options.password == None: 
-    try: options.password = os.environ['MYSQLPASSWORD']
-    except: options.password = ''
     
 if options.database == None: 
         parser.print_help()
