@@ -56,11 +56,9 @@ class RenameBySwappingEmploymentAndCommercialOrIndustrialOrHomeBasedForElcm(obje
             db.drop_table(new_name)
             db.DoQuery('CREATE TABLE %s SELECT * FROM %s;' 
                 % (new_name, old_name))
-            # Rename old table, if it is in the same database.
-            # If it is in a database further down the chain, don't rename it.
-            if (db.database_name_for(old_name) == db.database_name):
-                db.drop_table('%s_old' %old_name)
-                db.DoQuery('RENAME TABLE %s TO %s_old;' % (old_name, old_name))
+            # Rename old table
+            db.drop_table('%s_old' %old_name)
+            db.DoQuery('RENAME TABLE %s TO %s_old;' % (old_name, old_name))
         
 
 import os    
