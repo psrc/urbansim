@@ -56,8 +56,8 @@ if __name__ == "__main__":
                          #cache_with_true_data=true_data_cache, 
                          datasets_with_true_data={'zone':zones, 'faz':fazes, 'large_area': large_areas},
                          year_with_true_data=2002,
-                         known_output=["urbansim.zone.number_of_households", 
-                        #"urbansim.zone.number_of_jobs"
+                         known_output=["urbansim_parcel.zone.number_of_households", 
+                        #"urbansim_parcel.zone.number_of_jobs"
                         ], 
                          transformation = 'sqrt', base_year=2000, 
                          #scaling_parents = scaling,
