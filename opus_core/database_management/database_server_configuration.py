@@ -23,12 +23,15 @@ class DatabaseServerConfiguration(object):
     alternative is used."""
 
     def __init__(self, 
-                 protocol = 'mysql', 
+                 protocol = None, 
                  host_name = None, 
                  user_name = None, 
                  password = None,
                  test = False):
         
+        if protocol is None:
+            protocol = os.environ.get('DEFAULT_URBANSIM_DB_ENGINE', 'mysql')
+            
         self.protocol = protocol.lower()
             
         if host_name is None and not test:
