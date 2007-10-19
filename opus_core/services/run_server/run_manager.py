@@ -24,7 +24,7 @@ from sqlalchemy.sql import select, and_
 
 class RunManager(object):
     """An abstraction representing a simulation manager that automatically logs
-    runs (and their status) to a mysql database (run_activity),
+    runs (and their status) to a database (run_activity),
     creates resources for runs, and can run simulations.
     """
     #TODO: some preconditions should be checked!
