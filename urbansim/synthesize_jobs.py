@@ -15,6 +15,7 @@
 from opus_core.misc import sample
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.flatten_scenario_database_chain import FlattenScenarioDatabaseChain
 
 class SynthesizeJobs(object):
     def synthesize_employment_data(self, config):
@@ -45,20 +46,25 @@ class SynthesizeJobs(object):
             building_ids += [id]
             home_based += [home]
                     
-        config = DatabaseServerConfiguration(
+        db_server_config = DatabaseServerConfiguration(
             host_name = config['db_config'].host_name,
             user_name = config['db_config'].user_name,
             password = config['db_config'].password
         )           
-        db_server = DatabaseServer(config['db_config'])
+        db_server = DatabaseServer(db_server_config)
         
-        db_server.create_database(output_db_name)
+        flatten_db_config = {
+            'tables_to_copy':[gridcells_table_name, jobs_table_name],
+            'db_server_config_from':db_server_config,
+            'from_database_name':input_db_name,
+            'db_server_config_to':db_server_config,
+            'to_database_name':output_db_name,
+            }
         
-        input_database = db_server.get_database(input_db_name)
+        FlattenScenarioDatabaseChain().copy_scenario_database(flatten_db_config)
+                
         output_database = db_server.get_database(output_db_name)
-        
-        input_database.DoQuery('USE %(in_db)s' % {'in_db':input_db_name})
-        
+                
         sector_name = 0; sector_id = 1
         
         sector = {}
@@ -66,10 +72,10 @@ class SynthesizeJobs(object):
             name = entry[sector_name]
             id = entry[sector_id]
             sector[id] = self._get_jobs_per_building_type_in_sector_by_zone(
-                input_database, jobs_by_zone_by_sector_table_name, 
+                output_database, jobs_by_zone_by_sector_table_name, 
                 jobs_table_name, name, id)
 
-        results = self._get_building_type_proportion_by_zone(input_database, 
+        results = self._get_building_type_proportion_by_zone(output_database, 
                                                            gridcells_table_name)
             
         grid_id = 0; zone_id = 1
@@ -112,7 +118,7 @@ class SynthesizeJobs(object):
         
         if len(jobs_table_data) > 0:
             output_prefix = (
-                """INSERT INTO $$.%(jobs_out)s 
+                """INSERT INTO %(jobs_out)s 
                     (GRID_ID, HOME_BASED, SECTOR_ID, BUILDING_TYPE) VALUES
                 """ % {'jobs_out':jobs_output_table_name})
             output_postfix = ';'
@@ -179,14 +185,14 @@ class SynthesizeJobs(object):
                 BUILDING_TYPE, 
                 %(type)s*PROPORTION AS JOBS_FOR_THIS_TYPE,
                 %(type)s AS TOTAL
-            FROM $$.%(data)s AS d,
+            FROM %(data)s AS d,
                 (SELECT j.SECTOR_ID, BUILDING_TYPE, RAW/TOTAL AS PROPORTION 
                 FROM (SELECT SECTOR_ID, BUILDING_TYPE, COUNT(*) AS RAW 
-                     FROM $$.%(jobs)s 
+                     FROM %(jobs)s 
                      GROUP BY SECTOR_ID, BUILDING_TYPE) AS j, 
                      
                      (SELECT SECTOR_ID,COUNT(*) AS TOTAL 
-                     FROM $$.%(jobs)s 
+                     FROM %(jobs)s 
                      GROUP BY SECTOR_ID) AS t
                 WHERE j.SECTOR_ID = t.SECTOR_ID) AS p
             WHERE p.SECTOR_ID = %(sector)s
@@ -301,13 +307,13 @@ class SynthesizeJobs(object):
                 GOVERNMENTAL_SQFT/GOV_TOTAL AS GOV, 
                 COMMERCIAL_SQFT/COM_TOTAL AS COM, 
                 INDUSTRIAL_SQFT/IND_TOTAL AS IND
-            FROM $$.%(grid)s AS g, 
+            FROM %(grid)s AS g, 
                 (SELECT ZONE_ID, 
                     SUM(RESIDENTIAL_UNITS) AS RES_TOTAL,
                     SUM(GOVERNMENTAL_SQFT) AS GOV_TOTAL,
                     SUM(COMMERCIAL_SQFT) AS COM_TOTAL,
                     SUM(INDUSTRIAL_SQFT) AS IND_TOTAL 
-                FROM $$.%(grid)s
+                FROM %(grid)s
                 GROUP BY ZONE_ID) AS t
             WHERE g.ZONE_ID = t.ZONE_ID
             """ % {'grid':gridcells_table_name})
