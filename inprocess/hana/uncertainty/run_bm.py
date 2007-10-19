@@ -16,8 +16,6 @@ import sys
 from numpy import sort
 from opus_core.bayesian_melding import BayesianMelding
 from opus_core.plot_functions import plot_histogram
-from opus_core.store.tab_storage import tab_storage
-from opus_core.store.flt_storage import flt_storage
 from opus_core.misc import unique_values
 from opus_core.storage_factory import StorageFactory
 from opus_core.resources import Resources
@@ -40,14 +38,17 @@ if __name__ == "__main__":
 #    scaling = {1: "/scratch/urbbuild/urbansim_cache/psrc/cache_source_zone"}
 
     # where the true data (on a zone level) is stored in a table format 
-#    true_data_dir = "/Users/hana/data"
+    #true_data_dir = "/Users/hana/data/"
     true_data_dir = "/home/hana/urbansim_cache/psrc/data"
+
     true_data_file_name = "PSRC2005TAZData" # the physical file should have the ending '.tab'
 
-    in_storage = tab_storage(storage_location=true_data_dir)
+    in_storage = StorageFactory().get_storage('tab_storage',
+                                              storage_location = true_data_dir)
     zones = ZoneDataset(in_storage=in_storage, in_table_name=true_data_file_name)
     
-    flt_storage = flt_storage(cache_directory + "/2000")
+    flt_storage = StorageFactory().get_storage('flt_storage',
+                                              storage_location = cache_directory + "/2000")
     fazes = FazDataset(in_storage=flt_storage, in_table_name='fazes')
     large_areas = LargeAreaDataset(in_storage=flt_storage, in_table_name='large_areas')
 
