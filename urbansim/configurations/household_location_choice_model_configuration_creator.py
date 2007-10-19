@@ -188,7 +188,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'data_objects': 'datasets',
                     'debuglevel': 'debuglevel',
                     'specification': 'specification',
-                    'maximum_runs': 5
+                    'maximum_runs': 3
                     }
                 }
             })
@@ -211,6 +211,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
             coefficients_table = 'coefficients_table',
             specification_table = 'specification_table',
             input_index = 'input_index',
+            maximum_runs=10
             )
         
         expected = Configuration({
@@ -275,7 +276,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'data_objects': 'datasets',
                     'debuglevel': 999,
                     'specification': 'specification',
-                    'maximum_runs': 5
+                    'maximum_runs': 10
                     }
                 }
             })

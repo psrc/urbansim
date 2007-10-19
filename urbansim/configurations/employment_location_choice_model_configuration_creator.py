@@ -214,7 +214,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'data_objects': 'datasets',
                     'debuglevel': 'debuglevel',
                     'specification': 'specification',
-                    'maximum_runs': 5
+                    'maximum_runs': 3
                     }
                 }
             })
@@ -308,7 +308,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'data_objects': 'datasets',
                     'debuglevel': 8888,
                     'specification': 'specification',
-                    'maximum_runs': 5
+                    'maximum_runs': 3
                     }
                 }
             })
