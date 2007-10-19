@@ -16,12 +16,19 @@ import os
 import re
 
 from opus_core.logger import logger
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+
 
 
 class DBSubPattern(object):
     def convert_databases(self, db_config, databases, tables, patterns, backup=True, backup_postfix='_old'):
-        db_server = MysqlDatabaseServer(db_config)
+        dbconfig = DatabaseServerConfiguration(
+            host_name = db_config.host_name,
+            user_name = db_config.user_name,
+            password = db_config.password                                       
+        )
+        db_server = DatabaseServer(dbconfig)
         
         for db_name in databases:
             db = db_server.get_database(db_name)
@@ -89,7 +96,7 @@ class DBSubPattern(object):
 
 
 from opus_core.tests import opus_unittest
-from opus_core.configurations.database_server_configuration import LocalhostDatabaseServerConfiguration
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 class TestDBSubPattern(opus_unittest.OpusTestCase):
     def setUp(self):
@@ -150,7 +157,7 @@ class TestDBSubPattern(opus_unittest.OpusTestCase):
             'backup_postfix':'_old',
             }
             
-        self.db_server = MysqlDatabaseServer(LocalhostDatabaseServerConfiguration())
+        self.db_server = DatabaseServer(DatabaseServerConfiguration())
         
         self.dbs = []
         for db_name in self.test_db_names:
@@ -271,7 +278,7 @@ class TestDBSubPattern(opus_unittest.OpusTestCase):
 
                                
     def test_convert_databases(self):
-        DBSubPattern().convert_databases(LocalhostDatabaseServerConfiguration(), 
+        DBSubPattern().convert_databases(DatabaseServerConfiguration(), 
             self.config['databases'], self.config['tables'], self.patterns)
         
         for db_name in self.config['databases']:

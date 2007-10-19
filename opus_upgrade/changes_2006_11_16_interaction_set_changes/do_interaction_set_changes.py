@@ -19,8 +19,9 @@ import sys
 from optparse import OptionParser
 from classes.db_sub_pattern import DBSubPattern
 
-from opus_core.store.mysql_database_server import MysqlDatabaseServer
-from opus_core.configurations.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+
 
 
 def main():
@@ -71,15 +72,6 @@ def main():
             "multiple times.")
     (options, args) = parser.parse_args()
     
-    if options.host == None: 
-        try: options.host = os.environ['MYSQLHOSTNAME']
-        except: options.host = 'localhost'
-    if options.username == None: 
-        try: options.username = os.environ['MYSQLUSERNAME']
-        except: options.username = ''
-    if options.password == None: 
-        try: options.password = os.environ['MYSQLPASSWORD']
-        except: options.password = ''
     if options.backup == None: options.backup = True
     if options.postfix == None: options.postfix = '_old'
     
@@ -109,7 +101,12 @@ def main():
         
     elif len(options.tables) > 1:
         print "Converting tables in database %s on host %s" % (options.databases[0], options.host)
-        db_server = MysqlDatabaseServer(db_config)
+        dbconfig = DatabaseServerConfiguration(
+            host_name = db_config.host_name,
+            user_name = db_config.user_name,
+            password = db_config.password                                       
+        )        
+        db_server = DatabaseServer(dbconfig)
         db = db_server.get_database(options.databases[0])
         
         DBSubPattern().convert_database(db, options.tables, patterns, options.backup, options.postfix)
@@ -117,7 +114,13 @@ def main():
     
     else:
         print "Converting table %s in database %s on host %s" % (options.tables[0], options.databases[0], options.host)
-        db_server = MysqlDatabaseServer(db_config)
+
+        dbconfig = DatabaseServerConfiguration(
+            host_name = db_config.host_name,
+            user_name = db_config.user_name,
+            password = db_config.password                                       
+        )        
+        db_server = DatabaseServer(dbconfig)
         db = db_server.get_database(options.databases[0])
         
         DBSubPattern().convert_table(db, options.tables[0], patterns, options.backup, options.postfix)
