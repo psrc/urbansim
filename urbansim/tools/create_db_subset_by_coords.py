@@ -28,53 +28,53 @@ create database %(output_database_name)s ; use %(output_database_name)s ;
 
 create table scenario_information as select * from %(input_database_name)s.scenario_information; 
 
-create table gridcells as select * from $$.gridcells 
+create table gridcells as select * from gridcells 
     where relative_x >= %(low_x)s and relative_x <= %(high_x)s and
         relative_y >= %(low_y)s and relative_y <= %(high_y)s; 
 create index gridcells_grid_id on gridcells (grid_id);
 
-create table households as select hh.* from $$.households as hh, gridcells as gc where hh.grid_id = gc.grid_id;
+create table households as select hh.* from households as hh, gridcells as gc where hh.grid_id = gc.grid_id;
 
-create table buildings as select b.* from $$.buildings as b, gridcells as gc where b.grid_id = gc.grid_id;
+create table buildings as select b.* from buildings as b, gridcells as gc where b.grid_id = gc.grid_id;
 
-create table jobs as select j.* from $$.jobs as j, gridcells as gc where j.grid_id = gc.grid_id;
+create table jobs as select j.* from jobs as j, gridcells as gc where j.grid_id = gc.grid_id;
 
 create table development_event_history as select deh.* from 
-$$.development_event_history as deh, gridcells as gc where deh.grid_id = gc.grid_id;
+development_event_history as deh, gridcells as gc where deh.grid_id = gc.grid_id;
 
 create table jobs_for_estimation as select j.* from
-$$.jobs_for_estimation as j, gridcells as gc where j.grid_id = gc.grid_id;
+jobs_for_estimation as j, gridcells as gc where j.grid_id = gc.grid_id;
 
 create table households_for_estimation as select h.* from
-$$.households_for_estimation as h, gridcells as gc where h.grid_id = gc.grid_id;
+households_for_estimation as h, gridcells as gc where h.grid_id = gc.grid_id;
 
 create table gridcell_fractions_in_zones as select f.* from 
-$$.gridcell_fractions_in_zones as f, gridcells as gc where f.grid_id = gc.grid_id;
+gridcell_fractions_in_zones as f, gridcells as gc where f.grid_id = gc.grid_id;
 
 create index gridcell_fractions_in_zones_zone_id on gridcell_fractions_in_zones (zone_id); 
 
 create index gridcells_zone_id on gridcells (zone_id); create table zones as select distinct z.* 
-from $$.zones as z where z.zone_id in (select distinct zone_id from gridcells union select 
+from zones as z where z.zone_id in (select distinct zone_id from gridcells union select 
 distinct zone_id from gridcell_fractions_in_zones); create index zones_zone_id on zones (zone_id);
 
 create table travel_data1 as select td.* 
-from $$.travel_data as td, zones where td.from_zone_id = zones.zone_id; 
+from travel_data as td, zones where td.from_zone_id = zones.zone_id; 
 
 create table travel_data as select td.* from travel_data1 as td, zones where td.to_zone_id = zones.zone_id; 
 drop table travel_data1;
 
-create table annual_employment_control_totals as select * from $$.annual_employment_control_totals; 
+create table annual_employment_control_totals as select * from annual_employment_control_totals; 
 
 update annual_employment_control_totals set total_home_based_employment = 
-total_home_based_employment * ((select count(*) from jobs) / (select count(*) from $$.jobs)); 
+total_home_based_employment * ((select count(*) from jobs) / (select count(*) from jobs)); 
 
 update annual_employment_control_totals set total_non_home_based_employment = 
-     total_non_home_based_employment * ((select count(*) from jobs) / (select count(*) from $$.jobs));
+     total_non_home_based_employment * ((select count(*) from jobs) / (select count(*) from jobs));
 
-create table annual_household_control_totals as select * from $$.annual_household_control_totals; 
+create table annual_household_control_totals as select * from annual_household_control_totals; 
 
 update annual_household_control_totals set total_number_of_households = total_number_of_households * (
-(select count(*) from households) / (select count(*) from $$.households))
+(select count(*) from households) / (select count(*) from households))
         """ % { 'low_x': low_point.x, 
                 'low_y': low_point.y, 
                 'high_x': high_point.x, 
@@ -85,7 +85,7 @@ update annual_household_control_totals set total_number_of_households = total_nu
                 }
             )
          
-        commands_to_execute = commands_to_execute.replace('\n', ' ').replace('$$.','')
+        commands_to_execute = commands_to_execute.replace('\n', ' ')
         command_list = str.split(commands_to_execute, ';')
         for command in command_list:
             command = command.strip()
