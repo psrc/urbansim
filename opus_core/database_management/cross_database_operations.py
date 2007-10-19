@@ -34,7 +34,8 @@ class CrossDatabaseOperations(object):
         return byte_size
         
     def copy_table(self, table_to_copy, 
-                   database_in, database_out, 
+                   database_in, database_out,
+                   new_table_name = None, 
                    use_chunking = True,
                    memory_in_gigabytes = 2):        
         
@@ -44,7 +45,9 @@ class CrossDatabaseOperations(object):
         in_table = Table(table_to_copy, in_metadata, autoload=True)
 
         out_table = in_table.tometadata(out_metadata)
-        out_metadata.create_all()        
+        if new_table_name is not None:
+            out_table.rename(new_table_name)
+        out_metadata.create_all()
             
         if use_chunking:
             memory_in_bytes = memory_in_gigabytes * 1024**3
