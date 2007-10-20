@@ -314,10 +314,12 @@ class BayesianMelding:
     def compute_true_data(self, year, quantity_of_interest):
         variable_name = VariableName(quantity_of_interest)
         dataset_name = variable_name.get_dataset_name()
-        dataset_pool = self.setup_environment(self.cache_with_true_data, year)
-        datasets = self.get_datasets(dataset_pool)
-        datasets[dataset_name].compute_variables(variable_name)
-        self.true_data_of_quantity_of_interest = datasets[dataset_name].get_attribute(variable_name)
+        if self.cache_with_true_data is not None:
+            dataset_pool = self.setup_environment(self.cache_with_true_data, year)
+            datasets = self.get_datasets(dataset_pool)
+            self.true_data_of_quantity_of_interest = datasets[dataset_name].compute_variables(variable_name)
+        else:
+            self.true_data_of_quantity_of_interest = self.true_datasets[dataset].get_attribute(variable_name)
 
     def compute_and_write_true_data(self, year, quantity_of_interest, filename):
         self.compute_true_data(year, quantity_of_interest)
