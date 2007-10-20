@@ -31,15 +31,15 @@ if __name__ == "__main__":
     #true_data_cache = "/scratch/urbbuild/urbansim_cache/psrc/uncertainty/run_1364.2006_12_01_10_42"
 
     # in what directory is the file 'cache_directories'
-    cache_directory = "/home/hana/urbansim_cache/psrc/parcel/run_3904.2007_10_19_15_01"
-
+    #cache_directory = "/home/hana/urbansim_cache/psrc/parcel/run_3904.2007_10_19_15_01"
+    cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/run_3764.2007_10_08_16_01"
     # This is needed only if one of the runs was scaled, e.g. run on reduced set of gridcells. 
     # It gives the directory of the base year full set, in order to scale back.
 #    scaling = {1: "/scratch/urbbuild/urbansim_cache/psrc/cache_source_zone"}
 
     # where the true data (on a zone level) is stored in a table format 
-    #true_data_dir = "/Users/hana/data/"
-    true_data_dir = "/home/hana/urbansim_cache/psrc/data"
+    true_data_dir = "/Users/hana/data/"
+    #true_data_dir = "/home/hana/urbansim_cache/psrc/data"
 
     true_data_file_name = "PSRC2005TAZData" # the physical file should have the ending '.tab'
 
@@ -55,13 +55,13 @@ if __name__ == "__main__":
     bm = BayesianMelding(cache_directory, 
                          #cache_with_true_data=true_data_cache, 
                          datasets_with_true_data={'zone':zones, 'faz':fazes, 'large_area': large_areas},
-                         year_with_true_data=2002,
+                         year_with_true_data=2005,
                          known_output=["urbansim_parcel.zone.number_of_households", 
-                        #"urbansim_parcel.zone.number_of_jobs"
+                        "urbansim_parcel.zone.number_of_jobs"
                         ], 
                          transformation = 'sqrt', base_year=2000, 
                          #scaling_parents = scaling,
-                         dataset_package='urbansim')
+                         package_order=['urbansim_parcel', 'urbansim', 'opus_core'])
     weights = bm.compute_weights()
     print weights
 
