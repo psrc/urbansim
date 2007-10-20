@@ -22,7 +22,7 @@ from opus_core.misc import load_from_text_file, write_to_text_file, try_transfor
 from opus_core.variables.variable_name import VariableName
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
-from opus_core.datasets.dataset_factory import DatasetFactory
+from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.resources import Resources
 from opus_core.session_configuration import SessionConfiguration
@@ -40,7 +40,7 @@ class BayesianMelding:
                  datasets_with_true_data = None,
                  year_with_true_data=0,
                  known_output=[], transformation=None, inverse_transformation=None,
-                 base_year=0, scaling_parents={}, dataset_package='core'):
+                 base_year=0, scaling_parents={}, package_order=['core']):
         """ Class used in the Basesian melding analysis.
         'cache_directory' is the first directory created by start_run_set.py. It should
         contain a file called 'cache_directories' which contains a list of all caches that
@@ -61,18 +61,18 @@ class BayesianMelding:
         self.cache_with_true_data = cache_with_true_data
         self.true_datasets = datasets_with_true_data
         self.cache_storage_with_true_data = None
-        self.dataset_package = dataset_package
+        self.package_order = package_order
         self.transformation = transformation
         if inverse_transformation is not None:
             self.transformation_pairs[self.transformation] = inverse_transformation
         self.base_year = base_year
         self.year_with_true_data = year_with_true_data
         self.known_output = []
-        self.datasets_to_create = {}
+        self.datasets_to_create = []
         for var in known_output:
             varname = VariableName(var)
             self.known_output.append(varname)
-            self.datasets_to_create[varname.get_dataset_name()] = {}
+            self.datasets_to_create.append(varname.get_dataset_name())
         self.propagation_factor = None
         self.y = {}
         self.y_match_to_datasets = {}
@@ -88,14 +88,16 @@ class BayesianMelding:
                 self.scaling_parent_datasets[dir] = {}
             self.scaling_child_datasets[run] = {}
 
-
+    def get_datasets(self, dataset_pool):
+        result = {}
+        for dataset in self.datasets_to_create:
+            result[dataset] = dataset_pool.get_dataset(dataset)
+        return result
+    
     def compute_y(self):
         if self.true_datasets is None:
-            self.cache_storage_with_true_data = self.setup_environment(self.cache_with_true_data,
-                                                                       self.year_with_true_data)
-            self.true_datasets = DatasetFactory().create_datasets_from_flt(self.datasets_to_create,
-                                    self.dataset_package,
-                                    additional_arguments={'in_storage': self.cache_storage_with_true_data})
+            dataset_pool = self.setup_environment(self.cache_with_true_data, self.year_with_true_data)
+            self.true_datasets = self.get_datasets(dataset_pool)
         iout = -1
         for variable in self.known_output:
             dataset = variable.get_dataset_name()
@@ -107,19 +109,15 @@ class BayesianMelding:
 
     def compute_scalings(self):
         for dir in self.scaling_parent_datasets.keys():
-            cache_storage_for_scaling = self.setup_environment(dir, self.base_year)
-            self.scaling_parent_datasets[dir] = DatasetFactory().create_datasets_from_flt(self.datasets_to_create,
-                                    self.dataset_package,
-                                    additional_arguments={'in_storage': cache_storage_for_scaling})
+            dataset_pool = self.setup_environment(dir, self.base_year)
+            self.scaling_parent_datasets[dir] = self.get_datasets(dataset_pool)
             for variable in self.known_output:
                 dataset = variable.get_dataset_name()
                 self.scaling_parent_datasets[dir][dataset].compute_variables(variable, resources=Resources(self.scaling_parent_datasets[dir]))
 
         for run in self.scaling_child_datasets.keys():
-            cache_storage_for_this_run = self.setup_environment(self.cache_set[run-1], self.base_year)
-            self.scaling_child_datasets[run] = DatasetFactory().create_datasets_from_flt(self.datasets_to_create,
-                                            self.dataset_package,
-                                            additional_arguments={'in_storage': cache_storage_for_this_run})
+            dataset_pool = self.setup_environment(self.cache_set[run-1], self.base_year)
+            self.scaling_child_datasets[run] = self.get_datasets(dataset_pool)
             for variable in self.known_output:
                 dataset = variable.get_dataset_name()
                 self.scaling_child_datasets[run][dataset].compute_variables(variable, resources=Resources(self.scaling_child_datasets[run]))
@@ -152,10 +150,8 @@ class BayesianMelding:
             iout += 1
             dimension_reduced = False
             for i in range(self.number_of_runs):
-                cache_storage_for_this_run = self.setup_environment(self.cache_set[i], self.year_with_true_data)
-                simulated_datasets = DatasetFactory().create_datasets_from_flt(self.datasets_to_create,
-                                            self.dataset_package,
-                                            additional_arguments={'in_storage': cache_storage_for_this_run})
+                dataset_pool = self.setup_environment(self.cache_set[i], self.year_with_true_data)
+                simulated_datasets = self.get_datasets(dataset_pool)
                 ds = simulated_datasets[dataset]
                 ds.compute_variables(variable, resources=Resources(simulated_datasets))
                 if i == 0: # first run
@@ -229,11 +225,11 @@ class BayesianMelding:
         ss.set_current_time(year)
         ac = AttributeCache()
         storage = ac.get_flt_storage_for_year(year)
-        package_order = [self.dataset_package, 'opus_core']
-        SessionConfiguration(new_instance=True,
+        package_order = self.package_order
+        sc = SessionConfiguration(new_instance=True,
                              package_order=package_order,
                              in_storage=ac)
-        return storage
+        return sc.get_dataset_pool()
 
     def set_propagation_factor(self, year):
         self.propagation_factor = (year - self.base_year)/float(self.year_with_true_data-self.base_year)
@@ -253,10 +249,8 @@ class BayesianMelding:
         variable_name = VariableName(quantity_of_interest)
         dataset = variable_name.get_dataset_name()
         for i in range(self.number_of_runs):
-            cache_storage_for_this_run = self.setup_environment(self.cache_set[i], year)
-            simulated_datasets = DatasetFactory().create_datasets_from_flt({dataset:{}},
-                                        self.dataset_package,
-                                        additional_arguments={'in_storage': cache_storage_for_this_run})
+            dataset_pool = self.setup_environment(self.cache_set[i], year)
+            simulated_datasets = self.get_datasets(dataset_pool)
             simulated_datasets[dataset].compute_variables(variable_name)
             if i == 0: # first run
                 self.m = zeros((simulated_datasets[dataset].size(), self.number_of_runs),
@@ -320,10 +314,8 @@ class BayesianMelding:
     def compute_true_data(self, year, quantity_of_interest):
         variable_name = VariableName(quantity_of_interest)
         dataset_name = variable_name.get_dataset_name()
-        cache_storage = self.setup_environment(self.cache_with_true_data, year)
-        datasets = DatasetFactory().create_datasets_from_flt({dataset_name:{}},
-                                        self.dataset_package,
-                                        additional_arguments={'in_storage': cache_storage})
+        dataset_pool = self.setup_environment(self.cache_with_true_data, year)
+        datasets = self.get_datasets(dataset_pool)
         datasets[dataset_name].compute_variables(variable_name)
         self.true_data_of_quantity_of_interest = datasets[dataset_name].get_attribute(variable_name)
 
