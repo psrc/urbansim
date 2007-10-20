@@ -126,9 +126,11 @@ class sql_storage(Storage):
             elif column_data.dtype == 'f':
                 table_data[column_name] = [float(cell) for cell in column_data]
             
-        table = Table(table_name, db.metadata, *columns)
-        if overwrite_existing:
+        if db.table_exists(table_name) and overwrite_existing:
+            table = db.get_table(table_name)
             table.drop(checkfirst = True)
+            db.metadata.remove(table)
+        table = Table(table_name, db.metadata, *columns)
         
         connection = db.engine.connect()
         try:
@@ -337,7 +339,51 @@ else:
                     raise
                 
             self.assertEqual(expected_results, results)
+
+        def test_write_table_overwrite(self):
+            from MySQLdb import ProgrammingError, OperationalError
+                   
+            self.storage.write_table(
+                table_name = 'test_write_table', 
+                table_data = {
+                    'id': array([1,2,3]),
+                    'a': array([4,5,6]),
+                    }
+                )
+
+            self.storage.write_table(
+                table_name = 'test_write_table', 
+                table_data = {
+                    'id': array([1,2,3]),
+                    'a': array([4,5,6]),
+                    },
+                overwrite_existing = True
+                )                
+            expected_results = [['id', 'a'], [1,4], [2,5], [3,6]]
             
+            #Verify the data through a DatabaseServer database connection
+            db = self.db_server.get_database(self.database_name)
+            
+            try:
+                db.DoQuery('SELECT * FROM test_write_table')
+                
+            except ProgrammingError, (error_code, _):
+                if error_code == 1146:
+                    self.fail('write_table() did not create a table with the expected name (test_write_table).')
+                else:
+                    raise
+                
+            try:
+                results = db.GetResultsFromQuery('SELECT id, a FROM test_write_table ORDER BY id')
+                
+            except OperationalError, (error_code, error_message):
+                if error_code == 1054:
+                    self.fail('write_table() did not create all of the expected columns: %s' % error_message)
+                else:
+                    raise
+                
+            self.assertEqual(expected_results, results)
+                        
         def test_get_sql_alchemy_type_from_numpy_dtype(self):
             expected_sql_alchemy_type = Integer
             actual_sql_alchemy_type = self.storage._get_sql_alchemy_type_from_numpy_dtype(dtype('i'))
