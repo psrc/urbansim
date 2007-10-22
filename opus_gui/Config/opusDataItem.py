@@ -24,6 +24,19 @@ class OpusDataItem:
         self.parentItem = parent
         self.childItems = []
     
+    def initAsRootItem(self):
+        i = 0
+        for x in xrange(0,self.domNode.childNodes().count(),1):
+            current = self.domNode.childNodes().item(x)
+            if (current.attributes().namedItem(QString("flags")).isNull() or \
+                current.attributes().namedItem(QString("flags")).nodeValue() != QString("OpusHidden")) and \
+                (current.nodeType() == QDomNode.ElementNode):                
+                childNode = self.domNode.childNodes().item(x)
+                childItem = OpusDataItem(childNode, i , self)
+                self.childItems.append(childItem)
+                i = i + 1
+                childItem.initAsRootItem()
+
     def node(self):
         return self.domNode
     
@@ -34,12 +47,28 @@ class OpusDataItem:
         #print "DataItem.child ", i
         if len(self.childItems) > i:
             return self.childItems[i]
-        if i>=0 and i<self.domNode.childNodes().count():
-            childNode = self.domNode.childNodes().item(i)
-            childItem = OpusDataItem(childNode, i , self)
-            self.childItems.append(childItem)
-            return childItem
-        return 0
+        tryToFind = i+1
+        foundSoFar = 0
+        for x in xrange(0,self.domNode.childNodes().count(),1):
+            current = self.domNode.childNodes().item(x)
+            if (current.attributes().namedItem(QString("flags")).isNull() or \
+                current.attributes().namedItem(QString("flags")).nodeValue() != QString("OpusHidden")) and \
+                (current.nodeType() == QDomNode.ElementNode):
+                # We found one
+                foundSoFar = foundSoFar + 1
+            if foundSoFar == tryToFind:
+                # We have the one we are looking for
+                childNode = self.domNode.childNodes().item(x)
+                childItem = OpusDataItem(childNode, i , self)
+                self.childItems.append(childItem)
+                return childItem
+        return None
+        #if i>=0 and i<self.domNode.childNodes().count():
+        #    childNode = self.domNode.childNodes().item(i)
+        #    childItem = OpusDataItem(childNode, i , self)
+        #    self.childItems.append(childItem)
+        #    return childItem
+        #return 0
     
     def row(self):
         return self.rowNumber

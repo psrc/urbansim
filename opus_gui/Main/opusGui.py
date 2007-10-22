@@ -148,8 +148,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     
 
   def processCustomMenu(self, position):
-    print "Right mouse click custom menu requested"
     if self.view.indexAt(position).isValid():
+      print "Right mouse click custom menu requested, column %s" % (self.view.indexAt(position).column())
       if self.view.indexAt(position).internalPointer().node().nodeValue() != "":
         print "right mouse requested was for ", self.view.indexAt(position).internalPointer().node().nodeValue()
       elif self.view.indexAt(position).internalPointer().node().toElement().tagName() != "":
