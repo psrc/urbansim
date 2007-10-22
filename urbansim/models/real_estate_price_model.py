@@ -64,10 +64,13 @@ class RealEstatePriceModel(RegressionModelWithAdditionConstantVariation):
             outcome = exp(outcome)
         else:
             outcome_attribute_name = self.outcome_attribute.get_alias()
-        if outcome_attribute_name not in dataset.get_known_attribute_names():
-            dataset.add_primary_attribute(name=outcome_attribute_name, data=zeros(dataset.size(), float32))
-
-        dataset.set_values_of_one_attribute(outcome_attribute_name, outcome, index)
+        if outcome_attribute_name in dataset.get_known_attribute_names():
+            values = dataset.get_attribute(outcome_attribute_name).copy()
+            dataset.delete_one_attribute(outcome_attribute_name)
+        else:
+            values = zeros(dataset.size(), float32)
+        values[index] = outcome
+        dataset.add_primary_attribute(name=outcome_attribute_name, data=values)
         return outcome
 
     def estimate(self, specification, dataset, outcome_attribute="unit_price", index = None,
