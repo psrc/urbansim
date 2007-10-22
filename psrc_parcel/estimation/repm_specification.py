@@ -78,11 +78,11 @@ specification = {
     "ln_bldgage",
     "lnsqft",
     "ln_invfar",
-    "lngcdacbd",
+    #"lngcdacbd",
     "lnemp30da",
     "lnavginc",
     "lnempden",
-    "lnpopden",
+    #"lnpopden",
     ],
 
     2:   #Civil and Quasi-Public
@@ -92,7 +92,7 @@ specification = {
     "ln_invfar",
     "lnsqft",
     "lngcdacbd",
-    "lnemp30da",
+    #"lnemp30da",
     "lnempden",
     "lnpopden",
 
@@ -107,8 +107,8 @@ specification = {
     "lnemp30da",
     "lnemp30tw",
     "lngcdacbd",
-    "lnempden",
-    "lnpopden",
+    #"lnempden",
+    #"lnpopden",
     "lnavginc",
     ],
 
@@ -131,7 +131,7 @@ specification = {
             [
     "constant",
     "lnsqft",
-    "lnemp10da",
+    #"lnemp10da",
     "lnavginc",
     ], 
 
@@ -161,7 +161,7 @@ specification = {
     "constant",
     "lnsqft",
     "lnemp10da",
-    "lnavginc",
+    #"lnavginc",
     "lnunits",
     ],    
 
@@ -215,14 +215,14 @@ specification = {
     19:   #Park and Open Space
             [
     "constant",
-    "ln_bldgage",
-    "lnsqft",
+    #"ln_bldgage",
+    #"lnsqft",
     "ln_invfar",
     "lnempden",
     "lngcdacbd",
-    "lnpopden",
+    #"lnpopden",
     "lnemp20da",
-    "lnavginc",
+    #"lnavginc",
     ],  
     
     20:   #Parking
@@ -234,7 +234,7 @@ specification = {
     "lngcdacbd",
     "lnempden",
     "lnpopden",
-    "lnavginc",
+    #"lnavginc",
     ],
 
 
@@ -259,23 +259,23 @@ specification = {
             [
     "constant",
     "lnsqft",
-    "lnemp20da",
+    #"lnemp20da",
     "lnemp20tw",
     "lngcdacbd",
-    "lnempden",
-    "lnpopden",
-    "lnavginc",
+    #"lnempden",
+    #"lnpopden",
+    #"lnavginc",
     ],
 
     26:   #Vacant Developable
             [
     "constant",
     "lnlotsqft",
-    "lnemp30tw",
+    #"lnemp30tw",
     "lnemp10wa",
     "lngcdacbd",
     "lnempden",
-    "lnpopden",
+    #"lnpopden",
     "lnavginc",
     "inugb",
 #    "plan_3",
@@ -310,17 +310,18 @@ specification = {
     "lngcdacbd",
     "lnempden",
     "lnpopden",
-    "lnavginc",
+    #"lnavginc",
     ],
 
     30:   #Mixed Use
             [
     "constant",
     "lnsqft",
-    "lnemp20da",
-    "lnemp20tw",
+    #"lnemp20da",
+    #"lnemp20tw",
+    "lnemp10wa",
     "lngcdacbd",
-    "lnempden",
+    #"lnempden",
     "lnpopden",
     "lnavginc",
     "lnunits",
