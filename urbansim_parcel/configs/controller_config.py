@@ -398,6 +398,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         #hlcm_controller["init"]["arguments"]["filter"] = "'numpy.logical_and(building.residential_units, building.sqft_per_unit)'"
         hlcm_controller["prepare_for_estimate"]["arguments"]["agents_for_estimation_table"] = "'households_for_estimation'"
         hlcm_controller["prepare_for_estimate"]["arguments"]["filter"] = "'numpy.logical_and(household.building_id>0, household.disaggregate(building.sqft_per_unit>0))'" # filtering out agents for estimation with valid location
+        hlcm_controller["run"]["arguments"]["chunk_specification"] ="{'records_per_chunk':50000}"
         hlcm_controller["prepare_for_estimate"]["arguments"]["join_datasets"] = True
         hlcm_controller["prepare_for_estimate"]["arguments"]["index_to_unplace"] = None
         #hlcm_controller["estimate"]["arguments"]["procedure"] = 'None'
