@@ -140,20 +140,62 @@ class OpusGui(QMainWindow, Ui_MainWindow):
       self.gridlayout5.addWidget(self.view)
       self.view.setColumnWidth(0,250)
       # Hook up to the mousePressEvent and pressed
-      QObject.connect(self.view, SIGNAL("pressed(const QModelIndex &)"), self.processPressed)
+      #QObject.connect(self.view, SIGNAL("pressed(const QModelIndex &)"), self.processPressed)
       self.view.setContextMenuPolicy(Qt.CustomContextMenu)
       QObject.connect(self.view, SIGNAL("customContextMenuRequested(const QPoint &)"), self.processCustomMenu)
+      self.acceptIcon = QIcon(":/Images/Images/accept.png")
+      self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
+      self.bulletIcon = QIcon(":/Images/Images/bullet_black.png")
+      self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
+      self.act1 = QAction(self.acceptIcon, "Action1", self)
+      QObject.connect(self.act1, SIGNAL("triggered()"), self.action1)
+      self.act2 = QAction(self.applicationIcon, "Action2", self)
+      QObject.connect(self.act2, SIGNAL("triggered()"), self.action2)
+      self.act3 = QAction(self.bulletIcon, "Action3", self)
+      QObject.connect(self.act3, SIGNAL("triggered()"), self.action3)
+      self.act4 = QAction(self.calendarIcon, "Action4", self)
+      QObject.connect(self.act4, SIGNAL("triggered()"), self.action4)
     else:
       print "Error reading config"
     
+  def action1(self):
+    print "action1 context pressed with column = %s and item = %s" % \
+          (self.currentColumn, self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
+
+  def action2(self):
+    print "action2 context pressed with column = %s and item = %s" % \
+          (self.currentColumn, self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
+
+  def action3(self):
+    print "action3 context pressed with column = %s and item = %s" % \
+          (self.currentColumn, self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
+
+  def action4(self):
+    print "action4 context pressed with column = %s and item = %s" % \
+          (self.currentColumn, self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
 
   def processCustomMenu(self, position):
     if self.view.indexAt(position).isValid():
-      print "Right mouse click custom menu requested, column %s" % (self.view.indexAt(position).column())
+      #print "Right mouse click custom menu requested, column %s" % \
+      #      (self.view.indexAt(position).column())
       if self.view.indexAt(position).internalPointer().node().nodeValue() != "":
-        print "right mouse requested was for ", self.view.indexAt(position).internalPointer().node().nodeValue()
+        1+1
+        #print "right mouse requested was for ", \
+        #      self.view.indexAt(position).internalPointer().node().nodeValue()
       elif self.view.indexAt(position).internalPointer().node().toElement().tagName() != "":
-        print "right mouse requested was for ", self.view.indexAt(position).internalPointer().node().toElement().tagName()
+        1+1
+        #print "right mouse requested was for ", \
+        #      self.view.indexAt(position).internalPointer().node().toElement().tagName()
+      titleString = "Context Column %s" % (self.view.indexAt(position).column())
+      self.currentColumn = self.view.indexAt(position).column()
+      self.currentIndex = self.view.indexAt(position)
+      self.menu = QMenu(self)
+      self.menu.addAction(self.act1)
+      self.menu.addAction(self.act2)
+      self.menu.addSeparator()
+      self.menu.addAction(self.act3)
+      self.menu.addAction(self.act4)
+      self.menu.exec_(QCursor.pos())
     return
   
   def processPressed(self, index):
