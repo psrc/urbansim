@@ -17,11 +17,13 @@ from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from opus_core.configuration import Configuration
 from numpy import array, log
 import os
+from math import exp
 from urbansim.configurations.household_location_choice_model_configuration_creator import HouseholdLocationChoiceModelConfigurationCreator
 from urbansim.configurations.employment_transition_model_configuration_creator import EmploymentTransitionModelConfigurationCreator
 from urbansim.configurations.employment_relocation_model_configuration_creator import EmploymentRelocationModelConfigurationCreator
 from urbansim.configurations.employment_location_choice_model_configuration_creator import EmploymentLocationChoiceModelConfigurationCreator
 
+UNIT_PRICE_RANGE = (exp(3), exp(7))
 class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
     def __init__(self):
         AbstractUrbansimConfiguration.__init__(self)
@@ -70,14 +72,14 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                               "coefficients":"coefficients",
                               "dataset": "parcel",
                               "data_objects": "datasets",
-                              "run_config": "Resources({'exclude_outliers_from_initial_error': True, 'outlier_is_less_than': %s, 'outlier_is_greater_than': %s})" % (log(0.01), log(100000))
+                              "run_config": "Resources({'exclude_outliers_from_initial_error': True, 'outlier_is_less_than': %s, 'outlier_is_greater_than': %s})" % (UNIT_PRICE_RANGE[0], UNIT_PRICE_RANGE[1])
                               }
                     },
             "prepare_for_estimate": {
                 "name": "prepare_for_estimate",
                 "arguments": {"specification_storage": "base_cache_storage",
                               "specification_table": "'real_estate_price_model_specification'",
-                              "filter_variable":"'numpy.logical_and(urbansim_parcel.parcel.unit_price>0.01,urbansim_parcel.parcel.unit_price<1000,urbansim_parcel.parcel.existing_units>100)'",
+                              "filter_variable":"'numpy.logical_and(urbansim_parcel.parcel.unit_price>UNIT_PRICE_RANGE[0],urbansim_parcel.parcel.unit_price<UNIT_PRICE_RANGE[1], urbansim_parcel.parcel.existing_units>100)'",
                               "dataset": "parcel",
                               "threshold": 1},
                 "output": "(specification, index)"
@@ -394,7 +396,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         #hlcm_controller["init"]["arguments"]["number_of_units_string"] = None
         hlcm_controller["init"]["arguments"]["variable_package"] = "'urbansim_parcel'"
         hlcm_controller["init"]["arguments"]["run_config"] = "{'lottery_max_iterations': 7}"
-        hlcm_controller["init"]["arguments"]["filter"] = "'numpy.logical_and(numpy.logical_and(building.residential_units, building.sqft_per_unit), numpy.logical_and(urbansim_parcel.building.unit_price >= 1, urbansim_parcel.building.unit_price<100000))'"
+        hlcm_controller["init"]["arguments"]["filter"] = "'numpy.logical_and(numpy.logical_and(building.residential_units, building.sqft_per_unit), numpy.logical_and(urbansim_parcel.building.unit_price >= UNIT_PRICE_RANGE[0], urbansim_parcel.building.unit_price<UNIT_PRICE_RANGE[1]))'"
         #hlcm_controller["init"]["arguments"]["filter"] = "'numpy.logical_and(building.residential_units, building.sqft_per_unit)'"
         hlcm_controller["prepare_for_estimate"]["arguments"]["agents_for_estimation_table"] = "'households_for_estimation'"
         hlcm_controller["prepare_for_estimate"]["arguments"]["filter"] = "'numpy.logical_and(household.building_id>0, household.disaggregate(building.sqft_per_unit>0))'" # filtering out agents for estimation with valid location
