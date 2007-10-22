@@ -13,7 +13,7 @@
 #
 
 from opus_core.choices import Choices
-from numpy import where, array, compress, arange
+from numpy import where, array, compress, arange, logical_not
 from numpy import ndarray, zeros, sometrue, ones, concatenate
 from scipy.ndimage import sum as ndimage_sum
 from numpy import ma
@@ -94,7 +94,7 @@ class lottery_choices(Choices):
             choosers_out = where((sizes[choose_again] <= 0) + out[choose_again],1,choosers_out)
             choosers_out_idx = compress(choosers_out, arange(choosers_out.size))
             if choosers_out_idx.size > 0: # choosers whose choices are all full
-                choose_again = compress(choosers_out, choose_again)
+                choose_again = compress(logical_not(choosers_out), choose_again)
 
             new_probability = ma.filled(new_probability,0.0)
             out = where(sometrue(ma.filled(new_probability,0.0), axis=1) == 0)[0]
