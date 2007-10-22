@@ -28,7 +28,7 @@ class XMLConfiguration(Configuration):
         f = QtCore.QFile(filename)
         is_ok = f.open(QtCore.QIODevice.ReadOnly)
         if not is_ok:
-            raise 
+            raise IOError, "couldn't process XML file"
         doc = QtXml.QDomDocument()
         doc.setContent(f)
         configNode = doc.documentElement()
@@ -37,43 +37,43 @@ class XMLConfiguration(Configuration):
         changes = {}
         node = configNode.firstChild()
         while not node.isNull():
-            if node.isElement() and node.toElement().tagName()=='parent':
-               self._process_parent(node, filename)
-            else:
-                self._add_to_dict(node, changes)
+            if self._is_good_node(node):
+                e = node.toElement()
+                if e.tagName()!='item':
+                    raise ValueError, "malformed xml - expected a tag 'item' "
+                p = str(e.attributes().namedItem('parser_action').nodeValue())
+                if p=='parent':
+                    self._process_parent(e, filename)
+                elif p=='parent_old_format':
+                    self._process_parent_old_format(e, filename)
+                else:
+                    self._add_to_dict(e, changes)
             node = node.nextSibling()
         self.merge(changes)
         f.close()
         
     def _process_parent(self, node, filename):
-        # Process a node specifying the parent configuration.  This may be defined using either 
-        # another XML file or with an old-style configuration.  (The latter possibility is a 
-        # backward compatibility hack, and should be eventually removed.)
+        # Process a node specifying the parent configuration defined using  
+        # another XML file.
         # This code actually allows multiple parents, which will be merged together with 
         # parents listed later overriding ones listed earlier.  This could be disallowed - 
         # although it might be useful, and doesn't cost anything to support.
-        # Precondition: node should be an element node with the tag 'parent'
-        children = self._get_good_children(node)
-        if len(children)!=1:
-            raise ValueError, 'ill-formed parent node - should have just one child'
-        tag = children[0].toElement().tagName()
-        if tag=='file':
-            parentfilename = str(children[0].firstChild().toText().data())
-            # dir is the path to the directory containing the xml file named by filename
-            # if the parent file name is relative, find it relative to dir (join will ignore
-            # dir if the parent file name is absolute)
-            dir = os.path.split(os.path.abspath(filename))[0]
-            fullpath = os.path.join(dir, parentfilename)
-            parent = XMLConfiguration(fullpath)
-            self.merge(parent)
-        elif tag=='oldconfig':
-            path = str(children[0].attributes().namedItem('path').nodeValue())
-            class_name = str(children[0].firstChild().toText().data())
-            # if the node doesn't have a 'path' attribute, the getAttribute method returns ''
-            parent = self._make_instance(class_name, path)
-            self.merge(parent)
-        else:
-            raise ValueError, "ill-formed parent node - expected either 'file' or 'oldconfig'"
+        parentfilename = str(node.firstChild().nodeValue())
+        # dir is the path to the directory containing the xml file named by filename
+        # if the parent file name is relative, find it relative to dir (join will ignore
+        # dir if the parent file name is absolute)
+        dir = os.path.split(os.path.abspath(filename))[0]
+        fullpath = os.path.join(dir, parentfilename)
+        parent = XMLConfiguration(fullpath)
+        self.merge(parent)
+
+    def _process_parent_old_format(self, node, filename):
+        # Process a node specifying the parent configuration defined using  
+        # n old-style configuration.  (This is a 
+        # backward compatibility hack, and should be eventually removed.)
+        d = self._convert_node_to_data(node)
+        parent = self._make_instance(d['Class name'], d['Class path'])
+        self.merge(parent)
 
     def _add_to_dict(self, node, result_dict):
         # 'node' should be an element node representing a key-value pair to be added to 
@@ -81,71 +81,82 @@ class XMLConfiguration(Configuration):
         if self._is_good_node(node):
             # make the dictionary keys be strings 
             # (later should they be turned into unicode instead??)
-            key = str(node.toElement().tagName())
-            result_dict[key] = self._convert_node_to_data(self._get_single_child(node))
+            key = str(node.attributes().namedItem('name').nodeValue())
+            result_dict[key] = self._convert_node_to_data(node)
             
     def _convert_node_to_data(self, node):
-        # convert 'node' to the corresponding Python data, and return the data
-        if node.isText():
-            # the data will be a QString - convert this to a regular Python string
-            # (later we might want to make it unicode)
-            return str(node.toText().data())
-        # if it's not a text node, it needs to be an element
-        if not node.isElement():
-            raise ValueError, 'malformed xml - expected an element node'
-        element = node.toElement()
-        # branch on the element's tag to determine the type of the return data
-        if element.tagName()=='None':
+        # branch on the node's type attribute to determine the type of the return data
+        type_name = str(node.attributes().namedItem('type').nodeValue())
+        if type_name=='None':
             return None
-        elif element.tagName()=='int':
-            return int(node.firstChild().toText().data())
-        elif element.tagName()=='float':
-            return float(node.firstChild().toText().data())
-        elif element.tagName()=='str':
-            return str(node.firstChild().toText().data())
-        elif element.tagName()=='unicode':
-            return unicode(node.firstChild().toText().data())
-        elif element.tagName()=='list' or element.tagName()=='tuple':
-            n = element.firstChild()
+        elif type_name=='integer':
+            return int(node.firstChild().nodeValue())
+        elif type_name=='float':
+            return float(node.firstChild().nodeValue())
+        elif type_name=='string':
+            return str(node.firstChild().nodeValue())
+        elif type_name=='password':
+            return str(node.firstChild().nodeValue())
+        elif type_name=='unicode':
+            return unicode(node.firstChild().nodeValue())
+        elif type_name=='list' or type_name=='tuple':
+            n = node.firstChild()
             result_list = []
             while not n.isNull():
                 if self._is_good_node(n):
                     result_list.append(self._convert_node_to_data(n))
                 n = n.nextSibling()
-            if element.tagName()=='tuple':
+            if type_name=='tuple':
                 return tuple(result_list)
             else:
                 return result_list
-        elif element.tagName()=='bool':
-            b = element.firstChild().toText().data()
+        elif type_name=='boolean':
+            b = node.firstChild().nodeValue()
             if b=='True':
                 return True
             elif b=='False':
                 return False
             else:
                 raise ValueError, 'malformed xml - expected a string representing a boolean'
-        elif element.tagName()=='array':
+        elif type_name=='array':
             # the data should be a string such as '[100, 300]'
             # use eval to turn this into a list, and then turn it into a numpy array
-            return array(eval(str(node.firstChild().nodeValue())))
-        elif element.tagName()=='dict':
+            s = str(node.firstChild().nodeValue()).strip()
+            return array(eval(s))
+        elif type_name=='dictionary':
             result_dict = {}
             child = node.firstChild()
             while not child.isNull():
                 self._add_to_dict(child, result_dict)
                 child = child.nextSibling()
             return result_dict
-        elif element.tagName()=='class':
-            class_name = str(node.attributes().namedItem('name').nodeValue())
-            path = str(node.attributes().namedItem('path').nodeValue())
-            keyword_args = {}
+        elif type_name=='class':
+            items = {}
             child = node.firstChild()
             while not child.isNull():
-                self._add_to_dict(child, keyword_args)
+                self._add_to_dict(child, items)
                 child = child.nextSibling()
-            return self._make_instance(class_name, path, keyword_args)
+            class_name = items['Class name']
+            class_path = items['Class path']
+            # delete the class name and class path from the dictionary -- the remaining items 
+            # will be the keyword arguments to use to create the instance
+            del items['Class name']
+            del items['Class path']
+            return self._make_instance(class_name, class_path, items)
+        elif type_name=='model':
+            modelname = str(node.attributes().namedItem('name').nodeValue())
+            # if no children, the item name is the value; otherwise return a dictionary
+            if node.hasChildNodes():
+                subdict = {}
+                child = node.firstChild()
+                while not child.isNull():
+                    self._add_to_dict(child, subdict)
+                    child = child.nextSibling()
+                return {modelname: subdict}
+            else:
+                return modelname
         else:
-            raise ValueError, 'malformed xml - unknown tag name %s' % node.tagName
+            raise ValueError, 'unknown type: %s' % type_name
             
     def _is_good_node(self, node):
         """Return True if this node should be processed, False if this node should be ignored.  
@@ -210,12 +221,11 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                           'ten': 10.0,
                           'mynone': None,
                           'years': (1980, 1981),
-                          'years_with_spaces': (1980, 1981),
-                          'listofstrings': ['squid', 'clam'],
-                          'models': ['model_name1', 
-                                     {'model_name2': 'all'}, 
-                                     {'model_name3': {'chooser': 'random'}},
-                                     {'model_name4': {'chooser': 'random', 'sampler': 'fussy'}}],
+                          'list_test': ['squid', 'clam', u'uniclam'],
+                          'dicttest': {'str1': 'squid', 'str2': 'clam'},
+                          'models': ['model1', 
+                                     {'model2': {'group_members': 'all'}}, 
+                                     {'model3': {'chooser': 'random', 'sampler': 'fussy'}}],
                           'selectionstest': ['good name 1', 'good name 2']
                           })
             
@@ -265,12 +275,15 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'database_configuration.xml')
         config = XMLConfiguration(f)
         db_config = config['input_configuration']
-        expected_host_name = os.environ.get('MYSQLHOSTNAME','localhost')
-        expected_password = os.environ.get('MYSQLPASSWORD','')
-        self.assertEqual(db_config.host_name, expected_host_name)
-        self.assertEqual(db_config.user_name, 'Fred')
-        self.assertEqual(db_config.password, expected_password)
+        self.assertEqual(db_config.host_name, 'bigserver')
+        self.assertEqual(db_config.user_name, 'fred')
+        self.assertEqual(db_config.password, 'secret')
         self.assertEqual(db_config.database_name, 'river_city_baseyear')
             
+    def test_error_handling(self):
+        self.assertRaises(IOError, XMLConfiguration, 'badname.xml')
+        f = os.path.join(self.test_configs, 'badconfig.xml')
+        self.assertRaises(ValueError, XMLConfiguration, f)
+
 if __name__ == '__main__':
     opus_unittest.main()

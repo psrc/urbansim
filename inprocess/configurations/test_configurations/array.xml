@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
 
-<arraytest>
-  <array>[100, 300]</array>
-</arraytest>
+<item name="arraytest" type="array">
+[100, 300]
+</item>
 
 </configuration>

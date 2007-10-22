@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
-<parent><file>grandparentconfig.xml</file></parent>
-<description>this is the parent</description>
-<year><int>2000</int></year>
+
+<item name="parent" type="file" parser_action="parent">grandparentconfig.xml</item>
+<item name="description" type="string">this is the parent</item>
+<item name="year" type="integer">2000</item>
+
 </configuration>

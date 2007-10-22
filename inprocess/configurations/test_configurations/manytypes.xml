@@ -1,54 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
 
-<description>a test configuration</description>
+<item name="description" type="string">a test configuration</item>
 
-<year><int>1980</int></year>
+<item name="year" type="integer">1980</item>
 
-<mybool><bool>True</bool></mybool>
+<item name="mybool" type="boolean">True</item>
 
-<ten><float>10.0</float></ten>
+<item name="ten" type="float">10.0</item>
 
-<mynone><None/></mynone>
+<item name="mynone" type="None"></item>
 
-<years><tuple><int>1980</int><int>1981</int></tuple></years>
+<item name="years" type="tuple">
+<item name="startyear" type="integer">1980</item>
+<item name="endyear" type="integer">1981</item>
+</item>
 
-<years_with_spaces>
-  <tuple>
-    <int> 1980  </int>
-    <int> 1981</int>
-  </tuple>
-</years_with_spaces>
+<item name="list_test" type="list">
+<item name="str1" type="string">squid</item>
+<item name="str2" type="string">clam</item>
+<item name="u1" type="unicode">uniclam</item>
+</item>
 
-<listofstrings>
-  <list>
-    <str>squid</str>
-    <str>clam</str>
-  </list>
-</listofstrings>
+<item name="dicttest" type="dictionary">
+<item name="str1" type="string">squid</item>
+<item name="str2" type="string">clam</item>
+</item>
 
-<models>
-  <list>
-    <str>model_name1</str>
-    <dict>
-      <model_name2>all</model_name2>
-    </dict>
-    <dict>
-      <model_name3> <dict><chooser>random</chooser></dict> </model_name3>
-    </dict>
-    <dict>
-      <model_name4> <dict><chooser>random</chooser><sampler>fussy</sampler></dict> </model_name4>
-    </dict>
-  </list>
-</models>
 
-<selectionstest>
-  <list>
-    <str selected="False">bad name 1</str>
-    <str selected="True">good name 1</str>
-    <str selected="False">bad name 1</str>
-    <str>good name 2</str>
-  </list>
-</selectionstest>
+<item name="models" type="list">
+  <item name="model1" type="model" />
+  <item name="model2" type="model">
+    <item name="group_members" type="string">all</item>
+  </item>
+  <item name="model3" type="model">
+    <item name="chooser" type="string">random</item>
+    <item name="sampler" type="string">fussy</item>
+  </item>
+</item>
+
+<item name="selectionstest" type="list">
+<item name="str1" type="string" selected="False">bad name 1</item>
+<item name="str2" type="string" selected="True">good name 1</item>
+<item name="str3" type="string" selected="False">bad name 2</item>
+<item name="str4" type="string">good name 2</item>   <!-- default is that it's selected -->
+</item>
 
 </configuration>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
 
-<input_configuration>
-<class name="DatabaseConfiguration" path="opus_core.configurations.database_configuration">
-  <host_name><None/></host_name>
-  <user_name>Fred</user_name>
-  <password><None/></password>
-  <database_name>river_city_baseyear</database_name>
-</class>
-</input_configuration>
+<item name="input_configuration" type="class">
+  <item name="Class name" type="string">DatabaseConfiguration</item>
+  <item name="Class path" type="string">opus_core.configurations.database_configuration</item>
+  <item name="host_name" type="string">bigserver</item>
+  <item name="user_name" type="string">fred</item>
+  <item name="password" type="password">secret</item>
+  <item name="database_name" type="string">river_city_baseyear</item>
+</item>
 
 </configuration>

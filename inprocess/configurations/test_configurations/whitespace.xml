@@ -3,8 +3,12 @@
         
 <!-- this configuration has a bunch of comments 
    and whitespace -->
+   
+   
+   
+ 
 <configuration>
-<description>a test configuration</description>
+<item name="description" type="string">a test configuration</item>
   <!-- another comment -->
   
 </configuration>
