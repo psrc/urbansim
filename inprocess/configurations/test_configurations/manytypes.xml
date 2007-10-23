@@ -39,6 +39,11 @@
   </item>
 </item>
 
+<item name="mytables" type="list">
+  <item name="gridcells" type="table" />
+  <item name="jobs" type="table" />
+</item>
+
 <item name="selectionstest" type="list">
 <item name="str1" type="string" selected="False">bad name 1</item>
 <item name="str2" type="string" selected="True">good name 1</item>

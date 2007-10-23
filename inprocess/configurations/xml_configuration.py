@@ -155,6 +155,8 @@ class XMLConfiguration(Configuration):
                 return {modelname: subdict}
             else:
                 return modelname
+        elif type_name=='table':
+            return str(node.attributes().namedItem('name').nodeValue())
         else:
             raise ValueError, 'unknown type: %s' % type_name
             
@@ -226,6 +228,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                           'models': ['model1', 
                                      {'model2': {'group_members': 'all'}}, 
                                      {'model3': {'chooser': 'random', 'sampler': 'fussy'}}],
+                          'mytables': ['gridcells', 'jobs'],
                           'selectionstest': ['good name 1', 'good name 2']
                           })
             

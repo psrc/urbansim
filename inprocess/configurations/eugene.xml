@@ -1,159 +1,144 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version='1.0' encoding='UTF-8'?>
 <configuration>
 
-<!-- For now, just get the old-style parent configuration.  -->
-<parent>
-<oldconfig path="urbansim.configs.base_configuration">AbstractUrbansimConfiguration</oldconfig>
-</parent>
+<item name="parent" type="dictionary" icon=":/Images/specialIcon.png" parser_action="parent_old_format">
+  <item name="Class name" type="string">AbstractUrbansimConfiguration</item>
+  <item name="Class path" type="string">urbansim.configs.base_configuration</item>
+</item>
+  
+<item name="description" type="string">Eugene baseline configuration</item>
+  
+<item name="base_year" type="integer">1980</item>
 
-<description>
-Eugene's baseline configuration (adapted from the Python dictionary version in eugene.configs.baseline)
-</description>
+<item name="years" type="tuple">
+  <item name="startyear" type="integer">1981</item>
+  <item name="endyear" type="integer">1982</item>
+</item>
 
-<base_year>
-<int>1980</int>
-</base_year>
+<item type="list" name="models" >
+  <item type="model" name="prescheduled_events" />
+  <item type="model" name="events_coordinator" />
+  <item type="model" name="residential_land_share_model" />
+  <item type="model" name="land_price_model" />
+  <item type="model" name="development_project_transition_model" />
+  <item type="model" name="residential_development_project_location_choice_model" />
+  <item type="model" name="commercial_development_project_location_choice_model" />
+  <item type="model" name="industrial_development_project_location_choice_model" />
+  <item type="model" name="development_event_transition_model" />
+  <item type="model" name="events_coordinator" />
+  <item type="model" name="residential_land_share_model" />
+  <item type="model" name="household_transition_model" />
+  <item type="model" name="employment_transition_model" />
+  <item type="model" name="household_relocation_model" />
+  <item type="model" name="household_location_choice_model" />
+  <item type="model" name="employment_relocation_model" />
+  <item type="model" name="employment_location_choice_model" >
+    <item type="string" name="group_members" >_all_</item>
+  </item>
+  <item type="model" name="distribute_unplaced_jobs_model" />
+</item>
 
-<years>
-<tuple>
-<int>1981</int>
-<int>1982</int>
-</tuple>
-</years>
+<item name="input_configuration" type="class">
+  <item name="Class name" type="string" flags="hidden">DatabaseConfiguration</item>
+  <item name="Class path" type="string" flags="hidden">opus_core.configurations.database_configuration</item>
+  <item name="host_name" type="string"></item>
+  <item name="user_name" type="string"></item>
+  <item name="password" type="password"></item>
+  <item name="database_name" type="string">eugene_1980_baseyear</item>
+</item>
 
-<models>
-<list>
-<str>prescheduled_events</str>
-<str>events_coordinator</str>
-<str>residential_land_share_model</str>
-<str>land_price_model</str>
-<str>development_project_transition_model</str>
-<str>residential_development_project_location_choice_model</str>
-<str>commercial_development_project_location_choice_model</str>
-<str>industrial_development_project_location_choice_model</str>
-<str>development_event_transition_model</str>
-<str>events_coordinator</str>
-<str>residential_land_share_model</str>
-<str>household_transition_model</str>
-<str>employment_transition_model</str>
-<str>household_relocation_model</str>
-<str>household_location_choice_model</str>
-<str>employment_relocation_model</str>
-<dict> 
-  <employment_location_choice_model>
-    <dict><group_members>_all_</group_members></dict>
-  </employment_location_choice_model>
-</dict>
-<str>distribute_unplaced_jobs_model</str>
-</list>
-</models>
+<item name="cache_directory" type="string">c:/opusworkspace/eugene</item>
 
-<input_configuration>
-<class name="DatabaseConfiguration" path="opus_core.configurations.database_configuration">
-  <host_name><None/></host_name>
-  <user_name><None/></user_name>
-  <password><None/></password>
-  <database_name>eugene_1980_baseyear</database_name>
-</class>
-</input_configuration>
+<item name="creating_baseyear_cache_configuration" type="class">
+  <item name="Class name" type="string" flags="hidden">CreatingBaseyearCacheConfiguration</item>
+  <item name="Class path" type="string" flags="hidden">urbansim.configurations.creating_baseyear_cache_configuration</item>
+  <item name="cache_directory_root" type="string">c:/urbansim_cache</item>
+  <item name="cache_from_mysql" type="boolean">False</item>
+  <item name="baseyear_cache" type="class">
+    <item name="Class name" type="string" flags="hidden">BaseyearCacheConfiguration</item>
+    <item name="Class path" type="string" flags="hidden">opus_core.configurations.baseyear_cache_configuration</item>
+    <item name="existing_cache_to_copy" type="string">c:/urbansim_cache/run_962.2006_11_07_08_50</item>
+  </item>
+  <item name="cache_scenario_database" type="string">urbansim.model_coordinators.cache_scenario_database</item>
+  <item name="tables_to_cache" type="list">
+    <item name="annual_employment_control_totals" type="table" />
+    <item name="annual_household_control_totals" type="table" />
+    <item name="buildings" type="table" />
+    <item name="building_types" type="table" />
+    <item name="development_event_history" type="table" />
+    <item name="gridcells" type="table" />
+    <item name="households" type="table" />
+    <item name="job_building_types" type="table" />
+    <item name="jobs" type="table" />
+    <item name="travel_data" type="table" />
+    <item name="zones" type="table" />
+    <item name="counties" type="table" />
+    <item name="commercial_development_location_choice_model_coefficients" type="table" />
+    <item name="commercial_development_location_choice_model_specification" type="table" />
+    <item name="commercial_employment_location_choice_model_coefficients" type="table" />
+    <item name="commercial_employment_location_choice_model_specification" type="table" />
+    <item name="home_based_employment_location_choice_model_specification" type="table" />
+    <item name="home_based_employment_location_choice_model_coefficients" type="table" />
+    <item name="industrial_employment_location_choice_model_coefficients" type="table" />
+    <item name="industrial_employment_location_choice_model_specification" type="table" />
+    <item name="industrial_development_location_choice_model_coefficients" type="table" />
+    <item name="industrial_development_location_choice_model_specification" type="table" />
+    <item name="residential_development_location_choice_model_coefficients" type="table" />
+    <item name="residential_development_location_choice_model_specification" type="table" />
+    <!-- <item name="fazes" type="table" /> ** NOT SELECTED ** -->
+    <item name="urbansim_constants" type="table" />
+    <item name="household_location_choice_model_coefficients" type="table" />
+    <item name="household_location_choice_model_specification" type="table" />
+    <item name="land_price_model_coefficients" type="table" />
+    <item name="land_price_model_specification" type="table" />
+    <item name="residential_land_share_model_coefficients" type="table" />
+    <item name="residential_land_share_model_specification" type="table" />
+    <!-- <item name="plan_type_group_definitions" type="table" /> ** NOT SELECTED ** -->
+    <!-- <item name="plan_type_groups" type="table" /> ** NOT SELECTED ** -->
+    <!-- <item name="large_areas" type="table" /> ** NOT SELECTED ** -->
+    <item name="household_characteristics_for_ht" type="table" />
+    <item name="development_types" type="table" />
+    <item name="development_type_group_definitions" type="table" />
+    <item name="development_constraints" type="table" />
+    <item name="annual_relocation_rates_for_households" type="table" />
+    <item name="annual_relocation_rates_for_jobs" type="table" />
+    <item name="base_year" type="table" />
+    <item name="cities" type="table" />
+    <!-- <item name="development_events" type="table" /> ** NOT SELECTED ** -->
+    <item name="development_type_groups" type="table" />
+    <item name="employment_adhoc_sector_group_definitions" type="table" />
+    <item name="employment_adhoc_sector_groups" type="table" />
+    <item name="employment_events" type="table" />
+    <item name="employment_sectors" type="table" />
+    <!-- <item name="land_use_events" type="table" /> ** NOT SELECTED ** -->
+    <item name="plan_types" type="table" />
+    <item name="race_names" type="table" />
+    <item name="target_vacancies" type="table" />
+    <item name="jobs_for_estimation" type="table" />
+    <item name="households_for_estimation" type="table" />
+    <!-- <item name="development_events_exogenous" type="table" /> ** NOT SELECTED ** -->
+  </item>
+  <item name="tables_to_cache_nchunks" type="dictionary">
+    <item name="gridcells" type="integer">1</item>
+  </item>
+  <item name="tables_to_copy_to_previous_years" type="dictionary">
+    <item name="development_type_group_definitions" type="integer">1975</item>
+    <item name="development_type_groups" type="integer">1975</item>
+    <item name="development_types" type="integer">1975</item>
+    <item name="urbansim_constants" type="integer">1975</item>
+  </item>
+</item>
 
-<cache_directory>c:/opusworkspace/eugene</cache_directory>
-
-<creating_baseyear_cache_configuration>
-<class name="CreatingBaseyearCacheConfiguration" path="urbansim.configurations.creating_baseyear_cache_configuration">
-  <cache_directory_root>c:/urbansim_cache</cache_directory_root>
-  <cache_from_mysql><bool>False</bool></cache_from_mysql>
-  <baseyear_cache>
-    <class name="BaseyearCacheConfiguration" path="opus_core.configurations.baseyear_cache_configuration">
-      <existing_cache_to_copy>c:/urbansim_cache/run_962.2006_11_07_08_50</existing_cache_to_copy>
-    </class>
-  </baseyear_cache>
-  <cache_scenario_database>urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
-  <tables_to_cache>
-    <list>
-    <str>annual_employment_control_totals</str>
-    <str>annual_household_control_totals</str>
-    <str>buildings</str>
-    <str>building_types</str>
-    <str>development_event_history</str>
-    <str>gridcells</str>
-    <str>households</str>
-    <str>job_building_types</str>
-    <str>jobs</str>
-    <str>travel_data</str>
-    <str>zones</str>
-    <str>counties</str>
-    <str>commercial_development_location_choice_model_coefficients</str>
-    <str>commercial_development_location_choice_model_specification</str>
-    <str>commercial_employment_location_choice_model_coefficients</str>
-    <str>commercial_employment_location_choice_model_specification</str>
-    <str>home_based_employment_location_choice_model_specification</str>
-    <str>home_based_employment_location_choice_model_coefficients</str>
-    <str>industrial_employment_location_choice_model_coefficients</str>
-    <str>industrial_employment_location_choice_model_specification</str>
-    <str>industrial_development_location_choice_model_coefficients</str>
-    <str>industrial_development_location_choice_model_specification</str>
-    <str>residential_development_location_choice_model_coefficients</str>
-    <str>residential_development_location_choice_model_specification</str>
-    <str selected="False">fazes</str>
-    <str>urbansim_constants</str>
-    <str>household_location_choice_model_coefficients</str>
-    <str>household_location_choice_model_specification</str>
-    <str>land_price_model_coefficients</str>
-    <str>land_price_model_specification</str>
-    <str>residential_land_share_model_coefficients</str>
-    <str>residential_land_share_model_specification</str>
-    <str selected="False">plan_type_group_definitions</str>
-    <str selected="False">plan_type_groups</str>
-    <str selected="False">large_areas</str>
-    <str>household_characteristics_for_ht</str>
-    <str>development_types</str>
-    <str>development_type_group_definitions</str>
-    <str>development_constraints</str>
-    <str>annual_relocation_rates_for_households</str>
-    <str>annual_relocation_rates_for_jobs</str>
-    <str>base_year</str>
-    <str>cities</str>
-    <str selected="False">development_events</str>
-    <str>development_type_groups</str>
-    <str>employment_adhoc_sector_group_definitions</str>
-    <str>employment_adhoc_sector_groups</str>
-    <str>employment_events</str>
-    <str>employment_sectors</str>
-    <str selected="False">land_use_events</str>
-    <str>plan_types</str>
-    <str>race_names</str>
-    <str>target_vacancies</str>
-    <str>jobs_for_estimation</str>
-    <str>households_for_estimation</str>
-    <str selected="False">development_events_exogenous</str>
-    </list>
-  </tables_to_cache>
-  <tables_to_cache_nchunks>
-    <dict><gridcells><int>1</int></gridcells></dict>
-  </tables_to_cache_nchunks>
-  <tables_to_copy_to_previous_years>
-    <dict>
-    <development_type_group_definitions><int>1975</int></development_type_group_definitions>
-    <development_type_groups><int>1975</int></development_type_groups>
-    <development_types><int>1975</int></development_types>
-    <urbansim_constants><int>1975</int></urbansim_constants>
-    </dict>
-  </tables_to_copy_to_previous_years>
-</class>
-</creating_baseyear_cache_configuration>
-
-<dataset_pool_configuration>
-<class name="DatasetPoolConfiguration" path="opus_core.configurations.dataset_pool_configuration">
-  <package_order>
-    <list>
-    <str>eugene</str>
-    <str>urbansim</str>
-    <str>opus_core</str>
-    </list>
-  </package_order>
-  <package_order_exceptions><dict></dict></package_order_exceptions>
-</class>
-</dataset_pool_configuration>
+<item name="dataset_pool_configuration" type="class">
+  <item name="Class name" type="string" flags="hidden">DatasetPoolConfiguration</item>
+  <item name="Class path" type="string" flags="hidden">opus_core.configurations.dataset_pool_configuration</item>
+  <item name="package_order" type="list">
+    <item name="package" type="string">eugene</item>
+    <item name="package" type="string">urbansim</item>
+    <item name="package" type="string">opus_core</item>
+  </item>
+  <item name="package_order_exceptions" type="dictionary">
+  </item>
+</item>
 
 </configuration>
