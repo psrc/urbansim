@@ -47,7 +47,7 @@ class DatabaseServerConfiguration(AbstractConfiguration):
 
     def __init__(self, host_name=None, user_name=None, password=None):
         self.env_host_name = os.environ.get('MYSQLHOSTNAME','localhost')
-        if host_name is None:
+        if host_name is None or host_name=='':
             self.host_name = self.env_host_name # Redundant --
             self.use_environment_variable_for_host_name = True # because of this
                     # -- but whatever.
@@ -55,14 +55,14 @@ class DatabaseServerConfiguration(AbstractConfiguration):
             self.host_name = host_name
         
         self.env_user_name = os.environ.get('MYSQLUSERNAME','')
-        if user_name is None:
+        if user_name is None or user_name=='':
             self.user_name = self.env_user_name # Ditto.
             self.use_environment_variable_for_user_name = True
         else:
             self.user_name = user_name
         
         self.env_password = os.environ.get('MYSQLPASSWORD','')
-        if password is None:
+        if password is None or password=='':
             self.env_password = self.env_password # Ditto.
             self.use_environment_variable_for_password = True
         else:
