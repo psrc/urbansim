@@ -15,9 +15,9 @@
 #from urbansim.estimation.config import config
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from opus_core.configuration import Configuration
-from numpy import array, log
+from numpy import array
 import os
-from math import exp
+from math import exp, log
 from urbansim.configurations.household_location_choice_model_configuration_creator import HouseholdLocationChoiceModelConfigurationCreator
 from urbansim.configurations.employment_transition_model_configuration_creator import EmploymentTransitionModelConfigurationCreator
 from urbansim.configurations.employment_relocation_model_configuration_creator import EmploymentRelocationModelConfigurationCreator
@@ -72,7 +72,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                               "coefficients":"coefficients",
                               "dataset": "parcel",
                               "data_objects": "datasets",
-                              "run_config": "Resources({'exclude_outliers_from_initial_error': True, 'outlier_is_less_than': %s, 'outlier_is_greater_than': %s})" % (UNIT_PRICE_RANGE[0], UNIT_PRICE_RANGE[1])
+                              "run_config": "Resources({'exclude_outliers_from_initial_error': True, 'outlier_is_less_than': %s, 'outlier_is_greater_than': %s})" % (log(UNIT_PRICE_RANGE[0]), log(UNIT_PRICE_RANGE[1]))
                               }
                     },
             "prepare_for_estimate": {
