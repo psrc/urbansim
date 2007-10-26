@@ -24,9 +24,9 @@ specification = {
             #"is_condo_residential = building.disaggregate(building_type.building_type_name)=='condo_residential'",
             #"is_multi_family_residential = building.disaggregate(building_type.building_type_name)=='multi_family_residential'",
             #"is_single_family_residential = building.disaggregate(building_type.building_type_name)=='single_family_residential'",
-            "ln_avg_building_sf_per_unit = ln(urbansim_parcel.building.building_sqft_per_unit)",
+            #"ln_avg_building_sf_per_unit = ln(urbansim_parcel.building.building_sqft_per_unit)",
 #            "ln_avg_value_per_unit = ln(building.disaggregate(urbansim_parcel.parcel.unit_price)/building.residential_units)",
-#            "ln_value_per_unit = ln(urbansim_parcel.building.unit_price)",
+            #"ln_value_per_unit = ln(urbansim_parcel.building.unit_price)",
           #  "value_per_unit_gt_500 = urbansim_parcel.building.unit_price > 500",
 
            #"lnempden=(ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_per_acre))).astype(float32)",
@@ -72,7 +72,7 @@ specification = {
             #"persons_x_is_condo_residential = household.persons * urbansim.building.is_condo_residential",
             #"persons_x_is_single_family_residential = household.persons * urbansim.building.is_single_family_residential",
             #"income_x_ln_avg_building_sf_per_unit = household.income * ln(building.building_sqft/building.residential_units)",
-   #         "income_x_ln_avg_value_per_unit = household.income * ln(urbansim_parcel.building.unit_price)",
+            "ln_income_x_ln_avg_value_per_unit = ln(household.income) * ln(urbansim_parcel.building.unit_price)",
             #"income_x_ln_parcel_sf = household.income * ln(urbansim.building.parcel_sqft)",
             #"income_x_ln_parcel_sf_per_unit = household.income * ln(urbansim_parcel.building.parcel_sqft_per_unit)",
             #"income_x_ln_residential_units = household.income * ln(building.residential_units)",
@@ -84,7 +84,7 @@ specification = {
 
              #"unit_price = urbansim_parcel.building.unit_price",
             #"ln_price = ln_bounded(urbansim_parcel.building.unit_price)",
-            "ln_income_less_price_per_unit = ln_bounded(household.income - (urbansim_parcel.building.unit_price/10)*urbansim_parcel.building.building_sqft)",
+            "ln_income_less_price_per_unit = ln_bounded(household.income - (urbansim_parcel.building.unit_price/10.)*urbansim_parcel.building.building_sqft)",
              #"income_less_price_per_unit = (household.income - (urbansim_parcel.building.unit_price/10))",
              #"income_less_price_per_unit_neg = where(household.income - (urbansim_parcel.building.unit_price/10)<0,1,0)",
              # "cost_ratio = (urbansim_parcel.building.unit_price/10)/where(household.income>1000,household.income,1000)",
@@ -95,14 +95,14 @@ specification = {
             #"persons_x_ln_avg_building_sf_per_unit = household.persons * ln(urbansim_parcel.building.building_sqft_per_unit)",
             #"persons_x_ln_avg_value_per_unit = household.persons * ln(building.total_value/building.residential_units)",
             #"persons_x_ln_parcel_sf = household.persons * ln(urbansim.building.parcel_sqft)",
-            "persons_x_ln_parcel_sf_per_unit = household.persons * ln(urbansim.building.parcel_sqft_per_unit)",
+           # "persons_x_ln_parcel_sf_per_unit = household.persons * ln(urbansim.building.parcel_sqft_per_unit)",
             #"persons_x_ln_residential_units = household.persons * ln(building.residential_units)",
             #"persons_x_bedrooms = household.persons * building.number_of_bedrooms / building.residential_units",
-            #"persons_x_avg_hhs = household.persons * building.disaggregate(zone.aggregate(household.persons, function=mean))",
+            "persons_x_avg_hhs = household.persons * building.disaggregate(zone.aggregate(household.persons, function=mean))",
            #"single_x_singles = household.persons==1 * building.disaggregate(zone.aggregate(household.persons==1))",
 
             "is_pre_1940 = building.year_built < 1940",
-
+            "urbansim_parcel.building.has_valid_year_built",
            #"workers_ln_emp_30min_hbw_drive_alone =  household.workers * building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))",
 
            #"ln_emp_10min_hbw_walk_1person = (household.persons==1) * building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_walk))",

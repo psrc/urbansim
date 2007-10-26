@@ -50,9 +50,11 @@ class EstimationRunner(object):
         if diagnose and self.model[0] != 'REPM':  #only works for LCM and derivatives
             model_name = model[1]
             #if type is not None:
-                #model_name = "%s_%s" % (type, model_name)
-            run_configuration["models_configuration"][model_name]["controller"]["estimate"]["arguments"]["procedure"]=\
-                "'opus_core.bhhh_mnl_estimation_with_diagnose'"
+                #model_name = "%s_%s" % (type, model_name)    
+            procedure_name = run_configuration["models_configuration"][model_name]["controller"]["estimate"]["arguments"].get('procedure',
+                                                                                                            "'opus_core.bhhh_mnl_estimation'")
+            run_configuration["models_configuration"][model_name]["controller"]["estimate"]["arguments"]["procedure"]= "'%s_with_diagnose'" % \
+                procedure_name[1:(len(procedure_name)-1)]
                 
         run_configuration.replace(estimation_config)
         self.estimator = Estimator(run_configuration, save_estimation_results=save_estimation_results)
@@ -73,13 +75,15 @@ class EstimationRunner(object):
         plot_correlation_diagnose('correlation_submodel_%s' % submodel)
 
 if __name__ == '__main__':
-    model = ("REPM", "real_estate_price_model")
-#    model = ("HLCM", "household_location_choice_model")
-#    model = ("ELCM", "employment_location_choice_model", "home_based", True)
-#    model = ("ELCM", "employment_location_choice_model", "non_home_based", False)
+    try: import wingdbstub
+    except: pass
+    #model = ("REPM", "real_estate_price_model")
+    model = ("HLCM", "household_location_choice_model")
+    #model = ("ELCM", "employment_location_choice_model", "home_based", True)
+    #model = ("ELCM", "employment_location_choice_model", "non_home_based", False)
 
 
     from my_estimation_config import my_configuration
     er = EstimationRunner()
-    er.run_estimation(my_configuration, model, save_estimation_results=False, diagnose=True)
+    er.run_estimation(my_configuration, model, save_estimation_results=True, diagnose=False)
     
