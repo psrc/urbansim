@@ -337,6 +337,7 @@ class ChoiceModel(ChunkModel):
                 self.estimate_config.merge({"variable_names": self.model_interaction.get_variable_names(submodel)})
                 self.estimate_config.merge({"fixed_values": self.model_interaction.get_coefficient_fixed_values(submodel)})
                 self.estimate_config.merge({"submodel": submodel})
+                self.estimate_config.merge({"_model_":self})
                 result[submodel] = self.estimate_submodel(self.get_all_data(submodel), submodel)
                 if "estimators" in result[submodel].keys():
                     coef[submodel].set_beta_alt(result[submodel]["estimators"])

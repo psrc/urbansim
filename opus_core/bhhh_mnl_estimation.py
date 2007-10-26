@@ -14,7 +14,7 @@
 
 from opus_core.estimation_procedure import EstimationProcedure
 from opus_core.logger import logger
-from numpy import zeros,log,transpose,float32,dot,reshape,diagonal,sqrt, array, ones, where, arange
+from numpy import zeros,log,transpose,float32,dot,reshape,diagonal,sqrt, array, ones, where, arange, exp
 from numpy.linalg import inv
 from opus_core.pstat import chisqprob
 from opus_core.misc import get_indices_of_matched_items
@@ -22,12 +22,15 @@ import time
 #import pdb
 
 class bhhh_mnl_estimation(EstimationProcedure):
+    maximum_iterations = 200
+    minimum_probability = exp(-745.)
+    
     def run(self, data, upc_sequence, resources):
         """
         'data' is of shape (nobservations, nchoices, nvariables).
         """
         start= time.clock()
-        maxiter=200 #Maximum iterations allowed
+        maxiter=self.maximum_iterations #Maximum iterations allowed
         eps=0.001 #Convergence criterion for gradient*hessian-inv*gradient
         tags = ["estimate", "result"]
         vl = 2
@@ -60,14 +63,13 @@ class bhhh_mnl_estimation(EstimationProcedure):
             l_1=l_2
             g=(self.mnl_gradient(data, b1, depm, index_of_not_fixed_values))
             try:
-                h=inv(dot(transpose(g),g))
+                h=self.get_hessian(g)
             except:
                 logger.log_warning("Estimation led to singular matrix. No results.", tags=tags, verbosity_level=vl)
                 return {}
             g=g.sum(axis=0)
             c=dot(dot(transpose(g),h),g)
-            dhinv=diagonal(h)
-            se[index_of_not_fixed_values]=(sqrt(diagonal(h))).astype(se.dtype)
+            se[index_of_not_fixed_values]=self.get_standard_error(h).astype(se.dtype)
             ll_ratio = 1-(l_1/l_0)
             adj_ll_ratio = 1-((l_1-nvars)/l_0)
             tvalues[index_of_not_fixed_values] = (b1[index_of_not_fixed_values]/se[index_of_not_fixed_values]).astype(tvalues.dtype)
@@ -114,6 +116,8 @@ class bhhh_mnl_estimation(EstimationProcedure):
     def mnl_loglikelihood(self, data, b, depm):
         self.upc_sequence.compute_utilities(data, b, self.resources)
         p = self.upc_sequence.compute_probabilities(self.resources)
+        #assure that we can get log from p (replace 0 by minimum  value for 0)
+        p[where(p==0)] = self.minimum_probability
         ll = (depm*log(p)).sum(axis=0)
         return ll
 
@@ -126,3 +130,12 @@ class bhhh_mnl_estimation(EstimationProcedure):
                                            (nobs*alts,index_of_not_fixed_values.size))),
                                          (nobs,alts,index_of_not_fixed_values.size))).sum(axis=1)
         return g
+
+    def get_hessian(self, derivative):
+        return inv(dot(transpose(derivative),derivative))
+        
+    def get_standard_error(self, hessian):
+        return sqrt(diagonal(self.get_covariance(hessian)))
+        
+    def get_covariance(self, hessian):
+        return hessian

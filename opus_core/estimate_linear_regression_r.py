@@ -48,9 +48,10 @@ class estimate_linear_regression_r(object):
         rnames = array(map(lambda x: "x."+ str(x), range(1,nvar+1)))
         coef_names_array = swapaxes(array([coef_names[0,:], rnames]),1,0)
         logger.log_status(coef_names_array)
-        outcome = resources["outcome"]
+        outcome = resources["outcome"].astype("float64") # Rpy doesn't like float32, but is okay with float64
         set_default_mode(NO_CONVERSION)
-        d = r.data_frame(x=data,y=outcome)
+        data_for_r = data.astype("float64")
+        d = r.data_frame(x=data_for_r,y=outcome)
         expression = "y ~ x.1"
         for i in range(2,nvar+1):
             expression=expression+" + x."+str(i)

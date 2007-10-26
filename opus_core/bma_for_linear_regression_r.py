@@ -49,14 +49,15 @@ class bma_for_linear_regression_r(object):
         rnames = array(map(lambda x: "x."+ str(x), range(1,nvar+1)))
         coef_names_array = swapaxes(array([coef_names, rnames]),1,0)
         logger.log_status(str(coef_names_array))
-        outcome = resources["outcome"]
+        outcome = resources["outcome"].astype("float64")
         #from opus_core.misc import write_to_text_file, write_table_to_text_file
         #write_to_text_file("/Users/hana/bma/outcome", outcome)
         #write_table_to_text_file("/Users/hana/bma/dat", data)
         #return {}
         set_default_mode(NO_CONVERSION)
         r.library("BMA")
-        d = r.data_frame(x=data,y=outcome)
+        data_for_r = data.astype("float64")
+        d = r.data_frame(x=data_for_r,y=outcome)
         expression = "y ~ x.1"
         for i in range(2,nvar+1):
             expression=expression+" + x."+str(i)
