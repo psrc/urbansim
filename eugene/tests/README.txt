@@ -10,8 +10,8 @@ To run all of the tests for the eugene package:
  If you want to run this test and you don't have the eugene_1980_database already
  in MySQL, download the Eugene 1980 baseyear cache from the Opus/UrbanSim download page 
  at www.urbansim.org/download.  (Be sure and get the cache corresponding to your
- version of the code.)  Then use the export_cache_to_mysql tool in eugene.tools to copy 
- the data from the cache into MySQL.  The cache directory will be 
+ version of the code.)  Then use the do_export_cache_to_sql_database script in opus_core/tools
+ to copy the data from the cache into MySQL.  The cache directory will be 
  eugene_1980_baseyear_cache/1980 (note the 1980 subdirectory).  You should copy it to 
  a database named eugene_1980_baseyear.
  
