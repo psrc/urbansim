@@ -39,8 +39,8 @@ my_controller_configuration = {
                                         "RealEstatePriceModel"},
     "init": {
         "name": "RealEstatePriceModel",
-        "outcome_attribute":"'ln_unit_price=ln(building.unit_price)'",
         "arguments": {"submodel_string": "'building_use_id'",
+                      "outcome_attribute":"'ln_unit_price=ln(building.unit_price)'",
                       "filter_attribute": None}, # "'valid'"}, # 
         },
     "prepare_for_run": {
@@ -143,7 +143,7 @@ my_controller_configuration = {
                       "short_name":"'BLCM'",
                       "choices":"'urbansim.lottery_choices'",
                       "submodel_string":"'business.sector_id'",
-                      "filter": None, #"'building.building_sqft'",
+                      "filter": None, #"'building.unit_price > 1'",
                       "location_id_string":"'building_id'",
                       "run_config":"models_configuration['business_location_choice_model']",
                       "estimate_config":"models_configuration['business_location_choice_model']"
