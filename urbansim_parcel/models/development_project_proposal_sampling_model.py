@@ -138,23 +138,12 @@ class DevelopmentProjectProposalSamplingModel(Model):
         is_proposal_eligible = logical_and(sum_is_accepted_type_over_proposals == number_of_components_in_proposals,
                                            sum_of_units_proposed > 0)
 
-        logger.log_status("Sampling from %s eligible proposals." % is_proposal_eligible.sum())
-        # consider planned proposals (they are not sampled)
-        for status in [self.proposal_set.id_planned, self.proposal_set.id_proposed]:
-            if self.weight.sum() == 0.0:
-                break
+        # consider proposals (in this order: planned, proposed, tentative)
+        for status in [self.proposal_set.id_planned, self.proposal_set.id_proposed, self.proposal_set.id_tentative]:
             idx = where(logical_and(self.proposal_set.get_attribute("status_id") == status, is_proposal_eligible))[0]
             if idx.size <= 0:
                 continue
-            isorted = self.weight[idx].argsort()[range(idx.size-1,-1,-1)]
-            # consider proposals in order of the highest weights
-            self.consider_proposals(idx[isorted], current_target_vacancy)
-
-        # consider tentative proposals
-        for status in [self.proposal_set.id_tentative]:
-            idx = where(logical_and(self.proposal_set.get_attribute("status_id") == status, is_proposal_eligible))[0]
-            if idx.size <= 0:
-                continue
+            logger.log_status("Sampling from %s eligible proposals with status %s." % (idx.size, status))
             while (True in self.accepting_proposals):
                 if self.weight[idx].sum() == 0.0:
                     logger.log_warning("Running out of proposals; there aren't any proposals with non-zero weight")
@@ -195,7 +184,6 @@ class DevelopmentProjectProposalSamplingModel(Model):
         is_residential = target_vacancy.get_attribute("is_residential")
         buildings = self.dataset_pool.get_dataset("building")
         building_type_ids = buildings.get_attribute("building_type_id")
-        parcels = self.dataset_pool.get_dataset('parcel')
         for index in arange(target_vacancy.size()):
             type_id = type_ids[index]
             target = self.target_vacancies[type_id]           
