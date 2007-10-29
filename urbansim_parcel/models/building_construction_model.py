@@ -84,6 +84,7 @@ class BuildingConstructionModel(Model):
         component_land_use_types = proposal_component_set.compute_variables([
               'development_project_proposal_component.disaggregate(development_template.land_use_type_id, [development_project_proposal])'],
                       dataset_pool=dataset_pool)
+
         # from the velocity function determine the amount to be built for each component
         if velocity_function_set is not None:
             development_amount = proposal_component_set.compute_variables(["cummulative_amount_of_development"], 
@@ -107,7 +108,8 @@ class BuildingConstructionModel(Model):
         new_buildings["land_area"] = array([], dtype=building_dataset.get_attribute("land_area").dtype)
         
         sqft_per_unit = proposal_component_set.get_attribute("building_sqft_per_unit").astype(new_buildings["sqft_per_unit"].dtype)
-        parcel_vacant_land_area = parcels.get_attribute("vacant_land_area").astype(new_buildings["land_area"].dtype)
+        land_area_taken = proposal_component_set.compute_variables(['urbansim_parcel.development_project_proposal_component.land_area_taken'],
+                                                                   dataset_pool=dataset_pool).astype(new_buildings["land_area"].dtype)
         template_ids = proposal_component_set.get_attribute("template_id")
         number_of_new_buildings = {}
         number_of_new_buildings_by_template_id = {}
@@ -151,9 +153,7 @@ class BuildingConstructionModel(Model):
                              array(idx_to_be_built.size * [this_building_type], dtype="int32")))
                     new_buildings["sqft_per_unit"] = concatenate((new_buildings["sqft_per_unit"],
                                                                   sqft_per_unit[pidx][idx_to_be_built]))
-                    new_buildings["land_area"] = concatenate((new_buildings["land_area"], 
-                                                              array(idx_to_be_built.size * [parcel_vacant_land_area[parcel_index]],
-                                                                    dtype=new_buildings["land_area"].dtype)))
+                    new_buildings["land_area"] = concatenate((new_buildings["land_area"], land_area_taken[pidx][idx_to_be_built]))
                     number_of_new_buildings[this_building_type] += idx_to_be_built.size
                     if parcel_is_lut_vacant[parcel_index]:
                         parcel_lut[parcel_index] = component_land_use_types[pidx][idx_to_be_built][0]
