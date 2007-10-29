@@ -40,8 +40,8 @@ class StartRunOptionGroup(GenericOptionGroup):
         
 
 if __name__ == "__main__":
-    try: import wingdbstub
-    except: pass
+    #try: import wingdbstub
+    #except: pass
     option_group = StartRunOptionGroup()
     parser = option_group.parser
     (options, args) = parser.parse_args()
