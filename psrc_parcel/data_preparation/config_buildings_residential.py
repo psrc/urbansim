@@ -35,13 +35,13 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
             'flush_variables': False,
             'cache_directory': None,
             'creating_baseyear_cache_configuration': CreatingBaseyearCacheConfiguration(
-                #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/data_preparation/stepII',
-                cache_directory_root = r'/urbansim_cache/psrc_parcel',
+                cache_directory_root = r'/Users/hana/urbansim_cache/psrc/data_preparation/stepII',
+                #cache_directory_root = r'/urbansim_cache/psrc_parcel',
                 #cache_directory_root = r'/home/lmwang/urbansim_cache/psrc_parcel',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
-                    #existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/data_preparation/cache',
-                    existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/cache_source',
+                    existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/data_preparation/cache',
+                    #existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/cache_source',
                     #existing_cache_to_copy = r'/home/lmwang/urbansim_cache/psrc_parcel/cache_source',
                     years_to_cache = [2000]
                     ),
@@ -54,6 +54,7 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
             'base_year':2000,
             'years':(2001, 2001),
             'models':[ # models are executed in the same order as in this list
+                 "real_estate_price_model",
                  "expected_sale_price_model",
                  "development_proposal_choice_model",
                  "building_construction_model",
@@ -62,6 +63,7 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
                     'zone':{},
                     'household':{},
                     'building': {},
+                    'parcel': {},
                     #'development_project_proposal': {}
                 },
             #"low_memory_mode": True,
@@ -82,12 +84,13 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
         self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["zones"] = 'zone'
         self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["type"] = "'residential'"
         self['models_configuration']['development_proposal_choice_model']['controller']['run']['arguments']["n"] = 50 #at zonal level the number of proposals needed is smaller
-        self['models_configuration']['expected_sale_price_model']['controller']["init"]['arguments']["filter_attribute"] = "'urbansim_parcel.development_project_proposal.is_size_fit'"
-        self['models_configuration']['expected_sale_price_model']['controller']["prepare_for_run"]['arguments']["parcel_filter"] = \
-                "'numpy.logical_and(numpy.logical_or(urbansim_parcel.parcel.is_residential_land_use_type, numpy.logical_and(parcel.land_use_type_id==26, urbansim_parcel.parcel.is_residential_plan_type)), urbansim_parcel.parcel.vacant_land_area > 0)'"
+        #self['models_configuration']['expected_sale_price_model']['controller']["init"]['arguments']["filter_attribute"] = "'urbansim_parcel.development_project_proposal.is_size_fit'"
+        #self['models_configuration']['expected_sale_price_model']['controller']["prepare_for_run"]['arguments']["parcel_filter_for_new_development"] = \
+        #        "'numpy.logical_and(numpy.logical_or(urbansim_parcel.parcel.is_residential_land_use_type, numpy.logical_and(parcel.land_use_type_id==26, urbansim_parcel.parcel.is_residential_plan_type)), urbansim_parcel.parcel.vacant_land_area > 0)'"
+        self['models_configuration']['expected_sale_price_model']['controller']["prepare_for_run"]['arguments']["parcel_filter_for_redevelopment"] = None
                 #"'numpy.logical_or(parcel.land_use_type_id==26, numpy.logical_and(urbansim_parcel.parcel.is_residential_land_use_type, urbansim_parcel.parcel.vacant_land_area > 0))'"
         #self['models_configuration']['expected_sale_price_model']['controller']["prepare_for_run"]['arguments']["create_proposal_set"] = False
         self['models_configuration']['expected_sale_price_model']['controller']["run"]['arguments']["chunk_specification"] = "{'nchunks': 5}"
-        self['models_configuration']['building_construction_model']['controller']["run"]['arguments']["consider_amount_built_in_parcels"] = False
+        #self['models_configuration']['building_construction_model']['controller']["run"]['arguments']["consider_amount_built_in_parcels"] = False
         self['models_configuration']['building_construction_model']['controller']['run']['arguments']["current_year"] = 2000
         

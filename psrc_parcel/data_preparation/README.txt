@@ -11,7 +11,7 @@ VI.  Assign buildings to remaining jobs
 VII. Post-process
 VIII.Exporting resulting tables to database
 
-Note: Make sure that buildings built after 2000.
+Note: Make sure that buildings built after 2000 are removed.
 
 I. Create a 'jobs' table and 'building_sqft_per_job' table
 ****
