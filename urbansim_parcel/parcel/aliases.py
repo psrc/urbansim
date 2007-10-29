@@ -69,7 +69,7 @@ aliases = [
        "building_sqft_per_unit = safe_array_divide(urbansim_parcel.parcel.building_sqft, urbansim_parcel.parcel.residential_units)",
        "residential_units = (parcel.aggregate(building.residential_units)).astype(int32)",       
        "parcel_sqft_per_unit = parcel.parcel_sqft/(urbansim_parcel.parcel.residential_units).astype(float32)",
-       "unit_price = safe_array_divide(parcel.land_value + parcel.improvement_value, urbansim_parcel.parcel.existing_units)",
-       #"unit_price = (parcel.land_value + parcel.improvement_value) / (urbansim_parcel.parcel.building_sqft).astype(float32)",
+       "unit_price = safe_array_divide(parcel.land_value + urbansim_parcel.parcel.improvement_value, urbansim_parcel.parcel.existing_units)",
        "demolition_cost = (parcel.aggregate(urbansim_parcel.building.demolition_cost)).astype(int32)",
+       "improvement_value = (parcel.aggregate(building.improvement_value)).astype(int32)",
            ]

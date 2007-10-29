@@ -106,10 +106,13 @@ class BuildingConstructionModel(Model):
         new_buildings["building_type_id"] = array([], dtype="int32")
         new_buildings["sqft_per_unit"] = array([], dtype=building_dataset.get_attribute("sqft_per_unit").dtype)
         new_buildings["land_area"] = array([], dtype=building_dataset.get_attribute("land_area").dtype)
+        new_buildings["improvement_value"] = array([], dtype=building_dataset.get_attribute("improvement_value").dtype)
         
         sqft_per_unit = proposal_component_set.get_attribute("building_sqft_per_unit").astype(new_buildings["sqft_per_unit"].dtype)
         land_area_taken = proposal_component_set.compute_variables(['urbansim_parcel.development_project_proposal_component.land_area_taken'],
                                                                    dataset_pool=dataset_pool).astype(new_buildings["land_area"].dtype)
+        construction_cost = proposal_component_set.compute_variables(['urbansim_parcel.development_project_proposal_component.construction_cost'],
+                                                                   dataset_pool=dataset_pool).astype(new_buildings["improvement_value"].dtype)
         template_ids = proposal_component_set.get_attribute("template_id")
         number_of_new_buildings = {}
         number_of_new_buildings_by_template_id = {}
@@ -154,6 +157,7 @@ class BuildingConstructionModel(Model):
                     new_buildings["sqft_per_unit"] = concatenate((new_buildings["sqft_per_unit"],
                                                                   sqft_per_unit[pidx][idx_to_be_built]))
                     new_buildings["land_area"] = concatenate((new_buildings["land_area"], land_area_taken[pidx][idx_to_be_built]))
+                    new_buildings["improvement_value"] = concatenate((new_buildings["improvement_value"], construction_cost[pidx][idx_to_be_built]))
                     number_of_new_buildings[this_building_type] += idx_to_be_built.size
                     if parcel_is_lut_vacant[parcel_index]:
                         parcel_lut[parcel_index] = component_land_use_types[pidx][idx_to_be_built][0]
