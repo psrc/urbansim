@@ -97,7 +97,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             self.proposal_set.modify_attribute(name="status_id", data=status)
             if ((zone_index+1) % 50) == 0: # flush every 50th zone 
                 self.proposal_set.flush_dataset()
-        return self.proposal_set
+        return (self.proposal_set, [])
 
     def compute_job_building_type_distribution(self):
         building_type_dataset = self.dataset_pool.get_dataset('building_type')
