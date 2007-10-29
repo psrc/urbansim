@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+ 
+<item name="description" type="string">Base UrbanSim configuration</item>
+
+<item name="data" type="dictionary" parser_action="category">
+  <item name="input_configuration" type="file" parser_action="include">data/input_configuration.xml</item>
+  <item name="cache_configuration" type="file" parser_action="include">data/cache_configuration.xml</item>
+  <item name="services_configuration" type="file" parser_action="include">data/services_configuration.xml</item>
+</item>
+
+<item name="model_system" type="dictionary" parser_action="category">
+  <item name="models" type="file" parser_action="include">model_system/models.xml</item>
+  <item name="others" type="file" parser_action="include">model_system/others.xml</item>
+</item>
+
+</configuration>

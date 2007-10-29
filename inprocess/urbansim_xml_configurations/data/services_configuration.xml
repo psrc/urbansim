@@ -1,9 +1,13 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<services_configuration>
-<class name="ServicesConfigurationCreator" path="urbansim.configurations.services_configuration_creator">
-  <host_name>localhost</host_name>
-  <user_name>urbansim</user_name>
-  <db_password><None/></db_password>
-  <database_name>services</database_name>
-</class>
-</services_configuration>
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+
+<item name="services_configuration" type="class">
+  <item name="Class name" type="string" flags="hidden">ServicesConfigurationCreator</item>
+  <item name="Class path" type="string" flags="hidden">urbansim.configurations.services_configuration_creator</item>
+  <item name="host_name" type="string">localhost</item>
+  <item name="user_name" type="string">urbansim</item>
+  <!-- <item name="db_password" type="password"></item> *** NOT IN ServicesConfigurationCreator -->
+  <item name="database_name" type="string">services</item>
+</item>
+
+</configuration>

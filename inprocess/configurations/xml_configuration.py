@@ -47,7 +47,7 @@ class XMLConfiguration(Configuration):
                 elif p=='parent_old_format':
                     self._process_parent_old_format(e, filename)
                 else:
-                    self._add_to_dict(e, changes)
+                    self._add_to_dict(e, changes, filename)
             node = node.nextSibling()
         self.merge(changes)
         f.close()
@@ -71,20 +71,43 @@ class XMLConfiguration(Configuration):
         # Process a node specifying the parent configuration defined using  
         # n old-style configuration.  (This is a 
         # backward compatibility hack, and should be eventually removed.)
-        d = self._convert_node_to_data(node)
+        d = self._convert_node_to_data(node, filename)
         parent = self._make_instance(d['Class name'], d['Class path'])
         self.merge(parent)
 
-    def _add_to_dict(self, node, result_dict):
+    def _add_to_dict(self, node, result_dict, filename):
         # 'node' should be an element node representing a key-value pair to be added to 
         # the dictionary 'result_dict' (unless it's a comment or whitespace)
         if self._is_good_node(node):
-            # make the dictionary keys be strings 
-            # (later should they be turned into unicode instead??)
-            key = str(node.attributes().namedItem('name').nodeValue())
-            result_dict[key] = self._convert_node_to_data(node)
+            # If this is a dictionary node that's just a category, add the children to result_dict;
+            # otherwise add an entry to the dict with the item name as the key.
+            p = str(node.attributes().namedItem('parser_action').nodeValue())
+            if p=='category':
+                # todo: check that type=dictionary
+                child = node.firstChild()
+                while not child.isNull():
+                    self._add_to_dict(child, result_dict, filename)
+                    child = child.nextSibling()
+            elif p=='include':
+                # todo: check that type=file
+                # Process a node specifying that another xml configuration should be
+                # included at this point.  The included config should have one item,
+                # whose name matches the name of the node that specifies the include.
+                includefilename = str(node.firstChild().nodeValue())
+                # dir is the path to the directory containing the xml file named by filename
+                # if the parent file name is relative, find it relative to dir (join will ignore
+                # dir if the parent file name is absolute)
+                dir = os.path.split(os.path.abspath(filename))[0]
+                fullpath = os.path.join(dir, includefilename)
+                included = XMLConfiguration(fullpath)
+                result_dict.update(included)
+            else:
+                # make the dictionary keys be strings 
+                # (later should they be turned into unicode instead??)
+                key = str(node.attributes().namedItem('name').nodeValue())
+                result_dict[key] = self._convert_node_to_data(node, filename)
             
-    def _convert_node_to_data(self, node):
+    def _convert_node_to_data(self, node, filename):
         # branch on the node's type attribute to determine the type of the return data
         type_name = str(node.attributes().namedItem('type').nodeValue())
         if type_name=='None':
@@ -104,7 +127,7 @@ class XMLConfiguration(Configuration):
             result_list = []
             while not n.isNull():
                 if self._is_good_node(n):
-                    result_list.append(self._convert_node_to_data(n))
+                    result_list.append(self._convert_node_to_data(n, filename))
                 n = n.nextSibling()
             if type_name=='tuple':
                 return tuple(result_list)
@@ -118,6 +141,9 @@ class XMLConfiguration(Configuration):
                 return False
             else:
                 raise ValueError, 'malformed xml - expected a string representing a boolean'
+        elif type_name=='file':
+            # file type should have been handled elsewhere (it should be either a parent or an include)
+            raise ValueError, "malformed xml - unknown parser action for type='file'"
         elif type_name=='array':
             # the data should be a string such as '[100, 300]'
             # use eval to turn this into a list, and then turn it into a numpy array
@@ -127,14 +153,14 @@ class XMLConfiguration(Configuration):
             result_dict = {}
             child = node.firstChild()
             while not child.isNull():
-                self._add_to_dict(child, result_dict)
+                self._add_to_dict(child, result_dict, filename)
                 child = child.nextSibling()
             return result_dict
         elif type_name=='class':
             items = {}
             child = node.firstChild()
             while not child.isNull():
-                self._add_to_dict(child, items)
+                self._add_to_dict(child, items, filename)
                 child = child.nextSibling()
             class_name = items['Class name']
             class_path = items['Class path']
@@ -150,7 +176,7 @@ class XMLConfiguration(Configuration):
                 subdict = {}
                 child = node.firstChild()
                 while not child.isNull():
-                    self._add_to_dict(child, subdict)
+                    self._add_to_dict(child, subdict, filename)
                     child = child.nextSibling()
                 return {modelname: subdict}
             else:
@@ -273,9 +299,37 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assert_('models' in config)
         self.assert_('random_nonexistant_key' not in config)
             
+    def test_categories(self):
+        f = os.path.join(self.test_configs, 'categories.xml')
+        config = XMLConfiguration(f)
+        self.assertEqual(config, 
+                         {'description': 'category test',
+                          'precache': True,
+                          'chunksize': 12,
+                          'years': (1980, 1981),
+                          'bool2': False,
+                          'int2': 13})
+
+    def test_include(self):
+        f = os.path.join(self.test_configs, 'include_test.xml')
+        config = XMLConfiguration(f)
+        self.assertEqual(config, 
+                         {'description': 'include test',
+                          'stuff': 'an included string'})
+
     def test_class_element(self):
         # test a configuration element that is a specified class
         f = os.path.join(self.test_configs, 'database_configuration.xml')
+        config = XMLConfiguration(f)
+        db_config = config['input_configuration']
+        self.assertEqual(db_config.host_name, 'bigserver')
+        self.assertEqual(db_config.user_name, 'fred')
+        self.assertEqual(db_config.password, 'secret')
+        self.assertEqual(db_config.database_name, 'river_city_baseyear')
+            
+    def test_class_element_with_categories(self):
+        # like test_class_element, but with an additional layer of categorization in the xml
+        f = os.path.join(self.test_configs, 'database_configuration_with_categories.xml')
         config = XMLConfiguration(f)
         db_config = config['input_configuration']
         self.assertEqual(db_config.host_name, 'bigserver')
@@ -287,6 +341,6 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertRaises(IOError, XMLConfiguration, 'badname.xml')
         f = os.path.join(self.test_configs, 'badconfig.xml')
         self.assertRaises(ValueError, XMLConfiguration, f)
-
+        
 if __name__ == '__main__':
     opus_unittest.main()

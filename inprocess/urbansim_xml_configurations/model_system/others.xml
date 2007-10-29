@@ -1,12 +1,16 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
 
-<base_year>
-<int>2000</int>
-</base_year>
 
-<years>
-<tuple>
-<int>2001</int>
-<int>2030</int>
-</tuple>
-</years>
+<item name="others" type="dictionary" parser_action="category">
+
+  <item name="base_year" type="integer">1980</item>
+
+  <item name="years" type="tuple">
+    <item name="startyear" type="integer">1981</item>
+    <item name="endyear" type="integer">1982</item>
+  </item>
+
+</item>
+
+</configuration>
