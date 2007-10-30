@@ -1,6 +1,49 @@
 DATA PREPARATION
 ================
-Process: 
+Automated process:
+
+I.   Create a 'jobs' table from a table of businesses and 'building_sqft_per_job' table
+****
+Run the script unroll_jobs_from_establishments.py
+  - choose appropriate settings in the __main__ part
+  - recommended: instorage set to MysqlStorage (where the business table lives),
+                 outstorage set to FltStorage (where your cache data is; must contain the 'buildings' table)
+  - The script creates a 'jobs' table by unrolling the business table, removes jobs with non-existing buildings, 
+    and writes the 'jobs' table out into the outstorage.
+  - In addition, the scripts creates a 'building_sqft_per_job' table from the existing jobs 
+    and writes it out into the outstorage.
+    
+II.
+****
+Run 
+python opus_core/tools/start_run.py -c psrc_parcel.data_preparation.config_data_preparation
+(update 'cache_directory_root' and 'existing_cache_to_copy' to your local environment)
+
+This runs a simulation for 5 years (2001-2005), in each year processing one step of the data preparation process.
+See the description of the steps in the section below. Thus, the final results are stored in year 2005 of the 
+simulation cache.
+If the process fails before completing the fifth year, proceed with the manual processing.
+
+III. Post-process
+****
+Attributes that define higher-level geography should be deleted from 
+datasets in the cache directory in order not to be treated as primary attributes,
+and thus being re-computed from lower-level geography.
+These are:
+parcel_id, zone_id in households, possibly households_for_estimation (will be re-computed from building_id)
+parcel_id, zone_id in jobs and jobs_for_estimation (will be re-computed from building_id)
+zone_id in buildings (will be re-computed from parcel_id)
+
+IV. Exporting resulting tables to database
+****
+Export the following tables from your simulation cache to the database: 'households', 'buildings', 'jobs', 
+'building_sqft_per_job'
+  - For each table use:
+    python opus_core/tools/do_export_cache_to_mysql_database.py -c your_cache_directory/year -t table_name -d database_name
+    
+    
+---------------------------------------------------------------------------------------------------------------------------
+Manual Process: 
 
 I.   Create a 'jobs' table from a table of businesses
 II.  Create new residential buildings to accommodate all households
@@ -15,14 +58,7 @@ Note: Make sure that buildings built after 2000 are removed.
 
 I. Create a 'jobs' table and 'building_sqft_per_job' table
 ****
-1. Run the script unroll_jobs_from_establishments.py
-  - choose appropriate settings in the __main__ part
-  - recommended: instorage set to MysqlStorage (where the business table lives),
-                 outstorage set to FltStorage (where your cache data is; must contain the 'buildings' table)
-  - The script creates a 'jobs' table by unrolling the business table, removes jobs with non-existing buildings, 
-    and writes the 'jobs' table out into the outstorage.
-  - In addition, the scripts creates a 'building_sqft_per_job' table from the existing jobs 
-    and writes it out into the outstorage.
+See Step I. in the automated process above.
            
 II. Create new residential buildings
 ****
@@ -109,17 +145,8 @@ VI.  Assign buildings to remaining jobs
   
 VII. Post-process
 ****
-After all the preceding steps are done, attributes that define higher-level geography should be deleted from 
-datasets in the baseyear cache directory in order not to be treated as primary attributes,
-and thus being re-computed from lower-level geography.
-These are:
-parcel_id, zone_id in households, possibly households_for_estimation (will be re-computed from building_id)
-parcel_id, zone_id in jobs and jobs_for_estimation (will be re-computed from building_id)
-zone_id in buildings (will be re-computed from parcel_id)
+See Step III. in the automated process above.
 
 VIII. Exporting resulting tables to database
 ****
-Export the following tables from your baseyear cache to the database: 'households', 'buildings', 'jobs', 
-'building_sqft_per_job'
-  - For each table use:
-    python opus_core/tools/do_export_cache_to_mysql_database.py -c your_cache_directory/year -t table_name -d database_name
+See Step IV. in the automated process above.
