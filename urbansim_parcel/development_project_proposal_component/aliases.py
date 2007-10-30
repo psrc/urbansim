@@ -20,6 +20,6 @@ aliases = [
    "percent_building_sqft = development_project_proposal_component.disaggregate(development_template_component.percent_building_sqft)",
    "is_residential = development_project_proposal_component.disaggregate(building_type.is_residential)",
    "building_sqft = urbansim_parcel.development_project_proposal_component.building_sqft_per_unit * urbansim_parcel.development_project_proposal_component.units_proposed",
-   "land_area_taken = urbansim_parcel.development_project_proposal_component.percent_building_sqft * development_project_proposal_component.disaggregate(urbansim_parcel.development_project_proposal.land_area_taken) / 100."
+   "land_area_taken = urbansim_parcel.development_project_proposal_component.percent_building_sqft * development_project_proposal_component.disaggregate(urbansim_parcel.development_project_proposal.land_area_taken) / 100.",
    "construction_cost = (development_project_proposal_component.disaggregate(urbansim_parcel.development_project_proposal.construction_cost_per_unit) * urbansim_parcel.development_project_proposal_component.units_proposed).astype(float32)",
    ]
