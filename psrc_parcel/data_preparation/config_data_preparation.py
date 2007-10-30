@@ -28,7 +28,7 @@ from urbansim.configurations.employment_relocation_model_configuration_creator i
 from numpy import array
 import os
 
-class ConfigBuildingsResidential(UrbansimParcelConfiguration):
+class ConfigDataPreparation(UrbansimParcelConfiguration):
     def __init__(self):
         config = UrbansimParcelConfiguration()
 
@@ -70,7 +70,7 @@ class ConfigBuildingsResidential(UrbansimParcelConfiguration):
                 ],
                2003: # Step 4 (Assign buildings to jobs with known parcel_id)
                [
-                
+                'assign_buildings_to_jobs'
                 ],
                2004: # Step 5 (Create new non-residential buildings)
                [
