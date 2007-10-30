@@ -16,7 +16,7 @@
 specification = {}
 
 specification = {
-        1:   #submodel_id
+        -2:   #submodel_id
             [
            ("urbansim_parcel.household_x_building.ln_sampling_probability_for_bias_correction_mnl_vacant_residential_units", "bias", 1),
             #"avg_bedrooms_per_unit = building.number_of_bedrooms/building.residential_units",
@@ -64,10 +64,16 @@ specification = {
             #"is_condo = urbansim.building.is_condo_residential",
             #"is_single_family = urbansim.building.is_single_family_residential",
             #"is_multi_family = urbansim.building.is_multi_family_residential",
-            "ln_income_x_is_condo_residential = ln(household.income) * urbansim.building.is_condo_residential",
+            #"ln_income_x_is_condo_residential = ln(household.income) * urbansim.building.is_condo_residential",
             #"income_x_is_multi_family_residential = household.income * urbansim.building.is_multi_family_residential",
-            "ln_income_x_is_single_family_residential = ln(household.income) * urbansim.building.is_single_family_residential",
+            #"ln_income_x_is_single_family_residential = ln(household.income) * urbansim.building.is_single_family_residential",
             #"ln_income_x_is_multi_family_residential = ln(household.income) * urbansim.building.is_multi_family_residential",
+            "is_low_income_x_is_not_single_family_residential = urbansim.household.is_low_income * numpy.logical_not(urbansim.building.is_single_family_residential)",
+            #"is_low_income_x_is_condo_residential = urbansim.household.is_low_income * urbansim.building.is_condo_residential",
+            #"is_mid_income_x_is_multi_family_residential = urbansim.household.is_mid_income * urbansim.building.is_multi_family_residential",
+            #"no_children_x_is_multi_family_residential = urbansim.household.is_without_children * urbansim.building.is_multi_family_residential",
+            #"no_children_x_is_condo_residential = urbansim.household.is_without_children * urbansim.building.is_condo_residential",
+            "less_than_2_persons_x_is_not_single_family_residential = (household.persons < 2) * numpy.logical_not(urbansim.building.is_single_family_residential)",
             #"persons_x_is_multi_family_residential = household.persons * urbansim.building.is_multi_family_residential",
             #"persons_x_is_condo_residential = household.persons * urbansim.building.is_condo_residential",
             #"persons_x_is_single_family_residential = household.persons * urbansim.building.is_single_family_residential",
@@ -80,7 +86,7 @@ specification = {
             #"income_x_ln_avg_income = household.income * ln(building.disaggregate(urbansim_parcel.zone.average_income))",
     #        "ln_income_x_avg_income = ln(household.income * building.disaggregate(urbansim_parcel.zone.average_income))",
             #"avg_inc_less_inc = (building.disaggregate(urbansim_parcel.zone.average_income)) - household.income",
-             "inc_diff_sq = ((building.disaggregate(urbansim_parcel.zone.average_income)/10000) - household.income/10000)**2",
+             #"inc_diff_sq = ((building.disaggregate(urbansim_parcel.zone.average_income)/10000) - household.income/10000)**2",
 
              #"unit_price = urbansim_parcel.building.unit_price",
             #"ln_price = ln_bounded(urbansim_parcel.building.unit_price)",
@@ -98,12 +104,12 @@ specification = {
            # "persons_x_ln_parcel_sf_per_unit = household.persons * ln(urbansim.building.parcel_sqft_per_unit)",
             #"persons_x_ln_residential_units = household.persons * ln(building.residential_units)",
             #"persons_x_bedrooms = household.persons * building.number_of_bedrooms / building.residential_units",
-            "persons_x_avg_hhs = household.persons * building.disaggregate(zone.aggregate(household.persons, function=mean))",
+            #"persons_x_avg_hhs = household.persons * building.disaggregate(zone.aggregate(household.persons, function=mean))",
            #"single_x_singles = household.persons==1 * building.disaggregate(zone.aggregate(household.persons==1))",
 
-            "is_pre_1940 = building.year_built < 1940",
-            "urbansim_parcel.building.has_valid_year_built",
-           #"workers_ln_emp_30min_hbw_drive_alone =  household.workers * building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))",
+            #"is_pre_1940 = building.year_built < 1940",
+           # "urbansim_parcel.building.has_valid_year_built",
+           "workers_ln_emp_30min_hbw_drive_alone =  household.workers * building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))",
 
            #"ln_emp_10min_hbw_walk_1person = (household.persons==1) * building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_walk))",
            #"ln_emp_40min_hbw_transit_walk_1person = (household.persons==1) * building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_40_minutes_travel_time_hbw_am_transit_walk))",
@@ -112,13 +118,13 @@ specification = {
            # "ln_emp_40min_hbw_transit_walk = building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_40_minutes_travel_time_hbw_am_transit_walk))",
             #"ln_emp_20min_hbw_walk = building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_20_minutes_travel_time_hbw_am_walk))",
             #"gen_cost_wt_access_to_emp_hbw_drive_alone = building.disaggregate(psrc.zone.generalized_cost_weighted_access_to_employment_hbw_am_drive_alone)",
-            "trip_wt_avg_time_hbw_drive_alone = building.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_drive_alone)",
+            #"trip_wt_avg_time_hbw_drive_alone = building.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_drive_alone)",
            # "trip_wt_avg_time_hbw_drive_alone_gt_45 = where(building.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_drive_alone)>60,1,0)",
            #"trip_wt_avg_time_hbw_transit_walk = building.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_transit_walk)",
             #"transit_mode_share_overall = building.disaggregate(psrc.zone.mode_split_transit_trips_over_all.py)",
             #"ln_number_of_jobs_within_walking_distance = ln(building.disaggregate(psrc.parcel.number_of_jobs_within_walking_distance))",
-            #"gcdacbd_1person= (household.persons==1) * building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)",
-            "gcdacbd = building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)",
+            "gcdacbd_1person= (household.persons==1) * building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)",
+           # "gcdacbd = building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)",
             #"ln_residential_units_within_walking_distance = ln(building.disaggregate(psrc.parcel.residential_units_within_walking_distance))",
 
             ],
