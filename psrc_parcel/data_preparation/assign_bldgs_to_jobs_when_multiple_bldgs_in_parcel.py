@@ -27,6 +27,7 @@ from urbansim.datasets.job_dataset import JobDataset
 from unroll_jobs_from_establishments import UnrollJobsFromEstablishments
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from unroll_jobs_from_establishments import CreateBuildingSqftPerJobDataset
 
 class DB_settings(object):
     db_host_name='trondheim.cs.washington.edu'
@@ -57,7 +58,7 @@ class AssignBuildingsToJobs:
     minimum_sqft = UnrollJobsFromEstablishments.minimum_sqft
     maximum_sqft = UnrollJobsFromEstablishments.maximum_sqft
     
-    def run(self, in_storage, out_storage, dataset_pool_storage, jobs_table="jobs"):
+    def run(self, job_dataset, dataset_pool, out_storage=None, jobs_table="jobs"):
         """
         Algorithm:
             1. For all non_home_based jobs that have parcel_id assigned but no building_id, try
@@ -83,9 +84,7 @@ class AssignBuildingsToJobs:
         should contain all other tables needed (buildings, households, building_types). 
         """
         seed(1)
-        job_dataset = JobDataset(in_storage=in_storage, in_table_name = jobs_table)
-        dataset_pool = DatasetPool(package_order=['urbansim_parcel', 'urbansim'],
-                                   storage=dataset_pool_storage)
+
         dataset_pool._add_dataset("job", job_dataset)
         parcel_ids = job_dataset.get_attribute("parcel_id")
         building_ids = job_dataset.get_attribute("building_id")
@@ -293,13 +292,19 @@ class AssignBuildingsToJobs:
         building_types[idx_bt_missing] = sample_bt.astype(int32)
         job_dataset.modify_attribute(name="building_type", data = building_types) 
         
-        job_dataset.write_dataset(out_table_name=jobs_table, out_storage=out_storage, attributes=AttributeType.PRIMARY)
-        building_dataset.write_dataset(out_table_name='buildings', out_storage=out_storage, attributes=AttributeType.PRIMARY)
+        if out_storage is not None:
+            job_dataset.write_dataset(out_table_name=jobs_table, out_storage=out_storage, attributes=AttributeType.PRIMARY)
+            building_dataset.write_dataset(out_table_name='buildings', out_storage=out_storage, attributes=AttributeType.PRIMARY)
         logger.log_status("Assigning building_id to jobs done.")
 
         
+class RunAssignBldgsToJobs:
+    def run(self, job_dataset, dataset_pool):
+        AssignBuildingsToJobs().run(job_dataset, dataset_pool)
+        ds = CreateBuildingSqftPerJobDataset()._do_run(dataset_pool)
+        ds.flush_dataset()
+        
 if __name__ == '__main__':
-    from unroll_jobs_from_establishments import CreateBuildingSqftPerJobDataset
     # Uncomment the right instorage and outstorage.
     # input/output_database_name is used only if MysqlStorage is uncommented.
     # input/output_cache is used only if FltStorage is uncommented.
@@ -314,6 +319,9 @@ if __name__ == '__main__':
     instorage = FltStorage().get(input_cache)
     outstorage = FltStorage().get(output_cache)
     pool_storage = instorage
-    AssignBuildingsToJobs().run(instorage, outstorage, dataset_pool_storage=pool_storage)
+    job_dataset = JobDataset(in_storage=in_storage, in_table_name = jobs_table)
+    dataset_pool = DatasetPool(package_order=['urbansim_parcel', 'urbansim'],
+                                   storage=pool_storage)
+    AssignBuildingsToJobs().run(job_dataset, dataset_pool, out_storage=outstorage)
     CreateBuildingSqftPerJobDataset().run(in_storage=outstorage, out_storage=outstorage)
             

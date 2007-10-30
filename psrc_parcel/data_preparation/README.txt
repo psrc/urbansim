@@ -33,12 +33,16 @@ II. Create new residential buildings
 2. Copy the resulting 'buildings' table to your cache directory (replace the existing one).
    IMPORTANT: delete the attribute/file 'building_sqft.li4' (if it exists)! This is a computed attribute
    and must be recomputed.
+   
+3. Copy the attribute parcels/unit_price from the simulation directory into the parcels subdirectory of your cache.
 
 Note: The procedure in Step 1. includes creating a proposal set which can be very time consuming. 
       If you pass the point where the proposal set is created and need to re-run the step, do the following:
       - copy the directory 'development_project_proposals' from the simulation directory to your baseyear cache
       - modify config_buildings_residential.py as follows:
           * add 'development_project_proposal': {} to the 'datasets_to_preload' entry
+          * comment out entry 'real_estate_price_model' in "models". Copy the attribute parcels/unit_price 
+            from the simulation directory into the parcels subdirectory of your cache.
           * if you need to also re-run the Development Project Proposal Regression Model,
             uncomment the line 
             self['models_configuration']['expected_sale_price_model']['controller']["prepare_for_run"]['arguments']["create_proposal_set"] = False
