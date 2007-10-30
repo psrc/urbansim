@@ -80,7 +80,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
         self.proposal_set.compute_variables([
             'urbansim_parcel.development_project_proposal.number_of_components',
             'zone_id=development_project_proposal.disaggregate(parcel.zone_id)',
-            'occurence_frequency = development_project_proposal.disaggregate(development_template.sample_size)'],
+            #'occurence_frequency = development_project_proposal.disaggregate(development_template.sample_size)'
+            ],
                                         dataset_pool=self.dataset_pool)
         buildings = self.dataset_pool.get_dataset("building")
         buildings.compute_variables([
@@ -129,8 +130,8 @@ class DevelopmentProjectProposalSamplingModel(Model):
         zones_of_proposals = self.proposal_set.get_attribute("zone_id")
         self.building_sqft_per_job_table = sqft_per_job.get_building_sqft_as_table(zones_of_proposals.max(), 
                                                                                    tv_building_types.max())
-        occurence_frequency = self.proposal_set.get_attribute("occurence_frequency")/ \
-                    float(self.dataset_pool.get_dataset('development_template').get_attribute('sample_size').sum())
+        #occurence_frequency = self.proposal_set.get_attribute("occurence_frequency")/ \
+        #            float(self.dataset_pool.get_dataset('development_template').get_attribute('sample_size').sum())
         # consider only those proposals that have all components of accepted type and sum of proposed units > 0
         is_accepted_type = self.accepting_proposals[components_building_type_ids]
         sum_is_accepted_type_over_proposals = array(ndimage.sum(is_accepted_type, labels = proposal_ids_in_component_set, 
@@ -154,7 +155,9 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 idx = idx[self.weight[idx] > 0]
                 n = minimum(idx.size, n)
                 sampled_proposal_indexes = probsample_noreplace(proposal_ids[idx], n, 
-                                                prob_array=(self.weight[idx]/float(self.weight[idx].sum()))*occurence_frequency[idx],
+                                                prob_array=(self.weight[idx]/float(self.weight[idx].sum()))
+                                                                #*occurence_frequency[idx]
+                                                                ,
                                                 exclude_index=None, return_indices=True)
                 self.consider_proposals(arange(self.proposal_set.size())[idx[sampled_proposal_indexes]],
                                         current_target_vacancy
