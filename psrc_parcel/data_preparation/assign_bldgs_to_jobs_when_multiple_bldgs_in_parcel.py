@@ -133,6 +133,7 @@ class AssignBuildingsToJobs:
         counter_zero_capacity = 0
         counter_zero_distr = 0
         # iterate over parcels
+        logger.log_status("Placing non-home-based jobs ...")
         for parcel in unique_parcels:
             idx_in_bldgs = where(parcel_ids_in_bldgs == parcel)[0]
             idx_in_jobs = where(parcel_ids[job_index_non_home_based] == parcel)[0]
@@ -196,6 +197,7 @@ class AssignBuildingsToJobs:
         job_index_non_home_based_unplaced = where(logical_and(is_now_considered, building_types == 2))[0]
         unique_parcels = unique_values(parcel_ids[job_index_non_home_based_unplaced])
         imputed_sqft = 0
+        logger.log_status("Try to reclassify non-home-based jobs ...")
         for parcel in unique_parcels:
             idx_in_bldgs = where(parcel_ids_in_bldgs == parcel)[0]
             if idx_in_bldgs.size <= 0:
@@ -247,6 +249,7 @@ class AssignBuildingsToJobs:
                              dataset_pool=dataset_pool)
         parcels_with_exceeded_capacity = []
         # iterate over parcels
+        logger.log_status("Placing home-based jobs ...")
         for parcel in unique_parcels:
             idx_in_bldgs = where(parcel_ids_in_bldgs == parcel)[0]
             idx_in_jobs = where(parcel_ids[job_index_home_based] == parcel)[0]

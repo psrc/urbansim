@@ -22,6 +22,7 @@ from urbansim.datasets.job_dataset import JobDataset
 from urbansim.datasets.building_dataset import BuildingDataset
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from urbansim_parcel.datasets.building_sqft_per_job_dataset import create_building_sqft_per_job_dataset
 
 class DB_settings(object):
     db_host_name='trondheim.cs.washington.edu'
@@ -127,7 +128,6 @@ class CreateBuildingSqftPerJobDataset:
     minimum_median = 25
     maximum_median = 2000
     def run(self, in_storage, out_storage):
-        from urbansim_parcel.datasets.building_sqft_per_job_dataset import create_building_sqft_per_job_dataset
         dataset_pool = DatasetPool(storage=in_storage, package_order=['psrc_parcel', 'urbanism_parcel', 'urbansim'] )
         ds = self._do_run(dataset_pool)
         logger.log_status("Write building_sqft_per_job table.")
