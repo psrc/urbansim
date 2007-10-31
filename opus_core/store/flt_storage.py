@@ -18,9 +18,9 @@ from glob import glob
 import numpy
 
 from opus_core.store.storage import Storage
-from opus_core.store.old.flt_storage import flt_storage as flt_storage_old
+from opus_core.misc import is_file_in_directory
         
-class flt_storage(Storage, flt_storage_old): 
+class flt_storage(Storage): 
     class storage_file(object):
         def __init__(self, name):
             self._name = name
@@ -67,9 +67,47 @@ class flt_storage(Storage, flt_storage_old):
                 'b': '>', # big-endian
                 'i': '|', # irrelevant
                 }[extension_character]
+                    
+        def _extension_for_numpy_type(self, dtype):
+            """Returns the file extension for this numpy type."""    
+            str = dtype.str
+            return self._map_byteorder_symbol_to_extension_character(str[0]) + str[1:]
+                
+        def _get_native_endian_file_extension_character(self):
+            if array([1], dtype='<i4').dtype.byteorder == '=':
+                return self._map_byteorder_symbol_to_extension_character('<')
+            else:
+                return self._map_byteorder_symbol_to_extension_character('>')
+    
+        def _write_to_file(self, directory, attribute_name, attribute_data):
+            """Writes data to a file."""
+            extension = self._extension_for_numpy_type(attribute_data.dtype)
+            filename = '%s.%s' % (attribute_name, extension)
+        
+            file_path = os.path.join(directory, filename)
+        
+            f = file(file_path, mode="wb")
+            try:
+                try:
+                    attribute_data.tofile(f)
+                
+                except ValueError:
+                    logger.log_error(
+                        "Unable to write attribute '%s' to disk. The disk may be "
+                        "full or the location write-protected. (%s)"
+                            % (attribute_name, file_path))
+                    raise
+                
+            finally:
+                f.close()
     
     def __init__(self, storage_location):
         self._base_directory = storage_location
+
+    def has_table(self, table):
+        return is_file_in_directory(table, self._get_base_directory())
+        
+
         
     def get_storage_location(self):
         return self._base_directory
@@ -100,6 +138,9 @@ class flt_storage(Storage, flt_storage_old):
             result = [file.lower() for file in result]
 
         return result
+    
+    def _get_base_directory(self):
+        return self._base_directory
     
     def get_table_names(self):
         dataset_path = self._get_base_directory()

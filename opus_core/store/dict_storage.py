@@ -17,9 +17,8 @@ import copy
 from numpy import array
 
 from opus_core.store.storage import Storage
-from opus_core.store.old.dict_storage import dict_storage as dict_storage_old
 
-class dict_storage(Storage, dict_storage_old):
+class dict_storage(Storage):
     def __init__(self):
         self._mystorage = {}
         

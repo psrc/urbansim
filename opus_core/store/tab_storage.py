@@ -13,10 +13,9 @@
 # 
 
 from opus_core.store.delimited_storage import delimited_storage
-from opus_core.store.old.delimited_storage import delimited_storage as delimited_storage_old
 
 
-class tab_storage(delimited_storage, delimited_storage_old):
+class tab_storage(delimited_storage):
     def __init__(self, storage_location, *args, **kwargs):
         delimited_storage.__init__(self, 
             storage_location,

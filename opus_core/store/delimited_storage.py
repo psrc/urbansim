@@ -21,10 +21,9 @@ from numpy import array, dtype
 
 from opus_core.opus_error import OpusError
 from opus_core.store.storage import Storage
-from opus_core.store.old.delimited_storage import delimited_storage as delimited_storage_old
 
 
-class delimited_storage(Storage, delimited_storage_old):
+class delimited_storage(Storage):
     """
     A storage object that saves table and value data into a directory, 
     giving each table its own file in the directory. Uses the Python csv module,

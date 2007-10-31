@@ -14,9 +14,9 @@
 
 from sets import Set
 from numpy import array
-from opus_core.store.old.storage import Storage as Storage_old
+#from opus_core.store.old.storage import Storage as Storage_old
 
-class Storage(Storage_old):
+class Storage:
     ALL_COLUMNS = '*'
     
     def get_storage_location(self):

@@ -17,10 +17,9 @@ from opus_core.store.storage import Storage
 from opus_core.store.flt_storage import flt_storage
 from opus_core.simulation_state import SimulationState
 from opus_core.misc import unique_values
-from opus_core.store.old.attribute_cache import AttributeCache as AttributeCache_old
 
 
-class AttributeCache(Storage, AttributeCache_old):
+class AttributeCache(Storage):
     """This Storage class caches data via the file system, which is faster
     than running directly from a database, and allows the simulation to 
     unload computed values from memory when they are no longer needed.
@@ -47,8 +46,8 @@ class AttributeCache(Storage, AttributeCache_old):
     It currently uses flt_storage.
     """
     def __init__(self, cache_directory=None):
-        AttributeCache_old.__init__(self, cache_directory)
         """cache_location is the directory containing the year directories."""
+        self.simulation_state = SimulationState()
         self._cache_location = cache_directory
         self._flt_storage_per_year = {}
         
