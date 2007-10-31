@@ -168,6 +168,9 @@ class ConfigDataPreparation(UrbansimParcelConfiguration):
                   "import": {
                      "psrc_parcel.data_preparation.assign_bldgs_to_jobs_when_multiple_bldgs_in_parcel": "RunAssignBldgsToJobs"
                      },
+                  "init": {
+                           "name": "RunAssignBldgsToJobs"
+                           },
                   "run": {
                           "arguments": {
                                         "job_dataset": "job",
