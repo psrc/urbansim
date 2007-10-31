@@ -75,7 +75,10 @@ class ParcelDataset(UrbansimDataset):
             self.development_constraints[type_id] = {}
             type_constraint_max[type_id] = {}
             for constraint_type in unique_values(constraint_types[w_this_type]):
-                self.development_constraints[type_id].update({ constraint_type : zeros((index.size,2), dtype="float32") })
+                if consider_constraints_as_rules:
+                    self.development_constraints[type_id].update({ constraint_type : -2*ones((index.size,2), dtype="float32") })
+                else:
+                    self.development_constraints[type_id].update({ constraint_type : -1*ones((index.size,2), dtype="float32") })
                 w_this_type_and_constraint_type = where( logical_and(type_ids == type_id, constraint_types == constraint_type ) )
                 if w_this_type_and_constraint_type[0].size > 0:
                 # initialize the maximum value, because minimum of maximum value below need to have this initial value to work
@@ -104,6 +107,9 @@ class ParcelDataset(UrbansimDataset):
                 for constraint_type in all_unique_constraint_types:
                     if not self.development_constraints[type_id].has_key(constraint_type):
                         self.development_constraints[type_id].update({ constraint_type : zeros((index.size,2), dtype="float32") })
+                    else:
+                        # change the initial value of -2 in minimum for 0 (i.e. not allowed)
+                        self.development_constraints[type_id][constraint_type][where(self.development_constraints[type_id][constraint_type]<-1.5)] = 0
                     
 
         logger.end_block()
@@ -156,12 +162,12 @@ class Tests(opus_unittest.OpusTestCase):
         storage.write_table(
             table_name='development_constraints',
             table_data={
-                'constraint_id': array([1,  2, 3, 4, 5, 6, 7]),
-                'is_constrained': array([0, 0, 1, 1, 1, 0, 0]),
-                'generic_land_use_type_id': array([1, 1, 1, 1, 2, 2, 2]),
-                'constraint_type': array(["unit_per_acre","far","unit_per_acre", "far", "far", "unit_per_acre", "far"]),
-                'minimum': array([0, 0,  0,  0,  2,  0, 0]),
-                'maximum': array([3, 0, 0.2, 1,  10, 0.4, 100]),
+                'constraint_id': array([1,  2, 3, 4, 5, 6, 7, 8]),
+                'is_constrained': array([0, 0, 1, 1, 1, 0, 0, 1]),
+                'generic_land_use_type_id': array([1, 1, 1, 1, 2, 2, 2, 2]),
+                'constraint_type': array(["unit_per_acre","far","unit_per_acre", "far", "far", "unit_per_acre", "far", "far"]),
+                'minimum': array([0, 0,  0,  0,  2,  0, 0, -1]),
+                'maximum': array([3, 0, 0.2, 1,  10, 0.4, 100, -1]),
             }
         )
         storage.write_table(
@@ -179,7 +185,6 @@ class Tests(opus_unittest.OpusTestCase):
         constraints = dataset_pool.get_dataset('development_constraint')
 
         values = parcels.get_development_constraints(constraints, dataset_pool)
-
         should_be = { 1:{"unit_per_acre":array([[0,0.2],
                                                 [0, 3],
                                                 [0,0.2]]
@@ -189,17 +194,16 @@ class Tests(opus_unittest.OpusTestCase):
                                      [0,  1]]
                                      ),                              
                            },
-                      2:{"unit_per_acre":array([[0, 0],
+                      2:{"unit_per_acre":array([[-1, -1],
                                                 [0, 0.4],
-                                                [0, 0]]
+                                                [-1, -1]]
                                                ),
-                         "far":array([[2,10],
+                         "far":array([[2,-1],
                                      [0, 100],
-                                     [2, 10]]
+                                     [2, -1]]
                                      )         
                           }
                      }
-
         for bt, ct in should_be.iteritems():
             for key, should_be_value in ct.iteritems():
                 self.assert_(bt in values)
