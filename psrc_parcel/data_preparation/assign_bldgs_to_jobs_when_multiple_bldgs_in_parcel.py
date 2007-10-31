@@ -302,7 +302,7 @@ class RunAssignBldgsToJobs:
     def run(self, job_dataset, dataset_pool):
         AssignBuildingsToJobs().run(job_dataset, dataset_pool)
         ds = CreateBuildingSqftPerJobDataset()._do_run(dataset_pool)
-        ds.flush_dataset()
+        dataset_pool.replace_dataset('building_sqft_per_job', ds)
         
 if __name__ == '__main__':
     # Uncomment the right instorage and outstorage.
