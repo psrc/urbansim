@@ -87,6 +87,7 @@ class ConfigDataPreparation(UrbansimParcelConfiguration):
             "datasets_to_preload":{
                     'zone':{},
                     'household':{},
+                    'job': {},
                     'building': {},
                     'parcel': {},
                     "job_building_type":{},
