@@ -83,9 +83,6 @@ class AssignBuildingsToJobs:
         'in_storage' should contain the jobs table and the zone_averages_table. The 'dataset_pool_storage'
         should contain all other tables needed (buildings, households, building_types). 
         """
-        seed(1)
-
-        dataset_pool._add_dataset("job", job_dataset)
         parcel_ids = job_dataset.get_attribute("parcel_id")
         building_ids = job_dataset.get_attribute("building_id")
         building_types = job_dataset.get_attribute("building_type")
@@ -322,6 +319,7 @@ if __name__ == '__main__':
     job_dataset = JobDataset(in_storage=in_storage, in_table_name = jobs_table)
     dataset_pool = DatasetPool(package_order=['urbansim_parcel', 'urbansim'],
                                    storage=pool_storage)
+    seed(1)
     AssignBuildingsToJobs().run(job_dataset, dataset_pool, out_storage=outstorage)
     CreateBuildingSqftPerJobDataset().run(in_storage=outstorage, out_storage=outstorage)
             
