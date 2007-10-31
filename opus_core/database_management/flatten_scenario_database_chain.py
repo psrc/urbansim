@@ -27,9 +27,10 @@ class FlattenScenarioDatabaseChain(object):
         more databases.
         """
         new_database.metadata.reflect()
-        scenario_information_table = new_database.get_table('scenario_information')
-        qry = scenario_information_table.update(values = {'parent_database_url':''})
-        new_database.engine.execute(qry)
+        if new_database.table_exists('scenario_information'):
+            scenario_information_table = new_database.get_table('scenario_information')
+            qry = scenario_information_table.update(values = {'PARENT_DATABASE_URL':''})
+            new_database.engine.execute(qry)
             
     def _create_db_from_chain_via_python(self, 
                                          db_server_config_from,
@@ -56,6 +57,8 @@ class FlattenScenarioDatabaseChain(object):
         #by default, copy all tables
         if tables_to_copy == []:
             tables_to_copy = table_mapping.values()
+        elif 'scenario_information' not in tables_to_copy:
+            tables_to_copy.append('scenario_information')
             
         for database_name, tables in table_mapping.items():
             database_in = db_server_from.get_database(database_name)
