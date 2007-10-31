@@ -50,10 +50,10 @@ class CrossDatabaseOperations(object):
         out_metadata.create_all()
             
         if use_chunking:
-            memory_in_bytes = memory_in_gigabytes * 1024**3
+            memory_in_bytes = memory_in_gigabytes * 1024**2
             
             row_size = self._row_byte_size(in_table)
-            chunk_size = int( .25 * memory_in_bytes / row_size  )
+            chunk_size = int( .1 * memory_in_bytes / row_size  )
             
             num_rows = in_table.count().execute().fetchone()[0]
             num_inserted_rows = 0
@@ -61,8 +61,9 @@ class CrossDatabaseOperations(object):
             while num_inserted_rows < num_rows:
                 qry = in_table.select().offset(num_inserted_rows).limit(chunk_size)
                     
+                result = qry.execute()
                 data = [ dict( (col.key, x[col.name]) for col in in_table.c)
-                                    for x in qry.execute() ]
+                                    for x in result ]
             
                 out_table.insert().execute(*data)
                 num_inserted_rows += len(data)
