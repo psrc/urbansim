@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 from opus_core.store.storage import Storage
-from opus_core.store.old.dbf_storage import dbf_storage as dbf_storage_old
+#from opus_core.store.old.dbf_storage import dbf_storage as dbf_storage_old
 from opus_core.tests import opus_unittest
 from glob import glob
 
@@ -38,7 +38,7 @@ else:
     # The dbf_storage class defined here is the one that works with dbfpy.
     import os
     
-    class dbf_storage(Storage, dbf_storage_old): 
+    class dbf_storage(Storage): 
         
         # hook for unit tests
         _my_dbf = _dbf_class
