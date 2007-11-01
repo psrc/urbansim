@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 from opus_core.configuration import Configuration
 from urbansim_parcel.configs.controller_config import UrbansimParcelConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
@@ -95,9 +95,6 @@ class Baseline(UrbansimParcelConfiguration):
                 unroll_gridcells = False
                 ),
             'input_configuration': DatabaseConfiguration(
-                host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
-                user_name     = os.environ.get('MYSQLUSERNAME',''),
-                password      = os.environ.get('MYSQLPASSWORD',''),
                 database_name = 'psrc_2005_parcel_baseyear',
                 #database_name = 'psrc_2005_parcel_baseyear_change_20070913',
                 ),
