@@ -30,7 +30,7 @@ class BuildingConstructionModel(Model):
     model_name = "BuildingConstructionModel"
 
     def run (self, development_proposal_set, building_dataset, dataset_pool, buildings_to_be_demolished=[], 
-             consider_amount_built_in_parcels = True, current_year=None):
+             consider_amount_built_in_parcels = False, current_year=None):
         
         self.demolish_buildings(buildings_to_be_demolished, building_dataset, dataset_pool)
 

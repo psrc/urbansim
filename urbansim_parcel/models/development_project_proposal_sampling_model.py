@@ -292,9 +292,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 return
             # don't consider proposed projects for this site in the future (i.e. in further sampling)
             self.weight[proposals_parcel_ids == this_site] = 0.0
-            if self.weight[proposal_indexes].sum() == 0.0:
-                logger.log_warning("Running out of proposals; there aren't any proposals with non-zero weight")
-                return
+
 
     def schedule_accepted_proposals(self):
         ##TODO: handle demolished buildings in self.demolished_buildings
