@@ -33,16 +33,16 @@ class RunSanfranciscoTravelModel(RunTravelModel):
         tm_config = config["travel_model_configuration"]
         tm_data_dir = tm_config["directory"]
 
-        year_dir = tm_config[year]  #'CoreEA0511202006\\urbansim\\2001'
+        year_dir = tm_config[year]  #'2001\\urbansim'
         dir_part1,dir_part2 = os.path.split(year_dir)
-        while dir_part1:
-            dir_part1, dir_part2 = os.path.split(dir_part1)
-        project_year_dir = os.path.join(tm_data_dir, dir_part2)   #C:/SEMCOG_baseline/CoreEA0511202006
+#        while dir_part1:
+#            dir_part1, dir_part2 = os.path.split(dir_part1)
+        project_year_dir = os.path.join(tm_data_dir, dir_part1)   #C:/SF/2001
         
         logger.log_status('Start travel model from directory %s for year %d' % (project_year_dir, year))
 
         logger.log_status('Running travel model ...')
-        cmdline = tm_config['travel_model_command']
+        cmdline = tm_config['travel_model_command'] + ' ' + project_year_dir
         os.system(cmdline)
 
 if __name__ == "__main__":
