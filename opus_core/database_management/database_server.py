@@ -38,8 +38,11 @@ class DatabaseServer(object):
         self.metadata = MetaData(
             bind = self.engine
         ) 
-
-        self.cursor = self.engine.connect()
+        try:
+            self.cursor = self.engine.connect()
+        except Exception, e:
+            logger.log_error('Error connecting to database server using config: %s'%repr(self.config))
+            raise e
         self.show_output = False
 
     def get_connection_string(self):
@@ -147,6 +150,7 @@ class Tests(opus_unittest.OpusTestCase):
         server_config = DatabaseServerConfiguration(
             protocol = 'mysql',
             test = True)
+        
         return DatabaseServer(server_config) 
     
     def get_postgres_server(self):
@@ -155,6 +159,12 @@ class Tests(opus_unittest.OpusTestCase):
             test = True)
         return DatabaseServer(server_config) 
     
+    def get_mssql_server(self):
+        server_config = DatabaseServerConfiguration(
+            protocol = 'mssql',
+            test = True)
+        return DatabaseServer(server_config)     
+
     def helper_create_drop_and_has_database(self, db_server):
         db_name = 'test_database_server'
         self.assertFalse(db_server.has_database(db_name))
@@ -184,6 +194,16 @@ class Tests(opus_unittest.OpusTestCase):
             server = self.get_postgres_server()
             self.helper_create_drop_and_has_database(server)
             server.close()
-                                 
+
+    def test_mssql_create_drop_and_has_database(self):
+        try:
+            import pyodbc
+        except:
+            pass
+        else:
+            server = self.get_postgres_server()
+            self.helper_create_drop_and_has_database(server)
+            server.close()
+                                             
 if __name__ == '__main__':
     opus_unittest.main()

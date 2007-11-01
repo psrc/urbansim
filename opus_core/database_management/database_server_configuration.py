@@ -51,3 +51,5 @@ class DatabaseServerConfiguration(object):
         else:
             self.password = password
 
+    def __repr__(self):
+        return '%s://%s:%s@%s'%(self.protocol, self.user_name, self.password, self.host_name) 
