@@ -37,7 +37,7 @@ class DatasetFactory(object):
         return ClassFactory().get_class(module_full_name, class_name=class_name,
                                         arguments=arguments, debug=debug)
  
-    def search_for_dataset(self, package_order, dataset_name, **kwargs):
+    def search_for_dataset(self, dataset_name, package_order, **kwargs):
         for package_name in package_order:
             try:
                 dataset = self.get_dataset(dataset_name, package=package_name, **kwargs)

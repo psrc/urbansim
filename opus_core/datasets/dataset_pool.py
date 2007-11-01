@@ -120,7 +120,7 @@ class DatasetPool(object):
             else:
                 arguments['in_storage'] = self._storage
     
-            dataset = DatasetFactory().search_for_dataset(self._package_order, dataset_name, 
+            dataset = DatasetFactory().search_for_dataset(dataset_name, self._package_order, 
                                                            subdir='datasets', 
                                                            arguments=arguments)        
         self._add_dataset(dataset_name, dataset)
