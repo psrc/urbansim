@@ -31,15 +31,16 @@ def create_travel_model_configuration(scenario_dir_name,
     
     ### mapping from urbansim zone variable name to travel model TAZ attribute name 
     urbansim_to_tm_variable_mapping = [
-#        ('zone.zone_id', 'SFTAZ'),   #normally use zone_id as join field
+        ('zone.zone_id', 'SFTAZ'),   #normally use zone_id as join field
 #        ('zone.seq_taz', 'ID'),    #alternatively id field
         ('sanfrancisco.zone.number_of_households', 'HHLDS'),
         ('sanfrancisco.zone.population', 'POP'),
         ('sanfrancisco.zone.employment', 'EMPLOYMENT'),
-#        ('?', 'EMPLOYEDRESIDENTS'),        
+        ('sanfrancisco.zone.aggregage(households.workers,intermediates=[parcel])', 'EMPLOYEDRESIDENTS'),        
         ('sanfrancisco.zone.employment_of_sector_cie', 'EMP-CIE'),
         ('sanfrancisco.zone.employment_of_sector_med', 'EMP-MED'),
         ('sanfrancisco.zone.employment_of_sector_mips', 'EMP-MIPS'),
+        ('sanfrancisco.zone.employment_of_sector_retailent', 'EMP-RETAILENT'),
         ('sanfrancisco.zone.employment_of_sector_pdr', 'EMP-PDR'),
         ('sanfrancisco.zone.employment_of_sector_visitor', 'EMP-VISITOR'),
         ]
