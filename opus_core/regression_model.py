@@ -24,7 +24,7 @@ from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.datasets.dataset import Dataset
 from opus_core.storage_factory import StorageFactory
 from opus_core.logger import logger
-from numpy import arange, zeros, float32, ndarray, array
+from numpy import arange, zeros, float32, ndarray, array, where, inf
 from time import time
 
 class RegressionModel(ChunkModel):
@@ -119,6 +119,15 @@ class RegressionModel(ChunkModel):
                         resources=self.run_config).astype(float32)
         return outcome
 
+    def correct_infinite_values(self, dataset, outcome_attribute_name, maxvalue=1e+38):
+        """Check if the model resulted in infinite values. If yes,
+        print warning and clip the values to maxvalue"""
+        infidx = where(dataset.get_attribute(outcome_attribute_name) == inf)[0]
+
+        if infidx.size > 0:
+            logger.log_warning("Infinite values in %s. Clipped to %s." % (outcome_attribute_name, maxvalue))
+            dataset.set_values_of_one_attribute(outcome_attribute_name, maxvalue, infidx)
+            
     def estimate(self, specification, dataset, outcome_attribute, index = None, procedure=None, data_objects=None,
                         estimate_config=None,  debuglevel=0):
         """'specification' is of type EquationSpecification,
