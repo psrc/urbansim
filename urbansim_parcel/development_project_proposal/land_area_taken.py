@@ -25,15 +25,21 @@ class land_area_taken(Variable):
 
     def dependencies(self):
         return ["vacant_land_area = development_project_proposal.disaggregate(urbansim_parcel.parcel.vacant_land_area)",
+                "parcel_sqft = development_project_proposal.disaggregate(urbansim_parcel.parcel.parcel_sqft)",
                 "land_sqft_min = development_project_proposal.disaggregate(development_template.land_sqft_min)",
                 "land_sqft_max = development_project_proposal.disaggregate(development_template.land_sqft_max)", 
                  ]
 
     def compute(self, dataset_pool):
         proposals = self.get_dataset()
+        
         vacant_land_area = proposals.get_attribute("vacant_land_area")
         land_sqft_min = proposals.get_attribute("land_sqft_min")
         land_sqft_max = proposals.get_attribute("land_sqft_max")
+
+        if 'is_redevelopment' in proposals.get_known_attribute_names():
+            is_redev = proposals.get_attribute('is_redevelopment') == True
+            vacant_land_area[is_redev] = proposals.get_attribute('parcel_sqft')[is_redev]
         
         results = vacant_land_area.astype(self._return_type)
         w_min = where(results<land_sqft_min)
@@ -69,19 +75,21 @@ class Tests(opus_unittest.OpusTestCase):
             'parcel':
             {
                 "parcel_id":        array([1,   2,    3]),
+                "parcel_sqft":        array([2,   35,    110]),
                 "vacant_land_area": array([1, 22,  110]),
             },
             'development_project_proposal':
             {
                 "proposal_id":array([1,  2, 3,  4, 5,  6, 7, 8, 9, 10, 11]),
                 "parcel_id":  array([1,  1,  1,  1, 2,  2, 2, 3, 3, 3, 3 ]),
-                "template_id":array([1,  2, 3, 4,  2,  3, 4, 1,  2, 3, 4])
+                "template_id":array([1,  2, 3, 4,  2,  3, 4, 1,  2, 3, 4]),
+                'is_redevelopment':array([0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0])
             },
             }
         )
         
         should_be = array([1, 0,  0, 0,  
-                              20, 8, 0, 
+                              20, 8, 35, 
                            2, 20, 8, 110])   
         
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
