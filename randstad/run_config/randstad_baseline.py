@@ -16,7 +16,7 @@ import os
 
 from numpy import array
 
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
@@ -31,9 +31,6 @@ run_configuration = AbstractUrbansimConfiguration()
 my_run_configuration = {    
     'models_configuration':models_configuration,
     'input_configuration':DatabaseConfiguration(
-        host_name = os.environ['MYSQLHOSTNAME'],
-        user_name = os.environ['MYSQLUSERNAME'],
-        password = os.environ['MYSQLPASSWORD'],
         database_name = 'randstad_021105_estimation',
         ),
     #'cache_directory':'C:/urbansim_cache/randstad_source',

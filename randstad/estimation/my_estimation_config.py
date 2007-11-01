@@ -14,22 +14,16 @@
 
 import os
 
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
 
 my_configuration = {
     'cache_directory':None, ### TODO: Set this cache_directory to something useful.
     'input_configuration':DatabaseConfiguration(
-        host_name = os.environ.get('MYSQLHOSTNAME','localhost'),
-        user_name = os.environ.get('MYSQLUSERNAME',''),
-        password = os.environ.get('MYSQLPASSWORD',''),
         database_name = 'randstad_021105_estimation',
         ),
     'output_configuration':DatabaseConfiguration(
-        host_name = os.environ.get('MYSQLHOSTNAME','localhost'),
-        user_name = os.environ.get('MYSQLUSERNAME',''),
-        password = os.environ.get('MYSQLPASSWORD',''),
         database_name = 'randstad_estimation_output',
         ),
     'datasets_to_cache_after_each_model':[],
