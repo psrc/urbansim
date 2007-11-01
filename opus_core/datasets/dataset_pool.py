@@ -120,19 +120,9 @@ class DatasetPool(object):
             else:
                 arguments['in_storage'] = self._storage
     
-            for package_name in self._package_order:
-                try:
-                    dataset = DatasetFactory().get_dataset(dataset_name, 
+            dataset = DatasetFactory().search_for_dataset(self._package_order, dataset_name, 
                                                            subdir='datasets', 
-                                                           package=package_name, 
-                                                           arguments=arguments)
-                    break
-                except ImportError:
-                    continue
-            else:
-                raise Exception("Dataset '%s' not found in any of the "
-                    "packages: '%s'." % (dataset_name, "', '".join(self._package_order)))
-        
+                                                           arguments=arguments)        
         self._add_dataset(dataset_name, dataset)
     
     def _create_dataset(self, module_path, dataset_arguments):

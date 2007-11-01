@@ -37,6 +37,18 @@ class DatasetFactory(object):
         return ClassFactory().get_class(module_full_name, class_name=class_name,
                                         arguments=arguments, debug=debug)
  
+    def search_for_dataset(self, package_order, dataset_name, **kwargs):
+        for package_name in package_order:
+            try:
+                dataset = self.get_dataset(dataset_name, package=package_name, **kwargs)
+                break
+            except ImportError:
+                continue
+        else:
+            raise Exception("Dataset '%s' not found in any of the "
+                    "packages: '%s'." % (dataset_name, "', '".join(package_order)))
+        return dataset
+    
     def class_name_for_dataset(self, dataset_name):
         """
         Return the class name for this dataset, e.g. 'DevelopmentEventDataset' for 
