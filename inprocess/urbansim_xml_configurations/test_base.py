@@ -18,3 +18,4 @@ from inprocess.configurations.xml_configuration import XMLConfiguration
 inprocessdir = __import__('inprocess').__path__[0]
 baseconfig_path = os.path.join(inprocessdir, 'urbansim_xml_configurations', 'base_urbansim.xml')
 c = XMLConfiguration(baseconfig_path)
+print c

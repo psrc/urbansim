@@ -14,12 +14,13 @@
   <item name="others" type="file" parser_action="include">model_system/others.xml</item>
 </item>
 
-<item name="models" type="dictionary" parser_action="category">
 
-**** NOT DONE ****
+<!-- **** NOT DONE ****
+<item name="models" type="dictionary" parser_action="category">
   <item name="models" type="file" parser_action="include">model_system/models.xml</item>
   <item name="others" type="file" parser_action="include">model_system/others.xml</item>
 </item>
+-->
 
 <item name="advanced" type="dictionary" parser_action="category">
   <item name="datasets_to_cache_after_each_model" type="file" parser_action="include">advanced/datasets_to_cache_after_each_model.xml</item>

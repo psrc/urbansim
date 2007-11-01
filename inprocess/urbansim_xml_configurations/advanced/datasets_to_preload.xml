@@ -1,30 +1,20 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<datasets_to_preload>
-<list>
-<dict selected="True"><gridcell><nchunks><int>2</int></nchunks></gridcell></dict>
-<dict selected="True"><household><nchunks><int>1</int></nchunks></household></dict>
-<dict selected="True"><job><nchunks><int>1</int></nchunks></job></dict>
-<dict selected="True"><zone><nchunks><int>1</int></nchunks></zone></dict>
-<dict selected="True"><development_type><nchunks><int>1</int></nchunks></development_type></dict>
-<dict selected="True"><target_vacancy><nchunks><int>1</int></nchunks></target_vacancy></dict>
-<dict selected="True"><development_event_history><nchunks><int>1</int></nchunks></development_event_history></dict>
-<dict selected="True"><development_constraint><nchunks><int>1</int></nchunks></development_constraint></dict>
-<dict selected="True"><job_building_type><nchunks><int>1</int></nchunks></job_building_type></dict>
-<dict selected="True"><vacant_land_and_building_type><nchunks><int>1</int></nchunks></vacant_land_and_building_type></dict>
-<dict selected="True"><urbansim_constant><nchunks><int>1</int></nchunks></urbansim_constant></dict>
-</list>
-</datasets_to_preload>
-
-
 <?xml version='1.0' encoding='UTF-8'?>
 <configuration>
 
-<item name="datasets_to_preload" type="list">
-  <item name="gridcell" type="dataset">ok</item>
+<item name="datasets_to_preload" type="list" parser_action="list_to_dictionary">
+  <item name="gridcell" type="dataset">ok<item name="nchunks" type="integer">2</item></item>
   <item name="household" type="dataset">ok</item>
   <item name="job" type="dataset">ok</item>
-  <item name="travel_data" type="dataset">skip</item>
-  <item name="zone" type="dataset">skip</item>
+  <item name="zone" type="dataset">ok</item>
+  <item name="development_type" type="dataset">ok</item>
+  <item name="target_vacancy" type="dataset">ok</item>
+  <item name="development_event_history" type="dataset">ok</item>
+  <item name="development_constraint" type="dataset">ok</item>
+  <item name="job_building_type" type="dataset">ok</item>
+  <item name="building_type" type="dataset">skip</item>
+  <item name="building" type="dataset">skip</item>
+  <item name="vacant_land_and_building_type" type="dataset">ok</item>
+  <item name="urbansim_constant" type="dataset">ok</item>
 </item>
 
 </configuration>

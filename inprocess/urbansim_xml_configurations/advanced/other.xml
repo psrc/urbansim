@@ -1,17 +1,25 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<model_system><str>urbansim.model_coordinators.model_system</str></model_system>
-<debuglevel><int>4</int></debuglevel>
-<flush_variables><bool>False</bool></flush_variables>
-<seed><int>0</int></seed>
-<chunk_specification><dict><nchunks><int>1</int></nchunks></dict></chunk_specification>
-<dataset_pool_configuration>
-<class name="DatasetPoolConfiguration" path="opus_core.configurations.dataset_pool_configuration">
-  <package_order>
-    <list>
-    <str>urbansim</str>
-    <str>opus_core</str>
-    </list>
-  </package_order>
-  <package_order_exceptions><dict></dict></package_order_exceptions>
-</class>
-</dataset_pool_configuration>
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+
+<item name="model_system" type="string">urbansim.model_coordinators.model_system</item>
+
+<item name="debuglevel" type="integer">4</item>
+
+<item name="flush_variables" type="boolean">False</item>
+
+<item name="seed" type="integer">0</item>
+
+<item name="chunk_specification" type="dictionary"><item name="nchunks" type="integer">1</item></item>
+
+<item name="dataset_pool_configuration" type="class">
+  <item name="Class name" type="string" flags="hidden">DatasetPoolConfiguration</item>
+  <item name="Class path" type="string" flags="hidden">opus_core.configurations.dataset_pool_configuration</item>
+  <item name="package_order" type="list">
+    <item name="package" type="string">urbansim</item>
+    <item name="package" type="string">opus_core</item>
+  </item>
+  <item name="package_order_exceptions" type="dictionary">
+  </item>
+</item>
+
+</configuration>
