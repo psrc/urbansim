@@ -2,9 +2,9 @@
 <configuration>
 
 <item name="datasets_to_preload" type="list" parser_action="list_to_dictionary">
-  <item name="job" type="dataset">yes</item>
-  <item name="household" type="dataset">no</item>
-  <item name="gridcell" type="dataset">yes<item name="nchunks" type="integer">4</item></item>
+  <item name="job" type="dataset">ok</item>
+  <item name="household" type="dataset">skip</item>
+  <item name="gridcell" type="dataset">ok<item name="nchunks" type="integer">4</item></item>
 </item>
 
 </configuration>
