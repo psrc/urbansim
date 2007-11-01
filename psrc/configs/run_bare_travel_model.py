@@ -18,7 +18,7 @@ from urbansim.configs.general_configuration import GeneralConfiguration
 from urbansim.simulation.run_simulation import RunSimulation
 from urbansim.model_coordinators.model_system import ModelSystem
 from opus_core.misc import get_config_from_opus_path
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 
@@ -42,9 +42,6 @@ class ModelConfig(GeneralConfiguration):
                 ),
             'models':[],  # run no urbansim models
             'input_configuration': DatabaseConfiguration(
-                host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
-                user_name     = os.environ.get('MYSQLUSERNAME',''),
-                password      = os.environ.get('MYSQLPASSWORD',''),
                 database_name = 'PSRC_2000_baseyear',
                 ),
             'base_year':year,

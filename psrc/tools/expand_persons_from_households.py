@@ -101,22 +101,16 @@ class ExpandPersons(object):
         persons.write_dataset(out_storage=out_storage, out_table_name=persons_table_name)
 
 
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 
 
 
 if __name__ == '__main__':
     config = Configuration({
         'input_configuration': DatabaseConfiguration(
-            host_name     = "trondheim.cs.washington.edu",
-            user_name     = os.environ['MYSQLUSERNAME'],
-            password      = os.environ['MYSQLPASSWORD'],
             database_name = 'PSRC_2000_baseyear',
             ),
         'output_configuration': DatabaseConfiguration(
-            host_name     = 'trondheim.cs.washington.edu', #os.environ['MYSQLHOSTNAME'],
-            user_name     = os.environ['MYSQLUSERNAME'],
-            password      = os.environ['MYSQLPASSWORD'],
             database_name = 'GSPSRC_2000_baseyear_change_20060902',
             ),
         'dataset_pool_configuration': DatasetPoolConfiguration(

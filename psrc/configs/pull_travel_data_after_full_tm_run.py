@@ -15,7 +15,7 @@
 import os
 
 from opus_core.storage_factory import StorageFactory
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configs.general_configuration import GeneralConfiguration
@@ -113,9 +113,6 @@ class PullTravelDataAfterFullTmRun(GeneralConfiguration):
                 ),
             'models':[],  # run no urbansim models
             'input_configuration': DatabaseConfiguration(
-                host_name = os.environ.get('MYSQLHOSTNAME','localhost'),
-                user_name = os.environ.get('MYSQLUSERNAME',''),
-                password = os.environ.get('MYSQLPASSWORD',''),
                 database_name = 'PSRC_2000_baseyear',
                 ),
             'base_year':2000,

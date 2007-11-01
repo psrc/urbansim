@@ -14,7 +14,7 @@
 
 import os
 
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 
 from psrc.config.wlcm_config import run_configuration
 
@@ -53,9 +53,6 @@ config_changes = {
         },
 
     'input_configuration':DatabaseConfiguration(
-        host_name = "trondheim.cs.washington.edu",
-        user_name = os.environ.get('MYSQLUSERNAME',''),
-        password = os.environ.get('MYSQLPASSWORD',''),
         database_name = 'GSPSRC_2000_baseyear_change_20060924_wlcm_init',
         ),
 #    'output_configuration':DatabaseConfiguration(

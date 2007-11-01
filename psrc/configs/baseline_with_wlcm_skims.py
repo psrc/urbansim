@@ -15,7 +15,7 @@
 import os
 
 from opus_core.storage_factory import StorageFactory
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 
@@ -105,9 +105,6 @@ config_changes = {
         tables_to_copy_to_previous_years = {},
         ),
     'input_configuration':DatabaseConfiguration(
-        host_name = os.environ.get('MYSQLHOSTNAME','localhost'),
-        user_name = os.environ.get('MYSQLUSERNAME',''),
-        password = os.environ.get('MYSQLPASSWORD',''),
         database_name = 'PSRC_2000_baseyear',
         ),
     'base_year':2000,

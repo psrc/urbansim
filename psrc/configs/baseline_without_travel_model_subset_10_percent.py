@@ -14,14 +14,11 @@
 
 import os
 
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 from psrc.configs.baseline_without_travel_model import run_configuration as config
 
 run_configuration = config.copy()
 run_configuration['input_configuration'] = DatabaseConfiguration(
-    host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
-    user_name     = os.environ.get('MYSQLUSERNAME',''),
-    password      = os.environ.get('MYSQLPASSWORD',''),
     database_name = 'PSRC_2000_baseyear_sampled_10_percent',
     ),
 run_configuration['datasets_to_cache_after_each_model'] = []

@@ -14,7 +14,7 @@
 
 import os
 
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 
 from psrc.config.wlcm_config import run_configuration
 
@@ -26,15 +26,9 @@ run_configuration["models"] = [
 #run_configuration["models_configuration"]['household_location_choice_model']['controller']['run']['arguments']['agents_index']=None
 config_changes = {
     'input_configuration':DatabaseConfiguration(
-        host_name = "trondheim.cs.washington.edu",
-        user_name = os.environ.get('MYSQLUSERNAME',''),
-        password = os.environ.get('MYSQLPASSWORD',''),
         database_name = 'PSRC_2000_baseyear',
         ),
     'output_configuration':DatabaseConfiguration(
-        host_name = "trondheim.cs.washington.edu", #os.environ['MYSQLHOSTNAME'],
-        user_name = os.environ.get('MYSQLUSERNAME',''),
-        password = os.environ.get('MYSQLPASSWORD',''),
         database_name = 'GSPSRC_2000_baseyear_change_200609021',
         ),
     'datasets_to_cache_after_each_model':['person'],
