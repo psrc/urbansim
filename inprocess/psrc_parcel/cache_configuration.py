@@ -15,7 +15,7 @@
 import os
 
 from opus_core.configuration import Configuration
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
@@ -75,15 +75,9 @@ class CacheConfiguration(Configuration):
 #                },
             ),
         'input_configuration': DatabaseConfiguration(
-            host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
-            user_name     = os.environ.get('MYSQLUSERNAME',''),
-            password      = os.environ.get('MYSQLPASSWORD',''),
             database_name = "PSRC_2000_parcels" #'PSRC_2000_parcels',
             ),
         'output_configuration':DatabaseConfiguration(
-            host_name = os.environ.get('MYSQLHOSTNAME','localhost'),
-            user_name = os.environ.get('MYSQLUSERNAME',''),
-            password = os.environ.get('MYSQLPASSWORD',''),
             database_name = 'PSRC_2000_parcels_estimation_output',
             ),
         'dataset_pool_configuration': DatasetPoolConfiguration(

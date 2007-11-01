@@ -17,7 +17,7 @@ import os
 from numpy import array
 
 from opus_core.configuration import Configuration
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
 from urbansim.configs.estimation_base_config import run_configuration as config
@@ -26,9 +26,6 @@ from urbansim.configurations.creating_baseyear_cache_configuration import Creati
 
 config_changes = {
     'input_configuration':DatabaseConfiguration(
-        host_name = os.environ.get('MYSQLHOSTNAME','localhost'),
-        user_name = os.environ.get('MYSQLUSERNAME',''),
-        password = os.environ.get('MYSQLPASSWORD',''),
         database_name = 'PSRC_2000_parcels',
         ),
     'cache_directory':'C:/tmp/urbansim_cache/psrc_parcel_hana/06_06_13_11_39_48',

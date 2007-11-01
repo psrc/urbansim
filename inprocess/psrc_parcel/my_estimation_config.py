@@ -14,21 +14,16 @@
 
 import os
 
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 
 my_configuration = {
     'input_configuration':DatabaseConfiguration(
         host_name = 'trondheim', #os.environ.get('MYSQLHOSTNAME','localhost'),
-        user_name = os.environ.get('MYSQLUSERNAME',''),
-        password = os.environ.get('MYSQLPASSWORD',''),
         database_name = 'PSRC_2000_parcels', # change
         ),
-    'output_configuration':DatabaseConfiguration(
-        host_name = os.environ.get('MYSQLHOSTNAME','localhost'),
-        user_name = os.environ.get('MYSQLUSERNAME',''),
-        password = os.environ.get('MYSQLPASSWORD',''),
+    'output_configuration':DatabaseServerConfiguration(
         database_name = 'PSRC_2000_parcels_estimation_output',
         ),  
     'datasets_to_cache_after_each_model':[],
