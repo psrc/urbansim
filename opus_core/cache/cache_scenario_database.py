@@ -34,7 +34,6 @@ class CacheScenarioDatabase(Model):
         
         #import pydevd;pydevd.settrace()
         
-        #protocol defaults to mysql
         server_configuration = DatabaseServerConfiguration(
             host_name = config['input_configuration'].host_name,
             user_name = config['input_configuration'].user_name,
