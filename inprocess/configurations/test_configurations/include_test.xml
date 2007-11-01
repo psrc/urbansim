@@ -2,6 +2,6 @@
 <configuration>
 
 <item name="description" type="string">include test</item>
-<item name="stuff" type="file" parser_action="include">included_string.xml</item>
+<item name="stufftoinclude" type="file" parser_action="include">included_stuff.xml</item>
 
 </configuration>

@@ -14,3 +14,17 @@
 <dict selected="True"><urbansim_constant><nchunks><int>1</int></nchunks></urbansim_constant></dict>
 </list>
 </datasets_to_preload>
+
+
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+
+<item name="datasets_to_preload" type="list">
+  <item name="gridcell" type="dataset">yes</item>
+  <item name="household" type="dataset">yes</item>
+  <item name="job" type="dataset">yes</item>
+  <item name="travel_data" type="dataset">no</item>
+  <item name="zone" type="dataset">no</item>
+</item>
+
+</configuration>

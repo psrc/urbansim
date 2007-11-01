@@ -14,4 +14,17 @@
   <item name="others" type="file" parser_action="include">model_system/others.xml</item>
 </item>
 
+<item name="models" type="dictionary" parser_action="category">
+
+**** NOT DONE ****
+  <item name="models" type="file" parser_action="include">model_system/models.xml</item>
+  <item name="others" type="file" parser_action="include">model_system/others.xml</item>
+</item>
+
+<item name="advanced" type="dictionary" parser_action="category">
+  <item name="datasets_to_cache_after_each_model" type="file" parser_action="include">advanced/datasets_to_cache_after_each_model.xml</item>
+  <item name="datasets_to_preload" type="file" parser_action="include">advanced/datasets_to_preload.xml</item>
+  <item name="other" type="file" parser_action="include">advanced/other.xml</item>
+</item>
+
 </configuration>

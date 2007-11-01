@@ -1,10 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<datasets_to_cache_after_each_model>
-<list>
-<str selected="True">gridcell</str>
-<str selected="True">household</str>
-<str selected="True">job</str>
-<str selected="False">travel_data</str>
-<str selected="False">zone</str>
-</list>
-</datasets_to_cache_after_each_model>
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+
+<item name="datasets_to_cache_after_each_model" type="list">
+  <item name="gridcell" type="dataset">yes</item>
+  <item name="household" type="dataset">yes</item>
+  <item name="job" type="dataset">yes</item>
+  <item name="travel_data" type="dataset">no</item>
+  <item name="zone" type="dataset">no</item>
+</item>
+
+</configuration>

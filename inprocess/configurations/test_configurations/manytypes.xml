@@ -9,8 +9,6 @@
 
 <item name="ten" type="float">10.0</item>
 
-<item name="mynone" type="None"></item>
-
 <item name="years" type="tuple">
 <item name="startyear" type="integer">1980</item>
 <item name="endyear" type="integer">1981</item>
@@ -29,26 +27,25 @@
 
 
 <item name="models" type="list">
-  <item name="model1" type="model" />
-  <item name="model2" type="model">
-    <item name="group_members" type="string">all</item>
+  <item name="model1" type="model">run</item>
+  <item name="model2" type="model">run<item name="group_members" type="string">all</item>
   </item>
-  <item name="model3" type="model">
-    <item name="chooser" type="string">random</item>
+  <item name="model3" type="model">run<item name="chooser" type="string">random</item>
     <item name="sampler" type="string">fussy</item>
   </item>
+  <item name="model4" type="model">skip</item>
 </item>
 
 <item name="mytables" type="list">
-  <item name="gridcells" type="table" />
-  <item name="jobs" type="table" />
+  <item name="gridcells" type="table">yes</item>
+  <item name="zones" type="table">no</item>
+  <item name="jobs" type="table">yes</item>
 </item>
 
-<item name="selectionstest" type="list">
-<item name="str1" type="string" selected="False">bad name 1</item>
-<item name="str2" type="string" selected="True">good name 1</item>
-<item name="str3" type="string" selected="False">bad name 2</item>
-<item name="str4" type="string">good name 2</item>   <!-- default is that it's selected -->
+<item name="mydatasets" type="list">
+  <item name="gridcell" type="dataset">yes</item>
+  <item name="zone" type="dataset">no</item>
+  <item name="job" type="dataset">yes</item>
 </item>
 
 </configuration>

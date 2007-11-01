@@ -95,8 +95,8 @@ class XMLConfiguration(Configuration):
                 # whose name matches the name of the node that specifies the include.
                 includefilename = str(node.firstChild().nodeValue())
                 # dir is the path to the directory containing the xml file named by filename
-                # if the parent file name is relative, find it relative to dir (join will ignore
-                # dir if the parent file name is absolute)
+                # if the parent file name is relative, find it relative to dir 
+                # (join will ignore dir if the parent file name is absolute)
                 dir = os.path.split(os.path.abspath(filename))[0]
                 fullpath = os.path.join(dir, includefilename)
                 included = XMLConfiguration(fullpath)
@@ -108,11 +108,12 @@ class XMLConfiguration(Configuration):
                 result_dict[key] = self._convert_node_to_data(node, filename)
             
     def _convert_node_to_data(self, node, filename):
-        # branch on the node's type attribute to determine the type of the return data
+        # convert the information under node into the appropriate Python datatype.
+        # To do this, branch on the node's type attribute.  For some kinds of data,
+        # return None if the node should be skipped.  For example, for type="model"
+        # return None if that is a model that isn't selected to be run
         type_name = str(node.attributes().namedItem('type').nodeValue())
-        if type_name=='None':
-            return None
-        elif type_name=='integer':
+        if type_name=='integer':
             return int(node.firstChild().nodeValue())
         elif type_name=='float':
             return float(node.firstChild().nodeValue())
@@ -123,26 +124,11 @@ class XMLConfiguration(Configuration):
         elif type_name=='unicode':
             return unicode(node.firstChild().nodeValue())
         elif type_name=='list' or type_name=='tuple':
-            n = node.firstChild()
-            result_list = []
-            while not n.isNull():
-                if self._is_good_node(n):
-                    result_list.append(self._convert_node_to_data(n, filename))
-                n = n.nextSibling()
-            if type_name=='tuple':
-                return tuple(result_list)
-            else:
-                return result_list
+            return self._convert_list_or_tuple_to_data(node, filename, type_name)
         elif type_name=='boolean':
-            b = node.firstChild().nodeValue()
-            if b=='True':
-                return True
-            elif b=='False':
-                return False
-            else:
-                raise ValueError, 'malformed xml - expected a string representing a boolean'
+            return self._convert_boolean_to_data(node)
         elif type_name=='file':
-            # file type should have been handled elsewhere (it should be either a parent or an include)
+            # file type should have been handled elsewhere (parser_action should be either a parent or an include)
             raise ValueError, "malformed xml - unknown parser action for type='file'"
         elif type_name=='array':
             # the data should be a string such as '[100, 300]'
@@ -150,50 +136,25 @@ class XMLConfiguration(Configuration):
             s = str(node.firstChild().nodeValue()).strip()
             return array(eval(s))
         elif type_name=='dictionary':
-            result_dict = {}
-            child = node.firstChild()
-            while not child.isNull():
-                self._add_to_dict(child, result_dict, filename)
-                child = child.nextSibling()
-            return result_dict
+            return self._convert_dictionary_to_data(node, filename)
         elif type_name=='class':
-            items = {}
-            child = node.firstChild()
-            while not child.isNull():
-                self._add_to_dict(child, items, filename)
-                child = child.nextSibling()
-            class_name = items['Class name']
-            class_path = items['Class path']
-            # delete the class name and class path from the dictionary -- the remaining items 
-            # will be the keyword arguments to use to create the instance
-            del items['Class name']
-            del items['Class path']
-            return self._make_instance(class_name, class_path, items)
+            return self._convert_class_to_data(node, filename)
         elif type_name=='model':
-            modelname = str(node.attributes().namedItem('name').nodeValue())
-            # if no children, the item name is the value; otherwise return a dictionary
-            if node.hasChildNodes():
-                subdict = {}
-                child = node.firstChild()
-                while not child.isNull():
-                    self._add_to_dict(child, subdict, filename)
-                    child = child.nextSibling()
-                return {modelname: subdict}
-            else:
-                return modelname
+            # "skip" is the value used to indicate models to skip
+            return self._convert_custom_type_to_data(node, filename, "skip")
         elif type_name=='table':
-            return str(node.attributes().namedItem('name').nodeValue())
+            return self._convert_custom_type_to_data(node, filename, "no")
+        elif type_name=='dataset':
+            return self._convert_custom_type_to_data(node, filename, "no")
         else:
             raise ValueError, 'unknown type: %s' % type_name
             
     def _is_good_node(self, node):
         """Return True if this node should be processed, False if this node should be ignored.  
-        It should be ignored if it's a comment, just whitespace, or has the attribute selected=False """
+        It should be ignored if it's a comment or just whitespace."""
         if node.isComment():
             return False
         elif node.isText() and node.toText().data().trimmed().isEmpty():
-            return False
-        elif node.attributes().namedItem('selected').nodeValue()=='False':
             return False
         else:
             return True
@@ -228,6 +189,79 @@ class XMLConfiguration(Configuration):
         inst = cls.__new__(cls)
         inst.__init__(**keyword_args)
         return inst
+    
+    def _convert_list_or_tuple_to_data(self, node, filename, type_name):
+        n = node.firstChild()
+        result_list = []
+        while not n.isNull():
+            if self._is_good_node(n):
+                d = self._convert_node_to_data(n, filename)
+                if d is not None:
+                    result_list.append(d)
+            n = n.nextSibling()
+        if type_name=='tuple':
+            return tuple(result_list)
+        # type_name should be 'list'
+        p = str(node.attributes().namedItem('parser_action').nodeValue())
+        if p=='list_to_dictionary':
+            result_dict = {}
+            for x in result_list:
+                if isinstance(x, str):
+                    result_dict[x] = {}
+                else:
+                    # x should be a dictionary with one entry
+                    result_dict.update(x)
+            return result_dict
+        else:
+            return result_list
+        
+    def _convert_boolean_to_data(self, node):
+        b = node.firstChild().nodeValue()
+        if b=='True':
+            return True
+        elif b=='False':
+            return False
+        else:
+            raise ValueError, 'malformed xml - expected a string representing a boolean'
+        
+    def _convert_dictionary_to_data(self, node, filename):
+        result_dict = {}
+        child = node.firstChild()
+        while not child.isNull():
+            self._add_to_dict(child, result_dict, filename)
+            child = child.nextSibling()
+        return result_dict
+        
+    def _convert_class_to_data(self, node, filename):
+        items = {}
+        child = node.firstChild()
+        while not child.isNull():
+            self._add_to_dict(child, items, filename)
+            child = child.nextSibling()
+        class_name = items['Class name']
+        class_path = items['Class path']
+        # delete the class name and class path from the dictionary -- the remaining items 
+        # will be the keyword arguments to use to create the instance
+        del items['Class name']
+        del items['Class path']
+        return self._make_instance(class_name, class_path, items)
+
+    def _convert_custom_type_to_data(self, node, filename, skip):
+        # skip is a string that is the value when this node should be skipped
+        child = node.firstChild()
+        if child.nodeValue()==skip:
+            return None
+        name = str(node.attributes().namedItem('name').nodeValue())
+        child = child.nextSibling()
+        # if no more children, the item name is the value; otherwise return a dictionary
+        if child.isNull():
+            return name
+        else:
+            subdict = {}
+            while not child.isNull():
+                self._add_to_dict(child, subdict, filename)
+                child = child.nextSibling()
+            return {name: subdict}
 
 import os
 from numpy import ma
@@ -247,7 +281,6 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                           'year': 1980,
                           'mybool': True,
                           'ten': 10.0,
-                          'mynone': None,
                           'years': (1980, 1981),
                           'list_test': ['squid', 'clam', u'uniclam'],
                           'dicttest': {'str1': 'squid', 'str2': 'clam'},
@@ -255,7 +288,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                                      {'model2': {'group_members': 'all'}}, 
                                      {'model3': {'chooser': 'random', 'sampler': 'fussy'}}],
                           'mytables': ['gridcells', 'jobs'],
-                          'selectionstest': ['good name 1', 'good name 2']
+                          'mydatasets': ['gridcell', 'job']
                           })
             
     def test_whitespace_and_comments(self):
@@ -315,7 +348,14 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config = XMLConfiguration(f)
         self.assertEqual(config, 
                          {'description': 'include test',
-                          'stuff': 'an included string'})
+                          'mystring': 'an included string',
+                          'myint': 42})
+
+    def test_list_to_dict(self):
+        f = os.path.join(self.test_configs, 'list_to_dict.xml')
+        config = XMLConfiguration(f)
+        self.assertEqual(config, 
+                         {'datasets_to_preload': {'job': {}, 'gridcell': {'nchunks': 4}}})
 
     def test_class_element(self):
         # test a configuration element that is a specified class

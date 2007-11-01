@@ -16,26 +16,24 @@
 </item>
 
 <item type="list" name="models" >
-  <item type="model" name="prescheduled_events" />
-  <item type="model" name="events_coordinator" />
-  <item type="model" name="residential_land_share_model" />
-  <item type="model" name="land_price_model" />
-  <item type="model" name="development_project_transition_model" />
-  <item type="model" name="residential_development_project_location_choice_model" />
-  <item type="model" name="commercial_development_project_location_choice_model" />
-  <item type="model" name="industrial_development_project_location_choice_model" />
-  <item type="model" name="development_event_transition_model" />
-  <item type="model" name="events_coordinator" />
-  <item type="model" name="residential_land_share_model" />
-  <item type="model" name="household_transition_model" />
-  <item type="model" name="employment_transition_model" />
-  <item type="model" name="household_relocation_model" />
-  <item type="model" name="household_location_choice_model" />
-  <item type="model" name="employment_relocation_model" />
-  <item type="model" name="employment_location_choice_model" >
-    <item type="string" name="group_members" >_all_</item>
-  </item>
-  <item type="model" name="distribute_unplaced_jobs_model" />
+  <item type="model" name="prescheduled_events">run</item>
+  <item type="model" name="events_coordinator">run</item>
+  <item type="model" name="residential_land_share_model">run</item>
+  <item type="model" name="land_price_model">run</item>
+  <item type="model" name="development_project_transition_model">run</item>
+  <item type="model" name="residential_development_project_location_choice_model">run</item>
+  <item type="model" name="commercial_development_project_location_choice_model">run</item>
+  <item type="model" name="industrial_development_project_location_choice_model">run</item>
+  <item type="model" name="development_event_transition_model">run</item>
+  <item type="model" name="events_coordinator">run</item>
+  <item type="model" name="residential_land_share_model">run</item>
+  <item type="model" name="household_transition_model">run</item>
+  <item type="model" name="employment_transition_model">run</item>
+  <item type="model" name="household_relocation_model">run</item>
+  <item type="model" name="household_location_choice_model">run</item>
+  <item type="model" name="employment_relocation_model">run</item>
+  <item type="model" name="employment_location_choice_model">run<item type="string" name="group_members">_all_</item></item>
+  <item type="model" name="distribute_unplaced_jobs_model">run</item>
 </item>
 
 <item name="input_configuration" type="class">
@@ -61,62 +59,62 @@
   </item>
   <item name="cache_scenario_database" type="string">urbansim.model_coordinators.cache_scenario_database</item>
   <item name="tables_to_cache" type="list">
-    <item name="annual_employment_control_totals" type="table" />
-    <item name="annual_household_control_totals" type="table" />
-    <item name="buildings" type="table" />
-    <item name="building_types" type="table" />
-    <item name="development_event_history" type="table" />
-    <item name="gridcells" type="table" />
-    <item name="households" type="table" />
-    <item name="job_building_types" type="table" />
-    <item name="jobs" type="table" />
-    <item name="travel_data" type="table" />
-    <item name="zones" type="table" />
-    <item name="counties" type="table" />
-    <item name="commercial_development_location_choice_model_coefficients" type="table" />
-    <item name="commercial_development_location_choice_model_specification" type="table" />
-    <item name="commercial_employment_location_choice_model_coefficients" type="table" />
-    <item name="commercial_employment_location_choice_model_specification" type="table" />
-    <item name="home_based_employment_location_choice_model_specification" type="table" />
-    <item name="home_based_employment_location_choice_model_coefficients" type="table" />
-    <item name="industrial_employment_location_choice_model_coefficients" type="table" />
-    <item name="industrial_employment_location_choice_model_specification" type="table" />
-    <item name="industrial_development_location_choice_model_coefficients" type="table" />
-    <item name="industrial_development_location_choice_model_specification" type="table" />
-    <item name="residential_development_location_choice_model_coefficients" type="table" />
-    <item name="residential_development_location_choice_model_specification" type="table" />
-    <!-- <item name="fazes" type="table" /> ** NOT SELECTED ** -->
-    <item name="urbansim_constants" type="table" />
-    <item name="household_location_choice_model_coefficients" type="table" />
-    <item name="household_location_choice_model_specification" type="table" />
-    <item name="land_price_model_coefficients" type="table" />
-    <item name="land_price_model_specification" type="table" />
-    <item name="residential_land_share_model_coefficients" type="table" />
-    <item name="residential_land_share_model_specification" type="table" />
-    <!-- <item name="plan_type_group_definitions" type="table" /> ** NOT SELECTED ** -->
-    <!-- <item name="plan_type_groups" type="table" /> ** NOT SELECTED ** -->
-    <!-- <item name="large_areas" type="table" /> ** NOT SELECTED ** -->
-    <item name="household_characteristics_for_ht" type="table" />
-    <item name="development_types" type="table" />
-    <item name="development_type_group_definitions" type="table" />
-    <item name="development_constraints" type="table" />
-    <item name="annual_relocation_rates_for_households" type="table" />
-    <item name="annual_relocation_rates_for_jobs" type="table" />
-    <item name="base_year" type="table" />
-    <item name="cities" type="table" />
-    <!-- <item name="development_events" type="table" /> ** NOT SELECTED ** -->
-    <item name="development_type_groups" type="table" />
-    <item name="employment_adhoc_sector_group_definitions" type="table" />
-    <item name="employment_adhoc_sector_groups" type="table" />
-    <item name="employment_events" type="table" />
-    <item name="employment_sectors" type="table" />
-    <!-- <item name="land_use_events" type="table" /> ** NOT SELECTED ** -->
-    <item name="plan_types" type="table" />
-    <item name="race_names" type="table" />
-    <item name="target_vacancies" type="table" />
-    <item name="jobs_for_estimation" type="table" />
-    <item name="households_for_estimation" type="table" />
-    <!-- <item name="development_events_exogenous" type="table" /> ** NOT SELECTED ** -->
+    <item name="annual_employment_control_totals" type="table">yes</item>
+    <item name="annual_household_control_totals" type="table">yes</item>
+    <item name="buildings" type="table">yes</item>
+    <item name="building_types" type="table">yes</item>
+    <item name="development_event_history" type="table">yes</item>
+    <item name="gridcells" type="table">yes</item>
+    <item name="households" type="table">yes</item>
+    <item name="job_building_types" type="table">yes</item>
+    <item name="jobs" type="table">yes</item>
+    <item name="travel_data" type="table">yes</item>
+    <item name="zones" type="table">yes</item>
+    <item name="counties" type="table">yes</item>
+    <item name="commercial_development_location_choice_model_coefficients" type="table">yes</item>
+    <item name="commercial_development_location_choice_model_specification" type="table">yes</item>
+    <item name="commercial_employment_location_choice_model_coefficients" type="table">yes</item>
+    <item name="commercial_employment_location_choice_model_specification" type="table">yes</item>
+    <item name="home_based_employment_location_choice_model_specification" type="table">yes</item>
+    <item name="home_based_employment_location_choice_model_coefficients" type="table">yes</item>
+    <item name="industrial_employment_location_choice_model_coefficients" type="table">yes</item>
+    <item name="industrial_employment_location_choice_model_specification" type="table">yes</item>
+    <item name="industrial_development_location_choice_model_coefficients" type="table">yes</item>
+    <item name="industrial_development_location_choice_model_specification" type="table">yes</item>
+    <item name="residential_development_location_choice_model_coefficients" type="table">yes</item>
+    <item name="residential_development_location_choice_model_specification" type="table">yes</item>
+    <item name="fazes" type="table">no</item>
+    <item name="urbansim_constants" type="table">yes</item>
+    <item name="household_location_choice_model_coefficients" type="table">yes</item>
+    <item name="household_location_choice_model_specification" type="table">yes</item>
+    <item name="land_price_model_coefficients" type="table">yes</item>
+    <item name="land_price_model_specification" type="table">yes</item>
+    <item name="residential_land_share_model_coefficients" type="table">yes</item>
+    <item name="residential_land_share_model_specification" type="table">yes</item>
+    <item name="plan_type_group_definitions" type="table">no</item>
+    <item name="plan_type_groups" type="table">no</item>
+    <item name="large_areas" type="table">no</item>
+    <item name="household_characteristics_for_ht" type="table">yes</item>
+    <item name="development_types" type="table">yes</item>
+    <item name="development_type_group_definitions" type="table">yes</item>
+    <item name="development_constraints" type="table">yes</item>
+    <item name="annual_relocation_rates_for_households" type="table">yes</item>
+    <item name="annual_relocation_rates_for_jobs" type="table">yes</item>
+    <item name="base_year" type="table">yes</item>
+    <item name="cities" type="table">yes</item>
+    <item name="development_events" type="table">no</item>
+    <item name="development_type_groups" type="table">yes</item>
+    <item name="employment_adhoc_sector_group_definitions" type="table">yes</item>
+    <item name="employment_adhoc_sector_groups" type="table">yes</item>
+    <item name="employment_events" type="table">yes</item>
+    <item name="employment_sectors" type="table">yes</item>
+    <item name="land_use_events" type="table">no</item>
+    <item name="plan_types" type="table">yes</item>
+    <item name="race_names" type="table">yes</item>
+    <item name="target_vacancies" type="table">yes</item>
+    <item name="jobs_for_estimation" type="table">yes</item>
+    <item name="households_for_estimation" type="table">yes</item>
+    <item name="development_events_exogenous" type="table">no</item>
   </item>
   <item name="tables_to_cache_nchunks" type="dictionary">
     <item name="gridcells" type="integer">1</item>
