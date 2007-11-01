@@ -13,7 +13,7 @@
 # 
 
 import os
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
@@ -52,9 +52,6 @@ class Baseline(AbstractUrbansimConfiguration):
                 'distribute_unplaced_jobs_model',
                 ],
             'input_configuration': DatabaseConfiguration(
-                host_name = os.environ.get('MYSQLHOSTNAME','localhost'),
-                user_name = os.environ.get('MYSQLUSERNAME',''),
-                password = os.environ.get('MYSQLPASSWORD',''),
                 database_name = 'eugene_1980_baseyear',
                 ),
             'cache_directory':'c:/opusworkspace/eugene',
