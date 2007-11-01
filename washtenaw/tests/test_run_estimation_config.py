@@ -15,7 +15,7 @@
 import os
 
 from opus_core.configuration import Configuration
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 
@@ -26,9 +26,6 @@ class TestRunEstimationConfig(Configuration):
     def __init__(self):
         Configuration.__init__(self, data = {
             'input_configuration':DatabaseConfiguration(
-                host_name = 'trondheim.cs.washington.edu',
-                user_name = os.environ.get('MYSQLUSERNAME',''),
-                password = os.environ.get('MYSQLPASSWORD',''),
                 database_name = "washtenaw_class",
                 ),
             'datasets_to_cache_after_each_model':[],

@@ -14,7 +14,7 @@
 
 import os
 
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
@@ -22,15 +22,9 @@ from urbansim.configurations.creating_baseyear_cache_configuration import Creati
 
 my_configuration = {
     'input_configuration':DatabaseConfiguration(
-        host_name = os.environ.get('MYSQLHOSTNAME','localhost'),
-        user_name = os.environ.get('MYSQLUSERNAME',''),
-        password = os.environ.get('MYSQLPASSWORD',''),
         database_name = "semcog_baseyear", #change
         ),
     'output_configuration':DatabaseConfiguration(
-        host_name = os.environ.get('MYSQLHOSTNAME','localhost'),
-        user_name = os.environ.get('MYSQLUSERNAME',''),
-        password = os.environ.get('MYSQLPASSWORD',''),
         database_name = "semcog_baseyear_estimation",
         ),
     'datasets_to_cache_after_each_model':[],
