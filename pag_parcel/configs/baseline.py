@@ -13,7 +13,7 @@
 #
 
 #from urbansim.estimation.config import config
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 from pag_parcel.configs.controller_config import models_configuration
 from urbansim.configs.general_configuration import GeneralConfiguration
 from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
@@ -90,9 +90,6 @@ class Baseline(GeneralConfiguration):
                 unroll_gridcells = False
                 ),
             'input_configuration': DatabaseConfiguration(
-                host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
-                user_name     = os.environ.get('MYSQLUSERNAME',''),
-                password      = os.environ.get('MYSQLPASSWORD',''),
                 database_name = 'pag_parcel_baseyear',
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
