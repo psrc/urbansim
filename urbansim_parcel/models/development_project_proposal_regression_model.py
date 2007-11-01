@@ -18,7 +18,7 @@ from opus_core.regression_model import RegressionModel
 from urbansim_parcel.datasets.development_project_proposal_dataset import DevelopmentProjectProposalDataset
 from urbansim_parcel.datasets.development_project_proposal_dataset import create_from_parcel_and_development_template
 from urbansim_parcel.datasets.development_project_proposal_component_dataset import create_from_proposals_and_template_components
-from numpy import exp, arange, logical_and, zeros, ones, where, array, float32, int16, concatenate
+from numpy import exp, arange, logical_and, zeros, ones, where, array, float32, int16, concatenate, inf
 from opus_core.variables.attribute_type import AttributeType
 import re
 
@@ -86,9 +86,9 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         
         dataset.set_values_of_one_attribute(self.outcome_attribute_name, 
                                                  result, index=index)
-        
-        return dataset
-    
+        self.correct_infinite_values(dataset, self.outcome_attribute_name)
+        return dataset            
+            
     def prepare_for_run(self, dataset_pool, parcel_filter_for_new_development=None, 
                         parcel_filter_for_redevelopment=None, create_proposal_set=True,
                         spec_replace_module_variable_pair=None, **kwargs):
