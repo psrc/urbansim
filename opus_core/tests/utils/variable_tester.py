@@ -53,7 +53,7 @@ class VariableTester(object):
         """
         self.file_path = file_path
         storage = StorageFactory().get_storage('dict_storage')
-        self.dataset_pool = DatasetPool()
+        self.dataset_pool = DatasetPool(package_order=package_order)
         for dataset_name, attribute_dict in test_data.iteritems():
             storage.write_table(table_name=dataset_name, table_data=attribute_dict)
         for dataset_name, attribute_dict in test_data.iteritems(): # the two loops are needed because

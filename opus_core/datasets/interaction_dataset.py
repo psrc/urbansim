@@ -20,6 +20,7 @@ from opus_core.datasets.dataset import Dataset
 from opus_core.variables.variable_factory import VariableFactory
 from opus_core.variables.attribute_type import AttributeType
 from opus_core.variables.variable import get_dependency_datasets
+from opus_core.storage_factory import StorageFactory
 from opus_core.misc import unique_values
 from opus_core.logger import logger
 from numpy import array, repeat, ndarray, reshape
@@ -551,6 +552,32 @@ class InteractionDataset(Dataset):
             self._check_dataset_name(vname.get_dataset_name())
             
         return vname
+    
+    def get_flatten_dataset(self):
+        """Creates a new dataset that is a 1D version of this dataset. All attributes are flattened.
+        Id name is a combination of the two id attributes.
+        """
+        storage = StorageFactory().get_storage('dict_storage')
+            
+        table_name = '%s_flatten' % self.get_dataset_name()
+        data = {}
+        for attr in self.get_known_attribute_names():
+            data[attr] = self.get_attribute(attr).ravel()
+            
+        ids = []
+        for i in [1,2]:
+            id_name = self.get_dataset(i).get_id_name()[0]
+            ids.append(id_name)
+            if id_name not in data.keys():
+                data[id_name] = self.get_attribute(id_name).ravel()
+            
+        storage.write_table(
+                    table_name=table_name,
+                    table_data=data
+                )
+        dataset = Dataset(in_storage=storage, id_name=ids,
+                          dataset_name=table_name, in_table_name=table_name)
+        return dataset
     
     def _check_dataset_name(self, name):
         """check that name is the name of this dataset or one of its components"""
