@@ -46,68 +46,72 @@ class flt_storage(Storage):
             name = '%s.%s' % (os.path.join(path, short_name), extension)
             return cls(name)
         
-        def _map_byteorder_symbol_to_extension_character(cls, byteorder_character):
-            map = {
-                '<': 'l', # little-endian
-                '>': 'b', # big-endian
-                '|': 'i', # irrelevant
-                }
-            if array([1], dtype='<i4').dtype.byteorder == '=':
-                map['='] = map['<']
-            else:
-                map['='] = map['>']
+        
+                
             
-            return map[byteorder_character]
-        
-        _map_byteorder_symbol_to_extension_character = classmethod(_map_byteorder_symbol_to_extension_character)
-                
-        def _map_extension_character_to_byteorder_symbol(self, extension_character):
-            return {
-                'l': '<', # little-endian
-                'b': '>', # big-endian
-                'i': '|', # irrelevant
-                }[extension_character]
-                    
-        def _extension_for_numpy_type(self, dtype):
-            """Returns the file extension for this numpy type."""    
-            str = dtype.str
-            return self._map_byteorder_symbol_to_extension_character(str[0]) + str[1:]
-                
-        def _get_native_endian_file_extension_character(self):
-            if array([1], dtype='<i4').dtype.byteorder == '=':
-                return self._map_byteorder_symbol_to_extension_character('<')
-            else:
-                return self._map_byteorder_symbol_to_extension_character('>')
-    
-        def _write_to_file(self, directory, attribute_name, attribute_data):
-            """Writes data to a file."""
-            extension = self._extension_for_numpy_type(attribute_data.dtype)
-            filename = '%s.%s' % (attribute_name, extension)
-        
-            file_path = os.path.join(directory, filename)
-        
-            f = file(file_path, mode="wb")
-            try:
-                try:
-                    attribute_data.tofile(f)
-                
-                except ValueError:
-                    logger.log_error(
-                        "Unable to write attribute '%s' to disk. The disk may be "
-                        "full or the location write-protected. (%s)"
-                            % (attribute_name, file_path))
-                    raise
-                
-            finally:
-                f.close()
-    
     def __init__(self, storage_location):
         self._base_directory = storage_location
+
+    def _extension_for_numpy_type(self, dtype):
+        """Returns the file extension for this numpy type."""    
+        str = dtype.str
+        return self._map_byteorder_symbol_to_extension_character(str[0]) + str[1:]
+
+    
+    def _write_to_file(self, directory, attribute_name, attribute_data):
+        """Writes data to a file."""
+        extension = self._extension_for_numpy_type(attribute_data.dtype)
+        filename = '%s.%s' % (attribute_name, extension)
+         
+        file_path = os.path.join(directory, filename)
+        
+        f = file(file_path, mode="wb")
+        try:
+            try:
+                attribute_data.tofile(f)
+                
+            except ValueError:
+                logger.log_error(
+                    "Unable to write attribute '%s' to disk. The disk may be "
+                     "full or the location write-protected. (%s)"
+                         % (attribute_name, file_path))
+                raise
+              
+        finally:
+            f.close()
+
 
     def has_table(self, table):
         return is_file_in_directory(table, self._get_base_directory())
         
-
+    def _get_native_endian_file_extension_character(self):
+        if array([1], dtype='<i4').dtype.byteorder == '=':
+            return self._map_byteorder_symbol_to_extension_character('<')
+        else:
+            return self._map_byteorder_symbol_to_extension_character('>')
+    
+    def _map_byteorder_symbol_to_extension_character(cls, byteorder_character):
+        map = {
+            '<': 'l', # little-endian
+            '>': 'b', # big-endian
+            '|': 'i', # irrelevant
+            }
+        if array([1], dtype='<i4').dtype.byteorder == '=':
+            map['='] = map['<']
+        else:
+            map['='] = map['>']
+        
+        return map[byteorder_character]
+        
+    _map_byteorder_symbol_to_extension_character = classmethod(_map_byteorder_symbol_to_extension_character)
+                
+    def _map_extension_character_to_byteorder_symbol(self, extension_character):
+        return {
+            'l': '<', # little-endian
+            'b': '>', # big-endian
+            'i': '|', # irrelevant
+            }[extension_character]
+                    
         
     def get_storage_location(self):
         return self._base_directory
