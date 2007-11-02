@@ -23,10 +23,101 @@ from opus_core.variables.variable_name import VariableName
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.datasets.dataset_pool import DatasetPool
-from opus_core.datasets.dataset import DatasetSubset
+from opus_core.datasets.dataset import DatasetSubset, Dataset
+from opus_core.datasets.interaction_dataset import InteractionDataset
+from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.resources import Resources
 from opus_core.session_configuration import SessionConfiguration
+from opus_core.storage_factory import StorageFactory
 
+class ObservedData:
+    def __init__(self, directory, year, storage_type='tab_storage', is_cache=False, package_order=['core']):
+        """'directory' is a directory, where the observed data are stored.
+        The type of those data is given in 'storage_type'. If it is opus cache, 
+        set it to 'flt_storage' and set the argument 'is_cache' to True.
+        'package_order' gives the order of packages for creating the necessary datasets.
+        'year' is the year from which we have the observed data.
+        
+        The class keeps a list of objects of type ObservedDataOneQuantity in self.observed_data_collection, 
+        each of which stores information about one quantity measure. Use the method 'add_quantity' to create
+        this list.
+        """
+        self.year = year
+        self.dataset_pool = None
+        self.storage = None
+        self.package_order = package_order
+        
+        if is_cache:
+            self.dataset_pool = setup_environment(directory, self.year, package_order)
+        else:
+            self.storage = StorageFactory().get_storage(storage_type, storage_location=directory)
+            
+        self.observed_data_collection = []
+ 
+    def get_storage(self):
+        return self.storage
+    
+    def get_dataset_pool(self):
+        return self.dataset_pool
+    
+    def get_package_order(self):
+        return self.package_order
+    
+    def add_quantity(self, variable_name, filename, **kwargs):
+        self.observed_data_collection.append(ObservedDataOneQuantity(variable_name, self, filename, **kwargs))
+        
+    def get_variable_names(self):
+        return map(lambda x: x.get_variable_name(), self.get_quantity_objects())
+        
+    def get_quantity_objects(self):
+        return self.observed_data_collection
+    
+    def get_year(self):
+        return self.year
+    
+    def get_values_for_quantity(variable_name):
+        alias = VariableName(variable_name).get_alias()
+        for q in self.get_quantity_objects():
+            if q.get_variable_name().get_alias() == alias:
+                return q.get_values()
+                
+class ObservedDataOneQuantity:
+    """  Class for storing information about one quantity measure. It is to be grouped in 
+    an object of class ObservedData.
+    """
+    def __init__(self, variable_name, observed_data, filename=None,  **kwargs):
+        """  'variable_name' is a quantity about which we have data available.
+        'observed_data' is of type ObservedData, it is the grouping parent. 
+        'filename' is the name of file where 
+        the data is stored. It can be None, if the observed_data.directory is a cache.
+        Remaining arguments are passed into DatasetFactory, thus it can contain information about how 
+        to create the corresponding dataset.
+        """
+        self.variable_name = VariableName(variable_name)
+        self.dataset_name = self.variable_name.get_dataset_name()
+        dataset_pool = observed_data.get_dataset_pool()
+        if dataset_pool is None:
+            kwargs.update({'in_storage':observed_data.get_storage(), 'in_table_name': filename})
+            try:
+                self.dataset = DatasetFactory().search_for_dataset(self.dataset_name, observed_data.get_package_order(), arguments=kwargs)
+            except: # take generic dataset
+                self.dataset = Dataset(dataset_name=self.dataset_name, **kwargs)
+        else:
+            self.dataset = dataset_pool.get_dataset(self.dataset_name)
+        self.dataset.compute_variables([self.variable_name], dataset_pool=dataset_pool)
+                
+    def get_values(self):
+        return self.dataset.get_attribute(self.variable_name)
+        
+    def get_variable_name(self):
+        return self.variable_name
+    
+    def get_dataset(self):
+        return self.dataset
+    
+    def get_dataset_name(self):
+        return self.dataset_name
+        
 class BayesianMelding:
 
     caches_file_name = "cache_directories"
@@ -36,46 +127,29 @@ class BayesianMelding:
     # pairs of inverse transformations
     transformation_pairs = {"sqrt": "**2", "log":"exp", "exp": "log", "**2": "sqrt"}
 
-    def __init__(self, cache_directory, cache_with_true_data=None,
-                 datasets_with_true_data = None,
-                 year_with_true_data=0,
-                 known_output=[], transformation=None, inverse_transformation=None,
+    def __init__(self, cache_directory, observed_data, transformation=None, inverse_transformation=None,
                  base_year=0, scaling_parents={}, package_order=['core']):
-        """ Class used in the Basesian melding analysis.
+        """ Class used in the Bayesian melding analysis.
         'cache_directory' is the first directory created by start_run_set.py. It should
         contain a file called 'cache_directories' which contains a list of all caches that
         belong to this set of runs. This list is read and stored in self.cache_set.
-        'cache_with_true_data' is the cache directory, where the true data are stored.
-        Alternatively, 'datasests_with_true_data' can be passed, which is a dictionary of
-        pairs (dataset name, dataset). It has priority over cache_with_true_data'.
-        'year_with_true_data' is the year from which we have true data.
-        'known_output' is a list of variable names about which we have data available.
+        'observed_data' is an object of ObservedData that contains all the information about observed data.
         """
         file = os.path.join(cache_directory, self.caches_file_name)
         if not os.path.exists(file):
             raise StandardError, "Directory %s must contain a file '%s'." % (cache_directory,
                                                                              self.caches_file_name)
         self.cache_directory = cache_directory
-        self.cache_set = load_from_text_file(file) # it is a array
+        self.cache_set = load_from_text_file(file) # it is an array
         self.number_of_runs = self.cache_set.size
-        self.cache_with_true_data = cache_with_true_data
-        self.true_datasets = datasets_with_true_data
-        self.cache_storage_with_true_data = None
+        self.observed_data = observed_data
         self.package_order = package_order
         self.transformation = transformation
         if inverse_transformation is not None:
             self.transformation_pairs[self.transformation] = inverse_transformation
         self.base_year = base_year
-        self.year_with_true_data = year_with_true_data
-        self.known_output = []
-        self.datasets_to_create = []
-        for var in known_output:
-            varname = VariableName(var)
-            self.known_output.append(varname)
-            self.datasets_to_create.append(varname.get_dataset_name())
         self.propagation_factor = None
         self.y = {}
-        self.y_match_to_datasets = {}
         self.mu = {}
         self.ahat = {}
         self.v = {}
@@ -95,17 +169,10 @@ class BayesianMelding:
         return result
     
     def compute_y(self):
-        if self.true_datasets is None:
-            dataset_pool = self.setup_environment(self.cache_with_true_data, self.year_with_true_data)
-            self.true_datasets = self.get_datasets(dataset_pool)
         iout = -1
-        for variable in self.known_output:
-            dataset = variable.get_dataset_name()
+        for quantity in self.observed_data.get_quantity_objects():
             iout += 1
-            self.true_datasets[dataset].compute_variables(variable, resources=Resources(self.true_datasets))
-            self.y[iout] = try_transformation(self.true_datasets[dataset].get_attribute(variable),
-                                              self.transformation)
-            self.y_match_to_datasets[iout] = dataset
+            self.y[iout] = try_transformation(quantity.get_values(), self.transformation)
 
     def compute_scalings(self):
         for dir in self.scaling_parent_datasets.keys():
@@ -145,27 +212,32 @@ class BayesianMelding:
 
     def estimate_mu(self):
         iout = -1
-        for variable in self.known_output:
-            dataset = variable.get_dataset_name()
+        for quantity in self.observed_data.get_quantity_objects():
+            dataset_name = quantity.get_dataset_name()
+            variable = quantity.get_variable_name()
             iout += 1
             dimension_reduced = False
+            quantity_ids = quantity.get_dataset().get_id_attribute()
             for i in range(self.number_of_runs):
-                dataset_pool = self.setup_environment(self.cache_set[i], self.year_with_true_data)
-                simulated_datasets = self.get_datasets(dataset_pool)
-                ds = simulated_datasets[dataset]
-                ds.compute_variables(variable, resources=Resources(simulated_datasets))
+                dataset_pool = setup_environment(self.cache_set[i], self.observed_data.get_year(), self.package_order)
+                ds = dataset_pool.get_dataset(dataset_name)
+                ds.compute_variables(variable, dataset_pool=dataset_pool)
+                if isinstance(ds, InteractionDataset):
+                    ds = ds.get_flatten_dataset()
                 if i == 0: # first run
-                    self.mu[iout] = zeros((ds.size(), self.number_of_runs),
-                                          dtype=float32)
+                    self.mu[iout] = zeros((self.y[iout].size, self.number_of_runs), dtype=float32)
                     ids = ds.get_id_attribute()
                 else:
-                    if ds.size() > self.mu[iout].shape[0]:
-                        ds = DatasetSubset(simulated_datasets[dataset], simulated_datasets[dataset].get_id_index(ids))
+                    if ds.size() > ids.shape[0]:
+                        ds = DatasetSubset(ds, ds.get_id_index(ids))
                         dimension_reduced = True
                 scale = self.get_scales(ds, i+1, variable)
-                self.mu[iout][:,i] = try_transformation(scale * ds.get_attribute(variable), self.transformation)
+                matching_index = ds.get_id_index(quantity_ids)
+                values = scale[matching_index] * ds.get_attribute(variable)[matching_index]
+                self.mu[iout][:,i] = try_transformation(values, self.transformation)
+                
             if dimension_reduced:
-                self.y[iout] = self.y[iout][self.true_datasets[self.y_match_to_datasets[iout]].get_id_index(ids)]
+                self.y[iout] = self.y[iout][quantity.get_dataset().get_id_index(ids)]
 
     def get_scales(self, dataset, run, variable):
         if run in self.scaling_parents.keys():
@@ -219,20 +291,8 @@ class BayesianMelding:
     def get_variance_for_quantity(self):
         return self.v[self.use_bias_and_variance_index]
 
-    def setup_environment(self, cache_directory, year):
-        ss = SimulationState(new_instance=True)
-        ss.set_cache_directory(cache_directory)
-        ss.set_current_time(year)
-        ac = AttributeCache()
-        storage = ac.get_flt_storage_for_year(year)
-        package_order = self.package_order
-        sc = SessionConfiguration(new_instance=True,
-                             package_order=package_order,
-                             in_storage=ac)
-        return sc.get_dataset_pool()
-
     def set_propagation_factor(self, year):
-        self.propagation_factor = (year - self.base_year)/float(self.year_with_true_data-self.base_year)
+        self.propagation_factor = (year - self.base_year)/float(self.observed_data.get_year() - self.base_year)
 
     def get_propagation_factor(self):
         return self.propagation_factor
@@ -247,16 +307,14 @@ class BayesianMelding:
 
     def compute_m(self, year, quantity_of_interest):
         variable_name = VariableName(quantity_of_interest)
-        dataset = variable_name.get_dataset_name()
+        dataset_name = variable_name.get_dataset_name()
         for i in range(self.number_of_runs):
-            dataset_pool = self.setup_environment(self.cache_set[i], year)
-            simulated_datasets = self.get_datasets(dataset_pool)
-            simulated_datasets[dataset].compute_variables(variable_name)
+            dataset_pool = setup_environment(self.cache_set[i], year, self.package_order)
+            ds = dataset_pool.get_dataset(dataset_name)
+            ds.compute_variables(variable_name)
             if i == 0: # first run
-                self.m = zeros((simulated_datasets[dataset].size(), self.number_of_runs),
-                                      dtype=float32)
-            self.m[:, i] = try_transformation(simulated_datasets[dataset].get_attribute(variable_name),
-                                                    self.transformation)
+                self.m = zeros((ds.size(), self.number_of_runs), dtype=float32)
+            self.m[:, i] = try_transformation(ds.get_attribute(variable_name), self.transformation)
 
 
     def get_posterior_component_mean(self):
@@ -298,10 +356,11 @@ class BayesianMelding:
         self.ahat, self.v = self.get_bias_and_variance_from_files()
 
         if use_bias_and_variance_from is None:
-            self.use_bias_and_variance_index = 0
-        else:
-            variable_list = map(lambda x: x.get_full_name(), self.known_output)
-            self.use_bias_and_variance_index = variable_list.index(use_bias_and_variance_from)
+            use_bias_and_variance_from = quantity_of_interest
+        variable_list = map(lambda x: x.get_expression(), self.observed_data.get_variable_names())
+        if use_bias_and_variance_from not in variable_list:
+            raise ValueError, "Quantity %s is not among observed data." % use_bias_and_variance_from
+        self.use_bias_and_variance_index = variable_list.index(use_bias_and_variance_from)
 
         self.compute_m(year, quantity_of_interest)
         procedure_class = ModelComponentCreator().get_model_component(procedure)
@@ -311,28 +370,15 @@ class BayesianMelding:
                                                        self.transformation_pairs[self.transformation])
         return self.simulated_values
 
-    def compute_true_data(self, year, quantity_of_interest):
-        variable_name = VariableName(quantity_of_interest)
-        dataset_name = variable_name.get_dataset_name()
-        if self.cache_with_true_data is not None:
-            dataset_pool = self.setup_environment(self.cache_with_true_data, year)
-            datasets = self.get_datasets(dataset_pool)
-            self.true_data_of_quantity_of_interest = datasets[dataset_name].compute_variables(variable_name)
-        else:
-            self.true_data_of_quantity_of_interest = self.true_datasets[dataset].get_attribute(variable_name)
-
-    def compute_and_write_true_data(self, year, quantity_of_interest, filename):
-        self.compute_true_data(year, quantity_of_interest)
-        self.write_true_data_for_quantity(filename)
-
     def write_simulated_values(self, filename):
         write_table_to_text_file(filename, self.simulated_values)
 
     def write_values_from_multiple_runs(self, filename, transformed_back=True):
         write_table_to_text_file(filename, self.get_predicted_values(transformed_back=transformed_back))
 
-    def write_true_data_for_quantity(self, filename):
-        write_to_text_file(filename, self.true_data_of_quantity_of_interest, delimiter=' ')
+    def write_observed_data_for_quantity(self, quantity_of_interest, filename):
+        data = self.observed_data.get_values_for_quantity(quantity_of_interest)
+        write_to_text_file(filename, data, delimiter=' ')
 
     def get_quantity_from_simulated_values(self, function):
         """'function' is a character string specifying a function of the scipy.ndimage package (e.g. mean,
@@ -363,3 +409,14 @@ class BayesianMelding:
         minvalues = sorted_values[:, int(n * tmp)]
         maxvalues = sorted_values[:, int(n * (1-tmp))]
         return array([minvalues, maxvalues])
+        
+def setup_environment(cache_directory, year, package_order):
+    ss = SimulationState(new_instance=True)
+    ss.set_cache_directory(cache_directory)
+    ss.set_current_time(year)
+    ac = AttributeCache()
+    storage = ac.get_flt_storage_for_year(year)
+    sc = SessionConfiguration(new_instance=True,
+                         package_order=package_order,
+                         in_storage=ac)
+    return sc.get_dataset_pool()
