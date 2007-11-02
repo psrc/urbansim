@@ -29,6 +29,8 @@ class ConvertNumarrayCacheToNumpyCache(object):
     numarray formatted files end with extensions like '.Float32', whereas
     numpy formatted files end with extensions like '.lf4'.
     """
+    
+    #this has errors with new storage classes!
     def old_to_new_extension_mapping_for_binary_files(self):
         endian = flt_storage(None)._get_native_endian_file_extension_character()
             
