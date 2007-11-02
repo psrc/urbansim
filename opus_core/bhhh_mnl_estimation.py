@@ -69,10 +69,6 @@ class bhhh_mnl_estimation(EstimationProcedure):
                 return {}
             g=g.sum(axis=0)
             c=dot(dot(transpose(g),h),g)
-            se[index_of_not_fixed_values]=self.get_standard_error(h).astype(se.dtype)
-            ll_ratio = 1-(l_1/l_0)
-            adj_ll_ratio = 1-((l_1-nvars)/l_0)
-            tvalues[index_of_not_fixed_values] = (b1[index_of_not_fixed_values]/se[index_of_not_fixed_values]).astype(tvalues.dtype)
             if c <= eps:
                 logger.log_status('Convergence achieved.', tags=tags, verbosity_level=vl)
                 break
@@ -84,8 +80,16 @@ class bhhh_mnl_estimation(EstimationProcedure):
             if s <= .001:
                 logger.log_warning('Cannot find increase', tags=tags, verbosity_level=vl)
                 break
+        # end of the iteration loop
+        
         if it>=(maxiter-1):
             logger.log_warning('Maximum iterations reached without convergence', tags=tags, verbosity_level=vl)
+ 
+        se[index_of_not_fixed_values]=self.get_standard_error(h).astype(se.dtype)
+        tvalues[index_of_not_fixed_values] = (b1[index_of_not_fixed_values]/se[index_of_not_fixed_values]).astype(tvalues.dtype)
+        ll_ratio = 1-(l_1/l_0)
+        adj_ll_ratio = 1-((l_1-nvars)/l_0)
+        
         logger.log_status("Number of Iterations: ", it+1, tags=tags, verbosity_level=vl)
         logger.log_status("***********************************************", tags=tags, verbosity_level=vl)
         logger.log_status('Log-likelihood is:           ', l_1, tags=tags, verbosity_level=vl)
