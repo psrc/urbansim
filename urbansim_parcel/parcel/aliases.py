@@ -72,4 +72,5 @@ aliases = [
        "unit_price = safe_array_divide(parcel.land_value + urbansim_parcel.parcel.improvement_value, urbansim_parcel.parcel.existing_units)",
        "demolition_cost = (parcel.aggregate(urbansim_parcel.building.demolition_cost)).astype(int32)",
        "improvement_value = (parcel.aggregate(building.improvement_value)).astype(int32)",
+       "total_value_per_sqft = safe_array_divide(parcel.land_value + urbansim_parcel.parcel.improvement_value, parcel.parcel_sqft)"
            ]
