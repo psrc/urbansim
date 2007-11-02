@@ -1,6 +1,13 @@
-<commercial_development_project_location_choice_model>
-<parent><file>parents/development_project_location_choice_model.xml</file></parent>
-project_type>commercial</project_type>
-<coefficients_table>commercial_development_location_choice_model_coefficients</coefficients_table>
-<specification_table>commercial_development_location_choice_model_specification</specification_table>
-</commercial_development_project_location_choice_model>
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+
+<item name="input_configuration" type="class">
+  <item name="Class name" type="string" flags="hidden">DevelopmentProjectLocationChoiceModelConfigurationCreator</item>
+  <item name="Class path" type="string" flags="hidden">urbansim.configurations.development_project_location_choice_model_configuration_creator</item>
+  <item name="project_type" type="string">commercial</item>
+  <item name="coefficients_table" type="string">commercial_development_location_choice_model_coefficients</item>
+  <item name="specification_table" type="string"><commercial_development_location_choice_model_specification/item>
+  <item name="default_args" type="file" parser_action="include">defaults/development_project_location_choice_model_defaults.xml</item>
+</item>
+
+</configuration>
