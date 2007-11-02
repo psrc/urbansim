@@ -2,26 +2,24 @@
 <configuration>
 
 <item name="models" type="list">
-  <item type="model" name="prescheduled_events" />
-  <item type="model" name="events_coordinator" />
-  <item type="model" name="residential_land_share_model" />
-  <item type="model" name="land_price_model" />
-  <item type="model" name="development_project_transition_model" />
-  <item type="model" name="residential_development_project_location_choice_model" />
-  <item type="model" name="commercial_development_project_location_choice_model" />
-  <item type="model" name="industrial_development_project_location_choice_model" />
-  <item type="model" name="development_event_transition_model" />
-  <item type="model" name="events_coordinator" />
-  <item type="model" name="residential_land_share_model" />
-  <item type="model" name="household_transition_model" />
-  <item type="model" name="employment_transition_model" />
-  <item type="model" name="household_relocation_model" />
-  <item type="model" name="household_location_choice_model" />
-  <item type="model" name="employment_relocation_model" />
-  <item type="model" name="employment_location_choice_model" >
-    <item type="string" name="group_members" >_all_</item>
-  </item>
-  <item type="model" name="distribute_unplaced_jobs_model" />
+  <item type="model" name="prescheduled_events">ok</item>
+  <item type="model" name="events_coordinator">ok</item>
+  <item type="model" name="residential_land_share_model">ok</item>
+  <item type="model" name="land_price_model">ok</item>
+  <item type="model" name="development_project_transition_model">ok</item>
+  <item type="model" name="residential_development_project_location_choice_model">ok</item>
+  <item type="model" name="commercial_development_project_location_choice_model">ok</item>
+  <item type="model" name="industrial_development_project_location_choice_model">ok</item>
+  <item type="model" name="development_event_transition_model">ok</item>
+  <item type="model" name="events_coordinator">ok</item>
+  <item type="model" name="residential_land_share_model">ok</item>
+  <item type="model" name="household_transition_model">ok</item>
+  <item type="model" name="employment_transition_model">ok</item>
+  <item type="model" name="household_relocation_model">ok</item>
+  <item type="model" name="household_location_choice_model">ok</item>
+  <item type="model" name="employment_relocation_model">ok</item>
+  <item type="model" name="employment_location_choice_model">ok<item type="string" name="group_members" >_all_</item></item>
+  <item type="model" name="distribute_unplaced_jobs_model">ok</item>
 </item>
 
 </configuration>
