@@ -59,7 +59,7 @@ class Baseline(AbstractUrbansimConfiguration):
                 cache_directory_root = 'c:/urbansim_cache',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
-                    existing_cache_to_copy = 'c:/urbansim_cache/run_962.2006_11_07_08_50',
+                    existing_cache_to_copy = 'c:/urbansim_cache/eugene_1980_baseyear_cache',
                     ),
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
