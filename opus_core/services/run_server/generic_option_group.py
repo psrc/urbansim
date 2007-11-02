@@ -23,15 +23,10 @@ from opus_core.database_management.database_server_configuration import Database
 
 class GenericOptionGroup:
     def __init__(self, usage="python %prog [options]", description=""):
-        # Do not require MySQL.
-        if 'MYSQLHOSTNAME' in os.environ:
-            default_host_name = os.environ['MYSQLHOSTNAME']
-        else:
-            default_host_name = None
             
         self.parser = OptionParser(usage=usage, description=description)
         
-        self.parser.add_option("--hostname", dest="host_name", default=default_host_name, 
+        self.parser.add_option("--hostname", dest="host_name", 
                                action="store", help="Name of host running services database server")
         self.parser.add_option("--database", dest="database_name", default="services", 
                                action="store", help="Name of services database")
@@ -50,10 +45,7 @@ class GenericOptionGroup:
         
 
     def get_services_database(self, options):
-        """Gets services database from the specified MySQL database.
-        
-        Return None if the MYSQLHOSTNAME, etc. environment variables are set appropriately,
-        MySQL is not running or installed, or if the 'services' database does not exist."""
+        """Gets services database from the specified database."""
         
         db_server = self.get_database_server(options)
         
@@ -66,10 +58,7 @@ class GenericOptionGroup:
             return None
         
     def get_database_server(self, options):
-        """Gets database server for the specified MySQL connection.
-        
-        Return None if the MYSQLHOSTNAME, etc. environment variables are set appropriately,
-        MySQL is not running or installed."""
+        """Gets database server for the specified db connection."""
         if options.host_name is None:
             return None
         
