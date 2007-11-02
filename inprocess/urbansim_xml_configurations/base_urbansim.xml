@@ -14,13 +14,22 @@
   <item name="others" type="file" parser_action="include">model_system/others.xml</item>
 </item>
 
-
-<!-- **** NOT DONE ****
 <item name="models" type="dictionary" parser_action="category">
-  <item name="models" type="file" parser_action="include">model_system/models.xml</item>
-  <item name="others" type="file" parser_action="include">model_system/others.xml</item>
+  <item name="models_configuration" type="dictionary">
+    <item name="development_project_types" type="file" parser_action="include">models/development_project_types.xml</item>
+    <item name="residential_development_project_location_choice_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/residential_development_project_location_choice_model.xml</item>
+    </item>
+    <item name="commercial_development_project_location_choice_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/commercial_development_project_location_choice_model.xml</item>
+    </item>
+    <item name="industrial_development_project_location_choice_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/industrial_development_project_location_choice_model.xml</item>
+    </item>
+  </item>
 </item>
--->
+
+
 
 <item name="advanced" type="dictionary" parser_action="category">
   <item name="datasets_to_cache_after_each_model" type="file" parser_action="include">advanced/datasets_to_cache_after_each_model.xml</item>

@@ -244,7 +244,11 @@ class XMLConfiguration(Configuration):
         # will be the keyword arguments to use to create the instance
         del items['Class name']
         del items['Class path']
-        return self._make_instance(class_name, class_path, items)
+        i = self._make_instance(class_name, class_path, items)
+        if node.attributes().namedItem('parser_action').nodeValue()=='execute':
+            return i.execute()
+        else:
+            return i
 
     def _convert_custom_type_to_data(self, node, filename, skip):
         # skip is a string that is the value when this node should be skipped
@@ -376,6 +380,13 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(db_config.user_name, 'fred')
         self.assertEqual(db_config.password, 'secret')
         self.assertEqual(db_config.database_name, 'river_city_baseyear')
+            
+    def test_execute(self):
+        # test the 'execute' parser action
+        f = os.path.join(self.test_configs, 'execute.xml')
+        config = XMLConfiguration(f)
+        c = config['controller']['import']['urbansim.models.development_project_location_choice_model_creator']
+        self.assertEqual(c, 'DevelopmentProjectLocationChoiceModelCreator')                         
             
     def test_error_handling(self):
         self.assertRaises(IOError, XMLConfiguration, 'badname.xml')

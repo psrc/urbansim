@@ -1,31 +1,58 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
 
-<development_project_types>
-  <commercial>
-    <dict>
-      <categories> array([ 1000,  2000,  5000, 10000]) </categories>
-      <developable_maximum_unit_variable_full_name>urbansim.gridcell.developable_maximum_commercial_sqft</developable_maximum_unit_variable_full_name>
-      <developable_minimum_unit_variable_full_name>urbansim.gridcell.developable_minimum_commercial_sqft</developable_minimum_unit_variable_full_name>
-      <residential><bool>False</bool></residential>
-      <units>commercial_sqft</units>
-    </dict>
-  </commercial>
-  <industrial>
-    <dict>
-      <categories> array([ 1000,  2000,  5000, 10000]) </categories>
-      <developable_maximum_unit_variable_full_name>urbansim.gridcell.developable_maximum_industrial_sqft</developable_maximum_unit_variable_full_name>
-      <developable_minimum_unit_variable_full_name>urbansim.gridcell.developable_minimum_industrial_sqft</developable_minimum_unit_variable_full_name>
-      <residential><bool>False</bool></residential>
-      <units>industrial_sqft</units>
-    </dict>
-  </industrial>
-  <residential>
-    <dict>
-      <categories> array([  1,  2,  3,  5, 10, 20]) </categories>
-      <developable_maximum_unit_variable_full_name>urbansim.gridcell.developable_maximum_residential_units</developable_maximum_unit_variable_full_name>
-      <developable_minimum_unit_variable_full_name>urbansim.gridcell.developable_minimum_residential_units</developable_minimum_unit_variable_full_name>
-      <residential><bool>True</bool></residential>
-      <units>residential_units</units>
-    </dict>
-  </residential>
-</development_project_types>
+<item name="development_project_types" type="class" parser_action="execute">
+  <item name="Class name" type="string" flags="hidden">DevelopmentProjectTypesConfigurationCreator</item>
+  <item name="Class path" type="string" flags="hidden">urbansim.configurations.development_project_types_configuration_creator</item>
+
+  <item name="commercial" type="class">
+    <item name="Class name" type="string" flags="hidden">DevelopmentProjectTypeConfigurationCreator</item>
+    <item name="Class path" type="string" flags="hidden">urbansim.configurations.development_project_type_configuration_creator</item>
+    <item name="categories" type="list">
+      <item name="cat" type="integer">1000</item>
+      <item name="cat" type="integer">2000</item>
+      <item name="cat" type="integer">5000</item>
+      <item name="cat" type="integer">10000</item>
+    </item>
+    <item name="developable_maximum_unit_variable_full_name" type="string">urbansim.gridcell.developable_maximum_commercial_sqft</item>
+    <item name="developable_minimum_unit_variable_full_name" type="string">urbansim.gridcell.developable_minimum_commercial_sqft</item>
+    <item name="residential" type="boolean">False</item>
+    <item name="units" type="string">commercial_sqft</item>
+  </item>
+
+  <item name="industrial" type="class">
+    <item name="Class name" type="string" flags="hidden">DevelopmentProjectTypeConfigurationCreator</item>
+    <item name="Class path" type="string" flags="hidden">urbansim.configurations.development_project_type_configuration_creator</item>
+    <item name="categories" type="list">
+      <item name="cat" type="integer">1000</item>
+      <item name="cat" type="integer">2000</item>
+      <item name="cat" type="integer">5000</item>
+      <item name="cat" type="integer">10000</item>
+    </item>
+    <item name="developable_maximum_unit_variable_full_name" type="string">urbansim.gridcell.developable_maximum_industrial_sqft</item>
+    <item name="developable_minimum_unit_variable_full_name" type="string">urbansim.gridcell.developable_minimum_industrial_sqft</item>
+    <item name="residential" type="boolean">False</item>
+    <item name="units" type="string">industrial_sqft</item>
+  </item>
+  
+  <item name="residential" type="class">
+    <item name="Class name" type="string" flags="hidden">DevelopmentProjectTypeConfigurationCreator</item>
+    <item name="Class path" type="string" flags="hidden">urbansim.configurations.development_project_type_configuration_creator</item>
+    <item name="categories" type="list">
+      <item name="cat" type="integer">1</item>
+      <item name="cat" type="integer">2</item>
+      <item name="cat" type="integer">3</item>
+      <item name="cat" type="integer">5</item>
+      <item name="cat" type="integer">10</item>
+      <item name="cat" type="integer">20</item>
+    </item>
+    <item name="developable_maximum_unit_variable_full_name" type="string">urbansim.gridcell.developable_maximum_residential_units</item>
+    <item name="developable_minimum_unit_variable_full_name" type="string">urbansim.gridcell.developable_minimum_residential_units</item>
+    <item name="residential" type="boolean">True</item>
+    <item name="units" type="string">residential_units</item>
+  </item>
+
+</item>
+
+</configuration>
+
