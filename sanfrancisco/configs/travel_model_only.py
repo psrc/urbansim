@@ -28,5 +28,5 @@ class TravelModelOnly(Baseline):
 #        self['creating_baseyear_cache_configuration']['baseyear_cache']['directory_to_cache'] = r'C:\urbansim_cache\washtenaw\cache_source20070129'
 
         from sanfrancisco.travel_model.create_travel_model_configuration import create_travel_model_configuration
-        travel_model_configuration = create_travel_model_configuration('/workspace/urbansim_cache/sf_tm/', mode='full')
+        travel_model_configuration = create_travel_model_configuration('/test/sf_tm/', mode='full')
         self['travel_model_configuration'] = travel_model_configuration

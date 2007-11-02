@@ -25,7 +25,10 @@ class is_building_use_SSS(Variable):
         Variable.__init__(self)
         
     def dependencies(self):
-        return ["_building_use=business.disaggregate(building_use.building_use)"]
+        return [
+               "building_use_id=business.disaggregate(building.building_use_id)",
+               "_building_use=business.disaggregate(building_use.building_use)"
+           ]
         
     def compute(self,  dataset_pool):
         name = map(lambda x: x.lower(), self.get_dataset().get_attribute("_building_use") )

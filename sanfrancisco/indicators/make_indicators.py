@@ -17,7 +17,7 @@
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.indicator_framework.core.source_data import SourceData
-
+from numpy import arange
 from opus_core.indicator_framework.image_types.matplotlib_map import Map
 from opus_core.indicator_framework.image_types.matplotlib_chart import Chart
 from opus_core.indicator_framework.image_types.table import Table
@@ -28,12 +28,12 @@ from opus_core.indicator_framework.storage_location.database import Database
 
 
 run_description = '(baseline 06/28/2007)'
-cache_directory = r'E:\urbansim_cache\sanfrancisco\run_3514.2007_08_24_08_18'
+cache_directory = r'E:\urbansim_cache\sanfrancisco\runs\run_3633.2007_09_14_15_59'
 
 source_data = SourceData(
     cache_directory = cache_directory,
     run_description = run_description,
-    years = [2001,2005],
+    years = [2001,2006],
     dataset_pool_configuration = DatasetPoolConfiguration(
         package_order=['sanfrancisco','urbansim','opus_core'],
         package_order_exceptions={},
@@ -64,6 +64,13 @@ single_year_requests = [
                      'sector_5_employment=census_tract.aggregate(sanfrancisco.building.employment_of_sector_5, intermediates=[parcel])',
                      'sector_6_employment=census_tract.aggregate(sanfrancisco.building.employment_of_sector_6, intermediates=[parcel])',
                      'total_employment=census_tract.aggregate(sanfrancisco.building.employment, intermediates=[parcel])',
+                     'sector_1_businesses=census_tract.aggregate(business.sector_id == 1, intermediates=[building, parcel])',
+                     'sector_2_businesses=census_tract.aggregate(business.sector_id == 2, intermediates=[building, parcel])',
+                     'sector_3_businesses=census_tract.aggregate(business.sector_id == 3, intermediates=[building, parcel])',
+                     'sector_4_businesses=census_tract.aggregate(business.sector_id == 4, intermediates=[building, parcel])',
+                     'sector_5_businesses=census_tract.aggregate(business.sector_id == 5, intermediates=[building, parcel])',
+                     'sector_6_businesses=census_tract.aggregate(business.sector_id == 6, intermediates=[building, parcel])',
+                     'total_businesses=census_tract.aggregate(urbansim_parcel.parcel.number_of_businesses)',
        ],
        #exclude_condition = '==0' #exclude_condition now accepts opus expressions
    ),
@@ -100,7 +107,7 @@ single_year_requests = [
 source_data = SourceData(
     cache_directory = cache_directory,
     run_description = run_description,
-    years = [2001,2002,2003,2004,2005],
+    years = [2001,2006],
     dataset_pool_configuration = DatasetPoolConfiguration(
         package_order=['sanfrancisco','urbansim','opus_core'],
         package_order_exceptions={},
@@ -109,20 +116,75 @@ source_data = SourceData(
 
 multi_year_requests = [
     #Chart(
-        #attribute = 'sanfrancisco.district14.aggregate(building.residential_units,intermediates=[parcel])',
-        #dataset_name = 'district14',
+        #attribute = 'bus_ = alldata.aggregate_all(business.sector_id == 1)',
+        #dataset_name = 'alldata',
         #source_data = source_data,
+        #years=arange(2001,2026),
         #),
-    ]
+    
+    Table(
+    source_data = source_data,
+    dataset_name = 'alldata',
+    name = 'Business Counts 1',
+    output_type='csv',
+    attribute = 'bus_1 = alldata.aggregate_all(business.sector_id == 1)',
+    years = arange(2001,2026),
+    ),
+    
+    Table(
+    source_data = source_data,
+    dataset_name = 'alldata',
+    name = 'Business Counts 2',
+    output_type='csv',
+    attribute = 'bus_2 = alldata.aggregate_all(business.sector_id == 2)',
+    years = arange(2001,2026),
+    ),
+
+    Table(
+    source_data = source_data,
+    dataset_name = 'alldata',
+    name = 'Business Counts 3',
+    output_type='csv',
+    attribute = 'bus_3 = alldata.aggregate_all(business.sector_id == 3)',
+    years = arange(2001,2026),
+    ),
+
+    Table(
+    source_data = source_data,
+    dataset_name = 'alldata',
+    name = 'Business Counts 4',
+    output_type='csv',
+    attribute = 'bus_4 = alldata.aggregate_all(business.sector_id == 4)',
+    years = arange(2001,2026),
+    ),
+
+    Table(
+    source_data = source_data,
+    dataset_name = 'alldata',
+    name = 'Business Counts 5',
+    output_type='csv',
+    attribute = 'bus_5 = alldata.aggregate_all(business.sector_id == 5)',
+    years = arange(2001,2026),
+    ),
+
+    Table(
+    source_data = source_data,
+    dataset_name = 'alldata',
+    name = 'Business Counts 6',
+    output_type='csv',
+    attribute = 'bus_6 = alldata.aggregate_all(business.sector_id == 6)',
+    years = arange(2001,2026),
+    ),
+]
 
 if __name__ == '__main__':
     from opus_core.indicator_framework.core.indicator_factory import IndicatorFactory
 
-    IndicatorFactory().create_indicators(
-        indicators = single_year_requests,
-        display_error_box = False, 
-        show_results = True)   
     #IndicatorFactory().create_indicators(
-        #indicators = multi_year_requests,
+        #indicators = single_year_requests,
         #display_error_box = False, 
         #show_results = True)   
+    IndicatorFactory().create_indicators(
+        indicators = multi_year_requests,
+        display_error_box = False, 
+        show_results = True)   

@@ -65,3 +65,6 @@ drop table if exists buildings;
 drop table if exists parcels;
 create table buildings select * from buildings_01;
 create table parcels select * from parcels_01;
+
+#delete records with no primary key
+delete FROM parcels  where parcel_id is null;

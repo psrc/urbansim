@@ -21,4 +21,6 @@ aliases = [
    "employment_of_sector_mips = zone.aggregate(sanfrancisco.building.employment_of_sector_mips, intermediates=[parcel])",
    "employment_of_sector_pdr = zone.aggregate(sanfrancisco.building.employment_of_sector_pdr, intermediates=[parcel])",   
    "employment_of_sector_visitor = zone.aggregate(sanfrancisco.building.employment_of_sector_visitor, intermediates=[parcel])",
-           ]
+   "employment_of_sector_retailent = zone.aggregate(sanfrancisco.building.employment_of_sector_retailent, intermediates=[parcel])",
+
+]
