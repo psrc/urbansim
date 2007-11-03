@@ -26,9 +26,23 @@
     <item name="industrial_development_project_location_choice_model" type="dictionary">
       <item name="controller" type="file" parser_action="include">models/industrial_development_project_location_choice_model.xml</item>
     </item>
+    <item name="prescheduled_events" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/prescheduled_events.xml</item>
+    </item>
+    <item name="events_coordinator" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/events_coordinator.xml</item>
+    </item>
+    <item name="residential_land_share_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/residential_land_share_model.xml</item>
+    </item>
+    <item name="land_price_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/land_price_model.xml</item>
+    </item>
   </item>
 </item>
 
+    <!-- omitted item for home_based_choice_model -->
+    <!-- omitted item for auto_ownership_choice_model -->
 
 
 <item name="advanced" type="dictionary" parser_action="category">

@@ -1,12 +1,15 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
 
-<land_price_model>
-<class name="LandPriceModelConfigurationCreator" 
-          path="urbansim.configurations.land_price_model_configuration_creator">
-<dataset>gridcell</dataset>
-<nchunks>1</nchunks>
-<threshold>1000</threshold>
-<estimation_procedure>opus_core.estimate_linear_regression</estimation_procedure>
-<coefficients_table>land_price_model_coefficients</coefficients_table>
-<specification_table>land_price_model_specification</specification_table>
-</land_price_model>
+<item name="controller" type="class" parser_action="execute">
+  <item name="Class name" type="string" flags="hidden">LandPriceModelConfigurationCreator</item>
+  <item name="Class path" type="string" flags="hidden">urbansim.configurations.land_price_model_configuration_creator</item>
+  <item name="dataset" type="string">gridcell</item>
+  <item name="nchunks" type="integer">1</item>
+  <item name="threshold" type="integer">1000</item>
+  <item name="estimation_procedure" type="string">opus_core.estimate_linear_regression</item>
+  <item name="coefficients_table" type="string">land_price_model_coefficients</item>
+  <item name="specification_table" type="string">land_price_model_specification</item>
+</item>
+
+</configuration>

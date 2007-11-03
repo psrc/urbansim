@@ -1,7 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
 
-<prescheduled_events>
-<class name="PrescheduledEventsConfigurationCreator" 
-          path="urbansim.configurations.prescheduled_events_configuration_creator">
-<output_events>development_events</output_events>
-</prescheduled_events>
+<item name="controller" type="class" parser_action="execute">
+  <item name="Class name" type="string" flags="hidden">PrescheduledEventsConfigurationCreator</item>
+  <item name="Class path" type="string" flags="hidden">urbansim.configurations.prescheduled_events_configuration_creator</item>
+  <item name="output_events" type="string">development_events</item>
+</item>
+
+</configuration>
