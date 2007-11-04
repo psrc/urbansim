@@ -117,10 +117,8 @@ class XMLConfiguration(Configuration):
             return int(node.firstChild().nodeValue())
         elif type_name=='float':
             return float(node.firstChild().nodeValue())
-        elif type_name=='string':
-            return str(node.firstChild().nodeValue())
-        elif type_name=='password':
-            return str(node.firstChild().nodeValue())
+        elif type_name=='string' or type_name=='password':
+            return self._convert_string_to_data(node)
         elif type_name=='unicode':
             return unicode(node.firstChild().nodeValue())
         elif type_name=='list' or type_name=='tuple':
@@ -190,6 +188,14 @@ class XMLConfiguration(Configuration):
         inst.__init__(**keyword_args)
         return inst
     
+    def _convert_string_to_data(self, node):
+        action = str(node.attributes().namedItem('parser_action').nodeValue())
+        value = str(node.firstChild().nodeValue())
+        if action=='empty_string_to_None' and value=='':
+            return None
+        else:
+            return value
+        
     def _convert_list_or_tuple_to_data(self, node, filename, type_name):
         n = node.firstChild()
         result_list = []
@@ -282,6 +288,9 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config = XMLConfiguration(f)
         self.assertEqual(config, 
                          {'description': 'a test configuration',
+                          'empty1': '',
+                          'empty2': None,
+                          'emptypassword': None,
                           'year': 1980,
                           'mybool': True,
                           'ten': 10.0,

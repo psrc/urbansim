@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+
+<item name="controller" type="class" parser_action="execute">
+  <item name="Class name" type="string" flags="hidden">BuildingRelocationModelConfigurationCreator</item>
+  <item name="Class path" type="string" flags="hidden">urbansim.configurations.building_relocation_model_configuration_creator</item>
+  <item name="agent_set" type="string">building</item>
+  <item name="location_id_name" type="string">gridcell.get_id_name()[0]</item>
+  <item name="output_index" type="string">brm_index</item>
+</item>
+
+</configuration>

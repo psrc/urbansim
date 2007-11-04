@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+
+<item name="controller" type="class" parser_action="execute">
+  <item name="Class name" type="string" flags="hidden">EmploymentLocationChoiceModelConfigurationCreator</item>
+  <item name="Class path" type="string" flags="hidden">urbansim.configurations.employment_location_choice_model_configuration_creator</item>
+  <item name="agent_set" type="string">job</item>
+  <item name="sample_size_locations" type="integer">30</item>
+  <item name="sampler" type="string" parser_action="empty_string_to_None">opus_core.samplers.weighted_sampler</item>
+  <item name="choices" type="string">urbansim.lottery_choices</item>
+  <item name="location_set" type="string">gridcell</item>
+  <item name="portion_to_unplace" type="float">0.08333333333</item>
+  <item name="records_per_chunk" type="integer">50000</item>
+  <item name="attribute_to_group_by" type="string">job_building_type.name</item>
+  <item name="agents_for_estimation_table" type="string" parser_action="empty_string_to_None">jobs_for_estimation</item>
+  <item name="filter_for_estimation" type="string" parser_action="empty_string_to_None"></item>
+  <item name="filter" type="string" parser_action="empty_string_to_None"></item>
+  <item name="capacity_string" type="string" parser_action="empty_string_to_None">vacant_SSS_job_space</item>
+  <item name="compute_capacity_flag" type="boolean">True</item>
+  <item name="estimation_weight_string" type="string" parser_action="empty_string_to_None">total_number_of_possible_SSS_jobs</item>
+  <item name="estimation_size_agents" type="float">1.0</item>
+  <item name="agent_units_string" type="string" parser_action="empty_string_to_None"></item>
+  <item name="number_of_units_string" type="string" parser_action="empty_string_to_None">total_number_of_possible_SSS_jobs</item>
+  <item name="lottery_max_iterations" type="integer">3</item>
+  <item name="variable_package" type="string">urbansim</item>
+  <item name="maximum_runs" type="integer">3</item>
+  <item name="input_index" type="string">erm_index</item>
+  <item name="coefficients_table" type="string">employment_location_choice_model_coefficients</item>
+  <item name="specification_table" type="string">employment_location_choice_model_specification</item>
+</item>
+
+</configuration>

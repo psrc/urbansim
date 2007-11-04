@@ -2,6 +2,9 @@
 <configuration>
 
 <item name="description" type="string">a test configuration</item>
+<item name="empty1" type="string"></item>
+<item name="empty2" type="string" parser_action="empty_string_to_None"></item>
+<item name="emptypassword" type="password" parser_action="empty_string_to_None"></item>
 
 <item name="year" type="integer">1980</item>
 

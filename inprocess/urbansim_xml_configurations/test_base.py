@@ -14,8 +14,12 @@
 
 import os
 from inprocess.configurations.xml_configuration import XMLConfiguration
+from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
+
 
 inprocessdir = __import__('inprocess').__path__[0]
 baseconfig_path = os.path.join(inprocessdir, 'urbansim_xml_configurations', 'base_urbansim.xml')
-c = XMLConfiguration(baseconfig_path)
-print c
+new = XMLConfiguration(baseconfig_path)
+old = AbstractUrbansimConfiguration()
+pass
+

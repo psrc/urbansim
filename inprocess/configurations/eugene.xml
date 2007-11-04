@@ -1,11 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <configuration>
 
-<item name="parent" type="dictionary" icon=":/Images/specialIcon.png" parser_action="parent_old_format">
-  <item name="Class name" type="string">AbstractUrbansimConfiguration</item>
-  <item name="Class path" type="string">urbansim.configs.base_configuration</item>
-</item>
-  
+ <item name="parent" type="file" parser_action="parent">../urbansim_xml_configurations/base_urbansim.xml</item>
+
 <item name="description" type="string">Eugene baseline configuration</item>
   
 <item name="base_year" type="integer">1980</item>
