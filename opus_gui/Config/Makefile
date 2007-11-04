@@ -11,9 +11,14 @@
 # other acknowledgments.
 # 
 
-all:
+# Modify to RM = del for win
+RM = rm -f
+#RM = del
+
+all: 
 
 clean:
-	rm -f *.pyc
-	rm -f *~
+	$(RM) *.pyc
+	$(RM) *~
+
 

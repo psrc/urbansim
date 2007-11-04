@@ -18,20 +18,11 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-# QGIS bindings for mapping functions
-from qgis.core import *
-from qgis.gui import *
-
 # General system includes
 import sys
 
 # Urbansim Tools
 from Main.opusGui import *
-
-
-# Path to local QGIS install
-qgis_prefix = "/usr/local"
-
 
 # Main entry to program.  Set up the main app and create a new window.
 def main(argv):
@@ -42,9 +33,16 @@ def main(argv):
   # Set the app style
   app.setStyle(QString("plastique"))
   
-  # initialize qgis libraries
-  QgsApplication.setPrefixPath(qgis_prefix, True)
-  QgsApplication.initQgis()
+  try:
+    # QGIS bindings for mapping functions
+    import qgis.core
+    # Path to local QGIS install
+    qgis_prefix = "/usr/local/qgis_svn"
+    # initialize qgis libraries
+    qgis.core.QgsApplication.setPrefixPath(qgis_prefix, True)
+    qgis.core.QgsApplication.initQgis()
+  except ImportError:
+      print "Unable to import QGIS"
 
   # create main window
   wnd = OpusGui()
@@ -56,8 +54,12 @@ def main(argv):
   # Start the app up
   retval = app.exec_()
   
-  # We got an exit signal so time to clean up
-  QgsApplication.exitQgis()
+  try:
+    import qgis.core
+    # We got an exit signal so time to clean up
+    qgis.core.QgsApplication.exitQgis()
+  except ImportError:
+    pass
   
   sys.exit(retval)
 

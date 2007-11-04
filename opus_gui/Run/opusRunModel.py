@@ -1,4 +1,3 @@
-#
 # UrbanSim software. Copyright (C) 1998-2007 University of Washington
 # 
 # You can redistribute this program and/or modify it under the terms of the
@@ -12,22 +11,23 @@
 # other acknowledgments.
 # 
 
-# Modify for win
-RM = rm -f
-#RM = del
 
-all:
-	$(MAKE) -C Main
-	$(MAKE) -C Util
-	$(MAKE) -C Config
-	$(MAKE) -C Run
-	$(MAKE) -C Map
+# PyQt4 includes for python bindings to QT
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+from opusRunModel_ui import *
+import sys
 
-clean:
-	$(RM) *.pyc
-	$(RM) *~
-	$(MAKE) -C Main clean
-	$(MAKE) -C Util clean
-	$(MAKE) -C Config clean
-	$(MAKE) -C Run clean
-	$(MAKE) -C Map clean
+class RunModelGui(QDialog, Ui_OpusRunModel):
+    def __init__(self, parent, fl):
+        QDialog.__init__(self, parent, fl)
+        self.setupUi(self)
+        self.parent = parent
+
+    def on_pbnRunModel_released(self):
+	# Fire up a new thread and run the model
+	1+1
+            
+    def on_pbnCancel_released(self):
+        self.close()
+
