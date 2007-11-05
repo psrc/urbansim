@@ -12,23 +12,40 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait, ListInt
-
+import os
+from enthought.traits.api import HasStrictTraits, Str, Bool, Int, Float, Trait, ListInt
 from opus_core.configuration import Configuration
 
 
 class ServicesConfigurationCreator(HasStrictTraits):
     host_name = Str('localhost')
     user_name = Trait(None, None, Str)
+    db_password = Str('')
+    get_host_name_from_environment_var = Bool(True)
+    get_user_name_from_environment_var = Bool(True)
+    get_db_password_from_environment_var = Bool(True)
     database_name = Str('services')
     
     _model_name = 'services_configuration'
     
-    def execute(self):        
+    def execute(self):
+        if self.get_host_name_from_environment_var:
+            host = os.environ.get('MYSQLHOSTNAME')
+        else:
+            host = self.host_name
+        if self.get_user_name_from_environment_var:
+            user = os.environ.get('MYSQLUSERNAME')
+        else:
+            user = self.user_name
+        if self.get_db_password_from_environment_var:
+            pwd = os.environ.get('MYSQLPASSWORD')
+        else:
+            pwd = self.db_password
         return Configuration({
-            'host_name':self.host_name,
-            'user_name':self.user_name,
-            'database_name':self.database_name,
+            'host_name': host,
+            'user_name': user,
+            'db_password': pwd,
+            'database_name': self.database_name,
             })
             
 
@@ -46,8 +63,9 @@ class TestServicesConfigurationCreator(opus_unittest.OpusTestCase):
         creator = ServicesConfigurationCreator()
         
         expected = Configuration({
-            'host_name':'localhost',
-            'user_name':None,
+            'host_name': os.environ.get('MYSQLHOSTNAME'),
+            'user_name': os.environ.get('MYSQLUSERNAME'),
+            'db_password': os.environ.get('MYSQLPASSWORD'),
             'database_name':'services',
             })
         
@@ -58,18 +76,42 @@ class TestServicesConfigurationCreator(opus_unittest.OpusTestCase):
         creator = ServicesConfigurationCreator(
             host_name = 'host_name',
             user_name = 'user_name',
+            db_password = 'secret',
             database_name = 'database_name',
+            get_host_name_from_environment_var = False,
+            get_user_name_from_environment_var = False,
+            get_db_password_from_environment_var = False
             )
-            
         expected = Configuration({
             'host_name':'host_name',
             'user_name':'user_name',
+            'db_password': 'secret',
             'database_name':'database_name',
             })
         
         result = creator.execute()
         self.assertDictsEqual(result, expected)
             
+    def test_with_some_arguments(self):
+        creator = ServicesConfigurationCreator(
+            host_name = 'host_name',
+            user_name = 'user_name',
+            db_password = 'secret',
+            database_name = 'database_name',
+            get_host_name_from_environment_var = True,
+            get_user_name_from_environment_var = False,
+            get_db_password_from_environment_var = False
+            )
+        expected = Configuration({
+            'host_name': os.environ.get('MYSQLHOSTNAME'),
+            'user_name':'user_name',
+            'db_password': 'secret',
+            'database_name':'database_name',
+            })
+        
+        result = creator.execute()
+        self.assertDictsEqual(result, expected)
             
+           
 if __name__ == '__main__':
     opus_unittest.main()
