@@ -32,7 +32,7 @@ class ConvertNumarrayCacheToNumpyCache(object):
     
     #this has errors with new storage classes!
     def old_to_new_extension_mapping_for_binary_files(self):
-        endian = flt_storage(None)._get_native_endian_file_extension_character()
+        endian = flt_storage.storage_file(None)._get_native_endian_file_extension_character()
             
         return {
         '.Bool': '.ib1',
@@ -85,7 +85,7 @@ class ConvertNumarrayCacheToNumpyCache(object):
         elif extension == '.txt':
             data = load_from_text_file(file_path)
             numpy_array = numpy.array(data)
-            storage = flt_storage(None)
+            storage = flt_storage.storage_file(None)
             storage._write_to_file(output_directory, file_stem, numpy_array)
             
         else:

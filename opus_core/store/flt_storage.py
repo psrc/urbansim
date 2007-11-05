@@ -49,6 +49,7 @@ class flt_storage(Storage):
             name = '%s.%s' % (os.path.join(path, short_name), extension)
             return cls(name)
         
+        @classmethod
         def _map_byteorder_symbol_to_extension_character(cls, byteorder_character):
             map = {
                 '<': 'l', # little-endian
@@ -62,7 +63,7 @@ class flt_storage(Storage):
             
             return map[byteorder_character]
         
-        _map_byteorder_symbol_to_extension_character = classmethod(_map_byteorder_symbol_to_extension_character)
+        #_map_byteorder_symbol_to_extension_character = classmethod(_map_byteorder_symbol_to_extension_character)
                 
         def _map_extension_character_to_byteorder_symbol(self, extension_character):
             return {
@@ -76,7 +77,13 @@ class flt_storage(Storage):
             str = dtype.str
             return self._map_byteorder_symbol_to_extension_character(str[0]) + str[1:]
                 
-            
+    
+        def _get_native_endian_file_extension_character(self):
+            if array([1], dtype='<i4').dtype.byteorder == '=':
+                return self._map_byteorder_symbol_to_extension_character('<')
+            else:
+                return self._map_byteorder_symbol_to_extension_character('>')
+
         def _write_to_file(self, directory, attribute_name, attribute_data):
             """Writes data to a file."""
             extension = self._extension_for_numpy_type(attribute_data.dtype)
@@ -102,12 +109,8 @@ class flt_storage(Storage):
     def __init__(self, storage_location):
         self._base_directory = storage_location
 
-    def _get_native_endian_file_extension_character(self):
-        if array([1], dtype='<i4').dtype.byteorder == '=':
-            return self._map_byteorder_symbol_to_extension_character('<')
-        else:
-            return self._map_byteorder_symbol_to_extension_character('>')
-
+        
+    """@classmethod
     def _map_byteorder_symbol_to_extension_character(cls, byteorder_character):
         map = {
             '<': 'l', # little-endian
@@ -119,7 +122,7 @@ class flt_storage(Storage):
         else:
             map['='] = map['>']
             
-        return map[byteorder_character]
+        return map[byteorder_character]"""
 
     def has_table(self, table):
         return is_file_in_directory(table, self._get_base_directory())

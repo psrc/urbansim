@@ -50,7 +50,7 @@ class TestDoConvertNumarrayCacheToNumpyCache(opus_unittest.OpusTestCase):
         convert.convert_file(os.path.join(self.test_data_path, 'numarray_inputs'), 'do_not_change_me.sometext', output_directory)
         self.assert_(os.path.exists(os.path.join(output_directory, 'do_not_change_me.sometext')))
         
-        endian = flt_storage(None)._get_native_endian_file_extension_character()
+        endian = flt_storage.storage_file(None)._get_native_endian_file_extension_character()
 
         convert.convert_file(os.path.join(self.test_data_path, 'numarray_inputs'), 'f.Int32', output_directory)
         self.assert_(os.path.exists(os.path.join(output_directory, 'f.%si4' % endian)))
