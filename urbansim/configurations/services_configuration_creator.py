@@ -21,23 +21,23 @@ class ServicesConfigurationCreator(HasStrictTraits):
     host_name = Str('localhost')
     user_name = Trait(None, None, Str)
     db_password = Str('')
-    get_host_name_from_environment_var = Bool(True)
-    get_user_name_from_environment_var = Bool(True)
-    get_db_password_from_environment_var = Bool(True)
+    get_host_name_from_environment_variable = Bool(True)
+    get_user_name_from_environment_variable = Bool(True)
+    get_db_password_from_environment_variable = Bool(True)
     database_name = Str('services')
     
     _model_name = 'services_configuration'
     
     def execute(self):
-        if self.get_host_name_from_environment_var:
+        if self.get_host_name_from_environment_variable:
             host = os.environ.get('MYSQLHOSTNAME')
         else:
             host = self.host_name
-        if self.get_user_name_from_environment_var:
+        if self.get_user_name_from_environment_variable:
             user = os.environ.get('MYSQLUSERNAME')
         else:
             user = self.user_name
-        if self.get_db_password_from_environment_var:
+        if self.get_db_password_from_environment_variable:
             pwd = os.environ.get('MYSQLPASSWORD')
         else:
             pwd = self.db_password
@@ -78,9 +78,9 @@ class TestServicesConfigurationCreator(opus_unittest.OpusTestCase):
             user_name = 'user_name',
             db_password = 'secret',
             database_name = 'database_name',
-            get_host_name_from_environment_var = False,
-            get_user_name_from_environment_var = False,
-            get_db_password_from_environment_var = False
+            get_host_name_from_environment_variable = False,
+            get_user_name_from_environment_variable = False,
+            get_db_password_from_environment_variable = False
             )
         expected = Configuration({
             'host_name':'host_name',
@@ -98,9 +98,9 @@ class TestServicesConfigurationCreator(opus_unittest.OpusTestCase):
             user_name = 'user_name',
             db_password = 'secret',
             database_name = 'database_name',
-            get_host_name_from_environment_var = True,
-            get_user_name_from_environment_var = False,
-            get_db_password_from_environment_var = False
+            get_host_name_from_environment_variable = True,
+            get_user_name_from_environment_variable = False,
+            get_db_password_from_environment_variable = False
             )
         expected = Configuration({
             'host_name': os.environ.get('MYSQLHOSTNAME'),
