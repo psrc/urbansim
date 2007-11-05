@@ -36,38 +36,49 @@ class DatabaseServerConfiguration(AbstractConfiguration):
     user_name = Str
     password = Password
     
-    use_environment_variable_for_user_name = Bool
-    use_environment_variable_for_host_name = Bool
-    use_environment_variable_for_password = Bool
+    get_user_name_from_environment_variable = Bool
+    get_host_name_from_environment_variable = Bool
+    get_password_from_environment_variable = Bool
 
 
 #===============================================================================
 #   Functionality
 #===============================================================================
 
-    def __init__(self, host_name=None, user_name=None, password=None):
+    def __init__(self, host_name=None, user_name=None, password=None,
+                 get_host_name_from_environment_variable=None,
+                 get_user_name_from_environment_variable=None,
+                 get_password_from_environment_variable=None):
+        
         self.env_host_name = os.environ.get('MYSQLHOSTNAME','localhost')
-        if host_name is None or host_name=='':
-            self.host_name = self.env_host_name # Redundant --
-            self.use_environment_variable_for_host_name = True # because of this
-                    # -- but whatever.
+        if host_name is None or get_host_name_from_environment_variable:
+            self.host_name = self.env_host_name
         else:
             self.host_name = host_name
-        
+        if get_host_name_from_environment_variable is None:
+            self.get_host_name_from_environment_variable = host_name is None
+        else:
+            self.get_host_name_from_environment_variable = get_host_name_from_environment_variable
+
         self.env_user_name = os.environ.get('MYSQLUSERNAME','')
-        if user_name is None or user_name=='':
-            self.user_name = self.env_user_name # Ditto.
-            self.use_environment_variable_for_user_name = True
+        if user_name is None or get_user_name_from_environment_variable:
+            self.user_name = self.env_user_name
         else:
             self.user_name = user_name
-        
+        if get_user_name_from_environment_variable is None:
+            self.get_user_name_from_environment_variable = user_name is None
+        else:
+            self.get_user_name_from_environment_variable = get_user_name_from_environment_variable
+
         self.env_password = os.environ.get('MYSQLPASSWORD','')
-        if password is None or password=='':
-            self.env_password = self.env_password # Ditto.
-            self.use_environment_variable_for_password = True
+        if password is None or get_password_from_environment_variable:
+            self.password = self.env_password
         else:
             self.password = password
-        
+        if get_password_from_environment_variable is None:
+            self.get_password_from_environment_variable = password is None
+        else:
+            self.get_password_from_environment_variable = get_password_from_environment_variable
 
 #===============================================================================
 #   Events
@@ -75,25 +86,25 @@ class DatabaseServerConfiguration(AbstractConfiguration):
 
     def _host_name_changed(self, value):
         if value != self.env_host_name:
-            self.use_environment_variable_for_host_name = False  
+            self.get_host_name_from_environment_variable = False  
 
     def _user_name_changed(self, value):
         if value != self.env_user_name:
-            self.use_environment_variable_for_user_name = False
+            self.get_user_name_from_environment_variable = False
         
     def _password_changed(self, value):
         if value != self.env_password:
-            self.use_environment_variable_for_password = False
+            self.get_password_from_environment_variable = False
 
-    def _use_environment_variable_for_user_name_changed(self, use_env):
+    def _get_user_name_from_environment_variable_changed(self, use_env):
         if use_env:
             self.user_name = self.env_user_name
 
-    def _use_environment_variable_for_host_name_changed(self, use_env):
+    def _get_host_name_from_environment_variable_changed(self, use_env):
         if use_env:            
             self.host_name = self.env_host_name
 
-    def _use_environment_variable_for_password_changed(self, use_env):
+    def _get_password_from_environment_variable_changed(self, use_env):
         if use_env:
             self.password = self.env_password
     
@@ -162,6 +173,30 @@ class DatabaseServerConfigurationTests(opus_unittest.OpusTestCase):
             "Lost user name in pickled version.")
         self.assertEqual(unpickled.password, expected_password,
             "Lost password in pickled version.")
+        
+        # additional tests for get_host_name_from_environment_variable,
+        # get_user_name_from_environment_variable, 
+        # and get_password_from_environment_variable
+        c2 = DatabaseServerConfiguration(host_name='h', user_name='fred', password='secret',
+                 get_host_name_from_environment_variable=False,
+                 get_user_name_from_environment_variable=False,
+                 get_password_from_environment_variable=False)
+        self.assertEqual(c2.host_name, 'h')
+        self.assertEqual(c2.user_name, 'fred')
+        self.assertEqual(c2.password, 'secret')
+        
+        c3 = DatabaseServerConfiguration(host_name='h', user_name='fred', password='secret',
+                 get_host_name_from_environment_variable=True,
+                 get_user_name_from_environment_variable=True,
+                 get_password_from_environment_variable=True)
+        self.assertEqual(c3.host_name, os.environ['MYSQLHOSTNAME'])
+        self.assertEqual(c3.user_name, os.environ['MYSQLUSERNAME'])
+        self.assertEqual(c3.password, os.environ['MYSQLPASSWORD'])
+        
+        c4 = DatabaseServerConfiguration()
+        self.assertEqual(c4.host_name, os.environ['MYSQLHOSTNAME'])
+        self.assertEqual(c4.user_name, os.environ['MYSQLUSERNAME'])
+        self.assertEqual(c4.password, os.environ['MYSQLPASSWORD'])
 
 
 if __name__=='__main__':

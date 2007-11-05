@@ -32,20 +32,20 @@ class DatabaseConfigurationView(View):
                 Group('database_name', show_border=True),
                 
                 Group( # Host Name Section
-                    Group('50',Item('use_environment_variable_for_host_name',help=self.env_var_help), orientation='horizontal'),
-                    Item('host_name', enabled_when='not(use_environment_variable_for_host_name)'),
+                    Group('50',Item('get_host_name_from_environment_variable',help=self.env_var_help), orientation='horizontal'),
+                    Item('host_name', enabled_when='not(get_host_name_from_environment_variable)'),
                     show_border=True
                     ),
                     
                 Group( # User Name Section
-                    Group('50', Item('use_environment_variable_for_user_name', help=self.env_var_help), orientation='horizontal'),
-                    Item('user_name', enabled_when='not(use_environment_variable_for_user_name)'),
+                    Group('50', Item('get_user_name_from_environment_variable', help=self.env_var_help), orientation='horizontal'),
+                    Item('user_name', enabled_when='not(get_user_name_from_environment_variable)'),
                     show_border=True
                     ),
                     
                 Group( # Password Section
-                    Group('50', Item('use_environment_variable_for_password', help=self.env_var_help), orientation='horizontal'),
-                    Item('password', enabled_when='not(use_environment_variable_for_password)'),
+                    Group('50', Item('get_password_from_environment_variable', help=self.env_var_help), orientation='horizontal'),
+                    Item('password', enabled_when='not(get_password_from_environment_variable)'),
                     show_border=True
                     ),
                     

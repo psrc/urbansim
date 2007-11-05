@@ -37,15 +37,21 @@ class DatabaseConfiguration(DatabaseServerConfiguration):
 #   Functionality
 #===============================================================================
 
-    def __init__(self, database_name, host_name=None, user_name=None, 
-            password=None):
-                
+    def __init__(self, database_name, 
+                 host_name=None, 
+                 user_name=None, 
+                 password=None,
+                 get_host_name_from_environment_variable=None,
+                 get_user_name_from_environment_variable=None,
+                 get_password_from_environment_variable=None):
         self.database_name = database_name
-
         DatabaseServerConfiguration.__init__(self,
             host_name = host_name,
             user_name = user_name,
             password = password,
+            get_host_name_from_environment_variable=get_host_name_from_environment_variable,
+            get_user_name_from_environment_variable=get_user_name_from_environment_variable,
+            get_password_from_environment_variable=get_password_from_environment_variable
             )
 
 #===============================================================================
