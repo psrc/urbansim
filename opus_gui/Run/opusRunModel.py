@@ -16,17 +16,35 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from opusRunModel_ui import *
-import sys,time
+import os, sys, time
+
+from opus_core.tools.start_run import StartRunOptionGroup
+from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
+from inprocess.configurations.xml_configuration import XMLConfiguration
 
 class OpusModelTest(object):
     def __init__(self,parent):
         self.parent = parent
 
     def run(self):
-        for i in range(101):
-            self.parent.progressCallback(i)
-            time.sleep(0.1)
+        # Run the Eugene model using the XML version of the Eugene configuration.
+        # This code hacked together based on opus_core/tools/start_run.py
+        # No progress bar indicator yet ...
+        option_group = StartRunOptionGroup()
+        parser = option_group.parser
+        # simulate 0 command line arguments by passing in []
+        (options, args) = parser.parse_args([])
+        run_manager = option_group.get_run_manager(options)
+        # find the directory containing the eugene xml configurations
+        inprocessdir = __import__('inprocess').__path__[0]
+        path = os.path.join(inprocessdir, 'configurations', 'projects', 'eugene', 'baseline.xml')
+        config = XMLConfiguration(path)
+        insert_auto_generated_cache_directory_if_needed(config)
+        run_manager.run_run(config)
         self.parent.finishedCallback(True)
+        #
+        # statement to signal i % progress:
+        # self.parent.progressCallback(i)
         
     
 class RunModelThread(QThread):
