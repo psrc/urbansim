@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusRunModel.ui'
 #
-# Created: Sat Nov  3 13:47:26 2007
+# Created: Sun Nov  4 14:04:36 2007
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,9 +27,10 @@ class Ui_OpusRunModel(object):
         self.hboxlayout.setMargin(9)
         self.hboxlayout.setObjectName("hboxlayout")
 
-        self.model_text = QtGui.QLabel(self.widget)
-        self.model_text.setObjectName("model_text")
-        self.hboxlayout.addWidget(self.model_text)
+        self.runProgressBar = QtGui.QProgressBar(self.widget)
+        self.runProgressBar.setProperty("value",QtCore.QVariant(24))
+        self.runProgressBar.setObjectName("runProgressBar")
+        self.hboxlayout.addWidget(self.runProgressBar)
         self.vboxlayout.addWidget(self.widget)
 
         self.widget_2 = QtGui.QWidget(OpusRunModel)
@@ -54,7 +55,6 @@ class Ui_OpusRunModel(object):
 
     def retranslateUi(self, OpusRunModel):
         OpusRunModel.setWindowTitle(QtGui.QApplication.translate("OpusRunModel", "OpusGui - Run Model", None, QtGui.QApplication.UnicodeUTF8))
-        self.model_text.setText(QtGui.QApplication.translate("OpusRunModel", "Starting to run the model...", None, QtGui.QApplication.UnicodeUTF8))
         self.pbnCancel.setText(QtGui.QApplication.translate("OpusRunModel", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
         self.pbnStartModel.setText(QtGui.QApplication.translate("OpusRunModel", "Start Model", None, QtGui.QApplication.UnicodeUTF8))
 

@@ -16,18 +16,66 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from opusRunModel_ui import *
-import sys
+import sys,time
+
+class OpusModelTest():
+    def __init__(self,parent):
+        self.parent = parent
+
+    def run(self):
+        for i in range(101):
+            self.parent.progressCallback(i)
+            time.sleep(0.1)
+        self.parent.finishedCallback(True)
+        
+    
+class RunModelThread(QThread):
+    def __init__(self, parent):
+        QThread.__init__(self, parent)
+        self.parent = parent
+        
+    def run(self):
+        self.parent.progressBar.setRange(0,100)
+        self.model = OpusModelTest(self)
+        self.model.run()
+
+    def progressCallback(self,percent):
+        print "Ping From Model"
+        self.emit(SIGNAL("runPing(PyQt_PyObject)"),percent)
+
+    def finishedCallback(self,success):
+        if success:
+            print "Success retruned from Model"
+        else:
+            print "Error retruned from Model"
+        self.emit(SIGNAL("runFinished(PyQt_PyObject)"),success)
+            
 
 class RunModelGui(QDialog, Ui_OpusRunModel):
     def __init__(self, parent, fl):
         QDialog.__init__(self, parent, fl)
         self.setupUi(self)
         self.parent = parent
+        self.progressBar = self.runProgressBar
+        self.progressBar.reset()
 
-    def on_pbnRunModel_released(self):
+    def on_pbnStartModel_released(self):
 	# Fire up a new thread and run the model
-	1+1
+        print "Start Model Pressed"
+	self.runThread = RunModelThread(self)
+        QObject.connect(self.runThread, SIGNAL("runPing(PyQt_PyObject)"),
+                        self.runPingFromThread)
+        QObject.connect(self.runThread, SIGNAL("runFinished(PyQt_PyObject)"),
+                        self.runFinishedFromThread)
+        self.runThread.start()
             
     def on_pbnCancel_released(self):
         self.close()
+
+    def runPingFromThread(self,value):
+        self.progressBar.setValue(value)
+        print "Ping from thread!"
+
+    def runFinishedFromThread(self,success):
+        print "Model Finished!"
 

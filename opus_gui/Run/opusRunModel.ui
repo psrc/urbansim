@@ -48,9 +48,9 @@
        <number>9</number>
       </property>
       <item>
-       <widget class="QLabel" name="model_text" >
-        <property name="text" >
-         <string>Starting to run the model...</string>
+       <widget class="QProgressBar" name="runProgressBar" >
+        <property name="value" >
+         <number>24</number>
         </property>
        </widget>
       </item>
