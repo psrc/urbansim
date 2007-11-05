@@ -27,7 +27,7 @@ class ParallelPythonTest(unittest.TestCase):
         self.ppservers = ()
         #ppservers = ("10.0.0.1",)
 
-    def test_sample(self):
+    def xtest_sample(self):
 
         def mysamplefunc(arr):
             sample_noreplace(arr, arr.size/10)

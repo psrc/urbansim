@@ -21,7 +21,8 @@ class ParallelManager:
     def run_parallel(self, function, inputs, args=(), depfuncs=(), modules=(), return_as_numpy=True):
         # submit jobs
         jobs = [self.parallel_server.submit(function,(input,) + args, depfuncs=depfuncs, modules=modules) for input in inputs]
-        result = [job() for job in jobs]        
+        result = [job() for job in jobs]
+        #print result
         if return_as_numpy:
             return array(result)
         return result
@@ -32,7 +33,7 @@ from numpy import arange, resize, array, zeros
 import time
 
 class ParallelManagerTest(opus_unittest.OpusTestCase):
-    def test_pp_manager_sample(self):
+    def xtest_pp_manager_sample(self):
 
         def mysamplefunc(arr):
             a = sample_noreplace(arr, arr.size/10)
@@ -40,14 +41,14 @@ class ParallelManagerTest(opus_unittest.OpusTestCase):
         
         ncpus = 2
         manager = ParallelManager(ncpus=ncpus)
-        l = resize(arange(100), (100,100000))
+        l = resize(arange(100), (10,10000))
 
         start= time.time()
         results = manager.run_parallel(mysamplefunc, l, depfuncs=(sample_noreplace,unique_values))
         print "test_pp_manager_sample on %s cpus: %s" % (ncpus, time.time()-start)
         #print result
         start= time.time()
-        result = zeros((100,100))
+        result = zeros((10,100))
         for i in xrange(l.shape[0]):
             result[i,:] = mysamplefunc(l[i,:])
         print "test_pp_manager_sample sequential: %s" % (time.time()-start)
