@@ -18,7 +18,7 @@ from PyQt4.QtGui import *
 from opusRunModel_ui import *
 import sys,time
 
-class OpusModelTest():
+class OpusModelTest(object):
     def __init__(self,parent):
         self.parent = parent
 
