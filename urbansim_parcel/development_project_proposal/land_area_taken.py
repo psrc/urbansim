@@ -25,7 +25,6 @@ class land_area_taken(Variable):
 
     def dependencies(self):
         return ["vacant_land_area = development_project_proposal.disaggregate(urbansim_parcel.parcel.vacant_land_area)",
-                "parcel_sqft = development_project_proposal.disaggregate(urbansim_parcel.parcel.parcel_sqft)",
                 "land_sqft_min = development_project_proposal.disaggregate(development_template.land_sqft_min)",
                 "land_sqft_max = development_project_proposal.disaggregate(development_template.land_sqft_max)", 
                  ]
@@ -38,6 +37,8 @@ class land_area_taken(Variable):
         land_sqft_max = proposals.get_attribute("land_sqft_max")
 
         if 'is_redevelopment' in proposals.get_known_attribute_names():
+            self.add_and_solve_dependencies(["parcel_sqft = development_project_proposal.disaggregate(urbansim_parcel.parcel.parcel_sqft)"],
+                                        dataset_pool=dataset_pool)
             is_redev = proposals.get_attribute('is_redevelopment') == True
             vacant_land_area[is_redev] = proposals.get_attribute('parcel_sqft')[is_redev]
         
