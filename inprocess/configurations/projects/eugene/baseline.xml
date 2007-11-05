@@ -9,7 +9,7 @@
 
 <item name="years" type="tuple">
   <item name="startyear" type="integer">1981</item>
-  <item name="endyear" type="integer">1982</item>
+  <item name="endyear" type="integer">1981</item>
 </item>
 
 <item type="list" name="models" >
@@ -55,7 +55,7 @@
   <item name="baseyear_cache" type="class">
     <item name="Class name" type="string" flags="hidden">BaseyearCacheConfiguration</item>
     <item name="Class path" type="string" flags="hidden">opus_core.configurations.baseyear_cache_configuration</item>
-    <item name="existing_cache_to_copy" type="string">c:/urbansim_cache/run_962.2006_11_07_08_50</item>
+    <item name="existing_cache_to_copy" type="string">c:/urbansim_cache/eugene_1980_baseyear_cache</item>
   </item>
   <item name="cache_scenario_database" type="string">urbansim.model_coordinators.cache_scenario_database</item>
   <item name="tables_to_cache" type="list">
