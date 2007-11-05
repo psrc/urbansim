@@ -7,9 +7,9 @@
   <item name="host_name" type="string"></item>
   <item name="user_name" type="string"></item>
   <item name="db_password" type="password"></item>
-  <item name="get_host_name_from_environment_variable" type="Boolean">True</item>
-  <item name="get_user_name_from_environment_variable" type="Boolean">True</item>
-  <item name="get_db_password_from_environment_variable" type="Boolean">True</item>
+  <item name="get_host_name_from_environment_variable" type="boolean">True</item>
+  <item name="get_user_name_from_environment_variable" type="boolean">True</item>
+  <item name="get_db_password_from_environment_variable" type="boolean">True</item>
   <item name="database_name" type="string">services</item>
 
 </configuration>
