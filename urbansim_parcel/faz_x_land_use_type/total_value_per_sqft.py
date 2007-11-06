@@ -19,13 +19,15 @@ class total_value_per_sqft(Variable):
     def dependencies(self):
         return ["faz_id = parcel.disaggregate(zone.faz_id)",
                 "parcel.land_use_type_id",
-                "urbansim_parcel.parcel.total_value_per_sqft"
+                #"urbansim_parcel.parcel.total_value_per_sqft"
+                "urbansim_parcel.parcel.unit_price"
                 ]
         
     def compute(self, dataset_pool):
         ds = self.get_dataset()
         parcels = dataset_pool.get_dataset('parcel')
-        up = parcels.get_attribute("total_value_per_sqft")
+        #up = parcels.get_attribute("total_value_per_sqft")
+        up = parcels.get_attribute("unit_price")
         faz = parcels.get_attribute("faz_id")
         lut = parcels.get_attribute("land_use_type_id")
         fazids = ds.get_dataset(1).get_id_attribute()
@@ -55,7 +57,7 @@ class Tests(opus_unittest.OpusTestCase):
                               },
              "parcel":{
                  "parcel_id": arange(1,21),
-                 "total_value_per_sqft":       array([10,5,3,100,2,1,4,2,68,400,3,12,14,59,24,0,0,24,5,2.5]),
+                 "unit_price":       array([10,5,3,100,2,1,4,2,68,400,3,12,14,59,24,0,0,24,5,2.5]),
                  "land_use_type_id": array([1, 3,1, 5, 4,5,4,3,1,  1, 4,3, 1, 5, 5, 3,4, 1,1, 1]),
                  "faz_id":    array([1, 2,2, 1, 2,1,1,1,1,  2, 2,1, 2, 1, 2, 2,1, 1,1, 2])
                        }
