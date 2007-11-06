@@ -19,6 +19,8 @@ from opus_core.misc import get_config_from_opus_path
 from opus_core.logger import logger
 from remote_run_controller import RemoteRunOptionGroup
 from remote_run_controller import RemoteRun
+from opus_core.services.run_server.run_activity import RunActivity
+from urbansim.tools.run_manager import RunManager
 
 class RemoteRunSetOptionGroup(RemoteRunOptionGroup):
     def __init__(self):
@@ -47,17 +49,19 @@ class RemoteRunSet(RemoteRun):
         else:
             self.read_run_id_file(run_id_file)
             self.run_id_file = run_id_file
+            run_activity = RunActivity(self.services_database)
+            self.run_manager = RunManager(run_activity)
         return None
             
     def run(self, start_year, end_year, configuration_path, run_id_file=None):
         self.prepare_for_run(configuration_path=configuration_path, run_id_file=run_id_file)    
-        self._do_run(start_year, end_year, config)
+        self._do_run(start_year, end_year)
         
     def read_run_id_file(self, filename):
         # filename is a file with a pair (run_id, year) per row
-        content = load_table_from_text_file(filename, convert_to_float=True)
+        content = load_table_from_text_file(filename, convert_to_float=True)[0]
         for run_id, year in content:
-            self.run_ids_dict[run_id] = year
+            self.run_ids_dict[int(run_id)] = int(year)
         
     def _do_run(self, start_year, end_year, *args, **kwargs):
         logger.log_status("run_id_file: %s" % self.run_id_file)
