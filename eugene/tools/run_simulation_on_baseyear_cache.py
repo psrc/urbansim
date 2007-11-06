@@ -75,7 +75,8 @@ if __name__ == '__main__':
     ###         the unicode case.
     cache_dir = str(args.filesystem_path_to_baseyear_cache)
     classpath = str(args.opus_classpath_of_configuration)
-    output_dir = os.path.join(str(args.output_directory), strftime('%Y_%m_%d_%H_%M',localtime()))
+    output_dir_container = str(args.output_directory)
+    output_dir = os.path.join(output_dir_container, strftime('%Y_%m_%d_%H_%M',localtime()))
     years_to_run = args.number_of_years_to_run
     
     exec(create_import_for_camel_case_class(classpath, 
@@ -98,6 +99,12 @@ if __name__ == '__main__':
     base_year_directory = os.path.join(cache_dir, str(base_year))
     if not os.path.exists(base_year_directory):
         msg = 'Invalid cache directory: %s\nThe cache directory should have a subdirectory %d for the base year' % (cache_dir, base_year)
+        display_message_dialog(msg)
+        sys.exit(1)
+    
+    # sanity check on the output directory 
+    if output_dir_container=='':
+        msg = 'Output directory not specified'
         display_message_dialog(msg)
         sys.exit(1)
     
