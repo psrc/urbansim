@@ -67,11 +67,11 @@ class RemoteRunSet(RemoteRun):
             else:
                 this_start_year = start_year
             RemoteRun._do_run(self, max(this_start_year, finished_year+1), end_year, config)
-            self.run_ids[self.run_id] = self.get_urbansim_last_year(config)
+            self.run_ids_dict[self.run_id] = self.get_urbansim_last_year(config)
             self.write_into_run_id_file()
             
     def write_into_run_id_file(self):
-        result = array(map(lambda(x,y): [x,y], self.run_ids.iteritems()))
+        result = array(map(lambda(x,y): [x,y], self.run_ids_dict.iteritems()))
         write_table_to_text_file(self.run_id_file, result)
         
 if __name__ == "__main__":
