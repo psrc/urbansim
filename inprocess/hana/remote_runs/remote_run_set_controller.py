@@ -67,6 +67,7 @@ class RemoteRunSet(RemoteRun):
         logger.log_status("run_id_file: %s" % self.run_id_file)
         for run_id, finished_year in self.run_ids_dict.iteritems():
             self.run_id = run_id
+            self.remote_communication_path = '%s/%s' % (self.remote_communication_path_root, self.run_id)
             config = self.run_manager.get_resources_for_run_id_from_history(services_host_name=self.services_hostname,
                                                                        services_database_name=self.services_dbname,
                                                                        run_id=self.run_id)
@@ -74,7 +75,10 @@ class RemoteRunSet(RemoteRun):
                 this_start_year = config['years'][0]
             else:
                 this_start_year = start_year
-            RemoteRun._do_run(self, max(this_start_year, finished_year+1), end_year, config)
+            this_start_year = max(this_start_year, finished_year+1)
+            if this_start_year > end_year: 
+                continue
+            RemoteRun._do_run(self, this_start_year, end_year, config)
             self.run_ids_dict[self.run_id] = self.get_urbansim_last_year(config)
             self.write_into_run_id_file()
             
