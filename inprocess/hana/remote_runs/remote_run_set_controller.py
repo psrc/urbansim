@@ -14,6 +14,7 @@
 
 import getpass
 from numpy.random import seed, randint
+from numpy import array
 from opus_core.misc import load_table_from_text_file, write_table_to_text_file
 from opus_core.misc import get_config_from_opus_path
 from opus_core.logger import logger
