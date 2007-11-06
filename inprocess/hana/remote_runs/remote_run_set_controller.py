@@ -49,6 +49,10 @@ class RemoteRunSet(RemoteRun):
             self.run_id_file = run_id_file
         return None
             
+    def run(self, start_year, end_year, configuration_path, run_id_file=None):
+        self.prepare_for_run(configuration_path=configuration_path, run_id_file=run_id_file)    
+        self._do_run(start_year, end_year, config)
+        
     def read_run_id_file(self, filename):
         # filename is a file with a pair (run_id, year) per row
         content = load_table_from_text_file(filename, convert_from_float=True)
