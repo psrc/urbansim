@@ -206,14 +206,15 @@ class RunManager(object):
                 year_to_purge = run_resources['years'][0]
                 if skip_urbansim:
                     year_to_purge += 1
-                while True:
-                    dir_to_remove = os.path.join(run_resources['cache_directory'], str(year_to_purge))
-                    if os.path.exists(dir_to_remove):
-                        logger.log_status('Removing cache directory: %s' % dir_to_remove)
-                        shutil.rmtree(dir_to_remove)
-                        year_to_purge += 1
-                    else:
-                        break
+                if year_to_purge > run_resources['base_year']: # do not delete cache if it is the base year
+                    while True:
+                        dir_to_remove = os.path.join(run_resources['cache_directory'], str(year_to_purge))
+                        if os.path.exists(dir_to_remove):
+                            logger.log_status('Removing cache directory: %s' % dir_to_remove)
+                            shutil.rmtree(dir_to_remove)
+                            year_to_purge += 1
+                        else:
+                            break
 
             run_resources["skip_urbansim"] = skip_urbansim
             self.run_activity.add_row_to_history(history_id, run_resources, "restarted in %d" % run_resources['years'][0])

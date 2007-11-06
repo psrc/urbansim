@@ -175,8 +175,11 @@ def load_from_file(filename, byteorder=DEFAULT_BYTEORDER, type='float32'):
 
 def load_table_from_text_file(filename, convert_to_float=False, split_delimiter=' ', header=False):
 
-    """Reads table from a file. If 'convert_to_float' is False, it returns a strings array.
-       Otherwise it returns a 2D numpy array. In the latter case, a row is splitted using the 'split_delimiter'.
+    """Reads table from a file. It returns a tuple, where the first element
+       is an array of the values in file, the second element is the header.
+       If 'convert_to_float' is False, the value array a strings array.
+       Otherwise the value array is a 2D numpy array. In the latter case, a row is splitted using the 'split_delimiter'.
+       If header is False, noo header is assumed and the second element of the resulting tuple is None.
     """
     from numpy import array, reshape
 
