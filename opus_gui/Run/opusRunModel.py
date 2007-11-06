@@ -19,7 +19,7 @@ from opusRunModel_ui import *
 import os, sys, time
 
 from opus_core.tools.start_run import StartRunOptionGroup
-from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
+from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed, SimulationRunError
 from inprocess.configurations.xml_configuration import XMLConfiguration
 
 class OpusModelTest(object):
@@ -30,18 +30,22 @@ class OpusModelTest(object):
         # Run the Eugene model using the XML version of the Eugene configuration.
         # This code hacked together based on opus_core/tools/start_run.py
         # No progress bar indicator yet ...
-        option_group = StartRunOptionGroup()
-        parser = option_group.parser
-        # simulate 0 command line arguments by passing in []
-        (options, args) = parser.parse_args([])
-        run_manager = option_group.get_run_manager(options)
-        # find the directory containing the eugene xml configurations
-        inprocessdir = __import__('inprocess').__path__[0]
-        path = os.path.join(inprocessdir, 'configurations', 'projects', 'eugene', 'baseline.xml')
-        config = XMLConfiguration(path)
-        insert_auto_generated_cache_directory_if_needed(config)
-        run_manager.run_run(config)
-        self.parent.finishedCallback(True)
+        try:
+            option_group = StartRunOptionGroup()
+            parser = option_group.parser
+            # simulate 0 command line arguments by passing in []
+            (options, args) = parser.parse_args([])
+            run_manager = option_group.get_run_manager(options)
+            # find the directory containing the eugene xml configurations
+            inprocessdir = __import__('inprocess').__path__[0]
+            path = os.path.join(inprocessdir, 'configurations', 'projects', 'eugene', 'baseline.xml')
+            config = XMLConfiguration(path)
+            insert_auto_generated_cache_directory_if_needed(config)
+            run_manager.run_run(config)
+            succeeded = True
+        except SimulationRunError:
+            succeeded = False
+        self.parent.finishedCallback(succeeded)
         #
         # statement to signal i % progress:
         # self.parent.progressCallback(i)
@@ -63,9 +67,9 @@ class RunModelThread(QThread):
 
     def finishedCallback(self,success):
         if success:
-            print "Success retruned from Model"
+            print "Success returned from Model"
         else:
-            print "Error retruned from Model"
+            print "Error returned from Model"
         self.emit(SIGNAL("runFinished(PyQt_PyObject)"),success)
             
 
@@ -78,9 +82,9 @@ class RunModelGui(QDialog, Ui_OpusRunModel):
         self.progressBar.reset()
 
     def on_pbnStartModel_released(self):
-	# Fire up a new thread and run the model
+        # Fire up a new thread and run the model
         print "Start Model Pressed"
-	self.runThread = RunModelThread(self)
+        self.runThread = RunModelThread(self)
         QObject.connect(self.runThread, SIGNAL("runPing(PyQt_PyObject)"),
                         self.runPingFromThread)
         QObject.connect(self.runThread, SIGNAL("runFinished(PyQt_PyObject)"),

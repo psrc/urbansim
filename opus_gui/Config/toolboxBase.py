@@ -21,7 +21,7 @@ from Config.opusDataModel import OpusDataModel
 from Run.opusRunModel import RunModelGui
 
 # General system includes
-import sys,string
+import os, sys,string
 
   
 # Main console class for the python console
@@ -53,7 +53,10 @@ class ToolboxBase(object):
     self.resultsmanager_tree.resizeColumnToContents(0)
 
     # Play with the new tree view here
-    self.configFile = QFile("./config.xml")
+    # find the directory containing the eugene xml configurations
+    opus_gui_dir = __import__('opus_gui').__path__[0]
+    f = os.path.join(opus_gui_dir, 'config.xml')
+    self.configFile = QFile(f)
     if self.configFile.open(QIODevice.ReadWrite):
       self.doc = QDomDocument()
       self.doc.setContent(self.configFile)
