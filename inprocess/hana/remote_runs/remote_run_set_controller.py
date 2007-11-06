@@ -55,7 +55,7 @@ class RemoteRunSet(RemoteRun):
         
     def read_run_id_file(self, filename):
         # filename is a file with a pair (run_id, year) per row
-        content = load_table_from_text_file(filename, convert_from_float=True)
+        content = load_table_from_text_file(filename, convert_to_float=True)
         for run_id, year in content:
             self.run_ids_dict[run_id] = year
         
