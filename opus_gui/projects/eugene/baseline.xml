@@ -1,14 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <configuration>
-  <item parser_action="parent_old_format" icon=":/Images/specialIcon.png" type="dictionary" name="parent" >
-    <item type="string" name="Class name" >AbstractUrbansimConfiguration</item>
-    <item type="string" name="Class path" >urbansim.configs.base_configuration</item>
-  </item>
+  <item parser_action="parent" type="file" name="parent" >../urbansim/baseline.xml</item>
   <item type="string" name="description" >Eugene baseline configuration</item>
   <item type="integer" name="base_year" >1980</item>
   <item type="tuple" name="years" >
     <item type="integer" name="startyear" >1981</item>
-    <item type="integer" name="endyear" >1982</item>
+    <item type="integer" name="endyear" >1981</item>
   </item>
   <item type="list" name="models" >
     <item type="model" name="prescheduled_events" >ok</item>
@@ -37,6 +34,9 @@
     <item type="string" name="host_name" />
     <item type="string" name="user_name" />
     <item type="password" name="password" />
+    <item type="boolean" name="get_host_name_from_environment_variable" >True</item>
+    <item type="boolean" name="get_user_name_from_environment_variable" >True</item>
+    <item type="boolean" name="get_password_from_environment_variable" >True</item>
     <item type="string" name="database_name" >eugene_1980_baseyear</item>
   </item>
   <item type="string" name="cache_directory" >/home/aaronr/work/urbansim/eugene</item>

@@ -55,7 +55,7 @@ class ToolboxBase(object):
     # Play with the new tree view here
     # find the directory containing the eugene xml configurations
     opus_gui_dir = __import__('opus_gui').__path__[0]
-    f = os.path.join(opus_gui_dir, 'config.xml')
+    f = os.path.join(opus_gui_dir, 'projects', 'eugene', 'baseline.xml')
     self.configFile = QFile(f)
     if self.configFile.open(QIODevice.ReadWrite):
       self.doc = QDomDocument()
@@ -66,9 +66,10 @@ class ToolboxBase(object):
       indentSize = 2
       out = QTextStream(self.configFile)
       self.doc.save(out, indentSize)
-      self.model = OpusDataModel(self.doc, self.parent)
+      self.model = OpusDataModel(self.doc, self.parent, self.configFile)
       self.view = QTreeView(self.parent)
       self.view.setModel(self.model)
+      self.view.setExpanded(self.model.index(0,0,QModelIndex()),True)
       #NEED TO FIX THIS
       self.parent.gridlayout5.addWidget(self.view)
       self.view.setColumnWidth(0,250)
@@ -113,7 +114,7 @@ class ToolboxBase(object):
           (self.currentColumn, self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
 
   def processCustomMenu(self, position):
-    if self.view.indexAt(position).isValid():
+    if self.view.indexAt(position).isValid() and self.view.indexAt(position).column() == 0:
       #print "Right mouse click custom menu requested, column %s" % \
       #      (self.view.indexAt(position).column())
       if self.view.indexAt(position).internalPointer().node().nodeValue() != "":

@@ -19,9 +19,10 @@ from PyQt4.QtXml import *
 from opusDataItem import OpusDataItem
 
 class OpusDataModel(QAbstractItemModel):
-    def __init__(self, document, parent):
+    def __init__(self, document, parent, configFile):
         QAbstractItemModel.__init__(self, parent)
 
+        self.configFile = configFile
         self.parentObj = parent
         self.domDocument = document
         
@@ -220,7 +221,10 @@ class OpusDataModel(QAbstractItemModel):
     def flags(self, index):
         if not index.isValid():
             return 0
-        return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
+        if index.column() == 2:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
+        else:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
         #return Qt.ItemIsEnabled | Qt.ItemIsSelectable
     
     def headerData(self, section, oreientation, role):
@@ -273,19 +277,23 @@ class OpusDataModel(QAbstractItemModel):
         return len(parentItem.childItems)
 
     def setData(self,index,value,role):
-        print "setData %s" % (value.toString())
         
         if not index.isValid():
             return False
         if role != Qt.EditRole:
             return False
+        print "setData %s" % (value.toString())
         # Get the item associated with the index
         item = index.internalPointer()
         domNode = item.node()
-        domNode.setNodeValue(QString(value.toString()))
+        if domNode.hasChildNodes():
+            children = domNode.childNodes()
+            for x in xrange(0,children.count(),1):
+                if children.item(x).isText():
+                    children.item(x).setNodeValue(QString(value.toString()))
         indentSize = 2
-        self.parentObj.configFile.close()
-        self.parentObj.configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
-        out = QTextStream(self.parentObj.configFile)
+        self.configFile.close()
+        self.configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
+        out = QTextStream(self.configFile)
         self.domDocument.save(out, indentSize)
         return True

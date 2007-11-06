@@ -24,13 +24,22 @@ class OpusDataItem:
         self.parentItem = parent
         self.childItems = []
     
+    #def initAsRootItem(self):
+    #    if self.domNode.childNodes().count() == 1:
+    #        current = self.domNode.childNodes().item(0)
+    #        childItem = OpusDataItem(current, 0 , self)
+    #        self.childItems.append(childItem)
+    #        self.initAsRootChild()
+    #    else:
+    #        print "ERROR - XML has more than one root configuration item"
+
     def initAsRootItem(self):
         i = 0
         for x in xrange(0,self.domNode.childNodes().count(),1):
             current = self.domNode.childNodes().item(x)
             if (current.attributes().namedItem(QString("flags")).isNull() or \
-                current.attributes().namedItem(QString("flags")).nodeValue() != QString("OpusHidden")) and \
-                (current.nodeType() == QDomNode.ElementNode):                
+                current.attributes().namedItem(QString("flags")).nodeValue() != QString("hidden")) and \
+                (current.nodeType() == QDomNode.ElementNode):
                 childNode = self.domNode.childNodes().item(x)
                 childItem = OpusDataItem(childNode, i , self)
                 self.childItems.append(childItem)

@@ -37,8 +37,8 @@ class OpusModelTest(object):
             (options, args) = parser.parse_args([])
             run_manager = option_group.get_run_manager(options)
             # find the directory containing the eugene xml configurations
-            inprocessdir = __import__('inprocess').__path__[0]
-            path = os.path.join(inprocessdir, 'configurations', 'projects', 'eugene', 'baseline.xml')
+            inprocessdir = __import__('opus_gui').__path__[0]
+            path = os.path.join(inprocessdir, 'projects', 'eugene', 'baseline.xml')
             config = XMLConfiguration(path)
             insert_auto_generated_cache_directory_if_needed(config)
             run_manager.run_run(config)

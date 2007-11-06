@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+
+<item name="controller" type="class" parser_action="execute">
+  <item name="Class name" type="string" flags="hidden">RealEstatePriceModelConfigurationCreator</item>
+  <item name="Class path" type="string" flags="hidden">urbansim.configurations.real_estate_price_model_configuration_creator</item>
+  <item name="nchunks" type="integer">1</item>
+  <item name="dataset" type="string">building</item>
+  <item name="outcome_attribute" type="string">ln_unit_price=ln(urbansim.building.avg_val_per_unit)</item>
+  <item name="submodel_string" type="string">building_type_id</item>
+  <item name="filter_variable" type="string">building.avg_val_per_unit</item>
+  <item name="coefficients_table" type="string">real_estate_price_model_coefficients</item>
+  <item name="specification_table" type="string">real_estate_price_model_specification</item>
+</item>
+
+</configuration>
