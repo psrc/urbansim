@@ -126,8 +126,9 @@ class XMLConfiguration(Configuration):
         elif type_name=='boolean':
             return self._convert_boolean_to_data(node)
         elif type_name=='file':
-            # file type should have been handled elsewhere (parser_action should be either a parent or an include)
-            raise ValueError, "malformed xml - unknown parser action for type='file'"
+            return self._convert_file_or_directory_to_data(node)
+        elif type_name=='directory':
+            return self._convert_file_or_directory_to_data(node)
         elif type_name=='array':
             # the data should be a string such as '[100, 300]'
             # use eval to turn this into a list, and then turn it into a numpy array
@@ -230,6 +231,15 @@ class XMLConfiguration(Configuration):
         else:
             raise ValueError, 'malformed xml - expected a string representing a boolean'
         
+    def _convert_file_or_directory_to_data(self, node):
+        name = str(node.firstChild().nodeValue())
+        action = str(node.attributes().namedItem('parser_action').nodeValue())
+        if action=='prefix_with_urbansim_cache':
+            prefix = os.environ.get('URBANSIM_CACHE', '')
+            return os.path.join(prefix, name)
+        else:
+            return name
+        
     def _convert_dictionary_to_data(self, node, filename):
         result_dict = {}
         child = node.firstChild()
@@ -326,6 +336,15 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config = XMLConfiguration(f)
         should_be = array([100, 300]) 
         self.assert_(ma.allclose(config['arraytest'], should_be, rtol=1e-6))
+        
+    def test_files_directories(self):
+        f = os.path.join(self.test_configs, 'files_directories.xml')
+        config = XMLConfiguration(f)
+        prefix = os.environ.get('URBANSIM_CACHE', '')
+        self.assertEqual(config, {'file1': 'testfile', 
+                                  'file2': os.path.join(prefix, 'testfile'),
+                                  'dir1': 'testdir', 
+                                  'dir2': os.path.join(prefix, 'testdir')})
         
     def test_xml_inheritance(self):
         # test inheritance with a chain of xml configurations

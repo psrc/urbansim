@@ -45,17 +45,17 @@
   <item name="database_name" type="string">eugene_1980_baseyear</item>
 </item>
 
-<item name="cache_directory" type="string">c:/opusworkspace/eugene</item>
+<item name="cache_directory" type="directory" parser_action="prefix_with_urbansim_cache">eugene/eugene_1980_baseyear_cache</item>
 
 <item name="creating_baseyear_cache_configuration" type="class">
   <item name="Class name" type="string" flags="hidden">CreatingBaseyearCacheConfiguration</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.creating_baseyear_cache_configuration</item>
-  <item name="cache_directory_root" type="string">c:/urbansim_cache</item>
+  <item name="cache_directory_root" type="directory" parser_action="prefix_with_urbansim_cache">eugene/runs</item>
   <item name="cache_from_mysql" type="boolean">False</item>
   <item name="baseyear_cache" type="class">
     <item name="Class name" type="string" flags="hidden">BaseyearCacheConfiguration</item>
     <item name="Class path" type="string" flags="hidden">opus_core.configurations.baseyear_cache_configuration</item>
-    <item name="existing_cache_to_copy" type="string">c:/urbansim_cache/eugene_1980_baseyear_cache</item>
+    <item name="existing_cache_to_copy" type="directory" parser_action="prefix_with_urbansim_cache">eugene/eugene_1980_baseyear_cache</item>
   </item>
   <item name="cache_scenario_database" type="string">urbansim.model_coordinators.cache_scenario_database</item>
   <item name="tables_to_cache" type="list">
