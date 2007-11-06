@@ -180,7 +180,7 @@ class RunManager(object):
         except:
             if self.run_activity is not None:
                 self.run_activity.add_row_to_history(history_id, run_resources, "failed")
-            raise
+            raise SimulationRunError
 
     def restart_run(self, history_id, restart_year,
                     services_host_name,
@@ -286,6 +286,11 @@ class RunManager(object):
                 resources['creating_baseyear_cache_configuration'].cache_scenario_database, resources)
         else:
             CacheFltData().run(resources)
+            
+
+class SimulationRunError(Exception):
+    """exception to be raised if the simulation fails at runtime"""
+    pass
             
 def insert_auto_generated_cache_directory_if_needed(config):
     """Auto-generate a cache directory based upon current date-time."""
