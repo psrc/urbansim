@@ -46,9 +46,12 @@ if __name__ == "__main__":
 
     known_output={"urbansim_parcel.zone.number_of_households": ("PSRC2005TAZData", "sqrt"), 
                   "urbansim_parcel.zone.number_of_jobs": ("PSRC2005TAZData", "sqrt"),
-                  "urbansim_parcel.large_area_x_land_use_type.total_value_per_sqft": ("avg_total_value_per_unit_by_la", "log", 
+                  #"urbansim_parcel.large_area_x_land_use_type.total_value_per_sqft": ("avg_total_value_per_unit_by_la", "log", 
+                  #                                                                    {"id_name": 
+                  #                                                                    ["large_area_id", "land_use_type_id"]}),
+                  "urbansim_parcel.faz_x_land_use_type.total_value_per_sqft": ("avg_total_value_per_unit_by_faz", "log", 
                                                                                       {"id_name": 
-                                                                                      ["large_area_id", "land_use_type_id"]})
+                                                                                      ["faz_id", "land_use_type_id"]})
                   }
                   
     for var, arguments in known_output.iteritems():
