@@ -21,9 +21,10 @@ from numpy import array, dtype
 
 from opus_core.opus_error import OpusError
 from opus_core.store.storage import Storage
+from opus_core.store.old.delimited_storage import delimited_storage as delimited_storage_old
 
 
-class delimited_storage(Storage):
+class delimited_storage(Storage, delimited_storage_old):
     """
     A storage object that saves table and value data into a directory, 
     giving each table its own file in the directory. Uses the Python csv module,
@@ -229,8 +230,12 @@ class delimited_storage(Storage):
         column_names, column_types = self.__get_header_information_from_table(table_name)
         
         if None in column_types:
-            column_types = self.__infer_header_information_in_table(table_name)
-            
+            inferred_column_types = self.__infer_header_information_in_table(table_name)
+
+            for i in range(len(column_types)):
+                if column_types[i] is None:
+                    column_types[i] = inferred_column_types[i]
+                
         return column_names, column_types
     
     __column_name_and_type_pattern = re.compile('^\s*([_A-Za-z]\w*)\s*(?:\:\s*([buifcSUV][0-9]*)\s*)?$')
