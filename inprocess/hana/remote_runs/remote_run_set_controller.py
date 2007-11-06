@@ -75,10 +75,7 @@ class RemoteRunSet(RemoteRun):
                 this_start_year = config['years'][0]
             else:
                 this_start_year = start_year
-            this_start_year = max(this_start_year, finished_year+1)
-            if this_start_year > end_year: 
-                continue
-            RemoteRun._do_run(self, this_start_year, end_year, config)
+            RemoteRun._do_run(self, max(this_start_year, finished_year+1), end_year, config)
             self.run_ids_dict[self.run_id] = self.get_urbansim_last_year(config)
             self.write_into_run_id_file()
             

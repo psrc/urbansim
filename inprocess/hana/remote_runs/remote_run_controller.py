@@ -224,18 +224,19 @@ class RemoteRun:
             if this_end_year > end_year:
                 sys.exit(1) #run finished
 
-            urbansim_resources['years'] = (this_start_year, this_end_year)
+            if this_start_year <= this_end_year:
+                urbansim_resources['years'] = (this_start_year, this_end_year)
+                    
+                self.run_manager.run_activity.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % self.run_id)        
+                self.run_manager.run_activity.add_row_to_history(self.run_id, urbansim_resources, "started")
                 
-            self.run_manager.run_activity.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % self.run_id)        
-            self.run_manager.run_activity.add_row_to_history(self.run_id, urbansim_resources, "started")
-            
-            if not self.skip_urbansim:
-                self.run_remote_python_process("%s/urbansim/tools/restart_run.py" % self.remote_opus_path, 
-                                           "%s %s --skip-cache-cleanup --skip-travel-model --hostname=%s" % (
-                                                     self.run_id, this_start_year, self.services_hostname),
-                                               )                   
-                if not self.has_urbansim_finished(urbansim_resources):
-                    raise StandardError, "There was an error in the urbansim run."
+                if not self.skip_urbansim:
+                    self.run_remote_python_process("%s/urbansim/tools/restart_run.py" % self.remote_opus_path, 
+                                               "%s %s --skip-cache-cleanup --skip-travel-model --hostname=%s" % (
+                                                         self.run_id, this_start_year, self.services_hostname),
+                                                   )                   
+                    if not self.has_urbansim_finished(urbansim_resources):
+                        raise StandardError, "There was an error in the urbansim run."
 
             # run travel models
             if not self.skip_travel_model:
