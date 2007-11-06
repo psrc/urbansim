@@ -128,10 +128,13 @@ class RemoteRun:
             if not len(results) > 1:
                 raise StandardError, "run_id %s doesn't exist in run_activity table." % self.run_id
             
+        self.set_local_output_path()
+        return config
+            
+    def set_local_output_path(self):
         self.local_output_path = os.path.join(self.local_output_path_root, str(self.run_id))
         if not os.path.exists(self.local_output_path):
             os.makedirs('%s' % self.local_output_path)
-        return config
             
     def copy_resources_to_remote_host(self, config):
         pickle_dir = mkdtemp()

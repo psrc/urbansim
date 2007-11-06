@@ -68,6 +68,7 @@ class RemoteRunSet(RemoteRun):
         for run_id, finished_year in self.run_ids_dict.iteritems():
             self.run_id = run_id
             self.remote_communication_path = '%s/%s' % (self.remote_communication_path_root, self.run_id)
+            self.set_local_output_path()
             config = self.run_manager.get_resources_for_run_id_from_history(services_host_name=self.services_hostname,
                                                                        services_database_name=self.services_dbname,
                                                                        run_id=self.run_id)
