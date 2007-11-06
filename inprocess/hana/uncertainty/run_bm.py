@@ -40,28 +40,29 @@ if __name__ == "__main__":
 
     # where the true data (on a zone level) is stored in a table format 
     observed_data_dir = "/Users/hana/bm/observed_data/"
-    #true_data_dir = "/home/hana/urbansim_cache/psrc/data"
-
-    observed_data_file_name = "PSRC2005TAZData" # the physical file should have the ending '.tab'
 
     observed_data = ObservedData(observed_data_dir, 2002, 'tab_storage', 
                                  package_order=['urbansim_parcel', 'urbansim', 'opus_core'])
 
-    known_output={"urbansim_parcel.zone.number_of_households": "PSRC2005TAZData", 
-                  "urbansim_parcel.zone.number_of_jobs": "PSRC2005TAZData",
-                  "urbansim_parcel.large_area_x_land_use_type.total_value_per_sqft": ("avg_total_value_per_unit_by_la", {"id_name": 
+    known_output={"urbansim_parcel.zone.number_of_households": ("PSRC2005TAZData", "sqrt"), 
+                  "urbansim_parcel.zone.number_of_jobs": ("PSRC2005TAZData", "sqrt"),
+                  "urbansim_parcel.large_area_x_land_use_type.total_value_per_sqft": ("avg_total_value_per_unit_by_la", "log", 
+                                                                                      {"id_name": 
                                                                                       ["large_area_id", "land_use_type_id"]})
                   }
                   
-    for var, file in known_output.iteritems():
-        if isinstance(file, tuple):
-            observed_data.add_quantity(var, file[0], **file[1])
+    for var, arguments in known_output.iteritems():
+        if isinstance(arguments, tuple):
+            if len(arguments) == 2:
+                observed_data.add_quantity(var, arguments[0], transformation=arguments[1])
+            elif len(arguments) > 2:
+                observed_data.add_quantity(var, arguments[0], transformation=arguments[1], **arguments[2])
         else:
-            observed_data.add_quantity(var, file)
+            observed_data.add_quantity(var, arguments)
         
     bm = BayesianMelding(cache_directory, 
                          observed_data,                        
-                         transformation = 'sqrt', base_year=2000, 
+                         base_year=2000, 
                          #scaling_parents = scaling,
                          package_order=['urbansim_parcel', 'urbansim', 'opus_core'])
     weights = bm.compute_weights()

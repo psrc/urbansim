@@ -26,9 +26,9 @@ from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.datasets.dataset import DatasetSubset, Dataset
 from opus_core.datasets.interaction_dataset import InteractionDataset
 from opus_core.datasets.dataset_factory import DatasetFactory
-from opus_core.resources import Resources
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.storage_factory import StorageFactory
+from opus_core.logger import logger
 
 class ObservedData:
     def __init__(self, directory, year, storage_type='tab_storage', is_cache=False, package_order=['core']):
@@ -81,15 +81,25 @@ class ObservedData:
             if q.get_variable_name().get_alias() == alias:
                 return q.get_values()
                 
+    def get_quantity_object(self, index):
+        return self.get_quantity_objects()[index]
+                
 class ObservedDataOneQuantity:
     """  Class for storing information about one quantity measure. It is to be grouped in 
     an object of class ObservedData.
     """
-    def __init__(self, variable_name, observed_data, filename=None,  **kwargs):
+    # pairs of inverse transformations
+    transformation_pairs = {"sqrt": "**2", "log":"exp", "exp": "log", "**2": "sqrt"}
+
+    def __init__(self, variable_name, observed_data, filename=None,  transformation=None, inverse_transformation=None, 
+                 **kwargs):
         """  'variable_name' is a quantity about which we have data available.
         'observed_data' is of type ObservedData, it is the grouping parent. 
         'filename' is the name of file where 
         the data is stored. It can be None, if the observed_data.directory is a cache.
+        'transformation' is an operation to be performed on the data (e.g. sqrt, log),
+        'inverse_transformation' is the inverse function of 'transformation'. If it not given, it
+        is determined automatically.
         Remaining arguments are passed into DatasetFactory, thus it can contain information about how 
         to create the corresponding dataset.
         """
@@ -105,9 +115,16 @@ class ObservedDataOneQuantity:
         else:
             self.dataset = dataset_pool.get_dataset(self.dataset_name)
         self.dataset.compute_variables([self.variable_name], dataset_pool=dataset_pool)
+        self.transformation = transformation
+        self.inverse_transformation = inverse_transformation
+        if (self.transformation is not None) and (self.inverse_transformation is None):
+            self.inverse_transformation = self.transformation_pairs[self.transformation]
                 
     def get_values(self):
         return self.dataset.get_attribute(self.variable_name)
+        
+    def get_transformed_values(self):
+        return try_transformation(self.get_values(), self.transformation)
         
     def get_variable_name(self):
         return self.variable_name
@@ -117,6 +134,12 @@ class ObservedDataOneQuantity:
     
     def get_dataset_name(self):
         return self.dataset_name
+    
+    def get_transformation(self):
+        return self.transformation
+    
+    def get_transformation_pair(self):
+        return (self.transformation, self.inverse_transformation)
         
 class BayesianMelding:
 
@@ -124,10 +147,8 @@ class BayesianMelding:
     weights_file_name = "weights"
     variance_file_name = "variance"
     bias_file_name = "bias"
-    # pairs of inverse transformations
-    transformation_pairs = {"sqrt": "**2", "log":"exp", "exp": "log", "**2": "sqrt"}
-
-    def __init__(self, cache_directory, observed_data, transformation=None, inverse_transformation=None,
+    
+    def __init__(self, cache_directory, observed_data,
                  base_year=0, scaling_parents={}, package_order=['core']):
         """ Class used in the Bayesian melding analysis.
         'cache_directory' is the first directory created by start_run_set.py. It should
@@ -144,9 +165,6 @@ class BayesianMelding:
         self.number_of_runs = self.cache_set.size
         self.observed_data = observed_data
         self.package_order = package_order
-        self.transformation = transformation
-        if inverse_transformation is not None:
-            self.transformation_pairs[self.transformation] = inverse_transformation
         self.base_year = base_year
         self.propagation_factor = None
         self.y = {}
@@ -172,7 +190,7 @@ class BayesianMelding:
         iout = -1
         for quantity in self.observed_data.get_quantity_objects():
             iout += 1
-            self.y[iout] = try_transformation(quantity.get_values(), self.transformation)
+            self.y[iout] = quantity.get_transformed_values()
 
     def compute_scalings(self):
         for dir in self.scaling_parent_datasets.keys():
@@ -180,14 +198,14 @@ class BayesianMelding:
             self.scaling_parent_datasets[dir] = self.get_datasets(dataset_pool)
             for variable in self.known_output:
                 dataset = variable.get_dataset_name()
-                self.scaling_parent_datasets[dir][dataset].compute_variables(variable, resources=Resources(self.scaling_parent_datasets[dir]))
+                self.scaling_parent_datasets[dir][dataset].compute_variables(variable, dataset_pool=dataset_pool)
 
         for run in self.scaling_child_datasets.keys():
             dataset_pool = self.setup_environment(self.cache_set[run-1], self.base_year)
             self.scaling_child_datasets[run] = self.get_datasets(dataset_pool)
             for variable in self.known_output:
                 dataset = variable.get_dataset_name()
-                self.scaling_child_datasets[run][dataset].compute_variables(variable, resources=Resources(self.scaling_child_datasets[run]))
+                self.scaling_child_datasets[run][dataset].compute_variables(variable, dataset_pool=dataset_pool)
 
     def compute_weights(self, procedure="opus_core.bm_normal_weights", **kwargs):
         """ Launches the run method of the given 'procedure'. This should return the actual BM weights.
@@ -234,7 +252,7 @@ class BayesianMelding:
                 scale = self.get_scales(ds, i+1, variable)
                 matching_index = ds.get_id_index(quantity_ids)
                 values = scale[matching_index] * ds.get_attribute(variable)[matching_index]
-                self.mu[iout][:,i] = try_transformation(values, self.transformation)
+                self.mu[iout][:,i] = try_transformation(values, quantity.get_transformation())
                 
             if dimension_reduced:
                 self.y[iout] = self.y[iout][quantity.get_dataset().get_id_index(ids)]
@@ -278,8 +296,9 @@ class BayesianMelding:
         return self.ahat[self.use_bias_and_variance_index]
 
     def get_data_for_quantity(self, transformed_back=True):
-        if transformed_back and (self.transformation is not None):
-            return try_transformation(self.y[self.use_bias_and_variance_index], self.transformation_pairs[self.transformation])
+        transformation, inverse_transformation = self.observed_data.get_quantity_object(self.use_bias_and_variance_index).get_transformation_pair()
+        if transformed_back and (transformation is not None):
+            return try_transformation(self.y[self.use_bias_and_variance_index], inverse_transformation)
         return self.y[self.use_bias_and_variance_index]
 
     def get_data(self):
@@ -298,8 +317,8 @@ class BayesianMelding:
         return self.propagation_factor
 
     def get_predicted_values(self, transformed_back=False):
-        if transformed_back and (self.transformation is not None):
-            return try_transformation(self.m, self.transformation_pairs[self.transformation])
+        if transformed_back and (self.transformation_pair_for_prediction[0] is not None):
+            return try_transformation(self.m, self.transformation_pair_for_prediction[1])
         return self.m
 
     def get_weights(self):
@@ -311,10 +330,10 @@ class BayesianMelding:
         for i in range(self.number_of_runs):
             dataset_pool = setup_environment(self.cache_set[i], year, self.package_order)
             ds = dataset_pool.get_dataset(dataset_name)
-            ds.compute_variables(variable_name)
+            ds.compute_variables(variable_name, dataset_pool=dataset_pool)
             if i == 0: # first run
                 self.m = zeros((ds.size(), self.number_of_runs), dtype=float32)
-            self.m[:, i] = try_transformation(ds.get_attribute(variable_name), self.transformation)
+            self.m[:, i] = try_transformation(ds.get_attribute(variable_name), self.transformation_pair_for_prediction[0])
 
 
     def get_posterior_component_mean(self):
@@ -361,13 +380,13 @@ class BayesianMelding:
         if use_bias_and_variance_from not in variable_list:
             raise ValueError, "Quantity %s is not among observed data." % use_bias_and_variance_from
         self.use_bias_and_variance_index = variable_list.index(use_bias_and_variance_from)
-
+        self.transformation_pair_for_prediction = self.observed_data.get_quantity_object(self.use_bias_and_variance_index).get_transformation_pair()
         self.compute_m(year, quantity_of_interest)
         procedure_class = ModelComponentCreator().get_model_component(procedure)
         self.simulated_values = procedure_class.run(self, **kwargs)
-        if self.transformation is not None: # need to transform back
+        if self.transformation_pair_for_prediction[0] is not None: # need to transform back
             self.simulated_values = try_transformation(self.simulated_values,
-                                                       self.transformation_pairs[self.transformation])
+                                                       self.transformation_pair_for_prediction[1])
         return self.simulated_values
 
     def write_simulated_values(self, filename):
@@ -419,4 +438,5 @@ def setup_environment(cache_directory, year, package_order):
     sc = SessionConfiguration(new_instance=True,
                          package_order=package_order,
                          in_storage=ac)
+    logger.log_status("Setup environment for year %s. Use cache directory %s." % (year, storage.get_storage_location()))
     return sc.get_dataset_pool()
