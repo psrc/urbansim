@@ -260,6 +260,7 @@ class ModelSystem(object):
                         model_name = model_entry
                         processes = ["run"]
     
+                    self._write_status_for_gui(year, models, model_entry, model_name, resources)
                     group_member = None
                     for imember in range(max(1, len(model_group_members_to_run.keys()))):
                         controller_config = models_configuration[model_name]["controller"]
@@ -472,6 +473,29 @@ class ModelSystem(object):
         for arg_key in arg_dict.keys():
             result += "%s=%s, " % (arg_key, arg_dict[arg_key])
         return result
+    
+    def _write_status_for_gui(self, year, models, model_entry, model_name, resources):
+        # Write a status file for each model run if the entry status_file_for_gui is in
+        # resources.  The GUI uses this to update a progress bar.  The file is ascii, with
+        # the following format (1 item per line):
+        #   start year
+        #   end year
+        #   current year
+        #   total number of models
+        #   number of current model that is about to run
+        #   message to display in the progress bar widget
+        if 'status_file_for_gui' in resources:
+            msg = 'year: %d  model: %s' % (year, model_name)
+            (startyear, endyear) = resources['years']
+            n_models = len(models)
+            which = models.index(model_entry)
+            status = '%d\n%d\n%d\n%d\n%d\n%s\n' % (startyear, endyear, year, n_models, which, msg)
+            dir = resources['cache_directory']
+            filename = os.path.join(dir, resources['status_file_for_gui'])
+            f = open(filename, 'w')
+            f.write(status)
+            f.close()
+            
 
 if __name__ == "__main__":
     from opus_core.store.attribute_cache import AttributeCache
