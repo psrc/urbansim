@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusMain.ui'
 #
-# Created: Sat Nov  3 23:59:19 2007
+# Created: Wed Nov  7 00:34:15 2007
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -29,7 +29,7 @@ class Ui_MainWindow(object):
         self.toolBox = QtGui.QToolBox(self.splitter)
         self.toolBox.setEnabled(True)
 
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Policy(5),QtGui.QSizePolicy.Policy(5))
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.toolBox.sizePolicy().hasHeightForWidth())
@@ -38,7 +38,7 @@ class Ui_MainWindow(object):
         self.toolBox.setObjectName("toolBox")
 
         self.datamanager_page = QtGui.QWidget()
-        self.datamanager_page.setGeometry(QtCore.QRect(0,0,434,447))
+        self.datamanager_page.setGeometry(QtCore.QRect(0,0,503,445))
         self.datamanager_page.setObjectName("datamanager_page")
 
         self.gridlayout1 = QtGui.QGridLayout(self.datamanager_page)
@@ -53,7 +53,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.datamanager_page,"")
 
         self.modelmanager_page = QtGui.QWidget()
-        self.modelmanager_page.setGeometry(QtCore.QRect(0,0,96,79))
+        self.modelmanager_page.setGeometry(QtCore.QRect(0,0,112,112))
         self.modelmanager_page.setObjectName("modelmanager_page")
 
         self.gridlayout2 = QtGui.QGridLayout(self.modelmanager_page)
@@ -67,7 +67,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.modelmanager_page,"")
 
         self.runmanager_page = QtGui.QWidget()
-        self.runmanager_page.setGeometry(QtCore.QRect(0,0,96,79))
+        self.runmanager_page.setGeometry(QtCore.QRect(0,0,112,112))
         self.runmanager_page.setObjectName("runmanager_page")
 
         self.gridlayout3 = QtGui.QGridLayout(self.runmanager_page)
@@ -81,7 +81,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.runmanager_page,"")
 
         self.resultsmanager_page = QtGui.QWidget()
-        self.resultsmanager_page.setGeometry(QtCore.QRect(0,0,96,79))
+        self.resultsmanager_page.setGeometry(QtCore.QRect(0,0,112,112))
         self.resultsmanager_page.setObjectName("resultsmanager_page")
 
         self.gridlayout4 = QtGui.QGridLayout(self.resultsmanager_page)
@@ -95,7 +95,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.resultsmanager_page,"")
 
         self.treeTestPage = QtGui.QWidget()
-        self.treeTestPage.setGeometry(QtCore.QRect(0,0,96,26))
+        self.treeTestPage.setGeometry(QtCore.QRect(0,0,503,445))
         self.treeTestPage.setObjectName("treeTestPage")
 
         self.gridlayout5 = QtGui.QGridLayout(self.treeTestPage)
@@ -145,7 +145,7 @@ class Ui_MainWindow(object):
 
         self.pythonLineWidget = QtGui.QWidget(self.tab_pythonView)
 
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Policy(5),QtGui.QSizePolicy.Policy(0))
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.pythonLineWidget.sizePolicy().hasHeightForWidth())
@@ -153,8 +153,8 @@ class Ui_MainWindow(object):
         self.pythonLineWidget.setObjectName("pythonLineWidget")
 
         self.hboxlayout = QtGui.QHBoxLayout(self.pythonLineWidget)
-        self.hboxlayout.setMargin(9)
         self.hboxlayout.setSpacing(6)
+        self.hboxlayout.setMargin(9)
         self.hboxlayout.setObjectName("hboxlayout")
 
         self.pythonLabel = QtGui.QLabel(self.pythonLineWidget)
@@ -178,7 +178,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0,0,902,24))
+        self.menubar.setGeometry(QtCore.QRect(0,0,902,26))
         self.menubar.setObjectName("menubar")
 
         self.menuMap = QtGui.QMenu(self.menubar)
@@ -224,7 +224,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuUtilities.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.toolBox.setCurrentIndex(0)
+        self.toolBox.setCurrentIndex(4)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 

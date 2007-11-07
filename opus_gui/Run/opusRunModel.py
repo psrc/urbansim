@@ -25,8 +25,16 @@ from inprocess.configurations.xml_configuration import XMLConfiguration
 class OpusModelTest(object):
     def __init__(self,parent):
         self.parent = parent
+        self.progressCallback = parent.progressCallback
+        self.finishedCallback = parent.finishedCallback
 
     def run(self):
+        #### FOR TESTING ONLY
+        #for i in range(101):
+        #    #self.parent.progressCallback(i)
+        #    print "model loop"
+        #    time.sleep(1)
+
         # Run the Eugene model using the XML version of the Eugene configuration.
         # This code hacked together based on opus_core/tools/start_run.py
         # No progress bar indicator yet ...
@@ -44,6 +52,7 @@ class OpusModelTest(object):
             insert_auto_generated_cache_directory_if_needed(config)
             cache_dir = config['cache_directory']
             statusfile = os.path.join(cache_dir, 'status.txt')
+            self.statusfile = statusfile
             config['status_file_for_gui'] = statusfile
             run_manager.run_run(config)
             succeeded = True
@@ -52,7 +61,7 @@ class OpusModelTest(object):
         if statusfile is not None and os.path.exists(statusfile):
             os.remove(statusfile)
         self.parent.finishedCallback(succeeded)
-        #
+        
         # statement to signal i % progress:
         # self.parent.progressCallback(i)
         
@@ -67,27 +76,30 @@ class OpusModelTest(object):
         #   total number of models
         #   number of current model that is about to run
         #   message to display in the progress bar widget
-        f = open(statusfile)
-        lines = f.readlines()
-        f.close()
-        # use float for all numbers to help with percent computation
-        start_year = float(lines[0])
-        end_year = float(lines[1])
-        current_year = float(lines[2])
-        total_models = float(lines[3])
-        current_model = float(lines[4])
-        message = lines[5].strip()
-        total_years = end_year - start_year + 1
-        # For each year, we need to run all of the models.
-        # year_fraction_completed is the fraction completed (ignoring the currently running year)
-        # model_fraction_completed is the additional fraction completed for the current year
-        year_fraction_completed = (current_year - start_year) / total_years
-        model_fraction_completed = (current_model / total_models) / total_years
-        percentage = 100.0* (year_fraction_completed + model_fraction_completed)
-        print percentage
-        print message
-        
-    
+        try:
+            f = open(statusfile)
+            lines = f.readlines()
+            f.close()
+            # use float for all numbers to help with percent computation
+            start_year = float(lines[0])
+            end_year = float(lines[1])
+            current_year = float(lines[2])
+            total_models = float(lines[3])
+            current_model = float(lines[4])
+            message = lines[5].strip()
+            total_years = end_year - start_year + 1
+            # For each year, we need to run all of the models.
+            # year_fraction_completed is the fraction completed (ignoring the currently running year)
+            # model_fraction_completed is the additional fraction completed for the current year
+            year_fraction_completed = (current_year - start_year) / total_years
+            model_fraction_completed = (current_model / total_models) / total_years
+            percentage = 100.0* (year_fraction_completed + model_fraction_completed)
+            #print percentage
+            #print message
+            return {"percentage":percentage,"message":message}
+        except IOError:
+            return {"percentage":0,"message":"Model initializing..."}
+
 class RunModelThread(QThread):
     def __init__(self, parent):
         QThread.__init__(self, parent)
@@ -116,25 +128,50 @@ class RunModelGui(QDialog, Ui_OpusRunModel):
         self.setupUi(self)
         self.parent = parent
         self.progressBar = self.runProgressBar
+        self.statusLabel = self.runStatusLabel
         self.progressBar.reset()
+        self.statusLabel.setText(QString("Press Start to run the model..."))
 
     def on_pbnStartModel_released(self):
         # Fire up a new thread and run the model
         print "Start Model Pressed"
+        self.pbnStartModel.setEnabled(False)
+        self.progressBar.setValue(0)
+        self.statusLabel.setText(QString("Model initializing..."))
         self.runThread = RunModelThread(self)
-        QObject.connect(self.runThread, SIGNAL("runPing(PyQt_PyObject)"),
-                        self.runPingFromThread)
+        # Use this signal from the thread if it is capable of producing its own status signal
+        #QObject.connect(self.runThread, SIGNAL("runPing(PyQt_PyObject)"),
+        #                self.runPingFromThread)
         QObject.connect(self.runThread, SIGNAL("runFinished(PyQt_PyObject)"),
                         self.runFinishedFromThread)
+        # Use this timer to call a function in the thread to check status if the thread is unable
+        # to produce its own signal above
+        self.timer = QTimer()
+        QObject.connect(self.timer, SIGNAL("timeout()"),
+                        self.runStatusFromThread)
+        self.timer.start(1000)
         self.runThread.start()
             
     def on_pbnCancel_released(self):
         self.close()
 
+    # This is not used currently since the model can not return status... instead we use a timer to
+    # check the status from a log file.
     def runPingFromThread(self,value):
         self.progressBar.setValue(value)
-        print "Ping from thread!"
+        #print "Ping from thread!"
 
+    # Called when the model is finished... peg the percentage to 100% and stop the timer.
     def runFinishedFromThread(self,success):
-        print "Model Finished!"
+        print "Model Finished with sucess = ", success
+        self.progressBar.setValue(100)
+        self.statusLabel.setText(QString("Model finished with status = %s" % (success)))
+        self.timer.stop()
+        self.pbnStartModel.setEnabled(True)
 
+    def runStatusFromThread(self):
+        status = self.runThread.model._compute_progress(self.runThread.model.statusfile)
+        self.progressBar.setValue(status["percentage"])
+        self.statusLabel.setText(status["message"])
+        print "runStatusFromThread from timer with percentage = %d and message = %s" % (status["percentage"],
+                                                                                        status["message"])

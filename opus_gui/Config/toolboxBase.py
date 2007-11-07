@@ -81,7 +81,7 @@ class ToolboxBase(object):
       self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
       self.bulletIcon = QIcon(":/Images/Images/bullet_black.png")
       self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
-      self.act1 = QAction(self.acceptIcon, "Action1", self.parent)
+      self.act1 = QAction(self.acceptIcon, "Run a Model", self.parent)
       QObject.connect(self.act1, SIGNAL("triggered()"), self.action1)
       self.act2 = QAction(self.applicationIcon, "Action2", self.parent)
       QObject.connect(self.act2, SIGNAL("triggered()"), self.action2)
