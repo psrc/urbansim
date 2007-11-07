@@ -44,24 +44,30 @@ if __name__ == "__main__":
     observed_data = ObservedData(observed_data_dir, 2002, 'tab_storage', 
                                  package_order=['urbansim_parcel', 'urbansim', 'opus_core'])
 
-    known_output={"urbansim_parcel.zone.number_of_households": ("PSRC2005TAZData", "sqrt"), 
-                  "urbansim_parcel.zone.number_of_jobs": ("PSRC2005TAZData", "sqrt"),
-                  #"urbansim_parcel.large_area_x_land_use_type.total_value_per_sqft": ("avg_total_value_per_unit_by_la", "log", 
-                  #                                                                    {"id_name": 
-                  #                                                                    ["large_area_id", "land_use_type_id"]}),
-                  "urbansim_parcel.faz_x_land_use_type.total_value_per_sqft": ("avg_total_value_per_unit_by_faz", "log", 
-                                                                                      {"id_name": 
-                                                                                      ["faz_id", "land_use_type_id"]})
-                  }
+    known_output=[{'variable_name': "urbansim_parcel.zone.number_of_households",
+                   'filename': "PSRC2005TAZData", 
+                   'transformation': "sqrt",
+                   },
+                  {'variable_name': "urbansim_parcel.zone.number_of_jobs",
+                   'filename': "PSRC2005TAZData", 
+                   'transformation': "sqrt",
+                   },
+#                  {'variable_name': "urbansim_parcel.faz_x_land_use_type.total_value_per_sqft",
+#                   'filename': "avg_total_value_per_unit_by_faz", 
+#                   'transformation': "log",
+#                   'filter': 'faz_x_land_use_type_flatten.total_value_per_sqft > 0',
+#                   "id_name":  ["faz_id", "land_use_type_id"]
+#                   },
+                  {'variable_name': "urbansim_parcel.large_area_x_land_use_type.total_value_per_sqft",
+                   'filename': "avg_total_value_per_unit_by_la", 
+                   'transformation': "log",
+                   #'filter': 'faz_x_land_use_type_flatten.total_value_per_sqft > 0',
+                   "id_name":  ["large_area_id", "land_use_type_id"]
+                   }
+                  ]
                   
-    for var, arguments in known_output.iteritems():
-        if isinstance(arguments, tuple):
-            if len(arguments) == 2:
-                observed_data.add_quantity(var, arguments[0], transformation=arguments[1])
-            elif len(arguments) > 2:
-                observed_data.add_quantity(var, arguments[0], transformation=arguments[1], **arguments[2])
-        else:
-            observed_data.add_quantity(var, arguments)
+    for quantity in known_output:
+        observed_data.add_quantity(**quantity)
         
     bm = BayesianMelding(cache_directory, 
                          observed_data,                        

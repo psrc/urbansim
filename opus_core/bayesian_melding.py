@@ -92,7 +92,7 @@ class ObservedDataOneQuantity:
     transformation_pairs = {"sqrt": "**2", "log":"exp", "exp": "log", "**2": "sqrt"}
 
     def __init__(self, variable_name, observed_data, filename=None,  transformation=None, inverse_transformation=None, 
-                 **kwargs):
+                 filter=None, **kwargs):
         """  'variable_name' is a quantity about which we have data available.
         'observed_data' is of type ObservedData, it is the grouping parent. 
         'filename' is the name of file where 
@@ -100,6 +100,7 @@ class ObservedDataOneQuantity:
         'transformation' is an operation to be performed on the data (e.g. sqrt, log),
         'inverse_transformation' is the inverse function of 'transformation'. If it not given, it
         is determined automatically.
+        'filter' is a variable that will be applied to both, the observed data and the simulated data.
         Remaining arguments are passed into DatasetFactory, thus it can contain information about how 
         to create the corresponding dataset.
         """
@@ -119,6 +120,7 @@ class ObservedDataOneQuantity:
         self.inverse_transformation = inverse_transformation
         if (self.transformation is not None) and (self.inverse_transformation is None):
             self.inverse_transformation = self.transformation_pairs[self.transformation]
+        self.filter = filter
                 
     def get_values(self):
         return self.dataset.get_attribute(self.variable_name)
