@@ -20,6 +20,7 @@ from urbansim_parcel.datasets.development_project_proposal_dataset import create
 from urbansim_parcel.datasets.development_project_proposal_component_dataset import create_from_proposals_and_template_components
 from numpy import exp, arange, logical_and, zeros, ones, where, array, float32, int16, concatenate, inf
 from opus_core.variables.attribute_type import AttributeType
+from opus_core.logger import logger
 import re
 
 class DevelopmentProjectProposalRegressionModel(RegressionModel):
@@ -116,14 +117,16 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
             index1 = None
             
         if create_proposal_set:
+            logger.start_block("Creating proposals for new development.")
             proposal_set = create_from_parcel_and_development_template( parcels, templates, 
                                                               filter_attribute=self.filter,
                                                               parcel_index = index1,
                                                               dataset_pool=dataset_pool,
                                                               resources = kwargs.get("resources", None) )
             proposal_set.add_attribute( zeros(proposal_set.size(), dtype=int16), "is_redevelopment", AttributeType.PRIMARY )
-
+            logger.end_block()
             if parcel_filter_for_redevelopment is not None:
+                logger.start_block("Creating proposals for re-development.")
                 buildings = dataset_pool.get_dataset('building')
                 land_area = buildings.get_attribute("land_area").copy()
                 parcels.compute_variables(parcel_filter_for_redevelopment, dataset_pool=dataset_pool)
@@ -144,7 +147,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                 ###roll back land_area of buildings
                 buildings.set_values_of_one_attribute("land_area", land_area[demolished_buildings_index], 
                                                      index=demolished_buildings_index )
-
+                logger.end_block()
         
             if existing_proposal_set is not None: # add existing proposals to the created ones
                 proposal_set.join_by_rows(existing_proposal_set, require_all_attributes=False, change_ids_if_not_unique=True)

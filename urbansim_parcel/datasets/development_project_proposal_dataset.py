@@ -21,7 +21,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.misc import unique_values, DebugPrinter
 from opus_core.logger import logger
-from numpy import arange, where, resize, zeros, array, logical_and, logical_or, concatenate
+from numpy import arange, where, resize, zeros, array, logical_and, logical_or, concatenate, ones
 
 class DevelopmentProjectProposalDataset(UrbansimDataset):
     """ contains the proposed development projects, which is created from interaction of parcels with development template;
@@ -200,7 +200,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
     proposal_template_ids = array([],dtype="int32")
     for i_template in range(development_template_dataset.size()):
         this_template_id = template_ids[i_template]
-        fit_indicator = array(index1.size*[True], dtype="bool8")
+        fit_indicator = ones(index1.size, dtype="bool8")
         if has_constraint_dataset:
             generic_land_use_type_id = generic_land_use_type_ids[i_template]
             for constraint_type, constraint in parcel_dataset.development_constraints[generic_land_use_type_id].iteritems():
@@ -231,7 +231,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
                     debug.print_debug("template_id %s (GLU ID %s) max total non residential capacity %s, %s of them fit constraints " % (this_template_id, generic_land_use_type_id, non_res_capacity.sum(), (non_res_capacity * fit_indicator).sum() ), 12)
                 
         proposal_parcel_ids = concatenate((proposal_parcel_ids, parcel_ids[index1[fit_indicator]]))
-        proposal_template_ids = concatenate( (proposal_template_ids, array( [this_template_id] * where(fit_indicator)[0].size )) )
+        proposal_template_ids = concatenate( (proposal_template_ids, resize(array([this_template_id]), fit_indicator.sum())))
     
     proposals = _create_project_proposals(proposal_parcel_ids, proposal_template_ids)
     proposals = _subset_by_filter(proposals)
