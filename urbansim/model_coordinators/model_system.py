@@ -36,7 +36,6 @@ from opus_core.simulation_state import SimulationState
 from opus_core.file_utilities import get_resources_from_file
 from opus_core.session_configuration import SessionConfiguration
 
-# TODO: This file has syntax errors, is it working?
 class ModelSystem(object):
     """
     Uses the information in configuration to run/estimate a set of models.
@@ -53,6 +52,9 @@ class ModelSystem(object):
                db_input_database - name of the input database.
                db_output_database - name of the output database.
                debuglevel - an integer. The higher the more output will be printed. Default: 0
+        This method is called both to start up the simulation for all years, and also for each year 
+        when running with one process per year.  In the latter case, 'years' consists of just
+        (current_year, current_year) rather than the real start and end years for the simulation.
         """
         if not isinstance(resources, Resources):
             raise TypeError, "Argument 'resources' must be of type 'Resources'."
@@ -213,7 +215,7 @@ class ModelSystem(object):
                 #==========
                 # Run the models.
                 #==========
-    
+                model_number = -1
                 for model_entry in models:
                     # list models can be in the form:
                     # [{'model_name_1': {'group_members': ['residential', 'commercial']}},
@@ -223,6 +225,7 @@ class ModelSystem(object):
                     #  'model_name_4',
                     #  {'model_name_5': {'group_members': 'all'}}
                     # ]
+                    model_number = model_number+1
                     model_group_members_to_run = {}
                     # get list of methods to be processed evtl. for each group member
                     if isinstance(model_entry, dict):
@@ -260,7 +263,7 @@ class ModelSystem(object):
                         model_name = model_entry
                         processes = ["run"]
     
-                    self._write_status_for_gui(year, models, model_entry, model_name, resources)
+                    self._write_status_for_gui(year, models, model_number, model_name, resources)
                     group_member = None
                     for imember in range(max(1, len(model_group_members_to_run.keys()))):
                         controller_config = models_configuration[model_name]["controller"]
@@ -474,25 +477,19 @@ class ModelSystem(object):
             result += "%s=%s, " % (arg_key, arg_dict[arg_key])
         return result
     
-    def _write_status_for_gui(self, year, models, model_entry, model_name, resources):
+    def _write_status_for_gui(self, year, models, model_number, model_name, resources):
         # Write a status file for each model run if the entry status_file_for_gui is in
         # resources.  The GUI uses this to update a progress bar.  The file is ascii, with
         # the following format (1 item per line):
-        #   start year
-        #   end year
         #   current year
         #   total number of models
         #   number of current model that is about to run
         #   message to display in the progress bar widget
         if 'status_file_for_gui' in resources:
             msg = 'year: %d  model: %s' % (year, model_name)
-            (startyear, endyear) = resources['years']
             n_models = len(models)
-            which = models.index(model_entry)
-            status = '%d\n%d\n%d\n%d\n%d\n%s\n' % (startyear, endyear, year, n_models, which, msg)
-            dir = resources['cache_directory']
-            filename = os.path.join(dir, resources['status_file_for_gui'])
-            f = open(filename, 'w')
+            status = '%d\n%d\n%d\n%s\n' % (year, n_models, model_number, msg)
+            f = open(resources['status_file_for_gui'], 'w')
             f.write(status)
             f.close()
             
