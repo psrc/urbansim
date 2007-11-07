@@ -76,13 +76,20 @@ class ObservedData:
         return self.year
     
     def get_values_for_quantity(variable_name):
-        alias = VariableName(variable_name).get_alias()
-        for q in self.get_quantity_objects():
-            if q.get_variable_name().get_alias() == alias:
-                return q.get_values()
+        return self.get_quantity_objects()[self.get_index_for_quantity(variable_name)].get_values()
                 
-    def get_quantity_object(self, index):
+    def get_quantity_object_by_index(self, index):
         return self.get_quantity_objects()[index]
+        
+    def get_quantity_object(self, variable_name):
+        return self.get_quantity_objects()[self.get_index_for_quantity(variable_name)]
+        
+    def get_index_for_quantity(self, variable_name):
+        alias = VariableName(variable_name).get_alias()
+        for iq in range(len(self.get_quantity_objects())):
+            q = self.get_quantity_objects()[iq]
+            if q.get_variable_name().get_alias() == alias:
+                return iq
                 
 class ObservedDataOneQuantity:
     """  Class for storing information about one quantity measure. It is to be grouped in 
@@ -298,7 +305,7 @@ class BayesianMelding:
         return self.ahat[self.use_bias_and_variance_index]
 
     def get_data_for_quantity(self, transformed_back=True):
-        transformation, inverse_transformation = self.observed_data.get_quantity_object(self.use_bias_and_variance_index).get_transformation_pair()
+        transformation, inverse_transformation = self.observed_data.get_quantity_object_by_index(self.use_bias_and_variance_index).get_transformation_pair()
         if transformed_back and (transformation is not None):
             return try_transformation(self.y[self.use_bias_and_variance_index], inverse_transformation)
         return self.y[self.use_bias_and_variance_index]
@@ -382,7 +389,7 @@ class BayesianMelding:
         if use_bias_and_variance_from not in variable_list:
             raise ValueError, "Quantity %s is not among observed data." % use_bias_and_variance_from
         self.use_bias_and_variance_index = variable_list.index(use_bias_and_variance_from)
-        self.transformation_pair_for_prediction = self.observed_data.get_quantity_object(self.use_bias_and_variance_index).get_transformation_pair()
+        self.transformation_pair_for_prediction = self.observed_data.get_quantity_object_by_index(self.use_bias_and_variance_index).get_transformation_pair()
         self.compute_m(year, quantity_of_interest)
         procedure_class = ModelComponentCreator().get_model_component(procedure)
         self.simulated_values = procedure_class.run(self, **kwargs)
@@ -393,6 +400,9 @@ class BayesianMelding:
 
     def write_simulated_values(self, filename):
         write_table_to_text_file(filename, self.simulated_values)
+        
+    def write_expected_values(self, filename, index):
+        write_table_to_text_file(filename, self.mu[index])
 
     def write_values_from_multiple_runs(self, filename, transformed_back=True):
         write_table_to_text_file(filename, self.get_predicted_values(transformed_back=transformed_back))
