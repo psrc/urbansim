@@ -198,6 +198,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
     
     proposal_parcel_ids = array([],dtype="int32")
     proposal_template_ids = array([],dtype="int32")
+    logger.start_block("Combine parcels, templates and constraints.")
     for i_template in range(development_template_dataset.size()):
         this_template_id = template_ids[i_template]
         fit_indicator = ones(index1.size, dtype="bool8")
@@ -232,7 +233,8 @@ def create_from_parcel_and_development_template(parcel_dataset,
                 
         proposal_parcel_ids = concatenate((proposal_parcel_ids, parcel_ids[index1[fit_indicator]]))
         proposal_template_ids = concatenate( (proposal_template_ids, resize(array([this_template_id]), fit_indicator.sum())))
-    
+        
+    logger.end_block()
     proposals = _create_project_proposals(proposal_parcel_ids, proposal_template_ids)
     proposals = _subset_by_filter(proposals)
     # eliminate proposals with zero units_proposed
