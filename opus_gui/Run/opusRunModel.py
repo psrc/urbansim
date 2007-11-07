@@ -30,6 +30,7 @@ class OpusModelTest(object):
         # Run the Eugene model using the XML version of the Eugene configuration.
         # This code hacked together based on opus_core/tools/start_run.py
         # No progress bar indicator yet ...
+        statusfile = None
         try:
             option_group = StartRunOptionGroup()
             parser = option_group.parser
@@ -37,18 +38,54 @@ class OpusModelTest(object):
             (options, args) = parser.parse_args([])
             run_manager = option_group.get_run_manager(options)
             # find the directory containing the eugene xml configurations
-            inprocessdir = __import__('opus_gui').__path__[0]
-            path = os.path.join(inprocessdir, 'projects', 'eugene', 'baseline.xml')
-            config = XMLConfiguration(path)
+            xml_dir = __import__('opus_gui').__path__[0]
+            xml_path = os.path.join(xml_dir, 'projects', 'eugene', 'baseline.xml')
+            config = XMLConfiguration(xml_path)
             insert_auto_generated_cache_directory_if_needed(config)
+            cache_dir = config['cache_directory']
+            statusfile = os.path.join(cache_dir, 'status.txt')
+            config['status_file_for_gui'] = statusfile
             run_manager.run_run(config)
             succeeded = True
         except SimulationRunError:
             succeeded = False
+        if statusfile is not None and os.path.exists(statusfile):
+            os.remove(statusfile)
         self.parent.finishedCallback(succeeded)
         #
         # statement to signal i % progress:
         # self.parent.progressCallback(i)
+        
+    def _compute_progress(self, statusfile):
+        # Stub method to compute percent progress for the progress bar
+        # the statusfile is written by the _write_status_for_gui method
+        # in class ModelSystem in urbansim.model_coordinators.model_system
+        # The file is ascii, with the following format (1 item per line):
+        #   start year
+        #   end year
+        #   current year
+        #   total number of models
+        #   number of current model that is about to run
+        #   message to display in the progress bar widget
+        f = open(statusfile)
+        lines = f.readlines()
+        f.close()
+        # use float for all numbers to help with percent computation
+        start_year = float(lines[0])
+        end_year = float(lines[1])
+        current_year = float(lines[2])
+        total_models = float(lines[3])
+        current_model = float(lines[4])
+        message = lines[5].strip()
+        total_years = end_year - start_year + 1
+        # For each year, we need to run all of the models.
+        # year_fraction_completed is the fraction completed (ignoring the currently running year)
+        # model_fraction_completed is the additional fraction completed for the current year
+        year_fraction_completed = (current_year - start_year) / total_years
+        model_fraction_completed = (current_model / total_models) / total_years
+        percentage = 100.0* (year_fraction_completed + model_fraction_completed)
+        print percentage
+        print message
         
     
 class RunModelThread(QThread):
