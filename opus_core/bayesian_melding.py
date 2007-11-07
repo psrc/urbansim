@@ -417,7 +417,7 @@ class BayesianMelding:
         write_table_to_text_file(filename, self.get_expected_values_by_index(index, transformed_back))
 
     def write_observed_data(self, filename, index, transformed_back=True):
-        write_table_to_text_file(filename, self.get_observed_data_by_index(index, transformed_back))
+        write_to_text_file(filename, self.get_observed_data_by_index(index, transformed_back), delimiter=' ')
         
     def write_values_from_multiple_runs(self, filename, transformed_back=True):
         write_table_to_text_file(filename, self.get_predicted_values(transformed_back=transformed_back))
