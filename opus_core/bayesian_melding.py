@@ -298,6 +298,12 @@ class BayesianMelding:
     def get_expected_values(self):
         return self.mu
 
+    def get_expected_values_by_index(self, index, transformed_back=True):
+        transformation, inverse_transformation = self.observed_data.get_quantity_object_by_index(index).get_transformation_pair()
+        if transformed_back and (transformation is not None):
+            return try_transformation(self.mu[index], inverse_transformation)
+        return self.mu[index]
+    
     def get_bias(self):
         return self.ahat
 
@@ -401,8 +407,8 @@ class BayesianMelding:
     def write_simulated_values(self, filename):
         write_table_to_text_file(filename, self.simulated_values)
         
-    def write_expected_values(self, filename, index):
-        write_table_to_text_file(filename, self.mu[index])
+    def write_expected_values(self, filename, index, transformed_back=True):
+        write_table_to_text_file(filename, self.get_expected_values_by_index(index, transformed_back))
 
     def write_values_from_multiple_runs(self, filename, transformed_back=True):
         write_table_to_text_file(filename, self.get_predicted_values(transformed_back=transformed_back))
