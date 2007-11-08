@@ -198,7 +198,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
     
     proposal_parcel_ids = array([],dtype="int32")
     proposal_template_ids = array([],dtype="int32")
-    logger.start_block("Combine parcels, templates and constraints.")
+    logger.start_block("Combine parcels, templates and constraints")
     for i_template in range(development_template_dataset.size()):
         this_template_id = template_ids[i_template]
         fit_indicator = ones(index1.size, dtype="bool8")
@@ -236,7 +236,13 @@ def create_from_parcel_and_development_template(parcel_dataset,
         
     logger.end_block()
     proposals = _create_project_proposals(proposal_parcel_ids, proposal_template_ids)
-    proposals = _subset_by_filter(proposals)
+    try:
+        proposals = _subset_by_filter(proposals)
+    except (MemoryError, ValueError):
+        proposals.flush_dataset()
+        dataset_pool.flush_loaded_datasets()
+        proposals = _subset_by_filter(proposals)
+        
     # eliminate proposals with zero units_proposed
     units_proposed = proposals.compute_variables(["urbansim_parcel.development_project_proposal.units_proposed"],
                                                  dataset_pool = dataset_pool)

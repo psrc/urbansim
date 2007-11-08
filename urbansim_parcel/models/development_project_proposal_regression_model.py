@@ -117,7 +117,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
             index1 = None
             
         if create_proposal_set:
-            logger.start_block("Creating proposals for new development.")
+            logger.start_block("Creating proposals for new development")
             proposal_set = create_from_parcel_and_development_template( parcels, templates, 
                                                               filter_attribute=self.filter,
                                                               parcel_index = index1,
@@ -126,7 +126,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
             proposal_set.add_attribute( zeros(proposal_set.size(), dtype=int16), "is_redevelopment", AttributeType.PRIMARY )
             logger.end_block()
             if parcel_filter_for_redevelopment is not None:
-                logger.start_block("Creating proposals for re-development.")
+                logger.start_block("Creating proposals for re-development")
                 buildings = dataset_pool.get_dataset('building')
                 land_area = buildings.get_attribute("land_area").copy()
                 parcels.compute_variables(parcel_filter_for_redevelopment, dataset_pool=dataset_pool)
