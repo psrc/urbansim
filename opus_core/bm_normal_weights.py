@@ -23,6 +23,7 @@ class bm_normal_weights:
         variance_all = bm_object.get_variance()
         bias_all = bm_object.get_bias()
         wi = ones(bm_object.number_of_runs, dtype=float32)
+        weight_components = {}
         for l in y_all.keys():
             y = y_all[l]
             mu = mu_all[l]
@@ -33,5 +34,7 @@ class bm_normal_weights:
             tmp2 = sum((reshape(y, (y.size,1)) - bias - mu)**2.0, axis=0)/(2.0*variance)
             logwi = tmp1 - tmp2
             logwi = logwi - logwi.max()
-            wi = wi * exp(logwi)
-        return wi/wi.sum()
+            this_wi = exp(logwi)
+            weight_components[l] = this_wi/this_wi.sum()
+            wi = wi * weight_components[l]
+        return (wi/wi.sum(), weight_components)

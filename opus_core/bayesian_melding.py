@@ -180,6 +180,7 @@ class BayesianMelding:
         self.mu = {}
         self.ahat = {}
         self.v = {}
+        self.weight_components = {}
         self.simulated_values = None
         self.scaling_parents = scaling_parents
         self.scaling_parent_datasets = {}
@@ -230,7 +231,7 @@ class BayesianMelding:
         self.estimate_variance()
         if procedure is not None:
             procedure_class = ModelComponentCreator().get_model_component(procedure)
-            self.weights = procedure_class.run(self, **kwargs)
+            self.weights, self.weight_components = procedure_class.run(self, **kwargs)
         else:
             self.weights = 1.0/self.number_of_runs * ones(self.number_of_runs)
         write_to_text_file(os.path.join(self.cache_directory, self.weights_file_name),
@@ -289,7 +290,7 @@ class BayesianMelding:
         for l in self.mu.keys():
             self.v[l] = zeros(self.number_of_runs, dtype=float32)
             for i in range(self.number_of_runs):
-                self.v[l][i] = ((self.y[l] - self.ahat[l] - self.mu[l][:,i])**2.0).mean()
+                 self.v[l][i] = ((self.y[l] - self.ahat[l] - self.mu[l][:,i])**2.0).mean()
             if l > 0:
                 mode="ab" # add to existing file
             write_to_text_file(os.path.join(self.cache_directory, self.variance_file_name),
@@ -331,6 +332,9 @@ class BayesianMelding:
     def get_variance_for_quantity(self):
         return self.v[self.use_bias_and_variance_index]
 
+    def get_weight_components(self):
+        return self.weight_components
+    
     def set_propagation_factor(self, year):
         self.propagation_factor = (year - self.base_year)/float(self.observed_data.get_year() - self.base_year)
 
