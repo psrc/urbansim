@@ -236,13 +236,8 @@ def create_from_parcel_and_development_template(parcel_dataset,
         
     logger.end_block()
     proposals = _create_project_proposals(proposal_parcel_ids, proposal_template_ids)
-    try:
-        proposals = _subset_by_filter(proposals)
-    except (MemoryError, ValueError):
-        proposals.flush_dataset()
-        dataset_pool.flush_loaded_datasets()
-        proposals = _subset_by_filter(proposals)
-        
+    proposals = _subset_by_filter(proposals)
+
     # eliminate proposals with zero units_proposed
     units_proposed = proposals.compute_variables(["urbansim_parcel.development_project_proposal.units_proposed"],
                                                  dataset_pool = dataset_pool)
