@@ -14,11 +14,7 @@
 
 import os
 
-from opus_core.configurations.database_configuration import DatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-
-from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
-
 from psrc.configs.baseline import Baseline
 
 class CachingConfiguration(Baseline):
