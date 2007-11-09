@@ -45,7 +45,8 @@ class DevelopmentProjectLocationChoiceModelConfigurationCreator(HasStrictTraits)
         self.specification_table = '%s_specification' % self._model_name
         
         # Let HasStrictTraits handle the assignment, etc. of the named arguments, above
-        kwargs['project_type'] = project_type
+        # kwargs['project_type'] = project_type # doesn't work for some users
+        self.project_type = project_type
         
         HasStrictTraits.__init__(self, *args, **kwargs)
     
