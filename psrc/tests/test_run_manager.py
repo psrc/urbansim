@@ -109,8 +109,6 @@ if does_database_server_exist_for_this_hostname(
                                                            % history_id)[1:]
                                                            
             expected = [['started'], ['done']]
-            print 'expected: ',expected
-            print 'output: ', statuses
             
             for i in expected:
                 self.assertTrue(i in statuses)
@@ -146,9 +144,6 @@ if does_database_server_exist_for_this_hostname(
                                                            % history_id)[1:]
                                                            
             expected = [['started'], ['done'], ['restarted in 2001'], ['done'], ['restarted in 2002'], ['done']]       
-                                                    
-            print 'expected: ',expected
-            print 'output: ', statuses
 
             for i in expected:
                 self.assertTrue(i in statuses)
