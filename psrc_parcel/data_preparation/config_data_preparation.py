@@ -13,11 +13,8 @@
 #
 
 #from urbansim.estimation.config import config
-from opus_core.configurations.database_configuration import DatabaseConfiguration
 from opus_core.configuration import Configuration
 from urbansim_parcel.configs.controller_config import UrbansimParcelConfiguration
-from urbansim.configs.general_configuration import GeneralConfiguration
-from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
