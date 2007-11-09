@@ -59,8 +59,6 @@ class GenericOptionGroup:
         
     def get_database_server(self, options):
         """Gets database server for the specified db connection."""
-        if options.host_name is None:
-            return None
         
         config = DatabaseServerConfiguration(
             host_name = options.host_name,
