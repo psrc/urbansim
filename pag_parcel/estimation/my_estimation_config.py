@@ -14,7 +14,7 @@
 
 import os
 
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
@@ -24,9 +24,6 @@ from urbansim.configurations.creating_baseyear_cache_configuration import Creati
 my_configuration = {
     'cache_directory' : 'c:/urbansim_cache/pag_parcel/cache_source', # change or leave out
     'output_configuration': DatabaseConfiguration(
-        host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
-        user_name     = os.environ.get('MYSQLUSERNAME',''),
-        password      = os.environ.get('MYSQLPASSWORD',''),
         database_name = 'pag_parcel_2000_estimation', #we want to write these to MSSQL
         ),
     'dataset_pool_configuration': DatasetPoolConfiguration(
