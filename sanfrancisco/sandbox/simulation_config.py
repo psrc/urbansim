@@ -15,7 +15,7 @@
 import os
 
 #from opus_core.misc import get_host_name
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
 from urbansim.configs.base_config_zone import tables_to_cache
@@ -44,9 +44,6 @@ my_configuration = {
     'cache_directory': '/urbansim_cache/psrc_zone', ### TODO: Set this cache_directory to something useful.
     'creating_baseyear_cache_configuration': cache_configuration['creating_baseyear_cache_configuration'],
     'input_configuration': DatabaseConfiguration(
-        host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
-        user_name     = os.environ.get('MYSQLUSERNAME',''),
-        password      = os.environ.get('MYSQLPASSWORD',''),
         database_name = 'PSRC_2000_estimation_zone_pwaddell', #change
         ),                      
     'base_year':2000,
