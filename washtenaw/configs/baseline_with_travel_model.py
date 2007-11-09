@@ -13,8 +13,6 @@
 # 
 
 import os
-from opus_core.configurations.database_configuration import DatabaseConfiguration
-from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from baseline import Baseline
 
 class BaselineWithTravelModel(Baseline):
