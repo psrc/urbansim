@@ -17,11 +17,14 @@ from opus_core.database_management.database_server_configuration import Database
 
 class DatabaseConfiguration(DatabaseServerConfiguration):
     """A DatabaseConfiguration provides the connection information 
-    for a sql database server and database.  
-    The default values for host_name, 
-    user_name, and password are found by looking in the appropriate system 
-    variables; if the system environment vars are absent some reasonable 
-    alternative is used."""
+    for a sql database server and database.
+    If use_environment_variables is True, the
+    values for protocol, host_name, user_name, and password are found by looking in 
+    the appropriate environment variables; if use_environment_variables is
+    False, these values are set to the parameters to the __init__ method.  
+    For backwards compatibility, use_environment_variables can also be None.
+    In that case, the value of e.g. host_name is either the argument provided if
+    the argument is not None, or the environment variable if it is."""
 
     def __init__(self, 
                  protocol = None, 
@@ -29,14 +32,16 @@ class DatabaseConfiguration(DatabaseServerConfiguration):
                  user_name = None, 
                  password = None,
                  database_name = None,
-                 test = False):
+                 test = False,
+                 use_environment_variables = None):
   
         DatabaseServerConfiguration.__init__(self,
             protocol = protocol,
             host_name = host_name,
             user_name = user_name,
             password = password,
-            test = test
+            test = test,
+            use_environment_variables = use_environment_variables
             )      
 
         self.database_name = database_name
