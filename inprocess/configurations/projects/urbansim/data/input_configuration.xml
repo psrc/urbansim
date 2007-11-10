@@ -3,13 +3,12 @@
 
 <item name="input_configuration" type="class">
   <item name="Class name" type="string" flags="hidden">DatabaseConfiguration</item>
-  <item name="Class path" type="string" flags="hidden">opus_core.configurations.database_configuration</item>
+  <item name="Class path" type="string" flags="hidden">opus_core.database_management.database_configuration</item>
+  <item name="protocol" type="string"></item>
   <item name="host_name" type="string"></item>
   <item name="user_name" type="string"></item>
   <item name="password" type="password"></item>
-  <item name="get_host_name_from_environment_variable" type="boolean">True</item>
-  <item name="get_user_name_from_environment_variable" type="boolean">True</item>
-  <item name="get_password_from_environment_variable" type="boolean">True</item>
+  <item name="use_environment_variables" type="boolean">True</item>
   <item name="database_name" type="string"></item>
 </item>
 

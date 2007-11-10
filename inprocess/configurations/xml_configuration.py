@@ -394,6 +394,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'database_configuration.xml')
         config = XMLConfiguration(f)
         db_config = config['input_configuration']
+        self.assertEqual(db_config.protocol, 'mysql')
         self.assertEqual(db_config.host_name, 'bigserver')
         self.assertEqual(db_config.user_name, 'fred')
         self.assertEqual(db_config.password, 'secret')
@@ -404,6 +405,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'database_configuration_with_categories.xml')
         config = XMLConfiguration(f)
         db_config = config['input_configuration']
+        self.assertEqual(db_config.protocol, 'mysql')
         self.assertEqual(db_config.host_name, 'bigserver')
         self.assertEqual(db_config.user_name, 'fred')
         self.assertEqual(db_config.password, 'secret')
