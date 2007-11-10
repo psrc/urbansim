@@ -32,14 +32,13 @@ class DatabaseServerConfiguration(object):
                  test = False,
                  use_environment_variables = None):
         if use_environment_variables is True:
-            protocol = os.environ.get('DEFAULT_URBANSIM_DB_ENGINE', 'mysql')
-            self.protocol = protocol.lower()
+            self.protocol = os.environ.get('DEFAULT_URBANSIM_DB_ENGINE', 'mysql').lower()
             if test:
-                self.host_name = os.environ.get('%sHOSTNAMEFORTESTS'%protocol.upper(),'localhost')
+                self.host_name = os.environ.get('%sHOSTNAMEFORTESTS'%self.protocol.upper(),'localhost')
             else:
-                self.host_name = os.environ.get('%sHOSTNAME'%protocol.upper(),'localhost')
-            self.user_name = os.environ.get('%sUSERNAME'%protocol.upper(),'')
-            self.password = os.environ.get('%sPASSWORD'%protocol.upper(),'') 
+                self.host_name = os.environ.get('%sHOSTNAME'%self.protocol.upper(),'localhost')
+            self.user_name = os.environ.get('%sUSERNAME'%self.protocol.upper(),'')
+            self.password = os.environ.get('%sPASSWORD'%self.protocol.upper(),'') 
         elif use_environment_variables is False:
             self.protocol = protocol.lower()
             self.host_name = host_name
@@ -52,17 +51,17 @@ class DatabaseServerConfiguration(object):
                 self.protocol = protocol.lower() 
             if host_name is None:
                 if test:
-                    self.host_name = os.environ.get('%sHOSTNAMEFORTESTS'%protocol.upper(),'localhost')
+                    self.host_name = os.environ.get('%sHOSTNAMEFORTESTS'%self.protocol.upper(),'localhost')
                 else:
-                    self.host_name = os.environ.get('%sHOSTNAME'%protocol.upper(),'localhost')
+                    self.host_name = os.environ.get('%sHOSTNAME'%self.protocol.upper(),'localhost')
             else:
                 self.host_name = host_name
             if user_name is None:
-                self.user_name = os.environ.get('%sUSERNAME'%protocol.upper(),'')
+                self.user_name = os.environ.get('%sUSERNAME'%self.protocol.upper(),'')
             else:
                 self.user_name = user_name
             if password is None:
-                self.password = os.environ.get('%sPASSWORD'%protocol.upper(),'')
+                self.password = os.environ.get('%sPASSWORD'%self.protocol.upper(),'')
             else:
                 self.password = password
         else:
@@ -101,6 +100,12 @@ class DatabaseServerConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(c3.host_name, os.environ['MYSQLHOSTNAME'])
         self.assertEqual(c3.user_name, 'fred')
         self.assertEqual(c3.password, os.environ['MYSQLPASSWORD'])
+
+        c4 = DatabaseServerConfiguration()
+        self.assertEqual(c4.protocol, 'mysql')
+        self.assertEqual(c4.host_name, os.environ['MYSQLHOSTNAME'])
+        self.assertEqual(c4.user_name, os.environ['MYSQLUSERNAME'])
+        self.assertEqual(c4.password, os.environ['MYSQLPASSWORD'])
 
 if __name__=='__main__':
     opus_unittest.main()
