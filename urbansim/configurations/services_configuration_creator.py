@@ -21,25 +21,19 @@ class ServicesConfigurationCreator(HasStrictTraits):
     host_name = Str('localhost')
     user_name = Trait(None, None, Str)
     db_password = Str('')
-    get_host_name_from_environment_variable = Bool(True)
-    get_user_name_from_environment_variable = Bool(True)
-    get_db_password_from_environment_variable = Bool(True)
+    use_environment_variables = Bool(True)
     database_name = Str('services')
     
     _model_name = 'services_configuration'
     
     def execute(self):
-        if self.get_host_name_from_environment_variable:
+        if self.use_environment_variables:
             host = os.environ.get('MYSQLHOSTNAME')
-        else:
-            host = self.host_name
-        if self.get_user_name_from_environment_variable:
             user = os.environ.get('MYSQLUSERNAME')
-        else:
-            user = self.user_name
-        if self.get_db_password_from_environment_variable:
             pwd = os.environ.get('MYSQLPASSWORD')
         else:
+            host = self.host_name
+            user = self.user_name
             pwd = self.db_password
         return Configuration({
             'host_name': host,
@@ -61,14 +55,11 @@ class TestServicesConfigurationCreator(opus_unittest.OpusTestCase):
         
     def test_defaults(self):
         creator = ServicesConfigurationCreator()
-        
         expected = Configuration({
             'host_name': os.environ.get('MYSQLHOSTNAME'),
             'user_name': os.environ.get('MYSQLUSERNAME'),
             'db_password': os.environ.get('MYSQLPASSWORD'),
-            'database_name':'services',
-            })
-        
+            'database_name':'services'})
         result = creator.execute()
         self.assertDictsEqual(result, expected)
         
@@ -78,37 +69,30 @@ class TestServicesConfigurationCreator(opus_unittest.OpusTestCase):
             user_name = 'user_name',
             db_password = 'secret',
             database_name = 'database_name',
-            get_host_name_from_environment_variable = False,
-            get_user_name_from_environment_variable = False,
-            get_db_password_from_environment_variable = False
+            use_environment_variables = False
             )
         expected = Configuration({
             'host_name':'host_name',
             'user_name':'user_name',
             'db_password': 'secret',
-            'database_name':'database_name',
-            })
-        
+            'database_name':'database_name'})
         result = creator.execute()
         self.assertDictsEqual(result, expected)
             
-    def test_with_some_arguments(self):
+    def test_with_arguments_use_env_vars(self):
+        # supply arguments, but use environment variables anyway
         creator = ServicesConfigurationCreator(
             host_name = 'host_name',
             user_name = 'user_name',
             db_password = 'secret',
             database_name = 'database_name',
-            get_host_name_from_environment_variable = True,
-            get_user_name_from_environment_variable = False,
-            get_db_password_from_environment_variable = False
+            use_environment_variables = True
             )
         expected = Configuration({
             'host_name': os.environ.get('MYSQLHOSTNAME'),
-            'user_name':'user_name',
-            'db_password': 'secret',
-            'database_name':'database_name',
-            })
-        
+            'user_name': os.environ.get('MYSQLUSERNAME'),
+            'db_password': os.environ.get('MYSQLPASSWORD'),
+            'database_name':'database_name'})
         result = creator.execute()
         self.assertDictsEqual(result, expected)
             
