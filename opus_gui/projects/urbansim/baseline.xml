@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+ 
+<item name="description" type="string">Base UrbanSim configuration</item>
+
+<item name="data" type="dictionary" parser_action="category">
+  <item name="input_configuration" type="file" parser_action="include">data/input_configuration.xml</item>
+  <item name="cache_configuration" type="file" parser_action="include">data/cache_configuration.xml</item>
+  <item name="services_configuration" type="file" parser_action="include">data/services_configuration.xml</item>
+</item>
+
+<item name="model_system" type="dictionary" parser_action="category">
+  <item name="models" type="file" parser_action="include">model_system/models.xml</item>
+  <item name="others" type="file" parser_action="include">model_system/others.xml</item>
+</item>
+
+<item name="models" type="dictionary" parser_action="category">
+  <item name="models_configuration" type="dictionary">
+    <item name="development_project_types" type="file" parser_action="include">models/development_project_types.xml</item>
+    <item name="residential_development_project_location_choice_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/residential_development_project_location_choice_model.xml</item>
+    </item>
+    <item name="commercial_development_project_location_choice_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/commercial_development_project_location_choice_model.xml</item>
+    </item>
+    <item name="industrial_development_project_location_choice_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/industrial_development_project_location_choice_model.xml</item>
+    </item>
+    <item name="prescheduled_events" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/prescheduled_events.xml</item>
+    </item>
+    <item name="events_coordinator" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/events_coordinator.xml</item>
+    </item>
+    <item name="home_based_choice_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/home_based_choice_model.xml</item>
+    </item>
+    <item name="auto_ownership_choice_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/auto_ownership_choice_model.xml</item>
+    </item>
+    <item name="residential_land_share_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/residential_land_share_model.xml</item>
+    </item>
+    <item name="land_price_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/land_price_model.xml</item>
+    </item>
+    <item name="development_project_transition_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/development_project_transition_model.xml</item>
+    </item>
+    <item name="development_event_transition_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/development_event_transition_model.xml</item>
+    </item>
+    <item name="household_transition_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/household_transition_model.xml</item>
+    </item>
+    <item name="employment_transition_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/employment_transition_model.xml</item>
+    </item>
+    <item name="household_relocation_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/household_relocation_model.xml</item>
+    </item>
+    <item name="household_location_choice_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/household_location_choice_model.xml</item>
+    </item>
+    <item name="employment_relocation_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/employment_relocation_model.xml</item>
+    </item>
+    <item name="employment_location_choice_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/employment_location_choice_model.xml</item>
+    </item>
+    <item name="home_based_employment_location_choice_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/home_based_employment_location_choice_model.xml</item>
+    </item>
+    <item name="governmental_employment_location_choice_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/governmental_employment_location_choice_model.xml</item>
+    </item>
+    <item name="distribute_unplaced_jobs_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/distribute_unplaced_jobs_model.xml</item>
+    </item>
+    <item name="real_estate_price_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/real_estate_price_model.xml</item>
+    </item>
+    <item name="building_transition_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/building_transition_model.xml</item>
+    </item>
+    <item name="building_relocation_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/building_relocation_model.xml</item>
+    </item>
+    <item name="building_location_choice_model" type="dictionary">
+      <item name="controller" type="file" parser_action="include">models/building_location_choice_model.xml</item>
+    </item>
+  </item>
+</item>
+
+
+
+<item name="advanced" type="dictionary" parser_action="category">
+  <item name="datasets_to_cache_after_each_model" type="file" parser_action="include">advanced/datasets_to_cache_after_each_model.xml</item>
+  <item name="datasets_to_preload" type="file" parser_action="include">advanced/datasets_to_preload.xml</item>
+  <item name="other" type="file" parser_action="include">advanced/other.xml</item>
+</item>
+
+<!-- 
+changes:
+
+in general_configuration.py  events_coordinator had:
+'default_type_of_change':DevelopmentEventTypeOfChange.ADD (omitted)
+
+omitted debug level as a parameter in all configs (should handle this a different way)
+      
+earlier XML didn't have home_based_choice_model, auto_ownership_choice_model 
+-->
+
+
+</configuration>

@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+
+<item name="controller" type="class" parser_action="execute">
+  <item name="Class name" type="string" flags="hidden">HomeBasedChoiceModelConfigurationCreator</item>
+  <item name="Class path" type="string" flags="hidden">urbansim.configurations.home_based_choice_model_configuration_creator</item>
+  <item name="records_per_chunk" type="integer">500</item>
+  <item name="agent_set" type="string">person</item>
+  <item name="estimation_procedure" type="string">opus_core.bhhh_mnl_estimation</item>
+  <item name="choice_attribute_name" type="string">work_nonhome_based</item>
+  <item name="choice_set" type="list">
+    <item name="int" type="integer">0</item>
+    <item name="int" type="integer">1</item>
+  </item>
+  <item name="agents_for_estimation_table" type="string">persons_for_estimation</item>
+  <item name="filter" type="string">None</item>
+  <item name="coefficients_table" type="string">home_based_choice_model_coefficients</item>
+  <item name="specification_table" type="string">home_based_choice_model_specification</item>
+</item>
+
+</configuration>
