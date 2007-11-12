@@ -4,7 +4,7 @@
 <item name="description" type="string">Base UrbanSim configuration</item>
 
 <item name="data" type="dictionary" parser_action="category">
-  <item name="input_configuration" type="file" parser_action="include">data/input_configuration.xml</item>
+  <item name="baseyear_database" type="file" parser_action="include">data/baseyear_database.xml</item>
   <item name="cache_configuration" type="file" parser_action="include">data/cache_configuration.xml</item>
   <item name="services_configuration" type="file" parser_action="include">data/services_configuration.xml</item>
 </item>
