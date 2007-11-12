@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+
+<item name="controller" type="class" parser_action="execute">
+  <item name="Class name" type="string" flags="hidden">LandPriceModelConfigurationCreator</item>
+  <item name="Class path" type="string" flags="hidden">urbansim.configurations.land_price_model_configuration_creator</item>
+  <item name="dataset" type="string">gridcell</item>
+  <item name="nchunks" type="integer">1</item>
+  <item name="threshold" type="integer">1000</item>
+  <item name="estimation_procedure" type="string">opus_core.estimate_linear_regression</item>
+  <item name="coefficients_table" type="string">land_price_model_coefficients</item>
+  <item name="specification_table" type="string">land_price_model_specification</item>
+</item>
+
+</configuration>
