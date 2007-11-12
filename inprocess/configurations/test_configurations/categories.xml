@@ -3,6 +3,8 @@
 
 <item name="description" type="string">category test</item>
 
+<item name="gui_name" config_name="real_name" type="string">config name test</item>
+
 
 <item name="advanced" type="dictionary" parser_action="category">
   <item name="precache" type="boolean">True</item>

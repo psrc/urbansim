@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <configuration>
 
-<item name="models" type="list">
+<item name="models to run" config_name="models" type="list">
   <item type="model" name="prescheduled_events">ok</item>
   <item type="model" name="events_coordinator">ok</item>
   <item type="model" name="residential_land_share_model">ok</item>

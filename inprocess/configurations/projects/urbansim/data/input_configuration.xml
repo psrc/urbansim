@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <configuration>
 
-<item name="input_configuration" type="class">
+<item name="baseyear database configuration" config_name="input_configuration" type="class">
   <item name="Class name" type="string" flags="hidden">DatabaseConfiguration</item>
   <item name="Class path" type="string" flags="hidden">opus_core.database_management.database_configuration</item>
   <item name="protocol" type="string"></item>

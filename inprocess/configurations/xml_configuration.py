@@ -104,7 +104,11 @@ class XMLConfiguration(Configuration):
             else:
                 # make the dictionary keys be strings 
                 # (later should they be turned into unicode instead??)
-                key = str(node.attributes().namedItem('name').nodeValue())
+                config_name = str(node.attributes().namedItem('config_name').nodeValue())
+                if config_name!='':
+                    key = config_name
+                else:
+                    key = str(node.attributes().namedItem('name').nodeValue())
                 result_dict[key] = self._convert_node_to_data(node, filename)
             
     def _convert_node_to_data(self, node, filename):
@@ -369,6 +373,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config = XMLConfiguration(f)
         self.assertEqual(config, 
                          {'description': 'category test',
+                          'real_name': 'config name test',
                           'precache': True,
                           'chunksize': 12,
                           'years': (1980, 1981),

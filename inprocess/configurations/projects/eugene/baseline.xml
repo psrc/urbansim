@@ -7,12 +7,12 @@
   
 <item name="base_year" type="integer">1980</item>
 
-<item name="years" type="tuple">
+<item name="years to run" config_name="years" type="tuple">
   <item name="startyear" type="integer">1981</item>
   <item name="endyear" type="integer">1981</item>
 </item>
 
-<item type="list" name="models" >
+<item name="models to run" config_name="models" type="list">
   <item type="model" name="prescheduled_events">ok</item>
   <item type="model" name="events_coordinator">ok</item>
   <item type="model" name="residential_land_share_model">ok</item>
@@ -33,7 +33,7 @@
   <item type="model" name="distribute_unplaced_jobs_model">ok</item>
 </item>
 
-<item name="input_configuration" type="class">
+<item name="baseyear database configuration" config_name="input_configuration" type="class">
   <item name="Class name" type="string" flags="hidden">DatabaseConfiguration</item>
   <item name="Class path" type="string" flags="hidden">opus_core.database_management.database_configuration</item>
   <item name="protocol" type="string"></item>

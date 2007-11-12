@@ -6,7 +6,7 @@
 
   <item name="base_year" type="integer">1980</item>
 
-  <item name="years" type="tuple">
+  <item name="years to run" config_name="years" type="tuple">
     <item name="startyear" type="integer">1981</item>
     <item name="endyear" type="integer">1982</item>
   </item>
