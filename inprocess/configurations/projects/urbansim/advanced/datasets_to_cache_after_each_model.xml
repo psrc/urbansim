@@ -2,11 +2,11 @@
 <configuration>
 
 <item name="datasets_to_cache_after_each_model" type="list">
-  <item name="gridcell" type="dataset">ok</item>
-  <item name="household" type="dataset">ok</item>
-  <item name="job" type="dataset">ok</item>
-  <item name="travel_data" type="dataset">skip</item>
-  <item name="zone" type="dataset">skip</item>
+  <item name="gridcell" type="dataset">Load</item>
+  <item name="household" type="dataset">Load</item>
+  <item name="job" type="dataset">Load</item>
+  <item name="travel_data" type="dataset">Skip</item>
+  <item name="zone" type="dataset">Skip</item>
 </item>
 
 </configuration>

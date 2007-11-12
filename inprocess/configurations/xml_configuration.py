@@ -144,11 +144,11 @@ class XMLConfiguration(Configuration):
             return self._convert_class_to_data(node, filename)
         elif type_name=='model':
             # "skip" is the value used to indicate models to skip
-            return self._convert_custom_type_to_data(node, filename, "skip")
+            return self._convert_custom_type_to_data(node, filename, "Skip")
         elif type_name=='table':
-            return self._convert_custom_type_to_data(node, filename, "skip")
+            return self._convert_custom_type_to_data(node, filename, "Skip")
         elif type_name=='dataset':
-            return self._convert_custom_type_to_data(node, filename, "skip")
+            return self._convert_custom_type_to_data(node, filename, "Skip")
         else:
             raise ValueError, 'unknown type: %s' % type_name
             

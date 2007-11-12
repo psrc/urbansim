@@ -30,25 +30,25 @@
 
 
 <item name="models" type="list">
-  <item name="model1" type="model">ok</item>
-  <item name="model2" type="model">ok<item name="group_members" type="string">all</item>
+  <item name="model1" type="model">Run</item>
+  <item name="model2" type="model">Run<item name="group_members" type="string">all</item>
   </item>
-  <item name="model3" type="model">ok<item name="chooser" type="string">random</item>
+  <item name="model3" type="model">Run<item name="chooser" type="string">random</item>
     <item name="sampler" type="string">fussy</item>
   </item>
-  <item name="model4" type="model">skip</item>
+  <item name="model4" type="model">Skip</item>
 </item>
 
 <item name="mytables" type="list">
-  <item name="gridcells" type="table">ok</item>
-  <item name="zones" type="table">skip</item>
-  <item name="jobs" type="table">ok</item>
+  <item name="gridcells" type="table">Load</item>
+  <item name="zones" type="table">Skip</item>
+  <item name="jobs" type="table">Load</item>
 </item>
 
 <item name="mydatasets" type="list">
-  <item name="gridcell" type="dataset">ok</item>
-  <item name="zone" type="dataset">skip</item>
-  <item name="job" type="dataset">ok</item>
+  <item name="gridcell" type="dataset">Load</item>
+  <item name="zone" type="dataset">Skip</item>
+  <item name="job" type="dataset">Load</item>
 </item>
 
 </configuration>
