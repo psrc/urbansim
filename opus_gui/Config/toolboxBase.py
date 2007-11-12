@@ -69,8 +69,8 @@ class ToolboxBase(object):
       self.doc.save(out, indentSize)
       self.model = OpusDataModel(self.doc, self.parent, self.configFile)
       self.view = QTreeView(self.parent)
-      self.delegate = OpusDataDelegate(self.parent)
-      #self.view.setItemDelegate(self.delegate)
+      self.delegate = OpusDataDelegate(self.view)
+      self.view.setItemDelegate(self.delegate)
       self.view.setModel(self.model)
       self.view.setExpanded(self.model.index(0,0,QModelIndex()),True)
       #NEED TO FIX THIS

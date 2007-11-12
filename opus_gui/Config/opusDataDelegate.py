@@ -22,24 +22,70 @@ from opusDataItem import OpusDataItem
 class OpusDataDelegate(QItemDelegate):
     def __init__(self, parent):
         QItemDelegate.__init__(self, parent)
+        self.parent = parent
+        self.signalMapper = QSignalMapper(self)
         
     def createEditor(self, parent, option, index):
-        if index.column() == 2:
-            #model = index.model()
-            #btobject = model.getItemAt(index.row())
-            editor = QComboBox(parent)
-            print "here1"
-            return editor
-        else:
-            print "here2"
+        if not index.isValid():
             return QItemDelegate.createEditor(self, parent, option, index)
+        # Get the item associated with the index
+        item = index.internalPointer()
+        domNode = item.node()
+        if domNode.isNull():
+            return QItemDelegate.createEditor(self, parent, option, index)
+        # Handle ElementNodes
+        if domNode.isElement():
+            domElement = domNode.toElement()
+            if domElement.isNull():
+                return QItemDelegate.createEditor(self, parent, option, index)
+            # So we have a valid element and our column is 2 we need to make a editor
+            if index.column() == 2:
+                if domElement.attribute(QString("type")) == QString("model"):
+                    editor = QComboBox(parent)
+                    if index.model().data(index,Qt.DisplayRole).toString() == QString("run"):
+                        editor.addItem(QString("run"))
+                        editor.addItem(QString("skip"))
+                    else:
+                        editor.addItem(QString("skip"))
+                        editor.addItem(QString("run"))
+                    #QObject.connect(editor, SIGNAL("activated(int)"), self.signalMapper, SLOT("map()"))
+                    #self.signalMapper.setMapping(editor,editor)
+                    #QObject.connect(self.signalMapper, SIGNAL("mapped(int)"), self.comboBoxFinished)
+                    QObject.connect(editor, SIGNAL("activated(int)"), self.comboBoxFinished)
+                    return editor
+                elif domElement.attribute(QString("type")) == QString("table"):
+                    editor = QComboBox(parent)
+                    if index.model().data(index,Qt.DisplayRole).toString() == QString("load"):
+                        editor.addItem(QString("load"))
+                        editor.addItem(QString("skip"))
+                    else:
+                        editor.addItem(QString("skip"))                        
+                        editor.addItem(QString("load"))
+                    QObject.connect(editor, SIGNAL("activated(int)"), self.comboBoxFinished)
+                    return editor
+                else:
+                    editor = QItemDelegate.createEditor(self, parent, option, index)
+                    if type(editor) == QLineEdit:
+                        editor.setText(index.model().data(index,Qt.DisplayRole).toString())
+                    return editor
+            else:
+                return QItemDelegate.createEditor(self, parent, option, index)
     
     def setEditorData(self,editor,index):
-        #print "here3"
         pass
+        
     
     def setModelData(self,editor,model,index):
-        pass
+        #print "setModelData"
+        if type(editor) == QComboBox:
+            model.setData(index,QVariant(editor.currentText()),Qt.EditRole)
+        else:
+            QItemDelegate.setModelData(self,editor,model,index)
+        
     
     def updateEditorGeometry(self, editor, option, index):
         editor.setGeometry(option.rect)
+
+    def comboBoxFinished(self,x):
+        #print "comboBoxFinished ", self.sender()
+        self.emit(SIGNAL("commitData(QWidget*)"),self.sender())

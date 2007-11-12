@@ -282,7 +282,7 @@ class OpusDataModel(QAbstractItemModel):
             return False
         if role != Qt.EditRole:
             return False
-        print "setData %s" % (value.toString())
+        print "ModelView setData %s" % (value.toString())
         # Get the item associated with the index
         item = index.internalPointer()
         domNode = item.node()
