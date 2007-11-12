@@ -42,12 +42,12 @@ class OpusDataDelegate(QItemDelegate):
             if index.column() == 2:
                 if domElement.attribute(QString("type")) == QString("model"):
                     editor = QComboBox(parent)
-                    if index.model().data(index,Qt.DisplayRole).toString() == QString("run"):
-                        editor.addItem(QString("run"))
-                        editor.addItem(QString("skip"))
+                    if index.model().data(index,Qt.DisplayRole).toString() == QString("Run"):
+                        editor.addItem(QString("Run"))
+                        editor.addItem(QString("Skip"))
                     else:
-                        editor.addItem(QString("skip"))
-                        editor.addItem(QString("run"))
+                        editor.addItem(QString("Skip"))
+                        editor.addItem(QString("Run"))
                     #QObject.connect(editor, SIGNAL("activated(int)"), self.signalMapper, SLOT("map()"))
                     #self.signalMapper.setMapping(editor,editor)
                     #QObject.connect(self.signalMapper, SIGNAL("mapped(int)"), self.comboBoxFinished)
@@ -55,12 +55,22 @@ class OpusDataDelegate(QItemDelegate):
                     return editor
                 elif domElement.attribute(QString("type")) == QString("table"):
                     editor = QComboBox(parent)
-                    if index.model().data(index,Qt.DisplayRole).toString() == QString("load"):
-                        editor.addItem(QString("load"))
-                        editor.addItem(QString("skip"))
+                    if index.model().data(index,Qt.DisplayRole).toString() == QString("Load"):
+                        editor.addItem(QString("Load"))
+                        editor.addItem(QString("Skip"))
                     else:
-                        editor.addItem(QString("skip"))                        
-                        editor.addItem(QString("load"))
+                        editor.addItem(QString("Skip"))                        
+                        editor.addItem(QString("Load"))
+                    QObject.connect(editor, SIGNAL("activated(int)"), self.comboBoxFinished)
+                    return editor
+                elif domElement.attribute(QString("type")) == QString("boolean"):
+                    editor = QComboBox(parent)
+                    if index.model().data(index,Qt.DisplayRole).toString() == QString("True"):
+                        editor.addItem(QString("True"))
+                        editor.addItem(QString("False"))
+                    else:
+                        editor.addItem(QString("False"))                        
+                        editor.addItem(QString("True"))
                     QObject.connect(editor, SIGNAL("activated(int)"), self.comboBoxFinished)
                     return editor
                 else:
