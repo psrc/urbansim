@@ -52,6 +52,8 @@ class RemoteRunSet(RemoteRun):
             self.run_id_file = run_id_file
             run_activity = RunActivity(self.services_database)
             self.run_manager = RunManager(run_activity)
+        logger.log_status("run_id_file: %s" % self.run_id_file)
+        self.write_into_run_id_file()
         return None
             
     def run(self, start_year, end_year, configuration_path, run_id_file=None):
@@ -65,7 +67,6 @@ class RemoteRunSet(RemoteRun):
             self.run_ids_dict[int(run_id)] = int(year)
         
     def _do_run(self, start_year, end_year, *args, **kwargs):
-        logger.log_status("run_id_file: %s" % self.run_id_file)
         for run_id, finished_year in self.run_ids_dict.iteritems():
             self.run_id = run_id
             self.remote_communication_path = '%s/%s' % (self.remote_communication_path_root, self.run_id)
