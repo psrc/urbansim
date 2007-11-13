@@ -56,9 +56,14 @@ class ScenarioDatabaseManager(object):
         #      It should just be a database name
         if 'scenario_information' in tables_in_database:
             scenario_info_table = database.get_table('scenario_information')
-            query = select(
-                columns = [scenario_info_table.c.PARENT_DATABASE_URL]               
-            )
+            if 'PARENT_DATABASE_URL' in scenario_info_table.c:
+                col = scenario_info_table.c.PARENT_DATABASE_URL
+            elif 'parent_database_url' in scenario_info_table.c:
+                col = scenario_info_table.c.parent_database_url
+            else:
+                raise 'Scenario information table contains no parent_database_url column'
+            
+            query = select(columns = [col])
             next_database_name = database.engine.execute(query).fetchone()
             if next_database_name == () or next_database_name[0] == '':
                 next_database_name = None

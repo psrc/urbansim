@@ -28,9 +28,14 @@ class FlattenScenarioDatabaseChain(object):
         """
         new_database.metadata.reflect()
         if new_database.table_exists('scenario_information'):
+            qry = None
             scenario_information_table = new_database.get_table('scenario_information')
-            qry = scenario_information_table.update(values = {'PARENT_DATABASE_URL':''})
-            new_database.engine.execute(qry)
+            if 'PARENT_DATABASE_URL' in scenario_information_table.c:
+                qry = scenario_information_table.update(values = {'PARENT_DATABASE_URL':''})
+            elif 'parent_database_url' in scenario_information_table.c:
+                qry = scenario_information_table.update(values = {'parent_database_url':''})
+            if qry is not None: 
+                new_database.engine.execute(qry)
             
     def _create_db_from_chain_via_python(self, 
                                          db_server_config_from,
