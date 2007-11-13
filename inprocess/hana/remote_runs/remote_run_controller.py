@@ -235,8 +235,8 @@ class RemoteRun:
                 
                 if not self.skip_urbansim:
                     self.run_remote_python_process("%s/urbansim/tools/restart_run.py" % self.remote_opus_path, 
-                                               "%s %s --skip-cache-cleanup --skip-travel-model --hostname=%s" % (
-                                                         self.run_id, this_start_year, self.services_hostname),
+                                               "%s %s --skip-cache-cleanup --skip-travel-model" % (
+                                                         self.run_id, this_start_year),
                                                    )                   
                     if not self.has_urbansim_finished(urbansim_resources):
                         raise StandardError, "There was an error in the urbansim run."
