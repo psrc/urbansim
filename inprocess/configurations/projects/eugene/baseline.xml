@@ -13,24 +13,24 @@
 </item>
 
 <item name="models to run" config_name="models" type="list">
-  <item type="model" name="prescheduled_events">Run</item>
-  <item type="model" name="events_coordinator">Run</item>
-  <item type="model" name="residential_land_share_model">Run</item>
-  <item type="model" name="land_price_model">Run</item>
-  <item type="model" name="development_project_transition_model">Run</item>
-  <item type="model" name="residential_development_project_location_choice_model">Run</item>
-  <item type="model" name="commercial_development_project_location_choice_model">Run</item>
-  <item type="model" name="industrial_development_project_location_choice_model">Run</item>
-  <item type="model" name="development_event_transition_model">Run</item>
-  <item type="model" name="events_coordinator">Run</item>
-  <item type="model" name="residential_land_share_model">Run</item>
-  <item type="model" name="household_transition_model">Run</item>
-  <item type="model" name="employment_transition_model">Run</item>
-  <item type="model" name="household_relocation_model">Run</item>
-  <item type="model" name="household_location_choice_model">Run</item>
-  <item type="model" name="employment_relocation_model">Run</item>
-  <item type="model" name="employment_location_choice_model">Run<item type="string" name="group_members">_all_</item></item>
-  <item type="model" name="distribute_unplaced_jobs_model">Run</item>
+  <item type="model" name="prescheduled_events" choices="Run|Skip">Run</item>
+  <item type="model" name="events_coordinator" choices="Run|Skip">Run</item>
+  <item type="model" name="residential_land_share_model" choices="Run|Skip">Run</item>
+  <item type="model" name="land_price_model" choices="Run|Skip">Run</item>
+  <item type="model" name="development_project_transition_model" choices="Run|Skip">Run</item>
+  <item type="model" name="residential_development_project_location_choice_model" choices="Run|Skip">Run</item>
+  <item type="model" name="commercial_development_project_location_choice_model" choices="Run|Skip">Run</item>
+  <item type="model" name="industrial_development_project_location_choice_model" choices="Run|Skip">Run</item>
+  <item type="model" name="development_event_transition_model" choices="Run|Skip">Run</item>
+  <item type="model" name="events_coordinator" choices="Run|Skip">Run</item>
+  <item type="model" name="residential_land_share_model" choices="Run|Skip">Run</item>
+  <item type="model" name="household_transition_model" choices="Run|Skip">Run</item>
+  <item type="model" name="employment_transition_model" choices="Run|Skip">Run</item>
+  <item type="model" name="household_relocation_model" choices="Run|Skip">Run</item>
+  <item type="model" name="household_location_choice_model" choices="Run|Skip">Run</item>
+  <item type="model" name="employment_relocation_model" choices="Run|Skip">Run</item>
+  <item type="model" name="employment_location_choice_model" choices="Run|Skip">Run<item type="string" name="group_members">_all_</item></item>
+  <item type="model" name="distribute_unplaced_jobs_model" choices="Run|Skip">Run</item>
 </item>
 
 <item name="baseyear database configuration" config_name="input_configuration" type="class">
@@ -40,7 +40,7 @@
   <item name="host_name" type="string"></item>
   <item name="user_name" type="string"></item>
   <item name="password" type="password"></item>
-  <item name="use_environment_variables" type="boolean">True</item>
+  <item name="use_environment_variables" type="boolean" choices="True|False">True</item>
   <item name="database_name" type="string">eugene_1980_baseyear</item>
 </item>
 
@@ -50,7 +50,7 @@
   <item name="Class name" type="string" flags="hidden">CreatingBaseyearCacheConfiguration</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.creating_baseyear_cache_configuration</item>
   <item name="cache_directory_root" type="directory" parser_action="prefix_with_urbansim_cache">eugene/runs</item>
-  <item name="cache_from_mysql" type="boolean">False</item>
+  <item name="cache_from_mysql" type="boolean" choices="True|False">False</item>
   <item name="baseyear_cache" type="class">
     <item name="Class name" type="string" flags="hidden">BaseyearCacheConfiguration</item>
     <item name="Class path" type="string" flags="hidden">opus_core.configurations.baseyear_cache_configuration</item>
@@ -58,62 +58,62 @@
   </item>
   <item name="cache_scenario_database" type="string">urbansim.model_coordinators.cache_scenario_database</item>
   <item name="tables_to_cache" type="list">
-    <item name="annual_employment_control_totals" type="table">Load</item>
-    <item name="annual_household_control_totals" type="table">Load</item>
-    <item name="buildings" type="table">Load</item>
-    <item name="building_types" type="table">Load</item>
-    <item name="development_event_history" type="table">Load</item>
-    <item name="gridcells" type="table">Load</item>
-    <item name="households" type="table">Load</item>
-    <item name="job_building_types" type="table">Load</item>
-    <item name="jobs" type="table">Load</item>
-    <item name="travel_data" type="table">Load</item>
-    <item name="zones" type="table">Load</item>
-    <item name="counties" type="table">Load</item>
-    <item name="commercial_development_location_choice_model_coefficients" type="table">Load</item>
-    <item name="commercial_development_location_choice_model_specification" type="table">Load</item>
-    <item name="commercial_employment_location_choice_model_coefficients" type="table">Load</item>
-    <item name="commercial_employment_location_choice_model_specification" type="table">Load</item>
-    <item name="home_based_employment_location_choice_model_specification" type="table">Load</item>
-    <item name="home_based_employment_location_choice_model_coefficients" type="table">Load</item>
-    <item name="industrial_employment_location_choice_model_coefficients" type="table">Load</item>
-    <item name="industrial_employment_location_choice_model_specification" type="table">Load</item>
-    <item name="industrial_development_location_choice_model_coefficients" type="table">Load</item>
-    <item name="industrial_development_location_choice_model_specification" type="table">Load</item>
-    <item name="residential_development_location_choice_model_coefficients" type="table">Load</item>
-    <item name="residential_development_location_choice_model_specification" type="table">Load</item>
-    <item name="fazes" type="table">Skip</item>
-    <item name="urbansim_constants" type="table">Load</item>
-    <item name="household_location_choice_model_coefficients" type="table">Load</item>
-    <item name="household_location_choice_model_specification" type="table">Load</item>
-    <item name="land_price_model_coefficients" type="table">Load</item>
-    <item name="land_price_model_specification" type="table">Load</item>
-    <item name="residential_land_share_model_coefficients" type="table">Load</item>
-    <item name="residential_land_share_model_specification" type="table">Load</item>
-    <item name="plan_type_group_definitions" type="table">Skip</item>
-    <item name="plan_type_groups" type="table">Skip</item>
-    <item name="large_areas" type="table">Skip</item>
-    <item name="household_characteristics_for_ht" type="table">Load</item>
-    <item name="development_types" type="table">Load</item>
-    <item name="development_type_group_definitions" type="table">Load</item>
-    <item name="development_constraints" type="table">Load</item>
-    <item name="annual_relocation_rates_for_households" type="table">Load</item>
-    <item name="annual_relocation_rates_for_jobs" type="table">Load</item>
-    <item name="base_year" type="table">Load</item>
-    <item name="cities" type="table">Load</item>
-    <item name="development_events" type="table">Skip</item>
-    <item name="development_type_groups" type="table">Load</item>
-    <item name="employment_adhoc_sector_group_definitions" type="table">Load</item>
-    <item name="employment_adhoc_sector_groups" type="table">Load</item>
-    <item name="employment_events" type="table">Load</item>
-    <item name="employment_sectors" type="table">Load</item>
-    <item name="land_use_events" type="table">Skip</item>
-    <item name="plan_types" type="table">Load</item>
-    <item name="race_names" type="table">Load</item>
-    <item name="target_vacancies" type="table">Load</item>
-    <item name="jobs_for_estimation" type="table">Load</item>
-    <item name="households_for_estimation" type="table">Load</item>
-    <item name="development_events_exogenous" type="table">Skip</item>
+    <item name="annual_employment_control_totals" type="table" choices="Cache|Skip">Cache</item>
+    <item name="annual_household_control_totals" type="table" choices="Cache|Skip">Cache</item>
+    <item name="buildings" type="table" choices="Cache|Skip">Cache</item>
+    <item name="building_types" type="table" choices="Cache|Skip">Cache</item>
+    <item name="development_event_history" type="table" choices="Cache|Skip">Cache</item>
+    <item name="gridcells" type="table" choices="Cache|Skip">Cache</item>
+    <item name="households" type="table" choices="Cache|Skip">Cache</item>
+    <item name="job_building_types" type="table" choices="Cache|Skip">Cache</item>
+    <item name="jobs" type="table" choices="Cache|Skip">Cache</item>
+    <item name="travel_data" type="table" choices="Cache|Skip">Cache</item>
+    <item name="zones" type="table" choices="Cache|Skip">Cache</item>
+    <item name="counties" type="table" choices="Cache|Skip">Cache</item>
+    <item name="commercial_development_location_choice_model_coefficients" type="table" choices="Cache|Skip">Cache</item>
+    <item name="commercial_development_location_choice_model_specification" type="table" choices="Cache|Skip">Cache</item>
+    <item name="commercial_employment_location_choice_model_coefficients" type="table" choices="Cache|Skip">Cache</item>
+    <item name="commercial_employment_location_choice_model_specification" type="table" choices="Cache|Skip">Cache</item>
+    <item name="home_based_employment_location_choice_model_specification" type="table" choices="Cache|Skip">Cache</item>
+    <item name="home_based_employment_location_choice_model_coefficients" type="table" choices="Cache|Skip">Cache</item>
+    <item name="industrial_employment_location_choice_model_coefficients" type="table" choices="Cache|Skip">Cache</item>
+    <item name="industrial_employment_location_choice_model_specification" type="table" choices="Cache|Skip">Cache</item>
+    <item name="industrial_development_location_choice_model_coefficients" type="table" choices="Cache|Skip">Cache</item>
+    <item name="industrial_development_location_choice_model_specification" type="table" choices="Cache|Skip">Cache</item>
+    <item name="residential_development_location_choice_model_coefficients" type="table" choices="Cache|Skip">Cache</item>
+    <item name="residential_development_location_choice_model_specification" type="table" choices="Cache|Skip">Cache</item>
+    <item name="fazes" type="table" choices="Cache|Skip">Skip</item>
+    <item name="urbansim_constants" type="table" choices="Cache|Skip">Cache</item>
+    <item name="household_location_choice_model_coefficients" type="table" choices="Cache|Skip">Cache</item>
+    <item name="household_location_choice_model_specification" type="table" choices="Cache|Skip">Cache</item>
+    <item name="land_price_model_coefficients" type="table" choices="Cache|Skip">Cache</item>
+    <item name="land_price_model_specification" type="table" choices="Cache|Skip">Cache</item>
+    <item name="residential_land_share_model_coefficients" type="table" choices="Cache|Skip">Cache</item>
+    <item name="residential_land_share_model_specification" type="table" choices="Cache|Skip">Cache</item>
+    <item name="plan_type_group_definitions" type="table" choices="Cache|Skip">Skip</item>
+    <item name="plan_type_groups" type="table" choices="Cache|Skip">Skip</item>
+    <item name="large_areas" type="table" choices="Cache|Skip">Skip</item>
+    <item name="household_characteristics_for_ht" type="table" choices="Cache|Skip">Cache</item>
+    <item name="development_types" type="table" choices="Cache|Skip">Cache</item>
+    <item name="development_type_group_definitions" type="table" choices="Cache|Skip">Cache</item>
+    <item name="development_constraints" type="table" choices="Cache|Skip">Cache</item>
+    <item name="annual_relocation_rates_for_households" type="table" choices="Cache|Skip">Cache</item>
+    <item name="annual_relocation_rates_for_jobs" type="table" choices="Cache|Skip">Cache</item>
+    <item name="base_year" type="table" choices="Cache|Skip">Cache</item>
+    <item name="cities" type="table" choices="Cache|Skip">Cache</item>
+    <item name="development_events" type="table" choices="Cache|Skip">Skip</item>
+    <item name="development_type_groups" type="table" choices="Cache|Skip">Cache</item>
+    <item name="employment_adhoc_sector_group_definitions" type="table" choices="Cache|Skip">Cache</item>
+    <item name="employment_adhoc_sector_groups" type="table" choices="Cache|Skip">Cache</item>
+    <item name="employment_events" type="table" choices="Cache|Skip">Cache</item>
+    <item name="employment_sectors" type="table" choices="Cache|Skip">Cache</item>
+    <item name="land_use_events" type="table" choices="Cache|Skip">Skip</item>
+    <item name="plan_types" type="table" choices="Cache|Skip">Cache</item>
+    <item name="race_names" type="table" choices="Cache|Skip">Cache</item>
+    <item name="target_vacancies" type="table" choices="Cache|Skip">Cache</item>
+    <item name="jobs_for_estimation" type="table" choices="Cache|Skip">Cache</item>
+    <item name="households_for_estimation" type="table" choices="Cache|Skip">Cache</item>
+    <item name="development_events_exogenous" type="table" choices="Cache|Skip">Skip</item>
   </item>
   <item name="tables_to_cache_nchunks" type="dictionary">
     <item name="gridcells" type="integer">1</item>

@@ -16,7 +16,7 @@
   <item name="filter_for_estimation" type="string" parser_action="empty_string_to_None"></item>
   <item name="filter" type="string" parser_action="empty_string_to_None"></item>
   <item name="capacity_string" type="string" parser_action="empty_string_to_None">vacant_SSS_job_space</item>
-  <item name="compute_capacity_flag" type="boolean">True</item>
+  <item name="compute_capacity_flag" type="boolean" choices="True|False">True</item>
   <item name="estimation_weight_string" type="string" parser_action="empty_string_to_None">total_number_of_possible_SSS_jobs</item>
   <item name="estimation_size_agents" type="float">1.0</item>
   <item name="agent_units_string" type="string" parser_action="empty_string_to_None"></item>

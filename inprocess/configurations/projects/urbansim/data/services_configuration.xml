@@ -7,7 +7,7 @@
   <item name="host_name" type="string"></item>
   <item name="user_name" type="string"></item>
   <item name="db_password" type="password"></item>
-  <item name="use_environment_variables" type="boolean">True</item>
+  <item name="use_environment_variables" type="boolean" choices="True|False">True</item>
   <item name="database_name" type="string">services</item>
 
 </configuration>

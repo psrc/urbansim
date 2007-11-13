@@ -16,7 +16,7 @@
     </item>
     <item name="developable_maximum_unit_variable_full_name" type="string">urbansim.gridcell.developable_maximum_commercial_sqft</item>
     <item name="developable_minimum_unit_variable_full_name" type="string">urbansim.gridcell.developable_minimum_commercial_sqft</item>
-    <item name="residential" type="boolean">False</item>
+    <item name="residential" type="boolean" choices="True|False">False</item>
     <item name="units" type="string">commercial_sqft</item>
   </item>
 
@@ -31,7 +31,7 @@
     </item>
     <item name="developable_maximum_unit_variable_full_name" type="string">urbansim.gridcell.developable_maximum_industrial_sqft</item>
     <item name="developable_minimum_unit_variable_full_name" type="string">urbansim.gridcell.developable_minimum_industrial_sqft</item>
-    <item name="residential" type="boolean">False</item>
+    <item name="residential" type="boolean" choices="True|False">False</item>
     <item name="units" type="string">industrial_sqft</item>
   </item>
   
@@ -48,7 +48,7 @@
     </item>
     <item name="developable_maximum_unit_variable_full_name" type="string">urbansim.gridcell.developable_maximum_residential_units</item>
     <item name="developable_minimum_unit_variable_full_name" type="string">urbansim.gridcell.developable_minimum_residential_units</item>
-    <item name="residential" type="boolean">True</item>
+    <item name="residential" type="boolean" choices="True|False">True</item>
     <item name="units" type="string">residential_units</item>
   </item>
 

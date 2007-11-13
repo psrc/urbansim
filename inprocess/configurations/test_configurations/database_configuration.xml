@@ -8,7 +8,7 @@
   <item name="host_name" type="string">bigserver</item>
   <item name="user_name" type="string">fred</item>
   <item name="password" type="password">secret</item>
-  <item name="use_environment_variables" type="boolean">False</item>
+  <item name="use_environment_variables" type="boolean" choices="True|False">False</item>
   <item name="database_name" type="string">river_city_baseyear</item>
 </item>
 

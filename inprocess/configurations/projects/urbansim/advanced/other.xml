@@ -5,7 +5,7 @@
 
 <item name="debuglevel" type="integer">4</item>
 
-<item name="flush_variables" type="boolean">False</item>
+<item name="flush_variables" type="boolean" choices="True|False">False</item>
 
 <item name="seed" type="integer">0</item>
 

@@ -2,19 +2,19 @@
 <configuration>
 
 <item name="datasets_to_preload" type="list" parser_action="list_to_dictionary">
-  <item name="gridcell" type="dataset">Load<item name="nchunks" type="integer">2</item></item>
-  <item name="household" type="dataset">Load</item>
-  <item name="job" type="dataset">Load</item>
-  <item name="zone" type="dataset">Load</item>
-  <item name="development_type" type="dataset">Load</item>
-  <item name="target_vacancy" type="dataset">Load</item>
-  <item name="development_event_history" type="dataset">Load</item>
-  <item name="development_constraint" type="dataset">Load</item>
-  <item name="job_building_type" type="dataset">Load</item>
-  <item name="building_type" type="dataset">Skip</item>
-  <item name="building" type="dataset">Skip</item>
-  <item name="vacant_land_and_building_type" type="dataset">Load</item>
-  <item name="urbansim_constant" type="dataset">Load</item>
+  <item name="gridcell" type="dataset" choices="Load|Skip">Load<item name="nchunks" type="integer">2</item></item>
+  <item name="household" type="dataset" choices="Load|Skip">Load</item>
+  <item name="job" type="dataset" choices="Load|Skip">Load</item>
+  <item name="zone" type="dataset" choices="Load|Skip">Load</item>
+  <item name="development_type" type="dataset" choices="Load|Skip">Load</item>
+  <item name="target_vacancy" type="dataset" choices="Load|Skip">Load</item>
+  <item name="development_event_history" type="dataset" choices="Load|Skip">Load</item>
+  <item name="development_constraint" type="dataset" choices="Load|Skip">Load</item>
+  <item name="job_building_type" type="dataset" choices="Load|Skip">Load</item>
+  <item name="building_type" type="dataset" choices="Load|Skip">Skip</item>
+  <item name="building" type="dataset" choices="Load|Skip">Skip</item>
+  <item name="vacant_land_and_building_type" type="dataset" choices="Load|Skip">Load</item>
+  <item name="urbansim_constant" type="dataset" choices="Load|Skip">Load</item>
 </item>
 
 </configuration>
