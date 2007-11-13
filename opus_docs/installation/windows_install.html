@@ -232,8 +232,9 @@ but only do
 this if you have a fast internet connection and enough disk space
 (since there will be a lot of data)</p>
 
-<p>To get them all, in Windows explorer, open up the workspace directory and right-click in an empty
-region. &nbsp;Select 'SVN Checkout ...', and fill in the "URL of repository' field in the dialog box with: '<span style="font-family: monospace;">https://trondheim.cs.washington.edu/svn/opus</span>'
+<p>To get them all for 
+stable release 4.1.1, in Windows explorer, open up the workspace directory and right-click in an empty
+region. &nbsp;Select 'SVN Checkout ...', and fill in the "URL of repository' field in the dialog box with: '<span style="font-family: monospace;">https://trondheim.cs.washington.edu/svn/opus/tags/4.1.1/</span>'
 (without the quotes). &nbsp;The checkout directory should be already
 filled in with your workspace folder. &nbsp;Pick 'OK', and your system
 should download all of the Opus/Urbansim packages.</p>
@@ -242,7 +243,7 @@ should download all of the Opus/Urbansim packages.</p>
 explorer, open up&nbsp;the workspace directory and right-click in an
 empty
 region. &nbsp;Select 'SVN Checkout ...', and fill in the "URL of
-repository' field in the dialog box with: '<span style="font-family: monospace;">https://trondheim.cs.washington.edu/svn/opus</span>/opus_core'.
+repository' field in the dialog box with: '<span style="font-family: monospace;">https://trondheim.cs.washington.edu/svn/opus/tags/4.1.1/opus_core/'</span>.
 (without the quotes). &nbsp;The checkout directory should be already
 filled
 in with your workspace folder -- but to this append '\opus_core'.
@@ -253,16 +254,17 @@ download the opus_core package. &nbsp;Do the same thing for the other
 packages you need, minimally 'urbansim' and 'eugene'. &nbsp;In other
 words, the repository addresses for these three packages are:</p>
 
+
 <ul>
 
 
-  <li>https://trondheim.cs.washington.edu/svn/opus/opus_core</li>
+  <li>https://trondheim.cs.washington.edu/svn/opus/tags/4.1.1/opus_core</li>
 
 
-  <li>https://trondheim.cs.washington.edu/svn/opus/urbansim</li>
+  <li>https://trondheim.cs.washington.edu/svn/opus/tags/4.1.1/urbansim</li>
 
 
-  <li>https://trondheim.cs.washington.edu/svn/opus/eugene</li>
+  <li>https://trondheim.cs.washington.edu/svn/opus/tags/4.1.1/eugene</li>
 
 
 </ul>
@@ -277,7 +279,10 @@ words, the repository addresses for these three packages are:</p>
 repository by right-clicking on its folder and picking 'SVN Update'.</p>
 
 
-
+<p>The above commands check out stable release 4.1.1 -- adjust the URLs appropriately to get a
+different stable release.  See <a href="releases.html">Opus Revisions and Releases</a>
+for details on this, 
+on checking out the development version instead of a stable release, etc.
 
 <h3>Option 3: Getting Opus and UrbanSim using subversion and Eclipse</h3>
 

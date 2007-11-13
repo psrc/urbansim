@@ -294,10 +294,24 @@ instead. &nbsp;You'll have a much easier time later if you update your
 code.
 <h3>Option 2: Getting Opus and UrbanSim using a command line interface to subversion</h3>
 
-<p>First, make sure you have a subversion client installed. &nbsp;If not, you can get one from <a href="http://subversion.tigris.org/project_packages.html">http://subversion.tigris.org/project_packages.html</a>. &nbsp;Next, in a shell (i.e. a terminal window), type the following commands:</p>
-<pre>mkdir opusworkspace<br>cd opusworkspace<br>svn checkout https://trondheim.cs.washington.edu/svn/opus/opus_core<br>svn checkout https://trondheim.cs.washington.edu/svn/opus/urbansim<br>svn checkout https://trondheim.cs.washington.edu/svn/opus/eugene</pre>
-<p>You can also get all of the Opus and UrbanSim packages using these commands instead, but only do this if you have a fast internet connection and enough disk space (since there will be a lot of data).</p>
-<pre>mkdir opusworkspace<br>cd opusworkspace<br>svn checkout https://trondheim.cs.washington.edu/svn/opus</pre>
+p>Suppose you want to get stable release 4.1.1.
+First, make sure you have a subversion client installed. &nbsp;If not, you can get one 
+from <a href="http://subversion.tigris.org/project_packages.html">http://subversion.tigris.org/project_packages.html</a>. &nbsp;
+Next, in a shell (i.e. a terminal window), type the following commands:</p>
+<pre>
+mkdir opusworkspace
+cd opusworkspace
+svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/4.1.1/opus_core
+svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/4.1.1/urbansim
+svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/4.1.1/eugene
+</pre>
+
+<p>The above commands check out stable release 4.1.1 -- adjust the URLs appropriately to get a
+different stable release.  See <a href="releases.html">Opus Revisions and Releases</a>
+for details on this, on getting all of the packages at once instead of one by one,
+on checking out the development version instead of a stable release, etc.
+</p>
+
 <h3>Option 3: Getting Opus and UrbanSim using subversion and Eclipse</h3>
 This is the best option if you'll be doing software development. &nbsp;See <a href="ide_setup.html">Installing Opus and UrbanSim using an IDE</a> for details.<br>
 
