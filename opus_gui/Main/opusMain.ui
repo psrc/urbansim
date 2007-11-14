@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>902</width>
-    <height>648</height>
+    <width>974</width>
+    <height>707</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -55,15 +55,15 @@
         </size>
        </property>
        <property name="currentIndex" >
-        <number>4</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="datamanager_page" >
         <property name="geometry" >
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>503</width>
-          <height>445</height>
+          <width>112</width>
+          <height>112</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -1170,8 +1170,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>112</width>
-          <height>112</height>
+          <width>317</width>
+          <height>532</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -1196,175 +1196,6 @@
          <property name="verticalSpacing" >
           <number>6</number>
          </property>
-         <item row="0" column="0" >
-          <widget class="QTreeWidget" name="runmanager_tree" >
-           <column>
-            <property name="text" >
-             <string>Name</string>
-            </property>
-           </column>
-           <column>
-            <property name="text" >
-             <string>Type</string>
-            </property>
-           </column>
-           <item>
-            <property name="text" >
-             <string>scenario_configuration</string>
-            </property>
-            <property name="text" >
-             <string/>
-            </property>
-           </item>
-           <item>
-            <property name="text" >
-             <string>base_scenario</string>
-            </property>
-            <property name="icon" >
-             <iconset resource="opusMain.qrc" >:/Images/Images/accept.png</iconset>
-            </property>
-            <property name="text" >
-             <string/>
-            </property>
-            <item>
-             <property name="text" >
-              <string>base_year_cache</string>
-             </property>
-             <property name="icon" >
-              <iconset resource="opusMain.qrc" >:/Images/Images/folder_database.png</iconset>
-             </property>
-             <property name="text" >
-              <string>c:/urbansim_cache/run_962.2006_11_07_08_50</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>years_to_run</string>
-             </property>
-             <property name="icon" >
-              <iconset resource="opusMain.qrc" >:/Images/Images/calendar_view_day.png</iconset>
-             </property>
-             <property name="text" >
-              <string/>
-             </property>
-             <item>
-              <property name="text" >
-               <string>start_year</string>
-              </property>
-              <property name="text" >
-               <string>2000</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>end_year</string>
-              </property>
-              <property name="text" >
-               <string>2030</string>
-              </property>
-             </item>
-            </item>
-            <item>
-             <property name="text" >
-              <string>model_system_configuration</string>
-             </property>
-             <property name="icon" >
-              <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
-             </property>
-             <property name="text" >
-              <string>urbansim_base_configuration</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>indicator_sets</string>
-             </property>
-             <property name="text" >
-              <string/>
-             </property>
-             <item>
-              <property name="text" >
-               <string>standard_indicator_set</string>
-              </property>
-              <property name="icon" >
-               <iconset resource="opusMain.qrc" >:/Images/Images/table_multiple.png</iconset>
-              </property>
-              <property name="text" >
-               <string/>
-              </property>
-             </item>
-            </item>
-           </item>
-           <item>
-            <property name="text" >
-             <string>no_ugb_scenario</string>
-            </property>
-            <property name="icon" >
-             <iconset resource="opusMain.qrc" >:/Images/Images/exclamation.png</iconset>
-            </property>
-            <property name="text" >
-             <string/>
-            </property>
-            <item>
-             <property name="text" >
-              <string>base_year_cache</string>
-             </property>
-             <property name="icon" >
-              <iconset resource="opusMain.qrc" >:/Images/Images/exclamation.png</iconset>
-             </property>
-             <property name="text" >
-              <string>?</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>years_to_run</string>
-             </property>
-             <property name="icon" >
-              <iconset resource="opusMain.qrc" >:/Images/Images/calendar_view_day.png</iconset>
-             </property>
-             <property name="text" >
-              <string/>
-             </property>
-             <item>
-              <property name="text" >
-               <string>start_year</string>
-              </property>
-              <property name="text" >
-               <string>2000</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>end_year</string>
-              </property>
-              <property name="text" >
-               <string>2030</string>
-              </property>
-             </item>
-            </item>
-            <item>
-             <property name="text" >
-              <string>model_system_configuration</string>
-             </property>
-             <property name="icon" >
-              <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
-             </property>
-             <property name="text" >
-              <string>urbansim_base_configuration</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>indicator_sets</string>
-             </property>
-             <property name="text" >
-              <string/>
-             </property>
-            </item>
-           </item>
-          </widget>
-         </item>
         </layout>
        </widget>
        <widget class="QWidget" name="resultsmanager_page" >
@@ -1561,42 +1392,6 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="treeTestPage" >
-        <property name="geometry" >
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>503</width>
-          <height>445</height>
-         </rect>
-        </property>
-        <attribute name="label" >
-         <string>Tree Test Page</string>
-        </attribute>
-        <layout class="QGridLayout" >
-         <property name="leftMargin" >
-          <number>9</number>
-         </property>
-         <property name="topMargin" >
-          <number>9</number>
-         </property>
-         <property name="rightMargin" >
-          <number>9</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>9</number>
-         </property>
-         <property name="horizontalSpacing" >
-          <number>6</number>
-         </property>
-         <property name="verticalSpacing" >
-          <number>6</number>
-         </property>
-         <item row="0" column="0" >
-          <widget class="QWidget" native="1" name="treeTestPageWidget" />
-         </item>
-        </layout>
-       </widget>
       </widget>
       <widget class="QTabWidget" name="tabWidget" >
        <property name="currentIndex" >
@@ -1745,7 +1540,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>902</width>
+     <width>974</width>
      <height>26</height>
     </rect>
    </property>

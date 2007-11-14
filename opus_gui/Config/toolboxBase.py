@@ -34,7 +34,6 @@ class ToolboxBase(object):
     self.toolBox = self.parent.toolBox
     self.datamanager_tree = self.parent.datamanager_tree
     self.modelmanager_tree = self.parent.modelmanager_tree
-    self.runmanager_tree = self.parent.runmanager_tree
     self.resultsmanager_tree = self.parent.resultsmanager_tree
     
     # Build a list of the default list of tabs
@@ -50,7 +49,6 @@ class ToolboxBase(object):
 
     self.datamanager_tree.resizeColumnToContents(0)
     self.modelmanager_tree.resizeColumnToContents(0)
-    self.runmanager_tree.resizeColumnToContents(0)
     self.resultsmanager_tree.resizeColumnToContents(0)
 
     # Play with the new tree view here
@@ -75,10 +73,10 @@ class ToolboxBase(object):
       self.view.setExpanded(self.model.index(0,0,QModelIndex()),True)
       self.view.setAnimated(True)
       #NEED TO FIX THIS
-      self.parent.gridlayout5.addWidget(self.view)
-      self.view.setColumnWidth(0,250)
+      self.parent.gridlayout3.addWidget(self.view)
+      self.view.setColumnWidth(0,200)
+      self.view.setColumnWidth(1,50)
       # Hook up to the mousePressEvent and pressed
-      #QObject.connect(self.view, SIGNAL("pressed(const QModelIndex &)"), self.processPressed)
       self.view.setContextMenuPolicy(Qt.CustomContextMenu)
       QObject.connect(self.view, SIGNAL("customContextMenuRequested(const QPoint &)"), self.processCustomMenu)
       self.acceptIcon = QIcon(":/Images/Images/accept.png")

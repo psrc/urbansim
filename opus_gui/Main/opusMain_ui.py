@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusMain.ui'
 #
-# Created: Wed Nov  7 00:34:15 2007
+# Created: Tue Nov 13 22:15:36 2007
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(QtCore.QSize(QtCore.QRect(0,0,902,648).size()).expandedTo(MainWindow.minimumSizeHint()))
+        MainWindow.resize(QtCore.QSize(QtCore.QRect(0,0,974,707).size()).expandedTo(MainWindow.minimumSizeHint()))
 
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -38,7 +38,7 @@ class Ui_MainWindow(object):
         self.toolBox.setObjectName("toolBox")
 
         self.datamanager_page = QtGui.QWidget()
-        self.datamanager_page.setGeometry(QtCore.QRect(0,0,503,445))
+        self.datamanager_page.setGeometry(QtCore.QRect(0,0,112,112))
         self.datamanager_page.setObjectName("datamanager_page")
 
         self.gridlayout1 = QtGui.QGridLayout(self.datamanager_page)
@@ -67,17 +67,13 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.modelmanager_page,"")
 
         self.runmanager_page = QtGui.QWidget()
-        self.runmanager_page.setGeometry(QtCore.QRect(0,0,112,112))
+        self.runmanager_page.setGeometry(QtCore.QRect(0,0,317,532))
         self.runmanager_page.setObjectName("runmanager_page")
 
         self.gridlayout3 = QtGui.QGridLayout(self.runmanager_page)
         self.gridlayout3.setMargin(9)
         self.gridlayout3.setSpacing(6)
         self.gridlayout3.setObjectName("gridlayout3")
-
-        self.runmanager_tree = QtGui.QTreeWidget(self.runmanager_page)
-        self.runmanager_tree.setObjectName("runmanager_tree")
-        self.gridlayout3.addWidget(self.runmanager_tree,0,0,1,1)
         self.toolBox.addItem(self.runmanager_page,"")
 
         self.resultsmanager_page = QtGui.QWidget()
@@ -94,54 +90,40 @@ class Ui_MainWindow(object):
         self.gridlayout4.addWidget(self.resultsmanager_tree,0,0,1,1)
         self.toolBox.addItem(self.resultsmanager_page,"")
 
-        self.treeTestPage = QtGui.QWidget()
-        self.treeTestPage.setGeometry(QtCore.QRect(0,0,503,445))
-        self.treeTestPage.setObjectName("treeTestPage")
-
-        self.gridlayout5 = QtGui.QGridLayout(self.treeTestPage)
-        self.gridlayout5.setMargin(9)
-        self.gridlayout5.setSpacing(6)
-        self.gridlayout5.setObjectName("gridlayout5")
-
-        self.treeTestPageWidget = QtGui.QWidget(self.treeTestPage)
-        self.treeTestPageWidget.setObjectName("treeTestPageWidget")
-        self.gridlayout5.addWidget(self.treeTestPageWidget,0,0,1,1)
-        self.toolBox.addItem(self.treeTestPage,"")
-
         self.tabWidget = QtGui.QTabWidget(self.splitter)
         self.tabWidget.setObjectName("tabWidget")
 
         self.tab_editorView = QtGui.QWidget()
         self.tab_editorView.setObjectName("tab_editorView")
 
-        self.gridlayout6 = QtGui.QGridLayout(self.tab_editorView)
-        self.gridlayout6.setMargin(9)
-        self.gridlayout6.setSpacing(6)
-        self.gridlayout6.setObjectName("gridlayout6")
+        self.gridlayout5 = QtGui.QGridLayout(self.tab_editorView)
+        self.gridlayout5.setMargin(9)
+        self.gridlayout5.setSpacing(6)
+        self.gridlayout5.setObjectName("gridlayout5")
         self.tabWidget.addTab(self.tab_editorView,"")
 
         self.tab_mapView = QtGui.QWidget()
         self.tab_mapView.setObjectName("tab_mapView")
 
-        self.gridlayout7 = QtGui.QGridLayout(self.tab_mapView)
-        self.gridlayout7.setMargin(9)
-        self.gridlayout7.setSpacing(6)
-        self.gridlayout7.setObjectName("gridlayout7")
+        self.gridlayout6 = QtGui.QGridLayout(self.tab_mapView)
+        self.gridlayout6.setMargin(9)
+        self.gridlayout6.setSpacing(6)
+        self.gridlayout6.setObjectName("gridlayout6")
 
         self.widgetMap = QtGui.QWidget(self.tab_mapView)
         self.widgetMap.setMinimumSize(QtCore.QSize(100,100))
         self.widgetMap.setAutoFillBackground(True)
         self.widgetMap.setObjectName("widgetMap")
-        self.gridlayout7.addWidget(self.widgetMap,0,0,1,1)
+        self.gridlayout6.addWidget(self.widgetMap,0,0,1,1)
         self.tabWidget.addTab(self.tab_mapView,"")
 
         self.tab_pythonView = QtGui.QWidget()
         self.tab_pythonView.setObjectName("tab_pythonView")
 
-        self.gridlayout8 = QtGui.QGridLayout(self.tab_pythonView)
-        self.gridlayout8.setMargin(9)
-        self.gridlayout8.setSpacing(6)
-        self.gridlayout8.setObjectName("gridlayout8")
+        self.gridlayout7 = QtGui.QGridLayout(self.tab_pythonView)
+        self.gridlayout7.setMargin(9)
+        self.gridlayout7.setSpacing(6)
+        self.gridlayout7.setObjectName("gridlayout7")
 
         self.pythonLineWidget = QtGui.QWidget(self.tab_pythonView)
 
@@ -164,11 +146,11 @@ class Ui_MainWindow(object):
         self.pythonLineEdit = QtGui.QLineEdit(self.pythonLineWidget)
         self.pythonLineEdit.setObjectName("pythonLineEdit")
         self.hboxlayout.addWidget(self.pythonLineEdit)
-        self.gridlayout8.addWidget(self.pythonLineWidget,1,0,1,1)
+        self.gridlayout7.addWidget(self.pythonLineWidget,1,0,1,1)
 
         self.pythonWidget = QtGui.QWidget(self.tab_pythonView)
         self.pythonWidget.setObjectName("pythonWidget")
-        self.gridlayout8.addWidget(self.pythonWidget,0,0,1,1)
+        self.gridlayout7.addWidget(self.pythonWidget,0,0,1,1)
         self.tabWidget.addTab(self.tab_pythonView,"")
 
         self.tab_logView = QtGui.QWidget()
@@ -178,7 +160,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0,0,902,26))
+        self.menubar.setGeometry(QtCore.QRect(0,0,974,26))
         self.menubar.setObjectName("menubar")
 
         self.menuMap = QtGui.QMenu(self.menubar)
@@ -224,7 +206,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuUtilities.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.toolBox.setCurrentIndex(4)
+        self.toolBox.setCurrentIndex(2)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -703,157 +685,80 @@ class Ui_MainWindow(object):
         item95.setIcon(0,QtGui.QIcon(":/Images/Images/car.png"))
         item95.setText(1,"")
         self.toolBox.setItemText(self.toolBox.indexOf(self.modelmanager_page), QtGui.QApplication.translate("MainWindow", "Model Manager", None, QtGui.QApplication.UnicodeUTF8))
-        self.runmanager_tree.headerItem().setText(0,QtGui.QApplication.translate("MainWindow", "Name", None, QtGui.QApplication.UnicodeUTF8))
-        self.runmanager_tree.headerItem().setText(1,QtGui.QApplication.translate("MainWindow", "Type", None, QtGui.QApplication.UnicodeUTF8))
-        self.runmanager_tree.clear()
-
-        item96 = QtGui.QTreeWidgetItem(self.runmanager_tree)
-        item96.setText(0,QtGui.QApplication.translate("MainWindow", "scenario_configuration", None, QtGui.QApplication.UnicodeUTF8))
-        item96.setText(1,"")
-
-        item97 = QtGui.QTreeWidgetItem(self.runmanager_tree)
-        item97.setText(0,QtGui.QApplication.translate("MainWindow", "base_scenario", None, QtGui.QApplication.UnicodeUTF8))
-        item97.setIcon(0,QtGui.QIcon(":/Images/Images/accept.png"))
-        item97.setText(1,"")
-
-        item98 = QtGui.QTreeWidgetItem(item97)
-        item98.setText(0,QtGui.QApplication.translate("MainWindow", "base_year_cache", None, QtGui.QApplication.UnicodeUTF8))
-        item98.setIcon(0,QtGui.QIcon(":/Images/Images/folder_database.png"))
-        item98.setText(1,QtGui.QApplication.translate("MainWindow", "c:/urbansim_cache/run_962.2006_11_07_08_50", None, QtGui.QApplication.UnicodeUTF8))
-
-        item99 = QtGui.QTreeWidgetItem(item97)
-        item99.setText(0,QtGui.QApplication.translate("MainWindow", "years_to_run", None, QtGui.QApplication.UnicodeUTF8))
-        item99.setIcon(0,QtGui.QIcon(":/Images/Images/calendar_view_day.png"))
-        item99.setText(1,"")
-
-        item100 = QtGui.QTreeWidgetItem(item99)
-        item100.setText(0,QtGui.QApplication.translate("MainWindow", "start_year", None, QtGui.QApplication.UnicodeUTF8))
-        item100.setText(1,QtGui.QApplication.translate("MainWindow", "2000", None, QtGui.QApplication.UnicodeUTF8))
-
-        item101 = QtGui.QTreeWidgetItem(item99)
-        item101.setText(0,QtGui.QApplication.translate("MainWindow", "end_year", None, QtGui.QApplication.UnicodeUTF8))
-        item101.setText(1,QtGui.QApplication.translate("MainWindow", "2030", None, QtGui.QApplication.UnicodeUTF8))
-
-        item102 = QtGui.QTreeWidgetItem(item97)
-        item102.setText(0,QtGui.QApplication.translate("MainWindow", "model_system_configuration", None, QtGui.QApplication.UnicodeUTF8))
-        item102.setIcon(0,QtGui.QIcon(":/Images/Images/cog.png"))
-        item102.setText(1,QtGui.QApplication.translate("MainWindow", "urbansim_base_configuration", None, QtGui.QApplication.UnicodeUTF8))
-
-        item103 = QtGui.QTreeWidgetItem(item97)
-        item103.setText(0,QtGui.QApplication.translate("MainWindow", "indicator_sets", None, QtGui.QApplication.UnicodeUTF8))
-        item103.setText(1,"")
-
-        item104 = QtGui.QTreeWidgetItem(item103)
-        item104.setText(0,QtGui.QApplication.translate("MainWindow", "standard_indicator_set", None, QtGui.QApplication.UnicodeUTF8))
-        item104.setIcon(0,QtGui.QIcon(":/Images/Images/table_multiple.png"))
-        item104.setText(1,"")
-
-        item105 = QtGui.QTreeWidgetItem(self.runmanager_tree)
-        item105.setText(0,QtGui.QApplication.translate("MainWindow", "no_ugb_scenario", None, QtGui.QApplication.UnicodeUTF8))
-        item105.setIcon(0,QtGui.QIcon(":/Images/Images/exclamation.png"))
-        item105.setText(1,"")
-
-        item106 = QtGui.QTreeWidgetItem(item105)
-        item106.setText(0,QtGui.QApplication.translate("MainWindow", "base_year_cache", None, QtGui.QApplication.UnicodeUTF8))
-        item106.setIcon(0,QtGui.QIcon(":/Images/Images/exclamation.png"))
-        item106.setText(1,QtGui.QApplication.translate("MainWindow", "?", None, QtGui.QApplication.UnicodeUTF8))
-
-        item107 = QtGui.QTreeWidgetItem(item105)
-        item107.setText(0,QtGui.QApplication.translate("MainWindow", "years_to_run", None, QtGui.QApplication.UnicodeUTF8))
-        item107.setIcon(0,QtGui.QIcon(":/Images/Images/calendar_view_day.png"))
-        item107.setText(1,"")
-
-        item108 = QtGui.QTreeWidgetItem(item107)
-        item108.setText(0,QtGui.QApplication.translate("MainWindow", "start_year", None, QtGui.QApplication.UnicodeUTF8))
-        item108.setText(1,QtGui.QApplication.translate("MainWindow", "2000", None, QtGui.QApplication.UnicodeUTF8))
-
-        item109 = QtGui.QTreeWidgetItem(item107)
-        item109.setText(0,QtGui.QApplication.translate("MainWindow", "end_year", None, QtGui.QApplication.UnicodeUTF8))
-        item109.setText(1,QtGui.QApplication.translate("MainWindow", "2030", None, QtGui.QApplication.UnicodeUTF8))
-
-        item110 = QtGui.QTreeWidgetItem(item105)
-        item110.setText(0,QtGui.QApplication.translate("MainWindow", "model_system_configuration", None, QtGui.QApplication.UnicodeUTF8))
-        item110.setIcon(0,QtGui.QIcon(":/Images/Images/cog.png"))
-        item110.setText(1,QtGui.QApplication.translate("MainWindow", "urbansim_base_configuration", None, QtGui.QApplication.UnicodeUTF8))
-
-        item111 = QtGui.QTreeWidgetItem(item105)
-        item111.setText(0,QtGui.QApplication.translate("MainWindow", "indicator_sets", None, QtGui.QApplication.UnicodeUTF8))
-        item111.setText(1,"")
         self.toolBox.setItemText(self.toolBox.indexOf(self.runmanager_page), QtGui.QApplication.translate("MainWindow", "Run Manager", None, QtGui.QApplication.UnicodeUTF8))
         self.resultsmanager_tree.headerItem().setText(0,QtGui.QApplication.translate("MainWindow", "Name", None, QtGui.QApplication.UnicodeUTF8))
         self.resultsmanager_tree.headerItem().setText(1,QtGui.QApplication.translate("MainWindow", "Type", None, QtGui.QApplication.UnicodeUTF8))
         self.resultsmanager_tree.clear()
 
-        item112 = QtGui.QTreeWidgetItem(self.resultsmanager_tree)
-        item112.setText(0,QtGui.QApplication.translate("MainWindow", "Indicator sets", None, QtGui.QApplication.UnicodeUTF8))
-        item112.setIcon(0,QtGui.QIcon(":/Images/Images/bullet_black.png"))
-        item112.setText(1,"")
+        item96 = QtGui.QTreeWidgetItem(self.resultsmanager_tree)
+        item96.setText(0,QtGui.QApplication.translate("MainWindow", "Indicator sets", None, QtGui.QApplication.UnicodeUTF8))
+        item96.setIcon(0,QtGui.QIcon(":/Images/Images/bullet_black.png"))
+        item96.setText(1,"")
 
-        item113 = QtGui.QTreeWidgetItem(item112)
-        item113.setText(0,QtGui.QApplication.translate("MainWindow", "standard_indicator_set", None, QtGui.QApplication.UnicodeUTF8))
-        item113.setIcon(0,QtGui.QIcon(":/Images/Images/table_multiple.png"))
-        item113.setText(1,"")
+        item97 = QtGui.QTreeWidgetItem(item96)
+        item97.setText(0,QtGui.QApplication.translate("MainWindow", "standard_indicator_set", None, QtGui.QApplication.UnicodeUTF8))
+        item97.setIcon(0,QtGui.QIcon(":/Images/Images/table_multiple.png"))
+        item97.setText(1,"")
 
-        item114 = QtGui.QTreeWidgetItem(item113)
-        item114.setText(0,QtGui.QApplication.translate("MainWindow", "Tables", None, QtGui.QApplication.UnicodeUTF8))
-        item114.setText(1,"")
+        item98 = QtGui.QTreeWidgetItem(item97)
+        item98.setText(0,QtGui.QApplication.translate("MainWindow", "Tables", None, QtGui.QApplication.UnicodeUTF8))
+        item98.setText(1,"")
 
-        item115 = QtGui.QTreeWidgetItem(item114)
-        item115.setText(0,QtGui.QApplication.translate("MainWindow", "number_of_new_units_by_parcel", None, QtGui.QApplication.UnicodeUTF8))
-        item115.setIcon(0,QtGui.QIcon(":/Images/Images/table.png"))
-        item115.setText(1,QtGui.QApplication.translate("MainWindow", "2015", None, QtGui.QApplication.UnicodeUTF8))
+        item99 = QtGui.QTreeWidgetItem(item98)
+        item99.setText(0,QtGui.QApplication.translate("MainWindow", "number_of_new_units_by_parcel", None, QtGui.QApplication.UnicodeUTF8))
+        item99.setIcon(0,QtGui.QIcon(":/Images/Images/table.png"))
+        item99.setText(1,QtGui.QApplication.translate("MainWindow", "2015", None, QtGui.QApplication.UnicodeUTF8))
 
-        item116 = QtGui.QTreeWidgetItem(item114)
-        item116.setText(0,QtGui.QApplication.translate("MainWindow", "number_of_service_jobs_by_taz", None, QtGui.QApplication.UnicodeUTF8))
-        item116.setIcon(0,QtGui.QIcon(":/Images/Images/table.png"))
-        item116.setText(1,QtGui.QApplication.translate("MainWindow", "2020", None, QtGui.QApplication.UnicodeUTF8))
+        item100 = QtGui.QTreeWidgetItem(item98)
+        item100.setText(0,QtGui.QApplication.translate("MainWindow", "number_of_service_jobs_by_taz", None, QtGui.QApplication.UnicodeUTF8))
+        item100.setIcon(0,QtGui.QIcon(":/Images/Images/table.png"))
+        item100.setText(1,QtGui.QApplication.translate("MainWindow", "2020", None, QtGui.QApplication.UnicodeUTF8))
 
-        item117 = QtGui.QTreeWidgetItem(item113)
-        item117.setText(0,QtGui.QApplication.translate("MainWindow", "Charts", None, QtGui.QApplication.UnicodeUTF8))
-        item117.setText(1,"")
+        item101 = QtGui.QTreeWidgetItem(item97)
+        item101.setText(0,QtGui.QApplication.translate("MainWindow", "Charts", None, QtGui.QApplication.UnicodeUTF8))
+        item101.setText(1,"")
 
-        item118 = QtGui.QTreeWidgetItem(item117)
-        item118.setText(0,QtGui.QApplication.translate("MainWindow", "total_population", None, QtGui.QApplication.UnicodeUTF8))
-        item118.setIcon(0,QtGui.QIcon(":/Images/Images/chart_bar.png"))
-        item118.setText(1,QtGui.QApplication.translate("MainWindow", "2000-2030", None, QtGui.QApplication.UnicodeUTF8))
+        item102 = QtGui.QTreeWidgetItem(item101)
+        item102.setText(0,QtGui.QApplication.translate("MainWindow", "total_population", None, QtGui.QApplication.UnicodeUTF8))
+        item102.setIcon(0,QtGui.QIcon(":/Images/Images/chart_bar.png"))
+        item102.setText(1,QtGui.QApplication.translate("MainWindow", "2000-2030", None, QtGui.QApplication.UnicodeUTF8))
 
-        item119 = QtGui.QTreeWidgetItem(item113)
-        item119.setText(0,QtGui.QApplication.translate("MainWindow", "Maps", None, QtGui.QApplication.UnicodeUTF8))
-        item119.setText(1,"")
+        item103 = QtGui.QTreeWidgetItem(item97)
+        item103.setText(0,QtGui.QApplication.translate("MainWindow", "Maps", None, QtGui.QApplication.UnicodeUTF8))
+        item103.setText(1,"")
 
-        item120 = QtGui.QTreeWidgetItem(item119)
-        item120.setText(0,QtGui.QApplication.translate("MainWindow", "population_density_by_taz", None, QtGui.QApplication.UnicodeUTF8))
-        item120.setIcon(0,QtGui.QIcon(":/Images/Images/map.png"))
-        item120.setText(1,QtGui.QApplication.translate("MainWindow", "2000-2030", None, QtGui.QApplication.UnicodeUTF8))
+        item104 = QtGui.QTreeWidgetItem(item103)
+        item104.setText(0,QtGui.QApplication.translate("MainWindow", "population_density_by_taz", None, QtGui.QApplication.UnicodeUTF8))
+        item104.setIcon(0,QtGui.QIcon(":/Images/Images/map.png"))
+        item104.setText(1,QtGui.QApplication.translate("MainWindow", "2000-2030", None, QtGui.QApplication.UnicodeUTF8))
 
-        item121 = QtGui.QTreeWidgetItem(item119)
-        item121.setText(0,QtGui.QApplication.translate("MainWindow", "jobs_per_acre_by_taz", None, QtGui.QApplication.UnicodeUTF8))
-        item121.setIcon(0,QtGui.QIcon(":/Images/Images/map.png"))
-        item121.setText(1,QtGui.QApplication.translate("MainWindow", "2000-2030", None, QtGui.QApplication.UnicodeUTF8))
+        item105 = QtGui.QTreeWidgetItem(item103)
+        item105.setText(0,QtGui.QApplication.translate("MainWindow", "jobs_per_acre_by_taz", None, QtGui.QApplication.UnicodeUTF8))
+        item105.setIcon(0,QtGui.QIcon(":/Images/Images/map.png"))
+        item105.setText(1,QtGui.QApplication.translate("MainWindow", "2000-2030", None, QtGui.QApplication.UnicodeUTF8))
 
-        item122 = QtGui.QTreeWidgetItem(item119)
-        item122.setText(0,QtGui.QApplication.translate("MainWindow", "population_change_by_taz", None, QtGui.QApplication.UnicodeUTF8))
-        item122.setIcon(0,QtGui.QIcon(":/Images/Images/map.png"))
-        item122.setText(1,QtGui.QApplication.translate("MainWindow", "2000-2015", None, QtGui.QApplication.UnicodeUTF8))
+        item106 = QtGui.QTreeWidgetItem(item103)
+        item106.setText(0,QtGui.QApplication.translate("MainWindow", "population_change_by_taz", None, QtGui.QApplication.UnicodeUTF8))
+        item106.setIcon(0,QtGui.QIcon(":/Images/Images/map.png"))
+        item106.setText(1,QtGui.QApplication.translate("MainWindow", "2000-2015", None, QtGui.QApplication.UnicodeUTF8))
 
-        item123 = QtGui.QTreeWidgetItem(item112)
-        item123.setText(0,QtGui.QApplication.translate("MainWindow", "indicator_set_working", None, QtGui.QApplication.UnicodeUTF8))
-        item123.setIcon(0,QtGui.QIcon(":/Images/Images/table_multiple.png"))
-        item123.setText(1,"")
+        item107 = QtGui.QTreeWidgetItem(item96)
+        item107.setText(0,QtGui.QApplication.translate("MainWindow", "indicator_set_working", None, QtGui.QApplication.UnicodeUTF8))
+        item107.setIcon(0,QtGui.QIcon(":/Images/Images/table_multiple.png"))
+        item107.setText(1,"")
 
-        item124 = QtGui.QTreeWidgetItem(item123)
-        item124.setText(0,QtGui.QApplication.translate("MainWindow", "Tables", None, QtGui.QApplication.UnicodeUTF8))
-        item124.setText(1,"")
+        item108 = QtGui.QTreeWidgetItem(item107)
+        item108.setText(0,QtGui.QApplication.translate("MainWindow", "Tables", None, QtGui.QApplication.UnicodeUTF8))
+        item108.setText(1,"")
 
-        item125 = QtGui.QTreeWidgetItem(item123)
-        item125.setText(0,QtGui.QApplication.translate("MainWindow", "Charts", None, QtGui.QApplication.UnicodeUTF8))
-        item125.setText(1,"")
+        item109 = QtGui.QTreeWidgetItem(item107)
+        item109.setText(0,QtGui.QApplication.translate("MainWindow", "Charts", None, QtGui.QApplication.UnicodeUTF8))
+        item109.setText(1,"")
 
-        item126 = QtGui.QTreeWidgetItem(item123)
-        item126.setText(0,QtGui.QApplication.translate("MainWindow", "Maps", None, QtGui.QApplication.UnicodeUTF8))
-        item126.setText(1,"")
+        item110 = QtGui.QTreeWidgetItem(item107)
+        item110.setText(0,QtGui.QApplication.translate("MainWindow", "Maps", None, QtGui.QApplication.UnicodeUTF8))
+        item110.setText(1,"")
         self.toolBox.setItemText(self.toolBox.indexOf(self.resultsmanager_page), QtGui.QApplication.translate("MainWindow", "Results Manager", None, QtGui.QApplication.UnicodeUTF8))
-        self.toolBox.setItemText(self.toolBox.indexOf(self.treeTestPage), QtGui.QApplication.translate("MainWindow", "Tree Test Page", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_editorView), QtGui.QApplication.translate("MainWindow", "Editor", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_mapView), QtGui.QApplication.translate("MainWindow", "Map View", None, QtGui.QApplication.UnicodeUTF8))
         self.pythonLabel.setText(QtGui.QApplication.translate("MainWindow", ">>>", None, QtGui.QApplication.UnicodeUTF8))

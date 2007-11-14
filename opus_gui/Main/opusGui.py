@@ -36,7 +36,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.setupUi(self)
     
     # We need to initialize the window sizes
-    self.splitter.setSizes([350,500])
+    self.splitter.setSizes([450,550])
 
     try:
       import qgis.core
