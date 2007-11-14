@@ -40,37 +40,15 @@ class OpusDataDelegate(QItemDelegate):
                 return QItemDelegate.createEditor(self, parent, option, index)
             # So we have a valid element and our column is 2 we need to make a editor
             if index.column() == 2:
-                if domElement.attribute(QString("type")) == QString("model"):
+                if domElement.hasAttribute(QString("choices")):
                     editor = QComboBox(parent)
-                    if index.model().data(index,Qt.DisplayRole).toString() == QString("Run"):
-                        editor.addItem(QString("Run"))
-                        editor.addItem(QString("Skip"))
-                    else:
-                        editor.addItem(QString("Skip"))
-                        editor.addItem(QString("Run"))
-                    #QObject.connect(editor, SIGNAL("activated(int)"), self.signalMapper, SLOT("map()"))
-                    #self.signalMapper.setMapping(editor,editor)
-                    #QObject.connect(self.signalMapper, SIGNAL("mapped(int)"), self.comboBoxFinished)
-                    QObject.connect(editor, SIGNAL("activated(int)"), self.comboBoxFinished)
-                    return editor
-                elif domElement.attribute(QString("type")) == QString("table"):
-                    editor = QComboBox(parent)
-                    if index.model().data(index,Qt.DisplayRole).toString() == QString("Load"):
-                        editor.addItem(QString("Load"))
-                        editor.addItem(QString("Skip"))
-                    else:
-                        editor.addItem(QString("Skip"))                        
-                        editor.addItem(QString("Load"))
-                    QObject.connect(editor, SIGNAL("activated(int)"), self.comboBoxFinished)
-                    return editor
-                elif domElement.attribute(QString("type")) == QString("boolean"):
-                    editor = QComboBox(parent)
-                    if index.model().data(index,Qt.DisplayRole).toString() == QString("True"):
-                        editor.addItem(QString("True"))
-                        editor.addItem(QString("False"))
-                    else:
-                        editor.addItem(QString("False"))                        
-                        editor.addItem(QString("True"))
+                    choices = domElement.attribute(QString("choices"))
+                    currentIndex = 0
+                    for i,choice in enumerate(choices.split("|")):
+                        editor.addItem(choice)
+                        if index.model().data(index,Qt.DisplayRole).toString() == choice:
+                            currentIndex = i
+                    editor.setCurrentIndex(currentIndex)
                     QObject.connect(editor, SIGNAL("activated(int)"), self.comboBoxFinished)
                     return editor
                 else:
