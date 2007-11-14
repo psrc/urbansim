@@ -23,7 +23,7 @@ from Util.consoleBase import *
 from Config.toolboxBase import *
 
 # General system includes
-import sys
+import sys,time
 
   
 # Main window used for houseing the canvas, toolbars, and dialogs
@@ -35,6 +35,11 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     # required by Qt4 to initialize the UI
     self.setupUi(self)
     
+    self.splashPix = QPixmap(QString("Main/Images/new-logo-medium.png"))
+    self.splashPixScaled = self.splashPix.scaled(210,180,Qt.KeepAspectRatio)
+    self.splash = QSplashScreen(self.splashPixScaled)
+    self.splash.show()
+
     # We need to initialize the window sizes
     self.splitter.setSizes([450,550])
 
@@ -49,4 +54,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.consoleStuff = ConsoleBase(self)
 
     self.toolboxStuff = ToolboxBase(self)
-    
+
+    time.sleep(2)
+    self.splash.hide()
+
