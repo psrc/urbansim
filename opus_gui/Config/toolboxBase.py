@@ -73,6 +73,7 @@ class ToolboxBase(object):
       self.view.setItemDelegate(self.delegate)
       self.view.setModel(self.model)
       self.view.setExpanded(self.model.index(0,0,QModelIndex()),True)
+      self.view.setAnimated(True)
       #NEED TO FIX THIS
       self.parent.gridlayout5.addWidget(self.view)
       self.view.setColumnWidth(0,250)
