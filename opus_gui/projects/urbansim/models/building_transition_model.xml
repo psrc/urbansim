@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+
+<item name="controller" type="class" parser_action="execute">
+  <item name="Class name" type="string" flags="hidden">BuildingTransitionModelConfigurationCreator</item>
+  <item name="Class path" type="string" flags="hidden">urbansim.configurations.building_transition_model_configuration_creator</item>
+  <item name="building_set" type="string">building</item>
+  <item name="location_set" type="string">gridcell</item>
+  <item name="building_types_table" type="string">building_type</item>
+  <item name="vacancy_table" type="string">target_vacancy</item>
+</item>
+
+</configuration>
