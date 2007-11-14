@@ -694,7 +694,8 @@ Traits-based configuration classes.  This provides an explicit API
 for each configurable class, and avoids many of the problems
 associated with the prior use of resources.}
 
-\item Conventions for throwing exceptions.
+\item Conventions for throwing exceptions.  (We should make much more use of
+Opus-specific exceptions, rather than generic exceptions like StandardError.)
 
 \item Put all SQL strings into a single or small number of
 isolated files, so that it is easier to localize these strings to different
@@ -717,33 +718,6 @@ PEP 257 (\url{http://www.python.org/peps/pep-0008.html})
 (\url{http://www.python.org/peps/pep-0257.html}).
 
 \end{itemize}
-
-\section{Building an Opus Installer}\index{installer!creating}
-
-We use \verb|distutils| and \verb|setuptools| to build and distribute Opus.
-\verb|distutils| has been the de-facto standard package for building and
-distributing Python software, and \verb|setuptools| provides additional
-flexibility that makes that process even easier.
-
-In the \verb|opus_core| project, run "\verb|python packager.py|" from the
-command-line. This will produce \code{..\textbackslash ..\textbackslash
-dist\textbackslash opus-major.minor.build.zip}, where \verb|major| is the 
-major version number, \verb|minor| is the minor version number, and 
-\verb|build| is the build number.
-This zip file is all you need to distribute the Opus source. Refer to Chapter
-\ref{chapter:installation} for installation instructions.
-
-Changing the format of the built distribution is a command-line parameter
-to \verb|packager.py| called \verb|--distribution-format|,
-and this parameter corresponds to the standard \verb|distutils| formats,
-as outlined on \url{http://python.mirrors.ilisys.com.au/dev/doc/devel/dist/built-dist.html}
-
-There may be different version numbers for each package and for the
-distribution.  The distribution version number is specified by the
-\verb|opus_version| property in \package{nightly}'s
-\file{build.xml} file.  Each
-package specifies its own version number in the \verb|version| property within
-its \file{opus_package_info.py} file.
 
 
 %%% Local Variables:
