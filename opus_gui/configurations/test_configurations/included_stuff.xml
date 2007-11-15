@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+<item name="mystring" type="string">an included string</item>
+<item name="myint" type="integer">42</item>
+
+</configuration>

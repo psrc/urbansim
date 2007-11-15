@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+<item name="parent" type="file" parser_action="parent">parentconfig.xml</item>
+<item name="description" type="string">this is the child</item>
+
+</configuration>

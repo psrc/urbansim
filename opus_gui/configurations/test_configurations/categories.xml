@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+<item name="description" type="string">category test</item>
+
+<item name="gui_name" config_name="real_name" type="string">config name test</item>
+
+
+<item name="advanced" type="dictionary" parser_action="category">
+  <item name="precache" type="boolean" choices="True|False">True</item>
+  <item name="chunksize" type="integer">12</item>
+</item>
+
+<item name="years" type="tuple">
+<item name="startyear" type="integer">1980</item>
+<item name="endyear" type="integer">1981</item>
+</item>
+
+<item name="nested_advanced" type="dictionary" parser_action="category">
+  <item name="bool2" type="boolean" choices="True|False">False</item>
+  <item name="inner_advanced" type="dictionary" parser_action="category">
+    <item name="int2" type="integer">13</item>
+  </item>
+</item>
+
+
+</configuration>

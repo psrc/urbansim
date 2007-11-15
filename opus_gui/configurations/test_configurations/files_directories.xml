@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+<item name="file1" type="file">testfile</item>
+<item name="file2" type="file" parser_action="prefix_with_urbansim_cache">testfile</item>
+
+<item name="dir1" type="directory">testdir</item>
+<item name="dir2" type="directory" parser_action="prefix_with_urbansim_cache">testdir</item>
+
+</configuration>

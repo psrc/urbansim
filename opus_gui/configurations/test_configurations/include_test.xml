@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+<item name="description" type="string">include test</item>
+<item name="stufftoinclude" type="file" parser_action="include">included_stuff.xml</item>
+
+</configuration>

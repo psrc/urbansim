@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+<item name="description" type="string">a test configuration</item>
+<item name="empty1" type="string"></item>
+<item name="empty2" type="string" parser_action="empty_string_to_None"></item>
+<item name="emptypassword" type="password" parser_action="empty_string_to_None"></item>
+
+<item name="year" type="integer">1980</item>
+
+<item name="mybool" type="boolean" choices="True|False">True</item>
+
+<item name="ten" type="float">10.0</item>
+
+<item name="years" type="tuple">
+<item name="startyear" type="integer">1980</item>
+<item name="endyear" type="integer">1981</item>
+</item>
+
+<item name="list_test" type="list">
+<item name="str1" type="string">squid</item>
+<item name="str2" type="string">clam</item>
+<item name="u1" type="unicode">uniclam</item>
+</item>
+
+<item name="dicttest" type="dictionary">
+<item name="str1" type="string">squid</item>
+<item name="str2" type="string">clam</item>
+</item>
+
+
+<item name="models" type="list">
+  <item name="model1" type="model" choices="Run|Skip">Run</item>
+  <item name="model2" type="model" choices="Run|Skip">Run<item name="group_members" type="string">all</item>
+  </item>
+  <item name="model3" type="model" choices="Run|Skip">Run<item name="chooser" type="string">random</item>
+    <item name="sampler" type="string">fussy</item>
+  </item>
+  <item name="model4" type="model" choices="Run|Skip">Skip</item>
+</item>
+
+<item name="mytables" type="list">
+  <item name="gridcells" type="table" choices="Load|Skip">Load</item>
+  <item name="zones" type="table" choices="Load|Skip">Skip</item>
+  <item name="jobs" type="table" choices="Load|Skip">Load</item>
+</item>
+
+<item name="mydatasets" type="list">
+  <item name="gridcell" type="dataset" choices="Load|Skip">Load</item>
+  <item name="zone" type="dataset" choices="Load|Skip">Skip</item>
+  <item name="job" type="dataset" choices="Load|Skip">Load</item>
+</item>
+
+</configuration>
