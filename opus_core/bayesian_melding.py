@@ -434,7 +434,7 @@ class BayesianMelding:
         if mean_filename is not None:
             write_table_to_text_file(mean_filename, self.get_posterior_component_mean())
         if variance_filename is not None:
-            write_to_text_file(variance_filename, self.get_posterior_component_variance())
+            write_to_text_file(variance_filename, self.get_posterior_component_variance(), delimiter=' ')
 
     def get_quantity_from_simulated_values(self, function):
         """'function' is a character string specifying a function of the scipy.ndimage package (e.g. mean,
