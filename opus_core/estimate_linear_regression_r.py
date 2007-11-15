@@ -38,12 +38,16 @@ class estimate_linear_regression_r(EstimationProcedure):
         nobs = data.shape[0]
         nvar = data.shape[1]
         constant_position = resources.get("constant_position",  array([], dtype='int32')) #position for intercept
-        if constant_position.size <=0: #position for intercept
+        if constant_position.size <= 0: #position for intercept
             constant_position=-1
             nvalues = nvar
+            # Used for printing results below
+            start = 0
         else:
             constant_position=constant_position[0]
             nvalues = nvar+1        
+            # Used for printing results below
+            start = 1
 
         # R doesn't like "x.i" notation when there's a single independent variable
         if nvar < 2:
@@ -79,31 +83,6 @@ class estimate_linear_regression_r(EstimationProcedure):
         
         #r.print_(summary)
         set_default_mode(BASIC_CONVERSION)
-        new_coef = r.coefficients(fit)
-        values = zeros((nvalues,), dtype=float32)
-        se = zeros((nvalues,), dtype=float32)
-        if constant_position>=0:
-            values[constant_position] = new_coef["(Intercept)"]
-            start = 1
-            try:
-                se[constant_position] = summary[3]["coefficients"][0,1]
-            except:
-                pass
-        else:
-            start = 0
-        j=0
-        for i in range(1,nvar+1):
-            if j == constant_position:
-                j+=1
-            if constant_position == -1:
-                values[j] = new_coef["x"]
-            else:
-                values[j] = new_coef["x."+str(i)]
-            try:
-                se[j] = summary[3]["coefficients"][i,1]
-            except:
-                pass
-            j+=1
         
         # r.summary(fit)['coefficients'] is a 2D array of the following structure:
         # [ [estimate, standard error, t-value, p-value], ...]
@@ -115,8 +94,8 @@ class estimate_linear_regression_r(EstimationProcedure):
         Rsquared = r.summary(fit)['r.squared']
         Rsquared_adj = r.summary(fit)['adj.r.squared']
         
-        tvalues = values/se
-        result = {"estimators":values, "standard_errors":se,
+        tvalues = estimates/standard_errors
+        result = {"estimators":estimates, "standard_errors":standard_errors,
                    "other_measures":{"t_statistic":tvalues},
                     "other_info":{"R-Squared":Rsquared,
             "Adjusted R-Squared":Rsquared_adj}}
@@ -131,10 +110,10 @@ class estimate_linear_regression_r(EstimationProcedure):
         logger.log_status("Coeff_names\testimate\tSE\tt-values", tags=tags, verbosity_level=vl)
         if constant_position>=0:
             logger.log_status("%10s\t%8g\t%8g\t%8g" % ("constant", estimates[0], standard_errors[0],
-                                    estimates[0]/standard_errors[0]), tags=tags, verbosity_level=vl)
+                                    tvalues[0]), tags=tags, verbosity_level=vl)
         for i in range(nvar):
             logger.log_status("%10s\t%8g\t%8g\t%8g" % (names[i],estimates[i+start],standard_errors[i+start],
-                                    estimates[i+start]/standard_errors[i+start]), tags=tags, verbosity_level=vl)
+                                    tvalues[i+start]), tags=tags, verbosity_level=vl)
         logger.log_status("===============================================", tags=tags, verbosity_level=vl)
         logger.log_status(tags=tags, verbosity_level=vl)
         
@@ -198,8 +177,8 @@ class Tests(opus_unittest.OpusTestCase):
         #print "results from RPy-base estimation: " + str(result)
     
         # Finally, compare the scipy-based regression to the R-based regression
-        # Compare gradient of the independent variable estimate (would like to compare intercept, but that's not returned by run() method
-        self.assertEqual(round(gradient, 4), round(result['estimators'][0], 4))
+        # Compare estimate of the independent 
+        self.assertEqual(round(intercept, 4), round(result['estimators'][0], 4))
         # Compare the R-Squared
         self.assertEqual(round(r_squared, 6), round(result['other_info']['R-Squared'], 6))
     
