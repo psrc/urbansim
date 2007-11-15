@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<configuration>
-
-<item name="s" type="string">teststring</item>
-<item name="u" type="unicode">testunicode</item>
-
-</configuration>
