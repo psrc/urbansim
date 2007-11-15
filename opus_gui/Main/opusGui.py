@@ -71,9 +71,30 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
   def openProject(self):
     print "Open Project pressed..."
+    projectDialog = QFileDialog()
+    fd = projectDialog.getExistingDirectory(self,QString("Please select project directory..."),
+                                            QString(), QFileDialog.ShowDirsOnly)
+    # Check for cancel
+    if len(fd) == 0:
+      return
+    dirName = QString(fd)
+    dirNameInfo = QFileInfo(QString(fd))
+    dirNameBaseName = dirNameInfo.completeBaseName()
+    print "Dirname = ", dirName
     
   def openConfig(self):
     print "Open Config pressed..."
+    configDialog = QFileDialog()
+    filter_str = QString("*.xml")
+    fd = configDialog.getOpenFileName(self,QString("Please select an xml config file..."),
+                                      QString(), filter_str)
+    # Check for cancel
+    if len(fd) == 0:
+      return
+    fileName = QString(fd)
+    fileNameInfo = QFileInfo(QString(fd))
+    fileNameBaseName = fileNameInfo.completeBaseName()
+    print "Filename = ", fileName
     
   def saveProject(self):
     print "Save Project pressed..."
