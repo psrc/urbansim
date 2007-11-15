@@ -25,7 +25,7 @@ from opus_core.logger import logger
 from opus_core.simulation_state import SimulationState
 
 # from eugene.configs.baseline import Baseline
-from inprocess.configurations.xml_configuration import XMLConfiguration
+from opus_gui.configurations.xml_configuration import XMLConfiguration
 from urbansim.simulation.run_simulation_from_mysql import RunSimulationFromMysql
 
 # find the directory containing the eugene xml configurations
