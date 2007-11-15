@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusMain.ui'
 #
-# Created: Tue Nov 13 22:15:36 2007
+# Created: Wed Nov 14 23:36:44 2007
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -196,11 +196,41 @@ class Ui_MainWindow(object):
         self.mpActionAddVectorLayer = QtGui.QAction(MainWindow)
         self.mpActionAddVectorLayer.setIcon(QtGui.QIcon(":/Images/Images/mActionAddLayer.png"))
         self.mpActionAddVectorLayer.setObjectName("mpActionAddVectorLayer")
+
+        self.actionOpen_Project = QtGui.QAction(MainWindow)
+        self.actionOpen_Project.setObjectName("actionOpen_Project")
+
+        self.actionSave_Project = QtGui.QAction(MainWindow)
+        self.actionSave_Project.setObjectName("actionSave_Project")
+
+        self.actionSave_Project_As = QtGui.QAction(MainWindow)
+        self.actionSave_Project_As.setObjectName("actionSave_Project_As")
+
+        self.actionOpen_Config = QtGui.QAction(MainWindow)
+        self.actionOpen_Config.setObjectName("actionOpen_Config")
+
+        self.actionExit = QtGui.QAction(MainWindow)
+        self.actionExit.setObjectName("actionExit")
+
+        self.actionSave_Config = QtGui.QAction(MainWindow)
+        self.actionSave_Config.setObjectName("actionSave_Config")
+
+        self.actionSave_Config_As = QtGui.QAction(MainWindow)
+        self.actionSave_Config_As.setObjectName("actionSave_Config_As")
         self.menuMap.addAction(self.mpActionZoomIn)
         self.menuMap.addAction(self.mpActionZoomOut)
         self.menuMap.addAction(self.mpActionPan)
         self.menuProject.addSeparator()
         self.menuProject.addSeparator()
+        self.menuProject.addAction(self.actionOpen_Project)
+        self.menuProject.addAction(self.actionOpen_Config)
+        self.menuProject.addSeparator()
+        self.menuProject.addAction(self.actionSave_Project)
+        self.menuProject.addAction(self.actionSave_Project_As)
+        self.menuProject.addAction(self.actionSave_Config)
+        self.menuProject.addAction(self.actionSave_Config_As)
+        self.menuProject.addSeparator()
+        self.menuProject.addAction(self.actionExit)
         self.menubar.addAction(self.menuProject.menuAction())
         self.menubar.addAction(self.menuMap.menuAction())
         self.menubar.addAction(self.menuUtilities.menuAction())
@@ -772,5 +802,12 @@ class Ui_MainWindow(object):
         self.mpActionAddRasterLayer.setText(QtGui.QApplication.translate("MainWindow", "Add Raster Layer", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionZoomIn.setText(QtGui.QApplication.translate("MainWindow", "Zoom In", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionAddVectorLayer.setText(QtGui.QApplication.translate("MainWindow", "Add Vector Layer", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpen_Project.setText(QtGui.QApplication.translate("MainWindow", "Open Project", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSave_Project.setText(QtGui.QApplication.translate("MainWindow", "Save Project", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSave_Project_As.setText(QtGui.QApplication.translate("MainWindow", "Save Project As...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpen_Config.setText(QtGui.QApplication.translate("MainWindow", "Open Config", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExit.setText(QtGui.QApplication.translate("MainWindow", "Exit", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSave_Config.setText(QtGui.QApplication.translate("MainWindow", "Save Config", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSave_Config_As.setText(QtGui.QApplication.translate("MainWindow", "Save Config As...", None, QtGui.QApplication.UnicodeUTF8))
 
 import opusMain_rc

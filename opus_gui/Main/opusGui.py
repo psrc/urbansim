@@ -43,6 +43,17 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     # We need to initialize the window sizes
     self.splitter.setSizes([450,550])
 
+    # Play with the project and config load/save
+    QObject.connect(self.actionOpen_Project, SIGNAL("triggered()"), self.openProject)
+    QObject.connect(self.actionOpen_Config, SIGNAL("triggered()"), self.openConfig)
+    QObject.connect(self.actionSave_Project, SIGNAL("triggered()"), self.saveProject)
+    QObject.connect(self.actionSave_Project_As, SIGNAL("triggered()"), self.saveProjectAs)
+    QObject.connect(self.actionSave_Config, SIGNAL("triggered()"), self.saveConfig)
+    QObject.connect(self.actionSave_Config_As, SIGNAL("triggered()"), self.saveConfigAs)
+    # Exit
+    QObject.connect(self.actionExit, SIGNAL("triggered()"), self.exitOpus)
+
+
     try:
       import qgis.core
       import Map.mapBase
@@ -58,3 +69,24 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     time.sleep(2)
     self.splash.hide()
 
+  def openProject(self):
+    print "Open Project pressed..."
+    
+  def openConfig(self):
+    print "Open Config pressed..."
+    
+  def saveProject(self):
+    print "Save Project pressed..."
+    
+  def saveProjectAs(self):
+    print "Save Project As pressed..."
+    
+  def saveConfig(self):
+    print "Save Config pressed..."
+    
+  def saveConfigAs(self):
+    print "Save Config As pressed..."
+    
+  def exitOpus(self):
+    print "Exit pressed..."
+    self.close()
