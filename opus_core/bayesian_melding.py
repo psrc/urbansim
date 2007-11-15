@@ -429,6 +429,10 @@ class BayesianMelding:
     def write_observed_data_for_quantity(self, quantity_of_interest, filename):
         data = self.observed_data.get_values_for_quantity(quantity_of_interest)
         write_to_text_file(filename, data, delimiter=' ')
+        
+    def write_posterior_mean_and_variance(self, filename):
+        write_to_text_file(filename, self.get_posterior_component_mean())
+        write_to_text_file(filename, self.get_posterior_component_variance(), mode='ab')
 
     def get_quantity_from_simulated_values(self, function):
         """'function' is a character string specifying a function of the scipy.ndimage package (e.g. mean,
