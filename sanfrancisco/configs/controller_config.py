@@ -28,9 +28,9 @@ models_configuration["business_location_choice_model"] = {
                      "specification_table":"business_location_choice_model_specification",
                      "coefficients_table":"business_location_choice_model_coefficients",
                      "compute_capacity_flag":True,
-                     "capacity_string":"building.non_residential_building_sqft",
+                     "capacity_string":"building.non_residential_sqft",
                      "number_of_agents_string":"business.sqft",
-                     "number_of_units_string":"sanfrancisco.building.non_residential_vacant_building_sqft",
+                     "number_of_units_string":"sanfrancisco.building.vacant_non_residential_sqft",
    }
 
 my_controller_configuration = {
