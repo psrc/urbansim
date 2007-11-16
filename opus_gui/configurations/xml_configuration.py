@@ -416,13 +416,6 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(db_config.password, 'secret')
         self.assertEqual(db_config.database_name, 'river_city_baseyear')
             
-    def test_execute(self):
-        # test the 'execute' parser action
-        f = os.path.join(self.test_configs, 'execute.xml')
-        config = XMLConfiguration(f)
-        c = config['controller']['import']['urbansim.models.development_project_location_choice_model_creator']
-        self.assertEqual(c, 'DevelopmentProjectLocationChoiceModelCreator')                         
-            
     def test_error_handling(self):
         self.assertRaises(IOError, XMLConfiguration, 'badname.xml')
         f = os.path.join(self.test_configs, 'badconfig.xml')
