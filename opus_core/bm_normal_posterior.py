@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from numpy import reshape, sum, where
+from numpy import reshape, sum, where, sqrt
 from numpy.random import normal
 
 class bm_normal_posterior:
@@ -22,7 +22,7 @@ class bm_normal_posterior:
         K, I = pmean.shape
         variance = bm_object.get_posterior_component_variance()
         weights = bm_object.get_weights()
-        rns = normal(reshape(pmean, (K, I, 1)), reshape(variance, (1, I, 1)),
+        rns = normal(reshape(pmean, (K, I, 1)), reshape(sqrt(variance), (1, I, 1)),
                      (K, I, replicates))
         result = sum(reshape(weights, (1,I,1)) * rns, axis=1)
         if truncate_at_zero:
