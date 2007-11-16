@@ -28,8 +28,9 @@ except ImportError:
     print "Unable to import opus core libs"
 
 class OpusModelTest(object):
-    def __init__(self,parent):
+    def __init__(self,parent,xml_path):
         self.parent = parent
+        self.xml_path = xml_path
         self.progressCallback = parent.progressCallback
         self.finishedCallback = parent.finishedCallback
 
@@ -45,11 +46,9 @@ class OpusModelTest(object):
                 (options, args) = parser.parse_args([])
                 run_manager = option_group.get_run_manager(options)
                 # find the directory containing the eugene xml configurations
-                xml_dir = __import__('opus_gui').__path__[0]
-                xml_path = os.path.join(xml_dir, 'projects', 'eugene', 'baseline.xml')
-                # xml_dir = __import__('inprocess').__path__[0]
-                # xml_path = os.path.join(xml_dir, 'configurations', 'projects', 'eugene', 'baseline.xml')
-                config = XMLConfiguration(xml_path)
+                fileNameInfo = QFileInfo(QString(self.xml_path))
+                fileNameAbsolute = fileNameInfo.absoluteFilePath()
+                config = XMLConfiguration(str(fileNameAbsolute))
                 insert_auto_generated_cache_directory_if_needed(config)
                 (self.start_year, self.end_year) = config['years']
                 cache_dir = config['cache_directory']
@@ -97,13 +96,14 @@ class OpusModelTest(object):
                 return {"percentage":0,"message":"Model initializing..."}
 
 class RunModelThread(QThread):
-    def __init__(self, parent):
+    def __init__(self, parent, xml_file):
         QThread.__init__(self, parent)
         self.parent = parent
+        self.xml_file = xml_file
         
     def run(self):
         self.parent.progressBar.setRange(0,100)
-        self.model = OpusModelTest(self)
+        self.model = OpusModelTest(self,self.xml_file)
         self.model.run()
 
     def progressCallback(self,percent):
@@ -119,10 +119,11 @@ class RunModelThread(QThread):
             
 
 class RunModelGui(QDialog, Ui_OpusRunModel):
-    def __init__(self, parent, fl):
+    def __init__(self, parent, fl, xml_path):
         QDialog.__init__(self, parent, fl)
         self.setupUi(self)
         self.parent = parent
+        self.xml_path = xml_path
         self.progressBar = self.runProgressBar
         self.statusLabel = self.runStatusLabel
         self.progressBar.reset()
@@ -134,7 +135,7 @@ class RunModelGui(QDialog, Ui_OpusRunModel):
         self.pbnStartModel.setEnabled(False)
         self.progressBar.setValue(0)
         self.statusLabel.setText(QString("Model initializing..."))
-        self.runThread = RunModelThread(self)
+        self.runThread = RunModelThread(self, self.xml_path)
         # Use this signal from the thread if it is capable of producing its own status signal
         #QObject.connect(self.runThread, SIGNAL("runPing(PyQt_PyObject)"),
         #                self.runPingFromThread)

@@ -81,6 +81,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     dirNameInfo = QFileInfo(QString(fd))
     dirNameBaseName = dirNameInfo.completeBaseName()
     print "Dirname = ", dirName
+    # Now we recursively loop through and create an XML file tree
     
   def openConfig(self):
     print "Open Config pressed..."
@@ -95,6 +96,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     fileNameInfo = QFileInfo(QString(fd))
     fileNameBaseName = fileNameInfo.completeBaseName()
     print "Filename = ", fileName
+    # Open the file and add to the Run tab...
+    self.toolboxStuff.openXMLTree(fileName)
     
   def saveProject(self):
     print "Save Project pressed..."

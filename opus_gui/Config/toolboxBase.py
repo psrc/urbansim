@@ -51,20 +51,30 @@ class ToolboxBase(object):
     self.modelmanager_tree.resizeColumnToContents(0)
     self.resultsmanager_tree.resizeColumnToContents(0)
 
+    self.view = None
+    self.runManagerTrees = []
+    
+  
+  def openXMLTree(self, xml_file):
+    # Kill off the other tree if one exists...
+    if self.view:
+      self.parent.gridlayout3.removeWidget(self.view)
+    
     # Play with the new tree view here
     # find the directory containing the eugene xml configurations
-    opus_gui_dir = __import__('opus_gui').__path__[0]
-    f = os.path.join(opus_gui_dir, 'projects', 'eugene', 'baseline.xml')
-    self.configFile = QFile(f)
+    #opus_gui_dir = __import__('opus_gui').__path__[0]
+    #f = os.path.join(opus_gui_dir, 'projects', 'eugene', 'baseline.xml')
+    self.xml_file = xml_file
+    self.configFile = QFile(xml_file)
     if self.configFile.open(QIODevice.ReadWrite):
       self.doc = QDomDocument()
       self.doc.setContent(self.configFile)
       # Close the file and re-open with truncation
-      self.configFile.close()
-      self.configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
-      indentSize = 2
-      out = QTextStream(self.configFile)
-      self.doc.save(out, indentSize)
+      #self.configFile.close()
+      #self.configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
+      #indentSize = 2
+      #out = QTextStream(self.configFile)
+      #self.doc.save(out, indentSize)
       self.model = OpusDataModel(self.doc, self.parent, self.configFile)
       self.view = QTreeView(self.parent)
       self.delegate = OpusDataDelegate(self.view)
@@ -100,7 +110,7 @@ class ToolboxBase(object):
            self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
     flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | \
             Qt.WindowMaximizeButtonHint 
-    wnd = RunModelGui(self.parent,flags)
+    wnd = RunModelGui(self.parent,flags,self.xml_file)
     wnd.show()
 
   def action2(self):
