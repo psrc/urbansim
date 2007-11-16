@@ -30,6 +30,9 @@ class GetCacheDataIntoEmme2(AbstractEmme2TravelModel):
         """This is the main entry point.  It gets the appropriate configuration info from the 
         travel_model_configuration part of this config, and then copies the specified 
         UrbanSim data into files for emme/2 to read.  
+        If households and jobs do not have a primary attribute zone_id, the entry 'locations_to_disaggregate'
+        in the travel_model_configuration should be a list of dataset names over which the zone_id 
+        will be dissaggregated, ordered from higher to lower aggregation level, e.g. ['parcel', 'building']
         """
         cache_directory = config['cache_directory']
         simulation_state = SimulationState()
