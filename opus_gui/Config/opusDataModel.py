@@ -59,12 +59,16 @@ class OpusDataModel(QAbstractItemModel):
         self.databaseTableIcon = QIcon(":/Images/Images/database_table.png")
         self.errorIcon = QIcon(":/Images/Images/error.png")
         self.exclamationIcon = QIcon(":/Images/Images/exclamation.png")
+        self.fieldIcon = QIcon(":/Images/Images/field.png")
         self.folderDatabaseIcon = QIcon(":/Images/Images/folder_database.png")
         self.folderIcon = QIcon(":/Images/Images/folder.png")
         self.layersIcon = QIcon(":/Images/Images/layers.png")
+        self.lockIcon = QIcon(":/Images/Images/lock.png")
         self.mapGoIcon = QIcon(":/Images/Images/map_go.png")
         self.mapIcon = QIcon(":/Images/Images/map.png")
+        self.pageWhiteIcon = QIcon(":/Images/Images/page_white.png")
         self.pythonScriptIcon = QIcon(":/Images/Images/python_script.png")
+        self.pythonTypeIcon = QIcon(":/Images/Images/python_type.png")
         self.tableGoIcon = QIcon(":/Images/Images/table_go.png")
         self.tableLightningIcon = QIcon(":/Images/Images/table_lightning.png")
         self.tableMultipleIcon = QIcon(":/Images/Images/table_multiple.png")
@@ -78,21 +82,24 @@ class OpusDataModel(QAbstractItemModel):
         self.bookmarkIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_FileIcon))
 
     def iconFromType(self, attType):
-        typeMap = {"string":self.bookmarkIcon,
+        typeMap = {"string":self.fieldIcon,
                    "path":self.folderDatabaseIcon,
-                   "directory":self.folderIcon,
-                   "file":self.applicationIcon,
-                   "class":self.pythonScriptIcon,
+                   "directory":self.pythonTypeIcon,
+                   "file":self.pageWhiteIcon,
+                   "class":self.pythonTypeIcon,
                    "dictionary":self.pythonScriptIcon,
-                   "list":self.tableIcon,
-                   "tuple":self.tableMultipleIcon,
-                   "string":self.applicationIcon,
-                   "integer":self.applicationIcon,
+                   "list":self.pythonTypeIcon,
+                   "tuple":self.pythonTypeIcon,
+                   "unicode":self.fieldIcon,
+                   "integer":self.fieldIcon,
+                   "float":self.fieldIcon,
                    "model":self.cogIcon,
-                   "password":self.exclamationIcon,
+                   "dataset":self.folderDatabaseIcon,
+                   "table":self.tableIcon,
+                   "password":self.lockIcon,
                    "checkbox":self.bulletIcon,
                    "cacheConfig":self.databaseLinkIcon,
-                   "bool":self.applicationIcon,
+                   "boolean":self.pythonTypeIcon,
                    "":self.bulletIcon}
         if attType != QString("defValue") and typeMap.has_key(str(attType)):
             return typeMap[str(attType)]
