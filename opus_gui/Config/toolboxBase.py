@@ -93,18 +93,20 @@ class ToolboxBase(object):
       self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
       self.bulletIcon = QIcon(":/Images/Images/bullet_black.png")
       self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
-      self.act1 = QAction(self.acceptIcon, "Run a Model", self.parent)
-      QObject.connect(self.act1, SIGNAL("triggered()"), self.action1)
+      self.actRunModel = QAction(self.acceptIcon, "Run This Model", self.parent)
+      QObject.connect(self.actRunModel, SIGNAL("triggered()"), self.runModel)
       self.act2 = QAction(self.applicationIcon, "Action2", self.parent)
       QObject.connect(self.act2, SIGNAL("triggered()"), self.action2)
       self.act3 = QAction(self.bulletIcon, "Action3", self.parent)
       QObject.connect(self.act3, SIGNAL("triggered()"), self.action3)
       self.act4 = QAction(self.calendarIcon, "Action4", self.parent)
       QObject.connect(self.act4, SIGNAL("triggered()"), self.action4)
+      self.actOpenFile = QAction(self.calendarIcon, "Open File", self.parent)
+      QObject.connect(self.actOpenFile, SIGNAL("triggered()"), self.openFile)
     else:
       print "Error reading config"
     
-  def action1(self):
+  def runModel(self):
     print "action1 context pressed with column = %s and item = %s" % \
           (self.currentColumn,
            self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
@@ -125,6 +127,10 @@ class ToolboxBase(object):
     print "action4 context pressed with column = %s and item = %s" % \
           (self.currentColumn, self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
 
+  def openFile(self):
+    print "Open File context pressed with column = %s and item = %s" % \
+          (self.currentColumn, self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
+
   def processCustomMenu(self, position):
     if self.view.indexAt(position).isValid() and self.view.indexAt(position).column() == 0:
       #print "Right mouse click custom menu requested, column %s" % \
@@ -140,13 +146,30 @@ class ToolboxBase(object):
       titleString = "Context Column %s" % (self.view.indexAt(position).column())
       self.currentColumn = self.view.indexAt(position).column()
       self.currentIndex = self.view.indexAt(position)
-      self.menu = QMenu(self.parent)
-      self.menu.addAction(self.act1)
-      self.menu.addAction(self.act2)
-      self.menu.addSeparator()
-      self.menu.addAction(self.act3)
-      self.menu.addAction(self.act4)
-      self.menu.exec_(QCursor.pos())
+      item = self.currentIndex.internalPointer()
+      domNode = item.node()
+      if domNode.isNull():
+        return QVariant()
+      # Handle ElementNodes
+      if domNode.isElement():
+        domElement = domNode.toElement()
+        if domElement.isNull():
+          return QVariant()
+        if domElement.tagName() == QString("configuration"):
+          self.menu = QMenu(self.parent)
+          self.menu.addAction(self.actRunModel)
+          self.menu.exec_(QCursor.pos())          
+        elif domElement.attribute(QString("type")) == QString("file"):
+          self.menu = QMenu(self.parent)
+          self.menu.addAction(self.actOpenFile)
+          self.menu.exec_(QCursor.pos())
+        else:
+          self.menu = QMenu(self.parent)
+          self.menu.addAction(self.act2)
+          self.menu.addSeparator()
+          self.menu.addAction(self.act3)
+          self.menu.addAction(self.act4)
+          self.menu.exec_(QCursor.pos())
     return
   
   def processPressed(self, index):
