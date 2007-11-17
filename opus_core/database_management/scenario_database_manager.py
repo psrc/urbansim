@@ -72,11 +72,11 @@ class ScenarioDatabaseManager(object):
                 match = re.search("jdbc:mysql://[^/]*/(.*)", next_database_name)
                 if match is not None:
                     next_database_name = match.group(1)          
-#                    if 'PARENT_DATABASE_URL' in scenario_info_table.c:
-#                        u = scenario_info_table.update(values = {'PARENT_DATABASE_URL':next_database_name})
-#                    else:
-#                        u = scenario_info_table.update(values = {'parent_database_url':next_database_name})
-#                    database.engine.execute(u)
+                    if 'PARENT_DATABASE_URL' in scenario_info_table.c:
+                        u = scenario_info_table.update(values = {'PARENT_DATABASE_URL':next_database_name})
+                    else:
+                        u = scenario_info_table.update(values = {'parent_database_url':next_database_name})
+                    database.engine.execute(u)
                 database.close()
                 table_mapping = self._get_table_mapping(next_database_name, table_mapping)
             else: database.close()
@@ -155,7 +155,7 @@ else:
                 for table in v:
                     self.assertTrue(table in expected[k]) 
         
-        def skip_test_jdbc_url_written_overwritten_properly(self):
+        def test_jdbc_url_overwritten_properly(self):
             sdm = ScenarioDatabaseManager(self.config, 'db_chain_son')
             
             url = 'jdbc:mysql://name.host.domain/db_chain_dad'
