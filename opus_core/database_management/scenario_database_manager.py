@@ -15,7 +15,6 @@
 import re
 from opus_core.logger import logger
 
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 from opus_core.database_management.database_server import DatabaseServer
 from sqlalchemy import select
 
@@ -52,8 +51,6 @@ class ScenarioDatabaseManager(object):
             logger.log_status('Found: ' + scenario_database_name + "." + table_name,
                               tags=['database'], verbosity_level=3)
         
-        #TODO: there's no reason to have the parent database url store JDBC
-        #      It should just be a database name
         if 'scenario_information' in tables_in_database:
             scenario_info_table = database.get_table('scenario_information')
             if 'PARENT_DATABASE_URL' in scenario_info_table.c:
@@ -70,14 +67,112 @@ class ScenarioDatabaseManager(object):
             else:
                 next_database_name = next_database_name[0]
             
-            database.close()
-            if next_database_name is not None:                
+            if next_database_name is not None:  
+                #old method stored chain as a jdbc url; if this is the case, this code will update it              
                 match = re.search("jdbc:mysql://[^/]*/(.*)", next_database_name)
-                if match == None :
-                    raise ValueError("parent database url is not a MySQL JDBC url" )
-                next_database_name = match.group(1)
+                if match is not None:
+                    next_database_name = match.group(1)          
+#                    if 'PARENT_DATABASE_URL' in scenario_info_table.c:
+#                        u = scenario_info_table.update(values = {'PARENT_DATABASE_URL':next_database_name})
+#                    else:
+#                        u = scenario_info_table.update(values = {'parent_database_url':next_database_name})
+#                    database.engine.execute(u)
+                database.close()
                 table_mapping = self._get_table_mapping(next_database_name, table_mapping)
+            else: database.close()
         else:
             database.close()
             
         return table_mapping
+    
+    
+try:
+    import sqlalchemy
+except:
+    pass
+
+if sqlalchemy is None:
+    if __name__ == '__main__':
+        from opus_core.logger import logger 
+        logger.log_warning('Skipping scenario_database_manager unit tests -- could not import the sqlalchemy module.')
+    
+else:
+    from opus_core.tests import opus_unittest
+    from opus_core.database_management.test_classes.database_management_test_interface \
+        import DatabaseManagementTestInterface 
+
+    
+    class ScenarioDatabaseManagerTest(DatabaseManagementTestInterface):
+
+        def test_table_mapping_no_chain(self):
+            sdm = ScenarioDatabaseManager(self.config, 'db_chain_granddad')
+            t_mapping = sdm._get_table_mapping('db_chain_granddad', {})
+            
+            expected = {
+                'base_schema': 'db_chain_granddad',
+                'base_schema2': 'db_chain_granddad',
+                'scenario_information': 'db_chain_granddad'
+            }
+            
+            self.assertEqual(t_mapping, expected)
+        
+        def test_table_mapping_chain(self):
+            sdm = ScenarioDatabaseManager(self.config, 'db_chain_son')
+            t_mapping = sdm._get_table_mapping('db_chain_son', {})
+            
+            expected = {
+                'base_schema': 'db_chain_dad',
+                'base_schema2': 'db_chain_son',
+                'scenario_information': 'db_chain_son'
+            }
+            
+            self.assertEqual(t_mapping, expected)
+                    
+        def test_database_to_table_mapping_no_chain(self):
+            sdm = ScenarioDatabaseManager(self.config, 'db_chain_granddad')
+            d_mapping = sdm.get_database_to_table_mapping()
+            
+            expected = {
+                'db_chain_granddad': ['base_schema', 'base_schema2', 'scenario_information']
+            }
+            self.assertEqual(len(expected.keys()), len(d_mapping.keys()))
+            for k,v in d_mapping.items():
+                self.assertTrue(k in expected)
+                for table in v:
+                    self.assertTrue(table in expected[k])            
+        
+        def test_database_to_table_mapping_chain(self):
+            sdm = ScenarioDatabaseManager(self.config, 'db_chain_son')
+            d_mapping = sdm.get_database_to_table_mapping()
+            
+            expected = {
+                'db_chain_son': ['base_schema2', 'scenario_information'],
+                'db_chain_dad': ['base_schema']
+            }
+            self.assertEqual(len(expected.keys()), len(d_mapping.keys()))
+            for k,v in d_mapping.items():
+                self.assertTrue(k in expected)
+                for table in v:
+                    self.assertTrue(table in expected[k]) 
+        
+        def skip_test_jdbc_url_written_overwritten_properly(self):
+            sdm = ScenarioDatabaseManager(self.config, 'db_chain_son')
+            
+            url = 'jdbc:mysql://name.host.domain/db_chain_dad'
+            u = self.db_chain_son.get_table('scenario_information').update(
+                  values = {
+                    self.db_chain_son.get_table('scenario_information').c.parent_database_url:url})   
+            self.db_chain_son.engine.execute(u)       
+                 
+            sdm._get_table_mapping('db_chain_son', {})
+            
+            s = select(
+                columns=[self.db_chain_son.get_table('scenario_information').c.parent_database_url])
+            result = self.db_chain_son.engine.execute(s)
+            
+            output_url = result.fetchone()[0]
+            expected_url = 'db_chain_dad'
+            self.assertEqual(output_url, expected_url)
+
+    if __name__ == '__main__':
+        opus_unittest.main()

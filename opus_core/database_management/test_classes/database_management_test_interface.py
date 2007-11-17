@@ -22,25 +22,27 @@ from sqlalchemy.types import Integer, SmallInteger, Float, Numeric, \
 
 
 base_schema = {
-    'INTEGER': 'integer_col',
-    'TEXT':'clob_col',
-    'SHORT':'smallinteger_col',
-    'FLOAT':'float_col'                
+    'integer_col':'INTEGER',
+    'clob_col':'TEXT',
+    'smallinteger_col':'SHORT',
+    'float_col':'FLOAT'                
 }
 
 base_schema2 = {
-    'INTEGER': 'integer_col',
-    'DOUBLE':'numeric_col',
-    'VARCHAR':'varchar_col',
-    'BOOLEAN':'boolean_col'                
+    'integer_col':'INTEGER',
+    'numeric_col':'DOUBLE',
+    'varchar_col':'VARCHAR',
+    'boolean_col':'BOOLEAN'                
 }
 
 base_scenario_information_schema = {
-    'VARCHAR':'parent_database_url'
+    'parent_database_url':'VARCHAR'
 }
 
 class DatabaseManagementTestInterface(opus_unittest.OpusTestCase):
     def setUp(self):        
+        self.databases = ['db_chain_son', 'db_chain_dad', 'db_chain_granddad']
+        
         self.config = DatabaseServerConfiguration(test = True)
         self.server = DatabaseServer(self.config)
         self._create_databases()
@@ -57,9 +59,14 @@ class DatabaseManagementTestInterface(opus_unittest.OpusTestCase):
         self._seed_values()
         
     def _create_databases(self):
-        self.server.create_database('db_chain_granddad')
-        self.server.create_database('db_chain_dad')
-        self.server.create_database('db_chain_son')
+        
+        for db in self.databases:
+            try: 
+                self.server.drop_database(db)
+            except:
+                pass
+            
+            self.server.create_database(db)
         
     def _create_tables(self):
         self.db_chain_granddad.create_table('base_schema', base_schema)
@@ -73,12 +80,17 @@ class DatabaseManagementTestInterface(opus_unittest.OpusTestCase):
         self.db_chain_son.create_table('scenario_information', base_scenario_information_schema)
         
     def _seed_values(self):
-        u = self.db_chain_dad.update(
+        u = self.db_chain_granddad.get_table('scenario_information').insert(
+              values = {
+                self.db_chain_granddad.get_table('scenario_information').c.parent_database_url:''})   
+        self.db_chain_granddad.engine.execute(u)
+        
+        u = self.db_chain_dad.get_table('scenario_information').insert(
               values = {
                 self.db_chain_dad.get_table('scenario_information').c.parent_database_url:'db_chain_granddad'})
 
         self.db_chain_dad.engine.execute(u)
-        u = self.db_chain_son.update(
+        u = self.db_chain_son.get_table('scenario_information').insert(
               values = {
                 self.db_chain_son.get_table('scenario_information').c.parent_database_url:'db_chain_dad'})   
         self.db_chain_son.engine.execute(u)
@@ -111,7 +123,7 @@ class DatabaseManagementTestInterface(opus_unittest.OpusTestCase):
         self.db_chain_granddad.engine.execute(self.granddad_schema.insert(), granddad_vals)
         self.db_chain_granddad.engine.execute(self.granddad_schema2.insert(), granddad_vals2)        
         self.db_chain_dad.engine.execute(self.dad_schema.insert(), dad_vals)
-        self.db_chain_son.engine.execute(self.son_schema.insert(), son_vals2)
+        self.db_chain_son.engine.execute(self.son_schema2.insert(), son_vals2)
                      
     def tearDown(self):
         self.db_chain_granddad.close()
