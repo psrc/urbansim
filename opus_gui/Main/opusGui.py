@@ -21,6 +21,7 @@ from opusMain_ui import Ui_MainWindow
 
 from Util.consoleBase import *
 from Config.toolboxBase import *
+from Run.runManagerBase import *
 
 # General system includes
 import sys,time,tempfile
@@ -53,6 +54,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     # Exit
     QObject.connect(self.actionExit, SIGNAL("triggered()"), self.exitOpus)
 
+    QObject.connect(self.actionRun_Manager, SIGNAL("triggered()"), self.openRunManager)
+
     self.tempDir = tempfile.mkdtemp(prefix='opus_gui')
 
     try:
@@ -67,8 +70,18 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     self.toolboxStuff = ToolboxBase(self)
 
+    self.runManagerStuff = RunManagerBase(self)
+    flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | \
+            Qt.WindowMaximizeButtonHint 
+    self.runManagerGui = RunModelGui(self,flags)
+    self.runManagerStuff.setGui(self.runManagerGui)
+
     time.sleep(2)
     self.splash.hide()
+
+  def openRunManager(self):
+    print "Open Run Manager pressed..."
+    self.runManagerGui.show()
 
   def openProject(self):
     print "Open Project pressed..."

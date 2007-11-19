@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusMain.ui'
 #
-# Created: Thu Nov 15 22:34:44 2007
+# Created: Mon Nov 19 14:59:16 2007
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -217,6 +217,9 @@ class Ui_MainWindow(object):
 
         self.actionSave_Config_As = QtGui.QAction(MainWindow)
         self.actionSave_Config_As.setObjectName("actionSave_Config_As")
+
+        self.actionRun_Manager = QtGui.QAction(MainWindow)
+        self.actionRun_Manager.setObjectName("actionRun_Manager")
         self.menuMap.addAction(self.mpActionZoomIn)
         self.menuMap.addAction(self.mpActionZoomOut)
         self.menuMap.addAction(self.mpActionPan)
@@ -231,6 +234,7 @@ class Ui_MainWindow(object):
         self.menuProject.addAction(self.actionSave_Config_As)
         self.menuProject.addSeparator()
         self.menuProject.addAction(self.actionExit)
+        self.menuUtilities.addAction(self.actionRun_Manager)
         self.menubar.addAction(self.menuProject.menuAction())
         self.menubar.addAction(self.menuMap.menuAction())
         self.menubar.addAction(self.menuUtilities.menuAction())
@@ -809,5 +813,6 @@ class Ui_MainWindow(object):
         self.actionExit.setText(QtGui.QApplication.translate("MainWindow", "Exit", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSave_Config.setText(QtGui.QApplication.translate("MainWindow", "Save Config", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSave_Config_As.setText(QtGui.QApplication.translate("MainWindow", "Save Config As...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionRun_Manager.setText(QtGui.QApplication.translate("MainWindow", "Run Manager", None, QtGui.QApplication.UnicodeUTF8))
 
 import opusMain_rc

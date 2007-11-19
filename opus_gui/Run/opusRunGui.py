@@ -17,41 +17,92 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from opusRunModel_ui import *
 from opusRunModel import *
+#from runManagerBase import *
 import os, sys, time, tempfile, shutil
 
-class RunModelThread(QThread):
-    def __init__(self, parent, xml_file):
-        QThread.__init__(self, parent)
-        self.parent = parent
-        self.xml_file = xml_file
-        
-    def run(self):
-        self.parent.progressBar.setRange(0,100)
-        self.model = OpusModel(self,self.xml_file)
-        self.model.run()
-
-    def progressCallback(self,percent):
-        print "Ping From Model"
-        self.emit(SIGNAL("runPing(PyQt_PyObject)"),percent)
-
-    def finishedCallback(self,success):
-        if success:
-            print "Success returned from Model"
-        else:
-            print "Error returned from Model"
-        self.emit(SIGNAL("runFinished(PyQt_PyObject)"),success)
-            
-
 class RunModelGui(QDialog, Ui_OpusRunModel):
-    def __init__(self, parent, fl, xml_path):
+    def __init__(self, parent, fl):
         QDialog.__init__(self, parent, fl)
         self.setupUi(self)
         self.parent = parent
+        self.modelElements = []
+        for model in self.parent.runManagerStuff.getModelList():
+            self.modelElements.append(ModelGuiElement(self,model))
+        self.groupBoxLayout = QVBoxLayout(self.groupBox)
+        self.groupBoxLayout.setObjectName("groupBoxLayout")
+        for modelElement in self.modelElements:
+            self.groupBoxLayout.addWidget(modelElement)
+            modelElement.inGui = True
+
+    def addModelElement(self,model):
+        self.modelElements.append(ModelGuiElement(self,model))
+
+    def updateModelElements(self):
+        for modelElement in self.modelElements:
+            if modelElement.inGui == False:
+                self.groupBoxLayout.addWidget(modelElement)
+                modelElement.inGui = True
+
+    def on_pbnCancel_released(self):
+        self.close()
+
+        
+class ModelGuiElement(QWidget):
+    def __init__(self, parent, model):
+        QWidget.__init__(self, parent)
+        self.parent = parent
+        self.model = model
+        self.inGui = False
+        
+        # For now grab the first model in the manager
+        #xml_path = self.parent.runManagerStuff.modelList[0].xml_file
+        self.xml_path = model.xml_path
+
+        # LAYOUT FOR THE MODEL ELEMENT IN THE GUI
+        self.hboxlayout = QHBoxLayout(self)
+        self.hboxlayout.setObjectName("hboxlayout")
+
+        self.progressBarWidget = QWidget(self)
+        self.progressBarWidget.setObjectName("progressBarWidget")
+
+        self.pbVBoxLayout = QVBoxLayout(self.progressBarWidget)
+        self.pbVBoxLayout.setObjectName("pbVBoxLayout")
+
+        self.runProgressBar = QProgressBar(self.progressBarWidget)
+        self.runProgressBar.setProperty("value",QVariant(0))
+        self.runProgressBar.setObjectName("runProgressBar")
+        self.runProgressBar.reset()
+        self.pbVBoxLayout.addWidget(self.runProgressBar)
+
+        self.runStatusLabel = QLabel(self.progressBarWidget)
+        self.runStatusLabel.setAlignment(Qt.AlignCenter)
+        self.runStatusLabel.setObjectName("runStatusLabel")
+        self.runStatusLabel.setText(QString("Press Start to run the model..."))
+        self.pbVBoxLayout.addWidget(self.runStatusLabel)
+        self.hboxlayout.addWidget(self.progressBarWidget)
+
+        self.startWidget = QWidget(self)
+        self.startWidget.setObjectName("startWidget")
+
+        self.startGridLayout = QGridLayout(self.startWidget)
+        self.startGridLayout.setObjectName("startGridLayout")
+
+        self.pbnStartModel = QPushButton(self.startWidget)
+        self.pbnStartModel.setObjectName("pbnStartModel")
+        self.pbnStartModel.setText(QString("Start..."))
+        QObject.connect(self.pbnStartModel, SIGNAL("released()"),
+                        self.on_pbnStartModel_released)        
+        self.startGridLayout.addWidget(self.pbnStartModel,0,0,1,1)
+        self.hboxlayout.addWidget(self.startWidget)
+        
+    def on_pbnStartModel_released(self):
+        # Fire up a new thread and run the model
+        print "Start Model Pressed"
 
         # Need to make a copy of the project environment to work from
-        self.originalFile = QFileInfo(xml_path)
+        self.originalFile = QFileInfo(self.xml_path)
         self.originalDirName = self.originalFile.dir().dirName()
-        self.copyDir = QString(self.parent.tempDir)
+        self.copyDir = QString(self.parent.parent.tempDir)
         self.projectCopyDir = QDir(QString(tempfile.mkdtemp(prefix='opus_model',dir=str(self.copyDir))))
         # Copy the project dir from original to copy...
         tmpPathDir = self.originalFile.dir()
@@ -68,19 +119,12 @@ class RunModelGui(QDialog, Ui_OpusRunModel):
         # References to the GUI elements for status for this run...
         self.progressBar = self.runProgressBar
         self.statusLabel = self.runStatusLabel
-        self.progressBar.reset()
-        self.statusLabel.setText(QString("Press Start to run the model..."))
 
-    def on_pbnStartModel_released(self):
-        # Fire up a new thread and run the model
-        print "Start Model Pressed"
         self.pbnStartModel.setEnabled(False)
         self.progressBar.setValue(0)
         self.statusLabel.setText(QString("Model initializing..."))
-        self.runThread = RunModelThread(self, self.xml_path)
+        self.runThread = RunModelThread(self.parent,self,self.xml_path)
         # Use this signal from the thread if it is capable of producing its own status signal
-        #QObject.connect(self.runThread, SIGNAL("runPing(PyQt_PyObject)"),
-        #                self.runPingFromThread)
         QObject.connect(self.runThread, SIGNAL("runFinished(PyQt_PyObject)"),
                         self.runFinishedFromThread)
         # Use this timer to call a function in the thread to check status if the thread is unable
@@ -91,9 +135,6 @@ class RunModelGui(QDialog, Ui_OpusRunModel):
         self.timer.start(1000)
         self.runThread.start()
             
-    def on_pbnCancel_released(self):
-        self.close()
-
     # This is not used currently since the model can not return status... instead we use a timer to
     # check the status from a log file.
     def runPingFromThread(self,value):
@@ -109,7 +150,7 @@ class RunModelGui(QDialog, Ui_OpusRunModel):
         self.pbnStartModel.setEnabled(True)
 
     def runStatusFromThread(self):
-        status = self.runThread.model._compute_progress(self.runThread.model.statusfile)
+        status = self.runThread.parent.model._compute_progress(self.runThread.parent.model.statusfile)
         self.progressBar.setValue(status["percentage"])
         self.statusLabel.setText(status["message"])
         print "runStatusFromThread from timer with percentage = %d and message = %s" % (status["percentage"],

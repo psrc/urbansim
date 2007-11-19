@@ -20,6 +20,7 @@ from PyQt4.QtXml import *
 from Config.opusDataModel import OpusDataModel
 from Config.opusDataDelegate import OpusDataDelegate
 from Run.opusRunGui import RunModelGui
+from Run.opusRunModel import OpusModel
 
 # General system includes
 import os, sys,string
@@ -110,10 +111,13 @@ class ToolboxBase(object):
     print "action1 context pressed with column = %s and item = %s" % \
           (self.currentColumn,
            self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
-    flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | \
-            Qt.WindowMaximizeButtonHint 
-    wnd = RunModelGui(self.parent,flags,self.xml_file)
-    wnd.show()
+    # Add the model to the run Q and fire up the GUI
+    newModel = OpusModel(self,self.xml_file)
+    self.parent.runManagerStuff.addNewModelRun(newModel)
+    #flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | \
+    #        Qt.WindowMaximizeButtonHint 
+    #wnd = RunModelGui(self.parent,flags)
+    self.parent.runManagerStuff.gui.show()
 
   def action2(self):
     print "action2 context pressed with column = %s and item = %s" % \

@@ -26,12 +26,39 @@ except ImportError:
     WithOpus = False
     print "Unable to import opus core libs"
 
+class RunModelThread(QThread):
+    def __init__(self, parentThread,parent,xml_file):
+        QThread.__init__(self, parentThread)
+        self.parent = parent
+        self.xml_file = xml_file
+        
+    def run(self):
+        self.parent.progressBar.setRange(0,100)
+        #self.model = OpusModel(self,self.xml_file)
+        #self.model.run()
+        self.parent.model.progressCallback = self.progressCallback
+        self.parent.model.finishedCallback = self.finishedCallback
+        self.parent.model.run()
+        
+    def progressCallback(self,percent):
+        print "Ping From Model"
+        self.emit(SIGNAL("runPing(PyQt_PyObject)"),percent)
+
+    def finishedCallback(self,success):
+        if success:
+            print "Success returned from Model"
+        else:
+            print "Error returned from Model"
+        self.emit(SIGNAL("runFinished(PyQt_PyObject)"),success)
+            
+
 class OpusModel(object):
     def __init__(self,parent,xml_path):
         self.parent = parent
         self.xml_path = xml_path
-        self.progressCallback = parent.progressCallback
-        self.finishedCallback = parent.finishedCallback
+        #self.thread = RunModelThread(self.parent.parent,self.xml_path)
+        self.progressCallback = None
+        self.finishedCallback = None
 
     def run(self):
         if WithOpus:
@@ -61,7 +88,7 @@ class OpusModel(object):
                 succeeded = False
             if statusfile is not None and os.path.exists(statusfile):
                 os.remove(statusfile)
-            self.parent.finishedCallback(succeeded)
+            self.finishedCallback(succeeded)
         else:
             pass
         
