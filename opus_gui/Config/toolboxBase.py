@@ -19,7 +19,7 @@ from PyQt4.QtXml import *
 
 from Config.opusDataModel import OpusDataModel
 from Config.opusDataDelegate import OpusDataDelegate
-from Run.opusRunModel import RunModelGui
+from Run.opusRunGui import RunModelGui
 
 # General system includes
 import os, sys,string
