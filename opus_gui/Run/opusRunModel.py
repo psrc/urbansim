@@ -45,8 +45,9 @@ class OpusModel(object):
                 (options, args) = parser.parse_args([])
                 run_manager = option_group.get_run_manager(options)
                 # find the directory containing the eugene xml configurations
-                fileNameInfo = QFileInfo(QString(self.xml_path))
-                fileNameAbsolute = fileNameInfo.absoluteFilePath()
+                fileNameInfo = QFileInfo(self.xml_path)
+                fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
+                #print fileNameAbsolute
                 config = XMLConfiguration(str(fileNameAbsolute))
                 insert_auto_generated_cache_directory_if_needed(config)
                 (self.start_year, self.end_year) = config['years']

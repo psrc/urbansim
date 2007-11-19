@@ -23,7 +23,7 @@ from Util.consoleBase import *
 from Config.toolboxBase import *
 
 # General system includes
-import sys,time
+import sys,time,tempfile
 
   
 # Main window used for houseing the canvas, toolbars, and dialogs
@@ -53,6 +53,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     # Exit
     QObject.connect(self.actionExit, SIGNAL("triggered()"), self.exitOpus)
 
+    self.tempDir = tempfile.mkdtemp(prefix='opus_gui')
 
     try:
       import qgis.core
