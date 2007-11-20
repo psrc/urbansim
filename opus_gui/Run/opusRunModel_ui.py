@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusRunModel.ui'
 #
-# Created: Mon Nov 19 13:05:05 2007
+# Created: Mon Nov 19 15:13:04 2007
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -47,6 +47,6 @@ class Ui_OpusRunModel(object):
 
     def retranslateUi(self, OpusRunModel):
         OpusRunModel.setWindowTitle(QtGui.QApplication.translate("OpusRunModel", "OpusGui - Run Manager", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox.setTitle(QtGui.QApplication.translate("OpusRunModel", "Current Model", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBox.setTitle(QtGui.QApplication.translate("OpusRunModel", "Models available to run...", None, QtGui.QApplication.UnicodeUTF8))
         self.pbnCancel.setText(QtGui.QApplication.translate("OpusRunModel", "Close", None, QtGui.QApplication.UnicodeUTF8))
 

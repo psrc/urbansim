@@ -17,7 +17,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox" >
      <property name="title" >
-      <string>Current Model</string>
+      <string>Models available to run...</string>
      </property>
     </widget>
    </item>

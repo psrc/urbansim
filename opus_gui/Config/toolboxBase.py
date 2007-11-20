@@ -17,6 +17,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
+from Config.opusDataItem import OpusDataItem
 from Config.opusDataModel import OpusDataModel
 from Config.opusDataDelegate import OpusDataDelegate
 from Run.opusRunGui import RunModelGui
@@ -26,6 +27,148 @@ from Run.opusRunModel import OpusModel
 import os, sys,string
 
   
+class XMLTree(object):
+  def __init__(self, parent,path):
+    self.parent = parent.parent
+    self.parentTool = parent
+    self.path = path
+    self.groupBox = QGroupBox(self.parent)
+    self.groupBoxLayout = QVBoxLayout(self.groupBox)
+    # Play with the new tree view here
+    self.xml_file = path
+    self.configFile = QFile(self.xml_file)
+    if self.configFile.open(QIODevice.ReadWrite):
+      self.doc = QDomDocument()
+      self.doc.setContent(self.configFile)
+      self.model = OpusDataModel(self.doc, self.parent, self.configFile)
+      self.view = QTreeView(self.parent)
+      self.delegate = OpusDataDelegate(self.view)
+      self.view.setItemDelegate(self.delegate)
+      self.view.setModel(self.model)
+      self.view.setExpanded(self.model.index(0,0,QModelIndex()),True)
+      self.view.setAnimated(True)
+      #NEED TO FIX THIS
+      self.view.setColumnWidth(0,200)
+      self.view.setColumnWidth(1,50)
+      self.view.setMinimumHeight(200)
+      #self.parentTool.runManagerVBoxLayout.addWidget(self.view)
+
+      self.groupBoxLayout.addWidget(self.view)
+      self.groupBox.setTitle(QFileInfo(self.xml_file).filePath())
+      self.parent.gridlayout3.addWidget(self.groupBox)
+
+      # Hook up to the mousePressEvent and pressed
+      self.view.setContextMenuPolicy(Qt.CustomContextMenu)
+      QObject.connect(self.view, SIGNAL("customContextMenuRequested(const QPoint &)"), self.processCustomMenu)
+      self.removeIcon = QIcon(":/Images/Images/delete.png")
+      self.acceptIcon = QIcon(":/Images/Images/accept.png")
+      self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
+      self.bulletIcon = QIcon(":/Images/Images/bullet_black.png")
+      self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
+      self.actRunModel = QAction(self.acceptIcon, "Run This Model", self.parent)
+      QObject.connect(self.actRunModel, SIGNAL("triggered()"), self.runModel)
+      self.actRemoveTree = QAction(self.removeIcon, "Remove this tree", self.parent)
+      QObject.connect(self.actRemoveTree, SIGNAL("triggered()"), self.removeTree)
+      self.act2 = QAction(self.applicationIcon, "Action2", self.parent)
+      QObject.connect(self.act2, SIGNAL("triggered()"), self.action2)
+      self.act3 = QAction(self.bulletIcon, "Action3", self.parent)
+      QObject.connect(self.act3, SIGNAL("triggered()"), self.action3)
+      self.act4 = QAction(self.calendarIcon, "Action4", self.parent)
+      QObject.connect(self.act4, SIGNAL("triggered()"), self.action4)
+      self.actOpenFile = QAction(self.calendarIcon, "Open File", self.parent)
+      QObject.connect(self.actOpenFile, SIGNAL("triggered()"), self.openFile)
+    else:
+      print "Error reading config"
+
+  def runModel(self):
+    print "action1 context pressed with column = %s and item = %s" % \
+          (self.currentColumn,
+           self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
+    # Add the model to the run Q and fire up the GUI
+    newModel = OpusModel(self,self.xml_file)
+    self.parent.runManagerStuff.addNewModelRun(newModel)
+    self.parent.runManagerStuff.gui.show()
+
+  def removeTree(self):
+    print "remove tree pressed with column = %s and item = %s" % \
+          (self.currentColumn,
+           self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
+    print "Trying to remove %s group box" % (self.groupBox.title())
+    self.groupBox.hide()
+    self.parent.gridlayout3.removeWidget(self.groupBox)
+
+  def action2(self):
+    print "action2 context pressed with column = %s and item = %s" % \
+          (self.currentColumn, self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
+
+  def action3(self):
+    print "action3 context pressed with column = %s and item = %s" % \
+          (self.currentColumn, self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
+
+  def action4(self):
+    print "action4 context pressed with column = %s and item = %s" % \
+          (self.currentColumn, self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
+
+  def openFile(self):
+    print "Open File context pressed with column = %s and item = %s" % \
+          (self.currentColumn, self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
+    filePath = ""
+    if self.currentIndex.internalPointer().node().hasChildNodes():
+      children = self.currentIndex.internalPointer().node().childNodes()
+      for x in xrange(0,children.count(),1):
+        if children.item(x).isText():
+          filePath = children.item(x).nodeValue()
+    fileInfo = QFileInfo(filePath)
+    baseInfo = QFileInfo(self.xml_file)
+    baseDir = baseInfo.absolutePath()
+    newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
+    print "Test - ", newFile.absoluteFilePath()
+    self.parentTool.openXMLTree(newFile.absoluteFilePath())
+
+  def processCustomMenu(self, position):
+    if self.view.indexAt(position).isValid() and self.view.indexAt(position).column() == 0:
+      #print "Right mouse click custom menu requested, column %s" % \
+      #      (self.view.indexAt(position).column())
+      if self.view.indexAt(position).internalPointer().node().nodeValue() != "":
+        1+1
+        #print "right mouse requested was for ", \
+        #      self.view.indexAt(position).internalPointer().node().nodeValue()
+      elif self.view.indexAt(position).internalPointer().node().toElement().tagName() != "":
+        1+1
+        #print "right mouse requested was for ", \
+        #      self.view.indexAt(position).internalPointer().node().toElement().tagName()
+      titleString = "Context Column %s" % (self.view.indexAt(position).column())
+      self.currentColumn = self.view.indexAt(position).column()
+      self.currentIndex = self.view.indexAt(position)
+      item = self.currentIndex.internalPointer()
+      domNode = item.node()
+      if domNode.isNull():
+        return QVariant()
+      # Handle ElementNodes
+      if domNode.isElement():
+        domElement = domNode.toElement()
+        if domElement.isNull():
+          return QVariant()
+        if domElement.tagName() == QString("configuration"):
+          self.menu = QMenu(self.parent)
+          if domElement.attribute(QString("executable")) == QString("True"):
+            self.menu.addAction(self.actRunModel)
+            self.menu.addSeparator()
+          self.menu.addAction(self.actRemoveTree)
+          self.menu.exec_(QCursor.pos())          
+        elif domElement.attribute(QString("type")) == QString("file"):
+          self.menu = QMenu(self.parent)
+          self.menu.addAction(self.actOpenFile)
+          self.menu.exec_(QCursor.pos())
+        else:
+          self.menu = QMenu(self.parent)
+          self.menu.addAction(self.act2)
+          self.menu.addSeparator()
+          self.menu.addAction(self.act3)
+          self.menu.addAction(self.act4)
+          self.menu.exec_(QCursor.pos())
+    return
+
 # Main console class for the python console
 class ToolboxBase(object):
   def __init__(self, parent):
@@ -54,136 +197,16 @@ class ToolboxBase(object):
 
     self.view = None
     self.runManagerTrees = []
-    
+    #self.runManagerTreeContainer = QScrollArea(self.parent)
+    #self.runManagerVBoxLayout = QVBoxLayout(self.runManagerTreeContainer)
+    #self.runManagerVBoxLayout.setObjectName("runManagerVBoxLayout")
+    #self.parent.gridlayout3.addWidget(self.runManagerTreeContainer)
+
+  def openXMLDirTree(self, xml_dir):
+    pass
   
   def openXMLTree(self, xml_file):
-    # Kill off the other tree if one exists...
-    if self.view:
-      self.parent.gridlayout3.removeWidget(self.view)
-    
-    # Play with the new tree view here
-    # find the directory containing the eugene xml configurations
-    #opus_gui_dir = __import__('opus_gui').__path__[0]
-    #f = os.path.join(opus_gui_dir, 'projects', 'eugene', 'baseline.xml')
-    self.xml_file = xml_file
-    self.configFile = QFile(xml_file)
-    if self.configFile.open(QIODevice.ReadWrite):
-      self.doc = QDomDocument()
-      self.doc.setContent(self.configFile)
-      # Close the file and re-open with truncation
-      #self.configFile.close()
-      #self.configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
-      #indentSize = 2
-      #out = QTextStream(self.configFile)
-      #self.doc.save(out, indentSize)
-      self.model = OpusDataModel(self.doc, self.parent, self.configFile)
-      self.view = QTreeView(self.parent)
-      self.delegate = OpusDataDelegate(self.view)
-      self.view.setItemDelegate(self.delegate)
-      self.view.setModel(self.model)
-      self.view.setExpanded(self.model.index(0,0,QModelIndex()),True)
-      self.view.setAnimated(True)
-      #NEED TO FIX THIS
-      self.parent.gridlayout3.addWidget(self.view)
-      self.view.setColumnWidth(0,200)
-      self.view.setColumnWidth(1,50)
-      # Hook up to the mousePressEvent and pressed
-      self.view.setContextMenuPolicy(Qt.CustomContextMenu)
-      QObject.connect(self.view, SIGNAL("customContextMenuRequested(const QPoint &)"), self.processCustomMenu)
-      self.acceptIcon = QIcon(":/Images/Images/accept.png")
-      self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
-      self.bulletIcon = QIcon(":/Images/Images/bullet_black.png")
-      self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
-      self.actRunModel = QAction(self.acceptIcon, "Run This Model", self.parent)
-      QObject.connect(self.actRunModel, SIGNAL("triggered()"), self.runModel)
-      self.act2 = QAction(self.applicationIcon, "Action2", self.parent)
-      QObject.connect(self.act2, SIGNAL("triggered()"), self.action2)
-      self.act3 = QAction(self.bulletIcon, "Action3", self.parent)
-      QObject.connect(self.act3, SIGNAL("triggered()"), self.action3)
-      self.act4 = QAction(self.calendarIcon, "Action4", self.parent)
-      QObject.connect(self.act4, SIGNAL("triggered()"), self.action4)
-      self.actOpenFile = QAction(self.calendarIcon, "Open File", self.parent)
-      QObject.connect(self.actOpenFile, SIGNAL("triggered()"), self.openFile)
-    else:
-      print "Error reading config"
-    
-  def runModel(self):
-    print "action1 context pressed with column = %s and item = %s" % \
-          (self.currentColumn,
-           self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
-    # Add the model to the run Q and fire up the GUI
-    newModel = OpusModel(self,self.xml_file)
-    self.parent.runManagerStuff.addNewModelRun(newModel)
-    #flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | \
-    #        Qt.WindowMaximizeButtonHint 
-    #wnd = RunModelGui(self.parent,flags)
-    self.parent.runManagerStuff.gui.show()
-
-  def action2(self):
-    print "action2 context pressed with column = %s and item = %s" % \
-          (self.currentColumn, self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
-
-  def action3(self):
-    print "action3 context pressed with column = %s and item = %s" % \
-          (self.currentColumn, self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
-
-  def action4(self):
-    print "action4 context pressed with column = %s and item = %s" % \
-          (self.currentColumn, self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
-
-  def openFile(self):
-    print "Open File context pressed with column = %s and item = %s" % \
-          (self.currentColumn, self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
-
-  def processCustomMenu(self, position):
-    if self.view.indexAt(position).isValid() and self.view.indexAt(position).column() == 0:
-      #print "Right mouse click custom menu requested, column %s" % \
-      #      (self.view.indexAt(position).column())
-      if self.view.indexAt(position).internalPointer().node().nodeValue() != "":
-        1+1
-        #print "right mouse requested was for ", \
-        #      self.view.indexAt(position).internalPointer().node().nodeValue()
-      elif self.view.indexAt(position).internalPointer().node().toElement().tagName() != "":
-        1+1
-        #print "right mouse requested was for ", \
-        #      self.view.indexAt(position).internalPointer().node().toElement().tagName()
-      titleString = "Context Column %s" % (self.view.indexAt(position).column())
-      self.currentColumn = self.view.indexAt(position).column()
-      self.currentIndex = self.view.indexAt(position)
-      item = self.currentIndex.internalPointer()
-      domNode = item.node()
-      if domNode.isNull():
-        return QVariant()
-      # Handle ElementNodes
-      if domNode.isElement():
-        domElement = domNode.toElement()
-        if domElement.isNull():
-          return QVariant()
-        if domElement.tagName() == QString("configuration"):
-          self.menu = QMenu(self.parent)
-          self.menu.addAction(self.actRunModel)
-          self.menu.exec_(QCursor.pos())          
-        elif domElement.attribute(QString("type")) == QString("file"):
-          self.menu = QMenu(self.parent)
-          self.menu.addAction(self.actOpenFile)
-          self.menu.exec_(QCursor.pos())
-        else:
-          self.menu = QMenu(self.parent)
-          self.menu.addAction(self.act2)
-          self.menu.addSeparator()
-          self.menu.addAction(self.act3)
-          self.menu.addAction(self.act4)
-          self.menu.exec_(QCursor.pos())
-    return
-  
-  def processPressed(self, index):
-    print "Pressed Event Captured"
-    if index.isValid():
-      if index.internalPointer().node().nodeValue() != "":
-        print "left mouse requested was for ", index.internalPointer().node().nodeValue()
-      elif index.internalPointer().node().toElement().tagName() != "":
-        print "left mouse requested was for ", index.internalPointer().node().toElement().tagName()
-    return
+    self.runManagerTrees.append(XMLTree(self,xml_file))    
 
   def updateTabs(self, listOfTabs):
     # Here we can update to show current tabs

@@ -1558,11 +1558,8 @@
     </property>
     <addaction name="separator" />
     <addaction name="separator" />
-    <addaction name="actionOpen_Project" />
     <addaction name="actionOpen_Config" />
     <addaction name="separator" />
-    <addaction name="actionSave_Project" />
-    <addaction name="actionSave_Project_As" />
     <addaction name="actionSave_Config" />
     <addaction name="actionSave_Config_As" />
     <addaction name="separator" />

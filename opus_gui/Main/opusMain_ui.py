@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusMain.ui'
 #
-# Created: Mon Nov 19 14:59:16 2007
+# Created: Mon Nov 19 15:21:24 2007
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -225,11 +225,8 @@ class Ui_MainWindow(object):
         self.menuMap.addAction(self.mpActionPan)
         self.menuProject.addSeparator()
         self.menuProject.addSeparator()
-        self.menuProject.addAction(self.actionOpen_Project)
         self.menuProject.addAction(self.actionOpen_Config)
         self.menuProject.addSeparator()
-        self.menuProject.addAction(self.actionSave_Project)
-        self.menuProject.addAction(self.actionSave_Project_As)
         self.menuProject.addAction(self.actionSave_Config)
         self.menuProject.addAction(self.actionSave_Config_As)
         self.menuProject.addSeparator()

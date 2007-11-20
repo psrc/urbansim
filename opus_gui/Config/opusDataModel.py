@@ -131,7 +131,10 @@ class OpusDataModel(QAbstractItemModel):
                     return QVariant(self.iconFromType(domElement.attribute(QString("type"))))
                 elif role == Qt.DisplayRole:
                     if domElement.tagName() == QString("configuration"):
-                        return QVariant(domElement.tagName())
+                        if domElement.attribute(QString("executable")) == QString("True"):
+                            return QVariant(domElement.tagName().append(QString(" - executable")))
+                        else:
+                            return QVariant(domElement.tagName())
                     elif domElement.attribute(QString("name")) != QString("defValue"):
                         #Do something with strings
                         return QVariant(domElement.attribute(QString("name")))

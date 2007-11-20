@@ -42,13 +42,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.splash.show()
 
     # We need to initialize the window sizes
-    self.splitter.setSizes([450,550])
+    self.splitter.setSizes([550,550])
 
     # Play with the project and config load/save
-    QObject.connect(self.actionOpen_Project, SIGNAL("triggered()"), self.openProject)
+    #QObject.connect(self.actionOpen_Project, SIGNAL("triggered()"), self.openProject)
     QObject.connect(self.actionOpen_Config, SIGNAL("triggered()"), self.openConfig)
-    QObject.connect(self.actionSave_Project, SIGNAL("triggered()"), self.saveProject)
-    QObject.connect(self.actionSave_Project_As, SIGNAL("triggered()"), self.saveProjectAs)
+    #QObject.connect(self.actionSave_Project, SIGNAL("triggered()"), self.saveProject)
+    #QObject.connect(self.actionSave_Project_As, SIGNAL("triggered()"), self.saveProjectAs)
     QObject.connect(self.actionSave_Config, SIGNAL("triggered()"), self.saveConfig)
     QObject.connect(self.actionSave_Config_As, SIGNAL("triggered()"), self.saveConfigAs)
     # Exit
@@ -76,12 +76,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.runManagerGui = RunModelGui(self,flags)
     self.runManagerStuff.setGui(self.runManagerGui)
 
-    time.sleep(2)
+    #time.sleep(2)
     self.splash.hide()
 
   def openRunManager(self):
     print "Open Run Manager pressed..."
     self.runManagerGui.show()
+    #self.runManagerGui.activateWindow()
 
   def openProject(self):
     print "Open Project pressed..."
@@ -96,6 +97,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     dirNameBaseName = dirNameInfo.completeBaseName()
     print "Dirname = ", dirName
     # Now we recursively loop through and create an XML file tree
+    self.toolboxStuff.openXMLDirTree(dirName)
     
   def openConfig(self):
     print "Open Config pressed..."

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<configuration>
+<configuration executable="True">
   <item parser_action="parent" type="file" name="parent" >../urbansim/baseline.xml</item>
   <item type="string" name="description" >Eugene baseline configuration</item>
   <item type="integer" name="base_year" >1980</item>
