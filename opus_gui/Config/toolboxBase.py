@@ -67,7 +67,7 @@ class XMLTree(object):
       self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
       self.actRunModel = QAction(self.acceptIcon, "Run This Model", self.parent)
       QObject.connect(self.actRunModel, SIGNAL("triggered()"), self.runModel)
-      self.actRemoveTree = QAction(self.removeIcon, "Remove this tree", self.parent)
+      self.actRemoveTree = QAction(self.removeIcon, "Remove this tree from the GUI", self.parent)
       QObject.connect(self.actRemoveTree, SIGNAL("triggered()"), self.removeTree)
       self.act2 = QAction(self.applicationIcon, "Action2", self.parent)
       QObject.connect(self.act2, SIGNAL("triggered()"), self.action2)

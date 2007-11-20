@@ -15,7 +15,7 @@
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-import os, sys, time
+import os, shutil, sys, tempfile, time
 
 try:
     from opus_core.tools.start_run import StartRunOptionGroup
@@ -64,7 +64,9 @@ class OpusModel(object):
         if WithOpus:
             # Run the Eugene model using the XML version of the Eugene configuration.
             # This code adapted from opus_core/tools/start_run.py
-            statusfile = None
+            # statusdir is a temporary directory into which to write a status file
+            # regarding the progress of the simulation - the progress bar reads this file
+            statusdir = None
             try:
                 option_group = StartRunOptionGroup()
                 parser = option_group.parser
@@ -78,16 +80,16 @@ class OpusModel(object):
                 config = XMLConfiguration(str(fileNameAbsolute))
                 insert_auto_generated_cache_directory_if_needed(config)
                 (self.start_year, self.end_year) = config['years']
-                cache_dir = config['cache_directory']
-                statusfile = os.path.join(cache_dir, 'status.txt')
+                statusdir = tempfile.mkdtemp()
+                statusfile = os.path.join(statusdir, 'status.txt')
                 self.statusfile = statusfile
                 config['status_file_for_gui'] = statusfile
                 run_manager.run_run(config)
                 succeeded = True
             except SimulationRunError:
                 succeeded = False
-            if statusfile is not None and os.path.exists(statusfile):
-                os.remove(statusfile)
+            if statusdir is not None:
+                shutil.rmtree(statusdir, ignore_errors=True)
             self.finishedCallback(succeeded)
         else:
             pass
