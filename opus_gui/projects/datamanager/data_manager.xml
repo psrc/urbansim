@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration type="data" executable="False" >
+  <item type="list" name="Database Server Connections" >
+    <item type="class" name="Trondheim Database" >
+      <item type="string" name="Server" >trondheim</item>
+      <item type="string" name="Protocol" >MySQL</item>
+      <item type="string" name="Hostname" >trondheim.cs.washington.edu</item>
+      <item type="string" name="Username" >urbansim</item>
+      <item type="password" name="Password" >**********</item>
+      <item type="integer" name="Port" >3306</item>
+    </item>
+  </item>
+  <item type="list" name="Databases" >
+    <item type="database" name="Example Database" >
+      <item type="table" name="Example Table" >
+        <item type="column" name="Example Column" >Example Val1</item>
+        <item type="column" name="Example Column" >Example Val2</item>
+      </item>
+      <item type="table" name="Example Table" >
+        <item type="column" name="Example Column" >Example Val3</item>
+        <item type="column" name="Example Column" >Example Val4</item>
+      </item>
+    </item>
+  </item>
+  <item type="list" name="Opus Data" >
+    <item name="Cache Directory" >
+      <item type="directory" name="Name" >C:\urbansim_cache\eugene\eugene_1980_baseyear_cache</item>
+      <item name="Year Directory" >
+        <item type="directory" name="Name" >C:\urbansim_cache\eugene\eugene_1980_baseyear_cache\1980</item>
+        <item type="opus_dataset" name="jobs" >
+          <item type="opus_array" name="building_type" >foo</item>
+          <item type="opus_array" name="grid_id" >bar</item>
+          <item type="opus_array" name="home_based" >foo</item>
+          <item type="opus_array" name="job_id" >bar</item>
+          <item type="opus_array" name="sector_id" >foo</item>
+        </item>
+      </item>
+    </item>
+  </item>
+  <item type="list" name="Other Data" >
+    <item type="directory" name="Other Data Folder" >C:\data</item>
+  </item>
+  <item type="list" name="Data Processing" >
+    <item type="processing_sequence" name="Example Processing Sequence" >
+      <item type="opus_script" name="Example Opus Script" >c:\fooscript</item>
+      <item type="opus_script" name="Example Opus Script" >c:\barscript</item>
+      <item type="opus_script" name="Example Opus Script" >c:\fooscript</item>
+    </item>
+  </item>
+</configuration>
