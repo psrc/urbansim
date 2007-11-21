@@ -93,7 +93,7 @@ class XMLTree(object):
     print "remove tree pressed with column = %s and item = %s" % \
           (self.currentColumn,
            self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
-    print "Trying to remove %s group box" % (self.groupBox.title())
+    #print "Trying to remove %s group box" % (self.groupBox.title())
     self.groupBox.hide()
     self.parent.gridlayout3.removeWidget(self.groupBox)
 
@@ -122,7 +122,7 @@ class XMLTree(object):
     baseInfo = QFileInfo(self.xml_file)
     baseDir = baseInfo.absolutePath()
     newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
-    print "Test - ", newFile.absoluteFilePath()
+    #print "Test - ", newFile.absoluteFilePath()
     self.parentTool.openXMLTree(newFile.absoluteFilePath())
 
   def processCustomMenu(self, position):

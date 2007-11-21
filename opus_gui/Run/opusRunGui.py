@@ -20,45 +20,88 @@ from opusRunModel import *
 #from runManagerBase import *
 import os, sys, time, tempfile, shutil
 
+# This is the main Run Manager pop-up GUI for looking at models in the queue
 class RunModelGui(QDialog, Ui_OpusRunModel):
     def __init__(self, parent, fl):
         QDialog.__init__(self, parent, fl)
         self.setupUi(self)
         self.parent = parent
+        self.setFixedSize(self.size())
+
+        # NEED TO FIGURE OUT HOW TO GET THE RUN MANAGER SCROLLING
+        #self.scrollArea = QScrollArea(self.groupBox)
+        #self.scrollArea.setFixedSize(self.groupBox.size())
+        #self.scrollArea.setWidget(self.groupBox)
+        #self.scrollAreaLayout = QVBoxLayout(self.groupBox)
+        #self.scrollAreaLayout.addWidget(self.scrollArea)
+        #self.groupWidget = QGroupBox(self)
+        #self.scrollArea.setWidget(self.groupWidget)
+        #self.scrollArea.show()
+        
         self.modelElements = []
         for model in self.parent.runManagerStuff.getModelList():
             self.modelElements.append(ModelGuiElement(self,model))
         self.groupBoxLayout = QVBoxLayout(self.groupBox)
         self.groupBoxLayout.setObjectName("groupBoxLayout")
+        self.groupBoxLayout.setAlignment(Qt.AlignTop)
         for modelElement in self.modelElements:
             self.groupBoxLayout.addWidget(modelElement)
             modelElement.inGui = True
-
+        
     def addModelElement(self,model):
-        self.modelElements.append(ModelGuiElement(self,model))
+        self.modelElements.insert(0,ModelGuiElement(self,model))
 
+    def removeModelElement(self,modelElement):
+        self.groupBoxLayout.removeWidget(modelElement)
+        self.modelElements.remove(modelElement)
+        modelElement.hide()
+        
     def updateModelElements(self):
         for modelElement in self.modelElements:
             if modelElement.inGui == False:
-                self.groupBoxLayout.addWidget(modelElement)
+                self.groupBoxLayout.insertWidget(0,modelElement)
                 modelElement.inGui = True
 
     def on_pbnCancel_released(self):
         self.close()
 
-        
-class ModelGuiElement(QWidget):
+# This is an element in the Run Manager GUI that is the container for the model
+# and the model thread.  If the start button is pressed then the GUI will create
+# a thread to execute the given model.
+class ModelGuiElement(QGroupBox):
     def __init__(self, parent, model):
         QWidget.__init__(self, parent)
         self.parent = parent
         self.model = model
         self.inGui = False
         
-        # For now grab the first model in the manager
-        #xml_path = self.parent.runManagerStuff.modelList[0].xml_file
+        # Grab the path to the base XML used to run this model
         self.xml_path = model.xml_path
 
+        # Need to make a copy of the project environment to work from
+        self.originalFile = QFileInfo(self.xml_path)
+        self.originalDirName = self.originalFile.dir().dirName()
+        self.copyDir = QString(self.parent.parent.tempDir)
+        self.projectCopyDir = QDir(QString(tempfile.mkdtemp(prefix='opus_model',dir=str(self.copyDir))))
+        # Copy the project dir from original to copy...
+        tmpPathDir = self.originalFile.dir()
+        tmpPathDir.cdUp()
+        #print "%s, %s" % (tmpPathDir.absolutePath(), self.projectCopyDir.absolutePath())
+        # Go ahead and copy from one dir up (assumed to be the project space...
+        shutil.copytree(str(tmpPathDir.absolutePath()),
+                        str(self.projectCopyDir.absolutePath().append(QString("/").append(tmpPathDir.dirName()))))
+        # Now we can build the new path to the copy of the original file but in the temp space...
+        self.xml_path = self.projectCopyDir.absolutePath().append(QString("/"))
+        self.xml_path = self.xml_path.append(tmpPathDir.dirName().append("/").append(self.originalDirName))
+        self.xml_path = self.xml_path.append(QString("/"))
+        self.xml_path = self.xml_path.append(QFileInfo(self.originalFile.fileName()).fileName())
+
         # LAYOUT FOR THE MODEL ELEMENT IN THE GUI
+        stringToUse = "Time Queued - %s - Original XML Path - %s" % (time.asctime(time.localtime()),str(self.originalFile.absoluteFilePath()))
+        self.setTitle(QString(stringToUse))
+        #self.setTitle(QString("Time Queued - %s - Original XML Path - %s").append(QString(self.originalFile.absoluteFilePath())))
+        self.setFixedHeight(100)
+        
         self.hboxlayout = QHBoxLayout(self)
         self.hboxlayout.setObjectName("hboxlayout")
 
@@ -84,42 +127,37 @@ class ModelGuiElement(QWidget):
         self.startWidget = QWidget(self)
         self.startWidget.setObjectName("startWidget")
 
-        self.startGridLayout = QGridLayout(self.startWidget)
-        self.startGridLayout.setObjectName("startGridLayout")
+        self.startVBoxLayout = QGridLayout(self.startWidget)
+        self.startVBoxLayout.setObjectName("startGridLayout")
 
         self.pbnStartModel = QPushButton(self.startWidget)
         self.pbnStartModel.setObjectName("pbnStartModel")
-        self.pbnStartModel.setText(QString("Start..."))
+        self.pbnStartModel.setText(QString("Start Model..."))
         QObject.connect(self.pbnStartModel, SIGNAL("released()"),
                         self.on_pbnStartModel_released)        
-        self.startGridLayout.addWidget(self.pbnStartModel,0,0,1,1)
+        #self.startVBoxLayout.addWidget(self.pbnStartModel,0,0,1,1)
+        self.startVBoxLayout.addWidget(self.pbnStartModel)
+        self.pbnRemoveModel = QPushButton(self.startWidget)
+        self.pbnRemoveModel.setObjectName("pbnRemoveModel")
+        self.pbnRemoveModel.setText(QString("Remove From Queue"))
+        QObject.connect(self.pbnRemoveModel, SIGNAL("released()"),
+                        self.on_pbnRemoveModel_released)        
+        self.startVBoxLayout.addWidget(self.pbnRemoveModel)
         self.hboxlayout.addWidget(self.startWidget)
         
+    def on_pbnRemoveModel_released(self):
+        self.parent.removeModelElement(self)
+        self.parent.updateModelElements()
+    
     def on_pbnStartModel_released(self):
         # Fire up a new thread and run the model
-        print "Start Model Pressed"
+        #print "Start Model Pressed"
 
-        # Need to make a copy of the project environment to work from
-        self.originalFile = QFileInfo(self.xml_path)
-        self.originalDirName = self.originalFile.dir().dirName()
-        self.copyDir = QString(self.parent.parent.tempDir)
-        self.projectCopyDir = QDir(QString(tempfile.mkdtemp(prefix='opus_model',dir=str(self.copyDir))))
-        # Copy the project dir from original to copy...
-        tmpPathDir = self.originalFile.dir()
-        tmpPathDir.cdUp()
-        #print "%s, %s" % (tmpPathDir.absolutePath(), self.projectCopyDir.absolutePath())
-        # Go ahead and copy from one dir up (assumed to be the project space...
-        shutil.copytree(str(tmpPathDir.absolutePath()),
-                        str(self.projectCopyDir.absolutePath().append(QString("/").append(tmpPathDir.dirName()))))
-        # Now we can build the new path to the copy of the original file but in the temp space...
-        self.xml_path = self.projectCopyDir.absolutePath().append(QString("/"))
-        self.xml_path = self.xml_path.append(tmpPathDir.dirName().append("/").append(self.originalDirName))
-        self.xml_path = self.xml_path.append(QString("/"))
-        self.xml_path = self.xml_path.append(QFileInfo(self.originalFile.fileName()).fileName())
         # References to the GUI elements for status for this run...
         self.progressBar = self.runProgressBar
         self.statusLabel = self.runStatusLabel
 
+        self.pbnRemoveModel.setEnabled(False)
         self.pbnStartModel.setEnabled(False)
         self.progressBar.setValue(0)
         self.statusLabel.setText(QString("Model initializing..."))
@@ -148,6 +186,7 @@ class ModelGuiElement(QWidget):
         self.statusLabel.setText(QString("Model finished with status = %s" % (success)))
         self.timer.stop()
         self.pbnStartModel.setEnabled(True)
+        self.pbnRemoveModel.setEnabled(True)
 
     def runStatusFromThread(self):
         status = self.runThread.parent.model._compute_progress(self.runThread.parent.model.statusfile)
