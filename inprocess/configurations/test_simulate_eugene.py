@@ -54,7 +54,7 @@ class SimulationTest(opus_unittest.OpusTestCase):
                 logger.log_warning('Problem during simulation. Not removing database: %s' % self.simulation.config['output_configuration'].database_name)
             logger.log_warning('Problem during simulation. Not removing temporary directory: %s' % self.temp_dir)
    
-    def test_simulation(self):
+    def skip_test_simulation(self):
         """Checks that the simulation proceeds without caching.
         """
         self.simulation.run_simulation()
