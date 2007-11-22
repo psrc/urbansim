@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+
+<item name="models to run" config_name="models" type="list">
+  <item type="model" name="prescheduled_events" choices="Run|Skip">Run</item>
+  <item type="model" name="events_coordinator" choices="Run|Skip">Run</item>
+  <item type="model" name="residential_land_share_model" choices="Run|Skip">Run</item>
+  <item type="model" name="land_price_model" choices="Run|Skip">Run</item>
+  <item type="model" name="development_project_transition_model" choices="Run|Skip">Run</item>
+  <item type="model" name="residential_development_project_location_choice_model" choices="Run|Skip">Run</item>
+  <item type="model" name="commercial_development_project_location_choice_model" choices="Run|Skip">Run</item>
+  <item type="model" name="industrial_development_project_location_choice_model" choices="Run|Skip">Run</item>
+  <item type="model" name="development_event_transition_model" choices="Run|Skip">Run</item>
+  <item type="model" name="events_coordinator" choices="Run|Skip">Run</item>
+  <item type="model" name="residential_land_share_model" choices="Run|Skip">Run</item>
+  <item type="model" name="household_transition_model" choices="Run|Skip">Run</item>
+  <item type="model" name="employment_transition_model" choices="Run|Skip">Run</item>
+  <item type="model" name="household_relocation_model" choices="Run|Skip">Run</item>
+  <item type="model" name="household_location_choice_model" choices="Run|Skip">Run</item>
+  <item type="model" name="employment_relocation_model" choices="Run|Skip">Run</item>
+  <item type="model" name="employment_location_choice_model" choices="Run|Skip">Run<item type="string" name="group_members" >_all_</item></item>
+  <item type="model" name="distribute_unplaced_jobs_model" choices="Run|Skip">Run</item>
+</item>
+
+</configuration>

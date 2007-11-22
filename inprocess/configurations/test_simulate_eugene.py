@@ -30,7 +30,7 @@ from urbansim.simulation.run_simulation_from_mysql import RunSimulationFromMysql
 
 # find the directory containing the eugene xml configurations
 inprocessdir = __import__('inprocess').__path__[0]
-path = os.path.join(inprocessdir, 'configurations', 'projects', 'shared_projects', 'eugene_gridcell', 'run_manager', 'main.xml')
+path = os.path.join(inprocessdir, 'configurations', 'projects', 'standard_projects', 'eugene_gridcell', 'run_manager', 'main.xml')
 
 class SimulationTest(opus_unittest.OpusTestCase):
     

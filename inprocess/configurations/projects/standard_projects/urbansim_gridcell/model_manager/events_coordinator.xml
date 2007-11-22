@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+
+<item name="controller" type="class" parser_action="execute">
+  <item name="Class name" type="string" flags="hidden">EventsCoordinatorConfigurationCreator</item>
+  <item name="Class path" type="string" flags="hidden">urbansim.configurations.events_coordinator_configuration_creator</item>
+  <item name="location_set" type="string">gridcell</item>
+  <item name="development_type_set" type="string">development_type</item>
+  <item name="input_events" type="string">development_events</item>
+  <item name="output_changed_indices" type="string">changed_indices</item>
+  <item name="output_processed_development_event_indices" type="string">processed_development_event_indices</item>
+</item>
+
+</configuration>

@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+
+<item name="services_configuration" type="class" parser_action="execute">
+  <item name="Class name" type="string" flags="hidden">ServicesConfigurationCreator</item>
+  <item name="Class path" type="string" flags="hidden">urbansim.configurations.services_configuration_creator</item>
+  <item name="host_name" type="string"></item>
+  <item name="user_name" type="string"></item>
+  <item name="db_password" type="password"></item>
+  <item name="use_environment_variables" type="boolean" choices="True|False">True</item>
+  <item name="database_name" type="string">services</item>
+
+</configuration>
