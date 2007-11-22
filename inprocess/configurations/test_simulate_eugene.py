@@ -30,7 +30,7 @@ from urbansim.simulation.run_simulation_from_mysql import RunSimulationFromMysql
 
 # find the directory containing the eugene xml configurations
 inprocessdir = __import__('inprocess').__path__[0]
-path = os.path.join(inprocessdir, 'configurations', 'projects', 'eugene', 'baseline.xml')
+path = os.path.join(inprocessdir, 'configurations', 'projects', 'shared_projects', 'eugene_gridcell', 'run_manager', 'main.xml')
 
 class SimulationTest(opus_unittest.OpusTestCase):
     
@@ -54,7 +54,7 @@ class SimulationTest(opus_unittest.OpusTestCase):
                 logger.log_warning('Problem during simulation. Not removing database: %s' % self.simulation.config['output_configuration'].database_name)
             logger.log_warning('Problem during simulation. Not removing temporary directory: %s' % self.temp_dir)
    
-    def skip_test_simulation(self):
+    def test_simulation(self):
         """Checks that the simulation proceeds without caching.
         """
         self.simulation.run_simulation()

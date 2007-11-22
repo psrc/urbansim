@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+
+<item name="controller" type="class" parser_action="execute">
+  <item name="Class name" type="string" flags="hidden">EmploymentTransitionModelConfigurationCreator</item>
+  <item name="Class path" type="string" flags="hidden">urbansim.configurations.employment_transition_model_configuration_creator</item>
+  <item name="job_set" type="string">job</item
+  <item name="job_building_types" type="string">job_building_type</item
+  <item name="location_id_name" type="string">grid_id</item
+</item>
+
+</configuration>

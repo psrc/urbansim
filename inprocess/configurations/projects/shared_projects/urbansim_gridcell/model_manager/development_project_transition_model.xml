@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<configuration>
+
+<item name="controller" type="class" parser_action="execute">
+  <item name="Class name" type="string" flags="hidden">DevelopmentProjectTransitionModelConfigurationCreator</item>
+  <item name="Class path" type="string" flags="hidden">urbansim.configurations.development_project_transition_model_configuration_creator</item>
+  <item name="location_set" type="string">gridcell</item>
+  <item name="history_table" type="string">development_event_history</item>
+  <item name="vacancy_table" type="string">target_vacancy</item>
+  <item name="output_results" type="string">dptm_results</item>
+</item>
+
+</configuration>
