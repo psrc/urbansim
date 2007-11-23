@@ -59,6 +59,7 @@ class OpusModel(object):
         #self.thread = RunModelThread(self.parent.parent,self.xml_path)
         self.progressCallback = None
         self.finishedCallback = None
+        self.guiElement = None
 
     def run(self):
         if WithOpus:
@@ -83,6 +84,7 @@ class OpusModel(object):
                 statusdir = tempfile.mkdtemp()
                 statusfile = os.path.join(statusdir, 'status.txt')
                 self.statusfile = statusfile
+                self.config = config
                 config['status_file_for_gui'] = statusfile
                 run_manager.run_run(config)
                 succeeded = True
@@ -124,3 +126,26 @@ class OpusModel(object):
             except IOError:
                 return {"percentage":0,"message":"Model initializing..."}
 
+    def _get_current_log(self, key):
+        newKey = key
+        if WithOpus:
+            # We attempt to keep up on the current progress of the model run.  We pass into this
+            # function an intial "key" value of 0 and expect to get back a new "key" after the
+            # function returns.  It is up to us in this function to use this key to determine
+            # what has happened since last time this function was called.
+            # In this example we use the key to indicate where in a logfile we last stopped reading
+            # and seek into that file point and read to the end of the file and append to the
+            # log text edit field in the GUI.
+            if 'cache_directory' in self.config:
+                try:
+                    f = open(os.path.join(self.config['cache_directory'],'year_1981_log.txt'))
+                    f.seek(key)
+                    lines = f.read()
+                    newKey = f.tell()
+                    if newKey != key:
+                        self.guiElement.logText.append(lines)
+                    f.close()
+                except IOError:
+                    self.guiElement.logText.append("No logfile yet")
+                #self.guiElement.logText.append("ping")
+        return newKey

@@ -27,39 +27,37 @@ class RunModelGui(QDialog, Ui_OpusRunModel):
         self.setupUi(self)
         self.parent = parent
         self.setFixedSize(self.size())
-
-        # NEED TO FIGURE OUT HOW TO GET THE RUN MANAGER SCROLLING
-        #self.scrollArea = QScrollArea(self.groupBox)
-        #self.scrollArea.setFixedSize(self.groupBox.size())
-        #self.scrollArea.setWidget(self.groupBox)
-        #self.scrollAreaLayout = QVBoxLayout(self.groupBox)
-        #self.scrollAreaLayout.addWidget(self.scrollArea)
-        #self.groupWidget = QGroupBox(self)
-        #self.scrollArea.setWidget(self.groupWidget)
-        #self.scrollArea.show()
         
         self.modelElements = []
         for model in self.parent.runManagerStuff.getModelList():
             self.modelElements.append(ModelGuiElement(self,model))
-        self.groupBoxLayout = QVBoxLayout(self.groupBox)
+        
+        self.groupBoxLayout = QVBoxLayout(self.modelFrame)
         self.groupBoxLayout.setObjectName("groupBoxLayout")
         self.groupBoxLayout.setAlignment(Qt.AlignTop)
+        # Now add the tabs...
+        self.tabWidget = QTabWidget(self)
+        self.groupBoxLayout.addWidget(self.tabWidget)
+
         for modelElement in self.modelElements:
-            self.groupBoxLayout.addWidget(modelElement)
+            self.tabWidget.addTab(modelElement,modelElement.tabIcon,modelElement.tabLabel)
             modelElement.inGui = True
         
     def addModelElement(self,model):
         self.modelElements.insert(0,ModelGuiElement(self,model))
 
     def removeModelElement(self,modelElement):
-        self.groupBoxLayout.removeWidget(modelElement)
+        #self.groupBoxLayout.removeWidget(modelElement)
+        self.tabWidget.removeTab(self.tabWidget.indexOf(modelElement))
         self.modelElements.remove(modelElement)
         modelElement.hide()
         
     def updateModelElements(self):
         for modelElement in self.modelElements:
             if modelElement.inGui == False:
-                self.groupBoxLayout.insertWidget(0,modelElement)
+                #self.groupBoxLayout.insertWidget(0,modelElement)
+                #self.tabWidget.addTab(modelElement,str(modelElement.originalFile.absoluteFilePath()))
+                self.tabWidget.addTab(modelElement,modelElement.tabIcon,modelElement.tabLabel)
                 modelElement.inGui = True
 
     def on_pbnCancel_released(self):
@@ -68,16 +66,20 @@ class RunModelGui(QDialog, Ui_OpusRunModel):
 # This is an element in the Run Manager GUI that is the container for the model
 # and the model thread.  If the start button is pressed then the GUI will create
 # a thread to execute the given model.
-class ModelGuiElement(QGroupBox):
+class ModelGuiElement(QWidget):
     def __init__(self, parent, model):
         QWidget.__init__(self, parent)
         self.parent = parent
         self.model = model
+        self.model.guiElement = self
         self.inGui = False
+        self.logFileKey = 0
         
         # Grab the path to the base XML used to run this model
         self.xml_path = model.xml_path
-
+        self.tabIcon = QIcon(":/Images/Images/cog.png")
+        self.tabLabel = "PlaceHolder"
+        
         # Need to make a copy of the project environment to work from
         self.originalFile = QFileInfo(self.xml_path)
         self.originalDirName = self.originalFile.dir().dirName()
@@ -97,15 +99,26 @@ class ModelGuiElement(QGroupBox):
         self.xml_path = self.xml_path.append(QFileInfo(self.originalFile.fileName()).fileName())
 
         # LAYOUT FOR THE MODEL ELEMENT IN THE GUI
+        self.widgetLayout = QVBoxLayout(self)
+        self.widgetLayout.setAlignment(Qt.AlignTop)
+        self.groupBox = QGroupBox(self)
+        self.widgetLayout.addWidget(self.groupBox)
+
         stringToUse = "Time Queued - %s - Original XML Path - %s" % (time.asctime(time.localtime()),str(self.originalFile.absoluteFilePath()))
-        self.setTitle(QString(stringToUse))
+        self.groupBox.setTitle(QString(stringToUse))
         #self.setTitle(QString("Time Queued - %s - Original XML Path - %s").append(QString(self.originalFile.absoluteFilePath())))
-        self.setFixedHeight(100)
+        #self.groupBox.setFixedHeight(100)
         
-        self.hboxlayout = QHBoxLayout(self)
+        self.vboxlayout = QVBoxLayout(self.groupBox)
+        self.vboxlayout.setObjectName("vboxlayout")
+
+        self.modelControlWidget = QWidget(self.groupBox)
+        self.vboxlayout.addWidget(self.modelControlWidget)
+        
+        self.hboxlayout = QHBoxLayout(self.modelControlWidget)
         self.hboxlayout.setObjectName("hboxlayout")
 
-        self.progressBarWidget = QWidget(self)
+        self.progressBarWidget = QWidget(self.groupBox)
         self.progressBarWidget.setObjectName("progressBarWidget")
 
         self.pbVBoxLayout = QVBoxLayout(self.progressBarWidget)
@@ -124,7 +137,7 @@ class ModelGuiElement(QGroupBox):
         self.pbVBoxLayout.addWidget(self.runStatusLabel)
         self.hboxlayout.addWidget(self.progressBarWidget)
 
-        self.startWidget = QWidget(self)
+        self.startWidget = QWidget(self.groupBox)
         self.startWidget.setObjectName("startWidget")
 
         self.startVBoxLayout = QGridLayout(self.startWidget)
@@ -144,7 +157,12 @@ class ModelGuiElement(QGroupBox):
                         self.on_pbnRemoveModel_released)        
         self.startVBoxLayout.addWidget(self.pbnRemoveModel)
         self.hboxlayout.addWidget(self.startWidget)
-        
+
+        # Log panel
+        self.logText = QTextEdit(self.groupBox)
+        self.logText.setReadOnly(True)
+        self.vboxlayout.addWidget(self.logText)
+
     def on_pbnRemoveModel_released(self):
         self.parent.removeModelElement(self)
         self.parent.updateModelElements()
@@ -185,6 +203,8 @@ class ModelGuiElement(QGroupBox):
         self.progressBar.setValue(100)
         self.statusLabel.setText(QString("Model finished with status = %s" % (success)))
         self.timer.stop()
+        # Get the final logfile update after model finishes...
+        self.logFileKey = self.runThread.parent.model._get_current_log(self.logFileKey)
         self.pbnStartModel.setEnabled(True)
         self.pbnRemoveModel.setEnabled(True)
 
@@ -192,5 +212,6 @@ class ModelGuiElement(QGroupBox):
         status = self.runThread.parent.model._compute_progress(self.runThread.parent.model.statusfile)
         self.progressBar.setValue(status["percentage"])
         self.statusLabel.setText(status["message"])
-        print "runStatusFromThread from timer with percentage = %d and message = %s" % (status["percentage"],
-                                                                                        status["message"])
+        #print "runStatusFromThread from timer with percentage = %d and message = %s" % (status["percentage"],
+        #                                                                                status["message"])
+        self.logFileKey = self.runThread.parent.model._get_current_log(self.logFileKey)

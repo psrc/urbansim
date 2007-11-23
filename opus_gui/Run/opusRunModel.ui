@@ -21,14 +21,10 @@
   </property>
   <layout class="QVBoxLayout" >
    <item>
-    <widget class="QGroupBox" name="groupBox" >
-     <property name="title" >
-      <string>Models available to run...</string>
-     </property>
-    </widget>
+    <widget class="QWidget" native="1" name="modelFrame" />
    </item>
    <item>
-    <widget class="QWidget" native="1" name="widget_2" >
+    <widget class="QWidget" native="1" name="modelClose" >
      <property name="sizePolicy" >
       <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
        <horstretch>0</horstretch>
