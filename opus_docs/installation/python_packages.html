@@ -24,7 +24,8 @@ optional for use with Opus.&nbsp; You must have the required libraries to run
 Opus.&nbsp; The recommended libraries are not necessary to run Opus, but certain
 functionality will be unavailable without them.&nbsp; The optional libraries are
 Python modules that are needed only in special cases.&nbsp;</p>
-<p>Caution! The package you need depends on the version of python you are using.  
+<p>Caution! The package you need depends on the version of python you are using (except when you are building
+the package from source).  
 Be sure you have the right one.  In most cases, the python version number will be part of the filename.</p>
 
 In many cases, obtaining these packages is made simpler by the use of Easy Install, a python module that can help you 
@@ -66,15 +67,6 @@ where [<i>filename</i>] is the path from your current location of the downloaded
       <li><b>SQLAlchemy</b> (<a href="http://www.sqlalchemy.org">http://www.sqlalchemy.org</a>)
         allows programmatic access to a variety of database engines. Install version 0.4.</li>
 
-        <li><b>PyXML 0.8.4</b> (<a href="http://sourceforge.net/projects/pyxml/">http://sourceforge.net/projects/pyxml/</a>)
-        This Python package is needed for parsing XML files.  There is no windows installer for the python 2.5 version, so 
-        you should install it using Easy Install.  Compiling it from source may not work, so you should download the egg from
-        the <a href="http://code.enthought.com/enstaller/eggs/windows/xp/">enthought repository</a> and then install it with
-        Easy Install. Be sure to pick to correct version for your platform and version of Python.  For example. the egg for
-        Python 2.5 under Windows has the filename
-        <pre>PyXML-0.8.4.001-py2.5-win32.egg</pre>
-        </li>
-      
       <li><b>matplotlib 0.90.1</b> (<a href="http://matplotlib.sourceforge.net/">http://matplotlib.sourceforge.net/</a>)
         is a quite full-featured Python package for creating plots and graphs.
         The binary for Windows worked fine. 

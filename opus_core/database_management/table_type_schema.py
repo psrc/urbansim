@@ -19,7 +19,6 @@ from opus_core.exception.schema_exception import SchemaException
 from opus_core.opus_package_info import package
 from opus_core.logger import logger
 from xml.dom.minidom import parse, parseString
-from xml import xpath
 
 class TableTypeSchema(dict):
     """A schema for a database table.  
@@ -68,15 +67,30 @@ class TableTypeSchema(dict):
             return {}
         
         dom = parse(table_path)
-        col_names = xpath.Evaluate("table[name='" + table_name + "']/schema/column/@name", dom)
-        col_types = xpath.Evaluate("table[name='" + table_name + "']/schema/column/@type", dom)
+        # old code using xpath:
+        # col_names = xpath.Evaluate("table[name='" + table_name + "']/schema/column/@name", dom)
+        # col_types = xpath.Evaluate("table[name='" + table_name + "']/schema/column/@type", dom)
+        root = dom.documentElement
+        # check that root has a child node with the tag 'name' and text value table_name
+        # if not return the empty dictionary
+        ok = False
+        for c in root.childNodes:
+            if c.nodeType==c.ELEMENT_NODE and c.tagName=='name' and c.firstChild.nodeValue==table_name:
+                ok = True
+        if not ok:
+            return {}
+        schemaNodes = filter(lambda n: n.nodeType==n.ELEMENT_NODE and n.tagName=='schema', root.childNodes)
+        columnNodes = []
+        for s in schemaNodes:
+            columnNodes.extend(filter(lambda n: n.nodeType==n.ELEMENT_NODE and n.tagName=='column', s.childNodes))
+        col_names = map(lambda n: str(n.getAttribute('name')).lower(), columnNodes)
+        col_types = map(lambda n: str(n.getAttribute('type')), columnNodes)
         if len(col_names) == len(col_types):            
-            schema = zip(map(lambda m: str(m.nodeValue).lower(), col_names), 
-                        map(lambda m: str(m.nodeValue), col_types))
-            #return schema
+            schema = zip(col_names, col_types)
             return dict(schema)
+        else:
+            return {}
             
-    
     def get_table_schema_pairlist(self, table_name, look_up_path=''):
         """return a list of pairs instead of return a dictionary"""
         schema = self.get_table_schema(table_name, look_up_path)
