@@ -180,7 +180,7 @@ class RunManager(object):
         except:
             if self.run_activity is not None:
                 self.run_activity.add_row_to_history(history_id, run_resources, "failed")
-            raise SimulationRunError
+            raise # This re-raises the last exception
 
     def restart_run(self, history_id, restart_year,
                     services_host_name,
