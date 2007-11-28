@@ -16,8 +16,10 @@ import os, sys
 import pickle
 import copy
 import getpass
+import shutil
+import socket
 from opus_core.misc import get_config_from_opus_path
-from opus_core.misc import load_from_text_file
+from opus_core.misc import load_from_text_file, get_host_name
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
 from opus_core.services.run_server.run_activity import RunActivity
 from opus_core.configuration import Configuration
@@ -61,7 +63,7 @@ class RemoteRun:
         plink = 'plink'
         pscp = 'pscp'
         
-    python_command = "mosrun -h python" 
+    python_command = "python" 
     #default_hostname = "aalborg"
     default_hostname = "faloorum6.csss.washington.edu"
     default_username = getpass.getuser()
@@ -85,7 +87,7 @@ class RemoteRun:
         self.skip_travel_model = skip_travel_model
         self.skip_urbansim = skip_urbansim
         
-    def prepare_for_run(self, configuration_path=None, config=None, run_id=None):
+    def prepare_for_run(self, configuration_path=None, config=None, run_id=None, prepare_cache=True):
         """Configuration is given either as an opus path (configuration_path) or as a Configuration object (config)."""
         run_activity = RunActivity(self.services_database)
         self.run_manager = RunManager(run_activity)
@@ -110,15 +112,8 @@ class RemoteRun:
             config['cache_directory'] =  '%s/run_%s.%s' % (head, self.run_id, tail)
             self.remote_communication_path = '%s/%s' % (self.remote_communication_path_root, self.run_id)
             
-            if not self.skip_urbansim:
-                #create directory on the remote machine for communication
-                self.run_remote_python_process("%s/%s/prepare_communication_directory.py" % (self.remote_opus_path, 
-                                                                                         self.script_path),
-                                           "-d %s" % self.remote_communication_path)
-    
-                # create the baseyear cache on remote machine
-                self.run_remote_python_process("%s/%s/create_baseyear_cache.py" % (self.remote_opus_path, self.script_path),
-                                           config=config)
+            if not self.skip_urbansim and prepare_cache:
+                self.prepare_cache_and_communication_path(config)
 
             self.run_manager.run_activity.add_row_to_history(self.run_id, config, "started")
             
@@ -130,12 +125,28 @@ class RemoteRun:
             
         self.set_local_output_path()
         return config
-            
+                    
+    def prepare_cache_and_communication_path(self, config):
+        #create directory on the remote machine for communication
+        self.run_remote_python_process("%s/%s/prepare_communication_directory.py" % (self.remote_opus_path, 
+                                                                                 self.script_path),
+                                   "-d %s" % self.remote_communication_path)
+
+        # create the baseyear cache on remote machine
+        self.run_remote_python_process("%s/%s/create_baseyear_cache.py" % (self.remote_opus_path, self.script_path),
+                                   config=config)
+        
     def set_local_output_path(self):
         self.local_output_path = os.path.join(self.local_output_path_root, str(self.run_id))
         if not os.path.exists(self.local_output_path):
             os.makedirs('%s' % self.local_output_path)
             
+    def is_localhost(self):
+        if (self.hostname == 'localhost') or (self.hostname == get_host_name()) or \
+            (self.hostname == socket.gethostname()):
+            return True
+        return False
+    
     def copy_resources_to_remote_host(self, config):
         pickle_dir = mkdtemp()
         pickle_file_path = os.path.join(pickle_dir, 'resources.pickle')
@@ -155,18 +166,24 @@ class RemoteRun:
     def copy_file_from_remote_host(self, file, local_directory):
         if not os.path.exists(local_directory):
             os.makedirs('%s' % local_directory)
-        logger.log_status("Copy %s:%s/%s to %s" % (self.hostname, 
-                        self.remote_communication_path, file, local_directory))
-        os.system("%s -l %s -pw %s %s:%s/%s %s" % \
+        full_path = "%s/%s" % (self.remote_communication_path, file)
+        logger.log_status("Copy %s:%s to %s" % (self.hostname, 
+                        full_path, local_directory))
+        if self.is_localhost():
+            shutil.copy(full_path, local_directory)
+        else:
+            os.system("%s -l %s -pw %s %s:%s %s" % \
                        (self.pscp, self.username, self.password, self.hostname, 
-                        self.remote_communication_path, file, local_directory))
+                        sfull_path, local_directory))
         
     def copy_file_to_remote_host(self, file, subdirectory=''):
-        logger.log_status("Copy %s to %s:%s/%s" % (file, self.hostname, 
-                        self.remote_communication_path, subdirectory))
-        os.system("%s -l %s -pw %s %s %s:%s/%s" % \
-                       (self.pscp, self.username, self.password, file, self.hostname, 
-                        self.remote_communication_path, subdirectory))
+        full_path = "%s/%s" % (self.remote_communication_path, subdirectory)
+        logger.log_status("Copy %s to %s:%s" % (file, self.hostname, full_path))
+        if self.is_localhost():
+            shutil.copy(file, full_path)
+        else:
+            os.system("%s -l %s -pw %s %s %s:%s" % \
+                       (self.pscp, self.username, self.password, file, self.hostname, full_path))
         
     def run_remote_python_process(self, python_script, script_options="", config=None, is_opus_path=False):
         if config is not None:
@@ -184,7 +201,11 @@ class RemoteRun:
             python_script_full_name = python_script
         logger.log_status("Running on %s: %s %s %s %s" % (self.hostname, self.python_command, python_script_full_name, 
                     script_options, cmd_postfix))
-        os.system("%s -ssh -l %s -pw %s %s %s %s %s %s" % \
+        if self.is_localhost():
+            os.system("%s %s %s %s" % (self.python_command, python_script_full_name, 
+                    script_options, cmd_postfix))
+        else:
+            os.system("%s -ssh -l %s -pw %s %s %s %s %s %s" % \
                    (self.plink, self.username, self.password, self.hostname, self.python_command, python_script_full_name, 
                     script_options, cmd_postfix))
             
@@ -205,7 +226,7 @@ class RemoteRun:
         config = self.prepare_for_run(configuration_path=configuration_path, run_id=run_id)    
         self._do_run(start_year, end_year, config)
         
-    def _do_run(self, start_year, end_year, urbansim_resources):
+    def _do_run(self, start_year, end_year, urbansim_resources, background=False):
         travel_model_resources = Configuration(urbansim_resources)
         if start_year is None:
             start_year = travel_model_resources['years'][0]
@@ -222,6 +243,9 @@ class RemoteRun:
             travel_model_years.append(end_year)
         travel_model_years.sort()
         this_start_year = start_year
+        bg = ''
+        if background:
+            bg = '&'
         for travel_model_year in travel_model_years:
             this_end_year = travel_model_year
             if this_end_year > end_year:
@@ -235,8 +259,8 @@ class RemoteRun:
                 
                 if not self.skip_urbansim:
                     self.run_remote_python_process("%s/urbansim/tools/restart_run.py" % self.remote_opus_path, 
-                                               "%s %s --skip-cache-cleanup --skip-travel-model" % (
-                                                         self.run_id, this_start_year),
+                                               "%s %s --skip-cache-cleanup --skip-travel-model %s" % (
+                                                         self.run_id, this_start_year, bg),
                                                    )                   
                     if not self.has_urbansim_finished(urbansim_resources):
                         raise StandardError, "There was an error in the urbansim run."
