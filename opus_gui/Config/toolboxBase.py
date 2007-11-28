@@ -40,7 +40,7 @@ class XMLTree(object):
     if self.configFile.open(QIODevice.ReadWrite):
       self.doc = QDomDocument()
       self.doc.setContent(self.configFile)
-      self.model = OpusDataModel(self.doc, self.parent, self.configFile)
+      self.model = OpusDataModel(self.doc, self.parent, self.configFile, True)
       self.view = QTreeView(self.parent)
       self.delegate = OpusDataDelegate(self.view)
       self.view.setItemDelegate(self.delegate)

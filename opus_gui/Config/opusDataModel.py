@@ -19,9 +19,10 @@ from PyQt4.QtXml import *
 from opusDataItem import OpusDataItem
 
 class OpusDataModel(QAbstractItemModel):
-    def __init__(self, document, parent, configFile):
+    def __init__(self, document, parent, configFile, editable):
         QAbstractItemModel.__init__(self, parent)
 
+        self.editable = editable
         self.configFile = configFile
         self.parentObj = parent
         self.domDocument = document
@@ -231,11 +232,14 @@ class OpusDataModel(QAbstractItemModel):
     def flags(self, index):
         if not index.isValid():
             return 0
-        if index.column() == 2:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
+        if self.editable == True:
+            if index.column() == 2:
+                return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
+            else:
+                return Qt.ItemIsEnabled | Qt.ItemIsSelectable
         else:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
-        #return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+            return Qt.ItemIsEnabled
+        
     
     def headerData(self, section, oreientation, role):
         if oreientation == Qt.Horizontal and role == Qt.DisplayRole:

@@ -15,8 +15,13 @@
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from PyQt4.QtXml import *
 from opusRunModel_ui import *
 from opusRunModel import *
+
+from Config.opusDataModel import OpusDataModel
+from Config.opusDataDelegate import OpusDataDelegate
+
 #from runManagerBase import *
 import os, sys, time, tempfile, shutil
 
@@ -104,7 +109,8 @@ class ModelGuiElement(QWidget):
         self.groupBox = QGroupBox(self)
         self.widgetLayout.addWidget(self.groupBox)
 
-        stringToUse = "Time Queued - %s - Original XML Path - %s" % (time.asctime(time.localtime()),str(self.originalFile.absoluteFilePath()))
+        stringToUse = "Time Queued - %s - Original XML Path - %s" % (time.asctime(time.localtime()),
+                                                                     str(self.originalFile.absoluteFilePath()))
         self.groupBox.setTitle(QString(stringToUse))
         #self.setTitle(QString("Time Queued - %s - Original XML Path - %s").append(QString(self.originalFile.absoluteFilePath())))
         #self.groupBox.setFixedHeight(100)
@@ -158,10 +164,33 @@ class ModelGuiElement(QWidget):
         self.startVBoxLayout.addWidget(self.pbnRemoveModel)
         self.hboxlayout.addWidget(self.startWidget)
 
+        # Add a tab widget and layer in a tree view and log panel
+        self.tabWidget = QTabWidget(self.groupBox)
+        
+        self.configFile = QFile(self.xml_path)
+        if self.configFile.open(QIODevice.ReadOnly):
+            self.doc = QDomDocument()
+            self.doc.setContent(self.configFile)
+            self.dataModel = OpusDataModel(self.doc, self.parent, self.configFile, False)
+            self.view = QTreeView(self.parent)
+            self.delegate = OpusDataDelegate(self.view)
+            self.view.setItemDelegate(self.delegate)
+            self.view.setModel(self.dataModel)
+            self.view.setExpanded(self.dataModel.index(0,0,QModelIndex()),True)
+            self.view.setAnimated(True)
+            self.view.setColumnWidth(0,200)
+            self.view.setColumnWidth(1,50)
+            self.view.setMinimumHeight(200)
+            self.tabWidget.addTab(self.view,"Tree View")
+        
         # Log panel
         self.logText = QTextEdit(self.groupBox)
         self.logText.setReadOnly(True)
-        self.vboxlayout.addWidget(self.logText)
+        self.logText.setLineWidth(0)
+        self.tabWidget.addTab(self.logText,"Log")
+
+        # Finally add the tab to the model page
+        self.vboxlayout.addWidget(self.tabWidget)
 
     def on_pbnRemoveModel_released(self):
         self.parent.removeModelElement(self)
