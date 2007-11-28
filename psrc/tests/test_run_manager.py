@@ -75,6 +75,7 @@ def _do_run_simple_test_run(caller, temp_dir, services_database, end_year=None):
                          in_storage=AttributeCache())
     insert_auto_generated_cache_directory_if_needed(run_configuration)
     caller.resources = run_configuration
+    runs_manager.setup_new_run(run_name = os.path.basename(run_configuration['cache_directory']))
     runs_manager.run_run(run_configuration)
     
 
