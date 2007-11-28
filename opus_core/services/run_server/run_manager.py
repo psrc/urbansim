@@ -30,9 +30,8 @@ class RunManager(object):
     #TODO: some preconditions should be checked!
     def __init__(self, run_activity=None):
         self.run_activity = run_activity
-
-    def set_run_activity(self, run_activity):
-        self.run_activity = run_activity
+        self.history_id = None
+        self.ready_to_run = False
 
     def get_resources_for_run_id_from_history(self, run_id,
                                           services_host_name='localhost',
@@ -106,33 +105,45 @@ class RunManager(object):
         resources["years"] = (restart_year, end_year)
 
         return resources
-
+    
+    def setup_new_run(self, run_name):
+        if self.run_activity is not None:
+            self.history_id = self.run_activity.get_new_history_id()
+            #compose unique cache directory based on the history_id
+            head, tail = os.path.split(run_name)
+            unique_cache_directory = os.path.join(head, 'run_' +str(self.history_id)+'.'+tail)
+        else:
+            unique_cache_directory = run_name 
+               
+        self.current_cache_directory = unique_cache_directory
+        self.ready_to_run = True
+            
+    def get_current_cache_directory(self):
+        if not self.ready_to_run:
+            raise 'The RunManager has not been setup to run a new yet.'
+        return self.current_cache_directory 
+                
     def run_run(self, run_resources, run_as_multiprocess=True, run_in_background=False):
         """check run hasn't already been marked running
            log it in to run_activity
            run simulation
            mark run as done/failed
            """
+        if not self.ready_to_run:
+            raise 'RunManager.setup_new_run must be execute before RunManager.run_run'
+        if run_resources['cache_directory'] != self.current_cache_directory:
+            #TODO: do not change the configuration en route
+            run_resources['cache_directory'] = self.current_cache_directory
+            #raise 'The configuration and the RunManager conflict on the proper cache_directory'
         
-        if self.run_activity is not None:
-            history_id = self.run_activity.get_new_history_id()
-            
-            #add history_id to cache directory
-            head, tail = os.path.split(run_resources['cache_directory'])
-            cache_directory = os.path.join(head, 'run_' +str(history_id)+'.'+tail)
-            ### TODO: There is no good reason to be changing Configurations!
-            run_resources['cache_directory'] = cache_directory
-
-        else:
-            ### TODO: There is no good reason to be changing Configurations!
-            cache_directory = run_resources['cache_directory']
+        cache_directory = self.current_cache_directory
             
         # Make the cache_directory if it doesn't exist (doesn't include per-year directories).
         if not os.path.exists(cache_directory):
             os.makedirs(cache_directory)
 
         if self.run_activity is not None:
-            self.run_activity.add_row_to_history(history_id, run_resources, "started")
+            self.run_activity.add_row_to_history(self.history_id, run_resources, "started")
 
         try:
             # Test pre-conditions
@@ -175,12 +186,16 @@ class RunManager(object):
                 model_system.run_in_one_process(run_resources, run_in_background=run_in_background)
             
             if self.run_activity is not None:
-                self.run_activity.add_row_to_history(history_id, run_resources, "done")
+                self.run_activity.add_row_to_history(self.history_id, run_resources, "done")
 
         except:
             if self.run_activity is not None:
-                self.run_activity.add_row_to_history(history_id, run_resources, "failed")
+                self.run_activity.add_row_to_history(self.history_id, run_resources, "failed")
+            self.ready_to_run = False
             raise # This re-raises the last exception
+        
+        self.ready_to_run = False
+        
 
     def restart_run(self, history_id, restart_year,
                     services_host_name,
