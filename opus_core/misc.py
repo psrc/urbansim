@@ -173,22 +173,34 @@ def load_from_file(filename, byteorder=DEFAULT_BYTEORDER, type='float32'):
     byteswap_if_needed(data, byteorder)
     return data
 
-def load_table_from_text_file(filename, convert_to_float=False, split_delimiter=' ', header=False):
+def load_table_from_text_file(filename, convert_to_float=False, split_delimiter=' ', header=False, comment=None):
 
     """Reads table from a file. It returns a tuple, where the first element
        is an array of the values in file, the second element is the header.
        If 'convert_to_float' is False, the value array a strings array.
        Otherwise the value array is a 2D numpy array. In the latter case, a row is splitted using the 'split_delimiter'.
-       If header is False, noo header is assumed and the second element of the resulting tuple is None.
+       If header is False, no header is assumed and the second element of the resulting tuple is None.
+       If comment is not None, lines that start with that character are ignored.
     """
     from numpy import array, reshape
 
+    def readlineandignorecomments():
+        line = text_file.readline()
+        while (line != ''):
+            if (comment is None) or not line.startswith(comment):
+                break
+            line = text_file.readline()
+        return line
+    
     text_file = file(filename, "rb")
-    line = text_file.readline()
+    
+    line = readlineandignorecomments()
+ 
     header_line = None
     if header:
         header_line = re.split('\s+', line)[0:-1]
-        line = text_file.readline()
+        line = readlineandignorecomments()
+
     line_list = re.split('\s+', line)
     ncol = len(line_list)-1
     data = []
@@ -197,7 +209,7 @@ def load_table_from_text_file(filename, convert_to_float=False, split_delimiter=
         nrow += 1
         for column_number in range(ncol):
             data.append(line_list[column_number])
-        line = text_file.readline()
+        line = readlineandignorecomments()
         line_list = re.split('\s+', line)
     text_file.close()
     if convert_to_float:
@@ -209,9 +221,10 @@ def load_table_from_text_file(filename, convert_to_float=False, split_delimiter=
         return (reshape(array(map(lambda x: split_and_convert(x), data)), (nrow, ncol)), header_line)
     return (reshape(array(data), (nrow, ncol)), header_line)
 
-def load_from_text_file(filename, convert_to_float=False, split_delimiter=' '):
+def load_from_text_file(filename, convert_to_float=False, split_delimiter=' ', comment=None):
     """Reads character data from a file. If 'convert_to_float' is False, it returns a strings array.
        Otherwise it returns a numpy array. In the latter case, a row is splitted using the 'split_delimiter'.
+       If comment is not None, lines that start with that character are ignored.
     """
     from numpy import array
 
@@ -221,7 +234,8 @@ def load_from_text_file(filename, convert_to_float=False, split_delimiter=' '):
     while (line != ''):
         while line.endswith('\n') or line.endswith('\r'):
             line = line[:-1]
-        data.append(line)
+        if (comment is None) or not line.startswith(comment):
+            data.append(line)
         line = text_file.readline()
     text_file.close()
     if convert_to_float:
