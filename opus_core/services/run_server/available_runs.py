@@ -85,6 +85,11 @@ class AvailableRuns(object):
     def get_run_with_run_id(self,run_id):
         """ retrieve this scenario from cache"""
         return RunState(self.storage).get_run_state(run_id)
+    
+    def get_status_of_run_id(self,run_id):
+        """ retrieve status of this run"""
+        state = RunState(self.storage).get_run_state(run_id)
+        return state.status
 
     def has_run(self,run_id):
         """ return True iff this run is available"""
@@ -99,6 +104,15 @@ class AvailableRuns(object):
         
         return exists
 
+    def get_all_runs(self):
+        """Return all run_ids in available runs."""
+        from sqlalchemy.sql import select
+        available_runs = self.storage.get_table('available_runs')
+                
+        query = select(
+            columns = [available_runs.c.run_id])
+        return self.storage.engine.execute(query).fetchall()
+    
     def update_status_for_run(self,run_id,status):
         """ updates status on the database"""
         available_runs = self.storage.get_table('available_runs')

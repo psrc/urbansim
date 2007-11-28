@@ -32,6 +32,9 @@ class RunActivity(object):
     def get_storage(self):
         return self.storage
         
+    def get_available_runs(self):
+        return self.available_runs
+    
     def get_new_history_id(self):
         """Returns a unique run_id for a new run_activity trail."""
         run_activity = self.storage.get_table('run_activity')

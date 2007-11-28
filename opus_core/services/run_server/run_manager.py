@@ -288,7 +288,25 @@ class RunManager(object):
         else:
             CacheFltData().run(resources)
             
-
+    def get_runs_by_status(self, run_ids):
+        """Returns a dictionary where keys are the status (e.g. 'started', 'done', 'failed').
+        If run_ids is None, all runs from available runs are considered, otherwise only ids 
+        given by the run_ids list.
+        """
+        available_runs = self.run_activity.get_available_runs()
+        if run_ids is None:
+            run_ids = available_runs.get_all_runs()
+        started = []
+        finished = []
+        failed = []
+        result = {}    
+        for id in run_ids:
+            status = available_runs.get_status_of_run_id(id)
+            if status not in result.keys():
+                result[status] = []
+            result[status] = result[status].append(id)
+        return result
+        
 class SimulationRunError(Exception):
     """exception to be raised if the simulation fails at runtime"""
     pass
