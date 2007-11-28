@@ -137,8 +137,8 @@ class AssignBuildingsToJobs:
         for parcel in unique_parcels:
             idx_in_bldgs = where(parcel_ids_in_bldgs == parcel)[0]
             idx_in_jobs = where(parcel_ids[job_index_non_home_based] == parcel)[0]
-            #capacity = maximum(non_res_sqft[idx_in_bldgs] - occupied[idx_in_bldgs],0)
-            capacity = non_res_sqft[idx_in_bldgs] - occupied[idx_in_bldgs]
+            capacity = maximum(non_res_sqft[idx_in_bldgs] - occupied[idx_in_bldgs],0)
+            #capacity = non_res_sqft[idx_in_bldgs] - occupied[idx_in_bldgs]
             if capacity.sum() <= 0:
                 counter_zero_capacity += idx_in_jobs.size
                 continue
