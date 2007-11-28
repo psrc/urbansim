@@ -81,7 +81,10 @@ class OpusModel(object):
                 config = XMLConfiguration(str(fileNameAbsolute))
                 insert_auto_generated_cache_directory_if_needed(config)
                 (self.start_year, self.end_year) = config['years']
-                statusdir = tempfile.mkdtemp()
+
+                run_manager.setup_new_run(run_name = os.path.basename(config['cache_directory']))
+                #statusdir = tempfile.mkdtemp()
+                statusdir = run_manager.get_current_cache_directory()
                 statusfile = os.path.join(statusdir, 'status.txt')
                 self.statusfile = statusfile
                 self.config = config
