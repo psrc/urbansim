@@ -319,7 +319,7 @@ class RunManager(object):
             status = available_runs.get_status_of_run_id(id)
             if status not in result.keys():
                 result[status] = []
-            result[status] = result[status].append(id)
+            result[status].append(id)
         return result
         
 class SimulationRunError(Exception):
