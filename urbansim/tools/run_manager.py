@@ -73,33 +73,3 @@ class RunManager(CoreRunManager):
         except:
             self.run_activity.add_row_to_history(history_id, run_resources, "failed")
             raise
-
-    def prepare_for_run(self, run_resources):
-        """Prepares for simulation: caching data, create run_activity item,
-           derives from run_run, except that it doesn't really start simulation.
-           """        
-        if self.run_activity is not None:
-            history_id = self.run_activity.get_new_history_id()
-            
-            #add history_id to cache directory
-            head, tail = os.path.split(run_resources['cache_directory'])
-            cache_directory = os.path.join(head, 'run_' +str(history_id)+'.'+tail)
-            ### TODO: There is no good reason to be changing Configurations!
-            run_resources['cache_directory'] = cache_directory
-
-        else:
-            ### TODO: There is no good reason to be changing Configurations!
-            cache_directory = run_resources['cache_directory']
-
-        # Create baseyear cache
-        self.create_baseyear_cache(run_resources)
-            
-        # Make the cache_directory if it doesn't exist (doesn't include per-year directories).
-        if not os.path.exists(cache_directory):
-            os.makedirs(cache_directory)
-
-        if self.run_activity is not None:
-            self.run_activity.add_row_to_history(history_id, run_resources, "started")
-
-        return history_id
-        
