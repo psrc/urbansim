@@ -35,9 +35,11 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         zones.compute_variables(["existing_residential_units = zone.aggregate(building.residential_units, [parcel])",
                                  "existing_job_spaces = zone.aggregate(urbansim_parcel.building.total_non_home_based_job_space, [parcel])",
                                  ], dataset_pool=self.dataset_pool)
+
         if self.type["residential"]: 
             occupied_residential_units = zones.compute_variables(["zone.number_of_agents(household)",
                                      ], dataset_pool=self.dataset_pool)
+            maxiter = 10
         if self.type["non_residential"]:    
             zones.compute_variables(["number_of_all_nhb_jobs = zone.aggregate(urbansim.job.is_building_type_non_home_based)",
                                      "number_of_placed_nhb_jobs = zone.aggregate(urbansim_parcel.building.number_of_non_home_based_jobs)"],
@@ -52,6 +54,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             to_be_used_sqft = clip_to_zero_if_needed(existing_building_sqft - occupied_building_sqft, "Zonal Developer Model")
             to_be_placed_sqft = (zones.get_attribute("number_of_all_nhb_jobs") - 
                                  zones.get_attribute("number_of_placed_nhb_jobs")) * self.get_weighted_job_sqft()[zones.get_id_attribute()]
+            maxiter = 1
         
         exisiting_residential_units = zones.get_attribute("existing_residential_units")
         existing_job_spaces = zones.get_attribute("existing_job_spaces")
@@ -61,10 +64,11 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         zone_ids = zones.get_id_attribute()
         # keep copy of the weights
         original_weight = self.weight.copy()
-        # this is a hack - we want buildings to be built in 2000, but the simulation is running for 2001
-        start_year = SimulationState().get_current_time() - 1
+        # this is a hack: we want buildings to be built in 2000, but the simulation is running for different year
+        #start_year = SimulationState().get_current_time() - 1
+        start_year = 2000
         self.proposal_set.modify_attribute(name="start_year", data=array(self.proposal_set.size()*[start_year]))
-        
+
         for zone_index in range(zone_ids.size):
             self.zone = zone_ids[zone_index]
             if self.type["residential"]: 
@@ -73,6 +77,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             if self.type["non_residential"]:
                 self.existing_to_occupied_ratio_non_residential =  \
                             to_be_used_sqft[zone_index] / float(to_be_placed_sqft[zone_index])
+            
             
             status = self.proposal_set.get_attribute("status_id")
             where_zone = zone_ids_in_proposals == self.zone
@@ -89,8 +94,15 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             status[idx_out_zone_not_active_not_refused] = self.proposal_set.id_not_available
             self.proposal_set.modify_attribute(name="status_id", data=status)
             self.weight[:] = original_weight[:]
-            logger.log_status("DPSM for zone %s" % self.zone)
-            DevelopmentProjectProposalSamplingModel.run(self, **kwargs)
+            self.proposed_units_from_previous_iterations = {}
+            
+            logger.log_status("\nDPSM for zone %s" % self.zone)
+            for iter in range(maxiter):
+                self.weight[:] = original_weight[:]           
+                DevelopmentProjectProposalSamplingModel.run(self, **kwargs)
+                if (len(self.accepted_proposals)<=0) or self.vacancy_rate_met():
+                    break
+                
             status = self.proposal_set.get_attribute("status_id")
             where_not_active = where(status[idx_zone] != self.proposal_set.id_active)[0]
             status[idx_zone[where_not_active]] = self.proposal_set.id_refused
@@ -98,6 +110,39 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             if ((zone_index+1) % 50) == 0: # flush every 50th zone 
                 self.proposal_set.flush_dataset()
         return (self.proposal_set, [])
+    
+    def vacancy_rate_met(self):
+        if self.type["non_residential"]: 
+            return True
+        # applies only to residential case
+        is_residential = self.current_target_vacancy.get_attribute("is_residential")
+        type_ids = self.current_target_vacancy.get_attribute("building_type_id")
+        avg_tv = 0.0
+        existing = 0
+        occupied = 0
+        demolished = 0
+        proposed = 0
+        for index in arange(self.current_target_vacancy.size())[where(is_residential)]:
+            type_id = type_ids[index]
+            avg_tv += self.target_vacancies[type_id]
+            existing += self.existing_units[type_id]
+            occupied += self.occupied_units[type_id]
+            demolished += self.demolished_units[type_id]
+            proposed += self.proposed_units[type_id]
+            if type_id not in self.proposed_units_from_previous_iterations.keys():
+                self.proposed_units_from_previous_iterations[type_id] = 0
+            self.proposed_units_from_previous_iterations[type_id] += self.proposed_units[type_id]
+            
+        avg_tv = avg_tv/float(is_residential.sum())
+        units_stock = existing - demolished + proposed
+        current_vr = (units_stock - occupied) / float(units_stock)
+        if current_vr >= avg_tv:
+            return True
+        logger.log_status("Current overall vacancy rate: %s, average vacancy rate: %s" % (current_vr, avg_tv))
+        self.existing_to_occupied_ratio_residential = units_stock / float(occupied)
+        return False
+        
+        
 
     def compute_job_building_type_distribution(self):
         building_type_dataset = self.dataset_pool.get_dataset('building_type')
@@ -134,6 +179,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         return (sqft_lookup[:,building_type_ids] * job_building_type_distribution).sum(axis=1)
         
     def check_vacancy_rates(self, target_vacancy):
+        self.current_target_vacancy = target_vacancy
         type_ids = target_vacancy.get_attribute("building_type_id")
         is_residential = target_vacancy.get_attribute("is_residential")
         buildings = self.dataset_pool.get_dataset("building")
@@ -154,6 +200,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             self.proposed_units[type_id] = 0
             self.demolished_units[type_id] = 0
             self.existing_units[type_id] = buildings.get_attribute(unit_name)[is_matched_type*is_in_right_zone].astype("float32").sum()
+            self.existing_units[type_id] += self.proposed_units_from_previous_iterations.get(type_id, 0)
             self.occupied_units[type_id] = 0
             if self.existing_units[type_id] == 0:
                 vr = 0
