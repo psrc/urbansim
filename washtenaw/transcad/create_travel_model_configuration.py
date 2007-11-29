@@ -47,13 +47,13 @@ def create_travel_model_configuration(scenario_dir_name,
         "DataTable":"TAZ Data Table",
         "JoinField":"ID",
         "variable_mapping":[
-#        ('zone.zone_id', 'ID'),
-        ('zone.seq_taz', 'ID'),   #JoinField
+        ('zone.zone_id', 'ID'),
+#        ('zone.seq_taz', 'ID'),   #JoinField
         ('urbansim.zone.population', 'Population'),
         ('urbansim.zone.number_of_households', 'Households'),
         ('urbansim.zone.number_of_jobs', 'Total_Emp'),
-        ('opus_core.func.aggregate(urbansim.gridcell.number_of_jobs_of_group_basic)', 'Basic'),
-        ('opus_core.func.aggregate(urbansim.gridcell.number_of_jobs_of_group_nonbasic)', 'NonBasic'),
+        ('zone.aggregate(urbansim.gridcell.number_of_jobs_of_group_basic)', 'Basic'),
+        #('zone.aggregate(urbansim.gridcell.number_of_jobs_of_group_nonbasic)', 'NonBasic'),
         ('urbansim.zone.number_of_jobs_of_sector_4', 'WholeSale'),
         ('urbansim.zone.number_of_jobs_of_sector_5', 'Retail')
         ]
@@ -102,6 +102,11 @@ def _add_models(travel_model_configuration, mode):
             'washtenaw.transcad.run_semcog_travel_model',
             'washtenaw.transcad.get_transcad_data_into_cache',
             ]
+    if mode == 'skims':
+        models = [
+            'washtenaw.transcad.get_cache_data_into_transcad',
+            'washtenaw.transcad.get_transcad_data_into_cache',
+            ]        
     travel_model_configuration['models'] = models
         
 def _add_years(travel_model_configuration, years_to_run):

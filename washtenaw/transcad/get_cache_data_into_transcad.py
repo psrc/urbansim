@@ -21,7 +21,7 @@ from travel_model.models.get_cache_data_into_travel_model import GetCacheDataInt
 from opus_core.session_configuration import SessionConfiguration
 from run_transcad_macro import run_transcad_macro, run_get_file_location_macro
 from opus_core.store.attribute_cache import AttributeCache
-from washtenaw.transcad.set_project_ini_file import set_project_ini_file
+from washtenaw.transcad.set_project_ini_file import set_project_ini_file, get_project_year_dir
 
 class GetCacheDataIntoTranscad(GetCacheDataIntoTravelModel):
     """Write urbansim simulation information into a (file) format 
@@ -58,8 +58,8 @@ class GetCacheDataIntoTranscad(GetCacheDataIntoTravelModel):
             variable_list.append(urbansim_var)
             column_name.append(transcad_var)
 
-        zone_set.compute_variables(variable_list, resources=Resources(datasets))
-        variable_short_name = [VariableName(x).alias() for x in variable_list]
+        zone_set.compute_variables(variable_list)
+        variable_short_name = [VariableName(x).get_alias() for x in variable_list]
         
         tm_input_data_dir = os.path.join(tm_config['directory'], tm_config[year])
         if not os.path.exists(tm_input_data_dir):
