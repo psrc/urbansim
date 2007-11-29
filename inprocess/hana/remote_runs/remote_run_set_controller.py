@@ -38,6 +38,14 @@ class RemoteRunSet(RemoteRun):
     default_run_id_file = 'run_ids'
     python_commands = {"faloorum6.csss.washington.edu": "mosrun -h python",
                        "localhost": "python"}
+    configuration_update = {
+                            "faloorum6.csss.washington.edu": {'cache_directory_root': '/home/hana/urbansim_cache/psrc/parcel/bm',
+                                                              'existing_cache_to_copy': '/home/hana/urbansim_cache/psrc/cache_source_parcel'
+                                                              },
+                            "localhost": {'cache_directory_root': '/Users/hana/urbansim_cache/psrc/parcel/bm',
+                                          'existing_cache_to_copy': '/Users/hana/urbansim_cache/psrc/cache_source_parcel'
+                                          }
+                            }
     
     def __init__(self, server_file, hostname, username, password, *args, **kwargs):
         self.servers_info = {}
@@ -78,6 +86,7 @@ class RemoteRunSet(RemoteRun):
             seed(root_seed)
             # generate different seed for each run (each seed contains 1 number)
             seed_array = randint(1,2**30, self.number_of_runs)
+
             for irun in range(self.number_of_runs):
                 config['seed']= (seed_array[irun],)
                 RemoteRun.prepare_for_run(self, config=config, prepare_cache=False)
@@ -88,6 +97,8 @@ class RemoteRunSet(RemoteRun):
             self.run_id_file = run_id_file
             run_activity = RunActivity(self.services_database)
             self.run_manager = RunManager(run_activity)
+
+        self.date_time_str = time.strftime('%Y_%m_%d_%H_%M', time.localtime())
         logger.log_status("run_id_file: %s" % self.run_id_file)
         self.write_into_run_id_file()
         return None
@@ -110,10 +121,10 @@ class RemoteRunSet(RemoteRun):
 
         running_ids = []
         for iter in range(len(self.run_ids_dict.keys())): 
-            run_id = self.run_ids_dict.keys()[0]
+            run_id = self.run_ids_dict.keys()[iter]
             finished_year, server = self.run_ids_dict[run_id]
             while True: # wait for available server
-                selected_server = self.select_server(server)
+                selected_server, restart = self.select_server(server)
                 if selected_server is None: # no server available
                     time.sleep(60)
                     runs_by_status = self.run_manager.get_runs_by_status(running_ids)
@@ -133,7 +144,7 @@ class RemoteRunSet(RemoteRun):
             config = self.run_manager.get_resources_for_run_id_from_history(services_host_name=self.services_hostname,
                                                                        services_database_name=self.services_dbname,
                                                                        run_id=self.run_id)
-            self.prepare_for_this_run(config)
+            self.prepare_for_this_run(config, self.configuration_update.get(selected_server, {}), restart)
             if start_year is None:
                 this_start_year = config['years'][0]
             else:
@@ -142,9 +153,14 @@ class RemoteRunSet(RemoteRun):
             RemoteRun._do_run(self, max(this_start_year, finished_year+1), end_year, config, background=True)
             
             
-    def prepare_for_this_run(self, config):
-        head, tail = os.path.split(config['cache_directory'])
-        config['cache_directory'] =  '%s/run_%s.%s' % (head, self.run_id, tail)
+    def prepare_for_this_run(self, config, config_update={}, restart=False):
+        if not restart:
+            
+            config['cache_directory'] =  '%s/run_%s.%s' % (config_update.get('cache_directory_root',
+                                                                             config['creating_baseyear_cache_configuration'].cache_directory_root),
+                                                                             self.run_id, self.date_time_str)
+            config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy = config_update.get('existing_cache_to_copy', 
+                                                                config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy)
         self.prepare_cache_and_communication_path(config)
         self.run_manager.run_activity.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % self.run_id)        
         self.run_manager.run_activity.add_row_to_history(self.run_id, config, "started")
@@ -164,12 +180,15 @@ class RemoteRunSet(RemoteRun):
         self.write_into_run_id_file()
         
     def select_server(self, server):
+        restart = False
         selected_server = None
         for s, info in self.servers_info.iteritems():
             if ((server == 'NA') or (server == s)) and (info['running'] < info['number_of_processes']):
                 selected_server = s
                 break
-        return selected_server 
+        if selected_server == server:
+            restart=True
+        return (selected_server, restart)
     
     def enable_servers(self, runs):
         for run_id in runs:
@@ -178,7 +197,7 @@ class RemoteRunSet(RemoteRun):
             config = self.run_manager.get_resources_for_run_id_from_history(services_host_name=self.services_hostname,
                                                                        services_database_name=self.services_dbname,
                                                                        run_id=run_id)
-            self.run_ids_dict[self.run_id] = self.get_urbansim_last_year(config)
+            self.run_ids_dict[self.run_id] = (self.get_urbansim_last_year(config), server)
             self.write_into_run_id_file()
         
 if __name__ == "__main__":

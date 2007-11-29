@@ -70,8 +70,8 @@ class RemoteRun:
 
     remote_opus_path = "/home/hana/opus"
     remote_communication_path_root = '/home/hana/urbansim_tmp'
-    local_output_path_root = 'c:/hana/runs' # for output of the travel model
-    #local_output_path_root = '/Users/hana/tmp'
+    #local_output_path_root = 'c:/hana/runs' # for output of the travel model
+    local_output_path_root = '/Users/hana/tmp'
     script_path = 'inprocess/hana/remote_runs'
     remote_travel_models = ['opus_emme2.models.get_cache_data_into_emme2']
     
@@ -174,7 +174,7 @@ class RemoteRun:
         else:
             os.system("%s -l %s -pw %s %s:%s %s" % \
                        (self.pscp, self.username, self.password, self.hostname, 
-                        sfull_path, local_directory))
+                        full_path, local_directory))
         
     def copy_file_to_remote_host(self, file, subdirectory=''):
         full_path = "%s/%s" % (self.remote_communication_path, subdirectory)
