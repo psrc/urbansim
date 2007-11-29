@@ -117,6 +117,8 @@ class RunManager(object):
                
         self.current_cache_directory = unique_cache_directory
         self.ready_to_run = True
+        
+        logger.log_status('Cache directory for run %s set to %s' % (run_name, self.current_cache_directory))
             
     def get_current_cache_directory(self):
         if not self.ready_to_run:
