@@ -75,7 +75,7 @@ def _do_run_simple_test_run(caller, temp_dir, services_database, end_year=None):
                          in_storage=AttributeCache())
     insert_auto_generated_cache_directory_if_needed(run_configuration)
     caller.resources = run_configuration
-    runs_manager.setup_new_run(run_name = os.path.basename(run_configuration['cache_directory']))
+    runs_manager.setup_new_run(run_name = run_configuration['cache_directory'])
     runs_manager.run_run(run_configuration)
     
 
@@ -90,19 +90,33 @@ if does_database_server_exist_for_this_hostname(
         def setUp(self):
             self.services_database = _create_services_test_database()
             self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
-            _do_run_simple_test_run(self, self.temp_dir, self.services_database)
     
         def tearDown(self):
             # Turn off the logger, so we can delete the cache directory.
             logger.disable_all_file_logging()
+            _drop_services_test_database()
+
+        def cleanup_test_run(self):
             cache_dir = self.resources['cache_directory']
             if os.path.exists(cache_dir):
                 rmtree(cache_dir)
             if os.path.exists(self.temp_dir):
                 rmtree(self.temp_dir)
-            _drop_services_test_database()
-    
+            
+        def test_setup_run(self):
+            base_directory = self.temp_dir
+            run_name = 'test_scenario_name'
+            run_activity = RunActivity(self.services_database)
+            run_manager = RunManager(run_activity)
+            run_manager.setup_new_run(run_name = os.path.join(base_directory, run_name))
+            resulting_cache_directory = run_manager.get_current_cache_directory()
+            self.assertTrue(resulting_cache_directory.find(run_name)>-1)
+            self.assertEquals(os.path.dirname(resulting_cache_directory), base_directory)
+            self.assertTrue(run_manager.ready_to_run)
+            self.assertTrue(not os.path.exists(resulting_cache_directory))
+            
         def test_restart_simple_run(self):
+            _do_run_simple_test_run(self, self.temp_dir, self.services_database)
             run_activity = RunActivity(self.services_database)
             runs_manager = RunManager(run_activity)
             history_id = run_activity.storage.GetResultsFromQuery("SELECT max(run_id) FROM run_activity")[1][0]
@@ -150,6 +164,8 @@ if does_database_server_exist_for_this_hostname(
                 self.assertTrue(i in statuses)
                 
             self.assertEqual(len(statuses), len(expected))
+            
+            self.cleanup_test_run()
 
 if __name__ == "__main__":
     try: import wingdbstub
