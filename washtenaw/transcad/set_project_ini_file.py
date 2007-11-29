@@ -14,16 +14,20 @@
 
 import os
 
-def set_project_ini_file(config, year):
-    """ set project ini setting using values in config"""
-    ini_file = config['project_ini']
-    ini_fp = open(ini_file,"r")
+def get_project_year_dir(config, year):
     project_data_dir = config["directory"]   #C:/SEMCOG_baseline
-    year_dir = config[year]  #'CoreEA0511202006\\urbansim\\2001'
+    year_dir = config[year]  #'CoreEA05\\urbansim\\2001'
     dir_part1,dir_part2 = os.path.split(year_dir)
     while dir_part1:
         dir_part1, dir_part2 = os.path.split(dir_part1)
     project_year_dir = os.path.join(project_data_dir, dir_part2)   #C:/SEMCOG_baseline/CoreEA0511202006
+    return project_year_dir
+
+def set_project_ini_file(config, year):
+    """ set project ini setting using values in config"""
+    ini_file = config['project_ini']
+    ini_fp = open(ini_file,"r")
+    project_year_dir = get_project_year_dir(config, year)
     import ConfigParser
     cfg = ConfigParser.ConfigParser()
     cfg.readfp(ini_fp)

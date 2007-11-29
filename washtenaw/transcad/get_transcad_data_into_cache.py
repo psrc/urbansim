@@ -12,19 +12,18 @@
 # other acknowledgments.
 # 
 
+import os, csv
 from opus_core.resources import Resources
 from opus_core.logger import logger
 from urbansim.datasets.travel_data_dataset import TravelDataDataset
 from numpy import array, where, zeros, logical_and
-import os, csv
 from travel_model.models.get_travel_model_data_into_cache import GetTravelModelDataIntoCache
-from run_transcad_macro import run_transcad_macro
+from run_transcad_macro import run_transcad_macro, run_get_file_location_macro
 from opus_core.storage_factory import StorageFactory
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.session_configuration import SessionConfiguration
 from washtenaw.transcad.set_project_ini_file import set_project_ini_file
 
-## TODO: Is this class working?
 class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
     """
     A class to access the output of transcad travel models.
@@ -35,6 +34,7 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
                                           tm_output_file="tm_output.txt",
                                           ):
         """
+        
         Returns a new travel data set from a given set of transcad matrices 
         populated by a specified transcad macro.  
         The columns in the travel data set are those given in matrix_variable_map in travel_model_configuration.
@@ -43,26 +43,25 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
 
         tm_data_dir = os.path.join(tm_config['directory'], tm_config[year])
         tm_output_full_name = os.path.join(tm_data_dir, tm_output_file)
-        
         matrix_attribute_name_map = tm_config['tm_to_urbansim_variable_mapping']
-        matrix_attribute_name_map.append( ("Output File", tm_output_full_name) )
-        macro_args = matrix_attribute_name_map
-        for macroname, ui_db_file in tm_config['macro']['get_transcad_data_into_cache'].iteritems():
-            ui_db_file = os.path.join(tm_config['directory'], ui_db_file)
-            run_transcad_macro(macroname, ui_db_file, macro_args)
+        
+        transcad_file_location = run_get_file_location_macro(tm_config)
+        for matrix in matrix_attribute_name_map:
+            matrix[0] = transcad_file_location[matrix[0]]  #replace internal matrix name with absolute file name
+
+        macro_args =[ ("ExportTo", tm_output_full_name) ]
+        macro_args.append(("Matrix", matrix_attribute_name_map))
+        #for macroname, ui_db_file in tm_config['macro']['get_transcad_data_into_cache'].iteritems():
+            #ui_db_file = os.path.join(tm_config['directory'], ui_db_file)
+        macroname, ui_db_file = tm_config['macro']['get_transcad_data_into_cache']
+        run_transcad_macro(macroname, ui_db_file, macro_args)
 
         table_name = "travel_data"
         data_dict = self._read_macro_output_file(tm_output_full_name)
-        
-        self.__convert_seqtaz_to_taz(zone_set, data_dict)
-
-        in_storage = StorageFactory().get_storage('dict_storage')
-        in_storage.write_table(
-                table_name=table_name,
-                table_data=data_dict
-            )
-                
-        travel_data_set = TravelDataDataset(in_storage=in_storage, in_table_name=table_name)
+        data_dict = self._seq_taz_to_zone_conversion(zone_set, data_dict)
+        travel_data_set = TravelDataDataset(resources=Resources({'data':data_dict}),
+                                            in_storage_type="RAM", 
+                                            in_table_name=table_name)
         travel_data_set.size()
         return travel_data_set
 
@@ -119,15 +118,14 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
         
         return return_dict
 
-    def __convert_seqtaz_to_taz(self, zone_set, data_dict):
-        #convert from seq_taz_id to zone_id for both from_zone_id and to_zone_id fields in data_dict
-        #only need for SEMCOG
+    def _seq_taz_to_zone_conversion(self, zone_set, data_dict):
+        #convert from seq_taz_id to zone_id for both from_zone_id and to_zone_id fields
         seq_taz = zone_set.get_attribute("seq_taz")
         zone_ids = zone_set.get_id_attribute()
         
         #refactored from commented lines below, supposed to be faster
-        is_valid_from_zone_id = zeros(data_dict["from_zone_id"].size)
-        is_valid_to_zone_id = zeros(data_dict["to_zone_id"].size)
+        is_valid_from_zone_id = zeros(data_dict["from_zone_id"].size())
+        is_valid_to_zone_id = zeros(data_dict["to_zone_id"].size())
 
         for id in seq_taz:
             is_valid_from_zone_id += data_dict["from_zone_id"] == id
@@ -137,10 +135,18 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
         for name, values in data_dict.iteritems():
             data_dict[name] = values[keep_indices]
         
+        #convert from seq_taz to zone_id
+        for i in range(keep_indices[0].size()):
+            data_dict['from_zone_id'][i] = zone_ids[where(seq_taz==data_dict['from_zone_id'][i])][0]
+            data_dict['to_zone_id'][i] = zone_ids[where(seq_taz==data_dict['to_zone_id'][i])][0]
+
+
+        return data_dict
+    
         #keep_indices = []
         #o_zone_ids = []
         #d_zone_ids = []
-        #for index in range(data_dict["from_zone_id"].size):
+        #for index in range(data_dict["from_zone_id"].size()):
             #o = data_dict["from_zone_id"][index]
             #d = data_dict["to_zone_id"][index]
             #has_o = (seq_taz==o)
@@ -160,7 +166,7 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
                 #data_dict[name] = array(d_zone_ids)
             #else:
                 #data_dict[name] = values[keep_indices]
-
+    
     
 if __name__ == "__main__":
     try: import wingdbstub
@@ -177,10 +183,5 @@ if __name__ == "__main__":
     r = get_resources_from_file(options.resources_file_name)
     resources = Resources(get_resources_from_file(options.resources_file_name))
 
-    SessionConfiguration(new_instance=True,
-                         package_order=resources['dataset_pool_configuration'].package_order,
-                         package_order_exceptions=resources['dataset_pool_configuration'].package_order_exceptions,                              
-                         in_storage=AttributeCache())
-
-#    logger.enable_memory_logging()
+    logger.enable_memory_logging()
     GetTranscadDataIntoCache().run(resources, options.year)
