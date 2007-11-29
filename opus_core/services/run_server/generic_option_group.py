@@ -26,7 +26,11 @@ class GenericOptionGroup:
             
         self.parser = OptionParser(usage=usage, description=description)
         
-        self.parser.add_option("--hostname", dest="host_name", 
+        self.parser.add_option("--hostname", dest="host_name", default = None,
+                               action="store", help="Name of host running services database server")
+        self.parser.add_option("--username", dest="user_name", default = None,
+                               action="store", help="Username for host running services database server")
+        self.parser.add_option("--password", dest="password", default = None, 
                                action="store", help="Name of host running services database server")
         self.parser.add_option("--database", dest="database_name", default="services", 
                                action="store", help="Name of services database")
@@ -62,6 +66,8 @@ class GenericOptionGroup:
         
         config = DatabaseServerConfiguration(
             host_name = options.host_name,
+            user_name = options.user_name,
+            password = options.password
             )
         try:
             db_server = DatabaseServer(config)
