@@ -294,12 +294,22 @@ class RemoteRun:
                     self.run_remote_python_process("%s/urbansim/tools/restart_run.py" % self.remote_opus_path, 
                                                "%s %s --skip-cache-cleanup --skip-travel-model %s" % (
                                                          self.run_id, this_start_year, bg),
-                                                   )                   
-                    if not self.has_urbansim_finished(urbansim_resources):
-                        raise StandardError, "There was an error in the urbansim run."
+                                                   )
+                    if not background:               
+                        if not self.has_urbansim_finished(urbansim_resources):
+                            raise StandardError, "There was an error in the urbansim run."
 
             # run travel models
             if not self.skip_travel_model:
+                if background: # wait until urbansim finishes; check every 60 seconds
+                    while True:
+                        time.sleep(60)
+                        runs_by_status = self.run_manager.get_runs_by_status([self.run_id])
+                        if run_id in runs_by_status.get('done', []):
+                            break
+                        if run_id in runs_by_status.get('failed', []):
+                            raise StandardError, "There was an error in the urbansim run."
+
                 max_zone_id = 0
                 if travel_model_resources['travel_model_configuration'].has_key(this_end_year):
                     tm = AbstractEmme2TravelModel()

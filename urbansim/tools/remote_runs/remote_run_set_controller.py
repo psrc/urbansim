@@ -35,6 +35,18 @@ class RemoteRunSetOptionGroup(RemoteRunOptionGroup):
                                help="File with hostnames to run the set on.")
         
 class RemoteRunSet(RemoteRun):
+    """
+        Launches multiple runs, urbansim on given remote hosts (including localhost), travel model on localhost.
+        Several urbansim runs on remote hosts can be run in parallel (makes sense mainly if run with the option --skip-travel-model).
+        
+        If multiple hosts for urbansim are used, they can be defined in a file given by the option --server-file.
+        This file has one line per host in the following format:
+            hostname username remote_opus_path remote_communication_path_root number_of_runs_in_parallel_on_this_host
+        (see the doc string of the parent class)
+        
+        The script creates a file 'run_ids' in the current directory that contains information about the runs, their run_ids and hostnames.
+        For restarting a simulation, pass this file to the option --run-id-file. 
+    """
     default_run_id_file = 'run_ids'
     python_commands = {"faloorum6.csss.washington.edu": "mosrun -h python",
                        "localhost": "python"}
