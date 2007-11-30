@@ -44,7 +44,10 @@ class GetTravelModelDataIntoCache(AbstractTravelModel):
         if not os.path.exists(flt_dir_for_next_year):
             os.mkdir(flt_dir_for_next_year)
 
-        dataset_pool = SessionConfiguration().get_dataset_pool()
+        dataset_pool = SessionConfiguration(new_instance=True,
+                                            package_order=config['dataset_pool_configuration'].package_order,
+                                            package_order_exceptions=config['dataset_pool_configuration'].package_order_exceptions, 
+                                            in_storage=attribute_cache).get_dataset_pool()
         zone_set = dataset_pool.get_dataset('zone')
 
 #        zone_set = ZoneDataset(in_storage_location=flt_dir_for_this_year, 
