@@ -60,6 +60,8 @@ class OpusModel(object):
         self.progressCallback = None
         self.finishedCallback = None
         self.guiElement = None
+        self.config = None
+        self.statusfile = None
 
     def run(self):
         if WithOpus:
@@ -100,6 +102,8 @@ class OpusModel(object):
             pass
         
     def _compute_progress(self, statusfile):
+        if statusfile is None:
+            return {"percentage":0,"message":"Model initializing..."}
         if WithOpus:
             # Compute percent progress for the progress bar.
             # The statusfile is written by the _write_status_for_gui method
@@ -139,7 +143,7 @@ class OpusModel(object):
             # In this example we use the key to indicate where in a logfile we last stopped reading
             # and seek into that file point and read to the end of the file and append to the
             # log text edit field in the GUI.
-            if 'cache_directory' in self.config:
+            if self.config is not None and 'cache_directory' in self.config:
                 try:
                     f = open(os.path.join(self.config['cache_directory'],'year_1981_log.txt'))
                     f.seek(key)
