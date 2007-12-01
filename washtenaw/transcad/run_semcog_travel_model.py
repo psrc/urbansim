@@ -21,7 +21,7 @@ from washtenaw.travel_model.run_transcad_macro import run_transcad_macro
 import win32pdhutil, win32api, win32process
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.session_configuration import SessionConfiguration
-from washtenaw.travel_model.set_project_ini_file import set_project_ini_file
+from washtenaw.transcad.set_project_ini_file import set_project_ini_file
 
 class RunSemcogTravelModel(RunTravelModel):
     """Run the travel model.
