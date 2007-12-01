@@ -14,7 +14,7 @@
 
 #from urbansim.estimation.config import config
 from opus_core.configuration import Configuration
-from urbansim_parcel.configs.controller_config import UrbansimParcelConfiguration
+from psrc_parcel.configs.baseline import Baseline as PsrcParcelConfiguration
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
@@ -25,27 +25,16 @@ from urbansim.configurations.employment_relocation_model_configuration_creator i
 from numpy import array
 import os
 
-class ConfigDataPreparation(UrbansimParcelConfiguration):
+class ConfigDataPreparation(PsrcParcelConfiguration):
     def __init__(self):
-        config = UrbansimParcelConfiguration()
-
+        config = PsrcParcelConfiguration()
+        config['creating_baseyear_cache_configuration'].cache_directory_root = r'/Users/hana/urbansim_cache/psrc/data_preparation/run'
+        config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/data_preparation/cache_tmp'
+        config['input_configuration'].database_name = 'psrc_2005_parcel_baseyear_data_prep_start'
         config_changes = {
             'description':'data preparation for PSRC parcel (buildings)',
             'flush_variables': False,
-            'cache_directory': None,
-            'creating_baseyear_cache_configuration': CreatingBaseyearCacheConfiguration(
-                cache_directory_root = r'/Users/hana/urbansim_cache/psrc/data_preparation/run',
-                #cache_directory_root = r'/urbansim_cache/psrc_parcel',
-                #cache_directory_root = r'/home/lmwang/urbansim_cache/psrc_parcel',
-                cache_from_mysql = False,
-                baseyear_cache = BaseyearCacheConfiguration(
-                    existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/data_preparation/cache',
-                    #existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/cache_source',
-                    #existing_cache_to_copy = r'/home/lmwang/urbansim_cache/psrc_parcel/cache_source',
-                    years_to_cache = [2000]
-                    ),
-                cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
-                ),
+            'cache_directory': '/Users/hana/urbansim_cache/psrc/data_preparation/cache',
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
                 package_order_exceptions={},

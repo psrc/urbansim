@@ -30,8 +30,8 @@ Attributes that define higher-level geography should be deleted from
 datasets in the cache directory in order not to be treated as primary attributes,
 and thus being re-computed from lower-level geography.
 These are:
-parcel_id, zone_id in households, possibly households_for_estimation (will be re-computed from building_id)
-parcel_id, zone_id in jobs and jobs_for_estimation (will be re-computed from building_id)
+parcel_id, zone_id in households (will be re-computed from building_id)
+parcel_id, zone_id in jobs (will be re-computed from building_id)
 zone_id in buildings (will be re-computed from parcel_id)
 
 IV. Exporting resulting tables to database
