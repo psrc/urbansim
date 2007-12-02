@@ -28,20 +28,33 @@ from opus_core.indicator_framework.image_types.matplotlib_lorenzcurve import Lor
 from opus_core.indicator_framework.storage_location.database import Database
 
 
-run_description = '(baseline 08/09/2007)'
-cache_directory = r'/urbansim_cache/psrc_parcel/runs/run_3939.2007_10_23_11_08/'
+run_description = '(baseline 11/26/2007)'
+cache_directory = r'D:\urbansim_cache\run_4168.2007_11_20_16_53'
+
+#run_description = '(no build 11/26/2007)'
+#cache_directory = r'D:\urbansim_cache\run_4169.2007_11_21_00_12'
 
 source_data = SourceData(
     cache_directory = cache_directory,
     run_description = run_description,
-    years = range(2000, 2019, 1),  #[2000, 2005, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018#],
+    years = range(2000, 2031, 10),
     dataset_pool_configuration = DatasetPoolConfiguration(
-        package_order=['psrc_parcel','urbansim_parcel','urbansim','opus_core'],
+        package_order=['psrc_parcel','urbansim_parcel','psrc', 'urbansim','opus_core'],
         package_order_exceptions={},
         ),       
 )
 
 indicators=[
+    Table(
+        attribute = 'population=large_area.aggregate(urbansim_parcel.building.population, intermediates=[parcel, zone, faz])',
+        dataset_name = 'large_area',
+        source_data = source_data,
+        ),
+    Table(
+        attribute = 'employment=large_area.aggregate(urbansim_parcel.building.number_of_jobs, intermediates=[parcel, zone, faz])',
+        dataset_name = 'large_area',
+        source_data = source_data,
+        ),
 
 #Table(
 #    source_data = source_data,
@@ -58,11 +71,11 @@ indicators=[
 #    dataset_name = 'building_type',
 #    attribute = 'residential_units=building_type.aggregate(building.residential_units)',
 #    ), 
-Table(
-    source_data = source_data,
-    dataset_name = 'building_type',
-    attribute = 'avg_unit_price=building_type.aggregate(urbansim_parcel.building.unit_price, function=mean)',
-    ), 
+#Table(
+    #source_data = source_data,
+    #dataset_name = 'building_type',
+    #attribute = 'avg_unit_price=building_type.aggregate(urbansim_parcel.building.unit_price, function=mean)',
+    #), 
 #Table(
 #    source_data = source_data,
 #    dataset_name = 'building_type',
