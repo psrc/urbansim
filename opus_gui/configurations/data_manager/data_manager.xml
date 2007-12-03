@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<database_server_connections name="Database Server Connections">
+  <item type="database_server_connection" name="trondheim"></item>
+    <item type="string" name="Protocol">MySQL</item>
+	<item type="string" name="Hostname">trondheim.cs.washington.edu</item>
+	<item type="string" name="Username">urbansim</item>
+	<item type="password" name="Password">**********</item>
+	<item type="integer" name="Port">3306</item>
+</database_server_connections>
+
+<databases name="Databases">
+  <item type="database" name="Example Database"></item>
+</databases>
+
+<opus_data name="Opus Data">
+  <item type="opus_data_folder" name="C:\urbansim_cache\eugene\eugene_1980_baseyear_cache"></item>
+</opus_data>
+
+<other_data name="Other Data">
+  <item type="other_data_folder" name="C:\data"></item>
+</other_data>
+
+<data_processing name="Data Processing">
+  <item type="processing_sequence" name="Example Processing Sequence"></item>
+    <item type="opus_script" name="Example Opus Script"></item>
+    <item type="opus_script" name="Example Opus Script"></item>
+    <item type="opus_script" name="Example Opus Script"></item>
+</data_processing>
