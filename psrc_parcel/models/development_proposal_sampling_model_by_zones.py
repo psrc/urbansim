@@ -51,7 +51,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             existing_building_sqft = zones.compute_variables(
                      ["zone.aggregate(building.non_residential_sqft)"],
                          dataset_pool=self.dataset_pool)
-            to_be_used_sqft = clip_to_zero_if_needed(existing_building_sqft - occupied_building_sqft, "Zonal Developer Model")
+            to_be_used_sqft = existing_building_sqft - occupied_building_sqft
             to_be_placed_sqft = (zones.get_attribute("number_of_all_nhb_jobs") - 
                                  zones.get_attribute("number_of_placed_nhb_jobs")) * self.get_weighted_job_sqft()[zones.get_id_attribute()]
             maxiter = 1
@@ -75,8 +75,10 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
                 self.existing_to_occupied_ratio_residential =  \
                             exisiting_residential_units[zone_index] / float(occupied_residential_units[zone_index])
             if self.type["non_residential"]:
+                if to_be_placed_sqft[zone_index] <= 0:
+                    continue
                 self.existing_to_occupied_ratio_non_residential =  \
-                            to_be_used_sqft[zone_index] / float(to_be_placed_sqft[zone_index])
+                            max(to_be_used_sqft[zone_index],1) / float(to_be_placed_sqft[zone_index])
             
             
             status = self.proposal_set.get_attribute("status_id")
@@ -109,6 +111,8 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
             self.proposal_set.modify_attribute(name="status_id", data=status)
             if ((zone_index+1) % 50) == 0: # flush every 50th zone 
                 self.proposal_set.flush_dataset()
+                
+        self.proposal_set.set_values_of_one_attribute("status_id", self.proposal_set.id_not_available, where(status != self.proposal_set.id_active)[0])
         return (self.proposal_set, [])
     
     def vacancy_rate_met(self):
