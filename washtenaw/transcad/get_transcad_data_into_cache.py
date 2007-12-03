@@ -65,7 +65,7 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
             table_name=table_name,
             table_data=data_dict
             )
-        travel_data_set = TravelDataDataset(in_storage_type=storage, 
+        travel_data_set = TravelDataDataset(in_storage=storage, 
                                             in_table_name=table_name)
         travel_data_set.size()
         return travel_data_set
