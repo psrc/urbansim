@@ -59,8 +59,13 @@ class GetTranscadDataIntoCache(GetTravelModelDataIntoCache):
         table_name = "travel_data"
         data_dict = self._read_macro_output_file(tm_output_full_name)
         data_dict = self._seq_taz_to_zone_conversion(zone_set, data_dict)
-        travel_data_set = TravelDataDataset(resources=Resources({'data':data_dict}),
-                                            in_storage_type="RAM", 
+
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(
+            table_name=table_name,
+            table_data=data_dict
+            )
+        travel_data_set = TravelDataDataset(in_storage_type=storage, 
                                             in_table_name=table_name)
         travel_data_set.size()
         return travel_data_set
