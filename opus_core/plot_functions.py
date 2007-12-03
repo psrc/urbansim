@@ -31,6 +31,16 @@ def plot_histogram(values, main="", xlabel="", bins=None):
     create_histogram(values, main, xlabel, bins)
     show_plots()
 
+def plot_scatter(x, y, x_label=None, y_label=None, main = "", **kwargs):
+    from matplotlib.pylab import scatter, xlabel, ylabel, title
+    scatter(x,y, **kwargs)
+    if x_label is not None:
+        xlabel(x_label)
+    if y_label is not None:
+        ylabel(y_label)
+    title(main)
+    show_plots()
+    
 def create_barchart(values, bins=None, mini=None, maxi=None, main='', color='g'):
     """Create a bar chart of values."""
     from matplotlib.pylab import bar, xticks, title, axis

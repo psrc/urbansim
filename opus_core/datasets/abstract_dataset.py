@@ -1286,6 +1286,26 @@ class AbstractDataset(object):
         values = ma.filled(self.get_attribute(name), filled_value)
         plot_histogram(values, main=main, xlabel=name, bins=bins)
 
+    def plot_scatter(self, name_x, name_y, main="", npoints=None, **kwargs):
+        """Create a scatter plot of the attributes given by 'name_x' (x-axis) and 'name_y' (y-axis) and display its correlation coefficient.
+        'npoints' controls the number of points in the plot. If it is None, all points are plotted, otherwise they are selected randomly.
+        The plot is created using matplotlib.
+        """
+        from opus_core.plot_functions import plot_scatter
+        v1, v2 = self._scatter(name_x, name_y, npoints)
+        plot_scatter(v1, v2, name_x, name_y, main, **kwargs)
+        
+    def _scatter(self, name_x, name_y, npoints=None):
+        reg = self.correlation_coefficient(name_x, name_y)
+        logger.log_status("Correlation coefficient: ", reg)
+        v1 = self.get_attribute(name_x)
+        v2 = self.get_attribute(name_y)
+        if (npoints <> None) and (npoints < self.size()):
+            index = randint(0,self.size(), size=npoints)
+            v1 = v1[index]
+            v2 = v2[index]
+        return (v1, v2)
+    
     def r_histogram(self, name, main="", prob=1, breaks=None):
         """Create a histogram of the attribute given by 'name'. rpy module required.
         """
@@ -1301,14 +1321,7 @@ class AbstractDataset(object):
         rpy module required.
         """
         from rpy import r
-        reg = self.correlation_coefficient(name_x, name_y)
-        logger.log_status("Correlation coefficient: ", reg)
-        v1 = self.get_attribute(name_x)
-        v2 = self.get_attribute(name_y)
-        if (npoints <> None) and (npoints < self.size()):
-            index = randint(0,self.size(), size=npoints)
-            v1 = v1[index]
-            v2 = v2[index]
+        v1, v2 = self._scatter(name_x, name_y, npoints)
         r.plot(v1,v2, main=main,
             xlab=name_x, ylab=name_y)
 
