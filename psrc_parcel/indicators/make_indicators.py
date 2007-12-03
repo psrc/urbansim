@@ -55,212 +55,37 @@ indicators=[
         dataset_name = 'large_area',
         source_data = source_data,
         ),
-
-#Table(
-#    source_data = source_data,
-#    dataset_name = 'alldata',
-#    attribute = 'units_per_parcel_sqft=(alldata.aggregate_all(urbansim_parcel.parcel.residential_units)/alldata.aggregate_all((parcel.parcel_sqft).astype(float32))).astype(float32)',
-#    ),  
-#Table(
-#    source_data = source_data,
-#    dataset_name = 'alldata',
-#    attribute = 'residential_units=alldata.aggregate_all(building.residential_units)',
-#    ),  
-#Table(
-#    source_data = source_data,
-#    dataset_name = 'building_type',
-#    attribute = 'residential_units=building_type.aggregate(building.residential_units)',
-#    ), 
-#Table(
-    #source_data = source_data,
-    #dataset_name = 'building_type',
-    #attribute = 'avg_unit_price=building_type.aggregate(urbansim_parcel.building.unit_price, function=mean)',
-    #), 
-#Table(
-#    source_data = source_data,
-#    dataset_name = 'building_type',
-#    attribute = 'num_of_households=building_type.aggregate(urbansim_parcel.building.number_of_households)',
-#    ), 
-# 
-#Table(
-#    source_data = source_data,
-#    dataset_name = 'alldata',
-#    attribute = 'vacant_residential_units=alldata.aggregate_all(urbansim_parcel.building.vacant_residential_units)',
-#    ),  
-#Table(
-#    source_data = source_data,
-#    dataset_name = 'alldata',
-#    attribute = 'households=alldata.aggregate_all(household.household_id>-1)',
-#    ),  
-#Table(
-#    source_data = source_data,
-#    dataset_name = 'alldata',
-#    attribute = 'unplaced_households=alldata.aggregate_all(household.building_id<=0)',
-#    ), 
-#Table(
-#    source_data = source_data,
-#    dataset_name = 'alldata',
-#    attribute = 'vacant_ru_sqft_filter=alldata.aggregate_all(urbansim_parcel.building.vacant_residential_units * numpy.logical_and(building.residential_units, building.sqft_per_unit) )',
-#),
-
-#Table(
-#    source_data = source_data,
-#    dataset_name = 'alldata',
-#    attribute = 'vacant_ru_price_filter=alldata.aggregate_all( urbansim_parcel.building.vacant_residential_units * numpy.logical_and(urbansim_parcel.building.unit_price >= 20, urbansim_parcel.building.unit_price<1097) )'
-#),
-
-# Table(
-#     source_data = source_data,
-#     dataset_name = 'large_area',
-#     name = 'population',
-#     #operation = 'change',
-#     attribute = 'large_area.aggregate(urbansim_parcel.zone.population, intermediates=[faz])',
-# ),
-
-# Table(
-#     source_data = source_data,
-#     dataset_name = 'large_area',
-#     name = 'households',
-#     #operation = 'change',
-#     attribute = 'large_area.aggregate(urbansim_parcel.zone.number_of_households, intermediates=[faz])',
-# ),
-
-# Table(
-#     source_data = source_data,
-#     dataset_name = 'large_area',
-#     name = 'jobs',
-#     #operation = 'change',
-#     attribute = 'large_area.aggregate(urbansim_parcel.zone.number_of_jobs, intermediates=[faz])',
-# ),
-
-
-# Table(
-#     source_data = source_data,
-#     dataset_name = 'large_area',
-#     name = 'residential_units',
-#     #operation = 'change',
-#     attribute = 'large_area.aggregate(building.residential_units, intermediates=[parcel,zone,faz])',
-# ),
-
-# Table(
-#     source_data = source_data,
-#     dataset_name = 'large_area',
-#     name = 'nonresidential_sqft',
-#     #operation = 'change',
-#     attribute = 'large_area.aggregate(building.non_residential_sqft, intermediates=[parcel,zone,faz])'
-# ),
-
-#  Table(
-#      source_data = source_data,
-#      dataset_name = 'zone',
-#      name = 'population',
-#      #operation = 'change',
-#      attribute = 'urbansim_parcel.zone.population',
-#  ),
-
-#  Table(
-#      source_data = source_data,
-#      dataset_name = 'zone',
-#      name = 'households',
-#      #operation = 'change',
-#      attribute = 'zone.aggregate(urbansim_parcel.number_of_households)',
-#  ),
-
-#  Table(
-#      source_data = source_data,
-#      dataset_name = 'zone',
-#      name = 'jobs',
-#      #operation = 'change',
-#      attribute = 'zone.aggregate(urbansim_parcel.number_of_jobs)',
-#  ),
-
-#  Table(
-#      source_data = source_data,
-#      dataset_name = 'zone',
-#      name = 'residential_units',
-#      #operation = 'change',
-#      attribute = 'zone.aggregate(building.residential_units, intermediates=[parcel])',
-#  ),
-
-#  Table(
-#      source_data = source_data,
-#      dataset_name = 'zone',
-#      name = 'nonresidential_sqft',
-#      #operation = 'change',
-#      attribute = 'zone.aggregate(building.nonresidential_sqft, intermediates=[parcel])'
-#  ),
-
-# Table(
-#     source_data = source_data,
-#     dataset_name = 'zone',
-#     name = 'residential_units',
-#     #operation = 'change',
-#     attribute = 'zone.aggregate(building.residential_units, intermediates=[parcel])',
-# ),
-
-# Table(
-#     source_data = source_data,
-#     dataset_name = 'zone',
-#     name = 'nonresidential_sqft',
-#     #operation = 'change',
-#     attribute = 'zone.aggregate(building.nonresidential_sqft, intermediates=[parcel])'
-# ),
-
-
-#DatasetTable(
-#    source_data = source_data,
-#    dataset_name = 'building',
-#    name =  'unit_price',
-#    #operation = 'change',
-#    attributes = [
-#        'building.building_id',
-#        'urbansim_parcel.building.unit_price',
-#        'urbansim_parcel.building.residential_units',
-#        'urbansim_parcel.building.vacant_residential_units',
-#        'urbansim_parcel.building.year_built',
-#    ],
-#    exclude_condition = 'sqft_filter=numpy.logical_not(numpy.logical_and(uransim_parcel.building.residential_units, building.sqft_per_unit)) ',
-#),
-
-#DatasetTable(
-#    source_data = source_data,
-#    dataset_name = 'building',
-#    name =  'unit_price_new_bldg',
-#    #operation = 'change',
-#    attributes = [
-#        'building.building_id',
-#        'urbansim_parcel.building.unit_price',
-#        'urbansim_parcel.building.residential_units',
-#        'urbansim_parcel.building.vacant_residential_units',
-#        'urbansim_parcel.building.year_built',
-#    ],
-#    exclude_condition = 'building.year_built<2005',
-#),
-
-#DatasetTable(
-#    source_data = source_data,
-#    dataset_name = 'development_project_proposal',
-#    name = 'sfr_proposal_cons',
-#    attributes = [
-#       'development_project_proposal.proposal_id',
-#       'development_project_proposal.parcel_id',
-#       'development_project_proposal.template_id',
-#       'fit_contraint = (urbansim_parcel.development_project_proposal.is_allowed_by_constraint).astype(int32)',
-#       'fit_size = (urbansim_parcel.development_project_proposal.is_size_fit).astype(int32)',
-#       'urbansim_parcel.development_project_proposal.units_proposed',
-#       'urbansim_parcel.development_project_proposal.land_area_taken',
-#       'parcel_sqft=development_project_proposal.disaggregate(parcel.parcel_sqft)',
-#       'template_sqft_min=development_project_proposal.disaggregate(development_template.land_sqft_min)',
-#       'template_sqft_max=development_project_proposal.disaggregate(development_template.land_sqft_max)',
-#       'template_far=development_project_proposal.disaggregate(urbansim_parcel.development_template.far)',
-#       'min_far=development_project_proposal.disaggregate(urbansim_parcel.parcel.min_far_capacity_for_generic_land_use_type_1)',
-#       'max_far=development_project_proposal.disaggregate(urbansim_parcel.parcel.max_far_capacity_for_generic_land_use_type_1)',
-#       'template_units_per_acre=development_project_proposal.disaggregate(urbansim_parcel.development_template.units_per_acre)',
-#       'min_units_per_acre=development_project_proposal.disaggregate(urbansim_parcel.parcel.min_units_per_acre_capacity_for_generic_land_use_type_1)',
-#       'max_units_per_acre=development_project_proposal.disaggregate(urbansim_parcel.parcel.max_units_per_acre_capacity_for_generic_land_use_type_1)',
-#    ],
-    #exclude_condition = {'building_type_id':'!=19'}
-#),
+    Map(
+        attribute = 'population=gridcell.aggregate(urbansim_parcel.building.population, intermediates=[parcel])',
+        dataset_name = 'gridcell',
+        source_data = source_data,
+        ),
+    Map(
+        attribute = 'faz_employment=faz.aggregate(urbansim_parcel.building.population, intermediates=[parcel,zone])',
+        dataset_name = 'faz',
+        source_data = source_data,
+        ),
+    Map(
+        scale = [-8000, 40000],
+        name = 'urbansim_population_change',
+        source_data = source_data,
+        attribute = 'faz.population=faz.aggregate(urbansim_parcel.building.population, intermediates=[parcel,zone])',
+        operation = 'change',
+        dataset_name = 'faz',
+        ),
+    DatasetTable(
+        source_data = source_data,
+        dataset_name = 'building',
+        name =  'new_bldg',
+        attributes = [
+            'building.building_id',
+            'urbansim_parcel.building.unit_price',
+            'urbansim_parcel.building.residential_units',
+            'urbansim_parcel.building.vacant_residential_units',
+            'urbansim_parcel.building.year_built',
+        ],
+        exclude_condition = 'building.year_built<DDDD',
+    ),
 
 ]
 from opus_core.indicator_framework.core.indicator_factory import IndicatorFactory
