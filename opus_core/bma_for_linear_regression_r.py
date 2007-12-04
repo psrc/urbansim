@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 from rpy import r, set_default_mode, NO_CONVERSION
-from numpy import zeros, float32, swapaxes, array
+from numpy import zeros, float32, swapaxes, array, resize
 from opus_core.misc import check_dimensions
 from opus_core.logger import logger
 
@@ -46,27 +46,21 @@ class bma_for_linear_regression_r(object):
         beta = zeros(nvalues).astype(float32)
 
         coef_names = resources.get("coefficient_names",  nvar*[])
-        rnames = array(map(lambda x: "x."+ str(x), range(1,nvar+1)))
-        coef_names_array = swapaxes(array([coef_names, rnames]),1,0)
-        logger.log_status(str(coef_names_array))
         outcome = resources["outcome"].astype("float64")
         #from opus_core.misc import write_to_text_file, write_table_to_text_file
         #write_to_text_file("/Users/hana/bma/outcome", outcome)
-        #write_table_to_text_file("/Users/hana/bma/dat", data)
+        #write_table_to_text_file("/Users/hana/bma/dat", resize(array(coef_names), (1,nvar)))
+        #write_table_to_text_file("/Users/hana/bma/dat", data, mode="a")
         #return {}
         set_default_mode(NO_CONVERSION)
         r.library("BMA")
         data_for_r = data.astype("float64")
-        d = r.data_frame(x=data_for_r,y=outcome)
-        expression = "y ~ x.1"
-        for i in range(2,nvar+1):
-            expression=expression+" + x."+str(i)
-        model = r(expression)
-        fit = r.bic_glm(model, data=d, glm_family="gaussian", strict=1)
-        fit[20]=expression # shorten the 'call' item in the list
-#        fit[17]=coef_names # change the coefficient names for image plot
+        d = r.data_frame(r.matrix(data_for_r, ncol=nvar, dimnames=[[],coef_names]))
+        fit = r.bic_glm(x=d, y=outcome, glm_family="gaussian", strict=1)
+        fit[20] = '' # to have less output in the summary
         r.summary(fit)
+        #r.postscript(file="/Users/hana/bma/imageplot.ps")
         r.imageplot_bma(fit)
-
+        #r.dev_off()
         return {}
 
