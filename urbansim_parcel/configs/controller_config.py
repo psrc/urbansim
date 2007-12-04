@@ -92,6 +92,8 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                               "index": "index",
                               "data_objects": "datasets",
                               "debuglevel": 'debuglevel',
+                              #'procedure': "'opus_core.bma_for_linear_regression_r'",
+                              'procedure': "'opus_core.linear_regression'"
                               },
                 "output": "(coefficients, dummy)"
                 }
@@ -142,119 +144,6 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                 lottery_max_iterations = 7
                                 ).execute(),
                                        
-          "business_transition_model" : {
-                    "import": {"urbansim_parcel.models.business_transition_model":
-                                    "BusinessTransitionModel"
-                              },
-                    "init": {
-                        "name": "BusinessTransitionModel",
-                        "arguments": {
-                                      "debuglevel": 'debuglevel'
-                                      },
-                        },
-                     "prepare_for_run": {
-                         "name": "prepare_for_run",
-                         "arguments": {"storage": "base_cache_storage",
-                                       "in_table_name":"'annual_business_control_totals'",
-                                       "id_name":"['year', 'building_use_id']"},
-                         "output": "control_totals"
-                        },
-                    "run": {
-                        "arguments": {
-                            "year": "year",
-                            "business_set": "business",
-                            "control_totals": "control_totals",
-                            }
-                        }
-                    },
-        
-          "business_relocation_model" : {
-                    "import": {"urbansim.models.agent_relocation_model":
-                                    "AgentRelocationModel"
-                              },
-                    "init": {
-                        "name": "AgentRelocationModel",
-                        "arguments": {
-                                      "probabilities":"'urbansim_parcel.business_relocation_probabilities'",
-                                      "model_name":"'Business Relocation Model'",
-                                      "location_id_name":"'building_id'",
-                                      "debuglevel": 'debuglevel'
-                                      },
-                        },
-                    "prepare_for_run": {
-                        "name": "prepare_for_run",
-                        "arguments": {"what": "'business'",  "rate_storage": "base_cache_storage",
-                                           "rate_table": "'annual_relocation_rates_for_business'"},
-                        "output": "brm_resources"
-                        },
-                    "run": {
-                        "arguments": {"agent_set": "business", "resources": "brm_resources"},
-                        "output": "brm_index"
-                        }
-            },
-        
-         'business_location_choice_model': {
-            "import": {"urbansim_parcel.models.business_location_choice_model":"BusinessLocationChoiceModel"},
-            "init": {
-                "name": "BusinessLocationChoiceModel",
-                "arguments": {
-                              "location_set":"building",
-                              "model_name":"'Business Location Choice Model'",
-                              "short_name":"'BLCM'",
-                              "choices":"'urbansim.lottery_choices'",
-                              "submodel_string":"'business.building_use_id'",
-                              "filter": "'urbansim_parcel.building.building_sqft'",
-                              "location_id_string":"'building_id'",
-                              "run_config":"models_configuration['business_location_choice_model']",
-                              "estimate_config":"models_configuration['business_location_choice_model']"
-                     }},
-            "prepare_for_run": {
-                "name": "prepare_for_run",
-                "arguments": {"specification_storage": "base_cache_storage", #"models_configuration['specification_storage']",
-                              "specification_table": "models_configuration['business_location_choice_model']['specification_table']",
-                              "coefficients_storage": "base_cache_storage", #"models_configuration['coefficients_storage']",
-                              "coefficients_table": "models_configuration['business_location_choice_model']['coefficients_table']",
-                              },
-                "output": "(specification, coefficients)"
-                },
-        
-            "run": {
-                "arguments": {"specification": "specification",
-                              "coefficients":"coefficients",
-                              "agent_set": "business",
-                              "agents_index": 'brm_index',
-                              "data_objects": "datasets",
-                              "chunk_specification":"{'records_per_chunk':1000}",
-                              "debuglevel": 'debuglevel' }
-                },
-        # the estimate method is not availible before the estimation data is ready
-            "prepare_for_estimate": {
-                "name": "prepare_for_estimate",
-                "arguments": {
-                              "agent_set":"business",
-                              "join_datasets": "False",
-                              "agents_for_estimation_storage": "base_cache_storage",
-                              "agents_for_estimation_table": "'business_for_estimation'",
-                              "filter":None,
-                              "index_to_unplace":  "brm_index",
-                              "portion_to_unplace": 1/12.0,
-                              "data_objects": "datasets"
-                                },
-                "output": "(specification, index)"
-                },
-            "estimate": {
-                "arguments": {
-                              "specification": "specification",
-                              "agent_set": "business",
-                             "agents_index": "index",
-                              "data_objects": "datasets",
-                              "debuglevel": 'debuglevel'},
-                "output": "(coefficients, dummy)"
-                },
-           },
-        
-
-        
                 "household_relocation_model" : {
                     "import": {"urbansim.models.household_relocation_model_creator":
                                     "HouseholdRelocationModelCreator"
@@ -359,18 +248,6 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                    }
                  }
           },
-
-#        "household_location_choice_model": 
-#                  'HouseholdLocationChoiceModelConfigurationCreator(
-#                                location_set = "building",
-#                                sampler = "opus_core.samplers.weighted_sampler",
-#                                input_index = 'hrm_index',
-#                                submodel_string = None,
-#                                capacity_string = "urbansim_parcel.building.vacant_residential_units",
-#                                nchunks=12,
-#                                lottery_max_iterations=20
-#                                ).execute(),
-
         }
         
         for model in my_controller_configuration.keys():
@@ -378,12 +255,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                 self["models_configuration"][model] = {}
             self['models_configuration'][model]['controller'] = my_controller_configuration[model]
         
-        #BLDGLCM
-        #bldglcm_controller = config["models_configuration"]["building_location_choice_model"]["controller"]
-        ##bldglcm_controller = Configuration()
-        #
-        #config["models_configuration"]['building_location_choice_model']["controller"].merge(bldglcm_controller)
-        #HLCM
+        #settings for the HLCM
         hlcm_controller = self["models_configuration"]["household_location_choice_model"]["controller"]
         hlcm_controller["init"]["arguments"]["location_set"] = "building"
         hlcm_controller["init"]["arguments"]["location_id_string"] = "'building_id'"
@@ -405,7 +277,9 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         hlcm_controller["run"]["arguments"]["chunk_specification"] ="{'records_per_chunk':50000}"
         hlcm_controller["prepare_for_estimate"]["arguments"]["join_datasets"] = True
         hlcm_controller["prepare_for_estimate"]["arguments"]["index_to_unplace"] = None
+        # settng estimation procedure
         hlcm_controller["estimate"]["arguments"]["procedure"] = "'bhhh_wesml_mnl_estimation'"
+        #hlcm_controller["estimate"]["arguments"]["procedure"] = "'bhhh_mnl_estimation'"
         
         models_configuration['household_location_choice_model']["controller"].replace(hlcm_controller)
                 
@@ -414,15 +288,8 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                 'household':{},
                 'building':{},
                 'parcel':{'package_name':'urbansim_parcel'},
-        #        'business':{'package_name':'urbansim_parcel'},
-        #        'person':{'package_name':'urbansim_parcel'},
                 "building_type":{'package_name':'urbansim_parcel'},
                 'travel_data':{}
                 }
-        
-        #config["datasets_to_preload"]['business'] = {'package_name':'urbansim_parcel'}
-        #config["base_year"] = 2001
-        
-
         
 config = UrbansimParcelConfiguration()
