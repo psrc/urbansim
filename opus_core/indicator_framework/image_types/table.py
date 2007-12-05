@@ -141,6 +141,45 @@ class Tests(AbstractIndicatorTest):
         
         self.assert_(os.path.exists(indicator_path))
         self.assert_(os.path.exists(os.path.join(indicator_path, 'test__table__attribute.csv')))
-                    
+
+    def test_create_indicator_multiple_years(self):
+        indicator_path = os.path.join(self.temp_cache_path, 'indicators')
+        self.assert_(not os.path.exists(indicator_path))
+        
+        table = Table(
+                  source_data = self.source_data,
+                  dataset_name = 'test', 
+                  attribute = 'opus_core.test.attribute', 
+                  years = range(1980,1984), 
+                  output_type = 'csv'
+        )
+        table.create(False)
+        
+        file_path = os.path.join(indicator_path, 'test__table__attribute.csv')
+        self.assert_(os.path.exists(indicator_path))
+        self.assert_(os.path.exists(file_path))
+        
+        f = open(file_path)
+        cols = [col.strip() for col in f.readline().split(',')]
+        data = []
+        i = 0
+        for line in f:
+            line = line.strip()
+            if line == '': continue
+            row = [int(r.strip()) for r in line.split(',')]
+            #rows should all be tuples with all cols defined
+            self.assertEqual(len(cols), len(row))
+            #rows should be ordered by primary id
+            self.assertEqual(row[0],self.id_vals[i])
+            for col_index in range(1,len(cols)):
+                #each attribute value should be correct
+                if cols[col_index] == 'attribute_1983':
+                    self.assertEqual(row[col_index],self.attribute_vals_diff[i])
+                else:
+                    self.assertEqual(row[col_index],self.attribute_vals[i])
+            i += 1
+            data.append(row)
+        self.assertEqual(len(data),4)
+             
 if __name__ == '__main__':
     opus_unittest.main()
