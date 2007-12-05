@@ -38,7 +38,7 @@
 
 
 <p>This following instructions are for installing Opus &amp; UrbanSim on Linux.&nbsp;
-These installation directions have been tested with SuSe Linux and Intel
+These installation directions have been tested with Ubuntu Linux and Intel
 processors. </p>
 
 <ol>
@@ -60,9 +60,10 @@ processors. </p>
 
 <p>Opus and UrbanSim are implemented in Python, making heavy use of numerical
 Python packages and other software.&nbsp;&nbsp;For Linux we recommend using
-Python version 2.4.4; but some folks have also successfully used Python
-2.5.&nbsp; The <a href="http://www.python.org">official
-Python website</a> includes documentation, downloads, and much else.</p>
+Python version 2.5.1. The <a href="http://www.python.org">official
+Python website</a> includes documentation, downloads, and much else.  Depending 
+on your distribution, you may also be able to download and install Python using a package 
+manager such as Synaptic.</p>
 
 <p>In addition, some additional Python libraries are required, recommended, or
 optional for use with Opus.&nbsp; You must have the required libraries to run
@@ -74,15 +75,15 @@ Python modules that are needed only in special cases.&nbsp;</p>
 and Python 2.5 - make sure you download the correct version for the Python you
 are using.</p>
 
-<p>SuSe Linux comes with Python. If it is not installed by the initial
-installation, you can install Python using <a href="http://en.opensuse.org/YaST">YaST</a>
-or other software manager. Make sure that the python-devel libraries is also
-installed on a Linux system.</p>
-
 <p>Download the <a href="python_packages.html">required, recommended and
-optional Python packages</a> and then do the following to install each Python
-package:</p>
-
+optional Python packages</a> and install them.  For most packages, you should
+ be able to use Easy Install as described on the Python packages page, except
+ that in many cases running the commands will require superuser privileges.  Note
+ that installing some packages may require you to update your versions of gcc or 
+ other compilers.
+ 
+ Alternatively, you can do the following (this may still require compiler updates):</p>
+	
 <ol>
 
   <li>Extract the tar file (e.g. <i>filename</i>) by:</li>
@@ -116,21 +117,14 @@ package:</p>
   If you do not have superuser permissions, you need to install python to a
   place where&nbsp; you do have write permission and then use that version of
   python to invoke the setup.py command.&nbsp; For instance, if you installed
-  python2.4 to /homes/me/bin/python2.4&nbsp; issuing the following command will
+  python 2.5 to /homes/me/bin/python2.5&nbsp; issuing the following command will
   install the package into the site-packages directory of that version of
   python:</p>
 
   
-  <pre>/homes/me/bin/python2.4 setup.py install</pre>
+  <pre>/homes/me/bin/python2.5 setup.py install</pre>
 
 </blockquote>
-
-<ol start="3">
-
-  <li>If you get complaints about the wrong compiler version, you may need to
-    install the appropriate gcc compiler.</li>
-
-</ol>
 
 <h2>(optional) Step 2: <a name="mysql">Installing &amp; Configuring MySQL</a></h2>
 
@@ -143,7 +137,7 @@ any SQL database.)  If you use MySQL you can either have a local copy or run on 
 <p>If you don't install MySQL right away, you can return and install it later if you discover you 
 need it.</>
 
-<p>SuSe 10.0 contains MySQL version 4.1.13; be sure to also install packages
+<p>In Ubuntu, you can download MySQL using the Synaptic package manager.  Be sure to also install packages
 mysql-devel and mysql-shared.&nbsp; If MySQL is not installed, or to install a
 different version of MySQL, follow the instructions on <a href="http://dev.mysql.com/downloads/">http://dev.mysql.com/downloads/</a>.&nbsp;&nbsp;</p>
 
@@ -167,8 +161,8 @@ manager, such as YaST&rsquo;s System Services (Runlevel).</p>
 <p>In addition to MySQL itself, you might get the <a href="http://www.mysql.com/products/tools/query-browser/">MySQL
 Query Browser</a> (for prowling around in UrbanSim databases using a graphical
 interface), and the <a href="http://www.mysql.com/products/tools/administrator/">MySQL
-Administrator</a>. These are both available as binaries. Both software packages
-are contained in SuSe Linux 10.0.</p>
+Administrator</a>. These are both available as binaries, and may be available through a package
+ manager in your version of Linux.</p>
 
 <h2>Step 3: <a name="opus">Installing Opus and UrbanSim</a></h2>
 <p>There are two options for getting the Opus/UrbanSim code: as a zip
