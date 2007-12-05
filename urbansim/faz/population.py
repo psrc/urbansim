@@ -18,7 +18,7 @@ from variable_functions import my_attribute_label
 from opus_core.logger import logger
 
 class population(Variable):
-    """Number of jobs in zones """
+    """Number of peope in this faz"""
     _return_type="int32"
 
     def dependencies(self):
