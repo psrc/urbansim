@@ -549,26 +549,31 @@ that way, if you upgrade to a version of the \package{urbansim} package,
 your indicator \indicatorsindex definition won't be lost.)
 
 For example, here is the definition for the ``population'' variable
-\variablesindex in \module{psrc.large_area.population}.
+\variablesindex in \module{urbansim.faz.population}.
 
 \variablesindex\attributesindex\numpyindex
 \begin{verbatim}
+from opus_core.variables.variable import Variable
+from urbansim.functions import attribute_label
+from variable_functions import my_attribute_label
+from opus_core.logger import logger
+
 class population(Variable):
-    """Number of people in each area"""
+    """Number of peope in this faz"""
     _return_type="int32"
 
     def dependencies(self):
-        return [attribute_label("faz", "large_area_id"), 
-                attribute_label("faz", "population"), 
-                my_attribute_label("large_area_id")]
+        return [attribute_label("gridcell", "faz_id"), 
+                attribute_label("gridcell", "population"), 
+                my_attribute_label("faz_id")]
 
     def compute(self, dataset_pool):
-        faz = dataset_pool.get_dataset('faz')
-        return self.get_dataset().sum_over_ids(faz.get_attribute("large_area_id"), 
-                                   faz.get_attribute("population"))
+        gridcell = dataset_pool.get_dataset('gridcell')
+        return self.get_dataset().sum_over_ids(gridcell.get_attribute("faz_id"), 
+                                   gridcell.get_attribute("population"))
 
     def post_check(self, values, dataset_pool):
-        size = dataset_pool.get_dataset('faz').get_attribute("population").sum()
+        size = dataset_pool.get_dataset('gridcell').get_attribute("population").sum()
         self.do_check("x >= 0 and x <= " + str(size), values)
     
 
@@ -578,26 +583,25 @@ from numpy import array
 from numpy import ma
 
 class Tests(opus_unittest.OpusTestCase):
-    variable_name = "psrc.large_area.population"
+    variable_name = "urbansim.faz.population"
  
     def test_my_inputs(self):
         population = array([21,22,27,42]) 
-        faz_large_area_ids = array([1,2,1,3]) 
-        faz_id = array([1,2,3,4])
-            
-        values = VariableTestToolbox().compute_variable(self.variable_name, \
-                {"large_area":{
-                "large_area_id":array([1,2, 3])}, \
-            "faz":{ \
-                "population":population,\
-                "large_area_id":faz_large_area_ids, \
-                "faz_id":faz_id}}, \
-            dataset = "large_area")
+        gridcell_county_ids = array([1,2,1,3]) 
+        grid_id = array([1,2,3,4])
+        
+        values = VariableTestToolbox().compute_variable(self.variable_name, 
+            {"faz":{
+                "faz_id":array([1,2, 3])}, 
+            "gridcell":{ 
+                "population":population,
+                "faz_id":gridcell_county_ids, 
+                "grid_id":grid_id}}, 
+            dataset = "faz")
 
         should_be = array([48, 22, 42])
         
-        self.assertEqual(ma.allclose(values, should_be, rtol=1e-2), \
-                         True, msg = "Error in " + self.variable_name)
+        self.assertEqual(ma.allclose(values, should_be, rtol=1e-2), True, msg = "Error in " + self.variable_name)
 
 
 if __name__=='__main__':
@@ -615,13 +619,13 @@ values of certain other variables, \variablesindex which are listed
 in the \method{dependencies} method.  The \method{compute} method is
 where the action is: this defines how the values of this variable
 \variablesindex are computed.  In this case, we know that each
-\verb|large_area| contains a number of FAZ's (Forecast Analysis
-Zones). \fazindex The \verb|sum_over_ids| method iterates through
-the FAZ's, \fazindex adding up populations depending on which
-\verb|large_area| the FAZ \fazindex is in, and returns an array of
-the population in each \verb|large_area|.  If invoked, the
+\verb|faz| (Forecast Analysis Zone) contains a number of gridcells. 
+The \verb|sum_over_ids| method iterates through
+the gridcells, adding up populations depending on which
+\verb|faz| the gridcell is in, and returns an array of
+the population in each \verb|faz|.  If invoked, the
 \method{post_check} method performs a sanity check on the results:
-is the population in each \verb|large_area| between 0 and the total
+is the population in each \verb|faz| between 0 and the total
 population in all the grid cells?  (See Section
 \ref{sec:programming-by-contract}.)  Finally, a unit test is defined
 for this variable. \variablesindex This unit test, as with any other
@@ -631,19 +635,6 @@ small example (Section \ref{sec:unit-tests}). The
 \verb|if__name__=='__main__':| part at the end means that the test
 will be run if the file is run from the command line, but not if it
 is merely imported.
-
-Aside: Why not iterate over grid cells instead, you ask, since it's
-ultimately the grid cells that keep track of households and hence
-population?  One reason is that in this implementation grid cells
-know about the \verb|faz_id| \fazindex that contains the grid cell,
-but not the \verb|large_area_id|\@.  So it wouldn't work.  We could
-add the \verb|large_area_id| to each grid cell to make this work,
-but that would use extra space (there are a lot of grid cells).
-Further, if the populations of the FAZ's \fazindex are needed for
-any other purposes, these values will be computed on demand and
-cached
---- and there are way fewer FAZ's \fazindex than grid cells, making
-the \verb|large_area| computation more efficient.
 
 %%% Local Variables:
 %%% mode: latex
