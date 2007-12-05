@@ -22,16 +22,19 @@ from Config.opusDataModel import OpusDataModel
 from Config.opusDataDelegate import OpusDataDelegate
 #from Run.opusRunGui import RunModelGui
 from Run.opusRunModel import OpusModel
+from Run.opusRunScript import *
 
 # General system includes
 import os, sys,string
 
   
 class XMLTree(object):
-  def __init__(self, parent,path):
+  def __init__(self, parent,path,xmlType,parentWidget):
     self.parent = parent.parent
     self.parentTool = parent
     self.path = path
+    self.xmlType = xmlType
+    self.parentWidget = parentWidget
     self.groupBox = QGroupBox(self.parent)
     self.groupBoxLayout = QVBoxLayout(self.groupBox)
     # Play with the new tree view here
@@ -40,7 +43,7 @@ class XMLTree(object):
     if self.configFile.open(QIODevice.ReadWrite):
       self.doc = QDomDocument()
       self.doc.setContent(self.configFile)
-      self.model = OpusDataModel(self.doc, self.parent, self.configFile, True)
+      self.model = OpusDataModel(self.doc, self.parent, self.configFile, self.xmlType, True)
       self.view = QTreeView(self.parent)
       self.delegate = OpusDataDelegate(self.view)
       self.view.setItemDelegate(self.delegate)
@@ -55,7 +58,8 @@ class XMLTree(object):
 
       self.groupBoxLayout.addWidget(self.view)
       self.groupBox.setTitle(QFileInfo(self.xml_file).filePath())
-      self.parent.gridlayout3.addWidget(self.groupBox)
+      #self.parent.gridlayout3.addWidget(self.groupBox)
+      self.parentWidget.addWidget(self.groupBox)
 
       # Hook up to the mousePressEvent and pressed
       self.view.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -75,8 +79,10 @@ class XMLTree(object):
       QObject.connect(self.act3, SIGNAL("triggered()"), self.action3)
       self.act4 = QAction(self.calendarIcon, "Action4", self.parent)
       QObject.connect(self.act4, SIGNAL("triggered()"), self.action4)
-      self.actOpenFile = QAction(self.calendarIcon, "Open File", self.parent)
-      QObject.connect(self.actOpenFile, SIGNAL("triggered()"), self.openFile)
+      self.actOpenXMLFile = QAction(self.calendarIcon, "Open XML File", self.parent)
+      QObject.connect(self.actOpenXMLFile, SIGNAL("triggered()"), self.openXMLFile)
+      self.actExecScriptFile = QAction(self.calendarIcon, "Exec Script", self.parent)
+      QObject.connect(self.actExecScriptFile, SIGNAL("triggered()"), self.execScriptFile)
     else:
       print "Error reading config"
 
@@ -95,7 +101,7 @@ class XMLTree(object):
            self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
     #print "Trying to remove %s group box" % (self.groupBox.title())
     self.groupBox.hide()
-    self.parent.gridlayout3.removeWidget(self.groupBox)
+    self.parent.parentWidget.removeWidget(self.groupBox)
 
   def action2(self):
     print "action2 context pressed with column = %s and item = %s" % \
@@ -109,7 +115,44 @@ class XMLTree(object):
     print "action4 context pressed with column = %s and item = %s" % \
           (self.currentColumn, self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
 
-  def openFile(self):
+  def execScriptFile(self):
+    print "Exec Script Pressed"
+    # First find the script path...
+    scriptPath = ""
+    if self.currentIndex.internalPointer().parent().node().hasChildNodes():
+      children = self.currentIndex.internalPointer().parent().node().childNodes()
+      for x in xrange(0,children.count(),1):
+        if children.item(x).isElement():
+            domElement = children.item(x).toElement()
+            if not domElement.isNull():
+              if domElement.attribute(QString("name")) == QString("script_path"):
+                if domElement.hasChildNodes():
+                  children2 = domElement.childNodes()
+                  for x2 in xrange(0,children2.count(),1):
+                    if children2.item(x2).isText():
+                      scriptPath = children2.item(x2).nodeValue()
+    if scriptPath != "":
+      baseInfo = QFileInfo(self.xml_file)
+      baseDir = baseInfo.absolutePath()
+      newFile = QString(baseDir).append("/").append(QString(scriptPath))
+      sys.path.append(newFile)
+      
+    filePath = ""
+    if self.currentIndex.internalPointer().node().hasChildNodes():
+      children = self.currentIndex.internalPointer().node().childNodes()
+      for x in xrange(0,children.count(),1):
+        if children.item(x).isText():
+          filePath = children.item(x).nodeValue()
+    #fileInfo = QFileInfo(filePath)
+    #baseInfo = QFileInfo(self.xml_file)
+    #baseDir = baseInfo.absolutePath()
+    #newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
+    print "New File", filePath
+    x = OpusScript(self.parent,filePath)
+    y = RunScriptThread(self.parent,x)
+    y.run()
+    
+  def openXMLFile(self):
     print "Open File context pressed with column = %s and item = %s" % \
           (self.currentColumn, self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
     filePath = ""
@@ -149,16 +192,20 @@ class XMLTree(object):
         domElement = domNode.toElement()
         if domElement.isNull():
           return QVariant()
-        if domElement.tagName() == QString("configuration"):
+        if domElement.tagName() == QString("scenario_manager"):
           self.menu = QMenu(self.parent)
           if domElement.attribute(QString("executable")) == QString("True"):
             self.menu.addAction(self.actRunModel)
             self.menu.addSeparator()
           self.menu.addAction(self.actRemoveTree)
-          self.menu.exec_(QCursor.pos())          
+          self.menu.exec_(QCursor.pos())
         elif domElement.attribute(QString("type")) == QString("file"):
           self.menu = QMenu(self.parent)
-          self.menu.addAction(self.actOpenFile)
+          self.menu.addAction(self.actOpenXMLFile)
+          self.menu.exec_(QCursor.pos())
+        elif domElement.attribute(QString("type")) == QString("script_file"):
+          self.menu = QMenu(self.parent)
+          self.menu.addAction(self.actExecScriptFile)
           self.menu.exec_(QCursor.pos())
         else:
           self.menu = QMenu(self.parent)
@@ -176,7 +223,7 @@ class ToolboxBase(object):
 
     self.tabWidget = self.parent.tabWidget
     self.toolBox = self.parent.toolBox
-    self.datamanager_tree = self.parent.datamanager_tree
+    #self.datamanager_tree = self.parent.datamanager_tree
     self.modelmanager_tree = self.parent.modelmanager_tree
     self.resultsmanager_tree = self.parent.resultsmanager_tree
     
@@ -191,12 +238,13 @@ class ToolboxBase(object):
     QObject.connect(self.toolBox, SIGNAL("currentChanged(int)"),
                     self.toolBoxChanged)
 
-    self.datamanager_tree.resizeColumnToContents(0)
+    #self.datamanager_tree.resizeColumnToContents(0)
     self.modelmanager_tree.resizeColumnToContents(0)
     self.resultsmanager_tree.resizeColumnToContents(0)
 
     self.view = None
     self.runManagerTrees = []
+    self.dataManagerTrees = []
     #self.runManagerTreeContainer = QScrollArea(self.parent)
     #self.runManagerVBoxLayout = QVBoxLayout(self.runManagerTreeContainer)
     #self.runManagerVBoxLayout.setObjectName("runManagerVBoxLayout")
@@ -206,7 +254,8 @@ class ToolboxBase(object):
     pass
   
   def openXMLTree(self, xml_file):
-    self.runManagerTrees.append(XMLTree(self,xml_file))    
+    self.runManagerTrees.append(XMLTree(self,xml_file,"scenario_manager",self.parent.gridlayout3))    
+    self.dataManagerTrees.append(XMLTree(self,xml_file,"data_manager",self.parent.gridlayout1))    
 
   def updateTabs(self, listOfTabs):
     # Here we can update to show current tabs

@@ -1,5 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<configuration executable="True">
+
+<opus_project>
+
+<data_manager>
+
+<item name="script batch" type="script_batch">
+<item name="script path" type="script_path">../scripts</item>
+<item name="processing script 1" type="script_file">test</item>
+</item>
+
+</data_manager>
+
+
+
+<scenario_manager executable="True">
 
 <item name="parent" type="file" parser_action="parent">../urbansim/baseline.xml</item>
 
@@ -138,4 +152,7 @@
   </item>
 </item>
 
-</configuration>
+</scenario_manager>
+
+<opus_project>
+

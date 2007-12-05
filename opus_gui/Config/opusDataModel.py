@@ -19,13 +19,14 @@ from PyQt4.QtXml import *
 from opusDataItem import OpusDataItem
 
 class OpusDataModel(QAbstractItemModel):
-    def __init__(self, document, parent, configFile, editable):
+    def __init__(self, document, parent, configFile, xmlType, editable):
         QAbstractItemModel.__init__(self, parent)
 
         self.editable = editable
         self.configFile = configFile
         self.parentObj = parent
         self.domDocument = document
+        self.xmlType = xmlType
         
         # Root data for use in column headers
         self.rootData = []
@@ -34,8 +35,18 @@ class OpusDataModel(QAbstractItemModel):
         self.rootData.append(QVariant("Value"))
 
         # Get the XML config data
-        self._rootItem = OpusDataItem(document,0,self)
-        self._rootItem.initAsRootItem()
+        self.xmlRoot = document.elementsByTagName(QString(self.xmlType)).item(0)
+        print "Searching for ", self.xmlType
+        #self.xmlRoot = self.findXMLRoot(document, self.xmlType)
+        if self.xmlRoot == None:
+            print "No XML elements in the root with type ", self.xmlType
+            return
+        print "Found ", self.xmlRoot.nodeName()
+        self._rootItem = OpusDataItem(document, 0, self)
+        #self._rootItem = OpusDataItem(self.xmlRoot, 0, self)
+        self._rootItemSub = OpusDataItem(self.xmlRoot, 0, self._rootItem)
+        self._rootItemSub.initAsRootItem()
+        self._rootItem.childItems.append(self._rootItemSub)
         #print "We have %s child items in the root" % (len(self._rootItem.childItems))
         # Build the index tree...
         
@@ -82,6 +93,16 @@ class OpusDataModel(QAbstractItemModel):
                                   QIcon.Normal, QIcon.On)
         self.bookmarkIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_FileIcon))
 
+    def findXMLRoot(self,doc,tp):
+        i = 0
+        childNode = None
+        for x in xrange(0,doc.childNodes().count(),1):
+            current = doc.childNodes().item(x)
+            print "FOO",current.attributes().namedItem(QString("type")).nodeValue()
+            if (current.attributes().namedItem(QString("type")).nodeValue() == QString(tp)) and (current.nodeType() == QDomNode.ElementNode):
+                childNode = current
+        return childNode
+    
     def iconFromType(self, attType):
         typeMap = {"string":self.fieldIcon,
                    "path":self.folderDatabaseIcon,
@@ -131,7 +152,8 @@ class OpusDataModel(QAbstractItemModel):
                     #return QVariant(self.database)
                     return QVariant(self.iconFromType(domElement.attribute(QString("type"))))
                 elif role == Qt.DisplayRole:
-                    if domElement.tagName() == QString("configuration"):
+                    if domElement.tagName() == QString("scenario_manager") or \
+                           domElement.tagName() == QString("data_manager"):
                         if domElement.attribute(QString("executable")) == QString("True"):
                             return QVariant(domElement.tagName().append(QString(" - executable")))
                         else:
