@@ -17,6 +17,8 @@ import os
 from opus_core.indicator_framework.utilities.indicator_meta_data import IndicatorMetaData
 from opus_core.indicator_framework.core.indicator_data_manager import IndicatorDataManager
 from opus_core.indicator_framework.core.source_data import SourceData
+from opus_core.logger import logger
+
 
 class IndicatorResults(object):
     """  Takes the descriptions and locations of precomputed indicators 
@@ -74,7 +76,7 @@ class IndicatorResults(object):
                 indicators += self.data_manager.import_indicators(
                                  indicator_directory = dir)
             except: 
-                pass
+                logger.log_warning('Could not load indicators from directory %s'%dir)
         
         rows = []
         self._output_body(source_data, indicators, rows)

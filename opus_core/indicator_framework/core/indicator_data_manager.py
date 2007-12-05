@@ -14,6 +14,7 @@
 import re
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.indicator_framework.core.source_data import SourceData
+from opus_core.logger import logger
 
 class IndicatorDataManager:
     
@@ -83,7 +84,7 @@ class IndicatorDataManager:
                  indicator = self._import_indicator_from_file(f) 
                  indicators.append(indicator)
             except:
-                pass
+                logger.log_warning('Could not load indicator from %s'%f)
         return indicators        
     
     '''not in use yet'''
