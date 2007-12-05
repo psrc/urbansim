@@ -71,17 +71,17 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.toolboxStuff = ToolboxBase(self)
 
     self.runManagerStuff = RunManagerBase(self)
-    flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | \
-            Qt.WindowMaximizeButtonHint 
-    self.runManagerGui = RunModelGui(self,flags)
-    self.runManagerStuff.setGui(self.runManagerGui)
+    #flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | \
+    #        Qt.WindowMaximizeButtonHint 
+    #self.runManagerGui = RunModelGui(self,flags)
+    self.runManagerStuff.setGui(self)
 
     #time.sleep(2)
     self.splash.hide()
 
   def openRunManager(self):
     print "Open Run Manager pressed..."
-    self.runManagerGui.show()
+    #self.runManagerGui.show()
     #self.runManagerGui.activateWindow()
 
   def openProject(self):

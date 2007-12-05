@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusMain.ui'
 #
-# Created: Mon Nov 19 15:21:24 2007
+# Created: Tue Dec  4 22:26:15 2007
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!

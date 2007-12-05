@@ -20,7 +20,7 @@ from PyQt4.QtXml import *
 from Config.opusDataItem import OpusDataItem
 from Config.opusDataModel import OpusDataModel
 from Config.opusDataDelegate import OpusDataDelegate
-from Run.opusRunGui import RunModelGui
+#from Run.opusRunGui import RunModelGui
 from Run.opusRunModel import OpusModel
 
 # General system includes
@@ -87,7 +87,7 @@ class XMLTree(object):
     # Add the model to the run Q and fire up the GUI
     newModel = OpusModel(self,self.xml_file)
     self.parent.runManagerStuff.addNewModelRun(newModel)
-    self.parent.runManagerStuff.gui.show()
+    #self.parent.runManagerStuff.gui.show()
 
   def removeTree(self):
     print "remove tree pressed with column = %s and item = %s" % \
