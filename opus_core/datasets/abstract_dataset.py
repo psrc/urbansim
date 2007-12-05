@@ -740,14 +740,17 @@ class AbstractDataset(object):
         lname = len(name)
         for iattr in range(lname):
             attr_values = dataset.get_attribute_by_index(name[iattr], idx[idx_found])
-            if attr_values.dtype.kind == 'S':
-                if not isinstance(return_value_if_not_found, str):
-                    return_value_if_not_found = ""
-                values = array(self.size()*[return_value_if_not_found]).astype(attr_values.dtype)
-                values[idx_found] = attr_values
+            if idx_found.sum() == idx_found.size: # no missing value
+                values = attr_values
             else:
-                values = resize(array([return_value_if_not_found], dtype=attr_values.dtype), self.size())
-                values[idx_found] = ma.filled(attr_values, filled_value)
+                if attr_values.dtype.kind == 'S':
+                    if not isinstance(return_value_if_not_found, str):
+                        return_value_if_not_found = ""
+                    values = array(self.size()*[return_value_if_not_found]).astype(attr_values.dtype)
+                    values[idx_found] = attr_values
+                else:
+                    values = resize(array([return_value_if_not_found], dtype=attr_values.dtype), self.size())
+                    values[idx_found] = ma.filled(attr_values, filled_value)
             if lname > 1:
                 if iattr == 0:
                     result = {}
