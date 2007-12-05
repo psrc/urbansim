@@ -93,7 +93,6 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                               "data_objects": "datasets",
                               "debuglevel": 'debuglevel',
                               #'procedure': "'opus_core.bma_for_linear_regression_r'",
-                              'procedure': "'opus_core.linear_regression'"
                               },
                 "output": "(coefficients, dummy)"
                 }
