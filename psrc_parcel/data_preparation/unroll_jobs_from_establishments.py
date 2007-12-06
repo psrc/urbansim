@@ -143,7 +143,7 @@ class UnrollJobsFromEstablishments:
                     if eligible_sum > 0:
                         where_eligible = where(eligible)[0]
                         if eligible_sum <= to_be_removed-this_removal:
-                            draw = where_eligible
+                            draw = arange(eligible_sum)
                         else:
                             draw = sample_noreplace(where_eligible, to_be_removed-this_removal, eligible_sum)
                         remove = concatenate((remove, where_eligible[draw]))
