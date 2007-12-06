@@ -141,11 +141,12 @@ class UnrollJobsFromEstablishments:
                         eligible = logical_and(not_considered, in_zone_in_sector)
                     eligible_sum = eligible.sum()
                     if eligible_sum > 0:
+                        where_eligible = where(eligible)[0]
                         if eligible_sum <= to_be_removed-this_removal:
-                            draw = where(eligible)[0]
+                            draw = where_eligible
                         else:
-                            draw = sample_noreplace(where(eligible)[0], to_be_removed-this_removal, eligible_sum)
-                        remove = concatenate((remove, draw))
+                            draw = sample_noreplace(where_eligible, to_be_removed-this_removal, eligible_sum)
+                        remove = concatenate((remove, where_eligible[draw]))
                         this_removal += draw.size
                         if this_removal >= to_be_removed:
                             break
