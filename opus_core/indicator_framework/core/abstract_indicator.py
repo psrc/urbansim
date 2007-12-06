@@ -37,7 +37,8 @@ class AbstractIndicator(object):
     def __init__(self, source_data, dataset_name, attributes, 
                  years = None, operation = None, name = None,
                  suppress_file_extension_addition = False,
-                 storage_location = None, can_write_to_db = False):
+                 storage_location = None, can_write_to_db = False,
+                 check_integrity = True):
 
         self.dataset_name = dataset_name 
         self.attributes = attributes
@@ -45,10 +46,10 @@ class AbstractIndicator(object):
         self.source_data = source_data
         self.suppress_file_extension_addition = suppress_file_extension_addition
         
-        cache_directory = self.source_data.cache_directory
+        self.cache_directory = self.source_data.cache_directory
         
         if storage_location is None:
-            storage_location = os.path.join(cache_directory, 'indicators')
+            storage_location = os.path.join(self.cache_directory, 'indicators')
         self.storage_location = storage_location
                 
         storage_location_is_db = isinstance(storage_location, Database)
@@ -83,9 +84,10 @@ class AbstractIndicator(object):
             
         self.data_manager = IndicatorDataManager()
         
-        self._set_cache_directory(cache_directory)
+        self._set_cache_directory(self.cache_directory)
         
-        self._check_integrity()
+        if check_integrity: 
+            self._check_integrity()
 
     def get_storage_location(self):
         return self.storage_location
@@ -235,7 +237,7 @@ class AbstractIndicator(object):
                 filler = [-1 for i in range(max_size - len(results[year]))]
                 results[year] = concatenate((results[year],filler))
                     
-        return array(results), list(years_found)
+        return array(results), sorted(list(years_found))
 
     def _get_indicator(self, year, attributes = None, wrap = True):
         if attributes is None: 

@@ -83,8 +83,8 @@ class IndicatorDataManager:
             try:
                  indicator = self._import_indicator_from_file(f) 
                  indicators.append(indicator)
-            except:
-                logger.log_warning('Could not load indicator from %s'%f)
+            except Exception, e:
+                logger.log_warning('Could not load indicator from %s: %s'%(f,e))
         return indicators        
     
     '''not in use yet'''
@@ -158,6 +158,8 @@ class IndicatorDataManager:
                         params[name] = value
 
         f.close()
+        cache_directory = os.path.split(os.path.dirname(file_path).split()[0])[0]
+        source_data_params['cache_directory'] = cache_directory
         indicator = self._create_indicator(indicator_class, 
                                            params,
                                            non_constructor_attr,

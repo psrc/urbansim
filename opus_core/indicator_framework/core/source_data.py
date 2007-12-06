@@ -29,7 +29,8 @@ class SourceData(object):
                  cache_directory, 
                  comparison_cache_directory = '',
                  years = [],
-                 run_description = ''):
+                 run_description = '',
+                 check_integrity = True):
         
         self.dataset_pool_configuration = dataset_pool_configuration
         self.years = years            
@@ -37,7 +38,8 @@ class SourceData(object):
         self.comparison_cache_directory = comparison_cache_directory
         self.run_description = run_description         
             
-        self._check_integrity()
+        if check_integrity:
+            self._check_integrity()
             
     def get_run_description(self):
         if self.run_description == '':

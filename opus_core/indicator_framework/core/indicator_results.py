@@ -79,7 +79,7 @@ class IndicatorResults(object):
                 logger.log_warning('Could not load indicators from directory %s'%dir)
         
         rows = []
-        self._output_body(source_data, indicators, rows)
+        self._output_body(indicators, rows)
         
         unique_rows = dict([(' '.join(x), x) for x in rows])
         #rows_by_date_dict = dict([(x[4],x) for x in unique_rows.itervalues()])
@@ -107,7 +107,7 @@ class IndicatorResults(object):
         
         return file.name
 
-    def _output_body(self, source_data, indicators, rows, test = False):
+    def _output_body(self, indicators, rows, test = False):
         """ Generates the html for the indicators. 
         
             Finds the indicator file for every year each of the indicators 
@@ -373,7 +373,8 @@ class IndicatorResultsTests(TestWithAttributeData):
             for rqst in requests:
                 rqst.source_data = self.source_data
             rows = []
-            self.i_results._output_body(self.source_data, requests, rows, test = True)
+            self.i_results._output_body(#self.source_data, 
+                                        requests, rows, test = True)
             
             for i in range(len(output)):
                 if output[i] != rows[i]:
