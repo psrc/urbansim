@@ -8,6 +8,10 @@
   
   <scenario_manager>
     <item type="scenario" name="Eugene baseline" >
+      <item name="parent" type="dictionary" parser_action="parent_old_format">
+        <item name="Class name" type="string">GeneralConfiguration</item>
+        <item name="Class path" type="string">urbansim.configs.general_configuration</item>
+      </item>
       <item type="integer" name="base_year" >1980</item>
       <item config_name="years" type="tuple" name="years to run" >
         <item type="integer" name="startyear" >1981</item>

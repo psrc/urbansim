@@ -30,7 +30,7 @@ from urbansim.simulation.run_simulation_from_mysql import RunSimulationFromMysql
 
 # find the directory containing the eugene xml configurations
 inprocessdir = __import__('inprocess').__path__[0]
-path = os.path.join(inprocessdir, 'configurations', 'projects', 'standard_projects', 'eugene_gridcell', 'run_manager', 'main.xml')
+path = os.path.join(inprocessdir, 'configurations', 'projects', 'eugene_gridcell.xml')
 
 class SimulationTest(opus_unittest.OpusTestCase):
     
@@ -38,7 +38,7 @@ class SimulationTest(opus_unittest.OpusTestCase):
         self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
         self.simulation = RunSimulationFromMysql()
         # run_configuration = Baseline()
-        run_configuration = XMLConfiguration(path)
+        run_configuration = XMLConfiguration(path).get_run_configuration('Eugene baseline')
         run_configuration['creating_baseyear_cache_configuration'].cache_directory_root = self.temp_dir
         run_configuration['cache_directory'] = os.path.join(self.temp_dir, 'eugene')
         self.simulation.prepare_for_simulation(run_configuration)
@@ -54,7 +54,7 @@ class SimulationTest(opus_unittest.OpusTestCase):
                 logger.log_warning('Problem during simulation. Not removing database: %s' % self.simulation.config['output_configuration'].database_name)
             logger.log_warning('Problem during simulation. Not removing temporary directory: %s' % self.temp_dir)
    
-    def skip_test_simulation(self):
+    def test_simulation(self):
         """Checks that the simulation proceeds without caching.
         """
         self.simulation.run_simulation()
