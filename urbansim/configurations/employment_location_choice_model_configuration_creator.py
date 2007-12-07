@@ -40,6 +40,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
     variable_package = Trait("urbansim", Str, Str)
     maximum_runs = Int(3)
     input_index = Str('erm_index')
+    estimation_procedure = Str('opus_core.bhhh_mnl_estimation')
     
     coefficients_table = Str('employment_location_choice_model_coefficients')
     specification_table = Str('employment_location_choice_model_specification')
@@ -80,6 +81,7 @@ class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
                 'arguments': {
                     'sampler': get_string_or_None(self.sampler),
                     'choices': "'%s'" % self.choices,
+                    'estimation': "'%s'" % self.estimation_procedure,
                     'dataset_pool': 'dataset_pool',
                     'location_set': self.location_set,
                     'sample_size_locations': self.sample_size_locations,
@@ -166,6 +168,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                 'arguments': {
                     'sampler': "'opus_core.samplers.weighted_sampler'",
                     'choices': "'urbansim.lottery_choices'",
+                    'estimation': "'opus_core.bhhh_mnl_estimation'",
                     'dataset_pool': 'dataset_pool',
                     'location_set': 'gridcell',
                     'sample_size_locations': 30,
@@ -229,6 +232,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
             debuglevel = 8888,
             sampler = None,
             choices = 'package.choices',
+            estimation_procedure = 'opus_core.my_estimation_procedure',
             location_set = 'location_set',
             portion_to_unplace = 7777.7,
             records_per_chunk = 6666,
@@ -260,6 +264,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                 'arguments': {
                     'sampler': None, 
                     'choices': "'package.choices'",
+                    'estimation': "'opus_core.my_estimation_procedure'",
                     'dataset_pool': 'dataset_pool',
                     'location_set': 'location_set',
                     'sample_size_locations': 9999,
