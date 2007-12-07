@@ -883,6 +883,8 @@ class AbstractDataset(object):
         """
         myids = self.get_id_attribute()
         if isinstance(what, ma.array):
+            where_masked = where(what.mask)[0]
+            ids[where_masked] = 0 # do not consider those elements in the computation
             filled_what = ma.filled(what, 0)
         else:
             filled_what = what
