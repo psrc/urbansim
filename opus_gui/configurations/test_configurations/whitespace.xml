@@ -4,11 +4,15 @@
 <!-- this configuration has a bunch of comments 
    and whitespace -->
    
+<opus_project>
+
+<scenario_manager>
+<item type="scenario" name="test_scenario" >
    
-   
- 
-<configuration>
+
 <item name="description" type="string">a test configuration</item>
   <!-- another comment -->
   
-</configuration>
+</item>
+</scenario_manager>
+</opus_project>

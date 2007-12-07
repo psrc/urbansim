@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<configuration>
+<opus_project>
+<scenario_manager>
+<item type="scenario" name="test_scenario" >
 
 <item name="description" type="string">category test</item>
 
@@ -23,5 +25,6 @@
   </item>
 </item>
 
-
-</configuration>
+</item>
+</scenario_manager>
+</opus_project>

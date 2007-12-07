@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <opus_project>
 <scenario_manager>
-<item type="scenario" name="test_scenario" >
+<item type="scenario" name="test_scenario3" >
 
 <item name="s" type="string">teststring</item>
-<item name="u" type="unicode">testunicode</item>
 
 </item>
 </scenario_manager>

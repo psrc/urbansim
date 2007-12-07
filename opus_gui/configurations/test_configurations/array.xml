@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<configuration>
+<opus_project>
+<scenario_manager>
+<item type="scenario" name="test_scenario" >
 
 <item name="arraytest" type="array">
 [100, 300]
 </item>
 
-</configuration>
+</item>
+</scenario_manager>
+</opus_project>

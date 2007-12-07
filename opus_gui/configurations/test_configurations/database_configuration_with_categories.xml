@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<configuration>
+<opus_project>
+<scenario_manager>
+<item type="scenario" name="test_scenario" >
 
 <item name="input_configuration" type="class">
   <item name="Class name" type="string">DatabaseConfiguration</item>
@@ -14,4 +16,6 @@
   <item name="database_name" type="string">river_city_baseyear</item>
 </item>
 
-</configuration>
+</item>
+</scenario_manager>
+</opus_project>
