@@ -884,15 +884,17 @@ class AbstractDataset(object):
         myids = self.get_id_attribute()
         if isinstance(what, ma.array):
             where_masked = where(what.mask)[0]
-            ids[where_masked] = 0 # do not consider those elements in the computation
+            ids_local = ids.copy()
+            ids_local[where_masked] = 0 # do not consider those elements in the computation
             filled_what = ma.filled(what, 0)
         else:
             filled_what = what
+            ids_local = ids
         try:
             # formerly: values = eval("ndimage."+function+"(filled_what, labels=ids, index=myids)")
             # f is the function from ndimage
             f = getattr(ndimage, function)
-            values = f(*[filled_what], **{'labels': ids, 'index': myids})
+            values = f(*[filled_what], **{'labels': ids_local, 'index': myids})
             result = array(values)
         except:
             raise StandardError, "Unknown function " + function + " or error occured during evaluation."
