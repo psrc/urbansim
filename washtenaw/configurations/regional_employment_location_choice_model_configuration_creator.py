@@ -61,6 +61,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                 'arguments': {
                     'sampler': "'opus_core.samplers.weighted_sampler'",
                     'choices': "'urbansim.lottery_choices'",
+                    'estimation': "'opus_core.bhhh_mnl_estimation'",
                     'dataset_pool': 'dataset_pool',
                     'location_set': 'gridcell',
                     'sample_size_locations': 30,
