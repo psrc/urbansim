@@ -38,10 +38,10 @@ class XMLConfiguration(object):
         f.close()
         
     def get_run_configuration(self, name):
-        """extract the run configuration from this xml project and return it"""
+        """extract the run configuration named 'name' from this xml project and return it"""
         scenario_section = self._get_section('scenario_manager')
         scenario = self._get_item_named(name, scenario_section)
-        return self._node_to_dict(scenario)
+        return self._node_to_config(scenario)
 
     def _get_section(self, section_name):
         # convert the named section to a dictionary and return the dictionary
@@ -63,40 +63,44 @@ class XMLConfiguration(object):
             node = node.nextSibling()
         raise ValueError, "didn't find an xml item named %s" % name
     
-    def _node_to_dict(self, node):
-        result = {}
+    def _node_to_config(self, node):
+        changes = {}
+        parent = None
         child = node.firstChild()
         while not child.isNull():
             if self._is_good_node(child):
                 e = child.toElement()
                 if e.tagName()!='item':
                     raise ValueError, "malformed xml - expected a tag 'item' "
-                self._add_to_dict(e, result)
+                p = str(e.attributes().namedItem('parser_action').nodeValue())
+                if p=='parent':
+                    if parent is not None:
+                        raise ValueError, 'multiple parent declarations'
+                    parent = self._get_parent(e)
+                elif p=='parent_old_format':
+                    if parent is not None:
+                        raise ValueError, 'multiple parent declarations'
+                    parent = self._get_parent_old_format(e)
+                else:
+                    self._add_to_dict(e, changes)
             child = child.nextSibling()
-        return result
-        
-    def _process_parent(self, node):
+        if parent is None:
+            parent = Configuration()
+        parent.merge(changes)
+        return parent
+    
+    def _get_parent(self, node):
         # Process a node specifying the parent configuration defined using  
-        # another XML file.
-        # This code actually allows multiple parents, which will be merged together with 
-        # parents listed later overriding ones listed earlier.  This could be disallowed - 
-        # although it might be useful, and doesn't cost anything to support.
-        parentfilename = str(node.firstChild().nodeValue())
-        # dir is the path to the directory containing the xml file named by filename
-        # if the parent file name is relative, find it relative to dir (join will ignore
-        # dir if the parent file name is absolute)
-        dir = os.path.split(os.path.abspath(filename))[0]
-        fullpath = os.path.join(dir, parentfilename)
-        parent = XMLConfiguration(fullpath)
-        self.merge(parent)
+        # another scenario.
+        parent_name = str(node.firstChild().nodeValue())
+        return self.get_run_configuration(parent_name)
 
-    def _process_parent_old_format(self, node):
+    def _get_parent_old_format(self, node):
         # Process a node specifying the parent configuration defined using  
         # n old-style configuration.  (This is a 
         # backward compatibility hack, and should be eventually removed.)
         d = self._convert_node_to_data(node)
-        parent = self._make_instance(d['Class name'], d['Class path'])
-        self.merge(parent)
+        return self._make_instance(d['Class name'], d['Class path'])
 
     def _add_to_dict(self, node, result_dict):
         # 'node' should be an element node representing a key-value pair to be added to 
@@ -360,14 +364,14 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                                   'dir1': 'testdir', 
                                   'dir2': os.path.join(prefix, 'testdir')})
         
-    def skip_test_xml_inheritance(self):
+    def test_xml_inheritance(self):
         # test inheritance with a chain of xml configurations
         f = os.path.join(self.test_configs, 'childconfig.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         self.assertEqual(config, 
             {'description': 'this is the child', 'year': 2000, 'modelname': 'widgetmodel'})
             
-    def skip_test_old_config_inheritance(self):
+    def test_old_config_inheritance(self):
         # test inheriting from an old-style configuration 
         # (backward compatibility functionality - may be removed later)
         f = os.path.join(self.test_configs, 'childconfig_oldparent.xml')
@@ -389,14 +393,6 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                           'years': (1980, 1981),
                           'bool2': False,
                           'int2': 13})
-
-    def skip_test_include(self):
-        f = os.path.join(self.test_configs, 'include_test.xml')
-        config = XMLConfiguration(f).get_run_configuration('test_scenario')
-        self.assertEqual(config, 
-                         {'description': 'include test',
-                          'mystring': 'an included string',
-                          'myint': 42})
 
     def test_list_to_dict(self):
         f = os.path.join(self.test_configs, 'list_to_dict.xml')

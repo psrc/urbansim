@@ -1,7 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<configuration>
+<opus_project>
+<scenario_manager>
 
-<item name="parent" type="file" parser_action="parent">parentconfig.xml</item>
+<item type="scenario" name="test_scenario">
+<item name="parent" type="string" parser_action="parent">parent_scenario</item>
 <item name="description" type="string">this is the child</item>
+</item>
 
-</configuration>
+<item type="scenario" name="parent_scenario">
+<item name="parent" type="string" parser_action="parent">grandparent_scenario</item>
+<item name="description" type="string">this is the parent</item>
+<item name="year" type="integer">2000</item>
+</item>
+
+<item type="scenario" name="grandparent_scenario">
+<item name="description" type="string">this is the grandparent</item>
+<item name="year" type="integer">1980</item>
+<item name="modelname" type="string">widgetmodel</item>
+</item>
+
+</scenario_manager>
+</opus_project>
