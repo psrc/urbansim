@@ -27,4 +27,6 @@ class elcm_configuration(parent_config):
                 'job':{},
                 'job_building_type':{}                                   
                 }
+        run_configuration["models"].insert(0,
+                    {"real_estate_price_model": ["run"]})
         return run_configuration
