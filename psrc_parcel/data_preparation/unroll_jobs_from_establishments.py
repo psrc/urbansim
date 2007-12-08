@@ -55,6 +55,7 @@ class UnrollJobsFromEstablishments:
     
     minimum_sqft = 1
     maximum_sqft = 4000
+    governmental_sectors = [15, 16, 18, 19]
     
     def run(self, in_storage, out_storage, business_table="business", jobs_table="jobs", control_totals_table=None):
         logger.log_status("Unrolling %s table." % business_table)
@@ -105,6 +106,17 @@ class UnrollJobsFromEstablishments:
         jobs_data["job_id"] = arange(total_size)+1
         jobs_data["sqft"] = clip(jobs_data["sqft"], 0, self.maximum_sqft)
         jobs_data["sqft"][logical_and(jobs_data["sqft"]>0, jobs_data["sqft"]<self.minimum_sqft)] = self.minimum_sqft
+        
+        # correct missing job_building_types
+        wmissing_bt = where(jobs_data["building_type"]<=0)[0]
+        if wmissing_bt.size > 0:
+            jobs_data["building_type"][wmissing_bt] = 2 # assign non-homebased type for now. It can be re-classified in the assign_bldgs_to_jobs... script
+        # assign governmental building type 3 to the appropriate sectors
+        for sec in self.governmental_sectors:
+            wsec = where(jobs_data["sector_id"] == sec)[0]
+            if wsec.size > 0:
+                jobs_data["building_type"][wsec] = 3
+        
         # create jobs table and write it out
         storage = StorageFactory().get_storage('dict_storage')
         storage.write_table(
@@ -186,7 +198,7 @@ if __name__ == '__main__':
     #business_table = "est00_match_bldg2005_flag123457_flag12bldg"
     business_table = "businesses"
     control_totals_table = "employment_control_total_zone_2000_flattened"
-    input_database_name = "psrc_2005_parcel_baseyear_change_hyungtai_rerun"
+    input_database_name = "psrc_2005_parcel_baseyear_data_prep_business"
     #input_database_name = "psrc_2005_parcel_baseyear_change_20070713"
     #input_database_name = "psrc_2005_data_workspace_hana"
     output_database_name = "psrc_2005_parcel_baseyear_data_prep_start"
