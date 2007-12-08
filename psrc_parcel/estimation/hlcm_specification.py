@@ -29,7 +29,7 @@ specification = {
             #"ln_value_per_unit = ln(urbansim_parcel.building.unit_price)",
           #  "value_per_unit_gt_500 = urbansim_parcel.building.unit_price > 500",
 
-           #"lnempden=(ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_per_acre))).astype(float32)",
+           "lnempden=(ln(building.disaggregate(urbansim_parcel.zone.number_of_jobs_per_acre))).astype(float32)",
            "lnpopden=(ln(building.disaggregate(urbansim_parcel.zone.population_per_acre))).astype(float32)",
 
 
@@ -37,8 +37,6 @@ specification = {
            # "ln_parcel_sf = ln(building.disaggregate(parcel.parcel_sqft))",
             "ln_parcel_sf_per_unit = ln(urbansim_parcel.building.parcel_sqft_per_unit)",
    #         "ln_residential_units = ln(building.residential_units)",
-            #"lnretempwa = ln(building.disaggregate(psrc.parcel.retail_sector_employment_within_walking_distance))",
-            #"ln_emp_density=ln(building.disaggregate(psrc.zone.number_of_jobs_per_acre))",
             #"ln_avg_income =ln(building.disaggregate(urbansim_parcel.zone.average_income))",
             #"pct_low_income = building.disaggregate(psrc.parcel.percent_low_income_households_within_walking_distance)",
 
@@ -111,11 +109,12 @@ specification = {
             #"persons_x_avg_hhs = household.persons * building.disaggregate(zone.aggregate(household.persons, function=mean))",
            #"single_x_singles = household.persons==1 * building.disaggregate(zone.aggregate(household.persons==1))",
 
-            #"is_pre_1940 = building.year_built < 1940",
+           # "is_pre_1940 = building.year_built < 1940",
            # "urbansim_parcel.building.has_valid_year_built",
            "workers_ln_emp_30min_hbw_drive_alone =  household.workers * building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))",
 
            #"ln_emp_10min_hbw_walk_1person = (household.persons==1) * building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_walk))",
+           #"workers_ln_emp_10min_hbw_walk = household.workers * building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_walk))",
            #"ln_emp_40min_hbw_transit_walk_1person = (household.persons==1) * building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_40_minutes_travel_time_hbw_am_transit_walk))",
            #"ln_emp_30min_hbw_drive_alone_2persons =  (household.persons==2) * building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))",
            # "ln_emp_30min_hbw_drive_alone =  building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))",
