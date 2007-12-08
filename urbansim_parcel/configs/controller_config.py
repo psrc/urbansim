@@ -22,6 +22,8 @@ from urbansim.configurations.household_location_choice_model_configuration_creat
 from urbansim.configurations.employment_transition_model_configuration_creator import EmploymentTransitionModelConfigurationCreator
 from urbansim.configurations.employment_relocation_model_configuration_creator import EmploymentRelocationModelConfigurationCreator
 from urbansim.configurations.employment_location_choice_model_configuration_creator import EmploymentLocationChoiceModelConfigurationCreator
+from urbansim.configurations.governmental_employment_location_choice_model_configuration_creator import GovernmentalEmploymentLocationChoiceModelConfigurationCreator
+
 
 UNIT_PRICE_RANGE = (exp(3), exp(7))
 class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
@@ -55,7 +57,8 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                 "arguments": {"submodel_string": "'land_use_type_id'",
                               "outcome_attribute": "'ln_unit_price=ln(urbansim_parcel.parcel.unit_price)'",
                               "filter_attribute": "'numpy.logical_or(urbansim_parcel.parcel.building_sqft, urbansim_parcel.parcel.is_land_use_type_vacant)'",
-                              "dataset_pool": "dataset_pool"
+                              "dataset_pool": "dataset_pool",
+                              #"estimate_config": "{'estimation_size_agents':0.3}"
                               },
                 },
             "prepare_for_run": {
@@ -142,7 +145,13 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                 variable_package = "urbansim_parcel",
                                 lottery_max_iterations = 7
                                 ).execute(),
-                                       
+            'governmental_employment_location_choice_model': {
+                'controller': GovernmentalEmploymentLocationChoiceModelConfigurationCreator(
+                        input_index = 'erm_index',
+                        location_set = 'building',
+                        filter = 'urbansim_parcel.building.is_governmental'
+                        ).execute(),
+                    },                       
                 "household_relocation_model" : {
                     "import": {"urbansim.models.household_relocation_model_creator":
                                     "HouseholdRelocationModelCreator"
