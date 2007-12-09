@@ -322,19 +322,22 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_error_handling(self):
         # there isn't an xml configuration named badname.xml
         self.assertRaises(IOError, XMLConfiguration, 'badname.xml')
-        # badconfig1 doesn't have a root element called project
+        # badconfig1 has a syntax error in the xml
         f1 = os.path.join(self.test_configs, 'badconfig1.xml')
-        self.assertRaises(ValueError, XMLConfiguration, f1)
-        # badconfig2 is well-formed, but doesn't have a scenario_manager section 
-        # (so getting the run configuration from it doesn't work)
+        self.assertRaises(etree.XMLSyntaxError, XMLConfiguration, f1)
+        # badconfig2 doesn't have a root element called project
         f2 = os.path.join(self.test_configs, 'badconfig2.xml')
-        config2 = XMLConfiguration(f2)
-        self.assertRaises(ValueError, config2.get_run_configuration, 'test_scenario')
-        # badconfig3 is well-formed, with a scenario_manager section,
-        # but there isn't a scenario named test_scenario
+        self.assertRaises(ValueError, XMLConfiguration, f2)
+        # badconfig3 is well-formed, but doesn't have a scenario_manager section 
+        # (so getting the run configuration from it doesn't work)
         f3 = os.path.join(self.test_configs, 'badconfig3.xml')
-        config3 = XMLConfiguration(f2)
+        config3 = XMLConfiguration(f3)
         self.assertRaises(ValueError, config3.get_run_configuration, 'test_scenario')
+        # badconfig4 is well-formed, with a scenario_manager section,
+        # but there isn't a scenario named test_scenario
+        f4 = os.path.join(self.test_configs, 'badconfig4.xml')
+        config4 = XMLConfiguration(f4)
+        self.assertRaises(ValueError, config4.get_run_configuration, 'test_scenario')
         
 if __name__ == '__main__':
     opus_unittest.main()
