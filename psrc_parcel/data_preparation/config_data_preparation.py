@@ -21,6 +21,7 @@ from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfi
 from psrc_parcel.configs.household_location_choice_model_by_zones_configuration_creator import HouseholdLocationChoiceModelByZonesConfigurationCreator
 from urbansim.configurations.household_relocation_model_configuration_creator import HouseholdRelocationModelConfigurationCreator
 from psrc_parcel.configs.employment_location_choice_model_by_zones_configuration_creator import EmploymentLocationChoiceModelByZonesConfigurationCreator
+from psrc_parcel.configs.scaling_jobs_model_by_zones_configuration_creator import ScalingJobsModelByZonesConfigurationCreator
 from urbansim.configurations.employment_relocation_model_configuration_creator import EmploymentRelocationModelConfigurationCreator
 from numpy import array
 import os
@@ -68,6 +69,8 @@ class ConfigDataPreparation(PsrcParcelConfiguration):
               [
                 "employment_relocation_model",
                 {"employment_location_choice_model": {"group_members": "_all_" }},
+                "employment_relocation_model",
+                "governmental_employment_location_choice_model_without_filter"
                ]
            },
             "datasets_to_preload":{
@@ -132,6 +135,19 @@ class ConfigDataPreparation(PsrcParcelConfiguration):
                                 capacity_string = "urbansim_parcel.building.vacant_non_home_based_job_space",
                                 number_of_units_string = None,
                                 lottery_max_iterations=30
+                                ).execute()
+        self['models_configuration']['governmental_employment_location_choice_model'] = {}
+        self['models_configuration']['governmental_employment_location_choice_model']['controller'] = \
+                   ScalingJobsModelByZonesConfigurationCreator(
+                                location_set = "building",
+                                input_index = 'erm_index',
+                                filter = "urbansim_parcel.building.is_governmental"
+                                ).execute()
+        self['models_configuration']['governmental_employment_location_choice_model_without_filter'] = {}
+        self['models_configuration']['governmental_employment_location_choice_model_without_filter']['controller'] = \
+                   ScalingJobsModelByZonesConfigurationCreator(
+                                location_set = "building",
+                                input_index = 'erm_index',
                                 ).execute()
         self['models_configuration']['home_based_employment_location_choice_model'] = {}
         self['models_configuration']['home_based_employment_location_choice_model']['controller'] = \
