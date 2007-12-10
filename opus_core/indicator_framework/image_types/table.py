@@ -20,7 +20,7 @@ from numpy import newaxis, concatenate, rank
 
 from opus_core.indicator_framework.core.abstract_indicator import AbstractIndicator
 from opus_core.storage_factory import StorageFactory
-from opus_core.indicator_framework.storage_location.database import Database
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 
 class Table(AbstractIndicator):
 
@@ -29,7 +29,7 @@ class Table(AbstractIndicator):
                  output_type = 'csv',
                  storage_location = None):
         
-        if output_type == 'sql' and not isinstance(storage_location, Database): 
+        if output_type == 'sql' and not isinstance(storage_location, DatabaseConfiguration): 
             raise "If Table output_type is 'sql', a Database object must be passed as storage_location."
         elif output_type in ['dbf', 'csv', 'tab'] and \
                storage_location is not None and \

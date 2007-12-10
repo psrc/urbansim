@@ -22,7 +22,7 @@ from opus_core.indicator_framework.image_types.table import Table
 from opus_core.indicator_framework.image_types.geotiff_map import GeotiffMap
 from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
 from opus_core.indicator_framework.image_types.matplotlib_lorenzcurve import LorenzCurve
-from opus_core.indicator_framework.storage_location.database import Database
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 
 
 '''-------------------------
