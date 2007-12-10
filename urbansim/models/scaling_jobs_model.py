@@ -87,6 +87,9 @@ class ScalingJobsModel(Model):
         else:
             filter_values = location_set.compute_variables([self.filter], dataset_pool=self.dataset_pool)
             location_index = where(filter_values > 0)[0]
+        if location_index.size <= 0:
+            logger.log_status("No locations available. Nothing to be done.")
+            return array([])
         location_subset = DatasetSubset(location_set, location_index)
         i=0
         for sector in sectors:
