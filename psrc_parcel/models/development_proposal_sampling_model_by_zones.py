@@ -20,6 +20,8 @@ from urbansim_parcel.models.development_project_proposal_sampling_model import D
 from opus_core.datasets.dataset import DatasetSubset
 
 class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSamplingModel):
+    max_zone = 938
+    max_building_type = 22
         
     def run(self, zones, type=None, **kwargs):
         """If 'type' is None, the model runs for both, residential and non-residential space. Alternatively,
@@ -79,8 +81,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         start_year = 2000
         self.proposal_set.modify_attribute(name="start_year", data=array(self.proposal_set.size()*[start_year]))
 
-        #for zone_index in range(zone_ids.size):
-        for zone_index in [72, 893, 122, 123, 125]:
+        for zone_index in range(zone_ids.size):
             self.zone = zone_ids[zone_index]
             if self.type["residential"]:
                 if occupied_residential_units[zone_index] <= 0:
@@ -89,9 +90,9 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
                             max(existing_residential_units[zone_index],1) / float(occupied_residential_units[zone_index])
             if self.type["non_residential"]:
                 if to_be_placed_sqft[zone_index] <= 0:
-                    print "all_nhb_jobs:", zones.get_attribute("number_of_all_nhb_jobs")[zone_index]
-                    print "placed_nhb_jobs:", zones.get_attribute("number_of_placed_nhb_jobs")[zone_index]
-                    print "job_sqft:", self.get_weighted_job_sqft()[self.zone]
+                    #print "all_nhb_jobs:", zones.get_attribute("number_of_all_nhb_jobs")[zone_index]
+                    #print "placed_nhb_jobs:", zones.get_attribute("number_of_placed_nhb_jobs")[zone_index]
+                    #print "job_sqft:", self.get_weighted_job_sqft()[self.zone]
                     continue
                 self.existing_to_occupied_ratio_non_residential =  \
                             max(to_be_used_sqft[zone_index],1) / float(to_be_placed_sqft[zone_index])
@@ -122,7 +123,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
                     if (len(self.accepted_proposals)<=0) or self.vacancy_rate_met(existing_residential_units[zone_index],
                                                                               occupied_residential_units[zone_index]):
                         break
-                    print "ratio:", self.existing_to_occupied_ratio_residential
+                    #print "ratio:", self.existing_to_occupied_ratio_residential
                 
             status = self.proposal_set.get_attribute("status_id")
             where_not_active = where(status[idx_zone] != self.proposal_set.id_active)[0]
@@ -156,8 +157,8 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         units_stock = existing - demolished + proposed_total
         current_vr = (units_stock - occupied) / float(max(units_stock,1))
         logger.log_status("Current overall vacancy rate: %s, average vacancy rate: %s" % (current_vr, avg_tv))
-        print "units_stock:", units_stock
-        print "occupied:", occupied
+        #print "units_stock:", units_stock
+        #print "occupied:", occupied
         if current_vr >= avg_tv:
             return True
         logger.log_status("Current overall vacancy rate: %s, average vacancy rate: %s" % (current_vr, avg_tv))
@@ -194,7 +195,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
         mean_value = sqft_in_zad.mean()
         building_type_dataset = self.dataset_pool.get_dataset('building_type')
         building_type_ids = building_type_dataset.get_id_attribute()
-        zone_bt_lookup = mean_value*ones((zone_ids_in_zad.max()+1, building_type_ids.max()+1)) 
+        zone_bt_lookup = mean_value*ones((self.max_zone+1, self.max_building_type+1)) 
         for i in range(zone_average_dataset.size()):
             zone_bt_lookup[zone_ids_in_zad[i], bt_in_zad[i]] = sqft_in_zad[i]
         return zone_bt_lookup
@@ -247,7 +248,7 @@ class DevelopmentProposalSamplingModelByZones(DevelopmentProjectProposalSampling
                 else:
                     #vr = (self.existing_units[type_id] - self.occupied_units[type_id]) / float(max(self.existing_units[type_id],1))
                     vr = 1.0
-            print 'vacancy_rates:', type_id, vr        
+            #print 'vacancy_rates:', type_id, vr        
             if vr < target:
                 self.accepting_proposals[type_id] = True
 
