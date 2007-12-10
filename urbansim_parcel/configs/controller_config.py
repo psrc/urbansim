@@ -145,13 +145,12 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                 variable_package = "urbansim_parcel",
                                 lottery_max_iterations = 7
                                 ).execute(),
-            'governmental_employment_location_choice_model': {
-                'controller': GovernmentalEmploymentLocationChoiceModelConfigurationCreator(
+            'governmental_employment_location_choice_model': 
+                   GovernmentalEmploymentLocationChoiceModelConfigurationCreator(
                         input_index = 'erm_index',
                         location_set = 'building',
                         filter = 'urbansim_parcel.building.is_governmental'
-                        ).execute(),
-                    },                       
+                        ).execute(),                       
                 "household_relocation_model" : {
                     "import": {"urbansim.models.household_relocation_model_creator":
                                     "HouseholdRelocationModelCreator"
