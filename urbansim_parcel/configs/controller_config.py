@@ -299,5 +299,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                 "building_type":{'package_name':'urbansim_parcel'},
                 'travel_data':{}
                 }
-        
+        models_configuration['governmental_employment_location_choice_model']['controller']['import'] =  {
+           'urbansim_parcel.models.scaling_jobs_model': 'ScalingJobsModel'}
+
 config = UrbansimParcelConfiguration()
