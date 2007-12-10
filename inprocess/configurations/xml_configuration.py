@@ -14,7 +14,7 @@
 
 import os
 from numpy import array
-from lxml import etree
+from xml.etree.ElementTree import ElementTree
 from opus_core.configuration import Configuration
 
 class XMLConfiguration(object):
@@ -25,23 +25,24 @@ class XMLConfiguration(object):
     
     def __init__(self, filename):
         """initialize this configuration from the contents of the xml file named by 'filename' """
-        self.project_node = etree.parse(filename).getroot()
-        if self.project_node.tag!='opus_project':
+        self.root = ElementTree(file=filename).getroot()
+        if self.root.tag!='opus_project':
             raise ValueError, "malformed xml - expected to find a root element named 'opus_project'"
         
     def get_run_configuration(self, name):
-        """extract the run configuration named 'name' from this xml project and return it"""
-        scenarios = self.project_node.xpath("scenario_manager/item[@name='%s']" % name)
-        if len(scenarios)!=1:
-            raise ValueError, "didn't find a unique scenario named %s" % name
-        return self._node_to_config(scenarios[0])
+        """extract the run configuration named 'name' from this xml project and return it.  If there are
+        multiple configurations with that name, return the first one."""
+        for scenario in self.root.findall('scenario_manager/item'):
+            if scenario.get('name')==name:
+                return self._node_to_config(scenario)
+        raise ValueError, "didn't find a scenario named %s" % name
 
     def _node_to_config(self, node):
         changes = {}
         parent = None
         # iterate over the children, skipping comments and whitespace (by only 
         # examining elements with the 'item' tag)
-        for child in node.iterchildren(tag='item'):
+        for child in node.findall('item'):
             if child.get('parser_action', '')=='parent':
                 if parent is not None:
                     raise ValueError, 'multiple parent declarations'
@@ -200,6 +201,7 @@ class XMLConfiguration(object):
 
 import os
 from numpy import ma
+from xml.parsers.expat import ExpatError
 from opus_core.tests import opus_unittest
 class XMLConfigurationTests(opus_unittest.OpusTestCase):
 
@@ -324,7 +326,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertRaises(IOError, XMLConfiguration, 'badname.xml')
         # badconfig1 has a syntax error in the xml
         f1 = os.path.join(self.test_configs, 'badconfig1.xml')
-        self.assertRaises(etree.XMLSyntaxError, XMLConfiguration, f1)
+        self.assertRaises(ExpatError, XMLConfiguration, f1)
         # badconfig2 doesn't have a root element called project
         f2 = os.path.join(self.test_configs, 'badconfig2.xml')
         self.assertRaises(ValueError, XMLConfiguration, f2)
