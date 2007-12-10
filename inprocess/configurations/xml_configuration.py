@@ -25,6 +25,7 @@ class XMLConfiguration(object):
     
     def __init__(self, filename):
         """initialize this configuration from the contents of the xml file named by 'filename' """
+        self.filename = filename
         self.root = ElementTree(file=filename).getroot()
         if self.root.tag!='opus_project':
             raise ValueError, "malformed xml - expected to find a root element named 'opus_project'"
@@ -43,21 +44,32 @@ class XMLConfiguration(object):
         # iterate over the children, skipping comments and whitespace (by only 
         # examining elements with the 'item' tag)
         for child in node.findall('item'):
-            if child.get('parser_action', '')=='parent':
+            parser_action = child.get('parser_action', '')
+            if parser_action.startswith('parent'):
                 if parent is not None:
                     raise ValueError, 'multiple parent declarations'
-                parent = self.get_run_configuration(child.text)
-            elif child.get('parser_action', '')=='parent_old_format':
-                if parent is not None:
-                    raise ValueError, 'multiple parent declarations'
-                d = self._convert_node_to_data(child)
-                parent = self._make_instance(d['Class name'], d['Class path'])
+                parent = self._get_parent(child, parser_action)
             else:
                 self._add_to_dict(child, changes)    
         if parent is None:
             parent = Configuration()
         parent.merge(changes)
         return parent
+    
+    def _get_parent(self, node, parser_action):
+        if parser_action=='parent':
+            return self.get_run_configuration(node.text)
+        elif parser_action=='parent_external':
+            # find the path to the external configuration and load it
+            data = self._convert_node_to_data(node)
+            dir = os.path.dirname(self.filename)
+            file = os.path.join(dir, data['path'])
+            return XMLConfiguration(file).get_run_configuration(data['name'])
+        elif parser_action=='parent_old_format':
+            data = self._convert_node_to_data(node)
+            return self._make_instance(data['Class name'], data['Class path'])
+        else:
+            raise ValueError, "unknown parser action %s" % parser_action
 
     def _add_to_dict(self, node, result_dict):
         # 'node' should be an element node representing a key-value pair to be added to 
@@ -269,6 +281,13 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         self.assertEqual(config, 
             {'description': 'this is the child', 'year': 2000, 'modelname': 'widgetmodel'})
+            
+    def test_xml_inheritance_external_parent(self):
+        # test inheritance with an external_parent
+        f = os.path.join(self.test_configs, 'childconfig_external_parent.xml')
+        config = XMLConfiguration(f).get_run_configuration('grandchild_scenario')
+        self.assertEqual(config, 
+            {'description': 'this is the grandchild', 'year': 2000, 'modelname': 'widgetmodel'})
             
     def test_old_config_inheritance(self):
         # test inheriting from an old-style configuration 

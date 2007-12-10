@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<opus_project>
+<scenario_manager>
+
+<item type="scenario" name="grandchild_scenario">
+
+<item name="parent" type="dictionary" parser_action="parent_external">
+  <item name="name" type="string">test_scenario</item>
+  <item name="path" type="file">childconfig.xml</item>
+</item>
+
+<item name="description" type="string">this is the grandchild</item>
+
+</item>
+
+
+</scenario_manager>
+</opus_project>

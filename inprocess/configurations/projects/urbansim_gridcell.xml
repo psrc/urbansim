@@ -9,8 +9,7 @@
 
 <item name="default_model_configuration_set" type="model_configuration_set">
 
-
-<item name="development_project_types" type="class" parser_action="execute">
+<item name="development_project_types" type="development_project_type_set">
   <item name="Class name" type="string" flags="hidden">DevelopmentProjectTypesConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.development_project_types_configuration_creator</item>
 
@@ -72,7 +71,7 @@
 
 
  
-<item name="residential_development_project_location_choice_model" type="class" parser_action="model_configuration">
+<item name="residential_development_project_location_choice_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">DevelopmentProjectLocationChoiceModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.development_project_location_choice_model_configuration_creator</item>
   <item name="project_type" type="string">residential</item>
@@ -82,7 +81,7 @@
 </item>
 
 
-<item name="commercial_development_project_location_choice_model" type="class" parser_action="model_configuration">
+<item name="commercial_development_project_location_choice_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">DevelopmentProjectLocationChoiceModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.development_project_location_choice_model_configuration_creator</item>
   <item name="project_type" type="string">commercial</item>
@@ -91,7 +90,7 @@
   <item name="default_args" type="file" parser_action="include">defaults/development_project_location_choice_model_defaults.xml</item>
 </item>
 
-<item name="industrial_development_project_location_choice_model" type="class" parser_action="execute">
+<item name="industrial_development_project_location_choice_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">DevelopmentProjectLocationChoiceModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.development_project_location_choice_model_configuration_creator</item>
   <item name="project_type" type="string">industrial</item>
@@ -101,13 +100,13 @@
 </item>
 
 
-<item name="prescheduled_events" type="class" parser_action="execute">
+<item name="prescheduled_events" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">PrescheduledEventsConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.prescheduled_events_configuration_creator</item>
   <item name="output_events" type="string">development_events</item>
 </item>
 
-<item name="events_coordinator" type="class" parser_action="execute">
+<item name="events_coordinator" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">EventsCoordinatorConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.events_coordinator_configuration_creator</item>
   <item name="location_set" type="string">gridcell</item>
@@ -117,7 +116,7 @@
   <item name="output_processed_development_event_indices" type="string">processed_development_event_indices</item>
 </item>
 
-<item name="home_based_choice_model" type="class" parser_action="execute">
+<item name="home_based_choice_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">HomeBasedChoiceModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.home_based_choice_model_configuration_creator</item>
   <item name="records_per_chunk" type="integer">500</item>
@@ -135,7 +134,7 @@
 </item>
 
 
-<item name="auto_ownership_choice_model" type="class" parser_action="execute">
+<item name="auto_ownership_choice_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">AutoOwnershipChoiceModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.auto_ownership_choice_model_configuration_creator</item>
   <item name="agent_set" type="string">household</item>
@@ -152,7 +151,7 @@
   <item name="specification_table" type="string">auto_ownership_choice_model_specification</item>
 </item>
 
-<item name="residential_land_share_model" type="class" parser_action="execute">
+<item name="residential_land_share_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">ResidentialLandShareModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.residential_land_share_model_configuration_creator</item>
   <item name="dataset" type="string">gridcell</item>
@@ -161,7 +160,7 @@
   <item name="estimation_procedure" type="string">opus_core.estimate_linear_regression</item>
   <item name="input_changed_indices" type="string">changed_indices</item>
 </item>
-<item name="land_price_model" type="class" parser_action="execute">
+<item name="land_price_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">LandPriceModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.land_price_model_configuration_creator</item>
   <item name="dataset" type="string">gridcell</item>
@@ -172,7 +171,7 @@
   <item name="specification_table" type="string">land_price_model_specification</item>
 </item>
 
-<item name="development_project_transition_model" type="class" parser_action="execute">
+<item name="development_project_transition_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">DevelopmentProjectTransitionModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.development_project_transition_model_configuration_creator</item>
   <item name="location_set" type="string">gridcell</item>
@@ -181,7 +180,7 @@
   <item name="output_results" type="string">dptm_results</item>
 </item>
 
-<item name="development_event_transition_model" type="class" parser_action="execute">
+<item name="development_event_transition_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">DevelopmentEventTransitionModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.development_event_transition_model_configuration_creator</item>
   <item name="input_projects" type="string">dptm_results</item>
@@ -189,14 +188,14 @@
 </item>
 
 
-<item name="household_transition_model" type="class" parser_action="execute">
+<item name="household_transition_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">HouseholdTransitionModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.household_transition_model_configuration_creator</item>
   <item name="household_set" type="string">household</item>
 </item>
 
 
-<item name="employment_transition_model" type="class" parser_action="execute">
+<item name="employment_transition_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">EmploymentTransitionModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.employment_transition_model_configuration_creator</item>
   <item name="job_set" type="string">job</item>
@@ -205,7 +204,7 @@
 </item>
 
 
-<item name="household_relocation_model" type="class" parser_action="execute">
+<item name="household_relocation_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">HouseholdRelocationModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.household_relocation_model_configuration_creator</item>
   <item name="agent_set" type="string">household</item>
@@ -217,7 +216,7 @@
 </item>
 
 
-<item name="household_location_choice_model" type="class" parser_action="execute">
+<item name="household_location_choice_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">HouseholdLocationChoiceModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.household_location_choice_model_configuration_creator</item>
   <item name="agent_set" type="string">household</item>
@@ -239,7 +238,7 @@
 </item>
 
 
-<item name="employment_relocation_model" type="class" parser_action="execute">
+<item name="employment_relocation_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">EmploymentRelocationModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.employment_relocation_model_configuration_creator</item>
   <item name="agent_set" type="string">job</item>
@@ -250,7 +249,7 @@
   <item name="output_index" type="string">erm_index</item>
 </item>
 
-<item name="employment_location_choice_model" type="class" parser_action="execute">
+<item name="employment_location_choice_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">EmploymentLocationChoiceModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.employment_location_choice_model_configuration_creator</item>
   <item name="agent_set" type="string">job</item>
@@ -278,7 +277,7 @@
   <item name="specification_table" type="string">employment_location_choice_model_specification</item>
 </item>
 
-<item name="home_based_employment_location_choice_model" type="class" parser_action="execute">
+<item name="home_based_employment_location_choice_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">HomeBasedEmploymentLocationChoiceModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.home_based_employment_location_choice_model_configuration_creator</item>
   <item name="agent_set" type="string">job</item>
@@ -296,7 +295,7 @@
   <item name="maximum_runs" type="integer">5</item>
   <item name="input_index" type="string">erm_index</item>
 </item>
-<item name="governmental_employment_location_choice_model" type="class" parser_action="execute">
+<item name="governmental_employment_location_choice_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">GovernmentalEmploymentLocationChoiceModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.governmental_employment_location_choice_model_configuration_creator</item>
   <item name="agent_set" type="string">job</item>
@@ -304,13 +303,13 @@
   <item name="filter" type="string" parser_action="empty_string_to_None"></item>
   <item name="input_index" type="string">erm_index</item>
 </item>
-<item name="distribute_unplaced_jobs_model" type="class" parser_action="execute">
+<item name="distribute_unplaced_jobs_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">DistributeUnplacedJobsModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.distribute_unplaced_jobs_model_configuration_creator</item>
   <item name="agent_set" type="string">job</item>
   <item name="location_set" type="string">gridcell</item>
 </item>
-<item name="real_estate_price_model" type="class" parser_action="execute">
+<item name="real_estate_price_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">RealEstatePriceModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.real_estate_price_model_configuration_creator</item>
   <item name="nchunks" type="integer">1</item>
@@ -322,7 +321,7 @@
   <item name="specification_table" type="string">real_estate_price_model_specification</item>
 </item>
 
-<item name="building_transition_model" type="class" parser_action="execute">
+<item name="building_transition_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">BuildingTransitionModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.building_transition_model_configuration_creator</item>
   <item name="building_set" type="string">building</item>
@@ -331,14 +330,14 @@
   <item name="vacancy_table" type="string">target_vacancy</item>
 </item>
 
-<item name="building_relocation_model" type="class" parser_action="execute">
+<item name="building_relocation_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">BuildingRelocationModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.building_relocation_model_configuration_creator</item>
   <item name="agent_set" type="string">building</item>
   <item name="location_id_name" type="string">gridcell.get_id_name()[0]</item>
   <item name="output_index" type="string">brm_index</item>
 </item>
-<item name="building_location_choice_model" type="class" parser_action="execute">
+<item name="building_location_choice_model" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">BuildingLocationChoiceModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.building_location_choice_model_configuration_creator</item>
   <item name="records_per_chunk" type="integer">500</item>
@@ -495,7 +494,7 @@
 </item>
 </item>
 
-<item name="model_configurations" type="model_configuration_set" config_name="models_configuration">default_model_configuration_set</item>
+<!-- <item name="model_configurations" type="model_configuration_set" config_name="models_configuration">default_model_configuration_set</item> -->
 
 
 <item name="advanced" type="dictionary" parser_action="category">
