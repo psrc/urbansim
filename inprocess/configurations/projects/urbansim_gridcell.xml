@@ -60,15 +60,8 @@
     <item name="units" type="string">residential_units</item>
   </item>
 
-  <item name="defaults" type="dictionary">
-<item name="records_per_chunk" type="integer">300</item>
-<item name="location_set" type="string">gridcell</item>
-<item name="events_for_estimation_table" type="string">development_event_history</item>
-<item name="submodel_string" type="string">size_category</item>
-  </item>
   
 </item>
-
 
  
 <item name="residential_development_project_location_choice_model" type="model_configuration">
@@ -77,7 +70,7 @@
   <item name="project_type" type="string">residential</item>
   <item name="coefficients_table" type="string">residential_development_location_choice_model_coefficients</item>
   <item name="specification_table" type="string">residential_development_location_choice_model_specification</item>
-  <item name="default_args" type="file" parser_action="include">defaults/development_project_location_choice_model_defaults.xml</item>
+  <item name="default_args" type="defaults" parser_action="defaults">development_project_location_choice_defaults</item>
 </item>
 
 
@@ -87,7 +80,7 @@
   <item name="project_type" type="string">commercial</item>
   <item name="coefficients_table" type="string">commercial_development_location_choice_model_coefficients</item>
   <item name="specification_table" type="string">commercial_development_location_choice_model_specification</item>
-  <item name="default_args" type="file" parser_action="include">defaults/development_project_location_choice_model_defaults.xml</item>
+  <item name="default_args" type="defaults" parser_action="defaults">development_project_location_choice_defaults</item>
 </item>
 
 <item name="industrial_development_project_location_choice_model" type="model_configuration">
@@ -96,9 +89,15 @@
   <item name="project_type" type="string">industrial</item>
   <item name="coefficients_table" type="string">industrial_development_location_choice_model_coefficients</item>
   <item name="specification_table" type="string">industrial_development_location_choice_model_specification</item>
-  <item name="default_args" type="file" parser_action="include">defaults/development_project_location_choice_model_defaults.xml</item>
+  <item name="default_args" type="defaults" parser_action="defaults">development_project_location_choice_defaults</item>
 </item>
 
+  <item name="development_project_location_choice_defaults" type="dictionary">
+<item name="records_per_chunk" type="integer">300</item>
+<item name="location_set" type="string">gridcell</item>
+<item name="events_for_estimation_table" type="string">development_event_history</item>
+<item name="submodel_string" type="string">size_category</item>
+  </item>
 
 <item name="prescheduled_events" type="model_configuration">
   <item name="Class name" type="string" flags="hidden">PrescheduledEventsConfigurationCreator</item>
