@@ -13,7 +13,7 @@
 #
 
 import os
-from numpy import array, where, logical_and, arange, ones, cumsum, zeros, alltrue, absolute, resize, any, floor, maximum, int32, logical_not
+from numpy import array, where, logical_and, arange, ones, cumsum, zeros, alltrue, absolute, resize, any, floor, maximum, int32, logical_not, logical_or
 from numpy.random import seed
 from scipy.ndimage import sum as ndimage_sum
 from opus_core.logger import logger
@@ -99,7 +99,7 @@ class AssignBuildingsToJobs:
         non_res_sqft = building_dataset.get_attribute("non_residential_sqft")
         occupied = building_dataset.compute_variables(["urbansim_parcel.building.occupied_building_sqft_by_jobs"],
                                                                      dataset_pool=dataset_pool)
-        is_governmental = building_dataset.compute_variables(["building.disaggregate(building_types.generic_building_type == 7)"],
+        is_governmental = building_dataset.compute_variables(["building.disaggregate(building_type.generic_building_type_id == 7)"],
                                                                      dataset_pool=dataset_pool)
         
         # assign buildings to governmental jobs randomly
@@ -111,7 +111,7 @@ class AssignBuildingsToJobs:
                 continue
             idx_in_jobs = where(parcel_ids[job_index_governmental] == parcel)[0]
             draw = sample_replace(idx_in_bldgs, idx_in_jobs.size)
-            building_ids[job_index_governmental[idx_in_jobs]] = bldg_ids_in_bldgs[is_governmental[idx_in_bldgs[draw]]]
+            building_ids[job_index_governmental[idx_in_jobs]] = bldg_ids_in_bldgs[where(is_governmental)[0][draw]]
         logger.log_status("%s governmental jobs (out of %s gov. jobs) were placed." % (
                                                                 (building_ids[job_index_governmental]>0).sum(),
                                                                  job_index_governmental.size))
@@ -125,7 +125,7 @@ class AssignBuildingsToJobs:
         unique_parcels = unique_values(parcel_ids[job_index_non_home_based])
         job_building_types = job_dataset.compute_variables(["bldgs_building_type_id = job.disaggregate(building.building_type_id)"], 
                                                            dataset_pool=dataset_pool)
-        where_valid_jbt = where(logical_and(job_building_types>0, building_types == 2))[0]                     
+        where_valid_jbt = where(logical_and(job_building_types>0, logical_or(building_types == 2, building_types==3)))[0]
         building_type_dataset = dataset_pool.get_dataset("building_type")
         available_building_types= building_type_dataset.get_id_attribute()
         idx_available_bt = building_type_dataset.get_id_index(available_building_types)
@@ -158,6 +158,8 @@ class AssignBuildingsToJobs:
         logger.log_status("Placing non-home-based jobs ...")
         for parcel in unique_parcels:
             idx_in_bldgs = where(parcel_ids_in_bldgs == parcel)[0]
+            if idx_in_bldgs.size <= 0:
+                continue
             idx_in_jobs = where(parcel_ids[job_index_non_home_based] == parcel)[0]
             capacity = maximum(non_res_sqft[idx_in_bldgs] - occupied[idx_in_bldgs],0)
             #capacity = non_res_sqft[idx_in_bldgs] - occupied[idx_in_bldgs]
