@@ -12,6 +12,7 @@
 # 
 
 
+
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -56,7 +57,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     QObject.connect(self.actionRun_Manager, SIGNAL("triggered()"), self.openRunManager)
 
-    self.tempDir = tempfile.mkdtemp(prefix='inprocess.travis.opus_gui')
+    self.tempDir = tempfile.mkdtemp(prefix='opus_gui')
 
     try:
       import qgis.core
