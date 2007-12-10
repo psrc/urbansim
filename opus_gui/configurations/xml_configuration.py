@@ -308,7 +308,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
 
     def setUp(self):
         # find the directory containing the test xml configurations
-        opus_gui_dir = __import__('opus_gui').__path__[0]
+        opus_gui_dir = __import__('inprocess.travis.opus_gui').__path__[0]
         self.test_configs = os.path.join(opus_gui_dir, 'configurations', 'test_configurations')
 
     def test_types(self):

@@ -56,7 +56,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     QObject.connect(self.actionRun_Manager, SIGNAL("triggered()"), self.openRunManager)
 
-    self.tempDir = tempfile.mkdtemp(prefix='opus_gui')
+    self.tempDir = tempfile.mkdtemp(prefix='inprocess.travis.opus_gui')
 
     try:
       import qgis.core

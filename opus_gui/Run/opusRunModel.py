@@ -20,7 +20,7 @@ import os, shutil, sys, tempfile, time
 try:
     from opus_core.tools.start_run import StartRunOptionGroup
     from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed, SimulationRunError
-    from opus_gui.configurations.xml_configuration import XMLConfiguration
+    from inprocess.travis.opus_gui.configurations.xml_configuration import XMLConfiguration
     WithOpus = True
 except ImportError:
     WithOpus = False
