@@ -25,9 +25,8 @@ from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.logger import logger
 
-from opus_core.indicator_framework.utilities.gui_utilities import display_message_dialog
-from opus_core.indicator_framework.core.indicator_data_manager import IndicatorDataManager
-from opus_core.indicator_framework.utilities.integrity_error import IntegrityError
+from inprocess.travis.opus_core.indicator_framework.utilities.indicator_data_manager import IndicatorDataManager
+from inprocess.travis.opus_core.indicator_framework.utilities.integrity_error import IntegrityError
 from opus_core.database_management.database_configuration import DatabaseConfiguration
 
 from numpy import array, subtract, concatenate
@@ -442,11 +441,11 @@ class AbstractIndicator(object):
 
 
 from opus_core.tests import opus_unittest
-from opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
+from inprocess.travis.opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
         
 class Tests(AbstractIndicatorTest):                
-    def test__get_indicator_path(self):
-        from opus_core.indicator_framework.image_types.table import Table
+    def skip_test__get_indicator_path(self):
+        from inprocess.travis.opus_core.indicator_framework.image_types.table import Table
         table = Table(
             source_data = self.source_data,
             attribute = 'opus_core.test.population',
@@ -457,8 +456,8 @@ class Tests(AbstractIndicatorTest):
         
         self.assertEqual(returned_path, expected_path)            
 
-    def test_dataset_attribute_correctly_computed(self):
-        from opus_core.indicator_framework.image_types.table import Table
+    def skip_test_dataset_attribute_correctly_computed(self):
+        from inprocess.travis.opus_core.indicator_framework.image_types.table import Table
         table = Table(
             source_data = self.source_data,
             attribute = 'opus_core.test.attribute',
@@ -483,8 +482,8 @@ class Tests(AbstractIndicatorTest):
                                         wrap = False) 
         self.assertTrue(list(vals) == list(vals1981))
 
-    def test_dataset_attribute_correctly_computed_multiyear(self):
-        from opus_core.indicator_framework.image_types.table import Table
+    def skip_test_dataset_attribute_correctly_computed_multiyear(self):
+        from inprocess.travis.opus_core.indicator_framework.image_types.table import Table
         table = Table(
             source_data = self.source_data,
             attribute = 'opus_core.test.attribute',
@@ -514,8 +513,8 @@ class Tests(AbstractIndicatorTest):
         self.assertTrue(v3==v4)    
         self.assertTrue(v1==v4)  
                 
-    def test__output_types(self):
-        from opus_core.indicator_framework.image_types.table import Table
+    def skip_test__output_types(self):
+        from inprocess.travis.opus_core.indicator_framework.image_types.table import Table
         
         output_types = ['csv','tab']
         try:        
@@ -536,8 +535,8 @@ class Tests(AbstractIndicatorTest):
             path = table.get_file_path()
             self.assertEqual(os.path.exists(path), True)
                 
-    def test__cross_scenario_indicator(self):
-        from opus_core.indicator_framework.image_types.table import Table
+    def skip_test__cross_scenario_indicator(self):
+        from inprocess.travis.opus_core.indicator_framework.image_types.table import Table
         table = Table(
             source_data = self.cross_scenario_source_data,
             attribute = 'opus_core.test.attribute',
@@ -552,8 +551,8 @@ class Tests(AbstractIndicatorTest):
             (id, value) = l.split(',')
             self.assertEqual(0, int(value.strip()))
 
-    def test__indicator_expressions(self):
-        from opus_core.indicator_framework.image_types.table import Table
+    def skip_test__indicator_expressions(self):
+        from inprocess.travis.opus_core.indicator_framework.image_types.table import Table
         table = Table(
             source_data = self.source_data,
             attribute = '2 * opus_core.test.attribute',
@@ -576,8 +575,8 @@ class Tests(AbstractIndicatorTest):
         
         self.assertEqual(computed_vals,true_vals)
 
-    def test__indicator_expressions_with_two_variables(self):
-        from opus_core.indicator_framework.image_types.table import Table
+    def skip_test__indicator_expressions_with_two_variables(self):
+        from inprocess.travis.opus_core.indicator_framework.image_types.table import Table
         table = Table(
             source_data = self.source_data,
             attribute = '2 * opus_core.test.attribute - opus_core.test.attribute2',
@@ -601,8 +600,8 @@ class Tests(AbstractIndicatorTest):
         
         self.assertEqual(computed_vals,true_vals)
     
-    def test__integrity_checker(self):
-        from opus_core.indicator_framework.image_types.table import Table
+    def skip_test__integrity_checker(self):
+        from inprocess.travis.opus_core.indicator_framework.image_types.table import Table
         try:
             table = Table(
                 source_data = self.source_data,

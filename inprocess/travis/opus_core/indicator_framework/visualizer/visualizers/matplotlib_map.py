@@ -14,11 +14,11 @@
 
 import os, re, sys, time, traceback
 from copy import copy
-from opus_core.indicator_framework.core.abstract_indicator import AbstractIndicator
 
 from opus_core.logger import logger
+from inprocess.travis.opus_core.indicator_framework.visualizer.visualizer import Visualizer
 
-class Map(AbstractIndicator):
+class Map(Visualizer):
 
     def __init__(self, source_data, dataset_name, 
                  attribute = None, 
@@ -72,8 +72,8 @@ class Map(AbstractIndicator):
 
 
 from opus_core.tests import opus_unittest
-from opus_core.indicator_framework.core.source_data import SourceData
-from opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
+from inprocess.travis.opus_core.indicator_framework.maker.source_data import SourceData
+from inprocess.travis.opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
 
 class Tests(AbstractIndicatorTest):
         

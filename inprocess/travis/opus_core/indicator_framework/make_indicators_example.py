@@ -15,7 +15,7 @@
 # script to produce a number of indicators
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.indicator_framework.core.source_data import SourceData
+from opus_core.indicator_framework.maker.source_data import SourceData
 from opus_core.indicator_framework.image_types.matplotlib_map import Map
 from opus_core.indicator_framework.image_types.matplotlib_chart import Chart
 from opus_core.indicator_framework.image_types.table import Table

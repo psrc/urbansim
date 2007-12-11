@@ -13,7 +13,7 @@
 
 import re
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.indicator_framework.core.source_data import SourceData
+from inprocess.travis.opus_core.indicator_framework.maker.source_data import SourceData
 
 class IndicatorDataManager:
     
@@ -177,7 +177,7 @@ class IndicatorDataManager:
             params['attribute'] = params['attributes'][0]
             del params['attributes']
                     
-        exec('from opus_core.indicator_framework.image_types.%s import %s'%(module, indicator_class))
+        exec('from inprocess.travis.opus_core.indicator_framework.image_types.%s import %s'%(module, indicator_class))
         indicator = locals()[indicator_class](**params)
         
         for attr, value in non_constructor_attributes.items():
@@ -208,7 +208,7 @@ class IndicatorDataManager:
         return modules[indicator_class]
     
 from opus_core.tests import opus_unittest
-from opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
+from inprocess.travis.opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
 import os
 
 class Tests(AbstractIndicatorTest):  
@@ -216,9 +216,9 @@ class Tests(AbstractIndicatorTest):
         self.data_manager = IndicatorDataManager()
         AbstractIndicatorTest.setUp(self)
         
-    def test__write_metadata(self):
+    def skip_test__write_metadata(self):
         try:
-            from opus_core.indicator_framework.image_types.table import Table
+            from inprocess.travis.opus_core.indicator_framework.image_types.table import Table
         except: pass
         else:
             table = Table(
@@ -264,9 +264,9 @@ class Tests(AbstractIndicatorTest):
                     
             self.assertEqual(output,expected)
   
-    def test__read_write_metadata(self):
+    def skip_test__read_write_metadata(self):
         try:
-            from opus_core.indicator_framework.image_types.table import Table
+            from inprocess.travis.opus_core.indicator_framework.image_types.table import Table
         except: 
             raise
         else:
