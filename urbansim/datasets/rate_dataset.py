@@ -101,7 +101,7 @@ class RateDataset(UrbansimDataset):
             return normal(mean_var[0], mean_var[1], size=l)
         sampled_values = reshape(apply_along_axis(draw_rn, 0, (non_zero_probs, maximum(multiplicator*sd, minimum_sd)), 1),
                                  (non_zero_probs.size,))
-        probs[non_zero_probs_idx] = sampled_values
+        probs[non_zero_probs_idx] = sampled_values.astype(probs.dtype)
         self.add_primary_attribute(name=self.get_probability_attribute_name(), data=probs)
         if cache_storage is not None:
             self.write_dataset(out_storage=cache_storage)
