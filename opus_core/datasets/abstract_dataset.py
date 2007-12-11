@@ -896,8 +896,8 @@ class AbstractDataset(object):
             f = getattr(ndimage, function)
             values = f(*[filled_what], **{'labels': ids_local, 'index': myids})
             result = array(values)
-        except:
-            raise StandardError, "Unknown function " + function + " or error occured during evaluation."
+        except Exception, e:
+            raise StandardError, "Unknown function " + function + " or error occured during evaluation.\n%s" % e
         return result
 
     def sum_dataset_over_ids(self, dataset, attribute_name=None, constant=None):
