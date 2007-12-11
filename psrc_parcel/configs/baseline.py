@@ -105,7 +105,7 @@ class Baseline(UrbansimParcelConfiguration):
 #            'models_configuration':models_configuration,
 
             'base_year':2000,
-            'years':(2000, 2030),
+            'years':(2001, 2015),
             'models':[ # models are executed in the same order as in this list
                 #"process_pipeline_events",
                 "real_estate_price_model",
@@ -119,7 +119,7 @@ class Baseline(UrbansimParcelConfiguration):
                 "employment_relocation_model",
                 {"employment_location_choice_model":{'group_members': '_all_'}},
                 ],
-            'models_in_year': {2000: [               
+            'models_in_year': {2000: [ # This is not run anymore, since all jobs are located and only a few households are not.
                  "household_relocation_model_for_2000",
                 "household_location_choice_model_for_2000",
                 "employment_relocation_model_for_2000",
