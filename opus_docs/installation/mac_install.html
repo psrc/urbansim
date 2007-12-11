@@ -57,7 +57,7 @@ Installing on Macintosh</td>
 UrbanSim on
 Macintosh OS X.&nbsp; These installation directions have been
 tested with
-Macintosh OS X Version 10.4.5 with both PowerPC and Intel processors. </p>
+Macintosh OS X Tiger and Leopard with Intel processors. </p>
 
 
 <ol>
@@ -96,9 +96,14 @@ Variables for Opus and UrbanSim</a></li>
 <p>Opus and UrbanSim are implemented in Python, making heavy use
 of numerical
 Python packages and other software. For the Mac we recommend using
-Python version 2.5.1 The <a href="http://www.python.org">official
+Python version 2.5.1.  Mac OS X Leopard (10.5) comes with Python 2.5.1 
+already installed, so you don't need to update your version of Python.  If you are
+running an earlier version of the OS (10.4.9 or earlier), the default version
+will be 2.3.5 or earlier and you will need to update to Python 2.5.1.</p>
+
+<p>The <a href="http://www.python.org">official
 Python website</a> includes documentation, downloads, and much
-else. Go to the <a href="http://www.python.org/download/">Python
+else.  Go to the <a href="http://www.python.org/download/">Python
 download tab</a>
 and get "Python 2.5.1 for Macintosh OS X". This is an
 installer that works on both PPC and Intel Macs. Double-click on the
@@ -107,9 +112,8 @@ to install. When you're done you can unmount the image by clicking on
 the triangle symbol next to it in the Finder. </p>
 
 
-<p>A note on Python versions: the Mac comes with Python version
-2.3.5
-already installed. &nbsp;However, the universal installers for the
+<p>A note on Python versions: Tiger comes with Python version
+2.3.5 installed. &nbsp;However, the universal installers for the
 required packages are only available
 for newer versions of Python, so you need a newer version. (We
 &nbsp;suggest leaving Apple's installed version alone - there is no
@@ -178,30 +182,31 @@ We will use this later to install a number of packages.</p>
 
 <p>Now you can start downloading python packages.</p>
 
-<p>First, download and install the following universal binaries:
-
+<p>If you are running a version of OS X earlier than 10.5, such as 10.4.9, download and install the following:
 <ul>
 
-<li><a href="http://prdownloads.sourceforge.net/wxpython/wxPython2.6-osx-unicode-2.6.3.3-universal10.4-py2.5.dmg?download">wxPython 2.6.3.3</a> from sourceforge. Later versions of wxPython will not work.</li> 
+<li><a href="http://prdownloads.sourceforge.net/wxpython/wxPython2.6-osx-unicode-2.6.3.3-universal10.4-py2.5.dmg?download">wxPython 2.6.3.3</a> from sourceforge. Later versions of wxPython will not work.</li>
 
-<li><b>pytz</b> from <a href="http://pythonmac.org/packages/py25-fat/index.html">the downloads page on pythonmac.org</a>.</li>
+<li><b>pytz</b> from <a href="http://pythonmac.org/packages/py25-fat/index.html">the downloads page on pythonmac.org</a>.  This is also not necessary on 10.5/Leopard.</li>
 
 <li><b>python-dateutil</b>, also from <a href="http://pythonmac.org/packages/py25-fat/index.html">pythonmac.org</a>.</li>
 
-<li>Download and install the Superpack from <a href="http://trichech.us/?page_id=5">http://trichech.us/?page_id=5</a>.
-  This includes the packages NumPy 1.0.4, SciPi 0.7 and mathplotlib 0.90.1, all of which are necessary.</li>
-
 </ul>
+
+<p>If you are running 10.5/Leopard, the three packages above are not necessary.</p>
+
+<p>Now download and install the Superpack from <a href="http://trichech.us/?page_id=5">http://trichech.us/?page_id=5</a>.
+  This includes the packages NumPy 1.0.4, SciPi 0.7 and mathplotlib 0.90.1, all of which are necessary.</p>
 
 Install the following packages using Easy Install:
 
 <ul>
 
-	<li><b>Traits:</b>  At the commandline, type 
-	
-	<pre>easy_install -f http://code.enthought.com/enstaller/eggs/macosx/10.4/enthought.traits</pre>
-	
-	This will download and install Traits.</li>
+	<li><b>Traits:</b>  Go to <pre>http://code.enthought.com/enstaller/eggs/macosx/</pre> and navigate 
+	to the correct package, which will have a name like <pre>enthought.traits-2.0.1b1-py2.5-macosx-10.3-fat.egg</pre>
+	or something similar.  Download it, and then use
+	<pre>$ easy_install [<i>filename</i>]</pre>
+	to install it.</li>
 
 	 <li><b>SQLAlchemy 0.4:</b> Download the tarball (currently for SQLAlchehmy 0.4 from 
 	 <a href="http://www.sqlalchemy.org/download.html">http://www.sqlalchemy.org/download.html</a>.  
@@ -210,12 +215,6 @@ Install the following packages using Easy Install:
 	 where [<i>filename</i>] is the path of the file you just downloaded. (As of this writing the name of the file you want is SQLAlchemy-0.4.0.tar.gz.)</li>
 
  </ul>
-
-<br>
-
-
-Finally add the enthought directory to your Python path (see Step 5
-below).<br>
 
 
 <br>
@@ -236,6 +235,7 @@ This is a Python interface for the statistical programming language R
 by ArcGIS), install <b>dbfpy</b> (<a href="http://sourceforge.net/projects/dbfpy">http://sourceforge.net/projects/dbfpy</a>).</li>
 
  	<li>If you are using MySQL, download <b>MySQL-python</b> (<a href="http://sourceforge.net/projects/mysql-python">http://sourceforge.net/projects/mysql-python</a>).
+ 	You may need to put /usr/local/mysql/bin into your path before installing mysql-python to avoid getting an error.</li>
     	
 </ul>
 
@@ -328,8 +328,10 @@ tells Python where to look for files outside of Python's
 'site-packages' directory (which is the default location for Python
 installers). Change PYTHONPATH to include the path to the directory
 containing your 'workspace' that you defined in Step 4, e.g.
-'/Users/yourname/opusworkspace'.&nbsp; Finally, make sure your directory with enthought/traits is on the
-PYTHONPATH.</li>
+'/Users/yourname/opusworkspace'.&nbsp; On 10.5 or later, you also need to add the diretory
+/Library/Frameworks/Python.framework/Versions/2.5/lib/python2.5/site-packages, as the preinstalled
+ version of Python uses a different directory for sitepackages.  Finally, make sure your directory
+  with enthought/traits is on the PYTHONPATH.</li>
 
   <li><b>MYSQLHOSTNAMEFORTESTS</b> - This environment
 variable is only used for running unit tests that use MySQL. These
