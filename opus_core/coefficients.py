@@ -406,6 +406,8 @@ class Coefficients(object):
         se = self.get_standard_errors()
 
         def draw_rn (mean_var, n):
+            if mean_var[1] == 0:
+                return resize(array([mean_var[0]]), n)
             return normal(mean_var[0], mean_var[1], size=n)
         sampled_values = apply_along_axis(draw_rn, 0,
                                           (values, multiplicator*se), 1).reshape((values.size,)).astype(values.dtype)
