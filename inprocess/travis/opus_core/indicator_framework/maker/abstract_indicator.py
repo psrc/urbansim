@@ -28,7 +28,7 @@ from opus_core.logger import logger
 from opus_core.indicator_framework.utilities.gui_utilities import display_message_dialog
 from opus_core.indicator_framework.core.indicator_data_manager import IndicatorDataManager
 from opus_core.indicator_framework.utilities.integrity_error import IntegrityError
-from opus_core.indicator_framework.storage_location.database import Database
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 
 from numpy import array, subtract, concatenate
 
@@ -51,7 +51,7 @@ class AbstractIndicator(object):
             storage_location = os.path.join(cache_directory, 'indicators')
         self.storage_location = storage_location
                 
-        storage_location_is_db = isinstance(storage_location, Database)
+        storage_location_is_db = isinstance(storage_location, DatabaseConfiguration)
         if not can_write_to_db and storage_location_is_db:
             raise "Error: Invalid storage_location specified. Must be a path to the output directory."
         
