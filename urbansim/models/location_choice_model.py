@@ -266,8 +266,12 @@ class LocationChoiceModel(ChoiceModel):
             return index
         self.debug.print_debug("Sampling locations ...",3)
         # the following model component must return a 2D array of sampled locations per agent
-        index, chosen_choice = self.sampler_class.run(agent_subset, self.choice_set, index2=location_index, sample_size=nchoices,
+        try:
+            index, chosen_choice = self.sampler_class.run(agent_subset, self.choice_set, index2=location_index, sample_size=nchoices,
                 weight=self.weights, resources=self.run_config)
+        except Exception, e:
+            logger.log_warning("Problem with sampling alternatives.\n" % e)
+            index = None
         if index == None: # sampler produced an error
             index = array([], dtype="int32")
         return index
