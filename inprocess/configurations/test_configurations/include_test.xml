@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<opus_project>
+<scenario_manager>
+
+<item type="scenario" name="test_scenario">
+
+<item name="description" type="string">a test scenario</item>
+<item name="includeyears" type="path" parser_action="include">scenario_manager/test_scenario/stuff_to_include</item>
+
+<item name="stuff_to_include" type="dictionary">
+  <item name="startyear" type="integer">2000</item>
+  <item name="endyear" type="integer">2020</item>
+</item>
+
+</item>
+
+</scenario_manager>
+</opus_project>

@@ -14,7 +14,7 @@
 
 import os
 from numpy import array
-from xml.etree.ElementTree import ElementTree
+from xml.etree.cElementTree import ElementTree
 from opus_core.configuration import Configuration
 
 class XMLConfiguration(object):
@@ -70,15 +70,35 @@ class XMLConfiguration(object):
             return self._make_instance(data['Class name'], data['Class path'])
         else:
             raise ValueError, "unknown parser action %s" % parser_action
+    
+    def _get_node(self, path):
+        # Return the node indicated by path.  We ought to be able to just use
+        # the 'find' method; but we are using 'item' as the tag for all nodes.
+        # So this path uses names after the top-level selection.
+        names = path.split('/')
+        node = self.root.find(names[0])
+        for name in names[1:]:
+            for child in node:
+                if child.get('name')==name:
+                    node = child
+                    break
+                raise ValueError, "invalid path: %s" % path
+        return node
 
     def _add_to_dict(self, node, result_dict):
         # 'node' should be an element node representing a key-value pair to be added to 
         # the dictionary 'result_dict'.
         # If this is a dictionary node that's just a category, add the children to result_dict;
+        # if it's an 'include', find the referenced node and add its children to result_dict;
         # otherwise add an entry to the dict with the item name as the key.
-        if node.get('parser_action', '')=='category':
+        action = node.get('parser_action', '')
+        if action=='category':
             # todo: check that type=dictionary
             for child in node:
+                self._add_to_dict(child, result_dict)
+        elif action=='include':
+            included_node = self._get_node(node.text)
+            for child in included_node:
                 self._add_to_dict(child, result_dict)
         else:
             if 'config_name' in node.attrib:
@@ -213,7 +233,6 @@ class XMLConfiguration(object):
 
 import os
 from numpy import ma
-from xml.parsers.expat import ExpatError
 from opus_core.tests import opus_unittest
 class XMLConfigurationTests(opus_unittest.OpusTestCase):
 
@@ -318,6 +337,14 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(config, 
                          {'datasets_to_preload': {'job': {}, 'gridcell': {'nchunks': 4}}})
 
+    def skip_test_include(self):
+        f = os.path.join(self.test_configs, 'include_test.xml')
+        config = XMLConfiguration(f).get_run_configuration('test_scenario')
+        self.assertEqual(config, 
+                         {'description': 'a test scenario',
+                          'startyear': 2000,
+                          'endyear': 2020})
+
     def test_class_element(self):
         # test a configuration element that is a specified class
         f = os.path.join(self.test_configs, 'database_configuration.xml')
@@ -345,7 +372,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertRaises(IOError, XMLConfiguration, 'badname.xml')
         # badconfig1 has a syntax error in the xml
         f1 = os.path.join(self.test_configs, 'badconfig1.xml')
-        self.assertRaises(ExpatError, XMLConfiguration, f1)
+        self.assertRaises(SyntaxError, XMLConfiguration, f1)
         # badconfig2 doesn't have a root element called project
         f2 = os.path.join(self.test_configs, 'badconfig2.xml')
         self.assertRaises(ValueError, XMLConfiguration, f2)
