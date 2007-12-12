@@ -63,7 +63,7 @@ class MultipleRunsModification:
             config["models_configuration"][new_model_name] = config["models_configuration"][model_name]
             config["models_configuration"][new_model_name]["controller"]["prepare_for_run"]["arguments"]["sample_control_totals"] = \
                                                 True
-            config["models_configuration"][new_model_name]["controller"]["prepare_for_run"]["arguments"]["variance"] = 0.001
+            config["models_configuration"][new_model_name]["controller"]["prepare_for_run"]["arguments"]["variance"] = 0.0001
             config["models_configuration"][new_model_name]["controller"]["prepare_for_run"]["arguments"]["base_year"] = "base_year"
         for model_name in self.models_with_sampled_relocation_rates:
             new_model_name = "%s_with_sampled_rr" % model_name
