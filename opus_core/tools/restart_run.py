@@ -21,6 +21,9 @@ class RestartRunOptionGroup(GenericOptionGroup):
         self.parser.add_option("--skip-urbansim", dest="skip_urbansim", default=False, 
                                 action="store_true", 
                                 help="Skip running UrbanSim for the restart year.")
+        self.parser.add_option("--create-baseyear-cache-if-not-exists", dest="create_baseyear_cache_if_not_exists", default=False, 
+                                action="store_true",
+                                help="Create baseyear cache if not already exists")        
         self.parser.add_option("--skip-cache-cleanup", dest="skip_cache_cleanup", 
                                 default=False, action="store_true", 
                                 help="Skip removing year caches for this and future years.")
@@ -41,5 +44,6 @@ if __name__ == "__main__":
                                 services_host_name=options.host_name, 
                                 services_database_name=options.database_name,
                                 skip_urbansim=options.skip_urbansim,
+                                create_baseyear_cache_if_not_exists=options.create_baseyear_cache_if_not_exists,
                                 skip_cache_cleanup=options.skip_cache_cleanup)
                                   

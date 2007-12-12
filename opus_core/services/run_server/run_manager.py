@@ -87,8 +87,6 @@ class RunManager(object):
         if 'cache_variables' not in resources:
             resources['cache_variables'] = False
 
-        if not os.path.exists(resources['cache_directory']):
-            raise StandardError("cache directory doesn't exist: '%s'" % resources['cache_directory'])
         if not restart_year:
             raise StandardError("restart year un-specified")
         if restart_year < resources["years"][0]:
@@ -137,12 +135,13 @@ class RunManager(object):
             #TODO: do not change the configuration en route
             run_resources['cache_directory'] = self.current_cache_directory
             #raise 'The configuration and the RunManager conflict on the proper cache_directory'
-        
-        cache_directory = self.current_cache_directory
-            
-        # Make the cache_directory if it doesn't exist (doesn't include per-year directories).
-        if not os.path.exists(cache_directory):
-            os.makedirs(cache_directory)
+
+## This is handled by self.create_baseyear_cache        
+#        cache_directory = self.current_cache_directory
+#            
+#        # Make the cache_directory if it doesn't exist (doesn't include per-year directories).
+#        if not os.path.exists(cache_directory):
+#            os.makedirs(cache_directory)
 
         if self.run_activity is not None:
             self.run_activity.add_row_to_history(self.history_id, run_resources, "started")
@@ -155,11 +154,12 @@ class RunManager(object):
                     " full Opus path to the model system to be used.")
             
             # Create baseyear cache
-            if run_resources['creating_baseyear_cache_configuration'].cache_from_mysql:
-                ForkProcess().fork_new_process(
-                    run_resources['creating_baseyear_cache_configuration'].cache_scenario_database, run_resources)
-            else:
-                CacheFltData().run(run_resources)
+            self.create_baseyear_cache(run_resources)
+#            if run_resources['creating_baseyear_cache_configuration'].cache_from_mysql:
+#                ForkProcess().fork_new_process(
+#                    run_resources['creating_baseyear_cache_configuration'].cache_scenario_database, run_resources)
+#            else:
+#                CacheFltData().run(run_resources)
                 
             # Create brand-new output database (deletes any prior contents)
             if 'output_configuration' in run_resources:
@@ -203,6 +203,7 @@ class RunManager(object):
                     services_host_name,
                     services_database_name,
                     skip_urbansim=False,
+                    create_baseyear_cache_if_not_exists=False,
                     skip_cache_cleanup=False):
         """Restart the specified run."""
 
@@ -212,7 +213,15 @@ class RunManager(object):
            run_id=history_id,
            restart_year=restart_year)
         try:
+            if create_baseyear_cache_if_not_exists:
+                cache_directory = run_resources['cache_directory']
+                base_year = run_resources['base_year']
+                if not os.path.exists(cache_directory) or not os.path.exists(os.path.join(cache_directory, str(base_year))):
+                    self.create_baseyear_cache(run_resources)
 
+            if not os.path.exists(run_resources['cache_directory']):
+                raise StandardError("cache directory doesn't exist: '%s'" % resources['cache_directory'])
+    
             model_system = run_resources.get('model_system', None)
             if model_system is None:
                 raise TypeError, ("The configuration must specify model_system, the"
