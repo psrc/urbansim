@@ -6,10 +6,16 @@
 
 <item name="description" type="string">a test scenario</item>
 <item name="includeyears" type="path" parser_action="include">scenario_manager/test_scenario/stuff_to_include</item>
+<item name="includexy" type="path" parser_action="include">scenario_manager/test_scenario/morestuff</item>
 
-<item name="stuff_to_include" type="dictionary">
+<item name="stuff_to_include" type="dictionary" parser_action="only_for_includes">
   <item name="startyear" type="integer">2000</item>
   <item name="endyear" type="integer">2020</item>
+</item>
+
+<item name="morestuff" type="dictionary">
+  <item name="x" type="integer">10</item>
+  <item name="y" type="integer">20</item>
 </item>
 
 </item>

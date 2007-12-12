@@ -7,9 +7,9 @@
 
 <model_manager>
 
-<item name="default_model_configuration_set" type="model_configuration_set">
+<item name="default_model_configuration_set" type="dictionary" parser_action="execute">
 
-<item name="development_project_types" type="development_project_type_set">
+<item name="development_project_types" type="dictionary">
   <item name="Class name" type="string" flags="hidden">DevelopmentProjectTypesConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.development_project_types_configuration_creator</item>
 
@@ -62,15 +62,14 @@
 
   
 </item>
-
  
-<item name="residential_development_project_location_choice_model" type="model_configuration">
+<item name="residential_development_project_location_choice_model" type="dictionary" parser_action="execute">
   <item name="Class name" type="string" flags="hidden">DevelopmentProjectLocationChoiceModelConfigurationCreator</item>
   <item name="Class path" type="string" flags="hidden">urbansim.configurations.development_project_location_choice_model_configuration_creator</item>
   <item name="project_type" type="string">residential</item>
   <item name="coefficients_table" type="string">residential_development_location_choice_model_coefficients</item>
   <item name="specification_table" type="string">residential_development_location_choice_model_specification</item>
-  <item name="default_args" type="defaults" parser_action="defaults">development_project_location_choice_defaults</item>
+  <item name="default_args" type="path" parser_action="include">model_manager/development_project_location_choice_defaults</item>
 </item>
 
 
@@ -80,7 +79,7 @@
   <item name="project_type" type="string">commercial</item>
   <item name="coefficients_table" type="string">commercial_development_location_choice_model_coefficients</item>
   <item name="specification_table" type="string">commercial_development_location_choice_model_specification</item>
-  <item name="default_args" type="defaults" parser_action="defaults">development_project_location_choice_defaults</item>
+  <item name="default_args" type="path" parser_action="include">model_manager/development_project_location_choice_defaults</item>
 </item>
 
 <item name="industrial_development_project_location_choice_model" type="model_configuration">
@@ -89,10 +88,10 @@
   <item name="project_type" type="string">industrial</item>
   <item name="coefficients_table" type="string">industrial_development_location_choice_model_coefficients</item>
   <item name="specification_table" type="string">industrial_development_location_choice_model_specification</item>
-  <item name="default_args" type="defaults" parser_action="defaults">development_project_location_choice_defaults</item>
+  <item name="default_args" type="path" parser_action="include">model_manager/development_project_location_choice_defaults</item>
 </item>
 
-  <item name="development_project_location_choice_defaults" type="dictionary">
+  <item name="development_project_location_choice_defaults" type="dictionary" parser_action="only_for_includes">
 <item name="records_per_chunk" type="integer">300</item>
 <item name="location_set" type="string">gridcell</item>
 <item name="events_for_estimation_table" type="string">development_event_history</item>

@@ -78,10 +78,13 @@ class XMLConfiguration(object):
         names = path.split('/')
         node = self.root.find(names[0])
         for name in names[1:]:
-            for child in node:
-                if child.get('name')==name:
-                    node = child
-                    break
+            children = node.getchildren()
+            i = 0
+            while i<len(children) and children[i].get('name')!=name:
+                i = i+1
+            if i<len(children):
+                node = children[i]
+            else:
                 raise ValueError, "invalid path: %s" % path
         return node
 
@@ -100,6 +103,8 @@ class XMLConfiguration(object):
             included_node = self._get_node(node.text)
             for child in included_node:
                 self._add_to_dict(child, result_dict)
+        elif action=='only_for_includes':
+            pass
         else:
             if 'config_name' in node.attrib:
                 key = node.get('config_name')
@@ -337,13 +342,16 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(config, 
                          {'datasets_to_preload': {'job': {}, 'gridcell': {'nchunks': 4}}})
 
-    def skip_test_include(self):
+    def test_include(self):
         f = os.path.join(self.test_configs, 'include_test.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         self.assertEqual(config, 
                          {'description': 'a test scenario',
                           'startyear': 2000,
-                          'endyear': 2020})
+                          'endyear': 2020,
+                          'x': 10,
+                          'y': 20,
+                          'morestuff': {'x': 10, 'y': 20}})
 
     def test_class_element(self):
         # test a configuration element that is a specified class
