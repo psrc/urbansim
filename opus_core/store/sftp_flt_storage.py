@@ -284,7 +284,8 @@ def get_temp_dir_remote(transport):
     
 if paramiko is None:
     if __name__ == '__main__':
-        from opus_core.logger import logger 
+        from opus_core.logger import logger
+        import sys 
         logger.log_warning('Skipping sftp_flt_storage unit tests -- could not import the paramiko module.')
 
         sys.exit(0)
