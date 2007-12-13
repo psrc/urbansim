@@ -97,6 +97,7 @@ class RemoteRun:
         if not self.is_localhost(self.urbansim_server_config['hostname']):
             uclient = paramiko.SSHClient()
             uclient.load_system_host_keys()
+            uclient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             uclient.connect(hostname=urbansim_server_config['hostname'], 
                            username=urbansim_server_config['username'],
                            password=urbansim_server_config['password'],
@@ -107,6 +108,7 @@ class RemoteRun:
         if not self.is_localhost(self.travelmodel_server_config['hostname']):
             tclient = paramiko.SSHClient()
             tclient.load_system_host_keys()
+            tclient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             tclient.connect(hostname=travelmodel_server_config['hostname'], 
                            username=travelmodel_server_config['username'],
                            password=travelmodel_server_config['password'],
