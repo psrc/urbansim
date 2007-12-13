@@ -1,16 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
-
   <general>
-    <item parser_action="import" type="file" name="import" >urbansim_gridcell.xml</item>
     <item type="string" name="description" >Sample Eugene project</item>
   </general>
-  
   <scenario_manager>
     <item type="scenario" name="Eugene baseline" >
-      <item name="parent" type="dictionary" parser_action="parent_old_format">
-        <item name="Class name" type="string">GeneralConfiguration</item>
-        <item name="Class path" type="string">urbansim.configs.general_configuration</item>
+      <item parser_action="parent_external" type="dictionary" name="parent" >
+        <item type="string" name="name" >default_gridcell_scenario</item>
+        <item type="file" name="path" >urbansim_gridcell.xml</item>
       </item>
       <item type="integer" name="base_year" >1980</item>
       <item config_name="years" type="tuple" name="years to run" >
@@ -140,5 +137,4 @@
       </item>
     </item>
   </scenario_manager>
-  
 </opus_project>
