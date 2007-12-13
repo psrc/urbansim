@@ -2,16 +2,16 @@
 <opus_project>
 <scenario_manager>
 
-<item type="scenario" name="grandchild_scenario">
+<grandchild_scenario type="scenario">
 
-<item name="parent" type="dictionary" parser_action="parent_external">
-  <item name="name" type="string">test_scenario</item>
-  <item name="path" type="file">childconfig.xml</item>
-</item>
+<parent type="dictionary" parser_action="parent_external">
+  <name type="string">test_scenario</name>
+  <path type="file">childconfig.xml</path>
+</parent>
 
-<item name="description" type="string">this is the grandchild</item>
+<description type="string">this is the grandchild</description>
 
-</item>
+</grandchild_scenario>
 
 
 </scenario_manager>

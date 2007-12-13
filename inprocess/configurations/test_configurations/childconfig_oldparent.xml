@@ -2,18 +2,18 @@
 <opus_project>
 <scenario_manager>
 
-<item type="scenario" name="test_scenario">
+<test_scenario type="scenario">
 
-<item name="parent" type="dictionary" parser_action="parent_old_format">
-  <item name="Class name" type="string">GeneralConfiguration</item>
-  <item name="Class path" type="string">urbansim.configs.general_configuration</item>
-</item>
+<parent type="dictionary" parser_action="parent_old_format">
+  <Class_name type="string">GeneralConfiguration</Class_name>
+  <Class_path type="string">urbansim.configs.general_configuration</Class_path>
+</parent>
 
-<item name="years" type="tuple">
-<item name="startyear" type="integer">1980</item>
-<item name="endyear" type="integer">1990</item>
-</item>
+<years type="tuple">
+<startyear type="integer">1980</startyear>
+<endyear type="integer">1990</endyear>
+</years>
 
-</item>
+</test_scenario>
 </scenario_manager>
 </opus_project>

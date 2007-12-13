@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <opus_project>
 <scenario_manager>
-<item type="scenario" name="test_scenario" >
+<test_scenario type="scenario">
 
-<item name="description" type="string">category test</item>
+<description type="string">category test</description>
 
-<item name="gui_name" config_name="real_name" type="string">config name test</item>
+<gui_name config_name="real_name" type="string">config name test</gui_name>
 
 
-<item name="advanced" type="dictionary" parser_action="category">
-  <item name="precache" type="boolean" choices="True|False">True</item>
-  <item name="chunksize" type="integer">12</item>
-</item>
+<advanced type="dictionary" parser_action="category">
+  <precache type="boolean" choices="True|False">True</precache>
+  <chunksize type="integer">12</chunksize>
+</advanced>
 
-<item name="years" type="tuple">
-<item name="startyear" type="integer">1980</item>
-<item name="endyear" type="integer">1981</item>
-</item>
+<years type="tuple">
+<startyear type="integer">1980</startyear>
+<endyear type="integer">1981</endyear>
+</years>
 
-<item name="nested_advanced" type="dictionary" parser_action="category">
-  <item name="bool2" type="boolean" choices="True|False">False</item>
-  <item name="inner_advanced" type="dictionary" parser_action="category">
-    <item name="int2" type="integer">13</item>
-  </item>
-</item>
+<nested_advanced type="dictionary" parser_action="category">
+  <bool2 type="boolean" choices="True|False">False</bool2>
+  <inner_advanced type="dictionary" parser_action="category">
+    <int2 type="integer">13</int2>
+  </inner_advanced>
+</nested_advanced>
 
-</item>
+</test_scenario>
 </scenario_manager>
 </opus_project>

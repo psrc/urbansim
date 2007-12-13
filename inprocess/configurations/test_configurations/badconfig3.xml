@@ -2,7 +2,7 @@
 <opus_project>
 <data_manager>
 
-<item name="s" type="string">teststring</item>
+<s type="string">teststring</s>
 
 </data_manager>
 </opus_project>
