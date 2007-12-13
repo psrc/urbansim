@@ -27,6 +27,7 @@ from opus_core.services.run_server.run_manager import RunManager, insert_auto_ge
 from opus_core.fork_process import ForkProcess
 from opus_core.logger import logger
 from numpy import arange, where, logical_and
+from nturl2path import pathname2url
 from opus_core.store.sftp_flt_storage import get_stdout_for_ssh_cmd, exists_remotely, load_key_if_exists, _makedirs
 import paramiko
 
@@ -44,6 +45,16 @@ class OptionGroup(GenericOptionGroup):
                                help="the server runs travel model, default on localhost")        
         self.parser.add_option("-u", "--runserver-username", dest="runserver_username", default=None, 
                                help="Which user name to use for logging into the urbansim and/or travelmodel server(s)")
+        ## mostly for debugging purpose
+        self.parser.add_option("--start-year", dest="start_year", default=None,
+                               help="start year (inclusive)")
+        self.parser.add_option("--end-year", dest="end_year", default=None,
+                               help="end year (inclusive)")
+#        self.parser.add_option("--skip-travel-model", dest="skip_travel_model", default=False, action="store_true", 
+#                               help="Travel model will not be run.")
+#        self.parser.add_option("--skip-urbansim", dest="skip_urbansim", default=False, action="store_true", 
+#                               help="Urbansim will not be run.")
+        
 
 class RemoteRun:
     """ 
@@ -144,7 +155,8 @@ class RemoteRun:
             insert_auto_generated_cache_directory_if_needed(config)
             self.get_run_manager().setup_new_run(run_name = config['cache_directory'])
             run_id = self.get_run_manager().history_id            
-            config['cache_directory'] = self.get_run_manager().get_current_cache_directory()
+            config['cache_directory'] = pathname2url(self.get_run_manager().get_current_cache_directory())
+            ## pathname2url converts '\' or '\\' to '/'; it is necessary when this script is invoked from a nt os
             self.get_run_manager().run_activity.add_row_to_history(run_id, config, "started")
             
             #verify run_id has been added to services db
@@ -155,9 +167,9 @@ class RemoteRun:
 
         return run_id, config
 
-    def run(self, configuration_path, run_id=None):
+    def run(self, configuration_path, run_id=None, start_year=None, end_year=None):
         run_id, config = self.prepare_for_run(configuration_path, run_id=run_id)
-        self._do_run(run_id, config)
+        self._do_run(run_id, config, start_year=start_year, end_year=end_year)
         
     def _do_run(self, run_id, config, start_year=None, end_year=None):
         cache_directory = config['cache_directory']
@@ -224,7 +236,8 @@ class RemoteRun:
                 self.wait_until_run_done_or_failed(run_id)
                 logger.end_block()
                 ##TODO: open_sftp may need to be close()
-                if not exists_remotely(self.ssh['urbansim_server'].open_sftp(), os.path.join(cache_directory, str(this_end_year))):
+                if not exists_remotely(self.ssh['urbansim_server'].open_sftp(), 
+                                       pathname2url(os.path.join(cache_directory, str(this_end_year))) ):
                     raise StandardError, "cache for year %s doesn't exist in directory %s; there may be problem with urbansim run" % \
                                         (this_end_year, cache_directory)
             else:
@@ -262,7 +275,8 @@ class RemoteRun:
                         self.wait_until_run_done_or_failed(run_id)
                         logger.end_block()
                         ##TODO: open_sftp may need to be close()
-                        if not exists_remotely(self.ssh['urbansim_server'].open_sftp(), os.path.join(cache_directory, str(this_end_year+1))):
+                        if not exists_remotely(self.ssh['urbansim_server'].open_sftp(), 
+                                               pathname2url(os.path.join(cache_directory, str(this_end_year+1))) ):
                             raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
                                                 (this_end_year+1, local_cache_directory)
                     else:
@@ -321,8 +335,9 @@ if __name__ == "__main__":
     option_group = OptionGroup()
     parser = option_group.parser
     (options, args) = parser.parse_args()
-    
-    if not option_group.get_services_database(options):
+
+    services_db = option_group.get_services_database(options)
+    if not services_db:
         raise RuntimeError, "services database must exist; use --hostname argument to specify the database server containing services database."
     run_manager = option_group.get_run_manager(options)
     
@@ -339,8 +354,9 @@ if __name__ == "__main__":
 
     run = RemoteRun({'hostname':urbansim_server, 'username':urbansim_user, 'password':urbansim_password}, 
                     {'hostname':travelmodel_server, 'username':travelmodel_user, 'password':travelmodel_password}, 
-                    {'hostname':options.host_name, 'username':options.user_name, 'password':options.password, 
+                    {'hostname':services_db.host_name, 'username':services_db.user_name, 'password':services_db.password, 
                      'database_name':options.database_name},
                     run_manager)
-    run.run(configuration_path=options.configuration_path, run_id=options.run_id)
+    run.run(configuration_path=options.configuration_path, run_id=options.run_id, 
+            start_year=options.start_year, end_year=options.end_year)
     del run
