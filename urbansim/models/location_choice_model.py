@@ -270,7 +270,7 @@ class LocationChoiceModel(ChoiceModel):
             index, chosen_choice = self.sampler_class.run(agent_subset, self.choice_set, index2=location_index, sample_size=nchoices,
                 weight=self.weights, resources=self.run_config)
         except Exception, e:
-            logger.log_warning("Problem with sampling alternatives.\n" % e)
+            logger.log_warning("Problem with sampling alternatives.\n%s" % e)
             index = None
         if index == None: # sampler produced an error
             index = array([], dtype="int32")
