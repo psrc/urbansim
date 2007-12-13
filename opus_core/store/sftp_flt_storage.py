@@ -292,9 +292,24 @@ from shutil import rmtree
 from tempfile import mkdtemp
 from getpass import getuser
 
+def skip_test():
+    if paramiko is None:
+        return True
+    ## skip unittest if the connection cannot be authenticated
+    sftp_location = 'sftp://%s@%s' % (getuser(), 'localhost')
+    try:
+        storage = sftp_flt_storage(sftp_location)
+        return True
+    except:
+        from opus_core.logger import logger 
+        logger.log_warning('Skipping sftp_flt_storage unit tests -- no ssh access or could not authenticate.')
+        return False
+
 class SftpFltStorageTests(opus_unittest.OpusTestCase):
     
     def setUp(self):
+        if skip_test():
+            return
         years = [1980, 1981]
         datasets = ['base_year', 'cities']
 
@@ -318,10 +333,14 @@ class SftpFltStorageTests(opus_unittest.OpusTestCase):
                     self.storage.sftp.put(file, os.path.join(remote_dir_name, short_file_name))
             
     def tearDown(self):
+        if skip_test():
+            return
         if exists_remotely(self.storage.sftp, self.remote_temp_dir):
             _rmtree(self.storage.sftp, self.remote_temp_dir)
     
     def test_get_files(self):
+        if skip_test():
+            return
         expected = ['city_id', 'city_name']
         expected.sort()
         actual = self.storage.get_column_names('cities')
@@ -329,6 +348,8 @@ class SftpFltStorageTests(opus_unittest.OpusTestCase):
         self.assertEqual(expected, actual)
         
     def test_load_table(self):
+        if skip_test():
+            return
         expected = {
             'city_id': array([3, 1, 2], dtype='<i4'),
             'city_name': array(['Unknown', 'Eugene', 'Springfield']),
@@ -337,6 +358,8 @@ class SftpFltStorageTests(opus_unittest.OpusTestCase):
         self.assertDictsEqual(expected, actual)
         
     def test_get_table_names_1981(self):
+        if skip_test():
+            return
         self.storage._base_directory_remote = os.path.join(self.remote_temp_dir, 'data', 'test_cache', '1981')
         expected = ['base_year', 'cities']
         actual = self.storage.get_table_names()
@@ -347,6 +370,8 @@ class SftpFltStorageTests(opus_unittest.OpusTestCase):
 class StorageWriteTests(TestStorageInterface):
 
     def setUp(self):
+        if skip_test():
+            return
         opus_core_path = OpusPackage().get_opus_core_path()
         local_test_data_path = os.path.join(
             opus_core_path, 'data', 'test_cache', '1980')
@@ -358,10 +383,14 @@ class StorageWriteTests(TestStorageInterface):
         self.table_name = 'testtable'
             
     def tearDown(self):
+        if skip_test():
+            return
         if exists_remotely(self.storage.sftp, self.remote_temp_dir):
             _rmtree(self.storage.sftp, self.remote_temp_dir)
             
     def test_write_char_array(self):
+        if skip_test():
+            return
         expected = array(['string1', 'string227'])
         table_data = {
             'char_column': expected,
@@ -379,6 +408,8 @@ class StorageWriteTests(TestStorageInterface):
         self.assert_((expected==actual).all())
         
     def test_write_int_array(self):
+        if skip_test():
+            return
         expected = array([100, 70])
         table_data = {
             'int_column': expected,
@@ -401,6 +432,8 @@ class StorageWriteTests(TestStorageInterface):
 
         
     def test_write_float_and_boolean_array(self):
+        if skip_test():
+            return
         expected_float = array([100.17, 70.00])
         expected_bool = array([True, False])
         table_data = {
@@ -438,6 +471,8 @@ class StorageWriteTests(TestStorageInterface):
         self.assert_((expected_bool == actual).all())
         
     def test_writing_column_to_file_when_file_of_same_column_name_and_different_type_already_exists(self):
+        if skip_test():
+            return
         
         column_name= "some_column"
         os.mkdir(os.path.join(self.storage._get_base_directory(), self.table_name)) 
@@ -458,6 +493,8 @@ class StorageWriteTests(TestStorageInterface):
                                                                 self.table_name, column_name + ".li8")))
 
     def test_writing_column_to_file_when_two_files_of_same_column_name_and_different_type_already_exist(self):        
+        if skip_test():
+            return
 
         column_name= "some_column"
         os.mkdir(os.path.join(self.storage._get_base_directory(), self.table_name)) 
@@ -480,16 +517,14 @@ class StorageWriteTests(TestStorageInterface):
         my_data = { column_name: array([9,99,999], dtype='<i8') }
         self.assertRaises(FltError, storage.write_table, self.table_name, my_data)
         self.assert_(not (exists_remotely(self.storage.sftp, os.path.join(self.storage._get_base_directory_remote(), self.table_name, column_name + ".li8"))))        
+
+    def test_write_table_columns_with_different_sizes(self):
+        if not skip_test():
+            super(StorageWriteTests,self).test_write_table_columns_with_different_sizes()
                 
-if __name__ == '__main__' and paramiko is not None:
-    ## skip unittest if the connection cannot be authenticated
-    sftp_location = 'sftp://%s@%s' % (getuser(), 'localhost')
-    try:
-        storage = sftp_flt_storage(sftp_location)
-        opus_unittest.main()
-    except:
-        from opus_core.logger import logger 
-        logger.log_warning('Skipping sftp_flt_storage unit tests -- no ssh access or could not authenticate.')
-
-
-    
+    def test_write_table_no_data_to_write(self):
+        if not skip_test():
+            super(StorageWriteTests,self).test_write_table_no_data_to_write()
+                
+if __name__ == '__main__':
+    opus_unittest.main()
