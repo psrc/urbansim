@@ -80,7 +80,8 @@ class RemoteRunSet(RemoteRun):
                                            'username': username,
                                            'opus_path': self.remote_opus_path,
                                            'communication_path_root': self.remote_communication_path_root,
-                                           'number_of_processes': 1
+                                           'number_of_processes': 1,
+                                           'password': password
                                            }
         for server in self.servers_info.keys():
             self.servers_info[server]['python_command'] = self.python_commands.get(server, self.python_command)
@@ -120,7 +121,7 @@ class RemoteRunSet(RemoteRun):
         self._do_run(start_year, end_year)
         
     def read_run_id_file(self, filename):
-        # filename is a file with a pair (run_id, year) per row
+        # filename is a file with a tuple (run_id, year, hostname) per row
         content = load_table_from_text_file(filename, convert_to_float=False)[0]
         for run_id, year, server in content:
             self.run_ids_dict[int(run_id)] = (int(year), server)
@@ -227,18 +228,20 @@ if __name__ == "__main__":
                 hostname = RemoteRun.default_hostname
         else:
             hostname = options.server
-        if options.user is None:
-            username = raw_input('Username [%s]: ' % RemoteRunSet.default_username)
-            if len(username) == 0:
-                username = RemoteRun.default_username
-        else:
-            username = options.user
-        password = getpass.getpass('Password for %s@%s: ' % (username, hostname))
+        if hostname <> 'localhost':
+            if options.user is None:
+                username = raw_input('Username [%s]: ' % RemoteRunSet.default_username)
+                if len(username) == 0:
+                    username = RemoteRun.default_username
+                else:
+                    username = options.user       
+            password = getpass.getpass('Password for %s@%s: ' % (username, hostname))
 
     try: import wingdbstub
     except: pass
     db = option_group.get_services_database(options)
+    run_manager = option_group.get_run_manager(options)
     run = RemoteRunSet(options.server_file, hostname, username, password, options.host_name, options.database_name, db,
-                       options.skip_travel_model, options.skip_urbansim)
+                       options.skip_travel_model, options.skip_urbansim, run_manager)
     run.run(options.start_year, options.end_year, options.configuration_path, options.run_id_file)
         

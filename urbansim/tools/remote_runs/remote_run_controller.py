@@ -22,6 +22,7 @@ from opus_core.misc import get_config_from_opus_path
 from opus_core.misc import load_from_text_file, get_host_name
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
 from opus_core.services.run_server.run_activity import RunActivity
+from opus_core.database_management.database_server import DatabaseServer
 from opus_core.configuration import Configuration
 from urbansim.tools.run_manager import RunManager
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
@@ -91,10 +92,12 @@ class RemoteRun:
     default_username = getpass.getuser()
 
     # opus python path on the remote host (where opus projects live) 
-    remote_opus_path = "/home/hana/opus"
+    #remote_opus_path = "/home/hana/opus"
+    remote_opus_path = "/Users/hana/workspace"
     
     # root path for the process communicationon on the remote host (a subdirectory with a run_id will be created in runtime).  
-    remote_communication_path_root = '/home/hana/urbansim_tmp'
+    #remote_communication_path_root = '/home/hana/urbansim_tmp'
+    remote_communication_path_root = '/Users/hana/urbansim_tmp'
     
     # root path for the process communicationon on the local host (a subdirectory with a run_id will be created in runtime).  
     #local_output_path_root = 'c:/hana/runs'
@@ -109,7 +112,7 @@ class RemoteRun:
     remote_travel_models = ['opus_emme2.models.get_cache_data_into_emme2']
     
     def __init__(self, hostname, username, password, services_hostname, services_dbname, services_database,
-                 skip_travel_model=False, skip_urbansim=False):
+                 skip_travel_model=False, skip_urbansim=False, run_manager=None):
         self.hostname = hostname
         self.username = username
         self.password = password
@@ -119,15 +122,18 @@ class RemoteRun:
         self.remote_communication_path = None
         self.skip_travel_model = skip_travel_model
         self.skip_urbansim = skip_urbansim
+        self.services_db_config = {'hostname':services_database.host_name, 'username':services_database.user_name, 'password':services_database.password, 
+                     'database_name':services_dbname}
+        self._run_manager = None
+        if run_manager:
+            self._run_manager = run_manager
         
     def prepare_for_run(self, configuration_path=None, config=None, run_id=None, prepare_cache=True):
         """Configuration is given either as an opus path (configuration_path) or as a Configuration object (config)."""
-        run_activity = RunActivity(self.services_database)
-        self.run_manager = RunManager(run_activity)
     
         if run_id is not None:
             self.run_id = run_id
-            config = self.run_manager.get_resources_for_run_id_from_history(services_host_name=self.services_hostname,
+            config = self.get_run_manager().get_resources_for_run_id_from_history(services_host_name=self.services_hostname,
                                                                        services_database_name=self.services_dbname,
                                                                        run_id=self.run_id)
             self.remote_communication_path = '%s/%s' % (self.remote_communication_path_root, self.run_id)
@@ -140,7 +146,7 @@ class RemoteRun:
                     raise StandardError, "Either configuration_path, config or run_id must be given."
             insert_auto_generated_cache_directory_if_needed(config)
     
-            self.run_id = self.run_manager.run_activity.get_new_history_id()
+            self.run_id = self.get_run_manager().run_activity.get_new_history_id()
             head, tail = os.path.split(config['cache_directory'])
             config['cache_directory'] =  '%s/run_%s.%s' % (head, self.run_id, tail)
             self.remote_communication_path = '%s/%s' % (self.remote_communication_path_root, self.run_id)
@@ -148,10 +154,10 @@ class RemoteRun:
             if not self.skip_urbansim and prepare_cache:
                 self.prepare_cache_and_communication_path(config)
 
-            self.run_manager.run_activity.add_row_to_history(self.run_id, config, "started")
+            self.get_run_manager().run_activity.add_row_to_history(self.run_id, config, "started")
             
             #check that run_id must exist
-            results = self.run_manager.run_activity.storage.GetResultsFromQuery(
+            results = self.get_run_manager().run_activity.storage.GetResultsFromQuery(
                                                             "SELECT * from run_activity WHERE run_id = %s " % self.run_id)
             if not len(results) > 1:
                 raise StandardError, "run_id %s doesn't exist in run_activity table." % self.run_id
@@ -287,8 +293,8 @@ class RemoteRun:
             if this_start_year <= this_end_year:
                 urbansim_resources['years'] = (this_start_year, this_end_year)
                     
-                self.run_manager.run_activity.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % self.run_id)        
-                self.run_manager.run_activity.add_row_to_history(self.run_id, urbansim_resources, "started")
+                self.get_run_manager().run_activity.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % self.run_id)        
+                self.get_run_manager().run_activity.add_row_to_history(self.run_id, urbansim_resources, "started")
                 
                 if not self.skip_urbansim:
                     self.run_remote_python_process("%s/urbansim/tools/restart_run.py" % self.remote_opus_path, 
@@ -304,7 +310,7 @@ class RemoteRun:
                 if background: # wait until urbansim finishes; check every 60 seconds
                     while True:
                         time.sleep(60)
-                        runs_by_status = self.run_manager.get_runs_by_status([self.run_id])
+                        runs_by_status = self.get_run_manager().get_runs_by_status([self.run_id])
                         if run_id in runs_by_status.get('done', []):
                             break
                         if run_id in runs_by_status.get('failed', []):
@@ -341,6 +347,17 @@ class RemoteRun:
                     
             this_start_year = travel_model_year + 1  #next run starting from the next year of the travel model year
             
+    def get_run_manager(self):
+        """in case the connection to services timeout, reconnect
+        """
+        try:
+            self._run_manager.run_activity.storage.table_exists('run_activity')
+        except:  #connection has gone away, re-create run_manager
+            db_server = DatabaseServer(self.services_db_config)
+            services_db = db_server.get_database(self.services_dbname)
+            self._run_manager = RunManager( RunActivity(services_db) )
+        return self._run_manager
+    
 if __name__ == "__main__":
     option_group = RemoteRunOptionGroup()
     parser = option_group.parser
@@ -363,8 +380,9 @@ if __name__ == "__main__":
     try: import wingdbstub
     except: pass
     db = option_group.get_services_database(options)
+    run_manager = option_group.get_run_manager(options)
     run = RemoteRun(hostname, username, password, options.host_name, options.database_name, db,
-                    options.skip_travel_model, options.skip_urbansim)
+                    options.skip_travel_model, options.skip_urbansim, run_manager)
     run.run(options.start_year, options.end_year, options.configuration_path, options.run_id)
  
  
