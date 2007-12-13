@@ -173,8 +173,10 @@ class RemoteRun:
         
     def _do_run(self, run_id, config, start_year=None, end_year=None):
         cache_directory = config['cache_directory']
-        if start_year is None or end_year is None:
-            start_year, end_year = config['years']        
+        if start_year is None:
+            start_year = config['years'][0]
+        if end_year is None:
+            end_year = config['years'][1]
 
         travel_model_resources = None
         travel_model_years = []
@@ -254,7 +256,7 @@ class RemoteRun:
             if travel_model_resources is not None:
                 if travel_model_resources['travel_model_configuration'].has_key(this_end_year):
                     travel_model_resources['years'] = (this_end_year, this_end_year)
-                    self.update_services_database(self.get_run_manager().run_activity, run_id, config)
+                    self.update_services_database(self.get_run_manager().run_activity, run_id, travel_model_resources)
 
                     if not self.is_localhost(self.travelmodel_server_config['hostname']):
                         logger.start_block("Start Travel Model on %s from %s to %s" % (self.travelmodel_server_config['hostname'],
@@ -288,7 +290,7 @@ class RemoteRun:
                         os.system(cmd)
                         if not os.path.exists(os.path.join(cache_directory, str(this_end_year+1))):
                             raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
-                                                (this_end_year+1, local_cache_directory)
+                                                (this_end_year+1, cache_directory)
                 
             this_start_year = travel_model_year + 1  #next run starting from the next year of the travel model year
 

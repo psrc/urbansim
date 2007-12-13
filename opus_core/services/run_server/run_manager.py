@@ -219,8 +219,8 @@ class RunManager(object):
                 if not os.path.exists(cache_directory) or not os.path.exists(os.path.join(cache_directory, str(base_year))):
                     self.create_baseyear_cache(run_resources)
 
-            if not os.path.exists(run_resources['cache_directory']):
-                raise StandardError("cache directory doesn't exist: '%s'" % resources['cache_directory'])
+            if os.path.isdir(run_resources['cache_directory']) and not os.path.exists(run_resources['cache_directory']):
+                raise StandardError("cache directory doesn't exist: '%s'" % run_resources['cache_directory'])
     
             model_system = run_resources.get('model_system', None)
             if model_system is None:
