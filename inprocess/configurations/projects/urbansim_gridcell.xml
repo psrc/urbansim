@@ -1,533 +1,504 @@
-<?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
   <general>
-    <item type="string" name="description" >Base UrbanSim gridcell project</item>
+    <description type="string">Base UrbanSim gridcell project</description>
   </general>
   <model_manager>
-    <item type="dictionary" name="default_model_configurations" >
-      <item parser_action="execute" type="class" name="development_project_types" >
-        <item flags="hidden" type="string" name="Class_name" >DevelopmentProjectTypesConfigurationCreator</item>
-        <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.development_project_types_configuration_creator</item>
-        <item type="class" name="commercial" >
-          <item flags="hidden" type="string" name="Class_name" >DevelopmentProjectTypeConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.development_project_type_configuration_creator</item>
-          <item type="list" name="categories" >
-            <item type="integer" name="cat" >1000</item>
-            <item type="integer" name="cat" >2000</item>
-            <item type="integer" name="cat" >5000</item>
-            <item type="integer" name="cat" >10000</item>
-          </item>
-          <item type="string" name="developable_maximum_unit_variable_full_name" >urbansim.gridcell.developable_maximum_commercial_sqft</item>
-          <item type="string" name="developable_minimum_unit_variable_full_name" >urbansim.gridcell.developable_minimum_commercial_sqft</item>
-          <item type="boolean" name="residential" choices="True|False" >False</item>
-          <item type="string" name="units" >commercial_sqft</item>
-        </item>
-        <item type="class" name="industrial" >
-          <item flags="hidden" type="string" name="Class_name" >DevelopmentProjectTypeConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.development_project_type_configuration_creator</item>
-          <item type="list" name="categories" >
-            <item type="integer" name="cat" >1000</item>
-            <item type="integer" name="cat" >2000</item>
-            <item type="integer" name="cat" >5000</item>
-            <item type="integer" name="cat" >10000</item>
-          </item>
-          <item type="string" name="developable_maximum_unit_variable_full_name" >urbansim.gridcell.developable_maximum_industrial_sqft</item>
-          <item type="string" name="developable_minimum_unit_variable_full_name" >urbansim.gridcell.developable_minimum_industrial_sqft</item>
-          <item type="boolean" name="residential" choices="True|False" >False</item>
-          <item type="string" name="units" >industrial_sqft</item>
-        </item>
-        <item type="class" name="residential" >
-          <item flags="hidden" type="string" name="Class_name" >DevelopmentProjectTypeConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.development_project_type_configuration_creator</item>
-          <item type="list" name="categories" >
-            <item type="integer" name="cat" >1</item>
-            <item type="integer" name="cat" >2</item>
-            <item type="integer" name="cat" >3</item>
-            <item type="integer" name="cat" >5</item>
-            <item type="integer" name="cat" >10</item>
-            <item type="integer" name="cat" >20</item>
-          </item>
-          <item type="string" name="developable_maximum_unit_variable_full_name" >urbansim.gridcell.developable_maximum_residential_units</item>
-          <item type="string" name="developable_minimum_unit_variable_full_name" >urbansim.gridcell.developable_minimum_residential_units</item>
-          <item type="boolean" name="residential" choices="True|False" >True</item>
-          <item type="string" name="units" >residential_units</item>
-        </item>
-      </item>
-      <item type="dictionary" name="residential_development_project_location_choice_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" parser_action="execute" type="string" name="Class_name" >DevelopmentProjectLocationChoiceModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.development_project_location_choice_model_configuration_creator</item>
-          <item type="string" name="project_type" >residential</item>
-          <item type="string" name="coefficients_table" >residential_development_location_choice_model_coefficients</item>
-          <item type="string" name="specification_table" >residential_development_location_choice_model_specification</item>
-          <item parser_action="include" type="path" name="default_args" >model_manager/default_model_configurations/development_project_location_choice_defaults</item>
-        </item>
-      </item>
-      <item type="dictionary" name="commercial_development_project_location_choice_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >DevelopmentProjectLocationChoiceModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.development_project_location_choice_model_configuration_creator</item>
-          <item type="string" name="project_type" >commercial</item>
-          <item type="string" name="coefficients_table" >commercial_development_location_choice_model_coefficients</item>
-          <item type="string" name="specification_table" >commercial_development_location_choice_model_specification</item>
-          <item parser_action="include" type="path" name="default_args" >model_manager/default_model_configurations/development_project_location_choice_defaults</item>
-        </item>
-      </item>
-      <item type="dictionary" name="industrial_development_project_location_choice_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >DevelopmentProjectLocationChoiceModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.development_project_location_choice_model_configuration_creator</item>
-          <item type="string" name="project_type" >industrial</item>
-          <item type="string" name="coefficients_table" >industrial_development_location_choice_model_coefficients</item>
-          <item type="string" name="specification_table" >industrial_development_location_choice_model_specification</item>
-          <item parser_action="include" type="path" name="default_args" >model_manager/default_model_configurations/development_project_location_choice_defaults</item>
-        </item>
-      </item>
-      <item parser_action="only_for_includes" type="dictionary" name="development_project_location_choice_defaults" >
-        <item type="integer" name="records_per_chunk" >300</item>
-        <item type="string" name="location_set" >gridcell</item>
-        <item type="string" name="events_for_estimation_table" >development_event_history</item>
-        <item type="string" name="submodel_string" >size_category</item>
-      </item>
-      <item type="dictionary" name="prescheduled_events" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >PrescheduledEventsConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.prescheduled_events_configuration_creator</item>
-          <item type="string" name="output_events" >development_events</item>
-        </item>
-      </item>
-      <item type="dictionary" name="events_coordinator" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >EventsCoordinatorConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.events_coordinator_configuration_creator</item>
-          <item type="string" name="location_set" >gridcell</item>
-          <item type="string" name="development_type_set" >development_type</item>
-          <item type="string" name="input_events" >development_events</item>
-          <item type="string" name="output_changed_indices" >changed_indices</item>
-          <item type="string" name="output_processed_development_event_indices" >processed_development_event_indices</item>
-        </item>
-      </item>
-      <item type="dictionary" name="home_based_choice_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >HomeBasedChoiceModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.home_based_choice_model_configuration_creator</item>
-          <item type="integer" name="records_per_chunk" >500</item>
-          <item type="string" name="agent_set" >person</item>
-          <item type="string" name="estimation_procedure" >opus_core.bhhh_mnl_estimation</item>
-          <item type="string" name="choice_attribute_name" >work_nonhome_based</item>
-          <item type="list" name="choice_set" >
-            <item type="integer" name="int" >0</item>
-            <item type="integer" name="int" >1</item>
-          </item>
-          <item type="string" name="agents_for_estimation_table" >persons_for_estimation</item>
-          <item type="string" name="filter" >None</item>
-          <item type="string" name="coefficients_table" >home_based_choice_model_coefficients</item>
-          <item type="string" name="specification_table" >home_based_choice_model_specification</item>
-        </item>
-      </item>
-      <item type="dictionary" name="auto_ownership_choice_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >AutoOwnershipChoiceModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.auto_ownership_choice_model_configuration_creator</item>
-          <item type="string" name="agent_set" >household</item>
-          <item type="integer" name="records_per_chunk" >500</item>
-          <item type="string" name="estimation_procedure" >opus_core.bhhh_mnl_estimation</item>
-          <item type="string" name="choice_attribute_name" >cars</item>
-          <item type="list" name="choice_set" >
-            <item type="integer" name="int" >0</item>
-            <item type="integer" name="int" >1</item>
-            <item type="integer" name="int" >2</item>
-            <item type="integer" name="int" >3</item>
-          </item>
-          <item type="string" name="coefficients_table" >auto_ownership_choice_model_coefficients</item>
-          <item type="string" name="specification_table" >auto_ownership_choice_model_specification</item>
-        </item>
-      </item>
-      <item type="dictionary" name="residential_land_share_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >ResidentialLandShareModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.residential_land_share_model_configuration_creator</item>
-          <item type="string" name="dataset" >gridcell</item>
-          <item type="string" name="coefficients_table" >residential_land_share_model_coefficients</item>
-          <item type="string" name="specification_table" >residential_land_share_model_specification</item>
-          <item type="string" name="estimation_procedure" >opus_core.estimate_linear_regression</item>
-          <item type="string" name="input_changed_indices" >changed_indices</item>
-        </item>
-      </item>
-      <item type="dictionary" name="land_price_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >LandPriceModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.land_price_model_configuration_creator</item>
-          <item type="string" name="dataset" >gridcell</item>
-          <item type="integer" name="nchunks" >1</item>
-          <item type="integer" name="threshold" >1000</item>
-          <item type="string" name="estimation_procedure" >opus_core.estimate_linear_regression</item>
-          <item type="string" name="coefficients_table" >land_price_model_coefficients</item>
-          <item type="string" name="specification_table" >land_price_model_specification</item>
-        </item>
-      </item>
-      <item type="dictionary" name="development_project_transition_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >DevelopmentProjectTransitionModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.development_project_transition_model_configuration_creator</item>
-          <item type="string" name="location_set" >gridcell</item>
-          <item type="string" name="history_table" >development_event_history</item>
-          <item type="string" name="vacancy_table" >target_vacancy</item>
-          <item type="string" name="output_results" >dptm_results</item>
-        </item>
-      </item>
-      <item type="dictionary" name="development_event_transition_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >DevelopmentEventTransitionModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.development_event_transition_model_configuration_creator</item>
-          <item type="string" name="input_projects" >dptm_results</item>
-          <item type="string" name="output_events" >development_events</item>
-        </item>
-      </item>
-      <item type="dictionary" name="household_transition_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >HouseholdTransitionModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.household_transition_model_configuration_creator</item>
-          <item type="string" name="household_set" >household</item>
-        </item>
-      </item>
-      <item type="dictionary" name="employment_transition_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >EmploymentTransitionModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.employment_transition_model_configuration_creator</item>
-          <item type="string" name="job_set" >job</item>
-          <item type="string" name="job_building_types" >job_building_type</item>
-          <item type="string" name="location_id_name" >grid_id</item>
-        </item>
-      </item>
-      <item type="dictionary" name="household_relocation_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >HouseholdRelocationModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.household_relocation_model_configuration_creator</item>
-          <item type="string" name="agent_set" >household</item>
-          <item parser_action="empty_string_to_None" type="string" name="rate_table" >annual_relocation_rates_for_households</item>
-          <item type="string" name="location_id_name" >grid_id</item>
-          <item parser_action="empty_string_to_None" type="string" name="probabilities" >urbansim.household_relocation_probabilities</item>
-          <item type="string" name="what" >households</item>
-          <item type="string" name="output_index" >hrm_index</item>
-        </item>
-      </item>
-      <item type="dictionary" name="household_location_choice_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >HouseholdLocationChoiceModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.household_location_choice_model_configuration_creator</item>
-          <item type="string" name="agent_set" >household</item>
-          <item parser_action="empty_string_to_None" type="string" name="sampler" >opus_core.samplers.weighted_sampler</item>
-          <item type="string" name="choices" >urbansim.lottery_choices</item>
-          <item type="string" name="location_set" >gridcell</item>
-          <item parser_action="empty_string_to_None" type="string" name="capacity_string" >vacant_residential_units</item>
-          <item type="integer" name="sample_size_locations" >30</item>
-          <item type="float" name="portion_to_unplace" >0.08333333333</item>
-          <item type="integer" name="nchunks" >12</item>
-          <item type="string" name="agents_for_estimation_table_name" >households_for_estimation</item>
-          <item parser_action="empty_string_to_None" type="string" name="number_of_units_string" >residential_units</item>
-          <item parser_action="empty_string_to_None" type="string" name="number_of_agents_string" >number_of_households</item>
-          <item type="integer" name="lottery_max_iterations" >3</item>
-          <item type="integer" name="maximum_runs" >3</item>
-          <item type="string" name="coefficients_table" >household_location_choice_model_coefficients</item>
-          <item type="string" name="specification_table" >household_location_choice_model_specification</item>
-          <item type="string" name="input_index" >hrm_index</item>
-        </item>
-      </item>
-      <item type="dictionary" name="employment_relocation_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >EmploymentRelocationModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.employment_relocation_model_configuration_creator</item>
-          <item type="string" name="agent_set" >job</item>
-          <item type="string" name="what" >jobs</item>
-          <item parser_action="empty_string_to_None" type="string" name="rate_table" >annual_relocation_rates_for_jobs</item>
-          <item type="string" name="location_id_name" >grid_id</item>
-          <item parser_action="empty_string_to_None" type="string" name="probabilities" >urbansim.employment_relocation_probabilities</item>
-          <item type="string" name="output_index" >erm_index</item>
-        </item>
-      </item>
-      <item type="dictionary" name="employment_location_choice_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >EmploymentLocationChoiceModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.employment_location_choice_model_configuration_creator</item>
-          <item type="string" name="agent_set" >job</item>
-          <item type="integer" name="sample_size_locations" >30</item>
-          <item parser_action="empty_string_to_None" type="string" name="sampler" >opus_core.samplers.weighted_sampler</item>
-          <item type="string" name="choices" >urbansim.lottery_choices</item>
-          <item type="string" name="location_set" >gridcell</item>
-          <item type="float" name="portion_to_unplace" >0.08333333333</item>
-          <item type="integer" name="records_per_chunk" >50000</item>
-          <item type="string" name="attribute_to_group_by" >job_building_type.name</item>
-          <item parser_action="empty_string_to_None" type="string" name="agents_for_estimation_table" >jobs_for_estimation</item>
-          <item parser_action="empty_string_to_None" type="string" name="filter_for_estimation" />
-          <item parser_action="empty_string_to_None" type="string" name="filter" />
-          <item parser_action="empty_string_to_None" type="string" name="capacity_string" >vacant_SSS_job_space</item>
-          <item type="boolean" name="compute_capacity_flag" choices="True|False" >True</item>
-          <item parser_action="empty_string_to_None" type="string" name="estimation_weight_string" >total_number_of_possible_SSS_jobs</item>
-          <item type="float" name="estimation_size_agents" >1.0</item>
-          <item parser_action="empty_string_to_None" type="string" name="agent_units_string" />
-          <item parser_action="empty_string_to_None" type="string" name="number_of_units_string" >total_number_of_possible_SSS_jobs</item>
-          <item type="integer" name="lottery_max_iterations" >3</item>
-          <item type="string" name="variable_package" >urbansim</item>
-          <item type="integer" name="maximum_runs" >3</item>
-          <item type="string" name="input_index" >erm_index</item>
-          <item type="string" name="coefficients_table" >employment_location_choice_model_coefficients</item>
-          <item type="string" name="specification_table" >employment_location_choice_model_specification</item>
-        </item>
-      </item>
-      <item type="dictionary" name="home_based_employment_location_choice_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >HomeBasedEmploymentLocationChoiceModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.home_based_employment_location_choice_model_configuration_creator</item>
-          <item type="string" name="agent_set" >job</item>
-          <item type="string" name="location_set" >gridcell</item>
-          <item type="float" name="portion_to_unplace" >0.08333333333</item>
-          <item type="integer" name="records_per_chunk" >50000</item>
-          <item type="string" name="choices" >urbansim.lottery_choices</item>
-          <item type="integer" name="sample_size_locations" >30</item>
-          <item type="string" name="attribute_to_group_by" >job_building_type.name</item>
-          <item type="string" name="estimation_weight_string" >residential_units</item>
-          <item type="string" name="number_of_units_string" >residential_units</item>
-          <item type="string" name="agents_for_estimation_table" >jobs_for_estimation</item>
-          <item type="string" name="coefficients_table" >employment_location_choice_model_coefficients</item>
-          <item type="string" name="specification_table" >employment_location_choice_model_specification</item>
-          <item type="integer" name="maximum_runs" >5</item>
-          <item type="string" name="input_index" >erm_index</item>
-        </item>
-      </item>
-      <item type="dictionary" name="governmental_employment_location_choice_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >GovernmentalEmploymentLocationChoiceModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.governmental_employment_location_choice_model_configuration_creator</item>
-          <item type="string" name="agent_set" >job</item>
-          <item type="string" name="location_set" >gridcell</item>
-          <item parser_action="empty_string_to_None" type="string" name="filter" />
-          <item type="string" name="input_index" >erm_index</item>
-        </item>
-      </item>
-      <item type="dictionary" name="distribute_unplaced_jobs_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >DistributeUnplacedJobsModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.distribute_unplaced_jobs_model_configuration_creator</item>
-          <item type="string" name="agent_set" >job</item>
-          <item type="string" name="location_set" >gridcell</item>
-        </item>
-      </item>
-      <item type="dictionary" name="real_estate_price_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >RealEstatePriceModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.real_estate_price_model_configuration_creator</item>
-          <item type="integer" name="nchunks" >1</item>
-          <item type="string" name="dataset" >building</item>
-          <item type="string" name="outcome_attribute" >ln_unit_price=ln(urbansim.building.avg_val_per_unit)</item>
-          <item type="string" name="submodel_string" >building_type_id</item>
-          <item type="string" name="filter_variable" >building.avg_val_per_unit</item>
-          <item type="string" name="coefficients_table" >real_estate_price_model_coefficients</item>
-          <item type="string" name="specification_table" >real_estate_price_model_specification</item>
-        </item>
-      </item>
-      <item type="dictionary" name="building_transition_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >BuildingTransitionModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.building_transition_model_configuration_creator</item>
-          <item type="string" name="building_set" >building</item>
-          <item type="string" name="location_set" >gridcell</item>
-          <item type="string" name="building_types_table" >building_type</item>
-          <item type="string" name="vacancy_table" >target_vacancy</item>
-        </item>
-      </item>
-      <item type="dictionary" name="building_relocation_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >BuildingRelocationModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.building_relocation_model_configuration_creator</item>
-          <item type="string" name="agent_set" >building</item>
-          <item type="string" name="location_id_name" >gridcell.get_id_name()[0]</item>
-          <item type="string" name="output_index" >brm_index</item>
-        </item>
-      </item>
-      <item type="dictionary" name="building_location_choice_model" >
-        <item parser_action="execute" type="class" name="controller" >
-          <item flags="hidden" type="string" name="Class_name" >BuildingLocationChoiceModelConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.building_location_choice_model_configuration_creator</item>
-          <item type="integer" name="records_per_chunk" >500</item>
-          <item type="string" name="agent_set" >building</item>
-          <item type="string" name="location_set" >gridcell</item>
-          <item type="integer" name="sample_size_locations" >30</item>
-          <item type="string" name="attribute_to_group_by" >building_type.name</item>
-          <item type="string" name="coefficients_table" >development_location_choice_model_coefficients</item>
-          <item type="string" name="specification_table" >development_location_choice_model_specification</item>
-          <item type="string" name="input_index" >brm_index</item>
-        </item>
-      </item>
-    </item>
+    <default_model_configurations type="dictionary">
+      <development_project_types parser_action="execute" type="class">
+        <Class_name flags="hidden" type="string">DevelopmentProjectTypesConfigurationCreator</Class_name>
+        <Class_path flags="hidden" type="string">urbansim.configurations.development_project_types_configuration_creator</Class_path>
+        <commercial type="class">
+          <Class_name flags="hidden" type="string">DevelopmentProjectTypeConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.development_project_type_configuration_creator</Class_path>
+          <categories type="list">[1000, 2000, 5000, 10000]</categories>
+          <developable_maximum_unit_variable_full_name type="string">urbansim.gridcell.developable_maximum_commercial_sqft</developable_maximum_unit_variable_full_name>
+          <developable_minimum_unit_variable_full_name type="string">urbansim.gridcell.developable_minimum_commercial_sqft</developable_minimum_unit_variable_full_name>
+          <residential choices="True|False" type="boolean">False</residential>
+          <units type="string">commercial_sqft</units>
+        </commercial>
+        <industrial type="class">
+          <Class_name flags="hidden" type="string">DevelopmentProjectTypeConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.development_project_type_configuration_creator</Class_path>
+          <categories type="list">[1000, 2000, 5000, 10000]</categories>
+          <developable_maximum_unit_variable_full_name type="string">urbansim.gridcell.developable_maximum_industrial_sqft</developable_maximum_unit_variable_full_name>
+          <developable_minimum_unit_variable_full_name type="string">urbansim.gridcell.developable_minimum_industrial_sqft</developable_minimum_unit_variable_full_name>
+          <residential choices="True|False" type="boolean">False</residential>
+          <units type="string">industrial_sqft</units>
+        </industrial>
+        <residential type="class">
+          <Class_name flags="hidden" type="string">DevelopmentProjectTypeConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.development_project_type_configuration_creator</Class_path>
+          <categories type="list">[1, 2, 3, 5, 10, 20]</categories>
+          <developable_maximum_unit_variable_full_name type="string">urbansim.gridcell.developable_maximum_residential_units</developable_maximum_unit_variable_full_name>
+          <developable_minimum_unit_variable_full_name type="string">urbansim.gridcell.developable_minimum_residential_units</developable_minimum_unit_variable_full_name>
+          <residential choices="True|False" type="boolean">True</residential>
+          <units type="string">residential_units</units>
+        </residential>
+      </development_project_types>
+      <residential_development_project_location_choice_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" parser_action="execute" type="string">DevelopmentProjectLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.development_project_location_choice_model_configuration_creator</Class_path>
+          <project_type type="string">residential</project_type>
+          <coefficients_table type="string">residential_development_location_choice_model_coefficients</coefficients_table>
+          <specification_table type="string">residential_development_location_choice_model_specification</specification_table>
+          <default_args parser_action="include" type="path">model_manager/default_model_configurations/development_project_location_choice_defaults</default_args>
+        </controller>
+      </residential_development_project_location_choice_model>
+      <commercial_development_project_location_choice_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">DevelopmentProjectLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.development_project_location_choice_model_configuration_creator</Class_path>
+          <project_type type="string">commercial</project_type>
+          <coefficients_table type="string">commercial_development_location_choice_model_coefficients</coefficients_table>
+          <specification_table type="string">commercial_development_location_choice_model_specification</specification_table>
+          <default_args parser_action="include" type="path">model_manager/default_model_configurations/development_project_location_choice_defaults</default_args>
+        </controller>
+      </commercial_development_project_location_choice_model>
+      <industrial_development_project_location_choice_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">DevelopmentProjectLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.development_project_location_choice_model_configuration_creator</Class_path>
+          <project_type type="string">industrial</project_type>
+          <coefficients_table type="string">industrial_development_location_choice_model_coefficients</coefficients_table>
+          <specification_table type="string">industrial_development_location_choice_model_specification</specification_table>
+          <default_args parser_action="include" type="path">model_manager/default_model_configurations/development_project_location_choice_defaults</default_args>
+        </controller>
+      </industrial_development_project_location_choice_model>
+      <development_project_location_choice_defaults parser_action="only_for_includes" type="dictionary">
+        <records_per_chunk type="integer">300</records_per_chunk>
+        <location_set type="string">gridcell</location_set>
+        <events_for_estimation_table type="string">development_event_history</events_for_estimation_table>
+        <submodel_string type="string">size_category</submodel_string>
+      </development_project_location_choice_defaults>
+      <prescheduled_events type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">PrescheduledEventsConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.prescheduled_events_configuration_creator</Class_path>
+          <output_events type="string">development_events</output_events>
+        </controller>
+      </prescheduled_events>
+      <events_coordinator type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">EventsCoordinatorConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.events_coordinator_configuration_creator</Class_path>
+          <location_set type="string">gridcell</location_set>
+          <development_type_set type="string">development_type</development_type_set>
+          <input_events type="string">development_events</input_events>
+          <output_changed_indices type="string">changed_indices</output_changed_indices>
+          <output_processed_development_event_indices type="string">processed_development_event_indices</output_processed_development_event_indices>
+        </controller>
+      </events_coordinator>
+      <home_based_choice_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">HomeBasedChoiceModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.home_based_choice_model_configuration_creator</Class_path>
+          <records_per_chunk type="integer">500</records_per_chunk>
+          <agent_set type="string">person</agent_set>
+          <estimation_procedure type="string">opus_core.bhhh_mnl_estimation</estimation_procedure>
+          <choice_attribute_name type="string">work_nonhome_based</choice_attribute_name>
+          <choice_set type="list">[0, 1]</choice_set>
+          <agents_for_estimation_table type="string">persons_for_estimation</agents_for_estimation_table>
+          <filter type="string">None</filter>
+          <coefficients_table type="string">home_based_choice_model_coefficients</coefficients_table>
+          <specification_table type="string">home_based_choice_model_specification</specification_table>
+        </controller>
+      </home_based_choice_model>
+      <auto_ownership_choice_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">AutoOwnershipChoiceModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.auto_ownership_choice_model_configuration_creator</Class_path>
+          <agent_set type="string">household</agent_set>
+          <records_per_chunk type="integer">500</records_per_chunk>
+          <estimation_procedure type="string">opus_core.bhhh_mnl_estimation</estimation_procedure>
+          <choice_attribute_name type="string">cars</choice_attribute_name>
+          <choice_set type="list">[0, 1, 2, 3]</choice_set>
+          <coefficients_table type="string">auto_ownership_choice_model_coefficients</coefficients_table>
+          <specification_table type="string">auto_ownership_choice_model_specification</specification_table>
+        </controller>
+      </auto_ownership_choice_model>
+      <residential_land_share_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">ResidentialLandShareModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.residential_land_share_model_configuration_creator</Class_path>
+          <dataset type="string">gridcell</dataset>
+          <coefficients_table type="string">residential_land_share_model_coefficients</coefficients_table>
+          <specification_table type="string">residential_land_share_model_specification</specification_table>
+          <estimation_procedure type="string">opus_core.estimate_linear_regression</estimation_procedure>
+          <input_changed_indices type="string">changed_indices</input_changed_indices>
+        </controller>
+      </residential_land_share_model>
+      <land_price_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">LandPriceModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.land_price_model_configuration_creator</Class_path>
+          <dataset type="string">gridcell</dataset>
+          <nchunks type="integer">1</nchunks>
+          <threshold type="integer">1000</threshold>
+          <estimation_procedure type="string">opus_core.estimate_linear_regression</estimation_procedure>
+          <coefficients_table type="string">land_price_model_coefficients</coefficients_table>
+          <specification_table type="string">land_price_model_specification</specification_table>
+        </controller>
+      </land_price_model>
+      <development_project_transition_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">DevelopmentProjectTransitionModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.development_project_transition_model_configuration_creator</Class_path>
+          <location_set type="string">gridcell</location_set>
+          <history_table type="string">development_event_history</history_table>
+          <vacancy_table type="string">target_vacancy</vacancy_table>
+          <output_results type="string">dptm_results</output_results>
+        </controller>
+      </development_project_transition_model>
+      <development_event_transition_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">DevelopmentEventTransitionModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.development_event_transition_model_configuration_creator</Class_path>
+          <input_projects type="string">dptm_results</input_projects>
+          <output_events type="string">development_events</output_events>
+        </controller>
+      </development_event_transition_model>
+      <household_transition_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">HouseholdTransitionModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.household_transition_model_configuration_creator</Class_path>
+          <household_set type="string">household</household_set>
+        </controller>
+      </household_transition_model>
+      <employment_transition_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">EmploymentTransitionModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.employment_transition_model_configuration_creator</Class_path>
+          <job_set type="string">job</job_set>
+          <job_building_types type="string">job_building_type</job_building_types>
+          <location_id_name type="string">grid_id</location_id_name>
+        </controller>
+      </employment_transition_model>
+      <household_relocation_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">HouseholdRelocationModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.household_relocation_model_configuration_creator</Class_path>
+          <agent_set type="string">household</agent_set>
+          <rate_table parser_action="empty_string_to_None" type="string">annual_relocation_rates_for_households</rate_table>
+          <location_id_name type="string">grid_id</location_id_name>
+          <probabilities parser_action="empty_string_to_None" type="string">urbansim.household_relocation_probabilities</probabilities>
+          <what type="string">households</what>
+          <output_index type="string">hrm_index</output_index>
+        </controller>
+      </household_relocation_model>
+      <household_location_choice_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">HouseholdLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.household_location_choice_model_configuration_creator</Class_path>
+          <agent_set type="string">household</agent_set>
+          <sampler parser_action="empty_string_to_None" type="string">opus_core.samplers.weighted_sampler</sampler>
+          <choices type="string">urbansim.lottery_choices</choices>
+          <location_set type="string">gridcell</location_set>
+          <capacity_string parser_action="empty_string_to_None" type="string">vacant_residential_units</capacity_string>
+          <sample_size_locations type="integer">30</sample_size_locations>
+          <portion_to_unplace type="float">0.08333333333</portion_to_unplace>
+          <nchunks type="integer">12</nchunks>
+          <agents_for_estimation_table_name type="string">households_for_estimation</agents_for_estimation_table_name>
+          <number_of_units_string parser_action="empty_string_to_None" type="string">residential_units</number_of_units_string>
+          <number_of_agents_string parser_action="empty_string_to_None" type="string">number_of_households</number_of_agents_string>
+          <lottery_max_iterations type="integer">3</lottery_max_iterations>
+          <maximum_runs type="integer">3</maximum_runs>
+          <coefficients_table type="string">household_location_choice_model_coefficients</coefficients_table>
+          <specification_table type="string">household_location_choice_model_specification</specification_table>
+          <input_index type="string">hrm_index</input_index>
+        </controller>
+      </household_location_choice_model>
+      <employment_relocation_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">EmploymentRelocationModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.employment_relocation_model_configuration_creator</Class_path>
+          <agent_set type="string">job</agent_set>
+          <what type="string">jobs</what>
+          <rate_table parser_action="empty_string_to_None" type="string">annual_relocation_rates_for_jobs</rate_table>
+          <location_id_name type="string">grid_id</location_id_name>
+          <probabilities parser_action="empty_string_to_None" type="string">urbansim.employment_relocation_probabilities</probabilities>
+          <output_index type="string">erm_index</output_index>
+        </controller>
+      </employment_relocation_model>
+      <employment_location_choice_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">EmploymentLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.employment_location_choice_model_configuration_creator</Class_path>
+          <agent_set type="string">job</agent_set>
+          <sample_size_locations type="integer">30</sample_size_locations>
+          <sampler parser_action="empty_string_to_None" type="string">opus_core.samplers.weighted_sampler</sampler>
+          <choices type="string">urbansim.lottery_choices</choices>
+          <location_set type="string">gridcell</location_set>
+          <portion_to_unplace type="float">0.08333333333</portion_to_unplace>
+          <records_per_chunk type="integer">50000</records_per_chunk>
+          <attribute_to_group_by type="string">job_building_type.name</attribute_to_group_by>
+          <agents_for_estimation_table parser_action="empty_string_to_None" type="string">jobs_for_estimation</agents_for_estimation_table>
+          <filter_for_estimation parser_action="empty_string_to_None" type="string" />
+          <filter parser_action="empty_string_to_None" type="string" />
+          <capacity_string parser_action="empty_string_to_None" type="string">vacant_SSS_job_space</capacity_string>
+          <compute_capacity_flag choices="True|False" type="boolean">True</compute_capacity_flag>
+          <estimation_weight_string parser_action="empty_string_to_None" type="string">total_number_of_possible_SSS_jobs</estimation_weight_string>
+          <estimation_size_agents type="float">1.0</estimation_size_agents>
+          <agent_units_string parser_action="empty_string_to_None" type="string" />
+          <number_of_units_string parser_action="empty_string_to_None" type="string">total_number_of_possible_SSS_jobs</number_of_units_string>
+          <lottery_max_iterations type="integer">3</lottery_max_iterations>
+          <variable_package type="string">urbansim</variable_package>
+          <maximum_runs type="integer">3</maximum_runs>
+          <input_index type="string">erm_index</input_index>
+          <coefficients_table type="string">employment_location_choice_model_coefficients</coefficients_table>
+          <specification_table type="string">employment_location_choice_model_specification</specification_table>
+        </controller>
+      </employment_location_choice_model>
+      <home_based_employment_location_choice_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">HomeBasedEmploymentLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.home_based_employment_location_choice_model_configuration_creator</Class_path>
+          <agent_set type="string">job</agent_set>
+          <location_set type="string">gridcell</location_set>
+          <portion_to_unplace type="float">0.08333333333</portion_to_unplace>
+          <records_per_chunk type="integer">50000</records_per_chunk>
+          <choices type="string">urbansim.lottery_choices</choices>
+          <sample_size_locations type="integer">30</sample_size_locations>
+          <attribute_to_group_by type="string">job_building_type.name</attribute_to_group_by>
+          <estimation_weight_string type="string">residential_units</estimation_weight_string>
+          <number_of_units_string type="string">residential_units</number_of_units_string>
+          <agents_for_estimation_table type="string">jobs_for_estimation</agents_for_estimation_table>
+          <coefficients_table type="string">employment_location_choice_model_coefficients</coefficients_table>
+          <specification_table type="string">employment_location_choice_model_specification</specification_table>
+          <maximum_runs type="integer">5</maximum_runs>
+          <input_index type="string">erm_index</input_index>
+        </controller>
+      </home_based_employment_location_choice_model>
+      <governmental_employment_location_choice_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">GovernmentalEmploymentLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.governmental_employment_location_choice_model_configuration_creator</Class_path>
+          <agent_set type="string">job</agent_set>
+          <location_set type="string">gridcell</location_set>
+          <filter parser_action="empty_string_to_None" type="string" />
+          <input_index type="string">erm_index</input_index>
+        </controller>
+      </governmental_employment_location_choice_model>
+      <distribute_unplaced_jobs_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">DistributeUnplacedJobsModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.distribute_unplaced_jobs_model_configuration_creator</Class_path>
+          <agent_set type="string">job</agent_set>
+          <location_set type="string">gridcell</location_set>
+        </controller>
+      </distribute_unplaced_jobs_model>
+      <real_estate_price_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">RealEstatePriceModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.real_estate_price_model_configuration_creator</Class_path>
+          <nchunks type="integer">1</nchunks>
+          <dataset type="string">building</dataset>
+          <outcome_attribute type="string">ln_unit_price=ln(urbansim.building.avg_val_per_unit)</outcome_attribute>
+          <submodel_string type="string">building_type_id</submodel_string>
+          <filter_variable type="string">building.avg_val_per_unit</filter_variable>
+          <coefficients_table type="string">real_estate_price_model_coefficients</coefficients_table>
+          <specification_table type="string">real_estate_price_model_specification</specification_table>
+        </controller>
+      </real_estate_price_model>
+      <building_transition_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">BuildingTransitionModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.building_transition_model_configuration_creator</Class_path>
+          <building_set type="string">building</building_set>
+          <location_set type="string">gridcell</location_set>
+          <building_types_table type="string">building_type</building_types_table>
+          <vacancy_table type="string">target_vacancy</vacancy_table>
+        </controller>
+      </building_transition_model>
+      <building_relocation_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">BuildingRelocationModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.building_relocation_model_configuration_creator</Class_path>
+          <agent_set type="string">building</agent_set>
+          <location_id_name type="string">gridcell.get_id_name()[0]</location_id_name>
+          <output_index type="string">brm_index</output_index>
+        </controller>
+      </building_relocation_model>
+      <building_location_choice_model type="dictionary">
+        <controller parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">BuildingLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.building_location_choice_model_configuration_creator</Class_path>
+          <records_per_chunk type="integer">500</records_per_chunk>
+          <agent_set type="string">building</agent_set>
+          <location_set type="string">gridcell</location_set>
+          <sample_size_locations type="integer">30</sample_size_locations>
+          <attribute_to_group_by type="string">building_type.name</attribute_to_group_by>
+          <coefficients_table type="string">development_location_choice_model_coefficients</coefficients_table>
+          <specification_table type="string">development_location_choice_model_specification</specification_table>
+          <input_index type="string">brm_index</input_index>
+        </controller>
+      </building_location_choice_model>
+    </default_model_configurations>
   </model_manager>
   <scenario_manager>
-    <item type="scenario" name="default_gridcell_scenario" >
-      <item parser_action="category" type="dictionary" name="data" >
-        <item config_name="input_configuration" type="class" name="baseyear database" >
-          <item flags="hidden" type="string" name="Class_name" >DatabaseConfiguration</item>
-          <item flags="hidden" type="string" name="Class_path" >opus_core.database_management.database_configuration</item>
-          <item type="string" name="protocol" />
-          <item type="string" name="host_name" />
-          <item type="string" name="user_name" />
-          <item type="password" name="password" />
-          <item type="boolean" name="use_environment_variables" choices="True|False" >True</item>
-          <item type="string" name="database_name" />
-        </item>
-        <item parser_action="category" type="dictionary" name="cache_configuration" >
-          <item type="string" name="cache_directory" />
-          <item type="class" name="creating_baseyear_cache_configuration" >
-            <item flags="hidden" type="string" name="Class_name" >CreatingBaseyearCacheConfiguration</item>
-            <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.creating_baseyear_cache_configuration</item>
-            <item type="string" name="cache_scenario_database" >urbansim.model_coordinators.cache_scenario_database</item>
-            <item type="list" name="tables_to_cache" >
-              <item type="table" name="annual_employment_control_totals" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="annual_household_control_totals" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="development_event_history" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="gridcells" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="households" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="job_building_types" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="jobs" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="travel_data" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="zones" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="fazes" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="commercial_development_location_choice_model_coefficients" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="commercial_development_location_choice_model_specification" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="commercial_employment_location_choice_model_coefficients" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="commercial_employment_location_choice_model_specification" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="home_based_employment_location_choice_model_specification" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="home_based_employment_location_choice_model_coefficients" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="industrial_employment_location_choice_model_coefficients" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="industrial_employment_location_choice_model_specification" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="industrial_development_location_choice_model_coefficients" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="industrial_development_location_choice_model_specification" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="residential_development_location_choice_model_coefficients" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="residential_development_location_choice_model_specification" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="urbansim_constants" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="household_location_choice_model_coefficients" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="household_location_choice_model_specification" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="land_price_model_coefficients" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="land_price_model_specification" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="residential_land_share_model_coefficients" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="residential_land_share_model_specification" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="plan_type_group_definitions" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="plan_type_groups" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="household_characteristics_for_ht" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="development_types" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="development_type_group_definitions" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="development_constraints" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="annual_relocation_rates_for_households" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="annual_relocation_rates_for_jobs" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="base_year" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="development_events" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="development_type_groups" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="employment_adhoc_sector_group_definitions" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="employment_adhoc_sector_groups" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="employment_events" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="employment_sectors" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="land_use_events" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="plan_types" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="race_names" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="target_vacancies" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="development_events_exogenous" choices="Cache|Skip" >Cache</item>
-              <item type="table" name="jobs_for_estimation" choices="Cache|Skip" >Skip</item>
-              <item type="table" name="households_for_estimation" choices="Cache|Skip" >Skip</item>
-              <item type="table" name="buildings" choices="Cache|Skip" >Skip</item>
-              <item type="table" name=">building_types" choices="Cache|Skip" >Skip</item>
-              <item type="table" name="counties" choices="Cache|Skip" >Skip</item>
-              <item type="table" name="cities" choices="Cache|Skip" >Skip</item>
-              <item type="table" name="large_areas" choices="Cache|Skip" >Skip</item>
-            </item>
-            <item type="dictionary" name="tables_to_cache_nchunks" >
-              <item type="integer" name="gridcells" >1</item>
-            </item>
-            <item type="dictionary" name="tables_to_copy_to_previous_years" />
-          </item>
-        </item>
-        <item parser_action="execute" type="class" name="services_configuration" >
-          <item flags="hidden" type="string" name="Class_name" >ServicesConfigurationCreator</item>
-          <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.services_configuration_creator</item>
-          <item type="string" name="host_name" />
-          <item type="string" name="user_name" />
-          <item type="password" name="db_password" />
-          <item type="boolean" name="use_environment_variables" choices="True|False" >True</item>
-          <item type="string" name="database_name" >services</item>
-        </item>
-      </item>
-      <item parser_action="category" type="dictionary" name="model_system" >
-        <item config_name="models" type="list" name="models to run" >
-          <item type="model" name="prescheduled_events" choices="Run|Skip" >Run</item>
-          <item type="model" name="events_coordinator" choices="Run|Skip" >Run</item>
-          <item type="model" name="residential_land_share_model" choices="Run|Skip" >Run</item>
-          <item type="model" name="land_price_model" choices="Run|Skip" >Run</item>
-          <item type="model" name="development_project_transition_model" choices="Run|Skip" >Run</item>
-          <item type="model" name="residential_development_project_location_choice_model" choices="Run|Skip" >Run</item>
-          <item type="model" name="commercial_development_project_location_choice_model" choices="Run|Skip" >Run</item>
-          <item type="model" name="industrial_development_project_location_choice_model" choices="Run|Skip" >Run</item>
-          <item type="model" name="development_event_transition_model" choices="Run|Skip" >Run</item>
-          <item type="model" name="events_coordinator" choices="Run|Skip" >Run</item>
-          <item type="model" name="residential_land_share_model" choices="Run|Skip" >Run</item>
-          <item type="model" name="household_transition_model" choices="Run|Skip" >Run</item>
-          <item type="model" name="employment_transition_model" choices="Run|Skip" >Run</item>
-          <item type="model" name="household_relocation_model" choices="Run|Skip" >Run</item>
-          <item type="model" name="household_location_choice_model" choices="Run|Skip" >Run</item>
-          <item type="model" name="employment_relocation_model" choices="Run|Skip" >Run</item>
-          <item type="model" name="employment_location_choice_model" choices="Run|Skip" >Run<item type="string" name="group_members" >_all_</item>
-          </item>
-          <item type="model" name="distribute_unplaced_jobs_model" choices="Run|Skip" >Run</item>
-        </item>
-        <item parser_action="category" type="dictionary" name="others" >
-          <item type="integer" name="base_year" >1980</item>
-          <item config_name="years" type="tuple" name="years to run" >
-            <item type="integer" name="startyear" >1981</item>
-            <item type="integer" name="endyear" >1982</item>
-          </item>
-        </item>
-      </item>
-      <item config_name="models_configuration" type="dictionary" name="model_configurations" >
-        <item parser_action="include" type="path" name="configurations" >model_manager/default_model_configurations</item>
-      </item>
-      <item parser_action="category" type="dictionary" name="advanced" >
-        <item type="list" name="datasets_to_cache_after_each_model" >
-          <item type="dataset" name="gridcell" choices="Cache|Skip" >Cache</item>
-          <item type="dataset" name="household" choices="Cache|Skip" >Cache</item>
-          <item type="dataset" name="job" choices="Cache|Skip" >Cache</item>
-          <item type="dataset" name="travel_data" choices="Cache|Skip" >Skip</item>
-          <item type="dataset" name="zone" choices="Cache|Skip" >Skip</item>
-        </item>
-        <item parser_action="list_to_dictionary" type="list" name="datasets_to_preload" >
-          <item type="dataset" name="gridcell" choices="Load|Skip" >Load<item type="integer" name="nchunks" >2</item>
-          </item>
-          <item type="dataset" name="household" choices="Load|Skip" >Load</item>
-          <item type="dataset" name="job" choices="Load|Skip" >Load</item>
-          <item type="dataset" name="zone" choices="Load|Skip" >Load</item>
-          <item type="dataset" name="development_type" choices="Load|Skip" >Load</item>
-          <item type="dataset" name="target_vacancy" choices="Load|Skip" >Load</item>
-          <item type="dataset" name="development_event_history" choices="Load|Skip" >Load</item>
-          <item type="dataset" name="development_constraint" choices="Load|Skip" >Load</item>
-          <item type="dataset" name="job_building_type" choices="Load|Skip" >Load</item>
-          <item type="dataset" name="building_type" choices="Load|Skip" >Skip</item>
-          <item type="dataset" name="building" choices="Load|Skip" >Skip</item>
-          <item type="dataset" name="vacant_land_and_building_type" choices="Load|Skip" >Load</item>
-          <item type="dataset" name="urbansim_constant" choices="Load|Skip" >Load</item>
-        </item>
-        <item type="string" name="model_system" >urbansim.model_coordinators.model_system</item>
-        <item type="integer" name="debuglevel" >4</item>
-        <item type="boolean" name="flush_variables" choices="True|False" >False</item>
-        <item type="integer" name="seed" >0</item>
-        <item type="dictionary" name="chunk_specification" >
-          <item type="integer" name="nchunks" >1</item>
-        </item>
-        <item type="class" name="dataset_pool_configuration" >
-          <item flags="hidden" type="string" name="Class_name" >DatasetPoolConfiguration</item>
-          <item flags="hidden" type="string" name="Class_path" >opus_core.configurations.dataset_pool_configuration</item>
-          <item type="list" name="package_order" >
-            <item type="string" name="package" >urbansim</item>
-            <item type="string" name="package" >opus_core</item>
-          </item>
-          <item type="dictionary" name="package_order_exceptions" />
-        </item>
-      </item>
-    </item>
+    <default_gridcell_scenario type="scenario">
+      <data parser_action="category" type="dictionary">
+        <baseyear_database config_name="input_configuration" type="class">
+          <Class_name flags="hidden" type="string">DatabaseConfiguration</Class_name>
+          <Class_path flags="hidden" type="string">opus_core.database_management.database_configuration</Class_path>
+          <protocol type="string" />
+          <host_name type="string" />
+          <user_name type="string" />
+          <password type="password" />
+          <use_environment_variables choices="True|False" type="boolean">True</use_environment_variables>
+          <database_name type="string" />
+        </baseyear_database>
+        <cache_configuration parser_action="category" type="dictionary">
+          <cache_directory type="string" />
+          <creating_baseyear_cache_configuration type="class">
+            <Class_name flags="hidden" type="string">CreatingBaseyearCacheConfiguration</Class_name>
+            <Class_path flags="hidden" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
+            <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
+            <tables_to_cache type="selectable_list">
+              <annual_employment_control_totals choices="Cache|Skip" type="table">Cache</annual_employment_control_totals>
+              <annual_household_control_totals choices="Cache|Skip" type="table">Cache</annual_household_control_totals>
+              <development_event_history choices="Cache|Skip" type="table">Cache</development_event_history>
+              <gridcells choices="Cache|Skip" type="table">Cache</gridcells>
+              <households choices="Cache|Skip" type="table">Cache</households>
+              <job_building_types choices="Cache|Skip" type="table">Cache</job_building_types>
+              <jobs choices="Cache|Skip" type="table">Cache</jobs>
+              <travel_data choices="Cache|Skip" type="table">Cache</travel_data>
+              <zones choices="Cache|Skip" type="table">Cache</zones>
+              <fazes choices="Cache|Skip" type="table">Cache</fazes>
+              <commercial_development_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</commercial_development_location_choice_model_coefficients>
+              <commercial_development_location_choice_model_specification choices="Cache|Skip" type="table">Cache</commercial_development_location_choice_model_specification>
+              <commercial_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</commercial_employment_location_choice_model_coefficients>
+              <commercial_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</commercial_employment_location_choice_model_specification>
+              <home_based_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</home_based_employment_location_choice_model_specification>
+              <home_based_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</home_based_employment_location_choice_model_coefficients>
+              <industrial_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</industrial_employment_location_choice_model_coefficients>
+              <industrial_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</industrial_employment_location_choice_model_specification>
+              <industrial_development_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</industrial_development_location_choice_model_coefficients>
+              <industrial_development_location_choice_model_specification choices="Cache|Skip" type="table">Cache</industrial_development_location_choice_model_specification>
+              <residential_development_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</residential_development_location_choice_model_coefficients>
+              <residential_development_location_choice_model_specification choices="Cache|Skip" type="table">Cache</residential_development_location_choice_model_specification>
+              <urbansim_constants choices="Cache|Skip" type="table">Cache</urbansim_constants>
+              <household_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</household_location_choice_model_coefficients>
+              <household_location_choice_model_specification choices="Cache|Skip" type="table">Cache</household_location_choice_model_specification>
+              <land_price_model_coefficients choices="Cache|Skip" type="table">Cache</land_price_model_coefficients>
+              <land_price_model_specification choices="Cache|Skip" type="table">Cache</land_price_model_specification>
+              <residential_land_share_model_coefficients choices="Cache|Skip" type="table">Cache</residential_land_share_model_coefficients>
+              <residential_land_share_model_specification choices="Cache|Skip" type="table">Cache</residential_land_share_model_specification>
+              <plan_type_group_definitions choices="Cache|Skip" type="table">Cache</plan_type_group_definitions>
+              <plan_type_groups choices="Cache|Skip" type="table">Cache</plan_type_groups>
+              <household_characteristics_for_ht choices="Cache|Skip" type="table">Cache</household_characteristics_for_ht>
+              <development_types choices="Cache|Skip" type="table">Cache</development_types>
+              <development_type_group_definitions choices="Cache|Skip" type="table">Cache</development_type_group_definitions>
+              <development_constraints choices="Cache|Skip" type="table">Cache</development_constraints>
+              <annual_relocation_rates_for_households choices="Cache|Skip" type="table">Cache</annual_relocation_rates_for_households>
+              <annual_relocation_rates_for_jobs choices="Cache|Skip" type="table">Cache</annual_relocation_rates_for_jobs>
+              <base_year choices="Cache|Skip" type="table">Cache</base_year>
+              <development_events choices="Cache|Skip" type="table">Cache</development_events>
+              <development_type_groups choices="Cache|Skip" type="table">Cache</development_type_groups>
+              <employment_adhoc_sector_group_definitions choices="Cache|Skip" type="table">Cache</employment_adhoc_sector_group_definitions>
+              <employment_adhoc_sector_groups choices="Cache|Skip" type="table">Cache</employment_adhoc_sector_groups>
+              <employment_events choices="Cache|Skip" type="table">Cache</employment_events>
+              <employment_sectors choices="Cache|Skip" type="table">Cache</employment_sectors>
+              <land_use_events choices="Cache|Skip" type="table">Cache</land_use_events>
+              <plan_types choices="Cache|Skip" type="table">Cache</plan_types>
+              <race_names choices="Cache|Skip" type="table">Cache</race_names>
+              <target_vacancies choices="Cache|Skip" type="table">Cache</target_vacancies>
+              <development_events_exogenous choices="Cache|Skip" type="table">Cache</development_events_exogenous>
+              <jobs_for_estimation choices="Cache|Skip" type="table">Skip</jobs_for_estimation>
+              <households_for_estimation choices="Cache|Skip" type="table">Skip</households_for_estimation>
+              <buildings choices="Cache|Skip" type="table">Skip</buildings>
+              <building_types choices="Cache|Skip" type="table">Skip</building_types>
+              <counties choices="Cache|Skip" type="table">Skip</counties>
+              <cities choices="Cache|Skip" type="table">Skip</cities>
+              <large_areas choices="Cache|Skip" type="table">Skip</large_areas>
+            </tables_to_cache>
+            <tables_to_cache_nchunks type="dictionary">
+              <gridcells type="integer">1</gridcells>
+            </tables_to_cache_nchunks>
+            <tables_to_copy_to_previous_years type="dictionary" />
+          </creating_baseyear_cache_configuration>
+        </cache_configuration>
+        <services_configuration parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">ServicesConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.services_configuration_creator</Class_path>
+          <host_name type="string" />
+          <user_name type="string" />
+          <db_password type="password" />
+          <use_environment_variables choices="True|False" type="boolean">True</use_environment_variables>
+          <database_name type="string">services</database_name>
+        </services_configuration>
+      </data>
+      <model_system parser_action="category" type="dictionary">
+        <models_to_run config_name="models" type="selectable_list">
+          <prescheduled_events choices="Run|Skip" type="model">Run</prescheduled_events>
+          <events_coordinator choices="Run|Skip" type="model">Run</events_coordinator>
+          <residential_land_share_model choices="Run|Skip" type="model">Run</residential_land_share_model>
+          <land_price_model choices="Run|Skip" type="model">Run</land_price_model>
+          <development_project_transition_model choices="Run|Skip" type="model">Run</development_project_transition_model>
+          <residential_development_project_location_choice_model choices="Run|Skip" type="model">Run</residential_development_project_location_choice_model>
+          <commercial_development_project_location_choice_model choices="Run|Skip" type="model">Run</commercial_development_project_location_choice_model>
+          <industrial_development_project_location_choice_model choices="Run|Skip" type="model">Run</industrial_development_project_location_choice_model>
+          <development_event_transition_model choices="Run|Skip" type="model">Run</development_event_transition_model>
+          <events_coordinator choices="Run|Skip" type="model">Run</events_coordinator>
+          <residential_land_share_model choices="Run|Skip" type="model">Run</residential_land_share_model>
+          <household_transition_model choices="Run|Skip" type="model">Run</household_transition_model>
+          <employment_transition_model choices="Run|Skip" type="model">Run</employment_transition_model>
+          <household_relocation_model choices="Run|Skip" type="model">Run</household_relocation_model>
+          <household_location_choice_model choices="Run|Skip" type="model">Run</household_location_choice_model>
+          <employment_relocation_model choices="Run|Skip" type="model">Run</employment_relocation_model>
+          <employment_location_choice_model choices="Run|Skip" type="model">Run<group_members type="string">_all_</group_members>
+          </employment_location_choice_model>
+          <distribute_unplaced_jobs_model choices="Run|Skip" type="model">Run</distribute_unplaced_jobs_model>
+        </models_to_run>
+        <others parser_action="category" type="dictionary">
+          <base_year type="integer">1980</base_year>
+          <years_to_run config_name="years" type="tuple" >
+            <startyear type="integer">1981</startyear>
+            <endyear type="integer">1982</endyear>
+          </years_to_run>
+        </others>
+      </model_system>
+      <model_configurations config_name="models_configuration" type="dictionary">
+        <configurations parser_action="include" type="path">model_manager/default_model_configurations</configurations>
+      </model_configurations>
+      <advanced parser_action="category" type="dictionary">
+        <datasets_to_cache_after_each_model type="selectable_list">
+          <gridcell choices="Cache|Skip" type="dataset">Cache</gridcell>
+          <household choices="Cache|Skip" type="dataset">Cache</household>
+          <job choices="Cache|Skip" type="dataset">Cache</job>
+          <travel_data choices="Cache|Skip" type="dataset">Skip</travel_data>
+          <zone choices="Cache|Skip" type="dataset">Skip</zone>
+        </datasets_to_cache_after_each_model>
+        <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+          <gridcell choices="Load|Skip" type="dataset">Load<nchunks type="integer">2</nchunks>
+          </gridcell>
+          <household choices="Load|Skip" type="dataset">Load</household>
+          <job choices="Load|Skip" type="dataset">Load</job>
+          <zone choices="Load|Skip" type="dataset">Load</zone>
+          <development_type choices="Load|Skip" type="dataset">Load</development_type>
+          <target_vacancy choices="Load|Skip" type="dataset">Load</target_vacancy>
+          <development_event_history choices="Load|Skip" type="dataset">Load</development_event_history>
+          <development_constraint choices="Load|Skip" type="dataset">Load</development_constraint>
+          <job_building_type choices="Load|Skip" type="dataset">Load</job_building_type>
+          <building_type choices="Load|Skip" type="dataset">Skip</building_type>
+          <building choices="Load|Skip" type="dataset">Skip</building>
+          <vacant_land_and_building_type choices="Load|Skip" type="dataset">Load</vacant_land_and_building_type>
+          <urbansim_constant choices="Load|Skip" type="dataset">Load</urbansim_constant>
+        </datasets_to_preload>
+        <model_system type="string">urbansim.model_coordinators.model_system</model_system>
+        <debuglevel type="integer">4</debuglevel>
+        <flush_variables choices="True|False" type="boolean">False</flush_variables>
+        <seed type="integer">0</seed>
+        <chunk_specification type="dictionary">
+          <nchunks type="integer">1</nchunks>
+        </chunk_specification>
+        <dataset_pool_configuration type="class">
+          <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
+          <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+          <package_order type="list">['urbansim', 'opus_core']</package_order>
+          <package_order_exceptions type="dictionary" />
+        </dataset_pool_configuration>
+      </advanced>
+    </default_gridcell_scenario>
   </scenario_manager>
 </opus_project>

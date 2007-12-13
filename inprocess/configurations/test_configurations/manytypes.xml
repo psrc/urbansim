@@ -15,15 +15,13 @@
 
 <ten type="float">10.0</ten>
 
-<years type="tuple">
+<years type="tuple" >
 <startyear type="integer">1980</startyear>
 <endyear type="integer">1981</endyear>
 </years>
 
 <list_test type="list">
-<str1 type="string">squid</str1>
-<str2 type="string">clam</str2>
-<u1 type="unicode">uniclam</u1>
+[10, 20, 30]
 </list_test>
 
 <dicttest type="dictionary">
@@ -32,7 +30,7 @@
 </dicttest>
 
 
-<models type="list">
+<models type="selectable_list">
   <model1 type="model" choices="Run|Skip">Run</model1>
   <model2 type="model" choices="Run|Skip">Run<group_members type="string">all</group_members>
   </model2>
@@ -42,13 +40,13 @@
   <model4 type="model" choices="Run|Skip">Skip</model4>
 </models>
 
-<mytables type="list">
+<mytables type="selectable_list">
   <gridcells type="table" choices="Load|Skip">Load</gridcells>
   <zones type="table" choices="Load|Skip">Skip</zones>
   <jobs type="table" choices="Load|Skip">Load</jobs>
 </mytables>
 
-<mydatasets type="list">
+<mydatasets type="selectable_list">
   <gridcell type="dataset" choices="Load|Skip">Load</gridcell>
   <zone type="dataset" choices="Load|Skip">Skip</zone>
   <job type="dataset" choices="Load|Skip">Load</job>

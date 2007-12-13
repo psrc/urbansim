@@ -108,8 +108,12 @@ class XMLConfiguration(object):
             return self._convert_string_to_data(node)
         elif type_name=='unicode':
             return unicode(node.text)
-        elif type_name=='list' or type_name=='tuple':
-            return self._convert_list_or_tuple_to_data(node, type_name)
+        elif type_name=='selectable_list':
+            return self._convert_list_to_data(node)
+        elif type_name=='tuple':
+            return self._convert_tuple_to_data(node)
+        elif type_name=='list':
+            return eval(node.text)
         elif type_name=='boolean':
             return eval(node.text)
         elif type_name=='file':
@@ -157,12 +161,9 @@ class XMLConfiguration(object):
         else:
             return node.text
         
-    def _convert_list_or_tuple_to_data(self, node, type_name):
+    def _convert_list_to_data(self, node):
         r = map(lambda n: self._convert_node_to_data(n), node)
         result_list = filter(lambda n: n is not None, r)
-        if type_name=='tuple':
-            return tuple(result_list)
-        # type_name should be 'list'
         if node.get('parser_action', '')=='list_to_dictionary':
             result_dict = {}
             for x in result_list:
@@ -174,6 +175,10 @@ class XMLConfiguration(object):
             return result_dict
         else:
             return result_list
+        
+    def _convert_tuple_to_data(self, node):
+        r = map(lambda n: self._convert_node_to_data(n), node)
+        return tuple(r)
         
     def _convert_file_or_directory_to_data(self, node):
         if node.get('parser_action', '')=='prefix_with_urbansim_cache':
@@ -240,7 +245,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                           'mybool': True,
                           'ten': 10.0,
                           'years': (1980, 1981),
-                          'list_test': ['squid', 'clam', u'uniclam'],
+                          'list_test': [10, 20, 30],
                           'dicttest': {'str1': 'squid', 'str2': 'clam'},
                           'models': ['model1', 
                                      {'model2': {'group_members': 'all'}}, 
@@ -301,7 +306,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'childconfig_oldparent.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         # 'years' is overridden in the child
-        self.assertEqual(config['years'], (1980, 1990))
+        self.assertEqual(config['years'], (1980, 1981))
         # 'models' is inherited
         self.assert_('models' in config)
         self.assert_('random_nonexistant_key' not in config)

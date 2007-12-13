@@ -1,140 +1,135 @@
-<?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
   <general>
-    <item type="string" name="description" >Sample Eugene project</item>
+    <description type="string">Sample Eugene project</description>
   </general>
   <scenario_manager>
-    <item type="scenario" name="Eugene_baseline" executable="True">
-      <item parser_action="parent_external" type="dictionary" name="parent" >
-        <item type="string" name="name" >default_gridcell_scenario</item>
-        <item type="file" name="path" >urbansim_gridcell.xml</item>
-      </item>
-      <item type="integer" name="base_year" >1980</item>
-      <item config_name="years" type="tuple" name="years to run" >
-        <item type="integer" name="startyear" >1981</item>
-        <item type="integer" name="endyear" >1981</item>
-      </item>
-      <item config_name="models" type="list" name="models to run" >
-        <item type="model" name="prescheduled_events" choices="Run|Skip" >Run</item>
-        <item type="model" name="events_coordinator" choices="Run|Skip" >Run</item>
-        <item type="model" name="residential_land_share_model" choices="Run|Skip" >Run</item>
-        <item type="model" name="land_price_model" choices="Run|Skip" >Run</item>
-        <item type="model" name="development_project_transition_model" choices="Run|Skip" >Run</item>
-        <item type="model" name="residential_development_project_location_choice_model" choices="Run|Skip" >Run</item>
-        <item type="model" name="commercial_development_project_location_choice_model" choices="Run|Skip" >Run</item>
-        <item type="model" name="industrial_development_project_location_choice_model" choices="Run|Skip" >Run</item>
-        <item type="model" name="development_event_transition_model" choices="Run|Skip" >Run</item>
-        <item type="model" name="events_coordinator" choices="Run|Skip" >Run</item>
-        <item type="model" name="residential_land_share_model" choices="Run|Skip" >Run</item>
-        <item type="model" name="household_transition_model" choices="Run|Skip" >Run</item>
-        <item type="model" name="employment_transition_model" choices="Run|Skip" >Run</item>
-        <item type="model" name="household_relocation_model" choices="Run|Skip" >Run</item>
-        <item type="model" name="household_location_choice_model" choices="Run|Skip" >Run</item>
-        <item type="model" name="employment_relocation_model" choices="Run|Skip" >Run</item>
-        <item type="model" name="employment_location_choice_model" choices="Run|Skip" >Run<item type="string" name="group_members" >_all_</item>
-        </item>
-        <item type="model" name="distribute_unplaced_jobs_model" choices="Run|Skip" >Run</item>
-      </item>
-      <item config_name="input_configuration" type="class" name="baseyear database configuration" >
-        <item flags="hidden" type="string" name="Class_name" >DatabaseConfiguration</item>
-        <item flags="hidden" type="string" name="Class_path" >opus_core.database_management.database_configuration</item>
-        <item type="string" name="protocol" />
-        <item type="string" name="host_name" />
-        <item type="string" name="user_name" />
-        <item type="password" name="password" />
-        <item type="boolean" name="use_environment_variables" choices="True|False" >True</item>
-        <item type="string" name="database_name" >eugene_1980_baseyear</item>
-      </item>
-      <item parser_action="prefix_with_urbansim_cache" type="directory" name="cache_directory" >eugene/eugene_1980_baseyear_cache</item>
-      <item type="class" name="creating_baseyear_cache_configuration" >
-        <item flags="hidden" type="string" name="Class_name" >CreatingBaseyearCacheConfiguration</item>
-        <item flags="hidden" type="string" name="Class_path" >urbansim.configurations.creating_baseyear_cache_configuration</item>
-        <item parser_action="prefix_with_urbansim_cache" type="directory" name="cache_directory_root" >eugene/runs</item>
-        <item type="boolean" name="cache_from_mysql" choices="True|False" >False</item>
-        <item type="class" name="baseyear_cache" >
-          <item flags="hidden" type="string" name="Class_name" >BaseyearCacheConfiguration</item>
-          <item flags="hidden" type="string" name="Class_path" >opus_core.configurations.baseyear_cache_configuration</item>
-          <item parser_action="prefix_with_urbansim_cache" type="directory" name="existing_cache_to_copy" >eugene/eugene_1980_baseyear_cache</item>
-        </item>
-        <item type="string" name="cache_scenario_database" >urbansim.model_coordinators.cache_scenario_database</item>
-        <item type="list" name="tables_to_cache" >
-          <item type="table" name="annual_employment_control_totals" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="annual_household_control_totals" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="buildings" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="building_types" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="development_event_history" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="gridcells" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="households" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="job_building_types" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="jobs" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="travel_data" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="zones" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="counties" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="commercial_development_location_choice_model_coefficients" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="commercial_development_location_choice_model_specification" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="commercial_employment_location_choice_model_coefficients" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="commercial_employment_location_choice_model_specification" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="home_based_employment_location_choice_model_specification" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="home_based_employment_location_choice_model_coefficients" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="industrial_employment_location_choice_model_coefficients" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="industrial_employment_location_choice_model_specification" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="industrial_development_location_choice_model_coefficients" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="industrial_development_location_choice_model_specification" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="residential_development_location_choice_model_coefficients" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="residential_development_location_choice_model_specification" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="fazes" choices="Cache|Skip" >Skip</item>
-          <item type="table" name="urbansim_constants" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="household_location_choice_model_coefficients" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="household_location_choice_model_specification" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="land_price_model_coefficients" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="land_price_model_specification" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="residential_land_share_model_coefficients" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="residential_land_share_model_specification" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="plan_type_group_definitions" choices="Cache|Skip" >Skip</item>
-          <item type="table" name="plan_type_groups" choices="Cache|Skip" >Skip</item>
-          <item type="table" name="large_areas" choices="Cache|Skip" >Skip</item>
-          <item type="table" name="household_characteristics_for_ht" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="development_types" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="development_type_group_definitions" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="development_constraints" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="annual_relocation_rates_for_households" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="annual_relocation_rates_for_jobs" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="base_year" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="cities" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="development_events" choices="Cache|Skip" >Skip</item>
-          <item type="table" name="development_type_groups" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="employment_adhoc_sector_group_definitions" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="employment_adhoc_sector_groups" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="employment_events" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="employment_sectors" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="land_use_events" choices="Cache|Skip" >Skip</item>
-          <item type="table" name="plan_types" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="race_names" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="target_vacancies" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="jobs_for_estimation" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="households_for_estimation" choices="Cache|Skip" >Cache</item>
-          <item type="table" name="development_events_exogenous" choices="Cache|Skip" >Skip</item>
-        </item>
-        <item type="dictionary" name="tables_to_cache_nchunks" >
-          <item type="integer" name="gridcells" >1</item>
-        </item>
-        <item type="dictionary" name="tables_to_copy_to_previous_years" >
-          <item type="integer" name="development_type_group_definitions" >1975</item>
-          <item type="integer" name="development_type_groups" >1975</item>
-          <item type="integer" name="development_types" >1975</item>
-          <item type="integer" name="urbansim_constants" >1975</item>
-        </item>
-      </item>
-      <item type="class" name="dataset_pool_configuration" >
-        <item flags="hidden" type="string" name="Class_name" >DatasetPoolConfiguration</item>
-        <item flags="hidden" type="string" name="Class_path" >opus_core.configurations.dataset_pool_configuration</item>
-        <item type="list" name="package_order" >
-          <item type="string" name="package" >eugene</item>
-          <item type="string" name="package" >urbansim</item>
-          <item type="string" name="package" >opus_core</item>
-        </item>
-        <item type="dictionary" name="package_order_exceptions" />
-      </item>
-    </item>
+    <Eugene_baseline executable="True" type="scenario">
+      <parent parser_action="parent_external" type="dictionary">
+        <name type="string">default_gridcell_scenario</name>
+        <path type="file">urbansim_gridcell.xml</path>
+      </parent>
+      <base_year type="integer">1980</base_year>
+      <years_to_run config_name="years" type="tuple" >
+        <startyear type="integer">1981</startyear>
+        <endyear type="integer">1981</endyear>
+      </years_to_run>
+      <models_to_run config_name="models" type="selectable_list">
+        <prescheduled_events choices="Run|Skip" type="model">Run</prescheduled_events>
+        <events_coordinator choices="Run|Skip" type="model">Run</events_coordinator>
+        <residential_land_share_model choices="Run|Skip" type="model">Run</residential_land_share_model>
+        <land_price_model choices="Run|Skip" type="model">Run</land_price_model>
+        <development_project_transition_model choices="Run|Skip" type="model">Run</development_project_transition_model>
+        <residential_development_project_location_choice_model choices="Run|Skip" type="model">Run</residential_development_project_location_choice_model>
+        <commercial_development_project_location_choice_model choices="Run|Skip" type="model">Run</commercial_development_project_location_choice_model>
+        <industrial_development_project_location_choice_model choices="Run|Skip" type="model">Run</industrial_development_project_location_choice_model>
+        <development_event_transition_model choices="Run|Skip" type="model">Run</development_event_transition_model>
+        <events_coordinator choices="Run|Skip" type="model">Run</events_coordinator>
+        <residential_land_share_model choices="Run|Skip" type="model">Run</residential_land_share_model>
+        <household_transition_model choices="Run|Skip" type="model">Run</household_transition_model>
+        <employment_transition_model choices="Run|Skip" type="model">Run</employment_transition_model>
+        <household_relocation_model choices="Run|Skip" type="model">Run</household_relocation_model>
+        <household_location_choice_model choices="Run|Skip" type="model">Run</household_location_choice_model>
+        <employment_relocation_model choices="Run|Skip" type="model">Run</employment_relocation_model>
+        <employment_location_choice_model choices="Run|Skip" type="model">Run<group_members type="string">_all_</group_members>
+        </employment_location_choice_model>
+        <distribute_unplaced_jobs_model choices="Run|Skip" type="model">Run</distribute_unplaced_jobs_model>
+      </models_to_run>
+      <baseyear_database_configuration config_name="input_configuration" type="class">
+        <Class_name flags="hidden" type="string">DatabaseConfiguration</Class_name>
+        <Class_path flags="hidden" type="string">opus_core.database_management.database_configuration</Class_path>
+        <protocol type="string" />
+        <host_name type="string" />
+        <user_name type="string" />
+        <password type="password" />
+        <use_environment_variables choices="True|False" type="boolean">True</use_environment_variables>
+        <database_name type="string">eugene_1980_baseyear</database_name>
+      </baseyear_database_configuration>
+      <cache_directory parser_action="prefix_with_urbansim_cache" type="directory">eugene/eugene_1980_baseyear_cache</cache_directory>
+      <creating_baseyear_cache_configuration type="class">
+        <Class_name flags="hidden" type="string">CreatingBaseyearCacheConfiguration</Class_name>
+        <Class_path flags="hidden" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
+        <cache_directory_root parser_action="prefix_with_urbansim_cache" type="directory">eugene/runs</cache_directory_root>
+        <cache_from_mysql choices="True|False" type="boolean">False</cache_from_mysql>
+        <baseyear_cache type="class">
+          <Class_name flags="hidden" type="string">BaseyearCacheConfiguration</Class_name>
+          <Class_path flags="hidden" type="string">opus_core.configurations.baseyear_cache_configuration</Class_path>
+          <existing_cache_to_copy parser_action="prefix_with_urbansim_cache" type="directory">eugene/eugene_1980_baseyear_cache</existing_cache_to_copy>
+        </baseyear_cache>
+        <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
+        <tables_to_cache type="selectable_list">
+          <annual_employment_control_totals choices="Cache|Skip" type="table">Cache</annual_employment_control_totals>
+          <annual_household_control_totals choices="Cache|Skip" type="table">Cache</annual_household_control_totals>
+          <buildings choices="Cache|Skip" type="table">Cache</buildings>
+          <building_types choices="Cache|Skip" type="table">Cache</building_types>
+          <development_event_history choices="Cache|Skip" type="table">Cache</development_event_history>
+          <gridcells choices="Cache|Skip" type="table">Cache</gridcells>
+          <households choices="Cache|Skip" type="table">Cache</households>
+          <job_building_types choices="Cache|Skip" type="table">Cache</job_building_types>
+          <jobs choices="Cache|Skip" type="table">Cache</jobs>
+          <travel_data choices="Cache|Skip" type="table">Cache</travel_data>
+          <zones choices="Cache|Skip" type="table">Cache</zones>
+          <counties choices="Cache|Skip" type="table">Cache</counties>
+          <commercial_development_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</commercial_development_location_choice_model_coefficients>
+          <commercial_development_location_choice_model_specification choices="Cache|Skip" type="table">Cache</commercial_development_location_choice_model_specification>
+          <commercial_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</commercial_employment_location_choice_model_coefficients>
+          <commercial_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</commercial_employment_location_choice_model_specification>
+          <home_based_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</home_based_employment_location_choice_model_specification>
+          <home_based_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</home_based_employment_location_choice_model_coefficients>
+          <industrial_employment_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</industrial_employment_location_choice_model_coefficients>
+          <industrial_employment_location_choice_model_specification choices="Cache|Skip" type="table">Cache</industrial_employment_location_choice_model_specification>
+          <industrial_development_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</industrial_development_location_choice_model_coefficients>
+          <industrial_development_location_choice_model_specification choices="Cache|Skip" type="table">Cache</industrial_development_location_choice_model_specification>
+          <residential_development_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</residential_development_location_choice_model_coefficients>
+          <residential_development_location_choice_model_specification choices="Cache|Skip" type="table">Cache</residential_development_location_choice_model_specification>
+          <fazes choices="Cache|Skip" type="table">Skip</fazes>
+          <urbansim_constants choices="Cache|Skip" type="table">Cache</urbansim_constants>
+          <household_location_choice_model_coefficients choices="Cache|Skip" type="table">Cache</household_location_choice_model_coefficients>
+          <household_location_choice_model_specification choices="Cache|Skip" type="table">Cache</household_location_choice_model_specification>
+          <land_price_model_coefficients choices="Cache|Skip" type="table">Cache</land_price_model_coefficients>
+          <land_price_model_specification choices="Cache|Skip" type="table">Cache</land_price_model_specification>
+          <residential_land_share_model_coefficients choices="Cache|Skip" type="table">Cache</residential_land_share_model_coefficients>
+          <residential_land_share_model_specification choices="Cache|Skip" type="table">Cache</residential_land_share_model_specification>
+          <plan_type_group_definitions choices="Cache|Skip" type="table">Skip</plan_type_group_definitions>
+          <plan_type_groups choices="Cache|Skip" type="table">Skip</plan_type_groups>
+          <large_areas choices="Cache|Skip" type="table">Skip</large_areas>
+          <household_characteristics_for_ht choices="Cache|Skip" type="table">Cache</household_characteristics_for_ht>
+          <development_types choices="Cache|Skip" type="table">Cache</development_types>
+          <development_type_group_definitions choices="Cache|Skip" type="table">Cache</development_type_group_definitions>
+          <development_constraints choices="Cache|Skip" type="table">Cache</development_constraints>
+          <annual_relocation_rates_for_households choices="Cache|Skip" type="table">Cache</annual_relocation_rates_for_households>
+          <annual_relocation_rates_for_jobs choices="Cache|Skip" type="table">Cache</annual_relocation_rates_for_jobs>
+          <base_year choices="Cache|Skip" type="table">Cache</base_year>
+          <cities choices="Cache|Skip" type="table">Cache</cities>
+          <development_events choices="Cache|Skip" type="table">Skip</development_events>
+          <development_type_groups choices="Cache|Skip" type="table">Cache</development_type_groups>
+          <employment_adhoc_sector_group_definitions choices="Cache|Skip" type="table">Cache</employment_adhoc_sector_group_definitions>
+          <employment_adhoc_sector_groups choices="Cache|Skip" type="table">Cache</employment_adhoc_sector_groups>
+          <employment_events choices="Cache|Skip" type="table">Cache</employment_events>
+          <employment_sectors choices="Cache|Skip" type="table">Cache</employment_sectors>
+          <land_use_events choices="Cache|Skip" type="table">Skip</land_use_events>
+          <plan_types choices="Cache|Skip" type="table">Cache</plan_types>
+          <race_names choices="Cache|Skip" type="table">Cache</race_names>
+          <target_vacancies choices="Cache|Skip" type="table">Cache</target_vacancies>
+          <jobs_for_estimation choices="Cache|Skip" type="table">Cache</jobs_for_estimation>
+          <households_for_estimation choices="Cache|Skip" type="table">Cache</households_for_estimation>
+          <development_events_exogenous choices="Cache|Skip" type="table">Skip</development_events_exogenous>
+        </tables_to_cache>
+        <tables_to_cache_nchunks type="dictionary">
+          <gridcells type="integer">1</gridcells>
+        </tables_to_cache_nchunks>
+        <tables_to_copy_to_previous_years type="dictionary">
+          <development_type_group_definitions type="integer">1975</development_type_group_definitions>
+          <development_type_groups type="integer">1975</development_type_groups>
+          <development_types type="integer">1975</development_types>
+          <urbansim_constants type="integer">1975</urbansim_constants>
+        </tables_to_copy_to_previous_years>
+      </creating_baseyear_cache_configuration>
+      <dataset_pool_configuration type="class">
+        <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
+        <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+        <package_order type="list">['eugene', 'urbansim', 'opus_core']</package_order>
+        <package_order_exceptions type="dictionary" />
+      </dataset_pool_configuration>
+    </Eugene_baseline>
   </scenario_manager>
 </opus_project>
