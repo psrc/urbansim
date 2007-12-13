@@ -38,7 +38,7 @@ class SimulationTest(opus_unittest.OpusTestCase):
         self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
         self.simulation = RunSimulationFromMysql()
         # run_configuration = Baseline()
-        run_configuration = XMLConfiguration(path).get_run_configuration('Eugene baseline')
+        run_configuration = XMLConfiguration(path).get_run_configuration('Eugene_baseline')
         run_configuration['creating_baseyear_cache_configuration'].cache_directory_root = self.temp_dir
         run_configuration['cache_directory'] = os.path.join(self.temp_dir, 'eugene')
         self.simulation.prepare_for_simulation(run_configuration)
