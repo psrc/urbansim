@@ -90,6 +90,10 @@ class bhhh_mnl_estimation(EstimationProcedure):
         ll_ratio = 1-(l_1/l_0)
         adj_ll_ratio = 1-((l_1-nvars)/l_0)
         
+        # http://en.wikipedia.org/wiki/Akaike_information_criterion 
+        aic = 2 * nvars - 2 * l_1
+        logger.log_status("Akaike's Information Criterion (AIC): ", str(aic), tags=tags, verbosity=vl)
+        
         logger.log_status("Number of Iterations: ", it+1, tags=tags, verbosity_level=vl)
         logger.log_status("***********************************************", tags=tags, verbosity_level=vl)
         logger.log_status('Log-likelihood is:           ', l_1, tags=tags, verbosity_level=vl)
