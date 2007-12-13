@@ -281,14 +281,6 @@ def get_temp_dir_remote(transport):
     cmdline = "python -c 'import tempfile, sys; print tempfile.mkdtemp()'"
     return get_stdout_for_ssh_cmd(transport, cmdline)
 
-    
-if paramiko is None:
-    if __name__ == '__main__':
-        from opus_core.logger import logger
-        import sys 
-        logger.log_warning('Skipping sftp_flt_storage unit tests -- could not import the paramiko module.')
-
-        sys.exit(0)
 
 import os, sys
 from opus_core.tests import opus_unittest
@@ -489,14 +481,15 @@ class StorageWriteTests(TestStorageInterface):
         self.assertRaises(FltError, storage.write_table, self.table_name, my_data)
         self.assert_(not (exists_remotely(self.storage.sftp, os.path.join(self.storage._get_base_directory_remote(), self.table_name, column_name + ".li8"))))        
                 
-if __name__ == '__main__':
+if __name__ == '__main__' and paramiko is not None:
     ## skip unittest if the connection cannot be authenticated
     sftp_location = 'sftp://%s@%s' % (getuser(), 'localhost')
     try:
         storage = sftp_flt_storage(sftp_location)
+        opus_unittest.main()
     except:
         from opus_core.logger import logger 
         logger.log_warning('Skipping sftp_flt_storage unit tests -- no ssh access or could not authenticate.')
-        sys.exit(0)
 
-    opus_unittest.main()
+
+    
