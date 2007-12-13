@@ -27,7 +27,7 @@ from opus_core.services.run_server.run_manager import RunManager, insert_auto_ge
 from opus_core.fork_process import ForkProcess
 from opus_core.logger import logger
 from numpy import arange, where, logical_and
-from opus_core.store.sftp_flt_storage import get_stdout_for_ssh_cmd, exists_remotely, load_key_if_exists
+from opus_core.store.sftp_flt_storage import get_stdout_for_ssh_cmd, exists_remotely, load_key_if_exists, _makedirs
 import paramiko
 
 class OptionGroup(GenericOptionGroup):
@@ -124,10 +124,8 @@ class RemoteRun:
             self._run_manager = run_manager
 
     def __del__(self):
-        print 'in __del__'
         for key, value in self.ssh.iteritems():
             value.close()
-        print '__del__ done'
             
     def prepare_for_run(self, configuration_path=None, config=None, run_id=None):
         """Configuration is given either as an opus path (configuration_path) or as a Configuration object (config)."""
@@ -158,7 +156,6 @@ class RemoteRun:
     def run(self, configuration_path, run_id=None):
         run_id, config = self.prepare_for_run(configuration_path, run_id=run_id)
         self._do_run(run_id, config)
-        print 'run done'
         
     def _do_run(self, run_id, config, start_year=None, end_year=None):
         cache_directory = config['cache_directory']
@@ -215,8 +212,9 @@ class RemoteRun:
                       {'module':self.remote_module_path_from_opus_path(self.ssh['urbansim_server'], 'opus_core.tools.restart_run'), 
                        'run_id':run_id, 'start_year':this_start_year,
                        'services_hostname': self.services_db_config.host_name}
-                cmd += ' --skip-cache-cleanup --create-baseyear-cache-if-not-exists >> ' + os.path.join(cache_directory, 'urbansim_remote_run.log')
+                cmd += ' --skip-cache-cleanup --create-baseyear-cache-if-not-exists >> ' + 'urbansim_remote_run.log'
                 ## to avoid stdout overfilling sshclient buffer, redirect stdout to a log file
+                ## TODO: better handle the location of the urbansim_remote_run.log
                 logger.log_status("Call " + cmd)
                 try: self.ssh['urbansim_server'].exec_command(cmd)
 
@@ -246,13 +244,16 @@ class RemoteRun:
                     if not self.is_localhost(self.travelmodel_server_config['hostname']):
                         logger.start_block("Start Travel Model on %s from %s to %s" % (self.travelmodel_server_config['hostname'],
                                                                                        this_start_year, this_end_year) )
-
+                        sftp = self.ssh['urbansim_server'].open_sftp()
+                        _makedirs(sftp, cache_directory)
                         cmd = 'python %(module)s %(run_id)s %(start_year)s --hostname=%(services_hostname)s' % \
                               {'module':self.remote_module_path_from_opus_path(self.ssh['travelmodel_server'], 
                                                                                'opus_core.tools.restart_run'), 
                                'run_id':run_id, 'start_year':this_end_year,
                                'services_hostname': self.services_db_config.host_name}
-                        cmd += ' --skip-cache-cleanup --skip-urbansim >> ' + os.path.join(cache_directory, 'travelmodel_remote_run.log')
+                        cmd += ' --skip-cache-cleanup --skip-urbansim >> ' + 'travelmodel_remote_run.log'
+                        ## to avoid stdout overfilling sshclient buffer, redirect stdout to a log file                        
+                        ## TODO: better handle the location of the travelmodel_remote_run.log
                         logger.log_status("Call " + cmd)
                         try:self.ssh['travelmodel_server'].exec_command(cmd)
                         except:raise RuntimeError, "there is a problem running travel model remotely"
@@ -274,7 +275,7 @@ class RemoteRun:
                                                 (this_end_year+1, local_cache_directory)
                 
             this_start_year = travel_model_year + 1  #next run starting from the next year of the travel model year
-        print '_do_run done'
+
         return
 
     def wait_until_run_done_or_failed(self, run_id, msg=''):
