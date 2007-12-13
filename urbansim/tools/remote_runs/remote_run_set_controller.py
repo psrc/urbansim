@@ -108,8 +108,7 @@ class RemoteRunSet(RemoteRun):
         else:
             self.read_run_id_file(run_id_file)
             self.run_id_file = run_id_file
-            run_activity = RunActivity(self.services_database)
-            self.run_manager = RunManager(run_activity)
+            self.get_run_manager()
 
         self.date_time_str = time.strftime('%Y_%m_%d_%H_%M', time.localtime())
         logger.log_status("run_id_file: %s" % self.run_id_file)
@@ -140,21 +139,21 @@ class RemoteRunSet(RemoteRun):
                 selected_server, restart = self.select_server(server)
                 if selected_server is None: # no server available
                     time.sleep(60)
-                    runs_by_status = self.run_manager.get_runs_by_status(running_ids)
+                    runs_by_status = self.get_run_manager().get_runs_by_status(running_ids)
                     finished_runs = runs_by_status.get('done', [])
                     failed_runs = runs_by_status.get('failed', [])
                     finished_and_failed_runs = finished_runs + failed_runs
                     self.enable_servers(finished_and_failed_runs)
                     if len(failed_runs) > 0:
                         raise
-                    for run in finished_runs:
+                    for run in finished_and_failed_runs:
                         running_ids.remove(run)
                 else:
                     break
                 
             self.set_environment_for_this_run(selected_server, run_id)
             
-            config = self.run_manager.get_resources_for_run_id_from_history(services_host_name=self.services_hostname,
+            config = self.get_run_manager().get_resources_for_run_id_from_history(services_host_name=self.services_hostname,
                                                                        services_database_name=self.services_dbname,
                                                                        run_id=self.run_id)
             self.prepare_for_this_run(config, self.configuration_update.get(selected_server, {}), restart)
@@ -175,8 +174,8 @@ class RemoteRunSet(RemoteRun):
             config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy = config_update.get('existing_cache_to_copy', 
                                                                 config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy)
         self.prepare_cache_and_communication_path(config)
-        self.run_manager.run_activity.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % self.run_id)        
-        self.run_manager.run_activity.add_row_to_history(self.run_id, config, "started")
+        self.get_run_manager().run_activity.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % self.run_id)        
+        self.get_run_manager().run_activity.add_row_to_history(self.run_id, config, "started")
         
     def set_environment_for_this_run(self, server, run_id):
         self.run_id = run_id
@@ -207,7 +206,7 @@ class RemoteRunSet(RemoteRun):
         for run_id in runs:
             server = self.run_ids_dict[run_id][1]
             self.servers_info[server]['running'] =-1
-            config = self.run_manager.get_resources_for_run_id_from_history(services_host_name=self.services_hostname,
+            config = self.get_run_manager().get_resources_for_run_id_from_history(services_host_name=self.services_hostname,
                                                                        services_database_name=self.services_dbname,
                                                                        run_id=run_id)
             self.run_ids_dict[self.run_id] = (self.get_urbansim_last_year(config), server)
