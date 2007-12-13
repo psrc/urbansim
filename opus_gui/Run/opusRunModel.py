@@ -21,7 +21,8 @@ import os, shutil, sys, tempfile, time
 try:
     from opus_core.tools.start_run import StartRunOptionGroup
     from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed, SimulationRunError
-    from opus_gui.configurations.xml_configuration import XMLConfiguration
+    #from opus_gui.configurations.xml_configuration import XMLConfiguration
+    from inprocess.configurations.xml_configuration import XMLConfiguration
     WithOpus = True
 except ImportError:
     WithOpus = False
@@ -80,7 +81,7 @@ class OpusModel(object):
                 # find the directory containing the eugene xml configurations
                 fileNameInfo = QFileInfo(self.xml_path)
                 fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
-                #print fileNameAbsolute
+                print fileNameAbsolute
                 config = XMLConfiguration(str(fileNameAbsolute))
                 insert_auto_generated_cache_directory_if_needed(config)
                 (self.start_year, self.end_year) = config['years']
