@@ -2,58 +2,58 @@
 <opus_project>
 
 <scenario_manager>
-<item type="scenario" name="test_scenario" >
+<test_scenario type="scenario">
 
-<item name="description" type="string">a test configuration</item>
-<item name="empty1" type="string"></item>
-<item name="empty2" type="string" parser_action="empty_string_to_None"></item>
-<item name="emptypassword" type="password" parser_action="empty_string_to_None"></item>
+<description type="string">a test configuration</description>
+<empty1 type="string"></empty1>
+<empty2 type="string" parser_action="empty_string_to_None"></empty2>
+<emptypassword type="password" parser_action="empty_string_to_None"></emptypassword>
 
-<item name="year" type="integer">1980</item>
+<year type="integer">1980</year>
 
-<item name="mybool" type="boolean" choices="True|False">True</item>
+<mybool type="boolean" choices="True|False">True</mybool>
 
-<item name="ten" type="float">10.0</item>
+<ten type="float">10.0</ten>
 
-<item name="years" type="tuple">
-<item name="startyear" type="integer">1980</item>
-<item name="endyear" type="integer">1981</item>
-</item>
+<years type="tuple">
+<startyear type="integer">1980</startyear>
+<endyear type="integer">1981</endyear>
+</years>
 
-<item name="list_test" type="list">
-<item name="str1" type="string">squid</item>
-<item name="str2" type="string">clam</item>
-<item name="u1" type="unicode">uniclam</item>
-</item>
+<list_test type="list">
+<str1 type="string">squid</str1>
+<str2 type="string">clam</str2>
+<u1 type="unicode">uniclam</u1>
+</list_test>
 
-<item name="dicttest" type="dictionary">
-<item name="str1" type="string">squid</item>
-<item name="str2" type="string">clam</item>
-</item>
+<dicttest type="dictionary">
+<str1 type="string">squid</str1>
+<str2 type="string">clam</str2>
+</dicttest>
 
 
-<item name="models" type="list">
-  <item name="model1" type="model" choices="Run|Skip">Run</item>
-  <item name="model2" type="model" choices="Run|Skip">Run<item name="group_members" type="string">all</item>
-  </item>
-  <item name="model3" type="model" choices="Run|Skip">Run<item name="chooser" type="string">random</item>
-    <item name="sampler" type="string">fussy</item>
-  </item>
-  <item name="model4" type="model" choices="Run|Skip">Skip</item>
-</item>
+<models type="list">
+  <model1 type="model" choices="Run|Skip">Run</model1>
+  <model2 type="model" choices="Run|Skip">Run<group_members type="string">all</group_members>
+  </model2>
+  <model3 type="model" choices="Run|Skip">Run<chooser type="string">random</chooser>
+    <sampler type="string">fussy</sampler>
+  </model3>
+  <model4 type="model" choices="Run|Skip">Skip</model4>
+</models>
 
-<item name="mytables" type="list">
-  <item name="gridcells" type="table" choices="Load|Skip">Load</item>
-  <item name="zones" type="table" choices="Load|Skip">Skip</item>
-  <item name="jobs" type="table" choices="Load|Skip">Load</item>
-</item>
+<mytables type="list">
+  <gridcells type="table" choices="Load|Skip">Load</gridcells>
+  <zones type="table" choices="Load|Skip">Skip</zones>
+  <jobs type="table" choices="Load|Skip">Load</jobs>
+</mytables>
 
-<item name="mydatasets" type="list">
-  <item name="gridcell" type="dataset" choices="Load|Skip">Load</item>
-  <item name="zone" type="dataset" choices="Load|Skip">Skip</item>
-  <item name="job" type="dataset" choices="Load|Skip">Load</item>
-</item>
+<mydatasets type="list">
+  <gridcell type="dataset" choices="Load|Skip">Load</gridcell>
+  <zone type="dataset" choices="Load|Skip">Skip</zone>
+  <job type="dataset" choices="Load|Skip">Load</job>
+</mydatasets>
 
-</item>
+</test_scenario>
 </scenario_manager>
 </opus_project>

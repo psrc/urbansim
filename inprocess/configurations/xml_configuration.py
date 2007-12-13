@@ -31,19 +31,16 @@ class XMLConfiguration(object):
             raise ValueError, "malformed xml - expected to find a root element named 'opus_project'"
         
     def get_run_configuration(self, name):
-        """extract the run configuration named 'name' from this xml project and return it.  If there are
-        multiple configurations with that name, return the first one."""
-        for scenario in self.root.findall('scenario_manager/item'):
-            if scenario.get('name')==name:
-                return self._node_to_config(scenario)
-        raise ValueError, "didn't find a scenario named %s" % name
+        """extract the run configuration named 'name' from this xml project and return it."""
+        scenarios = self.root.findall('scenario_manager/%s' % name)
+        if len(scenarios)!=1:
+            raise ValueError, "didn't find a unique scenario named %s" % name
+        return self._node_to_config(scenarios[0])
 
     def _node_to_config(self, node):
         changes = {}
         parent = None
-        # iterate over the children, skipping comments and whitespace (by only 
-        # examining elements with the 'item' tag)
-        for child in node.findall('item'):
+        for child in node:
             parser_action = child.get('parser_action', '')
             if parser_action.startswith('parent'):
                 if parent is not None:
@@ -71,23 +68,6 @@ class XMLConfiguration(object):
         else:
             raise ValueError, "unknown parser action %s" % parser_action
     
-    def _get_node(self, path):
-        # Return the node indicated by path.  We ought to be able to just use
-        # the 'find' method; but we are using 'item' as the tag for all nodes.
-        # So this path uses names after the top-level selection.
-        names = path.split('/')
-        node = self.root.find(names[0])
-        for name in names[1:]:
-            children = node.getchildren()
-            i = 0
-            while i<len(children) and children[i].get('name')!=name:
-                i = i+1
-            if i<len(children):
-                node = children[i]
-            else:
-                raise ValueError, "invalid path: %s" % path
-        return node
-
     def _add_to_dict(self, node, result_dict):
         # 'node' should be an element node representing a key-value pair to be added to 
         # the dictionary 'result_dict'.
@@ -100,8 +80,10 @@ class XMLConfiguration(object):
             for child in node:
                 self._add_to_dict(child, result_dict)
         elif action=='include':
-            included_node = self._get_node(node.text)
-            for child in included_node:
+            included = self.root.findall(node.text)
+            if len(included)!=1:
+                raise ValueError, "didn't find a unique match for included name %s" % node.text
+            for child in included[0]:
                 self._add_to_dict(child, result_dict)
         elif action=='only_for_includes':
             pass
@@ -109,7 +91,7 @@ class XMLConfiguration(object):
             if 'config_name' in node.attrib:
                 key = node.get('config_name')
             else:
-                key = node.get('name')
+                key = node.tag
             result_dict[key] = self._convert_node_to_data(node)
             
     def _convert_node_to_data(self, node):
@@ -226,7 +208,7 @@ class XMLConfiguration(object):
         # skip is a string that is the value when this node should be skipped
         if node.text==skip:
             return None
-        name = node.get('name')
+        name = node.tag
         children = node.getchildren()
         if len(children)==0:
             return name
@@ -246,7 +228,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         inprocess_dir = __import__('inprocess').__path__[0]
         self.test_configs = os.path.join(inprocess_dir, 'configurations', 'test_configurations')
 
-    def skip_test_types(self):
+    def test_types(self):
         f = os.path.join(self.test_configs, 'manytypes.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         self.assertEqual(config, 
@@ -267,12 +249,12 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                           'mydatasets': ['gridcell', 'job']
                           })
             
-    def skip_test_whitespace_and_comments(self):
+    def test_whitespace_and_comments(self):
         f = os.path.join(self.test_configs, 'whitespace.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         self.assertEqual(config, {'description': 'a test configuration'})
         
-    def skip_test_str_and_unicode(self):
+    def test_str_and_unicode(self):
         # check that the keys in the config dictionary are str, and that
         # the str and unicode tags are working correctly
         f = os.path.join(self.test_configs, 'strings.xml')
@@ -282,7 +264,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assert_(type(config['s']) is str)
         self.assert_(type(config['u']) is unicode)
 
-    def skip_test_array(self):
+    def test_array(self):
         # check that the keys in the config dictionary are str, and that
         # the str and unicode tags are working correctly
         f = os.path.join(self.test_configs, 'array.xml')
@@ -290,7 +272,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         should_be = array([100, 300]) 
         self.assert_(ma.allclose(config['arraytest'], should_be, rtol=1e-6))
         
-    def skip_test_files_directories(self):
+    def test_files_directories(self):
         f = os.path.join(self.test_configs, 'files_directories.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         prefix = os.environ.get('URBANSIM_CACHE', '')
@@ -299,21 +281,21 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                                   'dir1': 'testdir', 
                                   'dir2': os.path.join(prefix, 'testdir')})
         
-    def skip_test_xml_inheritance(self):
+    def test_xml_inheritance(self):
         # test inheritance with a chain of xml configurations
         f = os.path.join(self.test_configs, 'childconfig.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         self.assertEqual(config, 
             {'description': 'this is the child', 'year': 2000, 'modelname': 'widgetmodel'})
             
-    def skip_test_xml_inheritance_external_parent(self):
+    def test_xml_inheritance_external_parent(self):
         # test inheritance with an external_parent
         f = os.path.join(self.test_configs, 'childconfig_external_parent.xml')
         config = XMLConfiguration(f).get_run_configuration('grandchild_scenario')
         self.assertEqual(config, 
             {'description': 'this is the grandchild', 'year': 2000, 'modelname': 'widgetmodel'})
             
-    def skip_test_old_config_inheritance(self):
+    def test_old_config_inheritance(self):
         # test inheriting from an old-style configuration 
         # (backward compatibility functionality - may be removed later)
         f = os.path.join(self.test_configs, 'childconfig_oldparent.xml')
@@ -324,7 +306,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assert_('models' in config)
         self.assert_('random_nonexistant_key' not in config)
             
-    def skip_test_categories(self):
+    def test_categories(self):
         f = os.path.join(self.test_configs, 'categories.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         self.assertEqual(config, 
@@ -336,13 +318,13 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                           'bool2': False,
                           'int2': 13})
 
-    def skip_test_list_to_dict(self):
+    def test_list_to_dict(self):
         f = os.path.join(self.test_configs, 'list_to_dict.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         self.assertEqual(config, 
                          {'datasets_to_preload': {'job': {}, 'gridcell': {'nchunks': 4}}})
 
-    def skip_test_include(self):
+    def test_include(self):
         f = os.path.join(self.test_configs, 'include_test.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         self.assertEqual(config, 
@@ -353,7 +335,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                           'y': 20,
                           'morestuff': {'x': 10, 'y': 20}})
 
-    def skip_test_class_element(self):
+    def test_class_element(self):
         # test a configuration element that is a specified class
         f = os.path.join(self.test_configs, 'database_configuration.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
@@ -364,8 +346,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(db_config.password, 'secret')
         self.assertEqual(db_config.database_name, 'river_city_baseyear')
             
-    def skip_test_class_element_with_categories(self):
-        # like skip_test_class_element, but with an additional layer of categorization in the xml
+    def test_class_element_with_categories(self):
+        # like test_class_element, but with an additional layer of categorization in the xml
         f = os.path.join(self.test_configs, 'database_configuration_with_categories.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         db_config = config['input_configuration']
@@ -375,7 +357,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(db_config.password, 'secret')
         self.assertEqual(db_config.database_name, 'river_city_baseyear')
             
-    def skip_test_error_handling(self):
+    def test_error_handling(self):
         # there isn't an xml configuration named badname.xml
         self.assertRaises(IOError, XMLConfiguration, 'badname.xml')
         # badconfig1 has a syntax error in the xml

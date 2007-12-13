@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <opus_project>
 <scenario_manager>
-<item type="scenario" name="test_scenario" >
+<test_scenario type="scenario">
 
-<item name="datasets_to_preload" type="list" parser_action="list_to_dictionary">
-  <item name="job" type="dataset" choices="Load|Skip">Load</item>
-  <item name="household" type="dataset" choices="Load|Skip">Skip</item>
-  <item name="gridcell" type="dataset" choices="Load|Skip">Load<item name="nchunks" type="integer">4</item></item>
-</item>
+<datasets_to_preload type="list" parser_action="list_to_dictionary">
+  <job type="dataset" choices="Load|Skip">Load</job>
+  <household type="dataset" choices="Load|Skip">Skip</household>
+  <gridcell type="dataset" choices="Load|Skip">Load<nchunks type="integer">4</nchunks></gridcell>
+</datasets_to_preload>
 
-</item>
+</test_scenario>
 </scenario_manager>
 </opus_project>

@@ -7,12 +7,12 @@
 <opus_project>
 
 <scenario_manager>
-<item type="scenario" name="test_scenario" >
+<test_scenario type="scenario">
    
 
-<item name="description" type="string">a test configuration</item>
+<description type="string">a test configuration</description>
   <!-- another comment -->
   
-</item>
+</test_scenario>
 </scenario_manager>
 </opus_project>
