@@ -107,6 +107,7 @@ class RemoteRun:
         self.ssh = {}
         if not self.is_localhost(self.urbansim_server_config['hostname']):
             uclient = paramiko.SSHClient()
+            uclient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             uclient.load_system_host_keys()
             uclient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             uclient.connect(hostname=urbansim_server_config['hostname'], 
@@ -232,10 +233,11 @@ class RemoteRun:
                 ## to avoid stdout overfilling sshclient buffer, redirect stdout to a log file
                 ## TODO: better handle the location of the urbansim_remote_run.log
                 logger.log_status("Call " + cmd)
-                try: self.ssh['urbansim_server'].exec_command(cmd)
-
-                except: raise RuntimeError, "there is a problem running urbansim remotely"
-                self.wait_until_run_done_or_failed(run_id)
+                try: 
+                    std = self.ssh['urbansim_server'].exec_command(cmd)  #std[0] - stdin, std[1] - stdout, std[2] - stderr
+                except: 
+                    raise RuntimeError, "there is a problem running urbansim remotely"
+                self.wait_until_run_done_or_failed(run_id, std=std)
                 logger.end_block()
                 ##TODO: open_sftp may need to be close()
                 if not exists_remotely(self.ssh['urbansim_server'].open_sftp(), 
@@ -261,8 +263,6 @@ class RemoteRun:
                     if not self.is_localhost(self.travelmodel_server_config['hostname']):
                         logger.start_block("Start Travel Model on %s from %s to %s" % (self.travelmodel_server_config['hostname'],
                                                                                        this_start_year, this_end_year) )
-                        sftp = self.ssh['urbansim_server'].open_sftp()
-                        _makedirs(sftp, cache_directory)
                         cmd = 'python %(module)s %(run_id)s %(start_year)s --hostname=%(services_hostname)s' % \
                               {'module':self.remote_module_path_from_opus_path(self.ssh['travelmodel_server'], 
                                                                                'opus_core.tools.restart_run'), 
@@ -272,9 +272,11 @@ class RemoteRun:
                         ## to avoid stdout overfilling sshclient buffer, redirect stdout to a log file                        
                         ## TODO: better handle the location of the travelmodel_remote_run.log
                         logger.log_status("Call " + cmd)
-                        try:self.ssh['travelmodel_server'].exec_command(cmd)
-                        except:raise RuntimeError, "there is a problem running travel model remotely"
-                        self.wait_until_run_done_or_failed(run_id)
+                        try:
+                            std = self.ssh['travelmodel_server'].exec_command(cmd)
+                        except:
+                            raise RuntimeError, "there is a problem running travel model remotely"
+                        self.wait_until_run_done_or_failed(run_id, std=std)
                         logger.end_block()
                         ##TODO: open_sftp may need to be close()
                         if not exists_remotely(self.ssh['urbansim_server'].open_sftp(), 
@@ -296,14 +298,26 @@ class RemoteRun:
 
         return
 
-    def wait_until_run_done_or_failed(self, run_id, msg=''):
+    def wait_until_run_done_or_failed(self, run_id, std=[], msg='\n'):
         while True:
             time.sleep(60)
-            runs_by_status = self.get_run_manager().get_runs_by_status([run_id])
+
+            #raise if command returns an error in stderr
+            if len(std) == 3: 
+                line = std[2].readline()
+                if line:
+                    while line:
+                        msg += line
+                        line = std[2].readline()
+                    for st in std:
+                        st.close()
+                    raise RuntimeError, "run failed: %s." % msg
+
+            runs_by_status = self.get_run_manager().get_runs_by_status([run_id])            
             if run_id in runs_by_status.get('done', []):
                 break
             if run_id in runs_by_status.get('failed', []):
-                raise StandardError, "run failed: %s." % msg
+                raise RuntimeError, "run failed: %s." % msg
         
     def update_services_database(self, run_activity, run_id, config):
         run_activity.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % run_id)
@@ -311,7 +325,7 @@ class RemoteRun:
 
     def remote_module_path_from_opus_path(self, ssh, opus_path):
         cmdline = r"python -c 'import %s; print %s.__file__'" % (opus_path, opus_path)
-        module_path = get_stdout_for_ssh_cmd(ssh._transport, cmdline)
+        module_path = get_stdout_for_ssh_cmd(ssh, cmdline)
         return module_path
 
     def is_localhost(self, hostname):
