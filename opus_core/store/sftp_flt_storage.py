@@ -19,6 +19,15 @@ from file_flt_storage import file_flt_storage, FltError
 from glob import glob
 import tempfile
 import stat
+import os
+
+if os.name == 'nt':
+    from nturl2path import pathname2url
+    convertpath = pathname2url
+else:
+    def convertpath(arg):
+        return arg
+
 try:
     import paramiko
 except ImportError:
@@ -32,29 +41,41 @@ class sftp_flt_storage(file_flt_storage):
     def __init__(self, storage_location):
         """
         storage_location = 'sftp://[username:passwd@]my.hostname.com/home/users/cache_dir'
-        it is recommended to store sftp user and password in system environment variables or in a security key, 
+        it is recommended to store sftp user and password in system environment variables or in a security key,
         instead of passing in as plain text.
         """
         o = urlparse(storage_location)
-        username = o.username
-        password = o.password
         hostname = o.hostname
-        if o.port is None:
-            sock = hostname
+        username = o.username or os.environ.get('URBANSIMUSERNAME', None) or os.environ.get('TRAVELMODELUSERNAME', None)
+        password = o.password or os.environ.get('URBANSIMPASSWORD', None) or os.environ.get('TRAVELMODELPASSWORD', None)
+        if o.port is not None:
+            port = o.port
         else:
-            sock = (hostname, o.port)
+            port = 22
         self._base_directory_remote = o.path
         self._base_directory = self._base_directory_local = tempfile.mkdtemp(prefix='opus_tmp')
         try:
-            t = paramiko.Transport(sock)
-            authenticate(t, username, password)
-            self.sftp = paramiko.SFTPClient.from_transport(t)
+            self.ssh = paramiko.SSHClient()
+            self.ssh.load_system_host_keys()
+            self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            self.ssh.connect(hostname=hostname,
+                             port = port,
+                             username=username,
+                             password=password,
+                             pkey=load_key_if_exists())
+            #self.ssh._transport.set_keepalive(60)
+
+            self.sftp = self.ssh.open_sftp()
         except Exception, e:
             raise
 
     def __del__(self):
-        if hasattr(self, 'sftp'):
+        #if hasattr(self, 'ssh') or hasattr(self, 'sftp'):
+        try:
             self.sftp.close()
+            self.ssh.close()
+        except:
+            pass
         rmtree(self._get_base_directory())
         
     def has_table(self, table):
@@ -103,9 +124,7 @@ class sftp_flt_storage(file_flt_storage):
         if exists_remotely(self.sftp, dataset_path):
             file_names = self.sftp.listdir(dataset_path)
             return [os.path.basename(name) for name in file_names 
-                    if len(self.get_column_names(name))>0 ]
-                       #os.path.isdir(name) and
-            
+                    if _isdir(self.sftp, name) and len(self.get_column_names(name))>0 ]
         else:
             raise FltError("Cache directory '%s' does not exist!" % dataset_path)
     
@@ -119,7 +138,7 @@ class sftp_flt_storage(file_flt_storage):
         unused_column_size, column_names = self._get_column_size_and_names(table_data)
         
         local_dir = os.path.join(self._get_base_directory(), table_name)
-        remote_dir = os.path.join(self._get_base_directory_remote(), table_name)
+        remote_dir = convertpath( os.path.join(self._get_base_directory_remote(), table_name) )
 
         if not exists_remotely(self.sftp, remote_dir):
             _makedirs(self.sftp, remote_dir)
@@ -144,7 +163,7 @@ class sftp_flt_storage(file_flt_storage):
         
         for column_name in column_names:
             local_file = glob(os.path.join(local_dir, '%s.*' % column_name))[0]
-            remote_file = os.path.join(remote_dir, os.path.basename(local_file) )
+            remote_file = convertpath( os.path.join(remote_dir, os.path.basename(local_file) ) )
             self.sftp.put(local_file, remote_file)
         
     def _get_files(self, table_name=''):
@@ -157,37 +176,16 @@ class sftp_flt_storage(file_flt_storage):
         return [self.storage_file(os.path.join(dataset_path, os.path.basename(remote_file.get_name()))) for remote_file in remote_files]
     
     def _get_remote_files(self, table_name=''):        
-        dataset_path = os.path.join(self._get_base_directory_remote(), table_name)
+        dataset_path = convertpath( os.path.join(self._get_base_directory_remote(), table_name) )
         if exists_remotely(self.sftp, dataset_path):
             file_names = self.sftp.listdir(dataset_path)
-            return [self.storage_file(os.path.join(dataset_path, name)) for name in file_names]
+            return [self.storage_file( convertpath(os.path.join(dataset_path, name))) for name in file_names]
         else:
             raise FltError("Cache directory '%s' does not exist!" % dataset_path)
+    
+    def listdir_in_base_directory(self):
+        return self.sftp.listdir( self._get_base_directory_remote() )
 
-def authenticate(transport, username, password=None, key_file=None):
-    """
-    authenticate a transport by password or key file
-    using password passed in or in environment variables
-    """
-    key = None
-    if password is None: 
-        if transport.sock.getpeername()[0] == os.environ.get('URBANSIMHOSTNAME', ''):
-            username = username or os.environ.get('URBANSIMUSERNAME', None)
-            password = os.environ.get('URBANSIMPASSWORD', None)
-        elif transport.sock.getpeername()[0] == os.environ.get('TRAVELMODELHOSTNAME', ''):
-            username = username or os.environ.get('TRAVELMODELUSERNAME', None)
-            password = os.environ.get('TRAVELMODELPASSWORD', None)
-    if password is None:
-        key=load_key_if_exists()
-
-    if password is None and key is None:
-        raise RuntimeError, 'Password for server %s unspecified, and private key file unavialble' % transport.sock.getpeername()[0]
-    try:
-        transport.connect(username=username, password=password, pkey=key)
-        if not transport.is_authenticated():
-            raise paramiko.AuthenticationException, 'Authentication to %s failed' % transport.sock.getpeername()[0]
-    except:
-        raise
 
 def load_key_if_exists(key_file=None):
     key=None
@@ -197,12 +195,8 @@ def load_key_if_exists(key_file=None):
         patterns = [key_file] + ['~/.ssh/id_rsa', '~/ssh/id_rsa']
         
     key_file = [os.path.expanduser(file) for file in patterns if os.path.exists(os.path.expanduser(file))]
-    if len(key_file) == 0:
-        key_file = None
-    else:
-        key_file = key_file[0]
-    
-    if key_file is not None:
+    if len(key_file) != 0:
+        key_file = key_file[0]    
         key = paramiko.RSAKey.from_private_key_file(key_file)
     
     return key
@@ -219,6 +213,24 @@ def exists_remotely(sftp, name):
         return False
     else:
         raise RuntimeError, "Error checking file status for %s on remote host" % (name)
+
+def _isdir(sftp, name):
+    """return True if name is an existing directory
+    """
+    isdir = False
+    if not exists_remotely(sftp, name):
+        return isdir
+    
+    try:
+        mode = sftp.lstat(name).st_mode
+    except os.error:
+        mode = 0
+    if stat.S_ISDIR(mode):
+        isdir = True
+    else:
+        isdir = False
+    
+    return isdir
 
 def _makedirs(sftp, path):
     """ make recursive directories on sftp server
@@ -264,22 +276,20 @@ def _rmtree(sftp, path, ignore_errors=False, onerror=None):
     except os.error:
         onerror(os.rmdir, path, sys.exc_info())
 
-def get_stdout_for_ssh_cmd(transport, cmdline):
+def get_stdout_for_ssh_cmd(ssh, cmdline):
     """get stdout after running cmdline through ssh channel
-    transport is a Transport object from paramiko module
+    ssh is a SSHClient object from paramiko module
     """
-    chan = transport.open_session()
-    chan.exec_command(cmdline)
-    stdin = chan.makefile('wb'); stdout = chan.makefile('rb'); stderr = chan.makefile_stderr('rb')
+    stdin, stdout, stderr = ssh.exec_command(cmdline)
     results = stdout.readline().strip()
     stdin.close(); stdout.close(); stderr.close()
     return results
 
-def get_temp_dir_remote(transport):
+def get_temp_dir_remote(ssh):
     """
     """
     cmdline = "python -c 'import tempfile, sys; print tempfile.mkdtemp()'"
-    return get_stdout_for_ssh_cmd(transport, cmdline)
+    return get_stdout_for_ssh_cmd(ssh, cmdline)
 
 
 import os, sys
@@ -292,11 +302,14 @@ from shutil import rmtree
 from tempfile import mkdtemp
 from getpass import getuser
 
+TESTUSERNAME = getuser()
+TESTHOSTNAME = 'localhost'
+
 def skip_test():
     if paramiko is None:
         return True
     ## skip unittest if the connection cannot be authenticated
-    sftp_location = 'sftp://%s@%s' % (getuser(), 'localhost')
+    sftp_location = 'sftp://%s@%s' % (TESTUSERNAME, TESTHOSTNAME)
     try:
         storage = sftp_flt_storage(sftp_location)
         return True
@@ -314,7 +327,7 @@ class SftpFltStorageTests(opus_unittest.OpusTestCase):
         datasets = ['base_year', 'cities']
 
         opus_core_path = OpusPackage().get_opus_core_path()
-        sftp_location = 'sftp://%s@%s' % (getuser(), 'localhost')
+        sftp_location = 'sftp://%s@%s' % (TESTUSERNAME, TESTHOSTNAME)
         self.storage = sftp_flt_storage(sftp_location)
         self.remote_temp_dir = get_temp_dir_remote(self.storage.sftp.sock.get_transport())
         self.storage._base_directory_remote = os.path.join(self.remote_temp_dir, 'data', 'test_cache', '1980')
@@ -375,7 +388,7 @@ class StorageWriteTests(TestStorageInterface):
         opus_core_path = OpusPackage().get_opus_core_path()
         local_test_data_path = os.path.join(
             opus_core_path, 'data', 'test_cache', '1980')
-        sftp_location = 'sftp://%s@%s' % (getuser(), 'localhost')
+        sftp_location = 'sftp://%s@%s' % (TESTUSERNAME, TESTHOSTNAME)
         self.storage = sftp_flt_storage(sftp_location)
         self.remote_temp_dir = get_temp_dir_remote(self.storage.sftp.sock.get_transport())
         self.storage._base_directory_remote = os.path.join(self.remote_temp_dir)
