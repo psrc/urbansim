@@ -49,11 +49,12 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
                 bank_dir = self.get_emme2_dir(config, year, "bank%i" % x)
             else:
                 bank_dir = os.path.join(matrix_directory, "bank%i" % x)
-            self.get_needed_matrices_from_emme2(year, 
-                                            year_config['cache_directory'],
-                                            bank_dir,
-                                            year_config['matrix_variable_map']["bank%i" % x],
-                                                matrices_created)
+            if "bank%i" % x in year_config['matrix_variable_map']:
+                self.get_needed_matrices_from_emme2(year, 
+                                                year_config['cache_directory'],
+                                                bank_dir,
+                                                year_config['matrix_variable_map']["bank%i" % x],
+                                                    matrices_created)
 
     def create_output_matrix_files(self, config, year, max_zone_id):
         """Create data files with emme2 matrices."""
