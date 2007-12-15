@@ -25,6 +25,7 @@ class AbstractIndicatorTest(TestWithAttributeData):
             cache_directory = self.temp_cache_path,
             comparison_cache_directory = self.temp_cache_path2,
             years = [1980],
+            name = 'test_cross_scenario_source_data',
             dataset_pool_configuration = DatasetPoolConfiguration(
                 package_order=['opus_core'],
                 package_order_exceptions={},
@@ -33,6 +34,7 @@ class AbstractIndicatorTest(TestWithAttributeData):
         self.source_data = SourceData(
             cache_directory = self.temp_cache_path,
             years = [1980],
+            name= 'test_source_data',
             dataset_pool_configuration = DatasetPoolConfiguration(
                 package_order=['opus_core'],
                 package_order_exceptions={},

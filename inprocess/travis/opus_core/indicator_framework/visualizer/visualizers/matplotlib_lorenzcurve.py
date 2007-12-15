@@ -14,8 +14,9 @@
 
 import os, re, sys, time, traceback
 from copy import copy
-from inprocess.travis.opus_core.indicator_framework.visualizer.visualizer import Visualizer
-
+from inprocess.travis.opus_core.indicator_framework.visualizer.visualizers.abstract_visualization\
+    import Visualization
+    
 from opus_core.logger import logger
 from numpy import array, arange
 from numpy import ones, zeros, hstack, vstack
@@ -25,13 +26,13 @@ from pylab import xlabel, ylabel, title, text
 from pylab import MultipleLocator, FormatStrFormatter
 from pylab import savefig, clf, close
 
-class LorenzCurve(Visualizer):
+class LorenzCurve(Visualization):
 
     def __init__(self, source_data, dataset_name, 
                  attribute = None, 
                  years = None, operation = None, name = None, scale = None,
                  storage_location = None):
-        AbstractIndicator.__init__(self, source_data, dataset_name, [attribute], 
+        Visualizer.__init__(self, source_data, dataset_name, [attribute], 
                                    years, operation, name,
                                    storage_location)
         self._values = None

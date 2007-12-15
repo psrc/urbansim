@@ -13,6 +13,33 @@
 #
 
 class Visualizer:
-    
-    def visualize(self, indicators, viz_options):
+
+    def visualize(self, indicators, *args, **kwargs):
         raise 'visualize not implemented'
+    
+    
+
+
+
+
+    def test__output_types(self):
+        from inprocess.travis.opus_core.indicator_framework.visualizers.table import Table
+        
+        output_types = ['csv','tab']
+        try:        
+            import dbfpy
+        except ImportError:
+            pass
+        else:
+            output_types.append('dbf')
+            
+        for output_type in output_types:
+            table = Table(
+                source_data = self.cross_scenario_source_data,
+                attribute = 'opus_core.test.attribute',
+                dataset_name = 'test',
+                output_type = output_type)
+            
+            table.create(False)
+            path = table.get_file_path()
+            self.assertEqual(os.path.exists(path), True)

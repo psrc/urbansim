@@ -15,8 +15,9 @@
 from opus_core.logger import logger
 import os, re, sys, time, traceback
 from copy import copy
-from inprocess.travis.opus_core.indicator_framework.visualizer.visualizer import Visualizer
-
+from inprocess.travis.opus_core.indicator_framework.visualizer.visualizers.abstract_visualization\
+    import Visualization
+    
 from numpy import newaxis
 try:
     from matplotlib.pylab import clf, gca, plot, setp, title, legend
@@ -27,14 +28,14 @@ except:
     pass
 else:
     
-    class Chart(Visualizer):
+    class Chart(Visualization):
     
         def __init__(self, source_data, dataset_name, 
                      attribute = None, 
                      years = None, operation = None, name = None,
                      storage_location = None):
             
-            AbstractIndicator.__init__(self, source_data, dataset_name, 
+            Visualizer.__init__(self, source_data, dataset_name, 
                                        [attribute], years, operation, name,
                                        storage_location)
     

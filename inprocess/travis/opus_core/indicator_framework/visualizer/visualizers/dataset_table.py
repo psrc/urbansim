@@ -17,9 +17,10 @@ from numpy import array, logical_and, logical_not, concatenate, newaxis, rank
 from opus_core.variables.variable_name import VariableName
 from opus_core.storage_factory import StorageFactory
 from opus_core.database_management.database_configuration import DatabaseConfiguration
-from inprocess.travis.opus_core.indicator_framework.visualizer.visualizer import Visualizer
+from inprocess.travis.opus_core.indicator_framework.visualizer.visualizers.abstract_visualization \
+    import Visualization
 
-class DatasetTable(Visualizer):
+class DatasetTable(Visualization):
 
     def __init__(self, source_data, dataset_name, attributes, 
                  name, years = None, operation = None, 
@@ -39,7 +40,7 @@ class DatasetTable(Visualizer):
         self.exclude_condition = exclude_condition
         self.name = name
         
-        AbstractIndicator.__init__(self, source_data, dataset_name, 
+        Visualizer.__init__(self, source_data, dataset_name, 
                                    attributes, years, operation, name,
                                    storage_location, can_write_to_db = True)
         

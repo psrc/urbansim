@@ -17,12 +17,13 @@ import os, re, sys, time, traceback
 from copy import copy
 
 from numpy import newaxis, concatenate, rank
-
-from inprocess.travis.opus_core.indicator_framework.visualizer.visualizer import Visualizer
+from inprocess.travis.opus_core.indicator_framework.visualizer.visualizers.abstract_visualization\
+    import Visualization
+    
 from opus_core.storage_factory import StorageFactory
 from opus_core.database_management.database_configuration import DatabaseConfiguration
 
-class Table(Visualizer):
+class Table(Visualization):
 
     def __init__(self, source_data, dataset_name, attribute, 
                  years = None, operation = None, name = None,
@@ -38,7 +39,7 @@ class Table(Visualizer):
         elif output_type not in ['dbf', 'csv', 'tab', 'sql']:
             raise "Table output_type must be either dbf, csv, tab, or sql"
 
-        AbstractIndicator.__init__(self, source_data, dataset_name, [attribute], 
+        Visualizer.__init__(self, source_data, dataset_name, [attribute], 
                                    years, operation, name,
                                    storage_location, can_write_to_db = True)
         

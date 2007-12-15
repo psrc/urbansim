@@ -260,6 +260,7 @@ class IndicatorResultsTests(TestWithAttributeData):
         self.i_results.indicator_documentation_mapping = {}
         self.source_data = SourceData(
             cache_directory = self.temp_cache_path,
+            name = 'test',
             run_description = '(opus_core)',
             dataset_pool_configuration = DatasetPoolConfiguration(
                 package_order=['opus_core'],

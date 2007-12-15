@@ -27,6 +27,7 @@ class SourceData(object):
     def __init__(self, 
                  dataset_pool_configuration,
                  cache_directory, 
+                 name,
                  comparison_cache_directory = '',
                  years = [],
                  run_description = ''):
@@ -35,7 +36,8 @@ class SourceData(object):
         self.years = years            
         self.cache_directory = cache_directory
         self.comparison_cache_directory = comparison_cache_directory
-        self.run_description = run_description         
+        self.run_description = run_description       
+        self.name = name  
             
         self._check_integrity()
             
@@ -117,6 +119,7 @@ class TestSourceData(TestWithAttributeData):
         self.source_data = SourceData(
             cache_directory = self.temp_cache_path,
             years = [1980],
+            name = 'test',
             dataset_pool_configuration = DatasetPoolConfiguration(
                 package_order=['opus_core'],
                 package_order_exceptions={},
@@ -144,6 +147,7 @@ class TestSourceData(TestWithAttributeData):
             source_data = SourceData(
                 cache_directory = self.temp_cache_path,
                 years = [1980],
+                name = 'test2',
                 dataset_pool_configuration = DatasetPoolConfiguration(
                     package_order=['opus_core'],
                     package_order_exceptions={},
@@ -157,6 +161,7 @@ class TestSourceData(TestWithAttributeData):
             source_data = SourceData(
                 cache_directory = self.temp_cache_path,
                 years = [1970],
+                name = 'test3',
                 dataset_pool_configuration = DatasetPoolConfiguration(
                     package_order=['opus_core'],
                     package_order_exceptions={},
@@ -172,6 +177,7 @@ class TestSourceData(TestWithAttributeData):
             source_data = SourceData(
                 cache_directory = 'null',
                 years = [1980],
+                name = 'test4',
                 dataset_pool_configuration = DatasetPoolConfiguration(
                     package_order=['opus_core'],
                     package_order_exceptions={},
@@ -188,6 +194,7 @@ class TestSourceData(TestWithAttributeData):
                 cache_directory = self.temp_cache_path,
                 comparison_cache_directory = 'null',
                 years = [1980],
+                name = 'test5',
                 dataset_pool_configuration = DatasetPoolConfiguration(
                     package_order=['opus_core'],
                     package_order_exceptions={},
