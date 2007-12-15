@@ -28,8 +28,8 @@ class DatasetJunior(object):
         self.dataset = dataset
         self.primary_keys = dataset.get_id_name()
         self.computed = []
-        self.table_representation = {}
-        self.tuple_representation = {}
+        self.column_representation = {}
+        self.row_representation = {}
         
         self.reduced = False
 
@@ -57,22 +57,22 @@ class DatasetJunior(object):
             datasetName = VariableName(attr)
             attribute_cols[attr + '_%i'%year] = self.dataset.get_attribute(datasetName)        
         
-        self._build_tuple_representation(id_cols, attribute_cols)
+        self._build_row_representation(id_cols, attribute_cols)
         
         if release_dataset:
             self.dataset = None     
         
         self.reduced = True
         
-    def _build_tuple_representation(self, id_cols, attribute_cols):
-        self.tuple_representation = {}
+    def _build_row_representation(self, id_cols, attribute_cols):
+        self.row_representation = {}
         num_rows = len(id_cols[0])
         for row in range(num_rows):
             key = tuple([id_col[row] for id_col in id_cols])#key is the tuple of id cols for the row
-            self.tuple_representation[key] = {}
+            self.row_representation[key] = {}
             
             for name, attribute_col in attribute_cols.items():
-                self.tuple_representation[key][name] = attribute_col[row]
+                self.row_representation[key][name] = attribute_col[row]
                 
     ###### Join methods ######
     def join(self, dataset, join_columns = None, fill_value = -1):
@@ -89,12 +89,12 @@ class DatasetJunior(object):
             join_columns = self.primary_keys
 
         #fill in missing data between dataset and this dataset            
-        self._merge_tuple_representations(primary_representation = self.tuple_representation, 
-                                          representation_to_merge = dataset.tuple_representation, 
+        self._merge_row_representations(primary_representation = self.row_representation, 
+                                          representation_to_merge = dataset.row_representation, 
                                           fill_value = fill_value)                
 
     
-    def _merge_tuple_representations(self, primary_representation, representation_to_merge, fill_value):
+    def _merge_row_representations(self, primary_representation, representation_to_merge, fill_value):
         '''merges representation_to_merge with primary_representation'''
         old_value_cols = primary_representation[primary_representation.keys()[0]].keys()
         new_value_cols = representation_to_merge[representation_to_merge.keys()[0]].keys()
@@ -116,31 +116,31 @@ class DatasetJunior(object):
         
     def get_columns(self):
         if self.reduced:
-            return self.primary_keys + self.tuple_representation[self.tuple_representation.keys()[0]].keys()
+            return self.primary_keys + self.row_representation[self.row_representation.keys()[0]].keys()
         else:
             return None
         
     #############################################
-    def get_table_representation(self):
+    def get_column_representation(self):
         if not self.reduced:
             self.reduce(release_dataset = False)
             
-        if self.table_representation == {}:
+        if self.column_representation == {}:
             cols = self.get_columns()
-            self.table_representation = dict([(col, []) for col in cols])
-            keys = self.tuple_representation.keys()
+            self.column_representation = dict([(col, []) for col in cols])
+            keys = self.row_representation.keys()
             keys.sort()
             for key in keys:
                 for i in range(len(key)):
-                    self.table_representation[self.primary_keys[i]].append(key[i])
-                values = self.tuple_representation[key]
+                    self.column_representation[self.primary_keys[i]].append(key[i])
+                values = self.row_representation[key]
                 for value_col,value in values.items():
-                    self.table_representation[value_col].append(value)
+                    self.column_representation[value_col].append(value)
             
-            for k,v in self.table_representation.items():
-                self.table_representation[k] = array(v)
+            for k,v in self.column_representation.items():
+                self.column_representation[k] = array(v)
             
-        return self.table_representation
+        return self.column_representation
             
     def replace(self, indicator, replacement_vals):
         year_replaced_attribute = indicator.attribute.replace('DDDD',repr(year))
@@ -173,7 +173,7 @@ class DatasetJuniorTests(TestWithAttributeData):
         dataset_junior2.reduce()
                     
         dataset_junior1.join(dataset_junior2)
-        output = dataset_junior1.tuple_representation
+        output = dataset_junior1.row_representation
 
         expected = {
             (1,):{'opus_core.test.attribute_1980':5,
@@ -202,7 +202,7 @@ class DatasetJuniorTests(TestWithAttributeData):
         dataset, dataset_junior = self._get_dataset_for_year_with_computed_attributes(year = 1980)
                 
         dataset_junior.reduce()   
-        output = dataset_junior.tuple_representation
+        output = dataset_junior.row_representation
         
         expected = {
             (1,):{'opus_core.test.attribute_1980':5,
@@ -216,11 +216,11 @@ class DatasetJuniorTests(TestWithAttributeData):
         }
         self.assertEqual(output,expected)
 
-    def test_get_table_representation(self):
+    def test_get_column_representation(self):
         dataset, dataset_junior = self._get_dataset_for_year_with_computed_attributes(year = 1980)
                 
         dataset_junior.reduce()   
-        output = dataset_junior.get_table_representation()
+        output = dataset_junior.get_column_representation()
         
         expected = {
             'id':[1,2,3,4],
@@ -250,7 +250,7 @@ class DatasetJuniorTests(TestWithAttributeData):
         
         return dataset, dataset_junior  
     
-    def test__build_tuple_representation(self):
+    def test__build_row_representation(self):
         id_cols = [
             array([2,4,6]),
             array([1,2,3])]
@@ -278,13 +278,13 @@ class DatasetJuniorTests(TestWithAttributeData):
         dataset_junior = DatasetJunior(dataset=dataset)
 
         
-        dataset_junior._build_tuple_representation(id_cols = id_cols, 
+        dataset_junior._build_row_representation(id_cols = id_cols, 
                                                    attribute_cols = attribute_cols) 
-        output = dataset_junior.tuple_representation
+        output = dataset_junior.row_representation
           
         self.assertEqual(expected,output)
         
-    def test__merge_tuple_representations(self):
+    def test__merge_row_representations(self):
         
         dataset = self._get_dataset(dataset_name = 'test', 
                                     cache_directory = self.temp_cache_path, 
@@ -313,17 +313,17 @@ class DatasetJuniorTests(TestWithAttributeData):
             'col4':array([40,50,60])              
         }
                 
-        dataset_junior1._build_tuple_representation(id_cols = id_cols1, 
+        dataset_junior1._build_row_representation(id_cols = id_cols1, 
                                                    attribute_cols = attribute_cols1) 
-        dataset_junior2._build_tuple_representation(id_cols = id_cols2, 
+        dataset_junior2._build_row_representation(id_cols = id_cols2, 
                                                    attribute_cols = attribute_cols2) 
         
-        dataset_junior1._merge_tuple_representations(
-             primary_representation = dataset_junior1.tuple_representation, 
-             representation_to_merge = dataset_junior2.tuple_representation, 
+        dataset_junior1._merge_row_representations(
+             primary_representation = dataset_junior1.row_representation, 
+             representation_to_merge = dataset_junior2.row_representation, 
              fill_value = -1)
         
-        output = dataset_junior1.tuple_representation
+        output = dataset_junior1.row_representation
         
         expected = {
             (2,1):{'col1':3,

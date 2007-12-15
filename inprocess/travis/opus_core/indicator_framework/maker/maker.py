@@ -188,7 +188,7 @@ class Maker(object):
 
         store.write_table(
             table_name = file_name, 
-            table_data = dataset.get_table_representation(), 
+            table_data = dataset.get_column_representation(), 
             fixed_column_order = cols,
             append_type_info = False)
     
