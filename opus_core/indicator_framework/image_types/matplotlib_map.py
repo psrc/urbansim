@@ -62,7 +62,7 @@ class Map(AbstractIndicator):
             title += '\n' + self.run_description
         
         file_path = self.get_file_path(year = year) 
-            
+
         dataset = self._get_dataset(year)  
         dataset.plot_map(attribute_alias, my_title=title, file=file_path,
                          filter='urbansim.gridcell.is_fully_in_water',
