@@ -19,6 +19,7 @@ try:
     from opus_core.store.storage import Storage
     from numpy import empty, append
     from string import count
+    from random import randint
 
 except:
     logger.log_warning('Could not load arcgisscripting module. Skipping.')
@@ -30,6 +31,13 @@ else:
         TODO: needs better error checking throughout
             - check for table existence
             - check for storage_location (workspace) existence
+            - deal with feature datasets in geodatabases
+             - right now this assumes that all tables/feature classes
+             are in the 'root' of the geodb
+            - deal with unicode strings from ESRI text columns
+              - do these need to be converted to numpy type String?
+            - deal with additional field length constraints
+             - already doing this for dbf, do the same for geodatabases
 
         The storage_location can be a string representation of one of the following:
             - a directory path (e.g. 'c:/temp')
@@ -48,11 +56,81 @@ else:
         def get_storage_location(self):
             return self._storage_location
 
-        def write_table(self):
-            None
+        def get_full_table_location(self, table_name):
+            storage_location = self.get_storage_location()
+            if storage_location[-1] != '/':
+                storage_location = storage_location + '/'
+            full_table_name = storage_location + table_name
+            return full_table_name
+
+        def write_table(self, table_name, table_data):
+
+            # Determine table type to write
+            storage_location = self.get_storage_location()
+            if storage_location.find('.sde') > -1:
+                dbf = False
+            elif storage_location.find('.gdb') > -1:
+                dbf = False
+            elif storage_location.find('.mdb') > -1:
+                dbf = False
+            else:
+                dbf = True
+
+            # Create table
+            if dbf == True:
+                if table_name.find('.dbf') == -1:
+                    table_name = table_name + '.dbf'
+                    self.gp.CreateTable(storage_location, table_name)
+                else:
+                    self.gp.CreateTable(storage_location, table_name)
+            else:
+                table_name = self.gp.ValidateTableName(table_name)
+                self.gp.CreateTable(storage_location, table_name)
+
+            # Get full path to table
+            full_table_location = self.get_full_table_location(table_name)
+
+            # Get column names
+            column_names = []
+            for i in table_data:
+                column_names.append(i)
+            # Get shortened column names
+            short_column_names = []
+            for i in column_names:
+                if len(i) <= 10:
+                    short_column_names.append(i)
+                else:
+                    short_name = self._get_shortened_column_name(i)
+                    short_column_names.append(short_name)
+            # Get column types
+            numpy_column_types = []
+            for i in column_names:
+                numpy_column_types.append(table_data[i].dtype.kind)
+            # Get ESRI column types
+            esri_column_types = []
+            for i in numpy_column_types:
+                esri_column_types.append(self._get_esri_type_from_numpy_dtype(i))
+
+            # Add fields
+            x = 0
+            for i in short_column_names:
+                self.gp.AddField(full_table_location, i, esri_column_types[x])
+                x += 1
+            # Delete automatically added field if table of type .dbf
+            if dbf == True:
+                self.gp.DeleteField(full_table_location, 'Field1')
+
+            # Insert records
+
+
+
 
         def load_table(self, table_name, column_names=Storage.ALL_COLUMNS):
             """
+            TODO:
+                - Convert any dates from date fields to strings
+                 - at this point this method reads in dates as python objects
+                 into the numpy array instead of strings
             The table_name parameter must be one of the following:
                 - for Shapefiles: 'your_shapefile.shp'
                 - for standalone .dbf tables: 'your_dbf.dbf'
@@ -65,11 +143,8 @@ else:
             table.
             """
 
-            # Create full path to table
-            storage_location = self.get_storage_location()
-            if storage_location[-1] != '/':
-                storage_location = storage_location + '/'
-            full_table_name = storage_location + table_name
+            # Get full path to table
+            full_table_name = self.get_full_table_location(table_name)
 
             # Get columns
             if column_names == '*':
@@ -246,20 +321,41 @@ else:
 
         def _get_numpy_dtype_from_esri_dtype(self, esri_type):
             mapping = {
-                        'SmallInteger': 'Int32',
+                        'SmallInteger': 'i',
                         'String': 'S',
-                        'Double': 'Float64',
-                        'Single': 'Float32',
+                        'Double': 'f',
+                        'Single': 'f',
                         'Date': 'S',
-                        'Integer': 'Int64'
+                        'Integer': 'i'
                       }
-            return mapping[esri_type]
+            try:
+                numpy_dtype = mapping[esri_type]
+            except:
+                raise ValueError('Unrecognized ESRI type: %s' % esri_type)
+            return numpy_dtype
 
         def _get_esri_type_from_numpy_dtype(self, numpy_dtype):
             mapping = {
-                       'i':'Integer',
-                       'f':'Double',
-                       'S':'String',
-                       'b':'SmallInteger'
+                       'i':'LONG',
+                       'f':'DOUBLE',
+                       'S':'TEXT',
+                       'b':'SHORT',
+                       'U':'TEXT',
+                       'u':'LONG',
+                       'c':'DOUBLE',
+                       'O':'TEXT',
+                       'V':'TEXT'
                        }
-            return mapping[numpy_dtype]
+            try:
+                esri_type = mapping[numpy_dtype]
+            except:
+                raise ValueError('Unrecognized numpy type: %s' % numpy_dtype)
+            return esri_type
+
+        def _get_shortened_column_name(self, column_name):
+            #Takes a string, reduces it to 8 characters in
+            #length, then adds a random number between 1 and 99
+            #to make it somewhat unique
+            rand = str(randint(0,99))
+            short_name = column_name[0:8] + rand
+            return short_name
