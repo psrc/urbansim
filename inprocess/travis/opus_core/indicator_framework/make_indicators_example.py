@@ -15,250 +15,127 @@
 # script to produce a number of indicators
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from opus_core.indicator_framework.maker.source_data import SourceData
-from opus_core.indicator_framework.image_types.matplotlib_map import Map
-from opus_core.indicator_framework.image_types.matplotlib_chart import Chart
-from opus_core.indicator_framework.image_types.table import Table
-from opus_core.indicator_framework.image_types.geotiff_map import GeotiffMap
-from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
-from opus_core.indicator_framework.image_types.matplotlib_lorenzcurve import LorenzCurve
-from opus_core.indicator_framework.storage_location.database import Database
+from inprocess.travis.opus_core.indicator_framework.maker.source_data import SourceData
+
+from opus_core.database_management.database_configuration import DatabaseConfiguration
+from inprocess.travis.opus_core.indicator_framework.maker.indicator import Indicator
+from inprocess.travis.opus_core.indicator_framework.maker.computed_indicator import ComputedIndicator
+from inprocess.travis.opus_core.indicator_framework.maker.maker import Maker
+from inprocess.travis.opus_core.indicator_framework.visualizer.visualizer import Visualizer
 
 
-'''-------------------------
-   ------  SourceData ------
--------------------------------
-The SourceData specifies the location of the simulation results that should be 
-used for computing the indicators, the years for which the indicators should be
-computed, and, optionally, a second data directory for which the indicators will
-be compared against. Each indicator requires a source data object to be passed
-to it.
-    dataset_pool_configuration:
-              An object that handles which datasets get loaded and in what 
-              order. 
-    cache_directory: 
-              A path to the directory containing the simulation results that 
-              the indicators should be computed from.
-    comparison_cache_directory: 
-              This field is optional. Set this field to the path to a second 
-              cache directory in order to run a cross-scenario indicator 
-              comparison. A subtract will be performed for equivalent 
-              values between scenarios.
-    run_description: 
-              A description of this indicator batch. This field is optional. 
-    years:    The default years that all the indicators will be computed for.
-              This field is optional, although all indicators will then need 
-              to have a years field.
+#############################################################
+#DEFINE indicators
+#############################################################
+indicators = {
+   'zone_population':Indicator( 
+       dataset_name = 'zone',
+       attribute = 'urbansim.zone.population'),   
+
+   'gridcell_population':Indicator(
+       dataset_name = 'gridcell',
+       attribute = 'urbansim.gridcell.population'),  
+   
+   'zone_industrial_sqft':Indicator(
+       dataset_name = 'zone',
+       attribute = 'urbansim.zone.industrial_sqft'),  
+              
+   'gridcell_number_of_jobs':Indicator(
+       dataset_name = 'gridcell',
+       attribute = 'urbansim.gridcell.number_of_jobs', 
+       name = 'jobs'),
+
+   'zone_number_of_jobs':Indicator(
+       dataset_name = 'zone',
+       attribute = 'urbansim.gridcell.number_of_jobs', 
+       name = 'zone_jobs'),
+              
+   #Expression example (comparison to baseyear)
+   'large_area_population_change':Indicator(
+       dataset_name = 'large_area',
+       name = 'de_population_change',
+       attribute = 'psrc.large_area.de_population_DDDD - psrc.large_area.de_population_2000',
+   ),
+
+   #example using regional-level aggregators
+   'alldata_home_based_jobs':Indicator(
+       attribute = 'alldata.aggregate_all(urbansim.zone.number_of_home_based_jobs)',
+       dataset_name = 'alldata',
+       name =  'number_of_home_based_jobs'),              
+}
 
 
--------------------------------
-   ------  Indicators ------
--------------------------------
-An indicator object specifies all the information necessary to compute 
-an indicator. Every indicator takes the following arguments:
-    source_data: 
-          Data locations and years for computing the indicator.
-          Described above.
-    dataset_name:
-          The name of the dataset that this indicator will be 
-          computed for.
-    years:    
-          The years that the indicator will be computed for.
-          This field is optional if the source_data object also 
-          has a years field. The indicator years field overrides
-          the source_data years field.
-    name: 
-          The desired name of the indicator. This field is optional. 
-          The default name is the indicator attribute, although 
-          some indicators overload the default name. Name replaces 
-          the old 'as' syntax.
-
-Many of the specific indicator types require additional arguments.
-The available indicator types and their additional arguments are: 
---------------
-Map 
-    A map of the indicator rendered in Matplotlib
-----------------
-    attribute: 
-        The fully qualified opus path of the indicator. If
-        an expression is specified, this field is optional.
-    expression:
-        See below
-    scale: 
-        A two element int list that are the min and max 
-        values for the scale of the outputted map.
---------------
-Chart  
-    A chart of the data over the years rendered in Matplotlib.
-    Charts should only be used when there are a small number
-    of different entities (e.g. at higher levels of geographic
-    aggregation).
---------------   
-    attribute: 
-        The fully qualified opus path of the indicator. If
-        an expression is specified, this field is optional.
-    expression:
-        See below
--------------- 
-Table 
-    A simple table of the indicator over each year.
---------------
-    attribute: 
-        The fully qualified opus path of the indicator. If
-        an expression is specified, this field is optional.
-    expression:
-        See below
-    output_type:
-        Tab, comma-separated output, or dbf (tab/csv/dbf). 
-        DBF Requires Dbfpy.
-
---------------
-DatasetTable
-    For every specified year, a tab-delimited table 
-    is outputted with the values of each of the
-    specified attributes.
---------------
-    attributes:
-        List of attributes that will be computed for every year. 
-        Each attribute will be a column in the resulting table.
-    exclude_condition:
-        Determines the condition under which certain rows 
-        are not included in the result. This is an indicator expression.
-        For example, "urbansim.gridcell.population>0".
-        This field is optional.
-        
---------------
-GeotiffMap
-    Uses Arcmap to generate a geotiff representation
-    of the indicator. Requires ArcMap.
---------------
-    package:
-        The package that has the region-specific templates and 
-        other files needed by arcmap to generate the geotiff.
-    attribute: 
-        The fully qualified opus path of the indicator. If
-        an expression is specified, this field is optional.
-        
---------------
-ArcGeotiffMap
-    A wrapper for a GeotiffMap indicator. The GeotiffMap is 
-    created and then ArcMap is launched and another image 
-    is produced. Requires ArcMap. This indicator type is no longer supported.
---------------
-    package:
-        The package that has the region-specific templates and 
-        other files needed by arcmap to generate the geotiff.
-    attribute: 
-        The fully qualified opus path of the indicator. If
-        an expression is specified, this field is optional.
-    layer_file:
-        Optional. Will default to ''.
-    transparency:
-        Optional. Will default to 0.
-    exit_after_export:
-        Determines if ArcMap exits after its done exporting the 
-        indicator. Will default to FalseOptional. Will default 
-        to False.
-    export_type:
-        The output format of the outputted indicator from ArcMap.
-        Optional. Will default to jpg
-'''
-
-#An example script:
-
-source_data = SourceData(
+#################################################################
+#DEFINE data source
+#################################################################
+# define any number of cache directories and/or years 
+# over which the indicators are computed
+result_template = SourceData(
    cache_directory = r'D:\urbansim_cache\run_1090.2006_11_14_12_12',
    comparison_cache_directory = r'D:\urbansim_cache\run_1091.2006_11_14_12_12',
    years = [2000, 2010],
    dataset_pool_configuration = DatasetPoolConfiguration(
          package_order=['urbansim','opus_core'],
          package_order_exceptions={},
-         ),                  
+         ),
 )
 
-indicators = [
-   Map( 
-       source_data = source_data,
-       dataset_name = 'zone',
-       attribute = 'urbansim.zone.population',
-       years = [2010], 
-       ),  
-   
-   Chart(
-       source_data = source_data,
-       dataset_name = 'gridcell',
-       attribute = 'urbansim.gridcell.population',
-       ),  
-   
-   Table(
-       source_data = source_data,
-       dataset_name = 'zone',
-       attribute = 'urbansim.zone.industrial_sqft',
-       output_type = 'tab'
-       ),  
+################################################################
+#COMPUTE indicators
+################################################################
+# setup an indicator Maker that will compute a set of indicators
+# for a given result template
+maker = Maker()
+computed_indicators = maker.create_batch(
+                            indicators = indicators, 
+                            result_template = result_template)
 
-   Table(
-       source_data = source_data,
-       dataset_name = 'zone',
-       attribute = 'urbansim.zone.industrial_sqft',
-       output_type = 'dbf',
-       years = [2000, 2002]
-       ), 
-              
-   GeotiffMap(
-       source_data = source_data,
-       dataset_name = 'gridcell',
-       package = 'psrc', 
-       attribute = 'urbansim.gridcell.number_of_jobs', 
-       name = 'jobs', 
-    ),
+############################################
+#VISUALIZE the resulting computed indicators
+############################################
+visualizer = Visualizer()
+
+
+# View an indicator as a matplotlib Map
+maps = ['zone_population',
+        'gridcell_population']
+visualizer.visualize(
+    indicators_to_visualize = maps, #override default indicators to visualize (all)
+    computed_indicators = computed_indicators,
+    visualization_type = 'matplotlib_map',
+    )
+
+# View an indicator as a matplotlib Chart
+
+charts = ['gridcell_population']
+visualizer.visualize(
+    indicators_to_visualize = charts,
+    computed_indicators = computed_indicators,
+    visualization_type = 'matplotlib_chart',
+    years = [2010] #override default years to visualize (all)
+    )
+
+# Write an indicator as a Table
+
+tables = ['zone_industrial_sqft', 
+          'large_area_population_change',
+          'alldata_home_based_jobs']
+for output_type in ['tab','cvs','dbf']:
+    visualizer.visualize(
+        indicators_to_visualize = tables,
+        computed_indicators = computed_indicators,
+        visualization_type = 'table',
+        output_type = output_type
+        )
     
-   DatasetTable(
-       source_data = source_data,
-       dataset_name = 'zone',
-       name = 'pop_and_ind_sqft',
-       attributes = [ 
-         'urbansim.zone.population',
-         'urbansim.zone.industrial_sqft',                     
-       ],
-       exclude_condition = 'urbansim.zone.population<100' #this accepts any opus expression
-   ),
+# Write a set of indicators sharing a dataset as a Dataset Table
 
-   #Expression example
-   Table(
-       source_data = source_data,
-       dataset_name = 'large_area',
-       name = 'de_population_change',
-       attribute = 'psrc.large_area.de_population_DDDD - psrc.large_area.de_population_2000',
-   ),
-         
-   #example of using an operation ("change since baseyear"). Other available operations
-   #are "percent_change" and "size" (of the dataset)         
-   Table(
-       source_data = source_data,
-       attribute = 'urbansim.faz.population',
-       dataset_name = 'faz',
-       name = 'population_change(DDDD-00)',
-       operation = 'change',
-       years = [2030]
-   ),   
-
-   #example using regional-level aggregators
-   Table(
-       attribute = 'alldata.aggregate_all(urbansim.zone.number_of_home_based_jobs)',
-       dataset_name = 'alldata',
-       source_data = source_data,
-       name =  'number_of_home_based_jobs',
-       years = [2000, 2010]
-   ),
-   ]
-
-
-
-if __name__ == '__main__':
-    from opus_core.indicator_framework.core.indicator_factory import IndicatorFactory
-
-    IndicatorFactory().create_indicators(
-        indicators = indicators,
-        display_error_box = False, 
-        show_results = True)    
+indicators_in_dataset_table = ['zone_population',
+                               'zone_industrial_sqft']
+visualizer.visualize(
+    indicators_to_visualize = indicators_in_dataset_table,
+    computed_indicators = computed_indicators,
+    visualization_type = 'dataset_table',
+    output_type = 'csv',
+    exclude_condition = 'urbansim.zone.population<100' #this accepts any opus expression
+    )    
