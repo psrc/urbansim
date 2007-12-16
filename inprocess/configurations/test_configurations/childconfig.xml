@@ -3,12 +3,12 @@
 <scenario_manager>
 
 <test_scenario type="scenario">
-<parent type="string" parser_action="parent">parent_scenario</parent>
+<parent type="scenario_name" parser_action="parent">parent_scenario</parent>
 <description type="string">this is the child</description>
 </test_scenario>
 
 <parent_scenario type="scenario">
-<parent type="string" parser_action="parent">grandparent_scenario</parent>
+<parent type="scenario_name" parser_action="parent">grandparent_scenario</parent>
 <description type="string">this is the parent</description>
 <year type="integer">2000</year>
 </parent_scenario>
