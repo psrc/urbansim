@@ -1,21 +1,19 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
-<scenario_manager>
-<test_scenario type="scenario">
-
-<input_configuration type="class">
-  <Class_name type="string">DatabaseConfiguration</Class_name>
-  <Class_path type="string">opus_core.database_management.database_configuration</Class_path>
-  <protocol type="string">mysql</protocol>
-  <host_name type="string">bigserver</host_name>
-  <user_info type="dictionary" parser_action="category">
-    <user_name type="string">fred</user_name>
-    <password type="password">secret</password>
-  </user_info>
-  <use_environment_variables type="boolean" choices="True|False">False</use_environment_variables>
-  <database_name type="string">river_city_baseyear</database_name>
-</input_configuration>
-
-</test_scenario>
-</scenario_manager>
+  <scenario_manager>
+    <test_scenario type="scenario">
+      <input_configuration type="class">
+        <Class_name type="string">DatabaseConfiguration</Class_name>
+        <Class_path type="string">opus_core.database_management.database_configuration</Class_path>
+        <protocol type="string">mysql</protocol>
+        <host_name type="string">bigserver</host_name>
+        <user_info parser_action="category" type="dictionary">
+          <user_name type="string">fred</user_name>
+          <password type="password">secret</password>
+        </user_info>
+        <use_environment_variables type="boolean" choices="True|False">False</use_environment_variables>
+        <database_name type="string">river_city_baseyear</database_name>
+      </input_configuration>
+    </test_scenario>
+  </scenario_manager>
 </opus_project>

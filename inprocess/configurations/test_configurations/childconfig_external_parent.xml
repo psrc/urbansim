@@ -1,25 +1,20 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
-<scenario_manager>
-
-<grandchild1 type="scenario">
-<parent type="scenario_name" parser_action="parent">test_scenario</parent>
-<description type="string">this is grandchild1</description>
-</grandchild1>
-
-<grandchild2 type="scenario">
-<parent type="scenario_name" parser_action="parent">other_scenario</parent>
-<description type="string">this is grandchild2</description>
-</grandchild2>
-
-<test_scenario type="scenario">
-  <import type="file">childconfig.xml</import>
-</test_scenario>
-
-<other_scenario type="scenario">
-  <import type="file">childconfig.xml</import>
-  <original_name type="scenario_name">test_scenario</original_name>
-</other_scenario>
-
-</scenario_manager>
+  <scenario_manager>
+    <grandchild1 type="scenario">
+      <parent parser_action="parent" type="scenario_name">test_scenario</parent>
+      <description type="string">this is grandchild1</description>
+    </grandchild1>
+    <grandchild2 type="scenario">
+      <parent parser_action="parent" type="scenario_name">other_scenario</parent>
+      <description type="string">this is grandchild2</description>
+    </grandchild2>
+    <test_scenario type="scenario">
+      <import type="file">childconfig.xml</import>
+    </test_scenario>
+    <other_scenario type="scenario">
+      <import type="file">childconfig.xml</import>
+      <original_name type="scenario_name">test_scenario</original_name>
+    </other_scenario>
+  </scenario_manager>
 </opus_project>

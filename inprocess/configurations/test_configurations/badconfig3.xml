@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
-<data_manager>
-
-<s type="string">teststring</s>
-
-</data_manager>
+  <data_manager>
+    <s type="string">teststring</s>
+  </data_manager>
 </opus_project>

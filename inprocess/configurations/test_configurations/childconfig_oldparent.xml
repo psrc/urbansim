@@ -1,19 +1,15 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
-<scenario_manager>
-
-<test_scenario type="scenario">
-
-<parent type="dictionary" parser_action="parent_old_format">
-  <Class_name type="string">GeneralConfiguration</Class_name>
-  <Class_path type="string">urbansim.configs.general_configuration</Class_path>
-</parent>
-
-<years type="tuple">
-<startyear type="integer">1980</startyear>
-<endyear type="integer">1981</endyear>
-</years>
-
-</test_scenario>
-</scenario_manager>
+  <scenario_manager>
+    <test_scenario type="scenario">
+      <parent parser_action="parent_old_format" type="dictionary">
+        <Class_name type="string">GeneralConfiguration</Class_name>
+        <Class_path type="string">urbansim.configs.general_configuration</Class_path>
+      </parent>
+      <years type="tuple">
+        <startyear type="integer">1980</startyear>
+        <endyear type="integer">1981</endyear>
+      </years>
+    </test_scenario>
+  </scenario_manager>
 </opus_project>

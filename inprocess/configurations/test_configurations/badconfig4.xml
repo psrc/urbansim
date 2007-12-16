@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
-<scenario_manager>
-<test_scenario4 type="scenario">
-
-<s type="string">teststring</s>
-
-</test_scenario4>
-</scenario_manager>
+  <scenario_manager>
+    <test_scenario4 type="scenario">
+      <s type="string">teststring</s>
+    </test_scenario4>
+  </scenario_manager>
 </opus_project>

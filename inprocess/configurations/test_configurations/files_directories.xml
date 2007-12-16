@@ -1,14 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
-<scenario_manager>
-<test_scenario type="scenario">
-
-<file1 type="file">testfile</file1>
-<file2 type="file" parser_action="prefix_with_urbansim_cache">testfile</file2>
-
-<dir1 type="directory">testdir</dir1>
-<dir2 type="directory" parser_action="prefix_with_urbansim_cache">testdir</dir2>
-
-</test_scenario>
-</scenario_manager>
+  <scenario_manager>
+    <test_scenario type="scenario">
+      <file1 type="file">testfile</file1>
+      <file2 parser_action="prefix_with_urbansim_cache" type="file">testfile</file2>
+      <dir1 type="directory">testdir</dir1>
+      <dir2 parser_action="prefix_with_urbansim_cache" type="directory">testdir</dir2>
+    </test_scenario>
+  </scenario_manager>
 </opus_project>
