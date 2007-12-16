@@ -336,7 +336,7 @@
     </default_model_configurations>
   </model_manager>
   <scenario_manager>
-    <default_gridcell_scenario type="scenario">
+    <default_scenario type="scenario">
       <data parser_action="category" type="dictionary">
         <baseyear_database config_name="input_configuration" type="class">
           <Class_name flags="hidden" type="string">DatabaseConfiguration</Class_name>
@@ -499,6 +499,6 @@
           <package_order_exceptions type="dictionary" />
         </dataset_pool_configuration>
       </advanced>
-    </default_gridcell_scenario>
+    </default_scenario>
   </scenario_manager>
 </opus_project>
