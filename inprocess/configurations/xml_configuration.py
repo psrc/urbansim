@@ -35,7 +35,19 @@ class XMLConfiguration(object):
         scenarios = self.root.findall('scenario_manager/%s' % name)
         if len(scenarios)!=1:
             raise ValueError, "didn't find a unique scenario named %s" % name
-        return self._node_to_config(scenarios[0])
+        import_node = scenarios[0].find('import')
+        if import_node is None:
+            return self._node_to_config(scenarios[0])
+        else:
+            # find the path to the external configuration and load it
+            dir = os.path.dirname(self.filename)
+            file = os.path.join(dir, import_node.text)
+            original_name_node = scenarios[0].find('original_name')
+            if original_name_node is None:
+                real_name = name
+            else:
+                real_name = original_name_node.text
+            return XMLConfiguration(file).get_run_configuration(real_name)
 
     def _node_to_config(self, node):
         changes = {}
@@ -56,12 +68,6 @@ class XMLConfiguration(object):
     def _get_parent(self, node, parser_action):
         if parser_action=='parent':
             return self.get_run_configuration(node.text)
-        elif parser_action=='parent_external':
-            # find the path to the external configuration and load it
-            data = self._convert_node_to_data(node)
-            dir = os.path.dirname(self.filename)
-            file = os.path.join(dir, data['path'])
-            return XMLConfiguration(file).get_run_configuration(data['name'])
         elif parser_action=='parent_old_format':
             data = self._convert_node_to_data(node)
             return self._make_instance(data['Class_name'], data['Class_path'])
@@ -106,6 +112,8 @@ class XMLConfiguration(object):
             return float(node.text)
         elif type_name=='string' or type_name=='password':
             return self._convert_string_to_data(node)
+        elif type_name=='scenario_name':
+            return node.text
         elif type_name=='unicode':
             return unicode(node.text)
         elif type_name=='selectable_list':
@@ -223,7 +231,6 @@ class XMLConfiguration(object):
                 self._add_to_dict(child, subdict)
             return {name: subdict}
 
-import os
 from numpy import ma
 from opus_core.tests import opus_unittest
 class XMLConfigurationTests(opus_unittest.OpusTestCase):
@@ -286,19 +293,22 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                                   'dir1': 'testdir', 
                                   'dir2': os.path.join(prefix, 'testdir')})
         
-    def test_xml_inheritance(self):
+    def test_inheritance(self):
         # test inheritance with a chain of xml configurations
         f = os.path.join(self.test_configs, 'childconfig.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         self.assertEqual(config, 
             {'description': 'this is the child', 'year': 2000, 'modelname': 'widgetmodel'})
             
-    def test_xml_inheritance_external_parent(self):
-        # test inheritance with an external_parent
+    def test_inheritance_external_parent(self):
+        # test inheritance with an external_parent (one with original name, one renamed)
         f = os.path.join(self.test_configs, 'childconfig_external_parent.xml')
-        config = XMLConfiguration(f).get_run_configuration('grandchild_scenario')
-        self.assertEqual(config, 
-            {'description': 'this is the grandchild', 'year': 2000, 'modelname': 'widgetmodel'})
+        config1 = XMLConfiguration(f).get_run_configuration('grandchild1')
+        self.assertEqual(config1, 
+            {'description': 'this is grandchild1', 'year': 2000, 'modelname': 'widgetmodel'})
+        config2 = XMLConfiguration(f).get_run_configuration('grandchild2')
+        self.assertEqual(config2, 
+            {'description': 'this is grandchild2', 'year': 2000, 'modelname': 'widgetmodel'})
             
     def test_old_config_inheritance(self):
         # test inheriting from an old-style configuration 
