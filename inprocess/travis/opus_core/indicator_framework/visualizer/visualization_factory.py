@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-class Visualizer:
+class VisualizationFactory:
 
     def visualize(self, indicators, *args, **kwargs):
         raise 'visualize not implemented'

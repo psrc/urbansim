@@ -90,10 +90,10 @@ computed_indicators = maker.create_batch(
 ############################################
 #VISUALIZE the resulting computed indicators
 ############################################
-from inprocess.travis.opus_core.indicator_framework.visualizer.visualizer import Visualizer
+from inprocess.travis.opus_core.indicator_framework.visualizer.visualization_factory import VisualizationFactory
 from opus_core.database_management.database_configuration import DatabaseConfiguration
 
-visualizer = Visualizer()
+visualizer = VisualizationFactory()
 visualized_indicators = []
 
 # View an indicator as a matplotlib Map
@@ -143,9 +143,9 @@ visualized_indicators += visualizer.visualize(
 ################################################################
 #Generate a REPORT with the visualizations
 ################################################################
-from inprocess.travis.opus_core.indicator_framework.reporter.reporter import Reporter
+from inprocess.travis.opus_core.indicator_framework.reporter.report_factory import ReportFactory
 
-reporter = Reporter
+reporter = ReportFactory
 reporter.generate_report(
     indicators_in_report = visualized_indicators,
     report_type = 'basic',
