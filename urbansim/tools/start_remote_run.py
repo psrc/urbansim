@@ -229,7 +229,7 @@ class RemoteRun:
                       {'module':self.remote_module_path_from_opus_path(self.ssh['urbansim_server'], 'opus_core.tools.restart_run'), 
                        'run_id':run_id, 'start_year':this_start_year,
                        'services_hostname': self.services_db_config.host_name}
-                cmd += ' --skip-cache-cleanup --create-baseyear-cache-if-not-exists >> ' + 'urbansim_remote_run.log'
+                cmd += ' --skip-cache-cleanup --create-baseyear-cache-if-not-exists >> ' + 'urbansim_run_%s.log' % run_id
                 ## to avoid stdout overfilling sshclient buffer, redirect stdout to a log file
                 ## TODO: better handle the location of the urbansim_remote_run.log
                 logger.log_status("Call " + cmd)
@@ -250,6 +250,7 @@ class RemoteRun:
                        'run_id':run_id, 'start_year':this_start_year,
                        'services_hostname': self.services_db_config.host_name}
                 cmd += ' --skip-cache-cleanup --create-baseyear-cache-if-not-exists'
+                logger.log_status("Call " + cmd)
                 os.system(cmd)
                 if not os.path.exists(os.path.join(cache_directory, str(this_end_year))):
                     raise StandardError, "cache for year %s doesn't exist in directory %s; there may be problem with urbansim run" % \
@@ -268,7 +269,7 @@ class RemoteRun:
                                                                                'opus_core.tools.restart_run'), 
                                'run_id':run_id, 'start_year':this_end_year,
                                'services_hostname': self.services_db_config.host_name}
-                        cmd += ' --skip-cache-cleanup --skip-urbansim >> ' + 'travelmodel_remote_run.log'
+                        cmd += ' --skip-cache-cleanup --skip-urbansim >> ' + 'travelmodel_run_%s.log' % run_id
                         ## to avoid stdout overfilling sshclient buffer, redirect stdout to a log file                        
                         ## TODO: better handle the location of the travelmodel_remote_run.log
                         logger.log_status("Call " + cmd)
@@ -289,6 +290,7 @@ class RemoteRun:
                                'run_id':run_id, 'start_year':this_end_year,
                                'services_hostname': self.services_db_config.host_name}
                         cmd += ' --skip-cache-cleanup --skip-urbansim'
+                        logger.log_status("Call " + cmd)
                         os.system(cmd)
                         if not os.path.exists(os.path.join(cache_directory, str(this_end_year+1))):
                             raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
