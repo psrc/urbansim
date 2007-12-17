@@ -17,7 +17,7 @@ RM = rm -f
 #RM = del
 
 all:
-	$(MAKE) -C Main
+	$(MAKE) -C main
 	$(MAKE) -C Util
 	$(MAKE) -C Config
 	$(MAKE) -C run
@@ -26,7 +26,7 @@ all:
 clean:
 	$(RM) *.pyc
 	$(RM) *~
-	$(MAKE) -C Main clean
+	$(MAKE) -C main clean
 	$(MAKE) -C Util clean
 	$(MAKE) -C Config clean
 	$(MAKE) -C run clean

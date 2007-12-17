@@ -22,7 +22,7 @@ from PyQt4.QtGui import *
 import sys
 
 # Urbansim Tools
-from Main.opusGui import *
+from main.opusGui import *
 
 # Main entry to program.  Set up the main app and create a new window.
 def main(argv):
