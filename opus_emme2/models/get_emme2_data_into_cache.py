@@ -70,14 +70,8 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
         """Copies the specified emme/2 matrices into the specified travel_data variable names.
         """
         logger.start_block('Getting matricies from emme2')
-        try:
-            next_year = year + 1
-            flt_dir_for_next_year = os.path.join(cache_directory, str(next_year))
-            if not os.path.exists(flt_dir_for_next_year):
-                os.mkdir(flt_dir_for_next_year)
-    
+        try:    
             zone_set = SessionConfiguration().get_dataset_from_pool('zone')
-            
             zone_set.load_dataset()
             travel_data_set = self.get_travel_data_from_emme2(zone_set, bank_dir, matrix_variable_map, matrices_created)
         finally:
@@ -85,7 +79,8 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
         
         logger.start_block('Writing data to cache')
         try:
-            out_storage = flt_storage(storage_location=flt_dir_for_next_year)
+            next_year = year + 1
+            out_storage = AttributeCache().get_flt_storage_for_year(next_year)
             travel_data_set.write_dataset(attributes='*', 
                                           out_storage=out_storage, 
                                           out_table_name='travel_data')
