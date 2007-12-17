@@ -192,11 +192,10 @@ class XMLTree(object):
         domElement = domNode.toElement()
         if domElement.isNull():
           return QVariant()
-        if domElement.tagName() == QString("scenario_manager"):
+        if domElement.attribute(QString("executable")) == QString("True"):
           self.menu = QMenu(self.parent)
-          if domElement.attribute(QString("executable")) == QString("True"):
-            self.menu.addAction(self.actRunModel)
-            self.menu.addSeparator()
+          self.menu.addAction(self.actRunModel)
+          self.menu.addSeparator()
           self.menu.addAction(self.actRemoveTree)
           self.menu.exec_(QCursor.pos())
         elif domElement.attribute(QString("type")) == QString("file"):

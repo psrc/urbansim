@@ -18,6 +18,20 @@ from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 from opusDataItem import OpusDataItem
 
+class OpusDataBaseModel(object):
+    def __init__(self, parent, document, configFile):
+        self.parent = parent
+        self.document = document
+        self.configFile = configFile
+
+        self._rootItem = OpusDataItem(document, 0, self)
+        self._rootItem.initAsRootItem()
+
+    def findRootElement(self,tag):
+        pass
+        
+
+
 class OpusDataModel(QAbstractItemModel):
     def __init__(self, document, parent, configFile, xmlType, editable):
         QAbstractItemModel.__init__(self, parent)
@@ -141,7 +155,6 @@ class OpusDataModel(QAbstractItemModel):
         domNode = item.node()
         if domNode.isNull():
             return QVariant()
-        #if domNode.isElement() and domNode.nodeType() == QDomNode.ElementNode:
         # Handle ElementNodes
         if domNode.isElement():
             domElement = domNode.toElement()
@@ -152,25 +165,7 @@ class OpusDataModel(QAbstractItemModel):
                     #return QVariant(self.database)
                     return QVariant(self.iconFromType(domElement.attribute(QString("type"))))
                 elif role == Qt.DisplayRole:
-                    if domElement.tagName() == QString("scenario_manager") or \
-                           domElement.tagName() == QString("data_manager"):
-                        if domElement.attribute(QString("executable")) == QString("True"):
-                            return QVariant(domElement.tagName().append(QString(" - executable")))
-                        else:
-                            return QVariant(domElement.tagName())
-                    elif domElement.attribute(QString("name")) != QString("defValue"):
-                        #Do something with strings
-                        return QVariant(domElement.attribute(QString("name")))
-                    #elif domElement.parentNode().nodeName() == "str":
-                    #    #Do something with strings
-                    #    return (domElement.text())
-                    #elif domElement.parentNode().nodeName() == "int":
-                    #    #Do something with numbers
-                    #    return (domElement.text())
-                    #elif domElement.tagName() != "":
-                    #    return QVariant(domElement.tagName())
-                    else:
-                        return QVariant()
+                    return QVariant(domElement.tagName())
                 else:
                     return QVariant()
             elif index.column() == 1:
@@ -198,55 +193,6 @@ class OpusDataModel(QAbstractItemModel):
                 #We have a problem... should only be 2 columns
                 print "Wrong number of columns"
                 return QVariant()
-        ## Handle TextNodes
-        #elif domNode.nodeType() == QDomNode.TextNode:
-        #    if role == Qt.DecorationRole:
-        #        if index.column() == 0:
-        #            return QVariant(self.bookmarkIcon)
-        #        else:
-        #            return QVariant()
-        #    elif role == Qt.DisplayRole:
-        #        if index.column() == 1:
-        #            if domNode.parentNode().nodeName() == "str":
-        #                #Do something with strings
-        #                return QVariant(domNode.parentNode().nodeName())
-        #            elif domNode.parentNode().nodeName() == "int":
-        #                #Do something with numbers
-        #                return QVariant(domNode.parentNode().nodeName())
-        #            else:
-        #                return QVariant(QString("str"))
-        #        else:
-        #            return QVariant(domNode.nodeValue())
-        #    else:
-        #        return QVariant()
-        ## Handle CommentNode
-        #elif domNode.nodeType() == QDomNode.CommentNode:
-        #    if role == Qt.DecorationRole:
-        #        if index.column() == 0:
-        #            return QVariant(self.bookmarkIcon)
-        #        else:
-        #            return QVariant()
-        #    if role == Qt.DisplayRole:
-        #        if index.column() == 0:
-        #            return QVariant(domNode.nodeValue())
-        #        else:
-        #            return QVariant()
-        #    else:
-        #        return QVariant()
-        ## Handle ProcessingInstructionNodes
-        #elif domNode.nodeType() == QDomNode.ProcessingInstructionNode:
-        #    if role == Qt.DecorationRole:
-        #        if index.column() == 0:
-        #            return QVariant(self.folderIcon)
-        #        else:
-        #            return QVariant()
-        #    if role == Qt.DisplayRole:
-        #        if index.column() == 0:
-        #            return QVariant(domNode.nodeValue())
-        #        else:
-        #            return QVariant()
-        #    else:
-        #        return QVariant()
         else:
             print "Node is not handled yet in the OpusDataModel - ", str(domNode.nodeType())
             return QVariant()
@@ -303,13 +249,8 @@ class OpusDataModel(QAbstractItemModel):
         if not parent.isValid():
             #print "row_count non-valid root item"
             parentItem = self._rootItem
-            #print parentItem.node().childNodes().count()
-            #return parentItem.node().childNodes().count()
         else:
             parentItem = parent.internalPointer()
-        #print parentItem.node().childNodes().count()
-        #print len(parentItem.childItems)
-        #return parentItem.node().childNodes().count()
         return len(parentItem.childItems)
 
     def setData(self,index,value,role):
@@ -327,9 +268,4 @@ class OpusDataModel(QAbstractItemModel):
             for x in xrange(0,children.count(),1):
                 if children.item(x).isText():
                     children.item(x).setNodeValue(QString(value.toString()))
-        #indentSize = 2
-        #self.configFile.close()
-        #self.configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
-        #out = QTextStream(self.configFile)
-        #self.domDocument.save(out, indentSize)
         return True
