@@ -327,9 +327,9 @@ class OpusDataModel(QAbstractItemModel):
             for x in xrange(0,children.count(),1):
                 if children.item(x).isText():
                     children.item(x).setNodeValue(QString(value.toString()))
-        indentSize = 2
-        self.configFile.close()
-        self.configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
-        out = QTextStream(self.configFile)
-        self.domDocument.save(out, indentSize)
+        #indentSize = 2
+        #self.configFile.close()
+        #self.configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
+        #out = QTextStream(self.configFile)
+        #self.domDocument.save(out, indentSize)
         return True

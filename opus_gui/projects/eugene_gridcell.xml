@@ -3,8 +3,8 @@
   <general>
     <item type="string" name="description" >Sample Eugene project</item>
   </general>
-  <scenario_manager executable="True">
-    <item type="scenario" name="Eugene_baseline" executable="True">
+  <scenario_manager executable="True" >
+    <item type="scenario" name="Eugene_baseline" executable="True" >
       <item parser_action="parent_external" type="dictionary" name="parent" >
         <item type="string" name="name" >default_gridcell_scenario</item>
         <item type="file" name="path" >urbansim_gridcell.xml</item>

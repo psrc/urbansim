@@ -216,7 +216,7 @@ class XMLTree(object):
           self.menu.exec_(QCursor.pos())
     return
 
-# Main console class for the python console
+# Main class for the toolbox
 class ToolboxBase(object):
   def __init__(self, parent):
     self.parent = parent
@@ -226,6 +226,7 @@ class ToolboxBase(object):
     #self.datamanager_tree = self.parent.datamanager_tree
     self.modelmanager_tree = self.parent.modelmanager_tree
     self.resultsmanager_tree = self.parent.resultsmanager_tree
+    self.currentXML = None
     
     # Build a list of the default list of tabs
     self.tabWidgetList = {}
@@ -254,6 +255,7 @@ class ToolboxBase(object):
     pass
   
   def openXMLTree(self, xml_file):
+    self.currentXML = xml_file
     self.runManagerTrees.append(XMLTree(self,xml_file,"scenario_manager",self.parent.gridlayout3))    
     self.dataManagerTrees.append(XMLTree(self,xml_file,"data_manager",self.parent.gridlayout1))    
 

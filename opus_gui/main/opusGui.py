@@ -124,9 +124,33 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     
   def saveConfig(self):
     print "Save Config pressed..."
+    configFile = self.toolboxStuff.runManagerTrees[0].model.configFile
+    domDocument = self.toolboxStuff.runManagerTrees[0].model.domDocument
+    indentSize = 2
+    configFile.close()
+    configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
+    out = QTextStream(configFile)
+    domDocument.save(out, indentSize)
+    print "Save Config finished..."
     
   def saveConfigAs(self):
     print "Save Config As pressed..."
+    qd = QFileDialog()
+    filter_str = QString("*.xml")
+    f2=qd.getSaveFileName(self,QString(),QString(),filter_str)
+    if f2.count(".xml")==0:
+      f = f2 + ".xml"
+    else:
+      f = f2
+    write_string = QString(f)
+    configFile = QFile(write_string)
+    domDocument = self.toolboxStuff.runManagerTrees[0].model.domDocument
+    indentSize = 2
+    configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
+    out = QTextStream(configFile)
+    domDocument.save(out, indentSize)
+    #### TODO - Now need to close existing project and re-open the newly
+    #### saved one...
     
   def exitOpus(self):
     print "Exit pressed..."
