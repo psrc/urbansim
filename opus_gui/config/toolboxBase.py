@@ -18,9 +18,9 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
-from Config.opusDataItem import OpusDataItem
-from Config.opusDataModel import OpusDataModel
-from Config.opusDataDelegate import OpusDataDelegate
+from config.opusDataItem import OpusDataItem
+from config.opusDataModel import OpusDataModel
+from config.opusDataDelegate import OpusDataDelegate
 from run.opusRunModel import OpusModel
 from run.opusRunScript import *
 

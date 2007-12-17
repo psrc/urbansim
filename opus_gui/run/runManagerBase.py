@@ -18,8 +18,8 @@ from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
 from run.opusRunModel import *
-from Config.opusDataModel import OpusDataModel
-from Config.opusDataDelegate import OpusDataDelegate
+from config.opusDataModel import OpusDataModel
+from config.opusDataDelegate import OpusDataDelegate
 
 # General system includes
 import os, sys, time, tempfile, shutil, string

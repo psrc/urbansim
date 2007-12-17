@@ -16,7 +16,7 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from Util.pythonGui import OpusPythonShell
+from util.pythonGui import OpusPythonShell
 
 # General system includes
 import sys,string

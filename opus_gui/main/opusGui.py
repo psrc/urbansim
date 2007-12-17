@@ -20,8 +20,8 @@ from PyQt4.QtGui import *
 # UI specific includes
 from opusMain_ui import Ui_MainWindow
 
-from Util.consoleBase import *
-from Config.toolboxBase import *
+from util.consoleBase import *
+from config.toolboxBase import *
 from run.runManagerBase import *
 
 # General system includes
