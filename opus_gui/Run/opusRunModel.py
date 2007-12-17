@@ -82,7 +82,7 @@ class OpusModel(object):
                 fileNameInfo = QFileInfo(self.xml_path)
                 fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
                 print fileNameAbsolute
-                config = XMLConfiguration(str(fileNameAbsolute))
+                config = XMLConfiguration(str(fileNameAbsolute)).get_run_configuration('Eugene_baseline')
                 insert_auto_generated_cache_directory_if_needed(config)
                 (self.start_year, self.end_year) = config['years']
 
