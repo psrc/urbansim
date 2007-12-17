@@ -57,7 +57,7 @@ class MapBase(object):
     
     ##### Lets test out a simple map
     self.layers = []
-    f = "Data/st99_d00.shp"
+    f = "data/st99_d00.shp"
     f_string = QString(f)
     info = QFileInfo(QString(f))
     
