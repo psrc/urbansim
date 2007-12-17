@@ -37,7 +37,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     # required by Qt4 to initialize the UI
     self.setupUi(self)
     
-    self.splashPix = QPixmap(QString("Main/Images/new-logo-medium.png"))
+    self.splashPix = QPixmap(QString("main/Images/new-logo-medium.png"))
     self.splashPixScaled = self.splashPix.scaled(210,180,Qt.KeepAspectRatio)
     self.splash = QSplashScreen(self.splashPixScaled)
     self.splash.show()
