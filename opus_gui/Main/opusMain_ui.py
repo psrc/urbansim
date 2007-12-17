@@ -2,13 +2,12 @@
 
 # Form implementation generated from reading ui file 'opusMain.ui'
 #
-# Created: Wed Dec  5 00:17:24 2007
+# Created: Sun Dec 16 20:57:33 2007
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):

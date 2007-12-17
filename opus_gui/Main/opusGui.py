@@ -22,7 +22,7 @@ from opusMain_ui import Ui_MainWindow
 
 from Util.consoleBase import *
 from Config.toolboxBase import *
-from Run.runManagerBase import *
+from run.runManagerBase import *
 
 # General system includes
 import sys,time,tempfile

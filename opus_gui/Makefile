@@ -20,8 +20,8 @@ all:
 	$(MAKE) -C Main
 	$(MAKE) -C Util
 	$(MAKE) -C Config
-	$(MAKE) -C Run
-	$(MAKE) -C Map
+	$(MAKE) -C run
+	$(MAKE) -C map
 
 clean:
 	$(RM) *.pyc
@@ -29,5 +29,5 @@ clean:
 	$(MAKE) -C Main clean
 	$(MAKE) -C Util clean
 	$(MAKE) -C Config clean
-	$(MAKE) -C Run clean
-	$(MAKE) -C Map clean
+	$(MAKE) -C run clean
+	$(MAKE) -C map clean
