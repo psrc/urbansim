@@ -106,27 +106,10 @@ class RemoteRun:
         
         self.ssh = {}
         if not self.is_localhost(self.urbansim_server_config['hostname']):
-            uclient = paramiko.SSHClient()
-            uclient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            uclient.load_system_host_keys()
-            uclient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            uclient.connect(hostname=urbansim_server_config['hostname'], 
-                           username=urbansim_server_config['username'],
-                           password=urbansim_server_config['password'],
-                           pkey=load_key_if_exists())
-            uclient._transport.set_keepalive(60)
-            self.ssh['urbansim_server'] = uclient
+            self.ssh['urbansim_server'] = self.get_ssh_client(None, self.urbansim_server_config)
         
         if not self.is_localhost(self.travelmodel_server_config['hostname']):
-            tclient = paramiko.SSHClient()
-            tclient.load_system_host_keys()
-            tclient.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            tclient.connect(hostname=travelmodel_server_config['hostname'], 
-                           username=travelmodel_server_config['username'],
-                           password=travelmodel_server_config['password'],
-                           pkey=load_key_if_exists())
-            tclient._transport.set_keepalive(60)
-            self.ssh['urbansim_server'] = tclient
+            self.ssh['travelmodel_server'] = self.get_ssh_client(None, self.travelmodel_server_config)
             
         self.services_db_config = DatabaseServerConfiguration(
                                             host_name=services_db_config['hostname'], 
@@ -140,7 +123,7 @@ class RemoteRun:
     def __del__(self):
         for key, value in self.ssh.iteritems():
             value.close()
-            
+    
     def prepare_for_run(self, configuration_path=None, config=None, run_id=None):
         """Configuration is given either as an opus path (configuration_path) or as a Configuration object (config)."""
     
@@ -191,7 +174,9 @@ class RemoteRun:
             elif not self.is_localhost(self.travelmodel_server_config['hostname']):
             ## urbansim runs on localhost, and travel model runs on travelmodel_server
             ## set sftp_flt_storage to the hostname of localhost
-                urbansim_server = socket.gethostname()
+                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                s.connect(('google.com', 0))
+                urbansim_server = s.getsockname()[0]    #this is to replace socket.gethostname(), which won't work in some case
                 travel_model_resources['cache_directory'] = "sftp://%s@%s%s" % (self.urbansim_server_config['username'], 
                                                                                urbansim_server, 
                                                                                cache_directory)
@@ -224,7 +209,8 @@ class RemoteRun:
                 logger.start_block("Start UrbanSim Simulation on %s from %s to %s" % (self.urbansim_server_config['hostname'],
                                                                                       this_start_year, this_end_year) )
                 cmd = 'python %(module)s %(run_id)s %(start_year)s --hostname=%(services_hostname)s' % \
-                      {'module':self.remote_module_path_from_opus_path(self.ssh['urbansim_server'], 'opus_core.tools.restart_run'), 
+                      {'module':self.remote_module_path_from_opus_path(self.get_ssh_client(self.ssh['urbansim_server'], self.urbansim_server_config),
+                                                                       'opus_core.tools.restart_run'), 
                        'run_id':run_id, 'start_year':this_start_year,
                        'services_hostname': self.services_db_config.host_name}
                 cmd += ' --skip-cache-cleanup --create-baseyear-cache-if-not-exists >> ' + 'urbansim_run_%s.log' % run_id
@@ -232,13 +218,13 @@ class RemoteRun:
                 ## TODO: better handle the location of the urbansim_remote_run.log
                 logger.log_status("Call " + cmd)
                 try: 
-                    std = self.ssh['urbansim_server'].exec_command(cmd)  #std[0] - stdin, std[1] - stdout, std[2] - stderr
+                    std = self.get_ssh_client(self.ssh['urbansim_server'], self.urbansim_server_config).exec_command(cmd)  #std[0] - stdin, std[1] - stdout, std[2] - stderr
                 except: 
                     raise RuntimeError, "there is a problem running urbansim remotely"
                 self.wait_until_run_done_or_failed(run_id, std=std)
                 logger.end_block()
                 ##TODO: open_sftp may need to be close()
-                if not exists_remotely(self.ssh['urbansim_server'].open_sftp(), 
+                if not exists_remotely(self.get_ssh_client(self.ssh['urbansim_server'], self.urbansim_server_config).open_sftp(), 
                                        pathname2url(os.path.join(cache_directory, str(this_end_year))) ):
                     raise StandardError, "cache for year %s doesn't exist in directory %s; there may be problem with urbansim run" % \
                                         (this_end_year, cache_directory)
@@ -263,7 +249,7 @@ class RemoteRun:
                         logger.start_block("Start Travel Model on %s from %s to %s" % (self.travelmodel_server_config['hostname'],
                                                                                        this_start_year, this_end_year) )
                         cmd = 'python %(module)s %(run_id)s %(start_year)s --hostname=%(services_hostname)s' % \
-                              {'module':self.remote_module_path_from_opus_path(self.ssh['travelmodel_server'], 
+                              {'module':self.remote_module_path_from_opus_path(self.get_ssh_client(self.ssh['travelmodel_server'], self.travelmodel_server_config),
                                                                                'opus_core.tools.restart_run'), 
                                'run_id':run_id, 'start_year':this_end_year,
                                'services_hostname': self.services_db_config.host_name}
@@ -272,7 +258,7 @@ class RemoteRun:
                         ## TODO: better handle the location of the travelmodel_remote_run.log
                         logger.log_status("Call " + cmd)
                         try:
-                            std = self.ssh['travelmodel_server'].exec_command(cmd)
+                            std = self.get_ssh_client(self.ssh['travelmodel_server'], self.travelmodel_server_config).exec_command(cmd)
                         except:
                             raise RuntimeError, "there is a problem running travel model remotely"
                         self.wait_until_run_done_or_failed(run_id, std=std)
@@ -287,8 +273,9 @@ class RemoteRun:
                         os.system(cmd)
                     
                     flt_directory_for_next_year = os.path.join(cache_directory, str(this_end_year+1))
-                    if self.is_localhost(self.urbansim_server_config['hostname']) and not exists_remotely(self.ssh['urbansim_server'].open_sftp(), 
-                                                                                                          pathname2url(flt_directory_for_next_year) ):
+                    if self.is_localhost(self.urbansim_server_config['hostname']) and \
+                       not exists_remotely(self.get_ssh_client(self.ssh['urbansim_server'], self.urbansim_server_config).open_sftp(), 
+                                           pathname2url(flt_directory_for_next_year) ):
                         ##TODO: open_sftp may need to be close()
                         raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
                                             (this_end_year+1, cache_directory)
@@ -326,7 +313,7 @@ class RemoteRun:
         run_activity.add_row_to_history(run_id, config, "started")
 
     def remote_module_path_from_opus_path(self, ssh, opus_path):
-        cmdline = r"python -c 'import %s; print %s.__file__'" % (opus_path, opus_path)
+        cmdline = 'python -c "import %s; print %s.__file__"' % (opus_path, opus_path)
         module_path = get_stdout_for_ssh_cmd(ssh, cmdline)
         return module_path
 
@@ -335,6 +322,26 @@ class RemoteRun:
             (hostname == socket.gethostname()):
             return True
         return False
+
+    def get_ssh_client(self, ssh_client, ssh_server_config):
+        """ return ssh_client if it is active, otherwise,
+        if ssh_client passed in is None or is not active, re-create a ssh_client
+        from ssh_server_config dict including hostname, username, and password
+        """
+        if ssh_client is not None and ssh_client._transport.is_active():
+            return ssh_client
+        
+        client = paramiko.SSHClient()
+        client.load_system_host_keys()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(hostname=ssh_server_config['hostname'], 
+                       username=ssh_server_config['username'],
+                       password=ssh_server_config['password'],
+                       pkey=load_key_if_exists())
+        #client._transport.set_keepalive(60)
+        ssh_client = client
+        
+        return ssh_client    
     
     def get_run_manager(self):
         """in case the connection to services timeout, reconnect
