@@ -15,7 +15,7 @@
 from opus_core.logger import logger
 
 try:
-    import arcgisscripting, types
+    import arcgisscripting, types, pywintypes, os
     from opus_core.store.storage import Storage
     from numpy import empty, append
     from string import count
@@ -29,15 +29,12 @@ else:
         """
         Testing an ESRI storage object
         TODO: needs better error checking throughout
-            - check for table existence
             - check for storage_location (workspace) existence
             - deal with feature datasets in geodatabases
              - right now this assumes that all tables/feature classes
              are in the 'root' of the geodb
-            - deal with unicode strings from ESRI text columns
-              - do these need to be converted to numpy type String?
-            - deal with additional field length constraints
-             - already doing this for dbf, do the same for geodatabases
+            - when creating a table, deal with table name length restrictions
+            - handle single and double float types better when reading tables
 
         The storage_location can be a string representation of one of the following:
             - a directory path (e.g. 'c:/temp')
@@ -49,6 +46,19 @@ else:
 
             # Create ESRI Geoprocessing Object
             self.gp = arcgisscripting.create()
+            # Check to see if storage_location exists
+            if 'Database Connections' in storage_location:
+                db_connection_file = os.path.split(storage_location)[-1]
+                full_db_connection_file_path = os.path.join(os.environ['USERPROFILE'], 'Application Data\\ESRI\\ArcCatalog', db_connection_file)
+                storage_location_exists = os.path.exists(full_db_connection_file_path)
+                # TODO: check for more of these boolean value checks
+                if not storage_location_exists:
+                    raise IOError, 'The ArcSDE geodatabase connection "%s" does not exist.' % (db_connection_file)
+            else:
+                storage_location_exists = os.path.exists(storage_location)
+                if not storage_location_exists:
+                    raise IOError, 'The storage location "%s" does not exist.' % (storage_location)
+
             # Set the ESRI workspace parameter
             self.gp.Workspace = storage_location
             self._storage_location = storage_location
@@ -63,7 +73,29 @@ else:
             full_table_name = storage_location + table_name
             return full_table_name
 
-        def write_table(self, table_name, table_data):
+        def write_table(self, table_name, table_data, overwrite_existing=False):
+            """
+            This method writes a dataset (table_data) to the specified table (table_name).
+            Set overwrite_existing = True if the table should be overwritten.
+            """
+            # Get full path to table
+            full_table_location = self.get_full_table_location(table_name)
+
+            if overwrite_existing == True:
+                self.gp.OverwriteOutput= 1
+                if self.table_exists(table_name) == True:
+                    logger.log_note('The table with the name "%s" already exists.' % (table_name))
+                    logger.log_note('This table will be overwritten.')
+                    self.gp.Delete(full_table_location)
+                else:
+                    logger.log_note('The table with the name "%s" does not exist.' % (table_name))
+                    logger.log_note('This table will be written.')
+            else:
+                self.gp.OverwriteOutput = 0
+                if self.table_exists(table_name) == True:
+                    logger.log_note('The table with the name "%s" already exists.' % (table_name))
+                    logger.log_note('This table will not be overwritten.')
+                    return None
 
             # Determine table type to write
             storage_location = self.get_storage_location()
@@ -87,21 +119,28 @@ else:
                 table_name = self.gp.ValidateTableName(table_name)
                 self.gp.CreateTable(storage_location, table_name)
 
-            # Get full path to table
-            full_table_location = self.get_full_table_location(table_name)
-
             # Get column names
             column_names = []
             for i in table_data:
                 column_names.append(i)
             # Get shortened column names
             short_column_names = []
-            for i in column_names:
-                if len(i) <= 10:
-                    short_column_names.append(i)
-                else:
-                    short_name = self._get_shortened_column_name(i)
-                    short_column_names.append(short_name)
+            if dbf == True:
+                for i in column_names:
+                    if len(i) <= 10:
+                        short_column_names.append(i)
+                    else:
+                        short_name = self._get_shortened_column_name(i, 8)
+                        short_column_names.append(short_name)
+            else:
+                for i in column_names:
+                    if len(i) <= 31:
+                        short_column_names.append(i)
+                    else:
+                        short_name = self._get_shortened_column_name(i, 29)
+                        short_column_names.append(i)
+            # Create column_names to short_column_names mapping
+            column_names_mapping = dict(zip(column_names, short_column_names))
             # Get column types
             numpy_column_types = []
             for i in column_names:
@@ -111,7 +150,7 @@ else:
             for i in numpy_column_types:
                 esri_column_types.append(self._get_esri_type_from_numpy_dtype(i))
 
-            # Add fields
+            # Add columns
             x = 0
             for i in short_column_names:
                 self.gp.AddField(full_table_location, i, esri_column_types[x])
@@ -121,16 +160,29 @@ else:
                 self.gp.DeleteField(full_table_location, 'Field1')
 
             # Insert records
-
-
-
+            #
+            # Get an ESRI InsertCursor on the table
+            rows = self.gp.InsertCursor(full_table_location)
+            # Get the number_of_records to insert
+            number_of_records = len(table_data[column_names[0]])
+            # Do the inserts
+            for i in range(0, number_of_records):
+                # Get an ESRI NewRow object
+                row = rows.NewRow()
+                for column_name, column_value in table_data.iteritems():
+                    # Check for string value, if yes, insert quotes
+                    if column_value[i].dtype.kind == 'S':
+                        strng = "'" + column_value[i] + "'"
+                        exec_stmt = "row.%s = %s" % (column_names_mapping[column_name], strng)
+                    else:
+                        exec_stmt = "row.%s = %s" % (column_names_mapping[column_name], column_value[i])
+                    # Execute the statement built above
+                    exec exec_stmt
+                # Insert the row
+                rows.InsertRow(row)
 
         def load_table(self, table_name, column_names=Storage.ALL_COLUMNS):
             """
-            TODO:
-                - Convert any dates from date fields to strings
-                 - at this point this method reads in dates as python objects
-                 into the numpy array instead of strings
             The table_name parameter must be one of the following:
                 - for Shapefiles: 'your_shapefile.shp'
                 - for standalone .dbf tables: 'your_dbf.dbf'
@@ -142,6 +194,10 @@ else:
             representing the column names that should be loaded from the
             table.
             """
+            # Check for table existence
+            if self.table_exists(table_name) == False:
+                logger.log_warning('Table with name "%s" does not exist.' % (table_name))
+                return None
 
             # Get full path to table
             full_table_name = self.get_full_table_location(table_name)
@@ -153,7 +209,7 @@ else:
                 columns = column_names
 
             # Get column types
-            column_types = self.get_column_types_esri(table_name)
+            column_types = self._get_column_types_esri(table_name)
             numpy_column_dtypes = []
             for i in column_types:
                 numpy_type = self._get_numpy_dtype_from_esri_dtype(i)
@@ -178,13 +234,19 @@ else:
                 table[i] = empty(0, numpy_column_dtypes[x])
                 x += 1
 
-            # Populate dictionary with table values
+            # Populate dictionary with table values while
+            # converting unicode and the special 'PyTime'
+            # types to strings
             while row:
                 exec exec_stmt
                 if type(row_values) != types.TupleType:
                     row_values = (row_values,)
                 x = 0
                 for i in row_values:
+                    if type(i) == types.UnicodeType:
+                        i = str(i)
+                    elif type(i) == pywintypes.TimeType:
+                        i = str(i)
                     table[columns[x]] = append(table[columns[x]], i)
                     x += 1
                 row = rows.Next()
@@ -197,6 +259,11 @@ else:
             'OID' and 'Geometry' and those containing '.' (e.g.
             SHAPE.area, SHAPE.len)
             """
+
+            # Check for table existence
+            if self.table_exists(table_name) == False:
+                logger.log_warning('Table with name "%s" does not exist.' % (table_name))
+                return None
 
             # Create full path to table
             storage_location = self.get_storage_location()
@@ -226,7 +293,7 @@ else:
 
             return column_names
 
-        def get_column_types_esri(self, table_name):
+        def _get_column_types_esri(self, table_name):
             """
             Returns a list of ESRI column types.  Omits columns of
             type 'OID' and 'Geometry' and those containing '.'
@@ -352,10 +419,10 @@ else:
                 raise ValueError('Unrecognized numpy type: %s' % numpy_dtype)
             return esri_type
 
-        def _get_shortened_column_name(self, column_name):
-            #Takes a string, reduces it to 8 characters in
+        def _get_shortened_column_name(self, column_name, length):
+            #Takes a string, reduces it to 'length' characters in
             #length, then adds a random number between 1 and 99
             #to make it somewhat unique
             rand = str(randint(0,99))
-            short_name = column_name[0:8] + rand
+            short_name = column_name[0:length] + rand
             return short_name
