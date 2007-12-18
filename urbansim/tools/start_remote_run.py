@@ -200,20 +200,18 @@ class RemoteRun:
                 if type(key) == int:
                     if key >= start_year and key <= end_year:
                         travel_model_years.append(key)
-
-        else:
+        
+        if end_year not in travel_model_years:
             travel_model_years.append(end_year)
-
+            ## in the case end_year is not a travel_model year, appending it
+            ## so we have 1 more iteration after the last travel_model_year
         travel_model_years.sort()
+        
         this_start_year = start_year
         for travel_model_year in travel_model_years:
+            if this_start_year > end_year:
+                return #run finished, should not be needed
             this_end_year = travel_model_year
-
-            if this_start_year >= this_end_year:
-                if this_end_year > end_year:
-                    return #run finished
-                else:
-                    this_end_year = end_year
                     
             config['years'] = (this_start_year, this_end_year)
             ## since there is no --skip-travel-model switch for restart_run yet
@@ -279,11 +277,6 @@ class RemoteRun:
                             raise RuntimeError, "there is a problem running travel model remotely"
                         self.wait_until_run_done_or_failed(run_id, std=std)
                         logger.end_block()
-                        ##TODO: open_sftp may need to be close()
-                        if not exists_remotely(self.ssh['urbansim_server'].open_sftp(), 
-                                               pathname2url(os.path.join(cache_directory, str(this_end_year+1))) ):
-                            raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
-                                                (this_end_year+1, local_cache_directory)
                     else:
                         cmd = 'python %(module)s %(run_id)s %(start_year)s  --hostname=%(services_hostname)s' % \
                               {'module':module_path_from_opus_path('opus_core.tools.restart_run'), 
@@ -292,11 +285,18 @@ class RemoteRun:
                         cmd += ' --skip-cache-cleanup --skip-urbansim'
                         logger.log_status("Call " + cmd)
                         os.system(cmd)
-                        if not os.path.exists(os.path.join(cache_directory, str(this_end_year+1))):
-                            raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
-                                                (this_end_year+1, cache_directory)
+                    
+                    flt_directory_for_next_year = os.path.join(cache_directory, str(this_end_year+1))
+                    if self.is_localhost(self.urbansim_server_config['hostname']) and not exists_remotely(self.ssh['urbansim_server'].open_sftp(), 
+                                                                                                          pathname2url(flt_directory_for_next_year) ):
+                        ##TODO: open_sftp may need to be close()
+                        raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
+                                            (this_end_year+1, cache_directory)
+                    elif not os.path.exists(flt_directory_for_next_year):
+                        raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
+                                            (this_end_year+1, cache_directory)
                 
-            this_start_year = travel_model_year + 1  #next run starting from the next year of the travel model year
+            this_start_year = travel_model_year + 1  #next run starting from the next year of a travel model year
 
         return
 
