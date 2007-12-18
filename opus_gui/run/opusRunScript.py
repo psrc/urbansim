@@ -72,6 +72,7 @@ class OpusScript(object):
         #
         try:
             importString = "from %s import opusRun" % (self.scriptInclude)
+            print importString
             exec(importString)
             if self.startingCallback != None:
                 self.startingCallback()

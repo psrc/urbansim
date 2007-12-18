@@ -54,7 +54,8 @@ class RunManagerBase(object):
       if modelElement.inGui == False:
         #self.groupBoxLayout.insertWidget(0,modelElement)
         #self.tabWidget.addTab(modelElement,str(modelElement.originalFile.absoluteFilePath()))
-        self.tabWidget.addTab(modelElement,modelElement.tabIcon,modelElement.tabLabel)
+        self.tabWidget.insertTab(0,modelElement,modelElement.tabIcon,modelElement.tabLabel)
+        self.tabWidget.setCurrentIndex(0)
         modelElement.inGui = True
   
   def setGui(self, gui):
@@ -87,8 +88,6 @@ class ModelGuiElement(QWidget):
         
         # Grab the path to the base XML used to run this model
         self.xml_path = model.xml_path
-        self.tabIcon = QIcon(":/Images/Images/cog.png")
-        self.tabLabel = "PlaceHolder"
         
         # Need to make a copy of the project environment to work from
         self.originalFile = QFileInfo(self.xml_path)
@@ -107,6 +106,9 @@ class ModelGuiElement(QWidget):
         self.xml_path = self.xml_path.append(tmpPathDir.dirName().append("/").append(self.originalDirName))
         self.xml_path = self.xml_path.append(QString("/"))
         self.xml_path = self.xml_path.append(QFileInfo(self.originalFile.fileName()).fileName())
+
+        self.tabIcon = QIcon(":/Images/Images/cog.png")
+        self.tabLabel = self.originalFile.fileName()
 
         # LAYOUT FOR THE MODEL ELEMENT IN THE GUI
         self.widgetLayout = QVBoxLayout(self)
@@ -183,7 +185,7 @@ class ModelGuiElement(QWidget):
             self.delegate = OpusDataDelegate(self.view)
             self.view.setItemDelegate(self.delegate)
             self.view.setModel(self.dataModel)
-            self.view.setExpanded(self.dataModel.index(0,0,QModelIndex()),True)
+            self.view.expandAll()
             self.view.setAnimated(True)
             self.view.setColumnWidth(0,200)
             self.view.setColumnWidth(1,50)

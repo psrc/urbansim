@@ -3,9 +3,9 @@
     <description type="string" >Sample Eugene project</description>
   </general>
   <data_manager>
-    <script_batch type="script_batch">
-      <script_path type="script_path">../scripts</script_path>
-      <processing_script_1 type="script_file">test</processing_script_1>
+    <script_batch type="script_batch" >
+      <script_path type="script_path" >projects.scripts</script_path>
+      <processing_script_1 type="script_file" >test</processing_script_1>
     </script_batch>
   </data_manager>
   <scenario_manager>

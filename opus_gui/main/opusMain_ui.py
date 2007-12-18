@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusMain.ui'
 #
-# Created: Sun Dec 16 21:40:02 2007
+# Created: Tue Dec 18 00:24:14 2007
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -38,17 +38,17 @@ class Ui_MainWindow(object):
         self.toolBox.setObjectName("toolBox")
 
         self.datamanager_page = QtGui.QWidget()
-        self.datamanager_page.setGeometry(QtCore.QRect(0,0,317,532))
+        self.datamanager_page.setGeometry(QtCore.QRect(0,0,352,524))
         self.datamanager_page.setObjectName("datamanager_page")
 
         self.gridlayout1 = QtGui.QGridLayout(self.datamanager_page)
         self.gridlayout1.setMargin(9)
         self.gridlayout1.setSpacing(6)
         self.gridlayout1.setObjectName("gridlayout1")
-        self.toolBox.addItem(self.datamanager_page,"")
+        self.toolBox.addItem(self.datamanager_page,QtGui.QIcon(":/Images/Images/database_table.png"),"")
 
         self.modelmanager_page = QtGui.QWidget()
-        self.modelmanager_page.setGeometry(QtCore.QRect(0,0,317,532))
+        self.modelmanager_page.setGeometry(QtCore.QRect(0,0,112,112))
         self.modelmanager_page.setObjectName("modelmanager_page")
 
         self.gridlayout2 = QtGui.QGridLayout(self.modelmanager_page)
@@ -59,17 +59,17 @@ class Ui_MainWindow(object):
         self.modelmanager_tree = QtGui.QTreeWidget(self.modelmanager_page)
         self.modelmanager_tree.setObjectName("modelmanager_tree")
         self.gridlayout2.addWidget(self.modelmanager_tree,0,0,1,1)
-        self.toolBox.addItem(self.modelmanager_page,"")
+        self.toolBox.addItem(self.modelmanager_page,QtGui.QIcon(":/Images/Images/chart_organisation.png"),"")
 
         self.runmanager_page = QtGui.QWidget()
-        self.runmanager_page.setGeometry(QtCore.QRect(0,0,317,532))
+        self.runmanager_page.setGeometry(QtCore.QRect(0,0,352,524))
         self.runmanager_page.setObjectName("runmanager_page")
 
         self.gridlayout3 = QtGui.QGridLayout(self.runmanager_page)
         self.gridlayout3.setMargin(9)
         self.gridlayout3.setSpacing(6)
         self.gridlayout3.setObjectName("gridlayout3")
-        self.toolBox.addItem(self.runmanager_page,"")
+        self.toolBox.addItem(self.runmanager_page,QtGui.QIcon(":/Images/Images/cog.png"),"")
 
         self.resultsmanager_page = QtGui.QWidget()
         self.resultsmanager_page.setGeometry(QtCore.QRect(0,0,112,112))
@@ -83,7 +83,7 @@ class Ui_MainWindow(object):
         self.resultsmanager_tree = QtGui.QTreeWidget(self.resultsmanager_page)
         self.resultsmanager_tree.setObjectName("resultsmanager_tree")
         self.gridlayout4.addWidget(self.resultsmanager_tree,0,0,1,1)
-        self.toolBox.addItem(self.resultsmanager_page,"")
+        self.toolBox.addItem(self.resultsmanager_page,QtGui.QIcon(":/Images/Images/map_go.png"),"")
 
         self.tabWidget = QtGui.QTabWidget(self.splitter)
         self.tabWidget.setObjectName("tabWidget")
@@ -95,7 +95,7 @@ class Ui_MainWindow(object):
         self.gridlayout5.setMargin(9)
         self.gridlayout5.setSpacing(6)
         self.gridlayout5.setObjectName("gridlayout5")
-        self.tabWidget.addTab(self.tab_editorView,"")
+        self.tabWidget.addTab(self.tab_editorView,QtGui.QIcon(":/Images/Images/table.png"),"")
 
         self.tab_mapView = QtGui.QWidget()
         self.tab_mapView.setObjectName("tab_mapView")
@@ -110,7 +110,7 @@ class Ui_MainWindow(object):
         self.widgetMap.setAutoFillBackground(True)
         self.widgetMap.setObjectName("widgetMap")
         self.gridlayout6.addWidget(self.widgetMap,0,0,1,1)
-        self.tabWidget.addTab(self.tab_mapView,"")
+        self.tabWidget.addTab(self.tab_mapView,QtGui.QIcon(":/Images/Images/map.png"),"")
 
         self.tab_pythonView = QtGui.QWidget()
         self.tab_pythonView.setObjectName("tab_pythonView")
@@ -146,11 +146,11 @@ class Ui_MainWindow(object):
         self.pythonWidget = QtGui.QWidget(self.tab_pythonView)
         self.pythonWidget.setObjectName("pythonWidget")
         self.gridlayout7.addWidget(self.pythonWidget,0,0,1,1)
-        self.tabWidget.addTab(self.tab_pythonView,"")
+        self.tabWidget.addTab(self.tab_pythonView,QtGui.QIcon(":/Images/Images/python_type.png"),"")
 
         self.tab_logView = QtGui.QWidget()
         self.tab_logView.setObjectName("tab_logView")
-        self.tabWidget.addTab(self.tab_logView,"")
+        self.tabWidget.addTab(self.tab_logView,QtGui.QIcon(":/Images/Images/folder.png"),"")
         self.gridlayout.addWidget(self.splitter,0,0,1,1)
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -163,9 +163,6 @@ class Ui_MainWindow(object):
 
         self.menuProject = QtGui.QMenu(self.menubar)
         self.menuProject.setObjectName("menuProject")
-
-        self.menuUtilities = QtGui.QMenu(self.menubar)
-        self.menuUtilities.setObjectName("menuUtilities")
         MainWindow.setMenuBar(self.menubar)
 
         self.statusbar = QtGui.QStatusBar(MainWindow)
@@ -201,17 +198,17 @@ class Ui_MainWindow(object):
         self.actionSave_Project_As = QtGui.QAction(MainWindow)
         self.actionSave_Project_As.setObjectName("actionSave_Project_As")
 
-        self.actionOpen_Config = QtGui.QAction(MainWindow)
-        self.actionOpen_Config.setObjectName("actionOpen_Config")
+        self.actionOpen_Project_2 = QtGui.QAction(MainWindow)
+        self.actionOpen_Project_2.setObjectName("actionOpen_Project_2")
 
         self.actionExit = QtGui.QAction(MainWindow)
         self.actionExit.setObjectName("actionExit")
 
-        self.actionSave_Config = QtGui.QAction(MainWindow)
-        self.actionSave_Config.setObjectName("actionSave_Config")
+        self.actionSave_Project_2 = QtGui.QAction(MainWindow)
+        self.actionSave_Project_2.setObjectName("actionSave_Project_2")
 
-        self.actionSave_Config_As = QtGui.QAction(MainWindow)
-        self.actionSave_Config_As.setObjectName("actionSave_Config_As")
+        self.actionSave_Project_As_2 = QtGui.QAction(MainWindow)
+        self.actionSave_Project_As_2.setObjectName("actionSave_Project_As_2")
 
         self.actionRun_Manager = QtGui.QAction(MainWindow)
         self.actionRun_Manager.setObjectName("actionRun_Manager")
@@ -220,16 +217,14 @@ class Ui_MainWindow(object):
         self.menuMap.addAction(self.mpActionPan)
         self.menuProject.addSeparator()
         self.menuProject.addSeparator()
-        self.menuProject.addAction(self.actionOpen_Config)
+        self.menuProject.addAction(self.actionOpen_Project_2)
         self.menuProject.addSeparator()
-        self.menuProject.addAction(self.actionSave_Config)
-        self.menuProject.addAction(self.actionSave_Config_As)
+        self.menuProject.addAction(self.actionSave_Project_2)
+        self.menuProject.addAction(self.actionSave_Project_As_2)
         self.menuProject.addSeparator()
         self.menuProject.addAction(self.actionExit)
-        self.menuUtilities.addAction(self.actionRun_Manager)
         self.menubar.addAction(self.menuProject.menuAction())
         self.menubar.addAction(self.menuMap.menuAction())
-        self.menubar.addAction(self.menuUtilities.menuAction())
 
         self.retranslateUi(MainWindow)
         self.toolBox.setCurrentIndex(2)
@@ -471,7 +466,7 @@ class Ui_MainWindow(object):
         item47.setIcon(0,QtGui.QIcon(":/Images/Images/car.png"))
         item47.setText(1,"")
         self.toolBox.setItemText(self.toolBox.indexOf(self.modelmanager_page), QtGui.QApplication.translate("MainWindow", "Model Manager", None, QtGui.QApplication.UnicodeUTF8))
-        self.toolBox.setItemText(self.toolBox.indexOf(self.runmanager_page), QtGui.QApplication.translate("MainWindow", "Run Manager", None, QtGui.QApplication.UnicodeUTF8))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.runmanager_page), QtGui.QApplication.translate("MainWindow", "Scenario Manager", None, QtGui.QApplication.UnicodeUTF8))
         self.resultsmanager_tree.headerItem().setText(0,QtGui.QApplication.translate("MainWindow", "Name", None, QtGui.QApplication.UnicodeUTF8))
         self.resultsmanager_tree.headerItem().setText(1,QtGui.QApplication.translate("MainWindow", "Type", None, QtGui.QApplication.UnicodeUTF8))
         self.resultsmanager_tree.clear()
@@ -552,7 +547,6 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_logView), QtGui.QApplication.translate("MainWindow", "Log View", None, QtGui.QApplication.UnicodeUTF8))
         self.menuMap.setTitle(QtGui.QApplication.translate("MainWindow", "Map", None, QtGui.QApplication.UnicodeUTF8))
         self.menuProject.setTitle(QtGui.QApplication.translate("MainWindow", "Project", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuUtilities.setTitle(QtGui.QApplication.translate("MainWindow", "Utilities", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionZoomOut.setText(QtGui.QApplication.translate("MainWindow", "Zoom Out", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionPan.setText(QtGui.QApplication.translate("MainWindow", "Pan", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionAddRasterLayer.setText(QtGui.QApplication.translate("MainWindow", "Add Raster Layer", None, QtGui.QApplication.UnicodeUTF8))
@@ -561,10 +555,10 @@ class Ui_MainWindow(object):
         self.actionOpen_Project.setText(QtGui.QApplication.translate("MainWindow", "Open Project", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSave_Project.setText(QtGui.QApplication.translate("MainWindow", "Save Project", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSave_Project_As.setText(QtGui.QApplication.translate("MainWindow", "Save Project As...", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionOpen_Config.setText(QtGui.QApplication.translate("MainWindow", "Open Config", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpen_Project_2.setText(QtGui.QApplication.translate("MainWindow", "Open Project", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExit.setText(QtGui.QApplication.translate("MainWindow", "Exit", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSave_Config.setText(QtGui.QApplication.translate("MainWindow", "Save Config", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSave_Config_As.setText(QtGui.QApplication.translate("MainWindow", "Save Config As...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSave_Project_2.setText(QtGui.QApplication.translate("MainWindow", "Save Project", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSave_Project_As_2.setText(QtGui.QApplication.translate("MainWindow", "Save Project As...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRun_Manager.setText(QtGui.QApplication.translate("MainWindow", "Run Manager", None, QtGui.QApplication.UnicodeUTF8))
 
 import opusMain_rc

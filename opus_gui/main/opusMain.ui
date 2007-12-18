@@ -62,12 +62,15 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>317</width>
-          <height>532</height>
+          <width>352</width>
+          <height>524</height>
          </rect>
         </property>
         <attribute name="label" >
          <string>Data Manager</string>
+        </attribute>
+        <attribute name="icon" >
+         <iconset resource="opusMain.qrc" >:/Images/Images/database_table.png</iconset>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -95,12 +98,15 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>317</width>
-          <height>532</height>
+          <width>112</width>
+          <height>112</height>
          </rect>
         </property>
         <attribute name="label" >
          <string>Model Manager</string>
+        </attribute>
+        <attribute name="icon" >
+         <iconset resource="opusMain.qrc" >:/Images/Images/chart_organisation.png</iconset>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -634,12 +640,15 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>317</width>
-          <height>532</height>
+          <width>352</width>
+          <height>524</height>
          </rect>
         </property>
         <attribute name="label" >
-         <string>Run Manager</string>
+         <string>Scenario Manager</string>
+        </attribute>
+        <attribute name="icon" >
+         <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -673,6 +682,9 @@
         </property>
         <attribute name="label" >
          <string>Results Manager</string>
+        </attribute>
+        <attribute name="icon" >
+         <iconset resource="opusMain.qrc" >:/Images/Images/map_go.png</iconset>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -865,6 +877,9 @@
         <attribute name="title" >
          <string>Editor</string>
         </attribute>
+        <attribute name="icon" >
+         <iconset resource="opusMain.qrc" >:/Images/Images/table.png</iconset>
+        </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
           <number>9</number>
@@ -889,6 +904,9 @@
        <widget class="QWidget" name="tab_mapView" >
         <attribute name="title" >
          <string>Map View</string>
+        </attribute>
+        <attribute name="icon" >
+         <iconset resource="opusMain.qrc" >:/Images/Images/map.png</iconset>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -927,6 +945,9 @@
        <widget class="QWidget" name="tab_pythonView" >
         <attribute name="title" >
          <string>Python Console</string>
+        </attribute>
+        <attribute name="icon" >
+         <iconset resource="opusMain.qrc" >:/Images/Images/python_type.png</iconset>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -993,6 +1014,9 @@
         <attribute name="title" >
          <string>Log View</string>
         </attribute>
+        <attribute name="icon" >
+         <iconset resource="opusMain.qrc" >:/Images/Images/folder.png</iconset>
+        </attribute>
        </widget>
       </widget>
      </widget>
@@ -1022,22 +1046,15 @@
     </property>
     <addaction name="separator" />
     <addaction name="separator" />
-    <addaction name="actionOpen_Config" />
+    <addaction name="actionOpen_Project_2" />
     <addaction name="separator" />
-    <addaction name="actionSave_Config" />
-    <addaction name="actionSave_Config_As" />
+    <addaction name="actionSave_Project_2" />
+    <addaction name="actionSave_Project_As_2" />
     <addaction name="separator" />
     <addaction name="actionExit" />
    </widget>
-   <widget class="QMenu" name="menuUtilities" >
-    <property name="title" >
-     <string>Utilities</string>
-    </property>
-    <addaction name="actionRun_Manager" />
-   </widget>
    <addaction name="menuProject" />
    <addaction name="menuMap" />
-   <addaction name="menuUtilities" />
   </widget>
   <widget class="QStatusBar" name="statusbar" />
   <action name="mpActionZoomOut" >
@@ -1095,9 +1112,9 @@
     <string>Save Project As...</string>
    </property>
   </action>
-  <action name="actionOpen_Config" >
+  <action name="actionOpen_Project_2" >
    <property name="text" >
-    <string>Open Config</string>
+    <string>Open Project</string>
    </property>
   </action>
   <action name="actionExit" >
@@ -1105,14 +1122,14 @@
     <string>Exit</string>
    </property>
   </action>
-  <action name="actionSave_Config" >
+  <action name="actionSave_Project_2" >
    <property name="text" >
-    <string>Save Config</string>
+    <string>Save Project</string>
    </property>
   </action>
-  <action name="actionSave_Config_As" >
+  <action name="actionSave_Project_As_2" >
    <property name="text" >
-    <string>Save Config As...</string>
+    <string>Save Project As...</string>
    </property>
   </action>
   <action name="actionRun_Manager" >

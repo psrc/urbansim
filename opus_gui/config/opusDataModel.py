@@ -27,6 +27,9 @@ class OpusDataBaseModel(object):
         self._rootItem = OpusDataItem(document, 0, self)
         self._rootItem.initAsRootItem()
 
+        # Dirty flag for keeping track of edits...
+        self.dirty = False
+
     def findRootElement(self,tag):
         pass
         
@@ -41,6 +44,8 @@ class OpusDataModel(QAbstractItemModel):
         self.parentObj = parent
         self.domDocument = document
         self.xmlType = xmlType
+        # Dirty flag for keeping track of edits...
+        self.dirty = False
         
         # Root data for use in column headers
         self.rootData = []
@@ -51,19 +56,18 @@ class OpusDataModel(QAbstractItemModel):
         # Get the XML config data
         self.xmlRoot = document.elementsByTagName(QString(self.xmlType)).item(0)
         print "Searching for ", self.xmlType
-        #self.xmlRoot = self.findXMLRoot(document, self.xmlType)
         if self.xmlRoot == None:
             print "No XML elements in the root with type ", self.xmlType
             return
         print "Found ", self.xmlRoot.nodeName()
         self._rootItem = OpusDataItem(document, 0, self)
-        #self._rootItem = OpusDataItem(self.xmlRoot, 0, self)
-        self._rootItemSub = OpusDataItem(self.xmlRoot, 0, self._rootItem)
-        self._rootItemSub.initAsRootItem()
-        self._rootItem.childItems.append(self._rootItemSub)
-        #print "We have %s child items in the root" % (len(self._rootItem.childItems))
-        # Build the index tree...
-        
+        # Loop through the first level children and inti them as a root item
+        # and append to the tree...
+        for x in xrange(0,self.xmlRoot.childNodes().count(),1):
+            current = self.xmlRoot.childNodes().item(x)
+            self._rootItemSub = OpusDataItem(current, x, self._rootItem)
+            self._rootItemSub.initAsRootItem()
+            self._rootItem.childItems.append(self._rootItemSub)
         
         #Add some icons
         self.folderIcon = QIcon()
@@ -268,4 +272,5 @@ class OpusDataModel(QAbstractItemModel):
             for x in xrange(0,children.count(),1):
                 if children.item(x).isText():
                     children.item(x).setNodeValue(QString(value.toString()))
+                    self.dirty = True
         return True
