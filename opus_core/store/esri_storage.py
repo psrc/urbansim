@@ -72,7 +72,7 @@ else:
             full_table_name = storage_location + table_name
             return full_table_name
 
-        def write_table(self, table_name, table_data, overwrite_existing=False):
+        def write_table(self, table_name, table_data, overwrite_existing=True):
             """
             This method writes a dataset (table_data) to the specified table (table_name).
             Set overwrite_existing = True if the table should be overwritten.
@@ -150,6 +150,8 @@ else:
             esri_column_types = []
             for i in numpy_column_types:
                 esri_column_types.append(self._get_esri_type_from_numpy_dtype(i))
+                
+            full_table_location = self.get_full_table_location(table_name)
 
             # Add columns
             x = 0
