@@ -218,7 +218,8 @@ class RemoteRun:
                 ## TODO: better handle the location of the urbansim_remote_run.log
                 logger.log_status("Call " + cmd)
                 try: 
-                    std = self.get_ssh_client(self.ssh['urbansim_server'], self.urbansim_server_config).exec_command(cmd)  #std[0] - stdin, std[1] - stdout, std[2] - stderr
+                    ssh = self.get_ssh_client(self.ssh['urbansim_server'], self.urbansim_server_config)
+                    std = ssh.exec_command(cmd)  #std[0] - stdin, std[1] - stdout, std[2] - stderr
                 except: 
                     raise RuntimeError, "there is a problem running urbansim remotely"
                 self.wait_until_run_done_or_failed(run_id, std=std)
@@ -258,7 +259,8 @@ class RemoteRun:
                         ## TODO: better handle the location of the travelmodel_remote_run.log
                         logger.log_status("Call " + cmd)
                         try:
-                            std = self.get_ssh_client(self.ssh['travelmodel_server'], self.travelmodel_server_config).exec_command(cmd)
+                            ssh = self.get_ssh_client(self.ssh['travelmodel_server'], self.travelmodel_server_config)
+                            std = ssh.exec_command(cmd)
                         except:
                             raise RuntimeError, "there is a problem running travel model remotely"
                         self.wait_until_run_done_or_failed(run_id, std=std)
@@ -273,12 +275,12 @@ class RemoteRun:
                         os.system(cmd)
                     
                     flt_directory_for_next_year = os.path.join(cache_directory, str(this_end_year+1))
-                    if self.is_localhost(self.urbansim_server_config['hostname']) and \
+                    if not self.is_localhost(self.urbansim_server_config['hostname']) and \
                        not exists_remotely(self.get_ssh_client(self.ssh['urbansim_server'], self.urbansim_server_config).open_sftp(), 
                                            pathname2url(flt_directory_for_next_year) ):
                         ##TODO: open_sftp may need to be close()
-                        raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
-                                            (this_end_year+1, cache_directory)
+                        raise StandardError, "travel model didn't create any output for year %s in directory %s on %s; there may be problem with travel model run" % \
+                                            (this_end_year+1, cache_directory, self.urbansim_server_config['hostname'])
                     elif not os.path.exists(flt_directory_for_next_year):
                         raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
                                             (this_end_year+1, cache_directory)
