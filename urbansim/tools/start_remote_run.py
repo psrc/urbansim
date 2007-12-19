@@ -224,7 +224,7 @@ class RemoteRun:
                     raise RuntimeError, "there is a problem running urbansim remotely"
                 self.wait_until_run_done_or_failed(run_id, std=std)
                 logger.end_block()
-                ##TODO: open_sftp may need to be close()
+                ##TODO: open_sftp may need to be closed
                 if not exists_remotely(self.get_ssh_client(self.ssh['urbansim_server'], self.urbansim_server_config).open_sftp(), 
                                        pathname2url(os.path.join(cache_directory, str(this_end_year))) ):
                     raise StandardError, "cache for year %s doesn't exist in directory %s; there may be problem with urbansim run" % \
@@ -278,9 +278,9 @@ class RemoteRun:
                     if not self.is_localhost(self.urbansim_server_config['hostname']):
                        if not exists_remotely(self.get_ssh_client(self.ssh['urbansim_server'], self.urbansim_server_config).open_sftp(), 
                                               pathname2url(flt_directory_for_next_year) ):
-                        ##TODO: open_sftp may need to be close()
-                        raise StandardError, "travel model didn't create any output for year %s in directory %s on %s; there may be problem with travel model run" % \
-                                            (this_end_year+1, cache_directory, self.urbansim_server_config['hostname'])
+                           ##TODO: open_sftp may need to be closed
+                           raise StandardError, "travel model didn't create any output for year %s in directory %s on %s; there may be problem with travel model run" % \
+                                               (this_end_year+1, cache_directory, self.urbansim_server_config['hostname'])
                     elif not os.path.exists(flt_directory_for_next_year):
                         raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
                                             (this_end_year+1, cache_directory)
