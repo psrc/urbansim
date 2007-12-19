@@ -54,20 +54,18 @@ class sftp_flt_storage(file_flt_storage):
             port = 22
         self._base_directory_remote = o.path
         self._base_directory = self._base_directory_local = tempfile.mkdtemp(prefix='opus_tmp')
-        try:
-            self.ssh = paramiko.SSHClient()
-            self.ssh.load_system_host_keys()
-            self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            self.ssh.connect(hostname=hostname,
-                             port = port,
-                             username=username,
-                             password=password,
-                             pkey=load_key_if_exists())
-            #self.ssh._transport.set_keepalive(60)
 
-            self.sftp = self.ssh.open_sftp()
-        except Exception, e:
-            raise
+        self.ssh = paramiko.SSHClient()
+        self.ssh.load_system_host_keys()
+        self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        self.ssh.connect(hostname=hostname,
+                         port = port,
+                         username=username,
+                         password=password,
+                         pkey=load_key_if_exists())
+        #self.ssh._transport.set_keepalive(60)
+
+        self.sftp = self.ssh.open_sftp()
 
     def __del__(self):
         #if hasattr(self, 'ssh') or hasattr(self, 'sftp'):

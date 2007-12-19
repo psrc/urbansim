@@ -275,9 +275,9 @@ class RemoteRun:
                         os.system(cmd)
                     
                     flt_directory_for_next_year = os.path.join(cache_directory, str(this_end_year+1))
-                    if not self.is_localhost(self.urbansim_server_config['hostname']) and \
-                       not exists_remotely(self.get_ssh_client(self.ssh['urbansim_server'], self.urbansim_server_config).open_sftp(), 
-                                           pathname2url(flt_directory_for_next_year) ):
+                    if not self.is_localhost(self.urbansim_server_config['hostname']):
+                       if not exists_remotely(self.get_ssh_client(self.ssh['urbansim_server'], self.urbansim_server_config).open_sftp(), 
+                                              pathname2url(flt_directory_for_next_year) ):
                         ##TODO: open_sftp may need to be close()
                         raise StandardError, "travel model didn't create any output for year %s in directory %s on %s; there may be problem with travel model run" % \
                                             (this_end_year+1, cache_directory, self.urbansim_server_config['hostname'])
