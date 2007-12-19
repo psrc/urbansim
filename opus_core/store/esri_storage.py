@@ -182,7 +182,8 @@ else:
                 # Insert the row
                 rows.InsertRow(row)
 
-        def load_table(self, table_name, column_names=Storage.ALL_COLUMNS):
+        def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True,
+            id_name=None):
             """
             The table_name parameter must be one of the following:
                 - for Shapefiles: 'your_shapefile.shp'
