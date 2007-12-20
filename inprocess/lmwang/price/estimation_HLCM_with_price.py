@@ -30,7 +30,6 @@ from numpy import arange, where, array, float32, concatenate
 from time import time, localtime, strftime
 from opus_core.session_configuration import SessionConfiguration
 
-
 from psrc_parcel.configs.baseline import Baseline
 from my_estimation_config import my_configuration
 
@@ -93,18 +92,6 @@ dataset_pool=SessionConfiguration().get_dataset_pool()
 #        return supply, vacancy_rate
 #
 #        
-#def create_households_for_estimation(agent_set, dbcon):
-#        estimation_set = HouseholdDataset(in_storage=StorageFactory().get_storage('mysql_storage', storage_location=dbcon),
-#                in_table_name="households_for_estimation")
-#        agent_set.unload_primary_attributes()
-#        agent_set.load_dataset(attributes='*')
-#        estimation_set.load_dataset(attributes=agent_set.get_primary_attribute_names())
-#        for attr in agent_set.get_attribute_names():
-#            agent_set.attribute_boxes[attr].set_data(concatenate((estimation_set.attribute_boxes[attr].get_data(), agent_set.attribute_boxes[attr].get_data())))
-#        agent_set._update_id_mapping()
-#        agent_set.update_size()
-#        return (agent_set, arange(estimation_set.size()))
-
 class HLCMEstimator(Estimator):
 
     def estimate(self, spec_var=None, spec_py=None,

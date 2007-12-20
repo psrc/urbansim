@@ -127,7 +127,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
         pass
         
     def test_defaults(self):
-        creator = HouseholdLocationChoiceModelConfigurationCreator()
+        creator = HouseholdLocationChoiceModelWithPriceAdjConfigurationCreator()
         
         expected = Configuration({
             'estimate': {
@@ -141,7 +141,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                 'output': '(coefficients, _)'
                 },
             'import': {
-                'urbansim.models.household_location_choice_model': 'HouseholdLocationChoiceModel'
+                'household_location_choice_model_with_price_adj': 'HouseholdLocationChoiceModelWithPriceAdj'
                 },
             'init': {
                 'arguments': {
@@ -150,12 +150,13 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'dataset_pool': 'dataset_pool',
                     'location_set': 'gridcell',
                     'sample_size_locations': 30,
+                    'demand_string': "'demand_string'",
                     'capacity_string': "'vacant_residential_units'",
                     'number_of_units_string': "'residential_units'",
                     'number_of_agents_string': "'number_of_households'",
                     'run_config': {'lottery_max_iterations': 3}
                     },
-                'name': 'HouseholdLocationChoiceModel'
+                'name': 'HouseholdLocationChoiceModelWithPriceAdj'
                 },
             'prepare_for_estimate': {
                 'arguments': {
@@ -200,7 +201,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
         self.assertDictsEqual(result, expected)
         
     def test_with_arguments(self):
-        creator = HouseholdLocationChoiceModelConfigurationCreator(
+        creator = HouseholdLocationChoiceModelWithPriceAdjConfigurationCreator(
             agent_set = 'agent_set',
             debuglevel = 999,
             sampler = None,
@@ -228,7 +229,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                 'output': '(coefficients, _)'
                 },
             'import': {
-                'urbansim.models.household_location_choice_model': 'HouseholdLocationChoiceModel'
+                'household_location_choice_model_with_price_adj': 'HouseholdLocationChoiceModelWithPriceAdj'
                 },
             'init': {
                 'arguments': {
@@ -237,12 +238,13 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'dataset_pool': 'dataset_pool',
                     'location_set': 'location_set',
                     'sample_size_locations': 2000,
+                    'demand_string': "'demand_string'",
                     'capacity_string': "'vacant_residential_units'",
                     'number_of_units_string': "'residential_units'",
                     'number_of_agents_string': "'number_of_households'",
                     'run_config': {'lottery_max_iterations': 20}
                     },
-                'name': 'HouseholdLocationChoiceModel'
+                'name': 'HouseholdLocationChoiceModelWithPriceAdj'
                 },
             'prepare_for_estimate': {
                 'arguments': {
