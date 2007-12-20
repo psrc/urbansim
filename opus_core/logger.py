@@ -13,6 +13,7 @@
 #
 
 import os
+import re
 import sys
 import time
 import traceback
@@ -130,6 +131,16 @@ class _Logger(Singleton):
         """
         Write all logger messages to this file using the given mode.
         """
+        if re.search("^sftp://", file_name):  # if cache_directory is a remote sftp URL, redirect log file to tempdir/run_xxxx
+            import tempfile
+            from urlparse import urlparse
+            file_name = urlparse(file_name).path
+            file_name = os.path.join(tempfile.gettempdir(), 
+                                     os.path.basename( os.path.dirname(file_name) ), #run_xxxx.2007_12_19_16_32
+                                     os.path.basename(file_name))
+            os.makedirs( os.path.dirname(file_name) )
+            verbose = True #always prompt where the log file is
+        
         if verbose:
             self.log_status('Logging to file: ' + os.path.join(os.getcwd(),file_name))
             

@@ -388,10 +388,7 @@ class ModelSystem(object):
         ### TODO: Get rid of this! There is absolutely no good reason to be
         ###       changing the Configuration!
         resources['cache_directory'] = cache_directory
-
-        if not os.path.exists(cache_directory):
-            os.makedirs(cache_directory)
-
+        
         log_file = os.path.join(cache_directory, 'run_multiprocess.log')
         logger.enable_file_logging(log_file)
 
@@ -455,9 +452,6 @@ class ModelSystem(object):
         ### TODO: Get rid of this! There is no good reason to be changing the
         ###       Configuration.
         resources['cache_directory'] = cache_directory
-
-        if not os.path.exists(cache_directory):
-            os.makedirs(cache_directory)
 
         if run_in_background:
             optional_arguments = '&'
