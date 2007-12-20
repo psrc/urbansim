@@ -138,8 +138,7 @@ class Table(Visualization):
         cols = primary_keys + sorted(attributes)
         table = self.input_storage.load_table(
             table_name = dataset_name,
-            column_names = cols,
-            columns_have_type = False)
+            column_names = cols)
         
         kwargs = {}
         if self.output_type in ['csv','tab']:
@@ -148,6 +147,7 @@ class Table(Visualization):
             
         table_name = self.get_name(
             indicators_to_visualize = indicators_to_visualize,
+            computed_indicators = computed_indicators,
             dataset_name = dataset_name,
             result_template = result_template)
         
@@ -200,22 +200,20 @@ class Tests(AbstractIndicatorTest):
         
         table = Table(indicator_directory = self.source_data.get_indicator_directory(),
                       output_type = 'csv')
-        viz_result = table.visualize(indicators_to_visualize = ['attr1',
+        viz_result = table.visualize(
+                        indicators_to_visualize = ['attr1',
                                                    'attr2'], 
                         computed_indicators = computed_indicators)[0]
                         
-        self.assertEqual(viz_result.result_path, 'test__table__1980_1984.csv')
+        self.assertEqual(viz_result.result_path, os.path.join(indicator_path, 'test|table|1980-1983.csv'))
         
-        print viz_result.result_path
         
         self.assert_(os.path.exists(viz_result.result_path))
-        self.assert_(os.path.exists(os.path.join(indicator_path, 'test__table__attribute.csv')))        
+        self.assert_(os.path.exists(os.path.join(indicator_path, 'test|table|1980-1983.csv')))        
         
 
 
-    def skip_test__output_types(self):
-        from inprocess.travis.opus_core.indicator_framework.visualizers.table import Table
-        
+    def test__output_types(self):        
         output_types = ['csv','tab']
         try:        
             import dbfpy
@@ -223,17 +221,26 @@ class Tests(AbstractIndicatorTest):
             pass
         else:
             output_types.append('dbf')
-            
+
+        indicator = Indicator(
+                  dataset_name = 'test', 
+                  attribute = 'opus_core.test.attribute'
+        )        
+
+        maker = Maker()
+        computed_indicators = maker.create_batch(
+            indicators = {'attr1':indicator}, 
+            result_template = self.source_data)
+
         for output_type in output_types:
             table = Table(
-                source_data = self.cross_scenario_source_data,
-                attribute = 'opus_core.test.attribute',
-                dataset_name = 'test',
-                output_type = output_type)
-            
-            table.create(False)
-            path = table.get_file_path()
-            self.assertEqual(os.path.exists(path), True)
+                        indicator_directory = self.source_data.get_indicator_directory(),
+                        output_type = output_type)
+            viz_result = table.visualize(
+                        indicators_to_visualize = ['attr1'], 
+                        computed_indicators = computed_indicators)[0]
+                                    
+            self.assertTrue(os.path.exists(viz_result.result_path))
             
 if __name__ == '__main__':
     opus_unittest.main()
