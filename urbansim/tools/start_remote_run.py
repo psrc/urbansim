@@ -291,8 +291,6 @@ class RemoteRun:
 
     def wait_until_run_done_or_failed(self, run_id, std=[], msg='\n'):
         while True:
-            time.sleep(60)
-
             #raise if command returns an error in stderr
             if len(std) == 3: 
                 line = std[2].readline()
@@ -309,6 +307,9 @@ class RemoteRun:
                 break
             if run_id in runs_by_status.get('failed', []):
                 raise RuntimeError, "run failed: %s." % msg
+            
+            time.sleep(60)
+
         
     def update_services_database(self, run_activity, run_id, config):
         run_activity.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % run_id)
