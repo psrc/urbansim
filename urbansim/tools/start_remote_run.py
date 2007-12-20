@@ -89,7 +89,8 @@ class RemoteRun:
         (Refer to http://www.urbansim.org/opus/stable-releases/opus-2006-07-14/userguide/node16.html for more details on defining system variables)
         or stored in an SSH key file (http://linux.byexamples.com/archives/297/how-to-ssh-without-password/)
         
-        Requirements: - paramiko python module installed, in addition to python modules required by opus/urbansim 
+        Requirements: - paramiko python module (http://www.lag.net/paramiko/) installed, in addition to python modules required by opus/urbansim. 
+                        paramiko requires pyCrypto (http://www.voidspace.org.uk/python/modules.shtml#pycrypto)
                       - all computers have working opus installation
                       - remote computers and localhost (if UrbanSim runs on localhost) have SSH server running and can be accessed through SSH
                       - the services database connection (i.e. one has a connection to mysql server and database 'services' exists).
@@ -276,11 +277,11 @@ class RemoteRun:
                     
                     flt_directory_for_next_year = os.path.join(cache_directory, str(this_end_year+1))
                     if not self.is_localhost(self.urbansim_server_config['hostname']):
-                       if not exists_remotely(self.get_ssh_client(self.ssh['urbansim_server'], self.urbansim_server_config).open_sftp(), 
-                                              pathname2url(flt_directory_for_next_year) ):
-                           ##TODO: open_sftp may need to be closed
-                           raise StandardError, "travel model didn't create any output for year %s in directory %s on %s; there may be problem with travel model run" % \
-                                               (this_end_year+1, cache_directory, self.urbansim_server_config['hostname'])
+                        if not exists_remotely(self.get_ssh_client(self.ssh['urbansim_server'], self.urbansim_server_config).open_sftp(), 
+                                               pathname2url(flt_directory_for_next_year) ):
+                            ##TODO: open_sftp may need to be closed
+                            raise StandardError, "travel model didn't create any output for year %s in directory %s on %s; there may be problem with travel model run" % \
+                                  (this_end_year+1, cache_directory, self.urbansim_server_config['hostname'])
                     elif not os.path.exists(flt_directory_for_next_year):
                         raise StandardError, "travel model didn't create any output for year %s in directory %s; there may be problem with travel model run" % \
                                             (this_end_year+1, cache_directory)
