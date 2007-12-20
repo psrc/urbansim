@@ -237,7 +237,7 @@ class delimited_storage(Storage):
                 
         return column_names, column_types
     
-    __column_name_and_type_pattern = re.compile('^\s*([_A-Za-z]\w*)\s*(?:\:\s*([buifcSUV][0-9]*)\s*)?$')
+    __column_name_and_type_pattern = re.compile('^\s*([_A-Za-z][\w\.]*)\s*(?:\:\s*([buifcSUV][0-9]*)\s*)?$')
     def __get_header_information_from_table(self, table_name):
         file_path = self._get_file_path_for_table(table_name)
         
@@ -265,8 +265,7 @@ class delimited_storage(Storage):
                 
             available_column_names.append(match.group(1))
             available_column_types.append(match.group(2))
-            
-            
+
         return available_column_names, available_column_types
         
     def __infer_header_information_in_table(self, table_name):
@@ -604,7 +603,6 @@ class TestDelimitedStorage(TestStorageInterface):
         
         for header in bad_headers_to_test:
             match = pattern.match(header)
-            
             self.assert_(match is None)
                  
     def test_infer_header_information_in_table(self):
