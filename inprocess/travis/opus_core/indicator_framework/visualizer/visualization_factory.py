@@ -12,34 +12,28 @@
 # other acknowledgments.
 #
 
+from opus_core.class_factory import ClassFactory 
+
 class VisualizationFactory:
 
-    def visualize(self, indicators, *args, **kwargs):
-        raise 'visualize not implemented'
-    
-    
-
-
-
-
-    def test__output_types(self):
-        from inprocess.travis.opus_core.indicator_framework.visualizers.table import Table
+    def visualize(self, 
+                  indicators_to_visualize,
+                  computed_indicators,
+                  visualization_type, 
+                  *args, **kwargs):
+        module = 'opus_core.indicator_framework.visualizer.visualizations'
+        module_composed_name = module + visualization_type
         
-        output_types = ['csv','tab']
-        try:        
-            import dbfpy
-        except ImportError:
-            pass
-        else:
-            output_types.append('dbf')
-            
-        for output_type in output_types:
-            table = Table(
-                source_data = self.cross_scenario_source_data,
-                attribute = 'opus_core.test.attribute',
-                dataset_name = 'test',
-                output_type = output_type)
-            
-            table.create(False)
-            path = table.get_file_path()
-            self.assertEqual(os.path.exists(path), True)
+        example_indicator = computed_indicators[indicators_to_visualize[0]]
+        indicator_directory = example_indicator.result_template.get_indicator_directory()
+        additional_args = {
+            'indicator_directory':indicator_directory
+        }
+        kwargs.update(additional_args)
+        visualization = ClassFactory().get_class(
+            module_composed_name = module_composed_name,
+            arguments=kwargs)
+        
+        return visualization.visualize(
+           indicators_to_visualize = indicators_to_visualize,
+           computed_indicators = computed_indicators, *args)

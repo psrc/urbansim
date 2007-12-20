@@ -24,12 +24,13 @@ from numpy import array, subtract, concatenate
 
 class DatasetJunior(object):
     
-    def __init__(self, dataset):
+    def __init__(self, dataset, name):
         self.dataset = dataset
         self.primary_keys = dataset.get_id_name()
         self.computed = []
         self.column_representation = {}
         self.row_representation = {}
+        self.name = name
         
         self.reduced = False
 
@@ -42,7 +43,7 @@ class DatasetJunior(object):
         self.computed.append((year_replaced_attribute, year))
             
     ###### Reduce methods #####
-    def reduce(self, release_dataset = True):
+    def reduce(self, release_dataset = False):
         '''extracts primary keys and computed attributes from dataset and puts 
            them into a tuple-based representation more natural for a 
            table-like structure'''
@@ -152,7 +153,7 @@ class DatasetJunior(object):
         
 from opus_core.tests import opus_unittest
 from inprocess.travis.opus_core.indicator_framework.test_classes.test_with_attribute_data import TestWithAttributeData
-from inprocess.travis.opus_core.indicator_framework.maker.indicator import Indicator
+from inprocess.travis.opus_core.indicator_framework.representations.indicator import Indicator
 
 class DatasetJuniorTests(TestWithAttributeData):      
         
@@ -235,7 +236,8 @@ class DatasetJuniorTests(TestWithAttributeData):
         dataset = self._get_dataset(dataset_name = 'test', 
                                     cache_directory = self.temp_cache_path, 
                                     year = year)
-        dataset_junior = DatasetJunior(dataset = dataset)
+        dataset_junior = DatasetJunior(dataset = dataset,
+                                       name = 'test')
         indicator = Indicator(
                   dataset_name = 'test', 
                   attribute = 'opus_core.test.attribute'
@@ -275,7 +277,8 @@ class DatasetJuniorTests(TestWithAttributeData):
         dataset = self._get_dataset(dataset_name = 'test', 
                                     cache_directory = self.temp_cache_path, 
                                     year = 1980)
-        dataset_junior = DatasetJunior(dataset=dataset)
+        dataset_junior = DatasetJunior(dataset=dataset,
+                                       name = 'test')
 
         
         dataset_junior._build_row_representation(id_cols = id_cols, 
@@ -290,8 +293,10 @@ class DatasetJuniorTests(TestWithAttributeData):
                                     cache_directory = self.temp_cache_path, 
                                     year = 1980)
         
-        dataset_junior1 = DatasetJunior(dataset=dataset)
-        dataset_junior2 = DatasetJunior(dataset=dataset)
+        dataset_junior1 = DatasetJunior(dataset=dataset,
+                                        name = 'test')
+        dataset_junior2 = DatasetJunior(dataset=dataset,
+                                        name = 'test2')
 
         id_cols1 = [
             array([2,4,6]),

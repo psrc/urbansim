@@ -24,8 +24,8 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.logger import logger
 
 from inprocess.travis.opus_core.indicator_framework.utilities.integrity_error import IntegrityError
-from inprocess.travis.opus_core.indicator_framework.maker.computed_indicator import ComputedIndicator
-from inprocess.travis.opus_core.indicator_framework.maker.indicator import Indicator
+from inprocess.travis.opus_core.indicator_framework.representations.computed_indicator import ComputedIndicator
+from inprocess.travis.opus_core.indicator_framework.representations.indicator import Indicator
 
 from numpy import array, subtract, concatenate
 from opus_core.storage_factory import StorageFactory
@@ -47,7 +47,7 @@ class Maker(object):
 
         cache_directory = self.source_data.cache_directory
         
-        self.storage_location = os.path.join(cache_directory, 'indicators')
+        self.storage_location = self.source_data.get_indicator_directory()
         if not os.path.exists(self.storage_location):
             os.mkdir(self.storage_location)
                 
@@ -76,7 +76,7 @@ class Maker(object):
         self.in_expression = False
         
         computed_indicators = {}
-        all_indicators = {}
+        datasets = {}
         
         for year in self.source_data.years:
             for name, indicator in indicators.items():
@@ -84,25 +84,28 @@ class Maker(object):
                         year = year, 
                         indicator = indicator)
                 dataset_junior.reduce()
-                if indicator.name in all_indicators:
-                    all_indicators[indicator.name].join(
+                unique_dataset_identifier = indicator.dataset_name
+                if unique_dataset_identifier in datasets:
+                    datasets[unique_dataset_identifier].join(
                              dataset = dataset_junior, 
                              fill_value = -1)
                 else:
-                    all_indicators[indicator.name] = dataset_junior
+                    datasets[unique_dataset_identifier] = dataset_junior
                 
             self._release_dataset()
                         
         for name, indicator in indicators.items():
             computed_indicator = ComputedIndicator(
                 indicator = indicator,
-                result_template = self.source_data)
-            self._write_indicator(
-                computed_indicator = computed_indicator, 
-                dataset = all_indicators[indicator.name])
-                
+                result_template = self.source_data,
+                dataset_metadata = {'dataset_name':indicator.dataset_name,
+                                    'primary_keys':datasets[indicator.dataset_name].primary_keys})
+            
             computed_indicators[name] = computed_indicator
-        
+                        
+        for dataset_name, dataset in datasets.items():
+            self._write_dataset(dataset = dataset)
+                
         self.computed_indicators[result_template.name] = computed_indicators
         return computed_indicators
                     
@@ -176,21 +179,18 @@ class Maker(object):
         return results
     
     ######## Output #############
-    def _write_indicator(self, computed_indicator, dataset):
+    def _write_dataset(self, dataset):
         storage_type = 'csv'
-        file_name = computed_indicator.get_file_name(extension = storage_type, 
-                                                     years = self.source_data.years,
-                                                     suppress_extension_addition = True)
-        store = StorageFactory().get_storage(storage_type + '_storage', storage_location = self.storage_location) 
+        store = StorageFactory().get_storage(storage_type + '_storage', 
+                                             storage_location = self.storage_location) 
         
         non_primary_keys = sorted([col for col in dataset.get_columns() if col not in dataset.primary_keys])
         cols = dataset.primary_keys + non_primary_keys
 
         store.write_table(
-            table_name = file_name, 
+            table_name = dataset.name, 
             table_data = dataset.get_column_representation(), 
-            fixed_column_order = cols,
-            append_type_info = False)
+            fixed_column_order = cols)
     
     ######## Cache management #########
         
@@ -250,7 +250,8 @@ class Maker(object):
             self.dataset_state['current_cache_directory'] = SimulationState().cache_directory
             self.dataset_state['dataset_name'] = dataset_name
                 
-            self.dataset = DatasetJunior(dataset = SessionConfiguration().get_dataset_from_pool(dataset_name))
+            self.dataset = DatasetJunior(dataset = SessionConfiguration().get_dataset_from_pool(dataset_name),
+                                         name = dataset_name)
         return self.dataset
     
 
@@ -306,11 +307,14 @@ class Tests(AbstractIndicatorTest):
         maker.create(indicator = indicator, 
                      result_template = self.source_data)
         
-        file_path = os.path.join(indicator_path, 'test__attribute__1980-1981-1982-1983.csv')
-        self.assert_(os.path.exists(indicator_path))
-        self.assert_(os.path.exists(file_path))
+        path = os.path.join(self.source_data.get_indicator_directory(),
+                            'test.csv')
         
-        f = open(file_path)
+        #file_path = os.path.join(indicator_path, 'test__attribute__1980-1981-1982-1983.csv')
+        self.assert_(os.path.exists(indicator_path))
+        self.assert_(os.path.exists(path))
+        
+        f = open(path)
         cols = [col.strip() for col in f.readline().split(',')]
         lines = f.readlines()
         f.close()
@@ -326,7 +330,7 @@ class Tests(AbstractIndicatorTest):
             self.assertEqual(row[0],self.id_vals[i])
             for col_index in range(1,len(cols)):
                 #each attribute value should be correct
-                if cols[col_index] == 'opus_core.test.attribute_1983':
+                if cols[col_index] == 'opus_core.test.attribute_1983:i4':
                     self.assertEqual(row[col_index],self.attribute_vals_diff[i])
                 else:
                     self.assertEqual(row[col_index],self.attribute_vals[i])
@@ -343,7 +347,8 @@ class Tests(AbstractIndicatorTest):
         computed_indicator = maker.create(indicator = indicator,
                                            result_template = self.source_data)
         
-        path = computed_indicator.get_file_path(years = self.source_data.years)
+        path = os.path.join(self.source_data.get_indicator_directory(),
+                            'test.csv') #computed_indicator.get_file_path(years = self.source_data.years)
         f = open(path)
         f.readline() #chop off header
     
@@ -368,7 +373,9 @@ class Tests(AbstractIndicatorTest):
         computed_indicator = maker.create(indicator = indicator,
                                            result_template = self.source_data)
         
-        path = computed_indicator.get_file_path(years = self.source_data.years)
+        path = os.path.join(self.source_data.get_indicator_directory(),
+                    'test.csv')
+#        path = computed_indicator.get_file_path(years = self.source_data.years)
 
         f = open(path)
         f.readline() #chop off header

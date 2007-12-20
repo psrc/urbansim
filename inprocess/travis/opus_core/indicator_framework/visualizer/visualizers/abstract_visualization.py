@@ -13,12 +13,21 @@
 # 
 
 class Visualization(object):
+    
+    def visualize(self):
+        '''Visualizes the given indicators and returns a dictionary
+           with the visualized indicators. 
+        '''
+        message = ('visualization.visualize needs '
+                   'to be overridden by child class.')
+        raise NotImplementedError(message)
+
     def get_file_extension(self):
         '''Returns the file extension of the outputted indicator 
         
            Abstract method that needs to be overridden in child classes.
         '''
-        message = ('abstract_image_type.get_file_extension needs '
+        message = ('visualization.get_file_extension needs '
                    'to be overridden by child class.')
         raise NotImplementedError(message)
 
@@ -27,7 +36,7 @@ class Visualization(object):
         
            Abstract method that needs to be overridden in child classes.
         '''
-        message = ('abstract_image_type.get_visualization_shorthand needs '
+        message = ('visualization.get_visualization_shorthand needs '
                    'to be overridden by child class.')
         raise NotImplementedError(message)
             

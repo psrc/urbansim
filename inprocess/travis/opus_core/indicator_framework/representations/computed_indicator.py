@@ -18,7 +18,10 @@ from time import strftime, localtime, time
 from inprocess.travis.opus_core.indicator_framework.utilities.indicator_data_manager import IndicatorDataManager
 
 class ComputedIndicator:
-    def __init__(self, indicator, result_template):
+    def __init__(self, 
+                 indicator, 
+                 result_template, 
+                 dataset_metadata):
 
         self.indicator = indicator
         self.result_template = result_template
@@ -26,6 +29,7 @@ class ComputedIndicator:
         cache_directory = self.result_template.cache_directory
         self.storage_location = os.path.join(cache_directory, 'indicators')
         self.date_computed = strftime("%Y-%m-%d %H:%M:%S", localtime(time()))
+        self.dataset_metadata = dataset_metadata
         
     def get_attribute_alias(self, year = None):
         return self.indicator.get_attribute_alias(year)
@@ -40,8 +44,7 @@ class ComputedIndicator:
         short_name = self.indicator.name
             
         file_name = '%s__%s'%(self.indicator.dataset_name,
-                                  short_name
-                                  )
+                              short_name)
         
         if years is not None:
             file_name += '__%s'%('-'.join([str(year) for year in years]))
@@ -63,7 +66,7 @@ class ComputedIndicator:
            source_data = self.result_template)
         
 from opus_core.tests import opus_unittest
-from inprocess.travis.opus_core.indicator_framework.maker.indicator import Indicator
+from inprocess.travis.opus_core.indicator_framework.representations.indicator import Indicator
 from inprocess.travis.opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
 
 class ComputedIndicatorTests(AbstractIndicatorTest):  
@@ -75,7 +78,11 @@ class ComputedIndicatorTests(AbstractIndicatorTest):
         
         computed_indicator = ComputedIndicator(
             result_template = self.source_data,
-            indicator = indicator                                       
+            indicator = indicator,
+            dataset_metadata = {
+                'dataset_name':indicator.dataset_name,
+                'primary_keys':['id']                    
+            }                                       
         )
         returned_path = computed_indicator.get_file_name()
         expected_path = 'test__population.csv'

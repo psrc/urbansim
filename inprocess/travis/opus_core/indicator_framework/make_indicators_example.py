@@ -94,25 +94,27 @@ from inprocess.travis.opus_core.indicator_framework.visualizer.visualization_fac
 from opus_core.database_management.database_configuration import DatabaseConfiguration
 
 visualizer = VisualizationFactory()
-visualized_indicators = []
+visualizations = []
 
 # View an indicator as a matplotlib Map
 maps = ['zone_population',
         'gridcell_population']
-visualized_indicators += visualizer.visualize(
+visualizations += visualizer.visualize(
     indicators_to_visualize = maps, #override default indicators to visualize (all)
     computed_indicators = computed_indicators,
     visualization_type = 'matplotlib_map',
+    name = 'my_maps'
     )
 
 # View an indicator as a matplotlib Chart
 
 charts = ['gridcell_population']
-visualized_indicators += visualizer.visualize(
+visualizations += visualizer.visualize(
     indicators_to_visualize = charts,
     computed_indicators = computed_indicators,
     visualization_type = 'matplotlib_chart',
-    years = [2010] #override default years to visualize (all)
+    years = [2010], #override default years to visualize (all)
+    name = 'charts'
     )
 
 # Write an indicator as a Table
@@ -121,33 +123,35 @@ tables = ['zone_industrial_sqft',
           'large_area_population_change',
           'alldata_home_based_jobs']
 for output_type in ['tab','cvs','dbf']:
-    visualized_indicators += visualizer.visualize(
+    visualizations += visualizer.visualize(
         indicators_to_visualize = tables,
         computed_indicators = computed_indicators,
         visualization_type = 'table',
-        output_type = output_type
+        output_type = output_type,
+        name = 'tables',
         )
     
 # Write a set of indicators sharing a dataset as a Dataset Table
 
 indicators_in_dataset_table = ['zone_population',
                                'zone_industrial_sqft']
-visualized_indicators += visualizer.visualize(
+visualizations += visualizer.visualize(
     indicators_to_visualize = indicators_in_dataset_table,
     computed_indicators = computed_indicators,
     visualization_type = 'dataset_table',
     output_type = 'csv',
     exclude_condition = 'urbansim.zone.population<100' #this accepts any opus expression
-    )    
+    name = 'dataset_table',
+    )
 
 ################################################################
 #Generate a REPORT with the visualizations
 ################################################################
 from inprocess.travis.opus_core.indicator_framework.reporter.report_factory import ReportFactory
 
-reporter = ReportFactory
+reporter = ReportFactory()
 reporter.generate_report(
-    indicators_in_report = visualized_indicators,
+    visualized_indicators = visualized_indicators,
     report_type = 'basic',
     open_immediately = True,
     storage_location = 'c:/my_reports'                     

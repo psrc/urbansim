@@ -40,6 +40,9 @@ class SourceData(object):
         self.name = name  
             
         self._check_integrity()
+        
+    def get_indicator_directory(self):
+        return os.path.join(self.cache_directory, 'indicators')
             
     def get_run_description(self):
         if self.run_description == '':
