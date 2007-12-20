@@ -19,6 +19,6 @@ class Visualization(object):
                  result_path,
                  name):
         self.indicators = indicators
-        visualization_type = visualization_type
-        result_path = result_path
-        name = name
+        self.visualization_type = visualization_type
+        self.result_path = result_path
+        self.name = name
