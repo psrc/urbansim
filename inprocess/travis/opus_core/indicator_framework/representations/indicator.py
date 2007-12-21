@@ -24,7 +24,7 @@ class Indicator:
         self.operation = operation                        
         self.name = name
         self.name = self.get_indicator_name(year = None)
-        self.date_computed = None    
+        self.date_computed = None
                     
         #TODO: write this method
         #self._check_integrity()
@@ -39,7 +39,7 @@ class Indicator:
             name = '%s_%s'%(self.operation, name)
             
         return name
-
+        
     def get_attribute_alias(self, year = None):
         attribute = self.attribute
         if year is not None:

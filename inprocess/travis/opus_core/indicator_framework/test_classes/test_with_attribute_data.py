@@ -40,8 +40,8 @@ class TestWithAttributeData(opus_unittest.OpusTestCase):
         self.attribute_vals2 = array([50,60,70,80])
         self.id_vals = array([1,2,3,4])
         
-        years = [1980, 1981, 1982]
-        for year in years:
+        self.years = [1980, 1981, 1982]
+        for year in self.years:
             self.add_attributes(year, self.attribute_vals,
                                 self.attribute_vals2)
 

@@ -13,24 +13,25 @@
 # 
 
 from opus_core.logger import logger
-import os, re, sys, time, traceback
-from copy import copy
-
-from numpy import newaxis, concatenate, rank
-from inprocess.travis.opus_core.indicator_framework.visualizer.visualizers.abstract_visualization\
-    import Visualization
+import os
     
 from opus_core.storage_factory import StorageFactory
 from opus_core.database_management.database_configuration import DatabaseConfiguration
 from inprocess.travis.opus_core.indicator_framework.representations.visualization import Visualization
 
-class Table(Visualization):
+from numpy import where, array
 
+class Table(Visualization):
+    ALL = 1
+    PER_YEAR = 2
+    PER_ATTRIBUTE = 3
+    
     def __init__(self, 
                  indicator_directory,
                  name = None,
                  output_type = None,
-                 storage_location = None):
+                 storage_location = None,
+                 output_style = ALL):
         
         if output_type == 'sql' and not isinstance(storage_location, DatabaseConfiguration): 
             raise "If Table output_type is 'sql', a Database object must be passed as storage_location."
@@ -40,7 +41,14 @@ class Table(Visualization):
             raise "If Table output_type is %s, storage_location must be a path to the output directory"%output_type
         elif output_type not in ['dbf', 'csv', 'tab', 'sql']:
             raise "Table output_type must be either dbf, csv, tab, or sql"
-
+        
+        if output_style not in [Table.ALL, 
+                                Table.PER_YEAR, 
+                                Table.PER_ATTRIBUTE]:
+            raise ('%s output_style is not appropriate.'%output_style, 
+                   'Choose from Table.ALL, Table.PER_YEAR, ',
+                   'and Table.PER_ATTRIBUTE')
+            
         self.output_type = output_type
         kwargs = {}
         if self.output_type == 'sql':
@@ -129,31 +137,37 @@ class Table(Visualization):
         primary_keys = example_indicator.dataset_metadata['primary_keys']
         result_template = example_indicator.result_template
         
-        attributes = []
-        for year in result_template.years:
-            attributes += ['%s_%i'% \
-                           (computed_indicators[ind].indicator.attribute.replace('DDDD',repr(year)),year) 
-                           for ind in indicators_to_visualize]
+        attributes = [computed_indicators[name].get_computed_dataset_column_name()
+                      for name in indicators_to_visualize]
              
         cols = primary_keys + sorted(attributes)
         table = self.input_storage.load_table(
             table_name = dataset_name,
             column_names = cols)
-        
-        kwargs = {}
-        if self.output_type in ['csv','tab']:
-            kwargs['fixed_column_order'] = cols
-            kwargs['append_type_info'] = False
             
         table_name = self.get_name(
             indicators_to_visualize = indicators_to_visualize,
             computed_indicators = computed_indicators,
             dataset_name = dataset_name,
             result_template = result_template)
+
         
+        #convert from id, year, attr representation to id, attr_year
+        new_data, cols = self._convert_to_tabular_form(
+            old_data = table,
+            attributes = attributes,
+            primary_keys = primary_keys,
+            years = result_template.years
+        )
+
+        kwargs = {}
+        if self.output_type in ['csv','tab']:
+            kwargs['fixed_column_order'] = cols
+            kwargs['append_type_info'] = False
+                    
         self.output_storage.write_table(
             table_name = table_name, 
-            table_data = table, 
+            table_data = new_data, 
             **kwargs)
         
         viz_metadata = Visualization(
@@ -162,15 +176,61 @@ class Table(Visualization):
                  visualization_type = self.get_visualization_type(),
                  result_path = os.path.join(self.indicator_directory,
                                             table_name + '.csv'),
-                 name = self.name
+                 name = self.name,
+                 years = result_template.years
                 )
         
         return [viz_metadata]
+    
+    def _convert_to_tabular_form(self,
+                                old_data,
+                                attributes,
+                                primary_keys,
+                                years):
+        #TODO: make sure that column types are properly handled
+        id_cols = [id_col for id_col in primary_keys if id_col != 'year']
         
+        keys = set(zip(
+                   *[list(old_data[col]) for col in id_cols]))
+        
+        keys = sorted(list(keys))
+        default_array = [-1 for i in range(len(keys))]
+
+        key_to_index_map = dict([(keys[i],i) for i in range(len(keys))])
+        
+        i = 0
+        new_names = {}
+        new_data = {}
+        for id_col in id_cols:
+            new_data[id_col] = array(default_array)
+        
+        for attribute in attributes:
+            for year in years:
+                if attribute.find('DDDD') == -1:
+                    new_name = '%s_%i'%(attribute, year)
+                else:
+                    new_name = attribute.replace('DDDD', repr(year))
+                new_names[(i,year)] = new_name                
+                new_data[new_name] = array(default_array)
+            i += 1
+        new_names = dict(new_names)
+
+        for i in range(len(old_data[primary_keys[0]])):
+            key = tuple([old_data[col][i] for col in id_cols])
+            index_in_new = key_to_index_map[key]
+            year = old_data['year'][i]
+            j = 0
+            for attribute in attributes:  
+                new_name = new_names[(j,year)]
+                new_data[new_name][index_in_new] = old_data[attribute][i]
+                j += 1          
+            for id_col in id_cols:
+                new_data[id_col][index_in_new] = old_data[id_col][i]
+        
+        return new_data, id_cols + sorted(new_names.values())
         
         
 from opus_core.tests import opus_unittest
-from inprocess.travis.opus_core.indicator_framework.maker.source_data import SourceData
 from inprocess.travis.opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
 from inprocess.travis.opus_core.indicator_framework.maker.maker import Maker
 from inprocess.travis.opus_core.indicator_framework.representations.indicator import Indicator
@@ -212,7 +272,37 @@ class Tests(AbstractIndicatorTest):
         self.assert_(os.path.exists(os.path.join(indicator_path, 'test|table|1980-1983.csv')))        
         
 
+    def test__convert_to_tabular_form(self):
+        table = Table(indicator_directory = self.source_data.get_indicator_directory(),
+                      output_type = 'csv')
+        
+        old_data = {
+            'id':array([1,2,3,1,2,4]),
+            'id2':array([3,4,5,3,4,5]),
+            'year':array([2000,2000,2000,2002,2002,2002]),
+            'attr1':array([1,2,3,10,20,30]),
+            'attr2':array([2,3,4,20,30,40]),
+        }
 
+        expected = {
+            'id':array([1,2,3,4]),
+            'id2':array([3,4,5,5]),
+            'attr1_2000':array([1,2,3,-1]),
+            'attr1_2002':array([10,20,-1,30]),
+            'attr2_2000':array([2,3,4,-1]),
+            'attr2_2002':array([20,30,-1,40]),
+        }
+               
+        output, cols = table._convert_to_tabular_form(
+            old_data = old_data,     
+            attributes = ['attr1','attr2'], 
+            primary_keys = ['id','id2', 'year'], 
+            years = [2000,2002])
+        
+        self.assertEqual(len(expected.keys()), len(output.keys()))
+        for k,v in expected.items():
+            self.assertEqual(list(v), list(output[k]))        
+        
     def test__output_types(self):        
         output_types = ['csv','tab']
         try:        

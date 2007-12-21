@@ -17,8 +17,10 @@ class Visualization(object):
                  indicators, 
                  visualization_type, 
                  result_path,
-                 name):
+                 name,
+                 years):
         self.indicators = indicators
         self.visualization_type = visualization_type
         self.result_path = result_path
         self.name = name
+        self.years = years
