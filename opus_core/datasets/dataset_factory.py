@@ -64,7 +64,8 @@ class DatasetFactory(object):
         In Opus, the convention is that the class name is same as the module name.
         """
         return '%s_dataset' % dataset_name
-        
+       
+    %TODO: the method below is incorrect 
     def table_name_for_dataset(self, dataset_name):
         """
         Return the table name for this dataset, e.g. 'gridcells' for dataset 'gridcell'.
