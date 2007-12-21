@@ -12,26 +12,6 @@
 # other acknowledgments.
 #
 
-from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
-
-class has_DDD_units(Variable):
-    """Boolean indicating whether the parcel has DDD residential units"""
-
-    residential_units = "residential_units"
-
-    def __init__(self, number):
-        Variable.__init__(self)
-        self.tnumber = number
-
-    def dependencies(self):
-        return [my_attribute_label(self.residential_units)]
-
-    def compute(self,  dataset_pool):
-        return self.get_dataset().get_attribute(self.residential_units) == self.tnumber
-
-    def post_check(self,  values, dataset_pool=None):
-        self.do_check("x == True or x == False", values)
 
 
 from opus_core.tests import opus_unittest
@@ -43,16 +23,19 @@ class Tests(opus_unittest.OpusTestCase):
             __file__,
             package_order=['urbansim_parcel', 'urbansim'],
             test_data={
-                "parcel":{
-                          "parcel_id":array([1,2,3]),
-                          "residential_units":array([0, 2, 1]),                
+                       "building":{
+                                   "building_id": array([1,2,3,4,5,6]),
+                                   },
+                       "household":{
+                          "household_id": arange(1,7),
+                          "building_id":array([1,2,2,2,1,5]),
+                          "persons":array([2,1,1,5,3,7]),
                           }
             }
         )
-        should_be = array([False, True, False])
-        instance_name = "urbansim_parcel.parcel.has_2_units"    
-        tester.test_is_close_for_family_variable(self, should_be, instance_name)
-
+        
+        should_be = array([5,7,0,0,7,0])
+        tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 
 if __name__=='__main__':
     opus_unittest.main()

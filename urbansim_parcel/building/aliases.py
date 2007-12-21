@@ -21,6 +21,8 @@ aliases = [
    "generic_building_type_id = building.disaggregate(building_type.generic_building_type_id)",
    "parcel_sqft = building.disaggregate(parcel.parcel_sqft)",
    "number_of_jobs = building.number_of_agents(job)",
+   "number_of_households = building.number_of_agents(household)",
+   "population = building.aggregate(household.persons)",
    "occupied_building_sqft_by_non_home_based_jobs = building.aggregate(urbansim_parcel.job.sqft_imputed * urbansim.job.is_building_type_non_home_based)",
    "building_type_name = building.disaggregate(building_type.building_type_name)",
    "is_residential = building.disaggregate(building_type.is_residential)",
@@ -31,4 +33,4 @@ aliases = [
    "zone_id = building.disaggregate(parcel.zone_id)",
    "has_vacant_residential_units = urbansim_parcel.building.vacant_residential_units > 0",
    "is_governmental = building.disaggregate(building_type.generic_building_type_description == 'government')",
-           ]
+    ]

@@ -42,35 +42,36 @@ class sqft_imputed(Variable):
         size = self.get_dataset().get_attribute("sqft").sum()
         self.do_check("x >= 0 and x <= " + str(size), values)
 
-if __name__=='__main__':
-    import unittest
-    from numpy import array
-    from opus_core.tests.utils.variable_tester import VariableTester
+from opus_core.tests import opus_unittest
+from numpy import array
+from opus_core.tests.utils.variable_tester import VariableTester
 
-    class Tests(unittest.TestCase):
-        def test(self):
-            tester = VariableTester(
-            __file__,
-            package_order=['urbansim_parcel','urbansim'],
-            test_data={
-            "building":{"building_id":         array([1,2,3,4]),
-                       "zone_id":              array([1,2,3,3]),
-                       "building_type_id":     array([1,3,1,2]),
-                },
-            "building_sqft_per_job":{
-                       "zone_id":              array([1,  1, 1,  2, 2, 2,  3, 3]),
-                       "building_type_id":     array([1,  2, 3,  1, 2, 3,  1, 3]),
-                       "building_sqft_per_job":array([100,50,200,80,60,500,20,10]),
-                },  
-             "job": {"job_id":      array([1,2,3,4, 5, 6, 7, 8]),
+class Tests(opus_unittest.OpusTestCase):
+    def test(self):
+        tester = VariableTester(
+        __file__,
+        package_order=['urbansim_parcel','urbansim'],
+        test_data={
+        "building":{"building_id":         array([1,2,3,4]),
+                   "zone_id":              array([1,2,3,3]),
+                   "building_type_id":     array([1,3,1,2]),
+            },
+        "building_sqft_per_job":{
+                   "zone_id":              array([1,  1, 1,  2, 2, 2,  3, 3]),
+                   "building_type_id":     array([1,  2, 3,  1, 2, 3,  1, 3]),
+                   "building_sqft_per_job":array([100,50,200,80,60,500,20,10]),
+            },  
+         "job": {"job_id":      array([1,2,3,4, 5, 6, 7, 8]),
 #                     "sqft":        array([0,1,4,0, 2, 5, 0, 0]),
-                     "building_id": array([2,1,3,1, 1, 2, 3, 4])
-                               },
-                       }
-                                    )
-            # mean over "building_sqft_per_job" is 127.5
+                 "building_id": array([2,1,3,1, 1, 2, 3, 4])
+                           },
+                   }
+                                )
+        # mean over "building_sqft_per_job" is 127.5
 #            should_be = array([500, 1, 4, 100, 2, 5, 20, 128])
-            should_be = array([500, 100, 20, 100, 100, 500, 20, 128])
-            tester.test_is_equal_for_variable_defined_by_this_module(self, should_be)
+        should_be = array([500, 100, 20, 100, 100, 500, 20, 128])
+        tester.test_is_equal_for_variable_defined_by_this_module(self, should_be)
 
-    unittest.main()
+
+if __name__=='__main__':
+    opus_unittest.main()

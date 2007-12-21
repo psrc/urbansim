@@ -13,5 +13,7 @@
 # 
 
 aliases = [
-   "zone_id = household.disaggregate(urbansim_parcel.building.zone_id)"
+   "zone_id = household.disaggregate(urbansim_parcel.building.zone_id)",
+   "parcel_id = household.disaggregate(urbansim_parcel.building.parcel_id)"
+   
            ]

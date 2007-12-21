@@ -12,18 +12,6 @@
 # other acknowledgments.
 # 
 
-from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
-from urbansim.functions import attribute_label
-
-class grid_id(Variable):
-    """The grid id of this job. """
-   
-    def dependencies(self):
-        return ["_grid_id = job.disaggregate(parcel.grid_id, [building])"]
-        
-    def compute(self,  dataset_pool):
-        return self.get_dataset().get_attribute("_grid_id")
     
 from opus_core.tests import opus_unittest
 from opus_core.datasets.dataset_pool import DatasetPool

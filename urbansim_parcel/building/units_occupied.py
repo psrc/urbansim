@@ -26,20 +26,14 @@ class units_occupied(Variable):
         
     def dependencies(self):
         return [
-#                "occupied_building_sqft = building.aggregate(business.building_sqft)",
-#                "occupied_residential_units = building.number_of_agents(household)",
-#                "urbansim_parcel.building.building_sqft_per_residential_unit",
-#                "_units_occupied = building.occupied_building_sqft + building.occupied_residential_units * building.building_sqft_per_residential_unit"
                 "urbansim_parcel.building.generic_unit_name",
                 "urbansim_parcel.building.parcel_sqft",
                 "building_type.unit_name"
-##                "generic_building_type_name = building.disaggregate(generic_building_type.generic_building_type_name, intermediates=[building_type])"
                 ]
 
     def compute(self,  dataset_pool):
         buildings = self.get_dataset()
         results = zeros(buildings.size(), dtype=self._return_type)
-#        results += buildings.get_attribute("_units_occupied")
         ##TODO: these dummy values are used when the businesses and households tables aren't ready
         for unit_name in unique_values(dataset_pool.get_dataset("building_type").get_attribute("unit_name")):
             #should not count parcel_sqft
@@ -51,3 +45,6 @@ class units_occupied(Variable):
     def post_check(self,  values, dataset_pool=None):
 #        size = dataset_pool.get_dataset("building").size()
         self.do_check("x >= 0")
+
+
+## TODO: create unittest for this variable

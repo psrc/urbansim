@@ -12,21 +12,6 @@
 # other acknowledgments.
 # 
 
-from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
-from urbansim.functions import attribute_label
-
-class parcel_id(Variable):
-    """The parcel_id of household."""
-
-    gc_parcel_id = "parcel_id"
-    
-    def dependencies(self):
-        return ["_parcel_id = job.disaggregate(building.parcel_id)"]
-        
-    def compute(self,  dataset_pool):
-        return self.get_dataset().get_attribute("_parcel_id")
-
 from opus_core.tests import opus_unittest
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
