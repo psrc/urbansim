@@ -47,28 +47,29 @@ class SSS_travel_time_weighted_access_by_population(Variable):
         
         return results
 
-if __name__=='__main__':
-    import unittest
-    from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numpy import array
-    from numpy import ma
-    from sanfrancisco.opus_package_info import package
-    
-    class Tests(unittest.TestCase):
-        def test_my_input(self):
-            mode = 'hwy'
-            values = VariableTestToolbox().compute_variable(
-                "sanfrancisco.zone.%s_travel_time_weighted_access_by_population" % mode,
-                {"zone":{
+from opus_core.tests import opus_unittest
+from numpy import array, arange
+from opus_core.tests.utils.variable_tester import VariableTester
+class Tests(opus_unittest.OpusTestCase):
+    def test_my_inputs(self):
+        mode = 'hwy'
+        tester = VariableTester(
+            __file__,
+            package_order=['urbansim_parcel', 'urbansim'],
+            test_data={
+                 "zone":{
                     "zone_id":array([1, 3]),
                     "population":array([10, 1])},
                  "travel_data":{
                      "from_zone_id":array([3,3,1,1]),
                      "to_zone_id":array([1,3,1,3]),
-                     mode:array([1, 2, 3, 4])}},
-                dataset = "zone")
+                     mode:array([1, 2, 3, 4])}            
+                 }
+        )
+        should_be = array([2.11111, 0.875])
+        instance_name = "sanfrancisco.zone.%s_travel_time_weighted_access_by_population" % mode    
+        tester.test_is_close_for_family_variable(self, should_be, instance_name)
 
-            should_be = array([2.11111, 0.875])
-            self.assert_(ma.allclose(values, should_be, rtol=1e-3), "Error in %s_travel_time_weighted_access_by_population" % mode)
 
-    unittest.main()
+if __name__=='__main__':
+    opus_unittest.main()

@@ -58,37 +58,3 @@ class Tests(opus_unittest.OpusTestCase):
 
 if __name__=='__main__':
     opus_unittest.main()
-    
-#if __name__=='__main__':
-#    import unittest
-#    from urbansim.variable_test_toolbox import VariableTestToolbox
-#    from numarray import array
-#    from numarray.ma import allequal
-#    from opus_core.resources import Resources    
-#    from sanfrancisco.datasets.parcels import ParcelSet    
-#    
-#    class Tests(unittest.TestCase):
-#        variable_name = "sanfrancisco.household.zone_id"
-#
-#        def test_my_inputs(self):
-#            parcel_id = array([1,1,2,3,7])
-##            zone_id = array([4, 5, 6])
-#
-#            resources = Resources({'data':
-#                                   {"parcel_id":array([1,2,3,4,5]),
-#                                    "zone_id":  array([2,1,2,3,1]),
-#                                    },
-#                                  })
-#            parcels = ParcelSet(resources=resources, in_storage_type="RAM")
-#
-#            values = VariableTestToolbox().compute_variable(self.variable_name, \
-#                {"household":{ \
-#                    "parcel_id":parcel_id}, \
-#                 "parcel":parcels }, \
-#                dataset = "household")
-#            should_be = array([2, 2, 1, 2, -1])
-#            
-#            self.assertEqual(allequal(values, should_be), \
-#                             True, msg = "Error in " + self.variable_name)
-#
-#    unittest.main()

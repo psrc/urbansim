@@ -43,34 +43,35 @@ class SSS_travel_time_to_DDD(Variable):
             time = zeros(self.get_dataset().size(), dtype=float32)
         return time
 
-if __name__=='__main__':
-    import unittest
-    from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numpy import array
-    from numpy import ma
-    from psrc.opus_package_info import package
-    
-    class Tests(unittest.TestCase):
-        def get_values(self, number):
-            values = VariableTestToolbox().compute_variable(
-                "sanfrancisco.zone.hwy_travel_time_to_%d" % number,
-                {"zone":{
+
+from opus_core.tests import opus_unittest
+from numpy import array, arange
+from opus_core.tests.utils.variable_tester import VariableTester
+class Tests(opus_unittest.OpusTestCase):
+    def do(self,sss, ddd, should_be):
+        tester = VariableTester(
+            __file__,
+            package_order=['urbansim'],
+            test_data={
+                 "zone":{
                     "zone_id":array([1,3])},
                  "travel_data":{
                      "from_zone_id":array([3,3,1,1]),
                      "to_zone_id":array([1,3,1,3]),
-                     "hwy":array([1.1, 2.2, 3.3, 4.4])}},
-                dataset = "zone")
-            return values
+                     sss:array([1.1, 2.2, 3.3, 4.4])}            
+                 }
+        )
+        instance_name = "sanfrancisco.zone.%s_travel_time_to_%s" % (sss, ddd)
+        tester.test_is_close_for_family_variable(self, should_be, instance_name)
 
-        def test_to_1(self):
-            values = self.get_values(1)
-            should_be = array([3.3, 1.1])
-            self.assert_(ma.allclose(values, should_be, rtol=1e-4), "Error in hwy_travel_time_to_1")
+    def test_to_1(self):
+        should_be = array([3.3, 1.1])
+        self.do('hwy', 1, should_be)
 
-        def test_to_3(self):
-            values = self.get_values(3)
-            should_be = array([4.4, 2.2])
-            self.assert_(ma.allclose(values, should_be, rtol=1e-4), "Error in hwy_travel_time_to_3")
+    def test_to_3(self):
+        should_be = array([4.4, 2.2])
+        self.do('bart', 3, should_be)
 
-    unittest.main()
+if __name__=='__main__':
+    opus_unittest.main()
+    

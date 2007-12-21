@@ -45,35 +45,36 @@ class employment_within_DDD_minutes_SSS_travel_time(Variable):
         
         return results
 
-if __name__=='__main__':
-    import unittest
-    from urbansim.variable_test_toolbox import VariableTestToolbox
-    from numpy import array
-    from numpy import ma
-    from sanfrancisco.opus_package_info import package
-    
-    class Tests(unittest.TestCase):
-        def get_values(self, number, mode):
-            values = VariableTestToolbox().compute_variable(
-                "sanfrancisco.zone.employment_within_%s_minutes_%s_travel_time" % (number, mode),
-                {"zone":{
+
+
+from opus_core.tests import opus_unittest
+from numpy import array, arange
+from opus_core.tests.utils.variable_tester import VariableTester
+class Tests(opus_unittest.OpusTestCase):
+    def do(self, ddd, sss, should_be):
+        tester = VariableTester(
+            __file__,
+            package_order=['urbansim'],
+            test_data={
+                 "zone":{
                     "zone_id":array([1,3]),
                     "employment":array([10, 1])},
                  "travel_data":{
                      "from_zone_id":array([3,3,1,1]),
                      "to_zone_id":array([1,3,1,3]),
-                     mode:array([1.1, 2.2, 3.3, 4.4])}},
-                dataset = "zone")
-            return values
+                     sss:array([1.1, 2.2, 3.3, 4.4])}
+            }
+        )
+        instance_name = "sanfrancisco.zone.employment_within_%s_minutes_%s_travel_time" % (ddd, sss) 
+        tester.test_is_close_for_family_variable(self, should_be, instance_name)
 
-        def test_to_2(self):
-            values = self.get_values(2, 'hwy')
-            should_be = array([0, 10])
-            self.assert_(ma.allclose(values, should_be, rtol=1e-4), "Error in employment_within_2_minutes_hwy_travel_time")
+    def test_to_2(self):
+        should_be = array([0, 10])
+        self.do(2, 'hwy', should_be)
 
-        def test_to_4(self):
-            values = self.get_values(4, 'bart')
-            should_be = array([10, 11])
-            self.assert_(ma.allclose(values, should_be, rtol=1e-4), "Error in employment_within_4_minutes_bart_travel_time")
+    def test_to_4(self):
+        should_be = array([10, 11])
+        self.do(4, 'bart', should_be)
 
-    unittest.main()
+if __name__=='__main__':
+    opus_unittest.main()
