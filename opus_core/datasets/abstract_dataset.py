@@ -631,6 +631,12 @@ class AbstractDataset(object):
             package_order = dataset_pool.get_package_order()
             
         result = None
+        if len(package_order) == 0:
+            full_variable_name = "%s.%s" % (self.get_dataset_name(), variable_name)
+            try:
+                result = self.compute_variables([full_variable_name], dataset_pool=dataset_pool)
+            except:
+                pass
         for package in package_order:
             full_variable_name = "%s.%s.%s" % (package, self.get_dataset_name(), variable_name)
             try:
