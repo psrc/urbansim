@@ -123,6 +123,47 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array([1320, 240])
         self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate_sum_one_level") 
 
+    def test_versioning_with_aggregate(self):
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name='households',
+            table_data={
+                'my_variable':array([4,8,2,1,40,23,78]), 
+                'id0':arange(7)+1,
+                'id1':array([1,3,1,2,3,2,1])
+                }
+            )
+        storage.write_table(table_name='fazes',
+            table_data={
+                'id1':array([1,2,3]), 
+                'id2':array([1,2,1])
+                }
+            )
+        storage.write_table(table_name='fazdistr',
+            table_data={
+                'id2':array([1,2])
+                }
+            )
+        ds0 = Dataset(in_storage=storage, in_table_name='households', id_name="id0", dataset_name="myhousehold")
+        ds1 = Dataset(in_storage=storage, in_table_name='fazes', id_name="id1", dataset_name="myfaz")             
+        ds2 = Dataset(in_storage=storage, in_table_name='fazdistr', id_name="id2", dataset_name="myfazdistr")
+        dataset_pool = DatasetPool()
+        dataset_pool._add_dataset('myhousehold', ds0)
+        dataset_pool._add_dataset('myfaz',ds1)
+        dataset_pool._add_dataset('myfazdistr',ds2)
+        ds0.modify_attribute("id1", array([1,3,1,2,3,2,1])) # has version 1
+        variable = 'my_var = myfazdistr.aggregate(10.0*myhousehold.my_variable, intermediates=[myfaz])'
+        ds2.compute_variables([variable], dataset_pool=dataset_pool)
+        self.assert_(ds2.get_version("my_var")==0)
+        ds2.compute_variables([variable], dataset_pool=dataset_pool)
+        self.assert_(ds2.get_version("my_var")==0) # version should stay the same, i.e. it should not recompute
+        ds0.touch_attribute("id1") # has version 2
+        ds2.compute_variables([variable], dataset_pool=dataset_pool)
+        self.assert_(ds2.get_version("my_var")==1) # version should be 1, i.e. it should recompute when id changes
+        ds1.touch_attribute("id2") # has version 1
+        ds2.compute_variables([variable], dataset_pool=dataset_pool)
+        self.assert_(ds2.get_version("my_var")==2) # version should be 2, i.e. it should recompute when id changes
+ 
+
     def test_aggregate_sum_two_levels(self):
         storage = StorageFactory().get_storage('dict_storage')
         storage.write_table(table_name='zones',
@@ -288,11 +329,15 @@ class Tests(opus_unittest.OpusTestCase):
         dataset_pool = DatasetPool()
         dataset_pool._add_dataset('myzone', ds)
         dataset_pool._add_dataset('myfaz', ds2)
+        var = "my_var = myzone.disaggregate(10.0*myfaz.my_variable)"
         ds.modify_attribute("id2", array([2,1,2,1])) # should have version 1
-        ds.compute_variables(["my_var = myzone.disaggregate(10.0*myfaz.my_variable)"], dataset_pool=dataset_pool)
+        ds.compute_variables([var], dataset_pool=dataset_pool)
         self.assert_(ds.get_version("my_var")==0)
-        ds.compute_variables(["my_var = myzone.disaggregate(10.0*myfaz.my_variable)"], dataset_pool=dataset_pool)
+        ds.compute_variables([var], dataset_pool=dataset_pool)
         self.assert_(ds.get_version("my_var")==0) # version should stay the same, i.e. it should not recompute
+        ds.touch_attribute("id2") # has version 2
+        ds.compute_variables([var], dataset_pool=dataset_pool)
+        self.assert_(ds.get_version("my_var")==1) # version should be 1, i.e. it should recompute when id changes
  
     def test_disaggregate_fully_qualified_variable(self):
         storage = StorageFactory().get_storage('dict_storage')
