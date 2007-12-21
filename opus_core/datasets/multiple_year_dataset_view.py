@@ -17,11 +17,9 @@ from sets import Set
 from numpy import array, int32, concatenate
 
 
-from opus_core.resources import Resources
 from opus_core.datasets.abstract_dataset import AbstractDataset
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.variables.variable_name import VariableName
-from opus_core.storage_factory import StorageFactory
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.variables.attribute_type import AttributeType
@@ -33,10 +31,6 @@ class MultipleYearDatasetView(AbstractDataset):
     A dataset whose data is the union of multiple years of another dataset.
     """
 
-    #def __init__(self, resources=None, in_storage=None, id_name=None, dataset_name=None,
-                  #data=None, out_storage=None, in_table_name=None,
-                  #out_table_name=None, debug=None):
-        
     def __init__(self, name_of_dataset_to_merge, in_table_name, attribute_cache, years_to_merge, *args, **kwargs):
         """Create a dataset that contains this many years of data from this dataset.
         
@@ -51,6 +45,8 @@ class MultipleYearDatasetView(AbstractDataset):
         dataset_for_current_year = SessionConfiguration().get_dataset_from_pool(
             self.name_of_dataset_to_merge)
         id_names = dataset_for_current_year.get_id_name() + ['year']
+        self.base_id_name = dataset_for_current_year.get_id_name()
+        
         
         # Masquerade as a dataset of the right type (important for computing the right variables).
         dataset_name = dataset_for_current_year.get_dataset_name()
@@ -60,7 +56,6 @@ class MultipleYearDatasetView(AbstractDataset):
                                  in_table_name=in_table_name,
                                  dataset_name=dataset_name,
                                  *args, **kwargs)
-                         
         
     def _validate_primary_attributes_same_for_all_years(self, name_of_dataset_to_merge, in_table_name, attribute_cache, years_to_merge):
         # Make sure that the set of primary attributes is the same for all years
@@ -113,29 +108,27 @@ class MultipleYearDatasetView(AbstractDataset):
                 attributes += in_storage.get_column_names(
                     table_name = in_table_name + '.computed')
                 
+        size_map = {}
         for attribute_name in attributes:
             values = self._get_attribute_for_year(self.name_of_dataset_to_merge, 
                                                   attribute_name,
                                                   self.years_to_merge[0])
+            size_map[self.years_to_merge[0]] = values.size
             for year in self.years_to_merge[1:]:
                 year_data = self._get_attribute_for_year(self.name_of_dataset_to_merge, 
                                                          attribute_name,
                                                          year)
+                size_map[year] = year_data.size
                 values = concatenate( (values, year_data) )
                 
             self.add_attribute(name=attribute_name, data=values)
-        
+
         # add the 'year' attribute, too.
         values = array([], dtype='int32')
         for year in self.years_to_merge:
-            year_data = self._get_attribute_for_year(
-                self.name_of_dataset_to_merge, 
-                attribute_name, # <- We'll just work with the last one from the previous loop,
-                year)           #      since all we care about is the size, not the values.
-            
-            size = year_data.size
-            
+            size = size_map[year]
             values = concatenate( (values, array([year]*size)) )
+            
         self.add_attribute(name='year', data=values)
                 
     def _get_attribute_for_year(self, dataset_name, attribute_name, year):
@@ -149,6 +142,7 @@ class MultipleYearDatasetView(AbstractDataset):
                 package_order_exceptions=calling_dataset_pool.get_package_order_exceptions(),
                 storage=AttributeCache())
             dataset = my_dataset_pool.get_dataset(dataset_name)
+            attribute_name = attribute_name.replace('DDDD',repr(year))
             dataset.compute_variables(attribute_name, my_dataset_pool)
             values = dataset.get_attribute(attribute_name)
             return values
