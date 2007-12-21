@@ -14,6 +14,7 @@
 
 
 from numpy import ma
+import os.path
 
 from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.storage_factory import StorageFactory
@@ -30,7 +31,9 @@ class VariableTester(object):
         """
         file_path is the directory path to the module defining the variable
             to be tested.  The name of the variable to be tested is extracted
-            from this path.
+            from this path.  As a special case, if the file_path ends in tests/variablename.py, 
+            we assume that this is a tests subdirectory with just a unit test, and 
+            remove the tests/ part to find the module name.
         package_order is the sequence of Opus packages in which to look for the
             dataset class modules for the datasets used in this test.
         test_data is a dictionary of data for the datasets to use in this test,
@@ -51,7 +54,12 @@ class VariableTester(object):
             If the dataset does not its own class to be created with, it must have
             an attribute 'id' which is the unique identifier of the dataset.
         """
-        self.file_path = file_path
+        (dirname, filename) = os.path.split(file_path)
+        (front, lastdir) = os.path.split(dirname)
+        if lastdir=='tests':
+            self.file_path = os.path.join(front,filename)
+        else:
+            self.file_path = file_path
         storage = StorageFactory().get_storage('dict_storage')
         self.dataset_pool = DatasetPool(package_order=package_order)
         for dataset_name, attribute_dict in test_data.iteritems():

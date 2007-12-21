@@ -46,6 +46,7 @@ class DummyDataset(object):
             aggregated_dataset = intermediates[-1].name
             dependent_attribute = VariableName(expr).get_alias()
         ds = self._dataset_pool.get_dataset(aggregated_dataset)
+        ds.compute_one_variable_with_unknown_package(dataset.get_id_name()[0], dataset_pool=self._dataset_pool)
         if function is None:
             result = dataset.aggregate_dataset_over_ids(ds, attribute_name=dependent_attribute)
         else:
