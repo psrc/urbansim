@@ -16,11 +16,16 @@ class Visualization(object):
     def __init__(self, 
                  indicators, 
                  visualization_type, 
-                 result_path,
                  name,
-                 years):
+                 years,
+                 table_name,
+                 storage_location, #either a file path or a DatabaseConfiguration
+                 file_extension
+                 ):
         self.indicators = indicators
         self.visualization_type = visualization_type
-        self.result_path = result_path
+        self.storage_location = storage_location
         self.name = name
         self.years = years
+        self.table_name = table_name
+        self.file_extension = file_extension
