@@ -29,7 +29,6 @@ except:
 
 from opus_core.store.storage import Storage
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 class sql_storage(Storage):
     def __init__(self,  
