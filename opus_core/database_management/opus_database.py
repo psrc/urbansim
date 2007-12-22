@@ -12,10 +12,7 @@
 # other acknowledgments.
 #
 
-import sys, re
-
-from numpy import array
-from numpy import rec
+import sys
 
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration 
 
