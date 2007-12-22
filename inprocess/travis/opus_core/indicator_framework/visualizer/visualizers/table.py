@@ -18,6 +18,8 @@ import os
 from opus_core.storage_factory import StorageFactory
 from opus_core.database_management.database_configuration import DatabaseConfiguration
 from inprocess.travis.opus_core.indicator_framework.visualizer.visualizers.abstract_visualization import Visualization
+from opus_core.database_management.database_server import DatabaseServer
+
 
 from numpy import where, array
 
@@ -54,6 +56,10 @@ class Table(Visualization):
         
         if storage_location is None:
             storage_location = indicator_directory
+        elif output_type == 'sql':
+            server = DatabaseServer(database_server_configuration = storage_location)
+            storage_location = server.get_database(
+                                   database_name = storage_location.database_name)
         self.storage_location = storage_location
                     
         self.output_storage = StorageFactory().get_storage(
@@ -513,6 +519,7 @@ class Tests(AbstractIndicatorTest):
             )
                         
             server = DatabaseServer(database_config)
+            server.drop_database(database_name = test_db_name)
             server.create_database(database_name = test_db_name)
             
         except:
