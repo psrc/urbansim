@@ -12,6 +12,7 @@
 # other acknowledgments.
 #
 
+import os
 from opus_core.logger import logger
 from numpy import ndarray,zeros,float32
 from numpy import where,reshape,newaxis,absolute
@@ -20,9 +21,8 @@ from numpy import any, arange, repeat
 from numpy import array, ma
 from scipy.ndimage import standard_deviation
 from numpy.mlab import mean,median,min
-from opus_core.misc import corr, unique_values
+from opus_core.misc import corr, unique_values, safe_array_divide
 from opus_core.session_configuration import SessionConfiguration
-import os
 from opus_core.variables.variable import ln
 from opus_core.bhhh_mnl_estimation import bhhh_mnl_estimation
 from opus_core.upc_factory import UPCFactory
@@ -58,30 +58,26 @@ class constrain_estimation_bhhh_two_loops(EstimationProcedure):
             supply = array(supply)
         nsupply = supply.size
 
-        max_iter = resources.get("max_iterations", None)
-        if max_iter == None:
-            max_iter = 100 # default
-
-        dataset_pool = SessionConfiguration().get_dataset_pool()
+        max_iter = resources.get("max_iterations", 100)  # default
+        sc = SessionConfiguration()
+        dataset_pool = sc.get_dataset_pool()
         sample_rate = dataset_pool.get_dataset("sample_rate")
-        CLOSE = SessionConfiguration()["CLOSE"]
-        info_filename = SessionConfiguration()["info_file"]
+        CLOSE = sc["CLOSE"]
+        info_filename = sc["info_file"]
         info_filename = os.path.join('.', info_filename)
-        info_file = open(info_filename,"a")
+        info_file = open(info_filename, "a")
 
         swing_fix = 0
         constraint_dict = {1:'constrained', 0:'unconstrained'}
+        location_set = sc.get_dataset_from_pool('building')
+        alt_id = location_set.get_attribute('submarket_id')
+        movers = location_set.get_attribute('movers')
 
-        alt_id = SessionConfiguration().get_dataset_from_pool('neighborhood').get_attribute('com')
-        movers98 = SessionConfiguration().get_dataset_from_pool('neighborhood').get_attribute('movers98')
-
-        demand_history = movers98[:, newaxis]
+        demand_history = movers[:, newaxis]
         prob_correlation = None
 
         #import pdb; pdb.set_trace()
-        index = resources.get("index", None)
-        if index == None:
-            index = arange(nsupply)
+        index = resources.get("index", arange(nsupply))
 
         if index.ndim <= 1:
             index = repeat(reshape(index, (1,index.shape[0])), nobs)
@@ -89,12 +85,12 @@ class constrain_estimation_bhhh_two_loops(EstimationProcedure):
 
         # WARNING: THE SCALING OF DEMAND IS HARD CODED AND NEEDS TO BE MADE AN ARGUMENT
         # scale demand to represent 100% from a 0.2% sample
-        demand = self.mnl_probabilities.get_demand(index, probability, nsupply)* 1 / sample_rate
+        demand = self.mnl_probabilities.get_demand(index, probability, nsupply) * 1 / sample_rate
         demand_history = concatenate((demand_history,
                                       demand[:, newaxis]),
                                       axis=1)
 
-        sdratio = ma.filled(supply/ma.masked_where(demand==0, demand),2.0)
+        sdratio = safe_array_divide(supply, demand, return_value_if_denominator_is_zero=2.0)
         #sdratio = _round(sdratio, 1.0, atol=CLOSE)
         sdratio_matrix = sdratio[index]
 
@@ -177,7 +173,7 @@ class constrain_estimation_bhhh_two_loops(EstimationProcedure):
     
                     info_file.write("\nDemand History:\n")
                     i_str = [str(x) for x in range(i)]
-                    info_file.write("outer_iteration, (movers98)," + ",".join(i_str) + "\n")
+                    info_file.write("outer_iteration, (movers)," + ",".join(i_str) + "\n")
                     #info_file.write(", ,\n")
                     for row in range(nsupply):
                         line = [str(x) for x in demand_history[row,]]
@@ -185,11 +181,11 @@ class constrain_estimation_bhhh_two_loops(EstimationProcedure):
     
                     demand_history_info_criteria = [500, 100, 50, 20]
                     for criterion in demand_history_info_criteria:
-                        com_rows_index = where(movers98 <= criterion)[0]
+                        com_rows_index = where(movers <= criterion)[0]
                         info_file.write("\nDemand History for alternatives with less than or equal to %s movers in 1998:\n" % criterion)
                         i_str = [str(x) for x in range(i)]
-                        info_file.write("outer_iteration, (movers98)," + ",".join(i_str) + "\n")
-                        #info_file.write(", movers98,\n")
+                        info_file.write("outer_iteration, (movers)," + ",".join(i_str) + "\n")
+                        #info_file.write(", movers,\n")
                         for row in com_rows_index:
                             line = [str(x) for x in demand_history[row,]]
                             info_file.write(str(alt_id[row]) + "," + ",".join(line) + "\n")
