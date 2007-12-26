@@ -40,6 +40,7 @@ class RunModelThread(QThread):
         #self.model.run()
         self.parent.model.progressCallback = self.progressCallback
         self.parent.model.finishedCallback = self.finishedCallback
+        self.parent.model.errorCallback = self.errorCallback
         self.parent.model.run()
         
     def progressCallback(self,percent):
@@ -52,7 +53,10 @@ class RunModelThread(QThread):
         else:
             print "Error returned from Model"
         self.emit(SIGNAL("runFinished(PyQt_PyObject)"),success)
-            
+
+    def errorCallback(self,errorMessage):
+        self.emit(SIGNAL("runError(PyQt_PyObject)"),errorMessage)
+
 
 class OpusModel(object):
     def __init__(self,parent,xml_path):
@@ -61,10 +65,23 @@ class OpusModel(object):
         #self.thread = RunModelThread(self.parent.parent,self.xml_path)
         self.progressCallback = None
         self.finishedCallback = None
+        self.errorCallback = None
         self.guiElement = None
         self.config = None
         self.statusfile = None
-
+        self.firstRead = True
+    
+    def formatExceptionInfo(self,maxTBlevel=5):
+        import traceback
+        cla, exc, trbk = sys.exc_info()
+        excName = cla.__name__
+        try:
+            excArgs = exc.__dict__["args"]
+        except KeyError:
+            excArgs = "<no args>"
+        excTb = traceback.format_tb(trbk, maxTBlevel)
+        return (excName, excArgs, excTb)
+    
     def run(self):
         if WithOpus:
             # Run the Eugene model using the XML version of the Eugene configuration.
@@ -72,6 +89,7 @@ class OpusModel(object):
             # statusdir is a temporary directory into which to write a status file
             # regarding the progress of the simulation - the progress bar reads this file
             statusdir = None
+            succeeded = False
             try:
                 option_group = StartRunOptionGroup()
                 parser = option_group.parser
@@ -93,10 +111,18 @@ class OpusModel(object):
                 self.statusfile = statusfile
                 self.config = config
                 config['status_file_for_gui'] = statusfile
+                # To test delay in writting of the first log file entry...
+                # time.sleep(5)
                 run_manager.run_run(config)
                 succeeded = True
             except SimulationRunError:
                 succeeded = False
+            except:
+                succeeded = False
+                errorInfo = self.formatExceptionInfo()
+                errorString = "Unexpected Error From Model :: " + str(errorInfo)
+                print errorInfo
+                self.errorCallback(errorString)
             if statusdir is not None:
                 shutil.rmtree(statusdir, ignore_errors=True)
             self.finishedCallback(succeeded)
@@ -155,6 +181,10 @@ class OpusModel(object):
                         self.guiElement.logText.append(lines)
                     f.close()
                 except IOError:
-                    self.guiElement.logText.append("No logfile yet")
+                    if self.firstRead == True:
+                        self.guiElement.logText.append("No logfile yet")
+                        self.firstRead = False
+                    else:
+                        self.guiElement.logText.insertPlainText(QString("."))
                 #self.guiElement.logText.append("ping")
         return newKey

@@ -213,7 +213,7 @@ class ModelGuiElement(QWidget):
         self.progressBar = self.runProgressBar
         self.statusLabel = self.runStatusLabel
 
-        self.pbnRemoveModel.setEnabled(False)
+        #self.pbnRemoveModel.setEnabled(False)
         self.pbnStartModel.setEnabled(False)
         self.progressBar.setValue(0)
         self.statusLabel.setText(QString("Model initializing..."))
@@ -221,6 +221,8 @@ class ModelGuiElement(QWidget):
         # Use this signal from the thread if it is capable of producing its own status signal
         QObject.connect(self.runThread, SIGNAL("runFinished(PyQt_PyObject)"),
                         self.runFinishedFromThread)
+        QObject.connect(self.runThread, SIGNAL("runError(PyQt_PyObject)"),
+                        self.runErrorFromThread)
         # Use this timer to call a function in the thread to check status if the thread is unable
         # to produce its own signal above
         self.timer = QTimer()
@@ -244,7 +246,7 @@ class ModelGuiElement(QWidget):
         # Get the final logfile update after model finishes...
         self.logFileKey = self.runThread.parent.model._get_current_log(self.logFileKey)
         self.pbnStartModel.setEnabled(True)
-        self.pbnRemoveModel.setEnabled(True)
+        #self.pbnRemoveModel.setEnabled(True)
 
     def runStatusFromThread(self):
         status = self.runThread.parent.model._compute_progress(self.runThread.parent.model.statusfile)
@@ -255,4 +257,7 @@ class ModelGuiElement(QWidget):
         #print "runStatusFromThread from timer with percentage = %d and message = %s" % (status["percentage"],
         #                                                                                status["message"])
         self.logFileKey = self.runThread.parent.model._get_current_log(self.logFileKey)
+
+    def runErrorFromThread(self,errorMessage):
+      QMessageBox.warning(self.parent,"Warning",errorMessage)
   
