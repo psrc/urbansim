@@ -29,7 +29,10 @@ import os, sys,string
 
   
 class XMLTree(object):
-  def __init__(self, parent,xmlType,parentWidget):
+  def __init__(self, parent,xmlType,parentWidget):    
+    self.addTree(parent,xmlType,parentWidget)
+
+  def addTree(self, parent,xmlType,parentWidget):
     self.parent = parent.parent
     self.parentTool = parent
     self.xmlType = xmlType
@@ -77,6 +80,11 @@ class XMLTree(object):
     self.actExecScriptFile = QAction(self.calendarIcon, "Exec Script", self.parent)
     QObject.connect(self.actExecScriptFile, SIGNAL("triggered()"), self.execScriptFile)
 
+  def removeTree(self):
+    #print "Trying to remove %s group box" % (self.groupBox.title())
+    self.groupBox.hide()
+    self.parentWidget.removeWidget(self.groupBox)
+
   def runModel(self):
     print "action1 context pressed with column = %s and item = %s" % \
           (self.currentColumn,
@@ -92,14 +100,6 @@ class XMLTree(object):
                           "Warning",
                           "Please save changes to project before running model")
       
-  def removeTree(self):
-    print "remove tree pressed with column = %s and item = %s" % \
-          (self.currentColumn,
-           self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
-    #print "Trying to remove %s group box" % (self.groupBox.title())
-    self.groupBox.hide()
-    self.parentWidget.removeWidget(self.groupBox)
-
   def action2(self):
     print "action2 context pressed with column = %s and item = %s" % \
           (self.currentColumn, self.currentIndex.internalPointer().node().toElement().attribute(QString("name")))
@@ -217,12 +217,12 @@ class ToolboxBase(object):
     self.doc = None
     self.configFile = None
     
-    # These are the lists for holding the trees that are displayed for each toolbox
+    # These are the trees that are displayed for each toolbox
     self.view = None
-    self.modelManagerTrees = []
-    self.resultsManagerTrees = []
-    self.runManagerTrees = []
-    self.dataManagerTrees = []
+    self.modelManagerTree = None
+    self.resultsManagerTree = None
+    self.runManagerTree = None
+    self.dataManagerTree = None
 
   def openXMLDirTree(self, xml_dir):
     # For when we can open a directory (maybe never)
@@ -235,9 +235,17 @@ class ToolboxBase(object):
     if self.configFile.open(QIODevice.ReadWrite):
       self.doc = QDomDocument()
       self.doc.setContent(self.configFile)
-      self.resultsManagerTrees.append(XMLTree(self,"results_manager",self.parent.gridlayout4))    
-      self.modelManagerTrees.append(XMLTree(self,"model_manager",self.parent.gridlayout2))    
-      self.runManagerTrees.append(XMLTree(self,"scenario_manager",self.parent.gridlayout3))    
-      self.dataManagerTrees.append(XMLTree(self,"data_manager",self.parent.gridlayout1))    
+      if self.resultsManagerTree != None:
+        self.resultsManagerTree.removeTree()
+      self.resultsManagerTree = XMLTree(self,"results_manager",self.parent.gridlayout4)    
+      if self.modelManagerTree != None:
+        self.modelManagerTree.removeTree()
+      self.modelManagerTree = XMLTree(self,"model_manager",self.parent.gridlayout2)    
+      if self.runManagerTree != None:
+        self.runManagerTree.removeTree()
+      self.runManagerTree = XMLTree(self,"scenario_manager",self.parent.gridlayout3)    
+      if self.dataManagerTree != None:
+        self.dataManagerTree.removeTree()
+      self.dataManagerTree = XMLTree(self,"data_manager",self.parent.gridlayout1)    
     else:
       print "Error reading config"

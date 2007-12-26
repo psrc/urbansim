@@ -88,14 +88,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     
   def saveConfig(self):
     print "Save Config pressed..."
-    configFile = self.toolboxStuff.runManagerTrees[0].model.configFile
-    domDocument = self.toolboxStuff.runManagerTrees[0].model.domDocument
+    configFile = self.toolboxStuff.runManagerTree.model.configFile
+    domDocument = self.toolboxStuff.runManagerTree.model.domDocument
     indentSize = 2
     configFile.close()
     configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
     out = QTextStream(configFile)
     domDocument.save(out, indentSize)
-    self.toolboxStuff.runManagerTrees[0].model.dirty = False
+    self.toolboxStuff.runManagerTree.model.dirty = False
     print "Save Config finished..."
     
   def saveConfigAs(self):
@@ -109,12 +109,12 @@ class OpusGui(QMainWindow, Ui_MainWindow):
       f = f2
     write_string = QString(f)
     configFile = QFile(write_string)
-    domDocument = self.toolboxStuff.runManagerTrees[0].model.domDocument
+    domDocument = self.toolboxStuff.runManagerTree.model.domDocument
     indentSize = 2
     configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
     out = QTextStream(configFile)
     domDocument.save(out, indentSize)
-    self.toolboxStuff.runManagerTrees[0].model.dirty = False
+    self.toolboxStuff.runManagerTree.model.dirty = False
     #### TODO - Now need to close existing project and re-open the newly
     #### saved one...
     
