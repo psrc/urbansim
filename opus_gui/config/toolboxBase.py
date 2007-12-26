@@ -82,8 +82,12 @@ class XMLTree(object):
 
   def removeTree(self):
     #print "Trying to remove %s group box" % (self.groupBox.title())
-    self.groupBox.hide()
-    self.parentWidget.removeWidget(self.groupBox)
+    if not self.model.dirty:
+      self.groupBox.hide()
+      self.parentWidget.removeWidget(self.groupBox)
+      return True
+    else:
+      return False
 
   def runModel(self):
     print "action1 context pressed with column = %s and item = %s" % \
@@ -229,23 +233,50 @@ class ToolboxBase(object):
     pass
   
   def openXMLTree(self, xml_file):
-    # Opening a project XML
-    self.xml_file = xml_file
-    self.configFile = QFile(xml_file)
-    if self.configFile.open(QIODevice.ReadWrite):
-      self.doc = QDomDocument()
-      self.doc.setContent(self.configFile)
-      if self.resultsManagerTree != None:
-        self.resultsManagerTree.removeTree()
-      self.resultsManagerTree = XMLTree(self,"results_manager",self.parent.gridlayout4)    
-      if self.modelManagerTree != None:
-        self.modelManagerTree.removeTree()
-      self.modelManagerTree = XMLTree(self,"model_manager",self.parent.gridlayout2)    
-      if self.runManagerTree != None:
-        self.runManagerTree.removeTree()
-      self.runManagerTree = XMLTree(self,"scenario_manager",self.parent.gridlayout3)    
-      if self.dataManagerTree != None:
-        self.dataManagerTree.removeTree()
-      self.dataManagerTree = XMLTree(self,"data_manager",self.parent.gridlayout1)    
+    # Check if the current model(s) is(are) dirty first...
+    if self.resultsManagerTree and self.resultsManagerTree.model.dirty:
+      QMessageBox.warning(self.parent,"Warning",
+                          "Please save changes to current project")
+    elif self.modelManagerTree and self.modelManagerTree.model.dirty:
+      QMessageBox.warning(self.parent,"Warning",
+                          "Please save changes to current project")
+    elif self.runManagerTree and self.runManagerTree.model.dirty:
+      QMessageBox.warning(self.parent,"Warning",
+                          "Please save changes to current project")
+    elif self.dataManagerTree and self.dataManagerTree.model.dirty:
+      QMessageBox.warning(self.parent,"Warning",
+                          "Please save changes to current project")
     else:
-      print "Error reading config"
+      # Opening a project XML
+      self.xml_file = xml_file
+      self.configFile = QFile(xml_file)
+      if self.configFile.open(QIODevice.ReadWrite):
+        self.doc = QDomDocument()
+        self.doc.setContent(self.configFile)
+        
+        
+        # Try to remove all the old trees... 
+        resultsManagerRemoveSuccess = True
+        if self.resultsManagerTree != None:
+          resultsManagerRemoveSuccess = self.resultsManagerTree.removeTree()
+        modelManagerRemoveSuccess = True
+        if self.modelManagerTree != None:
+          modelManagerRemoveSuccess = self.modelManagerTree.removeTree()
+        runManagerRemoveSuccess = True
+        if self.runManagerTree != None:
+          runManagerRemoveSuccess = self.runManagerTree.removeTree()
+        dataManagerRemoveSuccess = True
+        if self.dataManagerTree != None:
+          dataManagerRemoveSuccess = self.dataManagerTree.removeTree()
+
+        if resultsManagerRemoveSuccess and modelManagerRemoveSuccess and \
+               runManagerRemoveSuccess and dataManagerRemoveSuccess:
+          # We have successfully removed the old XML trees
+          self.resultsManagerTree = XMLTree(self,"results_manager",self.parent.gridlayout4)    
+          self.modelManagerTree = XMLTree(self,"model_manager",self.parent.gridlayout2)    
+          self.runManagerTree = XMLTree(self,"scenario_manager",self.parent.gridlayout3)    
+          self.dataManagerTree = XMLTree(self,"data_manager",self.parent.gridlayout1)
+        else:
+          print "There was an error removing the old config"
+      else:
+        print "Error reading config"
