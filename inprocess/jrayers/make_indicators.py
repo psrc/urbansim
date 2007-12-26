@@ -197,4 +197,4 @@ if __name__ == '__main__':
     IndicatorFactory().create_indicators(
         indicators = indicators,
         display_error_box = False,
-        show_results = True)
+        show_results = False)
