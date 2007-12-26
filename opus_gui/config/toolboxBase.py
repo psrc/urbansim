@@ -211,19 +211,16 @@ class ToolboxBase(object):
     # References to some parent main window elements
     self.tabWidget = self.parent.tabWidget
     self.toolBox = self.parent.toolBox
-    self.modelmanager_tree = self.parent.modelmanager_tree
-    self.resultsmanager_tree = self.parent.resultsmanager_tree
 
     # Storage for the master copy of the project XML
     self.xml_file = None
     self.doc = None
     self.configFile = None
     
-    # Resize the default trees - These are the ones that are not real yet...
-    self.modelmanager_tree.resizeColumnToContents(0)
-    self.resultsmanager_tree.resizeColumnToContents(0)
     # These are the lists for holding the trees that are displayed for each toolbox
     self.view = None
+    self.modelManagerTrees = []
+    self.resultsManagerTrees = []
     self.runManagerTrees = []
     self.dataManagerTrees = []
 
@@ -238,6 +235,8 @@ class ToolboxBase(object):
     if self.configFile.open(QIODevice.ReadWrite):
       self.doc = QDomDocument()
       self.doc.setContent(self.configFile)
+      self.resultsManagerTrees.append(XMLTree(self,"results_manager",self.parent.gridlayout4))    
+      self.modelManagerTrees.append(XMLTree(self,"model_manager",self.parent.gridlayout2))    
       self.runManagerTrees.append(XMLTree(self,"scenario_manager",self.parent.gridlayout3))    
       self.dataManagerTrees.append(XMLTree(self,"data_manager",self.parent.gridlayout1))    
     else:
