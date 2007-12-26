@@ -1,0 +1,382 @@
+<opus_project>
+  <general>
+    <description type="string">PSRC parel project</description>
+  </general>
+  
+  <model_manager>
+  
+<estimation type="dictionary">
+
+<REPM type="dictionary">
+<description type="string">Real Estate Price Model</description>
+
+<variable_definitions>
+  <hwy1000 type="variable_definition">hwy1000 = psrc.parcel.distance_to_highway_in_gridcell&lt;1000</hwy1000>
+    <hwy2000 type="variable_definition">hwy2000 = psrc.parcel.distance_to_highway_in_gridcell&lt;2000</hwy2000>
+    <art300 type="variable_definition">art300 = psrc.parcel.distance_to_arterial_in_gridcell&lt;300</art300>
+    <art600 type="variable_definition">art600 = psrc.parcel.distance_to_arterial_in_gridcell&lt;600</art600>
+    <ln_bldgage type="variable_definition">ln_bldgage = (ln(parcel.aggregate(urbansim_parcel.building.age_masked, function=mean))).astype(float32)</ln_bldgage>
+    <lnsqft type="variable_definition">lnsqft = (ln(urbansim_parcel.parcel.building_sqft)).astype(float32)</lnsqft>
+    <lnsqftunit type="variable_definition">lnsqftunit = (ln(urbansim_parcel.parcel.building_sqft_per_unit)).astype(float32)</lnsqftunit>
+    <lnlotsqft type="variable_definition">lnlotsqft = (ln(parcel.parcel_sqft)).astype(float32)</lnlotsqft>
+    <lnunits type="variable_definition">lnunits = (ln(urbansim_parcel.parcel.residential_units)).astype(float32)</lnunits>
+    <lnlotsqftunit type="variable_definition">lnlotsqftunit = (ln(urbansim_parcel.parcel.parcel_sqft_per_unit)).astype(float32)</lnlotsqftunit>
+    <far type="variable_definition">far = (urbansim_parcel.parcel.building_sqft/(parcel.parcel_sqft).astype(float32)).astype(float32)</far>
+    <ln_invfar type="variable_definition">ln_invfar = (ln(parcel.parcel_sqft/(urbansim_parcel.parcel.building_sqft).astype(float32))).astype(float32)</ln_invfar>
+    <lngcdacbd type="variable_definition">lngcdacbd = (ln(parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd))).astype(float32)</lngcdacbd>
+    <lnemp30da type="variable_definition">lnemp30da = (ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))).astype(float32)</lnemp30da>
+    <lnemp20da type="variable_definition">lnemp20da = (ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_20_minutes_travel_time_hbw_am_drive_alone))).astype(float32)</lnemp20da>
+    <lnemp10da type="variable_definition">lnemp10da = (ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone))).astype(float32)</lnemp10da>
+    <lnemp30tw type="variable_definition">lnemp30tw = (ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_transit_walk))).astype(float32)</lnemp30tw>
+    <lnemp20tw type="variable_definition">lnemp20tw = (ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_20_minutes_travel_time_hbw_am_transit_walk))).astype(float32)</lnemp20tw>
+    <lnemp10wa type="variable_definition">lnemp10wa = (ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_walk))).astype(float32)</lnemp10wa>
+    <lnemp20wa type="variable_definition">lnemp20wa = (ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_20_minutes_travel_time_hbw_am_walk))).astype(float32)</lnemp20wa>
+    <lnavginc type="variable_definition">lnavginc = (ln(parcel.disaggregate(urbansim_parcel.zone.average_income))).astype(float32)</lnavginc>
+    <lnempden type="variable_definition">lnempden = (ln(parcel.disaggregate(urbansim_parcel.zone.number_of_jobs_per_acre))).astype(float32)</lnempden>
+    <lnpopden type="variable_definition">lnpopden = (ln(parcel.disaggregate(urbansim_parcel.zone.population_per_acre))).astype(float32)</lnpopden>
+    <inugb type="variable_definition">inugb = parcel.is_inside_urban_growth_boundary</inugb>
+    <hbwavgtmda type="variable_definition">hbwavgtmda = parcel.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_drive_alone)</hbwavgtmda>
+    <is_pre_1940 type="variable_definition">is_pre_1940 = parcel.aggregate(building.year_built * numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, 1),function=mean) &lt; 1940</is_pre_1940>
+</variable_definitions>
+
+<specification_variables type="dictionary">
+  <_definition_ flags="hidden">all_variables</_definition_>
+  <agriculture type="submodel">
+       <number type="integer">1</number>
+       <constant type="variable" choices="Use">Use</constant>
+       <inugb type="variable" choices="Use|Skip">Use</inugb>
+       <lnemp20da type="variable" choices="Use|Skip">Use</lnemp20da>
+       <lnlotsqft type="variable" choices="Use|Skip">Use</lnlotsqft>
+       <lnsqft type="variable" choices="Use|Skip">Use</lnsqft>
+   </agriculture>
+  <civil type="submodel"> 
+       <description type="string">Civil and Quasi-Public</description>
+       <number type="integer">2</number>
+       <constant type="variable" choices="Use">Use</constant>
+       <inugb type="variable" choices="Use|Skip">Use</inugb>
+       <is_pre_1940 type="variable" choices="Use|Skip">Use</is_pre_1940>
+       <ln_invfar type="variable" choices="Use|Skip">Use</ln_invfar>
+        <lnavginc type="variable" choices="Use|Skip">Skip</lnavginc>
+        <lnemp10wa type="variable" choices="Use|Skip">Use</lnemp10wa>
+        <lnemp20da type="variable" choices="Use|Skip">Skip</lnemp20da>
+        <lnempden type="variable" choices="Use|Skip">Use</lnempden>
+        <lngcdacbd type="variable" choices="Use|Skip">Use</lngcdacbd>
+      </civil>
+      
+  <commercial type="submodel"> 
+    <number type="integer">3</number>      
+    <constant type="variable" choices="Use">Use</constant>
+    <art600 type="variable" choices="Use|Skip">Use</art600>
+    <art300 type="variable" choices="Use|Skip">Use</art300>
+    <ln_bldgage type="variable" choices="Use|Skip">Use</ln_bldgage>
+    <lnsqft type="variable" choices="Use|Skip">Use</lnsqft>
+    <lnlotsqft type="variable" choices="Use|Skip">Use</lnlotsqft>
+    <lnunits type="variable" choices="Use|Skip">Use</lnunits>
+    <ln_invfar type="variable" choices="Use|Skip">Use</ln_invfar>
+    <lngcdacbd type="variable" choices="Use|Skip">Use</lngcdacbd>
+    <lnemp20da type="variable" choices="Use|Skip">Use</lnemp20da>
+    <lnemp20tw type="variable" choices="Use|Skip">Use</lnemp20tw>
+    <lnemp10wa type="variable" choices="Use|Skip">Use</lnemp10wa>
+    <lnempden type="variable" choices="Use|Skip">Use</lnempden>
+    <inugb type="variable" choices="Use|Skip">Use</inugb>
+    <hbwavgtmda type="variable" choices="Use|Skip">Use</hbwavgtmda>
+   </commercial>
+
+   <government type="submodel"> 
+       <number type="integer">7</number>       
+       <constant type="variable" choices="Use">Use</constant>
+       <art600 type="variable" choices="Use|Skip">Use</art600>
+       <art300 type="variable" choices="Use|Skip">Skip</art300>
+       <inugb type="variable" choices="Use|Skip">Use</inugb>
+       <ln_bldgage type="variable" choices="Use|Skip">Use</ln_bldgage>
+       <lnemp10wa type="variable" choices="Use|Skip">Skip</lnemp10wa>
+       <lnemp20tw type="variable" choices="Use|Skip">Use</lnemp20tw>
+       <lngcdacbd type="variable" choices="Use|Skip">Use</lngcdacbd>
+       <lnlotsqft type="variable" choices="Use|Skip">Use</lnlotsqft>
+       <lnsqft type="variable" choices="Use|Skip">Use</lnsqft>
+   </government>
+   
+   <hospital type="submodel"> 
+        <description type="string">Hospital, Convalescent Center</description>
+        <number type="integer">9</number>       
+        <constant type="variable" choices="Use">Use</constant>
+        <ln_bldgage type="variable" choices="Use|Skip">Use</ln_bldgage>
+        <lngcdacbd type="variable" choices="Use|Skip">Use</lngcdacbd>
+        <lnlotsqft type="variable" choices="Use|Skip">Use</lnlotsqft>
+         <lnsqft type="variable" choices="Use|Skip">Use</lnsqft>
+   </hospital>
+   
+   <industrial type="submodel"> 
+         <number type="integer">10</number>       
+         <constant type="variable" choices="Use">Use</constant>
+         <hbwavgtmda type="variable" choices="Use|Skip">Use</hbwavgtmda>
+         <inugb type="variable" choices="Use|Skip">Use</inugb>
+         <ln_bldgage type="variable" choices="Use|Skip">Use</ln_bldgage>
+         <ln_invfar type="variable" choices="Use|Skip">Use</ln_invfar>
+         <lnemp20tw type="variable" choices="Use|Skip">Use</lnemp20tw>
+         <lnemp20wa type="variable" choices="Use|Skip">Use</lnemp20wa>
+         <lnempden type="variable" choices="Use|Skip">Use</lnempden>
+         <lngcdacbd type="variable" choices="Use|Skip">Use</lngcdacbd>
+         <lnsqft type="variable" choices="Use|Skip">Use</lnsqft>
+  </industrial>
+  
+   <mining type="submodel"> 
+    <number type="integer">12</number>       
+    <constant type="variable" choices="Use">Use</constant>
+    <inugb type="variable" choices="Use|Skip">Skip</inugb>
+    <lnlotsqft type="variable" choices="Use|Skip">Skip</lnlotsqft>
+    <lnsqft type="variable" choices="Use|Skip">Skip</lnsqft>
+    <lnavginc type="variable" choices="Use|Skip">Use</lnavginc>
+   </mining>
+   
+  <mobile_home_park type="submodel"> 
+    <number type="integer">13</number>       
+    <constant type="variable" choices="Use">Use</constant>
+    <art600 type="variable" choices="Use|Skip">Use</art600>
+    <art300 type="variable" choices="Use|Skip">Skip</art300>
+    <ln_bldgage type="variable" choices="Use|Skip">Use</ln_bldgage>
+    <lnsqft type="variable" choices="Use|Skip">Use</lnsqft>
+    <ln_invfar type="variable" choices="Use|Skip">Use</ln_invfar>
+    <lngcdacbd type="variable" choices="Use|Skip">Use</lngcdacbd>
+    <lnemp30da type="variable" choices="Use|Skip">Use</lnemp30da>
+    <lnemp20da type="variable" choices="Use|Skip">Use</lnemp20da>
+    <lnemp30tw type="variable" choices="Use|Skip">Use</lnemp30tw>
+    <lnemp20tw type="variable" choices="Use|Skip">Use</lnemp20tw>
+    <lnavginc type="variable" choices="Use|Skip">Use</lnavginc>
+    <lnempden type="variable" choices="Use|Skip">Use</lnempden>
+    <inugb type="variable" choices="Use|Skip">Use</inugb>
+    <hbwavgtmda type="variable" choices="Use|Skip">Use</hbwavgtmda>
+    <is_pre_1940 type="variable" choices="Use|Skip">Use</is_pre_1940>
+  </mobile_home_park>
+
+   <apartment type="submodel">
+    <description type="string">Multi-Family Residential (Apartment)</description>
+    <number type="integer">14</number>       
+    <constant type="variable" choices="Use">Use</constant>
+    <art600 type="variable" choices="Use|Skip">Skip</art600>
+    <art300 type="variable" choices="Use|Skip">Use</art300>
+    <hwy200 type="variable" choices="Use|Skip">Use</hwy200>
+    <ln_bldgage type="variable" choices="Use|Skip">Use</ln_bldgage>
+    <lnsqft type="variable" choices="Use|Skip">Use</lnsqft>
+    <lnlotsqft type="variable" choices="Use|Skip">Skip</lnlotsqft>
+    <lnunits type="variable" choices="Use|Skip">Use</lnunits>
+    <ln_invfar type="variable" choices="Use|Skip">Use</ln_invfar>
+    <lngcdacbd type="variable" choices="Use|Skip">Use</lngcdacbd>
+    <lnemp30da type="variable" choices="Use|Skip">Skip</lnemp30da>
+    <lnemp20da type="variable" choices="Use|Skip">Use</lnemp20da>
+    <lnemp10da type="variable" choices="Use|Skip">Use</lnemp10da>
+    <lnemp30tw type="variable" choices="Use|Skip">Use</lnemp30tw>
+    <lnemp20tw type="variable" choices="Use|Skip">Use</lnemp20tw>
+    <lnemp10wa type="variable" choices="Use|Skip">Use</lnemp10wa>
+    <lnemp20wa type="variable" choices="Use|Skip">Use</lnemp20wa>
+    <lnavginc type="variable" choices="Use|Skip">Use</lnavginc>
+    <lnempden type="variable" choices="Use|Skip">Use</lnempden>
+    <lnpopden type="variable" choices="Use|Skip">Use</lnpopden>
+    <inugb type="variable" choices="Use|Skip">Use</inugb>
+    <hbwavgtmda type="variable" choices="Use|Skip">Use</hbwavgtmda>
+    <is_pre_1940 type="variable" choices="Use|Skip">Use</is_pre_1940>
+  </apartment>
+
+  <condominium type="submodel"> 
+    <description type="string">Condominium Residential</description>
+    <number type="integer">15</number>       
+    <constant type="variable" choices="Use">Use</constant>
+    <hwy2000 type="variable" choices="Use|Skip">Use</hwy2000>
+    <art600 type="variable" choices="Use|Skip">Use</art600>
+    <art300 type="variable" choices="Use|Skip">Skip</art300>
+    <ln_bldgage type="variable" choices="Use|Skip">Use</ln_bldgage>
+    <lnsqft type="variable" choices="Use|Skip">Use</lnsqft>
+    <lnlotsqft type="variable" choices="Use|Skip">Use</lnlotsqft>
+    <lnunits type="variable" choices="Use|Skip">Use</lnunits>
+    <ln_invfar type="variable" choices="Use|Skip">Use</ln_invfar>
+    <lngcdacbd type="variable" choices="Use|Skip">Use</lngcdacbd>
+    <lnemp30da type="variable" choices="Use|Skip">Use</lnemp30da>
+    <lnemp20da type="variable" choices="Use|Skip">Use</lnemp20da>
+    <lnemp10da type="variable" choices="Use|Skip">Use</lnemp10da>
+    <lnemp10wa type="variable" choices="Use|Skip">Skip</lnemp10wa>
+    <lnavginc type="variable" choices="Use|Skip">Use</lnavginc>
+    <lnempden type="variable" choices="Use|Skip">Use</lnempden>
+    <lnpopden type="variable" choices="Use|Skip">Use</lnpopden>
+   </condominium>
+    
+   <office type="submodel"> 
+    <number type="integer">18</number>       
+    <constant type="variable" choices="Use">Use</constant>
+    <hwy2000 type="variable" choices="Use|Skip">Skip</hwy2000>
+    <art600 type="variable" choices="Use|Skip">Use</art600>
+    <art300 type="variable" choices="Use|Skip">Skip</art300>
+    <ln_bldgage type="variable" choices="Use|Skip">Use</ln_bldgage>
+    <lnlotsqft type="variable" choices="Use|Skip">Use</lnlotsqft>
+    <lnunits type="variable" choices="Use|Skip">Use</lnunits>
+    <ln_invfar type="variable" choices="Use|Skip">Use</ln_invfar>
+    <lngcdacbd type="variable" choices="Use|Skip">Use</lngcdacbd>
+    <lnemp30da type="variable" choices="Use|Skip">Use</lnemp30da>
+    <lnemp10da type="variable" choices="Use|Skip">Use</lnemp10da>
+    <lnemp30tw type="variable" choices="Use|Skip">Skip</lnemp30tw>
+    <lnemp10wa type="variable" choices="Use|Skip">Use</lnemp10wa>
+    <lnavginc type="variable" choices="Use|Skip">Use</lnavginc>
+    <lnempden type="variable" choices="Use|Skip">Use</lnempden>
+    <inugb type="variable" choices="Use|Skip">Use</inugb>
+    <hbwavgtmda type="variable" choices="Use|Skip">Use</hbwavgtmda>
+    <is_pre_1940 type="variable" choices="Use|Skip">Skip</is_pre_1940>
+  </office>
+
+  <park_and_open_space type="submodel"> 
+    <number type="integer">19</number>       <constant type="variable" choices="Use">Use</constant>
+    <hwy2000 type="variable" choices="Use|Skip">Skip</hwy2000>
+    <hwy200 type="variable" choices="Use|Skip">Skip</hwy200>
+    <art600 type="variable" choices="Use|Skip">Skip</art600>
+    <art300 type="variable" choices="Use|Skip">Use</art300>
+    <ln_invfar type="variable" choices="Use|Skip">Use</ln_invfar>    
+    <lnemp20da type="variable" choices="Use|Skip">Skip</lnemp20da>
+    <lngcdacbd type="variable" choices="Use|Skip">Skip</lngcdacbd>
+    <lnpopden type="variable" choices="Use|Skip">Skip</lnpopden> 
+  </park_and_open_space>
+                 
+ <parking type="submodel"> 
+    <number type="integer">20</number>       
+    <constant type="variable" choices="Use">Use</constant>
+    <hwy200 type="variable" choices="Use|Skip">Use</hwy200>
+    <art600 type="variable" choices="Use|Skip">Skip</art600>
+    <art300 type="variable" choices="Use|Skip">Skip</art300>
+    <hbwavgtmda type="variable" choices="Use|Skip">Skip</hbwavgtmda>        
+    <ln_invfar type="variable" choices="Use|Skip">Use</ln_invfar>         
+    <lnemp30da type="variable" choices="Use|Skip">Use</lnemp30da>
+    <lnemp30tw type="variable" choices="Use|Skip">Skip</lnemp30tw>    
+    <lnempden type="variable" choices="Use|Skip">Use</lnempden>
+    <lnpopden type="variable" choices="Use|Skip">Skip</lnpopden>
+  </parking>
+ 
+  <single_family_residential type="submodel"> 
+    <number type="integer">24</number>       
+    <constant type="variable" choices="Use">Use</constant>
+    <hwy2000 type="variable" choices="Use|Skip">Use</hwy2000>
+    <hwy200 type="variable" choices="Use|Skip">Skip</hwy200>
+    <art300 type="variable" choices="Use|Skip">Use</art300>
+    <art600 type="variable" choices="Use|Skip">Use</art600>
+    <ln_bldgage type="variable" choices="Use|Skip">Use</ln_bldgage>
+    <lnsqft type="variable" choices="Use|Skip">Use</lnsqft>
+    <lnlotsqft type="variable" choices="Use|Skip">Skip</lnlotsqft>
+    <lnunits type="variable" choices="Use|Skip">Use</lnunits>
+    <ln_invfar type="variable" choices="Use|Skip">Use</ln_invfar>
+    <lngcdacbd type="variable" choices="Use|Skip">Use</lngcdacbd>
+    <lnemp30da type="variable" choices="Use|Skip">Use</lnemp30da>
+    <lnemp20da type="variable" choices="Use|Skip">Use</lnemp20da>
+    <lnemp10da type="variable" choices="Use|Skip">Use</lnemp10da>
+    <lnemp10wa type="variable" choices="Use|Skip">Skip</lnemp10wa>
+    <lnavginc type="variable" choices="Use|Skip">Use</lnavginc>
+    <lnpopden type="variable" choices="Use|Skip">Use</lnpopden>
+    <inugb type="variable" choices="Use|Skip">Use</inugb>
+    <hbwavgtmda type="variable" choices="Use|Skip">Use</hbwavgtmda>
+    <is_pre_1940 type="variable" choices="Use|Skip">Use</is_pre_1940>
+   </single_family_residential>
+
+  <transportation type="submodel"> 
+    <description type="string">Transportation, Communication, Public Utilities</description>
+    <number type="integer">25</number>       
+    <constant type="variable" choices="Use">Use</constant>
+    <hwy200 type="variable" choices="Use|Skip">Skip</hwy200>
+    <art300 type="variable" choices="Use|Skip">Skip</art300>
+    <art600 type="variable" choices="Use|Skip">Skip</art600>
+    <inugb type="variable" choices="Use|Skip">Use</inugb>       
+    <ln_invfar type="variable" choices="Use|Skip">Use</ln_invfar>  
+    <lnemp20wa type="variable" choices="Use|Skip">Skip</lnemp20wa>
+    <lnemp30tw type="variable" choices="Use|Skip">Use</lnemp30tw> 
+    <lngcdacbd type="variable" choices="Use|Skip">Use</lngcdacbd>
+    <lnlotsqft type="variable" choices="Use|Skip">Use</lnlotsqft>
+    <lnpopden type="variable" choices="Use|Skip">Skip</lnpopden>
+    <lnavginc type="variable" choices="Use|Skip">Skip</lnavginc>
+  </transportation>
+  
+  <vacant_developable type="submodel"> 
+    <number type="integer">26</number>     
+      <constant type="variable" choices="Use">Use</constant>
+    <hwy2000 type="variable" choices="Use|Skip">Use</hwy2000>
+    <hwy200 type="variable" choices="Use|Skip">Skip</hwy200>
+    <art300 type="variable" choices="Use|Skip">Use</art300>
+    <art600 type="variable" choices="Use|Skip">Skip</art600>
+    <hbwavgtmda type="variable" choices="Use|Skip">Skip</hbwavgtmda>
+    <lnavginc type="variable" choices="Use|Skip">Use</lnavginc>
+    <lnpopden type="variable" choices="Use|Skip">Skip</lnpopden>
+    <lnemp10da type="variable" choices="Use|Skip">Use</lnemp10da>
+    <lnemp10wa type="variable" choices="Use|Skip">Use</lnemp10wa>  
+    <lnemp20da type="variable" choices="Use|Skip">Skip</lnemp20da>
+    <lnemp20wa type="variable" choices="Use|Skip">Skip</lnemp20wa>
+    <lnempden type="variable" choices="Use|Skip">Use</lnempden>
+    <lngcdacbd type="variable" choices="Use|Skip">Use</lngcdacbd>
+    <lnlotsqft type="variable" choices="Use|Skip">Use</lnlotsqft>
+    <lnsqft type="variable" choices="Use|Skip">Use</lnsqft>
+    </vacant_developable>
+
+   <warehousing type="submodel"> 
+    <number type="integer">28</number>      
+     <constant type="variable" choices="Use">Use</constant>
+    <hwy200 type="variable" choices="Use|Skip">Skip</hwy200>
+    <art300 type="variable" choices="Use|Skip">Skip</art300>
+    <art600 type="variable" choices="Use|Skip">Skip</art600>
+    <hbwavgtmda type="variable" choices="Use|Skip">Use</hbwavgtmda>
+    <inugb type="variable" choices="Use|Skip">Skip</inugb>  
+    <is_pre_1940 type="variable" choices="Use|Skip">Skip</is_pre_1940>  
+    <ln_bldgage type="variable" choices="Use|Skip">Use</ln_bldgage>
+    <ln_invfar type="variable" choices="Use|Skip">Use</ln_invfar>
+    <lnemp20tw type="variable" choices="Use|Skip">Use</lnemp20tw> 
+    <lnempden type="variable" choices="Use|Skip">Use</lnempden>
+    <lngcdacbd type="variable" choices="Use|Skip">Use</lngcdacbd> 
+    <lnlotsqft type="variable" choices="Use|Skip">Use</lnlotsqft>
+    <lnpopden type="variable" choices="Use|Skip">Use</lnpopden>
+   </warehousing> 
+                
+  <mixed_use type="submodel"> 
+    <number type="integer">30</number>     
+      <constant type="variable" choices="Use">Use</constant>
+    <hwy200 type="variable" choices="Use|Skip">Skip</hwy200>
+    <art300 type="variable" choices="Use|Skip">Skip</art300>
+    <art600 type="variable" choices="Use|Skip">Skip</art600>
+    <ln_bldgage type="variable" choices="Use|Skip">Use</ln_bldgage>
+    <lnsqft type="variable" choices="Use|Skip">Use</lnsqft>
+    <lnlotsqft type="variable" choices="Use|Skip">Use</lnlotsqft>
+    <lnunits type="variable" choices="Use|Skip">Use</lnunits>
+    <ln_invfar type="variable" choices="Use|Skip">Use</ln_invfar>
+    <lngcdacbd type="variable" choices="Use|Skip">Use</lngcdacbd>
+    <lnemp30da type="variable" choices="Use|Skip">Use</lnemp30da>
+    <lnemp20tw type="variable" choices="Use|Skip">Use</lnemp20tw>
+    <lnemp20wa type="variable" choices="Use|Skip">Skip</lnemp20wa>
+    <lnavginc type="variable" choices="Use|Skip">Skip</lnavginc>
+    <inugb type="variable" choices="Use|Skip">Use</inugb>
+    <hbwavgtmda type="variable" choices="Use|Skip">Use</hbwavgtmda>
+    <lnempden type="variable" choices="Use|Skip">Skip</lnempden>
+    <lnpopden type="variable" choices="Use|Skip">Skip</lnpopden>
+  </mixed_use>
+</specification_variables>
+
+  
+</REPM>
+  
+<run_estimation>
+
+<models type=
+
+ <models_to_estimate type="selectable_list">
+          <REPM type="model" choices="Estimate|Skip">Estimate</REPM>
+         <HLCM type="model" choices="Estimate|Skip">Estimate</HLCM>
+         <REPM type="model" choices="Estimate|Skip">Estimate</REPM>
+         <REPM type="model" choices="Estimate|Skip">Estimate</REPM>
+
+    model = ("REPM", "real_estate_price_model")
+    # model = ("HLCM", "household_location_choice_model")
+    #model = ("ELCM", "employment_location_choice_model", "home_based", True)
+    #model = ("ELCM", "employment_location_choice_model", "non_home_based", False)
+    
+    
+<run_estimation>
+
+
+</estimation>
+  
+  </model_manager>
+  
+  <scenario_manager>
+  </scenario_manager>
+  
+</opus_project>
+  
