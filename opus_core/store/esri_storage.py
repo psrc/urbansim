@@ -88,9 +88,6 @@ else:
                     logger.log_note('The table with the name "%s" already exists.' % (table_name))
                     logger.log_note('This table will be overwritten.')
                     self.gp.Delete(full_table_location)
-                else:
-                    logger.log_note('The table with the name "%s" does not exist.' % (table_name))
-                    logger.log_note('This table will be written.')
             else:
                 self.gp.OverwriteOutput = 0
                 if self.table_exists(table_name):
@@ -150,7 +147,7 @@ else:
             esri_column_types = []
             for i in numpy_column_types:
                 esri_column_types.append(self._get_esri_type_from_numpy_dtype(i))
-                
+
             full_table_location = self.get_full_table_location(table_name)
 
             # Add columns
