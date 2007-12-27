@@ -1,0 +1,29 @@
+<opus_project>
+  <model_manager>
+    <estimation>
+    
+      <real_estate_price_model type="dictionary">
+        <variable_definitions type="dictionary">
+          <ln_cost type="variable_definition">ln_cost=ln(psrc.parcel.cost)</ln_cost>
+        </variable_definitions>
+        <specification_variables type="dictionary">
+          <single_family_residential type="submodel">
+            <number type="integer">24</number>
+            <variables type="selectable_list">
+              <ln_cost type="variable" choices="Use|Skip">Use</ln_cost>
+            </variables>
+          </single_family_residential>
+        </specification_variables>
+      </real_estate_price_model>
+      
+      <models_to_estimate type="selectable_list">
+        <real_estate_price_model type="model" choices="Estimate|Skip">Estimate</real_estate_price_model>
+        <household_location_choice_model type="model" choices="Estimate|Skip">Skip</household_location_choice_model>
+        <employment_location_choice_model_home_based type="model" choices="Estimate|Skip">Skip</employment_location_choice_model_home_based>
+        <employment_location_choice_model_non_home_based type="model" choices="Estimate|Skip">Skip</employment_location_choice_model_non_home_based>
+      </models_to_estimate>
+      
+    </estimation>
+  </model_manager>
+  <scenario_manager/>
+</opus_project>

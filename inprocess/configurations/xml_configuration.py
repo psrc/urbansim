@@ -372,6 +372,16 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(db_config.password, 'secret')
         self.assertEqual(db_config.database_name, 'river_city_baseyear')
             
+    def skip_test_estimation(self):
+        f = os.path.join(self.test_configs, 'estimate.xml')
+        config = XMLConfiguration(f).get_estimation_configuration()
+        self.assertEqual(config, 
+          {'real_estate_price_model': 
+            {'variable_definitions': {'ln_cost': 'ln_cost=ln(psrc.parcel.cost)'}},
+             'specification_variables': 
+               {'single_family_residential': {'number': 24, 'variables': ['ln_cost']}},
+           'models_to_estimate': ['real_estate_price_model']})
+            
     def test_error_handling(self):
         # there isn't an xml configuration named badname.xml
         self.assertRaises(IOError, XMLConfiguration, 'badname.xml')

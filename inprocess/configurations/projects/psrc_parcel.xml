@@ -4,13 +4,11 @@
   </general>
   
   <model_manager>
-  
+
 <estimation type="dictionary">
+<real_estate_price_model type="dictionary">
 
-<REPM type="dictionary">
-<description type="string">Real Estate Price Model</description>
-
-<variable_definitions>
+<variable_definitions type="dictionary">
   <hwy1000 type="variable_definition">hwy1000 = psrc.parcel.distance_to_highway_in_gridcell&lt;1000</hwy1000>
     <hwy2000 type="variable_definition">hwy2000 = psrc.parcel.distance_to_highway_in_gridcell&lt;2000</hwy2000>
     <art300 type="variable_definition">art300 = psrc.parcel.distance_to_arterial_in_gridcell&lt;300</art300>
@@ -350,27 +348,16 @@
 </specification_variables>
 
   
-</REPM>
+</real_estate_price_model>
   
-<run_estimation>
-
-<models type=
 
  <models_to_estimate type="selectable_list">
-          <REPM type="model" choices="Estimate|Skip">Estimate</REPM>
-         <HLCM type="model" choices="Estimate|Skip">Estimate</HLCM>
-         <REPM type="model" choices="Estimate|Skip">Estimate</REPM>
-         <REPM type="model" choices="Estimate|Skip">Estimate</REPM>
+          <real_estate_price_model type="model" choices="Estimate|Skip">Estimate</real_estate_price_model>
+         <household_location_choice_model type="model" choices="Estimate|Skip">Skip</household_location_choice_model>
+         <employment_location_choice_model_home_based type="model" choices="Estimate|Skip">Skip</employment_location_choice_model_home_based>
+         <employment_location_choice_model_non_home_based type="model" choices="Estimate|Skip">Skip</employment_location_choice_model_non_home_based>
 
-    model = ("REPM", "real_estate_price_model")
-    # model = ("HLCM", "household_location_choice_model")
-    #model = ("ELCM", "employment_location_choice_model", "home_based", True)
-    #model = ("ELCM", "employment_location_choice_model", "non_home_based", False)
-    
-    
-<run_estimation>
-
-
+</models_to_estimate>
 </estimation>
   
   </model_manager>
