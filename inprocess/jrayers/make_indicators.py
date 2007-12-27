@@ -178,11 +178,11 @@ source_data = SourceData(
 
 indicators = [
 
-   Table(
+   DatasetTable(
        source_data = source_data,
        dataset_name = 'zone',
        name = 'test_zone_Table',
-       attribute = 'eugene.zones.travel_time_to_cbd',
+       attributes = ['eugene.zones.travel_time_to_cbd'],
        output_type = 'esri',
        storage_location = 'c:/temp/test_fgdb.gdb'
    ),
