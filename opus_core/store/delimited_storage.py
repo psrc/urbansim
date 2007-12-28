@@ -80,6 +80,7 @@ class delimited_storage(Storage):
     def write_table(self, 
                     table_name, 
                     table_data, 
+                    mode = Storage.OVERWRITE,
                     fixed_column_order = None,
                     append_type_info = True):
         
@@ -87,7 +88,12 @@ class delimited_storage(Storage):
             os.makedirs(self._output_directory)
         
         file_path = self._get_file_path_for_table(table_name)
-        
+
+        if mode == Storage.APPEND:
+            old_data = self.load_table(table_name = table_name)
+            old_data.update(table_data)
+            table_data = old_data
+                    
         column_size, column_names = self._get_column_size_and_names(table_data)
         
         if fixed_column_order is None:
@@ -99,7 +105,7 @@ class delimited_storage(Storage):
         values = []
         for column_name in column_names:
             column_type = table_data[column_name].dtype.str
-
+            
             if append_type_info:
                 column_header = ('%s:%s%s' 
                     % (column_name, 
@@ -110,7 +116,7 @@ class delimited_storage(Storage):
                 
             header.append(column_header)
             values.append(table_data[column_name])
-        
+            
         output = open(file_path, 'wb')
         try:
             writer = csv.writer(output, 'my_format')

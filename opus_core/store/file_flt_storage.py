@@ -172,7 +172,7 @@ class file_flt_storage(Storage):
         else:
             raise FltError("Cache directory '%s' does not exist!" % dataset_path)
     
-    def write_table(self, table_name, table_data):
+    def write_table(self, table_name, table_data, mode = Storage.OVERWRITE):
         """
         'table_name' specifies the subdirectory relative to base directory. 
         'table_data' is a dictionary where keys are the column names and values 
@@ -199,9 +199,12 @@ class file_flt_storage(Storage):
                 message += "Either the process of copying files into this directory is flawed, or there is a bug in Opus."
                 raise FltError(message)   
             
-            for existing_file_name in existing_files_of_this_name:
-                os.remove(existing_file_name)            
-            table_data[column_name].tofile(column_file.get_name())
+            if mode == Storage.OVERWRITE:
+                for existing_file_name in existing_files_of_this_name:
+                    os.remove(existing_file_name)            
+            
+            if mode == Storage.OVERWRITE or len(existing_files_of_this_name) == 0:
+                table_data[column_name].tofile(column_file.get_name())
     
 #    def _get_base_directory(self):
 #        return self._base_directory

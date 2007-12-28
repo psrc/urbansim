@@ -89,10 +89,10 @@ class AttributeCache(Storage):
         return result
 
 
-    def write_table(self, table_name, table_data):
+    def write_table(self, table_name, table_data, mode = Storage.OVERWRITE):
         year = SimulationState().get_current_time()
         storage = flt_storage(os.path.join(self.get_storage_location(), '%s' % year))
-        return storage.write_table(table_name, table_data)
+        return storage.write_table(table_name, table_data, mode)
 
 
     def get_column_names(self, table_name, lowercase=True):

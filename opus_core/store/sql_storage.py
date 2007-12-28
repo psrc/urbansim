@@ -63,7 +63,7 @@ class sql_storage(Storage):
         self._dispose_db(db)
         return storage_location
       
-    #TODO: what is id_name supposed to do? 
+    #TODO: eliminate id_name from storage interface
     def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True, id_name=None):
         db = self._get_db()
         
@@ -110,9 +110,16 @@ class sql_storage(Storage):
         return table_data
         
         
-    def write_table(self, table_name, table_data, overwrite_existing = True):
+    def write_table(self, table_name, table_data, mode = Storage.OVERWRITE):
         db = self._get_db()
         chunk_size = 1000
+        
+        if mode == Storage.APPEND:
+            #sqlalchemy has no support for alter table syntax, so just load and reload
+            old_data = self.load_table(table_name = table_name)
+            old_data.update(table_data)
+            table_data = old_data
+            
         table_length, _ = self._get_column_size_and_names(table_data)
         
         columns = []
@@ -124,8 +131,8 @@ class sql_storage(Storage):
                 table_data[column_name] = [int(cell) for cell in column_data]
             elif column_data.dtype == 'f':
                 table_data[column_name] = [float(cell) for cell in column_data]
-            
-        if db.table_exists(table_name) and overwrite_existing:
+        
+        if db.table_exists(table_name):
             table = db.get_table(table_name)
             table.drop(checkfirst = True)
             db.metadata.remove(table)
@@ -355,8 +362,7 @@ else:
                 table_data = {
                     'id': array([1,2,3]),
                     'a': array([4,5,6]),
-                    },
-                overwrite_existing = True
+                    }
                 )                
             expected_results = [['id', 'a'], [1,4], [2,5], [3,6]]
             

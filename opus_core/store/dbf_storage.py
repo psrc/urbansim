@@ -65,6 +65,7 @@ else:
         def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True,
             id_name=None # Not used for this storage, but required for SQL-based storages
             ):
+            
             """
             The entry 'table_name' is a file name. The first line in the file is considered to 
             contain column names.
@@ -122,7 +123,11 @@ else:
             dbf.close()
             return result
         
-        def write_table(self, table_name, table_data):
+        def write_table(self, table_name, table_data, mode = Storage.OVERWRITE):
+            #TODO: implement Storage.APPEND for dbfstore
+            if mode != Storage.OVERWRITE:
+                raise 'dbf_storage does not support anything except Storage.OVERWRITE'
+            
             if not os.path.exists(self._directory):
                 os.makedirs(self._directory)
                 

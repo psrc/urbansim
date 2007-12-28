@@ -18,6 +18,9 @@ from numpy import array
 
 class Storage:
     ALL_COLUMNS = '*'
+    OVERWRITE = 'o'
+    APPEND = 'a'
+    
     
     def get_storage_location(self):
         """Returns a unique description of the location that this storage object is
@@ -49,10 +52,12 @@ class Storage:
         raise NotImplementedError()
         
     # _write_dataset
-    def write_table(self, table_name, table_data):
+    def write_table(self, table_name, table_data, mode = OVERWRITE):
         """
         Writes the given table to storage with the given name. The table_data
-        parameter takes a dictionary with the column data.
+        parameter takes a dictionary with the column data. Mode determines what 
+        how the table_data will interact with data already written to the same
+        storage location. 
         
         e.g.: {
             'column1': array([...data...]),

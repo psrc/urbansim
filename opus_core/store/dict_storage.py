@@ -41,7 +41,11 @@ class dict_storage(Storage):
 
         return result
         
-    def write_table(self, table_name, table_data):
+    def write_table(self, table_name, table_data, mode = Storage.OVERWRITE):
+        if mode == Storage.APPEND:
+            old_data = self.load_table(table_name = table_name)
+            old_data.update(table_data)
+            table_data = old_data
         self._get_column_size_and_names(table_data)
         self._mystorage[table_name] = copy.deepcopy(table_data)
 
