@@ -228,15 +228,18 @@ class Tests(AbstractIndicatorTest):
 
         store = StorageFactory().get_storage(type = 'flt_storage',
                                              storage_location = storage_location)
-        cols = store.get_column_names(table_name = 'test')
-        self.assertEqual(sorted(cols), sorted(['autogenvar0','id']))
+        cols = sorted(store.get_column_names(table_name = 'test'))
+        self.assertTrue(len(cols[0])>10)
+        truncated_cols = copy(cols)
+        truncated_cols[0] = cols[0][:10]
+        self.assertEqual(truncated_cols, ['autogenvar','id'])
         
         expected_attribute_vals = [10,12,14,16]
         
         data = store.load_table(table_name = 'test',
-                                column_names = ['autogenvar0'])
+                                column_names = [cols[0]])
         
-        self.assertEqual(expected_attribute_vals, list(data['autogenvar0']))
+        self.assertEqual(expected_attribute_vals, list(data[cols[0]]))
 
 
     def test__indicator_expressions_with_two_variables(self):
