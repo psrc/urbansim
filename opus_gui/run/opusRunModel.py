@@ -15,7 +15,7 @@
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-import os, shutil, sys, tempfile, time
+import os, sys
 
 
 try:
@@ -123,8 +123,8 @@ class OpusModel(object):
                 errorString = "Unexpected Error From Model :: " + str(errorInfo)
                 print errorInfo
                 self.errorCallback(errorString)
-            if statusdir is not None:
-                shutil.rmtree(statusdir, ignore_errors=True)
+            if statusfile is not None:
+                os.remove(statusfile)
             self.finishedCallback(succeeded)
         else:
             pass
