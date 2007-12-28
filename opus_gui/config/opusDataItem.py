@@ -18,7 +18,8 @@ from PyQt4.QtXml import *
 
 
 class OpusDataItem:
-    def __init__(self,node, row, parent):
+    def __init__(self,domDocument, node, row, parent):
+        self.domDocument = domDocument
         self.domNode = node
         self.rowNumber = row
         self.parentItem = parent
@@ -41,7 +42,7 @@ class OpusDataItem:
                 current.attributes().namedItem(QString("flags")).nodeValue() != QString("hidden")) and \
                 (current.nodeType() == QDomNode.ElementNode):
                 childNode = self.domNode.childNodes().item(x)
-                childItem = OpusDataItem(childNode, i , self)
+                childItem = OpusDataItem(self.domDocument,childNode, i , self)
                 self.childItems.append(childItem)
                 i = i + 1
                 childItem.initAsRootItem()
@@ -52,6 +53,35 @@ class OpusDataItem:
     def parent(self):
         return self.parentItem
     
+    def remove(self):
+        # Need to remove the node...
+        self.parentItem.domNode.removeChild(self.domNode)
+        #self.parentItem.childItems.remove(self)
+        indexSelf = self.parentItem.childItems.index(self)
+        for x in xrange(indexSelf,len(self.parentItem.childItems)):
+            print "X index = ", x
+            self.parentItem.childItems[x].rowNumber = self.parentItem.childItems[x].rowNumber - 1
+        print len(self.parentItem.childItems)
+        self.parentItem.childItems.remove(self)
+        print len(self.parentItem.childItems)
+        
+    def addChild(self,elementTag,elementType,elementText):
+        # Need to add node to dom
+        print "parent has %d child items" % (self.domNode.childNodes().count())
+        newElement = self.domDocument.createElement(QString(elementTag))
+        newElement.setAttribute(QString("type"),elementType)
+        self.domNode.appendChild(newElement)
+        if elementText != "":
+            # Add a text Node
+            newText = self.domDocument.createTextNode(QString(elementText))
+            newElement.appendChild(newText)
+        print "parent has %d child items" % (self.domNode.childNodes().count())
+        # Then add the node to the model with a new item
+        print "item has %d child items" % (len(self.childItems))
+        childItem = OpusDataItem(self.domDocument, newElement,len(self.childItems),self)
+        self.childItems.append(childItem)
+        print "item has %d child items" % (len(self.childItems))
+        
     def child(self,i):
         #print "DataItem.child ", i
         if len(self.childItems) > i:
@@ -68,7 +98,7 @@ class OpusDataItem:
             if foundSoFar == tryToFind:
                 # We have the one we are looking for
                 childNode = self.domNode.childNodes().item(x)
-                childItem = OpusDataItem(childNode, i , self)
+                childItem = OpusDataItem(self.domDocument,childNode, i , self)
                 self.childItems.append(childItem)
                 return childItem
         return None

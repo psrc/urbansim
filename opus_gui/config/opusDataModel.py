@@ -60,12 +60,12 @@ class OpusDataModel(QAbstractItemModel):
             print "No XML elements in the root with type ", self.xmlType
             return
         print "Found ", self.xmlRoot.nodeName()
-        self._rootItem = OpusDataItem(document, 0, self)
+        self._rootItem = OpusDataItem(document,document, 0, self)
         # Loop through the first level children and inti them as a root item
         # and append to the tree...
         for x in xrange(0,self.xmlRoot.childNodes().count(),1):
             current = self.xmlRoot.childNodes().item(x)
-            self._rootItemSub = OpusDataItem(current, x, self._rootItem)
+            self._rootItemSub = OpusDataItem(document,current, x, self._rootItem)
             self._rootItemSub.initAsRootItem()
             self._rootItem.childItems.append(self._rootItemSub)
         
