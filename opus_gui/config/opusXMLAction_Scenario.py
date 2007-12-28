@@ -83,6 +83,21 @@ class OpusXMLAction_Scenario(object):
         newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
         #print "Test - ", newFile.absoluteFilePath()
         self.xmlTreeObject.parentTool.openXMLTree(newFile.absoluteFilePath())
+
+        # To test QScintilla
+        if self.xmlTreeObject.parent.editorStuff:
+            print "Loading into qscintilla..."
+            fileName = newFile.absoluteFilePath()
+            self.xmlTreeObject.parent.editorStuff.clear()
+            try:
+                f = open(fileName,'r')
+            except:
+                return
+            for l in f.readlines():
+                self.xmlTreeObject.parent.editorStuff.append(l)
+            f.close()
+            self.xmlTreeObject.parent.editorStatusLabel.setText(QString(fileName))
+
     
     def placeHolderAction(self):
         print "placeHolderAction pressed with column = %s and item = %s" % \

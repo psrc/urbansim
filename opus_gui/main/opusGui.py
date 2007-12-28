@@ -60,13 +60,25 @@ class OpusGui(QMainWindow, Ui_MainWindow):
       # Only load the map stuff if QGIS is loadable
       self.mapStuff = map.mapBase.MapBase(self)
     except ImportError:
-      pass
+      self.mapStuff = None
     
     self.consoleStuff = ConsoleBase(self)
     self.toolboxStuff = ToolboxBase(self)
     self.runManagerStuff = RunManagerBase(self)
     self.runManagerStuff.setGui(self)
 
+    try:
+      import util.editorBase
+      self.editorStatusLabel = QLabel(self)
+      self.editorStatusLabel.setAlignment(Qt.AlignCenter)
+      self.editorStatusLabel.setObjectName("editorStatusLabel")
+      self.editorStatusLabel.setText(QString("No files currently loaded..."))
+      self.gridlayout5.addWidget(self.editorStatusLabel)
+      self.editorStuff = util.editorBase.EditorBase(self)
+      self.gridlayout5.addWidget(self.editorStuff)
+    except ImportError:
+      self.editorStuff = None
+    
     time.sleep(1)
     self.splash.hide()
 
