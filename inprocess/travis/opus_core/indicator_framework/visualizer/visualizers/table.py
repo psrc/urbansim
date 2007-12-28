@@ -21,7 +21,7 @@ from inprocess.travis.opus_core.indicator_framework.visualizer.visualizers.abstr
 from opus_core.database_management.database_server import DatabaseServer
 
 
-from numpy import where, array
+from numpy import array
 
 class Table(Visualization):
     ALL = 1
@@ -42,6 +42,7 @@ class Table(Visualization):
                not isinstance(storage_location,str):
             raise "If Table output_type is %s, storage_location must be a path to the output directory"%output_type
         elif output_type not in ['dbf', 'csv', 'tab', 'sql']:
+            print output_type
             raise "Table output_type must be either dbf, csv, tab, or sql"
         
         if output_style not in [Table.ALL, 
@@ -67,29 +68,18 @@ class Table(Visualization):
             storage_location = storage_location
         )
         
-        self.input_storage = StorageFactory().get_storage(
-            type = 'csv_storage',
-            storage_location = indicator_directory)
-        self.indicator_directory = indicator_directory
         self.name = name
-    
+        self.indicator_directory = indicator_directory
+        
     def get_file_extension(self):
         if self.output_type == 'sql':
             return None
         else:
             return self.output_type
-    
-    def get_visualization_shorthand(self):
-        viz_map = {
-           'csv':'table',
-           'tab':'tab',
-           'dbf':'dbf',
-           'sql':'sql'
-        }
-        return viz_map[self.output_type]
               
     def get_additional_metadata(self):
-        return  [('output_type',self.output_type)]
+        return  [('output_type',self.output_type),
+                 ('output_style', self.output_style)]
         
     def get_visualization_type(self):
         return 'table-%i'%self.output_style
@@ -100,67 +90,66 @@ class Table(Visualization):
         """Create a table for the given indicator, save it to the cache
         directory's 'indicators' sub-directory."""
         
+        #TODO: eliminate this example indicator stuff
         example_indicator = computed_indicators[indicators_to_visualize[0]]
-        dataset_name = example_indicator.dataset_metadata['dataset_name']
-        primary_keys = example_indicator.dataset_metadata['primary_keys']
-        result_template = example_indicator.result_template
+        result_template = example_indicator.result_template        
+        dataset_to_attribute_map = {}
+
+        self._create_input_stores(years = result_template.years)
+        for name, computed_indicator in computed_indicators.items():
+            if name not in indicators_to_visualize: continue
+            
+            if computed_indicator.result_template != result_template:
+                raise 'result templates in indicator batch must all be the same.'
+            dataset_name = computed_indicator.indicator.dataset_name
+            if dataset_name not in dataset_to_attribute_map:
+                dataset_to_attribute_map[dataset_name] = []
+            dataset_to_attribute_map[dataset_name].append(name)
         
-        attributes = [(name,computed_indicators[name].get_computed_dataset_column_name())
-                      for name in indicators_to_visualize]
-        
-        cols = primary_keys + sorted([col_name for name, col_name in attributes])
-        table_data = self.input_storage.load_table(
-            table_name = dataset_name,
-            column_names = cols)
-        
-        if self.output_style == Table.ALL:
-            output_method = self.output_ALL
-        elif self.output_style == Table.PER_YEAR:
-            output_method = self.output_PER_YEAR
-        elif self.output_style == Table.PER_ATTRIBUTE:
-            output_method = self.output_PER_ATTRIBUTE
-        
-        viz_metadata = output_method(
-            dataset_name = dataset_name,
-            old_data = table_data,
-            attributes = attributes,
-            primary_keys = primary_keys,
-            years = result_template.years) 
-        
-        visualization_representations = []
-        for indicator_names, table_name, years in viz_metadata:
-            visualization_representations.append(
-                self._get_visualization_metadata(
-                    computed_indicators = computed_indicators,
-                    indicators_to_visualize = indicator_names,
-                    table_name = table_name,
-                    years = years
-            ))                   
+        for dataset_name, indicator_names in dataset_to_attribute_map.items():
+            visualization_representations = []
+            attributes = [(name,computed_indicators[name].get_computed_dataset_column_name())
+                          for name in indicator_names]
+            example_indicator = computed_indicators[indicator_names[0]]
+            primary_keys = example_indicator.dataset_metadata['primary_keys']
+            
+            if self.output_style == Table.ALL:
+                output_method = self.output_ALL
+            elif self.output_style == Table.PER_YEAR:
+                output_method = self.output_PER_YEAR
+            elif self.output_style == Table.PER_ATTRIBUTE:
+                output_method = self.output_PER_ATTRIBUTE
+            
+            viz_metadata = output_method(
+                dataset_name = dataset_name,
+                attributes = attributes,
+                primary_keys = primary_keys,
+                years = result_template.years) 
+                        
+            for indicator_names, table_name, years in viz_metadata:
+                visualization_representations.append(
+                    self._get_visualization_metadata(
+                        computed_indicators = computed_indicators,
+                        indicators_to_visualize = indicator_names,
+                        table_name = table_name,
+                        years = years))                   
         
         return visualization_representations
 
     def output_PER_YEAR(self,
                         dataset_name,
-                        old_data,
                         attributes,
                         primary_keys,
                         years):
         
-        id_cols = [id_col for id_col in primary_keys if id_col != 'year']
-        cols = [computed_name for name, computed_name in attributes]
+        per_year_data = self._get_PER_YEAR_form(
+            dataset_name = dataset_name, 
+            attributes = attributes, 
+            primary_keys = primary_keys, 
+            years = years)
+        
         viz_metadata = []
-        for year in years:
-            data_subset = {}
-            for col in cols + id_cols:
-                if col not in id_cols:
-                    if col.find('DDDD') == -1:
-                        col_name = '%s_%i'%(col, year)
-                    else:
-                        col_name = col.replace('DDDD', repr(year))
-                else: col_name = col
-
-                data_subset[col_name] = old_data[col][where(old_data['year']==year)]
-
+        for year, data_subset in per_year_data.items():            
             table_name = self.get_name(
                 dataset_name = dataset_name,
                 years = [year],
@@ -169,33 +158,29 @@ class Table(Visualization):
             self._write_to_storage(
                 table_name = table_name,
                 table_data = data_subset,
-                column_names = id_cols + sorted([col for col in data_subset.keys() 
-                                                      if col not in id_cols])
-            )
+                column_names = primary_keys + sorted([col for col in data_subset.keys() 
+                                                      if col not in primary_keys]))
             
             viz_metadata.append(([name for name, computed_name in attributes], 
                                  table_name, 
                                  [year])) 
                        
         return viz_metadata
-            
+        
     def output_PER_ATTRIBUTE(self,
                             dataset_name,
-                            old_data,
                             attributes,
                             primary_keys,
                             years):
-        
-        id_cols = [id_col for id_col in primary_keys if id_col != 'year']
-        new_data, cols, col_name_attribute_map = self._convert_to_tabular_form_for_ALL(
-                                old_data = old_data, 
-                                attributes = attributes, 
-                                primary_keys = primary_keys, 
-                                years = years)                                      
-        
+                
+        per_attribute_data = self._get_PER_ATTRIBUTE_form(
+            dataset_name = dataset_name, 
+            attributes = attributes, 
+            primary_keys = primary_keys, 
+            years = years)
+                
         viz_metadata = []
-        for name, cols in col_name_attribute_map.items():
-            data_subset = dict([(col, new_data[col]) for col in id_cols+cols])
+        for name, data_subset in per_attribute_data.items():
             table_name = self.get_name(
                 dataset_name = dataset_name,
                 years = years,
@@ -204,22 +189,22 @@ class Table(Visualization):
             self._write_to_storage(
                 table_name = table_name,
                 table_data = data_subset,
-                column_names = id_cols + sorted(cols)
+                column_names = primary_keys + sorted([col for col in data_subset.keys()
+                                                     if col not in primary_keys])
             )
             
             viz_metadata.append(([name], table_name, years))
             
         return viz_metadata
-                         
+                             
     def output_ALL(self,
                    dataset_name,
-                   old_data,
                    attributes,
                    primary_keys,
                    years):
 
-        new_data, cols, col_name_attribute_map = self._convert_to_tabular_form_for_ALL(
-            old_data = old_data,
+        new_data = self._get_ALL_form(
+            dataset_name = dataset_name,
             attributes = attributes,
             primary_keys = primary_keys,
             years = years
@@ -228,66 +213,16 @@ class Table(Visualization):
         table_name = self.get_name(
             dataset_name = dataset_name,
             years = years,
-            attribute_names = col_name_attribute_map.keys())
+            attribute_names = [name for name, computed_name in attributes])
                 
         self._write_to_storage(
             table_name = table_name,
             table_data = new_data,
-            column_names = cols
+            column_names = primary_keys + [col for col in new_data.keys() 
+                                               if col not in primary_keys]
         )
-        
-        return [(col_name_attribute_map.keys(), table_name, years)]
+        return [([name for name, computed_name in attributes], table_name, years)]
                                               
-    def _convert_to_tabular_form_for_ALL(self,
-                                old_data,
-                                attributes,
-                                primary_keys,
-                                years):
-        #TODO: make sure that column types are properly handled
-        id_cols = [id_col for id_col in primary_keys if id_col != 'year']
-        
-        keys = set(zip(
-                   *[list(old_data[col]) for col in id_cols]))
-        
-        keys = sorted(list(keys))
-        default_array = [-1 for i in range(len(keys))]
-
-        key_to_index_map = dict([(keys[i],i) for i in range(len(keys))])
-        
-        i = 0
-        new_names = {}
-        new_data = {}
-        col_name_attribute_map = {}
-        
-        for id_col in id_cols:
-            new_data[id_col] = array(default_array)
-        
-        for name, attribute in attributes:
-            col_name_attribute_map[name] = []
-            for year in years:
-                if attribute.find('DDDD') == -1:
-                    new_name = '%s_%i'%(attribute, year)
-                else:
-                    new_name = attribute.replace('DDDD', repr(year))
-                new_names[(i,year)] = new_name
-                col_name_attribute_map[name].append(new_name)                
-                new_data[new_name] = array(default_array)
-            i += 1
-        new_names = dict(new_names)
-
-        for i in range(len(old_data[primary_keys[0]])):
-            key = tuple([old_data[col][i] for col in id_cols])
-            index_in_new = key_to_index_map[key]
-            year = old_data['year'][i]
-            j = 0
-            for name, attribute in attributes:  
-                new_name = new_names[(j,year)]
-                new_data[new_name][index_in_new] = old_data[attribute][i]
-                j += 1          
-            for id_col in id_cols:
-                new_data[id_col][index_in_new] = old_data[id_col][i]
-        
-        return new_data, id_cols + sorted(new_names.values()), col_name_attribute_map
         
     def _write_to_storage(self, 
                           table_name,
@@ -336,10 +271,13 @@ class Tests(AbstractIndicatorTest):
             table = Table(indicator_directory = self.source_data.get_indicator_directory(),
                           output_type = 'csv',
                           output_style = style)
+            table._create_input_stores(range(1980,1984))
+            
             viz_results = table.visualize(
                             indicators_to_visualize = ['attr1',
                                                        'attr2'], 
                             computed_indicators = computed_indicators)
+            
             
             for viz_result in viz_results:
                 if style == Table.ALL:
@@ -357,50 +295,26 @@ class Tests(AbstractIndicatorTest):
                      os.path.join(viz_result.storage_location,
                                   viz_result.table_name + '.' + viz_result.file_extension), 
                      os.path.join(indicator_path, file_name))     
-        
-
-    def test__convert_to_tabular_form_for_ALL(self):
-        table = Table(indicator_directory = self.source_data.get_indicator_directory(),
-                      output_type = 'csv')
-        
-        old_data = {
-            'id':array([1,2,3,1,2,4]),
-            'id2':array([3,4,5,3,4,5]),
-            'year':array([2000,2000,2000,2002,2002,2002]),
-            'attr1':array([1,2,3,10,20,30]),
-            'attr2':array([2,3,4,20,30,40]),
-        }
-
-        expected = {
-            'id':array([1,2,3,4]),
-            'id2':array([3,4,5,5]),
-            'attr1_2000':array([1,2,3,-1]),
-            'attr1_2002':array([10,20,-1,30]),
-            'attr2_2000':array([2,3,4,-1]),
-            'attr2_2002':array([20,30,-1,40]),
-        }
-               
-        output, cols, dummy = table._convert_to_tabular_form_for_ALL(
-            old_data = old_data,     
-            attributes = [('attr1','attr1'),('attr2','attr2')], 
-            primary_keys = ['id','id2', 'year'], 
-            years = [2000,2002])
-        
-        self.assertEqual(len(expected.keys()), len(output.keys()))
-        for k,v in expected.items():
-            self.assertEqual(list(v), list(output[k]))
             
     def test__output_PER_ATTRIBUTE(self):
         indicator_directory = self.source_data.get_indicator_directory() 
         table = Table(indicator_directory = indicator_directory,
                       output_type = 'csv')
         
-        old_data = {
-            'id':array([1,2,3,1,2,4]),
-            'id2':array([3,4,5,3,4,5]),
-            'year':array([2000,2000,2000,2002,2002,2002]),
-            'attr1':array([1,2,3,10,20,30]),
-            'attr2':array([2,3,4,20,30,40]),
+        table._create_input_stores([2000,2002])
+        
+        input_2000 = {
+            'id':array([1,2,3]),
+            'id2':array([3,4,5]),
+            'attr1':array([1,2,3]),
+            'attr2':array([2,3,4]),
+        }
+
+        input_2002 = {
+            'id':array([1,2,4]),
+            'id2':array([3,4,5]),
+            'attr1':array([10,20,30]),
+            'attr2':array([20,30,40]),
         }
 
         expected1 = {
@@ -416,12 +330,28 @@ class Tests(AbstractIndicatorTest):
             'attr2_2000':array([2,3,4,-1]),
             'attr2_2002':array([20,30,-1,40]),
         }
-                       
+
+        for year in [2000,2002]:
+            input_storage = StorageFactory().get_storage(
+                type = 'flt_storage',
+                storage_location = os.path.join(
+                                    self.source_data.get_indicator_directory(),
+                                    '_stored_data',
+                                    repr(year)))
+            if year == 2000:
+                data = input_2000
+            else:
+                data = input_2002
+                
+            input_storage.write_table(
+                table_name = 'test',
+                table_data = data
+            )
+                                   
         viz_metadata = table.output_PER_ATTRIBUTE(
             dataset_name = 'test',
-            old_data = old_data,     
             attributes = [('attr1','attr1'),('attr2','attr2')], 
-            primary_keys = ['id','id2', 'year'], 
+            primary_keys = ['id','id2'], 
             years = [2000,2002])
 
         storage = StorageFactory().get_storage(
@@ -439,7 +369,7 @@ class Tests(AbstractIndicatorTest):
                 expected = expected1
             else:
                 expected = expected2
-                
+                                
             self.assertEqual(len(expected.keys()), len(output.keys()))
             for k,v in expected.items():
                 self.assertEqual(list(v), list(output[k]))
@@ -448,34 +378,57 @@ class Tests(AbstractIndicatorTest):
         indicator_directory = self.source_data.get_indicator_directory() 
         table = Table(indicator_directory = indicator_directory,
                       output_type = 'csv')
-        
-        old_data = {
-            'id':array([1,2,3,1,2,4]),
-            'id2':array([3,4,5,3,4,5]),
-            'year':array([2000,2000,2000,2002,2002,2002]),
-            'attr1':array([1,2,3,10,20,30]),
-            'attr2':array([2,3,4,20,30,40]),
+        table._create_input_stores([2000,2002])
+
+        input_2000 = {
+            'id':array([1,2,3]),
+            'id2':array([3,4,5]),
+            'attr1':array([1,2,3]),
+            'attr2':array([2,3,4]),
         }
 
-        expected1 = {
+        input_2002 = {
+            'id':array([1,2,4]),
+            'id2':array([3,4,5]),
+            'attr1':array([10,20,30]),
+            'attr2':array([20,30,40]),
+        }
+
+        expected_2000 = {
             'id':array([1,2,3]),
             'id2':array([3,4,5]),
             'attr1_2000':array([1,2,3]),
             'attr2_2000':array([2,3,4]),
         }
 
-        expected2 = {
+        expected_2002 = {
             'id':array([1,2,4]),
             'id2':array([3,4,5]),
             'attr1_2002':array([10,20,30]),
             'attr2_2002':array([20,30,40]),
         }
-                       
+        
+        for year in [2000,2002]:
+            input_storage = StorageFactory().get_storage(
+                type = 'flt_storage',
+                storage_location = os.path.join(
+                                    self.source_data.get_indicator_directory(),
+                                    '_stored_data',
+                                    repr(year)))
+            if year == 2000:
+                data = input_2000
+            else:
+                data = input_2002
+                
+            input_storage.write_table(
+                table_name = 'test',
+                table_data = data
+            )
+
         viz_metadata = table.output_PER_YEAR(
             dataset_name = 'test',
-            old_data = old_data,     
             attributes = [('attr1','attr1'),('attr2','attr2')], 
-            primary_keys = ['id','id2', 'year'], 
+            primary_keys = ['id','id2'], 
             years = [2000,2002])
 
         storage = StorageFactory().get_storage(
@@ -490,9 +443,9 @@ class Tests(AbstractIndicatorTest):
                                                         table_name + '.csv')))
             output = storage.load_table(table_name = table_name)
             if years == [2000]:
-                expected = expected1
+                expected = expected_2000
             else:
-                expected = expected2
+                expected = expected_2002
                                 
             self.assertEqual(len(expected.keys()), len(output.keys()))
             for k,v in expected.items():
@@ -508,8 +461,6 @@ class Tests(AbstractIndicatorTest):
             output_types.append('dbf')
 
         try:
-            from opus_core.database_management.database_configuration import DatabaseConfiguration
-            from opus_core.database_management.database_server import DatabaseServer
 
             test_db_name = 'test_db_for_indicator_framework'
             database_config = DatabaseConfiguration(
@@ -547,6 +498,7 @@ class Tests(AbstractIndicatorTest):
                         indicator_directory = self.source_data.get_indicator_directory(),
                         output_type = output_type,
                         **kwargs)
+            table._create_input_stores(self.source_data.years)
             viz_result = table.visualize(
                         indicators_to_visualize = ['attr1'], 
                         computed_indicators = computed_indicators)[0]
