@@ -83,11 +83,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.splash.hide()
 
   def openConfig(self):
+    from opus_core.misc import directory_path_from_opus_path
+    start_dir = directory_path_from_opus_path('opus_gui.projects')
     print "Open Config pressed..."
     configDialog = QFileDialog()
     filter_str = QString("*.xml")
     fd = configDialog.getOpenFileName(self,QString("Please select an xml config file..."),
-                                      QString(), filter_str)
+                                      QString(start_dir), filter_str)
     # Check for cancel
     if len(fd) == 0:
       return
