@@ -47,7 +47,6 @@ class MultipleYearDatasetView(AbstractDataset):
         id_names = dataset_for_current_year.get_id_name() + ['year']
         self.base_id_name = dataset_for_current_year.get_id_name()
         
-        
         # Masquerade as a dataset of the right type (important for computing the right variables).
         dataset_name = dataset_for_current_year.get_dataset_name()
         
@@ -56,7 +55,11 @@ class MultipleYearDatasetView(AbstractDataset):
                                  in_table_name=in_table_name,
                                  dataset_name=dataset_name,
                                  *args, **kwargs)
-        
+
+        coord_system = dataset_for_current_year.get_coordinate_system()
+        if coord_system is not None:
+            self._coordinate_system = coord_system
+                    
     def _validate_primary_attributes_same_for_all_years(self, name_of_dataset_to_merge, in_table_name, attribute_cache, years_to_merge):
         # Make sure that the set of primary attributes is the same for all years
         # being merged; otherwise, cannot do merge.
