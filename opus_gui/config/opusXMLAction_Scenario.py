@@ -42,6 +42,12 @@ class OpusXMLAction_Scenario(object):
         self.actOpenXMLFile = QAction(self.calendarIcon, "Open XML File", self.xmlTreeObject.parent)
         QObject.connect(self.actOpenXMLFile, SIGNAL("triggered()"), self.openXMLFile)
         
+        self.actEditXMLFileGlobal = QAction(self.calendarIcon, "Edit XML File Global", self.xmlTreeObject.parent)
+        QObject.connect(self.actEditXMLFileGlobal, SIGNAL("triggered()"), self.editXMLFileGlobal)
+        
+        self.actEditXMLFileLocal = QAction(self.calendarIcon, "Edit XML File Local", self.xmlTreeObject.parent)
+        QObject.connect(self.actEditXMLFileLocal, SIGNAL("triggered()"), self.editXMLFileLocal)
+        
         self.actPlaceHolder = QAction(self.applicationIcon, "Placeholder", self.xmlTreeObject.parent)
         QObject.connect(self.actPlaceHolder, SIGNAL("triggered()"), self.placeHolderAction)
         
@@ -84,9 +90,47 @@ class OpusXMLAction_Scenario(object):
         #print "Test - ", newFile.absoluteFilePath()
         self.xmlTreeObject.parentTool.openXMLTree(newFile.absoluteFilePath())
 
+    
+    def editXMLFileLocal(self):
+        print "Edit File Local context pressed with column = %s and item = %s" % \
+              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+        filePath = ""
+        if self.currentIndex.internalPointer().node().hasChildNodes():
+            children = self.currentIndex.internalPointer().node().childNodes()
+            for x in xrange(0,children.count(),1):
+                if children.item(x).isText():
+                    filePath = children.item(x).nodeValue()
+        fileInfo = QFileInfo(filePath)
+        baseInfo = QFileInfo(self.xmlTreeObject.parentTool.xml_file)
+        baseDir = baseInfo.absolutePath()
+        newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
+
         # To test QScintilla
         if self.xmlTreeObject.parent.editorStuff:
             print "Loading into qscintilla..."
+            # Now an individual tab
+            import util.editorBase
+            fileName = newFile.absoluteFilePath()
+            x = util.editorBase.EditorTab(self.xmlTreeObject.parent, QString(fileName))
+    
+    def editXMLFileGlobal(self):
+        print "Edit File Global context pressed with column = %s and item = %s" % \
+              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+        filePath = ""
+        if self.currentIndex.internalPointer().node().hasChildNodes():
+            children = self.currentIndex.internalPointer().node().childNodes()
+            for x in xrange(0,children.count(),1):
+                if children.item(x).isText():
+                    filePath = children.item(x).nodeValue()
+        fileInfo = QFileInfo(filePath)
+        baseInfo = QFileInfo(self.xmlTreeObject.parentTool.xml_file)
+        baseDir = baseInfo.absolutePath()
+        newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
+
+        # To test QScintilla
+        if self.xmlTreeObject.parent.editorStuff:
+            print "Loading into qscintilla..."
+            # Start with the base tab
             fileName = newFile.absoluteFilePath()
             self.xmlTreeObject.parent.editorStuff.clear()
             try:
@@ -98,7 +142,6 @@ class OpusXMLAction_Scenario(object):
             f.close()
             self.xmlTreeObject.parent.editorStatusLabel.setText(QString(fileName))
 
-    
     def placeHolderAction(self):
         print "placeHolderAction pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
@@ -126,6 +169,9 @@ class OpusXMLAction_Scenario(object):
                 elif domElement.attribute(QString("type")) == QString("file"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actOpenXMLFile)
+                    self.menu.addSeparator()
+                    self.menu.addAction(self.actEditXMLFileGlobal)
+                    self.menu.addAction(self.actEditXMLFileLocal)
                     self.menu.exec_(QCursor.pos())
                 else:
                     self.menu = QMenu(self.xmlTreeObject.parent)
