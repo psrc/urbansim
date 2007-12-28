@@ -21,8 +21,15 @@ class VisualizationFactory:
                   computed_indicators,
                   visualization_type, 
                   *args, **kwargs):
-        module = 'opus_core.indicator_framework.visualizer.visualizations'
-        module_composed_name = module + visualization_type
+        
+        class_names = {
+           'matplotlib_map':'MatplotlibMap',
+           'matplotlib_chart':'MatplotlibChart',
+           'table':'Table'
+        }
+        
+        module = 'inprocess.travis.opus_core.indicator_framework.visualizer.visualizers'
+        module_composed_name = module + '.' + visualization_type
         
         example_indicator = computed_indicators[indicators_to_visualize[0]]
         indicator_directory = example_indicator.result_template.get_indicator_directory()
@@ -32,6 +39,7 @@ class VisualizationFactory:
         kwargs.update(additional_args)
         visualization = ClassFactory().get_class(
             module_composed_name = module_composed_name,
+            class_name = class_names[visualization_type],
             arguments=kwargs)
         
         return visualization.visualize(
