@@ -17,18 +17,19 @@ import os
 from gc import collect
 from copy import copy
 
+from inprocess.travis.opus_core.indicator_framework.utilities.integrity_error import IntegrityError
+from inprocess.travis.opus_core.indicator_framework.representations.computed_indicator import ComputedIndicator
+from inprocess.travis.opus_core.indicator_framework.representations.indicator import Indicator
+
 from opus_core.variables.variable_name import VariableName
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.logger import logger
 
-from inprocess.travis.opus_core.indicator_framework.utilities.integrity_error import IntegrityError
-from inprocess.travis.opus_core.indicator_framework.representations.computed_indicator import ComputedIndicator
-from inprocess.travis.opus_core.indicator_framework.representations.indicator import Indicator
 
 from opus_core.storage_factory import StorageFactory
-from opus_core.datasets.multiple_year_dataset_view import MultipleYearDatasetView
+from opus_core.store.storage import Storage
 
 class Maker(object):
     def __init__(self):
@@ -45,7 +46,11 @@ class Maker(object):
 
         cache_directory = self.source_data.cache_directory
         
-        self.storage_location = self.source_data.get_indicator_directory()
+        self.storage_location = os.path.join(self.source_data.get_indicator_directory(),
+                                             '_stored_data')
+        
+        if not os.path.exists(self.source_data.get_indicator_directory()):
+            os.mkdir(self.source_data.get_indicator_directory())
         if not os.path.exists(self.storage_location):
             os.mkdir(self.storage_location)
                 
@@ -59,7 +64,7 @@ class Maker(object):
         (self.package_order, self.package_order_exceptions) = \
             self.source_data.get_package_order_and_exceptions()
                     
-        self._set_cache_directory(cache_directory)
+        SimulationState().set_cache_directory(cache_directory) 
         
         self._check_integrity(indicators = indicators, 
                               result_template = result_template)
@@ -71,42 +76,43 @@ class Maker(object):
         return computed_indicators
 
     def _make_all_indicators(self, indicators, result_template):
-        self.in_expression = False
         
         computed_indicators = {}
         indicators_by_dataset = {}
-        for name, indicator in indicators.items():
-            dataset_name = indicator.dataset_name
-            if dataset_name not in indicators_by_dataset:
-                indicators_by_dataset[dataset_name] = [(name,indicator)]
-            else:
-                indicators_by_dataset[dataset_name].append((name,indicator))
+        for year in result_template.years:
+            SimulationState().set_current_time(year)
+            SessionConfiguration(
+                new_instance = True,
+                package_order = self.package_order,
+                package_order_exceptions = self.package_order_exceptions,
+                in_storage = AttributeCache()) 
+                    
+            for name, indicator in indicators.items():
+                dataset_name = indicator.dataset_name
+                if dataset_name not in indicators_by_dataset:
+                    indicators_by_dataset[dataset_name] = [(name,indicator)]
+                else:
+                    indicators_by_dataset[dataset_name].append((name,indicator))
+                    
+            for dataset_name, indicators_in_dataset in indicators_by_dataset.items():
+                dataset = SessionConfiguration().get_dataset_from_pool(dataset_name)
                 
-        for dataset_name, indicators_in_dataset in indicators_by_dataset.items():
-            self._make_indicators_for_dataset(
-                 dataset_name = dataset_name,
-                 indicators_in_dataset = indicators_in_dataset,
-                 result_template = result_template,
-                 computed_indicators = computed_indicators
-            )
+                self._make_indicators_for_dataset(
+                     dataset = dataset,
+                     indicators_in_dataset = indicators_in_dataset,
+                     result_template = result_template,
+                     computed_indicators = computed_indicators,
+                     year = year
+                )
             
         self.computed_indicators[result_template.name] = computed_indicators
         return computed_indicators
     
-    def _make_indicators_for_dataset(self, dataset_name, 
+    def _make_indicators_for_dataset(self, dataset, 
                                      indicators_in_dataset,
                                      result_template,
-                                     computed_indicators):
-        in_table_name = dataset_name
-        dataset = MultipleYearDatasetView(
-            name_of_dataset_to_merge = dataset_name,
-            in_table_name = in_table_name,
-            attribute_cache = AttributeCache(),
-            years_to_merge = result_template.years)
-            
-        attributes = dataset.base_id_name + [ind.attribute 
-                                             for name,ind in indicators_in_dataset]
-        dataset.compute_variables(names = attributes)
+                                     computed_indicators,
+                                     year):
         
         for name, indicator in indicators_in_dataset:
             computed_indicator = ComputedIndicator(
@@ -115,64 +121,48 @@ class Maker(object):
                 dataset = dataset)
             
             computed_indicators[name] = computed_indicator
+                
+        table_name = dataset.get_dataset_name()
+        storage_location = os.path.join(self.storage_location,
+                                        repr(year))
             
-        self._write_dataset(
-            dataset = dataset, 
-            indicators_in_dataset = indicators_in_dataset,
-            computed_indicators = computed_indicators)
+        storage_type = 'flt'
+        store = StorageFactory().get_storage(storage_type + '_storage', 
+                                             storage_location = storage_location)
+        
+        already_computed_attributes = []
+        if not os.path.exists(storage_location):
+            os.mkdir(storage_location)
+        else:
+            if store.table_exists(table_name = table_name):
+                already_computed_attributes = store.get_column_names(table_name = table_name)
+                
+        attributes = dataset.get_id_name() + [ind.attribute 
+                                             for name,ind in indicators_in_dataset
+                                             if computed_indicators[name].get_computed_dataset_column_name() 
+                                                 not in already_computed_attributes]
+        
+        dataset.compute_variables(names = attributes)
+        
+        cols = copy(dataset.get_id_name())
+        cols += [computed_indicators[name].get_computed_dataset_column_name() 
+                for name, ind in indicators_in_dataset
+                if computed_indicators[name].get_computed_dataset_column_name() 
+                                                 not in already_computed_attributes]
+        
+        data = dict([(attribute, dataset.get_attribute(attribute))
+                 for attribute in cols])
+
+        store.write_table(
+            table_name = table_name, 
+            table_data = data,
+            mode = Storage.APPEND
+        )
         
         del dataset
         collect()
 
-    ######## Output #############
-    def _write_dataset(self, 
-                       dataset, 
-                       indicators_in_dataset,
-                       computed_indicators):        
-        cols = copy(dataset.get_id_name())
-        cols += [computed_indicators[name].get_computed_dataset_column_name() 
-                for name, ind in indicators_in_dataset]
-        data = {}
-        for attribute in cols:
-            data[attribute] = dataset.get_attribute(attribute)
-        
-        storage_type = 'csv'
-        store = StorageFactory().get_storage(storage_type + '_storage', 
-                                             storage_location = self.storage_location)
-        
-        store.write_table(
-            table_name = dataset.get_dataset_name(), 
-            table_data = data,
-            fixed_column_order = cols)
-        
-    
-    ######## Cache management #########
-        
-    def _set_cache_directory(self, cache_directory):
-        if cache_directory != SimulationState().get_cache_directory():
-            SimulationState().set_cache_directory(cache_directory) 
-            SessionConfiguration(
-                new_instance = True,
-                package_order = self.package_order,
-                package_order_exceptions = self.package_order_exceptions,
-                in_storage = AttributeCache()) 
-
-        
-    ########### Error and integrity checking ##############
-    def _handle_indicator_error(self, e, display_error_box = False):
-        ''' sends alert to various forums if there's an error '''
-                 
-        message = ('Failed to generate indicator "%s"! Check the indicator log '
-                'in the indicators directory of the "%s" cache for further '
-                'details.\nError: %s.' % (self.name, self.source_data.cache_directory, e))
-        logger.log_warning(message)
-        logger.log_stack_trace()
-#        if display_error_box:
-#            display_message_dialog(message)
-
-    def _check_integrity(self, indicators, result_template):
-        '''package does not exist'''
-        
+    def _check_integrity(self, indicators, result_template):        
         for name, indicator in indicators.items():
             attribute = indicator.attribute
             package = VariableName(attribute).get_package_name()
@@ -182,7 +172,7 @@ class Maker(object):
 
 from opus_core.tests import opus_unittest
 from inprocess.travis.opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
-        
+
 class Tests(AbstractIndicatorTest):            
     def test_create_indicator_multiple_years(self):
         indicator_path = os.path.join(self.temp_cache_path, 'indicators')
@@ -191,55 +181,36 @@ class Tests(AbstractIndicatorTest):
         self.source_data.years = range(1980,1984)
         indicator = Indicator(
                   dataset_name = 'test', 
-                  attribute = 'opus_core.test.attribute',
-        )        
+                  attribute = 'opus_core.test.attribute')        
         
         maker = Maker()
         maker.create(indicator = indicator, 
                      result_template = self.source_data)
         
-        path = os.path.join(self.source_data.get_indicator_directory(),
-                            'test.csv')
-        
-        #file_path = os.path.join(indicator_path, 'test__attribute__1980-1981-1982-1983.csv')
-        self.assert_(os.path.exists(indicator_path))
-        self.assert_(os.path.exists(path))
-        
-        f = open(path)
-        cols = [col.strip() for col in f.readline().split(',')]
-        self.assertEqual(['id:i4','year:i4','attribute:i4'], cols)
-        
-        lines = f.readlines()
-        f.close()
-        data = []
-        i = 0
+        for year in range(1980,1984):
+            storage_location = os.path.join(self.source_data.get_indicator_directory(),
+                                '_stored_data',
+                                repr(year))
+            self.assert_(os.path.exists(os.path.join(storage_location, 'test')))
 
-        processed_years = []
-        for line in lines:
-            line = line.strip()
-            if line == '': continue
-            row = [int(r.strip()) for r in line.split(',')]
-            #rows should all be tuples with all cols defined
-            self.assertEqual(len(cols), len(row))
+            store = StorageFactory().get_storage(type = 'flt_storage',
+                                                 storage_location = storage_location)
+            cols = store.get_column_names(table_name = 'test')
+            self.assertEqual(sorted(cols), sorted(['attribute','id']))
             
-            id = row[0]
-            year = row[1]
-            val = row[2]
-            if year not in processed_years:
-                processed_years.append(year)
-                i = 0
+            id_vals = [1,2,3,4]
+            attribute_vals = [5,6,7,8]
+            attribute_vals_1983 = [10,12,14,16]
             
-            self.assertEqual(self.id_vals[i], id)
+            data = store.load_table(table_name = 'test',
+                                    column_names = cols)
+            
+            self.assertEqual(id_vals, list(data['id']))
             if year == 1983:
-                self.assertEqual(self.attribute_vals_diff[i], val)
+                self.assertEqual(attribute_vals_1983, list(data['attribute']))
             else:
-                self.assertEqual(self.attribute_vals[i],val)
-
-            i += 1
-            data.append(row)
-
-        self.assertEqual(len(data),16)
-        self.assertEqual(processed_years, self.source_data.years)
+                self.assertEqual(attribute_vals, list(data['attribute']))
+            
 
     def test__indicator_expressions(self):
         maker = Maker()
@@ -250,22 +221,23 @@ class Tests(AbstractIndicatorTest):
         computed_indicator = maker.create(indicator = indicator,
                                            result_template = self.source_data)
         
-        path = os.path.join(self.source_data.get_indicator_directory(),
-                            'test.csv') #computed_indicator.get_file_path(years = self.source_data.years)
-        f = open(path)
-        f.readline() #chop off header
+        storage_location = os.path.join(self.source_data.get_indicator_directory(),
+                            '_stored_data',
+                            '1980')
+        self.assert_(os.path.exists(os.path.join(storage_location, 'test')))
 
-        computed_vals = {}
-        for l in f.readlines():
-            (id, year, value) = l.split(',')
-            computed_vals[int(id)] = int(value)
+        store = StorageFactory().get_storage(type = 'flt_storage',
+                                             storage_location = storage_location)
+        cols = store.get_column_names(table_name = 'test')
+        self.assertEqual(sorted(cols), sorted(['autogenvar0','id']))
         
-        f.close()
-        true_vals = {}
-        for i in range(len(self.id_vals)):
-            true_vals[self.id_vals[i]] = 2 * self.attribute_vals[i]
+        expected_attribute_vals = [10,12,14,16]
         
-        self.assertEqual(computed_vals,true_vals)
+        data = store.load_table(table_name = 'test',
+                                column_names = ['autogenvar0'])
+        
+        self.assertEqual(expected_attribute_vals, list(data['autogenvar0']))
+
 
     def test__indicator_expressions_with_two_variables(self):
         maker = Maker()
@@ -276,24 +248,22 @@ class Tests(AbstractIndicatorTest):
         computed_indicator = maker.create(indicator = indicator,
                                            result_template = self.source_data)
         
-        path = os.path.join(self.source_data.get_indicator_directory(),
-                    'test.csv')
-#        path = computed_indicator.get_file_path(years = self.source_data.years)
+        storage_location = os.path.join(self.source_data.get_indicator_directory(),
+                            '_stored_data',
+                            '1980')
+        self.assert_(os.path.exists(os.path.join(storage_location, 'test')))
 
-        f = open(path)
-        f.readline() #chop off header
-    
-        computed_vals = {}
-        for l in f.readlines():
-            (id, year, value) = l.split(',')
-            computed_vals[int(id)] = int(value)
-            
-        f.close()
-        true_vals = {}
-        for i in range(len(self.id_vals)):
-            true_vals[self.id_vals[i]] = 2 * self.attribute_vals[i] - self.attribute_vals2[i]
+        store = StorageFactory().get_storage(type = 'flt_storage',
+                                             storage_location = storage_location)
+        cols = store.get_column_names(table_name = 'test')
+        attr_col = [col for col in cols if col != 'id'][0]
         
-        self.assertEqual(computed_vals,true_vals)
+        expected_attribute_vals = [-40,-48,-56,-64]
+        
+        data = store.load_table(table_name = 'test',
+                                column_names = [attr_col])
+        
+        self.assertEqual(expected_attribute_vals, list(data[attr_col]))
 
     def skip_test__cross_scenario_indicator(self):
         from inprocess.travis.opus_core.indicator_framework.visualizers.table import Table
@@ -332,8 +302,6 @@ class Tests(AbstractIndicatorTest):
                           maker.create,
                           indicator,
                           self.source_data)
-                 
-
             
 if __name__ == '__main__':
     opus_unittest.main()
