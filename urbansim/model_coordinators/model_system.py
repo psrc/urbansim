@@ -284,6 +284,18 @@ class ModelSystem(object):
                             for import_module in import_config.keys():
                                 exec("from %s import %s" % (import_module, import_config[import_module]))
     
+                        # gui_import_replacements part
+                        # This is a temporary hack -- replicates the functionality of the "import" section
+                        # for use with the GUI.  The ontents of this part of the config is a dictionary.
+                        # Keys are names of models (not used here).  Values are 2 element pairs.
+                        # The first element is a name and the second is a value.  Bind the name to the value.
+                        if "gui_import_replacements" in controller_config.keys():
+                            import_replacement_config = controller_config["gui_import_replacements"]
+                            for model_name in import_replacement_config.keys():
+                                pair = import_replacement_config[model_name]
+                                temp = pair[1]
+                                exec("%s = temp") % pair[0]
+    
                         # init part
                         model = self.do_init(locals())
     
