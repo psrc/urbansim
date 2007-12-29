@@ -4,6 +4,12 @@
   </general>
   <model_manager>
     <estimation type="dictionary" >
+      <models_to_estimate type="selectable_list" >
+        <real_estate_price_model type="model" choices="Estimate|Skip" >Estimate</real_estate_price_model>
+        <household_location_choice_model type="model" choices="Estimate|Skip" >Skip</household_location_choice_model>
+        <employment_location_choice_model_home_based type="model" choices="Estimate|Skip" >Skip</employment_location_choice_model_home_based>
+        <employment_location_choice_model_non_home_based type="model" choices="Estimate|Skip" >Skip</employment_location_choice_model_non_home_based>
+      </models_to_estimate>
       <real_estate_price_model type="dictionary" >
         <all_variables type="dictionary" >
           <hwy200 type="variable_definition" >hwy200 = psrc.parcel.distance_to_highway_in_gridcell&lt;200</hwy200>
@@ -407,12 +413,6 @@
           <add_member_prefix type="boolean" >False</add_member_prefix>
         </employment_location_choice_model_non_home_based>
       </model_parameters>
-      <models_to_estimate type="selectable_list" >
-        <real_estate_price_model type="model" choices="Estimate|Skip" >Estimate</real_estate_price_model>
-        <household_location_choice_model type="model" choices="Estimate|Skip" >Skip</household_location_choice_model>
-        <employment_location_choice_model_home_based type="model" choices="Estimate|Skip" >Skip</employment_location_choice_model_home_based>
-        <employment_location_choice_model_non_home_based type="model" choices="Estimate|Skip" >Skip</employment_location_choice_model_non_home_based>
-      </models_to_estimate>
     </estimation>
   </model_manager>
   <scenario_manager/>
