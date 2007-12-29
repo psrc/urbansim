@@ -1,13 +1,16 @@
 <opus_project>
+
   <general>
     <description type="string" >Sample Eugene project</description>
   </general>
+
   <data_manager>
     <script_batch type="script_batch" >
       <script_path type="script_path" >projects.scripts</script_path>
       <processing_script_1 type="script_file" >test</processing_script_1>
     </script_batch>
   </data_manager>
+
   <model_manager>
     <estimation type="dictionary" >
       <real_estate_price_model type="dictionary" >
@@ -29,6 +32,7 @@
       </models_to_estimate>
     </estimation>
   </model_manager>
+
   <scenario_manager>
     <default_scenario type="scenario" >
       <import type="file" >urbansim_gridcell.xml</import>
@@ -159,122 +163,108 @@
       </dataset_pool_configuration>
     </Eugene_baseline>
   </scenario_manager>
-  
+
   <results_manager>
-  
-    <Libraries type="group">
-      <model.gridcell type="indicator_library">
-      	<population 
-      		type="indicator"
-      		package="urbansim"
-      		>urbansim.[ANY].population</population>
-      	<number_of_jobs 
-      		type="indicator"
-      		package="urbansim"
-      		>urbansim.[ANY].number_of_jobs</number_of_jobs>
+    <libraries type="group" >
+      <model.gridcell type="indicator_library" >
+        <population type="indicator" >
+          <package type="string" >urbansim</package>
+          <value type="string" >urbansim.[ANY].population</value>
+        </population>
+        <number_of_jobs type="indicator" >
+          <package type="string" >urbansim</package>
+          <value type="string" >urbansim.[ANY].number_of_jobs</value>
+        </number_of_jobs>
       </model.gridcell>
-      
-      <eugene.frank.indicators type="indicator_library">
-      	
-      </eugene.frank.indicators>
-      
-      <my_indicators type="indicator_library">
-      	<residential_units 
-      		type="indicator"
-      		package="urbansim"
-      		>alldata.aggregate_all(urbansim.gridcell.residential_units, function=sum)</residential_units>      		
-      
+      <eugene.frank.indicators type="indicator_library" />
+      <my_indicators type="indicator_library" >
+        <residential_units type="indicator" >
+          <package type="string" >urbansim</package>
+          <value type="string" >alldata.aggregate_all(urbansim.gridcell.residential_units, function=sum)</value>
+        </residential_units>
       </my_indicators>
-    </Libraries>
-  
-    <Result_templates type="selectable_list">
-      	<tunnel_scenario 
-      		type="result_template"
-      		years="1980-1984"
-      		run_name="run1834"
-      		>run1834 (1980-1984)</tunnel_scenario>      		
-      	<rebuild_scenario 
-      		type="result_template"
-      		years="1980-1984"
-      		run_name="run1835"
-      		>run1835 (1980-1984)</rebuild_scenario>
-    </Result_templates>
-
-    <Results type="selectable_list">
-  		<population
-  			id="1"
-  			type="indicator_result"
-  			result_template="rebuild_scenario"
-  			indicator_name="population"
-  			dataset_name="zone"
-  			>rebuild_scenario.zone.population</population>
-  		<population
-  			id="2"
-  			type="indicator_result"
-  			result_template="tunnel_scenario"
-  			indicator_name="population"
-  			dataset_name="zone"
-  			>tunnel_scenario.zone.population</population>
-  		<number_of_jobs
-  			id="3"
-  			type="indicator_result"
-  			result_template="rebuild_scenario"
-  			indicator_name="number_of_jobs"
-  			dataset_name="gridcell"
-  			>rebuild_scenario.gridcell.number_of_jobs</number_of_jobs>
-  		<number_of_jobs
-  			id="4"
-  			type="indicator_result"
-  			result_template="tunnel_scenario"
-  			indicator_name="number_of_jobs"
-  			dataset_name="gridcell"
-  			>tunnel_scenario.gridcell.number_of_jobs</number_of_jobs>  			
- 
-    </Results>
-
-<!--  For now, don't persist visualizations in the GUI...
-    <Visualizations type="selectable_list">
-  		<map.rebuild_scenario.zone.population.1980
-  			id="1"
-  			type="indicator_visualization"
-  			visualization_type="matplotlib_map"
-  			years="1980"
-  			indicator_result_id="1"
-  			>map.rebuild_scenario.zone.population.1980</map.rebuild_scenario.zone.population.1980>
-  		<map.rebuild_scenario.zone.population.1981
-  			id="2"
-  			type="indicator_visualization"
-  			visualization_type="matplotlib_map"
-  			years="1981"
-  			indicator_result="rebuild_scenario.zone.population"
-  			>map.rebuild_scenario.zone.population.1981</map.rebuild_scenario.zone.population.1981>
-  		<map.rebuild_scenario.zone.population.1982
-  			id="3"
-  			type="indicator_visualization"
-   			visualization_type="matplotlib_map"
-  			years="1982"
-  			indicator_result_id="1"
-  			>map.rebuild_scenario.zone.population.1982</map.rebuild_scenario.zone.population.1982>
-   		<map.rebuild_scenario.zone.population.1983
-   			id="4"
-  			type="indicator_visualization"
-  			visualization_type="matplotlib_map"
-  			years="1983"
-  			indicator_result_id="1"
-  			>map.rebuild_scenario.zone.population.1983</map.rebuild_scenario.zone.population.1983>
-  		<map.rebuild_scenario.zone.population.1984
-  			id="5"
-  			type="indicator_visualization"
-  			visualization_type="matplotlib_map"
-  			years="1984"
-  			indicator_result_id="1"
-  			>map.rebuild_scenario.zone.population.1984</map.rebuild_scenario.zone.population.1984>  			
-    </Visualizations>
-    
--->
-    
+    </libraries>
+    <result_templates type="selectable_list" >
+      <tunnel_scenario type="result_template" >
+        <start_year type="integer" >1980</start_year>
+        <end_year type="integer" >1984</end_year>
+        <run_name type="string" >run1834</run_name>
+        <value type="string" >run1834 (1980-1984)</value>
+      </tunnel_scenario>
+      <rebuild_scenario type="result_template" >
+        <start_year type="integer" >1980</start_year>
+        <end_year type="integer" >1984</end_year>
+        <run_name type="string" >run1835</run_name>
+        <value type="string" >run1835 (1980-1984)</value>
+      </rebuild_scenario>
+    </result_templates>
+    <results type="selectable_list" >
+      <population type="indicator_result" >
+        <id type="integer" >1</id>
+        <result_template type="string" >rebuild_scenario</result_template>
+        <indicator_name type="string" >population</indicator_name>
+        <dataset_name type="string" >zone</dataset_name>
+        <value type="string" >rebuild_scenario.zone.population</value>
+      </population>
+      <population type="indicator_result" >
+        <id type="integer" >2</id>
+        <result_template type="string" >tunnel_scenario</result_template>
+        <indicator_name type="string" >population</indicator_name>
+        <dataset_name type="string" >zone</dataset_name>
+        <value type="string" >tunnel_scenario.zone.population</value>
+      </population>
+      <number_of_jobs type="indicator_result" >
+        <id type="integer" >3</id>
+        <result_template type="string" >rebuild_scenario</result_template>
+        <indicator_name type="string" >number_of_jobs</indicator_name>
+        <dataset_name type="string" >gridcell</dataset_name>
+        <value type="string" >rebuild_scenario.gridcell.number_of_jobs</value>
+      </number_of_jobs>
+      <number_of_jobs type="indicator_result" >
+        <id type="integer" >4</id>
+        <result_template type="string" >tunnel_scenario</result_template>
+        <indicator_name type="string" >number_of_jobs</indicator_name>
+        <dataset_name type="string" >gridcell</dataset_name>
+        <value type="string" >tunnel_scenario.gridcell.number_of_jobs</value>
+      </number_of_jobs>
+    </results>
+    <visualizations type="selectable_list" >
+      <map.rebuild_scenario.zone.population.1980 type="indicator_visualization" >
+        <id type="integer" >1</id>
+        <visualization_type type="string" >matplotlib_map</visualization_type>
+        <years type="integer" >1980</years>
+        <indicator_result_id type="integer" >1</indicator_result_id>
+        <value type="string" >map.rebuild_scenario.zone.population.1980</value>
+      </map.rebuild_scenario.zone.population.1980>
+      <map.rebuild_scenario.zone.population.1981 type="indicator_visualization" >
+        <id type="integer" >2</id>
+        <visualization_type type="string" >matplotlib_map</visualization_type>
+        <years type="integer" >1981</years>
+        <indicator_result type="string" >rebuild_scenario.zone.population</indicator_result>
+        <value type="string" >map.rebuild_scenario.zone.population.1981</value>
+      </map.rebuild_scenario.zone.population.1981>
+      <map.rebuild_scenario.zone.population.1982 type="indicator_visualization" >
+        <id type="integer" >3</id>
+        <visualization_type type="string" >matplotlib_map</visualization_type>
+        <years type="integer" >1982</years>
+        <indicator_result_id type="integer" >1</indicator_result_id>
+        <value type="string" >map.rebuild_scenario.zone.population.1982</value>
+      </map.rebuild_scenario.zone.population.1982>
+      <map.rebuild_scenario.zone.population.1983 type="indicator_visualization" >
+        <id type="integer" >4</id>
+        <visualization_type type="string" >matplotlib_map</visualization_type>
+        <years type="integer" >1983</years>
+        <indicator_result_id type="integer" >1</indicator_result_id>
+        <value type="string" >map.rebuild_scenario.zone.population.1983</value>
+      </map.rebuild_scenario.zone.population.1983>
+      <map.rebuild_scenario.zone.population.1984 type="indicator_visualization" >
+        <id type="integer" >5</id>
+        <visualization_type type="string" >matplotlib_map</visualization_type>
+        <years type="integer" >1984</years>
+        <indicator_result_id type="integer" >1</indicator_result_id>
+        <value type="string" >map.rebuild_scenario.zone.population.1984</value>
+      </map.rebuild_scenario.zone.population.1984>
+    </visualizations>
   </results_manager>
-  
 
-  
 </opus_project>
