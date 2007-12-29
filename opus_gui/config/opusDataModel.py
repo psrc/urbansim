@@ -49,7 +49,7 @@ class OpusDataModel(QAbstractItemModel):
         
         # Root data for use in column headers
         self.rootData = []
-        self.rootData.append(QVariant("Storage"))
+        self.rootData.append(QVariant("Name"))
         self.rootData.append(QVariant("Type"))
         self.rootData.append(QVariant("Value"))
 
