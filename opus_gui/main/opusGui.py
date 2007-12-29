@@ -23,6 +23,7 @@ from opusMain_ui import Ui_MainWindow
 from util.consoleBase import *
 from config.toolboxBase import *
 from run.runManagerBase import *
+from results.resultManagerBase import *
 
 # General system includes
 import sys,time,tempfile
@@ -66,6 +67,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.toolboxStuff = ToolboxBase(self)
     self.runManagerStuff = RunManagerBase(self)
     self.runManagerStuff.setGui(self)
+    
+    self.resultManagerStuff = ResultManagerBase(self)
+    self.resultManagerStuff.setGui(self)
 
     try:
       import util.editorBase
