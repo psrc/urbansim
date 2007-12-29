@@ -19,6 +19,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
 from opus_gui.results.opus_result_generator import OpusResultGenerator
+from inprocess.travis.opus_core.indicator_framework.representations.visualization import Visualization
 
 
 class OpusXMLAction_Results(object):
@@ -100,12 +101,12 @@ class OpusXMLAction_Results(object):
         if not self.xmlTreeObject.model.dirty:
             # Add the model to the run Q
             new_result_run = OpusResultGenerator(self.xmlTreeObject,self.xmlTreeObject.parentTool.xml_file)
-            self.xmlTreeObject.parent.resultManagerStuff.addNewModelRun(new_result_run)
+            self.xmlTreeObject.parent.resultManagerStuff.addGenerateIndicatorForm(new_result_run)
         else:
             # Prompt the user to save...
             QMessageBox.warning(self.xmlTreeObject.parent,
                                 "Warning",
-                                "Please save changes to project before running model")
+                                "Please save changes to project before generating results")
     
     def viewResults(self):
         print "viewResults pressed with column = %s and item = %s" % \
@@ -114,7 +115,19 @@ class OpusXMLAction_Results(object):
     def viewResultsMatplotlibMap(self):
         print "viewResultsMatplotlibMap pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+        
+        from opus_core.misc import directory_path_from_opus_path
 
+        visualization = Visualization(indicators = None,
+                                      visualization_type = None,
+                                      name = None,
+                                      years = None,
+                                      table_name = 'alldata|chart|1980|alldata_home_based_jobs',
+                                      storage_location = directory_path_from_opus_path('opus_gui.main.sample_images'),
+                                      file_extension = 'png')
+        self.xmlTreeObject.parent.resultManagerStuff.addViewImageIndicator(visualization = visualization)
+        
+        
     def viewResultsMatplotlibChart(self):
         print "viewResultsMatplotlibChart pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
@@ -151,12 +164,12 @@ class OpusXMLAction_Results(object):
                     self.menu.addAction(self.actAddNewIndicator)
                     self.menu.exec_(QCursor.pos())
                     
-                elif domElement.attribute(QString("type")) == QString("result_template"):
+                elif domElement.attribute(QString("type")) == QString("source_data"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actGenerateResults)
                     self.menu.exec_(QCursor.pos())
 
-                elif domElement.attribute(QString("type")) == QString("result_templates"):
+                elif domElement.attribute(QString("type")) == QString("all_source_data"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actAddNewResultTemplate)
                     self.menu.exec_(QCursor.pos())
