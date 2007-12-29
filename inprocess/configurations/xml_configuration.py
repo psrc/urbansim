@@ -49,6 +49,23 @@ class XMLConfiguration(object):
                 real_name = original_name_node.text
             return XMLConfiguration(file).get_run_configuration(real_name)
 
+    def get_estimation_section(self):
+        estimation_sections = self.root.findall('model_manager/estimation')
+        if len(estimation_sections)!=1:
+            raise ValueError, "didn't find a unique estimation section"
+        return self._node_to_config(estimation_sections[0])
+    
+    def get_estimation_specification(self, model_name):
+        estimation_section = self.get_estimation_section()
+        model = estimation_section[model_name]
+        result = {}
+        result['_definition_'] = model['all_variables'].values()
+        for submodel_name in model.keys():
+            if submodel_name!='all_variables':
+                submodel = model[submodel_name]
+                result[submodel['submodel_id']] = submodel['variables']
+        return result
+    
     def _node_to_config(self, node):
         changes = {}
         parent = None
@@ -110,7 +127,7 @@ class XMLConfiguration(object):
             return int(node.text)
         elif type_name=='float':
             return float(node.text)
-        elif type_name=='string' or type_name=='password':
+        elif type_name=='string' or type_name=='password' or type_name=='variable_definition':
             return self._convert_string_to_data(node)
         elif type_name=='scenario_name':
             return node.text
@@ -132,7 +149,7 @@ class XMLConfiguration(object):
             # the data should be a string such as '[100, 300]'
             # use eval to turn this into a list, and then turn it into a numpy array
             return array(eval(node.text))
-        elif type_name=='dictionary':
+        elif type_name=='dictionary' or type_name=='submodel':
             return self._convert_dictionary_to_data(node)
         elif type_name=='class':
             return self._convert_class_to_data(node)
@@ -142,6 +159,8 @@ class XMLConfiguration(object):
         elif type_name=='table':
             return self._convert_custom_type_to_data(node, "Skip")
         elif type_name=='dataset':
+            return self._convert_custom_type_to_data(node, "Skip")
+        elif type_name=='variable':
             return self._convert_custom_type_to_data(node, "Skip")
         else:
             raise ValueError, 'unknown type: %s' % type_name
@@ -372,16 +391,24 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(db_config.password, 'secret')
         self.assertEqual(db_config.database_name, 'river_city_baseyear')
             
-    def skip_test_estimation(self):
+    def test_get_estimation_section(self):
         f = os.path.join(self.test_configs, 'estimate.xml')
-        config = XMLConfiguration(f).get_estimation_configuration()
-        self.assertEqual(config, 
-          {'real_estate_price_model': 
-            {'variable_definitions': {'ln_cost': 'ln_cost=ln(psrc.parcel.cost)'}},
-             'specification_variables': 
-               {'single_family_residential': {'number': 24, 'variables': ['ln_cost']}},
-           'models_to_estimate': ['real_estate_price_model']})
-            
+        config = XMLConfiguration(f).get_estimation_section()
+        should_be = {
+          'real_estate_price_model': {
+            'all_variables': {'ln_cost': 'ln_cost=ln(psrc.parcel.cost)', 'unit_price': 'unit_price=urbansim_parcel.parcel.unit_price'},
+            'single_family_residential': {'submodel_id': 24, 'variables': ['ln_cost']}},
+          'models_to_estimate': ['real_estate_price_model']}
+        self.assertEqual(config, should_be)
+        
+    def test_get_estimation_specification(self):
+        f = os.path.join(self.test_configs, 'estimate.xml')
+        config = XMLConfiguration(f).get_estimation_specification('real_estate_price_model')
+        should_be = {
+          '_definition_': ['ln_cost=ln(psrc.parcel.cost)', 'unit_price=urbansim_parcel.parcel.unit_price'],
+          24: ['ln_cost']}
+        self.assertEqual(config, should_be)
+        
     def test_error_handling(self):
         # there isn't an xml configuration named badname.xml
         self.assertRaises(IOError, XMLConfiguration, 'badname.xml')
