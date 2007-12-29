@@ -12,6 +12,8 @@
 # other acknowledgments.
 # 
 
+import os
+
 class Visualization(object):
     def __init__(self, 
                  indicators, 
@@ -29,3 +31,11 @@ class Visualization(object):
         self.years = years
         self.table_name = table_name
         self.file_extension = file_extension
+    
+    def get_file_path(self):
+        try:
+            return os.path.join(self.storage_location,
+                                self.table_name + '.' + self.file_extension)
+        except:
+            if not isinstance(self.storage_location, str):
+                raise 'get_file_path() only works for visualizations with results output to file system.'
