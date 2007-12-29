@@ -32,7 +32,7 @@ class VisualizationFactory:
         module_composed_name = module + '.' + visualization_type
         
         example_indicator = computed_indicators[indicators_to_visualize[0]]
-        indicator_directory = example_indicator.result_template.get_indicator_directory()
+        indicator_directory = example_indicator.source_data.get_indicator_directory()
         additional_args = {
             'indicator_directory':indicator_directory
         }

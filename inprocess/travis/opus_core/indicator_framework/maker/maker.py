@@ -35,14 +35,14 @@ class Maker(object):
     def __init__(self):
         self.computed_indicators = {}
     
-    def create(self, indicator, result_template):
+    def create(self, indicator, source_data):
         computed_indicators = self.create_batch(
                                 indicators = {indicator.name:indicator}, 
-                                result_template = result_template)
+                                source_data = source_data)
         return computed_indicators[indicator.name]
         
-    def create_batch(self, indicators, result_template):
-        self.source_data = result_template
+    def create_batch(self, indicators, source_data):
+        self.source_data = source_data
 
         cache_directory = self.source_data.cache_directory
         
@@ -67,19 +67,19 @@ class Maker(object):
         SimulationState().set_cache_directory(cache_directory) 
         
         self._check_integrity(indicators = indicators, 
-                              result_template = result_template)
+                              source_data = source_data)
         
         computed_indicators = self._make_all_indicators(
             indicators = indicators,
-            result_template = result_template)
+            source_data = source_data)
         
         return computed_indicators
 
-    def _make_all_indicators(self, indicators, result_template):
+    def _make_all_indicators(self, indicators, source_data):
         
         computed_indicators = {}
         indicators_by_dataset = {}
-        for year in result_template.years:
+        for year in source_data.years:
             SimulationState().set_current_time(year)
             SessionConfiguration(
                 new_instance = True,
@@ -100,24 +100,24 @@ class Maker(object):
                 self._make_indicators_for_dataset(
                      dataset = dataset,
                      indicators_in_dataset = indicators_in_dataset,
-                     result_template = result_template,
+                     source_data = source_data,
                      computed_indicators = computed_indicators,
                      year = year
                 )
             
-        self.computed_indicators[result_template.name] = computed_indicators
+        self.computed_indicators[source_data.name] = computed_indicators
         return computed_indicators
     
     def _make_indicators_for_dataset(self, dataset, 
                                      indicators_in_dataset,
-                                     result_template,
+                                     source_data,
                                      computed_indicators,
                                      year):
         
         for name, indicator in indicators_in_dataset:
             computed_indicator = ComputedIndicator(
                 indicator = indicator,
-                result_template = result_template,
+                source_data = source_data,
                 dataset = dataset)
             
             computed_indicators[name] = computed_indicator
@@ -162,7 +162,7 @@ class Maker(object):
         del dataset
         collect()
 
-    def _check_integrity(self, indicators, result_template):        
+    def _check_integrity(self, indicators, source_data):        
         for name, indicator in indicators.items():
             attribute = indicator.attribute
             package = VariableName(attribute).get_package_name()
@@ -185,7 +185,7 @@ class Tests(AbstractIndicatorTest):
         
         maker = Maker()
         maker.create(indicator = indicator, 
-                     result_template = self.source_data)
+                     source_data = self.source_data)
         
         for year in range(1980,1984):
             storage_location = os.path.join(self.source_data.get_indicator_directory(),
@@ -219,7 +219,7 @@ class Tests(AbstractIndicatorTest):
             dataset_name = 'test')
         
         computed_indicator = maker.create(indicator = indicator,
-                                           result_template = self.source_data)
+                                           source_data = self.source_data)
         
         storage_location = os.path.join(self.source_data.get_indicator_directory(),
                             '_stored_data',
@@ -249,7 +249,7 @@ class Tests(AbstractIndicatorTest):
             dataset_name = 'test')
         
         computed_indicator = maker.create(indicator = indicator,
-                                           result_template = self.source_data)
+                                           source_data = self.source_data)
         
         storage_location = os.path.join(self.source_data.get_indicator_directory(),
                             '_stored_data',

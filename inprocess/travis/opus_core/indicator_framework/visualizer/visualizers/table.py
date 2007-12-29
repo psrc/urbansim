@@ -92,14 +92,14 @@ class Table(Visualization):
         
         #TODO: eliminate this example indicator stuff
         example_indicator = computed_indicators[indicators_to_visualize[0]]
-        result_template = example_indicator.result_template        
+        source_data = example_indicator.source_data        
         dataset_to_attribute_map = {}
 
-        self._create_input_stores(years = result_template.years)
+        self._create_input_stores(years = source_data.years)
         for name, computed_indicator in computed_indicators.items():
             if name not in indicators_to_visualize: continue
             
-            if computed_indicator.result_template != result_template:
+            if computed_indicator.source_data != source_data:
                 raise 'result templates in indicator batch must all be the same.'
             dataset_name = computed_indicator.indicator.dataset_name
             if dataset_name not in dataset_to_attribute_map:
@@ -124,7 +124,7 @@ class Table(Visualization):
                 dataset_name = dataset_name,
                 attributes = attributes,
                 primary_keys = primary_keys,
-                years = result_template.years) 
+                years = source_data.years) 
                         
             for indicator_names, table_name, years in viz_metadata:
                 visualization_representations.append(
@@ -265,7 +265,7 @@ class Tests(AbstractIndicatorTest):
         computed_indicators = maker.create_batch(
             indicators = {'attr1':indicator, 
                           'attr2':indicator2}, 
-            result_template = self.source_data)
+            source_data = self.source_data)
         
         for style in [Table.ALL, Table.PER_YEAR, Table.PER_ATTRIBUTE]:
             table = Table(indicator_directory = self.source_data.get_indicator_directory(),
@@ -487,7 +487,7 @@ class Tests(AbstractIndicatorTest):
         maker = Maker()
         computed_indicators = maker.create_batch(
             indicators = {'attr1':indicator}, 
-            result_template = self.source_data)
+            source_data = self.source_data)
 
         for output_type in output_types:
             kwargs = {}

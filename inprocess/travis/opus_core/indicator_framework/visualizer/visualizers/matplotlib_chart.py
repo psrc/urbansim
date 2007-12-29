@@ -140,16 +140,16 @@ else:
             
             #TODO: eliminate this example indicator stuff
             example_indicator = computed_indicators[indicators_to_visualize[0]]
-            result_template = example_indicator.result_template        
+            source_data = example_indicator.source_data        
     
-            years = result_template.years
+            years = source_data.years
             self._create_input_stores(years = years)
     
             dataset_to_attribute_map = {}
             for name, computed_indicator in computed_indicators.items():
                 if name not in indicators_to_visualize: continue
                 
-                if computed_indicator.result_template != result_template:
+                if computed_indicator.source_data != source_data:
                     raise 'result templates in indicator batch must all be the same.'
                 dataset_name = computed_indicator.indicator.dataset_name
                 if dataset_name not in dataset_to_attribute_map:
@@ -167,7 +167,7 @@ else:
                      dataset_name = dataset_name,
                      attributes = attributes,
                      primary_keys = primary_keys,
-                     years = result_template.years
+                     years = source_data.years
                 )
                 for name, data_subset in data.items():
                     
@@ -247,7 +247,7 @@ else:
             computed_indicators = maker.create_batch(
                 indicators = {'attr1':indicator, 
                               'attr2':indicator2}, 
-                result_template = self.source_data)
+                source_data = self.source_data)
             
             chart = MatplotlibChart(
                         name = 'test_chart',

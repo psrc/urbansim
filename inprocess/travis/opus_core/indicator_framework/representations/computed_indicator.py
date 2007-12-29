@@ -21,13 +21,13 @@ from copy import copy
 class ComputedIndicator:
     def __init__(self, 
                  indicator, 
-                 result_template, 
+                 source_data, 
                  dataset):
 
         self.indicator = indicator
-        self.result_template = result_template
+        self.source_data = source_data
         
-        cache_directory = self.result_template.cache_directory
+        cache_directory = self.source_data.cache_directory
         self.storage_location = os.path.join(cache_directory, 'indicators')
         self.date_computed = strftime("%Y-%m-%d %H:%M:%S", localtime(time()))
         
@@ -75,7 +75,7 @@ class ComputedIndicator:
         data_manager = IndicatorDataManager()
         data_manager.export_indicator(
            indicator = self, 
-           source_data = self.result_template)
+           source_data = self.source_data)
         
 from opus_core.tests import opus_unittest
 from inprocess.travis.opus_core.indicator_framework.representations.indicator import Indicator
@@ -89,7 +89,7 @@ class ComputedIndicatorTests(AbstractIndicatorTest):
             dataset_name = 'test')
         
         computed_indicator = ComputedIndicator(
-            result_template = self.source_data,
+            source_data = self.source_data,
             indicator = indicator,
             dataset = None                                       
         )

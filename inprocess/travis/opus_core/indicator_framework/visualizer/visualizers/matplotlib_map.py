@@ -119,19 +119,19 @@ class MatplotlibMap(Visualization):
         
         #TODO: eliminate this example indicator stuff
         example_indicator = computed_indicators[indicators_to_visualize[0]]
-        result_template = example_indicator.result_template        
+        source_data = example_indicator.source_data        
         dataset_to_attribute_map = {}
         
         (package_order, package_order_exceptions) = \
-            result_template.get_package_order_and_exceptions()
+            source_data.get_package_order_and_exceptions()
             
             
-        self._create_input_stores(years = result_template.years)
+        self._create_input_stores(years = source_data.years)
 
         for name, computed_indicator in computed_indicators.items():
             if name not in indicators_to_visualize: continue
             
-            if computed_indicator.result_template != result_template:
+            if computed_indicator.source_data != source_data:
                 raise 'result templates in indicator batch must all be the same.'
             dataset_name = computed_indicator.indicator.dataset_name
             if dataset_name not in dataset_to_attribute_map:
@@ -142,7 +142,7 @@ class MatplotlibMap(Visualization):
         for dataset_name, indicator_names in dataset_to_attribute_map.items():  
             attributes = [(name,computed_indicators[name].get_computed_dataset_column_name())
                           for name in indicator_names]                  
-            for year in result_template.years:
+            for year in source_data.years:
                 SimulationState().set_current_time(year)
                 SessionConfiguration(
                     new_instance = True,
@@ -214,7 +214,7 @@ class Tests(AbstractIndicatorTest):
         maker = Maker()
         computed_indicators = maker.create_batch(
             indicators = {'population':indicator}, 
-            result_template = self.source_data)
+            source_data = self.source_data)
         
         indicator_path = os.path.join(self.temp_cache_path, 'indicators')
         self.assert_(not os.path.exists(indicator_path))
