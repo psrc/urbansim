@@ -96,6 +96,7 @@ class OpusEstimation(object):
                 xml_config = XMLConfiguration(parcelfile)
                 estimation_section = xml_config.get_estimation_section()
                 estimation_config = estimation_section['estimation_config']
+                self.config = estimation_config
                 # TODO: put save_estimation results etc into config
                 for model_name in estimation_config['models_to_estimate']:
                     model_config = estimation_config['model_parameters'][model_name]
@@ -133,6 +134,27 @@ class OpusEstimation(object):
     def _get_current_log(self, key):
         newKey = key
         if WithOpus:
-            # We attempt to keep up on the current progress
-            pass
+            # We attempt to keep up on the current progress of the model run.  We pass into this
+            # function an intial "key" value of 0 and expect to get back a new "key" after the
+            # function returns.  It is up to us in this function to use this key to determine
+            # what has happened since last time this function was called.
+            # In this example we use the key to indicate where in a logfile we last stopped reading
+            # and seek into that file point and read to the end of the file and append to the
+            # log text edit field in the GUI.
+            if self.config is not None and 'cache_directory' in self.config:
+                try:
+                    f = open(os.path.join(self.config['cache_directory'],'year_2000_log.txt'))
+                    f.seek(key)
+                    lines = f.read()
+                    newKey = f.tell()
+                    if newKey != key:
+                        self.guiElement.logText.append(lines)
+                    f.close()
+                except IOError:
+                    if self.firstRead == True:
+                        self.guiElement.logText.append("No logfile yet")
+                        self.firstRead = False
+                    else:
+                        self.guiElement.logText.insertPlainText(QString("."))
+                #self.guiElement.logText.append("ping")
         return newKey

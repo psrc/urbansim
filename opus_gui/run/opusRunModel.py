@@ -179,6 +179,8 @@ class OpusModel(object):
                     newKey = f.tell()
                     if newKey != key:
                         self.guiElement.logText.append(lines)
+                    else:
+                        self.guiElement.logText.insertPlainText(QString("."))
                     f.close()
                 except IOError:
                     if self.firstRead == True:

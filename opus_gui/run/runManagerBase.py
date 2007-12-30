@@ -401,8 +401,8 @@ class EstimationGuiElement(QWidget):
     self.vboxlayout.addWidget(self.tabWidget)
     
   def on_pbnRemoveModel_released(self):
-    self.runManager.removeModelElement(self)
-    self.runManager.updateModelElements()
+    self.runManager.removeEstimationElement(self)
+    self.runManager.updateEstimationElements()
     
   def on_pbnStartModel_released(self):
     # Fire up a new thread and run the model
