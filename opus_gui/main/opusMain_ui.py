@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusMain.ui'
 #
-# Created: Thu Dec 27 12:19:25 2007
+# Created: Sun Dec 30 15:05:45 2007
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -38,7 +38,7 @@ class Ui_MainWindow(object):
         self.toolBox.setObjectName("toolBox")
 
         self.datamanager_page = QtGui.QWidget()
-        self.datamanager_page.setGeometry(QtCore.QRect(0,0,370,524))
+        self.datamanager_page.setGeometry(QtCore.QRect(0,0,96,38))
         self.datamanager_page.setObjectName("datamanager_page")
 
         self.gridlayout1 = QtGui.QGridLayout(self.datamanager_page)
@@ -48,7 +48,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.datamanager_page,QtGui.QIcon(":/Images/Images/database_table.png"),"")
 
         self.modelmanager_page = QtGui.QWidget()
-        self.modelmanager_page.setGeometry(QtCore.QRect(0,0,370,524))
+        self.modelmanager_page.setGeometry(QtCore.QRect(0,0,96,38))
         self.modelmanager_page.setObjectName("modelmanager_page")
 
         self.gridlayout2 = QtGui.QGridLayout(self.modelmanager_page)
@@ -68,7 +68,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.runmanager_page,QtGui.QIcon(":/Images/Images/cog.png"),"")
 
         self.resultsmanager_page = QtGui.QWidget()
-        self.resultsmanager_page.setGeometry(QtCore.QRect(0,0,370,524))
+        self.resultsmanager_page.setGeometry(QtCore.QRect(0,0,96,38))
         self.resultsmanager_page.setObjectName("resultsmanager_page")
 
         self.gridlayout4 = QtGui.QGridLayout(self.resultsmanager_page)
@@ -155,6 +155,9 @@ class Ui_MainWindow(object):
 
         self.menuProject = QtGui.QMenu(self.menubar)
         self.menuProject.setObjectName("menuProject")
+
+        self.menuHelp = QtGui.QMenu(self.menubar)
+        self.menuHelp.setObjectName("menuHelp")
         MainWindow.setMenuBar(self.menubar)
 
         self.statusbar = QtGui.QStatusBar(MainWindow)
@@ -204,6 +207,9 @@ class Ui_MainWindow(object):
 
         self.actionRun_Manager = QtGui.QAction(MainWindow)
         self.actionRun_Manager.setObjectName("actionRun_Manager")
+
+        self.actionAbout = QtGui.QAction(MainWindow)
+        self.actionAbout.setObjectName("actionAbout")
         self.menuMap.addAction(self.mpActionZoomIn)
         self.menuMap.addAction(self.mpActionZoomOut)
         self.menuMap.addAction(self.mpActionPan)
@@ -215,8 +221,10 @@ class Ui_MainWindow(object):
         self.menuProject.addAction(self.actionSave_Project_As_2)
         self.menuProject.addSeparator()
         self.menuProject.addAction(self.actionExit)
+        self.menuHelp.addAction(self.actionAbout)
         self.menubar.addAction(self.menuProject.menuAction())
         self.menubar.addAction(self.menuMap.menuAction())
+        self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
         self.toolBox.setCurrentIndex(2)
@@ -236,6 +244,7 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_logView), QtGui.QApplication.translate("MainWindow", "Log View", None, QtGui.QApplication.UnicodeUTF8))
         self.menuMap.setTitle(QtGui.QApplication.translate("MainWindow", "Map", None, QtGui.QApplication.UnicodeUTF8))
         self.menuProject.setTitle(QtGui.QApplication.translate("MainWindow", "Project", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionZoomOut.setText(QtGui.QApplication.translate("MainWindow", "Zoom Out", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionPan.setText(QtGui.QApplication.translate("MainWindow", "Pan", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionAddRasterLayer.setText(QtGui.QApplication.translate("MainWindow", "Add Raster Layer", None, QtGui.QApplication.UnicodeUTF8))
@@ -249,5 +258,6 @@ class Ui_MainWindow(object):
         self.actionSave_Project_2.setText(QtGui.QApplication.translate("MainWindow", "Save Project", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSave_Project_As_2.setText(QtGui.QApplication.translate("MainWindow", "Save Project As...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRun_Manager.setText(QtGui.QApplication.translate("MainWindow", "Run Manager", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionAbout.setText(QtGui.QApplication.translate("MainWindow", "About", None, QtGui.QApplication.UnicodeUTF8))
 
 import opusMain_rc

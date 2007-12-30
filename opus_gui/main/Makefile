@@ -16,15 +16,18 @@
 RM = rm -f
 #RM = del
 
-all: opusMain_ui.py opusMain_rc.py
+all: opusMain_ui.py opusMain_rc.py opusAbout_ui.py
 
 clean:
-	$(RM) opusMain_ui.py opusMain_rc.py
+	$(RM) opusMain_ui.py opusMain_rc.py opusAbout_ui.py
 	$(RM) *.pyc
 	$(RM) *~
 
 opusMain_ui.py: opusMain.ui
 	pyuic4 -o opusMain_ui.py opusMain.ui
+
+opusAbout_ui.py: opusAbout.ui
+	pyuic4 -o opusAbout_ui.py opusAbout.ui
 
 opusMain_rc.py: opusMain.qrc
 	pyrcc4 -o opusMain_rc.py opusMain.qrc

@@ -19,6 +19,7 @@ from PyQt4.QtGui import *
 
 # UI specific includes
 from opusMain_ui import Ui_MainWindow
+from opusAbout import UrbansimAboutGui
 
 from util.consoleBase import *
 from config.toolboxBase import *
@@ -52,6 +53,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     QObject.connect(self.actionSave_Project_As_2, SIGNAL("triggered()"), self.saveConfigAs)
     # Exit
     QObject.connect(self.actionExit, SIGNAL("triggered()"), self.exitOpus)
+    # About
+    QObject.connect(self.actionAbout, SIGNAL("triggered()"), self.openAbout)
 
     self.tempDir = tempfile.mkdtemp(prefix='opus_gui')
 
@@ -86,6 +89,12 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     time.sleep(1)
     self.splash.hide()
 
+  def openAbout(self):
+    flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint 
+    wnd = UrbansimAboutGui(self,flags)
+    wnd.show()
+
+    
   def openConfig(self):
     from opus_core.misc import directory_path_from_opus_path
     start_dir = directory_path_from_opus_path('opus_gui.projects')
