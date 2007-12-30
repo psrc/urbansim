@@ -19,7 +19,7 @@ from PyQt4.QtCore import QString, QObject, SIGNAL, QFileInfo, \
 from PyQt4.QtGui import QMessageBox, QLineEdit, QComboBox, QGridLayout, \
                         QTextEdit, QTabWidget, QWidget, QPushButton, \
                         QGroupBox, QVBoxLayout, QIcon, QLabel, \
-                        QImage, QPainter
+                        QImage, QPainter, QPixmap, QScrollArea
 
 from opus_gui.results.opus_result_generator \
     import OpusResultThread
@@ -72,23 +72,20 @@ class ViewImageForm(QWidget):
         self.inGui = False
         self.visualization = visualization
         
-        self.widgetLayout = QVBoxLayout(self)
-        self.widgetLayout.setAlignment(Qt.AlignTop)
+        self.widgetLayout = QGridLayout(self)
 
-        self.groupBox = QGroupBox(self)
-        self.widgetLayout.addWidget(self.groupBox)
-
+        self.scroll = QScrollArea()
         file_path = self.visualization.get_file_path()
         print file_path, os.path.exists(file_path)
         self.lbl_image = QImage(QString(file_path))
+        self.label = QLabel()
+        self.label.setPixmap(QPixmap.fromImage(self.lbl_image))
+        self.scroll.setWidget(self.label)
+        self.widgetLayout.addWidget(self.scroll)
         
         self.tabIcon = QIcon(":/Images/Images/map.png")
         self.tabLabel = visualization.table_name
-    
-    def paintEvent(self, Event):
-        print Event
-        self.pntr_painter = QPainter(self.groupBox)
-        self.pntr_painter.drawImage(0,0,self.lbl_image) 
+
 
 
 # This is an element in the Run Manager GUI that is the container for the model
