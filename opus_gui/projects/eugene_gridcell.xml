@@ -171,7 +171,7 @@
       </my_indicators>
     </Libraries>
     
-    <all_source_data type="all_source_data" >
+    <Data_sources type="all_source_data" >
       <tunnel_scenario type="source_data" >
         <start_year type="integer" >1980</start_year>
         <end_year type="integer" >1984</end_year>
@@ -182,9 +182,9 @@
         <end_year type="integer" >1984</end_year>
         <run_name type="string" >run1835</run_name>
       </rebuild_scenario>
-    </all_source_data>
+    </Data_sources>
     
-    <results type="selectable_list" >
+    <Results type="selectable_list" >
       <population.zone.rebuild_scenario type="indicator_result" >
         <source_data type="string" >rebuild_scenario</source_data>
         <indicator_name type="string" >population</indicator_name>
@@ -205,7 +205,7 @@
         <indicator_name type="string" >number_of_jobs</indicator_name>
         <dataset_name type="string" >gridcell</dataset_name>
       </number_of_jobs>
-    </results>
+    </Results>
     
   </results_manager>
   
