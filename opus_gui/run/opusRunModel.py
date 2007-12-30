@@ -91,7 +91,6 @@ class OpusModel(object):
             statusdir = None
             statusfile = None
             succeeded = False
-            import pydevd;pydevd.settrace()
             try:
                 option_group = StartRunOptionGroup()
                 parser = option_group.parser
