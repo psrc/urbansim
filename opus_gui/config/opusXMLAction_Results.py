@@ -79,8 +79,8 @@ class OpusXMLAction_Results(object):
         QObject.connect(self.actViewResultAsAdvanced, SIGNAL("triggered()"), self.viewResultsAdvanced) 
         
                 
-        self.actPlaceHolder = QAction(self.applicationIcon, "Placeholder", self.xmlTreeObject.parent)
-        QObject.connect(self.actPlaceHolder, SIGNAL("triggered()"), self.placeHolderAction)
+        self.actViewDocumentation = QAction(self.applicationIcon, "View documentation", self.xmlTreeObject.parent)
+        QObject.connect(self.actViewDocumentation, SIGNAL("triggered()"), self.viewDocumentation)
 
     def placeHolderAction(self):
         print "placeHolderAction pressed with column = %s and item = %s" % \
@@ -122,7 +122,7 @@ class OpusXMLAction_Results(object):
                                       visualization_type = None,
                                       name = None,
                                       years = None,
-                                      table_name = 'alldata|chart|1980|alldata_home_based_jobs',
+                                      table_name = 'gridcell|map|1980|gridcell_number_of_jobs',
                                       storage_location = directory_path_from_opus_path('opus_gui.main.sample_images'),
                                       file_extension = 'png')
         self.xmlTreeObject.parent.resultManagerStuff.addViewImageIndicator(visualization = visualization)
@@ -131,15 +131,39 @@ class OpusXMLAction_Results(object):
     def viewResultsMatplotlibChart(self):
         print "viewResultsMatplotlibChart pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+
+        from opus_core.misc import directory_path_from_opus_path
+
+        visualization = Visualization(indicators = None,
+                                      visualization_type = None,
+                                      name = None,
+                                      years = None,
+                                      table_name = 'alldata|chart|1980|alldata_home_based_jobs',
+                                      storage_location = directory_path_from_opus_path('opus_gui.main.sample_images'),
+                                      file_extension = 'png')
+        self.xmlTreeObject.parent.resultManagerStuff.addViewImageIndicator(visualization = visualization)
+
               
     def viewResultsTablePerAttribute(self):
         print "viewResultsTablePerAttribute pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
               
     def viewResultsTablePerYear(self):
-        print "viewResultsTablePerYear pressed with column = %s and item = %s" % \
-              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+        from opus_core.misc import directory_path_from_opus_path
 
+        visualization = Visualization(
+                          indicators = None,
+                          visualization_type = None,
+                          name = None,
+                          years = None,
+                          table_name = 'zone|table-2|1980|zone_industrial_sqft',
+                          storage_location = directory_path_from_opus_path('opus_gui.main.sample_images'),
+                          file_extension = 'csv')
+        self.xmlTreeObject.parent.resultManagerStuff.addViewTableIndicator(visualization = visualization)
+
+    def viewDocumentation(self):
+        pass
+        
     def viewResultsAdvanced(self):
         print "viewResultsAdvanced pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())                  
@@ -176,6 +200,7 @@ class OpusXMLAction_Results(object):
                                                  
                 elif domElement.attribute(QString("type")) == QString("indicator"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
+                    self.menu.addAction(self.actViewDocumentation)
                     self.menu.addAction(self.actGenerateResults)
                     self.menu.exec_(QCursor.pos())
                     
@@ -192,11 +217,7 @@ class OpusXMLAction_Results(object):
                     
                     self.menu.addMenu(visualization_menu)
                     self.menu.exec_(QCursor.pos())
-                                   
-                else:
-                    self.menu = QMenu(self.xmlTreeObject.parent)
-                    self.menu.addAction(self.actPlaceHolder)
-                    self.menu.exec_(QCursor.pos())
+
         return
 
 
