@@ -19,6 +19,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
 from run.opusRunScript import *
+import util.documentationBase
 
 
 class OpusXMLAction_Data(object):
@@ -39,6 +40,9 @@ class OpusXMLAction_Data(object):
 
         self.actAddScriptFile = QAction(self.calendarIcon, "Add Script", self.xmlTreeObject.parent)
         QObject.connect(self.actAddScriptFile, SIGNAL("triggered()"), self.addScriptFile)
+
+        self.actOpenDocumentation = QAction(self.calendarIcon, "Open Documentation", self.xmlTreeObject.parent)
+        QObject.connect(self.actOpenDocumentation, SIGNAL("triggered()"), self.openDocumentation)
 
         self.actRemoveScriptFile = QAction(self.calendarIcon, "Remove Script", self.xmlTreeObject.parent)
         QObject.connect(self.actRemoveScriptFile, SIGNAL("triggered()"), self.removeScriptFile)
@@ -65,6 +69,22 @@ class OpusXMLAction_Data(object):
                                             self.currentIndex.model().parent(self.currentIndex))
         self.currentIndex.model().endRemoveRows()
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
+    def openDocumentation(self):
+        print "Open Documentation Pressed"
+        filePath = ""
+        if self.currentIndex.internalPointer().node().hasChildNodes():
+            children = self.currentIndex.internalPointer().node().childNodes()
+            for x in xrange(0,children.count(),1):
+                if children.item(x).isText():
+                    filePath = children.item(x).nodeValue()
+        fileInfo = QFileInfo(filePath)
+        baseInfo = QFileInfo(self.xmlTreeObject.parentTool.xml_file)
+        baseDir = baseInfo.absolutePath()
+        newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
+        fileName = newFile.absoluteFilePath().trimmed()
+        x = util.documentationBase.DocumentationTab(self.xmlTreeObject.parent, QString(fileName))
+
 
     def execScriptFile(self):
         print "Exec Script Pressed"
@@ -120,6 +140,10 @@ class OpusXMLAction_Data(object):
                 elif domElement.attribute(QString("type")) == QString("script_batch"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actAddScriptFile)
+                    self.menu.exec_(QCursor.pos())
+                elif domElement.attribute(QString("type")) == QString("documentation_path"):
+                    self.menu = QMenu(self.xmlTreeObject.parent)
+                    self.menu.addAction(self.actOpenDocumentation)
                     self.menu.exec_(QCursor.pos())
                 else:
                     self.menu = QMenu(self.xmlTreeObject.parent)

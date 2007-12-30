@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="indicator_list.xsl"?>
+
+
+<indicator_list>
+
+<group name="Transportation">
+	<indicator filename="vehicle_miles_traveled.xml" fullname="Vehicle miles traveled" />
+	<indicator filename="vehicle_miles_traveled_per_capita.xml" fullname="Vehicle miles traveled per capita" />
+	<indicator filename="gasoline_consumed_per_capita.xml" fullname="Gasoline consumed per capita" />
+	<indicator filename="mode_split_bike_trips_over_all.xml" fullname="Percentage of trips taken by bike" />
+	<indicator filename="mode_split_walk_trips_over_all.xml" fullname="Percentage of trips walked" />
+	<indicator filename="mode_split_sov_trips_over_all.xml" fullname="Percentage of trips taken in a single occupancy vehicle" />
+	<indicator filename="mode_split_carpool_trips_over_all.xml" fullname="Percentage of trips taken via carpool" />
+	<indicator filename="mode_split_transit_trips_over_all.xml" fullname="Percentage of trips taken on mass transit" />
+	<indicator filename="mode_split_park_ride_trips_over_all.xml" fullname="Percentage of trips taken as park and ride" />
+	<indicator filename="mode_split_human_powered_over_all.xml" fullname="Percentage of trips taken by bike or walked" />	
+	<indicator filename="mode_split_carpooling_over_automobile_trips.xml" fullname="Percentage of automobile trips which are carpools" />
+</group>
+
+<group name="Environmental Impacts">
+	<indicator filename="greenhouse_gas_emissions_from_vehicle_travel.xml" fullname="Greenhouse gas emissions from vehicle use" />
+</group>
+
+<group name="Land Use and Real Estate Development">
+    <subgroup name="Residential Development">
+      	<indicator filename="res_units.xml" fullname="Residential units" />
+      	<indicator filename="res_density.xml" fullname="Residential density" />
+      	<indicator filename="vac_res_units.xml" fullname="Vacant residential units" />
+    </subgroup>
+    <subgroup name="Nonresidential Development">
+      	<indicator filename="nonres_sqft_value.xml" fullname="Nonresidential square foot value" />
+    </subgroup>
+</group>
+
+<group name="Employment">
+ 	<indicator filename="employment.xml" fullname="Employment" />
+</group>
+
+<group name="Households and Population">
+    <subgroup name="Households">
+      	<indicator filename="mean_household_income.xml" fullname="Mean household income" />
+    </subgroup>
+    <subgroup name="Population">
+        <indicator filename="population.xml" fullname="Population" />
+      	<indicator filename="pop_density.xml" fullname="Population density" />
+    </subgroup>
+</group>
+
+</indicator_list>
+

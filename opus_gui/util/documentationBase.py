@@ -1,0 +1,69 @@
+# UrbanSim software. Copyright (C) 1998-2007 University of Washington
+# 
+# You can redistribute this program and/or modify it under the terms of the
+# GNU General Public License as published by the Free Software Foundation
+# (http://www.gnu.org/copyleft/gpl.html).
+# 
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
+# and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
+# other acknowledgments.
+# 
+
+
+# PyQt4 includes for python bindings to QT
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+
+# General system includes
+import sys,string
+
+  
+# Main 
+class DocumentationBase(QTextBrowser):
+    def __init__(self, parent,src):
+        QTextBrowser.__init__(self, parent)
+        self.parent = parent
+        self.src = src
+        self.setOpenExternalLinks(True)
+        self.setSource(QUrl(self.src))
+        
+
+class DocumentationTab(QWidget):
+    def __init__(self, parent, filePath):
+        QWidget.__init__(self, parent)
+        self.parent = parent
+        
+        self.tabIcon = QIcon(":/Images/Images/chart_organisation.png")
+        self.tabLabel = "Documentation Tab"
+
+        self.tab = QWidget(parent)
+        
+        self.widgetLayout = QVBoxLayout(self.tab)
+        self.widgetLayout.setAlignment(Qt.AlignTop)
+        self.docStatusLabel = QLabel(self.tab)
+        self.docStatusLabel.setAlignment(Qt.AlignCenter)
+        self.docStatusLabel.setObjectName("docStatusLabel")
+        self.docStatusLabel.setText(QString("No documentation currently loaded..."))
+        self.widgetLayout.addWidget(self.docStatusLabel)
+
+        self.pbnRemoveDoc = QPushButton(self.tab)
+        self.pbnRemoveDoc.setObjectName("pbnRemoveDoc")
+        self.pbnRemoveDoc.setText(QString("Remove Documentation"))
+        QObject.connect(self.pbnRemoveDoc, SIGNAL("released()"),
+                        self.released)
+        self.widgetLayout.addWidget(self.pbnRemoveDoc)
+
+        self.docStuff = DocumentationBase(self.parent,filePath)
+        self.widgetLayout.addWidget(self.docStuff)
+        self.docStatusLabel.setText(QString(filePath))
+
+        self.parent.tabWidget.insertTab(0,self.tab,self.tabIcon,self.tabLabel)
+        self.parent.tabWidget.setCurrentIndex(0)
+
+    def released(self):
+        print "Remove Documentation Pressed..."
+        self.parent.tabWidget.removeTab(self.parent.tabWidget.indexOf(self.tab))
+        self.tab.hide()
+

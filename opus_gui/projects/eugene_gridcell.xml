@@ -7,6 +7,7 @@
       <script_path type="script_path" >projects.scripts</script_path>
       <processing_script_1 type="script_file" >test</processing_script_1>
     </script_batch>
+    <documentation type="documentation_path">documentation/installation/index.html</documentation>
   </data_manager>
   <scenario_manager>
     <default_scenario type="scenario" >
