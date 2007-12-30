@@ -37,7 +37,6 @@ class ComputedIndicator:
         self.dataset_name = dataset_name
         self.primary_keys = primary_keys
         
-        
     def get_attribute_alias(self, year = None):
         return self.indicator.get_attribute_alias(year)
     
@@ -49,7 +48,6 @@ class ComputedIndicator:
                       suppress_extension_addition = False):
             
         short_name = self.indicator.name
-            
         file_name = '%s__%s'%(self.indicator.dataset_name,
                               short_name)
         
@@ -74,17 +72,6 @@ class ComputedIndicator:
         data_manager.export_indicator(
            indicator = self, 
            source_data = self.source_data)
-
-    def get_variable_alias(self, name):
-        vname = VariableName(name)
-        test = vname.get_alias()
-        if vname.get_dataset_name() is None:
-            vname.set_dataset_name(self.dataset_name)
-            
-        assert test==vname.get_alias()
-        
-        return vname.get_alias()
-
         
             
 from opus_core.tests import opus_unittest
