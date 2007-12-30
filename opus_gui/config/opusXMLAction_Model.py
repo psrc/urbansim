@@ -52,23 +52,6 @@ class OpusXMLAction_Model(object):
         if not self.xmlTreeObject.model.dirty:
             newEstimation = OpusEstimation(self.xmlTreeObject,self.xmlTreeObject.parentTool.xml_file)
             self.xmlTreeObject.parent.runManagerStuff.addNewEstimationRun(newEstimation)
-
-            #fileNameInfo = QFileInfo(self.xmlTreeObject.parentTool.xml_file)
-            #parcelfile = fileNameInfo.absoluteFilePath().trimmed()
-            #print parcelfile
-            #xml_config = XMLConfiguration(parcelfile)
-            #estimation_section = xml_config.get_estimation_section()
-            #estimation_config = estimation_section['estimation_config']
-            #
-            ## TODO: put save_estimation results etc into config
-            #for model_name in estimation_config['models_to_estimate']:
-            #    model_config = estimation_config['model_parameters'][model_name]
-            #    model = (model_config['abbreviation'], model_config['full_name'])
-            #    if 'location' in model_config:
-            #        model = model , (model_config['location'], model_config['add_member_prefix'])
-            #    specification = xml_config.get_estimation_specification(model_config['full_name'])
-            #    er = EstimationRunner()
-            #    er.run_estimation(estimation_config, model, specification, save_estimation_results=True, diagnose=False)
         else:
             # Prompt the user to save...
             QMessageBox.warning(self.xmlTreeObject.parent,
