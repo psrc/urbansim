@@ -231,7 +231,7 @@ class Table(Visualization):
         kwargs = {}
         if self.output_type in ['csv','tab']:
             kwargs['fixed_column_order'] = column_names
-            kwargs['append_type_info'] = False
+            #kwargs['append_type_info'] = False
             
         self.output_storage.write_table(
             table_name = table_name, 
