@@ -16,12 +16,10 @@ from opus_core.variables.variable_name import VariableName
 import os
 
 class Indicator:
-    def __init__(self, dataset_name, attribute, 
-                 operation = None, name = None):
+    def __init__(self, dataset_name, attribute, name = None):
 
         self.dataset_name = dataset_name 
         self.attribute = attribute
-        self.operation = operation                        
         self.name = name
         self.name = self.get_indicator_name(year = None)
         self.date_computed = None
@@ -34,9 +32,6 @@ class Indicator:
             name = self.get_attribute_alias(year)
         else:
             name = self.name
-            
-        if self.operation is not None and name.find(self.operation) == -1:
-            name = '%s_%s'%(self.operation, name)
             
         return name
         

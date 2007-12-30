@@ -111,7 +111,7 @@ class Table(Visualization):
             attributes = [(name,computed_indicators[name].get_computed_dataset_column_name())
                           for name in indicator_names]
             example_indicator = computed_indicators[indicator_names[0]]
-            primary_keys = example_indicator.dataset_metadata['primary_keys']
+            primary_keys = example_indicator.primary_keys
             
             if self.output_style == Table.ALL:
                 output_method = self.output_ALL

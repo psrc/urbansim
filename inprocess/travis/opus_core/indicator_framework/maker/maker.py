@@ -118,7 +118,8 @@ class Maker(object):
             computed_indicator = ComputedIndicator(
                 indicator = indicator,
                 source_data = source_data,
-                dataset = dataset)
+                dataset_name = dataset.get_dataset_name(),
+                primary_keys = copy(dataset.get_id_name()))
             
             computed_indicators[name] = computed_indicator
                 

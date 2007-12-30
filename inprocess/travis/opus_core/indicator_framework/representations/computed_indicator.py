@@ -22,7 +22,8 @@ class ComputedIndicator:
     def __init__(self, 
                  indicator, 
                  source_data, 
-                 dataset):
+                 dataset_name,
+                 primary_keys):
 
         self.indicator = indicator
         self.source_data = source_data
@@ -31,14 +32,11 @@ class ComputedIndicator:
         self.storage_location = os.path.join(cache_directory, 'indicators')
         self.date_computed = strftime("%Y-%m-%d %H:%M:%S", localtime(time()))
         
-        if dataset is not None:
-            #should only be None if unit testing...
-            self.dataset_metadata = {
-                            'dataset_name':dataset.get_dataset_name(),
-                            'primary_keys':copy(dataset.get_id_name())
-                            }
-            name = dataset.create_and_check_qualified_variable_name(indicator.attribute)
-            self.computed_dataset_column_name = name.get_alias()
+        self.computed_dataset_column_name = self.get_attribute_alias()
+        
+        self.dataset_name = dataset_name
+        self.primary_keys = primary_keys
+        
         
     def get_attribute_alias(self, year = None):
         return self.indicator.get_attribute_alias(year)
@@ -76,7 +74,19 @@ class ComputedIndicator:
         data_manager.export_indicator(
            indicator = self, 
            source_data = self.source_data)
+
+    def get_variable_alias(self, name):
+        vname = VariableName(name)
+        test = vname.get_alias()
+        if vname.get_dataset_name() is None:
+            vname.set_dataset_name(self.dataset_name)
+            
+        assert test==vname.get_alias()
         
+        return vname.get_alias()
+
+        
+            
 from opus_core.tests import opus_unittest
 from inprocess.travis.opus_core.indicator_framework.representations.indicator import Indicator
 from inprocess.travis.opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
@@ -91,7 +101,8 @@ class ComputedIndicatorTests(AbstractIndicatorTest):
         computed_indicator = ComputedIndicator(
             source_data = self.source_data,
             indicator = indicator,
-            dataset = None                                       
+            dataset_name = 'test',
+            primary_keys = ['id']                                       
         )
         returned_path = computed_indicator.get_file_name()
         expected_path = 'test__population.csv'
