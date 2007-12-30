@@ -89,7 +89,9 @@ class OpusModel(object):
             # statusdir is a temporary directory into which to write a status file
             # regarding the progress of the simulation - the progress bar reads this file
             statusdir = None
+            statusfile = None
             succeeded = False
+            import pydevd;pydevd.settrace()
             try:
                 option_group = StartRunOptionGroup()
                 parser = option_group.parser
