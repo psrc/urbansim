@@ -18,10 +18,11 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
-import os
-from inprocess.configurations.xml_configuration import XMLConfiguration
-# from psrc_parcel.estimation.run_estimation import EstimationRunner
-from inprocess.configurations.gui_estimation_runner import EstimationRunner
+#import os
+#from inprocess.configurations.xml_configuration import XMLConfiguration
+## from psrc_parcel.estimation.run_estimation import EstimationRunner
+#from inprocess.configurations.gui_estimation_runner import EstimationRunner
+from run.opusRunEstimation import OpusEstimation
         
 
 class OpusXMLAction_Model(object):
@@ -49,27 +50,30 @@ class OpusXMLAction_Model(object):
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
         # First confirm that the project file needs to be saved before running the estimation...
         if not self.xmlTreeObject.model.dirty:
-            fileNameInfo = QFileInfo(self.xmlTreeObject.parentTool.xml_file)
-            parcelfile = fileNameInfo.absoluteFilePath().trimmed()
-            print parcelfile
-            xml_config = XMLConfiguration(parcelfile)
-            estimation_section = xml_config.get_estimation_section()
-            estimation_config = estimation_section['estimation_config']
-            
-            # TODO: put save_estimation results etc into config
-            for model_name in estimation_config['models_to_estimate']:
-                model_config = estimation_config['model_parameters'][model_name]
-                model = (model_config['abbreviation'], model_config['full_name'])
-                if 'location' in model_config:
-                    model = model , (model_config['location'], model_config['add_member_prefix'])
-                specification = xml_config.get_estimation_specification(model_config['full_name'])
-                er = EstimationRunner()
-                er.run_estimation(estimation_config, model, specification, save_estimation_results=True, diagnose=False)
+            newEstimation = OpusEstimation(self.xmlTreeObject,self.xmlTreeObject.parentTool.xml_file)
+            self.xmlTreeObject.parent.runManagerStuff.addNewEstimationRun(newEstimation)
+
+            #fileNameInfo = QFileInfo(self.xmlTreeObject.parentTool.xml_file)
+            #parcelfile = fileNameInfo.absoluteFilePath().trimmed()
+            #print parcelfile
+            #xml_config = XMLConfiguration(parcelfile)
+            #estimation_section = xml_config.get_estimation_section()
+            #estimation_config = estimation_section['estimation_config']
+            #
+            ## TODO: put save_estimation results etc into config
+            #for model_name in estimation_config['models_to_estimate']:
+            #    model_config = estimation_config['model_parameters'][model_name]
+            #    model = (model_config['abbreviation'], model_config['full_name'])
+            #    if 'location' in model_config:
+            #        model = model , (model_config['location'], model_config['add_member_prefix'])
+            #    specification = xml_config.get_estimation_specification(model_config['full_name'])
+            #    er = EstimationRunner()
+            #    er.run_estimation(estimation_config, model, specification, save_estimation_results=True, diagnose=False)
         else:
             # Prompt the user to save...
             QMessageBox.warning(self.xmlTreeObject.parent,
                                 "Warning",
-                                "Please save changes to project before running model")
+                                "Please save changes to project before running estimation")
         
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
