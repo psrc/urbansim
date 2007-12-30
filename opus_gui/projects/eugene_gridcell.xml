@@ -190,22 +190,22 @@
         <source_data type="string" >rebuild_scenario</source_data>
         <indicator_name type="string" >population</indicator_name>
         <dataset_name type="string" >zone</dataset_name>
-      </population>
+      </population.zone.rebuild_scenario>
       <population.zone.tunnel_scenario type="indicator_result" >
         <source_data type="string" >tunnel_scenario</source_data>
         <indicator_name type="string" >population</indicator_name>
         <dataset_name type="string" >zone</dataset_name>
-      </population>
+      </population.zone.tunnel_scenario>
       <number_of_jobs.gridcell.rebuild_scenario type="indicator_result" >
         <source_data type="string" >rebuild_scenario</source_data>
         <indicator_name type="string" >number_of_jobs</indicator_name>
         <dataset_name type="string" >gridcell</dataset_name>
-      </number_of_jobs>
+      </number_of_jobs.gridcell.rebuild_scenario>
       <number_of_jobs.gridcell.tunnel_scenario type="indicator_result" >
         <source_data type="string" >tunnel_scenario</source_data>
         <indicator_name type="string" >number_of_jobs</indicator_name>
         <dataset_name type="string" >gridcell</dataset_name>
-      </number_of_jobs>
+      </number_of_jobs.gridcell.tunnel_scenario>
     </Results>
     
   </results_manager>
@@ -213,3 +213,4 @@
 
   
 </opus_project>
+    <documentation type="documentation_path">documentation/installation/index.html</documentation>
