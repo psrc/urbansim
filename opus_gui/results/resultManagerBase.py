@@ -91,6 +91,10 @@ class ResultManagerBase(AbstractManagerBase):
             
         for visualization in visualizations:
             form_generator(visualization = visualization)
+        
+        self.visualization_thread.wait()
+        self.visualization_thread = None
+        self.visualizer = None
 
     def addViewImageIndicator(self, visualization):
         new_form = ViewImageForm(parent = self.parent,

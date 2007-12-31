@@ -45,6 +45,11 @@ class OpusGuiThread(QThread):
             finishedCallback = None,
             errorCallback = None):
         
+        try:
+            import pydevd;pydevd.settrace()
+        except:
+            pass
+        
         if progressCallback is None:
             progressCallback = self.progressCallback
         if finishedCallback is None:
@@ -142,7 +147,7 @@ class OpusResultVisualizer(object):
                                          'indicators',
                                          '_stored_data',
                                          repr(source_data.years[0]))
-        #import pydevd;pydevd.settrace()
+        
         storage = StorageFactory().get_storage(
                        type = 'flt_storage',
                        storage_location = storage_location)
@@ -151,7 +156,8 @@ class OpusResultVisualizer(object):
         
         primary_keys = [col for col in cols if col.find('id') != -1]
         computed_indicator.primary_keys = primary_keys
-
+        print primary_keys
+        
         args = {}
         if self.indicator_type == 'matplotlib_map':
             viz_type = self.indicator_type
@@ -166,12 +172,13 @@ class OpusResultVisualizer(object):
             args['output_style'] = Table.PER_ATTRIBUTE          
             args['output_type'] = 'csv'
             
+        name = computed_indicator.get_file_name(
+                                    suppress_extension_addition = True)
         viz_factory = VisualizationFactory()
         self.visualizations = viz_factory.visualize(
-                                  indicators_to_visualize = ['viz'], 
-                                  computed_indicators = {'viz':computed_indicator}, 
+                                  indicators_to_visualize = [name], 
+                                  computed_indicators = {name:computed_indicator}, 
                                   visualization_type = viz_type, **args)
-        
     
     def get_visualizations(self):
         return self.visualizations
