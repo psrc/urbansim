@@ -45,10 +45,10 @@ class OpusGuiThread(QThread):
             finishedCallback = None,
             errorCallback = None):
         
-        try:
-            import pydevd;pydevd.settrace()
-        except:
-            pass
+#        try:
+#            import pydevd;pydevd.settrace()
+#        except:
+#            pass
         
         if progressCallback is None:
             progressCallback = self.progressCallback
