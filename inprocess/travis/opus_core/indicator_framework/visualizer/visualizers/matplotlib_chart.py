@@ -265,7 +265,7 @@ else:
                     name = 'attr1'
                 else:
                     name = 'attr2'
-                file_name = 'test|chart|1980-1983|%s.png'%name
+                file_name = 'test_chart_1980-1983_%s.png'%name
                     
                 self.assertEqual(
                      os.path.join(viz_result.storage_location,

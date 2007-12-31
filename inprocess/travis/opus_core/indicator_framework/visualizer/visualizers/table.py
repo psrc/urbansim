@@ -281,15 +281,15 @@ class Tests(AbstractIndicatorTest):
             
             for viz_result in viz_results:
                 if style == Table.ALL:
-                    file_name = 'test|table-%i|1980-1983|attr1-attr2.csv'%style
+                    file_name = 'test_table-%i_1980-1983_attr1-attr2.csv'%style
                 elif style == Table.PER_YEAR:
-                    file_name = 'test|table-%i|%i|attr1-attr2.csv'%(style,viz_result.years[0])
+                    file_name = 'test_table-%i_%i_attr1-attr2.csv'%(style,viz_result.years[0])
                 elif style == Table.PER_ATTRIBUTE:
                     if viz_result.indicators[0].indicator.name == 'attribute':
                         name = 'attr1'
                     else:
                         name = 'attr2'
-                    file_name = 'test|table-%i|1980-1983|%s.csv'%(style, name)
+                    file_name = 'test_table-%i_1980-1983_%s.csv'%(style, name)
                     
                 self.assertEqual(
                      os.path.join(viz_result.storage_location,
