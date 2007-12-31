@@ -182,6 +182,7 @@ class OpusXMLAction_Results(object):
                     visualization_menu.setTitle(QString("View result as..."))
                     
                     visualization_menu.addAction(self.actViewResultAsMatplotlibMap)
+                    visualization_menu.addAction(self.actViewResultAsArcgisMap)
                     visualization_menu.addAction(self.actViewResultAsMatplotlibChart)
                     visualization_menu.addAction(self.actViewResultAsTablePerYear)
                     visualization_menu.addAction(self.actViewResultAsTablePerAttribute)
