@@ -57,8 +57,13 @@ class MatplotlibMap(Visualization):
                it is considered as a 1/100 under the minimum value of the array.
                Filter is a 2D array. Points where filter is > 0 are masked out (put into background).
         """
+        import matplotlib
+        matplotlib.use('Qt4Agg') 
+        
         from matplotlib.pylab import jet,imshow,colorbar,show,axis,savefig,close,figure,title,normalize
         from matplotlib.pylab import rot90
+        
+        
         
         attribute_data = attribute_data[filter]
         coord_2d_data = dataset.get_2d_attribute(attribute_data = attribute_data)
