@@ -56,6 +56,12 @@ class OpusXMLAction_Results(object):
                                           "Map (Matplotlib)",
                                           self.xmlTreeObject.parent)
         QObject.connect(self.actViewResultAsMatplotlibMap, SIGNAL("triggered()"), self.viewResultsMatplotlibMap)                
+        self.actViewResultAsArcgisMap = QAction(self.acceptIcon, 
+                                          "Map (ArcGis)",
+                                          self.xmlTreeObject.parent)
+        QObject.connect(self.actViewResultAsArcgisMap, SIGNAL("triggered()"), self.viewResultsArcGisMap)                
+
+        
         self.actViewResultAsMatplotlibChart = QAction(self.acceptIcon, 
                                           "Chart (Matplotlib)",
                                           self.xmlTreeObject.parent)
@@ -103,7 +109,12 @@ class OpusXMLAction_Results(object):
         self.xmlTreeObject.parent.resultManagerStuff.addIndicatorForm(
                                                           indicator_type = 'matplotlib_map',
                                                           clicked_node = clicked_node)
-           
+
+    def viewResultsArcGisMap(self):
+        clicked_node = self.currentIndex.internalPointer().node().toElement()          
+        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorForm(
+                                                          indicator_type = 'arcgis_map',
+                                                          clicked_node = clicked_node)           
     def viewResultsMatplotlibChart(self):
         clicked_node = self.currentIndex.internalPointer().node().toElement()           
         self.xmlTreeObject.parent.resultManagerStuff.addIndicatorForm(

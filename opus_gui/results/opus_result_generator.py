@@ -107,7 +107,6 @@ class OpusResultVisualizer(object):
                 
                 succeeded = True
             except:
-                raise
                 succeeded = False
                 errorInfo = formatExceptionInfo()
                 errorString = "Unexpected Error From Model :: " + str(errorInfo)
@@ -163,6 +162,10 @@ class OpusResultVisualizer(object):
             viz_type = self.indicator_type
         elif self.indicator_type == 'matplotlib_chart':
             viz_type = self.indicator_type
+        elif self.indicator_type == 'arcgis_map':
+            viz_type = 'table'
+            args['output_type'] = Table.PER_ATTRIBUTE
+            args['output_type'] = 'esri'
         elif self.indicator_type == 'table_per_year':
             viz_type = 'table'
             args['output_style'] = Table.PER_YEAR

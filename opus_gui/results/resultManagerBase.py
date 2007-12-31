@@ -80,17 +80,19 @@ class ResultManagerBase(AbstractManagerBase):
                         self.visualizationsCreated)
         
     def visualizationsCreated(self, success):
-                 
+
+        form_generator = None
         visualizations = self.visualizer.get_visualizations()
         if self.indicator_type == 'matplotlib_map' or \
            self.indicator_type == 'matplotlib_chart':
             form_generator = self.addViewImageIndicator
         elif self.indicator_type == 'table_per_year' or \
              self.indicator_type == 'table_per_attribute':
-            form_generator = self.addViewTableIndicator
-            
-        for visualization in visualizations:
-            form_generator(visualization = visualization)
+            form_generator = self.addViewTableIndicator            
+        
+        if form_generator is not None:    
+            for visualization in visualizations:
+                form_generator(visualization = visualization)
         
         self.visualization_thread.wait()
         self.visualization_thread = None
@@ -105,9 +107,12 @@ class ResultManagerBase(AbstractManagerBase):
     def addViewTableIndicator(self, visualization):
         new_form = ViewTableForm(parent = self.parent,
                                  visualization = visualization)
-        self.guiElements.insert(0, new_form)
-        self.updateGuiElements()
-        
+        if self.indicator_type != 'arcgis_map':
+            self.guiElements.insert(0, new_form)
+            self.updateGuiElements()
+        else:
+            del new_form
+            
     def addViewDocumentationForm(self, indicator_node):
         new_form = ViewDocumentationForm(parent = self.parent,
                                          indicator_node = indicator_node)
