@@ -31,7 +31,7 @@ class Visualization(object):
         if attribute_names is not None:
             names = '-'.join(sorted(attribute_names))
             components.append(names)
-        name = '|'.join(components)
+        name = '_'.join(components)
                     
         return name
     
