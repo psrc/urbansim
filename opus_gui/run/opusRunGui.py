@@ -171,7 +171,7 @@ class ModelGuiElement(QWidget):
         if self.configFile.open(QIODevice.ReadOnly):
             self.doc = QDomDocument()
             self.doc.setContent(self.configFile)
-            self.dataModel = OpusDataModel(self.doc, self.parent, self.configFile, False)
+            self.dataModel = OpusDataModel(self, self.doc, self.parent, self.configFile, False)
             self.view = QTreeView(self.parent)
             self.delegate = OpusDataDelegate(self.view)
             self.view.setItemDelegate(self.delegate)

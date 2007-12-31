@@ -36,9 +36,9 @@ class OpusDataBaseModel(object):
 
 
 class OpusDataModel(QAbstractItemModel):
-    def __init__(self, document, parent, configFile, xmlType, editable):
+    def __init__(self, parentTree, document, parent, configFile, xmlType, editable):
         QAbstractItemModel.__init__(self, parent)
-
+        self.parentTree = parentTree
         self.editable = editable
         self.configFile = configFile
         self.parentObj = parent
@@ -272,5 +272,7 @@ class OpusDataModel(QAbstractItemModel):
             for x in xrange(0,children.count(),1):
                 if children.item(x).isText():
                     children.item(x).setNodeValue(QString(value.toString()))
+                    if self.dirty == False:
+                        self.parentTree.groupBox.setTitle(self.parentTree.groupBox.title().prepend(QString("*")))
                     self.dirty = True
         return True
