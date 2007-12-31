@@ -27,7 +27,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.logger import logger
 
-
+from time import strftime,localtime
 from opus_core.storage_factory import StorageFactory
 from opus_core.store.storage import Storage
 
@@ -43,7 +43,6 @@ class Maker(object):
         
     def create_batch(self, indicators, source_data):
         self.source_data = source_data
-
         cache_directory = self.source_data.cache_directory
         
         self.storage_location = os.path.join(self.source_data.get_indicator_directory(),
@@ -53,7 +52,14 @@ class Maker(object):
             os.mkdir(self.source_data.get_indicator_directory())
         if not os.path.exists(self.storage_location):
             os.mkdir(self.storage_location)
-                
+
+        log_file_path = os.path.join(cache_directory, 
+                                     'indicators',
+                                     'indicators.log')
+        logger.enable_file_logging(log_file_path, 'a')
+        logger.log_status('\n%s BEGIN %s %s' 
+            % ('='*10, strftime('%Y_%m_%d_%H_%M', localtime()), '='*10))
+                        
         self.dataset = None
         self.dataset_state = {
               'current_cache_directory':None,
@@ -72,6 +78,10 @@ class Maker(object):
         computed_indicators = self._make_all_indicators(
             indicators = indicators,
             source_data = source_data)
+        
+        logger.log_status('%s END %s %s\n' 
+            % ('='*11, strftime('%Y_%m_%d_%H_%M', localtime()), '='*11))
+        logger.disable_file_logging(log_file_path)
         
         return computed_indicators
 
