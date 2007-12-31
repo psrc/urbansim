@@ -96,22 +96,35 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     
   def openConfig(self):
-    from opus_core.misc import directory_path_from_opus_path
-    start_dir = directory_path_from_opus_path('opus_gui.projects')
-    print "Open Config pressed..."
-    configDialog = QFileDialog()
-    filter_str = QString("*.xml")
-    fd = configDialog.getOpenFileName(self,QString("Please select an xml config file..."),
-                                      QString(start_dir), filter_str)
-    # Check for cancel
-    if len(fd) == 0:
-      return
-    fileName = QString(fd)
-    fileNameInfo = QFileInfo(QString(fd))
-    fileNameBaseName = fileNameInfo.completeBaseName()
-    print "Filename = ", fileName
-    # Open the file and add to the Run tab...
-    self.toolboxStuff.openXMLTree(fileName)
+    if self.toolboxStuff.resultsManagerTree and self.toolboxStuff.resultsManagerTree.model.dirty:
+      QMessageBox.warning(self,"Warning",
+                          "Please save changes to current project")
+    elif self.toolboxStuff.modelManagerTree and self.toolboxStuff.modelManagerTree.model.dirty:
+      QMessageBox.warning(self,"Warning",
+                          "Please save changes to current project")
+    elif self.toolboxStuff.runManagerTree and self.toolboxStuff.runManagerTree.model.dirty:
+      QMessageBox.warning(self,"Warning",
+                          "Please save changes to current project")
+    elif self.toolboxStuff.dataManagerTree and self.toolboxStuff.dataManagerTree.model.dirty:
+      QMessageBox.warning(self,"Warning",
+                          "Please save changes to current project")
+    else:
+      from opus_core.misc import directory_path_from_opus_path
+      start_dir = directory_path_from_opus_path('opus_gui.projects')
+      print "Open Config pressed..."
+      configDialog = QFileDialog()
+      filter_str = QString("*.xml")
+      fd = configDialog.getOpenFileName(self,QString("Please select an xml config file..."),
+                                        QString(start_dir), filter_str)
+      # Check for cancel
+      if len(fd) == 0:
+        return
+      fileName = QString(fd)
+      fileNameInfo = QFileInfo(QString(fd))
+      fileNameBaseName = fileNameInfo.completeBaseName()
+      print "Filename = ", fileName
+      # Open the file and add to the Run tab...
+      self.toolboxStuff.openXMLTree(fileName)
     
   def saveConfig(self):
     print "Save Config pressed..."
@@ -123,27 +136,33 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     out = QTextStream(configFile)
     domDocument.save(out, indentSize)
     self.toolboxStuff.runManagerTree.model.dirty = False
+    self.toolboxStuff.dataManagerTree.model.dirty = False
+    self.toolboxStuff.modelManagerTree.model.dirty = False
+    self.toolboxStuff.resultsManagerTree.model.dirty = False
     print "Save Config finished..."
     
   def saveConfigAs(self):
-    print "Save Config As pressed..."
-    qd = QFileDialog()
-    filter_str = QString("*.xml")
-    f2=qd.getSaveFileName(self,QString(),QString(),filter_str)
-    if f2.count(".xml")==0:
-      f = f2 + ".xml"
-    else:
-      f = f2
-    write_string = QString(f)
-    configFile = QFile(write_string)
-    domDocument = self.toolboxStuff.runManagerTree.model.domDocument
-    indentSize = 2
-    configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
-    out = QTextStream(configFile)
-    domDocument.save(out, indentSize)
-    self.toolboxStuff.runManagerTree.model.dirty = False
-    #### TODO - Now need to close existing project and re-open the newly
-    #### saved one...
+    print "Save Config As is not implemented yet..."
+    #qd = QFileDialog()
+    #filter_str = QString("*.xml")
+    #f2=qd.getSaveFileName(self,QString(),QString(),filter_str)
+    #if f2.count(".xml")==0:
+    #  f = f2 + ".xml"
+    #else:
+    #  f = f2
+    #write_string = QString(f)
+    #configFile = QFile(write_string)
+    #domDocument = self.toolboxStuff.runManagerTree.model.domDocument
+    #indentSize = 2
+    #configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
+    #out = QTextStream(configFile)
+    #domDocument.save(out, indentSize)
+    #self.toolboxStuff.runManagerTree.model.dirty = False
+    #self.toolboxStuff.dataManagerTree.model.dirty = False
+    #self.toolboxStuff.modelManagerTree.model.dirty = False
+    #self.toolboxStuff.resultsManagerTree.model.dirty = False
+    ##### TODO - Now need to close existing project and re-open the newly
+    ##### saved one...
     
   def exitOpus(self):
     print "Exit pressed..."
