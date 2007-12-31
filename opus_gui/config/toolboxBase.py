@@ -42,49 +42,65 @@ class ToolboxBase(object):
     self.dataManagerTree = None
   
   def openXMLTree(self, xml_file):
+    saveBeforeOpen = QMessageBox.Discard
     # Check if the current model(s) is(are) dirty first...
     if self.resultsManagerTree and self.resultsManagerTree.model.dirty:
-      QMessageBox.warning(self.parent,"Warning",
-                          "Please save changes to current project")
+      saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
+                                      "Current project contains changes... \nShould we save or discard those changes before opening?",
+                                      QMessageBox.Discard,QMessageBox.Save)
     elif self.modelManagerTree and self.modelManagerTree.model.dirty:
-      QMessageBox.warning(self.parent,"Warning",
-                          "Please save changes to current project")
+      saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
+                                      "Current project contains changes... \nShould we save or discard those changes before opening?",
+                                      QMessageBox.Discard,QMessageBox.Save)
     elif self.runManagerTree and self.runManagerTree.model.dirty:
-      QMessageBox.warning(self.parent,"Warning",
-                          "Please save changes to current project")
+      saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
+                                      "Current project contains changes... \nShould we save or discard those changes before opening?",
+                                      QMessageBox.Discard,QMessageBox.Save)
     elif self.dataManagerTree and self.dataManagerTree.model.dirty:
-      QMessageBox.warning(self.parent,"Warning",
-                          "Please save changes to current project")
+      saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
+                                      "Current project contains changes... \nShould we save or discard those changes before opening?",
+                                      QMessageBox.Discard,QMessageBox.Save)
+    if saveBeforeOpen == QMessageBox.Save:
+      self.parent.saveConfig()
     else:
+      #if we have an existing tree we need to remove the dirty bit since we are discarding
+      if self.runManagerTree:
+        self.runManagerTree.model.dirty = False
+      if self.dataManagerTree:
+        self.dataManagerTree.model.dirty = False
+      if self.modelManagerTree:
+        self.modelManagerTree.model.dirty = False
+      if self.resultsManagerTree:
+        self.resultsManagerTree.model.dirty = False
         
-      # Try to remove all the old trees... 
-      resultsManagerRemoveSuccess = True
-      if self.resultsManagerTree != None:
-        resultsManagerRemoveSuccess = self.resultsManagerTree.removeTree()
-      modelManagerRemoveSuccess = True
-      if self.modelManagerTree != None:
-        modelManagerRemoveSuccess = self.modelManagerTree.removeTree()
-      runManagerRemoveSuccess = True
-      if self.runManagerTree != None:
-        runManagerRemoveSuccess = self.runManagerTree.removeTree()
-      dataManagerRemoveSuccess = True
-      if self.dataManagerTree != None:
-        dataManagerRemoveSuccess = self.dataManagerTree.removeTree()
-
-      if resultsManagerRemoveSuccess and modelManagerRemoveSuccess and \
-             runManagerRemoveSuccess and dataManagerRemoveSuccess:
-        # We have successfully removed the old XML trees
-        # Opening a project XML
-        self.xml_file = xml_file
-        self.configFile = QFile(xml_file)
-        if self.configFile.open(QIODevice.ReadWrite):
-          self.doc = QDomDocument()
-          self.doc.setContent(self.configFile)
-          self.resultsManagerTree = OpusXMLTree(self,"results_manager",self.parent.gridlayout4)    
-          self.modelManagerTree = OpusXMLTree(self,"model_manager",self.parent.gridlayout2)    
-          self.runManagerTree = OpusXMLTree(self,"scenario_manager",self.parent.gridlayout3)    
-          self.dataManagerTree = OpusXMLTree(self,"data_manager",self.parent.gridlayout1)
-        else:
-          print "Error reading config"
+    # Try to remove all the old trees... 
+    resultsManagerRemoveSuccess = True
+    if self.resultsManagerTree != None:
+      resultsManagerRemoveSuccess = self.resultsManagerTree.removeTree()
+    modelManagerRemoveSuccess = True
+    if self.modelManagerTree != None:
+      modelManagerRemoveSuccess = self.modelManagerTree.removeTree()
+    runManagerRemoveSuccess = True
+    if self.runManagerTree != None:
+      runManagerRemoveSuccess = self.runManagerTree.removeTree()
+    dataManagerRemoveSuccess = True
+    if self.dataManagerTree != None:
+      dataManagerRemoveSuccess = self.dataManagerTree.removeTree()
+    
+    if resultsManagerRemoveSuccess and modelManagerRemoveSuccess and \
+           runManagerRemoveSuccess and dataManagerRemoveSuccess:
+      # We have successfully removed the old XML trees
+      # Opening a project XML
+      self.xml_file = xml_file
+      self.configFile = QFile(xml_file)
+      if self.configFile.open(QIODevice.ReadWrite):
+        self.doc = QDomDocument()
+        self.doc.setContent(self.configFile)
+        self.resultsManagerTree = OpusXMLTree(self,"results_manager",self.parent.gridlayout4)    
+        self.modelManagerTree = OpusXMLTree(self,"model_manager",self.parent.gridlayout2)    
+        self.runManagerTree = OpusXMLTree(self,"scenario_manager",self.parent.gridlayout3)    
+        self.dataManagerTree = OpusXMLTree(self,"data_manager",self.parent.gridlayout1)
       else:
-        print "There was an error removing the old config"
+        print "Error reading config"
+    else:
+      print "There was an error removing the old config"

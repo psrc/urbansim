@@ -96,35 +96,53 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     
   def openConfig(self):
+    saveBeforeOpen = QMessageBox.Discard
     if self.toolboxStuff.resultsManagerTree and self.toolboxStuff.resultsManagerTree.model.dirty:
-      QMessageBox.warning(self,"Warning",
-                          "Please save changes to current project")
+      saveBeforeOpen = QMessageBox.question(self,"Warning",
+                                      "Current project contains changes... \nShould we save or discard those changes before opening?",
+                                      QMessageBox.Discard,QMessageBox.Save)
     elif self.toolboxStuff.modelManagerTree and self.toolboxStuff.modelManagerTree.model.dirty:
-      QMessageBox.warning(self,"Warning",
-                          "Please save changes to current project")
+      saveBeforeOpen = QMessageBox.question(self,"Warning",
+                                      "Current project contains changes... \nShould we save or discard those changes before opening?",
+                                      QMessageBox.Discard,QMessageBox.Save)
     elif self.toolboxStuff.runManagerTree and self.toolboxStuff.runManagerTree.model.dirty:
-      QMessageBox.warning(self,"Warning",
-                          "Please save changes to current project")
+      saveBeforeOpen = QMessageBox.question(self,"Warning",
+                                      "Current project contains changes... \nShould we save or discard those changes before opening?",
+                                      QMessageBox.Discard,QMessageBox.Save)
     elif self.toolboxStuff.dataManagerTree and self.toolboxStuff.dataManagerTree.model.dirty:
-      QMessageBox.warning(self,"Warning",
-                          "Please save changes to current project")
+      saveBeforeOpen = QMessageBox.question(self,"Warning",
+                                      "Current project contains changes... \nShould we save or discard those changes before opening?",
+                                      QMessageBox.Discard,QMessageBox.Save)
+
+    if saveBeforeOpen == QMessageBox.Save:
+      self.saveConfig()
     else:
-      from opus_core.misc import directory_path_from_opus_path
-      start_dir = directory_path_from_opus_path('opus_gui.projects')
-      print "Open Config pressed..."
-      configDialog = QFileDialog()
-      filter_str = QString("*.xml")
-      fd = configDialog.getOpenFileName(self,QString("Please select an xml config file..."),
-                                        QString(start_dir), filter_str)
-      # Check for cancel
-      if len(fd) == 0:
-        return
-      fileName = QString(fd)
-      fileNameInfo = QFileInfo(QString(fd))
-      fileNameBaseName = fileNameInfo.completeBaseName()
-      print "Filename = ", fileName
-      # Open the file and add to the Run tab...
-      self.toolboxStuff.openXMLTree(fileName)
+      #if we have an existing tree we need to remove the dirty bit since we are discarding
+      if self.toolboxStuff.runManagerTree:
+        self.toolboxStuff.runManagerTree.model.dirty = False
+      if self.toolboxStuff.dataManagerTree:
+        self.toolboxStuff.dataManagerTree.model.dirty = False
+      if self.toolboxStuff.modelManagerTree:
+        self.toolboxStuff.modelManagerTree.model.dirty = False
+      if self.toolboxStuff.resultsManagerTree:
+        self.toolboxStuff.resultsManagerTree.model.dirty = False
+
+    from opus_core.misc import directory_path_from_opus_path
+    start_dir = directory_path_from_opus_path('opus_gui.projects')
+    print "Open Config pressed..."
+    configDialog = QFileDialog()
+    filter_str = QString("*.xml")
+    fd = configDialog.getOpenFileName(self,QString("Please select an xml config file..."),
+                                      QString(start_dir), filter_str)
+    # Check for cancel
+    if len(fd) == 0:
+      return
+    fileName = QString(fd)
+    fileNameInfo = QFileInfo(QString(fd))
+    fileNameBaseName = fileNameInfo.completeBaseName()
+    print "Filename = ", fileName
+    # Open the file and add to the Run tab...
+    self.toolboxStuff.openXMLTree(fileName)
     
   def saveConfig(self):
     print "Save Config pressed..."
