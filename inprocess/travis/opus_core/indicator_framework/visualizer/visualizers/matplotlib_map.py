@@ -143,12 +143,13 @@ class MatplotlibMap(Visualization):
             attributes = [(name,computed_indicators[name].get_computed_dataset_column_name())
                           for name in indicator_names]                  
             for year in source_data.years:
-                SimulationState().set_current_time(year)
                 SessionConfiguration(
                     new_instance = True,
                     package_order = package_order,
                     package_order_exceptions = package_order_exceptions,
                     in_storage = AttributeCache()) 
+                SimulationState().set_cache_directory(source_data.cache_directory)
+                SimulationState().set_current_time(year)
                 dataset = SessionConfiguration().get_dataset_from_pool(dataset_name)
                 
                 dataset.compute_variables(names = dataset.get_coordinate_system())
