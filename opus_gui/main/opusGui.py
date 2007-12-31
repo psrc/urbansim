@@ -184,4 +184,25 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     
   def exitOpus(self):
     print "Exit pressed..."
+    saveBeforeClose = QMessageBox.Discard
+    if self.toolboxStuff.resultsManagerTree and self.toolboxStuff.resultsManagerTree.model.dirty:
+      saveBeforeClose = QMessageBox.question(self,"Warning",
+                                      "Current project contains changes... \nShould we save or discard those changes before closing?",
+                                      QMessageBox.Discard,QMessageBox.Save)
+    elif self.toolboxStuff.modelManagerTree and self.toolboxStuff.modelManagerTree.model.dirty:
+      saveBeforeClose = QMessageBox.question(self,"Warning",
+                                      "Current project contains changes... \nShould we save or discard those changes before closing?",
+                                      QMessageBox.Discard,QMessageBox.Save)
+    elif self.toolboxStuff.runManagerTree and self.toolboxStuff.runManagerTree.model.dirty:
+      saveBeforeClose = QMessageBox.question(self,"Warning",
+                                      "Current project contains changes... \nShould we save or discard those changes before closing?",
+                                      QMessageBox.Discard,QMessageBox.Save)
+    elif self.toolboxStuff.dataManagerTree and self.toolboxStuff.dataManagerTree.model.dirty:
+      saveBeforeClose = QMessageBox.question(self,"Warning",
+                                      "Current project contains changes... \nShould we save or discard those changes before closing?",
+                                      QMessageBox.Discard,QMessageBox.Save)
+
+    if saveBeforeClose == QMessageBox.Save:
+      self.saveConfig()
+    
     self.close()
