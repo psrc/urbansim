@@ -99,25 +99,25 @@ class OpusXMLAction_Results(object):
                                 "Please save changes to project before generating results")
     
     def viewResultsMatplotlibMap(self):
-        clicked_node = self.currentIndex.internalPointer().node().toElement().tagName()            
+        clicked_node = self.currentIndex.internalPointer().node().toElement()          
         self.xmlTreeObject.parent.resultManagerStuff.addIndicatorForm(
                                                           indicator_type = 'matplotlib_map',
                                                           clicked_node = clicked_node)
            
     def viewResultsMatplotlibChart(self):
-        clicked_node = self.currentIndex.internalPointer().node().toElement().tagName()            
+        clicked_node = self.currentIndex.internalPointer().node().toElement()           
         self.xmlTreeObject.parent.resultManagerStuff.addIndicatorForm(
                                                           indicator_type = 'matplotlib_chart',
                                                           clicked_node = clicked_node)
       
     def viewResultsTablePerAttribute(self):
-        clicked_node = self.currentIndex.internalPointer().node().toElement().tagName()            
+        clicked_node = self.currentIndex.internalPointer().node().toElement()           
         self.xmlTreeObject.parent.resultManagerStuff.addIndicatorForm(
                                                           indicator_type = 'table_per_attribute',
                                                           clicked_node = clicked_node)
         
     def viewResultsTablePerYear(self):
-        clicked_node = self.currentIndex.internalPointer().node().toElement().tagName()            
+        clicked_node = self.currentIndex.internalPointer().node().toElement()           
         self.xmlTreeObject.parent.resultManagerStuff.addIndicatorForm(
                                                           indicator_type = 'table_per_year',
                                                           clicked_node = clicked_node)

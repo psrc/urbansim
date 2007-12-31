@@ -11,11 +11,15 @@
 # other acknowledgments.
 # 
 
+from PyQt4.QtCore import QObject, SIGNAL
+
 
 from opus_gui.results.forms.generate_results_form import GenerateResultsForm
 from opus_gui.results.forms.view_documentation_form import ViewDocumentationForm
 from opus_gui.results.forms.view_image_form import ViewImageForm
 from opus_gui.results.forms.view_table_form import ViewTableForm
+from opus_gui.results.opus_result_generator import OpusGuiThread, OpusResultVisualizer
+
 
 # General system includes
 import os, sys, tempfile, shutil
@@ -28,7 +32,7 @@ class AbstractManagerBase(object):
         self.tabWidget = parent.tabWidget
         self.gui = parent
         self.guiElements = []
-    
+        
     def removeTab(self,guiElement):
         self.tabWidget.removeTab(self.tabWidget.indexOf(guiElement))
         self.guiElements.remove(guiElement)
@@ -48,18 +52,46 @@ class AbstractManagerBase(object):
 class ResultManagerBase(AbstractManagerBase):        
 
     def addGenerateIndicatorForm(self):
-                    
+
         new_form = GenerateResultsForm(parent = self.parent,
                                        result_manager = self)
         
         self.guiElements.insert(0, new_form)
         self.updateGuiElements()
 
-    def addIndicatorForm(self, indicator_type):
+    def addIndicatorForm(self, indicator_type, clicked_node):
         #build visualizations
-        #use indicator_framework_interface
-        pass
+        domDocument = self.parent.toolboxStuff.doc
+        self.indicator_type = indicator_type
+        self.visualizer = OpusResultVisualizer(
+                                xml_path = self.parent.toolboxStuff.xml_file,
+                                domDocument = domDocument,
+                                indicator_type = indicator_type,
+                                clicked_node = clicked_node)
         
+        self.visualization_thread = OpusGuiThread(
+                                  parentThread = self.parent,
+                                  parent = self,
+                                  thread_object = self.visualizer)
+        self.visualization_thread.start()
+
+        # Use this signal from the thread if it is capable of producing its own status signal
+        QObject.connect(self.visualization_thread, SIGNAL("runFinished(PyQt_PyObject)"),
+                        self.visualizationsCreated)
+        
+    def visualizationsCreated(self, success):
+                 
+        visualizations = self.visualizer.get_visualizations()
+        if self.indicator_type == 'matplotlib_map' or \
+           self.indicator_type == 'matplotlib_chart':
+            form_generator = self.addViewImageIndicator
+        elif self.indicator_type == 'table_per_year' or \
+             self.indicator_type == 'table_per_attribute':
+            form_generator = self.addViewTableIndicator
+            
+        for visualization in visualizations:
+            form_generator(visualization = visualization)
+
     def addViewImageIndicator(self, visualization):
         new_form = ViewImageForm(parent = self.parent,
                                  visualization = visualization)

@@ -22,7 +22,11 @@ try:
     from inprocess.configurations.xml_configuration import XMLConfiguration
     from inprocess.travis.opus_core.indicator_framework.representations.computed_indicator import ComputedIndicator
     from inprocess.travis.opus_core.indicator_framework.maker.maker import Maker
+    from inprocess.travis.opus_core.indicator_framework.visualizer.visualization_factory import VisualizationFactory
     from opus_gui.results.indicator_framework_interface import IndicatorFrameworkInterface
+    from opus_gui.results.xml_helper_methods import get_child_values
+    from inprocess.travis.opus_core.indicator_framework.visualizer.visualizers.table import Table
+    from opus_core.storage_factory import StorageFactory
 
 except ImportError:
     WithOpus = False
@@ -36,11 +40,21 @@ class OpusGuiThread(QThread):
         self.parent = parent
         self.thread_object = thread_object
         
-    def run(self):
-        #parent.element is an OpusResultGenerator
-        self.thread_object.progressCallback = self.progressCallback
-        self.thread_object.finishedCallback = self.finishedCallback
-        self.thread_object.errorCallback = self.errorCallback
+    def run(self, 
+            progressCallback = None,
+            finishedCallback = None,
+            errorCallback = None):
+        
+        if progressCallback is None:
+            progressCallback = self.progressCallback
+        if finishedCallback is None:
+            finishedCallback = self.finishedCallback
+        if errorCallback is None:
+            errorCallback = self.errorCallback
+            
+        self.thread_object.progressCallback = progressCallback
+        self.thread_object.finishedCallback = finishedCallback
+        self.thread_object.errorCallback = errorCallback
         self.thread_object.run()
         
     def progressCallback(self,percent):
@@ -58,7 +72,109 @@ class OpusGuiThread(QThread):
         self.emit(SIGNAL("runError(PyQt_PyObject)"),errorMessage)
 
 class OpusResultVisualizer(object):
-    pass
+    def __init__(self, 
+                 xml_path, 
+                 domDocument, 
+                 indicator_type,
+                 clicked_node):
+        self.xml_path = xml_path
+        self.finishedCallback = None
+        self.errorCallback = None
+        self.guiElement = None
+        self.config = None
+        self.firstRead = True
+        self.domDocument = domDocument  
+        self.indicator_type = indicator_type
+        self.clicked_node = clicked_node      
+        self.visualizations = []
+        
+    def run(self):
+        if WithOpus:
+            succeeded = False
+            try:
+                # find the directory containing the eugene xml configurations
+                fileNameInfo = QFileInfo(self.xml_path)
+                fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
+                print fileNameAbsolute
+                self.config = XMLConfiguration(str(fileNameAbsolute)).get_run_configuration('Eugene_baseline')
+
+                self._visualize()
+                
+                succeeded = True
+            except:
+                raise
+                succeeded = False
+                errorInfo = formatExceptionInfo()
+                errorString = "Unexpected Error From Model :: " + str(errorInfo)
+                print errorInfo
+                self.errorCallback(errorString)
+
+            self.finishedCallback(succeeded)
+        else:
+            pass
+    
+    
+    def _visualize(self):
+        info = get_child_values(parent = self.clicked_node,
+                                child_names = ['source_data',
+                                               'indicator_name',
+                                               'dataset_name'])
+        
+        source_data_name = str(info['source_data'])
+        indicator_name = str(info['indicator_name'])
+        dataset_name = str(info['dataset_name'])
+        
+        cache_directory = self.config['cache_directory']
+        interface = IndicatorFrameworkInterface(domDocument = self.domDocument)
+        
+        source_data = interface.get_source_data_from_XML(
+                                     source_data_name = source_data_name, 
+                                     cache_directory = cache_directory)
+        indicator = interface.get_indicator_from_XML(
+                                     indicator_name = indicator_name,
+                                     dataset_name = dataset_name)
+        
+        computed_indicator = interface.get_computed_indicator(indicator = indicator, 
+                                                              source_data = source_data, 
+                                                              dataset_name = dataset_name)
+        #hack to get plausible primary keys...
+        storage_location = os.path.join(cache_directory,
+                                         'indicators',
+                                         '_stored_data',
+                                         repr(source_data.years[0]))
+        #import pydevd;pydevd.settrace()
+        storage = StorageFactory().get_storage(
+                       type = 'flt_storage',
+                       storage_location = storage_location)
+        cols = storage.get_column_names(
+                    table_name = dataset_name)
+        
+        primary_keys = [col for col in cols if col.find('id') != -1]
+        computed_indicator.primary_keys = primary_keys
+
+        args = {}
+        if self.indicator_type == 'matplotlib_map':
+            viz_type = self.indicator_type
+        elif self.indicator_type == 'matplotlib_chart':
+            viz_type = self.indicator_type
+        elif self.indicator_type == 'table_per_year':
+            viz_type = 'table'
+            args['output_style'] = Table.PER_YEAR
+            args['output_type'] = 'csv'
+        elif self.indicator_type == 'table_per_attribute':
+            viz_type = 'table'
+            args['output_style'] = Table.PER_ATTRIBUTE          
+            args['output_type'] = 'csv'
+            
+        viz_factory = VisualizationFactory()
+        self.visualizations = viz_factory.visualize(
+                                  indicators_to_visualize = ['viz'], 
+                                  computed_indicators = {'viz':computed_indicator}, 
+                                  visualization_type = viz_type, **args)
+        
+    
+    def get_visualizations(self):
+        return self.visualizations
 
 class OpusResultGenerator(object):
     
@@ -95,7 +211,7 @@ class OpusResultGenerator(object):
                 succeeded = True
             except:
                 succeeded = False
-                errorInfo = self.formatExceptionInfo()
+                errorInfo = formatExceptionInfo()
                 errorString = "Unexpected Error From Model :: " + str(errorInfo)
                 print errorInfo
                 self.errorCallback(errorString)
@@ -156,13 +272,13 @@ class OpusResultGenerator(object):
                 #self.guiElement.logText.append("ping")
         return newKey
     
-    def formatExceptionInfo(self,maxTBlevel=5):
-        import traceback
-        cla, exc, trbk = sys.exc_info()
-        excName = cla.__name__
-        try:
-            excArgs = exc.__dict__["args"]
-        except KeyError:
-            excArgs = "<no args>"
-        excTb = traceback.format_tb(trbk, maxTBlevel)
-        return (excName, excArgs, excTb)
+def formatExceptionInfo(maxTBlevel=5):
+    import traceback
+    cla, exc, trbk = sys.exc_info()
+    excName = cla.__name__
+    try:
+        excArgs = exc.__dict__["args"]
+    except KeyError:
+        excArgs = "<no args>"
+    excTb = traceback.format_tb(trbk, maxTBlevel)
+    return (excName, excArgs, excTb)
