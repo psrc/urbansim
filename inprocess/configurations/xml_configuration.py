@@ -209,7 +209,7 @@ class XMLConfiguration(object):
         
     def _convert_file_or_directory_to_data(self, node):
         if node.get('parser_action', '')=='prefix_with_urbansim_cache':
-            prefix = os.environ.get('URBANSIM_CACHE', '')
+            prefix = os.environ.get('OPUS_DATA_PATH', '')
             return os.path.join(prefix, node.text)
         else:
             return node.text
