@@ -18,9 +18,6 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
-from opus_gui.results.opus_result_generator import OpusResultGenerator
-from inprocess.travis.opus_core.indicator_framework.representations.visualization import Visualization
-
 
 class OpusXMLAction_Results(object):
     def __init__(self, parent):
@@ -82,10 +79,6 @@ class OpusXMLAction_Results(object):
         self.actViewDocumentation = QAction(self.applicationIcon, "View documentation", self.xmlTreeObject.parent)
         QObject.connect(self.actViewDocumentation, SIGNAL("triggered()"), self.viewDocumentation)
 
-    def placeHolderAction(self):
-        print "placeHolderAction pressed with column = %s and item = %s" % \
-              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
-
     def addNewIndicator(self):
         print "addNewIndicator pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
@@ -97,69 +90,37 @@ class OpusXMLAction_Results(object):
     def generateResults(self):
         print "generateResults pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
-        # If the XML is not dirty we can go ahead and run... else prompt for saving
         if not self.xmlTreeObject.model.dirty:
-            # Add the model to the run Q
-            new_result_run = OpusResultGenerator(self.xmlTreeObject,self.xmlTreeObject.parentTool.xml_file)
-            self.xmlTreeObject.parent.resultManagerStuff.addGenerateIndicatorForm(new_result_run)
+            self.xmlTreeObject.parent.resultManagerStuff.addGenerateIndicatorForm()
         else:
             # Prompt the user to save...
             QMessageBox.warning(self.xmlTreeObject.parent,
                                 "Warning",
                                 "Please save changes to project before generating results")
     
-    def viewResults(self):
-        print "viewResults pressed with column = %s and item = %s" % \
-              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
-
     def viewResultsMatplotlibMap(self):
-        print "viewResultsMatplotlibMap pressed with column = %s and item = %s" % \
-              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
-        
-        from opus_core.misc import directory_path_from_opus_path
-
-        visualization = Visualization(indicators = None,
-                                      visualization_type = None,
-                                      name = None,
-                                      years = None,
-                                      table_name = 'gridcell|map|1980|gridcell_number_of_jobs',
-                                      storage_location = directory_path_from_opus_path('opus_gui.main.sample_images'),
-                                      file_extension = 'png')
-        self.xmlTreeObject.parent.resultManagerStuff.addViewImageIndicator(visualization = visualization)
-        
-        
+        clicked_node = self.currentIndex.internalPointer().node().toElement().tagName()            
+        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorForm(
+                                                          indicator_type = 'matplotlib_map',
+                                                          clicked_node = clicked_node)
+           
     def viewResultsMatplotlibChart(self):
-        print "viewResultsMatplotlibChart pressed with column = %s and item = %s" % \
-              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
-
-        from opus_core.misc import directory_path_from_opus_path
-
-        visualization = Visualization(indicators = None,
-                                      visualization_type = None,
-                                      name = None,
-                                      years = None,
-                                      table_name = 'alldata|chart|1980|alldata_home_based_jobs',
-                                      storage_location = directory_path_from_opus_path('opus_gui.main.sample_images'),
-                                      file_extension = 'png')
-        self.xmlTreeObject.parent.resultManagerStuff.addViewImageIndicator(visualization = visualization)
-
-              
+        clicked_node = self.currentIndex.internalPointer().node().toElement().tagName()            
+        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorForm(
+                                                          indicator_type = 'matplotlib_chart',
+                                                          clicked_node = clicked_node)
+      
     def viewResultsTablePerAttribute(self):
-        print "viewResultsTablePerAttribute pressed with column = %s and item = %s" % \
-              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
-              
+        clicked_node = self.currentIndex.internalPointer().node().toElement().tagName()            
+        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorForm(
+                                                          indicator_type = 'table_per_attribute',
+                                                          clicked_node = clicked_node)
+        
     def viewResultsTablePerYear(self):
-        from opus_core.misc import directory_path_from_opus_path
-
-        visualization = Visualization(
-                          indicators = None,
-                          visualization_type = None,
-                          name = None,
-                          years = None,
-                          table_name = 'zone|table-2|1980|zone_industrial_sqft',
-                          storage_location = directory_path_from_opus_path('opus_gui.main.sample_images'),
-                          file_extension = 'csv')
-        self.xmlTreeObject.parent.resultManagerStuff.addViewTableIndicator(visualization = visualization)
+        clicked_node = self.currentIndex.internalPointer().node().toElement().tagName()            
+        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorForm(
+                                                          indicator_type = 'table_per_year',
+                                                          clicked_node = clicked_node)
 
     def viewDocumentation(self):
         pass

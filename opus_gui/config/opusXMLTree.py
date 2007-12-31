@@ -17,15 +17,16 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from config.opusDataModel import OpusDataModel
-from config.opusDataDelegate import OpusDataDelegate
-from config.opusXMLAction import OpusXMLAction
+from opus_gui.config.opusDataModel import OpusDataModel
+from opus_gui.config.opusDataDelegate import OpusDataDelegate
+from opus_gui.config.opusXMLAction import OpusXMLAction
 
 class OpusXMLTree(object):
   def __init__(self, parent,xmlType,parentWidget):    
     self.addTree(parent,xmlType,parentWidget)
 
   def addTree(self, parent,xmlType,parentWidget):
+    #parent is a toolboxBase object
     self.parent = parent.parent
     self.parentTool = parent
     self.xmlType = xmlType

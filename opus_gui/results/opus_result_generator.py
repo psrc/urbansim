@@ -20,24 +20,28 @@ try:
     WithOpus = True
     #from opus_gui.configurations.xml_configuration import XMLConfiguration
     from inprocess.configurations.xml_configuration import XMLConfiguration
+    from inprocess.travis.opus_core.indicator_framework.representations.computed_indicator import ComputedIndicator
+    from inprocess.travis.opus_core.indicator_framework.maker.maker import Maker
+    from opus_gui.results.indicator_framework_interface import IndicatorFrameworkInterface
+
 except ImportError:
     WithOpus = False
     print "Unable to import opus core libs"
 
-class OpusResultThread(QThread):
+class OpusGuiThread(QThread):
 
-    def __init__(self, parentThread, parent, xml_file):
+    def __init__(self, parentThread, parent, thread_object):
         #parent is a GenerateResultsForm
         QThread.__init__(self, parentThread)
         self.parent = parent
-        self.xml_file = xml_file
+        self.thread_object = thread_object
         
     def run(self):
         #parent.element is an OpusResultGenerator
-        self.parent.result_generator.progressCallback = self.progressCallback
-        self.parent.result_generator.finishedCallback = self.finishedCallback
-        self.parent.result_generator.errorCallback = self.errorCallback
-        self.parent.result_generator.run()
+        self.thread_object.progressCallback = self.progressCallback
+        self.thread_object.finishedCallback = self.finishedCallback
+        self.thread_object.errorCallback = self.errorCallback
+        self.thread_object.run()
         
     def progressCallback(self,percent):
         print "Ping From Model"
@@ -52,19 +56,31 @@ class OpusResultThread(QThread):
 
     def errorCallback(self,errorMessage):
         self.emit(SIGNAL("runError(PyQt_PyObject)"),errorMessage)
-        
+
+class OpusResultVisualizer(object):
+    pass
 
 class OpusResultGenerator(object):
-    def __init__(self, parent, xml_path):
-        self.parent = parent
+    
+    def __init__(self, xml_path, domDocument):
         self.xml_path = xml_path
         self.finishedCallback = None
         self.errorCallback = None
         self.guiElement = None
         self.config = None
         self.firstRead = True
+        self.domDocument = domDocument
     
+    def set_data(self,
+                 source_data_name,
+                 indicator_name,
+                 dataset_name):
+        self.source_data_name = source_data_name
+        self.indicator_name = indicator_name
+        self.dataset_name = dataset_name
+        
     def run(self):
+        
         if WithOpus:
             succeeded = False
             try:
@@ -77,8 +93,6 @@ class OpusResultGenerator(object):
                 self._generate_results()
                 
                 succeeded = True
-            except Exception:
-                succeeded = False
             except:
                 succeeded = False
                 errorInfo = self.formatExceptionInfo()
@@ -91,9 +105,25 @@ class OpusResultGenerator(object):
             pass
 
     def _generate_results(self):
-        print 'now we generate results...'
-        pass
-    
+        
+        #TODO eliminate hardcoded package_order
+        cache_directory = self.config['cache_directory']
+        interface = IndicatorFrameworkInterface(domDocument = self.domDocument)
+        
+        source_data = interface.get_source_data_from_XML(
+                                     source_data_name = self.source_data_name, 
+                                     cache_directory = cache_directory)
+        indicator = interface.get_indicator_from_XML(
+                                     indicator_name = self.indicator_name,
+                                     dataset_name = self.dataset_name)
+        
+        maker = Maker()
+
+        computed_indicator = maker.create(indicator = indicator, 
+                                          source_data = source_data)
+        
+        #TODO: add result to results tree
+        
     def _get_current_log(self, key):
         newKey = key
         if WithOpus:
@@ -106,7 +136,11 @@ class OpusResultGenerator(object):
             # log text edit field in the GUI.
             if self.config is not None and 'cache_directory' in self.config:
                 try:
-                    f = open(os.path.join(self.config['cache_directory'],'year_1981_log.txt'))
+                    log_file = os.path.join(self.config['cache_directory'],
+                                          'indicators',
+                                          'indicators.log')
+                    
+                    f = open(log_file)
                     f.seek(key)
                     lines = f.read()
                     newKey = f.tell()
