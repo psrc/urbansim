@@ -100,21 +100,21 @@ computed_indicators = maker.create_batch(
 ############################################
 #VISUALIZE the resulting computed indicators
 ############################################
-#    from inprocess.travis.opus_core.indicator_framework.visualizer.visualization_factory import VisualizationFactory
-#    from opus_core.database_management.database_configuration import DatabaseConfiguration
-#    
-#    visualizer = VisualizationFactory()
-#    visualizations = []
-#    
-#    # View an indicator as a matplotlib Map
-#    maps = ['gridcell_number_of_jobs',
-#            'gridcell_population']
-#    visualizations += visualizer.visualize(
-#        indicators_to_visualize = maps, #override default indicators to visualize (all)
-#        computed_indicators = computed_indicators,
-#        visualization_type = 'matplotlib_map',
-#        name = 'my_maps'
-#        )
+#from inprocess.travis.opus_core.indicator_framework.visualizer.visualization_factory import VisualizationFactory
+#from opus_core.database_management.database_configuration import DatabaseConfiguration
+#
+#visualizer = VisualizationFactory()
+#visualizations = []
+#
+## View an indicator as a matplotlib Map
+#maps = ['gridcell_number_of_jobs',
+#        'gridcell_population']
+#visualizations += visualizer.visualize(
+#    indicators_to_visualize = maps, #override default indicators to visualize (all)
+#    computed_indicators = computed_indicators,
+#    visualization_type = 'matplotlib_map',
+#    name = 'my_maps'
+#    )
 #    
 #    # View an indicator as a matplotlib Chart
 #    
