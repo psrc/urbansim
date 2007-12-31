@@ -44,9 +44,11 @@ class ViewTableForm(QWidget):
                                 table_name = visualization.table_name)
         
         try:
-            primary_keys = self.visualization.indicators[0].primary_keys
+            primary_keys = visualization.indicators[0].primary_keys
         except:
             primary_keys = []
+            
+        print primary_keys
             
         keys = primary_keys + [key for key in table_data.keys() 
                                    if key not in primary_keys]
