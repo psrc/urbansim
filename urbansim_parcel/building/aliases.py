@@ -20,6 +20,7 @@ aliases = [
    "unit_name = building.disaggregate(building_type.unit_name)",
    "generic_building_type_id = building.disaggregate(building_type.generic_building_type_id)",
    "parcel_sqft = building.disaggregate(parcel.parcel_sqft)",
+   "employment = building.number_of_agents(job)",
    "number_of_jobs = building.number_of_agents(job)",
    "number_of_households = building.number_of_agents(household)",
    "population = building.aggregate(household.persons)",
