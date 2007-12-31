@@ -31,8 +31,8 @@ else:
     class MatplotlibChart(Visualization):
     
         def __init__(self, 
-                     name,
                      indicator_directory,
+                     name = None,
                      scale = None,
                      storage_location = None):
             

@@ -27,8 +27,8 @@ from opus_core.session_configuration import SessionConfiguration
 class MatplotlibMap(Visualization):
 
     def __init__(self, 
-                 name,
                  indicator_directory,
+                 name = None,
                  scale = None,
                  storage_location = None):
         self.name = name
