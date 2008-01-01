@@ -1,15 +1,15 @@
 # UrbanSim software. Copyright (C) 1998-2007 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 
 
@@ -29,18 +29,20 @@ from results.resultManagerBase import *
 # General system includes
 import sys,time,tempfile
 
-  
+
 # Main window used for houseing the canvas, toolbars, and dialogs
 class OpusGui(QMainWindow, Ui_MainWindow):
 
   def __init__(self):
     QMainWindow.__init__(self)
-    
+
     # required by Qt4 to initialize the UI
     self.setupUi(self)
-    
-    self.splashPix = QPixmap(QString("main/Images/new-logo-medium.png"))
-    self.splashPixScaled = self.splashPix.scaled(210,180,Qt.KeepAspectRatio)
+
+    #self.splashPix = QPixmap(QString("main/Images/new-logo-medium.png"))
+    self.splashPix = QPixmap(QString("main/Images/az-smart.bmp"))
+    #self.splashPixScaled = self.splashPix.scaled(210,180,Qt.KeepAspectRatio)
+    self.splashPixScaled = self.splashPix.scaled(600,252,Qt.KeepAspectRatio)
     self.splash = QSplashScreen(self.splashPixScaled)
     self.splash.show()
 
@@ -65,12 +67,12 @@ class OpusGui(QMainWindow, Ui_MainWindow):
       self.mapStuff = map.mapBase.MapBase(self)
     except ImportError:
       self.mapStuff = None
-    
+
     self.consoleStuff = ConsoleBase(self)
     self.toolboxStuff = ToolboxBase(self)
     self.runManagerStuff = RunManagerBase(self)
     self.runManagerStuff.setGui(self)
-    
+
     self.resultManagerStuff = ResultManagerBase(self)
     self.resultManagerStuff.setGui(self)
 
@@ -85,16 +87,16 @@ class OpusGui(QMainWindow, Ui_MainWindow):
       self.gridlayout5.addWidget(self.editorStuff)
     except ImportError:
       self.editorStuff = None
-    
+
     time.sleep(1)
     self.splash.hide()
 
   def openAbout(self):
-    flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint 
+    flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
     wnd = UrbansimAboutGui(self,flags)
     wnd.show()
 
-    
+
   def openConfig(self):
     saveBeforeOpen = QMessageBox.Discard
     if self.toolboxStuff.resultsManagerTree and self.toolboxStuff.resultsManagerTree.model.dirty:
@@ -143,7 +145,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     print "Filename = ", fileName
     # Open the file and add to the Run tab...
     self.toolboxStuff.openXMLTree(fileName)
-    
+
   def saveConfig(self):
     print "Save Config pressed..."
     configFile = self.toolboxStuff.runManagerTree.model.configFile
@@ -162,7 +164,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.toolboxStuff.resultsManagerTree.model.dirty = False
     self.toolboxStuff.resultsManagerTree.groupBox.setTitle(QFileInfo(self.toolboxStuff.resultsManagerTree.parentTool.xml_file).filePath())
     print "Save Config finished..."
-    
+
   def saveConfigAs(self):
     print "Save Config As is not implemented yet..."
     #qd = QFileDialog()
@@ -185,7 +187,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     #self.toolboxStuff.resultsManagerTree.model.dirty = False
     ##### TODO - Now need to close existing project and re-open the newly
     ##### saved one...
-    
+
   def exitOpus(self):
     print "Exit pressed..."
     saveBeforeClose = QMessageBox.Discard
@@ -208,5 +210,5 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     if saveBeforeClose == QMessageBox.Save:
       self.saveConfig()
-    
+
     self.close()
