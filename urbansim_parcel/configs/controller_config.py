@@ -58,7 +58,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                               "outcome_attribute": "'ln_unit_price=ln(urbansim_parcel.parcel.unit_price)'",
                               "filter_attribute": "'numpy.logical_or(urbansim_parcel.parcel.building_sqft, urbansim_parcel.parcel.is_land_use_type_vacant)'",
                               "dataset_pool": "dataset_pool",
-                              #"estimate_config": "{'estimation_size_agents':0.3}"
+                              "estimate_config": "{'save_predicted_values_and_errors':True}"
                               },
                 },
             "prepare_for_run": {
