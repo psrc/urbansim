@@ -79,7 +79,9 @@ class RegressionModelWithAdditionConstantVariation(RegressionModel):
             initial_error = dataset.get_attribute_by_index(initial_error_name, index)
         return outcome + initial_error
 
-
+    def run_after_estimation(self, *args, **kwargs):
+        return RegressionModel.run(self, *args, **kwargs)
+    
 from opus_core.tests import opus_unittest
 from numpy import array, ma
 from opus_core.datasets.dataset import Dataset
