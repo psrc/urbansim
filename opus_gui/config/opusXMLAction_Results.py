@@ -40,7 +40,7 @@ class OpusXMLAction_Results(object):
 
         #create new result template...
         self.actAddNewResultTemplate = QAction(self.acceptIcon, 
-                                          "Add new result template...",
+                                          "Add new data source...",
                                           self.xmlTreeObject.parent)
         QObject.connect(self.actAddNewResultTemplate, SIGNAL("triggered()"), self.addNewResultTemplate)          
         
