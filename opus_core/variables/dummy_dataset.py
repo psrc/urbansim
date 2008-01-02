@@ -97,8 +97,7 @@ class DummyDataset(object):
         agents = self._dataset_pool.get_dataset(agent_name.name)
         id_name = dataset.get_id_name()[0]
         if id_name not in agents.get_attribute_names(): # attribute not loaded yet
-            agents.get_attribute(id_name)
-        agents.compute_one_variable_with_unknown_package(id_name, dataset_pool=self._dataset_pool)
+            agents.compute_one_variable_with_unknown_package(id_name, dataset_pool=self._dataset_pool)
         self._var.add_and_solve_dependencies([agents._get_attribute_box(id_name)], dataset_pool=self._dataset_pool)
         result = dataset.sum_dataset_over_ids(agents, constant=1)
         return self._coerce_result(result, dataset)
