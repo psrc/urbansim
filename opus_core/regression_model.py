@@ -242,8 +242,8 @@ class RegressionModel(ChunkModel):
             predicted_error_attribute_name = 'residuals_%s' % outcome_variable_name.get_alias()
             dataset.add_primary_attribute(name=predicted_error_attribute_name, data = original_values - predicted_values)
             dataset.flush_attribute(predicted_error_attribute_name)
-            logger.log_status('Predicted values saved as %s/%s' % (dataset.get_dataset_name(), predicted_attribute_name))
-            logger.log_status('Residuals saved as %s/%s' % (dataset.get_dataset_name(), predicted_error_attribute_name))
+            logger.log_status('Predicted values saved as %s (for the %s dataset)' % (predicted_attribute_name, dataset.get_dataset_name()))
+            logger.log_status('Residuals saved as %s (for the %s dataset)' % (predicted_error_attribute_name, dataset.get_dataset_name()))
             
         return (coefficients, estimated_coef)
 
