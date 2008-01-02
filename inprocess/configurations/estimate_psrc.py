@@ -17,8 +17,8 @@ from inprocess.configurations.xml_configuration import XMLConfiguration
 # from psrc_parcel.estimation.run_estimation import EstimationRunner
 from inprocess.configurations.gui_estimation_runner import EstimationRunner
 
-inprocess_dir = __import__('inprocess').__path__[0]
-parcelfile = os.path.join(inprocess_dir, 'configurations', 'projects', 'psrc_parcel.xml')
+opusgui_dir = __import__('opus_gui').__path__[0]
+parcelfile = os.path.join(opusgui_dir, 'projects', 'psrc_parcel.xml')
 xml_config = XMLConfiguration(parcelfile)
 estimation_section = xml_config.get_estimation_section()
 estimation_config = estimation_section['estimation_config']

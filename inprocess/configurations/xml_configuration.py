@@ -208,7 +208,7 @@ class XMLConfiguration(object):
         return tuple(r)
         
     def _convert_file_or_directory_to_data(self, node):
-        if node.get('parser_action', '')=='prefix_with_urbansim_cache':
+        if node.get('parser_action', '')=='prefix_with_opus_data_path':
             prefix = os.environ.get('OPUS_DATA_PATH', '')
             return os.path.join(prefix, node.text)
         else:
@@ -306,7 +306,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_files_directories(self):
         f = os.path.join(self.test_configs, 'files_directories.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
-        prefix = os.environ.get('URBANSIM_CACHE', '')
+        prefix = os.environ.get('OPUS_DATA_PATH', '')
         self.assertEqual(config, {'file1': 'testfile', 
                                   'file2': os.path.join(prefix, 'testfile'),
                                   'dir1': 'testdir', 

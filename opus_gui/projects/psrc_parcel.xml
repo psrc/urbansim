@@ -371,7 +371,7 @@
         </mixed_use>
       </real_estate_price_model>
       <estimation_config type="dictionary" >
-        <cache_directory parser_action="prefix_with_urbansim_cache" type="directory" >psrc_parcel</cache_directory>
+        <cache_directory parser_action="prefix_with_opus_data_path" type="directory" >psrc_parcel</cache_directory>
         <output_configuration type="class" >
           <Class_name flags="hidden" type="string" >DatabaseConfiguration</Class_name>
           <Class_path flags="hidden" type="string" >opus_core.database_management.database_configuration</Class_path>

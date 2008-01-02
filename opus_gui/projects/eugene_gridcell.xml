@@ -51,16 +51,16 @@
         <use_environment_variables type="boolean" choices="True|False" >True</use_environment_variables>
         <database_name type="string" >eugene_1980_baseyear</database_name>
       </baseyear_database_configuration>
-      <cache_directory parser_action="prefix_with_urbansim_cache" type="directory" >eugene/eugene_1980_baseyear_cache</cache_directory>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory" >eugene/eugene_1980_baseyear_cache</cache_directory>
       <creating_baseyear_cache_configuration type="class" >
         <Class_name flags="hidden" type="string" >CreatingBaseyearCacheConfiguration</Class_name>
         <Class_path flags="hidden" type="string" >urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
-        <cache_directory_root parser_action="prefix_with_urbansim_cache" type="directory" >eugene/runs</cache_directory_root>
+        <cache_directory_root parser_action="prefix_with_opus_data_path" type="directory" >eugene/runs</cache_directory_root>
         <cache_from_mysql type="boolean" choices="True|False" >False</cache_from_mysql>
         <baseyear_cache type="class" >
           <Class_name flags="hidden" type="string" >BaseyearCacheConfiguration</Class_name>
           <Class_path flags="hidden" type="string" >opus_core.configurations.baseyear_cache_configuration</Class_path>
-          <existing_cache_to_copy parser_action="prefix_with_urbansim_cache" type="directory" >eugene/eugene_1980_baseyear_cache</existing_cache_to_copy>
+          <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory" >eugene/eugene_1980_baseyear_cache</existing_cache_to_copy>
         </baseyear_cache>
         <cache_scenario_database type="string" >urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
         <tables_to_cache type="selectable_list" >
