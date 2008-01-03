@@ -141,6 +141,7 @@ def create_travel_model_configuration(travel_model_dir_name,
     return travel_model_configuration
 
 def _add_models(travel_model_configuration, mode):
+    models = []
     if mode == 'full':
         models = [
             'opus_emme2.models.get_cache_data_into_emme2',

@@ -39,6 +39,6 @@ class RunMacrosAbstract(AbstractEmme2TravelModel):
             macro_path = self.get_macro_path(macro_dir, macro_name, bank)
             tm_output.run_emme2_macro(macro_path, bank_path, macro_info['scenario'])
 
-    def get_macro_path(self, macro_dir, macro_name, **kwargs):
+    def get_macro_path(self, macro_dir, macro_name, *args, **kwargs):
         return os.path.join(macro_dir, macro_name)
 
