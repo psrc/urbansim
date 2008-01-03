@@ -11,8 +11,11 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 #
+        
+
 
 import os
+from inprocess.demo.utilities import indicator_to_XML_writer
 
 #############################################################
 #DEFINE indicators
@@ -96,6 +99,8 @@ maker = Maker()
 computed_indicators = maker.create_batch(
                             indicators = indicators, 
                             source_data = source_data)
+
+print indicator_to_XML_writer(computed_indicators)
 
 ############################################
 #VISUALIZE the resulting computed indicators
