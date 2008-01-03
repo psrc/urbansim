@@ -23,6 +23,7 @@ from opus_core.misc import load_from_text_file, get_host_name
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
 from opus_core.services.run_server.run_activity import RunActivity
 from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 from opus_core.configuration import Configuration
 from urbansim.tools.run_manager import RunManager
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
@@ -122,8 +123,11 @@ class RemoteRun:
         self.remote_communication_path = None
         self.skip_travel_model = skip_travel_model
         self.skip_urbansim = skip_urbansim
-        self.services_db_config = {'hostname':services_database.host_name, 'username':services_database.user_name, 'password':services_database.password, 
-                     'database_name':services_dbname}
+        self.services_db_config = DatabaseServerConfiguration(
+                                        host_name = services_database.host_name, 
+                                        user_name = services_database.user_name, 
+                                        password = services_database.password 
+                                        )
         self._run_manager = None
         if run_manager:
             self._run_manager = run_manager
