@@ -58,7 +58,7 @@ class RegressionModelWithAdditionConstantVariation(RegressionModel):
         outcome = RegressionModel.run(self, specification, coefficients, dataset, index, **kwargs)
         initial_error_name = "_init_error_%s" % self.outcome_attribute.get_alias()
         if index is None:
-             index = arange(dataset.size())
+            index = arange(dataset.size())
         original_data = dataset.get_attribute_by_index(self.outcome_attribute, index)
 
         if initial_error_name not in dataset.get_known_attribute_names():

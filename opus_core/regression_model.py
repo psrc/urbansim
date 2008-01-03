@@ -232,7 +232,7 @@ class RegressionModel(ChunkModel):
                               estimated_coef[submodel]["other_info"][info])
         coefficients.fill_coefficients(coef)
         
-        self.save_predicted_values_and_errors(specification, coefficients, dataset, outcome_variable_name, data_objects)
+        self.save_predicted_values_and_errors(specification, coefficients, dataset, outcome_variable_name, index=index, data_objects=data_objects)
             
         return (coefficients, estimated_coef)
 
@@ -258,16 +258,19 @@ class RegressionModel(ChunkModel):
         ds = Dataset(in_storage=storage, id_name="id", in_table_name='dataset')
         return ds
 
-    def save_predicted_values_and_errors(self, specification, coefficients, dataset, outcome_variable, data_objects=None):
+    def save_predicted_values_and_errors(self, specification, coefficients, dataset, outcome_variable, index=None, data_objects=None):
         if self.estimate_config.get('save_predicted_values_and_errors', False):
             logger.log_status('Computing predicted values and residuals.')
-            original_values = dataset.get_attribute(outcome_variable)
-            predicted_values = self.run_after_estimation(specification, coefficients, dataset, data_objects=data_objects)
+            original_values = dataset.get_attribute_by_index(outcome_variable, index)
+            predicted_values = zeros(dataset.size(), dtype='float32')
+            predicted_values[index] = self.run_after_estimation(specification, coefficients, dataset, index=index, data_objects=data_objects)
             predicted_attribute_name = 'predicted_%s' % outcome_variable.get_alias()
             dataset.add_primary_attribute(name=predicted_attribute_name, data=predicted_values)
             dataset.flush_attribute(predicted_attribute_name)
             predicted_error_attribute_name = 'residuals_%s' % outcome_variable.get_alias()
-            dataset.add_primary_attribute(name=predicted_error_attribute_name, data = original_values - predicted_values)
+            error_values = zeros(dataset.size(), dtype='float32')
+            error_values[index] = (original_values - predicted_values[index]).astype(error_values.dtype)
+            dataset.add_primary_attribute(name=predicted_error_attribute_name, data = error_values)
             dataset.flush_attribute(predicted_error_attribute_name)
             logger.log_status('Predicted values saved as %s (for the %s dataset)' % (predicted_attribute_name, dataset.get_dataset_name()))
             logger.log_status('Residuals saved as %s (for the %s dataset)' % (predicted_error_attribute_name, dataset.get_dataset_name()))

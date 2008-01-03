@@ -57,7 +57,7 @@ class RealEstatePriceModel(RegressionModelWithAdditionConstantVariation):
         if (outcome == None) or (outcome.size <= 0):
             return outcome
         if index == None:
-             index = arange(dataset.size())
+            index = arange(dataset.size())
         if re.search("^ln_", self.outcome_attribute.get_alias()): # if the outcome attr. name starts with 'ln_'
                                                       # the results will be exponentiated.
             outcome_attribute_name = self.outcome_attribute.get_alias()[3:len(self.outcome_attribute.get_alias())]
