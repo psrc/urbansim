@@ -125,10 +125,14 @@ def create_travel_model_configuration(travel_model_dir_name,
         'tazvmt2.mac':{'bank':'bank2', 'scenario':-1},
         'tazvmt3.mac':{'bank':'bank3', 'scenario':-1},        
         }
-                        
+    traffic_volume_macros = {
+        'tveha.mac': {'bank': 'bank1', 'scenario':-1},
+        'tveharpt.mac': {'bank': 'bank1', 'scenario':-1},
+        }                    
     travel_model_configuration = {
         'matrix_variable_map':emme2_matricies,
         'emmission_emme2_macros':emmission_emme2_macros,
+        'traffic_volume_macros': traffic_volume_macros,
         'locations_to_disaggregate': locations_to_disaggregate
         }
 
@@ -142,11 +146,13 @@ def _add_models(travel_model_configuration, mode):
             'opus_emme2.models.get_cache_data_into_emme2',
             'opus_emme2.models.run_travel_model',
             'opus_emme2.models.run_emmission_emme2_macros',
+            'opus_emme2.models.run_traffic_volume_macros',
             'opus_emme2.models.get_emme2_data_into_cache',
             ]
     elif mode == 'skims':
         models = [
            'opus_emme2.models.run_emmission_emme2_macros',
+           'opus_emme2.models.run_traffic_volume_macros',
            'opus_emme2.models.get_emme2_data_into_cache',
             ]
     elif mode == 'get_emme2_data':
@@ -163,6 +169,7 @@ def _add_models(travel_model_configuration, mode):
         models = [
             'opus_emme2.models.get_cache_data_into_emme2',
             'opus_emme2.models.run_emmission_emme2_macros',
+            'opus_emme2.models.run_traffic_volume_macros',
             'opus_emme2.models.get_emme2_data_into_cache',
             ]
     travel_model_configuration['models'] = models
@@ -171,7 +178,7 @@ def _add_years(travel_model_configuration, travel_model_dir_name, years_to_run, 
     if years_to_run is None:
         years_to_run = {
             2000:'2000_06',
-            2005:'2000_06',
+            2005:'2005_06',
             2010:'2010_06',
             2015:'2010_06',
             2020:'2020_06',
