@@ -127,7 +127,7 @@ def create_travel_model_configuration(travel_model_dir_name,
         }
     traffic_volume_macros = {
         'tveha.mac': {'bank': 'bank1', 'scenario':-1},
-        'tveharpt.mac': {'bank': 'bank1', 'scenario':-1},
+        'tvehrpt.mac': {'bank': 'bank1', 'scenario':-1},
         }                    
     travel_model_configuration = {
         'matrix_variable_map':emme2_matricies,

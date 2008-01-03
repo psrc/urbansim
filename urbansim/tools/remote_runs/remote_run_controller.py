@@ -105,7 +105,8 @@ class RemoteRun:
     local_output_path_root = '/Users/hana/tmp'
     
     # number of banks of the travel model (e.g. if the TM creates directories bank1, bank2 and bank3, the value is [1, 2, 3])
-    banks = [1, 2, 3] 
+    #banks = [1, 2, 3] 
+    banks = [1] 
     #######################################################################
     
     # do not change the following two settings unless you know what you're doing.
