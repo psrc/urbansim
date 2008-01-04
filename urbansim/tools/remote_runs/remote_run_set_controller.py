@@ -49,7 +49,7 @@ class RemoteRunSet(RemoteRun):
     """
     default_run_id_file = 'run_ids'
     python_commands = {"faloorum6.csss.washington.edu": "mosrun -h python",
-                       "snickers2.stat.washington.edu": "python",
+                       "snickers2.stat.washington.edu": "mosrun -h python",
                        "localhost": "python"}
     configuration_update = {
                             "faloorum6.csss.washington.edu": {'cache_directory_root': '/home/hana/urbansim_cache/psrc/parcel/bm',
