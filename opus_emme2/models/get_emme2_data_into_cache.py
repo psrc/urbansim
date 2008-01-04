@@ -65,9 +65,10 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
         tm_output = TravelModelOutput()
         year_config = config['travel_model_configuration'][year]
         for x in 1,2,3:
-            bank_dir = self.get_emme2_dir(config, year, "bank%i" % x)
-            for matrix_name in year_config['matrix_variable_map']["bank%i" % x].keys():
-                tm_output._get_matrix_into_data_file(matrix_name, max_zone_id, bank_dir, "%s_one_matrix.txt" % matrix_name)
+            if "bank%i" % x in year_config['matrix_variable_map']:
+                bank_dir = self.get_emme2_dir(config, year, "bank%i" % x)
+                for matrix_name in year_config['matrix_variable_map']["bank%i" % x].keys():
+                    tm_output._get_matrix_into_data_file(matrix_name, max_zone_id, bank_dir, "%s_one_matrix.txt" % matrix_name)
             
     def get_needed_matrices_from_emme2(self, year, cache_directory, bank_dir, matrix_variable_map, matrices_created=False):
         """Copies the specified emme/2 matrices into the specified travel_data variable names.
