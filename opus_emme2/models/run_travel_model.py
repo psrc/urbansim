@@ -12,7 +12,7 @@
 # other acknowledgments.
 # 
 
-
+import re
 from opus_core.resources import Resources
 from numpy import array, float32, ones
 import os
