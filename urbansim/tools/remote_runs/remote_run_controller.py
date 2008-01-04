@@ -341,9 +341,14 @@ class RemoteRun:
                                 optional_args='%s -o %s' % (optional_args, os.path.join(self.local_output_path,'emme2_%d_log.txt' % this_end_year))
                             ForkProcess().fork_new_process(full_model_path, 
                                                            travel_model_resources, optional_args=optional_args)
+                    reports = travel_model_resources['travel_model_configuration'][this_end_year].get('reports', [])
                     for x in self.banks:
                         bank_dir = tm.get_emme2_dir(travel_model_resources, this_end_year, "bank%i" % x)
                         self.copy_file_to_remote_host("%s/*_one_matrix.txt" % bank_dir, subdirectory="bank%i" % x)
+                        for report in reports:
+                            report_name = os.path.join(bank_dir, report)
+                            if os.path.exists(report_name):
+                                self.copy_file_to_remote_host(report_name, subdirectory="bank%i" % x)
                         
                     self.run_remote_python_process('opus_emme2.models.get_emme2_data_into_cache', 
                                '-y %d --matrix_directory=%s' % (this_end_year, self.remote_communication_path),
