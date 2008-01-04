@@ -16,7 +16,7 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.store.flt_storage import flt_storage
 from opus_core.resources import Resources
 from numpy import array, float32, ones
-import os
+import os, shutil
 from opus_core.logger import logger
 from opus_emme2.models.abstract_emme2_travel_model import AbstractEmme2TravelModel
 from opus_core.simulation_state import SimulationState
@@ -42,20 +42,23 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
         year_config = config['travel_model_configuration'][year]
         matrices_created = False
         if matrix_directory is not None:
-            matrices_created = True
-            
+            matrices_created = True    
+        reports = year_config.get('reports_to_copy', [])
+        
         for x in 1,2,3:
-            if matrix_directory is None:
-                bank_dir = self.get_emme2_dir(config, year, "bank%i" % x)
-            else:
-                bank_dir = os.path.join(matrix_directory, "bank%i" % x)
             if "bank%i" % x in year_config['matrix_variable_map']:
+                if matrix_directory is None:
+                    bank_dir = self.get_emme2_dir(config, year, "bank%i" % x)
+                else:
+                    bank_dir = os.path.join(matrix_directory, "bank%i" % x)
                 self.get_needed_matrices_from_emme2(year, 
                                                 year_config['cache_directory'],
                                                 bank_dir,
                                                 year_config['matrix_variable_map']["bank%i" % x],
                                                     matrices_created)
-
+                for report in reports:
+                    self.copy_report_to_cache(report, year, year_config['cache_directory'], bank_dir)
+                    
     def create_output_matrix_files(self, config, year, max_zone_id):
         """Create data files with emme2 matrices."""
         from opus_emme2.travel_model_output import TravelModelOutput
@@ -97,6 +100,11 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
         from opus_emme2.travel_model_output import TravelModelOutput
         tm_output = TravelModelOutput()
         return tm_output.get_travel_data_set(zone_set, matrix_variable_map, bank_dir, matrices_created = matrices_created)
+       
+    def copy_report_to_cache(self, report_name, year, cache_directory, bank_dir):
+        filename = os.path.join(bank_dir, report_name)
+        if os.path.exists(filename):
+            shutil.copy(filename, os.path.join(cache_directory, str(year)))
         
 if __name__ == "__main__":
     try: import wingdbstub

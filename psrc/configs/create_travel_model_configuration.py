@@ -117,7 +117,12 @@ def create_travel_model_configuration(travel_model_dir_name,
 #            'nwlktm':'ni_walk_time_in_minutes',
             }
         }
-        
+    reports = [
+    """ This is a list of files that should be copied from the emme2 directory into cache. 
+        It is intended to serve for informative purposes, i.e. for keeping report files.
+    """
+        "tveham.rpt"
+               ]
     """emmission_emme2_macros should be a dictionary of key/value 'macro_name':{'bank':'scenario'}, where
     each of the specified macros lives in opus_emme2.emmission_emme2_macros"""
     emmission_emme2_macros = {
@@ -131,6 +136,7 @@ def create_travel_model_configuration(travel_model_dir_name,
         }                    
     travel_model_configuration = {
         'matrix_variable_map':emme2_matricies,
+        'reports_to_copy': reports,
         'emmission_emme2_macros':emmission_emme2_macros,
         'traffic_volume_macros': traffic_volume_macros,
         'locations_to_disaggregate': locations_to_disaggregate
