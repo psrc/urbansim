@@ -317,9 +317,9 @@ class RemoteRun:
                     while True:
                         time.sleep(60)
                         runs_by_status = self.get_run_manager().get_runs_by_status([self.run_id])
-                        if run_id in runs_by_status.get('done', []):
+                        if self.run_id in runs_by_status.get('done', []):
                             break
-                        if run_id in runs_by_status.get('failed', []):
+                        if self.run_id in runs_by_status.get('failed', []):
                             raise StandardError, "There was an error in the urbansim run."
 
                 max_zone_id = 0
