@@ -43,7 +43,7 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
         matrices_created = False
         if matrix_directory is not None:
             matrices_created = True    
-        reports = year_config.get('reports_to_copy', [])
+        reports = config['travel_model_configuration'].get('reports_to_copy', [])
         
         for x in 1,2,3:
             if "bank%i" % x in year_config['matrix_variable_map']:
