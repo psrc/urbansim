@@ -342,7 +342,7 @@ class RemoteRun:
                                 optional_args='%s -o %s' % (optional_args, os.path.join(self.local_output_path,'emme2_%d_log.txt' % this_end_year))
                             ForkProcess().fork_new_process(full_model_path, 
                                                            travel_model_resources, optional_args=optional_args)
-                    reports = travel_model_resources['travel_model_configuration'][this_end_year].get('reports', [])
+                    reports = travel_model_resources['travel_model_configuration'].get('reports_to_copy', [])
                     for x in self.banks:
                         bank_dir = tm.get_emme2_dir(travel_model_resources, this_end_year, "bank%i" % x)
                         self.copy_file_to_remote_host("%s/*_one_matrix.txt" % bank_dir, subdirectory="bank%i" % x)
