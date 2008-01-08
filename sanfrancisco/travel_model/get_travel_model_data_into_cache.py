@@ -51,7 +51,11 @@ class GetTravelModelDataIntoCache(GetTravelModelDataIntoCache):
             )
                 
         travel_data_set = TravelDataDataset(in_storage=in_storage, in_table_name=table_name)
+        max_zone_id = zone_set.get_id_attribute().max()
+        remove_index = where(logical_or(travel_data_set.get_attribute("from_zone_id")>max_zone_id,
+                                        travel_data_set.get_attribute("to_zone_id")>max_zone_id))[0]
         travel_data_set.size()
+        travel_data_set.remove_elements(remove_index)
         return travel_data_set
 
     def _read_output_file(self, filename, MISSING_VALUE=-9999):
