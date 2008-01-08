@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>OpusGui</string>
+   <string>AZ-SMART</string>
   </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QGridLayout" >
@@ -62,7 +62,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>96</width>
+          <width>98</width>
           <height>38</height>
          </rect>
         </property>
@@ -98,7 +98,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>96</width>
+          <width>98</width>
           <height>38</height>
          </rect>
         </property>
@@ -134,8 +134,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>370</width>
-          <height>524</height>
+          <width>335</width>
+          <height>529</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -170,7 +170,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>96</width>
+          <width>98</width>
           <height>38</height>
          </rect>
         </property>
@@ -362,7 +362,7 @@
      <x>0</x>
      <y>0</y>
      <width>974</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMap" >
@@ -392,8 +392,18 @@
     </property>
     <addaction name="actionAbout" />
    </widget>
+   <widget class="QMenu" name="menuTabs" >
+    <property name="title" >
+     <string>Tabs</string>
+    </property>
+    <addaction name="tabActionEditor" />
+    <addaction name="tabActionMapView" />
+    <addaction name="tabActionPythonConsole" />
+    <addaction name="tabActionLogView" />
+   </widget>
    <addaction name="menuProject" />
    <addaction name="menuMap" />
+   <addaction name="menuTabs" />
    <addaction name="menuHelp" />
   </widget>
   <widget class="QStatusBar" name="statusbar" />
@@ -480,6 +490,38 @@
   <action name="actionAbout" >
    <property name="text" >
     <string>About</string>
+   </property>
+  </action>
+  <action name="tabActionEditor" >
+   <property name="icon" >
+    <iconset resource="opusMain.qrc" >:/Images/Images/table.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Editor</string>
+   </property>
+  </action>
+  <action name="tabActionMapView" >
+   <property name="icon" >
+    <iconset resource="opusMain.qrc" >:/Images/Images/map.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Map View</string>
+   </property>
+  </action>
+  <action name="tabActionPythonConsole" >
+   <property name="icon" >
+    <iconset resource="opusMain.qrc" >:/Images/Images/python_type.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Python Console</string>
+   </property>
+  </action>
+  <action name="tabActionLogView" >
+   <property name="icon" >
+    <iconset resource="opusMain.qrc" >:/Images/Images/folder.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Log View</string>
    </property>
   </action>
  </widget>

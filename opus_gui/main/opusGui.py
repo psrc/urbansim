@@ -57,6 +57,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     QObject.connect(self.actionExit, SIGNAL("triggered()"), self.exitOpus)
     # About
     QObject.connect(self.actionAbout, SIGNAL("triggered()"), self.openAbout)
+    # Jesse toggleMapTab test
+    QObject.connect(self.tabActionMapView, SIGNAL("triggered()"), self.toggleMapTab)
 
     self.tempDir = tempfile.mkdtemp(prefix='opus_gui')
 
@@ -91,11 +93,17 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     time.sleep(1)
     self.splash.hide()
 
+  def toggleMapTab(self):
+    MapTabIndex = self.tabWidget.indexOf(self.tab_mapView)
+    if MapTabIndex == 1:
+      self.tabWidget.removeTab(MapTabIndex)
+    else:
+        self.tabWidget.addTab(self.tab_mapView,QIcon(":/Images/Images/map.png"),"")
+
   def openAbout(self):
     flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
     wnd = UrbansimAboutGui(self,flags)
     wnd.show()
-
 
   def openConfig(self):
     saveBeforeOpen = QMessageBox.Discard
