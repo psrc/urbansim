@@ -392,18 +392,8 @@
     </property>
     <addaction name="actionAbout" />
    </widget>
-   <widget class="QMenu" name="menuTabs" >
-    <property name="title" >
-     <string>Tabs</string>
-    </property>
-    <addaction name="tabActionEditor" />
-    <addaction name="tabActionMapView" />
-    <addaction name="tabActionPythonConsole" />
-    <addaction name="tabActionLogView" />
-   </widget>
    <addaction name="menuProject" />
    <addaction name="menuMap" />
-   <addaction name="menuTabs" />
    <addaction name="menuHelp" />
   </widget>
   <widget class="QStatusBar" name="statusbar" />
