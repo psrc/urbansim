@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusMain.ui'
 #
-# Created: Mon Jan 07 14:47:08 2008
+# Created: Tue Jan 08 15:23:32 2008
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -158,9 +158,6 @@ class Ui_MainWindow(object):
 
         self.menuHelp = QtGui.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
-
-        self.menuTabs = QtGui.QMenu(self.menubar)
-        self.menuTabs.setObjectName("menuTabs")
         MainWindow.setMenuBar(self.menubar)
 
         self.statusbar = QtGui.QStatusBar(MainWindow)
@@ -241,13 +238,8 @@ class Ui_MainWindow(object):
         self.menuProject.addSeparator()
         self.menuProject.addAction(self.actionExit)
         self.menuHelp.addAction(self.actionAbout)
-        self.menuTabs.addAction(self.tabActionEditor)
-        self.menuTabs.addAction(self.tabActionMapView)
-        self.menuTabs.addAction(self.tabActionPythonConsole)
-        self.menuTabs.addAction(self.tabActionLogView)
         self.menubar.addAction(self.menuProject.menuAction())
         self.menubar.addAction(self.menuMap.menuAction())
-        self.menubar.addAction(self.menuTabs.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -269,7 +261,6 @@ class Ui_MainWindow(object):
         self.menuMap.setTitle(QtGui.QApplication.translate("MainWindow", "Map", None, QtGui.QApplication.UnicodeUTF8))
         self.menuProject.setTitle(QtGui.QApplication.translate("MainWindow", "Project", None, QtGui.QApplication.UnicodeUTF8))
         self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuTabs.setTitle(QtGui.QApplication.translate("MainWindow", "Tabs", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionZoomOut.setText(QtGui.QApplication.translate("MainWindow", "Zoom Out", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionPan.setText(QtGui.QApplication.translate("MainWindow", "Pan", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionAddRasterLayer.setText(QtGui.QApplication.translate("MainWindow", "Add Raster Layer", None, QtGui.QApplication.UnicodeUTF8))
