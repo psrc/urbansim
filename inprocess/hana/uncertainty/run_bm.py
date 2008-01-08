@@ -13,7 +13,9 @@
 #
 
 import sys
-from numpy import sort
+import os
+import shutil
+from numpy import sort, zeros
 from opus_core.bayesian_melding import BayesianMelding
 from opus_core.bayesian_melding import ObservedData
 from opus_core.plot_functions import plot_histogram
@@ -24,6 +26,28 @@ from urbansim.datasets.zone_dataset import ZoneDataset
 from urbansim.datasets.faz_dataset import FazDataset
 from urbansim.datasets.large_area_dataset import LargeAreaDataset
 from opus_core.session_configuration import SessionConfiguration
+from opus_core.datasets.dataset_pool import DatasetPool
+
+def convert_screenline_report_to_dataset(report_name, cache_directory, years):
+    for year in years:
+        dir = os.path.join(cache_directory, str(year))
+        flt_storage = StorageFactory().get_storage('flt_storage',storage_location = dir)
+        pool = DatasetPool(storage=flt_storage, package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim'])
+        scnodes = pool.get_dataset('screenline_node')
+        scnodes.add_primary_attribute(name='traffic_volume_eh', data=zeros(scnodes.size(), dtype='float32'))
+        full_report_name = os.path.join(dir, report_name)
+        file = open(full_report_name, 'r')
+        file_contents = map(str.strip, file.readlines())
+        not_found_counter = 0
+        for line in file_contents[1:len(file_contents)]:
+            node_i, node_j, value, dummy = str.split(line)
+            try:
+                scnodes.set_value_of_attribute_by_id(attribute='traffic_volume_eh', value=float(value), 
+                                                             id=(int(node_i), int(node_j)))
+            except:
+                not_found_counter+=1
+        print "%s nodes not found in year %s" % (not_found_counter, year)
+        scnodes.write_dataset(out_storage=flt_storage)    
 
 if __name__ == "__main__":
     try: import wingdbstub
@@ -33,7 +57,8 @@ if __name__ == "__main__":
 
     # in what directory is the file 'cache_directories'
     #cache_directory = "/home/hana/urbansim_cache/psrc/parcel/run_3904.2007_10_19_15_01"
-    cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/run_3914.2007_10_19_18_55"
+    #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/1211/run_4491.2007_12_11_13_58"
+    cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0107/run_4786.2008_01_06_13_09"
     # This is needed only if one of the runs was scaled, e.g. run on reduced set of gridcells. 
     # It gives the directory of the base year full set, in order to scale back.
 #    scaling = {1: "/scratch/urbbuild/urbansim_cache/psrc/cache_source_zone"}
@@ -41,47 +66,55 @@ if __name__ == "__main__":
     # where the true data (on a zone level) is stored in a table format 
     observed_data_dir = "/Users/hana/bm/observed_data/"
 
-    observed_data = ObservedData(observed_data_dir, 2002, 'tab_storage', 
-                                 package_order=['urbansim_parcel', 'urbansim', 'opus_core'])
+    observed_data = ObservedData(observed_data_dir, 2006, 'tab_storage', 
+                                 package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
 
-    known_output=[{'variable_name': "urbansim_parcel.zone.number_of_households",
-                   'filename': "PSRC2005TAZData", 
-                   'transformation': "sqrt",
-                   },
-                  {'variable_name': "urbansim_parcel.zone.number_of_jobs",
-                   'filename': "PSRC2005TAZData", 
-                   'transformation': "sqrt",
-                   },
+    known_output=[#{'variable_name': "urbansim_parcel.zone.number_of_households",
+                  # 'filename': "PSRC2005TAZDataNew", 
+                  # 'transformation': "sqrt",
+                  # },
+                  #{'variable_name': "urbansim_parcel.zone.number_of_jobs",
+                  # 'filename': "PSRC2005TAZDataNew", 
+                  # 'transformation': "sqrt",
+                  # },
+                   {'variable_name': "psrc_parcel.screenline.traffic_volume_eh",
+                    'filename': "screenlines",
+                    'filter': "psrc_parcel.screenline.traffic_volume_eh",
+                    'transformation': "sqrt",
+                    'dependent_datasets': {'screenline_node': {'filename':'tv2006', 'match': True}}
+                    }
 #                  {'variable_name': "urbansim_parcel.faz_x_land_use_type.total_value_per_sqft",
 #                   'filename': "avg_total_value_per_unit_by_faz", 
 #                   'transformation': "log",
 #                   'filter': 'faz_x_land_use_type_flatten.total_value_per_sqft > 0',
 #                   "id_name":  ["faz_id", "land_use_type_id"]
 #                   },
-                  {'variable_name': "urbansim_parcel.large_area_x_land_use_type.total_value_per_sqft",
-                   'filename': "avg_total_value_per_unit_by_la", 
-                   'transformation': "log",
+#                  {'variable_name': "urbansim_parcel.large_area_x_land_use_type.total_value_per_sqft",
+#                   'filename': "avg_total_value_per_unit_by_la", 
+#                   'transformation': "log",
                    #'filter': 'faz_x_land_use_type_flatten.total_value_per_sqft > 0',
-                   "id_name":  ["large_area_id", "land_use_type_id"]
-                   }
+#                   "id_name":  ["large_area_id", "land_use_type_id"]
+#                   }
                   ]
                   
     for quantity in known_output:
         observed_data.add_quantity(**quantity)
         
+    #convert_screenline_report_to_dataset('tveham.rpt', cache_directory, [2006])
+                                         #[2006,2011, 2016, 2021])
     bm = BayesianMelding(cache_directory, 
                          observed_data,                        
                          base_year=2000, 
                          #scaling_parents = scaling,
-                         package_order=['urbansim_parcel', 'urbansim', 'opus_core'])
+                         package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
     weights = bm.compute_weights()
     print weights
 
-    posterior = bm.generate_posterior_distribution(year=2005, quantity_of_interest="urbansim_parcel.zone.number_of_households",
-                                                   replicates=10)
+    #posterior = bm.generate_posterior_distribution(year=2015, quantity_of_interest="urbansim_parcel.zone.number_of_households",
+                                                  # replicates=1000)
 
-    bm.write_simulated_values("/Users/hana/simulated_values")
-    bm.write_values_from_multiple_runs("/Users/hana/multiple_run_values")
+    #bm.write_simulated_values("/Users/hana/simulated_values")
+    #bm.write_values_from_multiple_runs("/Users/hana/multiple_run_values")
     #bm.write_simulated_values("/home/hana/BM/psrc_analysis/data/simulated_values")
     #bm.write_values_from_multiple_runs("/home/hana/BM/psrc_analysis/data/multiple_run_values")
 

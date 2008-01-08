@@ -15,7 +15,7 @@
 # This is under construction !!!
 
 import os
-from numpy import ones, zeros, float32, array, arange, transpose, reshape, sort, maximum
+from numpy import ones, zeros, float32, array, arange, transpose, reshape, sort, maximum, mean, where
 from scipy import ndimage
 from opus_core.model_component_creator import ModelComponentCreator
 from opus_core.misc import load_from_text_file, write_to_text_file, try_transformation, write_table_to_text_file
@@ -46,6 +46,7 @@ class ObservedData:
         self.dataset_pool = None
         self.storage = None
         self.package_order = package_order
+        self.matching_datasets = {}
         
         if is_cache:
             self.dataset_pool = setup_environment(directory, self.year, package_order)
@@ -90,7 +91,23 @@ class ObservedData:
             q = self.get_quantity_objects()[iq]
             if q.get_variable_name().get_alias() == alias:
                 return iq
-                
+            
+    def add_match(self, dataset, index = None):
+        dataset_name = dataset.get_dataset_name()
+        result = zeros(dataset.size(), dtype='bool8')
+        idx = index
+        if index is None:
+            idx = arange(dataset.size())
+        result[idx] = 1
+        if dataset_name in self.matching_datasets.keys():
+            tmp = zeros(dataset.size(), dtype='bool8')
+            tmp[dataset.get_id_index(self.matching_datasets[dataset_name])]=1
+            result = result*tmp
+        self.matching_datasets[dataset_name] = dataset.get_id_attribute()[where(result)]
+        
+    def get_matching_datasets(self):
+        return self.matching_datasets
+                 
 class ObservedDataOneQuantity:
     """  Class for storing information about one quantity measure. It is to be grouped in 
     an object of class ObservedData.
@@ -99,7 +116,7 @@ class ObservedDataOneQuantity:
     transformation_pairs = {"sqrt": "**2", "log":"exp", "exp": "log", "**2": "sqrt"}
 
     def __init__(self, variable_name, observed_data, filename=None,  transformation=None, inverse_transformation=None, 
-                 filter=None, **kwargs):
+                 filter=None, match=False, dependent_datasets={}, **kwargs):
         """  'variable_name' is a quantity about which we have data available.
         'observed_data' is of type ObservedData, it is the grouping parent. 
         'filename' is the name of file where 
@@ -108,6 +125,10 @@ class ObservedDataOneQuantity:
         'inverse_transformation' is the inverse function of 'transformation'. If it not given, it
         is determined automatically.
         'filter' is a variable that will be applied to both, the observed data and the simulated data.
+        'match' (logical) determines if the dataset should be matched (by ids) with the simulated dataset. Elements
+        that don't match are eliminated from the simulated dataset.
+        'dependent_datasets' (if any) should be a dictionary of dataset_name:{'filename': filename, 'match': True|False, **kwargs}. 
+        They will be added to the dataset_pool. 
         Remaining arguments are passed into DatasetFactory, thus it can contain information about how 
         to create the corresponding dataset.
         """
@@ -122,12 +143,35 @@ class ObservedDataOneQuantity:
                 self.dataset = Dataset(dataset_name=self.dataset_name, **kwargs)
         else:
             self.dataset = dataset_pool.get_dataset(self.dataset_name)
+        if match:
+            observed_data.add_match(self.dataset)
+        for dep_dataset_name, info in dependent_datasets.iteritems():
+            if dataset_pool is None:
+                dataset_pool = DatasetPool(storage=observed_data.get_storage(), package_order=observed_data.get_package_order())
+            info.update({'in_storage':observed_data.get_storage(), 'in_table_name': info.get('filename')})
+            del info['filename']
+            match = False
+            if 'match' in info.keys():
+                match = info['match']
+                del info['match']
+            try:
+                dep_dataset = DatasetFactory().search_for_dataset(dep_dataset_name, observed_data.get_package_order(), arguments=info)
+            except:
+                dep_dataset = Dataset(dataset_name=dep_dataset_name, **info)
+            dataset_pool.replace_dataset(dep_dataset_name, dep_dataset)
+            if match:
+                observed_data.add_match(dep_dataset)
+            
         self.dataset.compute_variables([self.variable_name], dataset_pool=dataset_pool)
+        if filter is not None:
+            filter_values = self.dataset.compute_variables([filter], dataset_pool=dataset_pool)
+            idx = where(filter_values > 0)[0]
+            observed_data.add_match(self.dataset, idx)
+            self.dataset.subset_by_index(idx)
         self.transformation = transformation
         self.inverse_transformation = inverse_transformation
         if (self.transformation is not None) and (self.inverse_transformation is None):
             self.inverse_transformation = self.transformation_pairs[self.transformation]
-        self.filter = filter
                 
     def get_values(self):
         return self.dataset.get_attribute(self.variable_name)
@@ -247,9 +291,7 @@ class BayesianMelding:
             dimension_reduced = False
             quantity_ids = quantity.get_dataset().get_id_attribute()
             for i in range(self.number_of_runs):
-                dataset_pool = setup_environment(self.cache_set[i], self.observed_data.get_year(), self.package_order)
-                ds = dataset_pool.get_dataset(dataset_name)
-                ds.compute_variables(variable, dataset_pool=dataset_pool)
+                ds = self._compute_variable(i, variable, dataset_name, self.observed_data.get_year())
                 if isinstance(ds, InteractionDataset):
                     ds = ds.get_flatten_dataset()
                 if i == 0: # first run
@@ -267,6 +309,15 @@ class BayesianMelding:
             if dimension_reduced:
                 self.y[iout] = self.y[iout][quantity.get_dataset().get_id_index(ids)]
 
+    def _compute_variable(self, run_index, variable, dataset_name, year):
+        dataset_pool = setup_environment(self.cache_set[run_index], year, self.package_order)
+        for mds_name, ids in self.observed_data.get_matching_datasets().iteritems():
+            mds = dataset_pool.get_dataset(mds_name)
+            mds.subset_by_ids(ids, flush_attributes_if_not_loaded=False)
+        ds = dataset_pool.get_dataset(dataset_name)
+        ds.compute_variables(variable, dataset_pool=dataset_pool)            
+        return ds
+    
     def get_scales(self, dataset, run, variable):
         if run in self.scaling_parents.keys():
             dataset_name = dataset.get_dataset_name()
@@ -280,17 +331,21 @@ class BayesianMelding:
         mode="wb"
         for l in self.mu.keys():
             self.ahat[l] = (reshape(self.y[l], (self.y[l].size,1)) - self.mu[l]).mean()
+            # for zone-specific bias
+            #self.ahat[l] = mean(reshape(self.y[l], (self.y[l].size,1)) - self.mu[l], axis=1)
             if l > 0:
                 mode="ab" # add to existing file
             write_to_text_file(os.path.join(self.cache_directory, self.bias_file_name),
                            array([self.ahat[l]]), mode=mode)
+                           # for zone-specific bias
+                           #self.ahat[l], mode=mode, delimiter=" ")
 
     def estimate_variance(self):
         mode="wb"
         for l in self.mu.keys():
             self.v[l] = zeros(self.number_of_runs, dtype=float32)
             for i in range(self.number_of_runs):
-                 self.v[l][i] = ((self.y[l] - self.ahat[l] - self.mu[l][:,i])**2.0).mean()
+                self.v[l][i] = ((self.y[l] - self.ahat[l] - self.mu[l][:,i])**2.0).mean()
             if l > 0:
                 mode="ab" # add to existing file
             write_to_text_file(os.path.join(self.cache_directory, self.variance_file_name),
@@ -353,9 +408,7 @@ class BayesianMelding:
         variable_name = VariableName(quantity_of_interest)
         dataset_name = variable_name.get_dataset_name()
         for i in range(self.number_of_runs):
-            dataset_pool = setup_environment(self.cache_set[i], year, self.package_order)
-            ds = dataset_pool.get_dataset(dataset_name)
-            ds.compute_variables(variable_name, dataset_pool=dataset_pool)
+            ds = self._compute_variable(i, variable_name, dataset_name, year)
             if i == 0: # first run
                 self.m = zeros((ds.size(), self.number_of_runs), dtype=float32)
             self.m[:, i] = try_transformation(ds.get_attribute(variable_name), self.transformation_pair_for_prediction[0])
@@ -363,6 +416,9 @@ class BayesianMelding:
 
     def get_posterior_component_mean(self):
         return self.get_bias_for_quantity()*self.get_propagation_factor() + self.get_predicted_values()
+        # for zone-specific bias
+        #bias = self.get_bias_for_quantity()
+        #return reshape(bias, (bias.size, 1)) + self.get_predicted_values()
 
     def get_posterior_component_variance(self):
         return self.get_variance_for_quantity()*self.get_propagation_factor()
@@ -377,7 +433,10 @@ class BayesianMelding:
         ahat={}
         v = {}
         for l in range(bias.size):
-            ahat[l] = bias[l]
+        # for zone-specific bias
+        #for l in range(bias.shape[0]):
+            #ahat[l] = bias[l,:]
+            ahat[l] = bias[l]            
             v[l] = variance[l,:]
         return (ahat, v)
 
@@ -389,7 +448,7 @@ class BayesianMelding:
         return array(load_from_text_file(file, convert_to_float=True))
 
     def generate_posterior_distribution(self, year, quantity_of_interest, procedure="opus_core.bm_normal_posterior",
-                                        use_bias_and_variance_from=None, **kwargs):
+                                        use_bias_and_variance_from=None, transformed_back=True, **kwargs):
         """
         'quantity_of_interest' is a varible name about which we want to get the posterior distribution.
         If there is multiple known_output, it must be made clear from which one the bias and variance
@@ -409,7 +468,7 @@ class BayesianMelding:
         self.compute_m(year, quantity_of_interest)
         procedure_class = ModelComponentCreator().get_model_component(procedure)
         self.simulated_values = procedure_class.run(self, **kwargs)
-        if self.transformation_pair_for_prediction[0] is not None: # need to transform back
+        if transformed_back and (self.transformation_pair_for_prediction[0] is not None): # need to transform back
             self.simulated_values = try_transformation(self.simulated_values,
                                                        self.transformation_pair_for_prediction[1])
         return self.simulated_values

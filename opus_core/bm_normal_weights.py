@@ -31,7 +31,8 @@ class bm_normal_weights:
             variance = variance_all[l]
             bias = bias_all[l]
             tmp1 = -K/2.0 * log(2.0*pi*variance)
-            tmp2 = sum((reshape(y, (y.size,1)) - bias - mu)**2.0, axis=0)/(2.0*variance)
+            #tmp2 = sum((reshape(y, (y.size,1)) - bias - mu)**2.0, axis=0)/(2.0*variance)
+            tmp2 = sum((reshape(y, (y.size,1)) - reshape(bias, (bias.size,1)) - mu)**2.0, axis=0)/(2.0*variance)
             logwi = tmp1 - tmp2
             logwi = logwi - logwi.max()
             this_wi = exp(logwi)
