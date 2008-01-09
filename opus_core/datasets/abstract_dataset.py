@@ -445,12 +445,18 @@ class AbstractDataset(object):
         self.n = len(self.get_attribute(self.get_attribute_names()[0]))
         self._update_id_mapping()
         
-    def subset_where_variable_larger_than_threshold(self, attribute, threshold=0):
+    def subset_by_ids(self, ids, **kwargs):
+        """Determines index of elements given by the array 'ids' and calls 'subset_by_index'.
+        """
+        index = self.get_id_index(ids)
+        self.subset_by_index(index, **kwargs)
+        
+    def subset_where_variable_larger_than_threshold(self, attribute, threshold=0, **kwargs):
         """Removes entries from the dataset for which value of the given attribute is smaller or equal
            to the given threshold.
         """
         index = self.get_index_where_variable_larger_than_threshold(attribute, threshold)[0]
-        self.subset_by_index(index)
+        self.subset_by_index(index, **kwargs)
 
     ##################################################################################
     ## Methods for obtaining column names
