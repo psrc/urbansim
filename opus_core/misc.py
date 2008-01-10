@@ -916,13 +916,25 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         self.assertEqual(ma.allequal(quantile(b, array([0, 0.2, 0.9, 0.5, 1])), array([0, 1, 8, 4, 10])), True)
 
     def test_remove_elements_with_matched_prefix(self):
-        from numpy import array, ma
+        from numpy import array, alltrue
 
         a = array(["max_attribute1", "min_attribute1", "attribute1", "attribute2_max", "attribute2"])
         prefix_list = ["min", "max"]
         result = remove_elements_with_matched_prefix_from_list(a, prefix_list)
-        self.assertEqual(ma.allequal(result, array(["attribute1", "attribute2_max", "attribute2"])), True,
+        self.assertEqual(result.size == 3, True, msg = "Error in test_remove_elements_with_matched_prefix: Size of the resulting array must be 3.")
+        self.assertEqual(alltrue(result == array(["attribute1", "attribute2_max", "attribute2"])), True,
                          msg = "Error in test_remove_elements_with_matched_prefix" )
+        
+    def test_remove_elements_with_matched_prefix_with_constraints_header(self):
+        from numpy import array, alltrue
+
+        a = array(["constraint_id", "city_id", "is_in_wetland", "min_units", "max_units", "min_commercial_sqft", 
+                   "max_commercial_sqft", "min_industrial_sqft", "max_industrial_sqft"])
+        prefix_list = ["min", "max"]
+        result = remove_elements_with_matched_prefix_from_list(a, prefix_list)
+        self.assertEqual(result.size == 3, True, msg = "Error in test_remove_elements_with_matched_prefix_with_constraints_header: Size of the resulting array must be 3.")
+        self.assertEqual(alltrue(result == array(["constraint_id", "city_id", "is_in_wetland"])), True,
+                         msg = "Error in test_remove_elements_with_matched_prefix_with_constraints_header" )
 
     def test_ematch(self):
         from numpy import array, ma
