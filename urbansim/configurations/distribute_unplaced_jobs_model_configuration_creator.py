@@ -13,7 +13,7 @@
 # 
 
 from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
-
+from opus_core.misc import get_string_or_None
 from opus_core.configuration import Configuration
 
 
@@ -21,6 +21,8 @@ class DistributeUnplacedJobsModelConfigurationCreator(HasStrictTraits):
     debuglevel = Trait('debuglevel', Str, Int)
     agent_set = Str('job')
     location_set = Str('gridcell')
+    agents_filter = Trait(None, None, Str)
+    filter = Trait(None, None, Str)
     
     _model_name = 'distribute_unplaced_jobs_model'
     
@@ -31,6 +33,7 @@ class DistributeUnplacedJobsModelConfigurationCreator(HasStrictTraits):
                 },
             'init': {
                 'arguments': {'debuglevel': self.debuglevel,
+                              'filter': get_string_or_None(self.filter),
                               'dataset_pool': 'dataset_pool'},
                 'name': 'DistributeUnplacedJobsModel'
                 },
@@ -39,6 +42,7 @@ class DistributeUnplacedJobsModelConfigurationCreator(HasStrictTraits):
                     'agent_set': self.agent_set,
                     'data_objects': 'datasets',
                     'location_set': self.location_set,
+                    'agents_filter': get_string_or_None(self.agents_filter),
                     }
                 }
             })
@@ -63,6 +67,7 @@ class TestDistributeUnplacedJobsModelConfigurationCreator(opus_unittest.OpusTest
                 },
             'init': {
                 'arguments': {'debuglevel': 'debuglevel',
+                              'filter': None,
                               'dataset_pool': 'dataset_pool'},
                 'name': 'DistributeUnplacedJobsModel'
                 },
@@ -70,7 +75,8 @@ class TestDistributeUnplacedJobsModelConfigurationCreator(opus_unittest.OpusTest
                 'arguments': {
                     'agent_set': 'job',
                     'data_objects': 'datasets',
-                    'location_set': 'gridcell'
+                    'location_set': 'gridcell',
+                    'agents_filter': None
                     }
                 }
             })
@@ -83,6 +89,7 @@ class TestDistributeUnplacedJobsModelConfigurationCreator(opus_unittest.OpusTest
             debuglevel = 9999,
             agent_set = 'agent_set',
             location_set = 'location_set',
+            agents_filter='job.sector_id==10'
             )
         
         expected = Configuration({
@@ -91,6 +98,7 @@ class TestDistributeUnplacedJobsModelConfigurationCreator(opus_unittest.OpusTest
                 },
             'init': {
                 'arguments': {'debuglevel': 9999,
+                              'filter': None,
                               'dataset_pool': 'dataset_pool'},
                 'name': 'DistributeUnplacedJobsModel'
                 },
@@ -98,7 +106,8 @@ class TestDistributeUnplacedJobsModelConfigurationCreator(opus_unittest.OpusTest
                 'arguments': {
                     'agent_set': 'agent_set',
                     'data_objects': 'datasets',
-                    'location_set': 'location_set'
+                    'location_set': 'location_set',
+                    'agents_filter': "'job.sector_id==10'"
                     }
                 }
             })

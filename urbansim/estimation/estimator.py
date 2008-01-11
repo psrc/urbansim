@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from numpy import absolute, array, where
+from numpy import absolute, array, where, take
 from opus_core.logger import logger
 from opus_core.resources import Resources
 from opus_core.coefficients import Coefficients
@@ -188,9 +188,17 @@ class Estimator(object):
     def get_choice_set_index(self): # works only for choice models
         return self.get_model().model_interaction.interaction_datasets[0].get_index(2)
         
+    def get_choice_set_index_for_submodel(self, submodel): # works only for choice models
+        index = self.get_choice_set_index()
+        return take (index, indices=self.get_agent_set_index_for_submodel(submodel), axis=0)
+    
     def get_agent_set_index(self): # works only for choice models
         return self.get_model().model_interaction.interaction_datasets[0].get_index(1)
         
+    def get_agent_set_index_for_submodel(self, submodel):
+        model = self.get_model()
+        return model.observations_mapping[submodel]
+    
     def cleanup(self, remove_cache=True):
         """Use this only if you don't want to reestimate."""
         self.simulation_state.remove_singleton(delete_cache=remove_cache)
