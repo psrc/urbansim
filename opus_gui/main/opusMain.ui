@@ -62,8 +62,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>38</height>
+          <width>370</width>
+          <height>524</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -91,6 +91,41 @@
          <property name="verticalSpacing" >
           <number>6</number>
          </property>
+         <item row="0" column="0" >
+          <widget class="QToolBox" name="dataManager_toolBox" >
+           <property name="currentIndex" >
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="datamanager_xmlconfig" >
+            <property name="geometry" >
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>352</width>
+              <height>450</height>
+             </rect>
+            </property>
+            <attribute name="label" >
+             <string>XML Config</string>
+            </attribute>
+            <layout class="QGridLayout" />
+           </widget>
+           <widget class="QWidget" name="datamanager_dirview" >
+            <property name="geometry" >
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>96</width>
+              <height>38</height>
+             </rect>
+            </property>
+            <attribute name="label" >
+             <string>Opus Data</string>
+            </attribute>
+            <layout class="QGridLayout" />
+           </widget>
+          </widget>
+         </item>
         </layout>
        </widget>
        <widget class="QWidget" name="modelmanager_page" >
@@ -98,7 +133,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
+          <width>96</width>
           <height>38</height>
          </rect>
         </property>
@@ -134,8 +169,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>335</width>
-          <height>529</height>
+          <width>370</width>
+          <height>524</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -170,7 +205,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
+          <width>96</width>
           <height>38</height>
          </rect>
         </property>
@@ -362,7 +397,7 @@
      <x>0</x>
      <y>0</y>
      <width>974</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMap" >

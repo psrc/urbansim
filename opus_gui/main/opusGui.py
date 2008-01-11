@@ -82,9 +82,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
       self.editorStatusLabel.setAlignment(Qt.AlignCenter)
       self.editorStatusLabel.setObjectName("editorStatusLabel")
       self.editorStatusLabel.setText(QString("No files currently loaded..."))
-      self.gridlayout5.addWidget(self.editorStatusLabel)
+      self.tab_editorView.layout().addWidget(self.editorStatusLabel)
       self.editorStuff = util.editorBase.EditorBase(self)
-      self.gridlayout5.addWidget(self.editorStuff)
+      self.tab_editorView.layout().addWidget(self.editorStuff)
     except ImportError:
       self.editorStuff = None
 

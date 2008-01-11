@@ -96,10 +96,10 @@ class ToolboxBase(object):
       if self.configFile.open(QIODevice.ReadWrite):
         self.doc = QDomDocument()
         self.doc.setContent(self.configFile)
-        self.resultsManagerTree = OpusXMLTree(self,"results_manager",self.parent.gridlayout4)    
-        self.modelManagerTree = OpusXMLTree(self,"model_manager",self.parent.gridlayout2)    
-        self.runManagerTree = OpusXMLTree(self,"scenario_manager",self.parent.gridlayout3)    
-        self.dataManagerTree = OpusXMLTree(self,"data_manager",self.parent.gridlayout1)
+        self.resultsManagerTree = OpusXMLTree(self,"results_manager",self.parent.resultsmanager_page.layout())    
+        self.modelManagerTree = OpusXMLTree(self,"model_manager",self.parent.modelmanager_page.layout())    
+        self.runManagerTree = OpusXMLTree(self,"scenario_manager",self.parent.runmanager_page.layout())    
+        self.dataManagerTree = OpusXMLTree(self,"data_manager",self.parent.datamanager_xmlconfig.layout())
       else:
         print "Error reading config"
     else:
