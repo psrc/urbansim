@@ -31,7 +31,6 @@ from enthought.traits.api import DictStrInt
 from enthought.traits.api import HasStrictTraits
 
 from opus_core.configurations.database_configuration import DatabaseConfiguration
-from opus_core.configurations.table_cache_configuration import TableCacheConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
 
