@@ -19,6 +19,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
 from config.opusXMLTree import OpusXMLTree
+from config.opusFileTree import OpusFileTree
 
 # Main class for the toolbox
 class ToolboxBase(object):
@@ -40,6 +41,7 @@ class ToolboxBase(object):
     self.resultsManagerTree = None
     self.runManagerTree = None
     self.dataManagerTree = None
+    self.dataManagerFileTree = None
   
   def openXMLTree(self, xml_file):
     saveBeforeOpen = QMessageBox.Discard
@@ -100,6 +102,7 @@ class ToolboxBase(object):
         self.modelManagerTree = OpusXMLTree(self,"model_manager",self.parent.modelmanager_page.layout())    
         self.runManagerTree = OpusXMLTree(self,"scenario_manager",self.parent.runmanager_page.layout())    
         self.dataManagerTree = OpusXMLTree(self,"data_manager",self.parent.datamanager_xmlconfig.layout())
+        self.dataManagerFileTree = OpusFileTree(self,self.parent.datamanager_dirview.layout())
       else:
         print "Error reading config"
     else:
