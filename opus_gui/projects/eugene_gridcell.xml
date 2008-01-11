@@ -128,6 +128,7 @@
           <development_type_group_definitions type="integer" >1975</development_type_group_definitions>
           <development_type_groups type="integer" >1975</development_type_groups>
           <development_types type="integer" >1975</development_types>
+          <development_constraints type="integer" >1975</development_constraints>
           <urbansim_constants type="integer" >1975</urbansim_constants>
         </tables_to_copy_to_previous_years>
       </creating_baseyear_cache_configuration>
