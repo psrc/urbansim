@@ -23,6 +23,7 @@ from urbansim.configurations.employment_transition_model_configuration_creator i
 from urbansim.configurations.employment_relocation_model_configuration_creator import EmploymentRelocationModelConfigurationCreator
 from urbansim.configurations.employment_location_choice_model_configuration_creator import EmploymentLocationChoiceModelConfigurationCreator
 from urbansim.configurations.governmental_employment_location_choice_model_configuration_creator import GovernmentalEmploymentLocationChoiceModelConfigurationCreator
+from urbansim.configurations.distribute_unplaced_jobs_model_configuration_creator import DistributeUnplacedJobsModelConfigurationCreator
 
 
 UNIT_PRICE_RANGE = (exp(3), exp(7))
@@ -145,6 +146,13 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                 variable_package = "urbansim_parcel",
                                 lottery_max_iterations = 7
                                 ).execute(),
+            'distribute_unplaced_jobs_model': {
+                    'controller': DistributeUnplacedJobsModelConfigurationCreator(
+                                    location_set = 'building',
+                                    filter = 'urbansim_parcel.building.is_governmental',
+                                    agents_filter = 'urbansim.job.is_in_employment_sector_group_scalable_sectors'
+                                                                                  ).execute(),
+                    },
             'governmental_employment_location_choice_model': 
                    GovernmentalEmploymentLocationChoiceModelConfigurationCreator(
                         input_index = 'erm_index',
