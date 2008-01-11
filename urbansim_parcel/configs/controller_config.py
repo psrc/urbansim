@@ -146,13 +146,11 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                 variable_package = "urbansim_parcel",
                                 lottery_max_iterations = 7
                                 ).execute(),
-            'distribute_unplaced_jobs_model': {
-                    'controller': DistributeUnplacedJobsModelConfigurationCreator(
+            'distribute_unplaced_jobs_model':  DistributeUnplacedJobsModelConfigurationCreator(
                                     location_set = 'building',
                                     filter = 'urbansim_parcel.building.is_governmental',
                                     agents_filter = 'urbansim.job.is_in_employment_sector_group_scalable_sectors'
                                                                                   ).execute(),
-                    },
             'governmental_employment_location_choice_model': 
                    GovernmentalEmploymentLocationChoiceModelConfigurationCreator(
                         input_index = 'erm_index',
@@ -308,5 +306,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                 }
         models_configuration['governmental_employment_location_choice_model']['controller']['import'] =  {
            'urbansim_parcel.models.scaling_jobs_model': 'ScalingJobsModel'}
+        models_configuration['distribute_unplaced_jobs_model']['controller']['import'] =  {
+           'urbansim_parcel.models.distribute_unplaced_jobs_model': 'DistributeUnplacedJobsModel'}
 
 config = UrbansimParcelConfiguration()
