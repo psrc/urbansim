@@ -118,9 +118,9 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                 location_set = "building",
                                 input_index = 'erm_index',
                                 estimation_weight_string = "vacant_SSS_job_space",
-                                agents_for_estimation_table = None, # will take standard jobs table 
-                                #agents_for_estimation_table = "jobs_for_estimation",
-                                estimation_size_agents = 0.1,
+                                #agents_for_estimation_table = None, # will take standard jobs table 
+                                agents_for_estimation_table = "jobs_for_estimation",
+                                #estimation_size_agents = 0.3,
                                 number_of_units_string = "total_SSS_job_space",
                                 filter = "building.non_residential_sqft",
                                 filter_for_estimation = "numpy.logical_and(job.building_id>0, job.disaggregate(building.non_residential_sqft) > 0)",
@@ -308,5 +308,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
            'urbansim_parcel.models.scaling_jobs_model': 'ScalingJobsModel'}
         models_configuration['distribute_unplaced_jobs_model']['controller']['import'] =  {
            'urbansim_parcel.models.distribute_unplaced_jobs_model': 'DistributeUnplacedJobsModel'}
+        models_configuration['real_estate_price_model_for_all_parcels'] = Configuration(models_configuration['real_estate_price_model'])
+        models_configuration['real_estate_price_model_for_all_parcels']['controller']['init']['arguments']['filter_attribute'] = None
 
 config = UrbansimParcelConfiguration()
