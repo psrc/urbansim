@@ -12,37 +12,14 @@
 # other acknowledgments.
 #
 
-import os
 
-from time import strftime
-from time import localtime
-
-from enthought.traits.api import HasStrictTraits
-from enthought.traits.api import List
-from enthought.traits.api import Dict
-
-
-class DatasetPoolConfiguration(HasStrictTraits):
+class DatasetPoolConfiguration(object):
     """Provides configuration information for a DatasetPool object."""
 
-#===============================================================================
-#   Traits
-#===============================================================================
-    package_order = List
-    package_order_exceptions = Dict
-    
-#===============================================================================
-#   Functionality
-#===============================================================================
     def __init__(self, package_order, package_order_exceptions):
         self.package_order = package_order
         self.package_order_exceptions = package_order_exceptions
         
-        
-#===============================================================================
-#    Events
-#===============================================================================
-
 
 from opus_core.tests import opus_unittest
 
