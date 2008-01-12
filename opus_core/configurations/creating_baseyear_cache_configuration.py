@@ -13,87 +13,43 @@
 #
 
 import os
-
-from sets import Set
 from tempfile import mktemp
 
-from enthought.traits.api import Any
-from enthought.traits.api import Str
-from enthought.traits.api import Bool
-from enthought.traits.api import Dict
-from enthought.traits.api import List
-from enthought.traits.api import Event
-from enthought.traits.api import Trait
-from enthought.traits.api import ListStr
-from enthought.traits.api import Instance
-from enthought.traits.api import Undefined
-from enthought.traits.api import DictStrInt
-from enthought.traits.api import HasStrictTraits
-
-from opus_core.configurations.database_configuration import DatabaseConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
 
-class CreatingBaseyearCacheConfiguration(HasStrictTraits):
+class CreatingBaseyearCacheConfiguration(object):
     """
     A CreatingBaseyearCacheConfiguration provides the configuration information 
     for creating a baseyear cache.
     """
-#===============================================================================
-#   Traits
-#===============================================================================
-    cache_directory_root = Str
-    cache_from_mysql = Bool
-    baseyear_cache = Instance(BaseyearCacheConfiguration)
-    cache_scenario_database = Str
-    tables_to_cache = ListStr
-    tables_to_cache_nchunks = DictStrInt
-    tables_to_copy_to_previous_years = DictStrInt
-    input_configuration = Instance(DatabaseConfiguration)
-    
-        
-#===============================================================================
-#   Functionality
-#===============================================================================
+
     def __init__(self,
             cache_directory_root = mktemp(prefix='opus_tmp'),
             cache_scenario_database = 'opus_core.cache.cache_scenario_database',
             cache_from_mysql = True,
-            baseyear_cache = Undefined,
+            baseyear_cache = None,
             tables_to_cache = [],
             tables_to_cache_nchunks = {},
             tables_to_copy_to_previous_years = {},
-            input_configuration = Undefined,
+            input_configuration = None,
             ):
-        
-        if baseyear_cache is not Undefined:
-            self.baseyear_cache = baseyear_cache
             
-        if input_configuration is not Undefined:
-            self.input_configuration = input_configuration
-            
-        if baseyear_cache is Undefined and not cache_from_mysql:
+        if baseyear_cache is None and not cache_from_mysql:
             raise TypeError("Parameter 'baseyear_cache' must be specified if "
                 "parameter 'cache_from_mysql' is not True!")
-                
+        
+        self.input_configuration = input_configuration
+        self.baseyear_cache = baseyear_cache
         self.cache_directory_root = cache_directory_root
         self.cache_from_mysql = cache_from_mysql
         self.cache_scenario_database = cache_scenario_database
         self.tables_to_cache = tables_to_cache
         self.tables_to_cache_nchunks = tables_to_cache_nchunks
         self.tables_to_copy_to_previous_years = tables_to_copy_to_previous_years
-        
-            
-#===============================================================================
-#   Events
-#===============================================================================
-    pass
     
         
 from opus_core.tests import opus_unittest
-
-from enthought.traits.api import TraitError
-
 
 class CreatingBaseyearCacheConfigurationTests(opus_unittest.OpusTestCase):
     def setUp(self):
