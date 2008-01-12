@@ -14,18 +14,21 @@
 
 from numpy import array
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
-
 from opus_core.configuration import Configuration
 
 
-class DevelopmentEventTransitionModelConfigurationCreator(HasStrictTraits):
-    debuglevel = Trait('debuglevel', Str, Int)
-    
-    input_projects = Str('dptm_results')
-    output_events = Str('development_events')
-    
+class DevelopmentEventTransitionModelConfigurationCreator(object):
     _model_name = 'development_event_transition_model'
+    
+    def __init__(self,
+        debuglevel = 'debuglevel',
+        input_projects = 'dptm_results',
+        output_events = 'development_events'):
+        
+        self.debuglevel = debuglevel
+        self.input_projects = input_projects
+        self.output_events = output_events
+    
     
     def execute(self):
         # Names of intermediate objects used to get data between steps

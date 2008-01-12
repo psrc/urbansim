@@ -12,19 +12,21 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
-
 from opus_core.configuration import Configuration
 
 
-class BuildingRelocationModelConfigurationCreator(HasStrictTraits):
-    agent_set = Str('building')
-    location_id_name = Str('gridcell.get_id_name()[0]') ### TODO: Replace with 'grid_id'?
-    
-    output_index = Str('brm_index')
+class BuildingRelocationModelConfigurationCreator(object):
     
     _model_name = 'agent_relocation_model'
     
+    def __init__(self,
+                agent_set = 'building',
+                location_id_name = 'gridcell.get_id_name()[0]',
+                output_index = 'brm_index'):
+        self.agent_set = agent_set
+        self.location_id_name = location_id_name
+        self.output_index = output_index
+        
     def execute(self):
         return Configuration({
             'import': {

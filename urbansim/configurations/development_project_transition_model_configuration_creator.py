@@ -14,12 +14,10 @@
 
 from numpy import array
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
-
 from opus_core.configuration import Configuration
 
 
-class DevelopmentProjectTransitionModelConfigurationCreator(HasStrictTraits):
+class DevelopmentProjectTransitionModelConfigurationCreator(object):
     debuglevel = Int(4)
     location_set = Str('gridcell')
     history_table = Str('development_event_history')

@@ -12,43 +12,48 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
-
 from opus_core.configuration import Configuration
 from opus_core.misc import get_string_or_None
 
-class DevelopmentProjectLocationChoiceModelConfigurationCreator(HasStrictTraits):
-    # Set in constructor
-    project_type = Str()
-    coefficients_table = Str()
-    specification_table = Str()
-    
-    input_agent_set = Str()
-
+class DevelopmentProjectLocationChoiceModelConfigurationCreator(object):
     _model_name = None
-    
-    # Default values
-    records_per_chunk = Int(300)
-    debuglevel = Trait('debuglevel', Str, Int)
-    location_set = Str('gridcell')
-    events_for_estimation_table = Str('development_event_history')
-    submodel_string = Trait('size_category', None, Str)
 
-    def __init__(self, project_type, *args, **kwargs):
+    def __init__(self, 
+                 project_type,
+                 records_per_chunk = (300),
+                 debuglevel = 'debuglevel',
+                 location_set = 'gridcell',
+                 events_for_estimation_table = 'development_event_history',
+                 submodel_string = 'size_category',
+                 input_agent_set = None,
+                 coefficients_table = None,
+                 specification_table = None):
+        
         """Construct attributes that depend upon project_type's value"""        
         # Hack around HasStrictTraits's restriction against assignment to non-Traits attributes
         self.__dict__['_model_name'] = '%s_development_location_choice_model' % project_type
         
         # Set defaults, which may be overridden by the kwarg values.
-        self.input_agent_set = "dptm_results['%s']" % project_type
-        self.coefficients_table = '%s_coefficients' % self._model_name
-        self.specification_table = '%s_specification' % self._model_name
+        if input_agent_set is None:
+            input_agent_set = "dptm_results['%s']" % project_type
+        if coefficients_table is None:
+            coefficients_table = '%s_coefficients' % self._model_name
+        if specification_table is None:
+            specification_table = '%s_specification' % self._model_name
         
         # Let HasStrictTraits handle the assignment, etc. of the named arguments, above
         # kwargs['project_type'] = project_type # doesn't work for some users
         self.project_type = project_type
         
-        HasStrictTraits.__init__(self, *args, **kwargs)
+        self.records_per_chunk = records_per_chunk
+        self.debuglevel = debuglevel
+        self.location_set = location_set
+        self.events_for_estimation_table = events_for_estimation_table
+        self.submodel_string = submodel_string
+        self.specification_table = specification_table
+        self.coefficients_table = coefficients_table
+        self.input_agent_set = input_agent_set
+        
     
     def execute(self):
         # Names of intermediate objects used to get data between steps

@@ -12,19 +12,26 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
-
 from opus_core.configuration import Configuration
 
 
-class BuildingTransitionModelConfigurationCreator(HasStrictTraits):
-    debuglevel = Trait('debuglevel', Str, Int)
-    building_set = Str('building')
-    location_set = Str('gridcell')
-    building_types_table = Str('building_type')
-    vacancy_table = Str('target_vacancy')
-    
+class BuildingTransitionModelConfigurationCreator(object):
+
     _model_name = 'building_transition_model'
+    
+    def __init__(self,
+        debuglevel = 'debuglevel',
+        building_set = 'building',
+        location_set = 'gridcell',
+        building_types_table = 'building_type',
+        vacancy_table = 'target_vacancy'):
+
+        self.debuglevel = debuglevel
+        self.building_set = building_set
+        self.location_set = location_set
+        self.building_types_table = building_types_table
+        self.vacancy_table = vacancy_table
+        
     
     def execute(self):
         return Configuration({

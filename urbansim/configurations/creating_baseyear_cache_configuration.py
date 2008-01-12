@@ -16,8 +16,6 @@ import os
 
 from tempfile import mktemp
 
-from enthought.traits.api import Bool
-
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.configurations.creating_baseyear_cache_configuration \
     import CreatingBaseyearCacheConfiguration \
@@ -25,7 +23,6 @@ from opus_core.configurations.creating_baseyear_cache_configuration \
 
 
 class CreatingBaseyearCacheConfiguration(CoreCreatingBaseyearCacheConfiguration):
-    unroll_gridcells = Bool
     
     def __init__(self, 
             unroll_gridcells=True,

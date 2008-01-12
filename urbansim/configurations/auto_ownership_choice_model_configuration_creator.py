@@ -16,17 +16,27 @@ from opus_core.configuration import Configuration
 
 
 class AutoOwnershipChoiceModelConfigurationCreator(object):
-    debuglevel = 0
-    agent_set = 'household'
-    records_per_chunk = 500
-    estimation_procedure = 'opus_core.bhhh_mnl_estimation'
-    choice_attribute_name = 'cars'
-    choice_set = [0, 1, 2, 3]
-    
-    coefficients_table = 'auto_ownership_choice_model_coefficients'
-    specification_table = 'auto_ownership_choice_model_specification'
-
     _model_name = 'auto_ownership_choice_model'        
+        
+    def __init__(self,        
+                 debuglevel = 0,
+                 agent_set = 'household',
+                 records_per_chunk = 500,
+                 estimation_procedure = 'opus_core.bhhh_mnl_estimation',
+                 choice_attribute_name = 'cars',
+                 choice_set = [0, 1, 2, 3],
+                 coefficients_table = 'auto_ownership_choice_model_coefficients',
+                 specification_table = 'auto_ownership_choice_model_specification'):
+        
+        debuglevel = debuglevel
+        agent_set = agent_set
+        records_per_chunk = records_per_chunk
+        estimation_procedure = estimation_procedure
+        choice_attribute_name = choice_attribute_name
+        choice_set = choice_set
+        
+        coefficients_table = coefficients_table
+        specification_table = specification_table
         
     def execute(self):
         # Names of intermediate objects used to get data between steps
