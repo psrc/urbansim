@@ -15,6 +15,7 @@
 from numpy import zeros, arange
 from opus_core.regression_model import RegressionModel
 from opus_core.variables.variable_name import VariableName
+from opus_core.logger import logger
 
 
 class RegressionModelWithAdditionConstantVariation(RegressionModel):
@@ -55,11 +56,14 @@ class RegressionModelWithAdditionConstantVariation(RegressionModel):
             except:
                 raise StandardError, "The outcome attribute %s must be a known attribute of the dataset %s." % (
                                                                 self.outcome_attribute.get_alias(), dataset.get_dataset_name())
-        outcome = RegressionModel.run(self, specification, coefficients, dataset, index, **kwargs)
-        initial_error_name = "_init_error_%s" % self.outcome_attribute.get_alias()
+            
         if index is None:
             index = arange(dataset.size())
         original_data = dataset.get_attribute_by_index(self.outcome_attribute, index)
+        
+        outcome = RegressionModel.run(self, specification, coefficients, dataset, index, initial_values=original_data, **kwargs)
+        initial_error_name = "_init_error_%s" % self.outcome_attribute.get_alias()
+
 
         if initial_error_name not in dataset.get_known_attribute_names():
             initial_error = original_data - outcome
@@ -69,11 +73,13 @@ class RegressionModelWithAdditionConstantVariation(RegressionModel):
             if exclude_missing_values:
                 missing_value = self.run_config.get("outcome_attribute_missing_value", 0)
                 initial_error[original_data == missing_value] = 0
+                logger.log_status('Values equal %s were excluded from adding residuals.' % missing_value)
             if exclude_outliers:
                 outlier_low = self.run_config.get("outlier_is_less_than", 0)
                 initial_error[original_data < outlier_low] = 0
                 outlier_high = self.run_config.get("outlier_is_greater_than", original_data.max())
                 initial_error[original_data > outlier_high] = 0
+                logger.log_status('Values less than %s and larger than %s were excluded from adding residuals.' % (outlier_low, outlier_high))
             dataset.set_values_of_one_attribute(initial_error_name, initial_error, index)
         else:
             initial_error = dataset.get_attribute_by_index(initial_error_name, index)
