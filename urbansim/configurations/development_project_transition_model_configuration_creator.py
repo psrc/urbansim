@@ -18,15 +18,21 @@ from opus_core.configuration import Configuration
 
 
 class DevelopmentProjectTransitionModelConfigurationCreator(object):
-    debuglevel = Int(4)
-    location_set = Str('gridcell')
-    history_table = Str('development_event_history')
-    vacancy_table = Str('target_vacancy')
-    
-    output_results = Str('dptm_results')
     
     _model_name = 'development_project_transition_model'
     
+    def __init__(self,
+            debuglevel = 4,
+            location_set = 'gridcell',
+            history_table = 'development_event_history',
+            vacancy_table = 'target_vacancy',
+            output_results = 'dptm_results'):
+        self.debuglevel = debuglevel
+        self.location_set = location_set
+        self.history_table = history_table
+        self.vacancy_table = vacancy_table
+        self.output_results = output_results
+        
     def execute(self):        
         return Configuration({
             'import': {
