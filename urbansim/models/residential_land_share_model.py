@@ -41,8 +41,9 @@ class ResidentialLandShareModel(RegressionModel):
             data_objects=None, run_config=None, debuglevel=0):
         """ For info on the arguments see RegressionModel.
         """
-        regression_outcome = RegressionModel.run(self, specification, coefficients, dataset, index, chunk_specification, data_objects,
-                                     run_config, debuglevel)
+        regression_outcome = RegressionModel.run(self, specification, coefficients, dataset, 
+                                index=index, chunk_specification=chunk_specification, data_objects=data_objects,
+                                run_config=run_config, debuglevel=debuglevel)
         if (regression_outcome == None) or (regression_outcome.size <=0):
             return regression_outcome
         if index == None:
