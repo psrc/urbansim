@@ -21,6 +21,8 @@ from PyQt4.QtXml import *
 from config.opusXMLTree import OpusXMLTree
 from config.opusFileTree import OpusFileTree
 
+import os
+
 # Main class for the toolbox
 class ToolboxBase(object):
   def __init__(self, parent):
@@ -96,13 +98,14 @@ class ToolboxBase(object):
       self.xml_file = xml_file
       self.configFile = QFile(xml_file)
       if self.configFile.open(QIODevice.ReadWrite):
+        self.opusDataPath = os.getenv("OPUS_DATA_PATH")
         self.doc = QDomDocument()
         self.doc.setContent(self.configFile)
         self.resultsManagerTree = OpusXMLTree(self,"results_manager",self.parent.resultsmanager_page.layout())    
         self.modelManagerTree = OpusXMLTree(self,"model_manager",self.parent.modelmanager_page.layout())    
         self.runManagerTree = OpusXMLTree(self,"scenario_manager",self.parent.runmanager_page.layout())    
         self.dataManagerTree = OpusXMLTree(self,"data_manager",self.parent.datamanager_xmlconfig.layout())
-        self.dataManagerFileTree = OpusFileTree(self,self.parent.datamanager_dirview.layout())
+        self.dataManagerFileTree = OpusFileTree(self,self.opusDataPath,self.parent.datamanager_dirview.layout())
       else:
         print "Error reading config"
     else:
