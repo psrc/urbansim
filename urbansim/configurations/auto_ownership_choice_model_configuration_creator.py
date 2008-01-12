@@ -28,15 +28,15 @@ class AutoOwnershipChoiceModelConfigurationCreator(object):
                  coefficients_table = 'auto_ownership_choice_model_coefficients',
                  specification_table = 'auto_ownership_choice_model_specification'):
         
-        debuglevel = debuglevel
-        agent_set = agent_set
-        records_per_chunk = records_per_chunk
-        estimation_procedure = estimation_procedure
-        choice_attribute_name = choice_attribute_name
-        choice_set = choice_set
+        self.debuglevel = debuglevel
+        self.agent_set = agent_set
+        self.records_per_chunk = records_per_chunk
+        self.estimation_procedure = estimation_procedure
+        self.choice_attribute_name = choice_attribute_name
+        self.choice_set = choice_set
         
-        coefficients_table = coefficients_table
-        specification_table = specification_table
+        self.coefficients_table = coefficients_table
+        self.specification_table = specification_table
         
     def execute(self):
         # Names of intermediate objects used to get data between steps
