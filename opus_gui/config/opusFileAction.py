@@ -30,6 +30,9 @@ class OpusFileAction(object):
         
         self.actPlaceHolder = QAction(self.applicationIcon, "Placeholder", self.xmlFileObject.mainwindow)
         QObject.connect(self.actPlaceHolder, SIGNAL("triggered()"), self.placeHolderAction)
+
+        self.actOpenTextFile = QAction(self.applicationIcon, "Open Text File", self.xmlFileObject.mainwindow)
+        QObject.connect(self.actOpenTextFile, SIGNAL("triggered()"), self.openTextFile)
         
         QObject.connect(self.xmlFileObject.treeview, SIGNAL("customContextMenuRequested(const QPoint &)"),
                         self.processCustomMenu)
@@ -37,10 +40,35 @@ class OpusFileAction(object):
     def placeHolderAction(self):
         print "placeHolderAction pressed with column = %s" % \
               (self.currentColumn)
-        
+
+    def openTextFile(self):
+        print "openTextFile pressed with column = %s and item = %s" % \
+              (self.currentColumn, self.xmlFileObject.model.filePath(self.currentIndex))
+        if self.xmlFileObject.mainwindow.editorStuff:
+            print "Loading into qscintilla..."
+            filename = self.xmlFileObject.model.filePath(self.currentIndex)
+            self.xmlFileObject.mainwindow.editorStuff.clear()
+            try:
+                f = open(filename,'r')
+            except:
+                return
+            for l in f.readlines():
+                self.xmlFileObject.mainwindow.editorStuff.append(l)
+            f.close()
+            self.xmlFileObject.mainwindow.editorStatusLabel.setText(QString(filename))
+
     def processCustomMenu(self, position):
         self.currentColumn = self.xmlFileObject.treeview.indexAt(position).column()
         self.currentIndex = self.xmlFileObject.treeview.indexAt(position)
-        self.menu = QMenu(self.xmlFileObject.mainwindow)
-        self.menu.addAction(self.actPlaceHolder)
-        self.menu.exec_(QCursor.pos())
+        if self.xmlFileObject.model.isDir(self.currentIndex):
+            # Do stuff for directories
+            pass
+        elif self.xmlFileObject.model.fileInfo(self.currentIndex).suffix() == "txt":
+            self.menu = QMenu(self.xmlFileObject.mainwindow)
+            self.menu.addAction(self.actOpenTextFile)
+            self.menu.exec_(QCursor.pos())
+        else:
+            # got something we werent expecting... just return with no menu
+            self.menu = QMenu(self.xmlFileObject.mainwindow)
+            self.menu.addAction(self.actPlaceHolder)
+            self.menu.exec_(QCursor.pos())
