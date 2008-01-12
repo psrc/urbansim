@@ -46,16 +46,18 @@ class TestDistributeUnplacedJobsModelConfigurationCreator(opus_unittest.OpusTest
                 },
             'init': {
                 'arguments': {'debuglevel': 'debuglevel',
-                              'dataset_pool': 'dataset_pool'},
-                'name': 'RegionalDistributeUnplacedJobsModel'
+                              'dataset_pool': 'dataset_pool',
+                              'filter':None},
+                'name': 'RegionalDistributeUnplacedJobsModel',
                 },
             'run': {
                 'arguments': {
                     'agent_set': 'job',
                     'data_objects': 'datasets',
-                    'location_set': 'gridcell'
+                    'location_set': 'gridcell',
+                    'agents_filter':None
                     }
-                }
+                },
             })
         
         result = creator.execute()
