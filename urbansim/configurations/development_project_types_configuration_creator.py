@@ -14,21 +14,18 @@
 
 from numpy import array
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait, Dict, Instance
-
 from opus_core.configuration import Configuration
 
 from urbansim.configurations.development_project_type_configuration_creator \
     import DevelopmentProjectTypeConfigurationCreator
 
 
-class DevelopmentProjectTypesConfigurationCreator(HasStrictTraits):
-    development_project_type_set = Dict(Str, 
-        Instance(DevelopmentProjectTypeConfigurationCreator))
+class DevelopmentProjectTypesConfigurationCreator(object):
     
     _model_name = 'development_project_types'
     
     def __init__(self, *args, **kwargs):
+        self.development_project_type_set = {}
         for development_project_type, config in kwargs.iteritems():
             self.development_project_type_set[development_project_type] = config
     

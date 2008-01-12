@@ -12,41 +12,90 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait, Bool
-
 from opus_core.configuration import Configuration
 from opus_core.misc import get_string_or_None
 
-class EmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
-    agent_set = Str('job')
-    sample_size_locations = Int(30)
-    debuglevel = Trait('debuglevel', Str, Int)
-    sampler = Trait('opus_core.samplers.weighted_sampler', None, Str)
-    choices = Str('urbansim.lottery_choices')
-    location_set = Str('gridcell')
-    portion_to_unplace = Float(1/12.)
-    records_per_chunk = Int(50000)
-    attribute_to_group_by = Str('job_building_type.name')
-    agents_for_estimation_table = Trait('jobs_for_estimation', None, Str)
-    filter_for_estimation = Trait(None, None, Str)
-    filter = Trait(None, None, Str)
-    capacity_string = Trait('vacant_SSS_job_space', None, Str)
-    compute_capacity_flag = Bool(True)
-    estimation_weight_string = Trait('total_number_of_possible_SSS_jobs', None, Str)
-    estimation_size_agents = Float(1.)
-    agent_units_string = Trait(None, None, Str)
-    number_of_units_string = Trait('total_number_of_possible_SSS_jobs', None, Str)
-    lottery_max_iterations = Int(3)
-    variable_package = Trait("urbansim", Str, Str)
-    maximum_runs = Int(3)
-    input_index = Str('erm_index')
-    estimation_procedure = Str('opus_core.bhhh_mnl_estimation')
-    
-    coefficients_table = Str('employment_location_choice_model_coefficients')
-    specification_table = Str('employment_location_choice_model_specification')
+class EmploymentLocationChoiceModelConfigurationCreator(object):
+    agent_set = 'job'
+    sample_size_locations = 30
+    debuglevel = 'debuglevel'
+    sampler = 'opus_core.samplers.weighted_sampler'
+    choices = 'urbansim.lottery_choices'
+    location_set = 'gridcell'
+    portion_to_unplace = 1/12.0
+    records_per_chunk = 50000
+    attribute_to_group_by = 'job_building_type.name'
+    agents_for_estimation_table = 'jobs_for_estimation'
+    filter_for_estimation = None
+    filter = None
+    capacity_string = 'vacant_SSS_job_space'
+    compute_capacity_flag = True
+    estimation_weight_string = 'total_number_of_possible_SSS_jobs'
+    estimation_size_agents = 1.0
+    agent_units_string = None
+    number_of_units_string = 'total_number_of_possible_SSS_jobs'
+    lottery_max_iterations = 3
+    variable_package = "urbansim"
+    maximum_runs = 3
+    input_index = 'erm_index'
+    estimation_procedure = 'opus_core.bhhh_mnl_estimation'
+    coefficients_table = 'employment_location_choice_model_coefficients'
+    specification_table = 'employment_location_choice_model_specification'
     
     _model_name = 'employment_location_choice_model'
     
+    def __init__(self,
+                agent_set = 'job',
+                sample_size_locations = 30,
+                debuglevel = 'debuglevel',
+                sampler = 'opus_core.samplers.weighted_sampler',
+                choices = 'urbansim.lottery_choices',
+                location_set = 'gridcell',
+                portion_to_unplace = 1/12.0,
+                records_per_chunk = 50000,
+                attribute_to_group_by = 'job_building_type.name',
+                agents_for_estimation_table = 'jobs_for_estimation',
+                filter_for_estimation = None,
+                filter = None,
+                capacity_string = 'vacant_SSS_job_space',
+                compute_capacity_flag = True,
+                estimation_weight_string = 'total_number_of_possible_SSS_jobs',
+                estimation_size_agents = 1.0,
+                agent_units_string = None,
+                number_of_units_string = 'total_number_of_possible_SSS_jobs',
+                lottery_max_iterations = 3,
+                variable_package = "urbansim",
+                maximum_runs = 3,
+                input_index = 'erm_index',
+                estimation_procedure = 'opus_core.bhhh_mnl_estimation',
+                coefficients_table = 'employment_location_choice_model_coefficients',
+                specification_table = 'employment_location_choice_model_specification'):
+        self.agent_set = agent_set
+        self.sample_size_locations = sample_size_locations
+        self.debuglevel = debuglevel
+        self.sampler = sampler
+        self.choices = choices
+        self.location_set = location_set
+        self.portion_to_unplace = portion_to_unplace
+        self.records_per_chunk = records_per_chunk
+        self.attribute_to_group_by = attribute_to_group_by
+        self.agents_for_estimation_table = agents_for_estimation_table
+        self.filter_for_estimation = filter_for_estimation
+        self.filter = filter
+        self.capacity_string = capacity_string
+        self.compute_capacity_flag = compute_capacity_flag
+        self.estimation_weight_string = estimation_weight_string
+        self.estimation_size_agents = estimation_size_agents
+        self.agent_units_string = agent_units_string
+        self.number_of_units_string = number_of_units_string
+        self.lottery_max_iterations = lottery_max_iterations
+        self.variable_package = variable_package
+        self.maximum_runs = maximum_runs
+        self.input_index = input_index
+        self.estimation_procedure = estimation_procedure
+        self.coefficients_table = coefficients_table
+        self.specification_table = specification_table
+        
     def execute(self):
         # Names of intermediate objects used to get data between steps
         # in this model process.

@@ -14,20 +14,25 @@
 
 from numpy import array
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait, ListInt, Bool
-
 from opus_core.configuration import Configuration
 
 
-class DevelopmentProjectTypeConfigurationCreator(HasStrictTraits):
-    categories = ListInt([1, 2, 3, 5, 10, 20])
-    developable_maximum_unit_variable_full_name = Str('urbansim.gridcell.developable_maximum_residential_units')
-    developable_minimum_unit_variable_full_name = Str('urbansim.gridcell.developable_minimum_residential_units')
-    residential = Bool(True)
-    units = Str('residential_units')
-    
+class DevelopmentProjectTypeConfigurationCreator(object):
     _model_name = 'development_project_type'
     
+    def __init__(self,
+            categories = [1, 2, 3, 5, 10, 20],
+            developable_maximum_unit_variable_full_name = 'urbansim.gridcell.developable_maximum_residential_units',
+            developable_minimum_unit_variable_full_name = 'urbansim.gridcell.developable_minimum_residential_units',
+            residential = True,
+            units = 'residential_units'
+            ):
+        self.categories = categories
+        self.developable_maximum_unit_variable_full_name = developable_maximum_unit_variable_full_name
+        self.developable_minimum_unit_variable_full_name = developable_minimum_unit_variable_full_name
+        self.residential = residential
+        self.units = units
+        
     def execute(self):        
         return Configuration({
             'categories': array(self.categories),

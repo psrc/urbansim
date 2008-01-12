@@ -12,19 +12,24 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
 from opus_core.misc import get_string_or_None
 from opus_core.configuration import Configuration
 
 
-class DistributeUnplacedJobsModelConfigurationCreator(HasStrictTraits):
-    debuglevel = Trait('debuglevel', Str, Int)
-    agent_set = Str('job')
-    location_set = Str('gridcell')
-    agents_filter = Trait(None, None, Str)
-    filter = Trait(None, None, Str)
-    
+class DistributeUnplacedJobsModelConfigurationCreator(object):
     _model_name = 'distribute_unplaced_jobs_model'
+    
+    def __init__(self,
+                debuglevel = 'debuglevel',
+                agent_set = 'job',
+                location_set = 'gridcell',
+                agents_filter = None,
+                filter = None):
+        self.debuglevel = debuglevel
+        self.agent_set = agent_set
+        self.location_set = location_set
+        self.agents_filter = agents_filter
+        self.filter = filter
     
     def execute(self):        
         return Configuration({
