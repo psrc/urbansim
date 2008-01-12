@@ -12,24 +12,22 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait, ListInt
-
 from opus_core.configuration import Configuration
 
 
-class AutoOwnershipChoiceModelConfigurationCreator(HasStrictTraits):
-    debuglevel = Trait(0, Str, Int)
-    agent_set = Str('household')
-    records_per_chunk = Int(500)
-    estimation_procedure = Str('opus_core.bhhh_mnl_estimation')
-    choice_attribute_name = Str('cars')
-    choice_set = ListInt([0, 1, 2, 3])
+class AutoOwnershipChoiceModelConfigurationCreator(object):
+    debuglevel = 0
+    agent_set = 'household'
+    records_per_chunk = 500
+    estimation_procedure = 'opus_core.bhhh_mnl_estimation'
+    choice_attribute_name = 'cars'
+    choice_set = [0, 1, 2, 3]
     
-    coefficients_table = Str('auto_ownership_choice_model_coefficients')
-    specification_table = Str('auto_ownership_choice_model_specification')
+    coefficients_table = 'auto_ownership_choice_model_coefficients'
+    specification_table = 'auto_ownership_choice_model_specification'
 
-    _model_name = 'auto_ownership_choice_model'
-    
+    _model_name = 'auto_ownership_choice_model'        
+        
     def execute(self):
         # Names of intermediate objects used to get data between steps
         # in this model process.

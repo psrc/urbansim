@@ -12,26 +12,35 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
-
 from opus_core.configuration import Configuration
 
 
-class BuildingLocationChoiceModelConfigurationCreator(HasStrictTraits):
-    records_per_chunk = Int(500)
-    debuglevel = Trait('debuglevel', Str, Int)
-    agent_set = Str('building')
-    location_set = Str('gridcell')
-    sample_size_locations = Int(30)
-    attribute_to_group_by = Str('building_type.name')
-    
-    coefficients_table = Str('development_location_choice_model_coefficients')
-    specification_table = Str('development_location_choice_model_specification')
-
-    input_index = Str('brm_index')
-
+class BuildingLocationChoiceModelConfigurationCreator(object):
     _model_name = 'building_location_choice_model'
     
+    def __init__(self,
+            records_per_chunk = 500,
+            debuglevel = 'debuglevel',
+            agent_set = 'building',
+            location_set = 'gridcell',
+            sample_size_locations = 30,
+            attribute_to_group_by = 'building_type.name',
+            coefficients_table = 'development_location_choice_model_coefficients',
+            specification_table = 'development_location_choice_model_specification',
+            input_index = 'brm_index',
+            ):
+        self.records_per_chunk = records_per_chunk
+        self.debuglevel = debuglevel
+        self.agent_set = agent_set
+        self.location_set = location_set
+        self.sample_size_locations = sample_size_locations
+        self.attribute_to_group_by = attribute_to_group_by
+        
+        self.coefficients_table = coefficients_table
+        self.specification_table = specification_table
+    
+        self.input_index = input_index
+        
     def execute(self):
         # Names of intermediate objects used to get data between steps
         # in this model process.
