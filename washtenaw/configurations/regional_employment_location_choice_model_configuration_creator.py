@@ -12,16 +12,18 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import Str, Int
 from urbansim.configurations.employment_location_choice_model_configuration_creator import EmploymentLocationChoiceModelConfigurationCreator as USELCMCC
 
 class RegionalEmploymentLocationChoiceModelConfigurationCreator(USELCMCC):
-
-    input_index = Str('erm_index')
-    lottery_max_iterations = Int(5)
-    maximum_runs = Int(2)
     _model_name = 'regional_employment_location_choice_model'
-    
+
+    def __init__(self, input_index = 'erm_index', lottery_max_iterations = 5, maximum_runs = 2, *args, **kwargs):
+        USELCMCC.__init__(self, 
+                          input_index = input_index, 
+                          lottery_max_iterations = lottery_max_iterations, 
+                          maximum_runs = maximum_runs,
+                          *args, **kwargs)
+            
     def execute(self):
         conf = USELCMCC.execute(self)
         conf['import'] = {'washtenaw.models.%s' % self._model_name: 'RegionalEmploymentLocationChoiceModel'}

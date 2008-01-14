@@ -20,7 +20,7 @@ class DevelopmentProjectLocationChoiceModelConfigurationCreator(object):
 
     def __init__(self, 
                  project_type,
-                 records_per_chunk = (300),
+                 records_per_chunk = 300,
                  debuglevel = 'debuglevel',
                  location_set = 'gridcell',
                  events_for_estimation_table = 'development_event_history',

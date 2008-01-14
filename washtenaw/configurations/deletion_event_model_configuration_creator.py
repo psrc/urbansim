@@ -12,17 +12,20 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str
-
 from opus_core.configuration import Configuration
 
 
-class DeletionEventModelConfigurationCreator(HasStrictTraits):
-    location_set = Str('gridcell')
-    deletion_event_set = Str('deletion_event')
+class DeletionEventModelConfigurationCreator(object):
+
     
     _model_name = 'deletion_event_model'
     
+    def __init__(self,
+                location_set = 'gridcell',
+                deletion_event_set = 'deletion_event'):
+        self.location_set = location_set
+        self.deletion_event_set = deletion_event_set
+        
     def execute(self):        
         return Configuration({
             'import': {

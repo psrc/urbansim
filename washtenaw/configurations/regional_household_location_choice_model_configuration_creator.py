@@ -12,21 +12,27 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import Str, Int, Trait
 from urbansim.configurations.household_location_choice_model_configuration_creator import HouseholdLocationChoiceModelConfigurationCreator as USHLCMCC
 
 class RegionalHouseholdLocationChoiceModelConfigurationCreator(USHLCMCC):
-
-    input_index = Str('hrm_index')
-    nchunks = Int(1)
-    #number_of_units_string = Trait(None, None, Str)
-    #number_of_agents_string = Trait(None, None, Str)
-    lottery_max_iterations = Int(5)
-    records_per_chunk = Int(50000)
-    maximum_runs = Int(3)
     
     _model_name = 'regional_household_location_choice_model'
-    
+
+    def __init__(self, 
+                 input_index = 'hrm_index', 
+                 lottery_max_iterations = 5, 
+                 maximum_runs = 3, 
+                 nchunks = 1,
+                 records_per_chunk = 50000,
+                 *args, **kwargs):
+        USHLCMCC.__init__(self, 
+                          input_index = input_index, 
+                          lottery_max_iterations = lottery_max_iterations, 
+                          maximum_runs = maximum_runs,
+                          nchunks = nchunks,
+                          *args, **kwargs)
+        self.records_per_chunk = records_per_chunk
+            
     def execute(self):
         conf = USHLCMCC.execute(self)
         conf['import'] = {'washtenaw.models.%s' % self._model_name: 'RegionalHouseholdLocationChoiceModel'}

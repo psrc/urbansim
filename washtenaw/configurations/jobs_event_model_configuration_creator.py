@@ -12,18 +12,21 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str
-
 from opus_core.configuration import Configuration
 
 
-class JobsEventModelConfigurationCreator(HasStrictTraits):
-    location_set = Str('gridcell')
-    agent_set = Str('job')
-    agent_event_set = Str('jobs_event')
-    
+class JobsEventModelConfigurationCreator(object):
+
     _model_name = 'agent_event_model'
-    
+
+    def __init__(self,
+                location_set = 'gridcell',
+                agent_set = 'job',
+                agent_event_set = 'jobs_event'):
+        self.location_set = location_set
+        self.agent_event_set = agent_event_set
+        self.agent_set = agent_set
+            
     def execute(self):        
         return Configuration({
             'import': {
