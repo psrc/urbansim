@@ -635,6 +635,13 @@ def convert_lower_case_with_underscores_into_camel_case(name):
     """
     return ''.join(map(lambda s: s.capitalize(), name.split('_')))
 
+def get_camel_case_class_name_from_opus_path(opus_path):
+    """return CamelCase class name from opus_path.
+    """
+    class_name = opus_path.split('.')[-1]
+    class_name = convert_lower_case_with_underscores_into_camel_case(class_name)    
+    return class_name
+
 def create_import_for_camel_case_class(opus_path, import_as=None):
     """Creates statement to import this class.
 
@@ -643,16 +650,14 @@ def create_import_for_camel_case_class(opus_path, import_as=None):
     Class name is CamelCase version of module name.
     To do import, exec returned statement.
     """
-    class_name = opus_path.split('.')[-1]
-    class_name = convert_lower_case_with_underscores_into_camel_case(class_name)
+    class_name = get_camel_case_class_name_from_opus_path(opus_path)
     if import_as is not None:
         return 'from %s import %s as %s' % (opus_path, class_name, import_as)
     else:
         return 'from %s import %s' % (opus_path, class_name)
 
 def get_config_from_opus_path(opus_path):
-    class_name = opus_path.split('.')[-1]
-    class_name = convert_lower_case_with_underscores_into_camel_case(class_name)
+    class_name = get_camel_case_class_name_from_opus_path(opus_path)
     import_stmt = 'from %s import %s' % (opus_path, class_name)
     exec(import_stmt)
 

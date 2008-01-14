@@ -17,10 +17,11 @@ from opus_core.session_configuration import SessionConfiguration
 from opus_core.resources import Resources
 from opus_core.simulation_state import SimulationState
 from opus_core.datasets.dataset_factory import DatasetFactory
-from psrc.travel_model_input_file_writer import TravelModelInputFileWriter
+from opus_core.class_factory import ClassFactory
 from opus_core.logger import logger
 from opus_core.store.attribute_cache import AttributeCache
 from opus_emme2.models.abstract_emme2_travel_model import AbstractEmme2TravelModel
+from opus_core.misc import get_camel_case_class_name_from_opus_path
         
 class GetCacheDataIntoEmme2(AbstractEmme2TravelModel):
     """Get needed emme/2 data from UrbanSim cache into inputs for travel model.
@@ -48,7 +49,6 @@ class GetCacheDataIntoEmme2(AbstractEmme2TravelModel):
         hh_set = dataset_pool.get_dataset('household')
         zone_set = dataset_pool.get_dataset('zone')
         job_set = dataset_pool.get_dataset('job')
-        taz_col_set = dataset_pool.get_dataset('constant_taz_column')
         locations_to_disaggregate = config['travel_model_configuration']['locations_to_disaggregate']
         len_locations_to_disaggregate = len(locations_to_disaggregate)
         if len_locations_to_disaggregate > 0:
@@ -61,26 +61,23 @@ class GetCacheDataIntoEmme2(AbstractEmme2TravelModel):
             else:
                 intermediates_string = ""
             hh_set.compute_variables(['%s = household.disaggregate(%s.%s %s)' % (zone_set.get_id_name()[0],
-                                                                              primary_location, zone_set.get_id_name()[0],
+                                                                                 primary_location, zone_set.get_id_name()[0],
                                                                                  intermediates_string)], 
-                                     dataset_pool=dataset_pool)
+                                      dataset_pool=dataset_pool)
             job_set.compute_variables(['%s = job.disaggregate(%s.%s %s)' % (zone_set.get_id_name()[0],
-                                                                              primary_location, zone_set.get_id_name()[0],
-                                                                                 intermediates_string)], 
-                                     dataset_pool=dataset_pool)
+                                                                            primary_location, zone_set.get_id_name()[0],
+                                                                            intermediates_string)], 
+                                       dataset_pool=dataset_pool)
         
-        return self._call_input_file_writer(config, year, job_set, zone_set, hh_set, taz_col_set)
+        return self._call_input_file_writer(config, year, dataset_pool)
 
-    def _call_input_file_writer(self, config, year, job_set, zone_set, hh_set, taz_col_set):
-        max_zone_id = zone_set.get_id_attribute().max()
-        tm_file_writer = TravelModelInputFileWriter()
-        tripgen_dir = self.get_emme2_dir(config, year, 'tripgen')
-        logger.log_status('tripgen dir: %s' % tripgen_dir)
+    def _call_input_file_writer(self, config, year, dataset_pool):
+        writer_module = config['travel_model_configuration'].get('travel_model_input_file_writer')
+        writer_class = get_camel_case_class_name_from_opus_path(writer_module)
+        file_writer = ClassFactory().get_class( writer_module, class_name=writer_class )
+        current_year_emme2_dir = self.get_emme2_dir(config, year)
         resulting_files = []
-        filename = tm_file_writer.create_tripgen_travel_model_input_file(job_set, hh_set,
-                                                              taz_col_set, max_zone_id,
-                                                              tripgen_dir,
-                                                              year)
+        filename = file_writer.run(current_year_emme2_dir, year, dataset_pool)
         resulting_files.append(filename)
         return resulting_files
     

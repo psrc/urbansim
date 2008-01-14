@@ -33,6 +33,11 @@ def create_travel_model_configuration(travel_model_dir_name,
     'locations_to_disaggregate is a list of dataset names over which zone_id of households and jobs will be determined.
     """
     
+    """a class handling computing urbansim variables for travel model and writing them to a file travel model uses as input
+    the variables and the file name are specified in the class
+    """
+    travel_model_input_file_writer = 'psrc.travel_model_input_file_writer'
+    
     """ emme2_matricies and emmission_emme2_macros should be passed in as parameters
     from psrc (or whoever is the specific client of emme2) run_config"""
     emme2_matricies = {
@@ -135,6 +140,7 @@ def create_travel_model_configuration(travel_model_dir_name,
         'tvehrpt.mac': {'bank': 'bank1', 'scenario':-1},
         }                    
     travel_model_configuration = {
+        'travel_model_input_file_writer':travel_model_input_file_writer,
         'matrix_variable_map':emme2_matricies,
         'reports_to_copy': reports,
         'emmission_emme2_macros':emmission_emme2_macros,
