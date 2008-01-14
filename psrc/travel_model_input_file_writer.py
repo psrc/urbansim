@@ -24,7 +24,7 @@ from opus_core.variables.variable_name import VariableName
 class TravelModelInputFileWriter(object):
     """Write urbansim simulation information into a (file) format that the emme2 travel model understands. """
 
-    def run(self, current_year_emme2_dir, current_year, dataset_pool):
+    def run(self, current_year_emme2_dir, current_year, dataset_pool, config=None):
         """Writes to the an emme2 input file in the [current_year_emme2_dir]/tripgen/inputtg/TAZDATA.MA2.
         """
         
@@ -128,12 +128,15 @@ m matrix="hhemp"
                 line_template = "%4d    %3d: %8.2f \n"
                 for taz_id in zone_set.get_id_attribute():
                     for i in range(101, 125):
-                        newfile.write(line_template % (taz_id, i, zone_set.get_attribute_by_id(variables_list[i-101], taz_id)))
+                        newfile.write(line_template % (taz_id, i, self._get_value_for_zone(taz_id, zone_set, variables_list[i-101])))
             finally:
                 newfile.close()
         finally:
             logger.end_block()
         return tm_input_file
+
+    def _get_value_for_zone(self, zone_id, zone_set, variable_name):
+        return zone_set.get_attribute_by_id(variable_name, zone_id)
 
     def _decade_floor(self, year):
         return int(round(year - 5, -1))
