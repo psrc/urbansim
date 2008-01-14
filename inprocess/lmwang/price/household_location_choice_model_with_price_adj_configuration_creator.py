@@ -12,34 +12,51 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
-
 from opus_core.configuration import Configuration
 from opus_core.misc import get_string_or_None
 
-class HouseholdLocationChoiceModelWithPriceAdjConfigurationCreator(HasStrictTraits):
-    agent_set = Str('household')
-    debuglevel = Trait('debuglevel', Str, Int)
-    sampler = Trait('opus_core.samplers.weighted_sampler', None, Str) 
-    choices = Str('urbansim.lottery_choices')
-    location_set = Str('gridcell')
-    capacity_string = Trait('vacant_residential_units', None, Str)
-    sample_size_locations = Int(30)
-    portion_to_unplace = Float(1/12.0)
-    nchunks = Int(12)
-    agents_for_estimation_table_name = Str('households_for_estimation')
-    number_of_units_string = Trait('residential_units', None, Str)
-    number_of_agents_string = Trait('number_of_households', None, Str)
-    lottery_max_iterations = Int(3)
-    maximum_runs = Int(5)
-    demand_string = Trait('demand_string', None, Str)
-    
-    coefficients_table = Str('household_location_choice_model_coefficients')
-    specification_table = Str('household_location_choice_model_specification')
-    
-    input_index = Str('hrm_index')
-    
+class HouseholdLocationChoiceModelWithPriceAdjConfigurationCreator(object):
+        
     _model_name = 'household_location_choice_model_with_price_adj'
+
+    def __init__(self,
+                agent_set = 'household',
+                debuglevel = 'debuglevel',
+                coefficients_table = 'household_location_choice_model_coefficients',
+                specification_table = 'household_location_choice_model_specification',
+                location_set = 'gridcell',
+                sampler = 'opus_core.samplers.weighted_sampler',
+                choices = 'urbansim.lottery_choices',
+                capacity_string = 'vacant_residential_units',
+                sample_size_locations = 30,
+                portion_to_unplace = 1/12.0,
+                nchunks = 12,
+                agents_for_estimation_table_name = 'households_for_estimation',
+                number_of_units_string = 'residential_units',
+                number_of_agents_string = 'number_of_households',
+                lottery_max_iterations = 3,
+                maximum_runs = 5,
+                input_index = 'hrm_index',
+                demand_string = 'demand_string'):
+        self.agent_set = agent_set
+        self.debuglevel = debuglevel
+        self.coefficients_table = coefficients_table
+        self.specification_table = specification_table
+        self.location_set = location_set
+        self.sampler = sampler
+        self.choices = choices
+        self.capacity_string = capacity_string
+        self.sample_size_locations = sample_size_locations
+        self.portion_to_unplace = portion_to_unplace
+        self.nchunks = nchunks
+        self.agents_for_estimation_table_name = agents_for_estimation_table_name
+        self.number_of_units_string = number_of_units_string
+        self.number_of_agents_string = number_of_agents_string
+        self.lottery_max_iterations = lottery_max_iterations
+        self.maximum_runs = maximum_runs
+        self.demand_string = demand_string
+        self.input_index = input_index    
+
     
     def execute(self):
         _coefficients = 'coefficients'
