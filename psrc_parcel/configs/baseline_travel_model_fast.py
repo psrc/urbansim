@@ -15,7 +15,7 @@
 from baseline import Baseline
 
 class BaselineTravelModelFast(Baseline):
-    multiple_runs=True
+
     def __init__(self):
         config = Baseline()
 
