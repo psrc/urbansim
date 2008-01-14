@@ -61,7 +61,7 @@ class RegressionModelWithAdditionConstantVariation(RegressionModel):
             index = arange(dataset.size())
         original_data = dataset.get_attribute_by_index(self.outcome_attribute, index)
         
-        outcome = RegressionModel.run(self, specification, coefficients, dataset, index, initial_values=original_data, **kwargs)
+        outcome = RegressionModel.run(self, specification, coefficients, dataset, index, initial_values=original_data.astype('float32'), **kwargs)
         initial_error_name = "_init_error_%s" % self.outcome_attribute.get_alias()
 
 

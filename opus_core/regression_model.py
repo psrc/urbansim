@@ -126,7 +126,7 @@ class RegressionModel(ChunkModel):
             if (data[submodel].shape[0] > 0) and (data[submodel].size > 0): # observations for this submodel available
                 outcome[self.observations_mapping[submodel]] = \
                     self.regression.run(data[submodel], coef[submodel].get_coefficient_values()[0,:],
-                        resources=self.run_config).astype(float32)
+                        resources=self.run_config).astype(outcome.dtype)
         return outcome
 
     def correct_infinite_values(self, dataset, outcome_attribute_name, maxvalue=1e+38):
