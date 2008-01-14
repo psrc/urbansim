@@ -32,6 +32,7 @@ aliases = [
    "building_sqft_per_unit=safe_array_divide(urbansim_parcel.building.building_sqft,building.residential_units)",
    "unit_price = building.disaggregate(urbansim_parcel.parcel.unit_price)",
    "zone_id = building.disaggregate(parcel.zone_id)",
+   "faz_id = building.disaggregate(zone.faz_id)",
    "has_vacant_residential_units = urbansim_parcel.building.vacant_residential_units > 0",
    "is_governmental = building.disaggregate(building_type.generic_building_type_description == 'government')",
     ]
