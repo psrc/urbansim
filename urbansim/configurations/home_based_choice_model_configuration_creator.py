@@ -12,26 +12,34 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait, ListInt
-
 from opus_core.configuration import Configuration
 
 
-class HomeBasedChoiceModelConfigurationCreator(HasStrictTraits):
-    debuglevel = Trait(0, Str, Int)
-    records_per_chunk = Int(500)
-    agent_set = Str('person')
-    estimation_procedure = Str('opus_core.bhhh_mnl_estimation')
-    choice_attribute_name = Str('work_nonhome_based')
-    choice_set = ListInt([0, 1])
-    agents_for_estimation_table = Str('persons_for_estimation')
-    filter = Str('None')
-    
-    coefficients_table = Str('home_based_choice_model_coefficients')
-    specification_table = Str('home_based_choice_model_specification')
-    
+class HomeBasedChoiceModelConfigurationCreator(object):
     _model_name = 'home_based_choice_model'
-    
+
+    def __init__(self,
+                agent_set = 'person',
+                debuglevel = 0,
+                coefficients_table = 'home_based_choice_model_coefficients',
+                specification_table = 'home_based_choice_model_specification',
+                records_per_chunk = 500,
+                agents_for_estimation_table = 'persons_for_estimation',
+                estimation_procedure = 'opus_core.bhhh_mnl_estimation',
+                choice_attribute_name = 'work_nonhome_based',
+                choice_set = [0, 1],
+                filter = 'None'):
+        self.agent_set = agent_set
+        self.debuglevel = debuglevel
+        self.coefficients_table = coefficients_table
+        self.specification_table = specification_table
+        self.records_per_chunk = records_per_chunk
+        self.agents_for_estimation_table = agents_for_estimation_table
+        self.estimation_procedure = estimation_procedure
+        self.choice_attribute_name = choice_attribute_name
+        self.choice_set = choice_set
+        self.filter = filter
+        
     def execute(self):
         # Names of intermediate objects used to get data between steps
         # in this model process.

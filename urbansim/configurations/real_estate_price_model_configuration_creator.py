@@ -12,24 +12,40 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
-
 from opus_core.configuration import Configuration
 
 
-class RealEstatePriceModelConfigurationCreator(HasStrictTraits):
-    debuglevel = Trait('debuglevel', Str, Int)
-    nchunks = Int(1)
-    dataset = Str('building')
-    outcome_attribute = Str('ln_unit_price=ln(urbansim.building.avg_val_per_unit)')
-    submodel_string = Str('building_type_id')
-    filter_variable = Str('building.avg_val_per_unit')
-    
-    coefficients_table = Str('real_estate_price_model_coefficients')
-    specification_table = Str('real_estate_price_model_specification')
+class RealEstatePriceModelConfigurationCreator(object):
+    debuglevel = 'debuglevel'
+    nchunks = 1
+    dataset = 'building'
+    outcome_attribute = 'ln_unit_price=ln(urbansim.building.avg_val_per_unit)'
+    submodel_string = 'building_type_id'
+    filter_variable = 'building.avg_val_per_unit'
+    coefficients_table = 'real_estate_price_model_coefficients'
+    specification_table = 'real_estate_price_model_specification'
     
     _model_name = 'real_estate_price_model'
-    
+
+    def __init__(self,
+                debuglevel = 'debuglevel',
+                nchunks = 1,
+                dataset = 'building',
+                outcome_attribute = 'ln_unit_price=ln(urbansim.building.avg_val_per_unit)',
+                submodel_string = 'building_type_id',
+                filter_variable = 'building.avg_val_per_unit',
+                coefficients_table = 'real_estate_price_model_coefficients',
+                specification_table = 'real_estate_price_model_specification'
+                ):
+        self.debuglevel = debuglevel
+        self.nchunks = nchunks
+        self.dataset = dataset
+        self.outcome_attribute = outcome_attribute
+        self.submodel_string = submodel_string
+        self.filter_variable = filter_variable
+        self.coefficients_table = coefficients_table
+        self.specification_table = specification_table
+        
     def execute(self):
         # Names of intermediate objects used to get data between steps
         # in this model process.

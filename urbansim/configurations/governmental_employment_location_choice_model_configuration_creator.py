@@ -12,18 +12,24 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
 from opus_core.misc import get_string_or_None
 from opus_core.configuration import Configuration
 
 
-class GovernmentalEmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):
-    agent_set = Str('job')
-    location_set = Str('gridcell')
-    debuglevel = Trait('debuglevel', Str, Int)
-    filter = Trait(None, None, Str)
-    input_index = Str('erm_index')
+class GovernmentalEmploymentLocationChoiceModelConfigurationCreator(object):
     
+    def __init__(self,
+                agent_set = 'job',
+                location_set = 'gridcell',
+                debuglevel = 'debuglevel',
+                filter = None,
+                input_index = 'erm_index'):
+        self.agent_set = agent_set
+        self.location_set = location_set
+        self.debuglevel = debuglevel
+        self.filter = filter
+        self.input_index = input_index
+        
     def execute(self):        
         return Configuration({
             'import': {'urbansim.models.scaling_jobs_model': 'ScalingJobsModel'},

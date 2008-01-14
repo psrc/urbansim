@@ -12,18 +12,22 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
-
 from opus_core.configuration import Configuration
 
 
-class EmploymentTransitionModelConfigurationCreator(HasStrictTraits):
-    debuglevel = Trait('debuglevel', Str, Int)
-    job_set = Str('job')
-    job_building_types = Str('job_building_type')
-    location_id_name = Str('grid_id')
+class EmploymentTransitionModelConfigurationCreator(object):    
     _model_name = 'employment_transition_model'
     
+    def __init__(self,
+                debuglevel = 'debuglevel',
+                job_set = 'job',
+                job_building_types = 'job_building_type',
+                location_id_name = 'grid_id'):
+        self.debuglevel = debuglevel
+        self.job_set = job_set
+        self.job_building_types = job_building_types
+        self.location_id_name = location_id_name
+        
     def execute(self):
         # Names of intermediate objects used to get data between steps
         # in this model process.

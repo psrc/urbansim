@@ -12,22 +12,28 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
-
 from opus_core.configuration import Configuration
 
 
-class ResidentialLandShareModelConfigurationCreator(HasStrictTraits):
-    dataset = Str('gridcell')
-    debuglevel = Trait('debuglevel', Str, Int)
-    
-    coefficients_table = Str('residential_land_share_model_coefficients')
-    specification_table = Str('residential_land_share_model_specification')
-    estimation_procedure = Str("opus_core.estimate_linear_regression")
-    input_changed_indices = Str('changed_indices')
+class ResidentialLandShareModelConfigurationCreator(object):
     
     _model_name = 'residential_land_share_model'
-    
+
+    def __init__(self,
+                dataset = 'gridcell',
+                debuglevel = 'debuglevel',
+                coefficients_table = 'residential_land_share_model_coefficients',
+                specification_table = 'residential_land_share_model_specification',
+                estimation_procedure = "opus_core.estimate_linear_regression",
+                input_changed_indices = 'changed_indices'
+                ):
+        self.dataset = dataset
+        self.debuglevel = debuglevel
+        self.coefficients_table = coefficients_table
+        self.specification_table = specification_table
+        self.estimation_procedure = estimation_procedure
+        self.input_changed_indices = input_changed_indices
+        
     def execute(self):
         # Names of intermediate objects used to get data between steps
         # in this model process.

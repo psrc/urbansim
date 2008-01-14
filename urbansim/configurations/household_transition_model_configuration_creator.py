@@ -12,17 +12,18 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
-
 from opus_core.configuration import Configuration
 
 
-class HouseholdTransitionModelConfigurationCreator(HasStrictTraits):
-    debuglevel = Trait('debuglevel', Str, Int)
-    household_set = Str('household')
-    
+class HouseholdTransitionModelConfigurationCreator(object):
     _model_name = 'household_transition_model'
     
+    def __init__(self,
+                 debuglevel = 'debuglevel',
+                 household_set = 'household'):
+        self.debuglevel = debuglevel
+        self.household_set = household_set
+        
     def execute(self):
         # Names of intermediate objects used to get data between steps
         # in this model process.

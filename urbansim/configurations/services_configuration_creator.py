@@ -13,19 +13,24 @@
 # 
 
 import os
-from enthought.traits.api import HasStrictTraits, Str, Bool, Int, Float, Trait, ListInt
 from opus_core.configuration import Configuration
 
 
-class ServicesConfigurationCreator(HasStrictTraits):
-    host_name = Str('localhost')
-    user_name = Trait(None, None, Str)
-    db_password = Str('')
-    use_environment_variables = Bool(True)
-    database_name = Str('services')
-    
+class ServicesConfigurationCreator(object):    
     _model_name = 'services_configuration'
     
+    def __init__(self,
+                host_name = 'localhost',
+                user_name = None,
+                db_password = '',
+                use_environment_variables = True,
+                database_name = 'services'):
+        self.host_name = host_name
+        self.user_name = user_name
+        self.db_password = db_password
+        self.use_environment_variables = use_environment_variables
+        self.database_name = database_name
+        
     def execute(self):
         if self.use_environment_variables:
             host = os.environ.get('MYSQLHOSTNAME')

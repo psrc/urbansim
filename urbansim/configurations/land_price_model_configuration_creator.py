@@ -12,23 +12,30 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
-
 from opus_core.configuration import Configuration
 
 
-class LandPriceModelConfigurationCreator(HasStrictTraits):
-    debuglevel = Trait('debuglevel', Str, Int)
-    dataset = Str('gridcell')
-    nchunks = Int(1)
-    threshold = Int(1000)
-    estimation_procedure = Str("opus_core.estimate_linear_regression")
-    
-    coefficients_table = Str('land_price_model_coefficients')
-    specification_table = Str('land_price_model_specification')
-    
+class LandPriceModelConfigurationCreator(object):    
     _model_name = 'land_price_model'
-    
+
+    def __init__(self,
+                debuglevel = 'debuglevel',
+                nchunks = 1,
+                dataset = 'gridcell',
+                coefficients_table = 'land_price_model_coefficients',
+                specification_table = 'land_price_model_specification',
+                threshold = 1000,
+                estimation_procedure = "opus_core.estimate_linear_regression"
+                ):
+        self.debuglevel = debuglevel
+        self.nchunks = nchunks
+        self.dataset = dataset
+        self.threshold = threshold
+        self.estimation_procedure = estimation_procedure
+        self.coefficients_table = coefficients_table
+        self.specification_table = specification_table
+        
+            
     def execute(self):
         # Names of intermediate objects used to get data between steps
         # in this model process.

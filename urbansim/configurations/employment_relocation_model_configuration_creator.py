@@ -12,22 +12,29 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
-
 from opus_core.configuration import Configuration
 from opus_core.misc import get_string_or_None
 
-class EmploymentRelocationModelConfigurationCreator(HasStrictTraits):
-    debuglevel = Trait('debuglevel', Str, Int)
-    agent_set = Str('job')
-    what = Str('jobs')
-    rate_table = Trait('annual_relocation_rates_for_jobs', None, Str)
-    location_id_name = Str('grid_id')
-    probabilities = Trait('urbansim.employment_relocation_probabilities', None, Str)
-    output_index = Str('erm_index')
+class EmploymentRelocationModelConfigurationCreator(object):
     
     _model_name = 'employment_transition_model'
-    
+
+    def __init__(self,
+                debuglevel = 'debuglevel',
+                agent_set = 'job',
+                what = 'jobs',
+                rate_table = 'annual_relocation_rates_for_jobs',
+                location_id_name = 'grid_id',
+                probabilities = 'urbansim.employment_relocation_probabilities',
+                output_index = 'erm_index'):
+        self.debuglevel = debuglevel
+        self.agent_set = agent_set
+        self.what = what
+        self.rate_table = rate_table
+        self.location_id_name = location_id_name
+        self.probabilities = probabilities
+        self.output_index = output_index
+        
     def execute(self):
         # Names of intermediate objects used to get data between steps
         # in this model process.

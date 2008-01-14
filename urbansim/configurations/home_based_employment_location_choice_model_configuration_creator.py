@@ -12,30 +12,44 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
-
 from opus_core.configuration import Configuration
 
 
-class HomeBasedEmploymentLocationChoiceModelConfigurationCreator(HasStrictTraits):    
-    debuglevel = Trait('debuglevel', Str, Int)
-    agent_set = Str('job')
-    location_set = Str('gridcell')
-    portion_to_unplace = Float(1/12.)
-    records_per_chunk = Int(50000)
-    choices = Str('urbansim.lottery_choices')
-    sample_size_locations = Int(30)
-    attribute_to_group_by = Str('job_building_type.name')
-    estimation_weight_string = Str('residential_units')
-    number_of_units_string = Str('residential_units')
-    agents_for_estimation_table = Str('jobs_for_estimation')
-    
-    coefficients_table = Str('employment_location_choice_model_coefficients')
-    specification_table = Str('employment_location_choice_model_specification')
-    maximum_runs = Int(5)
-    input_index = Str('erm_index')
-        
+class HomeBasedEmploymentLocationChoiceModelConfigurationCreator(object):    
+
     _model_name = 'home_based_employment_location_choice_model'
+
+    def __init__(self,
+                agent_set = 'job',
+                debuglevel = 'debuglevel',
+                coefficients_table = 'employment_location_choice_model_coefficients',
+                specification_table = 'employment_location_choice_model_specification',
+                location_set = 'gridcell',
+                choices = 'urbansim.lottery_choices',
+                sample_size_locations = 30,
+                portion_to_unplace = 1/12.0,
+                number_of_units_string = 'residential_units',
+                maximum_runs = 5,
+                input_index = 'erm_index',
+                records_per_chunk = 50000,
+                attribute_to_group_by = 'job_building_type.name',
+                estimation_weight_string = 'residential_units',
+                agents_for_estimation_table = 'jobs_for_estimation'):
+        self.agent_set = agent_set
+        self.debuglevel = debuglevel
+        self.coefficients_table = coefficients_table
+        self.specification_table = specification_table
+        self.location_set = location_set
+        self.choices = choices
+        self.sample_size_locations = sample_size_locations
+        self.portion_to_unplace = portion_to_unplace
+        self.number_of_units_string = number_of_units_string
+        self.maximum_runs = maximum_runs
+        self.input_index = input_index    
+        self.records_per_chunk = records_per_chunk
+        self.attribute_to_group_by = attribute_to_group_by
+        self.estimation_weight_string = estimation_weight_string
+        self.agents_for_estimation_table = agents_for_estimation_table
     
     def execute(self):
         # Names of intermediate objects used to get data between steps

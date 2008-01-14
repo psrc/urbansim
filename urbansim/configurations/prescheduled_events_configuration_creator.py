@@ -12,16 +12,16 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
-
 from opus_core.configuration import Configuration
 
 
-class PrescheduledEventsConfigurationCreator(HasStrictTraits):
+class PrescheduledEventsConfigurationCreator(object):
     _model_name = 'prescheduled_events'
     
-    output_events = Str('development_events')
-    
+    def __init__(self,
+                 output_events = 'development_events'):
+        self.output_events = output_events
+        
     def execute(self):
         return Configuration({
             'import': {

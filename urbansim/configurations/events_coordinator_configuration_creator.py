@@ -12,22 +12,25 @@
 # other acknowledgments.
 # 
 
-from enthought.traits.api import HasStrictTraits, Str, Int, Float, Trait
-
 from opus_core.configuration import Configuration
 
 
-class EventsCoordinatorConfigurationCreator(HasStrictTraits):
-    location_set = Str('gridcell')
-    development_type_set = Str('development_type')
-    
-    input_events = Str('development_events')
-    
-    output_changed_indices = Str('changed_indices')
-    output_processed_development_event_indices = Str('processed_development_event_indices')
+class EventsCoordinatorConfigurationCreator(object):
     
     _model_name = 'events_coordinator'
     
+    def __init__(self,
+                location_set = 'gridcell',
+                development_type_set = 'development_type',
+                input_events = 'development_events',
+                output_changed_indices = 'changed_indices',
+                output_processed_development_event_indices = 'processed_development_event_indices'):
+        self.location_set = location_set
+        self.development_type_set = development_type_set
+        self.input_events = input_events
+        self.output_changed_indices = output_changed_indices
+        self.output_processed_development_event_indices = output_processed_development_event_indices
+        
     def execute(self):
         return Configuration({
             'import': {
