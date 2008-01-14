@@ -85,7 +85,7 @@ class Ui_MainWindow(object):
         self.comboBox.addItem(QtGui.QApplication.translate("MainWindow", "zone", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBox.addItem(QtGui.QApplication.translate("MainWindow", "taz", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBox.addItem(QtGui.QApplication.translate("MainWindow", "county", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.addItem(QtGui.QApplication.translate("MainWindow", "all_data", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBox.addItem(QtGui.QApplication.translate("MainWindow", "alldata", None, QtGui.QApplication.UnicodeUTF8))
         self.lineEdit_3.setText(QtGui.QApplication.translate("MainWindow", "Source data", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBox_3.addItem(QtGui.QApplication.translate("MainWindow", "[select]", None, QtGui.QApplication.UnicodeUTF8))
 

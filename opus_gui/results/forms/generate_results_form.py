@@ -128,7 +128,7 @@ class GenerateResultsForm(QWidget):
             'zone',
             'taz',
             'county',
-            'all_data'
+            'alldata'
         ]
         self.co_dataset_name = QComboBox(self.groupBox)
         self.co_dataset_name.setObjectName("co_dataset_name")
