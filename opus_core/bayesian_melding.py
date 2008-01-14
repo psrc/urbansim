@@ -18,7 +18,7 @@ import os
 from numpy import ones, zeros, float32, array, arange, transpose, reshape, sort, maximum, mean, where
 from scipy import ndimage
 from opus_core.model_component_creator import ModelComponentCreator
-from opus_core.misc import load_from_text_file, write_to_text_file, try_transformation, write_table_to_text_file
+from opus_core.misc import load_from_text_file, write_to_text_file, try_transformation, write_table_to_text_file, load_table_from_text_file
 from opus_core.variables.variable_name import VariableName
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
@@ -454,6 +454,15 @@ class BayesianMelding:
         If there is multiple known_output, it must be made clear from which one the bias and variance
         is to be used (argument use_bias_and_variance_from) If it is None, the first known output is used.
         """
+        self.set_posterior(year, quantity_of_interest, use_bias_and_variance_from)
+        procedure_class = ModelComponentCreator().get_model_component(procedure)
+        self.simulated_values = procedure_class.run(self, **kwargs)
+        if transformed_back and (self.transformation_pair_for_prediction[0] is not None): # need to transform back
+            self.simulated_values = try_transformation(self.simulated_values,
+                                                       self.transformation_pair_for_prediction[1])
+        return self.simulated_values
+
+    def set_posterior(self, year, quantity_of_interest, use_bias_and_variance_from=None):
         self.set_propagation_factor(year)
         self.weights = self.get_weights_from_file()
         self.ahat, self.v = self.get_bias_and_variance_from_files()
@@ -466,13 +475,7 @@ class BayesianMelding:
         self.use_bias_and_variance_index = variable_list.index(use_bias_and_variance_from)
         self.transformation_pair_for_prediction = self.observed_data.get_quantity_object_by_index(self.use_bias_and_variance_index).get_transformation_pair()
         self.compute_m(year, quantity_of_interest)
-        procedure_class = ModelComponentCreator().get_model_component(procedure)
-        self.simulated_values = procedure_class.run(self, **kwargs)
-        if transformed_back and (self.transformation_pair_for_prediction[0] is not None): # need to transform back
-            self.simulated_values = try_transformation(self.simulated_values,
-                                                       self.transformation_pair_for_prediction[1])
-        return self.simulated_values
-
+        
     def write_simulated_values(self, filename):
         write_table_to_text_file(filename, self.simulated_values)
         
@@ -494,6 +497,17 @@ class BayesianMelding:
             write_table_to_text_file(mean_filename, self.get_posterior_component_mean())
         if variance_filename is not None:
             write_to_text_file(variance_filename, self.get_posterior_component_variance(), delimiter=' ')
+            
+    def export_weights_posterior_mean_and_variance(self, years, quantity_of_interest, directory, filename=None, 
+                                                     use_bias_and_variance_from=None):
+        for year in years:
+            self.set_posterior(year, quantity_of_interest, use_bias_and_variance_from)
+            if filename is None:
+                filename = quantity_of_interest
+            file = os.path.join(directory, str(year) + '_' + filename)
+            write_to_text_file(file, self.get_weights(), delimiter=' ')
+            write_to_text_file(file, self.get_posterior_component_variance(), mode='a', delimiter=' ')
+            write_table_to_text_file(file, self.get_posterior_component_mean(), mode='a')            
 
     def get_quantity_from_simulated_values(self, function):
         """'function' is a character string specifying a function of the scipy.ndimage package (e.g. mean,
@@ -536,3 +550,23 @@ def setup_environment(cache_directory, year, package_order):
                          in_storage=ac)
     logger.log_status("Setup environment for year %s. Use cache directory %s." % (year, storage.get_storage_location()))
     return sc.get_dataset_pool()
+
+
+class BayesianMeldingFromFile:
+    """ Class to be used if weights, means and variances were stored previously using export_weights_posterior_mean_and_variance of BayesianMelding class.
+        It can be passed into bm_normal_posterior.py.
+    """
+    def __init__(self, filename):
+        """The file 'filename' must have weights in first line, variances in second line and rest are the means. 
+        """
+        table = load_table_from_text_file(filename, convert_to_float=True)
+        self.weights = table[0,:]
+        self.variance = table[1,:]
+        self.means = table[2:table.shape[0],:]
+        
+    def get_posterior_component_mean(self):
+        return self.means
+    
+    def get_posterior_component_variance(self):
+        return self.variance
+    
