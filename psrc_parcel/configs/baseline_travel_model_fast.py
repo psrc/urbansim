@@ -18,7 +18,7 @@ class BaselineTravelModelFast(Baseline):
     multiple_runs=True
     def __init__(self):
         config = Baseline()
-        
+
         config_changes = {
             'description':'baseline travel model fast',
         }
@@ -26,7 +26,7 @@ class BaselineTravelModelFast(Baseline):
         
         from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
         travel_model_configuration = create_travel_model_configuration('baseline_travel_model_psrc_fast_new', 
-                                                                       emme2_batch_file='MODELUSim.BAT',
+                                                                       emme2_batch_file='MODELUSim.BAT ..\\triptabs',
                                                                        mode='full')
         config['travel_model_configuration'] = travel_model_configuration
         config['travel_model_configuration']['locations_to_disaggregate'] = ['parcel', 'building']
