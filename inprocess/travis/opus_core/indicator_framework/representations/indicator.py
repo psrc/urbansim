@@ -39,13 +39,18 @@ class Indicator:
         attribute = self.attribute
         if year is not None:
             attribute = self.attribute.replace('DDDD',repr(year))
+            
         return VariableName(attribute)
-
+                    
     def get_attribute_alias(self, year = None):
-        varname = self.get_variable_name(year)
-        #TODO: less hacky way to do this
-        if self.attribute[:10] == 'autogenvar':
-            return varname.get_squished_expression()
-        else:
-            return varname.get_alias()
+        attribute = self.attribute
+        vname = self.get_variable_name(year = year)
 
+        #TODO: less hacky way to do this
+        if attribute[:10] == 'autogenvar':
+            alias = vname.get_squished_expression()
+        else:
+            alias = vname.get_alias()
+    
+        return alias
+    
