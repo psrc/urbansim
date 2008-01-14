@@ -59,8 +59,8 @@ class ResidentialLandShareModel(RegressionModel):
     def estimate(self, specification, dataset, outcome_attribute="urbansim.gridcell.logistic_fraction_residential_land", index = None,
                         procedure="opus_core.estimate_linear_regression", data_objects=None,
                         estimate_config=None,  debuglevel=0):
-        return RegressionModel.estimate(self, specification, dataset, outcome_attribute, index, procedure, data_objects,
-                                     estimate_config, debuglevel)
+        return RegressionModel.estimate(self, specification, dataset, outcome_attribute, index, procedure, data_objects=data_objects,
+                                     estimate_config=estimate_config, debuglevel=debuglevel)
 
     def prepare_for_estimate(self, specification_dict = None, specification_storage=None,
                               specification_table=None, dataset=None,

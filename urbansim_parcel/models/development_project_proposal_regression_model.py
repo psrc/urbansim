@@ -73,8 +73,8 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         #dataset.flush_dataset_if_low_memory_mode()
         
         result = RegressionModel.run(self, specification, coefficients, dataset, 
-                                         index, chunk_specification, data_objects,
-                                         run_config, debuglevel)
+                                         index=index, chunk_specification=chunk_specification, data_objects=data_objects,
+                                         run_config=run_config, debuglevel=debuglevel)
 
         if re.search("^ln_", self.outcome_attribute_name): # if the outcome attr. name starts with 'ln_'
                                                            # the results will be exponentiated.
