@@ -54,7 +54,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
                      }
                 }
 
-        PSRCTravelModelInputFileWriter.run(current_year_emme2_dir, current_year, dataset_pool, config)
+        PSRCTravelModelInputFileWriter.run(self, current_year_emme2_dir, current_year, dataset_pool, config)
         
     def _write_to_file(self, zone_set, variables_list, tm_input_file):
         self.bm_generate_from_posterior(zone_set)
