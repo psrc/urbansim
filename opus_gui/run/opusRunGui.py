@@ -89,7 +89,8 @@ class ModelGuiElement(QWidget):
         self.originalFile = QFileInfo(self.xml_path)
         self.originalDirName = self.originalFile.dir().dirName()
         self.copyDir = QString(self.parent.parent.tempDir)
-        self.projectCopyDir = QDir(QString(tempfile.mkdtemp(prefix='opus_model',dir=str(self.copyDir))))
+        self.projectCopyDir = QDir(QString(tempfile.mkdtemp(prefix='opus_model',
+                                                            dir=str(self.copyDir))))
         # Copy the project dir from original to copy...
         tmpPathDir = self.originalFile.dir()
         tmpPathDir.cdUp()
@@ -112,8 +113,6 @@ class ModelGuiElement(QWidget):
         stringToUse = "Time Queued - %s - Original XML Path - %s" % (time.asctime(time.localtime()),
                                                                      str(self.originalFile.absoluteFilePath()))
         self.groupBox.setTitle(QString(stringToUse))
-        #self.setTitle(QString("Time Queued - %s - Original XML Path - %s").append(QString(self.originalFile.absoluteFilePath())))
-        #self.groupBox.setFixedHeight(100)
         
         self.vboxlayout = QVBoxLayout(self.groupBox)
         self.vboxlayout.setObjectName("vboxlayout")
@@ -167,6 +166,16 @@ class ModelGuiElement(QWidget):
         # Add a tab widget and layer in a tree view and log panel
         self.tabWidget = QTabWidget(self.groupBox)
         
+        # Simulation Progress Tab
+        self.simprogressWidget = QWidget(self.groupBox)
+        self.simprogressLayout = QVBoxLayout(self.simprogressWidget)
+        self.simprogressGroupBox = QGroupBox(self)
+        self.simprogressLayout.addWidget(self.simprogressGroupBox)
+        self.simprogressText = QTextEdit(self.simprogressGroupBox)
+        self.simprogressText.setReadOnly(True)
+        self.simprogressText.setLineWidth(0)
+        self.tabWidget.addTab(self.simprogressWidget,"Simulation Progress")
+
         self.configFile = QFile(self.xml_path)
         if self.configFile.open(QIODevice.ReadOnly):
             self.doc = QDomDocument()

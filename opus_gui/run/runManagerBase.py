@@ -137,12 +137,8 @@ class ModelGuiElement(QWidget):
     self.groupBox = QGroupBox(self)
     self.widgetLayout.addWidget(self.groupBox)
     
-    #stringToUse = "Time Queued - %s - Original XML Path - %s" % (time.asctime(time.localtime()),
-    #                                                             str(self.originalFile.absoluteFilePath()))
     stringToUse = "Time Queued - %s" % (time.asctime(time.localtime()))
     self.groupBox.setTitle(QString(stringToUse))
-    #self.setTitle(QString("Time Queued - %s - Original XML Path - %s").append(QString(self.originalFile.absoluteFilePath())))
-    #self.groupBox.setFixedHeight(100)
     
     self.vboxlayout = QVBoxLayout(self.groupBox)
     self.vboxlayout.setObjectName("vboxlayout")
@@ -197,11 +193,24 @@ class ModelGuiElement(QWidget):
     # Add a tab widget and layer in a tree view and log panel
     self.tabWidget = QTabWidget(self.groupBox)
     
+    # Simulation Progress Tab
+    self.simprogressWidget = QWidget(self.groupBox)
+    self.simprogressLayout = QGridLayout(self.simprogressWidget)
+    self.simprogressGroupBox = QGroupBox(self)
+    self.simprogressLayout2 = QGridLayout(self.simprogressGroupBox)
+    self.simprogressLayout.addWidget(self.simprogressGroupBox)
+    self.simprogressText = QTextEdit(self.simprogressGroupBox)
+    self.simprogressText.setReadOnly(True)
+    self.simprogressText.setFrameStyle(QFrame.NoFrame)
+    self.simprogressLayout2.addWidget(self.simprogressText)
+    self.tabWidget.addTab(self.simprogressWidget,"Simulation Progress")
+
     self.configFile = QFile(self.xml_path)
     if self.configFile.open(QIODevice.ReadOnly):
       self.doc = QDomDocument()
       self.doc.setContent(self.configFile)
-      self.dataModel = OpusDataModel(self, self.doc, self.parent, self.configFile, "scenario_manager", False)
+      self.dataModel = OpusDataModel(self, self.doc, self.parent, self.configFile,
+                                     "scenario_manager", False)
       self.view = QTreeView(self.parent)
       self.delegate = OpusDataDelegate(self.view)
       self.view.setItemDelegate(self.delegate)
@@ -275,8 +284,8 @@ class ModelGuiElement(QWidget):
     newString = QString(status["message"])
     newString.leftJustified(60)
     self.statusLabel.setText(newString)
-    #print "runStatusFromThread from timer with percentage = %d and message = %s" % (status["percentage"],
-    #                                                                                status["message"])
+    self.simprogressGroupBox.setTitle(newString)
+    self.simprogressText.insertPlainText(QString("."))
     self.logFileKey = self.runThread.parent.model._get_current_log(self.logFileKey)
     
   def runErrorFromThread(self,errorMessage):
@@ -379,7 +388,8 @@ class EstimationGuiElement(QWidget):
     if self.configFile.open(QIODevice.ReadOnly):
       self.doc = QDomDocument()
       self.doc.setContent(self.configFile)
-      self.dataModel = OpusDataModel(self, self.doc, self.parent, self.configFile, "model_manager", False)
+      self.dataModel = OpusDataModel(self, self.doc, self.parent, self.configFile,
+                                     "model_manager", False)
       self.view = QTreeView(self.parent)
       self.delegate = OpusDataDelegate(self.view)
       self.view.setItemDelegate(self.delegate)
