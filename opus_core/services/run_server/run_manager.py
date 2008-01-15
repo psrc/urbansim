@@ -340,8 +340,8 @@ class SimulationRunError(Exception):
 def insert_auto_generated_cache_directory_if_needed(config):
     """Auto-generate a cache directory based upon current date-time."""
     cache_directory_root = config['creating_baseyear_cache_configuration'].cache_directory_root
-    date_time_str = strftime('%Y_%m_%d_%H_%M', localtime())
-
-    cache_directory = os.path.join(cache_directory_root, date_time_str)
-
+    cache_directory = os.path.join(cache_directory_root, get_date_time_string())
     config['cache_directory'] = cache_directory
+    
+def get_date_time_string():
+    return strftime('%Y_%m_%d_%H_%M', localtime())
