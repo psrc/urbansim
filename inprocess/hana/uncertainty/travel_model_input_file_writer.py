@@ -79,13 +79,21 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         
     def _determine_current_share(self, dataset_name, zone_set):
         number_of_agents = zone_set.compute_variables(['zone.number_of_agents(%s)' % dataset_name], dataset_pool=self.dataset_pool).astype('float32')
+        logger.log_status('Current number of %s' % dataset_name)
+        logger.log_status(number_of_agents)
         for var in self.variables[dataset_name].keys():
             self.variables[dataset_name][var] = zone_set.get_attribute(var)/number_of_agents
             
     def _determine_simulated_values(self, dataset_name, zone_set, file):
         bm = BayesianMeldingFromFile(file)
         n = bm_normal_posterior().run(bm, replicates=1)
+        simulated_number_of_agents = n.ravel()*n.ravel()
+        logger.log_status('Simulated number of %s' % dataset_name)
+        logger.log_status(simulated_number_of_agents)
         for var, ratios in self.variables[dataset_name].iteritems():
             self.simulated_values[var] = zeros(zone_set.size())
-            self.simulated_values[var][zone_set.get_id_index(bm.get_m_ids())] = (round_(n.ravel()*n.ravel()*ratios)).astype(self.simulated_values[var].dtype)
+            self.simulated_values[var][zone_set.get_id_index(bm.get_m_ids())] = (round_(simulated_number_of_agents*ratios)).astype(self.simulated_values[var].dtype)
+            logger.log_status(var)
+            logger.log_status(self.simulated_values[var])
+            
             
