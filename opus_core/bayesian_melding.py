@@ -564,7 +564,7 @@ def setup_environment(cache_directory, year, package_order):
     return sc.get_dataset_pool()
 
 
-class BayesianMeldingFromFile:
+class BayesianMeldingFromFile(BayesianMelding):
     """ Class to be used if weights, means and variances were stored previously using export_weights_posterior_mean_and_variance of BayesianMelding class.
         It can be passed into bm_normal_posterior.py.
     """
