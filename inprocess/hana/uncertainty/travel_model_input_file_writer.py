@@ -77,7 +77,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         
     def _determine_current_share(self, dataset_name, zone_set):
         number_of_agents = zone_set.compute_variables(['zone.number_of_agents(%s)' % dataset_name], dataset_pool=self.dataset_pool).astype('float32')
-        for var in self.variables[dataset_name]:
+        for var in self.variables[dataset_name].keys():
             self.variables[dataset_name][var] = zone_set.get_attribute(var)/number_of_agents
             
     def _determine_simulated_values(self, dataset_name, zone_set, file):
