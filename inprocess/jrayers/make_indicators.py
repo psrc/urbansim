@@ -167,11 +167,11 @@ ArcGeotiffMap
 #An example script:
 
 source_data = SourceData(
-   cache_directory = r'C:\urbansim_cache\eugene\runs\run_4175.2007_11_26_09_26',
+   cache_directory = r'C:\urbansim_cache\seattle_parcel\run_4836.2008_01_15_16_02',
    comparison_cache_directory = r'',
-   years = [1980],
+   years = [2000,2010,2020,2030],
    dataset_pool_configuration = DatasetPoolConfiguration(
-         package_order=['eugene','urbansim','opus_core'],
+         package_order=['urbansim_parcel','urbansim','opus_core'],
          package_order_exceptions={},
          ),
 )
@@ -180,11 +180,11 @@ indicators = [
 
    Table(
        source_data = source_data,
-       dataset_name = 'zone',
-       name = 'test_zone_Table',
-       attribute = 'eugene.zones.travel_time_to_cbd',
+       dataset_name = 'parcel',
+       name = 'test_parcel_Table',
+       attribute = 'urbansim_parcel.parcel.unit_price',
        output_type = 'esri',
-       storage_location = 'c:/temp/test_fgdb.gdb'
+       storage_location = 'C:/temp/PSRC_test_set.gdb'
    ),
 
    ]

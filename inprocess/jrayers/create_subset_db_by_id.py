@@ -17,9 +17,6 @@ from opus_core.database_management.database_server_configuration import Database
 dbconfig = DatabaseServerConfiguration()
 dbserver = DatabaseServer(dbconfig)
 
-input_db = 'psrc_2005_parcel_baseyear_flattened_20080107'
-output_db = 'psrc_2005_parcel_baseyear_subset_seattle'
-
 tables_to_copy = [
     'home_based_employment_location_choice_model_coefficients',
     'home_based_employment_location_choice_model_specification',
@@ -47,17 +44,6 @@ tables_to_copy = [
     'development_constraints',
     'demolition_cost_per_sqft',
     ]
-
-for i in tables_to_copy:
-    query = "CREATE TABLE %s.%s SELECT * FROM %s.%s;" % (output_db, i, input_db, i)
-    dbserver.DoQuery(query)
-    print 'Finished copying %s...' % (i)
-
-#TODO:
-# - review GROUP BY clauses below
-# - generalize further by other ids (e.g. county, large_area)
-
-city_id = str(70)
 
 queries = [
     'DROP TABLE IF EXISTS %s.parcels;' % (output_db),
@@ -102,10 +88,24 @@ queries = [
     'UPDATE %s.annual_household_control_totals SET total_number_of_households = total_number_of_households * ((SELECT COUNT(*) FROM %s.households) / (SELECT COUNT(*) FROM %s.households));' % (output_db, output_db, input_db)
     ]
 
+# city_id to subset database on (70=Seattle)
+city_id = str(70)
+# flattened database to use as input data
+input_db = 'psrc_2005_parcel_baseyear_flattened_20080107'
+# output database to create subset data in (must exist)
+output_db = 'psrc_2005_parcel_baseyear_subset_seattle'
+
+# Copies all tables that are a complete copy
+for i in tables_to_copy:
+    query = "CREATE TABLE %s.%s SELECT * FROM %s.%s;" % (output_db, i, input_db, i)
+    dbserver.DoQuery(query)
+    print 'Finished copying %s...' % (i)
+
+# Creates all tables that are a subset of the original data
 for i in queries:
     dbserver.DoQuery(i)
     print 'Finished:  %s' % (i)
 
 
- 
+
 
