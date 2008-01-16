@@ -84,6 +84,6 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         bm = BayesianMeldingFromFile(file)
         n = bm_normal_posterior().run(bm, replicates=1)
         for var, ratios in self.variables[dataset_name].iteritems():
-            self.simulated_values[var] = zeros(zone_set.size())
-            self.simulated_values[var][zone_set.get_id_index(bm.get_m_ids())] = round_(n*n*ratios)
+            self.simulated_values[var] = zeros(zone_set.size(), dtype='int32')
+            self.simulated_values[var][zone_set.get_id_index(bm.get_m_ids())] = (round_(n.ravel()*n.ravel()*ratios)).astype('int32')
             

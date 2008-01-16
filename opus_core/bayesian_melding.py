@@ -575,7 +575,7 @@ class BayesianMeldingFromFile(BayesianMelding):
         self.weights = table[0,1:table.shape[1]]
         self.variance = table[1,1:table.shape[1]]
         self.means = table[2:table.shape[0],1:table.shape[1]]
-        self.m_ids = round_(table[2:table.shape[0],0])
+        self.m_ids = (round_(table[2:table.shape[0],0])).astype('int32')
         
     def get_posterior_component_mean(self):
         return self.means
