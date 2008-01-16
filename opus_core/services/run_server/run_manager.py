@@ -105,18 +105,20 @@ class RunManager(object):
         return resources
     
     def setup_new_run(self, run_name):
+        run_descr = run_name
         if self.run_activity is not None:
             self.history_id = self.run_activity.get_new_history_id()
             #compose unique cache directory based on the history_id
             head, tail = os.path.split(run_name)
             unique_cache_directory = os.path.join(head, 'run_' +str(self.history_id)+'.'+tail)
+            run_descr = self.history_id
         else:
             unique_cache_directory = run_name 
                
         self.current_cache_directory = unique_cache_directory
         self.ready_to_run = True
         
-        logger.log_status('Cache directory for run %s set to %s' % (run_name, self.current_cache_directory))
+        logger.log_status('Cache directory for run %s set to %s' % (run_descr, self.current_cache_directory))
             
     def get_current_cache_directory(self):
         if not self.ready_to_run:
