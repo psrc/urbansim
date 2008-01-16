@@ -438,6 +438,15 @@ class Dataset(AbstractDataset):
                 [column_names[(number_of_columns-lastchunk):number_of_columns]]
         return result
 
+    def create_subset_window_by_ids(self, ids):
+        """Create an object of class DatasetSubset where the entries are determined by the given identifiers 'ids'.
+        The data are not copied, rather it is a window for viewing a subset of the whole dataset. Any change
+        on the parent dataset (or on the subset) will affect the subset (or the whole set).
+        """
+        index=self.get_id_index(ids)
+        new = DatasetSubset(self, index)
+        return new
+    
 class DatasetSubset(Dataset):
     """Class for viewing a subset of a Dataset object, identified by a list of indices."""
     def __init__(self, parent, index):

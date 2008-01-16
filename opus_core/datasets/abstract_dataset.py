@@ -1443,16 +1443,7 @@ class AbstractDataset(object):
     ##################################################################################
     ## Other methods
     ##################################################################################
-    
-    def create_subset_window_by_ids(self, ids):
-        """Create an object of class DatasetSubset where the entries are determined by the given identifiers 'ids'.
-        The data are not copied, rather it is a window for viewing a subset of the whole dataset. Any change
-        on the parent dataset (or on the subset) will affect the subset (or the whole set).
-        """
-        index=self.get_id_index(ids)
-        new = DatasetSubset(self, index)
-        return new
-    
+        
     def get_dataset_name(self):
         """Determines the subdirectory in which variables for the dataset are implemented.
         """
