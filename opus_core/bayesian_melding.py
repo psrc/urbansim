@@ -15,7 +15,7 @@
 # This is under construction !!!
 
 import os
-from numpy import ones, zeros, float32, array, arange, transpose, reshape, sort, maximum, mean, where
+from numpy import ones, zeros, float32, array, arange, transpose, reshape, sort, maximum, mean, where, concatenate, round_
 from scipy import ndimage
 from opus_core.model_component_creator import ModelComponentCreator
 from opus_core.misc import load_from_text_file, write_to_text_file, try_transformation, write_table_to_text_file, load_table_from_text_file
@@ -46,7 +46,6 @@ class ObservedData:
         self.dataset_pool = None
         self.storage = None
         self.package_order = package_order
-        self.matching_datasets = {}
         
         if is_cache:
             self.dataset_pool = setup_environment(directory, self.year, package_order)
@@ -91,23 +90,7 @@ class ObservedData:
             q = self.get_quantity_objects()[iq]
             if q.get_variable_name().get_alias() == alias:
                 return iq
-            
-    def add_match(self, dataset, index = None):
-        dataset_name = dataset.get_dataset_name()
-        result = zeros(dataset.size(), dtype='bool8')
-        idx = index
-        if index is None:
-            idx = arange(dataset.size())
-        result[idx] = 1
-        if dataset_name in self.matching_datasets.keys():
-            tmp = zeros(dataset.size(), dtype='bool8')
-            tmp[dataset.get_id_index(self.matching_datasets[dataset_name])]=1
-            result = result*tmp
-        self.matching_datasets[dataset_name] = dataset.get_id_attribute()[where(result)]
-        
-    def get_matching_datasets(self):
-        return self.matching_datasets
-                 
+                             
 class ObservedDataOneQuantity:
     """  Class for storing information about one quantity measure. It is to be grouped in 
     an object of class ObservedData.
@@ -135,6 +118,8 @@ class ObservedDataOneQuantity:
         self.variable_name = VariableName(variable_name)
         self.dataset_name = self.variable_name.get_dataset_name()
         dataset_pool = observed_data.get_dataset_pool()
+        self.matching_datasets = {}
+        
         if dataset_pool is None:
             kwargs.update({'in_storage':observed_data.get_storage(), 'in_table_name': filename})
             try:
@@ -144,7 +129,7 @@ class ObservedDataOneQuantity:
         else:
             self.dataset = dataset_pool.get_dataset(self.dataset_name)
         if match:
-            observed_data.add_match(self.dataset)
+            self.add_match(self.dataset)
         for dep_dataset_name, info in dependent_datasets.iteritems():
             if dataset_pool is None:
                 dataset_pool = DatasetPool(storage=observed_data.get_storage(), package_order=observed_data.get_package_order())
@@ -160,13 +145,13 @@ class ObservedDataOneQuantity:
                 dep_dataset = Dataset(dataset_name=dep_dataset_name, **info)
             dataset_pool.replace_dataset(dep_dataset_name, dep_dataset)
             if match:
-                observed_data.add_match(dep_dataset)
+                self.add_match(dep_dataset)
             
         self.dataset.compute_variables([self.variable_name], dataset_pool=dataset_pool)
         if filter is not None:
             filter_values = self.dataset.compute_variables([filter], dataset_pool=dataset_pool)
             idx = where(filter_values > 0)[0]
-            observed_data.add_match(self.dataset, idx)
+            self.add_match(self.dataset, idx)
             self.dataset.subset_by_index(idx)
         self.transformation = transformation
         self.inverse_transformation = inverse_transformation
@@ -193,6 +178,22 @@ class ObservedDataOneQuantity:
     
     def get_transformation_pair(self):
         return (self.transformation, self.inverse_transformation)
+    
+    def add_match(self, dataset, index = None):
+        dataset_name = dataset.get_dataset_name()
+        result = zeros(dataset.size(), dtype='bool8')
+        idx = index
+        if index is None:
+            idx = arange(dataset.size())
+        result[idx] = 1
+        if dataset_name in self.matching_datasets.keys():
+            tmp = zeros(dataset.size(), dtype='bool8')
+            tmp[dataset.get_id_index(self.matching_datasets[dataset_name])]=1
+            result = result*tmp
+        self.matching_datasets[dataset_name] = dataset.get_id_attribute()[where(result)]
+        
+    def get_matching_datasets(self):
+        return self.matching_datasets
         
 class BayesianMelding:
 
@@ -291,7 +292,7 @@ class BayesianMelding:
             dimension_reduced = False
             quantity_ids = quantity.get_dataset().get_id_attribute()
             for i in range(self.number_of_runs):
-                ds = self._compute_variable(i, variable, dataset_name, self.observed_data.get_year())
+                ds = self._compute_variable(i, variable, dataset_name, self.observed_data.get_year(), quantity)
                 if isinstance(ds, InteractionDataset):
                     ds = ds.get_flatten_dataset()
                 if i == 0: # first run
@@ -309,9 +310,9 @@ class BayesianMelding:
             if dimension_reduced:
                 self.y[iout] = self.y[iout][quantity.get_dataset().get_id_index(ids)]
 
-    def _compute_variable(self, run_index, variable, dataset_name, year):
+    def _compute_variable(self, run_index, variable, dataset_name, year, quantity):
         dataset_pool = setup_environment(self.cache_set[run_index], year, self.package_order)
-        for mds_name, ids in self.observed_data.get_matching_datasets().iteritems():
+        for mds_name, ids in quantity.get_matching_datasets().iteritems():
             mds = dataset_pool.get_dataset(mds_name)
             mds.subset_by_ids(ids, flush_attributes_if_not_loaded=False)
         ds = dataset_pool.get_dataset(dataset_name)
@@ -408,9 +409,10 @@ class BayesianMelding:
         variable_name = VariableName(quantity_of_interest)
         dataset_name = variable_name.get_dataset_name()
         for i in range(self.number_of_runs):
-            ds = self._compute_variable(i, variable_name, dataset_name, year)
+            ds = self._compute_variable(i, variable_name, dataset_name, year, self.observed_data.get_quantity_object(quantity_of_interest))
             if i == 0: # first run
                 self.m = zeros((ds.size(), self.number_of_runs), dtype=float32)
+                self.m_ids = ds.get_id_attribute()
             self.m[:, i] = try_transformation(ds.get_attribute(variable_name), self.transformation_pair_for_prediction[0])
 
 
@@ -499,15 +501,22 @@ class BayesianMelding:
             write_to_text_file(variance_filename, self.get_posterior_component_variance(), delimiter=' ')
             
     def export_weights_posterior_mean_and_variance(self, years, quantity_of_interest, directory, filename=None, 
-                                                     use_bias_and_variance_from=None):
+                                                     use_bias_and_variance_from=None, ids = None):
         for year in years:
             self.set_posterior(year, quantity_of_interest, use_bias_and_variance_from)
             if filename is None:
                 filename = quantity_of_interest
             file = os.path.join(directory, str(year) + '_' + filename)
-            write_to_text_file(file, self.get_weights(), delimiter=' ')
-            write_to_text_file(file, self.get_posterior_component_variance(), mode='a', delimiter=' ')
-            write_table_to_text_file(file, self.get_posterior_component_mean(), mode='a')            
+            write_to_text_file(file, concatenate((array([0.]), self.get_weights())), delimiter=' ')
+            write_to_text_file(file, concatenate((array([0.]), self.get_posterior_component_variance())), mode='a', delimiter=' ')
+            variable_list = map(lambda x: x.get_expression(), self.observed_data.get_variable_names())
+            quantity_index = variable_list.index(quantity_of_interest)
+            if ids is None:
+                ids = self.m_ids
+            means = zeros((ids.size, self.number_of_runs+1))
+            means[:,0] = ids
+            means[self.observed_data.get_quantity_objects()[quantity_index].get_dataset().get_id_index(ids),1:means.shape[1]] = self.get_posterior_component_mean()
+            write_table_to_text_file(file, means, mode='a')            
 
     def get_quantity_from_simulated_values(self, function):
         """'function' is a character string specifying a function of the scipy.ndimage package (e.g. mean,
@@ -539,6 +548,9 @@ class BayesianMelding:
         maxvalues = sorted_values[:, int(n * (1-tmp))]
         return array([minvalues, maxvalues])
         
+    def get_m_ids(self):
+        return self.m_ids
+    
 def setup_environment(cache_directory, year, package_order):
     ss = SimulationState(new_instance=True)
     ss.set_cache_directory(cache_directory)
@@ -559,10 +571,11 @@ class BayesianMeldingFromFile:
     def __init__(self, filename):
         """The file 'filename' must have weights in first line, variances in second line and rest are the means. 
         """
-        table = load_table_from_text_file(filename, convert_to_float=True)
-        self.weights = table[0,:]
-        self.variance = table[1,:]
-        self.means = table[2:table.shape[0],:]
+        table = load_table_from_text_file(filename, convert_to_float=True)[0]
+        self.weights = table[0,1:table.shape[1]]
+        self.variance = table[1,1:table.shape[1]]
+        self.means = table[2:table.shape[0],1:table.shape[1]]
+        self.m_ids = round_(table[2:table.shape[0],0])
         
     def get_posterior_component_mean(self):
         return self.means

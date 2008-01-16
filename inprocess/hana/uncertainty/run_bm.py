@@ -57,8 +57,8 @@ if __name__ == "__main__":
 
     # in what directory is the file 'cache_directories'
     #cache_directory = "/home/hana/urbansim_cache/psrc/parcel/run_3904.2007_10_19_15_01"
-    #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/1211/run_4491.2007_12_11_13_58"
-    cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0107/run_4786.2008_01_06_13_09"
+    cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/1211/run_4491.2007_12_11_13_58"
+    #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0107/run_4786.2008_01_06_13_09"
     # This is needed only if one of the runs was scaled, e.g. run on reduced set of gridcells. 
     # It gives the directory of the base year full set, in order to scale back.
 #    scaling = {1: "/scratch/urbbuild/urbansim_cache/psrc/cache_source_zone"}
@@ -66,23 +66,26 @@ if __name__ == "__main__":
     # where the true data (on a zone level) is stored in a table format 
     observed_data_dir = "/Users/hana/bm/observed_data/"
 
-    observed_data = ObservedData(observed_data_dir, 2006, 'tab_storage', 
+    observed_data = ObservedData(observed_data_dir, 2005, 'tab_storage', 
                                  package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
 
-    known_output=[#{'variable_name': "urbansim_parcel.zone.number_of_households",
-                  # 'filename': "PSRC2005TAZDataNew", 
-                  # 'transformation': "sqrt",
-                  # },
-                  #{'variable_name': "urbansim_parcel.zone.number_of_jobs",
-                  # 'filename': "PSRC2005TAZDataNew", 
-                  # 'transformation': "sqrt",
-                  # },
-                   {'variable_name': "psrc_parcel.screenline.traffic_volume_eh",
-                    'filename': "screenlines",
-                    'filter': "psrc_parcel.screenline.traffic_volume_eh",
-                    'transformation': "sqrt",
-                    'dependent_datasets': {'screenline_node': {'filename':'tv2006', 'match': True}}
-                    }
+    known_output=[
+                  {'variable_name': "urbansim_parcel.zone.number_of_households",
+                   'filename': "PSRC2005TAZDataNew", 
+                   'transformation': "sqrt",
+                   #'filter': "urbansim_parcel.zone.number_of_households",
+                   },
+                  {'variable_name': "urbansim_parcel.zone.number_of_jobs",
+                   'filename': "PSRC2005TAZDataNew", 
+                   'transformation': "sqrt",
+                   #'filter': "urbansim_parcel.zone.number_of_jobs",
+                   },
+#                   {'variable_name': "psrc_parcel.screenline.traffic_volume_eh",
+#                    'filename': "screenlines",
+#                    'filter': "psrc_parcel.screenline.traffic_volume_eh",
+#                    'transformation': "sqrt",
+#                    'dependent_datasets': {'screenline_node': {'filename':'tv2006', 'match': True}}
+#                    }
 #                  {'variable_name': "urbansim_parcel.faz_x_land_use_type.total_value_per_sqft",
 #                   'filename': "avg_total_value_per_unit_by_faz", 
 #                   'transformation': "log",
@@ -100,7 +103,7 @@ if __name__ == "__main__":
     for quantity in known_output:
         observed_data.add_quantity(**quantity)
         
-    #convert_screenline_report_to_dataset('tveham.rpt', cache_directory, [2006])
+    #convert_screenline_report_to_dataset('tveham.rpt', cache_directory, [2006, 2011])
                                          #[2006,2011, 2016, 2021])
     bm = BayesianMelding(cache_directory, 
                          observed_data,                        
@@ -109,7 +112,11 @@ if __name__ == "__main__":
                          package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
     weights = bm.compute_weights()
     print weights
-
+    bm.export_weights_posterior_mean_and_variance([2020], quantity_of_interest="urbansim_parcel.zone.number_of_households",
+              directory="/Users/hana/bm/psrc_parcel/simulation_results")
+    bm.export_weights_posterior_mean_and_variance([2020], quantity_of_interest="urbansim_parcel.zone.number_of_jobs",
+                            directory="/Users/hana/bm/psrc_parcel/simulation_results")
+    
     #posterior = bm.generate_posterior_distribution(year=2015, quantity_of_interest="urbansim_parcel.zone.number_of_households",
                                                   # replicates=1000)
 
