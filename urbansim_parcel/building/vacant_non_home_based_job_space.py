@@ -13,7 +13,6 @@
 # 
 
 from opus_core.variables.variable import Variable
-from variable_functions import my_attribute_label
 from numpy import ma, clip
 
 class vacant_non_home_based_job_space(Variable):
@@ -24,20 +23,13 @@ class vacant_non_home_based_job_space(Variable):
     def dependencies(self):
         return ["urbansim_parcel.building.non_residential_sqft",
                 "urbansim_parcel.building.occupied_building_sqft_by_jobs",
-                "building_sqft_per_job.building_sqft_per_job",
-                "urbansim_parcel.building.non_residential_sqft",
-                "urbansim_parcel.building.zone_id",
-                "building.building_type_id",
+                "urbansim_parcel.building.building_sqft_per_job",
                 ]
 
     def compute(self,  dataset_pool):
         buildings = self.get_dataset()  
-        sqft_per_job = dataset_pool.get_dataset("building_sqft_per_job")
-        zones = buildings.get_attribute("zone_id")
-        type_ids = buildings.get_attribute("building_type_id")
         non_residential_sqft = buildings.get_attribute("non_residential_sqft")
-        building_sqft_per_job_table = sqft_per_job.get_building_sqft_as_table(zones.max(), type_ids.max())
-        building_sqft_per_job = building_sqft_per_job_table[zones, type_ids]
+        building_sqft_per_job = buildings.get_attribute("building_sqft_per_job")
         remaining_space = clip(non_residential_sqft - buildings.get_attribute("occupied_building_sqft_by_jobs"),
                                0, non_residential_sqft)
         return ma.filled(ma.masked_where(building_sqft_per_job==0, remaining_space / building_sqft_per_job), 0)
