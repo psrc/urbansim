@@ -64,7 +64,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         if variable_name in self.simulated_values.keys():
             index = zone_set.get_id_index(zone_id)
             return self.simulated_values[variable_name][index]
-        PSRCTravelModelInputFileWriter._get_value_for_zone(self, zone_id, zone_set, variable_name)
+        return PSRCTravelModelInputFileWriter._get_value_for_zone(self, zone_id, zone_set, variable_name)
 
     def bm_generate_from_posterior(self, zone_set):
         bmconfig = self.configuration['travel_model_configuration'].get('bm_distribution_files',None)
