@@ -17,7 +17,7 @@ import string
 import sys
 import time
 from opus_core.logger import logger
-from numpy import round_
+from numpy import round_, zeros
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.variables.variable_name import VariableName
 from psrc.travel_model_input_file_writer import TravelModelInputFileWriter as PSRCTravelModelInputFileWriter
@@ -84,6 +84,6 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         bm = BayesianMeldingFromFile(file)
         n = bm_normal_posterior().run(bm, replicates=1)
         for var, ratios in self.variables[dataset_name].iteritems():
-            self.simulated_values[var] = zero(zone_set.size())
+            self.simulated_values[var] = zeros(zone_set.size())
             self.simulated_values[var][zone_set.get_id_index(bm.get_m_ids())] = round_(n*n*ratios)
             
