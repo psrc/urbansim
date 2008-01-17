@@ -15,7 +15,7 @@
 import sys
 import time
 
-from numpy import array, where, arange
+from numpy import array, where, arange, zeros
 from inspect import getmembers, isroutine
 from opus_core.model_component import ModelComponent
 from opus_core.logger import logger
@@ -87,6 +87,9 @@ class Model(ModelComponent):
         """ Creates a class attribute self.observations_mapping which is a dictionary
         where each entry corresponds to one submodel. It contains indices
         of agents (within agents_index) that belong to that submodel.
+        Additionally, self.observations_mapping has an entry 'index' which contains agents_index, and an entry
+        'mapped_index' which contains only indices of agents_index that are included in any of the submodel entries of 
+        observations_mapping. Thus, missing entries of 'index' are agents that do not belong to any submodel. 
         'submodels' is a list of submodels to be considered.
         'submodel_string' specifies the name of attribute/variable that distinguishes submodels.
         'resources' are passed to the computation of variable 'submodel_string'.
@@ -107,7 +110,12 @@ class Model(ModelComponent):
                     self.observations_mapping[submodel] = w
         else: # no submodel distinction
             self.observations_mapping[-2] = arange(agents_index.size)
+        
+        mapped = zeros(agents_index.size, dtype='bool8')
+        for submodel, index in self.observations_mapping.iteritems():
+            mapped[index] = True
         self.observations_mapping["index"] = agents_index
+        self.observations_mapping["mapped_index"] = where(mapped)[0]
 
     def get_all_data(self, submodel=-2):
         """Model must have a property 'data' which is a dictionary that has for each submodel
