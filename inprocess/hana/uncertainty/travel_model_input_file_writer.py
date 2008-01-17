@@ -23,6 +23,7 @@ from opus_core.variables.variable_name import VariableName
 from psrc.travel_model_input_file_writer import TravelModelInputFileWriter as PSRCTravelModelInputFileWriter
 from opus_core.bayesian_melding import BayesianMeldingFromFile
 from opus_core.bm_normal_posterior import bm_normal_posterior
+from opus_core.misc import safe_array_divide
 
 class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
     """Write urbansim simulation information into a (file) format that the emme2 travel model understands. """
@@ -87,7 +88,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         logger.log_status('Current number of %s' % dataset_name)
         logger.log_status(number_of_agents)
         for var in self.variables[dataset_name].keys():
-            self.variables[dataset_name][var] = zone_set.get_attribute(var)/number_of_agents
+            self.variables[dataset_name][var] = safe_array_divide(zone_set.get_attribute(var), number_of_agents)
             
     def _determine_simulated_values(self, dataset_name, zone_set, file):
         bm = BayesianMeldingFromFile(file)
