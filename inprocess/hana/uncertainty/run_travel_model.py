@@ -80,8 +80,8 @@ if __name__ == "__main__":
     try: import wingdbstub
     except: pass
 
-    log_file = os.path.join(options.cache_directory, 'run_travel_model.log')
-    logger.enable_file_logging(log_file)
+    #log_file = os.path.join(options.cache_directory, 'run_travel_model.log')
+    #logger.enable_file_logging(log_file)
     tmrun = RunTravelModel()
     tmrun.run(int(options.year), options.configuration_path, options.cache_directory)
  
