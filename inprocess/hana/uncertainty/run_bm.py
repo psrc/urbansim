@@ -70,15 +70,20 @@ if __name__ == "__main__":
                                  package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
 
     known_output=[
-                  {'variable_name': "urbansim_parcel.zone.number_of_households",
-                   'filename': "PSRC2005TAZDataNew", 
-                   'transformation': "sqrt",
+                  #{'variable_name': "urbansim_parcel.zone.number_of_households",
+                  # 'filename': "PSRC2005TAZDataNew", 
+                  # 'transformation': "sqrt",
                    #'filter': "urbansim_parcel.zone.number_of_households",
-                   },
-                  {'variable_name': "urbansim_parcel.zone.number_of_jobs",
-                   'filename': "PSRC2005TAZDataNew", 
-                   'transformation': "sqrt",
+                   #},
+                  #{'variable_name': "urbansim_parcel.zone.number_of_jobs",
+                  # 'filename': "PSRC2005TAZDataNew", 
+                  # 'transformation': "sqrt",
                    #'filter': "urbansim_parcel.zone.number_of_jobs",
+                  # },
+                   {'variable_name': "urbansim_parcel.zone_x_employment_sector.number_of_jobs",
+                   'filename': "jobs_by_zones_and_sectors_flatten", 
+                   'transformation': "sqrt",
+                   "id_name":  ["zone_id", "sector_id"]
                    },
 #                   {'variable_name': "psrc_parcel.screenline.traffic_volume_eh",
 #                    'filename': "screenlines",
