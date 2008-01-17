@@ -57,7 +57,9 @@ class RunTravelModel:
                     os.makedirs('%s' % tmdir)
                 logger.log_status("Copy results to %s" % tmdir)
                 shutil.move(os.path.join(config['cache_directory'], str(year+1)), os.path.join(tmdir, str(year+1)))
-                shutil.move(os.path.join(config['cache_directory'],'emme2_%d_log.txt' % year), tmdir)
+                emme2logfile = os.path.join(config['cache_directory'],'emme2_%d_log.txt' % year)
+                if os.path.exists(emme2logfile):
+                    shutil.move(os.path.join(config['cache_directory'],emme2logfile), tmdir)
                  
     def _do_one_run(self, year, config):
         if not config['travel_model_configuration'].has_key(year):
@@ -78,6 +80,8 @@ if __name__ == "__main__":
     try: import wingdbstub
     except: pass
 
+    #log_file = os.path.join(options.cache_directory, 'run_travel_model.log')
+    #logger.enable_file_logging(log_file)
     tmrun = RunTravelModel()
     tmrun.run(int(options.year), options.configuration_path, options.cache_directory)
  
