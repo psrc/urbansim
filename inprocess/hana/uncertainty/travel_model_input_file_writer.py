@@ -53,7 +53,8 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
             "manu_jobs": None,  
                      }
                 }
-
+        log_file = os.path.join(config['cache_directory'], str(current_year+1), 'run_travel_model_bm.log')
+        logger.enable_file_logging(log_file)
         PSRCTravelModelInputFileWriter.run(self, current_year_emme2_dir, current_year, dataset_pool, config)
         
     def _write_to_file(self, zone_set, variables_list, tm_input_file):
