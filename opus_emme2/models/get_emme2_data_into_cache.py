@@ -105,7 +105,7 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
     def copy_report_to_cache(self, report_name, year, cache_directory, bank_dir):
         filename = os.path.join(bank_dir, report_name)
         if os.path.exists(filename):
-            shutil.copy(filename, os.path.join(cache_directory, str(year)))
+            shutil.copy(filename, os.path.join(cache_directory, str(year+1)))
         
 if __name__ == "__main__":
     try: import wingdbstub
