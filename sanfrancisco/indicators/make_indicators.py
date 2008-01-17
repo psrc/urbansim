@@ -24,16 +24,15 @@ from opus_core.indicator_framework.image_types.table import Table
 from opus_core.indicator_framework.image_types.geotiff_map import GeotiffMap
 from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
 from opus_core.indicator_framework.image_types.matplotlib_lorenzcurve import LorenzCurve
-from opus_core.indicator_framework.storage_location.database import Database
 
 
 run_description = '(baseline 06/28/2007)'
-cache_directory = r'E:\urbansim_cache\sanfrancisco\runs\run_3633.2007_09_14_15_59'
+cache_directory = r'/home/lmwang/work/sf/cache_source_0108'
 
 source_data = SourceData(
     cache_directory = cache_directory,
     run_description = run_description,
-    years = [2001,2006],
+    years = [2001],
     dataset_pool_configuration = DatasetPoolConfiguration(
         package_order=['sanfrancisco','urbansim','opus_core'],
         package_order_exceptions={},
@@ -70,10 +69,10 @@ single_year_requests = [
                      'sector_4_businesses=census_tract.aggregate(business.sector_id == 4, intermediates=[building, parcel])',
                      'sector_5_businesses=census_tract.aggregate(business.sector_id == 5, intermediates=[building, parcel])',
                      'sector_6_businesses=census_tract.aggregate(business.sector_id == 6, intermediates=[building, parcel])',
-                     'total_businesses=census_tract.aggregate(urbansim_parcel.parcel.number_of_businesses)',
+                     'total_businesses=census_tract.aggregate(sanfrancisco.building.number_of_businesses, intermediates=[parcel])',
        ],
        #exclude_condition = '==0' #exclude_condition now accepts opus expressions
-   ),
+       ),
 
        DatasetTable(
        source_data = source_data,
@@ -107,7 +106,7 @@ single_year_requests = [
 source_data = SourceData(
     cache_directory = cache_directory,
     run_description = run_description,
-    years = [2001,2006],
+    years = [2001,2002],
     dataset_pool_configuration = DatasetPoolConfiguration(
         package_order=['sanfrancisco','urbansim','opus_core'],
         package_order_exceptions={},
@@ -128,7 +127,7 @@ multi_year_requests = [
     name = 'Business Counts 1',
     output_type='csv',
     attribute = 'bus_1 = alldata.aggregate_all(business.sector_id == 1)',
-    years = arange(2001,2026),
+    years = [2001, 2002],
     ),
     
     Table(
@@ -137,7 +136,7 @@ multi_year_requests = [
     name = 'Business Counts 2',
     output_type='csv',
     attribute = 'bus_2 = alldata.aggregate_all(business.sector_id == 2)',
-    years = arange(2001,2026),
+    years = [2001, 2002],
     ),
 
     Table(
@@ -146,7 +145,7 @@ multi_year_requests = [
     name = 'Business Counts 3',
     output_type='csv',
     attribute = 'bus_3 = alldata.aggregate_all(business.sector_id == 3)',
-    years = arange(2001,2026),
+    years = [2001, 2002],
     ),
 
     Table(
@@ -155,7 +154,7 @@ multi_year_requests = [
     name = 'Business Counts 4',
     output_type='csv',
     attribute = 'bus_4 = alldata.aggregate_all(business.sector_id == 4)',
-    years = arange(2001,2026),
+    years = [2001, 2002],
     ),
 
     Table(
@@ -164,7 +163,7 @@ multi_year_requests = [
     name = 'Business Counts 5',
     output_type='csv',
     attribute = 'bus_5 = alldata.aggregate_all(business.sector_id == 5)',
-    years = arange(2001,2026),
+    years = [2001, 2002],
     ),
 
     Table(
@@ -173,18 +172,18 @@ multi_year_requests = [
     name = 'Business Counts 6',
     output_type='csv',
     attribute = 'bus_6 = alldata.aggregate_all(business.sector_id == 6)',
-    years = arange(2001,2026),
+    years = [2001, 2002],
     ),
 ]
 
 if __name__ == '__main__':
     from opus_core.indicator_framework.core.indicator_factory import IndicatorFactory
 
-    #IndicatorFactory().create_indicators(
-        #indicators = single_year_requests,
-        #display_error_box = False, 
-        #show_results = True)   
     IndicatorFactory().create_indicators(
-        indicators = multi_year_requests,
+        indicators = single_year_requests,
         display_error_box = False, 
         show_results = True)   
+    #IndicatorFactory().create_indicators(
+        #indicators = multi_year_requests,
+        #display_error_box = False, 
+        #show_results = True)   
