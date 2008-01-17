@@ -11,13 +11,11 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 # 
-
 from opus_core.configuration import Configuration
 from opus_core.misc import get_string_or_None
 
 class HouseholdLocationChoiceModelWithPriceAdjConfigurationCreator(object):
-        
-    _model_name = 'household_location_choice_model_with_price_adj'
+    _model_name = "household_location_choice_model_with_price_adj"
 
     def __init__(self,
                 agent_set = 'household',
@@ -36,8 +34,9 @@ class HouseholdLocationChoiceModelWithPriceAdjConfigurationCreator(object):
                 number_of_agents_string = 'number_of_households',
                 lottery_max_iterations = 3,
                 maximum_runs = 5,
-                input_index = 'hrm_index',
-                demand_string = 'demand_string'):
+                estimation_procedure = 'opus_core.bhhh_mnl_estimation',
+                demand_string = "demand_string",
+                input_index = 'hrm_index'):
         self.agent_set = agent_set
         self.debuglevel = debuglevel
         self.coefficients_table = coefficients_table
@@ -54,9 +53,9 @@ class HouseholdLocationChoiceModelWithPriceAdjConfigurationCreator(object):
         self.number_of_agents_string = number_of_agents_string
         self.lottery_max_iterations = lottery_max_iterations
         self.maximum_runs = maximum_runs
+        self.estimation_procedure = estimation_procedure
         self.demand_string = demand_string
-        self.input_index = input_index    
-
+        self.input_index = input_index
     
     def execute(self):
         _coefficients = 'coefficients'
@@ -82,6 +81,7 @@ class HouseholdLocationChoiceModelWithPriceAdjConfigurationCreator(object):
                 'arguments': {
                     'sampler': get_string_or_None(self.sampler),
                     'choices': "'%s'" % self.choices,
+                    'estimation': "'%s'" % self.estimation_procedure,                    
                     'dataset_pool': 'dataset_pool',
                     'location_set': self.location_set,
                     'sample_size_locations': self.sample_size_locations,
@@ -164,6 +164,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                 'arguments': {
                     'sampler': "'opus_core.samplers.weighted_sampler'",
                     'choices': "'urbansim.lottery_choices'",
+                    'estimation': "'opus_core.bhhh_mnl_estimation'",
                     'dataset_pool': 'dataset_pool',
                     'location_set': 'gridcell',
                     'sample_size_locations': 30,
@@ -223,6 +224,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
             debuglevel = 999,
             sampler = None,
             choices = 'package.choices',
+            estimation_procedure = 'opus_core.my_estimation_procedure',
             location_set = 'location_set',
             sample_size_locations = 2000,
             portion_to_unplace = 888.8,
@@ -252,6 +254,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                 'arguments': {
                     'sampler': None, 
                     'choices': "'package.choices'",
+                    'estimation': "'opus_core.my_estimation_procedure'",                    
                     'dataset_pool': 'dataset_pool',
                     'location_set': 'location_set',
                     'sample_size_locations': 2000,
