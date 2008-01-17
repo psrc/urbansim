@@ -91,7 +91,7 @@ class AgentLocationChoiceModel(LocationChoiceModel):
             else:
                 all_choices[unplaced]=choices
             unplaced = self.get_movers_from_overfilled_locations(agent_set, agents_index)
-            if (unplaced.size <= 0) or (unplaced_size_before_model == unplaced.size):
+            if (unplaced.size <= 0) or (unplaced_size_before_model == unplaced.size) or (unplaced.size == (unplaced_size_before_model - self.observations_mapping['mapped_index'].size)):
                 break
             agent_set.set_values_of_one_attribute(id_name, -1, agents_index[unplaced])
         return all_choices
