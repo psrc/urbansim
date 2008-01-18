@@ -53,6 +53,12 @@ class OpusXMLAction_Data(object):
         self.actRemoveNode = QAction(self.calendarIcon, "Remove Node", self.xmlTreeObject.parent)
         QObject.connect(self.actRemoveNode, SIGNAL("triggered()"), self.removeNode)
 
+        self.actMoveUp = QAction(self.calendarIcon, "Move Up", self.xmlTreeObject.parent)
+        QObject.connect(self.actMoveUp, SIGNAL("triggered()"), self.moveUp)
+
+        self.actMoveDown = QAction(self.calendarIcon, "Move Down", self.xmlTreeObject.parent)
+        QObject.connect(self.actMoveDown, SIGNAL("triggered()"), self.moveDown)
+
         self.actPlaceHolder = QAction(self.applicationIcon, "Placeholder", self.xmlTreeObject.parent)
         QObject.connect(self.actPlaceHolder, SIGNAL("triggered()"), self.placeHolderAction)
         
@@ -90,6 +96,16 @@ class OpusXMLAction_Data(object):
         print "Remove Node Pressed"
         self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
                                             self.currentIndex.model().parent(self.currentIndex))
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
+    def moveUp(self):
+        print "Move Up Pressed"
+        self.currentIndex.model().moveUp(self.currentIndex)
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
+    def moveDown(self):
+        print "Move Down Pressed"
+        self.currentIndex.model().moveDown(self.currentIndex)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def openDocumentation(self):
@@ -158,17 +174,23 @@ class OpusXMLAction_Data(object):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actExecScriptFile)
                     self.menu.addAction(self.actCloneScript)
+                    self.menu.addAction(self.actMoveUp)
+                    self.menu.addAction(self.actMoveDown)
                     self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("script_batch"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actAddScriptFile)
                     self.menu.addAction(self.actCloneBatch)
+                    self.menu.addAction(self.actMoveUp)
+                    self.menu.addAction(self.actMoveDown)
                     self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("documentation_path"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actOpenDocumentation)
+                    self.menu.addAction(self.actMoveUp)
+                    self.menu.addAction(self.actMoveDown)
                     self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
                 else:
