@@ -59,20 +59,31 @@ class OpusXMLAction_Data(object):
 
     def addScriptFile(self):
         print "Add Script Pressed"
-        #clone = self.currentIndex.internalPointer().domNode.cloneNode()
-        #self.currentIndex.model().insertRow(0,self.currentIndex,clone)
-        #self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        newNode = self.currentIndex.model().domDocument.createElement(QString("processing_script"))
+        newNode.setAttribute(QString("type"),QString("script_file"))
+        newText = self.currentIndex.model().domDocument.createTextNode(QString("script name here"))
+        newNode.appendChild(newText)
+        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
+                                            self.currentIndex,
+                                            newNode)
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def cloneBatch(self):
         print "cloneBatch Pressed"
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
-        self.currentIndex.model().insertRow(0,self.currentIndex.model().parent(self.currentIndex),clone)
+        parent = self.currentIndex.model().parent(self.currentIndex)
+        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(parent),
+                                            parent,
+                                            clone)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def cloneScript(self):
         print "cloneScript Pressed"
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
-        self.currentIndex.model().insertRow(0,self.currentIndex.model().parent(self.currentIndex),clone)
+        parent = self.currentIndex.model().parent(self.currentIndex)
+        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(parent),
+                                            parent,
+                                            clone)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def removeNode(self):

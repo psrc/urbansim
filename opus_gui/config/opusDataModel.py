@@ -288,7 +288,12 @@ class OpusDataModel(QAbstractItemModel):
             parentItem = self._rootItem
         else:
             parentItem = parent.internalPointer()
-        parentItem.domNode.insertBefore(node, parentItem.child(row).domNode)
+        if parentItem.numChildren() == 0:
+            parentItem.domNode.appendChild(node)
+        elif row >= parentItem.numChildren():
+            parentItem.domNode.insertAfter(node, parentItem.lastChild().domNode)
+        else:
+            parentItem.domNode.insertBefore(node, parentItem.child(row).domNode)
         item = OpusDataItem(self.domDocument,node,row,parentItem)
         item.initAsRootItem()
         #print "len=%d row=%d" % (len(parentItem.childItems),row)

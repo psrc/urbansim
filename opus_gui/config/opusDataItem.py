@@ -67,3 +67,12 @@ class OpusDataItem:
     def row(self):
         #return self.rowNumber
         return self.parentItem.childItems.index(self)
+
+    def numChildren(self):
+        return len(self.childItems)
+
+    def lastChild(self):
+        if len(self.childItems) > 0:
+            return self.childItems[-1]
+        else:
+            return None
