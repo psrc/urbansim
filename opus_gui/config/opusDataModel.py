@@ -203,7 +203,7 @@ class OpusDataModel(QAbstractItemModel):
 
     def flags(self, index):
         if not index.isValid():
-            return 0
+            return Qt.ItemIsEnabled
         if self.editable == True:
             if index.column() == 2:
                 return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
@@ -276,3 +276,28 @@ class OpusDataModel(QAbstractItemModel):
                         self.parentTree.groupBox.setTitle(self.parentTree.groupBox.title().prepend(QString("*")))
                     self.dirty = True
         return True
+
+    def insertRow(self,row,parent,node):
+        returnval = QAbstractItemModel.insertRow(self,row,parent)
+        self.beginInsertRows(parent,row,row)
+        # Add the element
+        parentItem = parent.internalPointer()
+        #parentItem.domNode.appendChild(node)
+        parentItem.domNode.insertBefore(node, parentItem.child(row).domNode)
+        item = OpusDataItem(self.domDocument,node,row,parentItem)
+        item.initAsRootItem()
+        #print "len=%d row=%d" % (len(parentItem.childItems),row)
+        parentItem.childItems.insert(row,item)
+        self.endInsertRows()
+        #print "debug"
+        return returnval
+
+    def removeRow(self,row,parent):
+        returnval = QAbstractItemModel.removeRow(self,row,parent)
+        self.beginRemoveRows(parent,row,row)
+        # Remove the element
+        parentItem = parent.internalPointer()
+        parentItem.domNode.removeChild(parentItem.child(row).domNode)
+        parentItem.childItems.pop(row)
+        self.endRemoveRows()
+        return returnval

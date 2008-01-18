@@ -54,20 +54,26 @@ class OpusXMLAction_Data(object):
     def addScriptFile(self):
         print "Add Script Pressed"
         # Add a node with tagname,type as arguments.
-        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),self.currentIndex)
-        self.currentIndex.internalPointer().addChild("default_script","script_file","script_name")
+        #self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),self.currentIndex)
+        #self.currentIndex.internalPointer().addChild("default_script","script_file","script_name")
+        #self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        
+        clone = self.currentIndex.internalPointer().domNode.cloneNode()
+        self.currentIndex.model().insertRow(0,self.currentIndex,clone)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
         
     def removeScriptFile(self):
         print "Remove Script Pressed"
         ######### This all needs to move into the re-implemented removeRow in the model...
-        self.currentIndex.model().beginRemoveRows(self.currentIndex.model().parent(self.currentIndex),
-                                                  self.currentIndex.internalPointer().rowNumber,
-                                                  self.currentIndex.internalPointer().rowNumber)
-        self.currentIndex.internalPointer().remove()
+        #self.currentIndex.model().beginRemoveRows(self.currentIndex.model().parent(self.currentIndex),
+        #                                          self.currentIndex.internalPointer().rowNumber,
+        #                                          self.currentIndex.internalPointer().rowNumber)
+        #self.currentIndex.internalPointer().remove()
+        #self.currentIndex.model().removeRow(self.currentIndex.internalPointer().rowNumber,
+        #                                    self.currentIndex.model().parent(self.currentIndex))
+        #self.currentIndex.model().endRemoveRows()
         self.currentIndex.model().removeRow(self.currentIndex.internalPointer().rowNumber,
                                             self.currentIndex.model().parent(self.currentIndex))
-        self.currentIndex.model().endRemoveRows()
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def openDocumentation(self):
