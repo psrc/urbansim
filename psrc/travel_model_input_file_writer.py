@@ -64,12 +64,12 @@ class TravelModelInputFileWriter(object):
 
         value_122 = zeros(zone_set.size())
         index_122 = zone_set.try_get_id_index(array([58,59,60,71,72,73,84,85,86,150,251,266,489,578,687,688,797,868]))
-        value_122[index_122 != -1] = 1
+        value_122[index_122[index_122 != -1]] = 1
         zone_set.add_attribute(data=value_122, name="v122")
         
         value_123 = zeros(zone_set.size())
         index_123 = zone_set.try_get_id_index(array([531,646,847,850,888,894,899,910]))
-        value_123[index_123 != -1] = 1
+        value_123[index_123[index_123 != -1]] = 1
         zone_set.add_attribute(data=value_123, name="v123")
         
         value_124 = logical_not(value_122 + value_123)
