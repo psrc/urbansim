@@ -41,11 +41,17 @@ class OpusXMLAction_Data(object):
         self.actAddScriptFile = QAction(self.calendarIcon, "Add Script", self.xmlTreeObject.parent)
         QObject.connect(self.actAddScriptFile, SIGNAL("triggered()"), self.addScriptFile)
 
+        self.actCloneBatch = QAction(self.calendarIcon, "Clone Batch", self.xmlTreeObject.parent)
+        QObject.connect(self.actCloneBatch, SIGNAL("triggered()"), self.cloneBatch)
+
+        self.actCloneScript = QAction(self.calendarIcon, "Clone Script", self.xmlTreeObject.parent)
+        QObject.connect(self.actCloneScript, SIGNAL("triggered()"), self.cloneScript)
+
         self.actOpenDocumentation = QAction(self.calendarIcon, "Open Documentation", self.xmlTreeObject.parent)
         QObject.connect(self.actOpenDocumentation, SIGNAL("triggered()"), self.openDocumentation)
 
-        self.actRemoveScriptFile = QAction(self.calendarIcon, "Remove Script", self.xmlTreeObject.parent)
-        QObject.connect(self.actRemoveScriptFile, SIGNAL("triggered()"), self.removeScriptFile)
+        self.actRemoveNode = QAction(self.calendarIcon, "Remove Node", self.xmlTreeObject.parent)
+        QObject.connect(self.actRemoveNode, SIGNAL("triggered()"), self.removeNode)
 
         self.actPlaceHolder = QAction(self.applicationIcon, "Placeholder", self.xmlTreeObject.parent)
         QObject.connect(self.actPlaceHolder, SIGNAL("triggered()"), self.placeHolderAction)
@@ -53,25 +59,24 @@ class OpusXMLAction_Data(object):
 
     def addScriptFile(self):
         print "Add Script Pressed"
-        # Add a node with tagname,type as arguments.
-        #self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),self.currentIndex)
-        #self.currentIndex.internalPointer().addChild("default_script","script_file","script_name")
+        #clone = self.currentIndex.internalPointer().domNode.cloneNode()
+        #self.currentIndex.model().insertRow(0,self.currentIndex,clone)
         #self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
-        
+
+    def cloneBatch(self):
+        print "cloneBatch Pressed"
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
-        self.currentIndex.model().insertRow(0,self.currentIndex,clone)
+        self.currentIndex.model().insertRow(0,self.currentIndex.model().parent(self.currentIndex),clone)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
-        
-    def removeScriptFile(self):
-        print "Remove Script Pressed"
-        ######### This all needs to move into the re-implemented removeRow in the model...
-        #self.currentIndex.model().beginRemoveRows(self.currentIndex.model().parent(self.currentIndex),
-        #                                          self.currentIndex.internalPointer().rowNumber,
-        #                                          self.currentIndex.internalPointer().rowNumber)
-        #self.currentIndex.internalPointer().remove()
-        #self.currentIndex.model().removeRow(self.currentIndex.internalPointer().rowNumber,
-        #                                    self.currentIndex.model().parent(self.currentIndex))
-        #self.currentIndex.model().endRemoveRows()
+
+    def cloneScript(self):
+        print "cloneScript Pressed"
+        clone = self.currentIndex.internalPointer().domNode.cloneNode()
+        self.currentIndex.model().insertRow(0,self.currentIndex.model().parent(self.currentIndex),clone)
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
+    def removeNode(self):
+        print "Remove Node Pressed"
         self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
                                             self.currentIndex.model().parent(self.currentIndex))
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
@@ -141,15 +146,19 @@ class OpusXMLAction_Data(object):
                 if domElement.attribute(QString("type")) == QString("script_file"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actExecScriptFile)
-                    self.menu.addAction(self.actRemoveScriptFile)
+                    self.menu.addAction(self.actCloneScript)
+                    self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("script_batch"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actAddScriptFile)
+                    self.menu.addAction(self.actCloneBatch)
+                    self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("documentation_path"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actOpenDocumentation)
+                    self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
                 else:
                     self.menu = QMenu(self.xmlTreeObject.parent)

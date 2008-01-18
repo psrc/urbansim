@@ -60,7 +60,8 @@ class OpusDataModel(QAbstractItemModel):
             print "No XML elements in the root with type ", self.xmlType
             return
         print "Found ", self.xmlRoot.nodeName()
-        self._rootItem = OpusDataItem(document,document, 0, self)
+        #self._rootItem = OpusDataItem(document,document.documentElement(), 0, self)
+        self._rootItem = OpusDataItem(document,self.xmlRoot, 0, self)
         # Loop through the first level children and inti them as a root item
         # and append to the tree...
         for x in xrange(0,self.xmlRoot.childNodes().count(),1):
@@ -244,6 +245,8 @@ class OpusDataModel(QAbstractItemModel):
         parentItem = childItem.parent()
         if not parentItem or parentItem == self._rootItem:
             return QModelIndex()
+        #if parentItem == self._rootItem:
+        #    return self.createIndex(0,0,parentItem)
         return self.createIndex(parentItem.row(),0,parentItem)
     
     def rowCount(self, parent):
@@ -281,8 +284,10 @@ class OpusDataModel(QAbstractItemModel):
         returnval = QAbstractItemModel.insertRow(self,row,parent)
         self.beginInsertRows(parent,row,row)
         # Add the element
-        parentItem = parent.internalPointer()
-        #parentItem.domNode.appendChild(node)
+        if parent == QModelIndex():
+            parentItem = self._rootItem
+        else:
+            parentItem = parent.internalPointer()
         parentItem.domNode.insertBefore(node, parentItem.child(row).domNode)
         item = OpusDataItem(self.domDocument,node,row,parentItem)
         item.initAsRootItem()
@@ -296,7 +301,10 @@ class OpusDataModel(QAbstractItemModel):
         returnval = QAbstractItemModel.removeRow(self,row,parent)
         self.beginRemoveRows(parent,row,row)
         # Remove the element
-        parentItem = parent.internalPointer()
+        if parent == QModelIndex():
+            parentItem = self._rootItem
+        else:
+            parentItem = parent.internalPointer()
         parentItem.domNode.removeChild(parentItem.child(row).domNode)
         parentItem.childItems.pop(row)
         self.endRemoveRows()
