@@ -17,7 +17,8 @@ from opus_core.variables.variable import Variable
 from numpy import array, where, float32
 from scipy.ndimage import sum as ndimage_sum
 from psrc.opus_package_info import package
-
+from opus_core.logger import logger
+from opus_core.misc import safe_array_divide
 from opus_core.tests import opus_unittest
 
 class Abstract_Trip_Weighted_Average_Variable_From_Home(Variable):
@@ -51,14 +52,21 @@ class Abstract_Trip_Weighted_Average_Variable_From_Home(Variable):
         # if there are contigious places of zero division the values should propigate upon iteration
         no_trips_from_here = where(denominator == 0)[0]
         while no_trips_from_here.size != 0:
+            if no_trips_from_here.size == denominator.size:
+                logger.log_warning("%s attribute of travel_data is all zeros; %s returns all zeros" % (self.trips_attribute_name, 
+                                                                                                       self.name()
+                                                                                                       ))
+                break
+                 
             substitute_locations = no_trips_from_here - 1    # a mapping, what zone the new data will come from
             if substitute_locations[0] < 0: substitute_locations[0] = 1
             numerator[no_trips_from_here] = numerator[substitute_locations]
             denominator[no_trips_from_here] = denominator[substitute_locations] 
             no_trips_from_here = where(denominator == 0)[0]
             
-        return numerator / denominator
+        return safe_array_divide(numerator, denominator)
 
+    ##TODO: this test class is not run or used by any other module
     class Abstract_Trip_Weighted_Average_Variable_From_Home_Tests(opus_unittest.OpusTestCase):
         def __init__(self, variable_name, time_attribute_name, trips_attribute_name):
             self.variable_name = variable_name
