@@ -185,28 +185,20 @@ We will use this later to install a number of packages.</p>
 <p>If you are running a version of OS X earlier than 10.5, such as 10.4.9, download and install the following:
 <ul>
 
-<li><a href="http://prdownloads.sourceforge.net/wxpython/wxPython2.6-osx-unicode-2.6.3.3-universal10.4-py2.5.dmg?download">wxPython 2.6.3.3</a> from sourceforge. Later versions of wxPython will not work.</li>
-
 <li><b>pytz</b> from <a href="http://pythonmac.org/packages/py25-fat/index.html">the downloads page on pythonmac.org</a>.  This is also not necessary on 10.5/Leopard.</li>
 
 <li><b>python-dateutil</b>, also from <a href="http://pythonmac.org/packages/py25-fat/index.html">pythonmac.org</a>.</li>
 
 </ul>
 
-<p>If you are running 10.5/Leopard, the three packages above are not necessary.</p>
+<p>If you are running 10.5/Leopard, the two packages above are not necessary.</p>
 
 <p>Now download and install the Superpack from <a href="http://trichech.us/?page_id=5">http://trichech.us/?page_id=5</a>.
   This includes the packages NumPy 1.0.4, SciPi 0.7 and matplotlib 0.90.1, all of which are necessary.</p>
 
-Install the following packages using Easy Install:
+Install the following package using Easy Install:
 
 <ul>
-
-	<li><b>Traits:</b>  Go to <pre>http://code.enthought.com/enstaller/eggs/macosx/</pre> and navigate 
-	to the correct package, which will have a name like <pre>enthought.traits-2.0.1b1-py2.5-macosx-10.3-fat.egg</pre>
-	or something similar.  Download it, and then use
-	<pre>$ easy_install [<i>filename</i>]</pre>
-	to install it.</li>
 
 	 <li><b>SQLAlchemy 0.4:</b> Download the tarball (currently for SQLAlchehmy 0.4 from 
 	 <a href="http://www.sqlalchemy.org/download.html">http://www.sqlalchemy.org/download.html</a>.  
@@ -242,6 +234,10 @@ by ArcGIS), install <b>dbfpy</b> (<a href="http://sourceforge.net/projects/dbfpy
 <p>You may get the following error after building and installing MySQL-python 1.2.2 on 10.3.9:
 <i><br>ImportError: dlcompat: dyld: /Library/Frameworks/Python.framework/Versions/2.5/Resources/Python.app/Contents/MacOS/Python can't open library: /usr/local/mysql/lib/mysql/libmysqlclient_r.15.dylib  (No such file or directory, errno = 2)</i>
 <br>This may happen because the library it is looking for is in /usr/local/mysql/lib/, and not in a subfolder called mysql.  Moving the files or creating aliases should fix the problem.</p>
+
+<p>Lastly, install <a href="http://www.riverbankcomputing.co.uk/pyqt/index.php">PyQT</a> and <a href="http://www.riverbankcomputing.co.uk/qscintilla/index.php">QScintilla</a>.  You need to install QT (version 4), SIP and finally PyQT.  The page <a href="http://phanatic.hu/archives/2007/11/building-qt-4-and-pyqt-on-mac-os-x-leopard/">
+http://phanatic.hu/archives/2007/11/building-qt-4-and-pyqt-on-mac-os-x-leopard/</a> has detailed directions for how to do this on Mac OS 10.5/Leopard.  The process is similar on Tiger/10.4,
+but seems to vary from user to user for reasons we haven't been able to pin down.  <a href="http://www.riverbankcomputing.com/pipermail/qscintilla/2007-July/000110.html">This page</a> has been useful to some users.
 
 <h2>Step 4: <a name="opus">Installing Opus and
 UrbanSim</a></h2>
@@ -316,7 +312,8 @@ This is the best option if you'll be doing software development. &nbsp;See <a hr
 Environment Variables</a>&nbsp;</h2>
 
 <p>UrbanSim requires the following environment variables.&nbsp; The first
-tells the Python interpreter where to find the Opus/UrbanSim code.  The remaining
+tells the Python interpreter where to find the Opus/UrbanSim code.  The second tells the GUI where to find your
+cached data. The remaining
 variables describe how to connect to MySQL -- leave those four out if you aren't
 installing MySQL.</p>
 
@@ -332,6 +329,8 @@ containing your 'workspace' that you defined in Step 4, e.g.
 /Library/Frameworks/Python.framework/Versions/2.5/lib/python2.5/site-packages, as the preinstalled
  version of Python uses a different directory for sitepackages.  Finally, make sure your directory
   with enthought/traits is on the PYTHONPATH.</li>
+
+<li><b>OPUS_DATA_PATH</b> - The directory where you keep your caches of data for particular runs, for example 'Users/yourname/urbansim_cache.</li>
 
   <li><b>MYSQLHOSTNAMEFORTESTS</b> - This environment
 variable is only used for running unit tests that use MySQL. These
