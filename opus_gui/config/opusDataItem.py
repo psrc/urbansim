@@ -21,19 +21,9 @@ class OpusDataItem:
     def __init__(self,domDocument, node, row, parent):
         self.domDocument = domDocument
         self.domNode = node
-        self.rowNumber = row
         self.parentItem = parent
         self.childItems = []
     
-    #def initAsRootItem(self):
-    #    if self.domNode.childNodes().count() == 1:
-    #        current = self.domNode.childNodes().item(0)
-    #        childItem = OpusDataItem(current, 0 , self)
-    #        self.childItems.append(childItem)
-    #        self.initAsRootChild()
-    #    else:
-    #        print "ERROR - XML has more than one root configuration item"
-
     def initAsRootItem(self):
         i = 0
         for x in xrange(0,self.domNode.childNodes().count(),1):
@@ -53,35 +43,6 @@ class OpusDataItem:
     def parent(self):
         return self.parentItem
     
-    def remove(self):
-        # Need to remove the node...
-        self.parentItem.domNode.removeChild(self.domNode)
-        #self.parentItem.childItems.remove(self)
-        indexSelf = self.parentItem.childItems.index(self)
-        for x in xrange(indexSelf,len(self.parentItem.childItems)):
-            print "X index = ", x
-            self.parentItem.childItems[x].rowNumber = self.parentItem.childItems[x].rowNumber - 1
-        print len(self.parentItem.childItems)
-        self.parentItem.childItems.remove(self)
-        print len(self.parentItem.childItems)
-        
-    def addChild(self,elementTag,elementType,elementText):
-        # Need to add node to dom
-        print "parent has %d child items" % (self.domNode.childNodes().count())
-        newElement = self.domDocument.createElement(QString(elementTag))
-        newElement.setAttribute(QString("type"),elementType)
-        self.domNode.appendChild(newElement)
-        if elementText != "":
-            # Add a text Node
-            newText = self.domDocument.createTextNode(QString(elementText))
-            newElement.appendChild(newText)
-        print "parent has %d child items" % (self.domNode.childNodes().count())
-        # Then add the node to the model with a new item
-        print "item has %d child items" % (len(self.childItems))
-        childItem = OpusDataItem(self.domDocument, newElement,len(self.childItems),self)
-        self.childItems.append(childItem)
-        print "item has %d child items" % (len(self.childItems))
-        
     def child(self,i):
         #print "DataItem.child ", i
         if len(self.childItems) > i:
@@ -102,13 +63,7 @@ class OpusDataItem:
                 self.childItems.append(childItem)
                 return childItem
         return None
-        #if i>=0 and i<self.domNode.childNodes().count():
-        #    childNode = self.domNode.childNodes().item(i)
-        #    childItem = OpusDataItem(childNode, i , self)
-        #    self.childItems.append(childItem)
-        #    return childItem
-        #return 0
     
     def row(self):
-        return self.rowNumber
-    
+        #return self.rowNumber
+        return self.parentItem.childItems.index(self)

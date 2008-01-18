@@ -72,7 +72,7 @@ class OpusXMLAction_Data(object):
         #self.currentIndex.model().removeRow(self.currentIndex.internalPointer().rowNumber,
         #                                    self.currentIndex.model().parent(self.currentIndex))
         #self.currentIndex.model().endRemoveRows()
-        self.currentIndex.model().removeRow(self.currentIndex.internalPointer().rowNumber,
+        self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
                                             self.currentIndex.model().parent(self.currentIndex))
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
