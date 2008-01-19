@@ -100,12 +100,12 @@ class OpusXMLAction_Data(object):
 
     def moveUp(self):
         print "Move Up Pressed"
-        self.currentIndex.model().moveUp(self.currentIndex,3)
+        self.currentIndex.model().moveUp(self.currentIndex)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def moveDown(self):
         print "Move Down Pressed"
-        self.currentIndex.model().moveDown(self.currentIndex,2)
+        self.currentIndex.model().moveDown(self.currentIndex)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def openDocumentation(self):
