@@ -18,22 +18,6 @@ from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 from opusDataItem import OpusDataItem
 
-class OpusDataBaseModel(object):
-    def __init__(self, parent, document, configFile):
-        self.parent = parent
-        self.document = document
-        self.configFile = configFile
-
-        self._rootItem = OpusDataItem(document, 0, self)
-        self._rootItem.initAsRootItem()
-
-        # Dirty flag for keeping track of edits...
-        self.dirty = False
-
-    def findRootElement(self,tag):
-        pass
-        
-
 
 class OpusDataModel(QAbstractItemModel):
     def __init__(self, parentTree, document, parent, configFile, xmlType, editable):
