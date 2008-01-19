@@ -299,16 +299,18 @@ class OpusDataModel(QAbstractItemModel):
         self.endRemoveRows()
         return returnval
 
-    def moveUp(self,item):
+    def moveUp(self,item,howmany=1):
         if item.isValid():
             currentRow = item.row()
             if currentRow > 0:
+                if howmany > currentRow:
+                    howmany = currentRow
                 clone = item.internalPointer().domNode.cloneNode()
                 currentParent = item.parent()
                 self.removeRow(currentRow,currentParent)
-                self.insertRow(currentRow-1,currentParent,clone)
+                self.insertRow(currentRow-howmany,currentParent,clone)
     
-    def moveDown(self,item):
+    def moveDown(self,item,howmany=1):
         if item.isValid():
             currentRow = item.row()
             if item.parent() == QModelIndex():
@@ -316,7 +318,9 @@ class OpusDataModel(QAbstractItemModel):
             else:
                 parentItem = item.parent().internalPointer()
             if currentRow < parentItem.numChildren()-1:
+                if howmany > (parentItem.numChildren()-1) - currentRow:
+                    howmany = (parentItem.numChildren()-1) - currentRow
                 clone = item.internalPointer().domNode.cloneNode()
                 currentParent = item.parent()
                 self.removeRow(currentRow,currentParent)
-                self.insertRow(currentRow+1,currentParent,clone)
+                self.insertRow(currentRow+howmany,currentParent,clone)
