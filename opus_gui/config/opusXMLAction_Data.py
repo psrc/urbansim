@@ -42,10 +42,13 @@ class OpusXMLAction_Data(object):
         QObject.connect(self.actAddScriptFile, SIGNAL("triggered()"), self.addScriptFile)
 
         self.actCloneBatch = QAction(self.calendarIcon, "Clone Batch", self.xmlTreeObject.parent)
-        QObject.connect(self.actCloneBatch, SIGNAL("triggered()"), self.cloneBatch)
+        QObject.connect(self.actCloneBatch, SIGNAL("triggered()"), self.cloneNode)
 
         self.actCloneScript = QAction(self.calendarIcon, "Clone Script", self.xmlTreeObject.parent)
-        QObject.connect(self.actCloneScript, SIGNAL("triggered()"), self.cloneScript)
+        QObject.connect(self.actCloneScript, SIGNAL("triggered()"), self.cloneNode)
+
+        self.actCloneNode = QAction(self.calendarIcon, "Clone Node", self.xmlTreeObject.parent)
+        QObject.connect(self.actCloneNode, SIGNAL("triggered()"), self.cloneNode)
 
         self.actOpenDocumentation = QAction(self.calendarIcon, "Open Documentation", self.xmlTreeObject.parent)
         QObject.connect(self.actOpenDocumentation, SIGNAL("triggered()"), self.openDocumentation)
@@ -53,11 +56,11 @@ class OpusXMLAction_Data(object):
         self.actRemoveNode = QAction(self.calendarIcon, "Remove Node", self.xmlTreeObject.parent)
         QObject.connect(self.actRemoveNode, SIGNAL("triggered()"), self.removeNode)
 
-        self.actMoveUp = QAction(self.calendarIcon, "Move Up", self.xmlTreeObject.parent)
-        QObject.connect(self.actMoveUp, SIGNAL("triggered()"), self.moveUp)
+        self.actMoveNodeUp = QAction(self.calendarIcon, "Move Up", self.xmlTreeObject.parent)
+        QObject.connect(self.actMoveNodeUp, SIGNAL("triggered()"), self.moveNodeUp)
 
-        self.actMoveDown = QAction(self.calendarIcon, "Move Down", self.xmlTreeObject.parent)
-        QObject.connect(self.actMoveDown, SIGNAL("triggered()"), self.moveDown)
+        self.actMoveNodeDown = QAction(self.calendarIcon, "Move Down", self.xmlTreeObject.parent)
+        QObject.connect(self.actMoveNodeDown, SIGNAL("triggered()"), self.moveNodeDown)
 
         self.actPlaceHolder = QAction(self.applicationIcon, "Placeholder", self.xmlTreeObject.parent)
         QObject.connect(self.actPlaceHolder, SIGNAL("triggered()"), self.placeHolderAction)
@@ -74,17 +77,8 @@ class OpusXMLAction_Data(object):
                                             newNode)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
-    def cloneBatch(self):
-        print "cloneBatch Pressed"
-        clone = self.currentIndex.internalPointer().domNode.cloneNode()
-        parent = self.currentIndex.model().parent(self.currentIndex)
-        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(parent),
-                                            parent,
-                                            clone)
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
-
-    def cloneScript(self):
-        print "cloneScript Pressed"
+    def cloneNode(self):
+        print "cloneNode Pressed"
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
         parent = self.currentIndex.model().parent(self.currentIndex)
         self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(parent),
@@ -98,12 +92,12 @@ class OpusXMLAction_Data(object):
                                             self.currentIndex.model().parent(self.currentIndex))
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
-    def moveUp(self):
+    def moveNodeUp(self):
         print "Move Up Pressed"
         self.currentIndex.model().moveUp(self.currentIndex)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
-    def moveDown(self):
+    def moveNodeDown(self):
         print "Move Down Pressed"
         self.currentIndex.model().moveDown(self.currentIndex)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
@@ -174,23 +168,24 @@ class OpusXMLAction_Data(object):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actExecScriptFile)
                     self.menu.addAction(self.actCloneScript)
-                    self.menu.addAction(self.actMoveUp)
-                    self.menu.addAction(self.actMoveDown)
+                    self.menu.addAction(self.actMoveNodeUp)
+                    self.menu.addAction(self.actMoveNodeDown)
                     self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("script_batch"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actAddScriptFile)
                     self.menu.addAction(self.actCloneBatch)
-                    self.menu.addAction(self.actMoveUp)
-                    self.menu.addAction(self.actMoveDown)
+                    self.menu.addAction(self.actMoveNodeUp)
+                    self.menu.addAction(self.actMoveNodeDown)
                     self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("documentation_path"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actOpenDocumentation)
-                    self.menu.addAction(self.actMoveUp)
-                    self.menu.addAction(self.actMoveDown)
+                    self.menu.addAction(self.actCloneNode)
+                    self.menu.addAction(self.actMoveNodeUp)
+                    self.menu.addAction(self.actMoveNodeDown)
                     self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
                 else:
