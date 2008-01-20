@@ -53,8 +53,8 @@ class OpusXMLAction_Scenario(object):
         
         
     def runModel(self):
-        print "action1 context pressed with column = %s and item = %s" % \
-              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+        #print "action1 context pressed with column = %s and item = %s" % \
+        #      (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
         # If the XML is not dirty we can go ahead and run... else prompt for saving
         if not self.xmlTreeObject.model.dirty:
             # Add the model to the run Q
@@ -75,8 +75,8 @@ class OpusXMLAction_Scenario(object):
             return False
     
     def openXMLFile(self):
-        print "Open File context pressed with column = %s and item = %s" % \
-              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+        #print "Open File context pressed with column = %s and item = %s" % \
+        #      (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
         filePath = ""
         if self.currentIndex.internalPointer().node().hasChildNodes():
             children = self.currentIndex.internalPointer().node().childNodes()
@@ -92,8 +92,8 @@ class OpusXMLAction_Scenario(object):
 
     
     def editXMLFileLocal(self):
-        print "Edit File Local context pressed with column = %s and item = %s" % \
-              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+        #print "Edit File Local context pressed with column = %s and item = %s" % \
+        #      (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
         filePath = ""
         if self.currentIndex.internalPointer().node().hasChildNodes():
             children = self.currentIndex.internalPointer().node().childNodes()
@@ -107,15 +107,15 @@ class OpusXMLAction_Scenario(object):
 
         # To test QScintilla
         if self.xmlTreeObject.parent.editorStuff:
-            print "Loading into qscintilla..."
+            #print "Loading into qscintilla..."
             # Now an individual tab
             import util.editorBase
             fileName = newFile.absoluteFilePath()
             x = util.editorBase.EditorTab(self.xmlTreeObject.parent, QString(fileName))
     
     def editXMLFileGlobal(self):
-        print "Edit File Global context pressed with column = %s and item = %s" % \
-              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+        #print "Edit File Global context pressed with column = %s and item = %s" % \
+        #      (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
         filePath = ""
         if self.currentIndex.internalPointer().node().hasChildNodes():
             children = self.currentIndex.internalPointer().node().childNodes()
@@ -129,7 +129,7 @@ class OpusXMLAction_Scenario(object):
 
         # To test QScintilla
         if self.xmlTreeObject.parent.editorStuff:
-            print "Loading into qscintilla..."
+            #print "Loading into qscintilla..."
             # Start with the base tab
             fileName = newFile.absoluteFilePath()
             self.xmlTreeObject.parent.editorStuff.clear()
@@ -143,8 +143,9 @@ class OpusXMLAction_Scenario(object):
             self.xmlTreeObject.parent.editorStatusLabel.setText(QString(fileName))
 
     def placeHolderAction(self):
-        print "placeHolderAction pressed with column = %s and item = %s" % \
-              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+        #print "placeHolderAction pressed with column = %s and item = %s" % \
+        #      (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+        pass
     
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \

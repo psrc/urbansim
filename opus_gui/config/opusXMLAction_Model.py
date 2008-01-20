@@ -42,12 +42,13 @@ class OpusXMLAction_Model(object):
         QObject.connect(self.actRunEstimation, SIGNAL("triggered()"), self.runEstimationAction)
 
     def placeHolderAction(self):
-        print "placeHolderAction pressed with column = %s and item = %s" % \
-              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+        #print "placeHolderAction pressed with column = %s and item = %s" % \
+        #      (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+        pass
     
     def runEstimationAction(self):
-        print "runEstimationAction pressed with column = %s and item = %s" % \
-              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+        #print "runEstimationAction pressed with column = %s and item = %s" % \
+        #      (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
         # First confirm that the project file needs to be saved before running the estimation...
         if not self.xmlTreeObject.model.dirty:
             newEstimation = OpusEstimation(self.xmlTreeObject,self.xmlTreeObject.parentTool.xml_file)

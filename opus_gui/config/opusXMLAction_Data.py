@@ -67,7 +67,7 @@ class OpusXMLAction_Data(object):
         
 
     def addScriptFile(self):
-        print "Add Script Pressed"
+        #print "Add Script Pressed"
         newNode = self.currentIndex.model().domDocument.createElement(QString("processing_script"))
         newNode.setAttribute(QString("type"),QString("script_file"))
         newText = self.currentIndex.model().domDocument.createTextNode(QString("script name here"))
@@ -78,7 +78,7 @@ class OpusXMLAction_Data(object):
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def cloneNode(self):
-        print "cloneNode Pressed"
+        #print "cloneNode Pressed"
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
         parent = self.currentIndex.model().parent(self.currentIndex)
         self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(parent),
@@ -87,23 +87,23 @@ class OpusXMLAction_Data(object):
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def removeNode(self):
-        print "Remove Node Pressed"
+        #print "Remove Node Pressed"
         self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
                                             self.currentIndex.model().parent(self.currentIndex))
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def moveNodeUp(self):
-        print "Move Up Pressed"
+        #print "Move Up Pressed"
         self.currentIndex.model().moveUp(self.currentIndex)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def moveNodeDown(self):
-        print "Move Down Pressed"
+        #print "Move Down Pressed"
         self.currentIndex.model().moveDown(self.currentIndex)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def openDocumentation(self):
-        print "Open Documentation Pressed"
+        #print "Open Documentation Pressed"
         filePath = ""
         if self.currentIndex.internalPointer().node().hasChildNodes():
             children = self.currentIndex.internalPointer().node().childNodes()
@@ -119,7 +119,7 @@ class OpusXMLAction_Data(object):
 
 
     def execScriptFile(self):
-        print "Exec Script Pressed"
+        #print "Exec Script Pressed"
         # First find the script path...
         scriptPath = ""
         if self.currentIndex.internalPointer().parent().node().hasChildNodes():
@@ -147,7 +147,7 @@ class OpusXMLAction_Data(object):
         y.run()
 
     def placeHolderAction(self):
-        print "placeHolderAction pressed with column = %s and item = %s" % \
+        #print "placeHolderAction pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
     
     def processCustomMenu(self, position):

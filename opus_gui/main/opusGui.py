@@ -130,7 +130,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     from opus_core.misc import directory_path_from_opus_path
     start_dir = directory_path_from_opus_path('opus_gui.projects')
-    print "Open Config pressed..."
+    #print "Open Config pressed..."
     configDialog = QFileDialog()
     filter_str = QString("*.xml")
     fd = configDialog.getOpenFileName(self,QString("Please select an xml config file..."),
@@ -141,12 +141,12 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     fileName = QString(fd)
     fileNameInfo = QFileInfo(QString(fd))
     fileNameBaseName = fileNameInfo.completeBaseName()
-    print "Filename = ", fileName
+    #print "Filename = ", fileName
     # Open the file and add to the Run tab...
     self.toolboxStuff.openXMLTree(fileName)
 
   def saveConfig(self):
-    print "Save Config pressed..."
+    #print "Save Config pressed..."
     configFile = self.toolboxStuff.runManagerTree.model.configFile
     domDocument = self.toolboxStuff.runManagerTree.model.domDocument
     indentSize = 2
@@ -162,7 +162,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.toolboxStuff.modelManagerTree.groupBox.setTitle(QFileInfo(self.toolboxStuff.modelManagerTree.parentTool.xml_file).filePath())
     self.toolboxStuff.resultsManagerTree.model.dirty = False
     self.toolboxStuff.resultsManagerTree.groupBox.setTitle(QFileInfo(self.toolboxStuff.resultsManagerTree.parentTool.xml_file).filePath())
-    print "Save Config finished..."
+    #print "Save Config finished..."
 
   def saveConfigAs(self):
     print "Save Config As is not implemented yet..."

@@ -39,11 +39,11 @@ class OpusDataModel(QAbstractItemModel):
 
         # Get the XML config data
         self.xmlRoot = document.elementsByTagName(QString(self.xmlType)).item(0)
-        print "Searching for ", self.xmlType
+        #print "Searching for ", self.xmlType
         if self.xmlRoot == None:
             print "No XML elements in the root with type ", self.xmlType
             return
-        print "Found ", self.xmlRoot.nodeName()
+        #print "Found ", self.xmlRoot.nodeName()
         #self._rootItem = OpusDataItem(document,document.documentElement(), 0, self)
         self._rootItem = OpusDataItem(document,self.xmlRoot, 0, self)
         # Loop through the first level children and inti them as a root item
@@ -101,7 +101,7 @@ class OpusDataModel(QAbstractItemModel):
         childNode = None
         for x in xrange(0,doc.childNodes().count(),1):
             current = doc.childNodes().item(x)
-            print "FOO",current.attributes().namedItem(QString("type")).nodeValue()
+            #print "FOO",current.attributes().namedItem(QString("type")).nodeValue()
             if (current.attributes().namedItem(QString("type")).nodeValue() == QString(tp)) and (current.nodeType() == QDomNode.ElementNode):
                 childNode = current
         return childNode
