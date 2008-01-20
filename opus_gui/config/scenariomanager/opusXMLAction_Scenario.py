@@ -109,9 +109,9 @@ class OpusXMLAction_Scenario(object):
         if self.xmlTreeObject.parent.editorStuff:
             #print "Loading into qscintilla..."
             # Now an individual tab
-            import util.editorBase
+            import util.editorbase
             fileName = newFile.absoluteFilePath()
-            x = util.editorBase.EditorTab(self.xmlTreeObject.parent, QString(fileName))
+            x = util.editorbase.EditorTab(self.xmlTreeObject.parent, QString(fileName))
     
     def editXMLFileGlobal(self):
         #print "Edit File Global context pressed with column = %s and item = %s" % \

@@ -19,7 +19,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
 from run.opusRunScript import *
-import util.documentationBase
+import util.documentationbase
 
 
 class OpusXMLAction_Data(object):
@@ -115,7 +115,7 @@ class OpusXMLAction_Data(object):
         baseDir = baseInfo.absolutePath()
         newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
         fileName = newFile.absoluteFilePath().trimmed()
-        x = util.documentationBase.DocumentationTab(self.xmlTreeObject.parent, QString(fileName))
+        x = util.documentationbase.DocumentationTab(self.xmlTreeObject.parent, QString(fileName))
 
 
     def execScriptFile(self):
