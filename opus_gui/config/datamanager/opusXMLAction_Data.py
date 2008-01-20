@@ -18,7 +18,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
-from run.opusRunScript import *
+from run.script.opusRunScript import *
 import util.documentationbase
 
 

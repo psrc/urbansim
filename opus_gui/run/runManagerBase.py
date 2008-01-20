@@ -17,8 +17,8 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
-from run.opusRunModel import *
-from run.opusRunEstimation import *
+from run.model.opusRunModel import *
+from run.estimation.opusRunEstimation import *
 from config.xmlmodelview.opusDataModel import OpusDataModel
 from config.xmlmodelview.opusDataDelegate import OpusDataDelegate
 

@@ -22,7 +22,7 @@ from PyQt4.QtXml import *
 #from inprocess.configurations.xml_configuration import XMLConfiguration
 ## from psrc_parcel.estimation.run_estimation import EstimationRunner
 #from inprocess.configurations.gui_estimation_runner import EstimationRunner
-from run.opusRunEstimation import OpusEstimation
+from run.estimation.opusRunEstimation import OpusEstimation
         
 
 class OpusXMLAction_Model(object):
