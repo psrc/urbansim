@@ -23,7 +23,7 @@ from opusAbout import UrbansimAboutGui
 
 from util.consolebase import *
 from config.toolboxBase import *
-from run.runManagerBase import *
+from run.runmanagerbase import *
 from results.resultManagerBase import *
 
 # General system includes
