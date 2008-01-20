@@ -18,7 +18,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
-from run.model.opusRunModel import OpusModel
+from run.model.opusrunmodel import OpusModel
 
 class OpusXMLAction_Scenario(object):
     def __init__(self, parent):
