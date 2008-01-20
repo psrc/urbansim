@@ -18,7 +18,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 # UI specific includes
-from opusAbout_ui import Ui_UrbansimAbout
+from opusabout_ui import Ui_UrbansimAbout
 
 class UrbansimAboutGui(QDialog, Ui_UrbansimAbout):
     def __init__(self, parent, fl):

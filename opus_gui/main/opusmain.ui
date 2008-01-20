@@ -70,7 +70,7 @@
          <string>Data Manager</string>
         </attribute>
         <attribute name="icon" >
-         <iconset resource="opusMain.qrc" >:/Images/Images/database_table.png</iconset>
+         <iconset resource="opusmain.qrc" >:/Images/Images/database_table.png</iconset>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -141,7 +141,7 @@
          <string>Model Manager</string>
         </attribute>
         <attribute name="icon" >
-         <iconset resource="opusMain.qrc" >:/Images/Images/chart_organisation.png</iconset>
+         <iconset resource="opusmain.qrc" >:/Images/Images/chart_organisation.png</iconset>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -177,7 +177,7 @@
          <string>Scenario Manager</string>
         </attribute>
         <attribute name="icon" >
-         <iconset resource="opusMain.qrc" >:/Images/Images/cog.png</iconset>
+         <iconset resource="opusmain.qrc" >:/Images/Images/cog.png</iconset>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -213,7 +213,7 @@
          <string>Results Manager</string>
         </attribute>
         <attribute name="icon" >
-         <iconset resource="opusMain.qrc" >:/Images/Images/map_go.png</iconset>
+         <iconset resource="opusmain.qrc" >:/Images/Images/map_go.png</iconset>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -246,7 +246,7 @@
          <string>Editor</string>
         </attribute>
         <attribute name="icon" >
-         <iconset resource="opusMain.qrc" >:/Images/Images/table.png</iconset>
+         <iconset resource="opusmain.qrc" >:/Images/Images/table.png</iconset>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -274,7 +274,7 @@
          <string>Map View</string>
         </attribute>
         <attribute name="icon" >
-         <iconset resource="opusMain.qrc" >:/Images/Images/map.png</iconset>
+         <iconset resource="opusmain.qrc" >:/Images/Images/map.png</iconset>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -315,7 +315,7 @@
          <string>Python Console</string>
         </attribute>
         <attribute name="icon" >
-         <iconset resource="opusMain.qrc" >:/Images/Images/python_type.png</iconset>
+         <iconset resource="opusmain.qrc" >:/Images/Images/python_type.png</iconset>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -383,7 +383,7 @@
          <string>Log View</string>
         </attribute>
         <attribute name="icon" >
-         <iconset resource="opusMain.qrc" >:/Images/Images/folder.png</iconset>
+         <iconset resource="opusmain.qrc" >:/Images/Images/folder.png</iconset>
         </attribute>
        </widget>
       </widget>
@@ -434,7 +434,7 @@
   <widget class="QStatusBar" name="statusbar" />
   <action name="mpActionZoomOut" >
    <property name="icon" >
-    <iconset resource="opusMain.qrc" >:/Images/Images/mActionZoomOut.png</iconset>
+    <iconset resource="opusmain.qrc" >:/Images/Images/mActionZoomOut.png</iconset>
    </property>
    <property name="text" >
     <string>Zoom Out</string>
@@ -442,7 +442,7 @@
   </action>
   <action name="mpActionPan" >
    <property name="icon" >
-    <iconset resource="opusMain.qrc" >:/Images/Images/mActionPan.png</iconset>
+    <iconset resource="opusmain.qrc" >:/Images/Images/mActionPan.png</iconset>
    </property>
    <property name="text" >
     <string>Pan</string>
@@ -450,7 +450,7 @@
   </action>
   <action name="mpActionAddRasterLayer" >
    <property name="icon" >
-    <iconset resource="opusMain.qrc" >:/Images/Images/mActionAddRasterLayer.png</iconset>
+    <iconset resource="opusmain.qrc" >:/Images/Images/mActionAddRasterLayer.png</iconset>
    </property>
    <property name="text" >
     <string>Add Raster Layer</string>
@@ -458,7 +458,7 @@
   </action>
   <action name="mpActionZoomIn" >
    <property name="icon" >
-    <iconset resource="opusMain.qrc" >:/Images/Images/mActionZoomIn.png</iconset>
+    <iconset resource="opusmain.qrc" >:/Images/Images/mActionZoomIn.png</iconset>
    </property>
    <property name="text" >
     <string>Zoom In</string>
@@ -466,7 +466,7 @@
   </action>
   <action name="mpActionAddVectorLayer" >
    <property name="icon" >
-    <iconset resource="opusMain.qrc" >:/Images/Images/mActionAddLayer.png</iconset>
+    <iconset resource="opusmain.qrc" >:/Images/Images/mActionAddLayer.png</iconset>
    </property>
    <property name="text" >
     <string>Add Vector Layer</string>
@@ -519,7 +519,7 @@
   </action>
   <action name="tabActionEditor" >
    <property name="icon" >
-    <iconset resource="opusMain.qrc" >:/Images/Images/table.png</iconset>
+    <iconset resource="opusmain.qrc" >:/Images/Images/table.png</iconset>
    </property>
    <property name="text" >
     <string>Editor</string>
@@ -527,7 +527,7 @@
   </action>
   <action name="tabActionMapView" >
    <property name="icon" >
-    <iconset resource="opusMain.qrc" >:/Images/Images/map.png</iconset>
+    <iconset resource="opusmain.qrc" >:/Images/Images/map.png</iconset>
    </property>
    <property name="text" >
     <string>Map View</string>
@@ -535,7 +535,7 @@
   </action>
   <action name="tabActionPythonConsole" >
    <property name="icon" >
-    <iconset resource="opusMain.qrc" >:/Images/Images/python_type.png</iconset>
+    <iconset resource="opusmain.qrc" >:/Images/Images/python_type.png</iconset>
    </property>
    <property name="text" >
     <string>Python Console</string>
@@ -543,7 +543,7 @@
   </action>
   <action name="tabActionLogView" >
    <property name="icon" >
-    <iconset resource="opusMain.qrc" >:/Images/Images/folder.png</iconset>
+    <iconset resource="opusmain.qrc" >:/Images/Images/folder.png</iconset>
    </property>
    <property name="text" >
     <string>Log View</string>
@@ -551,7 +551,7 @@
   </action>
  </widget>
  <resources>
-  <include location="opusMain.qrc" />
+  <include location="opusmain.qrc" />
  </resources>
  <connections/>
 </ui>

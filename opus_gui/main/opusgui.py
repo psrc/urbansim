@@ -18,8 +18,8 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 # UI specific includes
-from opusMain_ui import Ui_MainWindow
-from opusAbout import UrbansimAboutGui
+from opusmain_ui import Ui_MainWindow
+from opusabout import UrbansimAboutGui
 
 from util.consolebase import *
 from config.toolboxbase import *

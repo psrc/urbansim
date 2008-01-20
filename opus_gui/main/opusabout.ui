@@ -13,7 +13,7 @@
    <string>About Urbansim</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="opusMain.qrc" >:/Images/Images/exclamation.png</iconset>
+   <iconset resource="opusmain.qrc" >:/Images/Images/exclamation.png</iconset>
   </property>
   <property name="sizeGripEnabled" >
    <bool>true</bool>
@@ -161,7 +161,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>buttonCancel</tabstop>
  </tabstops>
  <resources>
-  <include location="opusMain.qrc" />
+  <include location="opusmain.qrc" />
  </resources>
  <connections/>
 </ui>

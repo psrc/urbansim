@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'opusMain.ui'
+# Form implementation generated from reading ui file 'opusmain.ui'
 #
-# Created: Fri Jan 11 00:46:53 2008
-#      by: PyQt4 UI code generator 4.3.1
+# Created: Sat Jan 19 23:13:18 2008
+#      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -303,4 +303,4 @@ class Ui_MainWindow(object):
         self.tabActionPythonConsole.setText(QtGui.QApplication.translate("MainWindow", "Python Console", None, QtGui.QApplication.UnicodeUTF8))
         self.tabActionLogView.setText(QtGui.QApplication.translate("MainWindow", "Log View", None, QtGui.QApplication.UnicodeUTF8))
 
-import opusMain_rc
+import opusmain_rc
