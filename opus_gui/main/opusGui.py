@@ -62,9 +62,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     try:
       import qgis.core
-      import map.mapBase
+      import map.mapbase
       # Only load the map stuff if QGIS is loadable
-      self.mapStuff = map.mapBase.MapBase(self)
+      self.mapStuff = map.mapbase.MapBase(self)
     except ImportError:
       self.mapStuff = None
 
