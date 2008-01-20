@@ -19,7 +19,7 @@ from PyQt4.QtGui import *
 
 from opus_gui.config.xmlmodelview.opusDataModel import OpusDataModel
 from opus_gui.config.xmlmodelview.opusDataDelegate import OpusDataDelegate
-from opus_gui.config.opusXMLAction import OpusXMLAction
+from opus_gui.config.xmltree.opusXMLAction import OpusXMLAction
 
 class OpusXMLTree(object):
   def __init__(self, parent,xmlType,parentWidget):    

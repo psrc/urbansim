@@ -17,7 +17,7 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from opus_gui.config.opusFileAction import OpusFileAction
+from opus_gui.config.filetree.opusFileAction import OpusFileAction
 
 class OpusFileTree(object):
   def __init__(self, parent, opusDataPath, parentWidget):    
