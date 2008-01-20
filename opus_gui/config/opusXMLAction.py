@@ -16,10 +16,10 @@
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import *
 
-from config.opusXMLAction_Results import OpusXMLAction_Results
-from config.opusXMLAction_Model import OpusXMLAction_Model
-from config.opusXMLAction_Scenario import OpusXMLAction_Scenario
-from config.opusXMLAction_Data import OpusXMLAction_Data
+from config.resultsmanager.opusXMLAction_Results import OpusXMLAction_Results
+from config.modelmanager.opusXMLAction_Model import OpusXMLAction_Model
+from config.scenariomanager.opusXMLAction_Scenario import OpusXMLAction_Scenario
+from config.datamanager.opusXMLAction_Data import OpusXMLAction_Data
 
 class OpusXMLAction(object):
     def __init__(self, parent):
