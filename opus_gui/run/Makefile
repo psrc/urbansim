@@ -15,11 +15,8 @@
 RM = rm -f
 #RM = del
 
-all: opusRunModel_ui.py
+all:
 
 clean:
 	$(RM) *.pyc
 	$(RM) *~
-
-opusRunModel_ui.py: opusRunModel.ui
-	pyuic4 -o opusRunModel_ui.py opusRunModel.ui
