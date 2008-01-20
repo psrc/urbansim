@@ -18,8 +18,8 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
-from config.xmltree.opusXMLTree import OpusXMLTree
-from config.filetree.opusFileTree import OpusFileTree
+from config.xmltree.opusxmltree import OpusXMLTree
+from config.filetree.opusfiletree import OpusFileTree
 
 import os
 
