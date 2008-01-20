@@ -17,8 +17,8 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from opus_gui.config.opusDataModel import OpusDataModel
-from opus_gui.config.opusDataDelegate import OpusDataDelegate
+from opus_gui.config.xmlmodelview.opusDataModel import OpusDataModel
+from opus_gui.config.xmlmodelview.opusDataDelegate import OpusDataDelegate
 from opus_gui.config.opusXMLAction import OpusXMLAction
 
 class OpusXMLTree(object):

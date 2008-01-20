@@ -19,8 +19,8 @@ from PyQt4.QtXml import *
 
 from run.opusRunModel import *
 from run.opusRunEstimation import *
-from config.opusDataModel import OpusDataModel
-from config.opusDataDelegate import OpusDataDelegate
+from config.xmlmodelview.opusDataModel import OpusDataModel
+from config.xmlmodelview.opusDataDelegate import OpusDataDelegate
 
 # General system includes
 import os, sys, time, tempfile, shutil, string
