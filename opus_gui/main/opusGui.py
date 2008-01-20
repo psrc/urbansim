@@ -22,7 +22,7 @@ from opusMain_ui import Ui_MainWindow
 from opusAbout import UrbansimAboutGui
 
 from util.consolebase import *
-from config.toolboxBase import *
+from config.toolboxbase import *
 from run.runmanagerbase import *
 from results.resultManagerBase import *
 
