@@ -16,9 +16,23 @@ RM = rm -f
 #RM = del
 
 all: 
+	$(MAKE) -C datamanager
+	$(MAKE) -C filetree
+	$(MAKE) -C modelmanager
+	$(MAKE) -C resultsmanager
+	$(MAKE) -C scenariomanager
+	$(MAKE) -C xmlmodelview
+	$(MAKE) -C xmltree
 
 clean:
 	$(RM) *.pyc
 	$(RM) *~
+	$(MAKE) -C datamanager clean
+	$(MAKE) -C filetree clean
+	$(MAKE) -C modelmanager clean
+	$(MAKE) -C resultsmanager clean
+	$(MAKE) -C scenariomanager clean
+	$(MAKE) -C xmlmodelview clean
+	$(MAKE) -C xmltree clean
 
 

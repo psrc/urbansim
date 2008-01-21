@@ -16,7 +16,13 @@ RM = rm -f
 #RM = del
 
 all:
+	$(MAKE) -C estimation
+	$(MAKE) -C model
+	$(MAKE) -C script
 
 clean:
 	$(RM) *.pyc
 	$(RM) *~
+	$(MAKE) -C estimation clean
+	$(MAKE) -C model clean
+	$(MAKE) -C script clean
