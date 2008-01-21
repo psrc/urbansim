@@ -35,35 +35,75 @@ class OpusXMLAction_Data(object):
         self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
         
-        self.actExecScriptFile = QAction(self.calendarIcon, "Exec Script", self.xmlTreeObject.parent)
-        QObject.connect(self.actExecScriptFile, SIGNAL("triggered()"), self.execScriptFile)
+        self.actExecScriptFile = QAction(self.calendarIcon,
+                                         "Exec Script",
+                                         self.xmlTreeObject.parent)
+        QObject.connect(self.actExecScriptFile,
+                        SIGNAL("triggered()"),
+                        self.execScriptFile)
 
-        self.actAddScriptFile = QAction(self.calendarIcon, "Add Script", self.xmlTreeObject.parent)
-        QObject.connect(self.actAddScriptFile, SIGNAL("triggered()"), self.addScriptFile)
+        self.actAddScriptFile = QAction(self.calendarIcon,
+                                        "Add Script",
+                                        self.xmlTreeObject.parent)
+        QObject.connect(self.actAddScriptFile,
+                        SIGNAL("triggered()"),
+                        self.addScriptFile)
 
-        self.actCloneBatch = QAction(self.calendarIcon, "Clone Batch", self.xmlTreeObject.parent)
-        QObject.connect(self.actCloneBatch, SIGNAL("triggered()"), self.cloneNode)
+        self.actCloneBatch = QAction(self.calendarIcon,
+                                     "Clone Batch",
+                                     self.xmlTreeObject.parent)
+        QObject.connect(self.actCloneBatch,
+                        SIGNAL("triggered()"),
+                        self.cloneNode)
 
-        self.actCloneScript = QAction(self.calendarIcon, "Clone Script", self.xmlTreeObject.parent)
-        QObject.connect(self.actCloneScript, SIGNAL("triggered()"), self.cloneNode)
+        self.actCloneScript = QAction(self.calendarIcon,
+                                      "Clone Script",
+                                      self.xmlTreeObject.parent)
+        QObject.connect(self.actCloneScript,
+                        SIGNAL("triggered()"),
+                        self.cloneNode)
 
-        self.actCloneNode = QAction(self.calendarIcon, "Clone Node", self.xmlTreeObject.parent)
-        QObject.connect(self.actCloneNode, SIGNAL("triggered()"), self.cloneNode)
+        self.actCloneNode = QAction(self.calendarIcon,
+                                    "Clone Node",
+                                    self.xmlTreeObject.parent)
+        QObject.connect(self.actCloneNode,
+                        SIGNAL("triggered()"),
+                        self.cloneNode)
 
-        self.actOpenDocumentation = QAction(self.calendarIcon, "Open Documentation", self.xmlTreeObject.parent)
-        QObject.connect(self.actOpenDocumentation, SIGNAL("triggered()"), self.openDocumentation)
+        self.actOpenDocumentation = QAction(self.calendarIcon,
+                                            "Open Documentation",
+                                            self.xmlTreeObject.parent)
+        QObject.connect(self.actOpenDocumentation,
+                        SIGNAL("triggered()"),
+                        self.openDocumentation)
 
-        self.actRemoveNode = QAction(self.calendarIcon, "Remove Node", self.xmlTreeObject.parent)
-        QObject.connect(self.actRemoveNode, SIGNAL("triggered()"), self.removeNode)
+        self.actRemoveNode = QAction(self.calendarIcon,
+                                     "Remove Node",
+                                     self.xmlTreeObject.parent)
+        QObject.connect(self.actRemoveNode,
+                        SIGNAL("triggered()"),
+                        self.removeNode)
 
-        self.actMoveNodeUp = QAction(self.calendarIcon, "Move Up", self.xmlTreeObject.parent)
-        QObject.connect(self.actMoveNodeUp, SIGNAL("triggered()"), self.moveNodeUp)
+        self.actMoveNodeUp = QAction(self.calendarIcon,
+                                     "Move Up",
+                                     self.xmlTreeObject.parent)
+        QObject.connect(self.actMoveNodeUp,
+                        SIGNAL("triggered()"),
+                        self.moveNodeUp)
 
-        self.actMoveNodeDown = QAction(self.calendarIcon, "Move Down", self.xmlTreeObject.parent)
-        QObject.connect(self.actMoveNodeDown, SIGNAL("triggered()"), self.moveNodeDown)
+        self.actMoveNodeDown = QAction(self.calendarIcon,
+                                       "Move Down",
+                                       self.xmlTreeObject.parent)
+        QObject.connect(self.actMoveNodeDown,
+                        SIGNAL("triggered()"),
+                        self.moveNodeDown)
 
-        self.actPlaceHolder = QAction(self.applicationIcon, "Placeholder", self.xmlTreeObject.parent)
-        QObject.connect(self.actPlaceHolder, SIGNAL("triggered()"), self.placeHolderAction)
+        self.actPlaceHolder = QAction(self.applicationIcon,
+                                      "Placeholder",
+                                      self.xmlTreeObject.parent)
+        QObject.connect(self.actPlaceHolder,
+                        SIGNAL("triggered()"),
+                        self.placeHolderAction)
         
 
     def addScriptFile(self):
@@ -115,7 +155,8 @@ class OpusXMLAction_Data(object):
         baseDir = baseInfo.absolutePath()
         newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
         fileName = newFile.absoluteFilePath().trimmed()
-        x = util.documentationbase.DocumentationTab(self.xmlTreeObject.parent, QString(fileName))
+        x = util.documentationbase.DocumentationTab(self.xmlTreeObject.parent,
+                                                    QString(fileName))
 
 
     def execScriptFile(self):
@@ -147,8 +188,7 @@ class OpusXMLAction_Data(object):
         y.run()
 
     def placeHolderAction(self):
-        #print "placeHolderAction pressed with column = %s and item = %s" % \
-              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+        pass
     
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
