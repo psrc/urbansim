@@ -33,7 +33,8 @@ class OpusXMLTree(object):
     self.parentWidget = parentWidget
     self.groupBox = QGroupBox(self.parent)
     self.groupBoxLayout = QVBoxLayout(self.groupBox)
-    self.model = OpusDataModel(self,self.parentTool.doc, self.parent, self.parentTool.configFile, self.xmlType, True)
+    self.model = OpusDataModel(self,self.parentTool.doc, self.parent,
+                               self.parentTool.configFile, self.xmlType, True)
     self.view = QTreeView(self.parent)
     self.delegate = OpusDataDelegate(self.view)
     self.view.setItemDelegate(self.delegate)
