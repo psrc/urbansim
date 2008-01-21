@@ -1,3 +1,4 @@
+#
 # UrbanSim software. Copyright (C) 1998-2007 University of Washington
 # 
 # You can redistribute this program and/or modify it under the terms of the
@@ -11,23 +12,10 @@
 # other acknowledgments.
 # 
 
-# Modify to RM = del for win
-RM = rm -f
-#RM = del
+import os, sys
 
-all: newscriptbatch_ui.py newscriptlibrary_ui.py configurescript_ui.py
-
-clean:
-	$(RM) newscriptbatch_ui.py newscriptlibrary_ui.py configurescript_ui.py
-	$(RM) *.pyc
-	$(RM) *~
-
-newscriptbatch_ui.py: newscriptbatch.ui
-	pyuic4 -o newscriptbatch_ui.py newscriptbatch.ui
-
-newscriptlibrary_ui.py: newscriptlibrary.ui
-	pyuic4 -o newscriptlibrary_ui.py newscriptlibrary.ui
-
-configurescript_ui.py: configurescript.ui
-	pyuic4 -o configurescript_ui.py configurescript.ui
+def opusRun(progressCB,logCB,params):
+    print "raw_xml with::"
+    for key, val in params.iteritems():
+        print "Key=%s Val=%s" % (key, val)
 

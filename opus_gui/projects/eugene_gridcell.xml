@@ -15,7 +15,8 @@
         <output_shapefile type="string" >c:\data\roads_buffer.shp</output_shapefile>
         <buffer_size type="integer" >49</buffer_size>
       </esri_buffer_tool>
-      <raw_sql_query config_name="input_configuration" type="class" >
+      <raw_sql_query type="input_configuration">
+        <database_config type="string">blahblahblah</database_config>
         <query type="string" >update some_table set some_field = blahblahblah</query>
       </raw_sql_query>
     </script_batch>
