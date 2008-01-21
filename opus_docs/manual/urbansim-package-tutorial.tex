@@ -1213,7 +1213,7 @@ before the call of \\
   a specific date yet for this change.  We will try to preserve backward
   compatibility.}
 
-\subsection{Expressions}
+\section{Expressions}
 \label{sec:urbansim-tutorial-expressions}
 \index{expressions}
 
@@ -1263,7 +1263,7 @@ from other expressions.  For example, here are some legal expressions:
 
 \end{itemize}
 
-\subsubsection{Variable Names in Expressions}
+\subsection{Variable Names in Expressions}
 
 The name used in an expression can be either a fully-qualified variable
 name, a dataset-qualified variable name, or a primary attribute.
@@ -1278,7 +1278,7 @@ so that
 \class{is_near_highway_if_threshold_is_2} matches the variable definition
 for \class{is_near_SSS_if_threshold_is_DDD}.
 
-\subsubsection{Unary Functions for Opus Expressions}
+\subsection{Unary Functions for Opus Expressions}
 \label{sec:functions-for-opus-expressions}
 
 There are a set of unary functions defined to use in expressions, as
@@ -1322,7 +1322,7 @@ of all the values in a variable \code{v}:
 
 \code{numpy.reciprocal(v)}
 
-\subsubsection{Operators for Opus Expressions}
+\subsection{Operators for Opus Expressions}
 \index{numpy!operators}
 
 All of the numpy operators can be used in Opus expressions, including
@@ -1331,7 +1331,7 @@ All of the numpy operators can be used in Opus expressions, including
 scalar argument, scales all the elements in an array,
 e.g.\ \code{1.2*household.income}.
 
-\subsubsection{Aliasing}
+\subsection{Aliasing}
 \label{sec:aliasing}
 \index{aliasing}
 
@@ -1383,7 +1383,7 @@ See the unit tests in
 \file{opus_core.variables.expression_tests.aliases_file} for examples of
 using these aliases.
 
-\subsubsection{Casting the Value of an Expression}
+\subsection{Casting the Value of an Expression}
 \index{casting}
 
 Normally the value of a variable defined by an expressions will be a
@@ -1402,7 +1402,7 @@ method: \code{bool8}, \code{int8}, \code{uint8}, \code{int16},
 \code{float32}, \code{float64}, \code{complex64}, \code{complex128}, and
 \code{longlong}.
  
-\subsubsection{Interaction Sets}
+\subsection{Interaction Sets}
 \index{interaction sets}
 
 If you access an attribute of a component of an interaction set in the
@@ -1475,7 +1475,7 @@ interaction and taking its log: \variablesindex \coefficientsindex
 \end{verbatim}
 
 
-\subsubsection{Aggregation and Disaggregation}
+\subsection{Aggregation and Disaggregation}
 \label{sec:aggregation}
 \index{aggregation} \index{disaggregation}
 
@@ -1514,7 +1514,7 @@ examples are:
 
 The syntax and semantics for these is as follows.
 
-\paragraph{Aggregation}
+\subsubsection{Aggregation}
 
 Suppose we have three different geographical units: gridcells, zones and
 neighborhoods.  We have information available on the gridcell level and
@@ -1603,7 +1603,7 @@ neighborhood.aggregate(gridcell.capacity, function=sum, intermediates=[zone]):
 array([ 6.,  0.,  9.])
 \end{verbatim}
 
-\paragraph{Disaggregation}
+\subsubsection{Disaggregation}
 
 Disaggregation is done analogously. The \class{disaggregate} method takes
 information from a coarse set of entities and allocates it to a finer set of
@@ -1665,7 +1665,7 @@ operations.  However, this isn't visible to the user.)  The result of an
 aggregation or disaggregation can also be used in more complex expressions,
 e.g. \code{ln(2*aggregate(gridcell.population))}.
 
-\subsubsection{Number of Agents}
+\subsection{Number of Agents}
 \index{number_of_agents}
 
 A common task in modeling is to determine a number of agents of one dataset
