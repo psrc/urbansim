@@ -33,32 +33,55 @@ class OpusXMLAction_Scenario(object):
         self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
         
-        self.actRunModel = QAction(self.acceptIcon, "Run This Model", self.xmlTreeObject.parent)
-        QObject.connect(self.actRunModel, SIGNAL("triggered()"), self.runModel)
+        self.actRunModel = QAction(self.acceptIcon,
+                                   "Run This Model",
+                                   self.xmlTreeObject.parent)
+        QObject.connect(self.actRunModel,
+                        SIGNAL("triggered()"),
+                        self.runModel)
         
-        self.actRemoveTree = QAction(self.removeIcon, "Remove this tree from the GUI", self.xmlTreeObject.parent)
-        QObject.connect(self.actRemoveTree, SIGNAL("triggered()"), self.removeTree)
+        self.actRemoveTree = QAction(self.removeIcon,
+                                     "Remove this tree from the GUI",
+                                     self.xmlTreeObject.parent)
+        QObject.connect(self.actRemoveTree,
+                        SIGNAL("triggered()"),
+                        self.removeTree)
         
-        self.actOpenXMLFile = QAction(self.calendarIcon, "Open XML File", self.xmlTreeObject.parent)
-        QObject.connect(self.actOpenXMLFile, SIGNAL("triggered()"), self.openXMLFile)
+        self.actOpenXMLFile = QAction(self.calendarIcon,
+                                      "Open XML File",
+                                      self.xmlTreeObject.parent)
+        QObject.connect(self.actOpenXMLFile,
+                        SIGNAL("triggered()"),
+                        self.openXMLFile)
         
-        self.actEditXMLFileGlobal = QAction(self.calendarIcon, "Edit XML File Global", self.xmlTreeObject.parent)
-        QObject.connect(self.actEditXMLFileGlobal, SIGNAL("triggered()"), self.editXMLFileGlobal)
+        self.actEditXMLFileGlobal = QAction(self.calendarIcon,
+                                            "Edit XML File Global",
+                                            self.xmlTreeObject.parent)
+        QObject.connect(self.actEditXMLFileGlobal,
+                        SIGNAL("triggered()"),
+                        self.editXMLFileGlobal)
         
-        self.actEditXMLFileLocal = QAction(self.calendarIcon, "Edit XML File Local", self.xmlTreeObject.parent)
-        QObject.connect(self.actEditXMLFileLocal, SIGNAL("triggered()"), self.editXMLFileLocal)
+        self.actEditXMLFileLocal = QAction(self.calendarIcon,
+                                           "Edit XML File Local",
+                                           self.xmlTreeObject.parent)
+        QObject.connect(self.actEditXMLFileLocal,
+                        SIGNAL("triggered()"),
+                        self.editXMLFileLocal)
         
-        self.actPlaceHolder = QAction(self.applicationIcon, "Placeholder", self.xmlTreeObject.parent)
-        QObject.connect(self.actPlaceHolder, SIGNAL("triggered()"), self.placeHolderAction)
+        self.actPlaceHolder = QAction(self.applicationIcon,
+                                      "Placeholder",
+                                      self.xmlTreeObject.parent)
+        QObject.connect(self.actPlaceHolder,
+                        SIGNAL("triggered()"),
+                        self.placeHolderAction)
         
         
     def runModel(self):
-        #print "action1 context pressed with column = %s and item = %s" % \
-        #      (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
         # If the XML is not dirty we can go ahead and run... else prompt for saving
         if not self.xmlTreeObject.model.dirty:
             # Add the model to the run Q
-            newModel = OpusModel(self.xmlTreeObject,self.xmlTreeObject.parentTool.xml_file)
+            newModel = OpusModel(self.xmlTreeObject,
+                                 self.xmlTreeObject.parentTool.xml_file)
             self.xmlTreeObject.parent.runManagerStuff.addNewModelRun(newModel)
         else:
             # Prompt the user to save...
@@ -75,8 +98,6 @@ class OpusXMLAction_Scenario(object):
             return False
     
     def openXMLFile(self):
-        #print "Open File context pressed with column = %s and item = %s" % \
-        #      (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
         filePath = ""
         if self.currentIndex.internalPointer().node().hasChildNodes():
             children = self.currentIndex.internalPointer().node().childNodes()
@@ -92,8 +113,6 @@ class OpusXMLAction_Scenario(object):
 
     
     def editXMLFileLocal(self):
-        #print "Edit File Local context pressed with column = %s and item = %s" % \
-        #      (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
         filePath = ""
         if self.currentIndex.internalPointer().node().hasChildNodes():
             children = self.currentIndex.internalPointer().node().childNodes()
@@ -114,8 +133,6 @@ class OpusXMLAction_Scenario(object):
             x = util.editorbase.EditorTab(self.xmlTreeObject.parent, QString(fileName))
     
     def editXMLFileGlobal(self):
-        #print "Edit File Global context pressed with column = %s and item = %s" % \
-        #      (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
         filePath = ""
         if self.currentIndex.internalPointer().node().hasChildNodes():
             children = self.currentIndex.internalPointer().node().childNodes()
@@ -143,8 +160,6 @@ class OpusXMLAction_Scenario(object):
             self.xmlTreeObject.parent.editorStatusLabel.setText(QString(fileName))
 
     def placeHolderAction(self):
-        #print "placeHolderAction pressed with column = %s and item = %s" % \
-        #      (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
         pass
     
     def processCustomMenu(self, position):
