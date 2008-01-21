@@ -56,6 +56,9 @@ class OpusScript(object):
         self.logCallback = None
         self.finishedCallback = None
 
+    def buildparams(self):
+        return {'param1':'val1','param2':'val2'}
+    
     def run(self):
         # Call the script, passing in the callbacks
         #
@@ -74,9 +77,11 @@ class OpusScript(object):
             importString = "from %s import opusRun" % (self.scriptInclude)
             print importString
             exec(importString)
+            self.params = self.buildparams()
             if self.startingCallback != None:
                 self.startingCallback()
-            success = opusRun(self.progressCallback,self.logCallback)
+            success = opusRun(self.progressCallback,self.logCallback,
+                              self.params)
             if self.finishedCallback != None:
                 self.finishedCallback(success)
         except ImportError:
