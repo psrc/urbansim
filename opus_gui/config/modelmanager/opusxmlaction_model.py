@@ -7,7 +7,7 @@
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
-# and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
+# and licensing information, and the file ACKNOWLEDGMENTS.html for funding and  
 # other acknowledgments.
 # 
 
@@ -35,29 +35,38 @@ class OpusXMLAction_Model(object):
         
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
         
-        self.actPlaceHolder = QAction(self.applicationIcon, "Placeholder", self.xmlTreeObject.parent)
-        QObject.connect(self.actPlaceHolder, SIGNAL("triggered()"), self.placeHolderAction)
+        self.actPlaceHolder = QAction(self.applicationIcon,
+                                      "Placeholder",
+                                      self.xmlTreeObject.parent)
+        QObject.connect(self.actPlaceHolder,
+                        SIGNAL("triggered()"),
+                        self.placeHolderAction)
 
-        self.actRunEstimation = QAction(self.applicationIcon, "Run Estimation", self.xmlTreeObject.parent)
-        QObject.connect(self.actRunEstimation, SIGNAL("triggered()"), self.runEstimationAction)
+        self.actRunEstimation = QAction(self.applicationIcon,
+                                        "Run Estimation",
+                                        self.xmlTreeObject.parent)
+        QObject.connect(self.actRunEstimation,
+                        SIGNAL("triggered()"),
+                        self.runEstimationAction)
 
     def placeHolderAction(self):
         #print "placeHolderAction pressed with column = %s and item = %s" % \
-        #      (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+        #      (self.currentColumn,
+        #       self.currentIndex.internalPointer().node().toElement().tagName())
         pass
     
     def runEstimationAction(self):
-        #print "runEstimationAction pressed with column = %s and item = %s" % \
-        #      (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
-        # First confirm that the project file needs to be saved before running the estimation...
+        # First confirm that the project file needs to be saved
+        # before running the estimation...
         if not self.xmlTreeObject.model.dirty:
-            newEstimation = OpusEstimation(self.xmlTreeObject,self.xmlTreeObject.parentTool.xml_file)
+            newEstimation = OpusEstimation(self.xmlTreeObject,
+                                           self.xmlTreeObject.parentTool.xml_file)
             self.xmlTreeObject.parent.runManagerStuff.addNewEstimationRun(newEstimation)
         else:
             # Prompt the user to save...
             QMessageBox.warning(self.xmlTreeObject.parent,
                                 "Warning",
-                                "Please save changes to project before running estimation")
+                                "Save changes to project before running estimation")
         
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
