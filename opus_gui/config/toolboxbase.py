@@ -50,19 +50,23 @@ class ToolboxBase(object):
     # Check if the current model(s) is(are) dirty first...
     if self.resultsManagerTree and self.resultsManagerTree.model.dirty:
       saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
-                                      "Current project contains changes... \nShould we save or discard those changes before opening?",
+                                            "Current project contains changes... \n"
+                                            "Should we save or discard those changes before opening?",
                                       QMessageBox.Discard,QMessageBox.Save)
     elif self.modelManagerTree and self.modelManagerTree.model.dirty:
       saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
-                                      "Current project contains changes... \nShould we save or discard those changes before opening?",
+                                      "Current project contains changes... \n"
+                                      "Should we save or discard those changes before opening?",
                                       QMessageBox.Discard,QMessageBox.Save)
     elif self.runManagerTree and self.runManagerTree.model.dirty:
       saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
-                                      "Current project contains changes... \nShould we save or discard those changes before opening?",
+                                      "Current project contains changes... \n"
+                                      "Should we save or discard those changes before opening?",
                                       QMessageBox.Discard,QMessageBox.Save)
     elif self.dataManagerTree and self.dataManagerTree.model.dirty:
       saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
-                                      "Current project contains changes... \nShould we save or discard those changes before opening?",
+                                      "Current project contains changes... \n"
+                                      "Should we save or discard those changes before opening?",
                                       QMessageBox.Discard,QMessageBox.Save)
     if saveBeforeOpen == QMessageBox.Save:
       self.parent.saveConfig()
