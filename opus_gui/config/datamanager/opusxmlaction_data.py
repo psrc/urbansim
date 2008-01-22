@@ -43,6 +43,13 @@ class OpusXMLAction_Data(object):
                         SIGNAL("triggered()"),
                         self.execScriptFile)
 
+        self.actExecScriptConfig = QAction(self.calendarIcon,
+                                           "Exec Script Config",
+                                           self.xmlTreeObject.parent)
+        QObject.connect(self.actExecScriptConfig,
+                        SIGNAL("triggered()"),
+                        self.execScriptConfig)
+
         self.actAddScriptFile = QAction(self.calendarIcon,
                                         "Add Script",
                                         self.xmlTreeObject.parent)
@@ -204,24 +211,27 @@ class OpusXMLAction_Data(object):
 
     def execScriptConfig(self):
         # First find the script that this config refers to...
-        
-        # First find the script path...
-        scriptPath = ""
-        if self.currentIndex.internalPointer().parent().node().hasChildNodes():
-            children = self.currentIndex.internalPointer().parent().node().childNodes()
+        configNode = self.currentIndex.internalPointer().node().toElement()
+        script_hook = configNode.elementsByTagName(QString("script_hook")).item(0)
+        script_name = QString("")
+        if script_hook.hasChildNodes():
+            children = script_hook.childNodes()
             for x in xrange(0,children.count(),1):
-                if children.item(x).isElement():
-                    domElement = children.item(x).toElement()
-                    if not domElement.isNull():
-                        if domElement.tagName() == QString("script_path"):
-                            if domElement.hasChildNodes():
-                                children2 = domElement.childNodes()
-                                for x2 in xrange(0,children2.count(),1):
-                                    if children2.item(x2).isText():
-                                        scriptPath = children2.item(x2).nodeValue()
-        filePath = ""
-        if self.currentIndex.internalPointer().node().hasChildNodes():
-            children = self.currentIndex.internalPointer().node().childNodes()
+                if children.item(x).isText():
+                    script_name = children.item(x).nodeValue()
+        # This will be in the script_library
+        library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("script_library")).item(0)
+        script_path = library.toElement().elementsByTagName("script_path").item(0)
+        script = library.toElement().elementsByTagName(script_name).item(0)
+
+        # First find the script path text...
+        if script_path.hasChildNodes():
+            children = script_path.childNodes()
+            for x in xrange(0,children.count(),1):
+                if children.item(x).isText():
+                    scriptPath = children.item(x).nodeValue()
+        if script.hasChildNodes():
+            children = script.childNodes()
             for x in xrange(0,children.count(),1):
                 if children.item(x).isText():
                     filePath = children.item(x).nodeValue()
@@ -260,6 +270,10 @@ class OpusXMLAction_Data(object):
                 elif domElement.attribute(QString("type")) == QString("script_library"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actAddScriptFile)
+                    self.menu.exec_(QCursor.pos())
+                elif domElement.attribute(QString("type")) == QString("script_config"):
+                    self.menu = QMenu(self.xmlTreeObject.parent)
+                    self.menu.addAction(self.actExecScriptConfig)
                     self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("script_batch"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
