@@ -105,11 +105,16 @@ class ToolboxBase(object):
         self.opusDataPath = os.getenv("OPUS_DATA_PATH")
         self.doc = QDomDocument()
         self.doc.setContent(self.configFile)
-        self.resultsManagerTree = OpusXMLTree(self,"results_manager",self.parent.resultsmanager_page.layout())    
-        self.modelManagerTree = OpusXMLTree(self,"model_manager",self.parent.modelmanager_page.layout())    
-        self.runManagerTree = OpusXMLTree(self,"scenario_manager",self.parent.runmanager_page.layout())    
-        self.dataManagerTree = OpusXMLTree(self,"data_manager",self.parent.datamanager_xmlconfig.layout())
-        self.dataManagerFileTree = OpusFileTree(self,self.opusDataPath,self.parent.datamanager_dirview.layout())
+        self.resultsManagerTree = OpusXMLTree(self,"results_manager",
+                                              self.parent.resultsmanager_page.layout())    
+        self.modelManagerTree = OpusXMLTree(self,"model_manager",
+                                            self.parent.modelmanager_page.layout())    
+        self.runManagerTree = OpusXMLTree(self,"scenario_manager",
+                                          self.parent.runmanager_page.layout())    
+        self.dataManagerTree = OpusXMLTree(self,"data_manager",
+                                           self.parent.datamanager_xmlconfig.layout())
+        self.dataManagerFileTree = OpusFileTree(self,self.opusDataPath,
+                                                self.parent.datamanager_dirview.layout())
       else:
         print "Error reading config"
     else:
