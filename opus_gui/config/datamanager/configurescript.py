@@ -25,8 +25,10 @@ class ConfigureScriptGui(QDialog, Ui_ConfigureScriptGui):
         self.setupUi(self)
         self.parent = parent
 
-    def accept(self):
-        print "accept pressed"
+    def on_createConfig_released(self):
+        print "create pressed"
+        self.close()
 
-    def reject(self):
-        print "reject pressed"
+    def on_cancelConfig_released(self):
+        print "cancel pressed"
+        self.close()
