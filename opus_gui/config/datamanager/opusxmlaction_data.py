@@ -130,7 +130,8 @@ class OpusXMLAction_Data(object):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint 
         window = ConfigureScriptGui(self,flags)
         window.show()
-
+        # Connect to a signal when the GUI collects the vars to add the element
+        
     def cloneNode(self):
         #print "cloneNode Pressed"
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
