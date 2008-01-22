@@ -158,7 +158,7 @@ class HouseholdLocationChoiceModelWithPriceAdj(HouseholdLocationChoiceModel):
         newfile.close()
         logger.end_block()
 
-def define_submarket(choice_set, submarket_id_expression):
+def define_submarket(choice_set, submarket_id_expression, compute_variables=[]):
     submarket_ids = choice_set.compute_variables("submarket_id=" + submarket_id_expression)
     unique_submarket_ids = unique_values(submarket_ids)
     storage = StorageFactory().get_storage('dict_storage')
@@ -168,4 +168,6 @@ def define_submarket(choice_set, submarket_id_expression):
                          id_name='submarket_id',
                          dataset_name='submarket'
                      )
+    if len(compute_variables):
+        submarkets.compute_variables(compute_variables)
     return submarkets
