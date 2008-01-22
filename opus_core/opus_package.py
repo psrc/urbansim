@@ -17,7 +17,6 @@ from opus_core.path import path
 from opus_core.logger import logger
 from opus_core.misc import copytree
 from opus_core.misc import replace_string_in_files
-from opus_core.misc import remove_directories_with_this_name
 
 class OpusPackage(object):
     """An abstraction for creating and manipulating Opus packages.
@@ -27,11 +26,10 @@ class OpusPackage(object):
     name = None
 
     # May over-ride following names in child class:
-    required_external_packages = ['numpy>=1.0.1', 'MySQL-python>=1.2.0']
+    required_external_packages = ['numpy>=1.0.4', 'matplotlib>=0.90.1', 'sqlalchemy>=0.4', 'scipy>=0.7']
     required_opus_packages = [] 
 
-    optional_external_packages = ['matplotlib>=0.87.7', 'Numeric>=23.8', 
-                                  'rpy>=0.4.6']
+    optional_external_packages = ['MySQL-python>=1.2.2', 'Numeric>=23.8', 'rpy>=0.4.6']
     optional_opus_packages = []
     
     required_included_file_types = ['*.pdf','*.html','*.png']
