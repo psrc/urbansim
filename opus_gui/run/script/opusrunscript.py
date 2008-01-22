@@ -48,9 +48,10 @@ class RunScriptThread(QThread):
             
 
 class OpusScript(object):
-    def __init__(self,parent,scriptInclude):
+    def __init__(self,parent,scriptInclude,scriptVars=[]):
         self.parent = parent
         self.scriptInclude = scriptInclude
+        self.scriptVars = scriptVars
         self.startingCallback = None
         self.progressCallback = None
         self.logCallback = None
@@ -81,7 +82,7 @@ class OpusScript(object):
             if self.startingCallback != None:
                 self.startingCallback()
             success = opusRun(self.progressCallback,self.logCallback,
-                              self.params)
+                              self.scriptVars)
             if self.finishedCallback != None:
                 self.finishedCallback(success)
         except ImportError:
