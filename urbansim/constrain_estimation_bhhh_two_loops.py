@@ -19,8 +19,8 @@ from numpy import where,reshape,newaxis,absolute
 from numpy import concatenate, ones
 from numpy import any, arange, repeat
 from numpy import array, ma
+from numpy import mean,median,min
 from scipy.ndimage import standard_deviation
-from numpy.mlab import mean,median,min
 from opus_core.misc import corr, unique_values, safe_array_divide
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.variables.variable import ln
@@ -69,22 +69,23 @@ class constrain_estimation_bhhh_two_loops(EstimationProcedure):
 
         swing_fix = 0
         constraint_dict = {1:'constrained', 0:'unconstrained'}
-        location_set = sc.get_dataset_from_pool('building')
-        alt_id = location_set.get_attribute('submarket_id')
-        movers = location_set.get_attribute('movers')
+        choice_set = resources['_model_'].choice_set
+        #location_set = sc.get_dataset_from_pool('submarket')
+        alt_id = choice_set.get_id_attribute()
+        movers = choice_set.get_attribute('movers')
 
         demand_history = movers[:, newaxis]
         prob_correlation = None
 
         #import pdb; pdb.set_trace()
-        index = resources.get("index", arange(nsupply))
+        index = resources.get("index", None)
+        if not index:
+            index = arange(nsupply)
 
         if index.ndim <= 1:
-            index = repeat(reshape(index, (1,index.shape[0])), nobs)
+            index = repeat(index[newaxis,:], nobs, axis=0)
         resources.merge({"index":index})
 
-        # WARNING: THE SCALING OF DEMAND IS HARD CODED AND NEEDS TO BE MADE AN ARGUMENT
-        # scale demand to represent 100% from a 0.2% sample
         demand = self.mnl_probabilities.get_demand(index, probability, nsupply) * 1 / sample_rate
         demand_history = concatenate((demand_history,
                                       demand[:, newaxis]),
@@ -224,7 +225,8 @@ class constrain_estimation_bhhh_two_loops(EstimationProcedure):
                 logger.log_status("mu = 1/%s = %s" % (beta_ln_pi, 1/beta_ln_pi))
                 probability_new = modified_upc_sequence.get_probabilities()
     
-                prob_hat = ma.filled(probability_new / (pi ** beta_ln_pi), 0.0)
+                #prob_hat = ma.filled(probability_new / (pi ** beta_ln_pi), 0.0)
+                prob_hat = safe_array_divide(probability_new, pi ** beta_ln_pi)
                 prob_hat_sum = prob_hat.sum(axis=1, dtype=float32)
                 if not ma.allclose(prob_hat_sum, 1.0):
                     logger.log_status("probability doesn't sum up to 1, with minimum %s, and maximum %s" %
@@ -304,7 +306,7 @@ class constrain_estimation_bhhh_two_loops(EstimationProcedure):
 
     def inner_loop(self, supply, demand, probability, index, sdratio_matrix, average_omega, nsupply,
                    max_iteration=100):
-        vacancy_rate = SessionConfiguration().get_dataset_from_pool("vacancy_rate")
+        #vacancy_rate = SessionConfiguration().get_dataset_from_pool("vacancy_rate")
         CLOSE = SessionConfiguration()["CLOSE"]
 
         inner_iterations=None; constrained_locations_history = None
