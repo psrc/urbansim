@@ -23,7 +23,7 @@ from urbansim.configurations.creating_baseyear_cache_configuration import Creati
 from sanfrancisco.configs.baseline import Baseline
 
 
-class CachingConfiguration(Configuration):
+class SynthesizerConfiguration(Configuration):
     
     def __init__(self):
         Configuration.__init__(self, self.__my_configuration())
@@ -39,7 +39,7 @@ class CachingConfiguration(Configuration):
         ]
         
         return {
-        'cache_directory' : r'/workspace/urbansim_cache/sanfrancisco/hh_syn', # change or leave out
+        'cache_directory' : r'/home/lmwang/work/sf/hh_syn', # change or leave out
         'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
     #        cache_directory_root = '/tmp/urbcache/sandbox_runs/estimation',
             unroll_gridcells = False,
@@ -52,10 +52,10 @@ class CachingConfiguration(Configuration):
             tables_to_copy_to_previous_years = {},                                          
             ),
         'input_configuration': DatabaseConfiguration(
-            database_name = 'sf_misc',
+            database_name = 'sanfrancisco_baseyear_start',
             ),
         'output_configuration': DatabaseConfiguration(
-            database_name = 'sf_misc_output',
+            database_name = 'sanfrancisco_baseyear_change_20080121',
             ),            
         'dataset_pool_configuration': DatasetPoolConfiguration(
             package_order=['sanfrancisco', 'urbansim', 'opus_core'],

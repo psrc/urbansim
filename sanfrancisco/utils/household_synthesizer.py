@@ -22,6 +22,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.tools.create_baseyear_cache import CreateBaseyearCache
 #from opus_core.resources import Resources
 #from opus_core.services.run_server.misc import create_datasets_from_flt
 #from sandbox.progress import ProgressMeter
@@ -37,32 +38,24 @@ class HouseholdSynthesizer(object):
                              package_order=config['dataset_pool_configuration'].package_order,
                              package_order_exceptions=config['dataset_pool_configuration'].package_order_exceptions,
                              in_storage=AttributeCache())
-        
-        db_config = DatabaseServerConfiguration(
-               host_name=config['output_configuration'].host_name,
-               user_name=config['output_configuration'].user_name,
-               password=config['output_configuration'].password                                               
-        )
-        db_server = DatabaseServer(db_config)
-        db = db_server.get_database(config['output_configuration'].database_name)
+        #if not os.path.exists(config['cache_directory']):  ## if cache exists, it will automatically skip
+        cacher = CreateBaseyearCache()
+        cache_dir = cacher.run(config)
+
         if 'output_configuration' in config:
+            db_config = DatabaseServerConfiguration(
+                   host_name=config['output_configuration'].host_name,
+                   user_name=config['output_configuration'].user_name,
+                   password=config['output_configuration'].password                                               
+            )
+            db_server = DatabaseServer(db_config)
+            db = db_server.get_database(config['output_configuration'].database_name)
             out_storage = StorageFactory().get_storage(
-               'sql_storage', 
-               storage_location = db)
+                'sql_storage', 
+                storage_location = db)
         else:
             output_cache = os.path.join(config['cache_directory'], str(config['base_year']+1))
             out_storage = StorageFactory().get_storage('flt_storage', storage_location=output_cache)
-
-#        attribute_cache = AttributeCache()
-#        
-#        if not os.path.exists(os.path.join(config['cache_directory'], str(config['base_year']))):
-#            #raise RuntimeError, "datasets uncached; run prepare_estimation_data.py first"
-#            CacheMysqlData().run(config, unroll_gridcells=False)
-#
-#        datasets = create_datasets_from_flt(config['datasets_to_preload'], 
-#                                            "urbansim",
-#                                            additional_arguments={'in_storage':attribute_cache})
-#        sc.merge(datasets)
 
         dataset_pool = SessionConfiguration().get_dataset_pool()
         households = dataset_pool.get_dataset("household")
@@ -104,7 +97,7 @@ class HouseholdSynthesizer(object):
         households.write_dataset(out_table_name='households', out_storage=out_storage)
   
 if __name__ == '__main__':
-    from caching_configuration import CachingConfiguration
-    config = CachingConfiguration()
+    from synthesizer_configuration import SynthesizerConfiguration
+    config = SynthesizerConfiguration()
 #    del config['output_configuration']['db_output_database']
     HouseholdSynthesizer(config)
