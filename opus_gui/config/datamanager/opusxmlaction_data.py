@@ -49,6 +49,13 @@ class OpusXMLAction_Data(object):
                         SIGNAL("triggered()"),
                         self.addScriptFile)
 
+        self.actNewConfig = QAction(self.calendarIcon,
+                                     "Create New Config",
+                                     self.xmlTreeObject.parent)
+        QObject.connect(self.actNewConfig,
+                        SIGNAL("triggered()"),
+                        self.newConfig)
+
         self.actCloneBatch = QAction(self.calendarIcon,
                                      "Clone Batch",
                                      self.xmlTreeObject.parent)
@@ -116,6 +123,9 @@ class OpusXMLAction_Data(object):
                                             self.currentIndex,
                                             newNode)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
+    def newConfig(self):
+        print "newConfig Pressed"
 
     def cloneNode(self):
         #print "cloneNode Pressed"
@@ -187,6 +197,35 @@ class OpusXMLAction_Data(object):
         y = RunScriptThread(self.xmlTreeObject.parent,x)
         y.run()
 
+    def execScriptConfig(self):
+        # First find the script that this config refers to...
+        
+        # First find the script path...
+        scriptPath = ""
+        if self.currentIndex.internalPointer().parent().node().hasChildNodes():
+            children = self.currentIndex.internalPointer().parent().node().childNodes()
+            for x in xrange(0,children.count(),1):
+                if children.item(x).isElement():
+                    domElement = children.item(x).toElement()
+                    if not domElement.isNull():
+                        if domElement.tagName() == QString("script_path"):
+                            if domElement.hasChildNodes():
+                                children2 = domElement.childNodes()
+                                for x2 in xrange(0,children2.count(),1):
+                                    if children2.item(x2).isText():
+                                        scriptPath = children2.item(x2).nodeValue()
+        filePath = ""
+        if self.currentIndex.internalPointer().node().hasChildNodes():
+            children = self.currentIndex.internalPointer().node().childNodes()
+            for x in xrange(0,children.count(),1):
+                if children.item(x).isText():
+                    filePath = children.item(x).nodeValue()
+        importPath = QString(scriptPath).append(QString(".")).append(QString(filePath))
+        print "New import ", importPath
+        x = OpusScript(self.xmlTreeObject.parent,importPath)
+        y = RunScriptThread(self.xmlTreeObject.parent,x)
+        y.run()
+
     def placeHolderAction(self):
         pass
     
@@ -206,15 +245,20 @@ class OpusXMLAction_Data(object):
                     return
                 if domElement.attribute(QString("type")) == QString("script_file"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
+                    self.menu.addAction(self.actNewConfig)
                     self.menu.addAction(self.actExecScriptFile)
                     self.menu.addAction(self.actCloneScript)
                     self.menu.addAction(self.actMoveNodeUp)
                     self.menu.addAction(self.actMoveNodeDown)
                     self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
-                elif domElement.attribute(QString("type")) == QString("script_batch"):
+                elif domElement.attribute(QString("type")) == QString("script_library"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actAddScriptFile)
+                    self.menu.exec_(QCursor.pos())
+                elif domElement.attribute(QString("type")) == QString("script_batch"):
+                    self.menu = QMenu(self.xmlTreeObject.parent)
+                    self.menu.addAction(self.actNewConfig)
                     self.menu.addAction(self.actCloneBatch)
                     self.menu.addAction(self.actMoveNodeUp)
                     self.menu.addAction(self.actMoveNodeDown)
