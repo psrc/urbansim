@@ -237,7 +237,21 @@ class OpusXMLAction_Data(object):
                     filePath = children.item(x).nodeValue()
         importPath = QString(scriptPath).append(QString(".")).append(QString(filePath))
         print "New import ", importPath
-        x = OpusScript(self.xmlTreeObject.parent,importPath,{'param1':'val1','param2':'val2'})
+
+        #Now loop and build up the parameters...
+        params = {}
+        childNodes = configNode.childNodes()
+        for x in xrange(0,childNodes.count(),1):
+            thisElement = childNodes.item(x)
+            thisElementText = QString("")
+            if thisElement.hasChildNodes():
+                children = thisElement.childNodes()
+                for x in xrange(0,children.count(),1):
+                    if children.item(x).isText():
+                        thisElementText = children.item(x).nodeValue()
+            params[thisElement.toElement().tagName()] = thisElementText
+        
+        x = OpusScript(self.xmlTreeObject.parent,importPath,params)
         y = RunScriptThread(self.xmlTreeObject.parent,x)
         y.run()
 
