@@ -19,6 +19,8 @@ from PyQt4.QtGui import *
 
 from configurescript_ui import Ui_ConfigureScriptGui
 
+import random
+
 class ConfigureScriptGui(QDialog, Ui_ConfigureScriptGui):
     def __init__(self, parent, fl):
         QDialog.__init__(self, parent.mainwindow, fl)
@@ -30,46 +32,34 @@ class ConfigureScriptGui(QDialog, Ui_ConfigureScriptGui):
         self.vboxlayout.setMargin(9)
         self.vboxlayout.setSpacing(6)
         self.vboxlayout.setObjectName("vboxlayout")
-
-        self.test1_widget = QWidget(self.variableBox)
-        self.test1_widget.setObjectName("test1_widget")
-        self.hboxlayout1 = QHBoxLayout(self.test1_widget)
-        self.hboxlayout1.setMargin(4)
-        self.hboxlayout1.setSpacing(4)
-        self.hboxlayout1.setObjectName("hboxlayout1")
-        self.test1_text = QLabel(self.test1_widget)
-        self.test1_text.setObjectName("test1_text")
-        self.test1_text.setText(QString("test1"))
-        self.hboxlayout1.addWidget(self.test1_text)
-        self.test1_line = QLineEdit(self.test1_widget)
-        self.test1_line.setEnabled(True)
-        self.test1_line.setMinimumSize(QSize(200,0))
-        self.test1_line.setObjectName("test1_line")
-        self.hboxlayout1.addWidget(self.test1_line)
-        self.vboxlayout.addWidget(self.test1_widget)
+        self.test_widget = []
+        self.hboxlayout = []
+        self.test_text = []
+        self.test_line = []
+        self.numberofvars = random.randint(2, 10)
+        for x in xrange(0,self.numberofvars):
+            print "Looping::%d" % (x)
+            self.test_widget.insert(x,QWidget(self.variableBox))
+            self.test_widget[x].setObjectName(QString("test_widget").append(str(x)))
+            self.hboxlayout.insert(x,QHBoxLayout(self.test_widget[x]))
+            self.hboxlayout[x].setMargin(4)
+            self.hboxlayout[x].setSpacing(4)
+            self.hboxlayout[x].setObjectName(QString("hboxlayout").append(str(x)))
+            self.test_text.insert(x,QLabel(self.test_widget[x]))
+            self.test_text[x].setObjectName(QString("test1_text").append(str(x)))
+            self.test_text[x].setText(QString("test").append(str(x)))
+            self.hboxlayout[x].addWidget(self.test_text[x])
+            self.test_line.insert(x,QLineEdit(self.test_widget[x]))
+            self.test_line[x].setEnabled(True)
+            self.test_line[x].setMinimumSize(QSize(200,0))
+            self.test_line[x].setObjectName(QString("test_line").append(str(x)))
+            self.hboxlayout[x].addWidget(self.test_line[x])
+            self.vboxlayout.addWidget(self.test_widget[x])
         
-        self.test2_widget = QWidget(self.variableBox)
-        self.test2_widget.setObjectName("test2_widget")
-        self.hboxlayout2 = QHBoxLayout(self.test2_widget)
-        self.hboxlayout2.setMargin(4)
-        self.hboxlayout2.setSpacing(4)
-        self.hboxlayout2.setObjectName("hboxlayout1")
-        self.test2_text = QLabel(self.test2_widget)
-        self.test2_text.setObjectName("test2_text")
-        self.test2_text.setText(QString("test2"))
-        self.hboxlayout2.addWidget(self.test2_text)
-        self.test2_line = QLineEdit(self.test2_widget)
-        self.test2_line.setEnabled(True)
-        self.test2_line.setMinimumSize(QSize(200,0))
-        self.test2_line.setObjectName("test2_line")
-        self.hboxlayout2.addWidget(self.test2_line)
-        self.vboxlayout.addWidget(self.test2_widget)
-
     def on_createConfig_released(self):
         print "create pressed"
-        self.vars[self.test1_text.text()] = self.test1_line.text()
-        self.vars[self.test2_text.text()] = self.test2_line.text()
-        #self.vars.append(["test2", self.test2_line.text()])
+        for x in xrange(0,self.numberofvars):
+            self.vars[self.test_text[x].text()] = self.test_line[x].text()
         for key,val in self.vars.iteritems():
             print "Key: %s , Val: %s" % (key,val)
         self.close()
