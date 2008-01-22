@@ -24,6 +24,7 @@ from config.datamanager.opusxmlaction_data import OpusXMLAction_Data
 class OpusXMLAction(object):
     def __init__(self, parent):
         self.parent = parent
+        self.mainwindow = parent.mainwindow
         self.xmlTreeObject = parent
         
         self.actionObject = self.getXMLActionObjectByType(self.xmlTreeObject.xmlType)

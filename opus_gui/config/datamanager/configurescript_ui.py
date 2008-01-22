@@ -2,29 +2,29 @@
 
 # Form implementation generated from reading ui file 'configurescript.ui'
 #
-# Created: Sun Jan 20 20:21:33 2008
+# Created: Mon Jan 21 20:25:01 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
 
-class Ui_Dialog(object):
-    def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(QtCore.QSize(QtCore.QRect(0,0,400,300).size()).expandedTo(Dialog.minimumSizeHint()))
+class Ui_ConfigureScriptGui(object):
+    def setupUi(self, ConfigureScriptGui):
+        ConfigureScriptGui.setObjectName("ConfigureScriptGui")
+        ConfigureScriptGui.resize(QtCore.QSize(QtCore.QRect(0,0,400,300).size()).expandedTo(ConfigureScriptGui.minimumSizeHint()))
 
-        self.buttonBox = QtGui.QDialogButtonBox(Dialog)
+        self.buttonBox = QtGui.QDialogButtonBox(ConfigureScriptGui)
         self.buttonBox.setGeometry(QtCore.QRect(30,240,341,32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.NoButton|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
 
-        self.retranslateUi(Dialog)
-        QtCore.QObject.connect(self.buttonBox,QtCore.SIGNAL("accepted()"),Dialog.accept)
-        QtCore.QObject.connect(self.buttonBox,QtCore.SIGNAL("rejected()"),Dialog.reject)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        self.retranslateUi(ConfigureScriptGui)
+        QtCore.QObject.connect(self.buttonBox,QtCore.SIGNAL("accepted()"),ConfigureScriptGui.accept)
+        QtCore.QObject.connect(self.buttonBox,QtCore.SIGNAL("rejected()"),ConfigureScriptGui.reject)
+        QtCore.QMetaObject.connectSlotsByName(ConfigureScriptGui)
 
-    def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+    def retranslateUi(self, ConfigureScriptGui):
+        ConfigureScriptGui.setWindowTitle(QtGui.QApplication.translate("ConfigureScriptGui", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
 

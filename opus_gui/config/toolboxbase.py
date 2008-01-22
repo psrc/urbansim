@@ -27,7 +27,8 @@ import os
 class ToolboxBase(object):
   def __init__(self, parent):
     self.parent = parent
-
+    self.mainwindow = parent
+    
     # References to some parent main window elements
     self.tabWidget = self.parent.tabWidget
     self.toolBox = self.parent.toolBox

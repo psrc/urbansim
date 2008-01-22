@@ -23,6 +23,7 @@ from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
 
 class OpusXMLTree(object):
   def __init__(self, parent,xmlType,parentWidget):    
+    self.mainwindow = parent.mainwindow
     self.addTree(parent,xmlType,parentWidget)
 
   def addTree(self, parent,xmlType,parentWidget):

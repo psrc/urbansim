@@ -20,11 +20,12 @@ from PyQt4.QtXml import *
 
 from run.script.opusrunscript import *
 import util.documentationbase
-
+from config.datamanager.configurescript import ConfigureScriptGui
 
 class OpusXMLAction_Data(object):
     def __init__(self, parent):
         self.parent = parent
+        self.mainwindow = parent.mainwindow
         self.xmlTreeObject = parent.xmlTreeObject
         
         self.currentColumn = None
@@ -126,6 +127,9 @@ class OpusXMLAction_Data(object):
 
     def newConfig(self):
         print "newConfig Pressed"
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint 
+        window = ConfigureScriptGui(self,flags)
+        window.show()
 
     def cloneNode(self):
         #print "cloneNode Pressed"
