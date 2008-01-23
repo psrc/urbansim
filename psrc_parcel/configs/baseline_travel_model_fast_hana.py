@@ -34,7 +34,6 @@ class BaselineTravelModelFastHana(Baseline):
                                                                        years_to_run={2005: '2005_06', 2010: '2010_06', 2015: '2010_06'})
         config['travel_model_configuration'] = travel_model_configuration
         config['travel_model_configuration']['locations_to_disaggregate'] = ['parcel', 'building']
-        del config['travel_model_configuration'][2000]
         
         ##fast model doesn't have bank2 and bank3; disable macros using them
         del config['travel_model_configuration']['emmission_emme2_macros']['tazvmt2.mac']
