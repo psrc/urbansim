@@ -46,8 +46,8 @@ class MultipleRunsModification:
                 "household_relocation_model_with_sampled_rr",
                 "household_location_choice_model_with_sampled_coef",
                 "employment_relocation_model_with_sampled_rr",
-                {"employment_location_choice_model_with_sampled_coef":{'group_members': ['non_home_based','home_based']}},
-                {"employment_location_choice_model":{'group_members': ['governmental']}}
+                {"employment_location_choice_model_with_sampled_coef":{'group_members': ['_all_']}},
+                'distribute_unplaced_jobs_model'
                 ]
         
     def modify_controller_for_first_year(self, config):
