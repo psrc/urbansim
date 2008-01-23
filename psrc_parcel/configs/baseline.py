@@ -176,8 +176,10 @@ class Baseline(UrbansimParcelConfiguration):
                                rate_table=None,
                                output_index = 'erm_index').execute()
  
-        if self.multiple_runs:
-            from multiple_runs_modification import MultipleRunsModification
-            MultipleRunsModification().modify_configuration(config)
-            
         self.merge(config)
+        if self.multiple_runs:
+            self.sample_inputs()
+
+    def sample_inputs(self):
+        from multiple_runs_modification import MultipleRunsModification
+        MultipleRunsModification().modify_configuration(self)

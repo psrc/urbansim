@@ -20,7 +20,9 @@ class BaselineTravelModelFastHana(Baseline):
     
     def __init__(self):
         config = Baseline()
-        config['number_of_runs'] = 1
+        if self.multiple_runs:
+            config.sample_inputs()
+        config['number_of_runs'] = 20
         config['seed'] = 1
         config_changes = {
             'description':'baseline travel model fast',
@@ -44,5 +46,6 @@ class BaselineTravelModelFastHana(Baseline):
              
         self.merge(config)
 
+    
 #if __name__ == "__main__":
-#    config = BaselineTravelModelFast()
+#    config = BaselineTravelModelFastHana()
