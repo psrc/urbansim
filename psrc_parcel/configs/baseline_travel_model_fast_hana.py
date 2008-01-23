@@ -14,7 +14,7 @@
 
 from baseline import Baseline
 
-class BaselineTravelModelFast(Baseline):
+class BaselineTravelModelFastHana(Baseline):
     
     multiple_runs = True
     
