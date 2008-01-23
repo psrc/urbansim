@@ -15,10 +15,13 @@
 from baseline import Baseline
 
 class BaselineTravelModelFast(Baseline):
-
+    
+    multiple_runs = True
+    
     def __init__(self):
         config = Baseline()
-
+        config['number_of_runs'] = 1
+        config['seed'] = 1
         config_changes = {
             'description':'baseline travel model fast',
         }
