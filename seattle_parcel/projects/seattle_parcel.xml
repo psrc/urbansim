@@ -1,0 +1,137 @@
+<opus_project>
+  <general>
+    <description type="string" >Sample Seattle project</description>
+  </general>
+  <data_manager>
+
+    <script_library type="script_library" >
+      <script_path type="script_path" >projects.scripts</script_path>
+      <esri_buffer_tool type="script_file" >esri_buffer</esri_buffer_tool>
+      <postgis_buffer_tool type="script_file" >postgis_buffer</postgis_buffer_tool>
+      <raw_sql_query type="script_file" >raw_sql</raw_sql_query>
+    </script_library>
+
+    <script_batch type="script_batch" >
+      <roads_buffer_tool type="script_config" >
+        <script_hook type="script_library_ref" >esri_buffer_tool</script_hook>
+        <input_shapefile type="string" >c:\data\roads.shp</input_shapefile>
+        <output_shapefile type="string" >c:\data\roads_buffer.shp</output_shapefile>
+        <buffer_size type="integer" >49</buffer_size>
+      </roads_buffer_tool>
+      <roads_sql_query type="script_config">
+        <script_hook type="script_library_ref" >raw_sql_query</script_hook>
+        <database_config type="string">blahblahblah</database_config>
+        <query type="string" >update some_table set some_field = blahblahblah</query>
+      </roads_sql_query>
+    </script_batch>
+
+    <script_batch type="script_batch" >
+      <script_path type="script_path" >projects.scripts</script_path>
+      <processing_script_1 type="script_file" >test</processing_script_1>
+    </script_batch>
+
+    <documentation type="documentation_path" >documentation/installation/index.html</documentation>
+
+  </data_manager>
+  <scenario_manager>
+    <default_scenario type="scenario" >
+#      <import type="file" >urbansim_gridcell.xml</import>
+    </default_scenario>
+    <Seattle_baseline type="scenario" executable="True" >
+      <parent parser_action="parent" type="scenario_name" >default_scenario</parent>
+      <base_year type="integer" >2000</base_year>
+      <years_to_run config_name="years" type="tuple" >
+        <startyear type="integer" >2001</startyear>
+        <endyear type="integer" >2005</endyear>
+      </years_to_run>
+      <models_to_run config_name="models" type="selectable_list" >
+        <real_estate_price_model type="model" choices="Run|Skip" >Run</real_estate_price_model>
+        <expected_sale_price_model type="model" choices="Run|Skip" >Run</expected_sale_price_model>
+        <development_proposal_choice_model type="model" choices="Run|Skip" >Run</development_proposal_choice_model>
+        <building_construction_model type="model" choices="Run|Skip" >Run</building_construction_model>
+        <household_transition_model type="model" choices="Run|Skip" >Run</household_transition_model>
+        <employment_transition_model type="model" choices="Run|Skip" >Run</employment_transition_model>
+        <household_relocation_model type="model" choices="Run|Skip" >Run</household_relocation_model>
+        <household_location_choice_model type="model" choices="Run|Skip" >Run</household_location_choice_model>
+       <employment_relocation_model type="model" choices="Run|Skip" >Run</employment_relocation_model>
+       <employment_location_choice_model type="model" choices="Run|Skip" >Run<group_members type="string" >_all_</group_members>
+        </employment_location_choice_model>
+        <distribute_unplaced_jobs_model type="model" choices="Run|Skip" >Run</distribute_unplaced_jobs_model>
+      </models_to_run>
+      <baseyear_database_configuration config_name="input_configuration" type="class" >
+        <Class_name flags="hidden" type="string" >DatabaseConfiguration</Class_name>
+        <Class_path flags="hidden" type="string" >opus_core.database_management.database_configuration</Class_path>
+        <protocol type="string" />
+        <host_name type="string" />
+        <user_name type="string" />
+        <password type="password" />
+        <use_environment_variables type="boolean" choices="True|False" >True</use_environment_variables>
+        <database_name type="string" >seattle_2000_parcel_baseyear_data</database_name>
+      </baseyear_database_configuration>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory" >seattle/seattle_2000_baseyear_cache</cache_directory>
+      <creating_baseyear_cache_configuration type="class" >
+        <Class_name flags="hidden" type="string" >CreatingBaseyearCacheConfiguration</Class_name>
+        <Class_path flags="hidden" type="string" >urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
+        <cache_directory_root parser_action="prefix_with_opus_data_path" type="directory" >seattle/runs</cache_directory_root>
+        <cache_from_mysql type="boolean" choices="True|False" >False</cache_from_mysql>
+        <baseyear_cache type="class" >
+          <Class_name flags="hidden" type="string" >BaseyearCacheConfiguration</Class_name>
+          <Class_path flags="hidden" type="string" >opus_core.configurations.baseyear_cache_configuration</Class_path>
+          <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory" >seattle/seattle_2000_baseyear_cache</existing_cache_to_copy>
+        </baseyear_cache>
+        <cache_scenario_database type="string" >urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
+        <tables_to_cache type="selectable_list" >
+          <annual_employment_control_totals type="table" choices="Cache|Skip" >Cache</annual_employment_control_totals>
+          <annual_household_control_totals type="table" choices="Cache|Skip" >Cache</annual_household_control_totals>
+          <annual_relocation_rates_for_households type="table" choices="Cache|Skip" >Cache</annual_relocation_rates_for_households>
+          <annual_relocation_rates_for_jobs type="table" choices="Cache|Skip" >Cache</annual_relocation_rates_for_jobs>
+          <building_sqft_per_job type="table" choices="Cache|Skip" >Cache</building_sqft_per_job>
+          <building_types type="table" choices="Cache|Skip" >Cache</building_types>
+          <buildings type="table" choices="Cache|Skip" >Cache</buildings>
+          <cities type="table" choices="Cache|Skip" >Cache</cities>
+          <constant_taz_columns type="table" choices="Cache|Skip" >Cache</constant_taz_columns>
+          <counties type="table" choices="Cache|Skip" >Cache</counties>
+          <demolition_cost_per_sqft type="table" choices="Cache|Skip" >Cache</demolition_cost_per_sqft>
+          <development_constraints type="table" choices="Cache|Skip" >Cache</development_constraints>
+          <development_template_components type="table" choices="Cache|Skip" >Cache</development_template_components>
+          <development_templates type="table" choices="Cache|Skip" >Cache</development_templates>
+          <employment_adhoc_sector_group_definitions type="table" choices="Cache|Skip" >Cache</employment_adhoc_sector_group_definitions>
+          <employment_adhoc_sector_groups type="table" choices="Cache|Skip" >Cache</employment_adhoc_sector_groups>
+          <employment_sectors type="table" choices="Cache|Skip" >Cache</employment_sectors>
+          <fazes type="table" choices="Cache|Skip" >Cache</fazes>
+          <generic_land_use_types type="table" choices="Cache|Skip" >Cache</employment_sectors>
+          <employment_sectors type="table" choices="Cache|Skip" >Cache</generic_land_use_types>
+          <gridcells type="table" choices="Cache|Skip" >Cache</gridcells>
+          <home_based_employment_location_choice_model_coefficients type="table" choices="Cache|Skip" >Cache</home_based_employment_location_choice_model_coefficients>
+          <home_based_employment_location_choice_model_specification type="table" choices="Cache|Skip" >Cache</home_based_employment_location_choice_model_specification>
+          <household_characteristics_for_ht type="table" choices="Cache|Skip" >Cache</household_characteristics_for_ht>
+          <household_location_choice_model_coefficients type="table" choices="Cache|Skip" >Cache</household_location_choice_model_coefficients>
+          <household_location_choice_model_specification type="table" choices="Cache|Skip" >Cache</household_location_choice_model_specification>
+          <households type="table" choices="Cache|Skip" >Cache</households>
+          <job_building_types type="table" choices="Cache|Skip" >Cache</job_building_types>
+          <jobs type="table" choices="Cache|Skip" >Cache</jobs>
+          <land_use_types type="table" choices="Cache|Skip" >Cache</land_use_types>
+          <large_areas type="table" choices="Cache|Skip" >Cache</large_areas>
+          <non_home_based_employment_location_choice_model_coefficients type="table" choices="Cache|Skip" >Cache</non_home_based_employment_location_choice_model_coefficients>
+          <non_home_based_employment_location_choice_model_specification type="table" choices="Cache|Skip" >Cache</non_home_based_employment_location_choice_model_specification>
+          <parcels type="table" choices="Cache|Skip" >Cache</parcels>
+          <real_estate_price_model_coefficients type="table" choices="Cache|Skip" >Cache</real_estate_price_model_coefficients>
+          <real_estate_price_model_specification type="table" choices="Cache|Skip" >Cache</real_estate_price_model_specification>
+          <target_vacancies type="table" choices="Cache|Skip" >Cache</target_vacancies>
+          <travel_data type="table" choices="Cache|Skip" >Cache</travel_data>
+          <urbansim_constants type="table" choices="Cache|Skip" >Cache</urbansim_constants>
+          <zones type="table" choices="Cache|Skip" >Cache</zones>
+        </tables_to_cache>
+        <tables_to_cache_nchunks type="dictionary" >
+          <parcels type="integer" >1</parcels>
+        </tables_to_cache_nchunks>
+      </creating_baseyear_cache_configuration>
+      <dataset_pool_configuration type="class" >
+        <Class_name flags="hidden" type="string" >DatasetPoolConfiguration</Class_name>
+        <Class_path flags="hidden" type="string" >opus_core.configurations.dataset_pool_configuration</Class_path>
+        <package_order type="list" >['seattle_parcel', 'psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</package_order>
+        <package_order_exceptions type="dictionary" />
+      </dataset_pool_configuration>
+    </Seattle_baseline>
+  </scenario_manager>
+</opus_project>
