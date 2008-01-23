@@ -21,7 +21,7 @@ class BaselineMultipleTravelModels2020(Baseline):
         config['number_of_runs'] = 10
         #config['seed'] = 9999
         from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
-        travel_model_configuration = create_travel_model_configuration('baseline_travel_model_psrc_fast_new', 
+        travel_model_configuration = create_travel_model_configuration('baseline_travel_model_psrc_fast_hana', 
                                                                        emme2_batch_file='MODELUSim.BAT ..\\triptabs',
                                                                        mode='full', years_to_run={2020: '2020_06'})
         config['travel_model_configuration'] = travel_model_configuration
@@ -41,7 +41,9 @@ class BaselineMultipleTravelModels2020(Baseline):
                 {'household': '/Users/hana/bm/psrc_parcel/simulation_results/2020_urbansim_parcel.zone.number_of_households',
                  'job': '/Users/hana/bm/psrc_parcel/simulation_results/2020_urbansim_parcel.zone.number_of_jobs'
                  }
+        config['travel_model_configuration'][2020]['models'] = config['travel_model_configuration'][2020].get('models')
+        config['travel_model_configuration'][2020]['models'].append('opus_emme2.models.restore_trip_tables')
         self.merge(config)
 
-#if __name__ == "__main__":
-#    config = BaselineTravelModelFast()
+if __name__ == "__main__":
+    config = BaselineMultipleTravelModels2020()
