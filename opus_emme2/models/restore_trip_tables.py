@@ -21,7 +21,7 @@ class RestoreTripTables:
     """
     def run(self, config, source_directory, year):
         dir = config['travel_model_configuration'][year]['bank'][0]
-        dst = os.path.join(dir, 'triptabs')
+        dst = os.path.join(os.environ['TRAVELMODELROOT'], dir, 'triptabs')
         src = os.path.join(dir, source_directory)
         shutil.rmtree(dst)
         shutil.copytree(src, dst)
