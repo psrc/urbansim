@@ -325,7 +325,7 @@ class RemoteRun:
                 max_zone_id = 0
                 if travel_model_resources['travel_model_configuration'].has_key(this_end_year):
                     tm = AbstractEmme2TravelModel()
-                    for full_model_path in travel_model_resources['travel_model_configuration']['models']:
+                    for full_model_path in travel_model_resources['travel_model_configuration'][this_end_year].get('models'):
                         if full_model_path in self.remote_travel_models:
                             # run this model remotely
                             self.run_remote_python_process(full_model_path, 
