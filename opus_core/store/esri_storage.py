@@ -43,7 +43,7 @@ else:
         """
 
         def __init__(self, storage_location):
-
+            storage_location = os.path.normpath(storage_location)
             # Create ESRI Geoprocessing Object
             self.gp = arcgisscripting.create()
             # Check to see if storage_location exists
@@ -77,11 +77,14 @@ else:
             This method writes a dataset (table_data) to the specified table (table_name).
             Set overwrite_existing = True if the table should be overwritten.
             """
+
+            # Replace dashes in the table name with underscores
+            table_name = table_name.replace('-', '_')
+
             # Reset the workspace
             self.gp.Workspace = self._storage_location
             # Get full path to table
             full_table_location = self.get_full_table_location(table_name)
-
             if overwrite_existing:
                 self.gp.OverwriteOutput= 1
                 if self.table_exists(table_name):
@@ -438,6 +441,8 @@ else:
             #to make it somewhat unique
             rand = str(randint(0,99))
             short_name = column_name[0:length] + rand
+            # Replace dashes with underscores (dashes are illegal in ESRI column names)
+            short_name = short_name.replace('-', '_')
             return short_name
 
 
