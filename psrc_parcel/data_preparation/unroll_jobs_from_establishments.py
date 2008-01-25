@@ -57,6 +57,7 @@ class UnrollJobsFromEstablishments:
     maximum_sqft = 4000
     number_of_jobs_attr = "jobs00"
     sqft_attr = "building_sqft_10vac"
+    geography_id_attr = "zone_id"
     compute_sqft_per_job = True
     unplace_jobs_with_non_existing_buildings = True
     
@@ -66,9 +67,7 @@ class UnrollJobsFromEstablishments:
         business_dataset = BusinessDataset(in_storage=in_storage, in_table_name=business_table)
         business_sizes = business_dataset.get_attribute(self.number_of_jobs_attr).astype("int32")
         sectors = business_dataset.get_attribute("sector_id")
-        tazes = array([], dtype='int32')
-        if "zone_id" in business_dataset.get_primary_attribute_names():
-            tazes = business_dataset.get_attribute("zone_id").astype("int32")
+        tazes = business_dataset.get_attribute(self.geography_id_attr).astype("int32")
         building_ids = array([], dtype='int32')
         if "building_id" in business_dataset.get_primary_attribute_names():
             building_ids = business_dataset.get_attribute("building_id")
@@ -93,7 +92,7 @@ class UnrollJobsFromEstablishments:
         jobs_data["sector_id"] = resize(array([-1], dtype=sectors.dtype), total_size)
         jobs_data["building_id"] = resize(array([-1], dtype=building_ids.dtype), total_size)
         jobs_data["parcel_id"] = resize(array([-1], dtype=parcel_ids.dtype), total_size)
-        jobs_data["zone_id"] = resize(array([-1], dtype=tazes.dtype), total_size)
+        jobs_data[self.geography_id_attr] = resize(array([-1], dtype=tazes.dtype), total_size)
         jobs_data["building_type"] = resize(array([-1], dtype=home_based.dtype), total_size)
         jobs_data["sqft"] = resize(array([], dtype=building_sqft.dtype), total_size)
         if join_flags is not None:
@@ -112,8 +111,7 @@ class UnrollJobsFromEstablishments:
                 jobs_data["building_id"][start_index:end_index] = building_ids[i]
             if parcel_ids.size > 0:
                 jobs_data["parcel_id"][start_index:end_index] = parcel_ids[i]
-            if tazes.size > 0:
-                jobs_data["zone_id"][start_index:end_index] = tazes[i]
+            jobs_data[self.geography_id_attr][start_index:end_index] = tazes[i]
             if home_based.size > 0:
                 jobs_data["building_type"][start_index:end_index] = home_based[i]
             if self.compute_sqft_per_job:
@@ -203,6 +201,7 @@ class UnrollJobsFromEstablishmentsWithZipcode(UnrollJobsFromEstablishments):
     
     number_of_jobs_attr = "employees"
     sqft_attr = "sqft_per_job"
+    geography_id_attr = "zip_id"
     compute_sqft_per_job = False
     unplace_jobs_with_non_existing_buildings = False
     
