@@ -89,7 +89,8 @@ class Baseline(UrbansimParcelConfiguration):
                     "fazes",
                     "large_areas",
                     "demolition_cost_per_sqft",
-                    'constant_taz_columns'
+                    'constant_taz_columns',
+                    'zipcodes',
                     ],
                 tables_to_cache_nchunks={'parcels': 1},
                 unroll_gridcells = False
