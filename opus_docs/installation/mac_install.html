@@ -243,23 +243,18 @@ but seems to vary from user to user for reasons we haven't been able to pin down
 UrbanSim</a></h2>
 
 
-<p>There are two options for getting the Opus/UrbanSim code: as a zip
-file, or direct from our subversion repository. &nbsp;(For you modeler
+<p>You should download the Opus/Urbansim code directly from our subversion repository. &nbsp;(For you modeler
 types, <a href="http://subversion.tigris.org/">subversion</a>
 in this context is the name of a version control system that nicely
 manages keeping track of different versions of the code; we're not
-talking politics.) &nbsp;Particularly if you will be modifying or
-adding to the Opus/Urbansim code, we recommend using subversion.
-&nbsp;This will make it easy to update to newer versions of
+talking politics.) &nbsp;Using subversion, it is easy to update to newer versions of
 Opus/UrbanSim and merge in any changes you've made. &nbsp;You can also
 request any particular version of the code from subversion.
 &nbsp;However, you do have to have a subversion client installed on
 your machine.</p>
 
-<p>Here are instructions for each of these options. &nbsp;(Well, actually, we're going to give you two ways
-to get Opus and UrbanSim using subversion, depending on whether you are
-using the Eclipse IDE. &nbsp;So OK, that's 3 options in all.)</p>
-<p>For each of these options, you construct a workspace, called say '/Users/yourusername/opusworkspace'. You'll then need to
+<p>Here are two ways to get the code. For each of these options, you construct a 
+workspace, called say '/Users/yourusername/opusworkspace'. You'll then need to
 add&nbsp;/Users/yourusername/opusworkspace to your Python path (see <a href="mac_install.html#Step_5:_Defining_Environment_Variables_">Step 5</a>
 for how to do this). &nbsp;The workspace will have subdirectories with
 the code for opus_core, urbansim, and other packages, and also a file
@@ -267,45 +262,24 @@ docs with all of the documentation for that version. &nbsp;The manual
 is in the subdirectory <i>opus_docs/manual</i> of the opus workspace, 
 and the tutorials are in the <i>tutorials</i> subdirectory.</p>
 
-<h3>Option 1: Getting Opus and UrbanSim as a zip file</h3>
+<h3>Option 1: Getting Opus and UrbanSim using a command line interface to subversion</h3>
 
-This is the simplest option. &nbsp;Browse to our downloads page, and select a zip file for a
-stable release. &nbsp;(Probably you want the latest stable release.)
-&nbsp;<span style="font-style: italic;">Caution: don't get the 2006
-release if you are using these directions! &nbsp;That uses an older set
-of instructions on doing an install.</span> &nbsp;Get a 2007 release or later.<br>
-<br>
-Create a workspace directory, say
-'/Users/yourusername/opusworkspace', and unzip the file there.<br>
-
-<br>
-
-<span style="font-weight: bold;">Hint</span>: if you find yourself
-starting to edit the source code in any of the packages you downloaded,
-stop, delete the workspace directory, and get the code using subversion
-instead. &nbsp;You'll have a much easier time later if you update your
-code.
-<h3>Option 2: Getting Opus and UrbanSim using a command line interface to subversion</h3>
-
-p>Suppose you want to get stable release 4.1.1.
-First, make sure you have a subversion client installed. &nbsp;If not, you can get one 
+<p>First, make sure you have a subversion client installed. &nbsp;If not, you can get one 
 from <a href="http://subversion.tigris.org/project_packages.html">http://subversion.tigris.org/project_packages.html</a>. &nbsp;
 Next, in a shell (i.e. a terminal window), type the following commands:</p>
 <pre>
 mkdir opusworkspace
 cd opusworkspace
-svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/4.1.1/opus_core
-svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/4.1.1/urbansim
-svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/4.1.1/eugene
+svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/opus_core
+svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/urbansim
+svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/eugene
 </pre>
 
-<p>The above commands check out stable release 4.1.1 -- adjust the URLs appropriately to get a
-different stable release.  See <a href="releases.html">Opus Revisions and Releases</a>
-for details on this, on getting all of the packages at once instead of one by one,
-on checking out the development version instead of a stable release, etc.
-</p>
+<p>The above commands check out the latest development version of the code -- adjust the URLs 
+appropriately to get a stable release.  See <a href="releases.html">Opus Revisions and Releases</a>
+for details on how to do this.</p>
 
-<h3>Option 3: Getting Opus and UrbanSim using subversion and Eclipse</h3>
+<h3>Option 2: Getting Opus and UrbanSim using subversion and Eclipse</h3>
 This is the best option if you'll be doing software development. &nbsp;See <a href="ide_setup.html">Installing Opus and UrbanSim using an IDE</a> for details.<br>
 
 <h2><a name="Step_5:_Defining_Environment_Variables_"></a>Step 5: <a name="environment">Defining
