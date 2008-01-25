@@ -19,7 +19,7 @@ from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheC
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 
 my_configuration = {
-     'cache_directory':r'/urbansim_cache/sanfrancisco/cache_source', ### TODO: Set this cache_directory to something useful.
+     'cache_directory':r'/home/lmwang/work/sf/cache_source_0125', ### TODO: Set this cache_directory to something useful.
     'input_configuration': DatabaseConfiguration(
         database_name = "sanfrancisco_baseyear",
         ),
@@ -29,7 +29,7 @@ my_configuration = {
         package_order_exceptions={},
         ),                          
     'output_configuration': DatabaseConfiguration(
-        database_name = "sanfrancisco_baseyear_estimation20070429",
+        database_name = "sanfrancisco_baseyear_change_20080115",
         ),
     'dataset_pool_configuration': DatasetPoolConfiguration(
         package_order=['sanfrancisco', 'urbansim', 'opus_core'],
