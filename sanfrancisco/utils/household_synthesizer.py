@@ -72,7 +72,7 @@ class HouseholdSynthesizer(object):
         
 #        is_household_unplace = datasets['household'].get_attribute("building_id") <= 0
         is_household_unplaced = 1 #all households are unplaced
-        household_building_id = zeros(households.size())-1 #datasets['household'].get_attribute("building_id")
+        household_building_id = zeros(households.size(), dtype='int32')-1 #datasets['household'].get_attribute("building_id")
         
         for zone_id in zone_ids:
             capacity = zones.get_attribute_by_id(capacity_attribute_name, zone_id)

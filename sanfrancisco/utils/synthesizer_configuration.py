@@ -39,7 +39,7 @@ class SynthesizerConfiguration(Configuration):
         ]
         
         return {
-        'cache_directory' : r'/home/lmwang/work/sf/hh_syn', # change or leave out
+        'cache_directory' : r'/home/lmwang/work/sf/cache_source_0125', # change or leave out
         'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
     #        cache_directory_root = '/tmp/urbcache/sandbox_runs/estimation',
             unroll_gridcells = False,
