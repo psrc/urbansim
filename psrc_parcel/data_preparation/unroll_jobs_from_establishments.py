@@ -55,23 +55,37 @@ class UnrollJobsFromEstablishments:
     
     minimum_sqft = 1
     maximum_sqft = 4000
-    governmental_sectors = [15, 16, 18, 19]
+    number_of_jobs_attr = "jobs00"
+    sqft_attr = "building_sqft_10vac"
+    compute_sqft_per_job = True
+    unplace_jobs_with_non_existing_buildings = True
     
     def run(self, in_storage, out_storage, business_table="business", jobs_table="jobs", control_totals_table=None):
         logger.log_status("Unrolling %s table." % business_table)
         # get attributes from the establisments table
         business_dataset = BusinessDataset(in_storage=in_storage, in_table_name=business_table)
-        business_sizes = business_dataset.get_attribute("jobs00").astype("int32")
+        business_sizes = business_dataset.get_attribute(self.number_of_jobs_attr).astype("int32")
         sectors = business_dataset.get_attribute("sector_id")
-        tazes = business_dataset.get_attribute("zone_id").astype("int32")
-        building_ids = business_dataset.get_attribute("building_id")
-        parcel_ids = business_dataset.get_attribute("parcel_id")
-        home_based = business_dataset.get_attribute("home_based")
-        building_sqft = business_dataset.get_attribute("building_sqft_10vac")
+        tazes = array([], dtype='int32')
+        if "zone_id" in business_dataset.get_primary_attribute_names():
+            tazes = business_dataset.get_attribute("zone_id").astype("int32")
+        building_ids = array([], dtype='int32')
+        if "building_id" in business_dataset.get_primary_attribute_names():
+            building_ids = business_dataset.get_attribute("building_id")
+        parcel_ids = array([], dtype='int32')
+        if "parcel_id" in business_dataset.get_primary_attribute_names():
+            parcel_ids = business_dataset.get_attribute("parcel_id")
+        home_based = array([], dtype='int16')
+        if "home_based" in business_dataset.get_primary_attribute_names():
+            home_based = business_dataset.get_attribute("home_based")
+        building_sqft = business_dataset.get_attribute(self.sqft_attr)
         building_sqft[building_sqft <= 0] = 0
-        join_flags = business_dataset.get_attribute("join_flag")
-        taz_est = business_dataset.get_attribute("taz_est")
-        impute_sqft_flag = business_dataset.get_attribute("impute_building_sqft_flag")
+        join_flags = None
+        if "join_flag" in business_dataset.get_primary_attribute_names():
+            join_flags = business_dataset.get_attribute("join_flag")
+        impute_sqft_flag = None
+        if "impute_building_sqft_flag" in business_dataset.get_primary_attribute_names():
+            impute_sqft_flag = business_dataset.get_attribute("impute_building_sqft_flag")
         
         # inititalize jobs attributes
         total_size = business_sizes.sum()
@@ -82,9 +96,10 @@ class UnrollJobsFromEstablishments:
         jobs_data["zone_id"] = resize(array([-1], dtype=tazes.dtype), total_size)
         jobs_data["building_type"] = resize(array([-1], dtype=home_based.dtype), total_size)
         jobs_data["sqft"] = resize(array([], dtype=building_sqft.dtype), total_size)
-        jobs_data["join_flag"] = resize(array([], dtype=join_flags.dtype), total_size)
-        jobs_data["taz_est"] = resize(array([], dtype=taz_est.dtype), total_size)
-        jobs_data["impute_building_sqft_flag"] = resize(array([], dtype=impute_sqft_flag.dtype), total_size)
+        if join_flags is not None:
+            jobs_data["join_flag"] = resize(array([], dtype=join_flags.dtype), total_size)
+        if impute_sqft_flag is not None:
+            jobs_data["impute_building_sqft_flag"] = resize(array([], dtype=impute_sqft_flag.dtype), total_size)
         
         indices = cumsum(business_sizes)
         # iterate over establishments. For each business create the corresponding number of jobs by filling the corresponding part 
@@ -93,29 +108,33 @@ class UnrollJobsFromEstablishments:
         for i in range(business_dataset.size()):
             end_index = indices[i]
             jobs_data["sector_id"][start_index:end_index] = sectors[i]
-            jobs_data["building_id"][start_index:end_index] = building_ids[i]
-            jobs_data["parcel_id"][start_index:end_index] = parcel_ids[i]
-            jobs_data["zone_id"][start_index:end_index] = tazes[i]
-            jobs_data["building_type"][start_index:end_index] = home_based[i]
-            jobs_data["sqft"][start_index:end_index] = round((building_sqft[i]-building_sqft[i]/10.0)/float(business_sizes[i])) # sqft per employee
-            jobs_data["join_flag"][start_index:end_index] = join_flags[i]
-            jobs_data["taz_est"][start_index:end_index] = taz_est[i]
-            jobs_data["impute_building_sqft_flag"][start_index:end_index]  = impute_sqft_flag[i]
+            if building_ids.size > 0:
+                jobs_data["building_id"][start_index:end_index] = building_ids[i]
+            if parcel_ids.size > 0:
+                jobs_data["parcel_id"][start_index:end_index] = parcel_ids[i]
+            if tazes.size > 0:
+                jobs_data["zone_id"][start_index:end_index] = tazes[i]
+            if home_based.size > 0:
+                jobs_data["building_type"][start_index:end_index] = home_based[i]
+            if self.compute_sqft_per_job:
+                jobs_data["sqft"][start_index:end_index] = round((building_sqft[i]-building_sqft[i]/10.0)/float(business_sizes[i])) # sqft per employee
+            else:
+                jobs_data["sqft"][start_index:end_index] = building_sqft[i]
+            if join_flags is not None:
+                jobs_data["join_flag"][start_index:end_index] = join_flags[i]
+            if impute_sqft_flag is not None:
+                jobs_data["impute_building_sqft_flag"][start_index:end_index]  = impute_sqft_flag[i]
             start_index = end_index
             
         jobs_data["job_id"] = arange(total_size)+1
-        jobs_data["sqft"] = clip(jobs_data["sqft"], 0, self.maximum_sqft)
-        jobs_data["sqft"][logical_and(jobs_data["sqft"]>0, jobs_data["sqft"]<self.minimum_sqft)] = self.minimum_sqft
+        if self.compute_sqft_per_job:
+            jobs_data["sqft"] = clip(jobs_data["sqft"], 0, self.maximum_sqft)
+            jobs_data["sqft"][logical_and(jobs_data["sqft"]>0, jobs_data["sqft"]<self.minimum_sqft)] = self.minimum_sqft
         
         # correct missing job_building_types
         wmissing_bt = where(jobs_data["building_type"]<=0)[0]
         if wmissing_bt.size > 0:
             jobs_data["building_type"][wmissing_bt] = 2 # assign non-homebased type for now. It can be re-classified in the assign_bldgs_to_jobs... script
-        # assign governmental building type 3 to the appropriate sectors
-        for sec in self.governmental_sectors:
-            wsec = where(jobs_data["sector_id"] == sec)[0]
-            if wsec.size > 0:
-                jobs_data["building_type"][wsec] = 3
         
         # create jobs table and write it out
         storage = StorageFactory().get_storage('dict_storage')
@@ -124,7 +143,8 @@ class UnrollJobsFromEstablishments:
                 table_data=jobs_data
                 )
         job_dataset = JobDataset(in_storage=storage)
-        self.unplace_jobs_with_non_existing_buildings(job_dataset, out_storage)
+        if self.unplace_jobs_with_non_existing_buildings:
+            self.do_unplace_jobs_with_non_existing_buildings(job_dataset, out_storage)
         
         # Match to control totals (only eliminate jobs if control totals are smaller than the actual number of jobs). 
         if control_totals_table is not None:
@@ -171,7 +191,7 @@ class UnrollJobsFromEstablishments:
         job_dataset.write_dataset(out_table_name=jobs_table, out_storage=out_storage)
         logger.log_status("Created %s jobs." % job_dataset.size())
     
-    def unplace_jobs_with_non_existing_buildings(self, jobs, in_storage):
+    def do_unplace_jobs_with_non_existing_buildings(self, jobs, in_storage):
         buildings = BuildingDataset(in_storage=in_storage)
         building_ids = jobs.get_attribute(buildings.get_id_name()[0])
         valid_building_ids_idx = where(building_ids > 0)[0]
@@ -179,7 +199,13 @@ class UnrollJobsFromEstablishments:
         logger.log_status("%s jobs have non-existing locations and are unplaced from buildings (parcel_id and zone_id are not affected)." % where(index < 0)[0].size)
         jobs.modify_attribute(name="building_id", data=-1, index=valid_building_ids_idx[index < 0])
 
-        
+class UnrollJobsFromEstablishmentsWithZipcode(UnrollJobsFromEstablishments):
+    
+    number_of_jobs_attr = "employees"
+    sqft_attr = "sqft_per_job"
+    compute_sqft_per_job = False
+    unplace_jobs_with_non_existing_buildings = False
+    
 class CreateBuildingSqftPerJobDataset:
     minimum_median = 25
     maximum_median = 2000
@@ -198,15 +224,22 @@ if __name__ == '__main__':
     #business_table = "est00_match_bldg2005_flag123457_flag12bldg"
     business_table = "businesses"
     control_totals_table = "employment_control_total_zone_2000_flattened"
-    input_database_name = "psrc_2005_parcel_baseyear_data_prep_business"
+    input_database_name = "psrc_2005_parcel_baseyear_data_prep_business_zip"
     #input_database_name = "psrc_2005_parcel_baseyear_change_20070713"
     #input_database_name = "psrc_2005_data_workspace_hana"
-    output_database_name = "psrc_2005_parcel_baseyear_data_prep_start"
+    #output_database_name = "psrc_2005_parcel_baseyear_data_prep_start"
+    output_database_name = "psrc_2005_parcel_baseyear_data_prep_business_zip"
     input_cache = "/Users/hana/urbansim_cache/psrc/cache_source/2000"
     output_cache = "/Users/hana/urbansim_cache/psrc/data_preparation/stepI/2000"
     instorage = MysqlStorage().get(input_database_name)
     outstorage = MysqlStorage().get(output_database_name)
     #instorage = FltStorage().get(input_cache)
     #outstorage = FltStorage().get(output_cache)
-    UnrollJobsFromEstablishments().run(instorage, outstorage, business_table=business_table, control_totals_table=control_totals_table)
-    CreateBuildingSqftPerJobDataset().run(in_storage=outstorage, out_storage=outstorage)
+    
+    unrolling_businesses_with_zipcode = True # set this True for unrolling businesses that have zip codes (instead of zone, parcels and buildings) 
+    
+    if not unrolling_businesses_with_zipcode:
+        UnrollJobsFromEstablishments().run(instorage, outstorage, business_table=business_table, control_totals_table=control_totals_table)
+        CreateBuildingSqftPerJobDataset().run(in_storage=outstorage, out_storage=outstorage)
+    else:
+        UnrollJobsFromEstablishmentsWithZipcode().run(instorage, outstorage, business_table=business_table, control_totals_table=None)
