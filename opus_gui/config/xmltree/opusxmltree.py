@@ -1,15 +1,15 @@
 # UrbanSim software. Copyright (C) 1998-2007 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 
 
@@ -22,7 +22,7 @@ from opus_gui.config.xmlmodelview.opusdatadelegate import OpusDataDelegate
 from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
 
 class OpusXMLTree(object):
-  def __init__(self, parent,xmlType,parentWidget):    
+  def __init__(self, parent,xmlType,parentWidget):
     self.mainwindow = parent.mainwindow
     self.addTree(parent,xmlType,parentWidget)
 
@@ -45,11 +45,11 @@ class OpusXMLTree(object):
     self.view.setColumnWidth(0,200)
     self.view.setColumnWidth(1,50)
     self.view.setMinimumHeight(200)
-    
+
     self.groupBoxLayout.addWidget(self.view)
     self.groupBox.setTitle(QFileInfo(self.parentTool.xml_file).filePath())
     self.parentWidget.addWidget(self.groupBox)
-    
+
     # Hook up to the mousePressEvent and pressed
     self.view.setContextMenuPolicy(Qt.CustomContextMenu)
     self.xmlAction = OpusXMLAction(self)

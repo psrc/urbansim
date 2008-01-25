@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 #
 # UrbanSim software. Copyright (C) 1998-2007 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 
 # PyQt4 includes for python bindings to QT
@@ -29,10 +29,10 @@ def main(argv):
 
   # create Qt application
   app = QApplication(argv,True)
-  
+
   # Set the app style
   app.setStyle(QString("plastique"))
-  
+
   try:
     # QGIS bindings for mapping functions
     import qgis.core
@@ -50,17 +50,17 @@ def main(argv):
 
   # Create signal for app finish
   app.connect(app, SIGNAL("lastWindowClosed()"), app, SLOT("quit()"))
-  
+
   # Start the app up
   retval = app.exec_()
-  
+
   try:
     import qgis.core
     # We got an exit signal so time to clean up
     qgis.core.QgsApplication.exitQgis()
   except ImportError:
     pass
-  
+
   sys.exit(retval)
 
 

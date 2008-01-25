@@ -1,15 +1,15 @@
 # UrbanSim software. Copyright (C) 1998-2007 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 
 
@@ -28,7 +28,7 @@ class ToolboxBase(object):
   def __init__(self, parent):
     self.parent = parent
     self.mainwindow = parent
-    
+
     # References to some parent main window elements
     self.tabWidget = self.parent.tabWidget
     self.toolBox = self.parent.toolBox
@@ -37,7 +37,7 @@ class ToolboxBase(object):
     self.xml_file = None
     self.doc = None
     self.configFile = None
-    
+
     # These are the trees that are displayed for each toolbox
     self.view = None
     self.modelManagerTree = None
@@ -45,7 +45,9 @@ class ToolboxBase(object):
     self.runManagerTree = None
     self.dataManagerTree = None
     self.dataManagerFileTree = None
-  
+    #jessetesting
+    self.dataManagerDBSTree = None
+
   def openXMLTree(self, xml_file):
     saveBeforeOpen = QMessageBox.Discard
     # Check if the current model(s) is(are) dirty first...
@@ -81,8 +83,8 @@ class ToolboxBase(object):
         self.modelManagerTree.model.dirty = False
       if self.resultsManagerTree:
         self.resultsManagerTree.model.dirty = False
-        
-    # Try to remove all the old trees... 
+
+    # Try to remove all the old trees...
     resultsManagerRemoveSuccess = True
     if self.resultsManagerTree != None:
       resultsManagerRemoveSuccess = self.resultsManagerTree.removeTree()
@@ -95,7 +97,7 @@ class ToolboxBase(object):
     dataManagerRemoveSuccess = True
     if self.dataManagerTree != None:
       dataManagerRemoveSuccess = self.dataManagerTree.removeTree()
-    
+
     if resultsManagerRemoveSuccess and modelManagerRemoveSuccess and \
            runManagerRemoveSuccess and dataManagerRemoveSuccess:
       # We have successfully removed the old XML trees
@@ -107,15 +109,19 @@ class ToolboxBase(object):
         self.doc = QDomDocument()
         self.doc.setContent(self.configFile)
         self.resultsManagerTree = OpusXMLTree(self,"results_manager",
-                                              self.parent.resultsmanager_page.layout())    
+                                              self.parent.resultsmanager_page.layout())
         self.modelManagerTree = OpusXMLTree(self,"model_manager",
-                                            self.parent.modelmanager_page.layout())    
+                                            self.parent.modelmanager_page.layout())
         self.runManagerTree = OpusXMLTree(self,"scenario_manager",
-                                          self.parent.runmanager_page.layout())    
+                                          self.parent.runmanager_page.layout())
         self.dataManagerTree = OpusXMLTree(self,"data_manager",
                                            self.parent.datamanager_xmlconfig.layout())
         self.dataManagerFileTree = OpusFileTree(self,self.opusDataPath,
                                                 self.parent.datamanager_dirview.layout())
+        #jessetesting
+        self.dataManagerDBSTree = OpusXMLTree(self, "data_manager_dbstree",
+                                              self.parent.datamanager_dbsconnections.layout())
+        self.data
       else:
         print "Error reading config"
     else:

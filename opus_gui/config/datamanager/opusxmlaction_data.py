@@ -1,15 +1,15 @@
 # UrbanSim software. Copyright (C) 1998-2007 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 
 
@@ -27,24 +27,24 @@ class OpusXMLAction_Data(object):
         self.parent = parent
         self.mainwindow = parent.mainwindow
         self.xmlTreeObject = parent.xmlTreeObject
-        
+
         self.currentColumn = None
         self.currentIndex = None
-        
+
         self.acceptIcon = QIcon(":/Images/Images/accept.png")
         self.removeIcon = QIcon(":/Images/Images/delete.png")
         self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
-        
+
         self.actExecScriptFile = QAction(self.calendarIcon,
-                                         "Exec Script",
+                                         "Exec Script (TESTING)",
                                          self.xmlTreeObject.parent)
         QObject.connect(self.actExecScriptFile,
                         SIGNAL("triggered()"),
                         self.execScriptFile)
 
         self.actExecScriptConfig = QAction(self.calendarIcon,
-                                           "Exec Script Config",
+                                           "Execute Script",
                                            self.xmlTreeObject.parent)
         QObject.connect(self.actExecScriptConfig,
                         SIGNAL("triggered()"),
@@ -58,7 +58,7 @@ class OpusXMLAction_Data(object):
                         self.addScriptFile)
 
         self.actNewConfig = QAction(self.calendarIcon,
-                                     "Create New Config",
+                                     "Create New Config (TESTING)",
                                      self.xmlTreeObject.parent)
         QObject.connect(self.actNewConfig,
                         SIGNAL("triggered()"),
@@ -119,7 +119,7 @@ class OpusXMLAction_Data(object):
         QObject.connect(self.actPlaceHolder,
                         SIGNAL("triggered()"),
                         self.placeHolderAction)
-        
+
 
     def addScriptFile(self):
         #print "Add Script Pressed"
@@ -134,11 +134,11 @@ class OpusXMLAction_Data(object):
 
     def newConfig(self):
         print "newConfig Pressed"
-        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint 
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         window = ConfigureScriptGui(self,flags)
         window.show()
         # Connect to a signal when the GUI collects the vars to add the element
-        
+
     def cloneNode(self):
         #print "cloneNode Pressed"
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
@@ -250,14 +250,14 @@ class OpusXMLAction_Data(object):
                     if children.item(x).isText():
                         thisElementText = children.item(x).nodeValue()
             params[thisElement.toElement().tagName()] = thisElementText
-        
+
         x = OpusScript(self.xmlTreeObject.parent,importPath,params)
         y = RunScriptThread(self.xmlTreeObject.parent,x)
         y.run()
 
     def placeHolderAction(self):
         pass
-    
+
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
                self.xmlTreeObject.view.indexAt(position).column() == 0:

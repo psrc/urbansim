@@ -1,15 +1,15 @@
 # UrbanSim software. Copyright (C) 1998-2007 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 
 # PyQt4 includes for python bindings to QT
@@ -31,7 +31,7 @@ class OpusDataModel(QAbstractItemModel):
         self.xmlType = xmlType
         # Dirty flag for keeping track of edits...
         self.dirty = False
-        
+
         # Root data for use in column headers
         self.rootData = []
         self.rootData.append(QVariant("Name"))
@@ -54,11 +54,11 @@ class OpusDataModel(QAbstractItemModel):
             self._rootItemSub = OpusDataItem(document,current, x, self._rootItem)
             self._rootItemSub.initAsRootItem()
             self._rootItem.childItems.append(self._rootItemSub)
-        
+
         #Add some icons
         self.folderIcon = QIcon()
         self.bookmarkIcon = QIcon()
-        
+
         self.app = qApp
 
         self.acceptIcon = QIcon(":/Images/Images/accept.png")
@@ -83,14 +83,15 @@ class OpusDataModel(QAbstractItemModel):
         self.mapGoIcon = QIcon(":/Images/Images/map_go.png")
         self.mapIcon = QIcon(":/Images/Images/map.png")
         self.pageWhiteIcon = QIcon(":/Images/Images/page_white.png")
+        self.pythonBatchIcon = QIcon(":/Images/Images/python_batch.png")
         self.pythonScriptIcon = QIcon(":/Images/Images/python_script.png")
         self.pythonTypeIcon = QIcon(":/Images/Images/python_type.png")
         self.tableGoIcon = QIcon(":/Images/Images/table_go.png")
         self.tableLightningIcon = QIcon(":/Images/Images/table_lightning.png")
         self.tableMultipleIcon = QIcon(":/Images/Images/table_multiple.png")
         self.tableIcon = QIcon(":/Images/Images/table.png")
-        
-        self.bookmarkIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_FileIcon))        
+
+        self.bookmarkIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_FileIcon))
         self.folderIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_DirClosedIcon),
                                   QIcon.Normal, QIcon.Off)
         self.folderIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_DirOpenIcon),
@@ -106,7 +107,7 @@ class OpusDataModel(QAbstractItemModel):
             if (current.attributes().namedItem(QString("type")).nodeValue() == QString(tp)) and (current.nodeType() == QDomNode.ElementNode):
                 childNode = current
         return childNode
-    
+
     def iconFromType(self, attType):
         typeMap = {"string":self.fieldIcon,
                    "path":self.folderDatabaseIcon,
@@ -126,12 +127,16 @@ class OpusDataModel(QAbstractItemModel):
                    "checkbox":self.bulletIcon,
                    "cacheConfig":self.databaseLinkIcon,
                    "boolean":self.pythonTypeIcon,
+                   "script_file":self.pythonTypeIcon,
+                   "script_library":self.folderIcon,
+                   "script_config":self.pythonTypeIcon,
+                   "script_batch":self.pythonBatchIcon,
                    "":self.bulletIcon}
         if attType != QString("defValue") and typeMap.has_key(str(attType)):
             return typeMap[str(attType)]
         else:
             return QVariant()
-    
+
     # We only allow for one child colum per branch in the tree
     def columnCount(self, parent):
         #return 1
@@ -176,7 +181,7 @@ class OpusDataModel(QAbstractItemModel):
                                 return QVariant(children.item(x).nodeValue())
                         return QVariant()
                     else:
-                        return QVariant()                        
+                        return QVariant()
                 else:
                     return QVariant()
             else:
@@ -197,14 +202,14 @@ class OpusDataModel(QAbstractItemModel):
                 return Qt.ItemIsEnabled | Qt.ItemIsSelectable
         else:
             return Qt.ItemIsEnabled
-        
-    
+
+
     def headerData(self, section, oreientation, role):
         if oreientation == Qt.Horizontal and role == Qt.DisplayRole:
             return QVariant(self.rootData[section])
         else:
             return QVariant()
-    
+
     def index(self, row, column, parent):
         if not self.hasIndex(row, column, parent):
             return QModelIndex()
@@ -222,7 +227,7 @@ class OpusDataModel(QAbstractItemModel):
             return self.createIndex(row, column, childItem)
         else:
             return QModelIndex()
-    
+
     def parent(self, child):
         if not child.isValid():
             return QModelIndex()
@@ -233,7 +238,7 @@ class OpusDataModel(QAbstractItemModel):
         #if parentItem == self._rootItem:
         #    return self.createIndex(0,0,parentItem)
         return self.createIndex(parentItem.row(),0,parentItem)
-    
+
     def rowCount(self, parent):
         if parent.column() > 0:
             return 0
@@ -246,7 +251,7 @@ class OpusDataModel(QAbstractItemModel):
         return len(parentItem.childItems)
 
     def setData(self,index,value,role):
-        
+
         if not index.isValid():
             return False
         if role != Qt.EditRole:
@@ -310,7 +315,7 @@ class OpusDataModel(QAbstractItemModel):
                 currentParent = item.parent()
                 self.removeRow(currentRow,currentParent)
                 self.insertRow(currentRow-howmany,currentParent,clone)
-    
+
     def moveDown(self,item,howmany=1):
         if item.isValid():
             currentRow = item.row()

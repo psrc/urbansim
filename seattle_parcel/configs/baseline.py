@@ -31,24 +31,16 @@ class Baseline(UrbansimParcelConfiguration):
         config = UrbansimParcelConfiguration()
         config_changes = {
             'description':'Seattle parcel baseline',
-            'cache_directory':None, ### TODO: Set this cache_directory to something useful.
-            #'cache_directory':r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
+            'cache_directory':None,
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-               #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
-               #cache_directory_root = r'/home/hana/urbansim_cache/psrc/parcel',
-               cache_directory_root = r'c:/urbansim_cache/seattle_parcel',
-               #cache_directory_root = r'/workspace/urbansim_cache/psrc_parcel',
+            cache_directory_root = r'c:/urbansim_cache/seattle_parcel',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
-                    #existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
-                    #existing_cache_to_copy = r'/home/hana/urbansim_cache/psrc/cache_source_parcel',
                     years_to_cache = [2000],
                     existing_cache_to_copy = r'c:/urbansim_cache/seattle_parcel/cache_source',
-                    #existing_cache_to_copy = r'/workspace/urbansim_cache/psrc_parcel/estimation',
                     ),
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
-                    #'business',
                     'households',
                     'buildings',
                     'parcels',
@@ -58,7 +50,6 @@ class Baseline(UrbansimParcelConfiguration):
                     "households_for_estimation",
                     "jobs_for_estimation",
                     "development_event_history",
-                    #"persons",
                     "travel_data",
                     "building_types",
                     "job_building_types",
@@ -96,13 +87,11 @@ class Baseline(UrbansimParcelConfiguration):
                 ),
             'input_configuration': DatabaseConfiguration(
                 database_name = 'psrc_2005_parcel_baseyear_subset_seattle',
-                #database_name = 'psrc_2005_parcel_baseyear_change_20070913',
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
                 package_order_exceptions={},
                 ),
-#            'models_configuration':models_configuration,
 
             'base_year':2000,
             'years':(2001, 2030),
@@ -142,7 +131,6 @@ class Baseline(UrbansimParcelConfiguration):
                     'development_template': {'package_name':'urbansim_parcel'},
                     'development_template_component': {'package_name':'urbansim_parcel'},
                     'job':{},
-#                    'person':{'package_name':'urbansim_parcel'},
                     "building_type":{'package_name':'urbansim_parcel'},
                     'travel_data':{},
                     "job_building_type":{}
