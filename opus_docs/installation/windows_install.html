@@ -79,16 +79,11 @@ and Intel processors. </p>
 
 <p>Opus and UrbanSim are implemented in Python, making heavy use of numerical
 Python packages and other software.&nbsp; Currently, Opus and UrbanSim are known
-to work on Python 2.5.&nbsp; The <a href="http://www.python.org">official
+to work on Python 2.5.1.&nbsp; The <a href="http://www.python.org">official
 Python website</a> includes documentation, downloads, and much else.</p>
-
-
-<h3>For Python 2.5.1</h3>
 
 <p>Download and install the Python 2.5.1 Windows installer from 
 <a href="http://www.python.org/download/">http://www.python.org/download/</a>.</p>
-
-
 
 <h2> <a name="libraries">Step 2: Installing Python Libraries</h2>
 
@@ -102,8 +97,10 @@ several others.  Download and install them from the
 
 <p>MySQL is an efficient, open-source SQL database.  You don't need it to run the
 basic Eugene tutorial, although for serious use with your own dataset you will want
-a database of some sort.  (We are steadily reducing the dependencies on the particular
-database used, however, with the goal of allowing Opus and UrbanSim to be used with
+a database of some sort.  Also, currently some of the unit tests use MySQL -- so if you don't
+install it, not all of the unit tests will pass.
+(However, we are steadily reducing the dependencies on the particular
+database used, with the goal of allowing Opus and UrbanSim to be used with
 any SQL database.)  If you use MySQL you can either have a local copy or run on a shared server.</p>
 
 <p>If you don't install MySQL right away, you can return and install it later if you discover you
@@ -166,13 +163,9 @@ request any particular version of the code from subversion.
 your machine.</p>
 
 
-<p>Here are two ways to get the code.  For each of these options, you construct a workspace, called say 'c:\opusworkspace'. You'll then need to
-add c:\opusworkspace to your Python path (see <a href="mac_install.html#Step_5:_Defining_Environment_Variables_">Step 4</a>
-for how to do this). &nbsp;The workspace will have subdirectories with
-the code for opus_core, urbansim, and other packages, and also a file
-docs with all of the documentation for that version. &nbsp;The manual
-is in the subdirectory <i>opus_docs\manual</i> of the opus workspace, and the tutorials are in the <i>tutorials</i> subdirectory.</p>
-
+<p>Here are two ways to get the code.  For each of these options, you construct a workspace, called say 'c:\opusworkspace'. 
+&nbsp;The workspace will have subdirectories with
+the code for opus_core, urbansim, and other packages.
 
 <h3>Option 1: Getting Opus and UrbanSim using TortiseSVN or command-line subversion client</h3>
 
@@ -198,6 +191,14 @@ region. &nbsp;Select 'SVN Checkout ...', and fill in the "URL of repository' fie
 filled in with your workspace folder. &nbsp;Pick 'OK', and your system
 should download all of the Opus/Urbansim packages.</p>
 
+<p>If you get all of the packages, you should end up with a directory structure like this:</p>
+<pre>c:\opusworkspace
+    opus
+        opus_core
+        urbansim
+        eugene
+        ....</pre>
+
 <p>Alternatively, to get just the packages you need, again in Windows
 explorer, open up&nbsp;the workspace directory and right-click in an
 empty
@@ -210,31 +211,25 @@ in with your workspace folder -- but to this append '\opus_core'.
 whole name will be '<span style="font-family: monospace;">c:\opusworkspace\opus_core</span>'.
 &nbsp;Pick 'OK', and your system should
 download the opus_core package. &nbsp;Do the same thing for the other
-packages you need, minimally 'urbansim' and 'eugene'. &nbsp;In other
-words, the repository addresses for these three packages are:</p>
-
+packages you need, minimally 'urbansim' and 'eugene'; and for the GUI,
+'opus_gui' and 'inprocess'. &nbsp;In other
+words, the repository addresses for these packages are:</p>
 
 <ul>
-
-
   <li>https://trondheim.cs.washington.edu/svn/opus/trunk/opus_core</li>
-
-
   <li>https://trondheim.cs.washington.edu/svn/opus/trunk/urbansim</li>
-
-
   <li>https://trondheim.cs.washington.edu/svn/opus/trunk/eugene</li>
-
-
+  <li>https://trondheim.cs.washington.edu/svn/opus/trunk/opus_gui</li>
+  <li>https://trondheim.cs.washington.edu/svn/opus/trunk/inprocess</li>
 </ul>
 
-<p>Whether you get all of the packages, or just the ones you need, you should end up with a directory structure like this:</p>
+<p>So, if you get just the packages you need, you should end up with a directory structure like this:</p>
 
 
 <pre>c:\opusworkspace<br>    opus_core<br>    urbansim<br>    eugene<br>    ....</pre>
 
 
-<p>Later, you can update a package to the latest version from the
+<p>In either case, later, you can update a package to the latest version from the
 repository by right-clicking on its folder and picking 'SVN Update'.</p>
 
 
@@ -259,7 +254,11 @@ installing MySQL.</p>
   <li><b>PYTHONPATH</b> - This environment variable tells Python where to look
     for files outside of Python&rsquo;s &lsquo;site-packages&rsquo; directory (which is the
     default location for Python installers).&nbsp; Change PYTHONPATH to include the
-    path to the directory containing your &lsquo;workspace&rsquo;, e.g. &lsquo;c:\opusworkspace&rsquo;.</li>
+    path to the directory containing the packages 
+    &lsquo;opus_core&rsquo;, &lsquo;urbansim&rsquo;, and so on.  If you checked out
+    just the packages you need, the path will likely be &lsquo;c:\opusworkspace&rsquo;.
+    If you checked out everything, there will likely be an additional directory layer:
+    &lsquo;c:\opusworkspace\opus&rsquo;.</li>
 
   <li><b>MYSQLHOSTNAMEFORTESTS</b> - This environment variable is only used
     for running unit tests that use MySQL. These tests use the MySQL database

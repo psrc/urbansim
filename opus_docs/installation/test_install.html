@@ -39,10 +39,10 @@
 <p>Now check that Python itself is installed and working by typing <tt>python</tt> at the
 command prompt to start a Python session.  For example, here are the results for this on Windows:</p>
 <pre>C:\&gt;python
-Python 2.4.3 - Enthought Edition 1.0.0 (#69, Aug  2 2006, 12:09:59) [MSC v.1310 32 bit (Intel)] on win32
-Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+Python 2.5.1 (r251:54863, Apr 18 2007, 08:51:08) [MSC v.1310 32 bit (Intel)] on win32
+Type "copyright", "credits" or "license()" for more information.
 &gt;&gt;&gt;</pre>
-<p>If you have installed Python 2.5, you will see a different version number in the above. </p>
+
 <p>Once you’re in Python, type in a simple expression and see if you get a
 reasonable answer: </p>
 <pre>&gt;&gt;&gt; 3+4
@@ -120,8 +120,10 @@ Loading id From Cache cache_directory c:\docume~1\socha\locals~1\temp\opus_tmp39
 -------------------------------------( OK )-------------------------------------
 
 (and so on and so on ...)</pre>
-<p>(Caution: particularly if you don’t have a fast machine, running
-all_tests.py may be time consuming, but you can always abort the tests.) </p>
+<p>Cautions: particularly if you don’t have a fast machine, running
+all_tests.py may be time consuming, but you can always abort the tests.  Also, some
+of the unit tests depend on having MySQL available -- if you don't have it, those
+tests won't pass.  (Other stuff will still run fine however.) </p>
 <p>Every Opus package has a ‘tests’ directory with a ‘all_tests.py’
 module. The ‘all_tests’ module will scan all files in the package searching for
 unit tests. It will run all that it finds. Note: unit tests that are ‘hidden’

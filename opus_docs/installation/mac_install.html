@@ -95,11 +95,14 @@ Variables for Opus and UrbanSim</a></li>
 
 <p>Opus and UrbanSim are implemented in Python, making heavy use
 of numerical
-Python packages and other software. For the Mac we recommend using
+Python packages and other software. Use
 Python version 2.5.1.  Mac OS X Leopard (10.5) comes with Python 2.5.1 
 already installed, so you don't need to update your version of Python.  If you are
 running an earlier version of the OS (10.4.9 or earlier), the default version
-will be 2.3.5 or earlier and you will need to update to Python 2.5.1.</p>
+will be 2.3.5 or earlier and you will need to also get Python 2.5.1.  
+When you install Python 2.5.1 the installer will
+put it earlier on the search path so that it will be found instead. You
+can still get to the old version via /usr/bin/python.</p>
 
 <p>The <a href="http://www.python.org">official
 Python website</a> includes documentation, downloads, and much
@@ -110,17 +113,6 @@ installer that works on both PPC and Intel Macs. Double-click on the
 image to mount it, then double-click on the MacPython.mpkg package icon
 to install. When you're done you can unmount the image by clicking on
 the triangle symbol next to it in the Finder. </p>
-
-
-<p>A note on Python versions: Tiger comes with Python version
-2.3.5 installed. &nbsp;However, the universal installers for the
-required packages are only available
-for newer versions of Python, so you need a newer version. (We
-&nbsp;suggest leaving Apple's installed version alone - there is no
-need to uninstall it. When you install Python 2.5 the installer will
-put it earlier on the search path so that it will be found instead. You
-can still get to the old version via /usr/bin/python.)</p>
-
 
 <h2>(optional) Step 2: <a name="mysql">Installing MySQL</a></h2>
 
@@ -273,6 +265,16 @@ cd opusworkspace
 svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/opus_core
 svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/urbansim
 svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/eugene
+svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/opus_gui
+svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/inprocess
+</pre>
+
+<p>This checks out just the minimal set of packages needed for the tutorial.  If you have a fast
+connection and enough disk space, you can get all of the Opus packages at once using these commands:
+<pre>
+mkdir opusworkspace
+cd opusworkspace
+svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/
 </pre>
 
 <p>The above commands check out the latest development version of the code -- adjust the URLs 
@@ -286,7 +288,8 @@ This is the best option if you'll be doing software development. &nbsp;See <a hr
 Environment Variables</a>&nbsp;</h2>
 
 <p>UrbanSim requires the following environment variables.&nbsp; The first
-tells the Python interpreter where to find the Opus/UrbanSim code.  The second tells the GUI where to find your
+tells the Python interpreter where to find the Opus/UrbanSim code.  The second tells the GUI 
+where to find your
 cached data. The remaining
 variables describe how to connect to MySQL -- leave those four out if you aren't
 installing MySQL.</p>
@@ -298,11 +301,14 @@ installing MySQL.</p>
 tells Python where to look for files outside of Python's
 'site-packages' directory (which is the default location for Python
 installers). Change PYTHONPATH to include the path to the directory
-containing your 'workspace' that you defined in Step 4, e.g.
-'/Users/yourname/opusworkspace'.&nbsp; On 10.5 or later, you also need to add the diretory
+containing the packages opus_core, urbansim, and so forth, that you downloaded in Step 4, e.g.
+'/Users/yourname/opusworkspace'  (if you checked out the packages one at a time),
+or '/Users/yourname/opusworkspace/opus' (if you checked them all out).&nbsp; In other words,
+your PYTHONPATH should point to the directory that contains opus_core, urbansim, opus_gui, and so
+forth.
+On 10.5 or later, you also need to add the directory
 /Library/Frameworks/Python.framework/Versions/2.5/lib/python2.5/site-packages, as the preinstalled
- version of Python uses a different directory for sitepackages.  Finally, make sure your directory
-  with enthought/traits is on the PYTHONPATH.</li>
+ version of Python uses a different directory for sitepackages.</li>
 
 <li><b>OPUS_DATA_PATH</b> - The directory where you keep your caches of data for particular runs, for example 'Users/yourname/urbansim_cache.</li>
 
