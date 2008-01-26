@@ -43,6 +43,25 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(name.get_alias(), 'p', msg="bad value for alias")
         self.assertEqual(name.get_autogen_class(), None, msg="bad value for autogen_class")
         
+    def xtest_alias_attribute_with_modification(self):
+        # this tests an expression consisting of an alias for a primary attribute that is modified
+        expr = "p = persons"
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(
+            table_name='tests',
+            table_data={
+                "persons":array([1,5,10]),
+                "id":array([1,3,4])
+                }
+            )
+        dataset = Dataset(in_storage=storage, in_table_name='tests', id_name="id", dataset_name="tests")
+        # modify the primary attribute 'persons'
+        new_values = array([3, 0, 100])
+        dataset.modify_attribute('persons', new_values)
+        # result should have the new values
+        result = dataset.compute_variables([expr])
+        self.assertEqual(ma.allclose(result, new_values, rtol=1e-7), True, msg="error in test_alias_attribute_with_modification")
+        
     def test_alias_complex_expression(self):
         # aliasing a complex expression
         expr = "x = 2*sqrt(var1+var2)"
