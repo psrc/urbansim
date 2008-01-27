@@ -50,26 +50,24 @@ class ToolboxBase(object):
   def openXMLTree(self, xml_file):
     saveBeforeOpen = QMessageBox.Discard
     # Check if the current model(s) is(are) dirty first...
+    save_string = QString("Current project contains changes... \n"
+                          "Should we save or discard those changes before opening?")
     if self.resultsManagerTree and self.resultsManagerTree.model.dirty:
       saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
-                                            "Current project contains changes... \n"
-                                            "Should we save or discard those changes before opening?",
-                                      QMessageBox.Discard,QMessageBox.Save)
+                                            save_string,
+                                            QMessageBox.Discard,QMessageBox.Save)
     elif self.modelManagerTree and self.modelManagerTree.model.dirty:
       saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
-                                      "Current project contains changes... \n"
-                                      "Should we save or discard those changes before opening?",
-                                      QMessageBox.Discard,QMessageBox.Save)
+                                            save_string,
+                                            QMessageBox.Discard,QMessageBox.Save)
     elif self.runManagerTree and self.runManagerTree.model.dirty:
       saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
-                                      "Current project contains changes... \n"
-                                      "Should we save or discard those changes before opening?",
-                                      QMessageBox.Discard,QMessageBox.Save)
+                                            save_string,
+                                            QMessageBox.Discard,QMessageBox.Save)
     elif self.dataManagerTree and self.dataManagerTree.model.dirty:
       saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
-                                      "Current project contains changes... \n"
-                                      "Should we save or discard those changes before opening?",
-                                      QMessageBox.Discard,QMessageBox.Save)
+                                            save_string,
+                                            QMessageBox.Discard,QMessageBox.Save)
     if saveBeforeOpen == QMessageBox.Save:
       self.parent.saveConfig()
     else:
