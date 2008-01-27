@@ -3,14 +3,12 @@
     <description type="string" >Sample Eugene project</description>
   </general>
   <data_manager>
-
     <script_library type="script_library" >
       <script_path type="script_path" >projects.scripts</script_path>
       <esri_buffer_tool type="script_file" >esri_buffer</esri_buffer_tool>
       <postgis_buffer_tool type="script_file" >postgis_buffer</postgis_buffer_tool>
       <raw_sql_query type="script_file" >raw_sql</raw_sql_query>
     </script_library>
-
     <script_batch type="script_batch" >
       <roads_buffer_tool type="script_config" >
         <script_hook type="script_library_ref" >esri_buffer_tool</script_hook>
@@ -18,21 +16,21 @@
         <output_shapefile type="string" >c:\data\roads_buffer.shp</output_shapefile>
         <buffer_size type="integer" >49</buffer_size>
       </roads_buffer_tool>
-      <roads_sql_query type="script_config">
+      <roads_sql_query type="script_config" >
         <script_hook type="script_library_ref" >raw_sql_query</script_hook>
-        <database_config type="string">blahblahblah</database_config>
+        <database_config type="string" >blahblahblah</database_config>
         <query type="string" >update some_table set some_field = blahblahblah</query>
       </roads_sql_query>
     </script_batch>
-
     <script_batch type="script_batch" >
       <script_path type="script_path" >projects.scripts</script_path>
       <processing_script_1 type="script_file" >test</processing_script_1>
     </script_batch>
-
     <documentation type="documentation_path" >documentation/installation/index.html</documentation>
-
   </data_manager>
+  <data_manager_dbstree>
+    <db_connection type="string" >foo bar connection</db_connection>
+  </data_manager_dbstree>
   <scenario_manager>
     <default_scenario type="scenario" >
       <import type="file" >urbansim_gridcell.xml</import>

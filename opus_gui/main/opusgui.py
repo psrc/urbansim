@@ -158,6 +158,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.toolboxStuff.runManagerTree.groupBox.setTitle(QFileInfo(self.toolboxStuff.runManagerTree.parentTool.xml_file).filePath())
     self.toolboxStuff.dataManagerTree.model.dirty = False
     self.toolboxStuff.dataManagerTree.groupBox.setTitle(QFileInfo(self.toolboxStuff.dataManagerTree.parentTool.xml_file).filePath())
+    self.toolboxStuff.dataManagerDBSTree.model.dirty = False
+    self.toolboxStuff.dataManagerDBSTree.groupBox.setTitle(QFileInfo(self.toolboxStuff.dataManagerDBSTree.parentTool.xml_file).filePath())
     self.toolboxStuff.modelManagerTree.model.dirty = False
     self.toolboxStuff.modelManagerTree.groupBox.setTitle(QFileInfo(self.toolboxStuff.modelManagerTree.parentTool.xml_file).filePath())
     self.toolboxStuff.resultsManagerTree.model.dirty = False

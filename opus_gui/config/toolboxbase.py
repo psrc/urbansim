@@ -45,7 +45,6 @@ class ToolboxBase(object):
     self.runManagerTree = None
     self.dataManagerTree = None
     self.dataManagerFileTree = None
-    #jessetesting
     self.dataManagerDBSTree = None
 
   def openXMLTree(self, xml_file):
@@ -79,6 +78,8 @@ class ToolboxBase(object):
         self.runManagerTree.model.dirty = False
       if self.dataManagerTree:
         self.dataManagerTree.model.dirty = False
+      if self.dataManagerFileTree:
+        self.dataManagerFileTree.model.dirty = False
       if self.modelManagerTree:
         self.modelManagerTree.model.dirty = False
       if self.resultsManagerTree:
@@ -97,9 +98,16 @@ class ToolboxBase(object):
     dataManagerRemoveSuccess = True
     if self.dataManagerTree != None:
       dataManagerRemoveSuccess = self.dataManagerTree.removeTree()
+    dataManagerFileRemoveSuccess = True
+    if self.dataManagerFileTree != None:
+      dataManagerFileRemoveSuccess = self.dataManagerFileTree.removeTree()
+    dataManagerDBSRemoveSuccess = True
+    if self.dataManagerDBSTree != None:
+      dataManagerDBSRemoveSuccess = self.dataManagerDBSTree.removeTree()
 
     if resultsManagerRemoveSuccess and modelManagerRemoveSuccess and \
-           runManagerRemoveSuccess and dataManagerRemoveSuccess:
+           runManagerRemoveSuccess and dataManagerRemoveSuccess and \
+           dataManagerFileRemoveSuccess and dataManagerDBSRemoveSuccess:
       # We have successfully removed the old XML trees
       # Opening a project XML
       self.xml_file = xml_file
@@ -118,10 +126,8 @@ class ToolboxBase(object):
                                            self.parent.datamanager_xmlconfig.layout())
         self.dataManagerFileTree = OpusFileTree(self,self.opusDataPath,
                                                 self.parent.datamanager_dirview.layout())
-        #jessetesting
         self.dataManagerDBSTree = OpusXMLTree(self, "data_manager_dbstree",
                                               self.parent.datamanager_dbsconnections.layout())
-        self.data
       else:
         print "Error reading config"
     else:

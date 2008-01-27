@@ -20,6 +20,7 @@ from config.resultsmanager.opusxmlaction_results import OpusXMLAction_Results
 from config.modelmanager.opusxmlaction_model import OpusXMLAction_Model
 from config.scenariomanager.opusxmlaction_scenario import OpusXMLAction_Scenario
 from config.datamanager.opusxmlaction_data import OpusXMLAction_Data
+from config.datamanager.opusxmlaction_datadb import OpusXMLAction_DataDB
 
 class OpusXMLAction(object):
     def __init__(self, parent):
@@ -41,6 +42,8 @@ class OpusXMLAction(object):
             return OpusXMLAction_Scenario(self)
         elif xmlType == "data_manager":
             return OpusXMLAction_Data(self)
+        elif xmlType == "data_manager_dbstree":
+            return OpusXMLAction_DataDB(self)
         else:
             #error out
             pass
