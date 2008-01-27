@@ -39,9 +39,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     # required by Qt4 to initialize the UI
     self.setupUi(self)
 
-    #self.splashPix = QPixmap(QString("main/Images/new-logo-medium.png"))
     self.splashPix = QPixmap(QString("main/Images/az-smart.bmp"))
-    #self.splashPixScaled = self.splashPix.scaled(210,180,Qt.KeepAspectRatio)
     self.splashPixScaled = self.splashPix.scaled(600,252,Qt.KeepAspectRatio)
     self.splash = QSplashScreen(self.splashPixScaled)
     self.splash.show()
@@ -141,7 +139,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     fileName = QString(fd)
     fileNameInfo = QFileInfo(QString(fd))
     fileNameBaseName = fileNameInfo.completeBaseName()
-    #print "Filename = ", fileName
     # Open the file and add to the Run tab...
     self.toolboxStuff.openXMLTree(fileName)
 
@@ -168,26 +165,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
   def saveConfigAs(self):
     print "Save Config As is not implemented yet..."
-    #qd = QFileDialog()
-    #filter_str = QString("*.xml")
-    #f2=qd.getSaveFileName(self,QString(),QString(),filter_str)
-    #if f2.count(".xml")==0:
-    #  f = f2 + ".xml"
-    #else:
-    #  f = f2
-    #write_string = QString(f)
-    #configFile = QFile(write_string)
-    #domDocument = self.toolboxStuff.runManagerTree.model.domDocument
-    #indentSize = 2
-    #configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
-    #out = QTextStream(configFile)
-    #domDocument.save(out, indentSize)
-    #self.toolboxStuff.runManagerTree.model.dirty = False
-    #self.toolboxStuff.dataManagerTree.model.dirty = False
-    #self.toolboxStuff.modelManagerTree.model.dirty = False
-    #self.toolboxStuff.resultsManagerTree.model.dirty = False
-    ##### TODO - Now need to close existing project and re-open the newly
-    ##### saved one...
 
   def exitOpus(self):
     print "Exit pressed..."
