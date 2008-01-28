@@ -69,7 +69,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         
     def get_variables_list(self, dataset_pool):
         self.full_variable_list = PSRCTravelModelInputFileWriter.get_variables_list(self, dataset_pool)
-        return full_var_list[0:12]
+        return self.full_variable_list[0:12]
         
     def _write_to_file(self, zone_set, variables_list, tm_input_file):
         self.bm_generate_from_posterior(zone_set)
