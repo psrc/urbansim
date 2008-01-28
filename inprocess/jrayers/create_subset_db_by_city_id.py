@@ -17,6 +17,13 @@ from opus_core.database_management.database_server_configuration import Database
 dbconfig = DatabaseServerConfiguration()
 dbserver = DatabaseServer(dbconfig)
 
+# city_id to subset database on (70=Seattle)
+city_id = str(70)
+# flattened database to use as input data
+input_db = 'psrc_2005_parcel_baseyear_flattened_20080107'
+# output database to create subset data in (must exist)
+output_db = 'psrc_2005_parcel_baseyear_subset_seattle_zip_jobs'
+
 tables_to_copy = [
     'home_based_employment_location_choice_model_coefficients',
     'home_based_employment_location_choice_model_specification',
@@ -87,13 +94,6 @@ queries = [
     'CREATE TABLE %s.annual_household_control_totals SELECT * FROM %s.annual_household_control_totals;' % (output_db, input_db),
     'UPDATE %s.annual_household_control_totals SET total_number_of_households = total_number_of_households * ((SELECT COUNT(*) FROM %s.households) / (SELECT COUNT(*) FROM %s.households));' % (output_db, output_db, input_db)
     ]
-
-# city_id to subset database on (70=Seattle)
-city_id = str(70)
-# flattened database to use as input data
-input_db = 'psrc_2005_parcel_baseyear_flattened_20080107'
-# output database to create subset data in (must exist)
-output_db = 'psrc_2005_parcel_baseyear_subset_seattle'
 
 # Copies all tables that are a complete copy
 for i in tables_to_copy:
