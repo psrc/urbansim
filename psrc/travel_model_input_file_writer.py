@@ -82,7 +82,14 @@ class TravelModelInputFileWriter(object):
         third_quarter = median(hh_income[where(hh_income>median_income)])
         
         """specify which variables are passing from urbansim to travel model; the order matters"""
-        variables_list = [
+        variables_list = get_variables_list()
+        
+        zone_set.compute_variables(variables_list, dataset_pool=dataset_pool )
+
+        return self._write_to_file(zone_set, variables_list, tm_input_file)
+
+    def get_variables_list(self):
+        return [
             "pctmf",  #101
             "hhs_of_first_quarter = zone.aggregate(household.income < %s)" % first_quarter, #102
             "hhs_of_second_quarter = zone.aggregate(numpy.logical_and(household.income >= %s, household.income < %s))" % (first_quarter, median_income), #103
@@ -109,10 +116,6 @@ class TravelModelInputFileWriter(object):
             'zone.gqn * zone.v124'       #124
             ]
         
-        zone_set.compute_variables(variables_list, dataset_pool=dataset_pool )
-
-        return self._write_to_file(zone_set, variables_list, tm_input_file)
-
     def _write_to_file(self, zone_set, variables_list, tm_input_file):
         logger.start_block("Writing to emme2 input file: " + tm_input_file)
         try:
