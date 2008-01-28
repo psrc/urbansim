@@ -89,6 +89,21 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     time.sleep(1)
     self.splash.hide()
 
+    self.actionCloseCurrentTab = QAction(self)
+    self.actionCloseCurrentTab.setIcon(QIcon(":/Images/Images/cross.png"))
+    self.actionCloseCurrentTab.setObjectName("actionCloseCurrentTab")
+    self.tabCornerWidget = QToolButton()
+    self.tabCornerWidget.setDefaultAction(self.actionCloseCurrentTab)
+    self.tabCornerWidget.setWhatsThis(QString("Close Current Tab"))
+    self.tabCornerWidget.setToolTip(QString("Close Current Tab"))
+    self.tabWidget.setCornerWidget(self.tabCornerWidget)
+    QObject.connect(self.actionCloseCurrentTab, SIGNAL("triggered()"), self.closeCurrentTab)
+
+
+  def closeCurrentTab(self):
+    print "Close the current tab - Index=%d Name=%s" % (self.tabWidget.currentIndex(),
+                                                        self.tabWidget.currentWidget().objectName())
+    
   def openAbout(self):
     flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
     wnd = UrbansimAboutGui(self,flags)
