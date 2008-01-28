@@ -97,18 +97,18 @@ class TravelModelInputFileWriter(object):
             'gqi', #106
             'gqn', #107
             '-1 + 0 * zone.zone_id',  #108 unsed, set to -1
-            "density_1_retail_jobs = (zone.density==1).astype(float32) * zone.aggregate(urbansim.job.is_in_employment_sector_group_retail)", #109
-            "density_2_retail_jobs = (zone.density==2).astype(float32) * zone.aggregate(urbansim.job.is_in_employment_sector_group_retail)", #110
-            "density_3_retail_jobs = (zone.density==3).astype(float32) * zone.aggregate(urbansim.job.is_in_employment_sector_group_retail)", #111
-            "density_1_fires_jobs = (zone.density==1).astype(float32) * zone.aggregate(urbansim.job.is_in_employment_sector_group_fires)",   #112
-            "density_2_fires_jobs = (zone.density==2).astype(float32) * zone.aggregate(urbansim.job.is_in_employment_sector_group_fires)",   #113
-            "density_3_fires_jobs = (zone.density==3).astype(float32) * zone.aggregate(urbansim.job.is_in_employment_sector_group_fires)",   #114
-            "density_1_gov_jobs = (zone.density==1).astype(float32) * zone.aggregate(urbansim.job.is_in_employment_sector_group_gov)",       #115
-            "density_2_gov_jobs = (zone.density==2).astype(float32) * zone.aggregate(urbansim.job.is_in_employment_sector_group_gov)",       #116
-            "density_3_gov_jobs = (zone.density==3).astype(float32) * zone.aggregate(urbansim.job.is_in_employment_sector_group_gov)",       #117 
-            "edu_jobs = zone.aggregate(urbansim.job.is_in_employment_sector_group_edu)",     #118
-            "wtcu_jobs = zone.aggregate(urbansim.job.is_in_employment_sector_group_wtcu)",   #119
-            "manu_jobs = zone.aggregate(urbansim.job.is_in_employment_sector_group_manu)",   #120
+            "density_1_retail_jobs = (zone.density==1).astype(float32) * urbansim_parcel.zone.number_of_jobs_of_sector_group_retail", #109
+            "density_2_retail_jobs = (zone.density==2).astype(float32) * urbansim_parcel.zone.number_of_jobs_of_sector_group_retail", #110
+            "density_3_retail_jobs = (zone.density==3).astype(float32) * urbansim_parcel.zone.number_of_jobs_of_sector_group_retail", #111
+            "density_1_fires_jobs = (zone.density==1).astype(float32) * urbansim_parcel.zone.number_of_jobs_of_sector_group_fires",   #112
+            "density_2_fires_jobs = (zone.density==2).astype(float32) * urbansim_parcel.zone.number_of_jobs_of_sector_group_fires",   #113
+            "density_3_fires_jobs = (zone.density==3).astype(float32) * urbansim_parcel.zone.number_of_jobs_of_sector_group_fires",   #114
+            "density_1_gov_jobs = (zone.density==1).astype(float32) * urbansim_parcel.zone.number_of_jobs_of_sector_group_gov",       #115
+            "density_2_gov_jobs = (zone.density==2).astype(float32) * urbansim_parcel.zone.number_of_jobs_of_sector_group_gov",       #116
+            "density_3_gov_jobs = (zone.density==3).astype(float32) * urbansim_parcel.zone.number_of_jobs_of_sector_group_gov",       #117 
+            "edu_jobs = urbansim_parcel.zone.number_of_jobs_of_sector_group_edu",     #118
+            "wtcu_jobs = urbansim_parcel.zone.number_of_jobs_of_sector_group_wtcu",   #119
+            "manu_jobs = urbansim_parcel.zone.number_of_jobs_of_sector_group_manu",   #120
             "fteuniv",                   #121
             'zone.gqn * zone.v122',      #122
             'zone.gqn * zone.v123',      #123
