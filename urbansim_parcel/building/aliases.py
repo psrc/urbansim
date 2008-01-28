@@ -33,6 +33,11 @@ aliases = [
    "unit_price = building.disaggregate(urbansim_parcel.parcel.unit_price)",
    "zone_id = building.disaggregate(parcel.zone_id)",
    "faz_id = building.disaggregate(zone.faz_id)",
+   "zip_id = building.disaggregate(parcel.zip_id)",
    "has_vacant_residential_units = urbansim_parcel.building.vacant_residential_units > 0",
    "is_governmental = building.disaggregate(building_type.generic_building_type_description == 'government')",
     ]
+
+for group in ['retail', 'manu', 'wtcu', 'fires', 'gov', 'edu']:
+    aliases.append("number_of_jobs_of_sector_group_%s = building.aggregate(urbansim.job.is_in_employment_sector_group_%s)" % (group, group))
+    
