@@ -82,7 +82,7 @@ class TravelModelInputFileWriter(object):
         third_quarter = median(hh_income[where(hh_income>median_income)])
         
         """specify which variables are passing from urbansim to travel model; the order matters"""
-        variables_list = get_variables_list()
+        variables_list = self.get_variables_list()
         
         zone_set.compute_variables(variables_list, dataset_pool=dataset_pool )
 
