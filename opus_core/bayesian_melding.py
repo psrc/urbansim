@@ -15,7 +15,8 @@
 # This is under construction !!!
 
 import os
-from numpy import ones, zeros, float32, array, arange, transpose, reshape, sort, maximum, mean, where, concatenate, round_
+import gc
+from numpy import ones, zeros, float32, array, arange, transpose, reshape, sort, maximum, mean, where, concatenate, round_, argsort, resize
 from scipy import ndimage
 from opus_core.model_component_creator import ModelComponentCreator
 from opus_core.misc import load_from_text_file, write_to_text_file, try_transformation, write_table_to_text_file, load_table_from_text_file
@@ -146,8 +147,8 @@ class ObservedDataOneQuantity:
             dataset_pool.replace_dataset(dep_dataset_name, dep_dataset)
             if match:
                 self.add_match(dep_dataset)
-            
-        self.dataset.compute_variables([self.variable_name], dataset_pool=dataset_pool)
+        if self.variable_name.get_alias() not in self.dataset.get_known_attribute_names():
+            self.dataset.compute_variables([self.variable_name], dataset_pool=dataset_pool)
         if filter is not None:
             filter_values = self.dataset.compute_variables([filter], dataset_pool=dataset_pool)
             idx = where(filter_values > 0)[0]
@@ -249,14 +250,14 @@ class BayesianMelding:
 
     def compute_scalings(self):
         for dir in self.scaling_parent_datasets.keys():
-            dataset_pool = self.setup_environment(dir, self.base_year)
+            dataset_pool = self.setup_environment(dir, self.get_base_year())
             self.scaling_parent_datasets[dir] = self.get_datasets(dataset_pool)
             for variable in self.known_output:
                 dataset = variable.get_dataset_name()
                 self.scaling_parent_datasets[dir][dataset].compute_variables(variable, dataset_pool=dataset_pool)
 
         for run in self.scaling_child_datasets.keys():
-            dataset_pool = self.setup_environment(self.cache_set[run-1], self.base_year)
+            dataset_pool = self.setup_environment(self.cache_set[run-1], self.get_base_year())
             self.scaling_child_datasets[run] = self.get_datasets(dataset_pool)
             for variable in self.known_output:
                 dataset = variable.get_dataset_name()
@@ -292,7 +293,7 @@ class BayesianMelding:
             dimension_reduced = False
             quantity_ids = quantity.get_dataset().get_id_attribute()
             for i in range(self.number_of_runs):
-                ds = self._compute_variable(i, variable, dataset_name, self.observed_data.get_year(), quantity)
+                ds = self._compute_variable(i, variable, dataset_name, self.get_calibration_year(), quantity)
                 if isinstance(ds, InteractionDataset):
                     ds = ds.get_flatten_dataset()
                 if i == 0: # first run
@@ -310,6 +311,9 @@ class BayesianMelding:
             if dimension_reduced:
                 self.y[iout] = self.y[iout][quantity.get_dataset().get_id_index(ids)]
 
+    def get_calibration_year(self):
+        return self.observed_data.get_year()
+    
     def _compute_variable(self, run_index, variable, dataset_name, year, quantity):
         dataset_pool = setup_environment(self.cache_set[run_index], year, self.package_order)
         for mds_name, ids in quantity.get_matching_datasets().iteritems():
@@ -385,6 +389,9 @@ class BayesianMelding:
     def get_variance(self):
         return self.v
 
+    def get_base_year(self):
+        return self.base_year
+    
     def get_variance_for_quantity(self):
         return self.v[self.use_bias_and_variance_index]
 
@@ -392,7 +399,7 @@ class BayesianMelding:
         return self.weight_components
     
     def set_propagation_factor(self, year):
-        self.propagation_factor = (year - self.base_year)/float(self.observed_data.get_year() - self.base_year)
+        self.propagation_factor = (year - self.get_base_year())/float(self.get_calibration_year() - self.get_base_year())
 
     def get_propagation_factor(self):
         return self.propagation_factor
@@ -471,13 +478,20 @@ class BayesianMelding:
 
         if use_bias_and_variance_from is None:
             use_bias_and_variance_from = quantity_of_interest
-        variable_list = map(lambda x: x.get_expression(), self.observed_data.get_variable_names())
-        if use_bias_and_variance_from not in variable_list:
-            raise ValueError, "Quantity %s is not among observed data." % use_bias_and_variance_from
-        self.use_bias_and_variance_index = variable_list.index(use_bias_and_variance_from)
+            
+        self.use_bias_and_variance_index = self.get_index_for_quantity(use_bias_and_variance_from)
         self.transformation_pair_for_prediction = self.observed_data.get_quantity_object_by_index(self.use_bias_and_variance_index).get_transformation_pair()
         self.compute_m(year, quantity_of_interest)
         
+    def get_index_for_quantity(self, variable_name):
+        variable_list = self.get_variable_names()
+        if variable_name not in variable_list:
+            raise ValueError, "Quantity %s is not among observed data." % variable_name
+        return variable_list.index(variable_name)
+        
+    def get_variable_names(self):
+        return map(lambda x: x.get_expression(), self.observed_data.get_variable_names())
+    
     def write_simulated_values(self, filename):
         write_table_to_text_file(filename, self.simulated_values)
         
@@ -509,7 +523,7 @@ class BayesianMelding:
             file = os.path.join(directory, str(year) + '_' + filename)
             write_to_text_file(file, concatenate((array([0.]), self.get_weights())), delimiter=' ')
             write_to_text_file(file, concatenate((array([0.]), self.get_posterior_component_variance())), mode='a', delimiter=' ')
-            variable_list = map(lambda x: x.get_expression(), self.observed_data.get_variable_names())
+            variable_list = self.get_variable_names()
             quantity_index = variable_list.index(quantity_of_interest)
             if ids is None:
                 ids = self.m_ids
@@ -518,6 +532,30 @@ class BayesianMelding:
             means[self.observed_data.get_quantity_objects()[quantity_index].get_dataset().get_id_index(ids),1:means.shape[1]] = self.get_posterior_component_mean()
             write_table_to_text_file(file, means, mode='a')            
 
+    def export_bm_parameters_of_one_quantity(self, quantity_of_interest, filepath, add_to_file=True):
+        variable_list = self.get_variable_names()
+        quantity_index = variable_list.index(quantity_of_interest)
+        mode = 'a'
+        if not add_to_file:
+            mode = 'w'
+        idx = argsort(self.get_weight_components()[quantity_index])
+        write_to_text_file(filepath, array([variable_list[quantity_index]]), mode=mode)
+        write_to_text_file(filepath, array([self.get_bias()[quantity_index], self.get_variance()[quantity_index][idx][-1]]), 
+                           mode='a', delimiter=' ')
+        
+    def export_bm_parameters(self, directory, filename=None, quantities=None):
+        if filename is None:
+            filename = 'bm_parameters_' + str(self.get_calibration_year())
+        file = os.path.join(directory, filename)
+        if quantities is None:
+            variable_list = self.get_variable_names()
+        else:
+            variable_list = quantities
+        write_to_text_file(file, array([get_base_year(), self.get_calibration_year()]), delimiter=' ')
+        for quant in variable_list:
+            self.export_bm_parameters_of_one_quantity(quant, file, add_to_file=True)
+            
+        
     def get_quantity_from_simulated_values(self, function):
         """'function' is a character string specifying a function of the scipy.ndimage package (e.g. mean,
         standard_deviation, variance).
@@ -551,7 +589,13 @@ class BayesianMelding:
     def get_m_ids(self):
         return self.m_ids
     
+    def get_variables_for_dataset(self, dataset_name):
+        """Rerturn variable names of the observed quantities that match the given dataset_name."""
+        return [var for var in self.get_variable_names() if VariableName(var).get_dataset_name() == dataset_name]
+
+    
 def setup_environment(cache_directory, year, package_order):
+    gc.collect()
     ss = SimulationState(new_instance=True)
     ss.set_cache_directory(cache_directory)
     ss.set_current_time(year)
@@ -565,10 +609,41 @@ def setup_environment(cache_directory, year, package_order):
 
 
 class BayesianMeldingFromFile(BayesianMelding):
-    """ Class to be used if weights, means and variances were stored previously using export_weights_posterior_mean_and_variance of BayesianMelding class.
+    """ Class to be used if bm parameters were stored previously using export_bm_parameters of BayesianMelding class.
         It can be passed into bm_normal_posterior.py.
     """
     def __init__(self, filename):
+        """The file 'filename' has the following structure:
+        1. line: base_year calibration_year 
+        2 lines per each variable: 
+            1. variable_name
+            2. bias variance  
+        """
+        content = load_from_text_file(filename)
+        nvar = (content.size-1)/2
+        self.base_year, self.year = map(lambda x: int(x), content[0].split(' '))
+        self.variable_names = []
+        self.ahat = {}
+        self.v = {}
+        self.weight_components = {}
+        counter = 1
+        for i in range(nvar):
+            self.variable_names.append(content[counter])
+            counter += 1
+            splitted_row = content[counter].split(' ')
+            self.ahat[i], self.v[i] = map(lambda x: array([float(x)]), splitted_row)
+            self.weight_components[i] = array([1.])
+            counter += 1
+        self.weights = array([1.])
+        self.number_of_runs = 1
+                 
+    def get_calibration_year(self):
+        return self.year
+     
+    def get_variable_names(self):
+        return self.variable_names
+    
+    def __init_old__(self, filename):
         """The file 'filename' must have weights in first line, variances in second line and rest are the means. 
         """
         table = load_table_from_text_file(filename, convert_to_float=True)[0]
@@ -577,9 +652,26 @@ class BayesianMeldingFromFile(BayesianMelding):
         self.means = table[2:table.shape[0],1:table.shape[1]]
         self.m_ids = (round_(table[2:table.shape[0],0])).astype('int32')
         
-    def get_posterior_component_mean(self):
-        return self.means
+#    def get_posterior_component_mean(self):
+#        return self.means
+#    
+#    def get_posterior_component_variance(self):
+#        return self.variance
     
-    def get_posterior_component_variance(self):
-        return self.variance
+    def set_posterior(self, year, quantity_of_interest, values, ids, use_bias_and_variance_from=None, transformation_pair = ("sqrt", "**2")):
+        self.set_propagation_factor(year)
+        if use_bias_and_variance_from is None:
+            use_bias_and_variance_from = quantity_of_interest
+            
+        self.use_bias_and_variance_index = self.get_index_for_quantity(use_bias_and_variance_from)
+        self.transformation_pair_for_prediction = transformation_pair
+        self.compute_m(values, ids)
+        
+    def compute_m(self, values, ids):
+        self.m = values
+        self.m_ids = ids
+        if self.m.ndim < 2:
+            self.m = resize(self.m, (self.m.size, 1))
+        self.m = try_transformation(self.m, self.transformation_pair_for_prediction[0])
+
     
