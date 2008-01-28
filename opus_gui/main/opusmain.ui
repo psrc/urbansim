@@ -10,6 +10,11 @@
     <height>707</height>
    </rect>
   </property>
+  <property name="font" >
+   <font>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
   <property name="windowTitle" >
    <string>AZ-SMART</string>
   </property>
@@ -55,15 +60,15 @@
         </size>
        </property>
        <property name="currentIndex" >
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="datamanager_page" >
         <property name="geometry" >
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>370</width>
-          <height>524</height>
+          <width>335</width>
+          <height>525</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -93,20 +98,31 @@
          </property>
          <item row="0" column="0" >
           <widget class="QToolBox" name="dataManager_toolBox" >
-           <property name="currentIndex" >
-            <number>0</number>
+           <property name="font" >
+            <font>
+             <pointsize>8</pointsize>
+            </font>
            </property>
+           <property name="currentIndex" >
+            <number>1</number>
+           </property>
+           <widget class="QWidget" name="datamanager_dbsconnections" >
+            <attribute name="label" >
+             <string>Database Server Connections</string>
+            </attribute>
+            <layout class="QGridLayout" />
+           </widget>
            <widget class="QWidget" name="datamanager_xmlconfig" >
             <property name="geometry" >
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>352</width>
-              <height>450</height>
+              <width>299</width>
+              <height>405</height>
              </rect>
             </property>
             <attribute name="label" >
-             <string>XML Config</string>
+             <string>Opus Scripts</string>
             </attribute>
             <layout class="QGridLayout" />
            </widget>
@@ -115,8 +131,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>96</width>
-              <height>38</height>
+              <width>299</width>
+              <height>409</height>
              </rect>
             </property>
             <attribute name="label" >
@@ -133,7 +149,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>96</width>
+          <width>98</width>
           <height>38</height>
          </rect>
         </property>
@@ -169,8 +185,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>370</width>
-          <height>524</height>
+          <width>335</width>
+          <height>529</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -205,7 +221,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>96</width>
+          <width>98</width>
           <height>38</height>
          </rect>
         </property>
@@ -397,7 +413,7 @@
      <x>0</x>
      <y>0</y>
      <width>974</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMap" >
