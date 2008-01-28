@@ -59,7 +59,7 @@
         <opus_data_year type="string" >2000</opus_data_year>
       </opus_data_to_esri>
     </script_batch>
-    <documentation type="documentation_path" >documentation/installation/index.html</documentation>
+    <script_documentation type="documentation_path" >documentation/script_docs.html</script_documentation>
   </data_manager>
   <model_manager>
     <estimation type="dictionary" >
@@ -545,4 +545,120 @@
       </creating_baseyear_cache_configuration>
     </Seattle_baseline>
   </scenario_manager>
+  <results_manager>
+    <Libraries type="group" >
+      <model.gridcell type="indicator_library" >
+        <population type="indicator" >
+          <package type="string" >urbansim</package>
+          <valid_datasets type="string" >GEOGRAPHY</valid_datasets>
+          <documentation_link type="string" />
+          <expression type="string" >urbansim.DATASET.population</expression>
+        </population>
+        <number_of_jobs type="indicator" >
+          <package type="string" >urbansim</package>
+          <valid_datasets type="string" >GEOGRAPHY</valid_datasets>
+          <documentation_link type="string" />
+          <expression type="string" >urbansim.DATASET.number_of_jobs</expression>
+        </number_of_jobs>
+        <industrial_sqft type="indicator" >
+          <package type="string" >urbansim</package>
+          <valid_datasets type="string" >GEOGRAPHY</valid_datasets>
+          <documentation_link type="string" />
+          <expression type="string" >urbansim.DATASET.industrial_sqft</expression>
+        </industrial_sqft>
+        <total_land_value type="indicator" >
+          <package type="string" >urbansim</package>
+          <valid_datasets type="string" >GEOGRAPHY</valid_datasets>
+          <documentation_link type="string" />
+          <expression type="string" >urbansim.DATASET.total_land_value</expression>
+        </total_land_value>
+        <population_density type="indicator" >
+          <package type="string" >urbansim</package>
+          <valid_datasets type="string" >gridcell</valid_datasets>
+          <documentation_link type="string" />
+          <expression type="string" >urbansim.DATASET.population_density</expression>
+        </population_density>
+      </model.gridcell>
+      <eugene.frank.indicators type="indicator_library" >
+        <global_population_density type="indicator" >
+          <package type="string" >urbansim</package>
+          <valid_datasets type="string" >alldata</valid_datasets>
+          <documentation_link type="string" />
+          <expression type="string" >alldata.aggregate_all(urbansim.gridcell.population_density, function=sum)</expression>
+        </global_population_density>
+      </eugene.frank.indicators>
+      <my_indicators append_to="True" type="indicator_library" >
+        <residential_units type="indicator" >
+          <package type="string" >urbansim</package>
+          <valid_datasets type="string" >alldata</valid_datasets>
+          <documentation_link type="string" />
+          <expression type="string" >alldata.aggregate_all(urbansim.gridcell.residential_units, function=sum)</expression>
+        </residential_units>
+      </my_indicators>
+    </Libraries>
+    <Data_sources type="all_source_data" >
+      <eugene_baseline type="source_data" >
+        <start_year type="integer" >1980</start_year>
+        <end_year type="integer" >1984</end_year>
+        <run_name type="string" >run1900</run_name>
+      </eugene_baseline>
+      <tunnel_scenario type="source_data" >
+        <start_year type="integer" >1980</start_year>
+        <end_year type="integer" >1984</end_year>
+        <run_name type="string" >run1834</run_name>
+      </tunnel_scenario>
+      <rebuild_scenario type="source_data" >
+        <start_year type="integer" >1980</start_year>
+        <end_year type="integer" >1984</end_year>
+        <run_name type="string" >run1835</run_name>
+      </rebuild_scenario>
+    </Data_sources>
+    <Results type="selectable_list" >
+      <population.zone.eugene_baseline type="indicator_result" >
+        <source_data type="string" >eugene_baseline</source_data>
+        <indicator_name type="string" >population</indicator_name>
+        <dataset_name type="string" >zone</dataset_name>
+      </population.zone.eugene_baseline>
+      <population.gridcell.eugene_baseline type="indicator_result" >
+        <source_data type="string" >eugene_baseline</source_data>
+        <indicator_name type="string" >population</indicator_name>
+        <dataset_name type="string" >gridcell</dataset_name>
+      </population.gridcell.eugene_baseline>
+      <number_of_jobs.zone.eugene_baseline type="indicator_result" >
+        <source_data type="string" >eugene_baseline</source_data>
+        <indicator_name type="string" >number_of_jobs</indicator_name>
+        <dataset_name type="string" >zone</dataset_name>
+      </number_of_jobs.zone.eugene_baseline>
+      <number_of_jobs.gridcell.eugene_baseline type="indicator_result" >
+        <source_data type="string" >eugene_baseline</source_data>
+        <indicator_name type="string" >number_of_jobs</indicator_name>
+        <dataset_name type="string" >gridcell</dataset_name>
+      </number_of_jobs.gridcell.eugene_baseline>
+      <industrial_sqft.zone.eugene_baseline type="indicator_result" >
+        <source_data type="string" >eugene_baseline</source_data>
+        <indicator_name type="string" >industrial_sqft</indicator_name>
+        <dataset_name type="string" >zone</dataset_name>
+      </industrial_sqft.zone.eugene_baseline>
+      <industrial_sqft.gridcell.eugene_baseline type="indicator_result" >
+        <source_data type="string" >eugene_baseline</source_data>
+        <indicator_name type="string" >industrial_sqft</indicator_name>
+        <dataset_name type="string" >gridcell</dataset_name>
+      </industrial_sqft.gridcell.eugene_baseline>
+      <total_land_value.zone.eugene_baseline type="indicator_result" >
+        <source_data type="string" >eugene_baseline</source_data>
+        <indicator_name type="string" >total_land_value</indicator_name>
+        <dataset_name type="string" >zone</dataset_name>
+      </total_land_value.zone.eugene_baseline>
+      <total_land_value.gridcell.eugene_baseline type="indicator_result" >
+        <source_data type="string" >eugene_baseline</source_data>
+        <indicator_name type="string" >total_land_value</indicator_name>
+        <dataset_name type="string" >gridcell</dataset_name>
+      </total_land_value.gridcell.eugene_baseline>
+      <population_density.gridcell.eugene_baseline type="indicator_result" >
+        <source_data type="string" >eugene_baseline</source_data>
+        <indicator_name type="string" >population_density</indicator_name>
+        <dataset_name type="string" >gridcell</dataset_name>
+      </population_density.gridcell.eugene_baseline>
+    </Results>
+  </results_manager>
 </opus_project>
