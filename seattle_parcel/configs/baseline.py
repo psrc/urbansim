@@ -33,11 +33,11 @@ class Baseline(UrbansimParcelConfiguration):
             'description':'Seattle parcel baseline',
             'cache_directory':None,
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-            cache_directory_root = r'c:/urbansim_cache/seattle_parcel',
+            cache_directory_root = r'C:\opus\opus_data\seattle_parcel',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     years_to_cache = [2000],
-                    existing_cache_to_copy = r'c:/urbansim_cache/seattle_parcel/cache_source',
+                    existing_cache_to_copy = r'C:\opus\opus_data\seattle_parcel',
                     ),
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
@@ -94,7 +94,7 @@ class Baseline(UrbansimParcelConfiguration):
                 ),
 
             'base_year':2000,
-            'years':(2001, 2030),
+            'years':(2001, 2006),
             'models':[ # models are executed in the same order as in this list
                 #"process_pipeline_events",
                 "real_estate_price_model",

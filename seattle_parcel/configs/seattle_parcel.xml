@@ -20,6 +20,8 @@
       <raw_sql_query type="script_file" >raw_sql</raw_sql_query>
       <esri_data_to_opus type="script_file" >esri_data_to_opus</esri_data_to_opus>
       <sql_data_to_opus type="script_file" >sql_data_to_opus</sql_data_to_opus>
+      <opus_data_to_sql type="script_file" >opus_data_to_sql</opus_data_to_sql>
+      <opus_data_to_esri type="script_file" >opus_data_to_esri</opus_data_to_esri>
     </script_library>
     <script_batch type="script_batch" >
       <esri_buffer_tool type="script_config" >
@@ -35,13 +37,27 @@
         <opus_data_directory type="string" >c:\urbansim_cache</opus_data_directory>
         <opus_data_year type="string" >1951</opus_data_year>
       </esri_data_to_opus>
-      <sql_data_to_opus type="script_config">
+      <sql_data_to_opus type="script_config" >
         <script_hook type="script_library_ref" >sql_data_to_opus</script_hook>
         <sql_db_name type="string" >psrc_2005_parcel_baseyear_subset_seattle_zip_jobs</sql_db_name>
         <table_name type="string" >ALL</table_name>
         <opus_data_directory type="string" >C:\opus\opus_data\seattle_parcel</opus_data_directory>
         <opus_data_year type="string" >2000</opus_data_year>
       </sql_data_to_opus>
+      <opus_data_to_sql type="script_config" >
+        <script_hook type="script_library_ref" >opus_data_to_sql</script_hook>
+        <sql_db_name type="string" >jesse_testing_db</sql_db_name>
+        <table_name type="string" >ALL</table_name>
+        <opus_data_directory type="string" >C:\opus\opus_data\seattle_parcel</opus_data_directory>
+        <opus_data_year type="string" >2000</opus_data_year>
+      </opus_data_to_sql>
+      <opus_data_to_esri type="script_config" >
+        <script_hook type="script_library_ref" >opus_data_to_esri</script_hook>
+        <esri_data_path type="string" >C:\tmp\test_geodb.gdb</esri_data_path>
+        <opus_table_name type="string" >zones</opus_table_name>
+        <opus_data_directory type="string" >C:\opus\opus_data\seattle_parcel</opus_data_directory>
+        <opus_data_year type="string" >2000</opus_data_year>
+      </opus_data_to_esri>
     </script_batch>
     <documentation type="documentation_path" >documentation/installation/index.html</documentation>
   </data_manager>

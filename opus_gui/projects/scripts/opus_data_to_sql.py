@@ -13,11 +13,14 @@
 #
 
 import os, sys
+from opus_core.logger import logger
 from opus_core.export_storage import ExportStorage
-from opus_core.store.esri_storage import esri_storage
+from opus_core.store.sql_storage import sql_storage
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.simulation_state import SimulationState
 from opus_core.session_configuration import SessionConfiguration
+from opus_core.database_management.opus_database import OpusDatabase
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 def opusRun(progressCB,logCB,params):
 
@@ -25,22 +28,30 @@ def opusRun(progressCB,logCB,params):
     for key, val in params.iteritems():
         params_dict[str(key)] = str(val)
 
-    esri_data_path = params_dict['esri_data_path']
-    esri_table_name = params_dict['esri_table_name']
     opus_data_directory = params_dict['opus_data_directory']
     opus_data_year = params_dict['opus_data_year']
+    sql_db_name = params_dict['sql_db_name']
+    table_name = params_dict['table_name']
 
-    input_storage = esri_storage(storage_location = esri_data_path)
+
+    dbserverconfig = DatabaseServerConfiguration()
+    opusdb = OpusDatabase(dbserverconfig, sql_db_name)
+
     attribute_cache = AttributeCache(cache_directory=opus_data_directory)
-    output_storage = attribute_cache.get_flt_storage_for_year(opus_data_year)
 
+    #input_storage = sql_storage(storage_location = opusdb)
+    input_storage = attribute_cache.get_flt_storage_for_year(opus_data_year)
+
+
+    #output_storage = attribute_cache.get_flt_storage_for_year(opus_data_year)
+    output_storage = sql_storage(storage_location = opusdb)
     SimulationState().set_current_time(opus_data_year)
     SessionConfiguration(new_instance=True,
                          package_order=[],
                          in_storage=AttributeCache())
 
-    if esri_table_name == 'ALL':
-        print "Sending all tables to OPUS storage..."
+    if table_name == 'ALL':
+        print 'Sending all tables to db...'
         lst = input_storage.get_table_names()
         for i in lst:
             ExportStorage().export_dataset(
@@ -48,12 +59,10 @@ def opusRun(progressCB,logCB,params):
                 in_storage = input_storage,
                 out_storage = output_storage,
             )
-
     else:
-        print "Exporting table '%s' to OPUS storage located at %s..." % (esri_table_name, opus_data_directory)
+        logger.start_block("Exporting table '%s' to sql..." %
+                   (table_name))
         ExportStorage().export_dataset(
-                                       dataset_name = esri_table_name,
-                                       in_storage = input_storage,
-                                       out_storage = output_storage,
-                                       )
-        print "Finished exporting table '%s'" % (esri_table_name)
+            dataset_name = table_name,
+            in_storage = input_storage,
+            out_storage = output_storage)

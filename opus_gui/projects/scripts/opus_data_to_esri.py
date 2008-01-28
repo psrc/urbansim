@@ -26,21 +26,25 @@ def opusRun(progressCB,logCB,params):
         params_dict[str(key)] = str(val)
 
     esri_data_path = params_dict['esri_data_path']
-    esri_table_name = params_dict['esri_table_name']
+    opus_table_name = params_dict['opus_table_name']
     opus_data_directory = params_dict['opus_data_directory']
     opus_data_year = params_dict['opus_data_year']
 
-    input_storage = esri_storage(storage_location = esri_data_path)
     attribute_cache = AttributeCache(cache_directory=opus_data_directory)
-    output_storage = attribute_cache.get_flt_storage_for_year(opus_data_year)
+
+    #input_storage = esri_storage(storage_location = esri_data_path)
+    input_storage = attribute_cache.get_flt_storage_for_year(opus_data_year)
+
+    #output_storage = attribute_cache.get_flt_storage_for_year(opus_data_year)
+    output_storage = esri_storage(storage_location = esri_data_path)
 
     SimulationState().set_current_time(opus_data_year)
     SessionConfiguration(new_instance=True,
                          package_order=[],
                          in_storage=AttributeCache())
 
-    if esri_table_name == 'ALL':
-        print "Sending all tables to OPUS storage..."
+    if opus_table_name == 'ALL':
+        print "Sending all tables to ESRI storage..."
         lst = input_storage.get_table_names()
         for i in lst:
             ExportStorage().export_dataset(
@@ -50,10 +54,10 @@ def opusRun(progressCB,logCB,params):
             )
 
     else:
-        print "Exporting table '%s' to OPUS storage located at %s..." % (esri_table_name, opus_data_directory)
+        print "Exporting table '%s' to ESRI storage located at %s..." % (opus_table_name, opus_data_directory)
         ExportStorage().export_dataset(
-                                       dataset_name = esri_table_name,
+                                       dataset_name = opus_table_name,
                                        in_storage = input_storage,
                                        out_storage = output_storage,
                                        )
-        print "Finished exporting table '%s'" % (esri_table_name)
+        print "Finished exporting table '%s'" % (opus_table_name)
