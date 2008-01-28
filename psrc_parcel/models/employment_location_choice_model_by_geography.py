@@ -14,26 +14,31 @@
 
 from numpy import arange, zeros, logical_and, where
 from opus_core.logger import logger
-from urbansim_parcel.models.scaling_jobs_model import ScalingJobsModel
+from psrc_parcel.models.employment_location_choice_model import EmploymentLocationChoiceModel
 
-class ScalingJobsModelByZones(ScalingJobsModel):
+class EmploymentLocationChoiceModelByGeography(EmploymentLocationChoiceModel):
+    
+    def __init__(self, group_member, location_set, geography_dataset, *args, **kwargs):
+        self.geography_dataset = geography_dataset
+        self.geography_id_name = geography_dataset.get_id_name()[0]
+        EmploymentLocationChoiceModel.__init__(self, group_member, location_set, *args, **kwargs)
         
-    def run(self, zones, location_set, agent_set, agents_index=None, **kwargs):
+    def run(self, specification, coefficients, agent_set, agents_index=None, **kwargs):
         if agents_index is None:
             agents_index = arange(agent_set.size())
         cond_array = zeros(agent_set.size(), dtype="bool8")
         cond_array[agents_index] = True
-        zone_ids = zones.get_id_attribute()
-        agents_zones = agent_set.compute_variables(["urbansim_parcel.job.zone_id"], dataset_pool = self.dataset_pool)
+        geography_ids = self.geography_dataset.get_id_attribute()
+        geographies_of_agents = agent_set.get_attribute(self.geography_id_name)
         orig_filter = self.filter
-        for zone_id in zone_ids:
-            new_index = where(logical_and(cond_array, agents_zones == zone_id))[0]
+        for geography_id in geography_ids:
+            new_index = where(logical_and(cond_array, geographies_of_agents == geography_id))[0]
             if orig_filter is not None:
-                self.filter = "(building.zone_id == %s) * %s" % (zone_id, orig_filter)
+                self.filter = "(building.%s == %s) * %s" % (self.geography_id_name, geography_id, orig_filter)
             else:
-                self.filter = "building.zone_id == %s" % zone_id
-            logger.log_status("SJM for zone %s" % zone_id)
-            ScalingJobsModel.run(self, location_set, agent_set, 
+                self.filter = "building.%s == %s" % (self.geography_id_name, geography_id)
+            logger.log_status("ELCM for %s %s" % (self.geography_dataset.get_dataset_name(), geography_id))
+            EmploymentLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                               agents_index=new_index, **kwargs)
             agent_set.flush_dataset()
             # self.choice_set.flush_dataset()

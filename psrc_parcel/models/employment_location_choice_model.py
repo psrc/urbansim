@@ -16,6 +16,7 @@ from urbansim.models.employment_location_choice_model import EmploymentLocationC
 
 class EmploymentLocationChoiceModel(UrbansimEmploymentLocationChoiceModel):
     
+    geography_id_name = 'zone_id'
     def __init__(self, group_member, location_set, **kwargs): 
         UrbansimEmploymentLocationChoiceModel.__init__(self, group_member, location_set, **kwargs)
-        location_set.compute_variables(["urbansim_parcel.building.zone_id"], dataset_pool = self.dataset_pool)   
+        location_set.compute_variables(["urbansim_parcel.building.%s" % self.geography_id_name], dataset_pool = self.dataset_pool)   

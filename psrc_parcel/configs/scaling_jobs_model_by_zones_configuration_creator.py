@@ -15,12 +15,12 @@
 from urbansim.configurations.governmental_employment_location_choice_model_configuration_creator import GovernmentalEmploymentLocationChoiceModelConfigurationCreator
 
 class ScalingJobsModelByZonesConfigurationCreator(GovernmentalEmploymentLocationChoiceModelConfigurationCreator):
-    _model_name = 'scaling_jobs_model_by_zones'
+    _model_name = 'scaling_jobs_model_by_geography'
     def execute(self):
         result = GovernmentalEmploymentLocationChoiceModelConfigurationCreator.execute(self)
         result['import'] = {
-                'psrc_parcel.models.%s' % self._model_name: 'ScalingJobsModelByZones'
+                'psrc_parcel.models.%s' % self._model_name: 'ScalingJobsModelByGeography'
                 }
-        result['init']['name'] = 'ScalingJobsModelByZones'
-        result["run"]["arguments"]["zones"] = 'zone'
+        result['init']['name'] = 'ScalingJobsModelByGeography'
+        result["run"]["arguments"]["geography_set"] = 'zone'
         return result
