@@ -67,26 +67,13 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         logger.enable_file_logging(log_file)
         PSRCTravelModelInputFileWriter.run(self, current_year_emme2_dir, current_year, dataset_pool, config)
         
-    def get_variables_list(self):
-        return [
-            "pctmf",  #101
-            "hhs_of_first_quarter = zone.aggregate(household.income < %s)" % first_quarter, #102
-            "hhs_of_second_quarter = zone.aggregate(numpy.logical_and(household.income >= %s, household.income < %s))" % (first_quarter, median_income), #103
-            "hhs_of_third_quarter = zone.aggregate(numpy.logical_and(household.income >= %s, household.income < %s))" % (median_income, third_quarter),  #104
-            "hhs_of_fourth_quarter = zone.aggregate(household.income >= %s)" % third_quarter, #105
-            'gqi', #106
-            'gqn', #107
-            '-1 + 0 * zone.zone_id',  #108 unsed, set to -1
-            "fteuniv",                   #121
-            'zone.gqn * zone.v122',      #122
-            'zone.gqn * zone.v123',      #123
-            'zone.gqn * zone.v124'       #124
-            ]
+    def get_variables_list(self, dataset_pool):
+        self.full_variable_list = PSRCTravelModelInputFileWriter.get_variables_list(self, dataset_pool)
+        return full_var_list[0:12]
         
     def _write_to_file(self, zone_set, variables_list, tm_input_file):
         self.bm_generate_from_posterior(zone_set)
-        varlist = PSRCTravelModelInputFileWriter.get_variables_list(self)
-        PSRCTravelModelInputFileWriter._write_to_file(self, zone_set, varlist, tm_input_file)
+        PSRCTravelModelInputFileWriter._write_to_file(self, zone_set, self.full_variable_list, tm_input_file)
 
     def _get_value_for_zone(self, zone_id, zone_set, variable_name):
         if variable_name in self.simulated_values.keys():
@@ -208,7 +195,7 @@ class TestTMInputWriter(opus_unittest.OpusTestCase):
                   ]
           }
         tmiw.dataset_pool = DatasetPool(package_order=['urbansim_parcel', 'urbansim'], storage=storage)
-        tmiw.year = 2005
+        tmiw.year = 2010
         tmiw.simulated_values = {}
         zones.compute_variables(tmiw.variables_to_scale['household'].keys(), dataset_pool = tmiw.dataset_pool)
         tmiw.configuration = {'travel_model_configuration': {'bm_distribution_file': temp_file[1]}}

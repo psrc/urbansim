@@ -38,7 +38,6 @@ class TravelModelInputFileWriter(object):
             zone_set.load_dataset()
             missing_dataset = 'household'
             household_set = dataset_pool.get_dataset("household")
-            household_set.load_dataset()
         except:
             raise "Dataset %s is missing from dataset_pool" % missing_dataset
         
@@ -74,21 +73,21 @@ class TravelModelInputFileWriter(object):
         
         value_124 = logical_not(value_122 + value_123)
         zone_set.add_attribute(data=value_124, name="v124")
-        
-        # setup for calculating quartile information
-        hh_income = household_set.get_attribute("income")
-        median_income = median(hh_income)
-        first_quarter = median(hh_income[where(hh_income<median_income)])
-        third_quarter = median(hh_income[where(hh_income>median_income)])
-        
+                
         """specify which variables are passing from urbansim to travel model; the order matters"""
-        variables_list = self.get_variables_list()
+        variables_list = self.get_variables_list(dataset_pool)
         
         zone_set.compute_variables(variables_list, dataset_pool=dataset_pool )
 
         return self._write_to_file(zone_set, variables_list, tm_input_file)
 
-    def get_variables_list(self):
+    def get_variables_list(self, dataset_pool):
+        household_set = dataset_pool.get_dataset("household")
+        # setup for calculating quartile information
+        hh_income = household_set.get_attribute("income")
+        median_income = median(hh_income)
+        first_quarter = median(hh_income[where(hh_income<median_income)])
+        third_quarter = median(hh_income[where(hh_income>median_income)])
         return [
             "pctmf",  #101
             "hhs_of_first_quarter = zone.aggregate(household.income < %s)" % first_quarter, #102
