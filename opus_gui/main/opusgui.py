@@ -105,12 +105,11 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.tabCornerWidget.setWhatsThis(QString("Close Current Tab"))
     self.tabCornerWidget.setToolTip(QString("Close Current Tab"))
     self.tabWidget.setCornerWidget(self.tabCornerWidget)
-    QObject.connect(self.actionCloseCurrentTab, SIGNAL("triggered()"), self.closeCurrentTab)
+    QObject.connect(self.actionCloseCurrentTab,
+                    SIGNAL("triggered()"), self.closeCurrentTab)
 
 
   def closeCurrentTab(self):
-    print "Close the current tab - Index=%d Name=%s" % (self.tabWidget.currentIndex(),
-                                                        self.tabWidget.currentWidget().objectName())
     widget = self.tabWidget.currentWidget()
     self.tabWidget.removeTab(self.tabWidget.currentIndex())
     try:
@@ -122,25 +121,29 @@ class OpusGui(QMainWindow, Ui_MainWindow):
   def openMapTab(self):
     if self.tabWidget.indexOf(self.tab_mapView) == -1:
       self.tab_mapView.show()
-      self.tabWidget.insertTab(0,self.tab_mapView,QIcon(":/Images/Images/map.png"),"Map View")
+      self.tabWidget.insertTab(0,self.tab_mapView,
+                               QIcon(":/Images/Images/map.png"),"Map View")
       self.tabWidget.setCurrentWidget(self.tab_mapView)
 
   def openPythonTab(self):
     if self.tabWidget.indexOf(self.tab_pythonView) == -1:
       self.tab_pythonView.show()
-      self.tabWidget.insertTab(0,self.tab_pythonView,QIcon(":/Images/Images/python_type.png"),"Python Console")
+      self.tabWidget.insertTab(0,self.tab_pythonView,
+                               QIcon(":/Images/Images/python_type.png"),"Python Console")
       self.tabWidget.setCurrentWidget(self.tab_pythonView)
 
   def openEditorTab(self):
     if self.tabWidget.indexOf(self.tab_editorView) == -1:
       self.tab_editorView.show()
-      self.tabWidget.insertTab(0,self.tab_editorView,QIcon(":/Images/Images/table.png"),"Editor View")
+      self.tabWidget.insertTab(0,self.tab_editorView,
+                               QIcon(":/Images/Images/table.png"),"Editor View")
       self.tabWidget.setCurrentWidget(self.tab_editorView)
 
   def openLogTab(self):
     if self.tabWidget.indexOf(self.tab_logView) == -1:
       self.tab_logView.show()
-      self.tabWidget.insertTab(0,self.tab_logView,QIcon(":/Images/Images/folder.png"),"Log View")
+      self.tabWidget.insertTab(0,self.tab_logView,
+                               QIcon(":/Images/Images/folder.png"),"Log View")
       self.tabWidget.setCurrentWidget(self.tab_logView)
 
   def openAbout(self):
