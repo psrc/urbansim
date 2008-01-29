@@ -103,6 +103,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
   def closeCurrentTab(self):
     print "Close the current tab - Index=%d Name=%s" % (self.tabWidget.currentIndex(),
                                                         self.tabWidget.currentWidget().objectName())
+    widget = self.tabWidget.currentWidget()
+    self.tabWidget.removeTab(self.tabWidget.currentIndex())
+    try:
+      widget.hide()
+    except:
+      pass
+    # Do something with the widget if we need to...
     
   def openAbout(self):
     flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint

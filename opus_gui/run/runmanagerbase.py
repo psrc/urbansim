@@ -195,6 +195,7 @@ class ModelGuiElement(QWidget):
     
     # Simulation Progress Tab
     self.simprogressWidget = QWidget(self.groupBox)
+    self.simprogressWidget.setObjectName("simprogressWidget")
     self.simprogressLayout = QGridLayout(self.simprogressWidget)
     self.simprogressGroupBox = QGroupBox(self)
     self.simprogressLayout2 = QGridLayout(self.simprogressGroupBox)
