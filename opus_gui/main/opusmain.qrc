@@ -18,6 +18,7 @@
         <file>Images/field.png</file>
         <file>Images/folder.png</file>
         <file>Images/folder_database.png</file>
+        <file>Images/help.png</file>
         <file>Images/layers.png</file>
         <file>Images/lock.png</file>
         <file>Images/mActionAddLayer.png</file>
@@ -30,6 +31,8 @@
         <file>Images/page_white.png</file>
         <file>Images/python_script.png</file>
         <file>Images/python_type.png</file>
+        <file>Images/script.png</file>
+        <file>Images/script_save.png</file>
         <file>Images/table.png</file>
         <file>Images/table_go.png</file>
         <file>Images/table_lightning.png</file>

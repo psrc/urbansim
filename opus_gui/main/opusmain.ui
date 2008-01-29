@@ -60,15 +60,15 @@
         </size>
        </property>
        <property name="currentIndex" >
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="datamanager_page" >
         <property name="geometry" >
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>335</width>
-          <height>525</height>
+          <width>382</width>
+          <height>527</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -107,6 +107,14 @@
             <number>1</number>
            </property>
            <widget class="QWidget" name="datamanager_dbsconnections" >
+            <property name="geometry" >
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>96</width>
+              <height>38</height>
+             </rect>
+            </property>
             <attribute name="label" >
              <string>Database Server Connections</string>
             </attribute>
@@ -117,8 +125,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>299</width>
-              <height>405</height>
+              <width>364</width>
+              <height>437</height>
              </rect>
             </property>
             <attribute name="label" >
@@ -131,8 +139,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>299</width>
-              <height>409</height>
+              <width>96</width>
+              <height>38</height>
              </rect>
             </property>
             <attribute name="label" >
@@ -149,7 +157,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
+          <width>96</width>
           <height>38</height>
          </rect>
         </property>
@@ -185,8 +193,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>335</width>
-          <height>529</height>
+          <width>382</width>
+          <height>527</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -221,7 +229,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
+          <width>96</width>
           <height>38</height>
          </rect>
         </property>
@@ -413,13 +421,15 @@
      <x>0</x>
      <y>0</y>
      <width>974</width>
-     <height>21</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMap" >
     <property name="title" >
      <string>Map</string>
     </property>
+    <addaction name="actionMap_View" />
+    <addaction name="separator" />
     <addaction name="mpActionZoomIn" />
     <addaction name="mpActionZoomOut" />
     <addaction name="mpActionPan" />
@@ -443,8 +453,17 @@
     </property>
     <addaction name="actionAbout" />
    </widget>
+   <widget class="QMenu" name="menuUtilities" >
+    <property name="title" >
+     <string>Utilities</string>
+    </property>
+    <addaction name="actionPython_Console" />
+    <addaction name="actionLog_View" />
+    <addaction name="actionEditor" />
+   </widget>
    <addaction name="menuProject" />
    <addaction name="menuMap" />
+   <addaction name="menuUtilities" />
    <addaction name="menuHelp" />
   </widget>
   <widget class="QStatusBar" name="statusbar" />
@@ -489,46 +508,73 @@
    </property>
   </action>
   <action name="actionOpen_Project" >
+   <property name="icon" >
+    <iconset resource="opusmain.qrc" >:/Images/Images/folder.png</iconset>
+   </property>
    <property name="text" >
     <string>Open Project</string>
    </property>
   </action>
   <action name="actionSave_Project" >
+   <property name="icon" >
+    <iconset resource="opusmain.qrc" >:/Images/Images/script_save.png</iconset>
+   </property>
    <property name="text" >
     <string>Save Project</string>
    </property>
   </action>
   <action name="actionSave_Project_As" >
+   <property name="icon" >
+    <iconset resource="opusmain.qrc" >:/Images/Images/script_save.png</iconset>
+   </property>
    <property name="text" >
     <string>Save Project As...</string>
    </property>
   </action>
   <action name="actionOpen_Project_2" >
+   <property name="icon" >
+    <iconset resource="opusmain.qrc" >:/Images/Images/folder.png</iconset>
+   </property>
    <property name="text" >
     <string>Open Project</string>
    </property>
   </action>
   <action name="actionExit" >
+   <property name="icon" >
+    <iconset resource="opusmain.qrc" >:/Images/Images/cross.png</iconset>
+   </property>
    <property name="text" >
     <string>Exit</string>
    </property>
   </action>
   <action name="actionSave_Project_2" >
+   <property name="icon" >
+    <iconset resource="opusmain.qrc" >:/Images/Images/script_save.png</iconset>
+   </property>
    <property name="text" >
     <string>Save Project</string>
    </property>
   </action>
   <action name="actionSave_Project_As_2" >
+   <property name="icon" >
+    <iconset resource="opusmain.qrc" >:/Images/Images/script_save.png</iconset>
+   </property>
    <property name="text" >
     <string>Save Project As...</string>
    </property>
   </action>
   <action name="actionRun_Manager" >
+   <property name="icon" >
+    <iconset resource="opusmain.qrc" >:/Images/Images/cog.png</iconset>
+   </property>
    <property name="text" >
     <string>Run Manager</string>
    </property>
   </action>
   <action name="actionAbout" >
+   <property name="icon" >
+    <iconset resource="opusmain.qrc" >:/Images/Images/help.png</iconset>
+   </property>
    <property name="text" >
     <string>About</string>
    </property>
@@ -563,6 +609,38 @@
    </property>
    <property name="text" >
     <string>Log View</string>
+   </property>
+  </action>
+  <action name="actionPython_Console" >
+   <property name="icon" >
+    <iconset resource="opusmain.qrc" >:/Images/Images/python_type.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Python Console</string>
+   </property>
+  </action>
+  <action name="actionLog_View" >
+   <property name="icon" >
+    <iconset resource="opusmain.qrc" >:/Images/Images/table.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Log View</string>
+   </property>
+  </action>
+  <action name="actionEditor" >
+   <property name="icon" >
+    <iconset resource="opusmain.qrc" >:/Images/Images/table_lightning.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Editor</string>
+   </property>
+  </action>
+  <action name="actionMap_View" >
+   <property name="icon" >
+    <iconset resource="opusmain.qrc" >:/Images/Images/map.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Map View</string>
    </property>
   </action>
  </widget>

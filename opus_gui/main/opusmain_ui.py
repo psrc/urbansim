@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'opusmain.ui'
 #
-# Created: Thu Jan 24 14:30:32 2008
-#      by: PyQt4 UI code generator 4.3.1
+# Created: Mon Jan 28 21:29:59 2008
+#      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -42,7 +42,7 @@ class Ui_MainWindow(object):
         self.toolBox.setObjectName("toolBox")
 
         self.datamanager_page = QtGui.QWidget()
-        self.datamanager_page.setGeometry(QtCore.QRect(0,0,335,525))
+        self.datamanager_page.setGeometry(QtCore.QRect(0,0,382,527))
         self.datamanager_page.setObjectName("datamanager_page")
 
         self.gridlayout1 = QtGui.QGridLayout(self.datamanager_page)
@@ -58,6 +58,7 @@ class Ui_MainWindow(object):
         self.dataManager_toolBox.setObjectName("dataManager_toolBox")
 
         self.datamanager_dbsconnections = QtGui.QWidget()
+        self.datamanager_dbsconnections.setGeometry(QtCore.QRect(0,0,96,38))
         self.datamanager_dbsconnections.setObjectName("datamanager_dbsconnections")
 
         self.gridlayout2 = QtGui.QGridLayout(self.datamanager_dbsconnections)
@@ -65,7 +66,7 @@ class Ui_MainWindow(object):
         self.dataManager_toolBox.addItem(self.datamanager_dbsconnections,"")
 
         self.datamanager_xmlconfig = QtGui.QWidget()
-        self.datamanager_xmlconfig.setGeometry(QtCore.QRect(0,0,299,405))
+        self.datamanager_xmlconfig.setGeometry(QtCore.QRect(0,0,364,437))
         self.datamanager_xmlconfig.setObjectName("datamanager_xmlconfig")
 
         self.gridlayout3 = QtGui.QGridLayout(self.datamanager_xmlconfig)
@@ -73,7 +74,7 @@ class Ui_MainWindow(object):
         self.dataManager_toolBox.addItem(self.datamanager_xmlconfig,"")
 
         self.datamanager_dirview = QtGui.QWidget()
-        self.datamanager_dirview.setGeometry(QtCore.QRect(0,0,299,409))
+        self.datamanager_dirview.setGeometry(QtCore.QRect(0,0,96,38))
         self.datamanager_dirview.setObjectName("datamanager_dirview")
 
         self.gridlayout4 = QtGui.QGridLayout(self.datamanager_dirview)
@@ -83,7 +84,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.datamanager_page,QtGui.QIcon(":/Images/Images/database_table.png"),"")
 
         self.modelmanager_page = QtGui.QWidget()
-        self.modelmanager_page.setGeometry(QtCore.QRect(0,0,98,38))
+        self.modelmanager_page.setGeometry(QtCore.QRect(0,0,96,38))
         self.modelmanager_page.setObjectName("modelmanager_page")
 
         self.gridlayout5 = QtGui.QGridLayout(self.modelmanager_page)
@@ -93,7 +94,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.modelmanager_page,QtGui.QIcon(":/Images/Images/chart_organisation.png"),"")
 
         self.runmanager_page = QtGui.QWidget()
-        self.runmanager_page.setGeometry(QtCore.QRect(0,0,335,529))
+        self.runmanager_page.setGeometry(QtCore.QRect(0,0,382,527))
         self.runmanager_page.setObjectName("runmanager_page")
 
         self.gridlayout6 = QtGui.QGridLayout(self.runmanager_page)
@@ -103,7 +104,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.runmanager_page,QtGui.QIcon(":/Images/Images/cog.png"),"")
 
         self.resultsmanager_page = QtGui.QWidget()
-        self.resultsmanager_page.setGeometry(QtCore.QRect(0,0,98,38))
+        self.resultsmanager_page.setGeometry(QtCore.QRect(0,0,96,38))
         self.resultsmanager_page.setObjectName("resultsmanager_page")
 
         self.gridlayout7 = QtGui.QGridLayout(self.resultsmanager_page)
@@ -182,7 +183,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0,0,974,21))
+        self.menubar.setGeometry(QtCore.QRect(0,0,974,24))
         self.menubar.setObjectName("menubar")
 
         self.menuMap = QtGui.QMenu(self.menubar)
@@ -193,6 +194,9 @@ class Ui_MainWindow(object):
 
         self.menuHelp = QtGui.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
+
+        self.menuUtilities = QtGui.QMenu(self.menubar)
+        self.menuUtilities.setObjectName("menuUtilities")
         MainWindow.setMenuBar(self.menubar)
 
         self.statusbar = QtGui.QStatusBar(MainWindow)
@@ -220,30 +224,39 @@ class Ui_MainWindow(object):
         self.mpActionAddVectorLayer.setObjectName("mpActionAddVectorLayer")
 
         self.actionOpen_Project = QtGui.QAction(MainWindow)
+        self.actionOpen_Project.setIcon(QtGui.QIcon(":/Images/Images/folder.png"))
         self.actionOpen_Project.setObjectName("actionOpen_Project")
 
         self.actionSave_Project = QtGui.QAction(MainWindow)
+        self.actionSave_Project.setIcon(QtGui.QIcon(":/Images/Images/script_save.png"))
         self.actionSave_Project.setObjectName("actionSave_Project")
 
         self.actionSave_Project_As = QtGui.QAction(MainWindow)
+        self.actionSave_Project_As.setIcon(QtGui.QIcon(":/Images/Images/script_save.png"))
         self.actionSave_Project_As.setObjectName("actionSave_Project_As")
 
         self.actionOpen_Project_2 = QtGui.QAction(MainWindow)
+        self.actionOpen_Project_2.setIcon(QtGui.QIcon(":/Images/Images/folder.png"))
         self.actionOpen_Project_2.setObjectName("actionOpen_Project_2")
 
         self.actionExit = QtGui.QAction(MainWindow)
+        self.actionExit.setIcon(QtGui.QIcon(":/Images/Images/cross.png"))
         self.actionExit.setObjectName("actionExit")
 
         self.actionSave_Project_2 = QtGui.QAction(MainWindow)
+        self.actionSave_Project_2.setIcon(QtGui.QIcon(":/Images/Images/script_save.png"))
         self.actionSave_Project_2.setObjectName("actionSave_Project_2")
 
         self.actionSave_Project_As_2 = QtGui.QAction(MainWindow)
+        self.actionSave_Project_As_2.setIcon(QtGui.QIcon(":/Images/Images/script_save.png"))
         self.actionSave_Project_As_2.setObjectName("actionSave_Project_As_2")
 
         self.actionRun_Manager = QtGui.QAction(MainWindow)
+        self.actionRun_Manager.setIcon(QtGui.QIcon(":/Images/Images/cog.png"))
         self.actionRun_Manager.setObjectName("actionRun_Manager")
 
         self.actionAbout = QtGui.QAction(MainWindow)
+        self.actionAbout.setIcon(QtGui.QIcon(":/Images/Images/help.png"))
         self.actionAbout.setObjectName("actionAbout")
 
         self.tabActionEditor = QtGui.QAction(MainWindow)
@@ -261,6 +274,24 @@ class Ui_MainWindow(object):
         self.tabActionLogView = QtGui.QAction(MainWindow)
         self.tabActionLogView.setIcon(QtGui.QIcon(":/Images/Images/folder.png"))
         self.tabActionLogView.setObjectName("tabActionLogView")
+
+        self.actionPython_Console = QtGui.QAction(MainWindow)
+        self.actionPython_Console.setIcon(QtGui.QIcon(":/Images/Images/python_type.png"))
+        self.actionPython_Console.setObjectName("actionPython_Console")
+
+        self.actionLog_View = QtGui.QAction(MainWindow)
+        self.actionLog_View.setIcon(QtGui.QIcon(":/Images/Images/table.png"))
+        self.actionLog_View.setObjectName("actionLog_View")
+
+        self.actionEditor = QtGui.QAction(MainWindow)
+        self.actionEditor.setIcon(QtGui.QIcon(":/Images/Images/table_lightning.png"))
+        self.actionEditor.setObjectName("actionEditor")
+
+        self.actionMap_View = QtGui.QAction(MainWindow)
+        self.actionMap_View.setIcon(QtGui.QIcon(":/Images/Images/map.png"))
+        self.actionMap_View.setObjectName("actionMap_View")
+        self.menuMap.addAction(self.actionMap_View)
+        self.menuMap.addSeparator()
         self.menuMap.addAction(self.mpActionZoomIn)
         self.menuMap.addAction(self.mpActionZoomOut)
         self.menuMap.addAction(self.mpActionPan)
@@ -273,12 +304,16 @@ class Ui_MainWindow(object):
         self.menuProject.addSeparator()
         self.menuProject.addAction(self.actionExit)
         self.menuHelp.addAction(self.actionAbout)
+        self.menuUtilities.addAction(self.actionPython_Console)
+        self.menuUtilities.addAction(self.actionLog_View)
+        self.menuUtilities.addAction(self.actionEditor)
         self.menubar.addAction(self.menuProject.menuAction())
         self.menubar.addAction(self.menuMap.menuAction())
+        self.menubar.addAction(self.menuUtilities.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.toolBox.setCurrentIndex(0)
+        self.toolBox.setCurrentIndex(2)
         self.dataManager_toolBox.setCurrentIndex(1)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -300,6 +335,7 @@ class Ui_MainWindow(object):
         self.menuMap.setTitle(QtGui.QApplication.translate("MainWindow", "Map", None, QtGui.QApplication.UnicodeUTF8))
         self.menuProject.setTitle(QtGui.QApplication.translate("MainWindow", "Project", None, QtGui.QApplication.UnicodeUTF8))
         self.menuHelp.setTitle(QtGui.QApplication.translate("MainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuUtilities.setTitle(QtGui.QApplication.translate("MainWindow", "Utilities", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionZoomOut.setText(QtGui.QApplication.translate("MainWindow", "Zoom Out", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionPan.setText(QtGui.QApplication.translate("MainWindow", "Pan", None, QtGui.QApplication.UnicodeUTF8))
         self.mpActionAddRasterLayer.setText(QtGui.QApplication.translate("MainWindow", "Add Raster Layer", None, QtGui.QApplication.UnicodeUTF8))
@@ -318,5 +354,9 @@ class Ui_MainWindow(object):
         self.tabActionMapView.setText(QtGui.QApplication.translate("MainWindow", "Map View", None, QtGui.QApplication.UnicodeUTF8))
         self.tabActionPythonConsole.setText(QtGui.QApplication.translate("MainWindow", "Python Console", None, QtGui.QApplication.UnicodeUTF8))
         self.tabActionLogView.setText(QtGui.QApplication.translate("MainWindow", "Log View", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPython_Console.setText(QtGui.QApplication.translate("MainWindow", "Python Console", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionLog_View.setText(QtGui.QApplication.translate("MainWindow", "Log View", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionEditor.setText(QtGui.QApplication.translate("MainWindow", "Editor", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionMap_View.setText(QtGui.QApplication.translate("MainWindow", "Map View", None, QtGui.QApplication.UnicodeUTF8))
 
 import opusmain_rc
