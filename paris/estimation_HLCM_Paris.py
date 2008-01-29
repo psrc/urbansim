@@ -20,8 +20,9 @@ from opus_core.equation_specification import EquationSpecification
 from urbansim.datasets.household_dataset import HouseholdDataset
 from opus_core.storage_factory import StorageFactory
 from opus_core.simulation_state import SimulationState
-from paris.paris_settings import ParisSettings
-from sandbox.estimator import Estimator
+#from paris.paris_settings import ParisSettings
+#from sandbox.estimator import Estimator
+from urbansim.estimation.estimator import Estimator, load_specification_from_variable
 from opus_core.resources import Resources
 from opus_core.logger import logger
 from numpy.random import seed
@@ -29,26 +30,30 @@ from opus_core.misc import unique_values
 from numpy import arange, where, array, float32, concatenate
 from time import time, localtime, strftime
 from opus_core.session_configuration import SessionConfiguration
+from opus_core.simulation_state import SimulationState
+from opus_core.session_configuration import SessionConfiguration
+from opus_core.store.attribute_cache import AttributeCache
 
 
 def compute_lambda(nbs):
         com_dept_id = nbs.get_attribute("dept")
         depts = unique_values(com_dept_id)
-        unitsvac9 = array([], dtype='int32') 
-        unitsvac9 = array([], dtype='int32') 
-        unitssec9 = array([], dtype='int32') 
-        units9=array([], dtype='int32')
-        stayers98 = array([], dtype='int32') 
-        movers98 = array([], dtype='int32')
-        availableratio = array([], dtype='int32') 
-        lambda_value = array([], dtype='int32')
+        unitsvac9 = []
+        unitssec9 = []
+        units9=[]
+        stayers98 = []
         for d in depts:
-                com_in_this_dept = where(com_dept_id==d)
-                unitsvac9 = concatenate((unitsvac9, nbs.get_attribute("unitsvac9")[com_in_this_dept].sum()))
-                unitssec9 = concatenate((unitssec9, nbs.get_attribute("unitssec9")[com_in_this_dept].sum()))
-                units9 = concatenate((units9, nbs.get_attribute("units9")[com_in_this_dept].sum()))
-                stayers98 = concatenate((stayers98, nbs.get_attribute("stayers98")[com_in_this_dept].sum()))
+                com_in_this_dept = where(com_dept_id==d)[0]
+                unitsvac9.append(nbs.get_attribute("unitsvac9")[com_in_this_dept].sum())
+                unitssec9.append(nbs.get_attribute("unitssec9")[com_in_this_dept].sum())
+                units9.append(nbs.get_attribute("units9")[com_in_this_dept].sum())
+                stayers98.append(nbs.get_attribute("stayers98")[com_in_this_dept].sum())
         
+        unitsvac9 = array(unitsvac9)
+        unitssec9 = array(unitssec9)
+        units9 = array(units9)
+        stayers98 = array(stayers98)
+
         movers98=units9 - stayers98 - unitssec9 - unitsvac9
         availableratio = unitsvac9 / units9.astype(float32)
         lambda_value = (units9 - unitssec9).astype(float32)/ (units9 - unitssec9 - unitsvac9) - unitsvac9.astype(float32) / movers98
@@ -66,7 +71,7 @@ def compute_supply_and_vacancy_rate(nbs, depts, lambdas):
         stayers98 = nbs.get_attribute("stayers98")
         
         movers98=units9 - stayers98 - unitssec9 - unitsvac9;
-        nbs.add_attribute(movers98, 'movers98')
+        nbs.add_attribute(movers98, 'movers')
         
         depts_list = depts.tolist()
         lambda_value = array([lambdas[depts_list.index(com)] for com in com_dept_id])
@@ -123,10 +128,10 @@ class HLCMEstimator(Estimator):
         depts, lambda_value = compute_lambda(self.nbs)
         supply, vacancy_rate = compute_supply_and_vacancy_rate(self.nbs, depts, lambda_value)
         self.nbs.set_values_of_one_attribute("supply", supply)
-
-        SessionConfiguration().get_dataset_pool()._add_dataset('vacancy_rate', vacancy_rate)
-        SessionConfiguration().get_dataset_pool()._add_dataset('sample_rate', agent_sample_rate)
-        SessionConfiguration().get_dataset_pool()._add_dataset('vacancy_rate', vacancy_rate)
+        dataset_pool = SessionConfiguration().get_dataset_pool()
+        dataset_pool.add_datasets_if_not_included({'vacancy_rate': vacancy_rate,
+                                                   'sample_rate':agent_sample_rate
+                                                   })
         SessionConfiguration()["CLOSE"] = CLOSE
         SessionConfiguration()['info_file'] = info_file
         
@@ -139,8 +144,7 @@ class HLCMEstimator(Estimator):
             spec_var = spec_py.specification
         
         if spec_var is not None:
-            self.specification, variables, coefficents, submodels = self.load_specification_from_variable(
-                                                     spec_var)
+            self.specification = load_specification_from_variable(spec_var)
         else:
             in_storage = StorageFactory().build_storage_for_dataset(type='sql_storage', 
                 storage_location=self.in_con)
@@ -188,7 +192,7 @@ if __name__ == "__main__":
     except:agent_sample_rate = 0.005
 
     try:alt_sample_size = int(sys.argv[2])
-    except:alt_sample_size = 20
+    except:alt_sample_size = None  #was 20 
     
     # run estimation for the given variables
     spec_var = {}
@@ -227,12 +231,27 @@ if __name__ == "__main__":
             ("paris.household_x_neighborhood.hhfem_nbtc","hhfem_nbtc")
             )
     }
-    
-    settings = ParisSettings()
-    settings.prepare_session_configuration()
-    estimator = HLCMEstimator(settings=settings, 
-                        run_land_price_model_before_estimation=False, 
-                        save_estimation_results=False, 
-                        debuglevel=4)
+
+    from my_estimation_config import my_configuration    
+    ss = SimulationState()
+    ss.set_current_time(2000)
+    ss.set_cache_directory(my_configuration['cache_directory'])
+
+    attribute_cache = AttributeCache()
+    sc = SessionConfiguration(new_instance=True,
+                         package_order=my_configuration['dataset_pool_configuration'].package_order,
+                         package_order_exceptions=my_configuration['dataset_pool_configuration'].package_order_exceptions,
+                         in_storage=attribute_cache)
+
+
+    #settings = ParisSettings()
+    #settings.prepare_session_configuration()
+    estimator = HLCMEstimator(config=my_configuration,
+                              save_estimation_results=False)
+
+    #estimator = HLCMEstimator(settings=my_configuration, 
+    #                    run_land_price_model_before_estimation=False, 
+    #                    save_estimation_results=False, 
+    #                    debuglevel=4)
     estimator.estimate(spec_var, agent_sample_rate=agent_sample_rate, alt_sample_size=alt_sample_size)
 
