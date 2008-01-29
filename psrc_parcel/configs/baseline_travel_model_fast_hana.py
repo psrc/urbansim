@@ -43,9 +43,12 @@ class BaselineTravelModelFastHana(Baseline):
 
         del config['travel_model_configuration']['matrix_variable_map']['bank2']
         del config['travel_model_configuration']['matrix_variable_map']['bank3']
+        
+        config['travel_model_configuration'][2015]['models'] = list(config['travel_model_configuration'][2015].get('models'))
+        config['travel_model_configuration'][2015]['models'].append('opus_emme2.models.restore_trip_tables')
              
         self.merge(config)
 
     
-#if __name__ == "__main__":
-#    config = BaselineTravelModelFastHana()
+if __name__ == "__main__":
+    config = BaselineTravelModelFastHana()
