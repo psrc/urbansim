@@ -55,6 +55,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     QObject.connect(self.actionExit, SIGNAL("triggered()"), self.exitOpus)
     # About
     QObject.connect(self.actionAbout, SIGNAL("triggered()"), self.openAbout)
+    #Add map tab
+    QObject.connect(self.actionMap_View, SIGNAL("triggered()"), self.openMapTab)
+    #Add editor tab
+    QObject.connect(self.actionEditor_View, SIGNAL("triggered()"), self.openEditorTab)
+    #Add python tab
+    QObject.connect(self.actionPython_View, SIGNAL("triggered()"), self.openPythonTab)
+    #Add log tab
+    QObject.connect(self.actionLog_View, SIGNAL("triggered()"), self.openLogTab)
 
     self.tempDir = tempfile.mkdtemp(prefix='opus_gui')
 
@@ -111,6 +119,30 @@ class OpusGui(QMainWindow, Ui_MainWindow):
       pass
     # Do something with the widget if we need to...
     
+  def openMapTab(self):
+    if self.tabWidget.indexOf(self.tab_mapView) == -1:
+      self.tab_mapView.show()
+      self.tabWidget.insertTab(0,self.tab_mapView,QIcon(":/Images/Images/map.png"),"Map View")
+      self.tabWidget.setCurrentWidget(self.tab_mapView)
+
+  def openPythonTab(self):
+    if self.tabWidget.indexOf(self.tab_pythonView) == -1:
+      self.tab_pythonView.show()
+      self.tabWidget.insertTab(0,self.tab_pythonView,QIcon(":/Images/Images/python_type.png"),"Python Console")
+      self.tabWidget.setCurrentWidget(self.tab_pythonView)
+
+  def openEditorTab(self):
+    if self.tabWidget.indexOf(self.tab_editorView) == -1:
+      self.tab_editorView.show()
+      self.tabWidget.insertTab(0,self.tab_editorView,QIcon(":/Images/Images/table.png"),"Editor View")
+      self.tabWidget.setCurrentWidget(self.tab_editorView)
+
+  def openLogTab(self):
+    if self.tabWidget.indexOf(self.tab_logView) == -1:
+      self.tab_logView.show()
+      self.tabWidget.insertTab(0,self.tab_logView,QIcon(":/Images/Images/folder.png"),"Log View")
+      self.tabWidget.setCurrentWidget(self.tab_logView)
+
   def openAbout(self):
     flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
     wnd = UrbansimAboutGui(self,flags)

@@ -18,6 +18,9 @@
   <property name="windowTitle" >
    <string>AZ-SMART</string>
   </property>
+  <property name="windowIcon" >
+   <iconset resource="opusmain.qrc" >:/Images/Images/cog.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QGridLayout" >
     <property name="leftMargin" >
@@ -67,8 +70,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>382</width>
-          <height>527</height>
+          <width>96</width>
+          <height>34</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -125,8 +128,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>364</width>
-              <height>437</height>
+              <width>96</width>
+              <height>38</height>
              </rect>
             </property>
             <attribute name="label" >
@@ -193,7 +196,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>382</width>
+          <width>331</width>
           <height>527</height>
          </rect>
         </property>
@@ -270,7 +273,7 @@
          <string>Editor</string>
         </attribute>
         <attribute name="icon" >
-         <iconset resource="opusmain.qrc" >:/Images/Images/table.png</iconset>
+         <iconset resource="opusmain.qrc" >:/Images/Images/table_lightning.png</iconset>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -407,7 +410,7 @@
          <string>Log View</string>
         </attribute>
         <attribute name="icon" >
-         <iconset resource="opusmain.qrc" >:/Images/Images/folder.png</iconset>
+         <iconset resource="opusmain.qrc" >:/Images/Images/table.png</iconset>
         </attribute>
        </widget>
       </widget>
@@ -457,9 +460,9 @@
     <property name="title" >
      <string>Utilities</string>
     </property>
-    <addaction name="actionPython_Console" />
+    <addaction name="actionPython_View" />
     <addaction name="actionLog_View" />
-    <addaction name="actionEditor" />
+    <addaction name="actionEditor_View" />
    </widget>
    <addaction name="menuProject" />
    <addaction name="menuMap" />
@@ -611,7 +614,7 @@
     <string>Log View</string>
    </property>
   </action>
-  <action name="actionPython_Console" >
+  <action name="actionPython_View" >
    <property name="icon" >
     <iconset resource="opusmain.qrc" >:/Images/Images/python_type.png</iconset>
    </property>
@@ -627,12 +630,12 @@
     <string>Log View</string>
    </property>
   </action>
-  <action name="actionEditor" >
+  <action name="actionEditor_View" >
    <property name="icon" >
     <iconset resource="opusmain.qrc" >:/Images/Images/table_lightning.png</iconset>
    </property>
    <property name="text" >
-    <string>Editor</string>
+    <string>Editor View</string>
    </property>
   </action>
   <action name="actionMap_View" >
