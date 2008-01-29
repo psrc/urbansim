@@ -117,7 +117,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     except:
       pass
     # Do something with the widget if we need to...
-    
+
   def openMapTab(self):
     if self.tabWidget.indexOf(self.tab_mapView) == -1:
       self.tab_mapView.show()
