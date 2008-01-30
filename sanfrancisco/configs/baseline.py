@@ -32,10 +32,10 @@ class Baseline(GeneralConfiguration):
             'description':'San Francisco baseline',
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-                cache_directory_root = r'/workspace/urbansim_cache/sanfrancisco',
+                cache_directory_root = r'e:/urbansim_cache/sanfrancisco',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
-                    existing_cache_to_copy = r'/workspace/urbansim_cache/sanfrancisco/cache_source',
+                    existing_cache_to_copy = r'e:/urbansim_cache/sanfrancisco/cache_source',
                     ),                
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
@@ -83,7 +83,7 @@ class Baseline(GeneralConfiguration):
                 unroll_gridcells = False
                 ),           
             'input_configuration': DatabaseConfiguration(
-                database_name = 'sanfrancisco_baseyear_estimation20070429',
+                database_name = 'sanfrancisco_baseyear_flattened',
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
                 package_order=['sanfrancisco', 'urbansim', 'opus_core'],
@@ -92,7 +92,7 @@ class Baseline(GeneralConfiguration):
             'models_configuration':models_configuration,
             
             'base_year':2001,
-            'years':(2002, 2005),
+            'years':(2002, 2030),
             'models':[ # models are executed in the same order as in this list 
                 "process_pipeline_events",
                 "real_estate_price_model",

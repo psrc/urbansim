@@ -23,5 +23,5 @@ class BaselineWithTravelModel(Baseline):
         self['description']='SF baseline + travel model'
         
         from sanfrancisco.travel_model.create_travel_model_configuration import create_travel_model_configuration
-        travel_model_configuration = create_travel_model_configuration('/workspace/urbansim_cache/sf_tm/', mode='full')
+        travel_model_configuration = create_travel_model_configuration('/sf_tm/', mode='full')
         self['travel_model_configuration'] = travel_model_configuration
