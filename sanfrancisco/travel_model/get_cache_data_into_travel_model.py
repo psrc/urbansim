@@ -30,7 +30,7 @@ class GetCacheDataIntoTravelModel(GetCacheDataIntoTravelModel):
                                        year,
                                        zone_set,
                                        dataset_pool,
-                                       tm_input_file_name="tm_input.txt",
+                                       tm_input_file_name="tm_input.csv",
                                        delimiter = ','):
         """Writes to file tm_input.txt in [travel_model_data_directory]/urbansim/[year], which travel model will read.
         """

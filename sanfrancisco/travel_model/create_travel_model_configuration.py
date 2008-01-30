@@ -27,6 +27,7 @@ def create_travel_model_configuration(scenario_dir_name,
     """
     
     travel_model_configuration = {}
+    # Edit the following to replace tm.cmd with the name of the batch file to run the travel model
     travel_model_configuration['travel_model_command'] = os.path.join(scenario_dir_name, "tm.cmd")
     
     ### mapping from urbansim zone variable name to travel model TAZ attribute name 
@@ -47,7 +48,7 @@ def create_travel_model_configuration(scenario_dir_name,
 
     ### file containing the output of travel_data table from travel model, including header in csv format
     ###
-    tm_to_urbansim_variable_file = r"tm_output.txt"  # relative to os.path.join(scenario_dir_name, year_dir)
+    tm_to_urbansim_variable_file = r"tm_output.csv"  # relative to os.path.join(scenario_dir_name, year_dir)
                                 
     travel_model_configuration.update( {
         "urbansim_to_tm_variable_mapping":urbansim_to_tm_variable_mapping,
@@ -71,13 +72,10 @@ def _add_models(travel_model_configuration, mode):
 def _add_years(travel_model_configuration, years_to_run):
     if years_to_run is None:
         years_to_run = {
-            2001:r'2001/urbansim',
-            2002:r'2002/urbansim',
-            2005:r'2005/urbansim',   #path to save interchanging files between urbansim and travel model
-            2010:r'2010/urbansim',   #path relative to scenario_dir_name
-            2015:r'2015/urbansim',
-            2020:r'2020/urbansim',
-            2025:r'2025/urbansim',
+            2005:r'2005',   #path to save interchanging files between urbansim and travel model
+            2010:r'2010',   #path relative to scenario_dir_name
+            2015:r'2015',
+            2025:r'2025',
             }
     for year, year_dir in years_to_run.iteritems():
         travel_model_configuration[year] = year_dir
