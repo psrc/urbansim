@@ -17,7 +17,6 @@
     <script_library type="script_library" >
       <script_path type="script_path" >projects.scripts</script_path>
       <esri_buffer_tool type="script_file" >esri_buffer</esri_buffer_tool>
-      <raw_sql_query type="script_file" >raw_sql</raw_sql_query>
       <esri_data_to_opus type="script_file" >esri_data_to_opus</esri_data_to_opus>
       <sql_data_to_opus type="script_file" >sql_data_to_opus</sql_data_to_opus>
       <opus_data_to_sql type="script_file" >opus_data_to_sql</opus_data_to_sql>
@@ -59,7 +58,6 @@
         <opus_data_year type="string" >2000</opus_data_year>
       </opus_data_to_esri>
     </script_batch>
-    <script_documentation type="documentation_path" >documentation/script_docs.html</script_documentation>
   </data_manager>
   <model_manager>
     <estimation type="dictionary" >

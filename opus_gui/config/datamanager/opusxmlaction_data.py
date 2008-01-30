@@ -120,7 +120,13 @@ class OpusXMLAction_Data(object):
                         SIGNAL("triggered()"),
                         self.placeHolderAction)
 
-
+        #jesse testing
+        self.actExecBatch = QAction(self.applicationIcon,
+                                      "Execute batch (TESTING)",
+                                      self.xmlTreeObject.parent)
+        QObject.connect(self.actExecBatch,
+                        SIGNAL("triggered()"),
+                        self.execBatch)
     def addScriptFile(self):
         #print "Add Script Pressed"
         newNode = self.currentIndex.model().domDocument.createElement(QString("processing_script"))
@@ -255,6 +261,10 @@ class OpusXMLAction_Data(object):
         y = RunScriptThread(self.xmlTreeObject.parent,x)
         y.run()
 
+    # jesse testing
+    def execBatch(self):
+        print "Execute batch (TESTING) pressed..."
+
     def placeHolderAction(self):
         pass
 
@@ -296,6 +306,8 @@ class OpusXMLAction_Data(object):
                     self.menu.addAction(self.actMoveNodeUp)
                     self.menu.addAction(self.actMoveNodeDown)
                     self.menu.addAction(self.actRemoveNode)
+                    #jesse testing
+                    self.menu.addAction(self.actExecBatch)
                     self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("documentation_path"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
