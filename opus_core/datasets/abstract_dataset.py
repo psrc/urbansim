@@ -1683,13 +1683,9 @@ class AbstractDataset(object):
         return self._get_attribute_box(name).is_version(version)
 
     def _get_attribute_type(self, name):
-       return self.attribute_boxes[name].get_type()
+        return self.attribute_boxes[name].get_type()
 
 
-
-
-
-        
     def _compute_one_variable(self, variable_name, dataset_pool, resources=None, quiet=False):
         """Compute variable given by the argument 'name'. The array of computed values is added to the class
         attribute 'set'. The argument resources (of type Resources)

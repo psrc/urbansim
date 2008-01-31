@@ -43,7 +43,7 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(name.get_alias(), 'p', msg="bad value for alias")
         self.assertEqual(name.get_autogen_class(), None, msg="bad value for autogen_class")
         
-    def xtest_alias_attribute_with_modification(self):
+    def test_alias_attribute_with_modification(self):
         # this tests an expression consisting of an alias for a primary attribute that is modified
         expr = "p = persons"
         storage = StorageFactory().get_storage('dict_storage')

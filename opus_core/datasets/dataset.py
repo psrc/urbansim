@@ -111,14 +111,15 @@ class Dataset(AbstractDataset):
             real_short_name = attr_name.get_short_name()
             if short_name!=real_short_name and real_short_name in self._primary_attribute_names:
                 short_name = real_short_name
+        if short_name not in self.get_attribute_names():
             if short_name in self._primary_attribute_names:
                 if self._id_names == None:
                     self._raise_error(NameError,
-                                      "Key 'id_name' is missing from resources of this dataset!")
+                                  "Key 'id_name' is missing from resources of this dataset!")
                 self.load_dataset(nchunks=1, attributes=[short_name])
             else:
                 self._raise_error(NameError,
-                                  "Cannot find attribute '%s'." % name)
+                              "Cannot find attribute '%s'." % name)
         elif not self.attribute_boxes[short_name].is_in_memory():
             if self.attribute_boxes[short_name].is_cached():
                 self.debug.print_debug("Loading %s.%s" % (self.get_dataset_name(), short_name), 8)
