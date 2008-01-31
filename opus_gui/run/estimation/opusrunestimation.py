@@ -1,15 +1,15 @@
 # UrbanSim software. Copyright (C) 1998-2007 University of Washington
-# 
+#
 # You can redistribute this program and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software Foundation
 # (http://www.gnu.org/copyleft/gpl.html).
-# 
+#
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
-# 
+#
 
 
 # PyQt4 includes for python bindings to QT
@@ -33,14 +33,14 @@ class RunEstimationThread(QThread):
         QThread.__init__(self, parentThread)
         self.parent = parent
         self.xml_file = xml_file
-        
+
     def run(self):
         self.parent.progressBar.setRange(0,100)
         self.parent.estimation.progressCallback = self.progressCallback
         self.parent.estimation.finishedCallback = self.finishedCallback
         self.parent.estimation.errorCallback = self.errorCallback
         self.parent.estimation.run()
-        
+
     def progressCallback(self,percent):
         print "Ping From Estimation"
         self.emit(SIGNAL("estimationPing(PyQt_PyObject)"),percent)
@@ -68,7 +68,7 @@ class OpusEstimation(object):
         self.config = None
         self.statusfile = None
         self.firstRead = True
-    
+
     def formatExceptionInfo(self,maxTBlevel=5):
         import traceback
         cla, exc, trbk = sys.exc_info()
@@ -79,7 +79,7 @@ class OpusEstimation(object):
             excArgs = "<no args>"
         excTb = traceback.format_tb(trbk, maxTBlevel)
         return (excName, excArgs, excTb)
-    
+
     def run(self):
         if WithOpus:
             # Run the Eugene model using the XML version of the Eugene configuration.
@@ -106,7 +106,7 @@ class OpusEstimation(object):
                     specification = xml_config.get_estimation_specification(model_config['full_name'])
                     er = EstimationRunner()
                     er.run_estimation(estimation_config, model,
-                                      specification, save_estimation_results=True, diagnose=False)
+                                      specification, save_estimation_results=False, diagnose=False)
                 succeeded = True
             except:
                 succeeded = False
@@ -119,7 +119,7 @@ class OpusEstimation(object):
             self.finishedCallback(succeeded)
         else:
             pass
-        
+
     def _compute_progress(self, statusfile):
         if statusfile is None:
             return {"percentage":0,"message":"Estimation initializing..."}
