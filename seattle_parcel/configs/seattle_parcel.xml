@@ -511,7 +511,7 @@
         <use_environment_variables type="boolean" choices="True|False" >True</use_environment_variables>
         <database_name type="string" >seattle_2000_parcel_baseyear_data</database_name>
       </baseyear_database_configuration>
-      <cache_directory parser_action="prefix_with_opus_data_path" type="directory" >seattle_parcel</cache_directory>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory" >run_5006.2008_01_28_10_11</cache_directory>
       <creating_baseyear_cache_configuration type="class" >
         <Class_name flags="hidden" type="string" >CreatingBaseyearCacheConfiguration</Class_name>
         <Class_path flags="hidden" type="string" >urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
@@ -614,19 +614,19 @@
   <results_manager>
     <Libraries type="group" >
       <model.parcel type="indicator_library" >
-        <population type="indicator" >
+        <number_of_jobs type="indicator" >
           <package type="string" >urbansim</package>
-          <valid_datasets type="string" >GEOGRAPHY</valid_datasets>
+          <valid_datasets type="string" >zone</valid_datasets>
           <documentation_link type="string" />
-          <expression type="string" >urbansim.DATASET.population</expression>
-        </population>
+          <expression type="string" >urbansim_parcel.DATASET.number_of_jobs</expression>
+        </number_of_jobs>
       </model.parcel>
       <seattle.frank.indicators type="indicator_library" >
         <global_population_density type="indicator" >
           <package type="string" >urbansim</package>
           <valid_datasets type="string" >alldata</valid_datasets>
           <documentation_link type="string" />
-          <expression type="string" >alldata.aggregate_all(urbansim.parcel.population_density, function=sum)</expression>
+          <expression type="string" >alldata.aggregate_all(urbansim_parcel.parcel.population_density, function=sum)</expression>
         </global_population_density>
       </seattle.frank.indicators>
       <my_indicators append_to="True" type="indicator_library" >
@@ -634,7 +634,7 @@
           <package type="string" >urbansim</package>
           <valid_datasets type="string" >alldata</valid_datasets>
           <documentation_link type="string" />
-          <expression type="string" >alldata.aggregate_all(urbansim.parcel.residential_units, function=sum)</expression>
+          <expression type="string" >alldata.aggregate_all(urbansim_parcel.parcel.residential_units, function=sum)</expression>
         </residential_units>
       </my_indicators>
     </Libraries>
@@ -647,11 +647,11 @@
       </seattle_parcel_baseline>
     </Data_sources>
     <Results type="selectable_list" >
-      <population.zone.seattle_parcel_baseline type="indicator_result" >
+      <number_of_jobs.zone.seattle_parcel_baseline type="indicator_result" >
         <source_data type="string" >seattle_parcel_baseline</source_data>
-        <indicator_name type="string" >population</indicator_name>
+        <indicator_name type="string" >number_of_jobs</indicator_name>
         <dataset_name type="string" >zone</dataset_name>
-      </population.zone.seattle_parcel_baseline>
+      </number_of_jobs.zone.seattle_parcel_baseline>
     </Results>
   </results_manager>
 </opus_project>
