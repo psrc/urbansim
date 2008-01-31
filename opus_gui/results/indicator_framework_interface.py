@@ -31,7 +31,7 @@ class IndicatorFrameworkInterface:
         source_data_node = self.domDocument.elementsByTagName(source_data_name).item(0)
 
         dataset_pool_configuration = DatasetPoolConfiguration(
-             package_order=['eugene','urbansim','opus_core'],
+             package_order=['seattle_parcel','urbansim_parcel','urbansim','opus_core'],
              package_order_exceptions={},
              )
         
@@ -44,7 +44,7 @@ class IndicatorFrameworkInterface:
                  dataset_pool_configuration = dataset_pool_configuration,
                  cache_directory = cache_directory, 
                  name = '',
-                 years = [1980])
+                 years = years)
         
         return source_data
         
