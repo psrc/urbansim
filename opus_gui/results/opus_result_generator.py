@@ -27,7 +27,8 @@ try:
     from opus_gui.results.xml_helper_methods import get_child_values
     from inprocess.travis.opus_core.indicator_framework.visualizer.visualizers.table import Table
     from opus_core.storage_factory import StorageFactory
-
+    from opus_gui.results.xml_helper_methods import get_child_values
+    
 except ImportError:
     WithOpus = False
     print "Unable to import opus core libs"
@@ -100,11 +101,7 @@ class OpusResultVisualizer(object):
                 # find the directory containing the eugene xml configurations
                 fileNameInfo = QFileInfo(self.xml_path)
                 fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
-                print fileNameAbsolute
-                self.config = XMLConfiguration(str(fileNameAbsolute)).get_run_configuration('Eugene_baseline')
-
-                self._visualize()
-                
+                self._visualize(configuration_path = fileNameAbsolute)
                 succeeded = True
             except:
                 succeeded = False
@@ -118,7 +115,7 @@ class OpusResultVisualizer(object):
             pass
     
     
-    def _visualize(self):
+    def _visualize(self, configuration_path):
         info = get_child_values(parent = self.clicked_node,
                                 child_names = ['source_data',
                                                'indicator_name',
@@ -127,10 +124,13 @@ class OpusResultVisualizer(object):
         source_data_name = str(info['source_data'])
         indicator_name = str(info['indicator_name'])
         dataset_name = str(info['dataset_name'])
-        
+        scenario_name = get_scenario_name(domDocument = self.domDocument, 
+                                          source_data_name = source_data_name)
+        self.config = XMLConfiguration(str(configuration_path)).get_run_configuration(scenario_name)
+
         cache_directory = self.config['cache_directory']
-        interface = IndicatorFrameworkInterface(domDocument = self.domDocument)
         
+        interface = IndicatorFrameworkInterface(domDocument = self.domDocument)
         source_data = interface.get_source_data_from_XML(
                                      source_data_name = source_data_name, 
                                      cache_directory = cache_directory)
@@ -213,10 +213,8 @@ class OpusResultGenerator(object):
                 # find the directory containing the eugene xml configurations
                 fileNameInfo = QFileInfo(self.xml_path)
                 fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
-                print fileNameAbsolute
-                self.config = XMLConfiguration(str(fileNameAbsolute)).get_run_configuration('Eugene_baseline')
-
-                self._generate_results()
+                configuration_path = fileNameAbsolute
+                self._generate_results(configuration_path = configuration_path)
                 
                 succeeded = True
             except:
@@ -230,9 +228,11 @@ class OpusResultGenerator(object):
         else:
             pass
 
-    def _generate_results(self):
+    def _generate_results(self, configuration_path):
+        scenario_name = get_scenario_name(domDocument = self.domDocument, 
+                                          source_data_name = self.source_data_name)
+        self.config = XMLConfiguration(str(configuration_path)).get_run_configuration(scenario_name)
         
-        #TODO eliminate hardcoded package_order
         cache_directory = self.config['cache_directory']
         interface = IndicatorFrameworkInterface(domDocument = self.domDocument)
         
@@ -281,6 +281,13 @@ class OpusResultGenerator(object):
                         self.guiElement.logText.insertPlainText(QString("."))
                 #self.guiElement.logText.append("ping")
         return newKey
+
+def get_scenario_name(domDocument, source_data_name):
+    source_data_node = domDocument.elementsByTagName(source_data_name).item(0)
+    scenario_name = str(get_child_values(parent = source_data_node, 
+                             child_names = ['scenario_name']))
+    return scenario_name
+    
     
 def formatExceptionInfo(maxTBlevel=5):
     import traceback

@@ -18,7 +18,6 @@ from inprocess.travis.opus_core.indicator_framework.maker.source_data import Sou
 from inprocess.travis.opus_core.indicator_framework.representations.indicator import Indicator
 from inprocess.travis.opus_core.indicator_framework.representations.computed_indicator import ComputedIndicator
 
-from opus_core.storage_factory import StorageFactory
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration    
 
 from opus_gui.results.xml_helper_methods import get_child_values
@@ -28,6 +27,7 @@ class IndicatorFrameworkInterface:
         self.domDocument = domDocument
     
     def get_source_data_from_XML(self, source_data_name, cache_directory):
+        #TODO eliminate hardcoded package_order
         source_data_node = self.domDocument.elementsByTagName(source_data_name).item(0)
 
         dataset_pool_configuration = DatasetPoolConfiguration(
