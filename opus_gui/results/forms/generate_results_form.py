@@ -124,11 +124,11 @@ class GenerateResultsForm(QWidget):
     def _setup_co_dataset_name(self):
         available_datasets = [
             '[select]',
-            'parcel',
+            #'parcel',
             'zone',
-            'taz',
-            'county',
-            'alldata'
+            #'taz',
+            #'county',
+            #'alldata'
         ]
         self.co_dataset_name = QComboBox(self.groupBox)
         self.co_dataset_name.setObjectName("co_dataset_name")
