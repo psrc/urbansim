@@ -105,7 +105,7 @@
             <constant type="variable" choices="Use" >Use</constant>
             <inugb type="variable" choices="Use|Skip" >Use</inugb>
             <lnemp20da type="variable" choices="Use|Skip" >Use</lnemp20da>
-            <lnlotsqft type="variable" choices="Use|Skip" >Use</lnlotsqft>
+            <lnlotsqft type="variable" choices="Use|Skip" >Skip</lnlotsqft>
             <lnsqft type="variable" choices="Use|Skip" >Use</lnsqft>
           </variables>
         </agriculture>
@@ -114,14 +114,14 @@
           <submodel_id type="integer" >2</submodel_id>
           <variables type="selectable_list" >
             <constant type="variable" choices="Use" >Use</constant>
-            <inugb type="variable" choices="Use|Skip" >Use</inugb>
+            <inugb type="variable" choices="Use|Skip" >Skip</inugb>
             <is_pre_1940 type="variable" choices="Use|Skip" >Use</is_pre_1940>
             <ln_invfar type="variable" choices="Use|Skip" >Use</ln_invfar>
             <lnavginc type="variable" choices="Use|Skip" >Skip</lnavginc>
             <lnemp10wa type="variable" choices="Use|Skip" >Use</lnemp10wa>
             <lnemp20da type="variable" choices="Use|Skip" >Skip</lnemp20da>
             <lnempden type="variable" choices="Use|Skip" >Use</lnempden>
-            <lngcdacbd type="variable" choices="Use|Skip" >Use</lngcdacbd>
+            <lngcdacbd type="variable" choices="Use|Skip" >Skip</lngcdacbd>
           </variables>
         </civil>
         <commercial type="submodel" >
@@ -380,8 +380,8 @@
             <lnemp20wa type="variable" choices="Use|Skip" >Skip</lnemp20wa>
             <lnempden type="variable" choices="Use|Skip" >Use</lnempden>
             <lngcdacbd type="variable" choices="Use|Skip" >Use</lngcdacbd>
-            <lnlotsqft type="variable" choices="Use|Skip" >Use</lnlotsqft>
-            <lnsqft type="variable" choices="Use|Skip" >Use</lnsqft>
+            <lnlotsqft type="variable" choices="Use|Skip" >Skip</lnlotsqft>
+            <lnsqft type="variable" choices="Use|Skip" >Skip</lnsqft>
           </variables>
         </vacant_developable>
         <warehousing type="submodel" >
@@ -391,16 +391,16 @@
             <hwy200 type="variable" choices="Use|Skip" >Skip</hwy200>
             <art300 type="variable" choices="Use|Skip" >Skip</art300>
             <art600 type="variable" choices="Use|Skip" >Skip</art600>
-            <hbwavgtmda type="variable" choices="Use|Skip" >Use</hbwavgtmda>
+            <hbwavgtmda type="variable" choices="Use|Skip" >Skip</hbwavgtmda>
             <inugb type="variable" choices="Use|Skip" >Skip</inugb>
             <is_pre_1940 type="variable" choices="Use|Skip" >Skip</is_pre_1940>
-            <ln_bldgage type="variable" choices="Use|Skip" >Use</ln_bldgage>
-            <ln_invfar type="variable" choices="Use|Skip" >Use</ln_invfar>
-            <lnemp20tw type="variable" choices="Use|Skip" >Use</lnemp20tw>
+            <ln_bldgage type="variable" choices="Use|Skip" >Skip</ln_bldgage>
+            <ln_invfar type="variable" choices="Use|Skip" >Skip</ln_invfar>
+            <lnemp20tw type="variable" choices="Use|Skip" >Skip</lnemp20tw>
             <lnempden type="variable" choices="Use|Skip" >Use</lnempden>
             <lngcdacbd type="variable" choices="Use|Skip" >Use</lngcdacbd>
-            <lnlotsqft type="variable" choices="Use|Skip" >Use</lnlotsqft>
-            <lnpopden type="variable" choices="Use|Skip" >Use</lnpopden>
+            <lnlotsqft type="variable" choices="Use|Skip" >Skip</lnlotsqft>
+            <lnpopden type="variable" choices="Use|Skip" >Skip</lnpopden>
           </variables>
         </warehousing>
         <mixed_use type="submodel" >
@@ -428,16 +428,16 @@
         </mixed_use>
       </real_estate_price_model>
       <estimation_config type="dictionary" >
-        <cache_directory parser_action="prefix_with_opus_data_path" type="directory" >psrc_parcel</cache_directory>
+        <cache_directory parser_action="prefix_with_opus_data_path" type="directory" >seattle_parcel</cache_directory>
         <output_configuration type="class" >
           <Class_name flags="hidden" type="string" >DatabaseConfiguration</Class_name>
           <Class_path flags="hidden" type="string" >opus_core.database_management.database_configuration</Class_path>
-          <database_name type="string" >psrc_2005_parcel_baseyear_change_20071011</database_name>
+          <database_name type="string" >i think this is not used unless saving results</database_name>
         </output_configuration>
         <dataset_pool_configuration type="class" >
           <Class_name flags="hidden" type="string" >DatasetPoolConfiguration</Class_name>
           <Class_path flags="hidden" type="string" >opus_core.configurations.dataset_pool_configuration</Class_path>
-          <package_order type="list" >['psrc_parcel', 'psrc', 'urbansim_parcel', 'urbansim', 'opus_core']</package_order>
+          <package_order type="list" >['seattle_parcel','urbansim_parcel','urbansim']</package_order>
           <package_order_exceptions type="dictionary" />
         </dataset_pool_configuration>
         <datasets_to_cache_after_each_model type="list" >[]</datasets_to_cache_after_each_model>
@@ -473,11 +473,11 @@
     </estimation>
   </model_manager>
   <scenario_manager>
-    <default_scenario type="scenario" >
-      <import type="file" >urbansim_gridcell.xml</import>
-    </default_scenario>
     <Seattle_baseline type="scenario" executable="True" >
-      <parent parser_action="parent" type="scenario_name" >default_scenario</parent>
+      <parent parser_action="parent_old_format" type="dictionary">
+        <Class_name type="string">UrbansimParcelConfiguration</Class_name>
+        <Class_path type="string">urbansim_parcel.configs.controller_config</Class_path>
+      </parent>
       <base_year type="integer" >2000</base_year>
       <years_to_run config_name="years" type="tuple" >
         <startyear type="integer" >2001</startyear>
@@ -497,6 +497,10 @@
         </employment_location_choice_model>
         <distribute_unplaced_jobs_model type="model" choices="Run|Skip" >Run</distribute_unplaced_jobs_model>
       </models_to_run>
+
+
+
+
       <baseyear_database_configuration config_name="input_configuration" type="class" >
         <Class_name flags="hidden" type="string" >DatabaseConfiguration</Class_name>
         <Class_path flags="hidden" type="string" >opus_core.database_management.database_configuration</Class_path>
@@ -520,27 +524,91 @@
         </baseyear_cache>
         <cache_scenario_database type="string" >urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
         <tables_to_cache type="selectable_list" >
-          <annual_employment_control_totals type="table" choices="Cache|Skip" >Cache</annual_employment_control_totals>
+          <households type="table" choices="Cache|Skip" >Cache</households>
+          <buildings type="table" choices="Cache|Skip" >Cache</buildings>
+          <parcels type="table" choices="Cache|Skip" >Cache</parcels>
+          <gridcells type="table" choices="Cache|Skip" >Cache</gridcells>
+          <zones type="table" choices="Cache|Skip" >Cache</zones>
+          <jobs type="table" choices="Cache|Skip" >Cache</jobs>
+          <households_for_estimation type="table" choices="Cache|Skip" >Cache</households_for_estimation>
+          <jobs_for_estimation type="table" choices="Cache|Skip" >Cache</jobs_for_estimation>
+          <development_event_history type="table" choices="Cache|Skip" >Cache</development_event_history>
+          <travel_data type="table" choices="Cache|Skip" >Cache</travel_data>
+          <building_types type="table" choices="Cache|Skip" >Cache</building_types>
+          <job_building_types type="table" choices="Cache|Skip" >Cache</job_building_types>
+          <urbansim_constants type="table" choices="Cache|Skip" >Cache</urbansim_constants>
+          <target_vacancies type="table" choices="Cache|Skip" >Cache</target_vacancies>
+          <home_based_employment_location_choice_model_coefficients type="table" choices="Cache|Skip" >Cache</home_based_employment_location_choice_model_coefficients>
+          <home_based_employment_location_choice_model_specification type="table" choices="Cache|Skip" >Cache</home_based_employment_location_choice_model_specification>
+          <non_home_based_employment_location_choice_model_coefficients type="table" choices="Cache|Skip" >Cache</non_home_based_employment_location_choice_model_coefficients>
+          <non_home_based_employment_location_choice_model_specification type="table" choices="Cache|Skip" >Cache</non_home_based_employment_location_choice_model_specification>
+          <household_location_choice_model_coefficients type="table" choices="Cache|Skip" >Cache</household_location_choice_model_coefficients>
+          <household_location_choice_model_specification type="table" choices="Cache|Skip" >Cache</household_location_choice_model_specification>
+          <real_estate_price_model_coefficients type="table" choices="Cache|Skip" >Cache</real_estate_price_model_coefficients>
+          <real_estate_price_model_specification type="table" choices="Cache|Skip" >Cache</real_estate_price_model_specification>
           <annual_household_control_totals type="table" choices="Cache|Skip" >Cache</annual_household_control_totals>
           <annual_relocation_rates_for_households type="table" choices="Cache|Skip" >Cache</annual_relocation_rates_for_households>
+          <household_characteristics_for_ht type="table" choices="Cache|Skip" >Cache</household_characteristics_for_ht>
+          <annual_employment_control_totals type="table" choices="Cache|Skip" >Cache</annual_employment_control_totals>
           <annual_relocation_rates_for_jobs type="table" choices="Cache|Skip" >Cache</annual_relocation_rates_for_jobs>
-          <building_sqft_per_job type="table" choices="Cache|Skip" >Cache</building_sqft_per_job>
-          <building_types type="table" choices="Cache|Skip" >Cache</building_types>
-          <buildings type="table" choices="Cache|Skip" >Cache</buildings>
-          <cities type="table" choices="Cache|Skip" >Cache</cities>
-          <constant_taz_columns type="table" choices="Cache|Skip" >Cache</constant_taz_columns>
-          <counties type="table" choices="Cache|Skip" >Cache</counties>
-          <demolition_cost_per_sqft type="table" choices="Cache|Skip" >Cache</demolition_cost_per_sqft>
-          <development_constraints type="table" choices="Cache|Skip" >Cache</development_constraints>
-          <development_template_components type="table" choices="Cache|Skip" >Cache</development_template_components>
-          <development_templates type="table" choices="Cache|Skip" >Cache</development_templates>
-          <employment_adhoc_sector_group_definitions type="table" choices="Cache|Skip" >Cache</employment_adhoc_sector_group_definitions>
-          <employment_adhoc_sector_groups type="table" choices="Cache|Skip" >Cache</employment_adhoc_sector_groups>
-          <employment_sectors type="table" choices="Cache|Skip" >Cache</employment_sectors>
-          <fazes type="table" choices="Cache|Skip" >Cache</fazes>
+          <land_use_types type="table" choices="Cache|Skip" >Cache</land_use_types>
           <generic_land_use_types type="table" choices="Cache|Skip" >Cache</generic_land_use_types>
+          <employment_sectors type="table" choices="Cache|Skip" >Cache</employment_sectors>
+          <employment_adhoc_sector_groups type="table" choices="Cache|Skip" >Cache</employment_adhoc_sector_groups>
+          <employment_adhoc_sector_group_definitions type="table" choices="Cache|Skip" >Cache</employment_adhoc_sector_group_definitions>
+          <development_templates type="table" choices="Cache|Skip" >Cache</development_templates>
+          <development_template_components type="table" choices="Cache|Skip" >Cache</development_template_components>
+          <development_constraints type="table" choices="Cache|Skip" >Cache</development_constraints>
+          <building_sqft_per_job type="table" choices="Cache|Skip" >Cache</building_sqft_per_job>
+          <fazes type="table" choices="Cache|Skip" >Cache</fazes>
+          <fazes type="table" choices="Cache|Skip" >Cache</fazes>
+          <demolition_cost_per_sqft type="table" choices="Cache|Skip" >Cache</demolition_cost_per_sqft>
+          <constant_taz_columns type="table" choices="Cache|Skip" >Cache</constant_taz_columns>
         </tables_to_cache>
+
+
+        <tables_to_cache_nchunks type="dictionary" >
+          <parcels type="integer" >1</parcels>
+        </tables_to_cache_nchunks>
+        <unroll_gridcells type="boolean">False</unroll_gridcells>
+
+
       </creating_baseyear_cache_configuration>
+
+      <dataset_pool_configuration type="class" >
+        <Class_name flags="hidden" type="string" >DatasetPoolConfiguration</Class_name>
+        <Class_path flags="hidden" type="string" >opus_core.configurations.dataset_pool_configuration</Class_path>
+        <package_order type="list" >['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</package_order>
+        <package_order_exceptions type="dictionary" />
+      </dataset_pool_configuration>
+
+      <flush_dataset_to_cache_after_each_model type="boolean">False</flush_dataset_to_cache_after_each_model>
+      <flush_variables type="boolean">False</flush_variables>
+      <low_memory_run type="boolean">False</low_memory_run>
+
+      <datasets_to_cache_after_each_model type="list" >['parcel', 'building', 'household', 'job',
+                                                      'development_project_proposal_component',
+                                                      'development_project_proposal', 'travel_data']</datasets_to_cache_after_each_model>
+      <unroll_gridcells type="boolean">False</unroll_gridcells>
+
+      <datasets_to_preload type="dictionary">
+       <zone type="dictionary"></zone>
+       <household type="dictionary"></household>
+       <building type="dictionary"></building>
+      <parcel type="dictionary"><package_name type="string">urbansim_parcel</package_name></parcel>
+      <development_template type="dictionary"><package_name type="string">urbansim_parcel</package_name></development_template>
+       <development_template_component type="dictionary"><package_name type="string">urbansim_parcel</package_name></development_template_component>
+
+
+       <job type="dictionary"></job>
+       <building_type type="dictionary"><package_name type="string">urbansim_parcel</package_name></building_type>
+
+      <travel_data type="dictionary"></travel_data>
+       <job_building_type type="dictionary"></job_building_type>
+      </datasets_to_preload>
+
+
+
     </Seattle_baseline>
   </scenario_manager>
   <results_manager>
