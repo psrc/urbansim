@@ -217,11 +217,19 @@ class OpusResultGenerator(object):
                 self._generate_results(configuration_path = configuration_path)
                 
                 succeeded = True
-            except:
+            except Exception, e:
                 succeeded = False
-                errorInfo = formatExceptionInfo()
-                errorString = "Unexpected Error From Model :: " + str(errorInfo)
-                print errorInfo
+                (exception_type, args, trace) = formatExceptionInfo()
+                error_characterization = 'Unexpected Error From Model'
+                error_message = str(e)
+                errorString = '%s :: %s \n%s\n%s%s'%(
+                    error_characterization,
+                    exception_type,
+                    args,
+                    ''.join(trace),
+                    error_message                                   
+                )
+                print errorString
                 self.errorCallback(errorString)
 
             self.finishedCallback(succeeded)
@@ -231,9 +239,14 @@ class OpusResultGenerator(object):
     def _generate_results(self, configuration_path):
         scenario_name = get_scenario_name(domDocument = self.domDocument, 
                                           source_data_name = self.source_data_name)
+        try:
+            import pydevd;pydevd.settrace()
+        except:
+            pass
         self.config = XMLConfiguration(str(configuration_path)).get_run_configuration(scenario_name)
         
         cache_directory = self.config['cache_directory']
+        print cache_directory
         interface = IndicatorFrameworkInterface(domDocument = self.domDocument)
         
         source_data = interface.get_source_data_from_XML(
@@ -284,9 +297,9 @@ class OpusResultGenerator(object):
 
 def get_scenario_name(domDocument, source_data_name):
     source_data_node = domDocument.elementsByTagName(source_data_name).item(0)
-    scenario_name = str(get_child_values(parent = source_data_node, 
-                             child_names = ['scenario_name']))
-    return scenario_name
+    scenario_name = get_child_values(parent = source_data_node, 
+                             child_names = ['scenario_name'])
+    return scenario_name['scenario_name']
     
     
 def formatExceptionInfo(maxTBlevel=5):
