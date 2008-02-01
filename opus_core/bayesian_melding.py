@@ -16,7 +16,7 @@
 
 import os
 import gc
-from numpy import ones, zeros, float32, array, arange, transpose, reshape, sort, maximum, mean, where, concatenate, round_, argsort, resize
+from numpy import ones, zeros, float32, array, arange, transpose, reshape, sort, maximum, mean, where, concatenate, round_, argsort, resize, average
 from scipy import ndimage
 from opus_core.model_component_creator import ModelComponentCreator
 from opus_core.misc import load_from_text_file, write_to_text_file, try_transformation, write_table_to_text_file, load_table_from_text_file
@@ -211,12 +211,7 @@ class BayesianMelding:
         belong to this set of runs. This list is read and stored in self.cache_set.
         'observed_data' is an object of ObservedData that contains all the information about observed data.
         """
-        file = os.path.join(cache_directory, self.caches_file_name)
-        if not os.path.exists(file):
-            raise StandardError, "Directory %s must contain a file '%s'." % (cache_directory,
-                                                                             self.caches_file_name)
-        self.cache_directory = cache_directory
-        self.cache_set = load_from_text_file(file) # it is an array
+        self.set_cache_attributes(cache_directory)
         self.number_of_runs = self.cache_set.size
         self.observed_data = observed_data
         self.package_order = package_order
@@ -236,6 +231,14 @@ class BayesianMelding:
                 self.scaling_parent_datasets[dir] = {}
             self.scaling_child_datasets[run] = {}
 
+    def set_cache_attributes(self, cache_directory):
+        file = os.path.join(cache_directory, self.caches_file_name)
+        if not os.path.exists(file):
+            raise StandardError, "Directory %s must contain a file '%s'." % (cache_directory,
+                                                                             self.caches_file_name)
+        self.cache_directory = cache_directory
+        self.cache_set = load_from_text_file(file) # it is an array
+        
     def get_datasets(self, dataset_pool):
         result = {}
         for dataset in self.datasets_to_create:
@@ -551,7 +554,7 @@ class BayesianMelding:
             variable_list = self.get_variable_names()
         else:
             variable_list = quantities
-        write_to_text_file(file, array([get_base_year(), self.get_calibration_year()]), delimiter=' ')
+        write_to_text_file(file, array([self.get_base_year(), self.get_calibration_year()]), delimiter=' ')
         for quant in variable_list:
             self.export_bm_parameters_of_one_quantity(quant, file, add_to_file=True)
             
@@ -612,7 +615,7 @@ class BayesianMeldingFromFile(BayesianMelding):
     """ Class to be used if bm parameters were stored previously using export_bm_parameters of BayesianMelding class.
         It can be passed into bm_normal_posterior.py.
     """
-    def __init__(self, filename):
+    def __init__(self, filename, package_order=['core']):
         """The file 'filename' has the following structure:
         1. line: base_year calibration_year 
         2 lines per each variable: 
@@ -626,6 +629,7 @@ class BayesianMeldingFromFile(BayesianMelding):
         self.ahat = {}
         self.v = {}
         self.weight_components = {}
+        self.package_order = package_order
         counter = 1
         for i in range(nvar):
             self.variable_names.append(content[counter])
@@ -643,35 +647,63 @@ class BayesianMeldingFromFile(BayesianMelding):
     def get_variable_names(self):
         return self.variable_names
     
-    def __init_old__(self, filename):
-        """The file 'filename' must have weights in first line, variances in second line and rest are the means. 
-        """
-        table = load_table_from_text_file(filename, convert_to_float=True)[0]
-        self.weights = table[0,1:table.shape[1]]
-        self.variance = table[1,1:table.shape[1]]
-        self.means = table[2:table.shape[0],1:table.shape[1]]
-        self.m_ids = (round_(table[2:table.shape[0],0])).astype('int32')
-        
-#    def get_posterior_component_mean(self):
-#        return self.means
-#    
-#    def get_posterior_component_variance(self):
-#        return self.variance
+    def generate_posterior_distribution(self, year, quantity_of_interest, cache_directory=None, values=None, ids=None, procedure="opus_core.bm_normal_posterior",
+                                        use_bias_and_variance_from=None, transformed_back=True, transformation_pair = (None, None), **kwargs):
+        if cache_directory is not None:
+            self.set_cache_attributes(cache_directory)
+        else:
+            if values is None or ids is None:
+                raise StandardError, "Either cache_directory or values and ids must be given."
+            
+        self.set_posterior(year, quantity_of_interest, values=values, ids=ids, use_bias_and_variance_from=use_bias_and_variance_from, transformation_pair=transformation_pair)
+        procedure_class = ModelComponentCreator().get_model_component(procedure)
+        self.simulated_values = procedure_class.run(self, **kwargs)
+        if transformed_back and (self.transformation_pair_for_prediction[0] is not None): # need to transform back
+            self.simulated_values = try_transformation(self.simulated_values,
+                                                       self.transformation_pair_for_prediction[1])
+        return self.simulated_values
     
-    def set_posterior(self, year, quantity_of_interest, values, ids, use_bias_and_variance_from=None, transformation_pair = ("sqrt", "**2")):
+    def set_cache_attributes(self, cache_directory):
+        file = os.path.join(cache_directory, self.caches_file_name)
+        if not os.path.exists(file):
+            # if the file cache_directores does not exist, consider this directory as the only directory in the set
+            self.cache_set = array([cache_directory])
+        else:
+            self.cache_set = load_from_text_file(file) # it is an array
+        self.cache_directory = cache_directory
+        
+    def set_posterior(self, year, quantity_of_interest, values=None, ids=None, use_bias_and_variance_from=None, transformation_pair = (None, None)):
         self.set_propagation_factor(year)
         if use_bias_and_variance_from is None:
             use_bias_and_variance_from = quantity_of_interest
             
         self.use_bias_and_variance_index = self.get_index_for_quantity(use_bias_and_variance_from)
         self.transformation_pair_for_prediction = transformation_pair
-        self.compute_m(values, ids)
+        self.compute_m(year, quantity_of_interest, values, ids)
         
-    def compute_m(self, values, ids):
+    def _get_m_from_values(self, values, ids):
         self.m = values
         self.m_ids = ids
         if self.m.ndim < 2:
             self.m = resize(self.m, (self.m.size, 1))
         self.m = try_transformation(self.m, self.transformation_pair_for_prediction[0])
 
-    
+    def compute_m(self, year, quantity_of_interest, values=None, ids=None):
+        if (values is not None) and (ids is not None):
+            self._get_m_from_values(values, ids)
+            return
+        variable_name = VariableName(quantity_of_interest)
+        dataset_name = variable_name.get_dataset_name()
+        for i in range(self.cache_set.size):
+            ds = self._compute_variable(i, variable_name, dataset_name, year)
+            if i == 0: # first run
+                m = zeros((ds.size(), self.cache_set.size), dtype=float32)
+                self.m_ids = ds.get_id_attribute()
+            m[:, i] = try_transformation(ds.get_attribute(variable_name), self.transformation_pair_for_prediction[0])
+        self.m = resize(average(m, axis=1), (m.shape[0], 1))
+            
+    def _compute_variable(self, run_index, variable, dataset_name, year, dummy=None):
+        dataset_pool = setup_environment(self.cache_set[run_index], year, self.package_order)
+        ds = dataset_pool.get_dataset(dataset_name)
+        ds.compute_variables(variable, dataset_pool=dataset_pool)            
+        return ds
