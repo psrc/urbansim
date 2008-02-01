@@ -18,7 +18,7 @@ from variable_functions import my_attribute_label
 class population_per_acre(Variable):
     """population in a zone / acres in a zone"""
 
-    _return_type="int32"
+    _return_type="float32"
     
     def dependencies(self):
         return [
@@ -67,7 +67,7 @@ class Tests(opus_unittest.OpusTestCase):
            }
         )
         
-        should_be = array([7/0.1, int(6/(0.3+0.4)), 6/0.2])
+        should_be = array([7/0.1, 6/(0.3+0.4), 6/0.2])
 
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 if __name__=='__main__':
