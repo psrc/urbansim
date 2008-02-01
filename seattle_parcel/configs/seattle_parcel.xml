@@ -25,34 +25,34 @@
     <script_batch type="script_batch" >
       <esri_buffer_tool type="script_config" >
         <script_hook type="script_library_ref" >esri_buffer_tool</script_hook>
-        <input_shapefile type="string" >c:\tmmp\cbd.shp</input_shapefile>
-        <output_shapefile type="string" >c:\tmmp\cbd222.shp</output_shapefile>
-        <buffer_size type="integer" >49</buffer_size>
+        <input_shapefile type="string" >c:\opus\opus_data\geodatabases\seattle_parcel.gdb\feature_classes\fazes_fc</input_shapefile>
+        <output_shapefile type="string" >c:\opus\opus_data\geodatabases\output_geodb.gdb\fazes_fc_500</output_shapefile>
+        <buffer_size type="integer" >500</buffer_size>
       </esri_buffer_tool>
       <esri_data_to_opus type="script_config" >
         <script_hook type="script_library_ref" >esri_data_to_opus</script_hook>
-        <esri_data_path type="string" >C:\opus\src\trunk\opus_core\store\data\esri\test_fgdb.gdb</esri_data_path>
-        <esri_table_name type="string" >test_table</esri_table_name>
-        <opus_data_directory type="string" >c:\urbansim_cache</opus_data_directory>
+        <esri_data_path type="string" >c:\opus\opus_data\geodatabases\seattle_parcel.gdb</esri_data_path>
+        <esri_table_name type="string" >zones</esri_table_name>
+        <opus_data_directory type="string" >c:\opus\opus_data\testing</opus_data_directory>
         <opus_data_year type="string" >1951</opus_data_year>
       </esri_data_to_opus>
       <sql_data_to_opus type="script_config" >
         <script_hook type="script_library_ref" >sql_data_to_opus</script_hook>
-        <sql_db_name type="string" >psrc_2005_parcel_baseyear_subset_seattle_zip_jobs</sql_db_name>
+        <sql_db_name type="string" >some_sql_database_name</sql_db_name>
         <table_name type="string" >ALL</table_name>
         <opus_data_directory type="string" >C:\opus\opus_data\seattle_parcel</opus_data_directory>
         <opus_data_year type="string" >2000</opus_data_year>
       </sql_data_to_opus>
       <opus_data_to_sql type="script_config" >
         <script_hook type="script_library_ref" >opus_data_to_sql</script_hook>
-        <sql_db_name type="string" >jesse_testing_db</sql_db_name>
+        <sql_db_name type="string" >some_sql_database_name</sql_db_name>
         <table_name type="string" >ALL</table_name>
         <opus_data_directory type="string" >C:\opus\opus_data\seattle_parcel</opus_data_directory>
         <opus_data_year type="string" >2000</opus_data_year>
       </opus_data_to_sql>
       <opus_data_to_esri type="script_config" >
         <script_hook type="script_library_ref" >opus_data_to_esri</script_hook>
-        <esri_data_path type="string" >C:\tmp\test_geodb.gdb</esri_data_path>
+        <esri_data_path type="string" >c:\opus\opus_data\geodatabases\output_geodb.gdb</esri_data_path>
         <opus_table_name type="string" >zones</opus_table_name>
         <opus_data_directory type="string" >C:\opus\opus_data\seattle_parcel</opus_data_directory>
         <opus_data_year type="string" >2000</opus_data_year>
@@ -432,7 +432,7 @@
         <output_configuration type="class" >
           <Class_name flags="hidden" type="string" >DatabaseConfiguration</Class_name>
           <Class_path flags="hidden" type="string" >opus_core.database_management.database_configuration</Class_path>
-          <database_name type="string" >i think this is not used unless saving results</database_name>
+          <database_name type="string" >none</database_name>
         </output_configuration>
         <dataset_pool_configuration type="class" >
           <Class_name flags="hidden" type="string" >DatasetPoolConfiguration</Class_name>
@@ -474,14 +474,14 @@
   </model_manager>
   <scenario_manager>
     <Seattle_baseline type="scenario" executable="True" >
-      <parent parser_action="parent_old_format" type="dictionary">
-        <Class_name type="string">UrbansimParcelConfiguration</Class_name>
-        <Class_path type="string">urbansim_parcel.configs.controller_config</Class_path>
+      <parent parser_action="parent_old_format" type="dictionary" >
+        <Class_name type="string" >UrbansimParcelConfiguration</Class_name>
+        <Class_path type="string" >urbansim_parcel.configs.controller_config</Class_path>
       </parent>
       <base_year type="integer" >2000</base_year>
       <years_to_run config_name="years" type="tuple" >
         <startyear type="integer" >2001</startyear>
-        <endyear type="integer" >2005</endyear>
+        <endyear type="integer" >2002</endyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list" >
         <real_estate_price_model type="model" choices="Run|Skip" >Run</real_estate_price_model>
@@ -497,10 +497,6 @@
         </employment_location_choice_model>
         <distribute_unplaced_jobs_model type="model" choices="Run|Skip" >Run</distribute_unplaced_jobs_model>
       </models_to_run>
-
-
-
-
       <baseyear_database_configuration config_name="input_configuration" type="class" >
         <Class_name flags="hidden" type="string" >DatabaseConfiguration</Class_name>
         <Class_path flags="hidden" type="string" >opus_core.database_management.database_configuration</Class_path>
@@ -515,7 +511,7 @@
       <creating_baseyear_cache_configuration type="class" >
         <Class_name flags="hidden" type="string" >CreatingBaseyearCacheConfiguration</Class_name>
         <Class_path flags="hidden" type="string" >urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
-        <cache_directory_root parser_action="prefix_with_opus_data_path" type="directory" >seattle/runs</cache_directory_root>
+        <cache_directory_root parser_action="prefix_with_opus_data_path" type="directory" >seattle_parcel</cache_directory_root>
         <cache_from_mysql type="boolean" choices="True|False" >False</cache_from_mysql>
         <baseyear_cache type="class" >
           <Class_name flags="hidden" type="string" >BaseyearCacheConfiguration</Class_name>
@@ -565,50 +561,44 @@
           <demolition_cost_per_sqft type="table" choices="Cache|Skip" >Cache</demolition_cost_per_sqft>
           <constant_taz_columns type="table" choices="Cache|Skip" >Cache</constant_taz_columns>
         </tables_to_cache>
-
-
         <tables_to_cache_nchunks type="dictionary" >
           <parcels type="integer" >1</parcels>
         </tables_to_cache_nchunks>
-        <unroll_gridcells type="boolean">False</unroll_gridcells>
-
-
+        <unroll_gridcells type="boolean" >False</unroll_gridcells>
       </creating_baseyear_cache_configuration>
-
       <dataset_pool_configuration type="class" >
         <Class_name flags="hidden" type="string" >DatasetPoolConfiguration</Class_name>
         <Class_path flags="hidden" type="string" >opus_core.configurations.dataset_pool_configuration</Class_path>
         <package_order type="list" >['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core']</package_order>
         <package_order_exceptions type="dictionary" />
       </dataset_pool_configuration>
-
-      <flush_dataset_to_cache_after_each_model type="boolean">False</flush_dataset_to_cache_after_each_model>
-      <flush_variables type="boolean">False</flush_variables>
-      <low_memory_run type="boolean">False</low_memory_run>
-
+      <flush_dataset_to_cache_after_each_model type="boolean" >False</flush_dataset_to_cache_after_each_model>
+      <flush_variables type="boolean" >False</flush_variables>
+      <low_memory_run type="boolean" >False</low_memory_run>
       <datasets_to_cache_after_each_model type="list" >['parcel', 'building', 'household', 'job',
                                                       'development_project_proposal_component',
                                                       'development_project_proposal', 'travel_data']</datasets_to_cache_after_each_model>
-      <unroll_gridcells type="boolean">False</unroll_gridcells>
-
-      <datasets_to_preload type="dictionary">
-       <zone type="dictionary"></zone>
-       <household type="dictionary"></household>
-       <building type="dictionary"></building>
-      <parcel type="dictionary"><package_name type="string">urbansim_parcel</package_name></parcel>
-      <development_template type="dictionary"><package_name type="string">urbansim_parcel</package_name></development_template>
-       <development_template_component type="dictionary"><package_name type="string">urbansim_parcel</package_name></development_template_component>
-
-
-       <job type="dictionary"></job>
-       <building_type type="dictionary"><package_name type="string">urbansim_parcel</package_name></building_type>
-
-      <travel_data type="dictionary"></travel_data>
-       <job_building_type type="dictionary"></job_building_type>
+      <unroll_gridcells type="boolean" >False</unroll_gridcells>
+      <datasets_to_preload type="dictionary" >
+        <zone type="dictionary" />
+        <household type="dictionary" />
+        <building type="dictionary" />
+        <parcel type="dictionary" >
+          <package_name type="string" >urbansim_parcel</package_name>
+        </parcel>
+        <development_template type="dictionary" >
+          <package_name type="string" >urbansim_parcel</package_name>
+        </development_template>
+        <development_template_component type="dictionary" >
+          <package_name type="string" >urbansim_parcel</package_name>
+        </development_template_component>
+        <job type="dictionary" />
+        <building_type type="dictionary" >
+          <package_name type="string" >urbansim_parcel</package_name>
+        </building_type>
+        <travel_data type="dictionary" />
+        <job_building_type type="dictionary" />
       </datasets_to_preload>
-
-
-
     </Seattle_baseline>
   </scenario_manager>
   <results_manager>
