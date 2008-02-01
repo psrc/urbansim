@@ -49,36 +49,48 @@ class RemoteRunSet(RemoteRun):
     """
     default_run_id_file = 'run_ids'
     python_commands = {"faloorum6.csss.washington.edu": "mosrun -h python",
-                       "snickers2.stat.washington.edu": "mosrun -h python",
+                       "snickers2.stat.washington.edu": "python",
                        "localhost": "python"}
     configuration_update = {
-                            "faloorum6.csss.washington.edu": {'cache_directory_root': '/home/hana/urbansim_cache/psrc/parcel/bm',
-                                                              'existing_cache_to_copy': '/home/hana/urbansim_cache/psrc/cache_source_parcel'
-                                                              },
-                            "snickers2.stat.washington.edu": {'cache_directory_root': '/homes/hana/urbansim_cache/psrc/parcel/bm',
-                                                              'existing_cache_to_copy': '/homes/hana/urbansim_cache/psrc/cache_source_parcel'
-                                                              },
-                            "localhost": {'cache_directory_root': '/Users/hana/urbansim_cache/psrc/parcel/bm',
+                            "faloorum6.csss.washington.edu": {'cache_directory_root': '/home/scratch/hana/urbansim_cache/psrc/parcel/bm/0131',
+                                                              'existing_cache_to_copy': '/home/scratch/hana/urbansim_cache/psrc/cache_source_parcel'
+                                                              },                            
+                            "localhost": {'cache_directory_root': '/Users/hana/urbansim_cache/psrc/parcel/bm/0131',
                                           'existing_cache_to_copy': '/Users/hana/urbansim_cache/psrc/cache_source_parcel'
                                           }
                             }
+    for i in range(1,9):
+        configuration_update["snickers%s.stat.washington.edu" % i] = {
+                                                            'cache_directory_root': '/homes/scratch/hana/urbansim_cache/psrc/parcel/bm/0131',
+                                                            'existing_cache_to_copy': '/homes/scratch/hana/urbansim_cache/psrc/cache_source_parcel'
+                                                              }
     
     def __init__(self, server_file, hostname, username, password, *args, **kwargs):
         self.servers_info = {}
         if server_file is not None: # read hostname-file
             host_names_and_paths_array = load_table_from_text_file(server_file, comment='#')[0]
+            passw = None
             for i in range(host_names_and_paths_array.shape[0]):
                 self.servers_info[host_names_and_paths_array[i,0]] = {
                                                             'username': host_names_and_paths_array[i,1],
                                                             'opus_path': host_names_and_paths_array[i,2],
                                                             'communication_path_root': host_names_and_paths_array[i,3],
                                                             'number_of_processes': int(host_names_and_paths_array[i,4])}
+                previous_passw = None
                 if (host_names_and_paths_array[i,0] <> 'localhost'):
-                    self.servers_info[host_names_and_paths_array[i,0]]['password'] = getpass.getpass('Password for %s@%s: ' % (
+                    default = ''
+                    if passw is not None:
+                        default = ' [previous password]'
+                        previous_passw = passw
+                    passw = getpass.getpass('Password for %s@%s%s:' % (
                                 self.servers_info[host_names_and_paths_array[i,0]]['username'], 
-                                host_names_and_paths_array[i,0]))
+                                host_names_and_paths_array[i,0], default))
+                    if len(passw) == 0:
+                        passw = previous_passw
+                    self.servers_info[host_names_and_paths_array[i,0]]['password'] = passw
                 else:
                     self.servers_info[host_names_and_paths_array[i,0]]['password'] = None
+
         else:
             self.servers_info[hostname] = {
                                            'username': username,
@@ -209,11 +221,15 @@ class RemoteRunSet(RemoteRun):
     def enable_servers(self, runs):
         for run_id in runs:
             server = self.run_ids_dict[run_id][1]
-            self.servers_info[server]['running'] =-1
+            self.servers_info[server]['running'] -= 1
             config = self.get_run_manager().get_resources_for_run_id_from_history(services_host_name=self.services_hostname,
                                                                        services_database_name=self.services_dbname,
                                                                        run_id=run_id)
-            self.run_ids_dict[self.run_id] = (self.get_urbansim_last_year(config), server)
+            try:
+                last_year = self.get_urbansim_last_year(config)
+            except:
+                last_year = 0
+            self.run_ids_dict[self.run_id] = (last_year, server)
             self.write_into_run_id_file()
         
 if __name__ == "__main__":
