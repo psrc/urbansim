@@ -104,7 +104,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         zone_ids = zone_set.get_id_attribute()
         for dataset_name in self.variables_to_scale.keys():
             bmvar = get_variables_for_number_of_agents(dataset_name, bm.get_variable_names())[0] # this should be a list with one element ('number_of_households')
-            bm.set_posterior(self.year, bmvar, zone_set.get_attribute(bmvar), zone_ids)
+            bm.set_posterior(self.year, bmvar, zone_set.get_attribute(bmvar), zone_ids, transformation_pair = ("sqrt", "**2"))
             n = bm_normal_posterior().run(bm, replicates=1)
             simulated_number_of_agents = n.ravel()*n.ravel()
             logger.log_status('Simulated number of %ss' % dataset_name)
@@ -119,7 +119,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
             logger.log_status('Current values of bm variables for %ss:' % dataset_name)
             bmvars = get_variables_for_number_of_agents(dataset_name, bm.get_variable_names())
             for bmvar in bmvars:
-                bm.set_posterior(self.year, bmvar, zone_set.get_attribute(bmvar), zone_ids)
+                bm.set_posterior(self.year, bmvar, zone_set.get_attribute(bmvar), zone_ids, transformation_pair = ("sqrt", "**2"))
                 n = bm_normal_posterior().run(bm, replicates=1)
                 simulated_number_of_agents = n.ravel()*n.ravel()
                 logger.log_status(bmvar)
