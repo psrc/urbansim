@@ -1767,7 +1767,7 @@ class AbstractDataset(object):
             if not (short_name in self.get_attribute_names()): #not loaded yet
                 self.get_attribute(short_name) #causes lazy loading
             return self.get_version(short_name)
-
+ 
         if (short_name in self.get_attribute_names()) and (self.are_dependent_variables_up_to_date(
                             variable_name, version=version)):
            #if self.attribute_boxes[short_name].is_in_memory():
@@ -1775,7 +1775,7 @@ class AbstractDataset(object):
            #elif self.attribute_boxes[short_name].is_cached():
            #if self.attribute_boxes[short_name].is_cached():
            #    self.get_attribute(short_name)
-           return self.get_version(short_name)
+            return self.get_version(short_name)
 
         return self._compute_one_variable(variable_name, dataset_pool, resources=resources, quiet=quiet)
 
