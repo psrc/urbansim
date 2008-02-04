@@ -127,6 +127,6 @@ class ToolboxBase(object):
         self.dataManagerDBSTree = OpusXMLTree(self, "data_manager_dbstree",
                                               self.parent.datamanager_dbsconnections.layout())
       else:
-        print "Error reading config"
+        print "Error reading the %s configuration file" % (xml_file)
     else:
       print "There was an error removing the old config"
