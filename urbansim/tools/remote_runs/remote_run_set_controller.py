@@ -159,7 +159,7 @@ class RemoteRunSet(RemoteRun):
                     finished_runs = runs_by_status.get('done', [])
                     failed_runs = runs_by_status.get('failed', [])
                     finished_and_failed_runs = finished_runs + failed_runs
-                    self.enable_servers(finished_and_failed_runs)
+                    self.enable_servers(finished_runs, failed_runs)
                     if len(failed_runs) > 0:
                         raise
                     for run in finished_and_failed_runs:
@@ -218,19 +218,22 @@ class RemoteRunSet(RemoteRun):
             restart=True
         return (selected_server, restart)
     
-    def enable_servers(self, runs):
-        for run_id in runs:
+    def enable_servers(self, finished_runs=[], failed_runs=[]):
+        for run_id in finished_runs+failed_runs:
             server = self.run_ids_dict[run_id][1]
             self.servers_info[server]['running'] -= 1
             config = self.get_run_manager().get_resources_for_run_id_from_history(services_host_name=self.services_hostname,
                                                                        services_database_name=self.services_dbname,
                                                                        run_id=run_id)
-            try:
-                last_year = self.get_urbansim_last_year(config)
-            except:
-                last_year = 0
-            self.run_ids_dict[self.run_id] = (last_year, server)
-            self.write_into_run_id_file()
+            if run_id in finished_runs:
+                self.run_ids_dict[run_id] = (config['years'][1], server)
+            else:
+                try:
+                    last_year = self.get_urbansim_last_year(config)
+                except:
+                    last_year = 0
+                self.run_ids_dict[run_id] = (int(last_year), server)
+        self.write_into_run_id_file()
         
 if __name__ == "__main__":
     option_group = RemoteRunSetOptionGroup()
@@ -256,8 +259,8 @@ if __name__ == "__main__":
                     username = options.user       
             password = getpass.getpass('Password for %s@%s: ' % (username, hostname))
 
-    try: import wingdbstub
-    except: pass
+    #try: import wingdbstub
+    #except: pass
     db = option_group.get_services_database(options)
     run_manager = option_group.get_run_manager(options)
     run = RemoteRunSet(options.server_file, hostname, username, password, options.host_name, options.database_name, db,
