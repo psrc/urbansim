@@ -1493,9 +1493,13 @@ class AbstractDataset(object):
     def _create_id_mapping(self):
         id_array=self.get_id_attribute()
         if id_array.size == 0:
-            self.id_mapping_type="A"
-            self.id_mapping_shift = 0
-            self.id_mapping = array([], dtype="int32")
+            if len(self.get_id_name()) > 1:
+                self.id_mapping_type="D" # dictionary
+                self.id_mapping = do_id_mapping_dict_from_array(id_array)
+            else:
+                self.id_mapping_type="A"
+                self.id_mapping_shift = 0
+                self.id_mapping = array([], dtype="int32")
             return
         if id_array.ndim == 1:
             maxid = id_array.max()
