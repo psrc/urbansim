@@ -97,7 +97,7 @@ class TravelModelOutput(object):
         finally:
             os.remove(temp_macro_file_name)
             
-    def run_emme2_macro(self, macro_path, bank_path, scenario_number=-1, output_file=None):
+    def run_emme2_macro(self, macro_path, bank_path, scenario_number=-1, output_file=None, append_to_output=True):
         """
         Runs this emme/2 macro in the bank specified.
         """
@@ -108,7 +108,9 @@ class TravelModelOutput(object):
         if output_file is None:
             out = ""
         else:
-            out = " > %s" % output_file
+            out = "> %s" % output_file
+            if append_to_output:
+                out = " >%s" % out
         try:
             os.chdir(bank_path)
             shutil.copy(macro_path, temp_macro_file_name)
