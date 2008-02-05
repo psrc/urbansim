@@ -22,7 +22,7 @@ class BaselineTravelModelFastHana(Baseline):
         config = Baseline()
         if self.multiple_runs:
             config.sample_inputs()
-        config['number_of_runs'] = 20
+        config['number_of_runs'] = 1
         config['seed'] = 1
         config_changes = {
             'description':'baseline travel model fast',
@@ -38,8 +38,8 @@ class BaselineTravelModelFastHana(Baseline):
         config['travel_model_configuration']['locations_to_disaggregate'] = ['parcel', 'building']
         
         ##fast model doesn't have bank2 and bank3; disable macros using them
-        del config['travel_model_configuration']['emmission_emme2_macros']['tazvmt2.mac']
-        del config['travel_model_configuration']['emmission_emme2_macros']['tazvmt3.mac']
+        del config['travel_model_configuration']['export_macros']['tazvmt2.mac']
+        del config['travel_model_configuration']['export_macros']['tazvmt3.mac']
 
         del config['travel_model_configuration']['matrix_variable_map']['bank2']
         del config['travel_model_configuration']['matrix_variable_map']['bank3']

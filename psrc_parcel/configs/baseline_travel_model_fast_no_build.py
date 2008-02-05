@@ -33,8 +33,8 @@ class BaselineTravelModelFastNoBuild(Baseline):
         del config['travel_model_configuration'][2000]
         
         ##fast model doesn't have bank2 and bank3; disable macros using them
-        del config['travel_model_configuration']['emmission_emme2_macros']['tazvmt2.mac']
-        del config['travel_model_configuration']['emmission_emme2_macros']['tazvmt3.mac']
+        del config['travel_model_configuration']['export_macros']['tazvmt2.mac']
+        del config['travel_model_configuration']['export_macros']['tazvmt3.mac']
 
         del config['travel_model_configuration']['matrix_variable_map']['bank2']
         del config['travel_model_configuration']['matrix_variable_map']['bank3']
