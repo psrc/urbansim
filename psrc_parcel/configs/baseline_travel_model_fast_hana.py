@@ -45,7 +45,9 @@ class BaselineTravelModelFastHana(Baseline):
         del config['travel_model_configuration']['matrix_variable_map']['bank3']
         
         config['travel_model_configuration']['export_macros']['get_link_attributes.mac'] = {'bank':'bank1', 'scenario':-1, 'path':'export_macros'}
-        config['travel_model_configuration']['node_matrix_variable_map'] = {"attr_on_links.rpt": {"timau": "am_pk_travel_time", "len": "distance"}}
+        config['travel_model_configuration']['node_matrix_variable_map'] = {"bank1": {"attr_on_links.rpt": {"timau": "am_pk_travel_time", "len": "distance"},
+                                                                            "tveham.rpt": {"@tveh": "vehicle_volume"}
+                                                                            }}
         config['travel_model_configuration'][2015]['models'] = list(config['travel_model_configuration'][2015].get('models'))
         config['travel_model_configuration'][2015]['models'].append('opus_emme2.models.restore_trip_tables')
              

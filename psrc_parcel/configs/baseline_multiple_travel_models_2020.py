@@ -37,7 +37,9 @@ class BaselineMultipleTravelModels2020(Baseline):
         del config['travel_model_configuration']['matrix_variable_map']['bank3']
         
         config['travel_model_configuration']['export_macros']['get_link_attributes.mac'] = {'bank':'bank1', 'scenario':-1, 'path':'export_macros'}
-        config['travel_model_configuration']['node_matrix_variable_map'] = {"bank1": {"attr_on_links.rpt": {"timau": "am_pk_travel_time", "len": "distance"}}}
+        config['travel_model_configuration']['node_matrix_variable_map'] = {"bank1": {"attr_on_links.rpt": {"timau": "am_pk_travel_time", "len": "distance"},
+                                                                                      "tveham.rpt": {"@tveh": "vehicle_volume"}
+                                                                            }}
         
         config['travel_model_configuration']['bm_distribution_file'] = \
                 '/Users/hana/bm/psrc_parcel/simulation_results/bm_parameters'
