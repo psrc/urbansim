@@ -116,6 +116,7 @@ class TravelModelOutput(object):
             if scenario_number != -1:
                 cmd = "%s %s" % (cmd, scenario_number)
             cmd = "%s%s" (cmd, out)
+            logger.log_status(cmd)
             if os.system(cmd):
                 raise StandardError("Problem with simulation")
         finally:
