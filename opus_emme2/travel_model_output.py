@@ -115,7 +115,7 @@ class TravelModelOutput(object):
             cmd = "emme2 000 -m %s" % temp_macro_file_name
             if scenario_number != -1:
                 cmd = "%s %s" % (cmd, scenario_number)
-            cmd = "%s%s" (cmd, out)
+            cmd = "%s%s" % (cmd, out)
             logger.log_status(cmd)
             if os.system(cmd):
                 raise StandardError("Problem with simulation")
