@@ -59,7 +59,7 @@ class RunTravelModel:
                 shutil.move(os.path.join(config['cache_directory'], str(year+1)), os.path.join(tmdir, str(year+1)))
                 emme2logfiles = os.path.join(config['cache_directory'],'emme2_*%d_log.txt' % year)
                 #if os.path.exists(emme2logfile):
-                shutil.move(os.path.join(config['cache_directory'],emme2logfile), tmdir)
+                shutil.move(os.path.join(config['cache_directory'],emme2logfiles), tmdir)
                  
     def _do_one_run(self, year, config):
         if not config['travel_model_configuration'].has_key(year):
