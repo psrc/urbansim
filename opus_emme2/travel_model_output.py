@@ -112,9 +112,10 @@ class TravelModelOutput(object):
         try:
             os.chdir(bank_path)
             shutil.copy(macro_path, temp_macro_file_name)
-            cmd = "emme2 000 -m %s%s" % (temp_macro_file_name, output_file)
+            cmd = "emme2 000 -m %s" % temp_macro_file_name
             if scenario_number != -1:
                 cmd = "%s %s" % (cmd, scenario_number)
+            cmd = "%s%s" (cmd, out)
             if os.system(cmd):
                 raise StandardError("Problem with simulation")
         finally:
