@@ -38,7 +38,7 @@ def create_travel_model_configuration(travel_model_dir_name,
     """
     travel_model_input_file_writer = 'psrc.travel_model_input_file_writer'
     
-    """ emme2_matricies and emmission_emme2_macros should be passed in as parameters
+    """ emme2_matricies and export_macros should be passed in as parameters
     from psrc (or whoever is the specific client of emme2) run_config"""
     emme2_matricies = {
         'bank1':{   
@@ -122,29 +122,32 @@ def create_travel_model_configuration(travel_model_dir_name,
 #            'nwlktm':'ni_walk_time_in_minutes',
             }
         }
+    # For mapping link attributes to nodes. Keys should be file names (report files), each entry is a dictionary as above.
+    node_matrix_variable_map = {}
+    
     reports = [
     #This is a list of files that should be copied from the emme2 directory into cache. 
     #It is intended to serve for informative purposes, i.e. for keeping report files.
         "tveham.rpt"
                ]
-    """emmission_emme2_macros should be a dictionary of key/value 'macro_name':{'bank':'scenario'}, where
-    each of the specified macros lives in opus_emme2.emmission_emme2_macros"""
-    emmission_emme2_macros = {
-        'tazvmt1.mac':{'bank':'bank1', 'scenario':-1},
-        'tazvmt2.mac':{'bank':'bank2', 'scenario':-1},
-        'tazvmt3.mac':{'bank':'bank3', 'scenario':-1},        
+    """export_macros should be a dictionary of key/value 'macro_name':{'bank': ..., 'scenario':..., 'path':...}, where
+    each of the specified macros lives in travel_model_dir_name/path. The macros are run on the specified bank."""
+    export_macros = { # contains macros that export travel data. They are run after run_travel_model and before get_emme2_data_into_cache
+        'tazvmt1.mac':{'bank':'bank1', 'scenario':-1, 'path':'export_macros'},
+        'tazvmt2.mac':{'bank':'bank2', 'scenario':-1, 'path':'export_macros'},
+        'tazvmt3.mac':{'bank':'bank3', 'scenario':-1, 'path':'export_macros'}, 
+        'tveha.mac': {'bank': 'bank1', 'scenario':-1, 'path':'export_macros'},
+        'tvehrpt.mac': {'bank': 'bank1', 'scenario':-1, 'path':'export_macros'},       
         }
-    traffic_volume_macros = {
-        'tveha.mac': {'bank': 'bank1', 'scenario':-1},
-        'tvehrpt.mac': {'bank': 'bank1', 'scenario':-1},
-        }                    
+                
     travel_model_configuration = {
         'travel_model_input_file_writer':travel_model_input_file_writer,
         'matrix_variable_map':emme2_matricies,
+        'node_matrix_variable_map': node_matrix_variable_map,
         'reports_to_copy': reports,
-        'emmission_emme2_macros':emmission_emme2_macros,
-        'traffic_volume_macros': traffic_volume_macros,
-        'locations_to_disaggregate': locations_to_disaggregate
+        'export_macros':export_macros,
+        'locations_to_disaggregate': locations_to_disaggregate,
+        'travel_model_base_directory': travel_model_dir_name
         }
 
     _add_models(travel_model_configuration, mode)
@@ -157,14 +160,12 @@ def _add_models(travel_model_configuration, mode):
         models = [
             'opus_emme2.models.get_cache_data_into_emme2',
             'opus_emme2.models.run_travel_model',
-            'opus_emme2.models.run_emmission_emme2_macros',
-            'opus_emme2.models.run_traffic_volume_macros',
+            'opus_emme2.models.run_export_macros',
             'opus_emme2.models.get_emme2_data_into_cache',
             ]
     elif mode == 'skims':
         models = [
-           'opus_emme2.models.run_emmission_emme2_macros',
-           'opus_emme2.models.run_traffic_volume_macros',
+           'opus_emme2.models.run_export_macros',
            'opus_emme2.models.get_emme2_data_into_cache',
             ]
     elif mode == 'get_emme2_data':
@@ -180,8 +181,7 @@ def _add_models(travel_model_configuration, mode):
     elif mode == 'null':
         models = [
             'opus_emme2.models.get_cache_data_into_emme2',
-            'opus_emme2.models.run_emmission_emme2_macros',
-            'opus_emme2.models.run_traffic_volume_macros',
+            'opus_emme2.models.run_export_macros',
             'opus_emme2.models.get_emme2_data_into_cache',
             ]
     travel_model_configuration['models'] = models
