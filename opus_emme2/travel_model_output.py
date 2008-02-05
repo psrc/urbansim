@@ -14,8 +14,9 @@
 
 from opus_core.logger import logger
 from urbansim.datasets.travel_data_dataset import TravelDataDataset
+from urbansim.datasets.node_travel_data_dataset import NodeTravelDataDataset
 from opus_core.misc import get_temp_file_name
-from numpy import zeros, float32, indices
+from numpy import zeros, float32, indices, round_, concatenate
 from opus_core.storage_factory import StorageFactory
 from os.path import join
 import os, shutil
@@ -54,6 +55,31 @@ class TravelModelOutput(object):
             self._put_one_matrix_into_travel_data_set(travel_data_set, max_zone_id, matrix_name, 
                                                      matrix_attribute_name_map[matrix_name], bank_path, matrices_created)
         return travel_data_set
+    
+    def get_node_travel_data_set(self, matrix_attribute_name_map, bank_path, out_storage=None):
+        """
+        Returns a new node travel data set containing the given set of emme/2 matrices 
+        populated from the emme/2 data bank.  The columns in the travel data set are 
+        those given in the attribute name of the map.
+        """
+                                       
+        table_name = 'storage'
+        in_storage = StorageFactory().get_storage('dict_storage')
+        in_storage.write_table(
+                table_name=table_name,
+                table_data={
+                    'from_node_id':array([], dtype="int32"),
+                    'to_node_id':array([], dtype="int32")
+                    }
+            )
+                                       
+        node_travel_data_set = NodeTravelDataDataset(in_storage=in_storage, 
+            in_table_name=table_name, out_storage=out_storage)
+
+        for file_name in matrix_attribute_name_map.keys():
+            self._put_matricies_from_one_file_into_node_travel_data_set(node_travel_data_set, file_name, 
+                                                     matrix_attribute_name_map[file_name], bank_path)
+        return node_travel_data_set
            
     def _get_matrix_into_data_file(self, matrix_name, max_zone_id, bank_path, file_name="_one_matrix.txt"):
         """
@@ -115,6 +141,45 @@ class TravelModelOutput(object):
                                                              id=(int(from_zone_id), int(to_zone_id)))
         finally:
             logger.end_block()
+            
+    def _put_matricies_from_one_file_into_node_travel_data_set(self, node_travel_data_set, file_name, attribute_map, bank_path):
+        """
+        Adds to the given node_travel_data_set the data for the given matrix
+        that is in the emme/2 data bank.
+        """
+        full_file_name = join(bank_path, file_name)
+        f = open(full_file_name, 'r')
+        file_contents = map(str.strip, f.readlines())
+        f.close()
+        header = str.split(file_contents[0])
+        attr_to_map_index = array([i for i in range(len(header)) if header[i] in attribute_map.keys()])
+        data = {}
+        for idx in attr_to_map_index:
+            node_travel_data_set.add_primary_attribute(data=zeros(node_travel_data_set.size(), dtype=float32), name=attribute_map[header[idx]])
+            data[attribute_map[header[idx]]] = array([], dtype=float32)
+        data['from_node_id'] = array([], dtype='int32')
+        data['to_node_id'] = array([], dtype='int32')
+        logger.log_status('Copying data from node matricies into variable node travel data set' )
+        
+        for line in file_contents[1:len(file_contents)]:
+            splitted_line = array(map(lambda x: float(x), str.split(line)), dtype=float32)
+            from_node_id, to_node_id = round_(splitted_line[0:2]).astype("int32")
+            try:
+                idindex = node_travel_data_set.get_id_index([[from_node_id, to_node_id]]) # this will raise error, if this combination of from_node, to_node is not in the dataset
+                for idx in attr_to_map_index:
+                    value = splitted_line[idx]
+                    node_travel_data_set.set_value_of_attribute_by_id(attribute=attribute_map[header[idx]], value=value, 
+                                                             id=(from_node_id, to_node_id))
+            except:
+                # if this combination of from_node, to_node is not in the dataset, add it to the data
+                for idx in attr_to_map_index:
+                    value = splitted_line[idx]
+                    data[attribute_map[header[idx]]] = concatenate((data[attribute_map[header[idx]]], array([value], dtype=float32)))
+                data['from_node_id'] = concatenate((data['from_node_id'], array([from_node_id])))
+                data['to_node_id'] = concatenate((data['to_node_id'], array([to_node_id])))
+
+        if data[data.keys()[0]].size > 0:
+            node_travel_data_set.add_elements(data, require_all_attributes=False)
         
     def _get_emme2_data_from_file(self, full_file_name):
         """Returns a list of all the lines (stripped) in the file. But only the lines that have data on them
@@ -159,8 +224,11 @@ q
 # Some of these tests can only be run on a machine that has an actual emme/2 
 # data bank.
 #================================================================================
+import tempfile
+import shutil
 from opus_core.tests import opus_unittest
 from numpy import array, ones
+from opus_core.misc import write_to_text_file, write_table_to_text_file
 from urbansim.datasets.zone_dataset import ZoneDataset
 
 class TravelModelOutputTests(opus_unittest.OpusTestCase):
@@ -257,5 +325,48 @@ class TravelModelOutputTests(opus_unittest.OpusTestCase):
             logger.log_warning('Test skipped. TRAVELMODELROOT environment '
                 'variable not found.')
 
+    def test_get_node_data_into_node_travel_data_set(self):
+        temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
+        file1 = 'report1'
+        temp_file1 = os.path.join(temp_dir, file1)
+        write_to_text_file(temp_file1, array(['inode', 'jnode', 'timau', '@corr', 'len', 'result']), delimiter=' ')
+        write_table_to_text_file(temp_file1, array([[1,2, 35.6, 4, 1.2, 0], 
+                                                    [2,1, 23.5, 3, 0.3,100], 
+                                                    [4,10, 2.1, 3, 0.5, 10],
+                                                    [3,1, 15.8, 4, 1.1, 5] ]), delimiter = ' ', mode='a')
+        file2 = 'report2'
+        temp_file2 = os.path.join(temp_dir, file2)
+        write_to_text_file(temp_file2, array(['inode', 'jnode', 'volau', 'result']), delimiter=' ')
+        write_table_to_text_file(temp_file2, array([[1,2, 110, 0], 
+                                                   [3,1, 350, 400], 
+                                                   [5,4, 200, 200]]), delimiter = ' ', mode='a')
+        
+        node_matrix_attribute_map = {file1: {
+                                             'timau':'travel_time',
+                                             'len':'distance',
+                                             '@corr': 'corridor'
+                                             },
+                                     file2: {
+                                             'volau': 'travel_volume'
+                                             }
+                                     }
+        tm_output = TravelModelOutput()
+        node_travel_data_set = tm_output.get_node_travel_data_set(node_matrix_attribute_map, temp_dir)
+        # size should be 5, since there are 5 unique combinations of from_node, to_node
+        self.assertEqual(node_travel_data_set.size(), 5)
+        # the dataset should have 6 attributes
+        self.assertEqual(len(node_travel_data_set.get_known_attribute_names()), 6)
+        self.assertEqual('travel_time' in node_travel_data_set.get_known_attribute_names(), True)
+        self.assertEqual('distance' in node_travel_data_set.get_known_attribute_names(), True)
+        self.assertEqual('corridor' in node_travel_data_set.get_known_attribute_names(), True)
+        self.assertEqual('travel_volume' in node_travel_data_set.get_known_attribute_names(), True)
+        self.assertEqual('from_node_id' in node_travel_data_set.get_known_attribute_names(), True)
+        self.assertEqual('to_node_id' in node_travel_data_set.get_known_attribute_names(), True)
+        # check values of one node
+        node = node_travel_data_set.get_data_element_by_id((3,1))
+        self.assertEqual(node.corridor, 4)
+        self.assertEqual(node.travel_volume, 350)
+        shutil.rmtree(temp_dir) 
+        
 if __name__=='__main__':
     opus_unittest.main()

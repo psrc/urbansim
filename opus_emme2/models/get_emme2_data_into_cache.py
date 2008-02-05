@@ -58,6 +58,10 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
                                                     matrices_created)
                 for report in reports:
                     self.copy_report_to_cache(report, year, year_config['cache_directory'], bank_dir)
+            if "bank%i" % x in year_config.get('node_matrix_variable_map', {}):
+                node_variable_map = year_config['node_matrix_variable_map']["bank%i" % x]
+                if len(node_variable_map.keys()) > 0:
+                    self.get_needed_node_matrices_from_emme2(year, year_config['cache_directory'], bank_dir, node_variable_map)
                     
     def create_output_matrix_files(self, config, year, max_zone_id):
         """Create data files with emme2 matrices."""
@@ -90,6 +94,25 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
                                           out_table_name='travel_data')
         finally:
             logger.end_block()
+            
+    def get_needed_node_matrices_from_emme2(self, year, cache_directory, bank_dir, node_matrix_variable_map):
+        """Creates a node_travel_data_dataset from a report file that contains node to node data.
+        """
+        logger.start_block('Getting node matricies from emme2')
+        try:
+            node_travel_data_set = self.get_node_travel_data_from_emme2(bank_dir, node_matrix_variable_map)
+        finally:
+            logger.end_block()
+        
+        logger.start_block('Writing data to cache')
+        try:
+            next_year = year + 1
+            out_storage = AttributeCache().get_flt_storage_for_year(next_year)
+            node_travel_data_set.write_dataset(attributes='*', 
+                                          out_storage=out_storage, 
+                                          out_table_name='node_travel_data')
+        finally:
+            logger.end_block()
               
     def get_travel_data_from_emme2(self, zone_set, bank_dir, matrix_variable_map, matrices_created=False):
         """Create a new travel_data from the emme2 output.
@@ -101,6 +124,17 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
         from opus_emme2.travel_model_output import TravelModelOutput
         tm_output = TravelModelOutput()
         return tm_output.get_travel_data_set(zone_set, matrix_variable_map, bank_dir, matrices_created = matrices_created)
+    
+    def get_node_travel_data_from_emme2(self, bank_dir, node_matrix_variable_map):
+        """Create a new node travel_data from the emme2 output.
+        Include the matrices listed in node_matrix_variable_map, which is a dictionary
+        mapping the emme2 matrix name, e.g. au1tim, to the Opus variable
+        name, e.g. single_vehicle_to_work_travel_time, as in:
+        {"au1tim":"single_vehicle_to_work_travel_time"}
+        """
+        from opus_emme2.travel_model_output import TravelModelOutput
+        tm_output = TravelModelOutput()
+        return tm_output.get_node_travel_data_set(node_matrix_variable_map, bank_dir)
        
     def copy_report_to_cache(self, report_name, year, cache_directory, bank_dir):
         filename = os.path.join(bank_dir, report_name)
