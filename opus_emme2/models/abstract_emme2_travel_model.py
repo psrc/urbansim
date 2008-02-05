@@ -32,7 +32,7 @@ class AbstractEmme2TravelModel(Model):
         return path
     
     def get_emme2_base_dir(self, config):
-        return config['travel_model_configuration']['travel_model_base_directory']
+        return os.path.join(os.environ['TRAVELMODELROOT'], config['travel_model_configuration']['travel_model_base_directory'])
     
 from opus_core.tests import opus_unittest
 class AbstractEmme2TravelModelTests(opus_unittest.OpusTestCase):
