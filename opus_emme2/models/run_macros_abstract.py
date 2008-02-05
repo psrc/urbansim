@@ -23,7 +23,7 @@ class RunMacrosAbstract(AbstractEmme2TravelModel):
        opus_emme2.models.get_emme2_data_into_cache.
     """
 
-    def run(self, macro_group_name, config, year):
+    def run(self, macro_group_name, config, year, output_file=None):
         """This is the main entry point.  It gets the appropriate values from the 
         travel_model_configuration part of this config, and then runs the specified 
         emme/2 macros. The macro specification should also have a specification of the bank it should run in.
@@ -35,11 +35,13 @@ class RunMacrosAbstract(AbstractEmme2TravelModel):
         import opus_emme2
         tm_output = TravelModelOutput()
         specified_macros = config['travel_model_configuration'][year][macro_group_name]
+        if output_file is None:
+            tmp_output_file = os.path.join(config['cache_directory'], "emme2_export_macros_%s_log.txt" % year)
         for macro_name, macro_info in specified_macros.iteritems():
             bank = macro_info['bank']
             bank_path = self.get_emme2_dir(config, year, bank)
             macro_path = os.path.join(self.get_emme2_base_dir(config), macro_info.get('path',''), macro_name)
-            tm_output.run_emme2_macro(macro_path, bank_path, macro_info['scenario'])
+            tm_output.run_emme2_macro(macro_path, bank_path, macro_info['scenario'], output_file=tmp_output_file)
 
 
 def prepare_for_running_macro(parser):
@@ -48,6 +50,8 @@ def prepare_for_running_macro(parser):
                       help="Name of file containing resources")
     parser.add_option("-y", "--year", dest="year", action="store", type="int",
                       help="Year in which to 'run' the travel model")
+    parser.add_option("-o", "--output-file", dest="output_file", action="store", type="string",
+                      help="Output log file. If not given, it is written into urbansim cache directory.")
     (options, args) = parser.parse_args()
    
     r = get_resources_from_file(options.resources_file_name)

@@ -97,7 +97,7 @@ class TravelModelOutput(object):
         finally:
             os.remove(temp_macro_file_name)
             
-    def run_emme2_macro(self, macro_path, bank_path, scenario_number=-1):
+    def run_emme2_macro(self, macro_path, bank_path, scenario_number=-1, output_file=None):
         """
         Runs this emme/2 macro in the bank specified.
         """
@@ -105,10 +105,14 @@ class TravelModelOutput(object):
                            (macro_path, bank_path))
         temp_macro_file_name = get_temp_file_name()
         prior_cwd = os.getcwd()
+        if output_file is None:
+            out = ""
+        else:
+            out = " > %s" % output_file
         try:
             os.chdir(bank_path)
             shutil.copy(macro_path, temp_macro_file_name)
-            cmd = "emme2 000 -m %s" % (temp_macro_file_name)
+            cmd = "emme2 000 -m %s%s" % (temp_macro_file_name, output_file)
             if scenario_number != -1:
                 cmd = "%s %s" % (cmd, scenario_number)
             if os.system(cmd):
