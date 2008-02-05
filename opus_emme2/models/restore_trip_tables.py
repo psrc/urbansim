@@ -23,7 +23,11 @@ class RestoreTripTables:
         dir = config['travel_model_configuration'][year]['bank'][0]
         dst = os.path.join(os.environ['TRAVELMODELROOT'], dir, 'triptabs')
         src = os.path.join(os.environ['TRAVELMODELROOT'], dir, source_directory)
+        backup = os.path.join(os.environ['TRAVELMODELROOT'], dir, 'triptabs.last')
+        if os.path.exists(backup):
+            shutil.rmtree(backup)
         if os.path.exists(dst):
+            shutil.copytree(dst, backup)
             shutil.rmtree(dst)
         shutil.copytree(src, dst)
         
