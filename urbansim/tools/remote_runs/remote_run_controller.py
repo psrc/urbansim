@@ -340,13 +340,19 @@ class RemoteRun:
                                 optional_args='%s -m -z %s' % (optional_args, max_zone_id)
                             elif full_model_path == 'opus_emme2.models.run_travel_model':
                                 optional_args='%s -o %s' % (optional_args, os.path.join(self.local_output_path,'emme2_%d_log.txt' % this_end_year))
+                            elif full_model_path == 'opus_emme2.models.run_export_macros':
+                                optional_args='%s -o %s' % (optional_args, os.path.join(self.local_output_path,'emme2_export_macros_%d_log.txt' % this_end_year))
                             ForkProcess().fork_new_process(full_model_path, 
                                                            travel_model_resources, optional_args=optional_args)
                     reports = travel_model_resources['travel_model_configuration'].get('reports_to_copy', [])
                     for x in self.banks:
                         bank_dir = tm.get_emme2_dir(travel_model_resources, this_end_year, "bank%i" % x)
                         self.copy_file_to_remote_host("%s/*_one_matrix.txt" % bank_dir, subdirectory="bank%i" % x)
-                        for report in reports:
+                        node_map = travel_model_resources['travel_model_configuration'].get('node_matrix_variable_map', {})
+                        node_files = []
+                        if "bank%i" % x in node_map.keys():
+                            node_files = node_map["bank%i" % x].keys()
+                        for report in reports+node_files:
                             report_name = os.path.join(bank_dir, report)
                             if os.path.exists(report_name):
                                 self.copy_file_to_remote_host(report_name, subdirectory="bank%i" % x)
