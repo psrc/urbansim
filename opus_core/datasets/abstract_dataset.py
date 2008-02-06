@@ -680,6 +680,8 @@ class AbstractDataset(object):
             if isnegative.sum() > 0:
                 raise KeyError, "No negative ids allowed in dataset."
             result = self.id_mapping[ids - self.id_mapping_shift]
+            if any(result < 0):
+                raise KeyError, "Some ids not found in dataset %s." % self.get_dataset_name()
         else:
             result = array(map(lambda x: self.id_mapping[x], ids), dtype=ids.dtype.char)
         return result
@@ -751,12 +753,13 @@ class AbstractDataset(object):
                 attribute_box = self._get_attribute_box(attr)
                 attribute_box.set_variable_instance(dataset.attribute_boxes[attr].get_variable_instance())
 
-    def join(self, dataset, name, join_attribute=None, new_name=None, metadata=AttributeType.COMPUTED):
+    def join(self, dataset, name, join_attribute=None, new_name=None, metadata=AttributeType.COMPUTED, **kwargs):
         """Call get_join_data() and add the resulting array
         to self.attribute_boxes as an additional attribute(s). 'new_name'
         specifies the name(s) of the new created attribute. If it is None, 'name' is used.
         'name' and 'new_name' can be either a character string or a list of char strings, if join is performed
         on mutiple attributes.
+        **kwargs are passed to get_join_data().
         """
 
         if not isinstance(name, list):
@@ -767,7 +770,7 @@ class AbstractDataset(object):
         if not isinstance(new_name, list):
             new_name = [new_name]
 
-        data = self.get_join_data(dataset, name, join_attribute)
+        data = self.get_join_data(dataset, name, join_attribute, **kwargs)
         for iattr in range(len(name)):
             if not isinstance(data, dict):
                 tmpdata = data

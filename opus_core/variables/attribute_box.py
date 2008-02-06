@@ -85,7 +85,7 @@ class AttributeBox(object):
         return (self.get_version() == version)
 
     def get_full_name(self):
-        return self.get_variable_name().get_full_name()
+        return self.get_variable_name().get_expression()
 
     def set_variable_instance(self, variable_instance):
         self._variable_instance = variable_instance
