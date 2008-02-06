@@ -25,7 +25,7 @@ try:
     from matplotlib.ticker import FormatStrFormatter
     from matplotlib.ticker import FixedLocator, ScalarFormatter
 except:
-    pass
+    print 'matplotlib import failed, skipping tests'
 else:
     
     class MatplotlibChart(Visualization):
@@ -210,23 +210,6 @@ else:
     from inprocess.travis.opus_core.indicator_framework.representations.indicator import Indicator
     
     class Tests(AbstractIndicatorTest):
-        def skip_test_create_indicator(self):
-            
-            indicator_path = os.path.join(self.temp_cache_path, 'indicators')
-            self.assert_(not os.path.exists(indicator_path))
-            
-            chart = MatplotlibChart(
-                      source_data = self.source_data,
-                      attribute = 'opus_core.test.attribute',
-                      dataset_name = 'test',
-                      years = None
-            )
-            
-            chart.create(False)
-            
-            self.assert_(os.path.exists(indicator_path))
-            self.assert_(os.path.exists(os.path.join(indicator_path, 'test__chart__attribute.png')))
-
         def test_create_indicator(self):
                 
             indicator_path = self.source_data.get_indicator_directory()
