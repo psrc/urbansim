@@ -27,7 +27,9 @@ from opus_core.bm_normal_posterior import bm_normal_posterior
 from opus_core.misc import safe_array_divide
 
 class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
-    """Write urbansim simulation information into a (file) format that the emme2 travel model understands. """
+    """Write urbansim simulation information into a (file) format that the emme2 travel model understands. 
+        It simulates nubmer of househodls and number of jobs from a posterior distribution of a bayesian melding analysis.
+    """
 
     variables_to_scale = {
         'household': {
@@ -54,27 +56,35 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
                 ]
         }
     
+    log_file_name = 'run_travel_model_bm.log'
+    
     def run(self, current_year_emme2_dir, current_year, dataset_pool, config=None):
+        self.do_setup(current_year, dataset_pool, config)
+        PSRCTravelModelInputFileWriter.run(self, current_year_emme2_dir, current_year, dataset_pool, config)
+        
+    def _do_setup(self, current_year, dataset_pool, config=None, enable_file_logging=True):
         self.configuration = config
         self.year = current_year
         self.dataset_pool = dataset_pool
         self.simulated_values = {}
-        logdir = os.path.join(config['cache_directory'], str(current_year+1))
-        if not os.path.exists(logdir):
-            os.makedirs('%s' % logdir)
-        log_file = os.path.join(logdir, 'run_travel_model_bm.log')
-        
-        logger.enable_file_logging(log_file)
-        PSRCTravelModelInputFileWriter.run(self, current_year_emme2_dir, current_year, dataset_pool, config)
+        if enable_file_logging:
+            logdir = os.path.join(config['cache_directory'], str(current_year+1))
+            if not os.path.exists(logdir):
+                os.makedirs('%s' % logdir)
+            log_file = os.path.join(logdir, self.log_file_name)
+            logger.enable_file_logging(log_file)
         
     def get_variables_list(self, dataset_pool):
         self.full_variable_list = PSRCTravelModelInputFileWriter.get_variables_list(self, dataset_pool)
         return self.full_variable_list[0:8] + self.full_variable_list[20:24] # jobs variablees removed, since they are computed within _determine_simulated_values
         
     def _write_to_file(self, zone_set, variables_list, tm_input_file):
-        self.bm_generate_from_posterior(zone_set)
+        self.generate_travel_model_input(zone_set)
         PSRCTravelModelInputFileWriter._write_to_file(self, zone_set, self.full_variable_list, tm_input_file)
 
+    def generate_travel_model_input(self, zone_set):
+        self.bm_generate_from_posterior(zone_set)
+        
     def _get_value_for_zone(self, zone_id, zone_set, variable_name):
         if variable_name in self.simulated_values.keys():
             index = zone_set.get_id_index(zone_id)
@@ -93,8 +103,10 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
             number_of_agents = zone_set.compute_variables(['zone.number_of_agents(%s)' % dataset_name], dataset_pool=self.dataset_pool).astype('float32')
             logger.log_status('Current number of %ss' % dataset_name)
             logger.log_status(number_of_agents)
+            nvars = len(self.variables_to_scale[dataset_name].keys())
             for var in self.variables_to_scale[dataset_name].keys():
-                self.variables_to_scale[dataset_name][var] = safe_array_divide(zone_set.get_attribute(var), number_of_agents)
+                self.variables_to_scale[dataset_name][var] = safe_array_divide(zone_set.get_attribute(var), number_of_agents,
+                                                                               return_value_if_denominator_is_zero=1.0/float(nvars))
             
     def _determine_simulated_values(self, zone_set, file):
         bm = BayesianMeldingFromFile(file)
@@ -102,6 +114,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         if len(variables_to_compute) > 0:
             zone_set.compute_variables(variables_to_compute, dataset_pool=self.dataset_pool)
         zone_ids = zone_set.get_id_attribute()
+        # simulate households
         for dataset_name in self.variables_to_scale.keys():
             bmvar = get_variables_for_number_of_agents(dataset_name, bm.get_variable_names())[0] # this should be a list with one element ('number_of_households')
             bm.set_posterior(self.year, bmvar, zone_set.get_attribute(bmvar), zone_ids, transformation_pair = ("sqrt", "**2"))
@@ -114,7 +127,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
                 self.simulated_values[var][zone_set.get_id_index(bm.get_m_ids())] = (round_(simulated_number_of_agents*ratios)).astype(self.simulated_values[var].dtype)
                 logger.log_status(var)
                 logger.log_status(self.simulated_values[var])
-            
+        # simulate jobs
         for dataset_name in self.variables_for_direct_matching.keys():
             logger.log_status('Current values of bm variables for %ss:' % dataset_name)
             bmvars = get_variables_for_number_of_agents(dataset_name, bm.get_variable_names())
@@ -178,7 +191,7 @@ class TestTMInputWriter(opus_unittest.OpusTestCase):
                 }
             )
         zones = ZoneDataset(in_storage=storage)
-        
+        dataset_pool = DatasetPool(package_order=['urbansim_parcel', 'urbansim'], storage=storage)
         tmiw = TravelModelInputFileWriter()
         
         tmiw.variables_to_scale = {
@@ -194,12 +207,10 @@ class TestTMInputWriter(opus_unittest.OpusTestCase):
                   "manu = zone.number_of_jobs_of_sector_group_manu"
                   ]
           }
-        tmiw.dataset_pool = DatasetPool(package_order=['urbansim_parcel', 'urbansim'], storage=storage)
-        tmiw.year = 2010
-        tmiw.simulated_values = {}
-        zones.compute_variables(tmiw.variables_to_scale['household'].keys(), dataset_pool = tmiw.dataset_pool)
-        tmiw.configuration = {'travel_model_configuration': {'bm_distribution_file': temp_file[1]}}
         
+        tmiw._do_setup(2010, dataset_pool, config={'travel_model_configuration': {'bm_distribution_file': temp_file[1]}}, enable_file_logging=False)
+        zones.compute_variables(tmiw.variables_to_scale['household'].keys(), dataset_pool = tmiw.dataset_pool)
+
         tmiw.bm_generate_from_posterior(zones)
         os.remove(temp_file[1])
         
