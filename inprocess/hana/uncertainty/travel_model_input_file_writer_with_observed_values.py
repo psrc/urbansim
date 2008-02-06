@@ -56,7 +56,7 @@ class TravelModelInputFileWriterWithObservedValues(BMTravelModelInputFileWriter)
         self._set_travel_model_input(zone_set)
         
     def _write_to_file(self, zone_set, variables_list, tm_input_file):
-        self._modify_vairable_set()
+        self._modify_variable_set()
         BMTravelModelInputFileWriter._write_to_file(self, zone_set, variables_list, tm_input_file)
         
     def _modify_variable_set(self):
