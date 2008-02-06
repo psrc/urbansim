@@ -59,7 +59,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
     log_file_name = 'run_travel_model_bm.log'
     
     def run(self, current_year_emme2_dir, current_year, dataset_pool, config=None):
-        self.do_setup(current_year, dataset_pool, config)
+        self._do_setup(current_year, dataset_pool, config)
         PSRCTravelModelInputFileWriter.run(self, current_year_emme2_dir, current_year, dataset_pool, config)
         
     def _do_setup(self, current_year, dataset_pool, config=None, enable_file_logging=True):
