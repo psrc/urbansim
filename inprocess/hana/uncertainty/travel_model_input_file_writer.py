@@ -76,7 +76,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         
     def get_variables_list(self, dataset_pool):
         self.full_variable_list = PSRCTravelModelInputFileWriter.get_variables_list(self, dataset_pool)
-        return self.full_variable_list[0:8] + self.full_variable_list[20:24] # jobs variablees removed, since they are computed within _determine_simulated_values
+        return self.full_variable_list[0:8] + self.full_variable_list[20:24] # some job variables removed, since they are computed within _determine_simulated_values
         
     def _write_to_file(self, zone_set, variables_list, tm_input_file):
         self.generate_travel_model_input(zone_set)

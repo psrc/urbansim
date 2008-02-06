@@ -54,6 +54,13 @@ class TravelModelInputFileWriterWithObservedValues(BMTravelModelInputFileWriter)
         zone_set.join(self.observed_zones_with_jobs, self.observed_zones_with_jobs.get_known_attribute_names(), metadata=AttributeType.PRIMARY, 
                       return_value_if_not_found=0)
         self._set_travel_model_input(zone_set)
+        
+    def _write_to_file(self, zone_set, variables_list, tm_input_file):
+        self._modify_vairable_set()
+        BMTravelModelInputFileWriter._write_to_file(self, zone_set, variables_list, tm_input_file)
+        
+    def _modify_variable_set(self):
+        self.full_variable_list[8:20] = self.variables_for_direct_matching['job']
             
     def _set_travel_model_input(self, zone_set):
         zone_ids = zone_set.get_id_attribute()
@@ -77,8 +84,7 @@ class TravelModelInputFileWriterWithObservedValues(BMTravelModelInputFileWriter)
                 logger.log_status(var)
                 logger.log_status(self.simulated_values[var])
                 
-def get_variables_for_number_of_agents(agent_name, variables):
-    return [var for var in variables if re.compile("number_of_%s" % agent_name).search(var)]
+
             
 from opus_core.tests import opus_unittest
 import tempfile
@@ -141,7 +147,7 @@ class TestTMInputWriter(opus_unittest.OpusTestCase):
             )
         zones = ZoneDataset(in_storage=storage)
         dataset_pool = DatasetPool(package_order=['urbansim_parcel', 'urbansim'], storage=storage)
-        tmiw = TravelModelInputFileWriter()
+        tmiw = TravelModelInputFileWriterWithObservedValues()
         
         tmiw.variables_to_scale = {
             'household': {
