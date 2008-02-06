@@ -46,11 +46,11 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
         reports = config['travel_model_configuration'].get('reports_to_copy', [])
         
         for x in 1,2,3:
+            if matrix_directory is None:
+                bank_dir = self.get_emme2_dir(config, year, "bank%i" % x)
+            else:
+                bank_dir = os.path.join(matrix_directory, "bank%i" % x)
             if "bank%i" % x in year_config['matrix_variable_map']:
-                if matrix_directory is None:
-                    bank_dir = self.get_emme2_dir(config, year, "bank%i" % x)
-                else:
-                    bank_dir = os.path.join(matrix_directory, "bank%i" % x)
                 self.get_needed_matrices_from_emme2(year, 
                                                 year_config['cache_directory'],
                                                 bank_dir,
