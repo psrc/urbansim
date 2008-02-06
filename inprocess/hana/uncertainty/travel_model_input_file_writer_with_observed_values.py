@@ -24,7 +24,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.variables.attribute_type import AttributeType
 
-class TravelModelInputFileWriter(BMTravelModelInputFileWriter):
+class TravelModelInputFileWriterWithObservedValues(BMTravelModelInputFileWriter):
     """Write urbansim simulation information into a (file) format that the emme2 travel model understands. 
         It uses the observed number of households and jobs.
     """
