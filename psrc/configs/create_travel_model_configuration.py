@@ -55,6 +55,8 @@ def create_travel_model_configuration(travel_model_dir_name,
             'atrnst':'am_transit_person_trip_table',
             'au1cos':'single_vehicle_to_work_travel_cost',
             
+            'au1dis': 'single_vehicle_to_work_travel_distance',
+            
 #            'mf91':'am_vehicle_miles_traveled',
 #
 #            'hbwdap':'hbw_daily_drive_alone_person_trip_table',
