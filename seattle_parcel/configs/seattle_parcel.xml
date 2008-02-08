@@ -21,6 +21,8 @@
       <sql_data_to_opus type="script_file" >sql_data_to_opus</sql_data_to_opus>
       <opus_data_to_sql type="script_file" >opus_data_to_sql</opus_data_to_sql>
       <opus_data_to_esri type="script_file" >opus_data_to_esri</opus_data_to_esri>
+      <create_businesses_from_cbp_data_file type="script_file" >create_businesses_from_cbp_data_file</create_businesses_from_cbp_data_file>
+      <create_households_from_sf3_data type="script_file" >create_households_from_sf3_data</create_households_from_sf3_data>
     </script_library>
     <script_batch type="script_batch" >
       <esri_buffer_tool type="script_config" >
@@ -58,6 +60,19 @@
         <opus_data_year type="string" >2000</opus_data_year>
       </opus_data_to_esri>
     </script_batch>
+    <data_imputation_tools type="script_batch" >
+      <create_businesses_from_cbp_data_file type="script_config" >
+        <script_hook type="script_library_ref" >create_businesses_from_cbp_data_file</script_hook>
+        <zip_codes_path type="string" >c:\tmp\seattle_zipcodes.txt</zip_codes_path>
+        <raw_cbp_data_file type="string" >c:\tmp\zbp00detail.txt</raw_cbp_data_file>
+        <output_file_path type="string" >c:\tmp\testing2.txt</output_file_path>
+      </create_businesses_from_cbp_data_file>
+      <create_households_from_sf3_data type="script_config" >
+        <script_hook type="script_library_ref" >create_households_from_sf3_data</script_hook>
+        <census_data_file type="string" >c:\tmp\dc_dec_2000_sf3_u_data1.txt</census_data_file>
+        <output_file type="string" >c:\tmp\output_households.txt</output_file>
+      </create_households_from_sf3_data>
+    </data_imputation_tools>
   </data_manager>
   <model_manager>
     <estimation type="dictionary" >
