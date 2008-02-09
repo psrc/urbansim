@@ -19,7 +19,7 @@ import os, sys
 try:
     WithOpus = True
     #from opus_gui.configurations.xml_configuration import XMLConfiguration
-    from inprocess.configurations.xml_configuration import XMLConfiguration
+    from opus_core.configurations.xml_configuration import XMLConfiguration
     from inprocess.travis.opus_core.indicator_framework.representations.computed_indicator import ComputedIndicator
     from inprocess.travis.opus_core.indicator_framework.maker.maker import Maker
     from inprocess.travis.opus_core.indicator_framework.visualizer.visualization_factory import VisualizationFactory
