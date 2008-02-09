@@ -20,9 +20,9 @@ import os, sys
 
 try:
     import os
-    from inprocess.configurations.xml_configuration import XMLConfiguration
+    from opus_core.configurations.xml_configuration import XMLConfiguration
     # from psrc_parcel.estimation.run_estimation import EstimationRunner
-    from inprocess.configurations.gui_estimation_runner import EstimationRunner
+    from gui_estimation_runner import EstimationRunner
     WithOpus = True
 except ImportError:
     WithOpus = False
