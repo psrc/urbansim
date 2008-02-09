@@ -79,7 +79,7 @@ class DevelopmentProjectProposalDataset(UrbansimDataset):
 #                index = self.get_2d_index()
             else:
                 self._raise_error(StandardError, "Cannot find variable '%s'\nin either dataset or in the interaction set." %
-                                variable_name.get_full_name())
+                                variable_name.get_expression())
             owner_dataset.compute_variables([variable_name], dataset_pool, resources=resources, quiet=True)
             new_version =  self.compute_variables_return_versions_and_final_value("%s = %s.disaggregate(%s.%s)" % \
                                    ( short_name, self.get_dataset_name(), owner_dataset.get_dataset_name(), short_name ),
