@@ -1706,7 +1706,7 @@ class AbstractDataset(object):
             id_name = id_name[0]
         if variable_name.get_dataset_name() is None:
             raise StandardError, "Computing variable " + \
-                  variable_name.get_full_name() + ":\n" + \
+                  variable_name.get_expression() + ":\n" + \
                   "Unable to get its dataset_name, maybe because of it's not a fully-qualified variable_name."
         if variable_name.get_dataset_name() != self.get_dataset_name():
             self._raise_mismatch_dataset_name_error(variable_name)
@@ -2137,7 +2137,7 @@ class AbstractDataset(object):
                           "Mismatch of dataset's name '%s' and variable's dataset name '%s' when computing variable '%s'"
                           % (self.get_dataset_name(),
                              variable_name.get_dataset_name(),
-                             variable_name.get_full_name()))
+                             variable_name.get_expression()))
 
     def _raise_error(self, error, msg):
         raise error("In dataset '%s': %s'" % (self.get_dataset_name(), msg))

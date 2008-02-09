@@ -116,7 +116,7 @@ class InteractionDataset(Dataset):
             owner_dataset, index = self.get_owner_dataset_and_index(dataset_name)
             if owner_dataset is None:
                 self._raise_error(StandardError, "Cannot find variable '%s'\nin either dataset or in the interaction set." %
-                                variable_name.get_full_name())
+                                variable_name.get_expression())
             owner_dataset.compute_variables([variable_name], dataset_pool, resources=resources, quiet=True)
             new_version = self.add_attribute(data = owner_dataset.get_attribute_by_index(variable_name, index),
                 name = variable_name, metadata = AttributeType.COMPUTED)
