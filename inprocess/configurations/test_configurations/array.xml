@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<opus_project>
-  <scenario_manager>
-    <test_scenario type="scenario">
-      <arraytest type="array">[100, 300]</arraytest>
-    </test_scenario>
-  </scenario_manager>
-</opus_project>
