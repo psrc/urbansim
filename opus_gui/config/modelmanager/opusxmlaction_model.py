@@ -18,10 +18,6 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
-#import os
-#from inprocess.configurations.xml_configuration import XMLConfiguration
-## from psrc_parcel.estimation.run_estimation import EstimationRunner
-#from inprocess.configurations.gui_estimation_runner import EstimationRunner
 from run.estimation.opusrunestimation import OpusEstimation
         
 
