@@ -247,8 +247,8 @@ class ModelSystem(object):
                                     raise KeyError, "Entry 'group_by_attribute' is missing for model %s" % model_name
                                 group_members = model_group.get_member_names()
                             for member in group_members:
-                                if isinstance(member, dict): # see 'model_name_2' ('residential')
-                                                             # in the comment above
+                                if isinstance(member, dict): 
+                                    # see 'model_name_2' ('residential') in the comment above
                                     member_name = member.keys()[0]
                                     model_group_members_to_run[member_name] = member[member_name]
                                     if not isinstance(model_group_members_to_run[member_name], list):
@@ -262,10 +262,15 @@ class ModelSystem(object):
                     else: # in the form 'model_name_4' in the comment above
                         model_name = model_entry
                         processes = ["run"]
-    
-                    self._write_status_for_gui(year, models, model_number, model_name, resources)
                     group_member = None
-                    for imember in range(max(1, len(model_group_members_to_run.keys()))):
+                    last_member = max(1, len(model_group_members_to_run.keys()))
+                    for imember in range(last_member):
+                        # write status file
+                        if len(model_group_members_to_run.keys())>0:
+                            descr = 'group: %s' % model_group_members_to_run.keys()[imember]
+                        else:
+                            descr = ''                                   
+                        self._write_status_for_gui(year, models, model_number, model_name, last_member, imember, descr, resources)
                         controller_config = models_configuration[model_name]["controller"]
                         model_configuration = models_configuration[model_name]
                         if model_group_members_to_run.keys():
@@ -286,7 +291,7 @@ class ModelSystem(object):
     
                         # gui_import_replacements part
                         # This is a temporary hack -- replicates the functionality of the "import" section
-                        # for use with the GUI.  The ontents of this part of the config is a dictionary.
+                        # for use with the GUI.  The contents of this part of the config is a dictionary.
                         # Keys are names of models (not used here).  Values are 2 element pairs.
                         # The first element is a name and the second is a value.  Bind the name to the value.
                         if "gui_import_replacements" in controller_config.keys():
@@ -483,18 +488,21 @@ class ModelSystem(object):
             result += "%s=%s, " % (arg_key, arg_dict[arg_key])
         return result
     
-    def _write_status_for_gui(self, year, models, model_number, model_name, resources):
+    def _write_status_for_gui(self, year, models, model_number, model_name, total_pieces, current_piece, piece_description, resources):
         # Write a status file for each model run if the entry status_file_for_gui is in
         # resources.  The GUI uses this to update a progress bar.  The file is ascii, with
         # the following format (1 item per line):
         #   current year
         #   total number of models
-        #   number of current model that is about to run
-        #   message to display in the progress bar widget
+        #   number of current model that is about to run (starting with 0)
+        #   name of current model
+        #   total number of pieces of current model (could be 1)
+        #   number of current piece
+        #   description of current piece (empty string if no description)
         if 'status_file_for_gui' in resources:
-            msg = 'year: %d  model: %s' % (year, model_name)
             n_models = len(models)
-            status = '%d\n%d\n%d\n%s\n' % (year, n_models, model_number, msg)
+            # for now, assume 1 piece, and no description
+            status = '%d\n%d\n%d\n%s\n%d\n%d\n%s\n' % (year, n_models, model_number, model_name, total_pieces, current_piece, piece_description)
             f = open(resources['status_file_for_gui'], 'w')
             f.write(status)
             f.close()
