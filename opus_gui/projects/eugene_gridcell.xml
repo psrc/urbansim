@@ -216,18 +216,21 @@
     <Data_sources type="all_source_data" >
       <eugene_baseline type="source_data" >
         <start_year type="integer" >1980</start_year>
-        <end_year type="integer" >1984</end_year>
+        <end_year type="integer" >1980</end_year>
         <run_name type="string" >run1900</run_name>
+        <scenario_name type="string" >Eugene_baseline</scenario_name>
       </eugene_baseline>
       <tunnel_scenario type="source_data" >
         <start_year type="integer" >1980</start_year>
-        <end_year type="integer" >1984</end_year>
+        <end_year type="integer" >1980</end_year>
         <run_name type="string" >run1834</run_name>
+        <scenario_name type="string" >Eugene_baseline</scenario_name>
       </tunnel_scenario>
       <rebuild_scenario type="source_data" >
         <start_year type="integer" >1980</start_year>
-        <end_year type="integer" >1984</end_year>
+        <end_year type="integer" >1980</end_year>
         <run_name type="string" >run1835</run_name>
+        <scenario_name type="string" >Eugene_baseline</scenario_name>
       </rebuild_scenario>
     </Data_sources>
     <Results type="selectable_list" >
