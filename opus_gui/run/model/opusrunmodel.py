@@ -112,7 +112,7 @@ class OpusModel(object):
                 self.statusfile = statusfile
                 self.config = config
                 config['status_file_for_gui'] = statusfile
-                # To test delay in writting of the first log file entry...
+                # To test delay in writing the first log file entry...
                 # time.sleep(5)
                 run_manager.run_run(config)
                 succeeded = True
@@ -141,7 +141,10 @@ class OpusModel(object):
             #   current year
             #   total number of models
             #   number of current model that is about to run (starting with 0)
-            #   message to display in the progress bar widget
+            #   name of current model
+            #   total number of pieces of current model (could be 1)
+            #   number of current piece
+            #   description of current piece (empty string if no description)
             try:
                 f = open(statusfile)
                 lines = f.readlines()
@@ -150,23 +153,29 @@ class OpusModel(object):
                 current_year = float(lines[0])
                 total_models = float(lines[1])
                 current_model = float(lines[2])
-                message = lines[3].strip()
+                model_name = lines[3].strip()
+                total_pieces = float(lines[4])
+                current_piece = float(lines[5])
+                piece_description = lines[6].strip()
                 total_years = float(self.end_year - self.start_year + 1)
                 # For each year, we need to run all of the models.
                 # year_fraction_completed is the fraction completed (ignoring the currently running year)
-                # model_fraction_completed is the additional fraction completed for the current year
+                # model_fraction_completed is the additional fraction of the models completed for the current year
+                # piece_fraction_completed is the additional fraction of the pieces of the current model completed for the current year
                 year_fraction_completed = (current_year - self.start_year) / total_years
                 model_fraction_completed = (current_model / total_models) / total_years
-                percentage = 100.0* (year_fraction_completed + model_fraction_completed)
-                return {"percentage":percentage,"message":message}
+                piece_fraction_completed = (current_piece / total_pieces) / (total_years*total_models)
+                percentage = 100.0* (year_fraction_completed + model_fraction_completed + piece_fraction_completed)
+                message = 'year: %d  model: %s %s' % (current_year, model_name, piece_description)
+                return {"percentage": percentage, "message": message}
             except IOError:
-                return {"percentage":0,"message":"Model initializing..."}
+                return {"percentage": 0, "message":" Model initializing..."}
 
     def _get_current_log(self, key):
         newKey = key
         if WithOpus:
             # We attempt to keep up on the current progress of the model run.  We pass into this
-            # function an intial "key" value of 0 and expect to get back a new "key" after the
+            # function an initial "key" value of 0 and expect to get back a new "key" after the
             # function returns.  It is up to us in this function to use this key to determine
             # what has happened since last time this function was called.
             # In this example we use the key to indicate where in a logfile we last stopped reading
