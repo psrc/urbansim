@@ -783,6 +783,26 @@ def get_string_or_None(arg):
         return "'%s'" % arg
     return None
 
+def get_dataset_from_flt_storage(dataset_name, directory, package_order=['opus_core'], dataset_args=None):
+    """ Returns an object of class Dataset (or its child) with data stored as flt_storage in 'directory'. If the child class is defined in a specific package, 
+    this package must be included in 'package_order'. If there is no child class definition for this 'dataset_name', set 'dataset_args' to a dictionary 
+    (possibly empty) and a generic Dataset will be returned. 'dataset_args' should contain entries needed as arguments for the Dataset class, e.g. 'in_table_name', 'id_name'.
+    """
+    from opus_core.storage_factory import StorageFactory
+    from opus_core.datasets.dataset_pool import DatasetPool
+    from opus_core.datasets.dataset_factory import DatasetFactory
+    from opus_core.datasets.dataset import Dataset
+    
+    storage = StorageFactory().get_storage('flt_storage',storage_location = directory)
+    if dataset_args is None:
+        pool = DatasetPool(storage=storage, package_order=package_order)
+        return pool.get_dataset(dataset_name)
+    dataset_args.update({'in_storage':storage})
+    try:
+        return DatasetFactory().search_for_dataset(dataset_name, package_order, arguments=dataset_args)
+    except: # take generic dataset
+        return Dataset(dataset_name=dataset_name, **dataset_args)
+    
 from opus_core.tests import opus_unittest
 import shutil
 import opus_core
@@ -1005,6 +1025,14 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         b = [0.01, 0.1, 0.01, 0.2, 0.1, 0.5, 0.08]
         self.assertEqual(unique_values(b), [0.01, 0.08, 0.1, 0.2, 0.5])
         self.assertEqual(unique_values(b, sort_values=False), [0.01, 0.1, 0.2, 0.5, 0.08])
+        
+    def test_get_dataset_from_flt_storage(self):
+        import opus_core
+        
+        attribute = 'little_endian'
+        location = os.path.join(opus_core.__path__[0], 'data', 'flt')
+        dataset = get_dataset_from_flt_storage('endian', directory=location, dataset_args={'in_table_name':'endians', 'id_name':[]})
+        self.assertAlmostEqual(11.0, dataset.get_attribute_by_index(attribute, 0))
 
 if __name__ == "__main__":
     opus_unittest.main()
