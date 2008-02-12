@@ -79,8 +79,7 @@ class SimulationState(object):
             self._created_base_cache_dir = False
 
         def get_cache_directory(self):
-            if not self.cache_directory_exists():
-                self.create_cache_directory()
+
             return self.cache_directory
         
         def set_cache_directory(self, cache_directory):
