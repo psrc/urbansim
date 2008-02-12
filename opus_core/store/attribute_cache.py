@@ -136,7 +136,7 @@ class AttributeCache(Storage):
         """
         from os import listdir
         current_year = SimulationState().get_current_time()
-        dirs = listdir(self.get_storage_location())
+        dirs = flt_storage(self.get_storage_location()).listdir_in_base_directory()
         years = []
         for dir_name in dirs:
             try:

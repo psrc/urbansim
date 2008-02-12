@@ -16,7 +16,7 @@ import os
 
 from glob import glob
 import numpy
-
+from opus_core.logger import logger
 from opus_core.store.storage import Storage
 from opus_core.misc import is_file_in_directory
         
@@ -181,6 +181,7 @@ class file_flt_storage(Storage):
         dir = os.path.join(self._get_base_directory(), table_name)
         
         if not os.path.exists(dir):
+            logger.log_status("%s doesn't exist and is created" % dir)
             os.makedirs(dir)
             
         unused_column_size, column_names = self._get_column_size_and_names(table_data)
@@ -218,6 +219,10 @@ class file_flt_storage(Storage):
             
         else:
             raise FltError("Cache directory '%s' does not exist!" % dataset_path)
+        
+    def listdir_in_base_directory(self):
+        return os.listdir( self._get_base_directory() )
+        
         
 
 class FltError(Exception):
