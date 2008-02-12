@@ -54,10 +54,9 @@ Installing on Macintosh</td>
 
 
 <p>This following instructions are for installing Opus &amp;
-UrbanSim on
-Macintosh OS X.&nbsp; These installation directions have been
-tested with
-Macintosh OS X Tiger and Leopard with Intel processors. </p>
+UrbanSim on Macintosh OS X.&nbsp; These installation directions have been
+tested with Macintosh OS X Tiger and Leopard with Intel processors,
+and Macintosh OS X Tiger with a PPC processor. </p>
 
 
 <ol>
@@ -102,7 +101,8 @@ running an earlier version of the OS (10.4.9 or earlier), the default version
 will be 2.3.5 or earlier and you will need to also get Python 2.5.1.  
 When you install Python 2.5.1 the installer will
 put it earlier on the search path so that it will be found instead. You
-can still get to the old version via /usr/bin/python.</p>
+can still get to the old version via /usr/bin/python.  (Don't simply delete the old
+version, since some other applications may still rely on it.)</p>
 
 <p>The <a href="http://www.python.org">official
 Python website</a> includes documentation, downloads, and much
@@ -161,9 +161,22 @@ Libraries</a></h2>
 
 <p> Unfortunately, there is no download for the Mac that contains
 all of the Python libraries needed by Opus and UrbanSim, so several steps are
-needed to install the Python libraries.  In most cases, obtaining these packages
+needed to install the Python libraries.</p>
+
+<p>In some cases, you'll need to compile the library from source (if it uses C or C++ routines
+rather than pure Python).  To get ready for doing this, install the optional Xcode package on one of the 
+Install Disks that came with your Mac (on Install Disk 2 for Leopard), if you don't already have it.
+Insert the disk, double-click "Xcode Tools," double-click "XcodeTools?.mpkg", and follow the on-screen instructions. 
+If you have an older Mac, you may need to get a more up-to-date version of Xcode Tools than the one that 
+came on your Install Disk. In particular if you get C compiler errors (such as not being able to find 'include' files), 
+this may be the problem. To fix it, get the latest version of Xcode Tools from 
+the <a href="http://developer.apple.com/tools/download/">Apple Tools Download page</a>. 
+(You'll need to register and login, but it's free. The file is huge - 924 MB.)</p>
+
+<p>Onward to the packages themselves.  In most cases, obtaining these packages
  is made simpler by the use of Easy Install, a python module that can help you 
- download and build python packages.  For more on Easy Install, <a href="http://peak.telecommunity.com/DevCenter/EasyInstall">visit the PEAK webpage</a>.
+ download and build python packages.  For more on Easy Install, 
+ <a href="http://peak.telecommunity.com/DevCenter/EasyInstall">visit the PEAK webpage</a>.</p>
 
 <p>Download <a href="http://peak.telecommunity.com/dist/ez_setup.py">ez_setup.py</a> to 
 	your computer.  Run it (from the directory it's in) by typing
@@ -219,6 +232,7 @@ This is a Python interface for the statistical programming language R
 by ArcGIS), install <b>dbfpy</b> (<a href="http://sourceforge.net/projects/dbfpy">http://sourceforge.net/projects/dbfpy</a>).</li>
 
  	<li>If you are using MySQL, download <b>MySQL-python</b> (<a href="http://sourceforge.net/projects/mysql-python">http://sourceforge.net/projects/mysql-python</a>).
+ 	You should install MySQL before trying to compile MySQL-python.
  	You may need to put /usr/local/mysql/bin into your path before installing mysql-python to avoid getting an error.</li>
     	
 </ul>
@@ -227,9 +241,17 @@ by ArcGIS), install <b>dbfpy</b> (<a href="http://sourceforge.net/projects/dbfpy
 <i><br>ImportError: dlcompat: dyld: /Library/Frameworks/Python.framework/Versions/2.5/Resources/Python.app/Contents/MacOS/Python can't open library: /usr/local/mysql/lib/mysql/libmysqlclient_r.15.dylib  (No such file or directory, errno = 2)</i>
 <br>This may happen because the library it is looking for is in /usr/local/mysql/lib/, and not in a subfolder called mysql.  Moving the files or creating aliases should fix the problem.</p>
 
-<p>Lastly, install <a href="http://www.riverbankcomputing.co.uk/pyqt/index.php">PyQt</a> and <a href="http://www.riverbankcomputing.co.uk/qscintilla/index.php">QScintilla</a>.  You need to install Qt (version 4), SIP and finally PyQt.  The page <a href="http://phanatic.hu/archives/2007/11/building-qt-4-and-pyqt-on-mac-os-x-leopard/">
-http://phanatic.hu/archives/2007/11/building-qt-4-and-pyqt-on-mac-os-x-leopard/</a> has detailed directions for how to do this on Mac OS 10.5/Leopard.  The process is similar on Tiger/10.4,
-but seems to vary from user to user for reasons we haven't been able to pin down.  <a href="http://www.riverbankcomputing.com/pipermail/qscintilla/2007-July/000110.html">This page</a> has been useful to some users.
+<p>Lastly, install <a href="http://www.riverbankcomputing.co.uk/pyqt/index.php">PyQt</a> and 
+<a href="http://www.riverbankcomputing.co.uk/qscintilla/index.php">QScintilla</a>.  You need to install Qt (version 4), SIP and finally PyQt.  
+For Leopard, currently you need to build Qt from source (don't use the dmg file), although presumably this will get fixed at some point.
+For Tiger, the dmg file will probably work.
+The page <a href="http://phanatic.hu/archives/2007/11/building-qt-4-and-pyqt-on-mac-os-x-leopard/">
+http://phanatic.hu/archives/2007/11/building-qt-4-and-pyqt-on-mac-os-x-leopard/</a> has detailed directions for how to do this on Mac OS 10.5/Leopard.  
+However, you should probably omit the parameter <tt>-q /usr/local/Trolltech/Qt-4.3.2/bin/qmake</tt> given in the directions for building PyQt (at least we did).
+To get PyQt to compile, you may also need to comment out all OpenGL components from the makefile.</p>
+
+<p>The process is similar on Tiger/10.4, but seems to vary from user to user for reasons we haven't been able to pin down.  
+<a href="http://www.riverbankcomputing.com/pipermail/qscintilla/2007-July/000110.html">This page</a> has been useful to some users.</p>
 
 <h2>Step 4: <a name="opus">Installing Opus and
 UrbanSim</a></h2>
