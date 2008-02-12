@@ -59,9 +59,10 @@ class RunModelThread(QThread):
 
 
 class OpusModel(object):
-    def __init__(self,parent,xml_path):
+    def __init__(self,parent,xml_path,modeltorun):
         self.parent = parent
         self.xml_path = xml_path
+        self.modeltorun = modeltorun
         #self.thread = RunModelThread(self.parent.parent,self.xml_path)
         self.progressCallback = None
         self.finishedCallback = None
@@ -101,7 +102,8 @@ class OpusModel(object):
                 fileNameInfo = QFileInfo(self.xml_path)
                 fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
                 print fileNameAbsolute
-                config = XMLConfiguration(str(fileNameAbsolute)).get_run_configuration('Eugene_baseline')
+                print self.modeltorun
+                config = XMLConfiguration(str(fileNameAbsolute)).get_run_configuration(str(self.modeltorun))
                 insert_auto_generated_cache_directory_if_needed(config)
                 (self.start_year, self.end_year) = config['years']
 

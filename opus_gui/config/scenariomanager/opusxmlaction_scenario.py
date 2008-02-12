@@ -79,9 +79,11 @@ class OpusXMLAction_Scenario(object):
     def runModel(self):
         # If the XML is not dirty we can go ahead and run... else prompt for saving
         if not self.xmlTreeObject.model.dirty:
+            modelToRun = self.currentIndex.internalPointer().node().nodeName()
             # Add the model to the run Q
             newModel = OpusModel(self.xmlTreeObject,
-                                 self.xmlTreeObject.parentTool.xml_file)
+                                 self.xmlTreeObject.parentTool.xml_file,
+                                 modelToRun)
             self.xmlTreeObject.parent.runManagerStuff.addNewModelRun(newModel)
         else:
             # Prompt the user to save...
