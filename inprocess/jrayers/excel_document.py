@@ -94,20 +94,22 @@ else:
             for i in range(number_data_rows):
                 new_num_cols = new_num_cols + number_of_columns
                 temp_list = range_list[new_num_cols:new_num_cols + number_of_columns]
-                lst.append(temp_list)               
-                
+                lst.append(temp_list)
+            
             # Create dictionary of columns to populate with values
             table = {}
             x = 0
             for i in range(0,number_of_columns):
                 col_name = str(range_list[i])
                 table[col_name] = empty(0, 'f')
-            
+                       
             # Populate dictionary with values
             for i in lst:
+                index_counter = 0
                 for j in i:
-                    column_name = column_names[i.index(j)]
+                    column_name = column_names[index_counter]
                     table[column_name] = append(table[column_name], j)
+                    index_counter += 1
 
             return table
             
