@@ -66,6 +66,7 @@ class RegressionModel(ChunkModel):
             self.estimate_config = Resources()
         self.data = {}
         self.coefficient_names = {}
+        ChunkModel.__init__(self)
 
     def run(self, specification, coefficients, dataset, index=None, chunk_specification=None,
             data_objects=None, run_config=None, initial_values=None, debuglevel=0):

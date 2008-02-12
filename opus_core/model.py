@@ -63,8 +63,10 @@ class Model(ModelComponent):
                 return results
             an_instance.estimate = logged_estimate_method
 
+        # set defaults for status attributes
+        an_instance.status_file_for_gui = None
         return an_instance
-
+                                           
     def name(self):
         if hasattr(self, 'model_name') and (self.model_name is not None):
             return '%s (from %s)' % (self.model_name, self.__module__)
@@ -155,6 +157,41 @@ class Model(ModelComponent):
                 return DatasetPool(pool_packages)
         return dataset_pool
 
+    def set_model_system_status_parameters(self, current_year=0, total_number_of_models=1, number_of_current_model=1, status_file_for_gui=None):
+        self.status_file_for_gui = status_file_for_gui
+        if self.status_file_for_gui is not None:
+            self.status_current_year = current_year
+            self.status_total_number_of_models = total_number_of_models
+            self.status_number_of_current_model = number_of_current_model                            
+        
+    def write_status_for_gui(self):
+        # Write a status file for each model run.
+        # The GUI uses this to update a progress bar.  The file is ascii, with
+        # the following format (1 item per line):
+        #   current year
+        #   total number of models
+        #   number of current model that is about to run (starting with 0)
+        #   name of current model
+        #   total number of pieces of current model (could be 1)
+        #   number of current piece
+        #   description of current piece (empty string if no description)
+        if self.status_file_for_gui is not None:
+            status = '%d\n%d\n%d\n%s\n%d\n%d\n%s\n' % (self.status_current_year, self.status_total_number_of_models, 
+                                                       self.status_number_of_current_model, self.name(), 
+                                                       self._get_status_total_pieces(), self._get_status_current_piece(), self._get_status_piece_description())
+            f = open(self.status_file_for_gui, 'w')
+            f.write(status)
+            f.close()
+            
+    def _get_status_total_pieces(self):
+        return 1
+    
+    def _get_status_current_piece(self):
+        return 0
+        
+    def _get_status_piece_description(self):
+        return ""
+    
 from opus_core.tests import opus_unittest
 import re
 

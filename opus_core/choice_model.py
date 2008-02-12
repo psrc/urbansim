@@ -104,6 +104,7 @@ class ChoiceModel(ChunkModel):
         self.dataset_pool = self.create_dataset_pool(dataset_pool)
         self.coefficient_names = {}
         self.model_interaction = ModelInteraction(self, interaction_pkg, [self.choice_set, upper_level_choice_set])
+        ChunkModel.__init__(self)
 
     def run(self, specification, coefficients, agent_set,
             agents_index=None, chunk_specification=None, data_objects=None, run_config=None, debuglevel=0):

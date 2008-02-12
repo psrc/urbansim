@@ -29,7 +29,12 @@ class ChunkModel(Model):
     __default_records_per_chunk = 1000
 
     model_short_name="ChunkM" # abbreviation of the model
-
+    
+    def __init__(self, *args, **kwargs):
+        self.number_of_chunks = 1
+        self.index_of_current_chunk = 0
+        Model.__init__(self, *args, **kwargs)
+        
     def run(self, chunk_specification, dataset, dataset_index=None, result_array_type=float32, **kwargs):
         """ 'chunk_specification' - determines number of chunks to use when computing over
                 the dataset set.
@@ -58,11 +63,13 @@ class ChunkModel(Model):
         if (chunk_specification is None):
             chunk_specification = {'nchunks':1}
         chunker = ChunkSpecification(chunk_specification)
-        nchunks = chunker.nchunks(dataset_index)
-        chunksize = int(ceil(all_indexed_individuals.size()/float(nchunks)))
-        for ichunk in range(nchunks):
+        self.number_of_chunks = chunker.nchunks(dataset_index)
+        chunksize = int(ceil(all_indexed_individuals.size()/float(self.number_of_chunks)))
+        for ichunk in range(self.number_of_chunks):
             logger.start_block("%s chunk %d out of %d."
-                               % (self.model_short_name, (ichunk+1), nchunks))
+                               % (self.model_short_name, (ichunk+1), self.number_of_chunks))
+            self.index_of_current_chunk = ichunk
+            self.write_status_for_gui()
             try:
                 chunk_agent_indices = ordered_agent_indices[arange((ichunk*chunksize),
                                                                    min((ichunk+1)*chunksize,
@@ -75,6 +82,12 @@ class ChunkModel(Model):
 
         return result_array
 
+    def get_number_of_chunks(self):
+        return self.number_of_chunks
+    
+    def get_index_of_current_chunk(self):
+        return self.index_of_current_chunk
+    
     def get_agents_order(self, dataset):
         """ Return desired order of individuals within a dataset containig only agents for chunking.
         """
@@ -83,3 +96,11 @@ class ChunkModel(Model):
     def run_chunk(self, index, dataset, *args, **kwargs):
         raise NotImplementedError, "Method 'run_chunk' for this model not implemented."
 
+    def _get_status_total_pieces(self):
+        return self.get_number_of_chunks()
+    
+    def _get_status_current_piece(self):
+        return self.get_index_of_current_chunk()
+        
+    def _get_status_piece_description(self):
+        return "%s chunk: %s " % (Model._get_status_piece_description(self), self.get_index_of_current_chunk() + 1)
