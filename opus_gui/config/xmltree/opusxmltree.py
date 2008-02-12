@@ -17,6 +17,7 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+from opus_gui.config.xmlmodelview.opusdataview import OpusDataView
 from opus_gui.config.xmlmodelview.opusdatamodel import OpusDataModel
 from opus_gui.config.xmlmodelview.opusdatadelegate import OpusDataDelegate
 from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
@@ -36,11 +37,12 @@ class OpusXMLTree(object):
     self.groupBoxLayout = QVBoxLayout(self.groupBox)
     self.model = OpusDataModel(self,self.parentTool.doc, self.parent,
                                self.parentTool.configFile, self.xmlType, True)
-    self.view = QTreeView(self.parent)
+    self.view = OpusDataView(self.parent)
     self.delegate = OpusDataDelegate(self.view)
     self.view.setItemDelegate(self.delegate)
     self.view.setModel(self.model)
-    self.view.expandAll()
+    # Need to traverse the whole tree and expand the nodes if they default to open
+    self.view.openDefaultItems()
     self.view.setAnimated(True)
     self.view.setColumnWidth(0,200)
     self.view.setColumnWidth(1,50)

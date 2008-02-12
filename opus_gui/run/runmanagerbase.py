@@ -19,6 +19,7 @@ from PyQt4.QtXml import *
 
 from run.model.opusrunmodel import *
 from run.estimation.opusrunestimation import *
+from config.xmlmodelview.opusdataview import OpusDataView
 from config.xmlmodelview.opusdatamodel import OpusDataModel
 from config.xmlmodelview.opusdatadelegate import OpusDataDelegate
 
@@ -212,7 +213,7 @@ class ModelGuiElement(QWidget):
       self.doc.setContent(self.configFile)
       self.dataModel = OpusDataModel(self, self.doc, self.parent, self.configFile,
                                      "scenario_manager", False)
-      self.view = QTreeView(self.parent)
+      self.view = OpusDataView(self.parent)
       self.delegate = OpusDataDelegate(self.view)
       self.view.setItemDelegate(self.delegate)
       self.view.setModel(self.dataModel)
@@ -391,7 +392,7 @@ class EstimationGuiElement(QWidget):
       self.doc.setContent(self.configFile)
       self.dataModel = OpusDataModel(self, self.doc, self.parent, self.configFile,
                                      "model_manager", False)
-      self.view = QTreeView(self.parent)
+      self.view = OpusDataView(self.parent)
       self.delegate = OpusDataDelegate(self.view)
       self.view.setItemDelegate(self.delegate)
       self.view.setModel(self.dataModel)

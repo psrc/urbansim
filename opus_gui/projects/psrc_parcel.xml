@@ -3,8 +3,8 @@
     <description type="string" >PSRC parcel project</description>
   </general>
   <model_manager>
-    <estimation type="dictionary" >
-      <models_to_estimate type="selectable_list" >
+    <estimation type="dictionary" setexpanded="True">
+      <models_to_estimate type="selectable_list" setexpanded="True">
         <real_estate_price_model type="model" choices="Estimate|Skip" >Estimate</real_estate_price_model>
         <household_location_choice_model type="model" choices="Estimate|Skip" >Skip</household_location_choice_model>
         <employment_location_choice_model_home_based type="model" choices="Estimate|Skip" >Skip</employment_location_choice_model_home_based>
