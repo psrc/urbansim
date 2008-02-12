@@ -211,7 +211,7 @@ class ModelSystem(object):
                 # and is passed on to models as they run.
                 ### TODO: There has got to be a better way!
                 model_resources = Resources(datasets)
-    
+                n_models, model_group_members_to_run = self.get_number_of_models_and_model_group_members_to_run(models, models_configuration)
                 #==========
                 # Run the models.
                 #==========
@@ -225,37 +225,10 @@ class ModelSystem(object):
                     #  'model_name_4',
                     #  {'model_name_5': {'group_members': 'all'}}
                     # ]
-                    model_number = model_number+1
-                    model_group_members_to_run = {}
                     # get list of methods to be processed evtl. for each group member
                     if isinstance(model_entry, dict):
-                        model_name = model_entry.keys()[0]
-                        value = model_entry[model_name]
-                        if isinstance(value, dict): # is a model group
-                            if not value.keys()[0]=="group_members":
-                                raise KeyError, "Key for model " + model_name + " must be 'group_members'."
-                            group_members = value[value.keys()[0]]
-                            model_group = None
-                            if 'group_by_attribute' in models_configuration[model_name]["controller"].keys():
-                                group_dataset_name, group_attribute = models_configuration[model_name]["controller"]['group_by_attribute']
-                                model_group = ModelGroup(SessionConfiguration().get_dataset_from_pool(group_dataset_name),
-                                                         group_attribute)
-                            if not isinstance(group_members, list):
-                                group_members = [group_members]
-                            if group_members[0] == "_all_": # see 'model_name_5' example above
-                                if model_group is None:
-                                    raise KeyError, "Entry 'group_by_attribute' is missing for model %s" % model_name
-                                group_members = model_group.get_member_names()
-                            for member in group_members:
-                                if isinstance(member, dict): 
-                                    # see 'model_name_2' ('residential') in the comment above
-                                    member_name = member.keys()[0]
-                                    model_group_members_to_run[member_name] = member[member_name]
-                                    if not isinstance(model_group_members_to_run[member_name], list):
-                                        model_group_members_to_run[member_name]=[model_group_members_to_run[member_name]]
-                                else: # see 'model_name_1'
-                                    model_group_members_to_run[member] = ["run"]
-                        else: # in the form 'model_name_3' in the comment above
+                        model_name, value = model_entry.items()[0]
+                        if not isinstance(value, dict): # is a model group
                             processes = value
                             if not isinstance(processes, list):
                                 processes = [processes]
@@ -263,20 +236,15 @@ class ModelSystem(object):
                         model_name = model_entry
                         processes = ["run"]
                     group_member = None
-                    last_member = max(1, len(model_group_members_to_run.keys()))
+                    model_group = model_group_members_to_run[model_name][1]
+                    last_member = max(1, len(model_group_members_to_run[model_name][0].keys()))
                     for imember in range(last_member):
-                        # write status file
-                        if len(model_group_members_to_run.keys())>0:
-                            descr = 'group: %s' % model_group_members_to_run.keys()[imember]
-                        else:
-                            descr = ''                                   
-                        self._write_status_for_gui(year, models, model_number, model_name, last_member, imember, descr, resources)
                         controller_config = models_configuration[model_name]["controller"]
                         model_configuration = models_configuration[model_name]
-                        if model_group_members_to_run.keys():
-                            group_member_name = model_group_members_to_run.keys()[imember]
+                        if model_group_members_to_run[model_name][0].keys():
+                            group_member_name = model_group_members_to_run[model_name][0].keys()[imember]
                             group_member = ModelGroupMember(model_group, group_member_name)
-                            processes = model_group_members_to_run[group_member_name]
+                            processes = model_group_members_to_run[model_name][0][group_member_name]
                             member_model_name = "%s_%s" % (group_member_name, model_name)
                             if member_model_name in models_configuration.keys():
                                 model_configuration = models_configuration[member_model_name]
@@ -303,9 +271,13 @@ class ModelSystem(object):
     
                         # init part
                         model = self.do_init(locals())
-    
+                        
                         # estimate and/or run part
                         for process in processes:
+                            model_number = model_number+1
+                            # write status file
+                            model.set_model_system_status_parameters(year, n_models, model_number, resources.get('status_file_for_gui', None))
+                            model.write_status_for_gui()
                             # prepare part
                             exec(self.do_prepare(locals()))
                             processmodel_config = controller_config[process]
@@ -393,6 +365,57 @@ class ModelSystem(object):
                                self.construct_arguments_from_config(processmodel_config))
         return eval(ev)
 
+    def get_number_of_models_and_model_group_members_to_run(self, models, models_configuration):
+        """Count number_of models in the list 'models' that can include group members (each member and each process is one model).""" 
+        # list models can be in the form:
+        # [{'model_name_1': {'group_members': ['residential', 'commercial']}},
+        #  {'model_name_2': {'group_members': [{'residential': ['estimate','run']},
+        #                                      'commercial']}},
+        #  {'model_name_3': ['estimate', 'run']},
+        #  'model_name_4',
+        #  {'model_name_5': {'group_members': 'all'}}
+        # ]
+        number_of_models = 1
+        model_group_members_to_run = {}
+        for model_entry in models:
+            if isinstance(model_entry, dict):
+                model_name, value = model_entry.items()[0]
+                if isinstance(value, dict): # is a model group
+                    if not value.keys()[0]=="group_members":
+                        raise KeyError, "Key for model " + model_name + " must be 'group_members'."
+                    group_members = value["group_members"]
+                    model_group = None
+                    if 'group_by_attribute' in models_configuration[model_name]["controller"].keys():
+                        group_dataset_name, group_attribute = models_configuration[model_name]["controller"]['group_by_attribute']
+                        model_group = ModelGroup(SessionConfiguration().get_dataset_from_pool(group_dataset_name),
+                                             group_attribute)
+                    if not isinstance(group_members, list):
+                        group_members = [group_members]
+                    if group_members[0] == "_all_": # see 'model_name_5' example above
+                        if model_group is None:
+                            raise KeyError, "Entry 'group_by_attribute' is missing for model %s" % model_name
+                        group_members = model_group.get_member_names()
+                    model_group_members_to_run[model_name] = [{}, model_group]
+                    for member in group_members:
+                        if isinstance(member, dict): 
+                            # see 'model_name_2' ('residential') in the comment above
+                            member_name = member.keys()[0]
+                            model_group_members_to_run[model_name][0][member_name] = member[member_name]
+                            if not isinstance(model_group_members_to_run[model_name][0][member_name], list):
+                                model_group_members_to_run[model_name][0][member_name]=[model_group_members_to_run[model_name][0][member_name]]
+                        else: # see 'model_name_1'
+                            model_group_members_to_run[model_name][0][member] = ["run"]
+                        number_of_models +=len(model_group_members_to_run[model_name][0][member])
+                else: # in the form 'model_name_3' in the comment above
+                    if not isinstance(value, list):
+                        number_of_models +=1
+                    else:
+                        number_of_models += len(value)
+            else: # in the form 'model_name_4' in the comment above
+                model_group_members_to_run[model_entry] = [{}, None]
+                number_of_models +=1
+        return  (number_of_models, model_group_members_to_run)
+                            
     def run_multiprocess(self, resources):
         resources = Resources(resources)
         self._merge_resources_with_defaults(resources)
@@ -487,26 +510,7 @@ class ModelSystem(object):
         for arg_key in arg_dict.keys():
             result += "%s=%s, " % (arg_key, arg_dict[arg_key])
         return result
-    
-    def _write_status_for_gui(self, year, models, model_number, model_name, total_pieces, current_piece, piece_description, resources):
-        # Write a status file for each model run if the entry status_file_for_gui is in
-        # resources.  The GUI uses this to update a progress bar.  The file is ascii, with
-        # the following format (1 item per line):
-        #   current year
-        #   total number of models
-        #   number of current model that is about to run (starting with 0)
-        #   name of current model
-        #   total number of pieces of current model (could be 1)
-        #   number of current piece
-        #   description of current piece (empty string if no description)
-        if 'status_file_for_gui' in resources:
-            n_models = len(models)
-            # for now, assume 1 piece, and no description
-            status = '%d\n%d\n%d\n%s\n%d\n%d\n%s\n' % (year, n_models, model_number, model_name, total_pieces, current_piece, piece_description)
-            f = open(resources['status_file_for_gui'], 'w')
-            f.write(status)
-            f.close()
-            
+                
 
 if __name__ == "__main__":
     from opus_core.store.attribute_cache import AttributeCache
