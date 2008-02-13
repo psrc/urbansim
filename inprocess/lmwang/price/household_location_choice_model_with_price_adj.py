@@ -15,7 +15,7 @@
 from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
 from urbansim.models.household_location_choice_model import HouseholdLocationChoiceModel
 from opus_core.misc import safe_array_divide, unique_values
-from opus_core.datasets.dataset import Dataset
+from opus_core.datasets.dataset import Dataset, DatasetSubset
 from numpy import allclose, alltrue, zeros, median, newaxis, concatenate, where
 from opus_core.logger import logger
 from opus_core.storage_factory import StorageFactory
@@ -158,7 +158,7 @@ class HouseholdLocationChoiceModelWithPriceAdj(HouseholdLocationChoiceModel):
         newfile.close()
         logger.end_block()
 
-def define_submarket(choice_set, submarket_id_expression, compute_variables=[]):
+def define_submarket(choice_set, submarket_id_expression, compute_variables=[], filter=None):
     submarket_ids = choice_set.compute_variables("submarket_id=" + submarket_id_expression)
     unique_submarket_ids = unique_values(submarket_ids)
     storage = StorageFactory().get_storage('dict_storage')
@@ -167,7 +167,11 @@ def define_submarket(choice_set, submarket_id_expression, compute_variables=[]):
                          in_table_name='submarkets',
                          id_name='submarket_id',
                          dataset_name='submarket'
-                     )
+                     )    
     if len(compute_variables):
         submarkets.compute_variables(compute_variables)
+    if filter is not None:
+        from numpy import logical_not
+        submarkets.remove_elements(index= where( logical_not(submarkets.compute_variables(filter)) )[0])
+        #submarkets = DatasetSubset(submarkets, index=where(submarkets.compute_variables(filter))[0])
     return submarkets
