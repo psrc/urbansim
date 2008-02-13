@@ -16,7 +16,7 @@
 #############################################################
 #DEFINE indicators
 #############################################################
-from inprocess.travis.opus_core.indicator_framework.maker.indicator import Indicator
+from opus_gui.results.indicator_framework.maker.indicator import Indicator
 
 indicators = {
    'zone_population':Indicator( 
@@ -62,7 +62,7 @@ indicators = {
 # define any number of cache directories and/or years 
 # over which the indicators are computed
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from inprocess.travis.opus_core.indicator_framework.maker.source_data import SourceData
+from opus_gui.results.indicator_framework.maker.source_data import SourceData
 
 result_template = SourceData(
    cache_directory = r'D:\urbansim_cache\run_1090.2006_11_14_12_12',
@@ -80,7 +80,7 @@ result_template = SourceData(
 ################################################################
 # setup an indicator Maker that will compute a set of indicators
 # for a given result template
-from inprocess.travis.opus_core.indicator_framework.maker.maker import Maker
+from opus_gui.results.indicator_framework.maker.maker import Maker
 
 maker = Maker()
 computed_indicators = maker.create_batch(
@@ -90,7 +90,7 @@ computed_indicators = maker.create_batch(
 ############################################
 #VISUALIZE the resulting computed indicators
 ############################################
-from inprocess.travis.opus_core.indicator_framework.visualizer.visualization_factory import VisualizationFactory
+from opus_gui.results.indicator_framework.visualizer.visualization_factory import VisualizationFactory
 from opus_core.database_management.database_configuration import DatabaseConfiguration
 
 visualizer = VisualizationFactory()
@@ -147,7 +147,7 @@ visualizations += visualizer.visualize(
 ################################################################
 #Generate a REPORT with the visualizations
 ################################################################
-from inprocess.travis.opus_core.indicator_framework.reporter.report_factory import ReportFactory
+from opus_gui.results.indicator_framework.reporter.report_factory import ReportFactory
 
 reporter = ReportFactory()
 reporter.generate_report(

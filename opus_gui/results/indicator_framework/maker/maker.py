@@ -17,9 +17,9 @@ import os
 from gc import collect
 from copy import copy
 
-from inprocess.travis.opus_core.indicator_framework.utilities.integrity_error import IntegrityError
-from inprocess.travis.opus_core.indicator_framework.representations.computed_indicator import ComputedIndicator
-from inprocess.travis.opus_core.indicator_framework.representations.indicator import Indicator
+from opus_gui.results.indicator_framework.utilities.integrity_error import IntegrityError
+from opus_gui.results.indicator_framework.representations.computed_indicator import ComputedIndicator
+from opus_gui.results.indicator_framework.representations.indicator import Indicator
 
 from opus_core.variables.variable_name import VariableName
 from opus_core.store.attribute_cache import AttributeCache
@@ -182,7 +182,7 @@ class Maker(object):
             
 
 from opus_core.tests import opus_unittest
-from inprocess.travis.opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
+from opus_gui.results.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
 
 class Tests(AbstractIndicatorTest):            
     def test_create_indicator_multiple_years(self):
@@ -280,7 +280,7 @@ class Tests(AbstractIndicatorTest):
         self.assertEqual(expected_attribute_vals, list(data[attr_col]))
 
     def skip_test__cross_scenario_indicator(self):
-        from inprocess.travis.opus_core.indicator_framework.visualizers.table import Table
+        from opus_gui.results.indicator_framework.visualizers.table import Table
         table = Table(
             source_data = self.cross_scenario_source_data,
             attribute = 'opus_core.test.attribute',

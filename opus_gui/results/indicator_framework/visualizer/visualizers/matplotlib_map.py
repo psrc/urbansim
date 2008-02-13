@@ -15,7 +15,7 @@
 import os
 
 from opus_core.logger import logger
-from inprocess.travis.opus_core.indicator_framework.visualizer.visualizers.abstract_visualization\
+from opus_gui.results.indicator_framework.visualizer.visualizers.abstract_visualization\
     import Visualization
 from opus_core.store.attribute_cache import AttributeCache
 from numpy import where, ma, ndarray
@@ -204,9 +204,9 @@ class MatplotlibMap(Visualization):
 
 
 from opus_core.tests import opus_unittest
-from inprocess.travis.opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
-from inprocess.travis.opus_core.indicator_framework.representations.indicator import Indicator
-from inprocess.travis.opus_core.indicator_framework.maker.maker import Maker
+from opus_gui.results.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
+from opus_gui.results.indicator_framework.representations.indicator import Indicator
+from opus_gui.results.indicator_framework.maker.maker import Maker
 
 class Tests(AbstractIndicatorTest):
         

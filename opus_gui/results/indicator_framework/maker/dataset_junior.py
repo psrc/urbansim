@@ -152,8 +152,8 @@ class DatasetJunior(object):
         pass        
         
 from opus_core.tests import opus_unittest
-from inprocess.travis.opus_core.indicator_framework.test_classes.test_with_attribute_data import TestWithAttributeData
-from inprocess.travis.opus_core.indicator_framework.representations.indicator import Indicator
+from opus_gui.results.indicator_framework.test_classes.test_with_attribute_data import TestWithAttributeData
+from opus_gui.results.indicator_framework.representations.indicator import Indicator
 
 class DatasetJuniorTests(TestWithAttributeData):      
         

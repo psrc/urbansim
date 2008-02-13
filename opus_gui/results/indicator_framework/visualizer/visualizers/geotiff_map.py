@@ -21,7 +21,7 @@ except:
 import os, re, sys, time, traceback
 from copy import copy
 from opus_core.misc import directory_path_from_opus_path
-from inprocess.travis.opus_core.indicator_framework.visualizer.visualizers.abstract_visualization\
+from opus_gui.results.indicator_framework.visualizer.visualizers.abstract_visualization\
     import Visualization
     
 class GeotiffMap(Visualization):
@@ -86,8 +86,8 @@ class GeotiffMap(Visualization):
         return self.get_file_path(year)
     
 from opus_core.tests import opus_unittest
-from inprocess.travis.opus_core.indicator_framework.maker.source_data import SourceData
-from inprocess.travis.opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
+from opus_gui.results.indicator_framework.maker.source_data import SourceData
+from opus_gui.results.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
 
 class Tests(AbstractIndicatorTest):
     

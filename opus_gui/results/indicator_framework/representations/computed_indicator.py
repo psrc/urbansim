@@ -15,7 +15,7 @@
 from opus_core.variables.variable_name import VariableName
 import os 
 from time import strftime, localtime, time
-from inprocess.travis.opus_core.indicator_framework.utilities.indicator_data_manager import IndicatorDataManager
+from opus_gui.results.indicator_framework.utilities.indicator_data_manager import IndicatorDataManager
 from copy import copy
 
 class ComputedIndicator:
@@ -75,8 +75,8 @@ class ComputedIndicator:
         
             
 from opus_core.tests import opus_unittest
-from inprocess.travis.opus_core.indicator_framework.representations.indicator import Indicator
-from inprocess.travis.opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
+from opus_gui.results.indicator_framework.representations.indicator import Indicator
+from opus_gui.results.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
 
 class ComputedIndicatorTests(AbstractIndicatorTest):  
     def test__get_indicator_path(self):

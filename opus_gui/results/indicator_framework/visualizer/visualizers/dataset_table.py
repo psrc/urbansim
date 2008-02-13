@@ -17,7 +17,7 @@ from numpy import array, logical_and, logical_not, concatenate, newaxis, rank
 from opus_core.variables.variable_name import VariableName
 from opus_core.storage_factory import StorageFactory
 from opus_core.database_management.database_configuration import DatabaseConfiguration
-from inprocess.travis.opus_core.indicator_framework.visualizer.visualizers.abstract_visualization \
+from opus_gui.results.indicator_framework.visualizer.visualizers.abstract_visualization \
     import Visualization
 
 class DatasetTable(Visualization):
@@ -141,7 +141,7 @@ class DatasetTable(Visualization):
 import os
 from opus_core.tests import opus_unittest
 
-from inprocess.travis.opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
+from opus_gui.results.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
 
 from numpy import ma
 

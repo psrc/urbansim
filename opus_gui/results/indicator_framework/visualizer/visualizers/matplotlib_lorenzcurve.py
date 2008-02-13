@@ -14,7 +14,7 @@
 
 import os, re, sys, time, traceback
 from copy import copy
-from inprocess.travis.opus_core.indicator_framework.visualizer.visualizers.abstract_visualization\
+from opus_gui.results.indicator_framework.visualizer.visualizers.abstract_visualization\
     import Visualization
     
 from opus_core.logger import logger
@@ -132,7 +132,7 @@ class LorenzCurve(Visualization):
 import os
 from opus_core.tests import opus_unittest
 from numpy import allclose
-from inprocess.travis.opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
+from opus_gui.results.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
 
 class Tests(AbstractIndicatorTest):
             

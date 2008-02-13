@@ -17,7 +17,7 @@ import os
 
 from opus_core.storage_factory import StorageFactory
 from opus_core.database_management.database_configuration import DatabaseConfiguration
-from inprocess.travis.opus_core.indicator_framework.visualizer.visualizers.abstract_visualization import Visualization
+from opus_gui.results.indicator_framework.visualizer.visualizers.abstract_visualization import Visualization
 from opus_core.database_management.database_server import DatabaseServer
 
 
@@ -242,9 +242,9 @@ class Table(Visualization):
 
 
 from opus_core.tests import opus_unittest
-from inprocess.travis.opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
-from inprocess.travis.opus_core.indicator_framework.maker.maker import Maker
-from inprocess.travis.opus_core.indicator_framework.representations.indicator import Indicator
+from opus_gui.results.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
+from opus_gui.results.indicator_framework.maker.maker import Maker
+from opus_gui.results.indicator_framework.representations.indicator import Indicator
 
 class Tests(AbstractIndicatorTest):
     def test_create_indicator(self):

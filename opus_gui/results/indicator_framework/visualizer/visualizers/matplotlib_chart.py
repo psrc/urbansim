@@ -15,7 +15,7 @@
 from opus_core.logger import logger
 import os, re, sys, time, traceback
 from copy import copy
-from inprocess.travis.opus_core.indicator_framework.visualizer.visualizers.abstract_visualization\
+from opus_gui.results.indicator_framework.visualizer.visualizers.abstract_visualization\
     import Visualization
     
 from numpy import newaxis
@@ -204,10 +204,10 @@ else:
         
 
     from opus_core.tests import opus_unittest    
-    from inprocess.travis.opus_core.indicator_framework.maker.source_data import SourceData
-    from inprocess.travis.opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
-    from inprocess.travis.opus_core.indicator_framework.maker.maker import Maker
-    from inprocess.travis.opus_core.indicator_framework.representations.indicator import Indicator
+    from opus_gui.results.indicator_framework.maker.source_data import SourceData
+    from opus_gui.results.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
+    from opus_gui.results.indicator_framework.maker.maker import Maker
+    from opus_gui.results.indicator_framework.representations.indicator import Indicator
     
     class Tests(AbstractIndicatorTest):
         def skip_test_create_indicator(self):

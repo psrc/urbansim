@@ -14,9 +14,9 @@
 
 import os
 
-from inprocess.travis.opus_core.indicator_framework.utilities.indicator_meta_data import IndicatorMetaData
-from inprocess.travis.opus_core.indicator_framework.utilities.indicator_data_manager import IndicatorDataManager
-from inprocess.travis.opus_core.indicator_framework.maker.source_data import SourceData
+from opus_gui.results.indicator_framework.utilities.indicator_meta_data import IndicatorMetaData
+from opus_gui.results.indicator_framework.utilities.indicator_data_manager import IndicatorDataManager
+from opus_gui.results.indicator_framework.maker.source_data import SourceData
 
 class IndicatorResults(object):
     """  Takes the descriptions and locations of precomputed indicators 
@@ -251,7 +251,7 @@ from opus_core.tests import opus_unittest
 import tempfile
 import shutil
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from inprocess.travis.opus_core.indicator_framework.test_classes.test_with_attribute_data import TestWithAttributeData
+from opus_gui.results.indicator_framework.test_classes.test_with_attribute_data import TestWithAttributeData
 
 class IndicatorResultsTests(TestWithAttributeData):
     def setUp(self):
@@ -291,9 +291,9 @@ class IndicatorResultsTests(TestWithAttributeData):
         
     def test__output_indicators(self):
         try:
-            from inprocess.travis.opus_core.indicator_framework.image_types.matplotlib_map import Map
-            from inprocess.travis.opus_core.indicator_framework.image_types.matplotlib_chart import Chart
-            from inprocess.travis.opus_core.indicator_framework.image_types.matplotlib_lorenzcurve import LorenzCurve
+            from opus_gui.results.indicator_framework.image_types.matplotlib_map import Map
+            from opus_gui.results.indicator_framework.image_types.matplotlib_chart import Chart
+            from opus_gui.results.indicator_framework.image_types.matplotlib_lorenzcurve import LorenzCurve
         except: pass
         else:
             self.source_data.years = [1980, 1982]

@@ -28,7 +28,7 @@ class VisualizationFactory:
            'table':'Table'
         }
         
-        module = 'inprocess.travis.opus_core.indicator_framework.visualizer.visualizers'
+        module = 'opus_gui.results.indicator_framework.visualizer.visualizers'
         module_composed_name = module + '.' + visualization_type
         
         example_indicator = computed_indicators[indicators_to_visualize[0]]

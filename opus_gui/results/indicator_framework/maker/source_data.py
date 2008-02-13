@@ -19,7 +19,7 @@ from copy import copy
 from time import strftime, localtime
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
-from inprocess.travis.opus_core.indicator_framework.utilities.integrity_error import IntegrityError
+from opus_gui.results.indicator_framework.utilities.integrity_error import IntegrityError
 
 class SourceData(object):
     """Configuration information for computing a set of indicators. """
@@ -113,7 +113,7 @@ class SourceData(object):
                     raise IntegrityError('Year %i does not exist in comparison cache directory %s'%
                                          (year, self.comparison_cache_directory))
     
-from inprocess.travis.opus_core.indicator_framework.test_classes.test_with_attribute_data import TestWithAttributeData
+from opus_gui.results.indicator_framework.test_classes.test_with_attribute_data import TestWithAttributeData
 
 
 class TestSourceData(TestWithAttributeData):

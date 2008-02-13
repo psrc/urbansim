@@ -14,4 +14,4 @@
 
 from opus_core.tests.utils.package_tester import PackageTester
 
-PackageTester().run_all_tests_for_package('inprocess.travis.opus_core.indicator_framework') 
+PackageTester().run_all_tests_for_package('opus_gui.results.indicator_framework') 

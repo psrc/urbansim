@@ -13,7 +13,7 @@
 # 
 
 import os
-from inprocess.travis.opus_core.indicator_framework.representations.visualization import Visualization as VisualizationRepresentation
+from opus_gui.results.indicator_framework.representations.visualization import Visualization as VisualizationRepresentation
 from numpy import array, where
 from opus_core.storage_factory import StorageFactory
 
@@ -255,12 +255,12 @@ class Visualization(object):
         return []
 
 from opus_core.tests import opus_unittest
-from inprocess.travis.opus_core.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
+from opus_gui.results.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
 
 
 class Tests(AbstractIndicatorTest):
     def test__get_ALL_form(self):
-        from inprocess.travis.opus_core.indicator_framework.visualizer.visualizers.table import Table
+        from opus_gui.results.indicator_framework.visualizer.visualizers.table import Table
         
         table = Table(indicator_directory = self.source_data.get_indicator_directory(),
                       output_type = 'csv')
