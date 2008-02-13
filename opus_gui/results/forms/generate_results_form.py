@@ -20,6 +20,7 @@ from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
 from opus_gui.results.xml_helper_methods import elementsByAttributeValue, get_child_values
 
 from opus_gui.results.opus_result_generator import OpusGuiThread, OpusResultGenerator
+from opus_gui.config.xmlmodelview.opusdataitem import OpusDataItem
 
 class GenerateResultsForm(QWidget):
     def __init__(self, parent, result_manager):
@@ -170,8 +171,6 @@ class GenerateResultsForm(QWidget):
         if str(indicator_text) == '[select]':
             raise 'need to select an indicator!!'
         
-        
-        
         dataset_name = str(self.co_dataset_name.currentText())
         if dataset_name == '[select]':
             raise 'need to select a dataset!!'
@@ -207,12 +206,38 @@ class GenerateResultsForm(QWidget):
 
     # Called when the model is finished... 
     def runFinishedFromThread(self,success):
-        print "Model Finished with sucess = ", success
-#        self.statusLabel.setText(QString("Model finished with status = %s" % (success)))
+        print "Results generated met with success = ", success
 
+        self.update_results_xml()
+        
         # Get the final logfile update after model finishes...
         self.logFileKey = self.result_generator._get_current_log(self.logFileKey)
         self.pbn_generate_results.setEnabled(True)
+
+    def update_results_xml(self):
+        print "update results"
+        xml_tree = self.toolboxStuff.resultsManagerTree
+        model = xml_tree.model
+        document = self.domDocument
+        xmlAction = xml_tree.xmlAction.actionObject
+        
+        newNode = document.createElement(QString("new node"))
+        newNode.setAttribute(QString("type"),QString("my type"))
+        newText = document.createTextNode(QString("my value"))
+        newNode.appendChild(newText)
+
+        grandparent_node = document.elementsByTagName(QString('results_manager')).item(0)
+        grandparent_item = OpusDataItem(document,grandparent_node, 0, model)
+        
+        parent_node = document.elementsByTagName(QString('Results')).item(0)
+        parent_item = OpusDataItem(document,parent_node, 0, grandparent_item)
+        
+        index = model.createIndex(2, 0, parent_item)
+        model.insertRow(0,
+                        index,
+                        newNode)
+        
+        model.emit(SIGNAL("layoutChanged()"))
 
     def runErrorFromThread(self,errorMessage):
         QMessageBox.warning(self.parent,"Warning",errorMessage)
