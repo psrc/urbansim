@@ -75,12 +75,12 @@ class mnl_probabilities(Probabilities):
         #omega = where(prob_sum<0,5,omega)
         return omega
 
-    def get_pi(self, sdratio_matrix, omega, constrained_locations_matrix, nobs):
+    def get_pi(self, sdratio_matrix, omega, constrained_locations_matrix):
         #pi = sdratio_matrix / omega[:,newaxis] * constrained_locations_matrix + unconstrained_locations_matrix
         pi = sdratio_matrix * constrained_locations_matrix + omega[:, newaxis] * (1 - constrained_locations_matrix)
         return pi
 
-    def get_average_omega(self, omega, probability, index, nsupply, nobs, demand):
+    def get_average_omega(self, omega, probability, index, nsupply, demand):
         omega_prob = omega[:, newaxis]*probability
         omega_prob_sum_over_i = array(ndimage_sum(omega_prob, labels=index+1, index=arange(nsupply)+1))
         prob_sum_over_i = array(ndimage_sum(probability, labels=index+1, index=arange(nsupply)+1))
