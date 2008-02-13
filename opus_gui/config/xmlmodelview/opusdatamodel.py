@@ -103,8 +103,8 @@ class OpusDataModel(QAbstractItemModel):
         childNode = None
         for x in xrange(0,doc.childNodes().count(),1):
             current = doc.childNodes().item(x)
-            #print "FOO",current.attributes().namedItem(QString("type")).nodeValue()
-            if (current.attributes().namedItem(QString("type")).nodeValue() == QString(tp)) and (current.nodeType() == QDomNode.ElementNode):
+            if (current.attributes().namedItem(QString("type")).nodeValue() == QString(tp)) and \
+                   (current.nodeType() == QDomNode.ElementNode):
                 childNode = current
         return childNode
 
@@ -337,3 +337,19 @@ class OpusDataModel(QAbstractItemModel):
                 currentParent = item.parent()
                 self.removeRow(currentRow,currentParent)
                 self.insertRow(currentRow+howmany,currentParent,clone)
+
+    def findElementIndexByName(self,name,parent):
+        rows = self.rowCount(parent)
+        for x in xrange(0,rows,1):
+            child = self.index(x,0,parent)
+            childElement = child.internalPointer().domNode.toElement()
+            if not childElement.isNull():
+                # Check if this is the one we want...
+                if childElement.nodeName() == QString(name):
+                    return child
+                # If this child has other children then we recurse
+                if self.rowCount(child)>0:
+                    childSearch = self.findElementIndexByName(name,child)
+                    if childSearch != QModelIndex():
+                        return childSearch
+        return QModelIndex()

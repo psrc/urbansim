@@ -266,8 +266,16 @@ class OpusXMLAction_Data(object):
         print "Execute batch (TESTING) pressed..."
 
     def placeHolderAction(self):
-        pass
-
+        # Test the finding of an index based on node name
+        parent = self.currentIndex.model().index(0,0,QModelIndex()).parent()
+        index = self.currentIndex.model().findElementIndexByName("buffer_size",parent)
+        if index.isValid():
+            indexElement = index.internalPointer()
+            print "%s,%d" % (indexElement.node().nodeName(),
+                             index.row())
+        else:
+            print "No valid node was found..."
+    
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
                self.xmlTreeObject.view.indexAt(position).column() == 0:
