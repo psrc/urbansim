@@ -20,12 +20,12 @@ try:
     WithOpus = True
     #from opus_gui.configurations.xml_configuration import XMLConfiguration
     from opus_core.configurations.xml_configuration import XMLConfiguration
-    from inprocess.travis.opus_core.indicator_framework.representations.computed_indicator import ComputedIndicator
-    from inprocess.travis.opus_core.indicator_framework.maker.maker import Maker
-    from inprocess.travis.opus_core.indicator_framework.visualizer.visualization_factory import VisualizationFactory
+    from opus_gui.results.indicator_framework.representations.computed_indicator import ComputedIndicator
+    from opus_gui.results.indicator_framework.maker.maker import Maker
+    from opus_gui.results.indicator_framework.visualizer.visualization_factory import VisualizationFactory
     from opus_gui.results.indicator_framework_interface import IndicatorFrameworkInterface
     from opus_gui.results.xml_helper_methods import get_child_values
-    from inprocess.travis.opus_core.indicator_framework.visualizer.visualizers.table import Table
+    from opus_gui.results.indicator_framework.visualizer.visualizers.table import Table
     from opus_core.storage_factory import StorageFactory
     from opus_gui.results.xml_helper_methods import get_child_values
     
@@ -239,10 +239,10 @@ class OpusResultGenerator(object):
     def _generate_results(self, configuration_path):
         scenario_name = get_scenario_name(domDocument = self.domDocument, 
                                           source_data_name = self.source_data_name)
-        try:
-            import pydevd;pydevd.settrace()
-        except:
-            pass
+#        try:
+#            import pydevd;pydevd.settrace()
+#        except:
+#            pass
         self.config = XMLConfiguration(str(configuration_path)).get_run_configuration(scenario_name)
         
         cache_directory = self.config['cache_directory']

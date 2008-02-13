@@ -12,11 +12,11 @@
 # 
 
 
-from inprocess.travis.opus_core.indicator_framework.representations.visualization import Visualization
-from inprocess.travis.opus_core.indicator_framework.visualizer.visualization_factory import VisualizationFactory
-from inprocess.travis.opus_core.indicator_framework.maker.source_data import SourceData
-from inprocess.travis.opus_core.indicator_framework.representations.indicator import Indicator
-from inprocess.travis.opus_core.indicator_framework.representations.computed_indicator import ComputedIndicator
+from opus_gui.results.indicator_framework.representations.visualization import Visualization
+from opus_gui.results.indicator_framework.visualizer.visualization_factory import VisualizationFactory
+from opus_gui.results.indicator_framework.maker.source_data import SourceData
+from opus_gui.results.indicator_framework.representations.indicator import Indicator
+from opus_gui.results.indicator_framework.representations.computed_indicator import ComputedIndicator
 
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration    
 
