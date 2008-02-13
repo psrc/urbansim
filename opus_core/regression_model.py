@@ -24,7 +24,7 @@ from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.datasets.dataset import Dataset
 from opus_core.storage_factory import StorageFactory
 from opus_core.logger import logger
-from numpy import arange, zeros, float32, ndarray, array, where, inf
+from numpy import arange, zeros, float32, ndarray, array, where, inf, concatenate
 from time import time
 
 class RegressionModel(ChunkModel):
@@ -67,6 +67,7 @@ class RegressionModel(ChunkModel):
         self.data = {}
         self.coefficient_names = {}
         ChunkModel.__init__(self)
+        self.get_status_for_gui().initialize_pieces(3, pieces_description = array(['initialization', 'computing variables', 'submodel: 1']))
 
     def run(self, specification, coefficients, dataset, index=None, chunk_specification=None,
             data_objects=None, run_config=None, initial_values=None, debuglevel=0):
@@ -102,6 +103,7 @@ class RegressionModel(ChunkModel):
             dataset.get_id_attribute()
         if index == None:
             index = arange(dataset.size())
+            
         result = ChunkModel.run(self, chunk_specification, dataset, index, float32,
                                  specification=specification, coefficients=coefficients)
         return result
@@ -110,18 +112,20 @@ class RegressionModel(ChunkModel):
         specified_coefficients = SpecifiedCoefficients().create(coefficients, specification, neqs=1)
         compute_resources = Resources({"debug":self.debug})
         submodels = specified_coefficients.get_submodels()
+        self.get_status_for_gui().update_pieces_using_submodels(submodels=submodels, leave_pieces=2)
         self.map_agents_to_submodels(submodels, self.submodel_string, dataset, index,
                                       dataset_pool=self.dataset_pool, resources = compute_resources)
         variables = specified_coefficients.get_full_variable_names_without_constants()
         self.debug.print_debug("Compute variables ...",4)
+        self.increment_current_status_piece()
         dataset.compute_variables(variables, dataset_pool = self.dataset_pool, resources = compute_resources)
-
         data = {}
         coef = {}
         outcome=self.initial_values[index].copy()
         for submodel in submodels:
             coef[submodel] = SpecifiedCoefficientsFor1Submodel(specified_coefficients,submodel)
             self.debug.print_debug("Compute regression for submodel " +str(submodel),4)
+            self.increment_current_status_piece()
             data[submodel] = dataset.create_regression_data(coef[submodel],
                                                                 index = index[self.observations_mapping[submodel]])
             if (data[submodel].shape[0] > 0) and (data[submodel].size > 0): # observations for this submodel available
@@ -200,10 +204,12 @@ class RegressionModel(ChunkModel):
         coefficients = create_coefficient_from_specification(specification)
         specified_coefficients = SpecifiedCoefficients().create(coefficients, specification, neqs=1)
         submodels = specified_coefficients.get_submodels()
+        self.get_status_for_gui().update_pieces_using_submodels(submodels=submodels, leave_pieces=2)
         self.map_agents_to_submodels(submodels, self.submodel_string, dataset, estimation_idx,
                                       dataset_pool=self.dataset_pool, resources = compute_resources)
         variables = specified_coefficients.get_full_variable_names_without_constants()
         self.debug.print_debug("Compute variables ...",4)
+        self.increment_current_status_piece()
         dataset.compute_variables(variables, dataset_pool=self.dataset_pool, resources = compute_resources)
 
         coef = {}
@@ -214,6 +220,7 @@ class RegressionModel(ChunkModel):
         outcome_variable_name = VariableName(outcome_attribute)
         for submodel in submodels:
             coef[submodel] = SpecifiedCoefficientsFor1Submodel(specified_coefficients,submodel)
+            self.increment_current_status_piece()
             logger.log_status("Estimate regression for submodel " +str(submodel),
                                tags=["estimate"], verbosity_level=2)
             logger.log_status("Number of observations: " +str(self.observations_mapping[submodel].size),
@@ -288,6 +295,15 @@ class RegressionModel(ChunkModel):
         
     def run_after_estimation(self, *args, **kwargs):
         return self.run(*args, **kwargs)
+            
+    def _get_status_total_pieces(self):
+        return ChunkModel._get_status_total_pieces(self) * self.get_status_for_gui().get_total_number_of_pieces()
+    
+    def _get_status_current_piece(self):
+        return ChunkModel._get_status_current_piece(self)*self.get_status_for_gui().get_total_number_of_pieces() + self.get_status_for_gui().get_current_piece()
+        
+    def _get_status_piece_description(self):
+        return "%s %s" % (ChunkModel._get_status_piece_description(self), self.get_status_for_gui().get_current_piece_description())
     
 from numpy import ma
 from opus_core.tests import opus_unittest

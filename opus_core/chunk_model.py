@@ -69,7 +69,6 @@ class ChunkModel(Model):
             logger.start_block("%s chunk %d out of %d."
                                % (self.model_short_name, (ichunk+1), self.number_of_chunks))
             self.index_of_current_chunk = ichunk
-            self.write_status_for_gui()
             try:
                 chunk_agent_indices = ordered_agent_indices[arange((ichunk*chunksize),
                                                                    min((ichunk+1)*chunksize,
@@ -103,4 +102,4 @@ class ChunkModel(Model):
         return self.get_index_of_current_chunk()
         
     def _get_status_piece_description(self):
-        return "%s chunk: %s " % (Model._get_status_piece_description(self), self.get_index_of_current_chunk() + 1)
+        return "%s chunk: %s" % (Model._get_status_piece_description(self), self.get_index_of_current_chunk()+1)

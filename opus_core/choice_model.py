@@ -28,7 +28,7 @@ from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.chunk_model import ChunkModel
 from opus_core.class_factory import ClassFactory
 from opus_core.logger import logger
-from numpy import where, zeros, array, arange, ones, take, ndarray, resize
+from numpy import where, zeros, array, arange, ones, take, ndarray, resize, concatenate
 from numpy import int32, compress, float64
 from numpy.random import permutation
 
@@ -105,6 +105,7 @@ class ChoiceModel(ChunkModel):
         self.coefficient_names = {}
         self.model_interaction = ModelInteraction(self, interaction_pkg, [self.choice_set, upper_level_choice_set])
         ChunkModel.__init__(self)
+        self.get_status_for_gui().initialize_pieces(3, pieces_description = array(['initialization', 'computing variables', 'submodel: 1']))
 
     def run(self, specification, coefficients, agent_set,
             agents_index=None, chunk_specification=None, data_objects=None, run_config=None, debuglevel=0):
@@ -166,6 +167,7 @@ class ChoiceModel(ChunkModel):
         self.run_config.merge({"index":index})
 
         submodels = self.model_interaction.get_submodels()
+        self.get_status_for_gui().update_pieces_using_submodels(submodels=submodels, leave_pieces=2)
         self.map_agents_to_submodels(submodels, self.submodel_string, agent_set, agents_index,
                                       dataset_pool=self.dataset_pool, resources = Resources({"debug": self.debug}))
         
@@ -178,6 +180,7 @@ class ChoiceModel(ChunkModel):
 
     def simulate_chunk(self):
         self.debug.print_debug("Compute variables ...",4)
+        self.increment_current_status_piece()
         self.model_interaction.compute_variables()
         coef = {}
         result = resize(array([-1], dtype="int32"), self.observations_mapping["index"].size)
@@ -187,6 +190,7 @@ class ChoiceModel(ChunkModel):
             self.model_interaction.prepare_data_for_simulation(submodel)
             coef[submodel] = self.model_interaction.get_submodel_coefficients(submodel)
             self.debug.print_debug("   submodel: %s   nobs: %s" % (submodel, self.observations_mapping[submodel].size), 5)
+            self.increment_current_status_piece()
             if self.model_interaction.is_there_data(submodel): # observations for this submodel available
                 if index is not None:
                     self.run_config["index"] = take (index, indices=self.observations_mapping[submodel], axis=0)
@@ -292,6 +296,7 @@ class ChoiceModel(ChunkModel):
             return None
 
         submodels = specification.get_distinct_submodels()
+        self.get_status_for_gui().update_pieces_using_submodels(submodels=submodels, leave_pieces=2)
         self.map_agents_to_submodels(submodels, self.submodel_string, agent_set,
                                       agents_for_estimation_idx,
                                       dataset_pool = self.dataset_pool,
@@ -317,6 +322,7 @@ class ChoiceModel(ChunkModel):
 
     def estimate_step(self):
         self.debug.print_debug("Compute variables ...",4)
+        self.increment_current_status_piece()
         self.model_interaction.compute_variables()
         coef = {}
         result = {}
@@ -324,6 +330,7 @@ class ChoiceModel(ChunkModel):
         self.debug.print_debug("Estimate ...",4)
         for submodel in self.model_interaction.get_submodels():
             logger.log_status("submodel: %s" % submodel)
+            self.increment_current_status_piece()
             self.model_interaction.prepare_data_for_estimation(submodel)
             coef[submodel] = self.model_interaction.get_submodel_coefficients(submodel)            
             self.coefficient_names[submodel] = self.model_interaction.get_coefficient_names(submodel)
@@ -510,6 +517,16 @@ class ChoiceModel(ChunkModel):
     def get_specified_coefficients(self):
         return self.model_interaction.get_specified_coefficients()
         
+    def _get_status_total_pieces(self):
+        return ChunkModel._get_status_total_pieces(self) * self.get_status_for_gui().get_total_number_of_pieces()
+    
+    def _get_status_current_piece(self):
+        return ChunkModel._get_status_current_piece(self)*self.get_status_for_gui().get_total_number_of_pieces() + self.get_status_for_gui().get_current_piece()
+        
+    def _get_status_piece_description(self):
+        return "%s %s" % (ChunkModel._get_status_piece_description(self), self.get_status_for_gui().get_current_piece_description())
+
+       
 def prepare_specification_and_coefficients(specification_storage=None, specification_table=None, coefficients_storage=None,
                          coefficients_table=None, sample_coefficients=False, cache_storage=None, multiplicator=1):
     """ Load specification and coefficients from given tables in given storages.
