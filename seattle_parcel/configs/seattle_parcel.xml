@@ -522,7 +522,7 @@
         <use_environment_variables type="boolean" choices="True|False" >True</use_environment_variables>
         <database_name type="string" >seattle_2000_parcel_baseyear_data</database_name>
       </baseyear_database_configuration>
-      <cache_directory parser_action="prefix_with_opus_data_path" type="directory" >seattle_parcel/run_5006.2008_01_28_10_11</cache_directory>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory" >seattle_parcel_cache/run_5006.2008_01_28_10_11</cache_directory>
       <creating_baseyear_cache_configuration type="class" >
         <Class_name flags="hidden" type="string" >CreatingBaseyearCacheConfiguration</Class_name>
         <Class_path flags="hidden" type="string" >urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
@@ -617,7 +617,7 @@
     </Seattle_baseline>
   </scenario_manager>
   <results_manager>
-    <Libraries type="group" >
+    <Libraries type="group" setexpanded="True" >
       <model.parcel type="indicator_library" >
         <number_of_jobs type="indicator" >
           <package type="string" >urbansim</package>
@@ -627,7 +627,7 @@
         </number_of_jobs>
       </model.parcel>
     </Libraries>
-    <Data_sources type="all_source_data" >
+    <Data_sources type="all_source_data" setexpanded="True" >
       <seattle_parcel_baseline type="source_data" >
         <start_year type="integer" >2000</start_year>
         <end_year type="integer" >2006</end_year>
@@ -635,12 +635,7 @@
         <scenario_name type="string" >Seattle_baseline</scenario_name>
       </seattle_parcel_baseline>
     </Data_sources>
-    <Results type="selectable_list" >
-      <number_of_jobs.zone.seattle_parcel_baseline type="indicator_result" >
-        <source_data type="string" >seattle_parcel_baseline</source_data>
-        <indicator_name type="string" >number_of_jobs</indicator_name>
-        <dataset_name type="string" >zone</dataset_name>
-      </number_of_jobs.zone.seattle_parcel_baseline>
+    <Results type="selectable_list" setexpanded="True" >
     </Results>
   </results_manager>
 </opus_project>
