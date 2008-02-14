@@ -277,6 +277,9 @@ class RemoteRun:
             start_year = travel_model_resources['years'][0]
         if end_year is None:
             end_year = travel_model_resources['years'][1]
+        if end_year < start_year:
+            logger.log_warning("end_year (%s) is smaller than start_year (%)." % (end_year, start_year))
+            sys.exit(1)
         #only keep sorted travel model years falls into years range
         travel_model_years = []
         if not self.skip_travel_model:
