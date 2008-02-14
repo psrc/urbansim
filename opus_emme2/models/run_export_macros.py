@@ -22,8 +22,8 @@ class RunExportMacros(RunMacrosAbstract):
        The macro specification should also have a specification of the bank it should run in.
     """
 
-    def run(self, config, year):
-        RunMacrosAbstract.run(self, 'export_macros', config, year)    
+    def run(self, config, year, output_file=None):
+        RunMacrosAbstract.run(self, 'export_macros', config, year, output_file)    
     
 if __name__ == "__main__":
     try: import wingdbstub
