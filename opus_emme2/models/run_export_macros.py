@@ -32,4 +32,4 @@ if __name__ == "__main__":
     from opus_emme2.models.run_macros_abstract import prepare_for_running_macro
     parser = OptionParser()
     resources, options = prepare_for_running_macro(parser)
-    RunExportMacros().run(resources, options.year)    
+    RunExportMacros().run(resources, options.year, options.output_file)    

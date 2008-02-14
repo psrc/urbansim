@@ -50,7 +50,7 @@ def prepare_for_running_macro(parser):
                       help="Name of file containing resources")
     parser.add_option("-y", "--year", dest="year", action="store", type="int",
                       help="Year in which to 'run' the travel model")
-    parser.add_option("-o", "--output-file", dest="output_file", action="store", type="string",
+    parser.add_option("-o", "--output-file", dest="output_file", action="store", type="string", default=None,
                       help="Output log file. If not given, it is written into urbansim cache directory.")
     (options, args) = parser.parse_args()
    
