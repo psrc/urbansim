@@ -12,7 +12,7 @@
 # 
 
 from PyQt4.QtCore import QString, QObject, SIGNAL, \
-                         Qt, QTimer
+                         Qt, QTimer, QModelIndex
 from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
                         QTextEdit, QTabWidget, QWidget, QPushButton, \
                         QGroupBox, QVBoxLayout, QIcon, QLabel
@@ -160,7 +160,7 @@ class GenerateResultsForm(QWidget):
         # References to the GUI elements for status for this run...
         #self.statusLabel = self.runStatusLabel
         #self.statusLabel.setText(QString("Model initializing..."))
-        
+
         self.pbn_generate_results.setEnabled(False)
 
         source_text = QString(self.co_source_data.currentText())
@@ -179,6 +179,12 @@ class GenerateResultsForm(QWidget):
                                    source_data_name = source_text,
                                    indicator_name = indicator_text,
                                    dataset_name = dataset_name)
+        
+        self.last_computed_result = {
+            'source_data_name': source_text,
+            'indicator_name': indicator_text,
+            'dataset_name': dataset_name                             
+        }
         
         self.runThread = OpusGuiThread(
                               parentThread = self.parent,
@@ -208,34 +214,63 @@ class GenerateResultsForm(QWidget):
     def runFinishedFromThread(self,success):
         print "Results generated met with success = ", success
 
+        try:
+            import pydevd;pydevd.settrace()
+        except:
+            pass
+        
         self.update_results_xml()
         
         # Get the final logfile update after model finishes...
         self.logFileKey = self.result_generator._get_current_log(self.logFileKey)
         self.pbn_generate_results.setEnabled(True)
 
+    def _create_node(self, document, name, type, value):
+        newNode = document.createElement(QString(name))
+        newNode.setAttribute(QString("type"),QString(type))
+        newText = document.createTextNode(QString(value))
+        newNode.appendChild(newText)
+        return newNode
+    
     def update_results_xml(self):
         print "update results"
         xml_tree = self.toolboxStuff.resultsManagerTree
         model = xml_tree.model
         document = self.domDocument
-        xmlAction = xml_tree.xmlAction.actionObject
-        
-        newNode = document.createElement(QString("new node"))
-        newNode.setAttribute(QString("type"),QString("my type"))
-        newText = document.createTextNode(QString("my value"))
-        newNode.appendChild(newText)
 
-        grandparent_node = document.elementsByTagName(QString('results_manager')).item(0)
-        grandparent_item = OpusDataItem(document,grandparent_node, 0, model)
+        name = '%s.%s.%s'%(self.last_computed_result['indicator_name'], 
+            self.last_computed_result['dataset_name'], 
+            self.last_computed_result['source_data_name'])
         
-        parent_node = document.elementsByTagName(QString('Results')).item(0)
-        parent_item = OpusDataItem(document,parent_node, 0, grandparent_item)
-        
-        index = model.createIndex(2, 0, parent_item)
+        newNode = self._create_node(document = document, 
+                                    name = name, 
+                                    type = 'indicator_result', 
+                                    value = '')
+        source_data_node = self._create_node(document = document, 
+                                    name = 'source_data', 
+                                    type = 'string', 
+                                    value = self.last_computed_result['source_data_name'])
+        indicator_node = self._create_node(document = document, 
+                                    name = 'indicator_name', 
+                                    type = 'string', 
+                                    value = self.last_computed_result['indicator_name'])        
+        dataset_node = self._create_node(document = document, 
+                                    name = 'dataset_name', 
+                                    type = 'string', 
+                                    value = self.last_computed_result['dataset_name'])
+                
+        parent = model.index(0,0,QModelIndex()).parent()
+        index = model.findElementIndexByName("Results", parent)
+
         model.insertRow(0,
                         index,
                         newNode)
+        
+        child_index = model.findElementIndexByName(name, parent)
+        for node in [dataset_node, indicator_node, source_data_node]:
+            model.insertRow(0,
+                            child_index,
+                            node)   
         
         model.emit(SIGNAL("layoutChanged()"))
 
