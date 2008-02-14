@@ -164,7 +164,7 @@
   </scenario_manager>
   <results_manager>
     <Libraries type="group" setexpanded="True">
-      <model.gridcell type="indicator_library" setexpanded="True">
+      <model.gridcell type="indicator_library">
         <population type="indicator">
           <package type="string" >urbansim</package>
           <valid_datasets type="string" >GEOGRAPHY</valid_datasets>
@@ -196,7 +196,7 @@
           <expression type="string" >urbansim.DATASET.population_density</expression>
         </population_density>
       </model.gridcell>
-      <eugene.frank.indicators type="indicator_library" setexpanded="True">
+      <eugene.frank.indicators type="indicator_library">
         <global_population_density type="indicator" >
           <package type="string" >urbansim</package>
           <valid_datasets type="string" >alldata</valid_datasets>
@@ -204,7 +204,7 @@
           <expression type="string" >alldata.aggregate_all(urbansim.gridcell.population_density, function=sum)</expression>
         </global_population_density>
       </eugene.frank.indicators>
-      <my_indicators append_to="True" type="indicator_library" setexpanded="True">
+      <my_indicators append_to="True" type="indicator_library">
         <residential_units type="indicator" >
           <package type="string" >urbansim</package>
           <valid_datasets type="string" >alldata</valid_datasets>
@@ -214,19 +214,19 @@
       </my_indicators>
     </Libraries>
     <Data_sources type="all_source_data" setexpanded="True">
-      <eugene_baseline type="source_data" setexpanded="True">
+      <eugene_baseline type="source_data">
         <start_year type="integer" >1980</start_year>
         <end_year type="integer" >1980</end_year>
         <run_name type="string" >run1900</run_name>
         <scenario_name type="string" >Eugene_baseline</scenario_name>
       </eugene_baseline>
-      <tunnel_scenario type="source_data" setexpanded="True">
+      <tunnel_scenario type="source_data">
         <start_year type="integer" >1980</start_year>
         <end_year type="integer" >1980</end_year>
         <run_name type="string" >run1834</run_name>
         <scenario_name type="string" >Eugene_baseline</scenario_name>
       </tunnel_scenario>
-      <rebuild_scenario type="source_data" setexpanded="True">
+      <rebuild_scenario type="source_data">
         <start_year type="integer" >1980</start_year>
         <end_year type="integer" >1980</end_year>
         <run_name type="string" >run1835</run_name>
