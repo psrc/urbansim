@@ -35,7 +35,7 @@ wlcm_model_configuration = {
                        "number_of_units_string":"urbansim.zone.number_of_non_home_based_jobs",
                        }
 
-run_configuration['models_configuration']['workplace_location_choice_model_for_resident']= wlcm_model_configuration    
+run_configuration['models_configuration']['workplace_choice_model_for_resident']= wlcm_model_configuration    
 my_controller_configuration = {
  'household_person_consistency_keeper':{
     "import": {"psrc.models.persons_consistency_keeper_model":"PersonDatasetConsistencyKeeperModel"},
@@ -66,7 +66,7 @@ my_controller_configuration = {
 #        },
 #    },
 
- 'workplace_location_choice_model_for_resident': {
+ 'workplace_choice_model_for_resident': {
     "import": {"urbansim.models.agent_location_choice_model":"AgentLocationChoiceModel"},
     "init": { 
         "name": "AgentLocationChoiceModel",
@@ -78,15 +78,15 @@ my_controller_configuration = {
                       "submodel_string":"'psrc.person.household_income'",
 #                      "filter": "'psrc.job.is_untaken_non_home_based_job'",
                       "location_id_string":"'psrc.person.zone_id'",#"'psrc.person.workplace_zone_id'",
-                      "run_config":"models_configuration['workplace_location_choice_model_for_resident']",
-                      "estimate_config":"models_configuration['workplace_location_choice_model_for_resident']"
+                      "run_config":"models_configuration['workplace_choice_model_for_resident']",
+                      "estimate_config":"models_configuration['workplace_choice_model_for_resident']"
              }},
     "prepare_for_run": {
         "name": "prepare_for_run",
         "arguments": {"specification_storage": "base_cache_storage", #"models_configuration['specification_storage']",
-                      "specification_table": "'workplace_location_choice_model_for_resident_specification'",
+                      "specification_table": "'workplace_choice_model_for_resident_specification'",
                       "coefficients_storage": "base_cache_storage", #"models_configuration['coefficients_storage']",
-                      "coefficients_table": "'workplace_location_choice_model_for_resident_coefficients'",
+                      "coefficients_table": "'workplace_choice_model_for_resident_coefficients'",
                       },
         "output": "(specification, coefficients)"
         },
@@ -151,13 +151,13 @@ my_controller_configuration = {
             }
  }
 
-my_controller_configuration["workplace_location_choice_model_for_immigrant"] = copy.deepcopy(my_controller_configuration["workplace_location_choice_model_for_resident"])
-my_controller_configuration["workplace_location_choice_model_for_immigrant"]["init"]["arguments"]["model_name"] = "'Non-home-based Workplace Choice Model for immigrants'"
-my_controller_configuration["workplace_location_choice_model_for_immigrant"]["prepare_for_run"]["arguments"]["specification_table"] = "'workplace_location_choice_model_for_immigrant_specification'"
-my_controller_configuration["workplace_location_choice_model_for_immigrant"]["prepare_for_run"]["arguments"]["coefficients_table"] = "'workplace_location_choice_model_for_immigrant_coefficients'"
-my_controller_configuration["workplace_location_choice_model_for_immigrant"]["run"]["arguments"]["agents_filter"] = "'psrc.person.is_immigrant_worker_without_workplace_zone'"
+my_controller_configuration["workplace_choice_model_for_immigrant"] = copy.deepcopy(my_controller_configuration["workplace_choice_model_for_resident"])
+my_controller_configuration["workplace_choice_model_for_immigrant"]["init"]["arguments"]["model_name"] = "'Non-home-based Workplace Choice Model for immigrants'"
+my_controller_configuration["workplace_choice_model_for_immigrant"]["prepare_for_run"]["arguments"]["specification_table"] = "'workplace_choice_model_for_immigrant_specification'"
+my_controller_configuration["workplace_choice_model_for_immigrant"]["prepare_for_run"]["arguments"]["coefficients_table"] = "'workplace_choice_model_for_immigrant_coefficients'"
+my_controller_configuration["workplace_choice_model_for_immigrant"]["run"]["arguments"]["agents_filter"] = "'psrc.person.is_immigrant_worker_without_workplace_zone'"
 
-my_controller_configuration["home_based_workplace_choice_model"] = copy.deepcopy(my_controller_configuration["workplace_location_choice_model_for_resident"])
+my_controller_configuration["home_based_workplace_choice_model"] = copy.deepcopy(my_controller_configuration["workplace_choice_model_for_resident"])
 my_controller_configuration["home_based_workplace_choice_model"]["init"]["arguments"]["filter"] = "'psrc.job.is_untaken_home_based_job'"
 my_controller_configuration["home_based_workplace_choice_model"]["init"]["arguments"]["model_name"] = "'Home-based Work Choice Model'"
 my_controller_configuration["home_based_workplace_choice_model"]["init"]["arguments"]["short_name"] = "'HBWCM'"
@@ -186,10 +186,10 @@ run_configuration['creating_baseyear_cache_configuration'].tables_to_cache += [
                                          "home_based_choice_model_specification",
                                          "home_based_workplace_choice_model_coefficients",
                                          "home_based_workplace_choice_model_specification",
-                                         "workplace_location_choice_model_for_resident_specification",
-                                         "workplace_location_choice_model_for_resident_coefficients",
-                                         "workplace_location_choice_model_for_immigrant_specification",
-                                         "workplace_location_choice_model_for_immigrant_coefficients",                                         
+                                         "workplace_choice_model_for_resident_specification",
+                                         "workplace_choice_model_for_resident_coefficients",
+                                         "workplace_choice_model_for_immigrant_specification",
+                                         "workplace_choice_model_for_immigrant_coefficients",                                         
                                          ]
 
 run_configuration["datasets_to_preload"]['person'] = {'package_name':'psrc'}
@@ -230,11 +230,11 @@ run_configuration["models"] = [
                 "home_based_choice_model",
                 "home_based_workplace_choice_model",
                 "job_change_model",
-                "workplace_location_choice_model_for_immigrant",
+                "workplace_choice_model_for_immigrant",
                 "job_person_consistency_keeper",
                 "household_relocation_model",
                 "household_location_choice_model",
-                "workplace_location_choice_model_for_resident",
+                "workplace_choice_model_for_resident",
                 "employment_relocation_model", 
                 {"employment_location_choice_model": {"group_members": "_all_"}},
                 "distribute_unplaced_jobs_model"

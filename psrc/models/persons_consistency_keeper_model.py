@@ -24,13 +24,13 @@ class PersonDatasetConsistencyKeeperModel(Model):
     def run(self, person_set, household_set=None, job_set=None, expand_person_set=True, resources=None):
         """main_dataset is either household or job,
 
-          if job_set is not None, it will need to set job_id of
+          if job_set is not None, it will set job_id of
         person/worker whose job 'disappears' to -1.
 
-          if household_set is not None, it will need
-        to expand personset to include persons in households
-        that just 'immigrate' by household_transition_model,
-        as well as eliminate persons whose household has emmigrated;
+          if household_set is not None, it will expand personset 
+          to include persons in households that just 'immigrate' 
+          by household_transition_model, as well as eliminate 
+          persons whose household has emmigrated;
         """
 
         if person_set is not None and job_set is not None:
@@ -78,7 +78,7 @@ class PersonDatasetConsistencyKeeperModel(Model):
                         work_nonhome_based += [-1] * workers[index]
 
                 #TODO: make this code works more robustly: above code depends on Household transition model
-                #assigning new households with ids larger than max_id.
+                #assigning new households with ids larger than max_id. Code below is extremely SLOW.
                 #unique_persons_hh_ids = unique_values(person_hh_id_array)
                 #workers = main_dataset.get_attribute("workers")
                 #hh_indices = arange(main_dataset.size())

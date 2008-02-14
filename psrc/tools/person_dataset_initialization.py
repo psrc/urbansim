@@ -23,7 +23,7 @@ run_configuration["models"] = [
     "household_person_consistency_keeper",
     "home_based_choice_model",
     "home_based_workplace_choice_model",
-    "workplace_location_choice_model_for_resident"
+    "workplace_choice_model_for_resident"
     ]
 
 #run_configuration["models_configuration"]['household_location_choice_model']['controller']['run']['arguments']['agents_index']=None
@@ -41,10 +41,10 @@ config_changes = {
                      "home_based_choice_model_specification",
                      "home_based_workplace_choice_model_coefficients",
                      "home_based_workplace_choice_model_specification",
-                     "workplace_location_choice_model_for_resident_specification",
-                     "workplace_location_choice_model_for_resident_coefficients",
-                     "workplace_location_choice_model_for_immigrant_specification",
-                     "workplace_location_choice_model_for_immigrant_coefficients",                     
+                     "workplace_choice_model_for_resident_specification",
+                     "workplace_choice_model_for_resident_coefficients",
+                     "workplace_choice_model_for_immigrant_specification",
+                     "workplace_choice_model_for_immigrant_coefficients",                     
                      ],                                          
         'unroll_gridcells':False,
         'tables_to_cache_nchunks': {

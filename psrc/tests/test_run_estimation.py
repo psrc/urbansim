@@ -62,7 +62,7 @@ class TestRunEstimation(opus_unittest.TestCase):
                     ('Industrial ELCM','ELCM', 'employment_location_choice_model', 'industrial', False), # uses general ELCM and therefore type will not be added to the model name
                     ('Commercial ELCM','ELCM', 'employment_location_choice_model', 'commercial', False), 
                     ('Home-based ELCM','ELCM', 'employment_location_choice_model', 'home_based', True), # we don't know exactly why, but this has to be True to get specification data from file and not the cache.
-                    #('RWZCM','RWZCM', 'workplace_location_choice_model_for_resident', 'dummy'),
+                    #('RWZCM','RWZCM', 'workplace_choice_model_for_resident', 'dummy'),
                     ('LPM','LPM', 'land_price_model'),
                     ('RLSM','RLSM', 'residential_land_share_model'),
                     ('Industrial DPLCM','DPLCM', 'development_location_choice_model', 'industrial'),

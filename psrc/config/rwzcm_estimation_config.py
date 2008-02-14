@@ -18,13 +18,13 @@ from urbansim.estimation.estimator import update_controller_by_specification_fro
 
 class rwzcm_configuration:
     def __init__(self, dummy=None):
-        self.model_name = "workplace_location_choice_model_for_resident"
+        self.model_name = "workplace_choice_model_for_resident"
     
     def get_configuration(self, specification_module="psrc.estimation.estimation_RWZCM_variables"):
         config = copy.deepcopy(run_configuration)
         config["models"] = [
             #"land_price_model",
-            {"workplace_location_choice_model_for_resident": ["estimate"]}
+            {"workplace_choice_model_for_resident": ["estimate"]}
          ]
         
         config["datasets_to_preload"] = {

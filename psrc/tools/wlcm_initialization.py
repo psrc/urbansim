@@ -20,7 +20,7 @@ from psrc.config.wlcm_config import run_configuration
 
     
 run_configuration["models"] = [
-    {"workplace_location_choice_model_for_resident": ["run"]}
+    {"workplace_choice_model_for_resident": ["run"]}
     ]
 
 #run_configuration["models_configuration"]['household_location_choice_model']['controller']['run']['arguments']['agents_index']=None
@@ -43,8 +43,8 @@ config_changes = {
             'travel_data',
             'zones',
             'persons',
-            'workplace_location_choice_model_for_resident_coefficients',
-            'workplace_location_choice_model_for_resident_specification',
+            'workplace_choice_model_for_resident_coefficients',
+            'workplace_choice_model_for_resident_specification',
             #'household_location_choice_model_coefficients',
             #'household_location_choice_model_specification',        
             #'employment_adhoc_sector_group_definitions',

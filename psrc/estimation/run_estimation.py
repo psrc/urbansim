@@ -76,7 +76,7 @@ if __name__ == '__main__':
     #model = ("ELCM", "employment_location_choice_model", "commercial", False)
     #model = ("ELCM", "employment_location_choice_model", "home_based", False)
     
-    #model = ("RWZCM", "workplace_location_choice_model_for_resident", "dummy")
+    #model = ("RWZCM", "workplace_choice_model_for_resident", "dummy")
     
     #model = ("LPM", "land_price_model")
     #model = ("RLSM", "residential_land_share_model")

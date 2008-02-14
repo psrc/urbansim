@@ -96,10 +96,10 @@ config_changes = {
             'development_events_exogenous',
             'job_building_types',
             'persons',
-            'workplace_location_choice_model_for_resident_specification',
-            'workplace_location_choice_model_for_resident_coefficients',
-            'workplace_location_choice_model_for_immigrant_specification',
-            'workplace_location_choice_model_for_immigrant_coefficients'
+            'workplace_choice_model_for_resident_specification',
+            'workplace_choice_model_for_resident_coefficients',
+            'workplace_choice_model_for_immigrant_specification',
+            'workplace_choice_model_for_immigrant_coefficients'
             ],
         tables_to_cache_nchunks = {'gridcells': 4},
         tables_to_copy_to_previous_years = {},
