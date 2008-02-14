@@ -30,13 +30,15 @@ class GetCacheDataIntoTravelModel(GetCacheDataIntoTravelModel):
                                        year,
                                        zone_set,
                                        dataset_pool,
-                                       tm_input_file_name="tm_input.csv",
                                        delimiter = ','):
-        """Writes to file tm_input.txt in [travel_model_data_directory]/urbansim/[year], which travel model will read.
+        """Writes to file specified by 'urbansim_to_tm_variable_file' 
+        to [travel_model_data_directory]/[year_directory], which travel model 
+        will use as input.
         """
 
         tm_config = config['travel_model_configuration']
         variable_mapping = tm_config['urbansim_to_tm_variable_mapping']
+        tm_input_file_name = tm_config['urbansim_to_tm_variable_file'] 
         
         variable_list = []
         column_name = []
@@ -54,7 +56,7 @@ class GetCacheDataIntoTravelModel(GetCacheDataIntoTravelModel):
 
         input_file = os.path.join(tm_input_data_dir, tm_input_file_name)
 
-        logger.log_status('write travel model input file to directory: %s' % tm_input_data_dir)
+        logger.log_status('write travel model input file : %s' % input_file)
         rows = zone_set.size()
         cols = len(variable_short_name)
         data = zeros(shape=(rows,cols))
@@ -68,7 +70,7 @@ class GetCacheDataIntoTravelModel(GetCacheDataIntoTravelModel):
     def _update_travel_model_data_file(self, tm_config, data, header, input_file, delimiter):
         self._write_to_txt_file(data, header, input_file, delimiter)
         
-    def _write_to_txt_file(self, data, header, input_file, delimiter='\t'):
+    def _write_to_txt_file(self, data, header, input_file, delimiter=','):
         logger.start_block("Writing to travel_model input file")
         newfile = open(input_file, 'w')
         newfile.write(delimiter.join(header) + "\n")
@@ -90,8 +92,6 @@ if __name__ == "__main__":
     parser.add_option("-y", "--year", dest="year", action="store", type="int",
                       help="Year in which to 'run' the travel model")
     (options, args) = parser.parse_args()
-#    options.resources_file_name = "c:\urbansim_cache\semcog_test_tm.pickle"
-#    options.year = 2001
     r = get_resources_from_file(options.resources_file_name)
     resources = Resources(get_resources_from_file(options.resources_file_name))
 
@@ -100,5 +100,4 @@ if __name__ == "__main__":
                          package_order_exceptions=resources['dataset_pool_configuration'].package_order_exceptions,                              
                          in_storage=AttributeCache())
 
-#    logger.enable_memory_logging()
     GetCacheDataIntoTravelModel().run(resources, options.year)

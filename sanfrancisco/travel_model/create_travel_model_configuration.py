@@ -45,15 +45,16 @@ def create_travel_model_configuration(scenario_dir_name,
         ('zone.aggregate(sanfrancisco.building.employment_of_building_use_pdr, intermediates=[parcel])', 'EMP-PDR'),
         ('zone.aggregate(sanfrancisco.building.employment_of_building_use_visitor, intermediates=[parcel])', 'EMP-VISITOR'),
         ]
-
-    ### file containing the output of travel_data table from travel model, including header in csv format
-    ###
-    tm_to_urbansim_variable_file = r"tm_output.csv"  # relative to os.path.join(scenario_dir_name, year_dir)
-                                
+                                    
     travel_model_configuration.update( {
         "urbansim_to_tm_variable_mapping":urbansim_to_tm_variable_mapping,
-        "tm_to_urbansim_variable_file":tm_to_urbansim_variable_file,
+    ### name of the file containing the input/output of data for/from travel model, 
+    ### including header in csv format
+    ### file location relative to os.path.join(scenario_dir_name, year_dir)
+        "urbansim_to_tm_variable_file":  r"tm_input.csv",  
+        "tm_to_urbansim_variable_file":  r"tm_output.csv",
         } )
+    
     travel_model_configuration['directory'] = scenario_dir_name
 
     _add_models(travel_model_configuration, mode)

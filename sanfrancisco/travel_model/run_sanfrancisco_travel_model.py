@@ -33,16 +33,13 @@ class RunSanfranciscoTravelModel(RunTravelModel):
         tm_config = config["travel_model_configuration"]
         tm_data_dir = tm_config["directory"]
 
-        year_dir = tm_config[year]  #'2001\\urbansim'
-        dir_part1,dir_part2 = os.path.split(year_dir)
-#        while dir_part1:
-#            dir_part1, dir_part2 = os.path.split(dir_part1)
-        project_year_dir = os.path.join(tm_data_dir, dir_part1)   #C:/SF/2001
-        
-        logger.log_status('Start travel model from directory %s for year %d' % (project_year_dir, year))
+        year_dir = tm_config[year]  #'2001'
 
-        logger.log_status('Running travel model ...')
-        cmdline = tm_config['travel_model_command'] + ' ' + project_year_dir
+        dir_part1, dir_part2 = os.path.split(tm_config['travel_model_command'])
+        
+        cmdline =  os.path.join(dir_part1, year_dir, dir_part2)
+        logger.log_status('Running travel model with %s' % cmdline)
+        os.chdir(os.path.join(dir_part1, year_dir))
         os.system(cmdline)
 
 if __name__ == "__main__":
@@ -57,8 +54,6 @@ if __name__ == "__main__":
                       help="Year in which to 'run' the travel model")
     (options, args) = parser.parse_args()
     
-#    options.resources_file_name = "c:\urbansim_cache\semcog_test_tm.pickle"
-#    options.year = 2001   
     r = get_resources_from_file(options.resources_file_name)
     resources = Resources(get_resources_from_file(options.resources_file_name))
 
@@ -67,5 +62,4 @@ if __name__ == "__main__":
                          package_order_exceptions=resources['dataset_pool_configuration'].package_order_exceptions,                              
                          in_storage=AttributeCache())
 
-#    logger.enable_memory_logging()
     RunSanfranciscoTravelModel().run(resources, options.year)    
