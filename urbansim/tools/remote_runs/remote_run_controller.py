@@ -42,11 +42,11 @@ class RemoteRunOptionGroup(GenericOptionGroup):
             description="Control urbansim and travel model to run on different computers, tailored for PSRC runs ")
         self.parser.add_option("-c", "--configuration-path", dest="configuration_path", default=None, 
                                help="Opus path to Python module defining run_configuration.")
-        self.parser.add_option("--start-year", dest="start_year", default=None,
+        self.parser.add_option("--start-year", dest="start_year", default=None, type="int",
                                help="start year (inclusive)")
-        self.parser.add_option("--end-year", dest="end_year", default=None,
+        self.parser.add_option("--end-year", dest="end_year", default=None, type="int",
                                help="end year (inclusive)")
-        self.parser.add_option("--run-id", dest="run_id", default=None, 
+        self.parser.add_option("--run-id", dest="run_id", default=None, type="int",
                                help="which run_id to run, None to start a new run")
         self.parser.add_option("--server", dest="server", default=None, 
                                help="which server to use to run UrbanSim")
@@ -386,13 +386,17 @@ if __name__ == "__main__":
             hostname = RemoteRun.default_hostname
     else:
         hostname = options.server
-    if options.user is None:
-        username = raw_input('Username [%s]: ' % RemoteRun.default_username)
-        if len(username) == 0:
-            username = RemoteRun.default_username
-    else:
-        username = options.user
-    password = getpass.getpass('Password for %s@%s: ' % (username, hostname))
+        
+    username=None
+    password=None
+    if hostname <> 'localhost':
+        if options.user is None:
+            username = raw_input('Username [%s]: ' % RemoteRun.default_username)
+            if len(username) == 0:
+                username = RemoteRun.default_username
+            else:
+                username = options.user
+        password = getpass.getpass('Password for %s@%s: ' % (username, hostname))
 
     try: import wingdbstub
     except: pass
