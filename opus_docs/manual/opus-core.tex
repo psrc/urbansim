@@ -10,19 +10,26 @@
 
 \chapter{The \package{opus_core} Opus Package}
 
-\emph{This section should walk through the Opus architecture, how it is
-organized into packages, and where those are located on the file system.
-Discuss where users should put their own scripts and data, and how they get
-access to them.}
+%\emph{This section should walk through the Opus architecture, how it is
+%organized into packages, and where those are located on the file system.
+%Discuss where users should put their own scripts and data, and how they get
+%access to them.}
 
-\section{Structure}
+%\section{Structure}
 
 Opus is organized as a set of ``Opus packages''.  Each Opus package
 encapsulates a set of functionality in a structure defined by a set of
-required directories and files.  Opus will have simple mechanisms to create a
-new package, bundle a package for distribution, and install or uninstall a
-package. This chapter describes functionality provided by the Opus
-package called \package{opus_core}.
+required directories and files.  
+%Opus will have simple mechanisms to create a
+%new package, bundle a package for distribution, and install or uninstall a
+%package. 
+This chapter describes main objects provided by the Opus
+package called \package{opus_core}. This package is intended to provide 
+a fairly general functionality, including data representation and manipulation, 
+various models for use in different domains, support for specification of models,
+or definition of variables. The package by itself does not provide a self-contained
+system of configured models that would run after pressing a button. It is rather a 
+collection of tools for building other opus packages.
 
 
 \section{Datasets}
@@ -129,9 +136,11 @@ computational load as well as eliminating the need to worry about when
 variables \variablesindex are computed: it will happen when, and only when, it is needed.
 
 The method \method{compute_variables()} \variablesindex takes as an arguments a list of
-variable \variablesindex names to be computed and an object of class \class{Resources} which
-is a dictionary with all objects and arguments the variable \variablesindex (and its dependent
-variables) \variablesindex need for the computation.
+variable \variablesindex names to be computed and an object of class \class{DatasetPool} which
+maintains a 'pool' of additional datasets that the variable \variablesindex (and its dependent
+variables) \variablesindex need for the computation (see Section~\ref{sec:core-dataset-pool}). 
+The method returns an array of values that result from computing the last variable in the 
+list of variable names.
 
 As mentioned before, datasets \datasetindex automatically load each attribute \attributesindex into memory
 when, and only when, the data for that attribute \attributesindex is needed.  This is done
