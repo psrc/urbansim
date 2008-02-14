@@ -37,6 +37,8 @@ class RunMacrosAbstract(AbstractEmme2TravelModel):
         specified_macros = config['travel_model_configuration'][year][macro_group_name]
         if output_file is None:
             tmp_output_file = os.path.join(config['cache_directory'], "emme2_export_macros_%s_log.txt" % year)
+        else:
+            tmp_output_file = output_file
         for macro_name, macro_info in specified_macros.iteritems():
             bank = macro_info['bank']
             bank_path = self.get_emme2_dir(config, year, bank)
