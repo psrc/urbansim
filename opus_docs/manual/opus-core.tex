@@ -142,13 +142,6 @@ variables) \variablesindex need for the computation (see Section~\ref{sec:core-d
 The method returns an array of values that result from computing the last variable in the 
 list of variable names.
 
-As mentioned before, datasets \datasetindex automatically load each attribute \attributesindex into memory
-when, and only when, the data for that attribute \attributesindex is needed.  This is done
-either as a side-effect of the \method{compute_variables()}, \variablesindex or via
-\method{get_attribute()}. \attributesindex If the attribute \attributesindex is defined by a variable, \variablesindex you must
-first use the \method{compute_variables()} \variablesindex method to force that variable \variablesindex to
-compute its values for every member of the dataset. \datasetindex
-
 \subsection{Attribute Names}
 \label{sec:opus-core-attribute-names}
 %
