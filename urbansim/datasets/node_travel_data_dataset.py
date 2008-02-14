@@ -13,6 +13,7 @@
 # 
 
 from urbansim.datasets.dataset import Dataset as UrbansimDataset
+from opus_core.logger import logger
 
 class NodeTravelDataDataset(UrbansimDataset):
     
@@ -28,5 +29,9 @@ class NodeTravelDataDataset(UrbansimDataset):
         """Returns a sum of values of the given attribute along the given path."""
         result = 0
         for step in range(len(path)-1):
-            result = result + self.get_attribute_by_id(name, [path[step], path[step+1]])
+            try:
+                #print " (%s) %s (%s)" % (path[step], self.get_attribute_by_id(name, [[path[step], path[step+1]]]), path[step+1])
+                result = result + self.get_attribute_by_id(name, [[path[step], path[step+1]]])
+            except:
+                logger.log_warning("Path from %s to %s not found." % (path[step], path[step+1]))
         return result
