@@ -17,11 +17,11 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
-from run.model.opusrunmodel import *
-from run.estimation.opusrunestimation import *
-from config.xmlmodelview.opusdataview import OpusDataView
-from config.xmlmodelview.opusdatamodel import OpusDataModel
-from config.xmlmodelview.opusdatadelegate import OpusDataDelegate
+from opus_gui.run.model.opusrunmodel import *
+from opus_gui.run.estimation.opusrunestimation import *
+from opus_gui.config.xmlmodelview.opusdataview import OpusDataView
+from opus_gui.config.xmlmodelview.opusdatamodel import OpusDataModel
+from opus_gui.config.xmlmodelview.opusdatadelegate import OpusDataDelegate
 
 # General system includes
 import os, sys, time, tempfile, shutil, string

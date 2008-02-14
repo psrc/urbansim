@@ -18,7 +18,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
-from run.estimation.opusrunestimation import OpusEstimation
+from opus_gui.run.estimation.opusrunestimation import OpusEstimation
         
 
 class OpusXMLAction_Model(object):

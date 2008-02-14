@@ -18,7 +18,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
-from run.model.opusrunmodel import OpusModel
+from opus_gui.run.model.opusrunmodel import OpusModel
 
 class OpusXMLAction_Scenario(object):
     def __init__(self, parent):
@@ -130,7 +130,7 @@ class OpusXMLAction_Scenario(object):
         if self.xmlTreeObject.parent.editorStuff:
             #print "Loading into qscintilla..."
             # Now an individual tab
-            import util.editorbase
+            import opus_gui.util.editorbase
             fileName = newFile.absoluteFilePath()
             x = util.editorbase.EditorTab(self.xmlTreeObject.parent, QString(fileName))
     

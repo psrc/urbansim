@@ -16,11 +16,7 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from util.pythongui import OpusPythonShell
-
-# General system includes
-import sys,string
-
+from opus_gui.util.pythongui import OpusPythonShell
   
 # Main console class for the python console
 class ConsoleBase(object):

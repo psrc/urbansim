@@ -18,9 +18,9 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
-from run.script.opusrunscript import *
-import util.documentationbase
-from config.datamanager.configurescript import ConfigureScriptGui
+from opus_gui.run.script.opusrunscript import *
+import opus_gui.util.documentationbase
+from opus_gui.config.datamanager.configurescript import ConfigureScriptGui
 
 class OpusXMLAction_DataDB(object):
     def __init__(self, parent):

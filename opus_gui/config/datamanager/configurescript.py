@@ -17,7 +17,7 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from configurescript_ui import Ui_ConfigureScriptGui
+from opus_gui.config.datamanager.configurescript_ui import Ui_ConfigureScriptGui
 
 import random
 

@@ -17,7 +17,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
-from opusdataitem import OpusDataItem
+from opus_gui.config.xmlmodelview.opusdataitem import OpusDataItem
 
 
 class OpusDataModel(QAbstractItemModel):

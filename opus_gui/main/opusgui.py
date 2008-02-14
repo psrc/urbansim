@@ -18,13 +18,13 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 # UI specific includes
-from opusmain_ui import Ui_MainWindow
-from opusabout import UrbansimAboutGui
+from opus_gui.main.opusmain_ui import Ui_MainWindow
+from opus_gui.main.opusabout import UrbansimAboutGui
 
-from util.consolebase import *
-from config.toolboxbase import *
-from run.runmanagerbase import *
-from results.resultManagerBase import *
+from opus_gui.util.consolebase import *
+from opus_gui.config.toolboxbase import *
+from opus_gui.run.runmanagerbase import *
+from opus_gui.results.resultManagerBase import *
 
 # General system includes
 import sys,time,tempfile
@@ -83,13 +83,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.resultManagerStuff.setGui(self)
 
     try:
-      import util.editorbase
+      import opus_gui.util.editorbase
       self.editorStatusLabel = QLabel(self)
       self.editorStatusLabel.setAlignment(Qt.AlignCenter)
       self.editorStatusLabel.setObjectName("editorStatusLabel")
       self.editorStatusLabel.setText(QString("No files currently loaded..."))
       self.tab_editorView.layout().addWidget(self.editorStatusLabel)
-      self.editorStuff = util.editorbase.EditorBase(self)
+      self.editorStuff = opus_gui.util.editorbase.EditorBase(self)
       self.tab_editorView.layout().addWidget(self.editorStuff)
     except ImportError:
       self.editorStuff = None

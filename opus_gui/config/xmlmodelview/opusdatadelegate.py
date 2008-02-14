@@ -17,9 +17,6 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
-from opusdatamodel import OpusDataModel
-from opusdataitem import OpusDataItem
-
 class OpusDataDelegate(QItemDelegate):
     def __init__(self, parent):
         QItemDelegate.__init__(self, parent)
