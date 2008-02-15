@@ -59,28 +59,26 @@ if __name__ == "__main__":
     #cache_directory = "/home/hana/urbansim_cache/psrc/parcel/run_3904.2007_10_19_15_01"
     #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/1211/run_4491.2007_12_11_13_58"
     #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0123/run_4960.2008_01_23_10_09"
-    cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0124/run_4954.2008_01_23_09_59"
-    # This is needed only if one of the runs was scaled, e.g. run on reduced set of gridcells. 
-    # It gives the directory of the base year full set, in order to scale back.
-#    scaling = {1: "/scratch/urbbuild/urbansim_cache/psrc/cache_source_zone"}
+    #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0124/run_4954.2008_01_23_09_59"
+    cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0131/run_5090.2008_01_31_14_45"
 
     # where the true data (on a zone level) is stored in a table format 
     observed_data_dir = "/Users/hana/bm/observed_data/"
 
-    observed_data = ObservedData(observed_data_dir, 2006, 'tab_storage', 
+    observed_data = ObservedData(observed_data_dir, 2005, 'tab_storage', 
                                  package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
 
     known_output=[
-#                  {'variable_name': "urbansim_parcel.zone.number_of_households",
-#                   'filename': "PSRC2005TAZDataNew", 
-#                   'transformation': "sqrt",
-#                   #'filter': "urbansim_parcel.zone.number_of_households",
-#                   },
-                    {'variable_name': "travel_data.am_single_vehicle_to_work_travel_time",
-                     'filename': "travel_times", 
-                     'transformation': "sqrt",
+                  {'variable_name': "urbansim_parcel.zone.number_of_households",
+                   'filename': "PSRC2005TAZDataNew", 
+                   'transformation': "sqrt",
                    #'filter': "urbansim_parcel.zone.number_of_households",
                    },
+#                    {'variable_name': "travel_data.am_single_vehicle_to_work_travel_time",
+#                     'filename': "travel_times", 
+#                     'transformation': "sqrt",
+#                   #'filter': "urbansim_parcel.zone.number_of_households",
+#                   },
 #                  {'variable_name': "urbansim_parcel.zone.number_of_jobs",
 #                   'filename': "PSRC2005TAZDataNew", 
 #                   'transformation': "sqrt",
@@ -118,18 +116,12 @@ if __name__ == "__main__":
 #                   'transformation': "sqrt",
 #                   }]
         
-#    for group in ['retail', 'manu', 'wtcu', 'fires', 'gov', 'edu']:
-#        known_output = known_output + [
-#                {'variable_name': "number_of_jobs_of_sector_group_%s = zone.aggregate(urbansim_parcel.building.number_of_jobs_of_sector_group_%s)" % (group, group),
-#                   'filename': "jobs_by_zones_and_groups", 
-#                   'transformation': "sqrt",
-#                   }]
-#    for sec, group in [(1, 'mining'), (2, 'constr')]:
-#        known_output = known_output + [
-#                {'variable_name': "number_of_jobs_of_sector_group_%s = zone.aggregate(urbansim_parcel.building.number_of_jobs_of_sector_%s)" % (group, sec),
-#                   'filename': "jobs_by_zones_and_groups", 
-#                   'transformation': "sqrt",
-#                   }]
+    for group in ['mining', 'constr', 'retail', 'manu', 'wtcu', 'fires', 'gov', 'edu']:
+        known_output = known_output + [
+                {'variable_name': "urbansim_parcel.zone.number_of_jobs_of_sector_group_%s" % group,
+                   'filename': "jobs_by_zones_and_groups", 
+                   'transformation': "sqrt",
+                   }]
           
     for quantity in known_output:
         observed_data.add_quantity(**quantity)
