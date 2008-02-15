@@ -44,7 +44,7 @@ class BaselineMultipleTravelModels2020(Baseline):
         config['travel_model_configuration']['bm_distribution_file'] = \
                 '/Users/hana/bm/psrc_parcel/simulation_results/bm_parameters'
                 
-        config['travel_model_configuration'][2020]['models'] = config['travel_model_configuration'][2020].get('models')
+        config['travel_model_configuration'][2020]['models'] = list(config['travel_model_configuration'][2020].get('models'))
         config['travel_model_configuration'][2020]['models'].append('opus_emme2.models.restore_trip_tables')
         self.merge(config)
 
