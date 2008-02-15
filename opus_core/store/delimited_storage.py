@@ -638,7 +638,7 @@ class TestDelimitedStorage(TestStorageInterface):
         file_path = self.storage._get_file_path_for_table('foo')
         foo = open(file_path, 'wb')
         try:
-           foo.write("attribute1,attribute2,attribute3\n1,1.1,a")
+            foo.write("attribute1,attribute2,attribute3\n1,1.1,a")
            # attribute1,attribute2,attribute3
            # 1,1.1,a
         finally:

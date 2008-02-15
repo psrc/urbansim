@@ -34,12 +34,17 @@ class file_flt_storage(Storage):
         def get_type(self):
             extension_position = self._name.rfind('.')+1
             byteorder_symbol = self._name[extension_position:extension_position+1]
-            type = self._map_extension_character_to_byteorder_symbol(byteorder_symbol) \
-                + self._name[extension_position+1:]
+            type = self._map_extension_character_to_byteorder_symbol(byteorder_symbol)
+            if type is None:
+                return None
+            type =  type + self._name[extension_position+1:]
             return type.encode()
         
         def get_short_name(self):
-            return os.path.basename(self._name)[:-len(self.get_type())-1]
+            type = self.get_type()
+            if type is None:
+                return os.path.basename(self._name)
+            return os.path.basename(self._name)[:-len(type)-1]
         
         @classmethod
         def new_storage_file(cls, short_name, type, path):
@@ -66,11 +71,14 @@ class file_flt_storage(Storage):
         #_map_byteorder_symbol_to_extension_character = classmethod(_map_byteorder_symbol_to_extension_character)
                 
         def _map_extension_character_to_byteorder_symbol(self, extension_character):
-            return {
-                'l': '<', # little-endian
-                'b': '>', # big-endian
-                'i': '|', # irrelevant
-                }[extension_character]
+            try:
+                return {
+                    'l': '<', # little-endian
+                    'b': '>', # big-endian
+                    'i': '|', # irrelevant
+                    }[extension_character]
+            except:
+                return None
                     
         def _extension_for_numpy_type(self, dtype):
             """Returns the file extension for this numpy type."""    
