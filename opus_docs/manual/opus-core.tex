@@ -34,11 +34,9 @@ collection of tools for building other opus packages.
 
 \section{Datasets}
 \label{sec:opus-core-datasets}
-
-The basic class for dealing with data is called \class{Dataset},
-\datasetindex implemented in
-\verb|opus_core.datasets.dataset|. \datasetindex
-
+%
+The basic class for dealing with data is called \class{Dataset}.
+\datasetindex 
 A dataset \datasetindex is a collection of attributes \attributesindex for a particular type of entity,
 such as a set of grid cells, or a set of households.  Each member in this set
 has the same set of characteristics, such as income of households.  In Opus,
@@ -51,7 +49,10 @@ Some attributes \attributesindex are read from a data store, we call them {\it p
   attributes}. \primaryattributesindex  Others, {\it computed attributes}, \computedattributesindex are computed by Opus
 variable definitions.  Attributes \attributesindex can be also modified or created by models.
 
+In this section, we describe the main functionality of \class{Dataset}. For a list of additional methods, 
+see Appendix~\ref{app:selected-methods-dataset}.
 
+%
 \subsection{Initialization}
 %
 The \class{Dataset} \datasetindex class is initialized by the following arguments:
@@ -118,30 +119,6 @@ storage, it might be of an advantage to load the whole dataset \datasetindex at 
 of the dataset \datasetindex usage and flush all attributes. \attributesindex Then any subsequent load will be
 performed on the fast cache.
 
-\subsection{Computing Variables}
-%
-Datasets \datasetindex automatically compute each variable \variablesindex when, and only when,
-needed. \index{Lazy evaluation}  This mechanism uses the dependency information
-from each variable \variablesindex which gives an information about what variables \variablesindex this
-variable \variablesindex depends on. Additionally, it is checked if variable's \variablesindex dependent
-variables \variablesindex have changed (versioning mechanism).  The computation is invoked by
-the dataset \datasetindex method \method{compute_variables()} which computes each of the
-given variables \variablesindex if either (a) this variable \variablesindex has not been computed before, or
-(b) the inputs to this variable \variablesindex (the values of variables \variablesindex upon which this
-variable \variablesindex depends) have changed since the last computation.  Thus, invoking
-\method{compute_variables()} \variablesindex on a single variable \variablesindex may either result in no more
-computation, or have a ripple effect of computing many variables \variablesindex upon which
-this one variable \variablesindex depends.  Lazily computing variables \variablesindex both helps minimize the
-computational load as well as eliminating the need to worry about when
-variables \variablesindex are computed: it will happen when, and only when, it is needed.
-
-The method \method{compute_variables()} \variablesindex takes as an arguments a list of
-variable \variablesindex names to be computed and an object of class \class{DatasetPool} which
-maintains a 'pool' of additional datasets that the variable \variablesindex (and its dependent
-variables) \variablesindex need for the computation (see Section~\ref{sec:core-dataset-pool}). 
-The method returns an array of values that result from computing the last variable in the 
-list of variable names.
-
 \subsection{Attribute Names}
 \label{sec:opus-core-attribute-names}
 %
@@ -178,31 +155,37 @@ Attributes \attributesindex for a dataset \datasetindex can be specified in foll
   \ref{sec:opus-core-expressions}.
 
 \end{description}
-Each specification can be give an alias using the syntax
+Expressions and fully-qualified names can be given an alias using the syntax
 \verb|alias = expr|.  In that case, the alias name is used as un-qualified
 name for this attribute and thus, values of this attribute can be accessed
 by \verb|get_attribute(alias)|.
 
-Opus contains a class \class{VariableName} \variablesindex that is initialized by passing a
-name in one of the forms above. Instances of this class can be also used when
-accessing attributes \attributesindex or invoking variable \variablesindex computation.
-
-\subsection{Attribute Box}
-\label{sec:attribute-box}
 %
-For each attribute \attributesindex that is loaded into memory or computed, the dataset \datasetindex creates
-an instance of \class{AttributeBox}. \attributesindex This object holds all information
-about the attribute, \attributesindex such as the data, attribute \attributesindex name (as \class{VariableName} \variablesindex
-object), version, type, if it is cached or in memory, and a corresponding
-instance of class \class{Variable} \variablesindex if this attribute \attributesindex is a variable. \variablesindex This
-information can be accessed by the \class{AttributeBox} \attributesindex methods
-\method{get_data()}, \method{get_variable_name()}, \variablesindex \method{get_version()},
-\method{get_type()}, \method{is_cached()}, \method{is_in_memory()},
-\method{get_variable_instance()}. \variablesindex The attribute \attributesindex box for a particular attribute \attributesindex
-can be accessed by the dataset \datasetindex method
-\method{_get_attribute_box(attribute_name)}, \attributesindex where the \verb|attribute_name| \attributesindex is
-given in one of the  forms above.
+\subsection{Computing Variables}
+%
+A variable (or equivalently, a computed attribute) is specified either by an expression of by a 
+fully-qualified name (see Section~\ref{sec:opus-variable}).
+Datasets \datasetindex automatically compute each variable \variablesindex when, and only when,
+needed. \index{Lazy evaluation}  This mechanism uses the dependency information
+from each variable \variablesindex which gives an information about what variables \variablesindex this
+variable \variablesindex depends on. Additionally, it is checked if variable's \variablesindex dependent
+variables \variablesindex have changed (versioning mechanism).  The computation is invoked by
+the dataset \datasetindex method \method{compute_variables()} which computes each of the
+given variables \variablesindex if either (a) this variable \variablesindex has not been computed before, or
+(b) the inputs to this variable \variablesindex (the values of variables \variablesindex upon which this
+variable \variablesindex depends) have changed since the last computation.  Thus, invoking
+\method{compute_variables()} \variablesindex on a single variable \variablesindex may either result in no more
+computation, or have a ripple effect of computing many variables \variablesindex upon which
+this one variable \variablesindex depends.  Lazily computing variables \variablesindex both helps minimize the
+computational load as well as eliminating the need to worry about when
+variables \variablesindex are computed: it will happen when, and only when, it is needed.
 
+The method \method{compute_variables()} \variablesindex takes as an arguments a list of
+variable \variablesindex names to be computed and an object of class \class{DatasetPool} which
+maintains a 'pool' of additional datasets that the variables \variablesindex (and their dependent
+variables) \variablesindex need for the computation (see Section~\ref{sec:core-dataset-pool}). 
+The method returns an array of values that result from computing the last variable in the 
+list of variable names.
 
 \subsection{Visualizing Datasets}
 %
@@ -213,22 +196,25 @@ Installation directions at your \file{opus_docs/docs/install.html}).
 \subsubsection{One-dimensional Plots}
 %
 Attributes \attributesindex in a dataset \datasetindex are stored as one-dimensional arrays, thus they can be
-plotted for example as a histogram \histogramindex or as a scatter plot. \scatterplotindex
+plotted for example as a histogram \histogramindex or as a scatter plot. \scatterplotindex The \class{Dataset} 
+offers the following methods:
 
 \begin{description}
 \item[\method{plot_histogram(name, ...)}] \histogramindex creates a histogram \histogramindex of attribute \attributesindex
 \verb|name| using matplotlib. \matplotlibindex
 \item[\method{r_histogram(name, ...)}] \rindex\histogramindex creates
 such histogram \histogramindex including a density line using the rpy \rpyindex library.
-\item[\method{r_scatter(name_x, name_y, ...)}] \rindex\scatterplotindex creates a scatter plot \scatterplotindex for two
-attributes \attributesindex using the rpy \rpyindex library.
+\item[\method{plot_scatter(name_x, name_y, ...)}] \rindex\scatterplotindex creates a scatter plot \scatterplotindex for two
+attributes \attributesindex using matplotlib. \matplotlibindex
+\item[\method{r_scatter(name_x, name_y, ...)}] \rindex\scatterplotindex creates a scatter plot \scatterplotindex 
+using the rpy \rpyindex library.
 \end{description}
 
 \subsubsection{Two-dimensional Plots}
 %
 One often is interested in a spatial graphical presentation of a dataset
 attribute.  By default, datasets have no spatial coordinate axes.  If you want
-a dataset to have a coordinate system, set the dataset's class variable
+a dataset to have a coordinate system, set the dataset's class attribute
 \verb|_coordinate_system| to be a tuple of the attribute names for the x and y
 coordinates, e.g. to \verb|('relative_x','relative_y')|.  This information then
 will be used by routines that need it.
@@ -242,6 +228,22 @@ library.
   image.
 \end{description}
 
+\subsection{Attribute Box}
+\label{sec:attribute-box}
+%
+For each attribute \attributesindex that is loaded into memory or computed, the dataset \datasetindex creates
+an instance of \class{AttributeBox}. \attributesindex This object holds all information
+about the attribute, \attributesindex such as the data, attribute \attributesindex name, 
+version, type, if it is cached or in memory, and a corresponding
+instance of class \class{Variable} \variablesindex if this attribute \attributesindex is a variable. \variablesindex This
+information can be accessed by the \class{AttributeBox} \attributesindex methods
+\method{get_data()}, \method{get_variable_name()}, \variablesindex \method{get_version()},
+\method{get_type()}, \method{is_cached()}, \method{is_in_memory()},
+\method{get_variable_instance()}. \variablesindex The attribute \attributesindex box for a particular attribute \attributesindex
+can be accessed by the dataset \datasetindex method
+\method{_get_attribute_box(attribute_name)}, \attributesindex where the \verb|attribute_name| \attributesindex is
+given in one of the  forms from Section~\ref{sec:opus-core-attribute-names}.
+
 \subsection{Subsets of Dataset}
 \datasetindex\datasetsubsetindex
 %
@@ -252,23 +254,29 @@ the parent object is seen by the child.
 
 It is initialized by passing the parent object and an index to the
 constructor.  The index determines indices of elements within the parent
-object that should be seen. Any call of \method{get_attribute()} \attributesindex returns
+object that should be seen. Any call of \method{get_attribute()} \attributesindex on the subset returns
 values corresponding to the index.
+A subset can be also created using the \class{Dataset} method {\method{create_subset_window_by_ids(ids)}
+called on the parent object. 
+
+Note that only methods for viewing attributes (such as \method{get_attribute()} or \method{summary()}) make sense
+for using with a subset. Other
+methods that would for example modify attributes (such as \method{compute_variables()}) could destroy the parent dataset.
 
 \subsection{Interaction Sets}
 \label{sec:interaction-set}
 %
 Opus allows the programmer to create a dataset representing
-the interaction between two other datasets, \datasetindex by using the class
+an interaction between two datasets, \datasetindex by using the class
 \class{InteractionDataset}, which is a child of \class{Dataset}. \datasetindex It serves mainly
 to enable the use of the Opus variable \variablesindex concept for variables \variablesindex
-that are defined as an interaction between datasets as well, \datasetindex and thus are of a 2-d
-shape. The class does not support loading from and writing to a storage.
+that are defined as an interaction between datasets, \datasetindex and thus are of a 2-d
+shape. The class does not support loading from and writing into a storage.
 
 \subsubsection{Initialization}
 The class is initialized by the following arguments:
 \begin{description}
-\item[resources] - the same function as in \class{Dataset}. \datasetindex
+\item[resources] - this argument has the same meaning as in \class{Dataset}. \datasetindex
 \item[dataset1] - an instance of \class{Dataset}. \datasetindex
 \item[dataset2] - an instance of \class{Dataset}. \datasetindex
 \item[index1] - indices of \verb|dataset1| over which the interaction is
@@ -276,7 +284,7 @@ The class is initialized by the following arguments:
 \item[index2] - indices of \verb|dataset2| over which the interaction is
   done. If it is not given, all elements are taken.
 \item[dataset_name] - a name of the interaction set. Default value is the
-  dataset \datasetindex name of  \verb|dataset1| connected by `_' to the dataset \datasetindex name of
+  dataset \datasetindex name of  \verb|dataset1| connected by `_x_' to the dataset \datasetindex name of
   \verb|dataset2|.
 \end{description}
 
@@ -294,7 +302,7 @@ The two interacting datasets \datasetindex can be accessed by the method
 
 The method \method{get_attribute_of_dataset(name, dataset_number)} returns values of
 the given attribute \attributesindex that belongs to the dataset given by  \verb|dataset_number| where
-only values associated to the corresponding \verb|index| are included. Thus, a
+only values associated to the corresponding index are included. Thus, a
 call \verb|self.get_attribute_of_dataset("attr", 1)| \attributesindex gives an array of size
 \verb|index1|, whereas a call \verb|self.get_dataset(1).get_attribute("attr")| \attributesindex
 gives an array containing values for all elements of \verb|dataset1|.
@@ -521,6 +529,10 @@ the dataset \datasetindex to which this attribute \attributesindex belongs
 each variable's definition comes from.  (In retrospect, this may not be
 ideal, and in the future we may no longer require the package name as part
 of variable names.)
+
+Opus contains a class \class{VariableName} \variablesindex that is initialized by passing a
+name in one of the forms above. Instances of this class can be also used when
+accessing attributes \attributesindex or invoking variable \variablesindex computation.
 
 The similarity to a Python \pythonindex \verb|import| statement is not a
 coincidence: Opus uses an \verb|import| statement to load the variable's
