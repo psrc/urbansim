@@ -48,7 +48,7 @@ class Tests(opus_unittest.OpusTestCase):
     def test_my_inputs(self):
         tester = VariableTester(
             __file__,
-            package_order=['sanfrancisco','urbansim'],
+            package_order=['urbansim_parcel','urbansim'],
             test_data={
             'job':
             {"job_id":array([1,2,3,4,5]),
