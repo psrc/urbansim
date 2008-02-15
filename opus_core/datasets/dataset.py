@@ -156,7 +156,8 @@ class Dataset(AbstractDataset):
 
         Each loaded attribute array is stored as a dictionary entry of type AttributeBox in 'set'.
         If any of the attributes has been already contained in 'set', its values
-        are overwritten. The class attribute 'n' is set to the number of values in one array (they
+        are overwritten (to disable this feature, use load_dataset_if_not_loaded). 
+        The class attribute 'n' is set to the number of values in one array (they
         should be all the same length). For a fast search, the class attribute 'id_mapping' is created which is
         a dictionary with entries whose keys are the unique identifiers of the data set and values are the indices
         of the corresponding array elements.
@@ -353,6 +354,7 @@ class Dataset(AbstractDataset):
         """Write dataset into the media given in out_storage (see also load_dataset).
         If 'attributes' is '*' all attributes that are known to the dataset (i.e. primary  + computed) are written.
         'attributes' can be also a list of attributes or AttributeType.PRIMARY or AttributeType.COMPUTED.
+        Computed attributes are written into the table '{out_table_name}.computed'.
         """
 
         #set defaults

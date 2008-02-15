@@ -783,8 +783,8 @@ def get_string_or_None(arg):
         return "'%s'" % arg
     return None
 
-def get_dataset_from_flt_storage(dataset_name, directory, package_order=['opus_core'], dataset_args=None):
-    """ Returns an object of class Dataset (or its child) with data stored as flt_storage in 'directory'. If the child class is defined in a specific package, 
+def get_dataset_from_storage(dataset_name, directory, storage_type, package_order=['opus_core'], dataset_args=None):
+    """ Returns an object of class Dataset (or its child) with data stored in a storage of type 'storage_type' in 'directory'. If the child class is defined in a specific package, 
     this package must be included in 'package_order'. If there is no child class definition for this 'dataset_name', set 'dataset_args' to a dictionary 
     (possibly empty) and a generic Dataset will be returned. 'dataset_args' should contain entries needed as arguments for the Dataset class, e.g. 'in_table_name', 'id_name'.
     """
@@ -793,7 +793,7 @@ def get_dataset_from_flt_storage(dataset_name, directory, package_order=['opus_c
     from opus_core.datasets.dataset_factory import DatasetFactory
     from opus_core.datasets.dataset import Dataset
     
-    storage = StorageFactory().get_storage('flt_storage',storage_location = directory)
+    storage = StorageFactory().get_storage(storage_type, storage_location = directory)
     if dataset_args is None:
         pool = DatasetPool(storage=storage, package_order=package_order)
         return pool.get_dataset(dataset_name)
@@ -803,6 +803,14 @@ def get_dataset_from_flt_storage(dataset_name, directory, package_order=['opus_c
     except: # take generic dataset
         return Dataset(dataset_name=dataset_name, **dataset_args)
     
+def get_dataset_from_flt_storage(dataset_name, directory, package_order=['opus_core'], dataset_args=None):
+    """See doc string to get_dataset_from_storage which  is called with storage_type='flt_storage'."""
+    return get_dataset_from_storage(dataset_name, directory, 'flt_storage', package_order=package_order, dataset_args=dataset_args)
+
+def get_dataset_from_tab_storage(dataset_name, directory, package_order=['opus_core'], dataset_args=None):
+    """See doc string to get_dataset_from_storage which  is called with storage_type='tab_storage'."""
+    return get_dataset_from_storage(dataset_name, directory, 'tab_storage', package_order=package_order, dataset_args=dataset_args)
+
 from opus_core.tests import opus_unittest
 import shutil
 import opus_core
@@ -1033,6 +1041,14 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         location = os.path.join(opus_core.__path__[0], 'data', 'flt')
         dataset = get_dataset_from_flt_storage('endian', directory=location, dataset_args={'in_table_name':'endians', 'id_name':[]})
         self.assertAlmostEqual(11.0, dataset.get_attribute_by_index(attribute, 0))
+        
+    def test_get_dataset_from_tab_storage(self):
+        import opus_core
+        
+        attribute = 'g2'
+        location = os.path.join(opus_core.__path__[0], 'data', 'tab')
+        dataset = get_dataset_from_tab_storage('test', directory=location)
+        self.assertAlmostEqual(21, dataset.attribute_sum(attribute))
 
 if __name__ == "__main__":
     opus_unittest.main()

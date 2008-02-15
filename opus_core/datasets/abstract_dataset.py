@@ -155,7 +155,8 @@ class AbstractDataset(object):
 
     def add_attribute(self, data, name, metadata=2):
         """Add values given in argument 'data' to dataset as an attribute 'name' as type 'metadata'. If this
-        attribute already exists, its values are rewritten.
+        attribute already exists, its values are overwritten. 
+        'metadata' should be of type AttributeType (PRIMARY=1, COMPUTED=2).
         The method increments and returns the version number of the attribute.
         """
         if not (isinstance(data, ndarray) or isinstance(data, ma.array)):
@@ -289,7 +290,8 @@ class AbstractDataset(object):
         return id_array
     
     def get_2d_attribute(self, attribute=None, attribute_data=None):
-        """Returns an 2d array of the attribute given. The dataset must have self._coordinate_system defined.
+        """Returns an 2d array of the attribute given. If no attribute is given, attribute_data must be provided.
+        The dataset must have self._coordinate_system defined.
         """
         self._check_2d_coordinates()
         x_attribute_name, y_attribute_name = self.get_coordinate_system()
@@ -465,6 +467,8 @@ class AbstractDataset(object):
     def get_attribute_names(self):
         """Return a list of attribute names (including computed variables) that have been
         loaded or computed, regardless of whether they are currently in memory.
+        Primary attributes that have not been used (and thus, are not loaded) will 
+        not be included in the result. (see also get_known_attribute_names())
         """
         return self.attribute_boxes.keys()
 
@@ -708,13 +712,14 @@ class AbstractDataset(object):
             return array(map(lambda x: self.try_id_mapping(x, return_value_if_not_found), ids))
 
     def get_index_where_variable_larger_than_threshold(self, attribute, threshold=0):
-        """Return index of entries for which value of the given attribute is smaller or equal
-           to the given threshold.
+        """Return index of entries for which value of the given attribute is larger than
+           the given threshold.
         """
         return where(self.get_attribute(attribute) > threshold)
     
     def get_filtered_index(self, filter, threshold=0, index=None, dataset_pool=None, resources=None):
-        """Return only those indices of index that pass through the given filter. Filter can be an expression/variable."""
+        """Return only those indices of index that pass through the given filter. Filter can be an expression/variable,
+        it is computed within this method."""
         self.compute_variables([filter], dataset_pool=dataset_pool, resources=resources)
         name = VariableName(filter)
         filtered_index = self.get_index_where_variable_larger_than_threshold(
@@ -822,7 +827,7 @@ class AbstractDataset(object):
         return result
 
     def join_by_rows(self, dataset, require_all_attributes=True, change_ids_if_not_unique=False):
-        """Add the elements of dataset to the elements of self.
+        """Add elements of dataset to the elements of self.
         Only joins primary attributes.
         All computed attributes will be deleted.
         Will load both datasets before doing join.
@@ -921,7 +926,7 @@ class AbstractDataset(object):
 
     def summary(self, names=[], resources=None):
         """Print a summary of the attributes given in the list 'names'.
-        # If names is an empty list, display summary for all primary attributes
+        If names is an empty list, display summary for all primary attributes
         plus all computed attributes.
         """
         if not names:
@@ -944,17 +949,18 @@ class AbstractDataset(object):
                         self.load_dataset(attributes=[short_name])
                     else:
                         self.compute_variables([item], resources=resources)
-                s = self.attribute_sum(short_name)
-                values = self.get_attribute(short_name)
-                logger.log_status("%25s\t%8s\t%8s\t%9g\t%7g\t%7g" %(short_name, round(values.mean(),2), round(ndimage.standard_deviation(values),2),
-                    s, values.min(), values.max()))
+                if self.get_data_type(item).char <> 'S':
+                    s = self.attribute_sum(short_name)
+                    values = self.get_attribute(short_name)
+                    logger.log_status("%25s\t%8s\t%8s\t%9g\t%7g\t%7g" %(short_name, round(values.mean(),2), round(ndimage.standard_deviation(values),2),
+                                                                        s, values.min(), values.max()))
         logger.log_status("\nSize:", self.size(), " records")
         logger.log_status("identifiers: ")
         for idname in self.get_id_name():
             logger.log_status("\t", idname, " in range ", self.get_attribute(idname).min(), "-", self.get_attribute(idname).max())
     
     def aggregate_all(self, function='sum', attribute_name=None):
-        """Aggregate atttribute (given by 'attribute_name') by applying the given function."""
+        """Aggregate atttribute (given by 'attribute_name') by applying the given function. 'attribute_name' must be given."""
         what = self.get_attribute(attribute_name)
         if isinstance(what, ma.array):
             filled_what = ma.filled(what, 0)
@@ -968,7 +974,8 @@ class AbstractDataset(object):
         return result
 
     def categorize(self, attribute_name, bins):
-        """ Return an array of membership of values of the specified attribute in the given bins.
+        """ Return an array of membership of values of the specified attribute in the given bins. (See also docs to 
+        the numpy function 'searchsorted'.)
         """
         values = self.get_attribute(attribute_name)
         return searchsorted(bins, values)
@@ -1100,12 +1107,14 @@ class AbstractDataset(object):
         r.plot(v1,v2, main=main,
             xlab=name_x, ylab=name_y)
 
-    def r_image(self, name, main="", xlab="x", ylab="y", min_value=None, max_value=None, file=None):
-        """    Plots a 2D image of attribute given by 'name'. rpy module and R library 'fields'
+    def r_image(self, name, main="", xlab="x", ylab="y", min_value=None, max_value=None, file=None, pdf=True):
+        """ Plots a 2D image of attribute given by 'name'. rpy module and R library 'fields'
             required. The dataset must have a method 'get_2d_attribute' defined that returns
-               a 2D array that is to be plotted. If min_value/max_value are given, all values
-               that are smaller/larger than these values are set to min_value/max_value.
-               As white background is considered the minimum value of the array.
+            a 2D array that is to be plotted. If min_value/max_value are given, all values
+            that are smaller/larger than these values are set to min_value/max_value.
+            As white background is considered the minimum value of the array.
+            If 'file' is given, the plot is outputed into the file as pdf (if 'pdf' is True) or as postscript
+            (if 'pdf' is False).
         """
         tdata = self.get_2d_attribute(name)
         nonmaskedmin = ma.minimum(tdata)
@@ -1127,21 +1136,27 @@ class AbstractDataset(object):
         from rpy import r
         r.library("fields")
         if file:
-            r.postscript(file)
+            if pdf:
+                r.pdf(file)
+            else:
+                r.postscript(file)
         r.image_plot(z=data, x=r.seq(1,xlen), y=r.seq(1,ylen),
                 xlab=xlab, ylab=ylab, main=main, sub=name,
                 col=r.c('white', r.rainbow(150)[20:150]))
+        if file:
+            r.dev_off()
 
     def plot_map(self, name, main="", xlab="x", ylab="y", min_value=None, max_value=None, file=None,
                  my_title="", filter=None, background=None):
-        """    Plots a 2D image of attribute given by 'name'. matplotlib required.
-               The dataset must have a method 'get_2d_attribute' defined that returns
-               a 2D array that is to be plotted. If min_value/max_value are given, all values
-               that are smaller/larger than these values are set to min_value/max_value.
-               Argument background is a value to be used for background. If it is not given,
-               it is considered as a 1/100 under the minimum value of the array.
-               Filter can be a string in which case it is considered as attribute name, or a 2D array.
-               Points where filter is > 0 are masked out (put into background).
+        """ Plots a 2D image of attribute given by 'name'. matplotlib required.
+            The dataset must have a method 'get_2d_attribute' defined that returns
+            a 2D array that is to be plotted. If min_value/max_value are given, all values
+            that are smaller/larger than these values are set to min_value/max_value.
+            Argument background is a value to be used for background. If it is not given,
+            it is considered as a 1/100 under the minimum value of the array.
+            Filter can be a string in which case it is considered as attribute name, or a 2D array.
+            Points where filter is > 0 are masked out (put into background).
+            If 'file' is given, the plot is outputed into the file.
         """
         from matplotlib.pylab import jet,imshow,colorbar,show,axis,savefig,close,figure,title,normalize
         from matplotlib.pylab import rot90
