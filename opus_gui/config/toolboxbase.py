@@ -46,28 +46,27 @@ class ToolboxBase(object):
     self.dataManagerTree = None
     self.dataManagerFileTree = None
     self.dataManagerDBSTree = None
+    
+    self.gui_configuration_file = os.path.join(os.environ['OPUS_HOME'], 'gui_config.xml')
+    if not os.path.exists(self.gui_configuration_file):
+        self.emit_default_gui_configuration_file(file_name = self.gui_configuration_file)
+        
+    self.gui_configuration_doc = QDomDocument()
+    self.gui_configuration_doc.setContent(QFile(self.gui_configuration_file))
 
   def openXMLTree(self, xml_file):
     saveBeforeOpen = QMessageBox.Discard
     # Check if the current model(s) is(are) dirty first...
     save_string = QString("Current project contains changes... \n"
                           "Should we save or discard those changes before opening?")
-    if self.resultsManagerTree and self.resultsManagerTree.model.dirty:
-      saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
-                                            save_string,
-                                            QMessageBox.Discard,QMessageBox.Save)
-    elif self.modelManagerTree and self.modelManagerTree.model.dirty:
-      saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
-                                            save_string,
-                                            QMessageBox.Discard,QMessageBox.Save)
-    elif self.runManagerTree and self.runManagerTree.model.dirty:
-      saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
-                                            save_string,
-                                            QMessageBox.Discard,QMessageBox.Save)
-    elif self.dataManagerTree and self.dataManagerTree.model.dirty:
-      saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
-                                            save_string,
-                                            QMessageBox.Discard,QMessageBox.Save)
+    
+    for manager in [self.resultsManagerTree, self.modelManagerTree, self.runManagerTree, self.dataManagerTree]:
+        if manager and manager.model.dirty:
+          saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
+                                                save_string,
+                                                QMessageBox.Discard,QMessageBox.Save)
+          break
+          
     if saveBeforeOpen == QMessageBox.Save:
       self.parent.saveConfig()
     else:
@@ -130,3 +129,14 @@ class ToolboxBase(object):
         print "Error reading the %s configuration file" % (xml_file)
     else:
       print "There was an error removing the old config"
+    
+  def emit_default_gui_configuration_file(self, file_name):
+      from opus_core.misc import directory_path_from_opus_path
+      
+      default_gui_config_path = os.path.join(directory_path_from_opus_path('opus_gui.projects'),
+                                             'default_gui_configuration.xml')
+      default_gui_config = open(default_gui_config_path)
+      new_file = open(file_name, 'w')
+      new_file.write(''.join(default_gui_config.readlines()))
+      new_file.close()
+      default_gui_config.close()

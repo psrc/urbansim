@@ -1,0 +1,9 @@
+<gui_configuration>
+	<startup_options>
+		<splash_logo>az-smart.bmp</splash_logo>
+		<window_size>
+			<x>550</x>
+			<y>550</y>
+		</window_size>
+	</startup_options>
+</gui_configuration>
