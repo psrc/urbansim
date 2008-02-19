@@ -27,7 +27,6 @@ try:
     from opus_gui.results.xml_helper_methods import get_child_values
     from opus_gui.results.indicator_framework.visualizer.visualizers.table import Table
     from opus_core.storage_factory import StorageFactory
-    from opus_gui.results.xml_helper_methods import get_child_values
     
 except ImportError:
     WithOpus = False
