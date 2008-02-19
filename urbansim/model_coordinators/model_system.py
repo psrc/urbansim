@@ -407,6 +407,7 @@ class ModelSystem(object):
                             model_group_members_to_run[model_name][0][member] = ["run"]
                         number_of_models +=len(model_group_members_to_run[model_name][0][member])
                 else: # in the form 'model_name_3' in the comment above
+                    model_group_members_to_run[model_name] = [{}, None]
                     if not isinstance(value, list):
                         number_of_models +=1
                     else:
