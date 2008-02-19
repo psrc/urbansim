@@ -17,7 +17,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.opus_package import OpusPackage
 from opus_core.datasets.dataset import Dataset
 
-def load_dataset_from_tab_storage():
+def create_dataset_from_tab_storage():
     storage = StorageFactory().get_storage('tab_storage', # type of storage
                                            storage_location = os.path.join(OpusPackage().get_opus_core_path(), "data/tab") # directory
                                            )
@@ -27,14 +27,14 @@ def load_dataset_from_tab_storage():
                            )
     return test_dataset
 
-def load_dataset_from_tab_storage_shortcut():
+def create_dataset_from_tab_storage_shortcut():
     from opus_core.misc import get_dataset_from_tab_storage
     return get_dataset_from_tab_storage('tests', 
                                         directory=os.path.join(OpusPackage().get_opus_core_path(), "data/tab"),
                                         dataset_args={'in_table_name':'tests', 'id_name':'id'})
     
 if __name__ == "__main__":
-    ds = load_dataset_from_tab_storage()
+    ds = create_dataset_from_tab_storage()
     ds.summary()
-    ds = load_dataset_from_tab_storage_shortcut()
+    ds = create_dataset_from_tab_storage_shortcut()
     ds.summary()
