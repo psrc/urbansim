@@ -43,7 +43,7 @@ class Model(ModelComponent):
         if 'run' in map(lambda (name, obj): name, getmembers(an_instance, isroutine)):
             run_method = an_instance.run
             def logged_run_method (*req_args, **opt_args):
-                logger.start_block("Running %s" % an_instance.name(), tags=["model", "model-run"],
+                logger.start_block("Running %s" % an_instance.full_name(), tags=["model", "model-run"],
                                                                         verbosity_level=1)
                 try:
                     results = run_method(*req_args, **opt_args)
@@ -55,7 +55,7 @@ class Model(ModelComponent):
         if 'estimate' in map(lambda (name, obj): name, getmembers(an_instance, isroutine)):
             estimate_method = an_instance.estimate
             def logged_estimate_method (*req_args, **opt_args):
-                logger.start_block("Estimating %s" % an_instance.name(), tags=["model", "model-estimate"],
+                logger.start_block("Estimating %s" % an_instance.full_name(), tags=["model", "model-estimate"],
                                                                         verbosity_level=1)
                 try:
                     results = estimate_method(*req_args, **opt_args)
@@ -70,6 +70,14 @@ class Model(ModelComponent):
         return an_instance
                                            
     def name(self):
+        """return the simple name of this model, either its name if it has one, or else the class name"""
+        if hasattr(self, 'model_name') and (self.model_name is not None):
+            return self.model_name
+        else:
+            return self.__class__.__name__
+
+    def full_name(self):
+        """return the full name of this model (including which module it is from)"""
         if hasattr(self, 'model_name') and (self.model_name is not None):
             return '%s (from %s)' % (self.model_name, self.__module__)
         else:
@@ -186,11 +194,11 @@ import re
 class ModelTests(opus_unittest.OpusTestCase):
     def test_name(self):
         t1=TestModel1()
-        self.assertEqual(re.search('Test model 1', t1.name()) is not None, 1)
+        self.assertEqual(re.search('Test model 1', t1.full_name()) is not None, 1)
         t2 = TestModel2()
-        self.assertEqual(re.search('Test model 2', t2.name()) is not None, 1)
+        self.assertEqual(re.search('Test model 2', t2.full_name()) is not None, 1)
         t3 = TestModel3()
-        self.assertEqual(re.search('TestModel3', t3.name()) is not None, 1)
+        self.assertEqual(re.search('TestModel3', t3.full_name()) is not None, 1)
 
     def test_method_calling_method(self):
         t1=TestModel1()

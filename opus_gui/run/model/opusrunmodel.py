@@ -191,7 +191,7 @@ class OpusModel(object):
                 model_name = lines[3].strip()
                 total_pieces = float(lines[4])
                 current_piece = float(lines[5])
-                piece_description = lines[6].strip()
+                # piece_description = lines[6].strip()
                 total_years = float(self.end_year - self.start_year + 1)
                 # For each year, we need to run all of the models.
                 # year_fraction_completed is the fraction completed (ignoring the currently running year)
@@ -201,7 +201,9 @@ class OpusModel(object):
                 model_fraction_completed = (current_model / total_models) / total_years
                 piece_fraction_completed = (current_piece / total_pieces) / (total_years*total_models)
                 percentage = 100.0* (year_fraction_completed + model_fraction_completed + piece_fraction_completed)
-                message = 'year: %d  model: %s %s' % (current_year, model_name, piece_description)
+                # omit the piece description for now (too long to fit)
+                # message = 'year: %d  model: %s %s' % (current_year, model_name, piece_description)
+                message = 'year: %d  model: %s' % (current_year, model_name)
                 return {"percentage": percentage, "message": message}
             except IOError:
                 return {"percentage": 0, "message":" Model initializing..."}
