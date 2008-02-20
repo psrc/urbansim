@@ -298,6 +298,7 @@ class ModelGuiElement(QWidget):
     # Get the final logfile update after model finishes...
     self.logFileKey = self.runThread.parent.model._get_current_log(self.logFileKey)
     self.running = False
+    self.paused = False
     self.pbnStartModel.setText(QString("Start Model..."))
     
   def runStatusFromThread(self):
@@ -312,6 +313,7 @@ class ModelGuiElement(QWidget):
     
   def runErrorFromThread(self,errorMessage):
     self.running = False
+    self.paused = False
     self.pbnStartModel.setText(QString("Start Model..."))
     QMessageBox.warning(self.parent,"Warning",errorMessage)
     
@@ -324,6 +326,8 @@ class EstimationGuiElement(QWidget):
     self.estimation.guiElement = self
     self.inGui = False
     self.logFileKey = 0
+    self.running = False
+    self.paused = False
     
     # Grab the path to the base XML used to run this model
     self.xml_path = estimation.xml_path
@@ -399,7 +403,7 @@ class EstimationGuiElement(QWidget):
     self.startVBoxLayout.addWidget(self.pbnStartModel)
     self.pbnRemoveModel = QPushButton(self.startWidget)
     self.pbnRemoveModel.setObjectName("pbnRemoveModel")
-    self.pbnRemoveModel.setText(QString("Remove From Queue"))
+    self.pbnRemoveModel.setText(QString("Cancel/Remove From Queue"))
     QObject.connect(self.pbnRemoveModel, SIGNAL("released()"),
                     self.on_pbnRemoveModel_released)        
     self.startVBoxLayout.addWidget(self.pbnRemoveModel)
@@ -435,32 +439,51 @@ class EstimationGuiElement(QWidget):
     self.vboxlayout.addWidget(self.tabWidget)
     
   def on_pbnRemoveModel_released(self):
+    self.running = False
+    self.paused = False
+    self.timer.stop()
+    self.runThread.cancel()
     self.runManager.removeEstimationElement(self)
     self.runManager.updateEstimationElements()
     
   def on_pbnStartModel_released(self):
-    # Fire up a new thread and run the model
-    # References to the GUI elements for status for this run...
-    self.progressBar = self.runProgressBar
-    self.statusLabel = self.runStatusLabel
-    
-    #self.pbnRemoveModel.setEnabled(False)
-    self.pbnStartModel.setEnabled(False)
-    self.progressBar.setValue(0)
-    self.statusLabel.setText(QString("Estimation initializing..."))
-    self.runThread = RunEstimationThread(self.parent,self,self.xml_path)
-    # Use this signal from the thread if it is capable of producing its own status signal
-    QObject.connect(self.runThread, SIGNAL("estimationFinished(PyQt_PyObject)"),
-                    self.runFinishedFromThread)
-    QObject.connect(self.runThread, SIGNAL("estimationError(PyQt_PyObject)"),
-                    self.runErrorFromThread)
-    # Use this timer to call a function in the thread to check status if the thread is unable
-    # to produce its own signal above
-    self.timer = QTimer()
-    QObject.connect(self.timer, SIGNAL("timeout()"),
-                    self.runStatusFromThread)
-    self.timer.start(1000)
-    self.runThread.start()
+    if self.running == True and self.paused == False:
+      # Take care of pausing a run
+      self.paused = True
+      self.timer.stop()
+      self.runThread.pause()
+      self.pbnStartModel.setText(QString("Resume Estimation..."))
+    elif self.running == True and self.paused == True:
+      # Need to resume a paused run
+      self.paused = False
+      self.timer.start(1000)
+      self.runThread.resume()
+      self.pbnStartModel.setText(QString("Pause Estimation..."))
+    elif self.running == False:
+      # Fire up a new thread and run the estimation
+      # References to the GUI elements for status for this run...
+      self.progressBar = self.runProgressBar
+      self.statusLabel = self.runStatusLabel
+      self.pbnStartModel.setText(QString("Pause Estimation..."))
+      self.progressBar.setValue(0)
+      self.statusLabel.setText(QString("Estimation initializing..."))
+      self.runThread = RunEstimationThread(self.parent,self,self.xml_path)
+      # Use this signal from the thread if it is capable of producing its own status signal
+      QObject.connect(self.runThread, SIGNAL("estimationFinished(PyQt_PyObject)"),
+                      self.runFinishedFromThread)
+      QObject.connect(self.runThread, SIGNAL("estimationError(PyQt_PyObject)"),
+                      self.runErrorFromThread)
+      # Use this timer to call a function in the thread to check status if the thread is unable
+      # to produce its own signal above
+      self.timer = QTimer()
+      QObject.connect(self.timer, SIGNAL("timeout()"),
+                      self.runStatusFromThread)
+      self.timer.start(1000)
+      self.running = True
+      self.paused = False
+      self.runThread.start()
+    else:
+      print "Unexpected state in the estimation run..."
     
   # This is not used currently since the model can not return status... instead we use a timer to
   # check the status from a log file.
@@ -476,7 +499,9 @@ class EstimationGuiElement(QWidget):
     self.timer.stop()
     # Get the final logfile update after model finishes...
     self.logFileKey = self.runThread.parent.estimation._get_current_log(self.logFileKey)
-    self.pbnStartModel.setEnabled(True)
+    self.running = False
+    self.paused = False
+    self.pbnStartModel.setText(QString("Start Estimation..."))
     
   def runStatusFromThread(self):
     status = self.runThread.parent.estimation._compute_progress(self.runThread.parent.estimation.statusfile)
@@ -487,5 +512,8 @@ class EstimationGuiElement(QWidget):
     self.logFileKey = self.runThread.parent.estimation._get_current_log(self.logFileKey)
     
   def runErrorFromThread(self,errorMessage):
+    self.running = False
+    self.paused = False
+    self.pbnStartModel.setText(QString("Start Estimation..."))
     QMessageBox.warning(self.parent,"Warning",errorMessage)
     

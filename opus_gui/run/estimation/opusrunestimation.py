@@ -41,6 +41,15 @@ class RunEstimationThread(QThread):
         self.parent.estimation.errorCallback = self.errorCallback
         self.parent.estimation.run()
 
+    def pause(self):
+        self.parent.estimation.pause()
+
+    def resume(self):
+        self.parent.estimation.resume()
+
+    def cancel(self):
+        self.parent.estimation.cancel()
+
     def progressCallback(self,percent):
         print "Ping From Estimation"
         self.emit(SIGNAL("estimationPing(PyQt_PyObject)"),percent)
@@ -60,7 +69,7 @@ class OpusEstimation(object):
     def __init__(self,parent,xml_path):
         self.parent = parent
         self.xml_path = xml_path
-        #self.thread = RunModelThread(self.parent.parent,self.xml_path)
+        self.er = None
         self.progressCallback = None
         self.finishedCallback = None
         self.errorCallback = None
@@ -68,6 +77,8 @@ class OpusEstimation(object):
         self.config = None
         self.statusfile = None
         self.firstRead = True
+        self.running = False
+        self.paused = False
 
     def formatExceptionInfo(self,maxTBlevel=5):
         import traceback
@@ -80,6 +91,22 @@ class OpusEstimation(object):
         excTb = traceback.format_tb(trbk, maxTBlevel)
         return (excName, excArgs, excTb)
 
+    def pause(self):
+        self.paused = True
+        print "Pause pressed"
+        # Can access the estimation manager via self.er
+    
+    def resume(self):
+        self.paused = False
+        print "Resume pressed"
+        # Can access the estimation manager via self.er
+    
+    def cancel(self):
+        self.running = False
+        self.paused = False
+        print "Cancel pressed"
+        # Can access the estimation manager via self.er
+    
     def run(self):
         if WithOpus:
             # Run the Eugene model using the XML version of the Eugene configuration.
@@ -104,12 +131,15 @@ class OpusEstimation(object):
                     if 'location' in model_config:
                         model = model , (model_config['location'], model_config['add_member_prefix'])
                     specification = xml_config.get_estimation_specification(model_config['full_name'])
-                    er = EstimationRunner()
-                    er.run_estimation(estimation_config, model,
+                    self.er = EstimationRunner()
+                    self.running = True
+                    self.er.run_estimation(estimation_config, model,
                                       specification, save_estimation_results=False, diagnose=False)
+                    self.running = False
                 succeeded = True
             except:
                 succeeded = False
+                self.running = False
                 errorInfo = self.formatExceptionInfo()
                 errorString = "Unexpected Error From Estimation :: " + str(errorInfo)
                 print errorInfo
