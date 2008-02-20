@@ -425,13 +425,12 @@ class ModelSystem(object):
         if (filename is None) or not os.path.exists(filename):
             return
         while True:
-            f = file(filename, "rb")
-            line = f.readline()
-            while line.endswith('\n') or line.endswith('\r'):
-                line = line[:-1]
+            f = file(filename)
+            line = f.read().strip()
+            f.close()
             if line == 'stop':
                 logger.log_warning('Simulation stopped.')
-                sys.exit(1)
+                sys.exit()
             elif line == 'resume':
                 break
             elif line <> 'pause':

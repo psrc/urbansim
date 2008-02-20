@@ -96,19 +96,16 @@ class OpusModel(object):
     
     def pause(self):
         self.paused = True
-        print "Pause pressed"
-        # Can access the run manager via self.run_manager
+        self._write_command_file('pause')
     
     def resume(self):
         self.paused = False
-        print "Resume pressed"
-        # Can access the run manager via self.run_manager
+        self._write_command_file('resume')
     
     def cancel(self):
         self.running = False
         self.paused = False
-        print "Cancel pressed"
-        # Can access the run manager via self.run_manager
+        self._write_command_file('stop')
     
     def run(self):
         if WithOpus:
@@ -237,3 +234,8 @@ class OpusModel(object):
                         self.guiElement.logText.insertPlainText(QString("."))
                 #self.guiElement.logText.append("ping")
         return newKey
+    
+    def _write_command_file(self, command):
+        f = open(self.commandfile, 'w')
+        f.write(command)
+        f.close()
