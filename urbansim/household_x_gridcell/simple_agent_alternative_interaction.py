@@ -22,11 +22,11 @@ class simple_agent_alternative_interaction(Variable):
     the G2 attribute of grid cells with the A2 attribute of households."""        
     
     def dependencies(self):
-        return [attribute_label("gridcell", "G2"), 
-                attribute_label("household", "A2")]
+        return [attribute_label("gridcell", "g2"), 
+                attribute_label("household", "a2")]
         
     def compute(self, dataset_pool):
-        return self.get_dataset().multiply("A2", "G2")
+        return self.get_dataset().multiply("a2", "g2")
 
 
 
@@ -42,9 +42,9 @@ class Tests(opus_unittest.OpusTestCase):
 
         values = VariableTestToolbox().compute_variable(self.variable_name, 
             {"gridcell":{ 
-                "G2":G2}, 
+                "g2":G2}, 
             "household":{ 
-                "A2":A2}}, 
+                "a2":A2}}, 
             dataset = "household_x_gridcell")
         should_be = array([[0,   0,   0], 
                            [40,  80,  120], 
