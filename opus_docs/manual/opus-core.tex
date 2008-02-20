@@ -326,100 +326,90 @@ An interaction set is automatically created and used in the
 One of the design elements of Opus is to allow users to choose alternative
 data storage methods depending on their needs, while keeping a consistent
 internal representation of data used by the system.  Currently Opus classes
-exist for reading and writing data in Random Access Memory (RAM), the MySQL
-database, Tab-delimited ASCII files, and binary files.  Other storage methods
-can be added as the need arises for users to read or write to other data
-repositories.
+exist for reading and writing data in Random Access Memory (RAM), to database
+tables, Tab-delimited ASCII files, and binary files.  Other storage methods can
+be added as the need arises.
 
-The generic class that supports data storage is called \class{Storage}. In
-order to be able to use it in connection with \class{Dataset}, any child of
-this class must implement methods \method{load_table()} and
-\method{determine_field_names()}, optionally a method
-\method{write_dataset()}. Method \method{load_table()} takes as arguments
-the name of the table as \verb|table_name|, and optional a list of attributes
- as \verb|column_names|, a parameter \verb|lowercase| for forcing all names to lowercase
-, and an \verb|id_name| to sort the loaded data
-which is currently only supported by SQL-based storages, and returns
-a dictionary with the column names as keys. This method is called from the
-\class{Dataset} method \method{load_dataset()}.
+The generic class that supports data storage is called
+\class{Storage}. Every class that we describe below derives from this class and
+implements the storage interface. All such classes therefore provide the
+following methods:
 
-Method \method{determine_field_names()} takes \verb|load_resources| as
+{\bf \method{load_table()}}: Loads the data stored in the data repository and
+returns it as a dicionary, where each key represents an attribute (column) of
+the table. The only required argument is \verb|table_name|. Optional
+arguments include \verb|column_names| (a list of columns that you want loaded;
+the default is to load all) and \verb|lowercase| (for forcing all names column
+names to lowercase). 
+
+{\bf \method{write_table()}}: Writes data out to the respective storage. The
+two non-optional parameters are \verb|table_name| and \verb|table_data|, the
+former naming the table and the latter defining the data to be written. More
+specifically, the \verb|table_data| argument should be a dictionary, where
+the keys represent a column and the values represent the data in those columns. 
+This is the same format as that returned by the \method{load_table()} method.
+An optional parameter \verb|mode| allows you to determine whether an existing
+table of the same name will either be overwritten or appended to with the new
+data. By default the table is overwritten. 
+
+{\bf \method{get_storage_location()}}: Returns the location at which data is
+being stored for this storage object. In the case of storage locations that
+exist on disk, a file path is returned. In the case of a database, an
+\class{OpusDatabase} object will be returned. 
+
+{\bf \method{get_column_names()}}: Takes a \verb|table_name| as an
 argument and returns a list of attribute names that were found on the storage.
 
-Method \method{write_dataset()} writes data into the given place. It takes as
-an argument an object of class \verb|Resources|, called
-\verb|write_resources|. \class{Dataset} \datasetindex calls this method from its method
-\method{write_dataset()}, where the \verb|write_resources| are automatically
-filled with entries \verb|attributes| (a list of attribute names to be written),
-\verb|out_table_name| (table/directory/file where the data should be written),
-\verb|values| (a dictionary with one entry per attribute where values are arrays
-of the data), \verb|id_name| (name of the unique identifier), \verb|attrtype| (a
-dictionary giving the type for each attribute), \verb|valuetypes| (a dictionary
-of numpy array types, such as \verb|float32|, \verb|int16|).
+{\bf \method{table_exists()}}: Takes a \verb|table_name| as an
+argument and returns whether a table by that name exists at the respective
+storage location.
 
+{\bf \method{get_table_names()}}: Returns a list of all the names of tables
+that exist at the respective storage location.
+
+{\bf Developer note:} {\textit In order to be able to implement the storage
+interface, the new storage subclass must implement methods \method{load_table()},
+\method{get_storage_location}, \method{write_table},
+and \method{get_column_names}.}
 
 The predefined storage classes in \package{opus_core} are \class{dict_storage},
-\class{tab_storage}, \class{mysql_storage}, \class{flt_storage}, implemented
+\class{tab_storage}, \class{sql_storage}, \class{flt_storage}, implemented
 in modules of the same name in \verb|opus_core.store|. Their instances can be
-created using the method \method{get_storage(type, resources,...)} of class
-\class{StorageFactory}. It passes \verb|resources| (of type \class{Resources})
-to the constructor of the class given by \verb|type|. A wrapper around
-\method{get_storage()}, method \method{build_storage_for_dataset(location,
-  type, ...)} creates \verb|resources| and puts in it an entry
-\verb|storage_location| (with the value of \verb|location|). This entry is used
-by most of the predefined storage classes.
+created using the method \method{get_storage(type, storage_location,...)} of
+class \class{StorageFactory}; \verb|type| is the storage type (e.g. ``sql_storage'')
+and \verb|storage_location| is either a location on disk or an
+\class{OpusDatabase}, depending on the type of storage being created.
+Other optional, storage-type specific arguments can also be passed in to the
+\method{get_storage} method. We now give a brief description of each available
+storage type, and how each may deviate from the above descriptions. 
 
 \subsection{dict_storage}
 \label{sec:ram-storage}
 %
-This class is an in-memory implementation of the storage interface
-The constructor of this class has no parameters.
-
-\subsection{mysql_storage}
-\label{sec:mysql-storage}
-%
-The constructor of this class expects an entry \verb|storage_location| in its
-argument \verb|resources| or the 4 parameters \verb|hostname|, \verb|username|,
-\verb|password|, and \verb|database_name| to connect to a MySQL databse.
-
-The methods \method{load_table()} \datasetindex and \method{determine_field_names()}
-interpret the entry \verb|table_name| in their argument \verb|load_resources|
-as the name of the MySQL table with the data to be loaded. In addition to
-entries passed from \class{Dataset}, \datasetindex it accepts an optional entry \verb|replace_nulls_with|
-which gives a replacement value for those attribute values that have \verb|NULL| in
-the MySQL table. By default this value is set to 0. If an attribute
-is stored as a character string and \verb|replace_nulls_with| is not a character string,
-the missing values are replaced by an empty string to avoid difficulties
-with mixing characters and numerical values in one array.
-
-The method \method{write_dataset()} accepts in \method{write_resource} (in
-addition to entries passed by the \class{Dataset} method
-\method{write_dataset()}) \datasetindex a boolean entry \verb|drop_table_flag| which
-determines if the table to be written to (value of \verb|out_table_name|)
-should be deleted before writing. Default behavior is do not delete. Note
-that this might cause the program to fail if the table already exists but its
-structure does not match to the attributes to be written.
+The simplest storage class. It is an in-memory implementation of the
+storage interface. The constructor of this class has no parameters (no \verb|storage_location|
+parameter needed.
 
 \subsection{csv_storage and tab_storage}
 %
-Both \verb|csv_storage| and \verb|tab_storage| provide a file-based storage for
-datasets.  They are based upon Python's csv module, and thus will appropriately
-quote any data as necessary.
+Both \verb|csv_storage| and \verb|tab_storage| provide file-based storage.  
+They are based upon Python's csv module, and thus will appropriately
+format data as necessary.
 
 The constructor of this class expects an entry \verb|storage_location| in its
 arguments. It should be a base directory on a hard drive where
 the data will be stored to and loaded from.
 
-The methods \method{load_table()} and \method{determine_field_names()}
-interpret the parameter  \verb|table_name| as a file
-name without extension (relative to the base directory) in which the data are
-stored in an ASCII format. The extension is added automatically. The data are
-stored with one attribute per column. The first row
-contains the attribute names and optional type information for each column.
-The type information, if provided, is appended to the column name and separated
-by a colon, as in \verb|id:int32| which specifies to use the numpy
-\verb|int32| type for storing the \verb|id| values.  The type may be any of the
-numpy types in Table~\ref{storage-numpy-python-mapping}:
+For these storage classes, all implemented methods of the storage interface which
+accept a \verb|table_name| parameter interpret it as a file name without
+extension (relative to the base directory) in which the data is stored (or where
+it should be stored). The extension is added automatically. The data is stored
+with one attribute per column. The first row contains the attribute names and
+optional type information for each column. The type information, if provided, is
+appended to the column name and separated by a colon, as in \verb|id:int32| which
+specifies to use the numpy \verb|int32| type for storing the \verb|id| values. 
+The type may be any of the numpy types in
+Table~\ref{storage-numpy-python-mapping}:
 
 \begin{table}
 \begin{center}
@@ -458,12 +448,47 @@ a:int8,b:float32,c:string40
 2,2.18,there
 \end{verbatim}
 
-The method \method{write_dataset()} writes the data to the file whose name is
-constructed by appending a to the \verb|out_table_name| entry in
-the \verb|write_resources| argument to \method{write_dataset()}.
-\verb|csv_storage| uses the ``csv'' suffix.  \verb|tab_storage| uses the
-``tab'' suffix.  \method{write_dataset()} always appends type information to
-the column names.
+% The method \method{write_dataset()} writes the data to the file whose name is
+% constructed by appending a to the \verb|out_table_name| entry in
+% the \verb|write_resources| argument to \method{write_dataset()}.
+% \verb|csv_storage| uses the ``csv'' suffix.  \verb|tab_storage| uses the
+% ``tab'' suffix.  \method{write_dataset()} always appends type information to
+% the column names.
+
+
+\subsection{sql_storage}
+\label{sec:sql-storage}
+%
+The constructor of this class expects an entry \verb|storage_location| in its
+arguments. This parameter should be an \class{OpusDatabase} and it governs a
+connection to a database. Here's an example of obtaining an
+\class{OpusDatabase} and then creating a storage object that can read and write from that database:
+
+\begin{verbatim}
+>>> import os
+>>> from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+>>> from opus_core.database_management.database_server import DatabaseServer
+>>> from opus_core.storage_factory import StorageFactory
+>>> config = DatabaseServerConfiguration(hostname = os.environ["MYSQLHOSTNAME"],
+                              	         username = os.environ["MYSQLUSERNAME"],
+                              	         password = os.environ["MYSQLPASSWORD"],
+                              	         protocol = "mysql")
+>>> db = DatabaseServer(config).get_database(database_name = ``mydatabase'')
+>>> storage = StorageFactory().get_storage('sql_storage',
+        storage_location = db)
+\end{verbatim}
+
+Note that the parameters \verb|hostname|, \verb|username|, and
+\verb|password| to \class{DatabaseServerConfiguration} are actually only
+necessary if you are trying to connect to a database that cannot be accessed via the server
+information that you have specified in your environment variables. Protocol
+will default to ``mysql'', unless you have set your DEFAULT_URBANSIM_DB_ENGINE
+environment variable to another database engine (e.g. postgres). 
+
+Now you have obtained a \class{sql_storage} object. For this storage class,
+all implemented methods of the storage interface which accept a \verb|table_name| parameter interpret it as
+name of a table in the database which is to be read from or written to,
+depending on the method.
 
 \subsection{flt_storage}
 \label{sec:flt-storage}
@@ -472,22 +497,17 @@ As in the case of tab storage, the constructor expects an entry
 \verb|storage_location| in its argument. It is the base
 directory where the data are stored to and loaded from.
 
-The methods \method{load_table()} \datasetindex and \method{determine_field_names()}
-interpret the argument \verb|table_name| as a subdirectory in the base directory in which each attribute is stored as a
-single file in a binary format. The file names correspond to attribute names
-with an extension that determines the type of the stored data. The file
-extension consists of three parts, one character for the byte order, one
-character for the type of the data, and one or more characters for the size of
-the column in bytes. The extension is similar to the dtype for numpy arrays,
-only the charakter for the byte order is changed from '<', '>', or '|' (for
-little endian, big endian, or irrelevant) to 'l', 'b', or 'i'.
-
-The method \method{write_dataset()} stores attribute according to the scheme
-above. By default the file extensions are determined automatically.  This can
-be changed by an entry \verb|valuetypes| in \verb|write_resources|, which is a
-dictionary with a type for each attribute.
-
-
+For this storage class, all implemented methods of the storage interface which
+accept a \verb|table_name| parameter interpret it as a subdirectory in the base
+directory in which each attribute is stored as a single file in a binary format.
+The file names correspond to attribute names with an extension that determines
+the type of the stored data. The file extension consists of three parts, one
+character for the byte order, one character for the type of the data, and one or
+more characters for the size of the column in bytes. The extension is similar to
+the dtype for numpy arrays, only the charakter for the byte order is changed from
+'<', '>', or '|' (for little endian, big endian, or irrelevant) to 'l', 'b', or
+'i'. The method \method{write_table()} stores attribute according to the scheme
+above.
 
 \subsection{dbf_storage}
 %
@@ -499,12 +519,12 @@ The constructor of this class expects an entry \verb|storage_location| in its
 arguments. It should be a base directory on a hard drive where
 the data will be stored to and loaded from.
 
-The methods \method{load_table()} and \method{determine_field_names()}
-interpret the argument \verb|table_name| a file
-name (relative to the base directory) without an extension in which the data are stored
-in an ``.dbf'' file.  The extension ``.dbf'' is added automatically. Each table
-is stored in one file. The format of these files is described at
-\url{http://www.clicketyclick.dk/databases/xbase/format/data_types.html\#DATA_TYPES}.
+For this storage class, all implemented methods of the storage interface which
+accept a \verb|table_name| parameter interpret it as a file name (relative to the
+base directory) without an extension in which the data are stored in an ``.dbf''
+file.  The extension ``.dbf'' is added automatically. Each table is stored in one
+file. The format of these files is described at
+\url{http://www.clicketyclick.dk/databases/xbase/format/data_types.html\#DATA_TYPES}.
 
 \section{Opus Variables} \indexii{Variables}{Opus}
 \label{sec:opus-variable}

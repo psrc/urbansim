@@ -77,17 +77,26 @@ are stored as an ASCII file in a table format. Alternatively, if the
 table is a MySQL \mysqlindex table called ``households'' stored in a
 database ``mydatabase,'' you could use
 
-\mysqlindex\index{Storage!mysql}
+\mysqlindex\index{Storage!sql}
+
+This storage class allows writing and reading to a database. The first step is
+to create a connection to a database. The parameters hostname, username, and
+password to DatabaseServerConfiguration are actually only necessary if you are
+trying to connect to a database that cannot be accessed via the server
+information that you have specified in your environment variables.
+
 \begin{verbatim}
 >>> import os
->>> from opus_core.store.opus_database import OpusDatabase
+>>> from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+>>> from opus_core.database_management.database_server import DatabaseServer
 >>> from opus_core.storage_factory import StorageFactory
->>> connection = OpusDatabase(hostname = os.environ["MYSQLHOSTNAME"],
-                              username = os.environ["MYSQLUSERNAME"],
-                              password = os.environ["MYSQLPASSWORD"],
-                              database_name = "mydatabase")
->>> storage = StorageFactory().get_storage('mysql_storage',
-        storage_location = connection)
+>>> config = DatabaseServerConfiguration(hostname = os.environ["MYSQLHOSTNAME"],
+                              	         username = os.environ["MYSQLUSERNAME"],
+                              	         password = os.environ["MYSQLPASSWORD"],
+                              	         protocol = "mysql")
+>>> db = DatabaseServer(config).get_database(database_name = ``mydatabase'')
+>>> storage = StorageFactory().get_storage('sql_storage',
+        storage_location = db)
 \end{verbatim}
 
 ({\em To do: add an example MySQL file, like household.tab, to play
