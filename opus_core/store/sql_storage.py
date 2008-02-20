@@ -63,8 +63,7 @@ class sql_storage(Storage):
         self._dispose_db(db)
         return storage_location
       
-    #TODO: eliminate id_name from storage interface
-    def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True, id_name=None):
+    def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True):
         db = self._get_db()
         
         table = Table(table_name, db.metadata, autoload=True)

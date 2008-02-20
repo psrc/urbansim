@@ -134,9 +134,7 @@ class delimited_storage(Storage):
         finally:
             output.close()
         
-    def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True,
-            id_name=None # Not used for this storage, but required for SQL-based storages
-            ):
+    def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True):
         file_path = self._get_file_path_for_table(table_name)
         
         if not os.path.exists(file_path):

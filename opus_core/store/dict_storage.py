@@ -25,19 +25,22 @@ class dict_storage(Storage):
     def get_storage_location(self):
         return 'An in-memory dictionary'
         
-    def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True,
-            id_name=None # Not used for this storage, but required for SQL-based storages
-            ):
-        ### TODO: Use lowercase
+    def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True):
         result = {}
         
         try:
-            columns_to_load = self._select_columns(column_names, self._mystorage[table_name])
+            available_column_names = self.get_column_names(table_name, lowercase)
+            columns_to_load = self._select_columns(column_names, available_column_names) 
         except AttributeError, e:
             raise AttributeError("In table '%s': %s" % (table_name, e))
         
+        if lowercase:
+            col_map = dict([(col.lower(),col) 
+                            for col in self.get_column_names(table_name, lowercase = False)])
         for column_name in columns_to_load:
-            result[column_name] = copy.deepcopy(self._mystorage[table_name][column_name])
+            if lowercase:
+                store_col_name = col_map[column_name]
+            result[column_name] = copy.deepcopy(self._mystorage[table_name][store_col_name])
 
         return result
         
@@ -50,8 +53,10 @@ class dict_storage(Storage):
         self._mystorage[table_name] = copy.deepcopy(table_data)
 
     def get_column_names(self, table_name, lowercase=True):
-        ### TODO: Use lowercase
-        return self._mystorage[table_name].keys()
+        cols = self._mystorage[table_name].keys()
+        if lowercase:
+            cols = [col.lower() for col in cols]
+        return cols
     
     def get_table_names(self):
         return self._mystorage.keys()

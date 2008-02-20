@@ -224,14 +224,16 @@ class Dataset(AbstractDataset):
                                 if name in in_storage.get_column_names(table_name)]
                 data = in_storage.load_table(table_name = table_name, 
                                              column_names = column_names, 
-                                             id_name = self.get_non_hidden_id_name())
+                                             #id_name = self.get_non_hidden_id_name()
+                                             )
                 data_computed = {}
                 if table_name+".computed" in in_storage.get_table_names():
                     column_names_computed = [name for name in chunked_attributes[ichunk] 
                                 if name in in_storage.get_column_names(table_name+".computed")]
                     data_computed = in_storage.load_table(table_name = table_name+".computed", 
                                                  column_names = column_names_computed, 
-                                                 id_name = self.get_non_hidden_id_name())
+                                                 #id_name = self.get_non_hidden_id_name()
+                                                 )
                 
                 for attr in data:
                     if self.attribute_boxes.has_key(attr):

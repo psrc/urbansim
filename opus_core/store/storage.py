@@ -35,9 +35,7 @@ class Storage:
         return []
 
     # _load_dataset
-    def load_table(self, table_name, column_names=ALL_COLUMNS, lowercase=True,
-            id_name=None # Required for SQL-based storages
-            ):
+    def load_table(self, table_name, column_names=ALL_COLUMNS, lowercase=True):
         """
         Returns a dictionary with the data for the requested columns.
         
@@ -109,9 +107,9 @@ class Storage:
         Returns a new string or a new list of strings matching the original, 
         save that the string or each string in the list is now lowercase.
         """
-        try:
+        if isinstance(string_or_list_of_strings, str):
             result = string_or_list_of_strings.lower()
-        except AttributeError:
+        else:
             result = [each_string.lower() for each_string in string_or_list_of_strings]
         return result
     

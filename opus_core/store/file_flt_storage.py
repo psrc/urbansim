@@ -140,9 +140,7 @@ class file_flt_storage(Storage):
     def get_storage_location(self):
         return self._base_directory
 
-    def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True,
-            id_name=None # Not used for this storage, but required for SQL-based storages
-            ):
+    def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True):
         files = self._get_files(table_name=table_name)
         
         result = {}

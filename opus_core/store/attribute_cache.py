@@ -67,9 +67,7 @@ class AttributeCache(Storage):
             self._flt_storage_per_year[year] = flt_storage(storage_location=base_directory)
         return self._flt_storage_per_year[year]
     
-    def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True,
-            id_name=None # Not used for this storage, but required for SQL-based storages
-            ):
+    def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True):
         result = {}
         column_names_for_year = {}
 

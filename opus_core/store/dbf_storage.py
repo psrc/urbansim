@@ -62,9 +62,7 @@ else:
         def _get_base_directory(self):
             return self._directory
         
-        def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True,
-            id_name=None # Not used for this storage, but required for SQL-based storages
-            ):
+        def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True):
             
             """
             The entry 'table_name' is a file name. The first line in the file is considered to 

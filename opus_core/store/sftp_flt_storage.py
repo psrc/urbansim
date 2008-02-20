@@ -86,9 +86,7 @@ class sftp_flt_storage(file_flt_storage):
     def get_storage_location(self):
         return self._base_directory_local
 
-    def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True,
-            id_name=None # Not used for this storage, but required for SQL-based storages
-            ):
+    def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True):
         local_files = self._get_files(table_name=table_name)
         remote_files = self._get_remote_files(table_name=table_name)
         for i in range(len(local_files)):

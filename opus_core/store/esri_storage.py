@@ -184,8 +184,7 @@ else:
                 # Insert the row
                 rows.InsertRow(row)
 
-        def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True,
-            id_name=None):
+        def load_table(self, table_name, column_names=Storage.ALL_COLUMNS, lowercase=True):
             """
             The table_name parameter must be one of the following:
                 - for Shapefiles: 'your_shapefile.shp'
@@ -211,9 +210,11 @@ else:
 
             # Get columns
             if column_names == '*':
-                columns = self.get_column_names(table_name)
+                columns = self.get_column_names(table_name, lowercase)
             else:
                 columns = column_names
+                if lowercase:
+                    columns = [col.lower() for col in columns]
 
             # Get column types
             column_types = self._get_column_types_esri(table_name)
