@@ -368,12 +368,12 @@ storage location.
 that exist at the respective storage location.
 
 {\bf Developer note:} {\textit In order to be able to implement the storage
-interface, the new storage subclass must implement methods \method{load_table()},
+interface, the new storage subclass must implement methods \method{load_table},
 \method{get_storage_location}, \method{write_table},
 and \method{get_column_names}.}
 
-The predefined storage classes in \package{opus_core} are \class{dict_storage},
-\class{tab_storage}, \class{sql_storage}, \class{flt_storage}, implemented
+The predefined storage classes in \package{opus_core} are \class{dict_storage}, \class{csv_storage},
+\class{tab_storage}, \class{sql_storage}, \class{flt_storage}, and \class{dbf_storage} implemented
 in modules of the same name in \verb|opus_core.store|. Their instances can be
 created using the method \method{get_storage(type, storage_location,...)} of
 class \class{StorageFactory}; \verb|type| is the storage type (e.g. ``sql_storage'')
@@ -470,9 +470,9 @@ connection to a database. Here's an example of obtaining an
 >>> from opus_core.database_management.database_server import DatabaseServer
 >>> from opus_core.storage_factory import StorageFactory
 >>> config = DatabaseServerConfiguration(hostname = os.environ["MYSQLHOSTNAME"],
-                              	         username = os.environ["MYSQLUSERNAME"],
-                              	         password = os.environ["MYSQLPASSWORD"],
-                              	         protocol = "mysql")
+                                         username = os.environ["MYSQLUSERNAME"],
+                                         password = os.environ["MYSQLPASSWORD"],
+                                         protocol = "mysql")
 >>> db = DatabaseServer(config).get_database(database_name = ``mydatabase'')
 >>> storage = StorageFactory().get_storage('sql_storage',
         storage_location = db)
