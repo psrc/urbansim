@@ -26,7 +26,7 @@ class Tests(opus_unittest.OpusTestCase):
                         },
                 "gridcell":{
                             "grid_id":array([1, 2, 3]),
-                            "travel_time_to_CBD":array([100, 1000, 1500]),
+                            "travel_time_to_cbd":array([100, 1000, 1500]),
                 }
             }
         )

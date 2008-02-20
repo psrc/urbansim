@@ -78,5 +78,5 @@ aliases = [
        "employment = parcel.aggregate(urbansim_parcel.building.number_of_jobs)",
        "number_of_households = parcel.aggregate(urbansim_parcel.building.number_of_households)",
        "population = parcel.aggregate(urbansim_parcel.building.population)",
-       "travel_time_to_cbd = parcel.disaggregate(gridcell.travel_time_to_CBD)",       
+       "travel_time_to_cbd = parcel.disaggregate(gridcell.travel_time_to_cbd)",       
            ]
