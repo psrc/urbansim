@@ -69,8 +69,11 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     QObject.connect(self.actionExit, SIGNAL("triggered()"), self.exitOpus)
     # About
     QObject.connect(self.actionAbout, SIGNAL("triggered()"), self.openAbout)
+    
+    # QGIS References are removed for the time being...
     #Add map tab
-    QObject.connect(self.actionMap_View, SIGNAL("triggered()"), self.openMapTab)
+    #QObject.connect(self.actionMap_View, SIGNAL("triggered()"), self.openMapTab)
+    
     #Add editor tab
     QObject.connect(self.actionEditor_View, SIGNAL("triggered()"), self.openEditorTab)
     #Add python tab
@@ -80,13 +83,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     self.tempDir = tempfile.mkdtemp(prefix='opus_gui')
 
-    try:
-      import qgis.core
-      import map.mapbase
-      # Only load the map stuff if QGIS is loadable
-      self.mapStuff = map.mapbase.MapBase(self)
-    except ImportError:
-      self.mapStuff = None
+    # QGIS References are removed for the time being...
+    #try:
+    #  import qgis.core
+    #  import map.mapbase
+    #  # Only load the map stuff if QGIS is loadable
+    #  self.mapStuff = map.mapbase.MapBase(self)
+    #except ImportError:
+    #  self.mapStuff = None
 
     self.consoleStuff = ConsoleBase(self)
     self.runManagerStuff = RunManagerBase(self)

@@ -33,16 +33,17 @@ def main(argv):
   # Set the app style
   app.setStyle(QString("plastique"))
 
-  try:
-    # QGIS bindings for mapping functions
-    import qgis.core
-    # Path to local QGIS install
-    qgis_prefix = "/usr/local/qgis_svn"
-    # initialize qgis libraries
-    qgis.core.QgsApplication.setPrefixPath(qgis_prefix, True)
-    qgis.core.QgsApplication.initQgis()
-  except ImportError:
-      print "Unable to import QGIS"
+  # QGIS References are removed for the time being...
+  #try:
+  #  # QGIS bindings for mapping functions
+  #  import qgis.core
+  #  # Path to local QGIS install
+  #  qgis_prefix = "/usr/local/qgis_svn"
+  #  # initialize qgis libraries
+  #  qgis.core.QgsApplication.setPrefixPath(qgis_prefix, True)
+  #  qgis.core.QgsApplication.initQgis()
+  #except ImportError:
+  #    print "Unable to import QGIS"
 
   # create main window
   wnd = OpusGui()
@@ -54,12 +55,13 @@ def main(argv):
   # Start the app up
   retval = app.exec_()
 
-  try:
-    import qgis.core
-    # We got an exit signal so time to clean up
-    qgis.core.QgsApplication.exitQgis()
-  except ImportError:
-    pass
+  # QGIS References are removed for the time being...
+  #try:
+  #  import qgis.core
+  #  # We got an exit signal so time to clean up
+  #  qgis.core.QgsApplication.exitQgis()
+  #except ImportError:
+  #  pass
 
   sys.exit(retval)
 
