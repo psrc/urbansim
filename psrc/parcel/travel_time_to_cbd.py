@@ -22,16 +22,16 @@ class travel_time_to_cbd(Variable):
 
     def dependencies(self):
         return [attribute_label('gridcell', "grid_id"),
-                attribute_label('gridcell', "travel_time_to_CBD"),
+                attribute_label('gridcell', "travel_time_to_cbd"),
                 my_attribute_label('grid_id')]
 
     def compute(self, dataset_pool):
         gcs = dataset_pool.get_dataset('gridcell')
         parcels = self.get_dataset()
-        return parcels.get_join_data(gcs, "travel_time_to_CBD")
+        return parcels.get_join_data(gcs, "travel_time_to_cbd")
 
     def post_check(self, values, dataset_pool):
-        units_max = dataset_pool.get_dataset('gridcell').get_attribute("travel_time_to_CBD").max()
+        units_max = dataset_pool.get_dataset('gridcell').get_attribute("travel_time_to_cbd").max()
         self.do_check("0 <= x and x <= " + str(units_max), ma.filled(values,0))
 
 
@@ -63,7 +63,7 @@ class Tests(opus_unittest.OpusTestCase):
             data_dictionary = { 
                 'gridcell':{
                     'grid_id':array([1, 2, 3]),
-                    'travel_time_to_CBD':array([100, 1000, 1500]),
+                    'travel_time_to_cbd':array([100, 1000, 1500]),
                     },
                 'parcel':parcels,
                 },
