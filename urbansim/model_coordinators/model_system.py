@@ -14,6 +14,7 @@
 
 import os
 import time
+import sys
 
 from gc import collect
 from shutil import rmtree
@@ -288,6 +289,9 @@ class ModelSystem(object):
                             self.vardict[outputvar] = self.do_process(locals())
                             exec outputvar+'=self.vardict[outputvar]'
     
+                            # check command file from gui, if the simulation should be stopped or paused
+                            self.do_commands_from_gui(resources.get('command_file_for_gui', None))
+                            
                             # capture namespace for interactive estimation
                             self.run_year_namespace = locals()
                             self.flush_datasets(resources.get("datasets_to_cache_after_each_model",[]))
@@ -417,6 +421,24 @@ class ModelSystem(object):
                 number_of_models +=1
         return  (number_of_models, model_group_members_to_run)
                             
+    def do_commands_from_gui(self, filename=None):
+        if (filename is None) or not os.path.exists(filename):
+            return
+        while True:
+            f = file(filename, "rb")
+            line = f.readline()
+            while line.endswith('\n') or line.endswith('\r'):
+                line = line[:-1]
+            if line == 'stop':
+                logger.log_warning('Simulation stopped.')
+                sys.exit(1)
+            elif line == 'resume':
+                break
+            elif line <> 'pause':
+                logger.log_warning("Unknown command '%s'. Allowed commands: 'stop', 'pause', 'resume'." % line)
+            time.sleep(10)
+            
+            
     def run_multiprocess(self, resources):
         resources = Resources(resources)
         self._merge_resources_with_defaults(resources)

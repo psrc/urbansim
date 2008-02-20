@@ -141,6 +141,8 @@ class OpusModel(object):
                 self.statusfile = statusfile
                 self.config = config
                 config['status_file_for_gui'] = statusfile
+                self.commandfile = os.path.join(statusdir, 'command.txt')
+                config['command_file_for_gui'] = self.commandfile
                 # To test delay in writing the first log file entry...
                 # time.sleep(5)
                 self.running = True
