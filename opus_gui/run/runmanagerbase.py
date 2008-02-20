@@ -107,6 +107,8 @@ class ModelGuiElement(QWidget):
     self.model.guiElement = self
     self.inGui = False
     self.logFileKey = 0
+    self.running = False
+    self.paused = False
     
     # Grab the path to the base XML used to run this model
     self.xml_path = model.xml_path
@@ -185,7 +187,7 @@ class ModelGuiElement(QWidget):
     self.startVBoxLayout.addWidget(self.pbnStartModel)
     self.pbnRemoveModel = QPushButton(self.startWidget)
     self.pbnRemoveModel.setObjectName("pbnRemoveModel")
-    self.pbnRemoveModel.setText(QString("Remove From Queue"))
+    self.pbnRemoveModel.setText(QString("Cancel/Remove From Queue"))
     QObject.connect(self.pbnRemoveModel, SIGNAL("released()"),
                     self.on_pbnRemoveModel_released)        
     self.startVBoxLayout.addWidget(self.pbnRemoveModel)
@@ -234,35 +236,53 @@ class ModelGuiElement(QWidget):
     self.vboxlayout.addWidget(self.tabWidget)
     
   def on_pbnRemoveModel_released(self):
+    self.running = False
+    self.paused = False
+    self.timer.stop()
+    self.runThread.cancel()
     self.runManager.removeModelElement(self)
     self.runManager.updateModelElements()
     
   def on_pbnStartModel_released(self):
-    # Fire up a new thread and run the model
-    #print "Start Model Pressed"
-    
-    # References to the GUI elements for status for this run...
-    self.progressBar = self.runProgressBar
-    self.statusLabel = self.runStatusLabel
-    
-    #self.pbnRemoveModel.setEnabled(False)
-    self.pbnStartModel.setEnabled(False)
-    self.progressBar.setValue(0)
-    self.statusLabel.setText(QString("Model initializing..."))
-    self.runThread = RunModelThread(self.parent,self,self.xml_path)
-    # Use this signal from the thread if it is capable of producing its own status signal
-    QObject.connect(self.runThread, SIGNAL("runFinished(PyQt_PyObject)"),
-                    self.runFinishedFromThread)
-    QObject.connect(self.runThread, SIGNAL("runError(PyQt_PyObject)"),
-                    self.runErrorFromThread)
-    # Use this timer to call a function in the thread to check status if the thread is unable
-    # to produce its own signal above
-    self.timer = QTimer()
-    QObject.connect(self.timer, SIGNAL("timeout()"),
-                    self.runStatusFromThread)
-    self.timer.start(1000)
-    self.runThread.start()
-    
+    if self.running == True and self.paused == False:
+      # Take care of pausing a run
+      self.paused = True
+      self.timer.stop()
+      self.runThread.pause()
+      self.pbnStartModel.setText(QString("Resume Model..."))
+    elif self.running == True and self.paused == True:
+      # Need to resume a paused run
+      self.paused = False
+      self.timer.start(1000)
+      self.runThread.resume()
+      self.pbnStartModel.setText(QString("Pause Model..."))
+    elif self.running == False:
+      # Fire up a new thread and run the model
+      # References to the GUI elements for status for this run...
+      self.progressBar = self.runProgressBar
+      self.statusLabel = self.runStatusLabel
+      
+      self.pbnStartModel.setText(QString("Pause Model..."))
+      self.progressBar.setValue(0)
+      self.statusLabel.setText(QString("Model initializing..."))
+      self.runThread = RunModelThread(self.parent,self,self.xml_path)
+      # Use this signal from the thread if it is capable of producing its own status signal
+      QObject.connect(self.runThread, SIGNAL("runFinished(PyQt_PyObject)"),
+                      self.runFinishedFromThread)
+      QObject.connect(self.runThread, SIGNAL("runError(PyQt_PyObject)"),
+                      self.runErrorFromThread)
+      # Use this timer to call a function in the thread to check status if the thread is unable
+      # to produce its own signal above
+      self.timer = QTimer()
+      QObject.connect(self.timer, SIGNAL("timeout()"),
+                      self.runStatusFromThread)
+      self.timer.start(1000)
+      self.running = True
+      self.paused = False
+      self.runThread.start()
+    else:
+      print "Unexpected state in the model run..."
+  
   # This is not used currently since the model can not return status... instead we use a timer to
   # check the status from a log file.
   def runPingFromThread(self,value):
@@ -277,8 +297,8 @@ class ModelGuiElement(QWidget):
     self.timer.stop()
     # Get the final logfile update after model finishes...
     self.logFileKey = self.runThread.parent.model._get_current_log(self.logFileKey)
-    self.pbnStartModel.setEnabled(True)
-    #self.pbnRemoveModel.setEnabled(True)
+    self.running = False
+    self.pbnStartModel.setText(QString("Start Model..."))
     
   def runStatusFromThread(self):
     status = self.runThread.parent.model._compute_progress(self.runThread.parent.model.statusfile)
@@ -291,6 +311,8 @@ class ModelGuiElement(QWidget):
     self.logFileKey = self.runThread.parent.model._get_current_log(self.logFileKey)
     
   def runErrorFromThread(self,errorMessage):
+    self.running = False
+    self.pbnStartModel.setText(QString("Start Model..."))
     QMessageBox.warning(self.parent,"Warning",errorMessage)
     
 class EstimationGuiElement(QWidget):

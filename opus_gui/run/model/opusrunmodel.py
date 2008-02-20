@@ -43,6 +43,15 @@ class RunModelThread(QThread):
         self.parent.model.errorCallback = self.errorCallback
         self.parent.model.run()
         
+    def pause(self):
+        self.parent.model.pause()
+
+    def resume(self):
+        self.parent.model.resume()
+
+    def cancel(self):
+        self.parent.model.cancel()
+
     def progressCallback(self,percent):
         print "Ping From Model"
         self.emit(SIGNAL("runPing(PyQt_PyObject)"),percent)
@@ -63,7 +72,7 @@ class OpusModel(object):
         self.parent = parent
         self.xml_path = xml_path
         self.modeltorun = modeltorun
-        #self.thread = RunModelThread(self.parent.parent,self.xml_path)
+        self.run_manager = None
         self.progressCallback = None
         self.finishedCallback = None
         self.errorCallback = None
@@ -71,6 +80,8 @@ class OpusModel(object):
         self.config = None
         self.statusfile = None
         self.firstRead = True
+        self.running = False
+        self.paused = False
     
     def formatExceptionInfo(self,maxTBlevel=5):
         import traceback
@@ -82,6 +93,22 @@ class OpusModel(object):
             excArgs = "<no args>"
         excTb = traceback.format_tb(trbk, maxTBlevel)
         return (excName, excArgs, excTb)
+    
+    def pause(self):
+        self.paused = True
+        print "Pause pressed"
+        # Can access the run manager via self.run_manager
+    
+    def resume(self):
+        self.paused = False
+        print "Resume pressed"
+        # Can access the run manager via self.run_manager
+    
+    def cancel(self):
+        self.running = False
+        self.paused = False
+        print "Cancel pressed"
+        # Can access the run manager via self.run_manager
     
     def run(self):
         if WithOpus:
@@ -97,7 +124,7 @@ class OpusModel(object):
                 parser = option_group.parser
                 # simulate 0 command line arguments by passing in []
                 (options, args) = parser.parse_args([])
-                run_manager = option_group.get_run_manager(options)
+                self.run_manager = option_group.get_run_manager(options)
                 # find the directory containing the eugene xml configurations
                 fileNameInfo = QFileInfo(self.xml_path)
                 fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
@@ -107,20 +134,24 @@ class OpusModel(object):
                 insert_auto_generated_cache_directory_if_needed(config)
                 (self.start_year, self.end_year) = config['years']
 
-                run_manager.setup_new_run(run_name = config['cache_directory'])
+                self.run_manager.setup_new_run(run_name = config['cache_directory'])
                 #statusdir = tempfile.mkdtemp()
-                statusdir = run_manager.get_current_cache_directory()
+                statusdir = self.run_manager.get_current_cache_directory()
                 statusfile = os.path.join(statusdir, 'status.txt')
                 self.statusfile = statusfile
                 self.config = config
                 config['status_file_for_gui'] = statusfile
                 # To test delay in writing the first log file entry...
                 # time.sleep(5)
-                run_manager.run_run(config)
+                self.running = True
+                self.run_manager.run_run(config)
+                self.running = False
                 succeeded = True
             except SimulationRunError:
+                self.running = False
                 succeeded = False
             except:
+                self.running = False
                 succeeded = False
                 errorInfo = self.formatExceptionInfo()
                 errorString = "Unexpected Error From Model :: " + str(errorInfo)
