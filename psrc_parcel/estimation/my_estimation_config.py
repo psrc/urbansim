@@ -22,7 +22,7 @@ from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheC
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 
 my_configuration = {
-    'cache_directory' : '/urbansim_cache/psrc_parcel/cache_source/', # change or leave out
+    'cache_directory' : '/urbansim_cache/psrc_parcel/persons/', # change or leave out
     'output_configuration': DatabaseConfiguration(
         database_name = 'psrc_2005_parcel_baseyear_change_20071011',
         ),
@@ -31,6 +31,19 @@ my_configuration = {
         package_order_exceptions={},
         ),
     'datasets_to_cache_after_each_model':[],
+    "datasets_to_preload":{
+        'zone':{},
+        'household':{},
+        'building':{},
+        'parcel':{'package_name':'urbansim_parcel'},
+        #'development_template': {'package_name':'urbansim_parcel'},
+        #'development_template_component': {'package_name':'urbansim_parcel'},
+        #"job_building_type":{}
+        'job':{},
+        'person':{'package_name':'urbansim_parcel'},        
+        "building_type":{'package_name':'urbansim_parcel'},
+        'travel_data':{},
+        },
     'low_memory_mode':False,
     'base_year': 2000,
     'years': (2000,2000),                    

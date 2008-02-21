@@ -13,10 +13,7 @@
 # 
 
 aliases = [
-   "zone_id = job.disaggregate(urbansim_parcel.building.zone_id)",
-   "parcel_id = job.disaggregate(building.parcel_id)",
-   "grid_id = job.disaggregate(parcel.grid_id, [building])",
-   "is_untaken_non_home_based_job = numpy.logical_and(job.number_of_agents(person)==0, job.building_type==2)",   
-   "is_untaken_home_based_job = numpy.logical_and(job.number_of_agents(person)==0, job.building_type==1)",
-   
+           'is_worker_without_job = numpy.logical_and(person.is_worker, person.job_id <= 0)',
+           'is_worker_with_job = numpy.logical_and(person.is_worker, person.job_id > 0)',
+           'is_non_home_based_worker_with_job = numpy.logical_and( numpy.logical_and(person.is_worker,  numpy.logical_not(person.work_at_home)), person.job_id > 0)',           
            ]

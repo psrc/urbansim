@@ -58,7 +58,8 @@ class Baseline(UrbansimParcelConfiguration):
                     "households_for_estimation",
                     "jobs_for_estimation",
                     "development_event_history",
-                    #"persons",
+                    "persons",
+                    "persons_for_estimation",
                     "travel_data",
                     "building_types",
                     "job_building_types",
@@ -143,7 +144,7 @@ class Baseline(UrbansimParcelConfiguration):
                     'development_template': {'package_name':'urbansim_parcel'},
                     'development_template_component': {'package_name':'urbansim_parcel'},
                     'job':{},
-#                    'person':{'package_name':'urbansim_parcel'},        
+                    'person':{'package_name':'urbansim_parcel'},        
                     "building_type":{'package_name':'urbansim_parcel'},
                     'travel_data':{},
                     "job_building_type":{}

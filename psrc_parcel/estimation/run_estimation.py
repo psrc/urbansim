@@ -78,12 +78,14 @@ if __name__ == '__main__':
     try: import wingdbstub
     except: pass
     #model = ("REPM", "real_estate_price_model")
-    model = ("HLCM", "household_location_choice_model")
+    #model = ("HLCM", "household_location_choice_model")
     #model = ("ELCM", "employment_location_choice_model", "home_based", True)
     #model = ("ELCM", "employment_location_choice_model", "non_home_based", False)
+    model = ("WCM", "workplace_choice_model_for_resident")
+    #model = ("HBJCM", "home_based_job_choice_model")
 
 
     from my_estimation_config import my_configuration
     er = EstimationRunner()
-    er.run_estimation(my_configuration, model, save_estimation_results=True, diagnose=False)
+    er.run_estimation(my_configuration, model, save_estimation_results=False, diagnose=False)
     

@@ -12,18 +12,17 @@
 # other acknowledgments.
 #
 
-#from urbansim.estimation.config import config
-from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
-from opus_core.configuration import Configuration
-from numpy import array
-import os
 from math import exp, log
-from urbansim.configurations.household_location_choice_model_configuration_creator import HouseholdLocationChoiceModelConfigurationCreator
-from urbansim.configurations.employment_transition_model_configuration_creator import EmploymentTransitionModelConfigurationCreator
-from urbansim.configurations.employment_relocation_model_configuration_creator import EmploymentRelocationModelConfigurationCreator
-from urbansim.configurations.employment_location_choice_model_configuration_creator import EmploymentLocationChoiceModelConfigurationCreator
-from urbansim.configurations.governmental_employment_location_choice_model_configuration_creator import GovernmentalEmploymentLocationChoiceModelConfigurationCreator
+from numpy import array
+from opus_core.configuration import Configuration
+from urbansim.configs.base_configuration import AbstractUrbansimConfiguration
 from urbansim.configurations.distribute_unplaced_jobs_model_configuration_creator import DistributeUnplacedJobsModelConfigurationCreator
+from urbansim.configurations.employment_location_choice_model_configuration_creator import EmploymentLocationChoiceModelConfigurationCreator
+from urbansim.configurations.employment_relocation_model_configuration_creator import EmploymentRelocationModelConfigurationCreator
+from urbansim.configurations.employment_transition_model_configuration_creator import EmploymentTransitionModelConfigurationCreator
+from urbansim.configurations.governmental_employment_location_choice_model_configuration_creator import GovernmentalEmploymentLocationChoiceModelConfigurationCreator
+from urbansim.configurations.household_location_choice_model_configuration_creator import HouseholdLocationChoiceModelConfigurationCreator
+import os, copy
 
 
 UNIT_PRICE_RANGE = (exp(3), exp(7))
@@ -32,22 +31,20 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         AbstractUrbansimConfiguration.__init__(self)
         models_configuration = self['models_configuration']
         
+        ## employment_location_choice_model is defined for gridcells at urbansim package 
         if "home_based_employment_location_choice_model" in models_configuration:
             del models_configuration["home_based_employment_location_choice_model"]
         if "non_home_based_employment_location_choice_model" in models_configuration:
             del models_configuration["non_home_based_employment_location_choice_model"]
-        models_configuration["business_location_choice_model"] = {
-                             "estimation":"opus_core.bhhh_mnl_estimation",
-                             "sampler":"opus_core.samplers.weighted_sampler",
-                             "sample_size_locations":30,
-        #                     "weights_for_estimation_string":"urbansim.zone.number_of_non_home_based_jobs",
-                             "specification_table":"business_location_choice_model_specification",
-                             "coefficients_table":"business_location_choice_model_coefficients",
-                             "compute_capacity_flag":True,
-                             "capacity_string":"urbansim_parcel.building.building_sqft",
-                             "number_of_agents_string":"business.sqft",
-                             "number_of_units_string":"urbansim_parcel.building.vacant_building_sqft",
-           }
+        models_configuration['workplace_choice_model_for_resident'] = {
+                       "estimation":"opus_core.bhhh_mnl_estimation",
+                       "sampler":"opus_core.samplers.weighted_sampler",
+                       "sample_size_locations":30,
+#                       "weights_for_estimation_string":"urbansim.zone.number_of_non_home_based_jobs",
+                       "compute_capacity_flag":True,
+                       "capacity_string":"(job.building_type==2).astype(int32)",  # each non home-based job can only be chosen once by one person
+                       "number_of_units_string":"(job.building_type==2).astype(int32)",
+        }
         
         my_controller_configuration = {
          'real_estate_price_model': {
@@ -179,6 +176,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                         "output": "hrm_index"
                         }
                     },
+                    
                 "process_pipeline_events":{
                      "import": {"urbansim_parcel.models.process_pipeline_events":
                                                          "ProcessPipelineEvents"},
@@ -261,7 +259,188 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                    }
                  }
           },
+         
+       # models related to workplace_choice_model
+#        'household_person_consistency_keeper':{
+#            "import": {"urbansim_parcel.models.persons_consistency_keeper_model":"PersonDatasetConsistencyKeeperModel"},
+#            "init": { 
+#                "name": "PersonDatasetConsistencyKeeperModel",
+#                "arguments": {},
+#                },
+#            "run": {
+#                "arguments": {"household_set": "household",
+#                              "person_set":"person",
+#                              "expand_person_set":True,
+#                          }
+#                },
+#            },
+#         'job_person_consistency_keeper':{
+#             "import": {"urbansim_parcel.models.persons_consistency_keeper_model":"PersonDatasetConsistencyKeeperModel"},
+#             "init": { 
+#                 "name": "PersonDatasetConsistencyKeeperModel",
+#                 "arguments": {},
+#                 },                                  
+#             "run": {
+#                 "arguments": {"job_set": "job",
+#                               "person_set":"person",
+#                               "expand_person_set":False,
+#                           }
+#                 },
+#             },
+             
+         'workplace_choice_model_for_resident': {
+             "import": {"urbansim_parcel.models.workplace_choice_model":"WorkplaceChoiceModel"},
+             "init": { 
+                 "name": "WorkplaceChoiceModel",
+                 "arguments": {
+                     "location_set":"job",
+                     "model_name":"'Non-home-based Workplace Choice Model for residents'",
+                     "short_name":"'NHBWCM'",
+                     "choices":"'urbansim.lottery_choices'",
+                     "submodel_string":None, #"'psrc.person.household_income'",
+                     "filter": "'urbansim_parcel.job.is_untaken_non_home_based_job'",
+                     "location_id_string":"'job_id'",
+                     "run_config":"models_configuration['workplace_choice_model_for_resident']",
+                     "estimate_config":"models_configuration['workplace_choice_model_for_resident']"
+                     }},
+             "prepare_for_run": {
+                 "name": "prepare_for_run",
+                 "arguments": {"specification_storage": "base_cache_storage", #"models_configuration['specification_storage']",
+                               "specification_table": "'workplace_choice_model_for_resident_specification'",
+                               "coefficients_storage": "base_cache_storage", #"models_configuration['coefficients_storage']",
+                               "coefficients_table": "'workplace_choice_model_for_resident_coefficients'",
+                               },
+                 "output": "(specification, coefficients)"
+                 },
+             "run": {
+                 "arguments": {"specification": "specification",
+                               "coefficients":"coefficients",
+                               "agent_set": "person",
+                               "agents_index": None,
+                               "agents_filter":"'urbansim_parcel.person.is_non_home_based_worker_without_job'",
+                               "data_objects": "datasets",
+                               "chunk_specification":"{'records_per_chunk':5000}",
+                               "debuglevel": 'debuglevel',
+                               },
+                 },
+             
+             # the estimate method is not available before the estimation data is ready
+             "prepare_for_estimate": {
+                 "name": "prepare_for_estimate",                                      
+                 "arguments": {
+                     "agent_set":"person",
+                     "household_set": "household",
+                     "join_datasets": "True",
+                     "agents_for_estimation_storage": "base_cache_storage",
+                     "agents_for_estimation_table": "'persons_for_estimation'",
+                     "households_for_estimation_table":"'households_for_estimation'",
+                     "filter":"'urbansim_parcel.person.is_non_home_based_worker_with_job'",
+                     "data_objects": "datasets"
+                     },
+                 "output": "(specification, workers_index)"
+                 },
+             "estimate": {
+                 "arguments": {
+                     "specification": "specification",
+                     "agent_set": "person",
+                     "agents_index": "workers_index",
+                     "data_objects": "datasets",
+                     "debuglevel": 'debuglevel',
+                     },  
+                 "output": "(coefficients, dummy)"                     
+                 },
+             },
+         'home_based_job_choice_model': {
+            'import': {
+                'urbansim_parcel.models.home_based_job_choice_model': 'HomeBasedJobChoiceModel'
+                },
+            'init': {
+                'arguments': {
+                    'choice_set': 'job',
+                    'filter': "'urbansim_parcel.job.is_untaken_home_based_job'",
+                    },
+                'name': 'HomeBasedJobChoiceModel'
+                },
+            'prepare_for_run': {
+                "name": "prepare_for_run",
+                'arguments': {
+                    'coefficients_storage': 'base_cache_storage',
+                    'coefficients_table': "'home_based_job_choice_model_coefficients'",
+                    'specification_storage': 'base_cache_storage',
+                    'specification_table': "'home_based_job_choice_model_specification'",
+                    'agent_set': 'person',
+                    'agents_filter': "'urbansim_parcel.person.is_worker_without_job'",
+                    'data_objects': 'datasets'
+                    },
+                'output': '(specification, coefficients, index)'
+                },
+            'run': {
+                'arguments': {
+                    'agent_set': 'person',
+                    'chunk_specification': "{'records_per_chunk':5000}",
+                    'coefficients': 'coefficients',
+                    'data_objects': 'datasets',
+                    'specification': 'specification'
+                    }
+                },                
+             "prepare_for_estimate": {
+                 "name": "prepare_for_estimate",                                      
+                 "arguments": {
+                     "agent_set":"person",
+                     "household_set": "household",
+                     "join_datasets": "True",
+                     "agents_for_estimation_storage": "base_cache_storage",
+                     "agents_for_estimation_table": "'persons_for_estimation'",
+                     "households_for_estimation_table":"'households_for_estimation'",
+                     "filter":"'urbansim_parcel.person.is_worker'",
+                     "data_objects": "datasets"
+                     },
+                 "output": "(specification, agents_index)"
+                 },
+            'estimate': {
+                'arguments': {
+                    'agent_set': 'person',
+                    'agents_index': 'agents_index',
+                    'data_objects': 'datasets',
+                    'debuglevel': 0,
+                    'procedure': "'opus_core.bhhh_mnl_estimation'",
+                    'specification': 'specification'
+                    },
+                'output': '(coefficients, _)'
+                 },
+            },
+             
+#         "job_change_model":{
+#             "import": {"urbansim.models.agent_relocation_model":
+#                        "AgentRelocationModel"
+#                        },         
+#             "init": {
+#                 "name": "AgentRelocationModel",
+#                 "arguments": {"choices":"opus_core.random_choices",
+#                               "probabilities":"psrc.job_change_probabilities",
+#                               "location_id_name":"job_id",
+#                               "model_name":"job change model",
+#                               "debuglevel": 'debuglevel',
+#                               },
+#                 },
+#             "prepare_for_run": {
+#                 "name": "prepare_for_run",
+#                 "arguments": {"what": "'person'",  "rate_storage": "base_cache_storage",
+#                               "rate_table": "'annual_job_change_rates_for_workers'"},
+#                 "output": "jcm_resources"
+#                 },
+#             "run": {
+#                 "arguments": {"agent_set": "person", "resources": "jcm_resources"},
+#                 "output": "jcm_index"
+#                 }
+#             },
         }
+        
+        my_controller_configuration["workplace_choice_model_for_immigrant"] = copy.deepcopy(my_controller_configuration["workplace_choice_model_for_resident"])
+        my_controller_configuration["workplace_choice_model_for_immigrant"]["init"]["arguments"]["model_name"] = "'Non-home-based Workplace Choice Model for immigrants'"
+        my_controller_configuration["workplace_choice_model_for_immigrant"]["prepare_for_run"]["arguments"]["specification_table"] = "'workplace_choice_model_for_immigrant_specification'"
+        my_controller_configuration["workplace_choice_model_for_immigrant"]["prepare_for_run"]["arguments"]["coefficients_table"] = "'workplace_choice_model_for_immigrant_coefficients'"
+        my_controller_configuration["workplace_choice_model_for_immigrant"]["run"]["arguments"]["agents_filter"] = "'psrc.person.is_immigrant_worker_without_job'"        
         
         for model in my_controller_configuration.keys():
             if model not in self["models_configuration"].keys():
