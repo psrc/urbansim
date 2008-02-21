@@ -168,9 +168,14 @@ class TravelModelOutput(object):
         data['from_node_id'] = array([], dtype='int32')
         data['to_node_id'] = array([], dtype='int32')
         logger.log_status('Copying data from node matricies into variable node travel data set' )
-        
+        def try_convert_to_float(x):
+            try:
+                return float(x)
+            except:
+                logger.log_warning('Invalid value in %s: %s' % (full_file_name, x))
+                return 0
         for line in file_contents[1:len(file_contents)]:
-            splitted_line = array(map(lambda x: float(x), str.split(line)), dtype=float32)
+            splitted_line = array(map(lambda x: try_convert_to_float(x), str.split(line)), dtype=float32)
             from_node_id, to_node_id = round_(splitted_line[0:2]).astype("int32")
             try:
                 idindex = node_travel_data_set.get_id_index([[from_node_id, to_node_id]]) # this will raise error, if this combination of from_node, to_node is not in the dataset
