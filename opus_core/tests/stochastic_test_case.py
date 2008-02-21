@@ -204,7 +204,23 @@ class StochasticTestCase(opus_unittest.OpusTestCase):
         self.assert_(prob >= significance_level,
                      msg="prob=%f < significance level of %f" % (prob, significance_level))
 
-
+    def chi_square_test_with_known_mean(self, function, mean, variance, number_of_iterations, significance_level=0.01):
+        """ Two-sided Chi^2 test for sigma = sigma_0 vs. sigma != sigma_0, if means are known.
+        'mean' and 'variance' are arrays whose length must correspond to the array that the given function produces.
+        """
+        K = mean.size
+        x = zeros((number_of_iterations, K), dtype=float32)
+        for i in range(number_of_iterations):
+            x[i,:]= function()
+        stat = (((x - mean)**2.0)/variance).sum()
+        prob = chisqprob(stat, K*number_of_iterations)
+        logger.log_status("Stochastic Test: Chi^2 test statistic = " + str(stat) + ", df=",
+                           str(K*number_of_iterations),", p=" + str(prob))
+        self.assert_((prob >= significance_level/2.0) and (prob <= (1-significance_level/2.0)),
+                     msg="prob=%f is not in [%f,%f]" % (prob, significance_level/2.0, 1-significance_level/2.0))
+        
+        
+        
 from opus_core.tests import opus_unittest
 
 class TestStochasticTestCase(opus_unittest.OpusTestCase):

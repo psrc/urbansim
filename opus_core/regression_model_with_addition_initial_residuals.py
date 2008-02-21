@@ -18,19 +18,21 @@ from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
 
 
-class RegressionModelWithAdditionConstantVariation(RegressionModel):
+class RegressionModelWithAdditionInitialResiduals(RegressionModel):
 
     """
-    It is a RegressionModel that computes an initial error of the observations to the prediction
-    when run for the first time. Then every time it adds this error to the outcome. The 'error' attribute
+    It is a RegressionModel that computes an initial error of the observations to the predictions
+    when run for the first time. Then every time it runs, it adds this error to the outcome. The 'error' attribute
     is called '_init_error_%s' % outcome_attribute and it is stored as a primary attribute.
     """
-    model_name = "Regression Model With Addition of Constant Variation"
-    model_short_name = "RMWACV"
+    model_name = "Regression Model With Addition of Initial Residuals"
+    model_short_name = "RMWAIR"
 
     def __init__(self, model_configuration=None, regression_procedure="opus_core.linear_regression",
                   submodel_string=None, outcome_attribute = None,
                   run_config=None, estimate_config=None, debuglevel=None, dataset_pool=None):
+        """'outcome_attribute' must be specified in order to compute the residuals.
+        """
         RegressionModel.__init__(self,
                                  regression_procedure=regression_procedure,
                                  submodel_string=submodel_string,
@@ -43,9 +45,12 @@ class RegressionModelWithAdditionConstantVariation(RegressionModel):
 
     def run(self, specification, coefficients, dataset, index=None, chunk_specification=None, **kwargs):
         """
-        See description above. If missing values of the outcome attribute are suppose to be excluded in 
-        the addition of the initial error, set an entry of run_config 'exclude_missing_values_from_initial_error' to True.
+        See description above. If missing values of the outcome attribute are suppose to be excluded from
+        the addition of the initial residuals, set an entry of run_config 'exclude_missing_values_from_initial_error' to True.
         Additionaly, an entry 'outcome_attribute_missing_value' specifies the missing value (default is 0).
+        Similarly, if outliers are to be excluded, the run_config entry "exclude_outliers_from_initial_error" should be set to True.
+        In such a case, run_config entries 'outlier_is_less_than' and 'outlier_is_greater_than' can define lower and upper bounds for outliers. 
+        By default, an outlier is a data point smaller than 0. There is no default upper bound.
         """
         if self.outcome_attribute is None:
             raise StandardError, "An outcome attribute must be specified for this model. Pass it into the initialization."
@@ -121,7 +126,7 @@ class Test(opus_unittest.OpusTestCase):
             "attr1", "attr2", "attr3", "constant"),
             coefficients=("b1", "b2", "b3", "constant"))
 
-        model = RegressionModelWithAdditionConstantVariation(outcome_attribute = "outcome")
+        model = RegressionModelWithAdditionInitialResiduals(outcome_attribute = "outcome")
         coef, dummy = model.estimate(specification, dataset, outcome_attribute = "outcome",
                                      procedure = "opus_core.estimate_linear_regression")
         result = model.run(specification, coef, dataset)

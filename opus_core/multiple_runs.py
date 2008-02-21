@@ -103,10 +103,10 @@ class MultipleRuns:
         for var in quantities_of_interest:
             self.values_from_mr[var] = self.compute_values_from_multiple_runs(year, var)
             
-    def export_values_from_mr(self, directory):
+    def export_values_from_mr(self, directory, prefix=''):
         vars = self.values_from_mr.keys()
         for var in vars:
-            filename = os.path.join(directory, VariableName(var).get_alias())
+            filename = os.path.join(directory, "%s%s" % (prefix, VariableName(var).get_alias()))
             write_table_to_text_file(filename, self.values_from_mr[var])
         
             

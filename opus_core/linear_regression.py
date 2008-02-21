@@ -23,7 +23,7 @@ class linear_regression(Regression):
         """
         Return a 1D array of outcomes of linear regression (1 outcome per observation).
         'coefficients' is a 1D array.
-        'data' is a 2D numpy array of the acctual data (nobservations x ncoefficients),
+        'data' is a 2D numpy array of the actual data (nobservations x ncoefficients),
             it can be created by Dataset.create_regression_data(...).
         """
         if data.ndim < 2:
