@@ -91,10 +91,7 @@ from opus_core.storage_factory import StorageFactory
 from numpy import array, arange, concatenate
 
 class Tests(StochasticTestCase):
-    # This test fails periodically -- we should adjust the parameters.
-    # But in the meantime it's commented out -- if someone edits this class
-    # please fix the test though!
-    def skip_test_sampling_control_totals(self):
+    def test_sampling_control_totals(self):
         household_totals = array([250, 1000, 1500, 1300, 2000, 1500])
         job_totals = array([20, 54, 10, 32, 43, 30])
         variance = 0.001
@@ -120,20 +117,10 @@ class Tests(StochasticTestCase):
                                 control_totals.get_attribute('totals_for_jobs')))
             return log(result)
 
-        # check if the means (on the log scale) are the control totals themselves
+        # Test the variance using Chi^2 hypothesis test with known means. These are the log of control totals.
         expected_results = log(concatenate([household_totals, job_totals]))
-        self.run_stochastic_test(__file__, run_model, expected_results, 20, type='normal',transformation=None,
-                                 significance_level=0.01)
+        self.chi_square_test_with_known_mean(run_model, expected_results, array(2*job_totals.size*[5*variance]), 10, significance_level=0.0001)
 
-        # check if the variances correspond to variance * years
-        def run_stochastic_test():
-            self.compute_stochastic_test_normal(run_model, expected_results, 10, transformation=None)
-            return self.variance
-        expected_variance = concatenate((arange(1, 7) * array(6*[variance]), arange(1, 7) * array(6*[variance])))
-        # The variance distribution (chi-squared with n-1 df) is approximated by the normal distr.
-        # In this case n (number of replicates) should be more than 15.
-        self.run_stochastic_test(__file__, run_stochastic_test, expected_variance, 20, type='normal',
-                                 significance_level=0.01)
 
 if __name__=='__main__':
     opus_unittest.main()

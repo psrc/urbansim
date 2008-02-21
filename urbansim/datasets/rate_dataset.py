@@ -115,8 +115,8 @@ class Tests(StochasticTestCase):
     def test_sampling_rates(self):
         rates = array([0.1, 0.4, 0.3, 0.0])
         n = 100
-        expected_results = rates
-        seed(10)
+        expected_results = rates[0:3] # exclude the last 0
+        #seed(10)
 
         def run_model():
             storage = StorageFactory().get_storage('dict_storage')
@@ -134,21 +134,11 @@ class Tests(StochasticTestCase):
 
             rate_set.sample_rates(n=n)
             result = rate_set.get_attribute('job_relocation_probability')
+            return result[0:3]
 
-            return result
-
-        def run_stochastic_test():
-            self.compute_stochastic_test_normal(run_model, expected_results, 10, transformation=None)
-            return self.variance
-
-
-        self.run_stochastic_test(__file__, run_model, expected_results, 20, type='normal',
-                                 significance_level=0.001)
-        expected_variance = array([ 0.0009,  0.0024,  0.0021,  0.])**2.0 # (p*(1-p)/n)^2
-        # The variance distribution (chi-squared with n-1 df) is approximated by the normal distr.
-        # In this case n (number of replicates) should be more than 15.
-        self.run_stochastic_test(__file__, run_stochastic_test, expected_variance, 20, type='normal',
-                                 significance_level=0.001)
-
+        expected_variance = array([ 0.0009,  0.0024,  0.0021])**2.0 # (p*(1-p)/n)^2
+        # Test the variance using Chi^2 hypothesis test with known means. These are the rates themselves.
+        self.chi_square_test_with_known_mean(run_model, expected_results, expected_variance, 20, significance_level=0.001)
+        
 if __name__=='__main__':
     opus_unittest.main()

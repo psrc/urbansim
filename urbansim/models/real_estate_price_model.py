@@ -13,11 +13,11 @@
 #
 
 from opus_core.resources import Resources
-from opus_core.regression_model_with_addition_constant_variation import RegressionModelWithAdditionConstantVariation
+from opus_core.regression_model_with_addition_constant_variation import RegressionModelWithAdditionInitialResiduals
 from numpy import exp, arange, logical_and, zeros, where, array, float32
 import re
 
-class RealEstatePriceModel(RegressionModelWithAdditionConstantVariation):
+class RealEstatePriceModel(RegressionModelWithAdditionInitialResiduals):
     """Predicts/estimates a dataset attribute of real estate price using a regression model.
     It can be configured for example for a building dataset or a gridcell dataset.
     """
@@ -33,7 +33,7 @@ class RealEstatePriceModel(RegressionModelWithAdditionConstantVariation):
                  estimate_config=None,
                  debuglevel=0, dataset_pool=None):
         self.filter_attribute = filter_attribute
-        RegressionModelWithAdditionConstantVariation.__init__(self,
+        RegressionModelWithAdditionInitialResiduals.__init__(self,
                                  regression_procedure=regression_procedure,
                                  submodel_string=submodel_string,
                                  outcome_attribute = outcome_attribute,
@@ -51,7 +51,7 @@ class RealEstatePriceModel(RegressionModelWithAdditionConstantVariation):
             res = Resources({"debug":debuglevel})
             index = dataset.get_filtered_index(self.filter_attribute, threshold=0, index=index, dataset_pool=self.dataset_pool,
                                                resources=res)
-        outcome = RegressionModelWithAdditionConstantVariation.run(self, specification, coefficients, dataset,
+        outcome = RegressionModelWithAdditionInitialResiduals.run(self, specification, coefficients, dataset,
                                          index, chunk_specification,
                                          run_config=run_config, debuglevel=debuglevel)
         if (outcome == None) or (outcome.size <= 0):
@@ -83,7 +83,7 @@ class RealEstatePriceModel(RegressionModelWithAdditionConstantVariation):
             res = Resources({"debug":debuglevel})
             index = dataset.get_filtered_index(self.filter_attribute, threshold=0, index=index, dataset_pool=self.dataset_pool,
                                                resources=res)
-        return RegressionModelWithAdditionConstantVariation.estimate(self, specification, dataset, outcome_attribute, index, procedure,
+        return RegressionModelWithAdditionInitialResiduals.estimate(self, specification, dataset, outcome_attribute, index, procedure,
                                      estimate_config=estimate_config, debuglevel=debuglevel)
 
     def prepare_for_estimate(self, specification_dict = None, specification_storage=None,
