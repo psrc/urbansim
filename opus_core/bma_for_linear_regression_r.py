@@ -12,22 +12,25 @@
 # other acknowledgments.
 #
 from rpy import r, set_default_mode, NO_CONVERSION
-from numpy import zeros, float32, swapaxes, array, resize
-from opus_core.misc import check_dimensions
-from opus_core.logger import logger
+from numpy import zeros, float32, array
+from opus_core.estimation_procedure import EstimationProcedure
 
-class bma_for_linear_regression_r(object):
+class bma_for_linear_regression_r(EstimationProcedure):
     """    Class for variable selection in a linear regression using R package BMA.
     It prints out results computed by the R function bic.glm and plots an image of the results.
     You need to have installed R, rpy and the R package BMA.
     """
     def run(self, data, regression, resources=None):
         """
+        The method prints out summary of the BMA procedure and creates an imageplot.
+        If resources has an entry 'bma_imageplot_filename', the imageplot is sent to this file as pdf.
+        The method does not return any useful results - it is a tool for variable selection.
+        Once you selected your variables, use estimate_linear_regression for further usage of the coefficients. 
+        
         Expects an entry 'outcome' in resources that provides the values of the dependent variable.
-        'data' is a 2D numpy array of the acctual data (nobservations x ncoefficients),
+        'data' is a 2D numpy array of the actual data (nobservations x ncoefficients),
             it can be created by Dataset.create_regression_data_for_estimation(...).
         'regression' is an instance of a regression class.
-        Return a dictionary with results.
         """
         if data.ndim < 2:
             raise StandardError, "Argument 'data' must be a 2D numpy array."
@@ -47,11 +50,6 @@ class bma_for_linear_regression_r(object):
 
         coef_names = resources.get("coefficient_names",  nvar*[])
         outcome = resources["outcome"].astype("float64")
-        #from opus_core.misc import write_to_text_file, write_table_to_text_file
-        #write_to_text_file("/Users/hana/bma/outcome", outcome)
-        #write_table_to_text_file("/Users/hana/bma/dat", resize(array(coef_names), (1,nvar)))
-        #write_table_to_text_file("/Users/hana/bma/dat", data, mode="a")
-        #return {}
         set_default_mode(NO_CONVERSION)
         r.library("BMA")
         data_for_r = data.astype("float64")
@@ -59,8 +57,11 @@ class bma_for_linear_regression_r(object):
         fit = r.bic_glm(x=d, y=outcome, glm_family="gaussian", strict=1)
         fit[20] = '' # to have less output in the summary
         r.summary(fit)
-        #r.postscript(file="/Users/hana/bma/imageplot.ps")
-        r.imageplot_bma(fit)
-        #r.dev_off()
+        filename = resources.get('bma_imageplot_filename', None)
+        if filename is not None:
+            r.pdf(file=filename)
+            r.dev_off()
+        else:
+            r.imageplot_bma(fit)
         return {}
 
