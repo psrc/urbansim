@@ -364,6 +364,7 @@ class OpusDataModel(QAbstractItemModel):
         return QModelIndex()
 
     def findElementIndexByType(self,name,parent,multiple=False):
+        finds = []
         rows = self.rowCount(parent)
         for x in xrange(0,rows,1):
             child = self.index(x,0,parent)
@@ -372,13 +373,23 @@ class OpusDataModel(QAbstractItemModel):
                 # Check if this is the one we want...
                 if childElement.hasAttribute(QString("type")) and \
                        childElement.attribute(QString("type")) == QString(name):
-                    return child
+                    finds.append(child)
+                    if multiple == False:
+                        return finds
                 # If this child has other children then we recurse
                 if self.rowCount(child)>0:
-                    childSearch = self.findElementIndexByType(name,child)
-                    if childSearch != QModelIndex():
-                        return childSearch
-        return QModelIndex()
+                    childSearch = self.findElementIndexByType(name,child,multiple)
+                    if multiple == False:
+                        #Check to make sure there is only one in the list returned
+                        if len(childSearch) != 1:
+                            print "Error in search... multiple returns when single expected"
+                        if childSearch[0] != QModelIndex():
+                            return childSearch
+                    else:
+                        finds.extend(childSearch)
+        if len(finds) == 0:
+            finds.append(QModelIndex())
+        return finds
 
     def create_node(self, document, name, type, value):
         newNode = document.createElement(QString(name))

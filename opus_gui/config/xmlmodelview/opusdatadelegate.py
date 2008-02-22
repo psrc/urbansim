@@ -53,11 +53,12 @@ class OpusDataDelegate(QItemDelegate):
                     editor = QComboBox(parent)
                     # Now find the options from the database section of the XML
                     dbxml = self.parent.parent.toolboxStuff.dataManagerDBSTree.model.index(0,0,QModelIndex()).parent()
-                    dbindex = self.parent.parent.toolboxStuff.dataManagerDBSTree.model.findElementIndexByType("db_connection",dbxml,True)
-                    choices = [index.model().data(index,Qt.DisplayRole).toString()]
-                    if dbindex.isValid():
-                        indexElement = dbindex.internalPointer()
-                        choices.append(indexElement.domNode.toElement().tagName())
+                    dbindexlist = self.parent.parent.toolboxStuff.dataManagerDBSTree.model.findElementIndexByType("db_connection",dbxml,True)
+                    choices = []
+                    for dbindex in dbindexlist:
+                        if dbindex.isValid():
+                            indexElement = dbindex.internalPointer()
+                            choices.append(indexElement.domNode.toElement().tagName())
                     currentIndex = 0
                     for i,choice in enumerate(choices):
                         editor.addItem(choice)
