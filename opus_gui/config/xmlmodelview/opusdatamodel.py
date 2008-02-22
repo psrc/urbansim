@@ -372,7 +372,6 @@ class OpusDataModel(QAbstractItemModel):
                 # Check if this is the one we want...
                 if childElement.hasAttribute(QString("type")) and \
                        childElement.attribute(QString("type")) == QString(name):
-                    print "Find"
                     return child
                 # If this child has other children then we recurse
                 if self.rowCount(child)>0:
