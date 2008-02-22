@@ -268,7 +268,7 @@ class OpusXMLAction_Data(object):
     def placeHolderAction(self):
         # Test the finding of an index based on node name
         parent = self.currentIndex.model().index(0,0,QModelIndex()).parent()
-        index = self.currentIndex.model().findElementIndexByName("buffer_size",parent)
+        index = self.currentIndex.model().findElementIndexByName("buffer_size",parent)[0]
         if index.isValid():
             indexElement = index.internalPointer()
             print "%s,%d" % (indexElement.node().nodeName(),

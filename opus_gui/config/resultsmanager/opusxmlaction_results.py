@@ -115,12 +115,15 @@ class OpusXMLAction_Results(object):
         
         parent = model.index(0,0,QModelIndex()).parent()
         
-        child_index = model.findElementIndexByName(name, parent)
-        for node in [expression_node, package_node]:
-            model.insertRow(0,
-                            child_index,
-                            node)
-                    
+        child_index = model.findElementIndexByName(name, parent)[0]
+        if child_index.isValid():
+            for node in [expression_node, package_node]:
+                model.insertRow(0,
+                                child_index,
+                                node)
+        else:
+            print "No valid node was found..."
+        
         model.emit(SIGNAL("layoutChanged()"))
         
     

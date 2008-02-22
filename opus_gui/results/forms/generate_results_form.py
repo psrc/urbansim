@@ -253,17 +253,22 @@ class GenerateResultsForm(QWidget):
                                     value = self.last_computed_result['dataset_name'])
                 
         parent = model.index(0,0,QModelIndex()).parent()
-        index = model.findElementIndexByName("Results", parent)
-
-        model.insertRow(0,
-                        index,
-                        newNode)
-        
-        child_index = model.findElementIndexByName(name, parent)
-        for node in [dataset_node, indicator_node, source_data_node]:
+        index = model.findElementIndexByName("Results", parent)[0]
+        if index.isValid():
             model.insertRow(0,
-                            child_index,
-                            node)   
+                            index,
+                            newNode)
+        else:
+            print "No valid node was found..."
+        
+        child_index = model.findElementIndexByName(name, parent)[0]
+        if child_index.isValid():
+            for node in [dataset_node, indicator_node, source_data_node]:
+                model.insertRow(0,
+                                child_index,
+                                node)
+        else:
+            print "No valid node was found..."
         
         model.emit(SIGNAL("layoutChanged()"))
 

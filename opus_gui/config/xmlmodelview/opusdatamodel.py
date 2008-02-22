@@ -348,6 +348,7 @@ class OpusDataModel(QAbstractItemModel):
                 self.insertRow(currentRow+howmany,currentParent,clone)
 
     def findElementIndexByName(self,name,parent,multiple=False):
+        finds = []
         rows = self.rowCount(parent)
         for x in xrange(0,rows,1):
             child = self.index(x,0,parent)
@@ -355,13 +356,23 @@ class OpusDataModel(QAbstractItemModel):
             if not childElement.isNull():
                 # Check if this is the one we want...
                 if childElement.nodeName() == QString(name):
-                    return child
+                    finds.append(child)
+                    if multiple == False:
+                        return finds
                 # If this child has other children then we recurse
                 if self.rowCount(child)>0:
-                    childSearch = self.findElementIndexByName(name,child)
-                    if childSearch != QModelIndex():
-                        return childSearch
-        return QModelIndex()
+                    childSearch = self.findElementIndexByName(name,child,multiple)
+                    if multiple == False:
+                        #Check to make sure there is only one in the list returned
+                        if len(childSearch) != 1:
+                            print "Error in search... multiple returns when single expected"
+                        if childSearch[0] != QModelIndex():
+                            return childSearch
+                    else:
+                        finds.extend(childSearch)
+        if len(finds) == 0:
+            finds.append(QModelIndex())
+        return finds
 
     def findElementIndexByType(self,name,parent,multiple=False):
         finds = []
