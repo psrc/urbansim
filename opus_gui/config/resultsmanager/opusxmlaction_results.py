@@ -84,10 +84,45 @@ class OpusXMLAction_Results(object):
                 
         self.actViewDocumentation = QAction(self.applicationIcon, "View documentation", self.xmlTreeObject.parent)
         QObject.connect(self.actViewDocumentation, SIGNAL("triggered()"), self.viewDocumentation)
-
+        
     def addNewIndicator(self):
         print "addNewIndicator pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+
+        model = self.currentIndex.model()
+        document = model.domDocument
+        name = 'untitled indicator'
+        default_value = '?'
+        
+        newNode = model.create_node(document = document, 
+                                    name = name, 
+                                    type = 'indicator', 
+                                    value = '')
+        
+        package_node = model.create_node(document = document, 
+                                    name = 'package', 
+                                    type = 'string', 
+                                    value = default_value)
+        
+        expression_node = model.create_node(document = document, 
+                                    name = 'expression', 
+                                    type = 'string', 
+                                    value = default_value)
+        
+        model.insertRow(0,
+                self.currentIndex,
+                newNode)
+        
+        parent = model.index(0,0,QModelIndex()).parent()
+        
+        child_index = model.findElementIndexByName(name, parent)
+        for node in [expression_node, package_node]:
+            model.insertRow(0,
+                            child_index,
+                            node)
+                    
+        model.emit(SIGNAL("layoutChanged()"))
+        
     
     def addNewResultTemplate(self):
         print "addNewResultTemplate pressed with column = %s and item = %s" % \
