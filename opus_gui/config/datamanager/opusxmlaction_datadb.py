@@ -36,6 +36,27 @@ class OpusXMLAction_DataDB(object):
         self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
 
+        self.actCloneDBConnection = QAction(self.calendarIcon,
+                                        "Clone DB Connection",
+                                        self.xmlTreeObject.parent)
+        QObject.connect(self.actCloneDBConnection,
+                        SIGNAL("triggered()"),
+                        self.cloneDBConnection)
+        
+        self.actNewDBConnection = QAction(self.calendarIcon,
+                                          "New DB Connection",
+                                          self.xmlTreeObject.parent)
+        QObject.connect(self.actNewDBConnection,
+                        SIGNAL("triggered()"),
+                        self.newDBConnection)
+        
+        self.actTestDBConnection = QAction(self.calendarIcon,
+                                           "Test DB Connection",
+                                           self.xmlTreeObject.parent)
+        QObject.connect(self.actTestDBConnection,
+                        SIGNAL("triggered()"),
+                        self.testDBConnection)
+        
         self.actPlaceHolder = QAction(self.applicationIcon,
                                       "Placeholder",
                                       self.xmlTreeObject.parent)
@@ -43,6 +64,52 @@ class OpusXMLAction_DataDB(object):
                         SIGNAL("triggered()"),
                         self.placeHolderAction)
 
+    def newDBConnection(self):
+        print "newDBConnection pressed"
+        newNode1 = self.currentIndex.model().domDocument.createElement(QString("new_connection"))
+        newNode1.setAttribute(QString("type"),QString("db_connection"))
+
+        newNode2 = self.currentIndex.model().domDocument.createElement(QString("host_name"))
+        newNode2.setAttribute(QString("type"),QString("string"))
+        newText = self.currentIndex.model().domDocument.createTextNode(QString(""))
+        newNode2.appendChild(newText)
+
+        newNode3 = self.currentIndex.model().domDocument.createElement(QString("protocol"))
+        newNode3.setAttribute(QString("type"),QString("string"))
+        newText = self.currentIndex.model().domDocument.createTextNode(QString(""))
+        newNode3.appendChild(newText)
+
+        newNode4 = self.currentIndex.model().domDocument.createElement(QString("user_name"))
+        newNode4.setAttribute(QString("type"),QString("string"))
+        newText = self.currentIndex.model().domDocument.createTextNode(QString(""))
+        newNode4.appendChild(newText)
+
+        newNode5 = self.currentIndex.model().domDocument.createElement(QString("password"))
+        newNode5.setAttribute(QString("type"),QString("password"))
+        newText = self.currentIndex.model().domDocument.createTextNode(QString(""))
+        newNode5.appendChild(newText)
+
+        newNode1.appendChild(newNode2)
+        newNode1.appendChild(newNode3)
+        newNode1.appendChild(newNode4)
+        newNode1.appendChild(newNode5)
+        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
+                                            self.currentIndex,
+                                            newNode1)
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        
+    def cloneDBConnection(self):
+        print "cloneDBConnection pressed"
+        clone = self.currentIndex.internalPointer().domNode.cloneNode()
+        parent = self.currentIndex.model().parent(self.currentIndex)
+        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(parent),
+                                            parent,
+                                            clone)
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
+    def testDBConnection(self):
+        print "testDBConnection pressed - Not yet implemented"
+        
     def placeHolderAction(self):
         print "Placeholder pressed"
 
@@ -60,9 +127,14 @@ class OpusXMLAction_DataDB(object):
                 domElement = domNode.toElement()
                 if domElement.isNull():
                     return
-                if domElement.attribute(QString("type")) == QString("db_connection"):
+                if domElement.attribute(QString("type")) == QString("database_library"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
-                    self.menu.addAction(self.actPlaceHolder)
+                    self.menu.addAction(self.actNewDBConnection)
+                    self.menu.exec_(QCursor.pos())
+                elif domElement.attribute(QString("type")) == QString("db_connection"):
+                    self.menu = QMenu(self.xmlTreeObject.parent)
+                    self.menu.addAction(self.actCloneDBConnection)
+                    self.menu.addAction(self.actTestDBConnection)
                     self.menu.exec_(QCursor.pos())
                 else:
                     self.menu = QMenu(self.xmlTreeObject.parent)

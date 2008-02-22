@@ -49,6 +49,25 @@ class OpusDataDelegate(QItemDelegate):
                     editor.setCurrentIndex(currentIndex)
                     QObject.connect(editor, SIGNAL("activated(int)"), self.comboBoxFinished)
                     return editor
+                elif domElement.attribute(QString("type")) == QString("db_connection_hook"):
+                    editor = QComboBox(parent)
+                    # Now find the options from the database section of the XML
+                    choices = [index.model().data(index,Qt.DisplayRole).toString()]
+                    print self.parent
+                    print self.parent.parent
+                    dbxml = self.parent.parent.toolboxStuff.dataManagerDBSTree.model.index(0,0,QModelIndex()).parent()
+                    index = self.parent.parent.toolboxStuff.dataManagerDBSTree.model.findElementIndexByName("urbansim_db2",dbxml)
+                    if index.isValid():
+                        indexElement = index.internalPointer()
+                        choices.append(indexElement.domNode.toElement().tagName())
+                    currentIndex = 0
+                    for i,choice in enumerate(choices):
+                        editor.addItem(choice)
+                        if index.model().data(index,Qt.DisplayRole).toString() == choice:
+                            currentIndex = i
+                    editor.setCurrentIndex(currentIndex)
+                    QObject.connect(editor, SIGNAL("activated(int)"), self.comboBoxFinished)
+                    return editor                    
                 else:
                     editor = QItemDelegate.createEditor(self, parent, option, index)
                     if type(editor) == QLineEdit:
