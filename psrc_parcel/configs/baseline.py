@@ -92,6 +92,7 @@ class Baseline(UrbansimParcelConfiguration):
                     "demolition_cost_per_sqft",
                     'constant_taz_columns',
                     'zipcodes',
+                    'cities',
                     ],
                 tables_to_cache_nchunks={'parcels': 1},
                 unroll_gridcells = False
