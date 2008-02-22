@@ -362,3 +362,10 @@ class OpusDataModel(QAbstractItemModel):
                     if childSearch != QModelIndex():
                         return childSearch
         return QModelIndex()
+
+    def create_node(self, document, name, type, value):
+        newNode = document.createElement(QString(name))
+        newNode.setAttribute(QString("type"),QString(type))
+        newText = document.createTextNode(QString(value))
+        newNode.appendChild(newText)
+        return newNode
