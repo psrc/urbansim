@@ -224,13 +224,6 @@ class GenerateResultsForm(QWidget):
         # Get the final logfile update after model finishes...
         self.logFileKey = self.result_generator._get_current_log(self.logFileKey)
         self.pbn_generate_results.setEnabled(True)
-
-    def _create_node(self, document, name, type, value):
-        newNode = document.createElement(QString(name))
-        newNode.setAttribute(QString("type"),QString(type))
-        newText = document.createTextNode(QString(value))
-        newNode.appendChild(newText)
-        return newNode
     
     def update_results_xml(self):
         print "update results"
@@ -242,19 +235,19 @@ class GenerateResultsForm(QWidget):
             self.last_computed_result['dataset_name'], 
             self.last_computed_result['source_data_name'])
         
-        newNode = self._create_node(document = document, 
+        newNode = model.create_node(document = document, 
                                     name = name, 
                                     type = 'indicator_result', 
                                     value = '')
-        source_data_node = self._create_node(document = document, 
+        source_data_node = model.create_node(document = document, 
                                     name = 'source_data', 
                                     type = 'string', 
                                     value = self.last_computed_result['source_data_name'])
-        indicator_node = self._create_node(document = document, 
+        indicator_node = model.create_node(document = document, 
                                     name = 'indicator_name', 
                                     type = 'string', 
                                     value = self.last_computed_result['indicator_name'])        
-        dataset_node = self._create_node(document = document, 
+        dataset_node = model.create_node(document = document, 
                                     name = 'dataset_name', 
                                     type = 'string', 
                                     value = self.last_computed_result['dataset_name'])
