@@ -203,7 +203,7 @@ class OpusDataModel(QAbstractItemModel):
         if not index.isValid():
             return Qt.ItemIsEnabled
         if self.editable == True:
-            if index.column() == 2:
+            if index.column() == 2 or index.column() == 0:
                 return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
             else:
                 return Qt.ItemIsEnabled | Qt.ItemIsSelectable
@@ -267,14 +267,23 @@ class OpusDataModel(QAbstractItemModel):
         # Get the item associated with the index
         item = index.internalPointer()
         domNode = item.node()
-        if domNode.hasChildNodes():
-            children = domNode.childNodes()
-            for x in xrange(0,children.count(),1):
-                if children.item(x).isText():
-                    children.item(x).setNodeValue(QString(value.toString()))
+        if index.column() == 0:
+            if domNode.isElement():
+                domElement = domNode.toElement()
+                if not domElement.isNull():
+                    domElement.setTagName(value.toString())
                     if self.dirty == False:
                         self.parentTree.groupBox.setTitle(self.parentTree.groupBox.title().prepend(QString("*")))
                     self.dirty = True
+        elif index.column() == 2:
+            if domNode.hasChildNodes():
+                children = domNode.childNodes()
+                for x in xrange(0,children.count(),1):
+                    if children.item(x).isText():
+                        children.item(x).setNodeValue(QString(value.toString()))
+                        if self.dirty == False:
+                            self.parentTree.groupBox.setTitle(self.parentTree.groupBox.title().prepend(QString("*")))
+                        self.dirty = True
         return True
 
     def insertRow(self,row,parent,node):

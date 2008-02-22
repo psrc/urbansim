@@ -54,6 +54,11 @@ class OpusDataDelegate(QItemDelegate):
                     if type(editor) == QLineEdit:
                         editor.setText(index.model().data(index,Qt.DisplayRole).toString())
                     return editor
+            elif index.column() == 0:
+                editor = QItemDelegate.createEditor(self, parent, option, index)
+                if type(editor) == QLineEdit:
+                    editor.setText(index.model().data(index,Qt.DisplayRole).toString())
+                return editor
             else:
                 return QItemDelegate.createEditor(self, parent, option, index)
     
