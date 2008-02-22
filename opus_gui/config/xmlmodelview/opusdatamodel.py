@@ -386,4 +386,5 @@ class OpusDataModel(QAbstractItemModel):
         newNode.setAttribute(QString("type"),QString(type))
         newText = document.createTextNode(QString(value))
         newNode.appendChild(newText)
-        return newNode>>>>>>> .r2814
+        return newNode
+
