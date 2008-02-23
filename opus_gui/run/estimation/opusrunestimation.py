@@ -15,7 +15,7 @@
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-import os, sys
+import os, sys, time
 
 
 try:
@@ -79,6 +79,7 @@ class OpusEstimation(object):
         self.firstRead = True
         self.running = False
         self.paused = False
+        self.cancelled = False
 
     def formatExceptionInfo(self,maxTBlevel=5):
         import traceback
@@ -104,6 +105,7 @@ class OpusEstimation(object):
     def cancel(self):
         self.running = False
         self.paused = False
+        self.cancelled = True
         print "Cancel pressed"
         # Can access the estimation manager via self.er
     
@@ -126,6 +128,13 @@ class OpusEstimation(object):
                 self.config = estimation_config
                 # TODO: put save_estimation results etc into config
                 for model_name in estimation_config['models_to_estimate']:
+                    # If we've paused the estimation, wait 10 seconds, and see if we are unpaused.  If we've cancelled,
+                    # exit the loop.  Note that this is a fairly coarse level of pause/resume/stop (at the level of
+                    # estimating an entire model, rather than a bit of a model).
+                    while self.paused and not self.cancelled:
+                        time.sleep(10)
+                    if self.cancelled:
+                        break
                     model_config = estimation_config['model_parameters'][model_name]
                     model = (model_config['abbreviation'], model_config['full_name'])
                     if 'location' in model_config:
