@@ -40,7 +40,7 @@ class OpusFileAction(object):
     def placeHolderAction(self):
         print "placeHolderAction pressed with column = %s" % \
               (self.currentColumn)
-
+        
     def openTextFile(self):
         print "openTextFile pressed with column = %s and item = %s" % \
               (self.currentColumn, self.xmlFileObject.model.filePath(self.currentIndex))
@@ -57,12 +57,29 @@ class OpusFileAction(object):
             f.close()
             self.xmlFileObject.mainwindow.editorStatusLabel.setText(QString(filename))
 
+    def fillInAvailableExportScripts(self):
+        print "Checking for scripts"
+        dbxml = self.xmlFileObject.mainwindow.toolboxStuff.dataManagerTree.model.index(0,0,QModelIndex()).parent()
+        dbindexlist = self.xmlFileObject.mainwindow.toolboxStuff.dataManagerTree.model.findElementIndexByType("script_config",dbxml,True)
+        choices = []
+        for dbindex in dbindexlist:
+            if dbindex.isValid():
+                indexElement = dbindex.internalPointer()
+                choices.append(indexElement.domNode.toElement().tagName())
+        return choices
+    
     def processCustomMenu(self, position):
         self.currentColumn = self.xmlFileObject.treeview.indexAt(position).column()
         self.currentIndex = self.xmlFileObject.treeview.indexAt(position)
         if self.xmlFileObject.model.isDir(self.currentIndex):
             # Do stuff for directories
-            pass
+            self.menu = QMenu(self.xmlFileObject.mainwindow)
+            choices = self.fillInAvailableExportScripts()
+            for i,choice in enumerate(choices):
+                # Add choices with custom text...
+                print choice
+            self.menu.addAction(self.actPlaceHolder)
+            self.menu.exec_(QCursor.pos())
         elif self.xmlFileObject.model.fileInfo(self.currentIndex).suffix() == "txt":
             self.menu = QMenu(self.xmlFileObject.mainwindow)
             self.menu.addAction(self.actOpenTextFile)
