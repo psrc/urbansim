@@ -20,24 +20,20 @@ from numpy.random import normal
 from numpy import log, exp
 
 base_commute_directory = '/Users/hana/urbansim_cache/psrc/parcel/bm/emme2_on_observed_data'
-all_emme_dirs = {'with_viaduct': {'/Users/hana/urbansim_cache/psrc/parcel/bm/runs_with_viaduct/run_5264_second_weight':
-                                  ['emme_run_1_2008_02_14_12_22', 'emme_run_2_2008_02_14_14_15', 'emme_run_3_2008_02_14_16_01',
-                                   'emme_run_4_2008_02_14_17_46', 'emme_run_5_2008_02_14_19_37', 'emme_run_6_2008_02_14_21_26',
-                                   'emme_run_7_2008_02_14_23_06', 'emme_run_8_2008_02_15_00_45', 'emme_run_9_2008_02_15_02_24', 
-                                   'emme_run_10_2008_02_15_04_02', 'emme_run_11_2008_02_15_05_44', 'emme_run_12_2008_02_15_07_23',
-                                   'emme_run_13_2008_02_15_09_02'
-                                   ]
-                                  },
-             'without_viaduct': {
-                            '/Users/hana/urbansim_cache/psrc/parcel/bm/runs_without_viaduct/run_5263_highest_weight':
-                                [
-                                 'emme_run_1_2008_02_15_13_00', 'emme_run_1_2008_02_15_13_15'
-                                 ]
-                                 }
-             }
-which_dirs = 'without_viaduct'
+all_emme_dirs = {'with_viaduct': '/Users/hana/urbansim_cache/psrc/parcel/bm/runs_with_viaduct/run_5257_highest_weight',
+                 'with_viaduct2': '/Users/hana/urbansim_cache/psrc/parcel/bm/runs_with_viaduct/run_5264_second_weight',
+                 'with_viaduct3': '/Users/hana/urbansim_cache/psrc/parcel/bm/runs_with_viaduct/run_5272_point_estimates',
+                 'without_viaduct': '/Users/hana/urbansim_cache/psrc/parcel/bm/runs_without_viaduct/run_5263_highest_weight',
+                 'without_viaduct2': '/Users/hana/urbansim_cache/psrc/parcel/bm/runs_without_viaduct/run_5270_second_weight',
+                 'without_viaduct3': '/Users/hana/urbansim_cache/psrc/parcel/bm/runs_without_viaduct/run_5273_point_estimates'
+                 }
 
-base_emme_dir, emme_dirs = all_emme_dirs[which_dirs].items()[0]
+which_dirs = 'without_viaduct3'
+
+base_emme_dir = all_emme_dirs[which_dirs]
+emme_dirs = os.listdir(base_emme_dir)
+emme_dirs = [x for x in emme_dirs if x.startswith('emme_')]
+
 for i in range(len(emme_dirs)):
     emme_dirs[i] = os.path.join(base_emme_dir, emme_dirs[i], str(2021))
 
@@ -49,6 +45,7 @@ dist = "psrc_parcel.commute_travel_data.subtract_from_travel_data_single_vehicle
 tt = "psrc_parcel.commute_travel_data.subtract_from_travel_data_am_single_vehicle_to_work_travel_time"
 
 for dir in emme_dirs:
+    print dir
     storage = StorageFactory().get_storage('flt_storage', storage_location = dir)
     pool = DatasetPool(storage=storage, package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim'])
     #pool._add_dataset('commute_travel_data', commutes)
