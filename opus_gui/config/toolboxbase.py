@@ -110,9 +110,22 @@ class ToolboxBase(object):
       self.xml_file = xml_file
       self.configFile = QFile(xml_file)
       if self.configFile.open(QIODevice.ReadWrite):
-        self.opusDataPath = os.getenv("OPUS_DATA_PATH")
+        self.opusDataPathOrig = os.getenv("OPUS_DATA_PATH")
+        #Then append the cache_directory_root from the modelmanager section of the XML
         self.doc = QDomDocument()
         self.doc.setContent(self.configFile)
+        cache_dir_root_path = ""
+        cache_dir_root_list = self.doc.elementsByTagName(QString("cache_directory_root"))
+        if cache_dir_root_list.length() > 0:
+          # We have a dir then we append it
+          cache_dir_root = cache_dir_root_list.item(0)
+          if cache_dir_root.hasChildNodes():
+            children = cache_dir_root.childNodes()
+            for x in xrange(0,children.count(),1):
+                if children.item(x).isText():
+                    cache_dir_root_path = "/" + children.item(x).nodeValue()
+        self.opusDataPath = self.opusDataPathOrig + cache_dir_root_path
+        #print self.opusDataPath
         self.resultsManagerTree = OpusXMLTree(self,"results_manager",
                                               self.parent.resultsmanager_page.layout())
         self.modelManagerTree = OpusXMLTree(self,"model_manager",
