@@ -123,7 +123,7 @@ class OpusEstimation(object):
                 parcelfile = fileNameInfo.absoluteFilePath().trimmed()
                 print parcelfile
                 xml_config = XMLConfiguration(parcelfile)
-                estimation_section = xml_config.get_estimation_section()
+                estimation_section = xml_config.get_section('model_manager/estimation')
                 estimation_config = estimation_section['estimation_config']
                 self.config = estimation_config
                 # TODO: put save_estimation results etc into config
