@@ -2,10 +2,10 @@
 <opus_project>
   <scenario_manager>
     <test_scenario type="scenario">
-      <parent parser_action="parent_old_format" type="dictionary">
+      <parent_old_format type="dictionary">
         <Class_name type="string">GeneralConfiguration</Class_name>
         <Class_path type="string">urbansim.configs.general_configuration</Class_path>
-      </parent>
+      </parent_old_format>
       <years type="tuple">
         <startyear type="integer">1980</startyear>
         <endyear type="integer">1981</endyear>

@@ -30,33 +30,38 @@ class XMLConfiguration(object):
         if self.root.tag!='opus_project':
             raise ValueError, "malformed xml - expected to find a root element named 'opus_project'"
         
-    def get_run_configuration(self, name):
-        """extract the run configuration named 'name' from this xml project and return it."""
-        scenarios = self.root.findall('scenario_manager/%s' % name)
-        if len(scenarios)!=1:
-            raise ValueError, "didn't find a unique scenario named %s" % name
-        import_node = scenarios[0].find('import')
-        if import_node is None:
-            return self._node_to_config(scenarios[0])
-        else:
-            # find the path to the external configuration and load it
-            dir = os.path.dirname(self.filename)
-            file = os.path.join(dir, import_node.text)
-            original_name_node = scenarios[0].find('original_name')
-            if original_name_node is None:
-                real_name = name
-            else:
-                real_name = original_name_node.text
-            return XMLConfiguration(file).get_run_configuration(real_name)
+    def get_section(self, name):
+        """Extract the section named 'name' from this xml project, convert it to a dictionary,
+        put in default values from parent configuration (if any), and return the dictionary.
+        To prevent an infinite loop, we don't look for a parent if this is the 'general' 
+        section (since that is where the parent of a project is listed).  If there are multiple
+        sections with the given name, return the first one."""
+        section = self._get_section_or_none(name)
+        if section is None:
+            raise ValueError, "didn't find a section named %s" % name
+        return section
 
-    def get_estimation_section(self):
-        estimation_sections = self.root.findall('model_manager/estimation')
-        if len(estimation_sections)!=1:
-            raise ValueError, "didn't find a unique estimation section"
-        return self._node_to_config(estimation_sections[0])
-    
+    def get_run_configuration(self, name):
+        """Extract the run configuration named 'name' from this xml project and return it.
+        Note that one run configuration can inherit from another (in addition to the usual
+        project-wide inheritance)."""
+        config = self.get_section('scenario_manager/%s' % name)
+        if 'parent' in config:
+            parent_config = self.get_run_configuration(config['parent'])
+            del config['parent']
+            parent_config.merge(config)
+            return parent_config
+        elif 'parent_old_format' in config:
+            d = config['parent_old_format']
+            parent_config = self._make_instance(d['Class_name'], d['Class_path'])
+            del config['parent_old_format']
+            parent_config.merge(config)
+            return parent_config
+        else:
+            return config
+
     def get_estimation_specification(self, model_name):
-        estimation_section = self.get_estimation_section()
+        estimation_section = self.get_section('model_manager/estimation')
         model = estimation_section[model_name]
         result = {}
         result['_definition_'] = model['all_variables'].values()
@@ -66,30 +71,33 @@ class XMLConfiguration(object):
                 result[submodel['submodel_id']] = submodel['variables']
         return result
     
-    def _node_to_config(self, node):
-        changes = {}
-        parent = None
-        for child in node:
-            parser_action = child.get('parser_action', '')
-            if parser_action.startswith('parent'):
-                if parent is not None:
-                    raise ValueError, 'multiple parent declarations'
-                parent = self._get_parent(child, parser_action)
-            else:
-                self._add_to_dict(child, changes)    
-        if parent is None:
-            parent = Configuration()
-        parent.merge(changes)
-        return parent
-    
-    def _get_parent(self, node, parser_action):
-        if parser_action=='parent':
-            return self.get_run_configuration(node.text)
-        elif parser_action=='parent_old_format':
-            data = self._convert_node_to_data(node)
-            return self._make_instance(data['Class_name'], data['Class_path'])
+    def _get_section_or_none(self, name):
+        # return the named section, or none if it doesn't exist
+        parentconfig = None
+        if name.split('/')[0]!='general':
+            parentnode = self.root.find('general/parent')
+            if parentnode is not None:
+                # Find the correct path to the XML file for the parent.  Node that this works
+                # correctly for both relative and absolute paths (since join does the right thing
+                # if the second arg is absolute).
+                dir = os.path.split(self.filename)[0]
+                parentfile = os.path.join(dir, parentnode.text)
+                parentconfig = XMLConfiguration(parentfile)._get_section_or_none(name)
+        x = self.root.find(name)
+        if x is None:
+            return parentconfig
+        section = Configuration(self._node_to_config(x))
+        if parentconfig is None:
+            return section
         else:
-            raise ValueError, "unknown parser action %s" % parser_action
+            parentconfig.merge(section)
+            return parentconfig
+
+    def _node_to_config(self, node):
+        config = {}
+        for child in node:
+            self._add_to_dict(child, config)    
+        return config
     
     def _add_to_dict(self, node, result_dict):
         # 'node' should be an element node representing a key-value pair to be added to 
@@ -315,19 +323,16 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_inheritance(self):
         # test inheritance with a chain of xml configurations
         f = os.path.join(self.test_configs, 'childconfig.xml')
-        config = XMLConfiguration(f).get_run_configuration('test_scenario')
+        config = XMLConfiguration(f).get_run_configuration('child_scenario')
         self.assertEqual(config, 
             {'description': 'this is the child', 'year': 2000, 'modelname': 'widgetmodel'})
             
     def test_inheritance_external_parent(self):
         # test inheritance with an external_parent (one with original name, one renamed)
         f = os.path.join(self.test_configs, 'childconfig_external_parent.xml')
-        config1 = XMLConfiguration(f).get_run_configuration('grandchild1')
+        config1 = XMLConfiguration(f).get_run_configuration('grandchild')
         self.assertEqual(config1, 
-            {'description': 'this is grandchild1', 'year': 2000, 'modelname': 'widgetmodel'})
-        config2 = XMLConfiguration(f).get_run_configuration('grandchild2')
-        self.assertEqual(config2, 
-            {'description': 'this is grandchild2', 'year': 2000, 'modelname': 'widgetmodel'})
+            {'description': 'this is the grandchild', 'year': 2000, 'modelname': 'widgetmodel'})
             
     def test_old_config_inheritance(self):
         # test inheriting from an old-style configuration 
@@ -391,9 +396,9 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(db_config.password, 'secret')
         self.assertEqual(db_config.database_name, 'river_city_baseyear')
             
-    def test_get_estimation_section(self):
+    def test_get_section(self):
         f = os.path.join(self.test_configs, 'estimate.xml')
-        config = XMLConfiguration(f).get_estimation_section()
+        config = XMLConfiguration(f).get_section('model_manager/estimation')
         should_be = {
           'real_estate_price_model': {
             'all_variables': {'ln_cost': 'ln_cost=ln(psrc.parcel.cost)', 'unit_price': 'unit_price=urbansim_parcel.parcel.unit_price'},
