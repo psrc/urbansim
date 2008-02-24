@@ -1,6 +1,7 @@
 <opus_project>
   <general>
     <description type="string" >Sample Eugene project</description>
+    <parent type="file">urbansim_gridcell.xml</parent>
   </general>
   <data_manager>
     <script_library type="script_library" setexpanded="True">
@@ -45,11 +46,8 @@
     </database_library>
   </data_manager_dbstree>
   <scenario_manager>
-    <default_scenario type="scenario" setexpanded="True">
-      <import type="file" >urbansim_gridcell.xml</import>
-    </default_scenario>
     <Eugene_baseline type="scenario" executable="True" setexpanded="True">
-      <parent parser_action="parent" type="scenario_name" >default_scenario</parent>
+      <parent type="scenario_name" >default_scenario</parent>
       <base_year type="integer" >1980</base_year>
       <years_to_run config_name="years" type="tuple" >
         <startyear type="integer" >1981</startyear>
