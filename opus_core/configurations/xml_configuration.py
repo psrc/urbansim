@@ -33,9 +33,7 @@ class XMLConfiguration(object):
     def get_section(self, name):
         """Extract the section named 'name' from this xml project, convert it to a dictionary,
         put in default values from parent configuration (if any), and return the dictionary.
-        To prevent an infinite loop, we don't look for a parent if this is the 'general' 
-        section (since that is where the parent of a project is listed).  If there are multiple
-        sections with the given name, return the first one."""
+        If there are multiple sections with the given name, return the first one."""
         section = self._get_section_or_none(name)
         if section is None:
             raise ValueError, "didn't find a section named %s" % name
@@ -73,16 +71,16 @@ class XMLConfiguration(object):
     
     def _get_section_or_none(self, name):
         # return the named section, or none if it doesn't exist
-        parentconfig = None
-        if name.split('/')[0]!='general':
-            parentnode = self.root.find('general/parent')
-            if parentnode is not None:
-                # Find the correct path to the XML file for the parent.  Node that this works
-                # correctly for both relative and absolute paths (since join does the right thing
-                # if the second arg is absolute).
-                dir = os.path.split(self.filename)[0]
-                parentfile = os.path.join(dir, parentnode.text)
-                parentconfig = XMLConfiguration(parentfile)._get_section_or_none(name)
+        parentnode = self.root.find('parent')
+        if parentnode is None:
+            parentconfig = None
+        else:
+            # Find the correct path to the XML file for the parent.  Node that this works
+            # correctly for both relative and absolute paths (since join does the right thing
+            # if the second arg is absolute).
+            dir = os.path.split(self.filename)[0]
+            parentfile = os.path.join(dir, parentnode.text)
+            parentconfig = XMLConfiguration(parentfile)._get_section_or_none(name)
         x = self.root.find(name)
         if x is None:
             return parentconfig
@@ -161,6 +159,8 @@ class XMLConfiguration(object):
             return self._convert_dictionary_to_data(node)
         elif type_name=='class':
             return self._convert_class_to_data(node)
+        elif type_name=='db_connection_hook':
+            return node.text
         elif type_name=='model':
             # "skip" is the value used to indicate models to skip
             return self._convert_custom_type_to_data(node, "Skip")
