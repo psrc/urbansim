@@ -322,14 +322,14 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         
     def test_inheritance(self):
         # test inheritance with a chain of xml configurations
-        f = os.path.join(self.test_configs, 'childconfig.xml')
+        f = os.path.join(self.test_configs, 'child_scenarios.xml')
         config = XMLConfiguration(f).get_run_configuration('child_scenario')
         self.assertEqual(config, 
             {'description': 'this is the child', 'year': 2000, 'modelname': 'widgetmodel'})
             
     def test_inheritance_external_parent(self):
         # test inheritance with an external_parent (one with original name, one renamed)
-        f = os.path.join(self.test_configs, 'childconfig_external_parent.xml')
+        f = os.path.join(self.test_configs, 'grandchild_scenario_external_parent.xml')
         config1 = XMLConfiguration(f).get_run_configuration('grandchild')
         self.assertEqual(config1, 
             {'description': 'this is the grandchild', 'year': 2000, 'modelname': 'widgetmodel'})
@@ -337,7 +337,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_old_config_inheritance(self):
         # test inheriting from an old-style configuration 
         # (backward compatibility functionality - may be removed later)
-        f = os.path.join(self.test_configs, 'childconfig_oldparent.xml')
+        f = os.path.join(self.test_configs, 'child_scenario_oldparent.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         # 'years' is overridden in the child
         self.assertEqual(config['years'], (1980, 1981))
