@@ -1,7 +1,7 @@
 <opus_project>
+  <parent type="file">urbansim_gridcell.xml</parent>
   <general>
     <description type="string" >Sample Eugene project</description>
-    <parent type="file">urbansim_gridcell.xml</parent>
   </general>
   <data_manager>
     <script_library type="script_library" setexpanded="True">
