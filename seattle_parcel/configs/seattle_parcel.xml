@@ -1,4 +1,5 @@
 <opus_project>
+   <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
   <general>
     <description type="string" >Sample Seattle project</description>
   </general>
@@ -489,10 +490,7 @@
   </model_manager>
   <scenario_manager>
     <Seattle_baseline type="scenario" executable="True" >
-      <parent_old_format type="dictionary" >
-        <Class_name type="string" >UrbansimParcelConfiguration</Class_name>
-        <Class_path type="string" >urbansim_parcel.configs.controller_config</Class_path>
-      </parent_old_format>
+      <parent type="scenario_name" >urbansim_parcel_baseline</parent>
       <base_year type="integer" >2000</base_year>
       <years_to_run config_name="years" type="tuple" >
         <startyear type="integer" >2001</startyear>
