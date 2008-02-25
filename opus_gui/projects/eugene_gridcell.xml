@@ -6,10 +6,24 @@
   <data_manager>
     <script_library type="script_library" setexpanded="True">
       <script_path type="script_path" >projects.scripts</script_path>
+      <opus_data_to_sql_tool type="script_file" >opus_data_to_sql</opus_data_to_sql_tool>
+      <opus_data_to_esri_tool type="script_file" >opus_data_to_esri</opus_data_to_esri_tool>
       <esri_buffer_tool type="script_file" >esri_buffer</esri_buffer_tool>
       <postgis_buffer_tool type="script_file" >postgis_buffer</postgis_buffer_tool>
       <raw_sql_query type="script_file" >raw_sql</raw_sql_query>
     </script_library>
+    <opus_data_to_sql type="script_batch" setexpanded="True">
+      <opus_data_to_sql_config type="script_config" >
+        <script_hook type="script_library_ref">opus_data_to_sql_tool</script_hook>
+        <param1 type="string" >foobar</param1>
+      </opus_data_to_sql_config>
+    </opus_data_to_sql>
+    <opus_data_to_esri type="script_batch" setexpanded="True">
+      <opus_data_to_esri_config type="script_config" >
+        <script_hook type="script_library_ref">opus_data_to_esri_tool</script_hook>
+        <param1 type="string" >barfoo</param1>
+      </opus_data_to_esri_config>
+    </opus_data_to_esri>
     <script_batch1 type="script_batch" setexpanded="True">
       <roads_buffer_tool type="script_config" >
         <script_hook type="script_library_ref" >esri_buffer_tool</script_hook>

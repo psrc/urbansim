@@ -28,13 +28,18 @@ class OpusFileAction(object):
         
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
         
-        self.actPlaceHolder = QAction(self.applicationIcon, "Placeholder", self.xmlFileObject.mainwindow)
-        QObject.connect(self.actPlaceHolder, SIGNAL("triggered()"), self.placeHolderAction)
+        self.actPlaceHolder = QAction(self.applicationIcon, "Placeholder",
+                                      self.xmlFileObject.mainwindow)
+        QObject.connect(self.actPlaceHolder, SIGNAL("triggered()"),
+                        self.placeHolderAction)
 
-        self.actOpenTextFile = QAction(self.applicationIcon, "Open Text File", self.xmlFileObject.mainwindow)
-        QObject.connect(self.actOpenTextFile, SIGNAL("triggered()"), self.openTextFile)
+        self.actOpenTextFile = QAction(self.applicationIcon, "Open Text File",
+                                       self.xmlFileObject.mainwindow)
+        QObject.connect(self.actOpenTextFile, SIGNAL("triggered()"),
+                        self.openTextFile)
         
-        QObject.connect(self.xmlFileObject.treeview, SIGNAL("customContextMenuRequested(const QPoint &)"),
+        QObject.connect(self.xmlFileObject.treeview,
+                        SIGNAL("customContextMenuRequested(const QPoint &)"),
                         self.processCustomMenu)
         
     def placeHolderAction(self):
@@ -58,15 +63,27 @@ class OpusFileAction(object):
             self.xmlFileObject.mainwindow.editorStatusLabel.setText(QString(filename))
 
     def fillInAvailableExportScripts(self):
-        print "Checking for scripts"
-        dbxml = self.xmlFileObject.mainwindow.toolboxStuff.dataManagerTree.model.index(0,0,QModelIndex()).parent()
-        dbindexlist = self.xmlFileObject.mainwindow.toolboxStuff.dataManagerTree.model.findElementIndexByType("script_config",dbxml,True)
+        #print "Checking for scripts"
+        tree = self.xmlFileObject.mainwindow.toolboxStuff.dataManagerTree
+        dbxml = tree.model.index(0,0,QModelIndex()).parent()
+        dbindexlist = tree.model.findElementIndexByType("script_batch",dbxml,True)
         choices = []
         for dbindex in dbindexlist:
             if dbindex.isValid():
                 indexElement = dbindex.internalPointer()
-                choices.append(indexElement.domNode.toElement().tagName())
+                tagName = indexElement.domNode.toElement().tagName()
+                if tagName.startsWith(QString("opus")):
+                    choices.append(tagName)
         return choices
+    
+    def dataActionMenuFunction(self,action):
+        filename = self.xmlFileObject.model.filePath(self.currentIndex)
+        actiontext = action.text()
+        print "%s - %s" % (filename,actiontext)
+        QObject.disconnect(self.menu, SIGNAL("triggered(QAction*)"),self.dataActionMenuFunction)
+        
+        # Add in the code to take action... like run a script...
+        return
     
     def processCustomMenu(self, position):
         self.currentColumn = self.xmlFileObject.treeview.indexAt(position).column()
@@ -75,10 +92,15 @@ class OpusFileAction(object):
             # Do stuff for directories
             self.menu = QMenu(self.xmlFileObject.mainwindow)
             choices = self.fillInAvailableExportScripts()
+            self.dynactions = []
             for i,choice in enumerate(choices):
                 # Add choices with custom text...
-                print choice
-            self.menu.addAction(self.actPlaceHolder)
+                #print choice
+                dynaction = QAction(self.applicationIcon, choice, self.xmlFileObject.mainwindow)
+                self.dynactions.append(dynaction)
+                self.menu.addAction(dynaction)
+            QObject.connect(self.menu, SIGNAL("triggered(QAction*)"),
+                            self.dataActionMenuFunction)
             self.menu.exec_(QCursor.pos())
         elif self.xmlFileObject.model.fileInfo(self.currentIndex).suffix() == "txt":
             self.menu = QMenu(self.xmlFileObject.mainwindow)
