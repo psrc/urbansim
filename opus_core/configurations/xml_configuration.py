@@ -23,27 +23,56 @@ class XMLConfiguration(object):
     and that can be stored or loaded from an XML file.
     """
     
-    def __init__(self, filename):
-        """initialize this configuration from the contents of the xml file named by 'filename' """
-        self.filename = filename
-        self.root = ElementTree(file=filename).getroot()
+    def __init__(self, filename, default_directory=None):
+        """Initialize this configuration from the contents of the xml file named by 'filename'.
+        Look first in the default directory if present; otherwise in the directory in which
+        the Opus code is stored."""
+        self._filepath = None
+        if default_directory is not None:
+            f = os.path.join(default_directory, filename)
+            if os.path.exists(f):
+                self._filepath = f
+        if self._filepath is None:
+            opus_core_dir = __import__('opus_core').__path__[0]
+            workspace_dir = os.path.split(opus_core_dir)[0]
+            self._filepath = os.path.join(workspace_dir, filename)
+        # if self._filepath doesn't exist, ElementTree will raise an IOError
+        self.root = ElementTree(file=self._filepath).getroot()
         if self.root.tag!='opus_project':
             raise ValueError, "malformed xml - expected to find a root element named 'opus_project'"
         
     def get_section(self, name):
         """Extract the section named 'name' from this xml project, convert it to a dictionary,
         put in default values from parent configuration (if any), and return the dictionary.
-        If there are multiple sections with the given name, return the first one."""
-        section = self._get_section_or_none(name)
-        if section is None:
-            raise ValueError, "didn't find a section named %s" % name
-        return section
+        Return None if there isn't such a section.  If there are multiple sections with the 
+        given name, return the first one."""
+        parentnode = self.root.find('parent')
+        if parentnode is None:
+            parentconfig = None
+        else:
+            # Find the correct path to the XML file for the parent.  Node that this works
+            # correctly for both relative and absolute paths (since join does the right thing
+            # if the second arg is absolute).
+            default_dir = os.path.split(self._filepath)[0]
+            parentconfig = XMLConfiguration(parentnode.text, default_directory=default_dir).get_section(name)
+        x = self.root.find(name)
+        if x is None:
+            return parentconfig
+        section = Configuration(self._node_to_config(x))
+        if parentconfig is None:
+            return section
+        else:
+            parentconfig.merge(section)
+            return parentconfig
+
 
     def get_run_configuration(self, name):
         """Extract the run configuration named 'name' from this xml project and return it.
         Note that one run configuration can inherit from another (in addition to the usual
         project-wide inheritance)."""
         config = self.get_section('scenario_manager/%s' % name)
+        if config is None:
+            raise ValueError, "didn't find a scenario named %s" % name
         if 'parent' in config:
             parent_config = self.get_run_configuration(config['parent'])
             del config['parent']
@@ -69,28 +98,6 @@ class XMLConfiguration(object):
                 result[submodel['submodel_id']] = submodel['variables']
         return result
     
-    def _get_section_or_none(self, name):
-        # return the named section, or none if it doesn't exist
-        parentnode = self.root.find('parent')
-        if parentnode is None:
-            parentconfig = None
-        else:
-            # Find the correct path to the XML file for the parent.  Node that this works
-            # correctly for both relative and absolute paths (since join does the right thing
-            # if the second arg is absolute).
-            dir = os.path.split(self.filename)[0]
-            parentfile = os.path.join(dir, parentnode.text)
-            parentconfig = XMLConfiguration(parentfile)._get_section_or_none(name)
-        x = self.root.find(name)
-        if x is None:
-            return parentconfig
-        section = Configuration(self._node_to_config(x))
-        if parentconfig is None:
-            return section
-        else:
-            parentconfig.merge(section)
-            return parentconfig
-
     def _node_to_config(self, node):
         config = {}
         for child in node:
