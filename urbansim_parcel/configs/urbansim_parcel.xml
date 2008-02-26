@@ -12,24 +12,22 @@
         <init type="dictionary" >
           <name type="string" >RealEstatePriceModel</name>
           <arguments type="dictionary" >
-            <submodel_string type="string" >land_use_type_id</submodel_string>
-            <outcome_attribute type="variable_definition" >ln_unit_price=ln(urbansim_parcel.parcel.unit_price)</outcome_attribute>
-            <filter_attribute type="variable_definition" >numpy.logical_or(urbansim_parcel.parcel.building_sqft, urbansim_parcel.parcel.is_land_use_type_vacant)</filter_attribute>
+            <submodel_string type="string" >'land_use_type_id'</submodel_string>
+            <outcome_attribute type="string" >'ln_unit_price=ln(urbansim_parcel.parcel.unit_price)'</outcome_attribute>
+            <filter_attribute type="string" >'numpy.logical_or(urbansim_parcel.parcel.building_sqft, urbansim_parcel.parcel.is_land_use_type_vacant)'</filter_attribute>
             <dataset_pool flags="hidden" type="string" >dataset_pool</dataset_pool>
-            <estimate_config type="dictionary" >
-              <save_predicted_values_and_errors type="boolean" >False</save_predicted_values_and_errors>
-            </estimate_config>
+            <estimate_config type="string" >Resources({'save_predicted_values_and_errors': False})</estimate_config>
           </arguments>
         </init>
         <prepare_for_run type="dictionary" >
           <name type="string" >prepare_for_run</name>
           <arguments type="dictionary" >
             <specification_storage type="string" >base_cache_storage</specification_storage>
-            <specification_table type="string" >real_estate_price_model_specification</specification_table>
+            <specification_table type="string" >'real_estate_price_model_specification'</specification_table>
             <coefficients_storage type="string" >base_cache_storage</coefficients_storage>
-            <coefficients_table type="string" >real_estate_price_model_coefficients</coefficients_table>
+            <coefficients_table type="string" >'real_estate_price_model_coefficients'</coefficients_table>
           </arguments>
-          <output flags="hidden" type="tuple" >(specification, coefficients)</output>
+          <output flags="hidden" type="string" >(specification, coefficients)</output>
         </prepare_for_run>
         <run type="dictionary" >
           <arguments type="dictionary" >
@@ -37,7 +35,7 @@
             <coefficients flags="hidden" type="string" >coefficients</coefficients>
             <dataset type="string" >parcel</dataset>
             <data_objects flags="hidden" type="string" >datasets</data_objects>
-            <run_config type="dictionary" >{'exclude_outliers_from_initial_error': True, 'outlier_is_less_than': exp(3), 'outlier_is_greater_than':exp(7)}</run_config>
+            <run_config type="string" >Resources({'exclude_outliers_from_initial_error': True, 'outlier_is_less_than':20.0855, 'outlier_is_greater_than': 1096.63})</run_config>
           </arguments>
         </run>
         <prepare_for_estimate type="dictionary" >
@@ -45,23 +43,23 @@
           <arguments type="dictionary" >
             <specification_storage type="string" >base_cache_storage</specification_storage>
             <specification_table type="string" >real_estate_price_model_specification</specification_table>
-            <filter_variable type="variable_definition" >numpy.logical_and(urbansim_parcel.parcel.unit_price>exp(3),urbansim_parcel.parcel.unit_price&lt;exp(7), urbansim_parcel.parcel.existing_units>100)</filter_variable>
+            <filter_variable type="string" >'numpy.logical_and(urbansim_parcel.parcel.unit_price&gt;20.0855, urbansim_parcel.parcel.unit_price&lt;1096.63, urbansim_parcel.parcel.existing_units&gt;100)'</filter_variable>
             <dataset type="string" >parcel</dataset>
             <threshold type="integer" >1</threshold>
           </arguments>
-          <output flags="hidden" type="tuple" >(specification, index)</output>
+          <output flags="hidden" type="string" >(specification, index)</output>
         </prepare_for_estimate>
         <estimate type="dictionary" >
           <arguments type="dictionary" >
             <specification flags="hidden" type="string" >specification</specification>
-            <outcome_attribute type="string" >ln_unit_price=ln(urbansim_parcel.parcel.unit_price)</outcome_attribute>
+            <outcome_attribute type="string" >'ln_unit_price=ln(urbansim_parcel.parcel.unit_price)'</outcome_attribute>
             <dataset type="string" >parcel</dataset>
             <index flags="hidden" type="string" >index</index>
             <data_objects flags="hidden" type="string" >datasets</data_objects>
             <debuglevel type="string" >debuglevel</debuglevel>
             <procedure type="string" >opus_core.estimate_linear_regression</procedure>
           </arguments>
-          <output flags="hidden" type="tuple" >(coefficients, dummy)</output>
+          <output flags="hidden" type="string" >(coefficients, dummy)</output>
         </estimate>
       </real_estate_price_model>
     </model_system>
