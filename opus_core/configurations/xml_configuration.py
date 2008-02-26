@@ -50,9 +50,7 @@ class XMLConfiguration(object):
         if parentnode is None:
             parentconfig = None
         else:
-            # Find the correct path to the XML file for the parent.  Node that this works
-            # correctly for both relative and absolute paths (since join does the right thing
-            # if the second arg is absolute).
+            # try looking for the parent in the same directory that this XML project is located
             default_dir = os.path.split(self._filepath)[0]
             parentconfig = XMLConfiguration(parentnode.text, default_directory=default_dir).get_section(name)
         x = self.root.find(name)
@@ -65,25 +63,19 @@ class XMLConfiguration(object):
             parentconfig.merge(section)
             return parentconfig
 
-
-    def get_run_configuration(self, name):
+    def get_run_configuration(self, name, merge_controllers=True):
         """Extract the run configuration named 'name' from this xml project and return it.
         Note that one run configuration can inherit from another (in addition to the usual
-        project-wide inheritance)."""
+        project-wide inheritance).  If merge_controllers is True, merge in the controller
+        section into the run configuration."""
         config = self.get_section('scenario_manager/%s' % name)
         if config is None:
             raise ValueError, "didn't find a scenario named %s" % name
-        # merge in the controllers in the model_manager/model_system portion of the project (if any)
-        my_controller_configuration = self.get_section('model_manager/model_system')
-        if my_controller_configuration is not None:
-            if "models_configuration" not in config:
-                config["models_configuration"] = {}
-            for model in my_controller_configuration.keys():
-                if model not in config["models_configuration"].keys():
-                    config["models_configuration"][model] = {}
-                config['models_configuration'][model]['controller'] = my_controller_configuration[model]
+        if merge_controllers:
+            # merge in the controllers in the model_manager/model_system portion of the project (if any)
+            self._merge_controllers(config)
         if 'parent' in config:
-            parent_config = self.get_run_configuration(config['parent'])
+            parent_config = self.get_run_configuration(config['parent'], merge_controllers=False)
             del config['parent']
             parent_config.merge(config)
             return parent_config
@@ -105,8 +97,20 @@ class XMLConfiguration(object):
             if submodel_name!='all_variables':
                 submodel = model[submodel_name]
                 result[submodel['submodel_id']] = submodel['variables']
+        self._merge_controllers(result)
         return result
     
+    def _merge_controllers(self, config):
+        # merge in the controllers in the model_manager/model_system portion of the project (if any) into config
+        my_controller_configuration = self.get_section('model_manager/model_system')
+        if my_controller_configuration is not None:
+            if "models_configuration" not in config:
+                config["models_configuration"] = {}
+            for model in my_controller_configuration.keys():
+                if model not in config["models_configuration"].keys():
+                    config["models_configuration"][model] = {}
+                config['models_configuration'][model]['controller'] = my_controller_configuration[model]
+
     def _node_to_config(self, node):
         config = {}
         for child in node:
@@ -435,7 +439,10 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_get_estimation_specification(self):
         f = os.path.join(self.test_configs, 'estimate.xml')
         config = XMLConfiguration(f).get_estimation_specification('real_estate_price_model')
-        should_be = {
+        should_be = {'models_configuration': {'real_estate_price_model': {'controller': {'prepare_for_run': {
+              'name': 'prepare_for_run', 
+              'arguments': {'specification_storage': 'base_cache_storage', 'specification_table': 'real_estate_price_model_specification'}
+              }}}},
           '_definition_': ['ln_cost=ln(psrc.parcel.cost)', 'unit_price=urbansim_parcel.parcel.unit_price'],
           24: ['ln_cost']}
         self.assertEqual(config, should_be)
