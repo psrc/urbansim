@@ -120,9 +120,9 @@ class OpusEstimation(object):
             succeeded = False
             try:
                 fileNameInfo = QFileInfo(self.xml_path)
-                parcelfile = fileNameInfo.absoluteFilePath().trimmed()
-                print parcelfile
-                xml_config = XMLConfiguration(parcelfile)
+                filename = fileNameInfo.absoluteFilePath().trimmed()
+                print filename
+                xml_config = XMLConfiguration(str(filename))
                 estimation_section = xml_config.get_section('model_manager/estimation')
                 estimation_config = estimation_section['estimation_config']
                 self.config = estimation_config
