@@ -615,7 +615,7 @@
     </Seattle_baseline>
   </scenario_manager>
   <results_manager>
-    <Libraries type="group" setexpanded="True" >
+    <Indicator_libraries type="group" setexpanded="True" >
       <model.parcel type="indicator_library" >
         <number_of_jobs type="indicator" >
           <package type="string" >urbansim</package>
@@ -624,7 +624,7 @@
           <expression type="string" >urbansim_parcel.DATASET.number_of_jobs</expression>
         </number_of_jobs>
       </model.parcel>
-    </Libraries>
+    </Indicator_libraries>
     <Data_sources type="all_source_data" setexpanded="True" >
       <seattle_parcel_baseline type="source_data" >
         <start_year type="integer" >2000</start_year>

@@ -1,10 +1,10 @@
 <opus_project>
-  <parent type="file">urbansim_gridcell.xml</parent>
+  <parent type="file" >urbansim_gridcell.xml</parent>
   <general>
     <description type="string" >Sample Eugene project</description>
   </general>
   <data_manager>
-    <script_library type="script_library" setexpanded="True">
+    <script_library type="script_library" setexpanded="True" >
       <script_path type="script_path" >projects.scripts</script_path>
       <opus_data_to_sql_tool type="script_file" >opus_data_to_sql</opus_data_to_sql_tool>
       <opus_data_to_esri_tool type="script_file" >opus_data_to_esri</opus_data_to_esri_tool>
@@ -12,19 +12,19 @@
       <postgis_buffer_tool type="script_file" >postgis_buffer</postgis_buffer_tool>
       <raw_sql_query type="script_file" >raw_sql</raw_sql_query>
     </script_library>
-    <opus_data_to_sql type="script_batch" setexpanded="True">
+    <opus_data_to_sql type="script_batch" setexpanded="True" >
       <opus_data_to_sql_config type="script_config" >
-        <script_hook type="script_library_ref">opus_data_to_sql_tool</script_hook>
+        <script_hook type="script_library_ref" >opus_data_to_sql_tool</script_hook>
         <param1 type="string" >foobar</param1>
       </opus_data_to_sql_config>
     </opus_data_to_sql>
-    <opus_data_to_esri type="script_batch" setexpanded="True">
+    <opus_data_to_esri type="script_batch" setexpanded="True" >
       <opus_data_to_esri_config type="script_config" >
-        <script_hook type="script_library_ref">opus_data_to_esri_tool</script_hook>
+        <script_hook type="script_library_ref" >opus_data_to_esri_tool</script_hook>
         <param1 type="string" >barfoo</param1>
       </opus_data_to_esri_config>
     </opus_data_to_esri>
-    <script_batch1 type="script_batch" setexpanded="True">
+    <script_batch1 type="script_batch" setexpanded="True" >
       <roads_buffer_tool type="script_config" >
         <script_hook type="script_library_ref" >esri_buffer_tool</script_hook>
         <input_shapefile type="string" >c:\data\roads.shp</input_shapefile>
@@ -37,30 +37,30 @@
         <query type="string" >update some_table set some_field = blahblahblah</query>
       </roads_sql_query>
     </script_batch1>
-    <script_batch2 type="script_batch" setexpanded="True">
+    <script_batch2 type="script_batch" setexpanded="True" >
       <script_path type="script_path" >projects.scripts</script_path>
       <processing_script_1 type="script_file" >test</processing_script_1>
     </script_batch2>
     <documentation type="documentation_path" >documentation/installation/index.html</documentation>
   </data_manager>
   <data_manager_dbstree>
-    <database_library type="database_library" setexpanded="True">
-      <urbansim_db1 type="db_connection" setexpanded="True">
-        <host_name type="string">urbanserver</host_name>
-        <protocol type="string">xxx_protocol</protocol>
-        <user_name type="string">pwaddell</user_name>
-        <password type="password">sunshine</password>
+    <database_library type="database_library" setexpanded="True" >
+      <urbansim_db1 type="db_connection" setexpanded="True" >
+        <host_name type="string" >urbanserver</host_name>
+        <protocol type="string" >xxx_protocol</protocol>
+        <user_name type="string" >pwaddell</user_name>
+        <password type="password" >sunshine</password>
       </urbansim_db1>
-      <urbansim_db2 type="db_connection" setexpanded="True">
-        <host_name type="string">urbanserver2</host_name>
-        <protocol type="string">xxx_protocol2</protocol>
-        <user_name type="string">pwaddell2</user_name>
-        <password type="password">sunshine2</password>
+      <urbansim_db2 type="db_connection" setexpanded="True" >
+        <host_name type="string" >urbanserver2</host_name>
+        <protocol type="string" >xxx_protocol2</protocol>
+        <user_name type="string" >pwaddell2</user_name>
+        <password type="password" >sunshine2</password>
       </urbansim_db2>
     </database_library>
   </data_manager_dbstree>
   <scenario_manager>
-    <Eugene_baseline type="scenario" executable="True" setexpanded="True">
+    <Eugene_baseline type="scenario" executable="True" setexpanded="True" >
       <parent type="scenario_name" >default_scenario</parent>
       <base_year type="integer" >1980</base_year>
       <years_to_run config_name="years" type="tuple" >
@@ -188,9 +188,9 @@
     </Eugene_baseline>
   </scenario_manager>
   <results_manager>
-    <Libraries type="group" setexpanded="True">
-      <model.gridcell type="indicator_library">
-        <population type="indicator">
+    <Indicator_libraries type="group" setexpanded="True" >
+      <model.gridcell type="indicator_library" >
+        <population type="indicator" >
           <package type="string" >urbansim</package>
           <valid_datasets type="string" >GEOGRAPHY</valid_datasets>
           <documentation_link type="string" />
@@ -221,7 +221,7 @@
           <expression type="string" >urbansim.DATASET.population_density</expression>
         </population_density>
       </model.gridcell>
-      <eugene.frank.indicators type="indicator_library">
+      <eugene.frank.indicators type="indicator_library" >
         <global_population_density type="indicator" >
           <package type="string" >urbansim</package>
           <valid_datasets type="string" >alldata</valid_datasets>
@@ -229,7 +229,7 @@
           <expression type="string" >alldata.aggregate_all(urbansim.gridcell.population_density, function=sum)</expression>
         </global_population_density>
       </eugene.frank.indicators>
-      <my_indicators append_to="True" type="indicator_library">
+      <my_indicators append_to="True" type="indicator_library" >
         <residential_units type="indicator" >
           <package type="string" >urbansim</package>
           <valid_datasets type="string" >alldata</valid_datasets>
@@ -237,73 +237,28 @@
           <expression type="string" >alldata.aggregate_all(urbansim.gridcell.residential_units, function=sum)</expression>
         </residential_units>
       </my_indicators>
-    </Libraries>
-    <Data_sources type="all_source_data" setexpanded="True">
-      <eugene_baseline type="source_data">
-        <start_year type="integer" >1980</start_year>
-        <end_year type="integer" >1980</end_year>
+    </Indicator_libraries>
+    <Simulation_runs type="all_source_data" setexpanded="True" >
+      <Eugene_baseline.run1900 type="source_data" >
+        <scenario_name type="string" >Eugene_baseline</scenario_name>
         <run_name type="string" >run1900</run_name>
-        <scenario_name type="string" >Eugene_baseline</scenario_name>
-      </eugene_baseline>
-      <tunnel_scenario type="source_data">
         <start_year type="integer" >1980</start_year>
         <end_year type="integer" >1980</end_year>
+      </Eugene_baseline.run1900>
+      <Tunnel_scenario.run1834 type="source_data" >
+        <scenario_name type="string" >Tunnel_scenario</scenario_name>
         <run_name type="string" >run1834</run_name>
-        <scenario_name type="string" >Eugene_baseline</scenario_name>
-      </tunnel_scenario>
-      <rebuild_scenario type="source_data">
         <start_year type="integer" >1980</start_year>
         <end_year type="integer" >1980</end_year>
+      </Tunnel_scenario.run1834>
+      <Rebuild_scenario.run1835 type="source_data" >
+        <scenario_name type="string" >Rebuild_scenario</scenario_name>
         <run_name type="string" >run1835</run_name>
-        <scenario_name type="string" >Eugene_baseline</scenario_name>
-      </rebuild_scenario>
-    </Data_sources>
-    <Results type="selectable_list" setexpanded="True">
-      <population.zone.eugene_baseline type="indicator_result" >
-        <source_data type="string" >eugene_baseline</source_data>
-        <indicator_name type="string" >population</indicator_name>
-        <dataset_name type="string" >zone</dataset_name>
-      </population.zone.eugene_baseline>
-      <population.gridcell.eugene_baseline type="indicator_result" >
-        <source_data type="string" >eugene_baseline</source_data>
-        <indicator_name type="string" >population</indicator_name>
-        <dataset_name type="string" >gridcell</dataset_name>
-      </population.gridcell.eugene_baseline>
-      <number_of_jobs.zone.eugene_baseline type="indicator_result" >
-        <source_data type="string" >eugene_baseline</source_data>
-        <indicator_name type="string" >number_of_jobs</indicator_name>
-        <dataset_name type="string" >zone</dataset_name>
-      </number_of_jobs.zone.eugene_baseline>
-      <number_of_jobs.gridcell.eugene_baseline type="indicator_result" >
-        <source_data type="string" >eugene_baseline</source_data>
-        <indicator_name type="string" >number_of_jobs</indicator_name>
-        <dataset_name type="string" >gridcell</dataset_name>
-      </number_of_jobs.gridcell.eugene_baseline>
-      <industrial_sqft.zone.eugene_baseline type="indicator_result" >
-        <source_data type="string" >eugene_baseline</source_data>
-        <indicator_name type="string" >industrial_sqft</indicator_name>
-        <dataset_name type="string" >zone</dataset_name>
-      </industrial_sqft.zone.eugene_baseline>
-      <industrial_sqft.gridcell.eugene_baseline type="indicator_result" >
-        <source_data type="string" >eugene_baseline</source_data>
-        <indicator_name type="string" >industrial_sqft</indicator_name>
-        <dataset_name type="string" >gridcell</dataset_name>
-      </industrial_sqft.gridcell.eugene_baseline>
-      <total_land_value.zone.eugene_baseline type="indicator_result" >
-        <source_data type="string" >eugene_baseline</source_data>
-        <indicator_name type="string" >total_land_value</indicator_name>
-        <dataset_name type="string" >zone</dataset_name>
-      </total_land_value.zone.eugene_baseline>
-      <total_land_value.gridcell.eugene_baseline type="indicator_result" >
-        <source_data type="string" >eugene_baseline</source_data>
-        <indicator_name type="string" >total_land_value</indicator_name>
-        <dataset_name type="string" >gridcell</dataset_name>
-      </total_land_value.gridcell.eugene_baseline>
-      <population_density.gridcell.eugene_baseline type="indicator_result" >
-        <source_data type="string" >eugene_baseline</source_data>
-        <indicator_name type="string" >population_density</indicator_name>
-        <dataset_name type="string" >gridcell</dataset_name>
-      </population_density.gridcell.eugene_baseline>
+        <start_year type="integer" >1980</start_year>
+        <end_year type="integer" >1980</end_year>
+      </Rebuild_scenario.run1835>
+    </Simulation_runs>
+    <Results type="selectable_list" setexpanded="True" >
     </Results>
   </results_manager>
 </opus_project>
