@@ -1,5 +1,16 @@
 <opus_project>
   <model_manager>
+    <model_system type="dictionary" >
+      <real_estate_price_model type="dictionary" >
+        <prepare_for_run type="dictionary" >
+          <name type="string" >prepare_for_run</name>
+          <arguments type="dictionary" >
+            <specification_storage type="string" >base_cache_storage</specification_storage>
+            <specification_table type="string" >real_estate_price_model_specification</specification_table>
+          </arguments>
+        </prepare_for_run>
+      </real_estate_price_model>
+    </model_system>
     <estimation type="dictionary" >
       <real_estate_price_model type="dictionary" >
         <all_variables type="dictionary" >
