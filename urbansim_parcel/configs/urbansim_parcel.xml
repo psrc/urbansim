@@ -62,6 +62,72 @@
           <output flags="hidden" type="string" >(coefficients, dummy)</output>
         </estimate>
       </real_estate_price_model>
+      
+      <employment_transition_model  parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">EmploymentTransitionModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.employment_transition_model_configuration_creator</Class_path>
+          <location_id_name type="string">building_id</location_id_name>
+      </employment_transition_model>
+ 
+      <employment_relocation_model  parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">EmploymentRelocationModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.employment_relocation_model_configuration_creator</Class_path>
+          <location_id_name type="string">building_id</location_id_name>
+          <output_index type="string">erm_index</output_index>
+      </employment_relocation_model>
+ 
+      <employment_location_choice_model  parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">EmploymentLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.employment_location_choice_model_configuration_creator</Class_path>
+          <location_set type="string">building</location_set>
+          <input_index type="string">erm_index</input_index>
+           <estimation_weight_string type="string">vacant_SSS_job_space</estimation_weight_string>
+           <agents_for_estimation_table type="string">jobs_for_estimation</agents_for_estimation_table>
+           <number_of_units_string type="string">total_SSS_job_space</number_of_units_string>
+           <filter type="string">building.non_residential_sqft</filter>
+           <filter_for_estimation type="string">numpy.logical_and(job.building_id&gt;0, job.disaggregate(building.non_residential_sqft) &gt; 0)</filter_for_estimation>
+           <portion_to_unplace type="integer">0</portion_to_unplace>
+           <capacity_string type="string">vacant_SSS_job_space</capacity_string>
+           <variable_package type="string">urbansim_parcel</variable_package>
+          <lottery_max_iterations type="integer">10</lottery_max_iterations>
+      </employment_location_choice_model>
+ 
+      <home_based_employment_location_choice_model  parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">EmploymentLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.employment_location_choice_model_configuration_creator</Class_path>
+          <location_set type="string">building</location_set>
+          <input_index type="string">erm_index</input_index>
+           <estimation_weight_string type="string">vacant_home_based_job_space</estimation_weight_string>
+           <agents_for_estimation_table type="string" parser_action="empty_string_to_None"></agents_for_estimation_table>
+           <estimation_size_agents type="float">0.4</estimation_size_agents>
+           <number_of_units_string type="string" parser_action="empty_string_to_None"></number_of_units_string>
+           <filter type="string">numpy.logical_and(building.residential_units, building.sqft_per_unit)</filter>
+           <filter_for_estimation type="string">numpy.logical_and(job.building_id&gt;0, job.disaggregate(building.sqft_per_unit &gt; 0))</filter_for_estimation>
+           <portion_to_unplace type="integer">0</portion_to_unplace>
+           <capacity_string type="string">vacant_home_based_job_space</capacity_string>
+           <variable_package type="string">urbansim_parcel</variable_package>
+          <lottery_max_iterations type="integer">7</lottery_max_iterations>
+      </home_based_employment_location_choice_model>
+ 
+ 
+      <distribute_unplaced_jobs_model  parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">DistributeUnplacedJobsModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.distribute_unplaced_jobs_model_configuration_creator</Class_path>
+          <location_set type="string">building</location_set>
+          <filter type="string">urbansim_parcel.building.is_governmental</filter>
+          <agents_filter type="string">urbansim.job.is_in_employment_sector_group_scalable_sectors</agents_filter>
+      </distribute_unplaced_jobs_model>
+ 
+      <governmental_employment_location_choice_model  parser_action="execute" type="class">
+          <Class_name flags="hidden" type="string">GovernmentalEmploymentLocationChoiceModelConfigurationCreator</Class_name>
+          <Class_path flags="hidden" type="string">urbansim.configurations.governmental_employment_location_choice_model_configuration_creator</Class_path>
+          <input_index type="string">erm_index</input_index>
+          <location_set type="string">building</location_set>
+          <filter type="string">urbansim_parcel.building.is_governmental</filter>
+      </governmental_employment_location_choice_model>
+ 
+ 
+
     </model_system>
   </model_manager>
   <scenario_manager>
