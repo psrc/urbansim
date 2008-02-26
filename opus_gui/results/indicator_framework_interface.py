@@ -26,20 +26,17 @@ class IndicatorFrameworkInterface:
     def __init__(self, domDocument):
         self.domDocument = domDocument
     
-    def get_source_data_from_XML(self, source_data_name, cache_directory):
+    def get_source_data_from_XML(self, source_data_name, cache_directory, years):
         #TODO eliminate hardcoded package_order
         source_data_node = self.domDocument.elementsByTagName(source_data_name).item(0)
 
         dataset_pool_configuration = DatasetPoolConfiguration(
-             package_order=['seattle_parcel','urbansim_parcel','urbansim','opus_core'],
+             #package_order=['seattle_parcel','urbansim_parcel','urbansim','opus_core'],
+             package_order=['eugene','urbansim','opus_core'],
+
              package_order_exceptions={},
              )
-        
-        years = get_child_values(parent = source_data_node, 
-                                 child_names = ['start_year',
-                                                'end_year'])
-        years = range(int(str(years['start_year'])), int(str(years['end_year'])) + 1)
-                
+                        
         source_data = SourceData(
                  dataset_pool_configuration = dataset_pool_configuration,
                  cache_directory = cache_directory, 

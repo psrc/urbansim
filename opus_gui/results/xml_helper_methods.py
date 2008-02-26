@@ -41,7 +41,7 @@ def _elementsByAttributeValue(first_child,
                 continue
 
             if domElement.attribute(attribute) == value:
-                matches.append(domElement)
+                matches.append((domElement,node))
             
         if node.hasChildNodes():
             first_child = node.firstChild()

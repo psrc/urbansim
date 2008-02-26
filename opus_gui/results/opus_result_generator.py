@@ -44,11 +44,7 @@ class OpusGuiThread(QThread):
             progressCallback = None,
             finishedCallback = None,
             errorCallback = None):
-        
-#        try:
-#            import pydevd;pydevd.settrace()
-#        except:
-#            pass
+    
         
         if progressCallback is None:
             progressCallback = self.progressCallback
@@ -118,11 +114,14 @@ class OpusResultVisualizer(object):
         info = get_child_values(parent = self.clicked_node,
                                 child_names = ['source_data',
                                                'indicator_name',
-                                               'dataset_name'])
+                                               'dataset_name',
+                                               'available_years'])
         
         source_data_name = str(info['source_data'])
         indicator_name = str(info['indicator_name'])
         dataset_name = str(info['dataset_name'])
+        years = [int(y) for y in str(info['available_years']).split(', ')]
+        
         scenario_name = get_scenario_name(domDocument = self.domDocument, 
                                           source_data_name = source_data_name)
         self.config = XMLConfiguration(str(configuration_path)).get_run_configuration(scenario_name)
@@ -132,7 +131,8 @@ class OpusResultVisualizer(object):
         interface = IndicatorFrameworkInterface(domDocument = self.domDocument)
         source_data = interface.get_source_data_from_XML(
                                      source_data_name = source_data_name, 
-                                     cache_directory = cache_directory)
+                                     cache_directory = cache_directory,
+                                     years = years)
         indicator = interface.get_indicator_from_XML(
                                      indicator_name = indicator_name,
                                      dataset_name = dataset_name)
@@ -199,10 +199,12 @@ class OpusResultGenerator(object):
     def set_data(self,
                  source_data_name,
                  indicator_name,
-                 dataset_name):
+                 dataset_name,
+                 years):
         self.source_data_name = source_data_name
         self.indicator_name = indicator_name
         self.dataset_name = dataset_name
+        self.years = years
         
     def run(self):
         
@@ -213,8 +215,12 @@ class OpusResultGenerator(object):
                 fileNameInfo = QFileInfo(self.xml_path)
                 fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
                 configuration_path = fileNameAbsolute
-                self._generate_results(configuration_path = configuration_path)
+                try:
+                    import pydevd;pydevd.settrace()
+                except:
+                    pass
                 
+                self._generate_results(configuration_path = configuration_path)
                 succeeded = True
             except Exception, e:
                 succeeded = False
@@ -250,7 +256,8 @@ class OpusResultGenerator(object):
         
         source_data = interface.get_source_data_from_XML(
                                      source_data_name = self.source_data_name, 
-                                     cache_directory = cache_directory)
+                                     cache_directory = cache_directory,
+                                     years = self.years)
         indicator = interface.get_indicator_from_XML(
                                      indicator_name = self.indicator_name,
                                      dataset_name = self.dataset_name)
@@ -259,9 +266,7 @@ class OpusResultGenerator(object):
 
         computed_indicator = maker.create(indicator = indicator, 
                                           source_data = source_data)
-        
-        #TODO: add result to results tree
-        
+                
     def _get_current_log(self, key):
         newKey = key
         if WithOpus:
