@@ -42,7 +42,7 @@
           <name type="string" >prepare_for_estimate</name>
           <arguments type="dictionary" >
             <specification_storage type="string" >base_cache_storage</specification_storage>
-            <specification_table type="string" >real_estate_price_model_specification</specification_table>
+            <specification_table type="string" >'real_estate_price_model_specification'</specification_table>
             <filter_variable type="string" >'numpy.logical_and(urbansim_parcel.parcel.unit_price&gt;20.0855, urbansim_parcel.parcel.unit_price&lt;1096.63, urbansim_parcel.parcel.existing_units&gt;100)'</filter_variable>
             <dataset type="string" >parcel</dataset>
             <threshold type="integer" >1</threshold>
@@ -57,7 +57,7 @@
             <index flags="hidden" type="string" >index</index>
             <data_objects flags="hidden" type="string" >datasets</data_objects>
             <debuglevel type="string" >debuglevel</debuglevel>
-            <procedure type="string" >opus_core.estimate_linear_regression</procedure>
+            <procedure type="string" >'opus_core.estimate_linear_regression'</procedure>
           </arguments>
           <output flags="hidden" type="string" >(coefficients, dummy)</output>
         </estimate>
