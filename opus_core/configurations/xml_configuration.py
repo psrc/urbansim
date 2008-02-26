@@ -73,6 +73,15 @@ class XMLConfiguration(object):
         config = self.get_section('scenario_manager/%s' % name)
         if config is None:
             raise ValueError, "didn't find a scenario named %s" % name
+        # merge in the controllers in the model_manager/model_system portion of the project (if any)
+        my_controller_configuration = self.get_section('model_manager/model_system')
+        if my_controller_configuration is not None:
+            if "models_configuration" not in config:
+                config["models_configuration"] = {}
+            for model in my_controller_configuration.keys():
+                if model not in config["models_configuration"].keys():
+                    config["models_configuration"][model] = {}
+                config['models_configuration'][model]['controller'] = my_controller_configuration[model]
         if 'parent' in config:
             parent_config = self.get_run_configuration(config['parent'])
             del config['parent']
@@ -411,6 +420,16 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
             'all_variables': {'ln_cost': 'ln_cost=ln(psrc.parcel.cost)', 'unit_price': 'unit_price=urbansim_parcel.parcel.unit_price'},
             'single_family_residential': {'submodel_id': 24, 'variables': ['ln_cost']}},
           'models_to_estimate': ['real_estate_price_model']}
+        self.assertEqual(config, should_be)
+        
+    def test_get_controller(self):
+        # test getting a run specification that includes a controller in the xml
+        f = os.path.join(self.test_configs, 'controller_test.xml')
+        config = XMLConfiguration(f).get_run_configuration('baseline')
+        should_be = {'models_configuration': {'real_estate_price_model': {'controller': {'prepare_for_run': {
+          'name': 'prepare_for_run', 
+          'arguments': {'specification_storage': 'base_cache_storage', 'specification_table': 'real_estate_price_model_specification'}
+          }}}}}
         self.assertEqual(config, should_be)
         
     def test_get_estimation_specification(self):
