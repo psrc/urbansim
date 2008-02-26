@@ -24,12 +24,13 @@ class DatasetPool(object):
     Maintains a 'pool' of datasets.  
     """
     
-    def __init__(self, package_order=[], package_order_exceptions={}, storage=None):
+    def __init__(self, package_order=[], package_order_exceptions={}, storage=None, datasets_dict={}):
         """Keeps a set of datasets by name & knows where to look for dataset modules."""
         self._package_order = package_order
         self._package_order_exceptions = package_order_exceptions
         self._storage = storage
         self._loaded_datasets = {}
+        self.add_datasets_if_not_included(datasets_dict)
         
     def get_copy(self):
         """Return a copy of this dataset pool, without copying the datasets."""

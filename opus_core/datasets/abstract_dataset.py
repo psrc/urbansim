@@ -289,15 +289,19 @@ class AbstractDataset(object):
                                      axis=1)
         return id_array
     
-    def get_2d_attribute(self, attribute=None, attribute_data=None):
+    def get_2d_attribute(self, attribute=None, attribute_data=None, coordinate_system=None):
         """Returns an 2d array of the attribute given. If no attribute is given, attribute_data must be provided.
-        The dataset must have self._coordinate_system defined.
+        If coordinate_system is None, dataset must have self._coordinate_system defined. It is a tuple of 2 attribute names, 
+        that define the x and y axis, respectively.
         """
-        self._check_2d_coordinates()
-        x_attribute_name, y_attribute_name = self.get_coordinate_system()
+        if coordinate_system is None:
+            self._check_2d_coordinates()
+            x_attribute_name, y_attribute_name = self.get_coordinate_system()
+        else:
+            x_attribute_name, y_attribute_name = coordinate_system
 
-        x = self.get_attribute(x_attribute_name)
-        y = self.get_attribute(y_attribute_name)
+        x = self.get_attribute(x_attribute_name).astype('int32')
+        y = self.get_attribute(y_attribute_name).astype('int32')
         maxx = int(ma.maximum.reduce(x))
         maxy = int(ma.maximum.reduce(y))
         if attribute is not None:
@@ -1088,35 +1092,56 @@ class AbstractDataset(object):
         v1, v2 = self._scatter(name_x, name_y, npoints)
         plot_scatter(v1, v2, name_x, name_y, main, **kwargs)
         
-    def r_histogram(self, name, main="", prob=1, breaks=None):
-        """Create a histogram of the attribute given by 'name'. rpy module required.
+    def r_histogram(self, name, main="", prob=1, breaks=None, file=None, pdf=True):
+        """Create a histogram of the attribute given by 'name'. 
+        If 'file' is given, the plot is outputed into the file as pdf (if 'pdf' is True) or as postscript
+            (if 'pdf' is False).
+        rpy module required.
         """
         from rpy import r
         if breaks is None:
             breaks = "Sturges"
+        if file:
+            if pdf:
+                r.pdf(file)
+            else:
+                r.postscript(file)
         r.hist(self.get_attribute(name),breaks=breaks, main=main, xlab=name, prob=prob)
         r.lines(r.density(self.get_attribute(name)))
+        if file:
+            r.dev_off()
 
-    def r_scatter(self, name_x, name_y, main="", npoints=None):
+    def r_scatter(self, name_x, name_y, main="", npoints=None, file=None, pdf=True):
         """Create a scatter plot of the attributes given by 'name_x' (x-axis) and 'name_y' (y-axis) and display its correlation coefficient.
         'npoints' controls the number of points in the plot. If it is None, all points are plotted, otherwise they are selected randomly.
+        If 'file' is given, the plot is outputed into the file as pdf (if 'pdf' is True) or as postscript
+            (if 'pdf' is False).
         rpy module required.
         """
         from rpy import r
         v1, v2 = self._scatter(name_x, name_y, npoints)
+        if file:
+            if pdf:
+                r.pdf(file)
+            else:
+                r.postscript(file)
         r.plot(v1,v2, main=main,
             xlab=name_x, ylab=name_y)
-
-    def r_image(self, name, main="", xlab="x", ylab="y", min_value=None, max_value=None, file=None, pdf=True):
+        if file:
+            r.dev_off()
+            
+    def r_image(self, name, main="", xlab="x", ylab="y", min_value=None, max_value=None, white_background=True, file=None, pdf=True, coordinate_system=None):
         """ Plots a 2D image of attribute given by 'name'. rpy module and R library 'fields'
             required. The dataset must have a method 'get_2d_attribute' defined that returns
             a 2D array that is to be plotted. If min_value/max_value are given, all values
             that are smaller/larger than these values are set to min_value/max_value.
-            As white background is considered the minimum value of the array.
+            If white_background is True, as white background is considered the minimum value of the array.
             If 'file' is given, the plot is outputed into the file as pdf (if 'pdf' is True) or as postscript
             (if 'pdf' is False).
+            If coordinate_system is None, dataset must have self._coordinate_system defined. It is a tuple of 2 attribute names 
+            that define the x and y axis, respectively.
         """
-        tdata = self.get_2d_attribute(name)
+        tdata = self.get_2d_attribute(name, coordinate_system=coordinate_system)
         nonmaskedmin = ma.minimum(tdata)
         if max_value == None:
             max_value = ma.maximum(tdata)
@@ -1140,14 +1165,18 @@ class AbstractDataset(object):
                 r.pdf(file)
             else:
                 r.postscript(file)
+        if white_background:
+            color = r.c('white', r.rainbow(150)[20:150])
+        else:
+            color = r.rainbow(150)[20:150]
         r.image_plot(z=data, x=r.seq(1,xlen), y=r.seq(1,ylen),
                 xlab=xlab, ylab=ylab, main=main, sub=name,
-                col=r.c('white', r.rainbow(150)[20:150]))
+                col=color)
         if file:
             r.dev_off()
 
     def plot_map(self, name, main="", xlab="x", ylab="y", min_value=None, max_value=None, file=None,
-                 my_title="", filter=None, background=None):
+                 my_title="", filter=None, background=None, coordinate_system=None):
         """ Plots a 2D image of attribute given by 'name'. matplotlib required.
             The dataset must have a method 'get_2d_attribute' defined that returns
             a 2D array that is to be plotted. If min_value/max_value are given, all values
@@ -1157,18 +1186,20 @@ class AbstractDataset(object):
             Filter can be a string in which case it is considered as attribute name, or a 2D array.
             Points where filter is > 0 are masked out (put into background).
             If 'file' is given, the plot is outputed into the file.
+            If coordinate_system is None, dataset must have self._coordinate_system defined. It is a tuple of 2 attribute names 
+            that define the x and y axis, respectively.
         """
         from matplotlib.pylab import jet,imshow,colorbar,show,axis,savefig,close,figure,title,normalize
         from matplotlib.pylab import rot90
         if name not in self.get_known_attribute_names():
             self.compute_variables([name])
-        tdata = self.get_2d_attribute(name)
+        tdata = self.get_2d_attribute(name, coordinate_system=coordinate_system)
         data_mask = tdata.mask
         if filter is not None:
             if isinstance(filter, str):
                 if filter not in self.get_known_attribute_names():
                     self.compute_variables([filter])
-                filter_data = self.get_2d_attribute(filter)
+                filter_data = self.get_2d_attribute(filter, coordinate_system=coordinate_system)
             elif isinstance(filter, ndarray):
                 if not ma.allclose(filter.shape, tdata.shape):
                     raise StandardError, "Argument filter must have the same shape as the 2d attribute."
