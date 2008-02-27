@@ -110,6 +110,7 @@
         <location_set type="string" >building</location_set>
         <filter type="string" >urbansim_parcel.building.is_governmental</filter>
         <agents_filter type="string" >urbansim.job.is_in_employment_sector_group_scalable_sectors</agents_filter>
+        <module_name type="string" >urbansim_parcel.models.scaling_jobs_model</module_name>
       </distribute_unplaced_jobs_model>
       <governmental_employment_location_choice_model parser_action="execute" type="class" >
         <Class_name flags="hidden" type="string" >GovernmentalEmploymentLocationChoiceModelConfigurationCreator</Class_name>
@@ -117,6 +118,7 @@
         <input_index type="string" >erm_index</input_index>
         <location_set type="string" >building</location_set>
         <filter type="string" >urbansim_parcel.building.is_governmental</filter>
+        <module_name type="string" >urbansim_parcel.models.distribute_unplaced_jobs_model</module_name>
       </governmental_employment_location_choice_model>
       <household_relocation_model parser_action="execute" type="class" >
         <Class_name flags="hidden" type="string" >HouseholdRelocationModelConfigurationCreator</Class_name>

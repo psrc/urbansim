@@ -99,4 +99,25 @@
     </run>
    </building_construction_model>
          
-                    
+   <household_location_choice_model  parser_action="execute" type="class">
+        <Class_name flags="hidden" type="string">HouseholdLocationChoiceModelConfigurationCreator</Class_name>
+        <Class_path flags="hidden" type="string">urbansim.configurations.household_location_choice_model_configuration_creator</Class_path>
+        <location_set type="string">building</location_set>
+        <agent_set type="string">household</agent_set>
+        <capacity_string type="string">'vacant_residential_units'</capacity_string>
+        <records_per_chunk type=integer>50000</records_per_chunk>
+        <sample_size_locations type=integer>30</sample_size_locations>
+        <sampler type="string">'opus_core.samplers.weighted_sampler'</sampler>
+        <lottery_max_iterations type=integer>7</lottery_max_iterations>
+        <location_id_name type="string">'building_id'</location_id_name>
+        <location_filter type="string">'numpy.logical_and(urbansim_parcel.building.is_residential, numpy.logical_and(numpy.logical_and(building.residential_units, building.sqft_per_unit), urbansim_parcel.building.unit_price > 0))'</location_filter>
+        <estimation_weight_string type="string">'urbansim_parcel.building.vacant_residential_units'</estimation_weight_string>
+        <estimation_size_agents type=float>None</estimation_size_agents>
+        <agents_for_estimation_table_name  type="string">'households_for_estimation'</agents_for_estimation_table_name>
+        <location_filter_for_estimation type="string">'numpy.logical_and(household.building_id>0, household.disaggregate(building.sqft_per_unit>0))'</location_filter_for_estimation>
+        <estimation_procedure type="string">'opus_core.bhhh_wesml_mnl_estimation'<estimation_procedure>
+        <join_agents_for_estimation_with_all_agents type='boolean'>True<<join_agents_for_estimation_with_all_agents>
+        <unplace_agents_for_estimation type='boolean'>False<<unplace_agents_for_estimation>
+        <estimate_config type="string"> {'wesml_sampling_correction_variable':"'psrc_parcel.building.wesml_sampling_correction_variable'"}</estimate_config>
+        <variable_package flags="hidden" type="string" >'urbansim_parcel'</variable_package>
+  </household_location_choice_model>
