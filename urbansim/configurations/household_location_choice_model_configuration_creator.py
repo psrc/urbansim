@@ -14,6 +14,7 @@
 
 from opus_core.configuration import Configuration
 from opus_core.misc import get_string_or_None
+from opus_core.resources import Resources
 
 class HouseholdLocationChoiceModelConfigurationCreator(object):
     _model_name = 'household_location_choice_model'
@@ -24,38 +25,75 @@ class HouseholdLocationChoiceModelConfigurationCreator(object):
                 coefficients_table = 'household_location_choice_model_coefficients',
                 specification_table = 'household_location_choice_model_specification',
                 location_set = 'gridcell',
+                location_id_name = None,
+                location_filter = None,
+                submodel_string = None,
                 sampler = 'opus_core.samplers.weighted_sampler',
                 choices = 'urbansim.lottery_choices',
                 capacity_string = 'vacant_residential_units',
+                estimation_weight_string = 'residential_units',
                 sample_size_locations = 30,
                 portion_to_unplace = 1/12.0,
                 nchunks = 12,
+                records_per_chunk = None,
                 agents_for_estimation_table_name = 'households_for_estimation',
                 number_of_units_string = 'residential_units',
                 number_of_agents_string = 'number_of_households',
                 lottery_max_iterations = 3,
                 maximum_runs = 3,
                 estimation_procedure = 'opus_core.bhhh_mnl_estimation',
+                estimation_size_agents = None,
+                location_filter_for_estimation = None,
+                variable_package = 'urbansim',
+                run_config = {},
+                estimate_config = {},
+                join_agents_for_estimation_with_all_agents = True,
+                unplace_agents_for_estimation = True,
                 input_index = 'hrm_index'):
         self.agent_set = agent_set
         self.debuglevel = debuglevel
         self.coefficients_table = coefficients_table
         self.specification_table = specification_table
         self.location_set = location_set
+        self.location_id_name = location_id_name
+        self.submodel_string = submodel_string
         self.sampler = sampler
         self.choices = choices
         self.capacity_string = capacity_string
+        self.estimation_weight_string = estimation_weight_string
         self.sample_size_locations = sample_size_locations
         self.portion_to_unplace = portion_to_unplace
-        self.nchunks = nchunks
         self.agents_for_estimation_table_name = agents_for_estimation_table_name
         self.number_of_units_string = number_of_units_string
         self.number_of_agents_string = number_of_agents_string
         self.lottery_max_iterations = lottery_max_iterations
         self.maximum_runs = maximum_runs
-        self.estimation_procedure = estimation_procedure 
-        self.input_index = input_index    
+        self.estimation_procedure = estimation_procedure
+        self.estimation_size_agents = estimation_size_agents
+        self.variable_package = variable_package
+        self.input_index = input_index
+        self.location_filter = location_filter
+        self.location_filter_for_estimation = location_filter_for_estimation
+        self.join_agents_for_estimation_with_all_agents = join_agents_for_estimation_with_all_agents
+        if unplace_agents_for_estimation:
+            self.index_to_unplace = self.input_index
+        else:
+            self.index_to_unplace = None
+        if records_per_chunk is not None:
+            self.chunk_specification = "{'records_per_chunk':%s}" % records_per_chunk
+        else:
+            self.chunk_specification = "{'nchunks':%s}" % nchunks
 
+        self.run_config = "Resources({'lottery_max_iterations': %s, " % self.lottery_max_iterations
+        for key, value in run_config.iteritems():
+            self.run_config += "'%s': %s," % (key, value)
+        self.run_config += '})'
+        
+        self.estimate_config = 'Resources({'
+        for key, value in estimate_config.iteritems():
+            self.estimate_config += "'%s': %s," % (key, value)
+        self.estimate_config += '})'
+        
     def execute(self):
         _coefficients = 'coefficients'
         _specification = 'specification'
@@ -84,9 +122,16 @@ class HouseholdLocationChoiceModelConfigurationCreator(object):
                     'location_set': self.location_set,
                     'sample_size_locations': self.sample_size_locations,
                     'capacity_string': get_string_or_None(self.capacity_string),
+                    'estimation_weight_string': get_string_or_None(self.estimation_weight_string),
                     'number_of_units_string': get_string_or_None(self.number_of_units_string),
                     'number_of_agents_string': get_string_or_None(self.number_of_agents_string),
-                    'run_config': {'lottery_max_iterations': self.lottery_max_iterations}
+                    'location_id_string': get_string_or_None(self.location_id_name),
+                    'submodel_string': get_string_or_None(self.submodel_string),
+                    'estimation_size_agents': self.estimation_size_agents,
+                    'filter': get_string_or_None(self.location_filter),
+                    'run_config': self.run_config,
+                    'estimate_config': self.estimate_config,
+                    "variable_package": "'%s'" % self.variable_package
                     },
                 'name': 'HouseholdLocationChoiceModel'
                 },
@@ -96,11 +141,12 @@ class HouseholdLocationChoiceModelConfigurationCreator(object):
                     'agents_for_estimation_storage': 'base_cache_storage',
                     'agents_for_estimation_table': "'%s'" % self.agents_for_estimation_table_name,
                     'data_objects': 'datasets',
-                    'index_to_unplace': self.input_index,
-                    'join_datasets': 'True',
+                    'index_to_unplace': self.index_to_unplace,
+                    'join_datasets': '%s' % self.join_agents_for_estimation_with_all_agents,
                     'portion_to_unplace': self.portion_to_unplace,
                     'specification_storage': 'base_cache_storage',
                     'specification_table': "'%s'" % self.specification_table,
+                    'filter': get_string_or_None(self.location_filter_for_estimation)
                     },
                 'name': 'prepare_for_estimate',
                 'output': '(%s, %s)' % (_specification, _index)
@@ -119,7 +165,7 @@ class HouseholdLocationChoiceModelConfigurationCreator(object):
                 'arguments': {
                     'agent_set': self.agent_set,
                     'agents_index': self.input_index,
-                    'chunk_specification': "{'nchunks':%s}" % self.nchunks,
+                    'chunk_specification': self.chunk_specification,
                     'coefficients': _coefficients,
                     'data_objects': 'datasets',
                     'debuglevel': self.debuglevel,
@@ -166,9 +212,16 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'location_set': 'gridcell',
                     'sample_size_locations': 30,
                     'capacity_string': "'vacant_residential_units'",
+                    'estimation_weight_string': "'residential_units'",
                     'number_of_units_string': "'residential_units'",
                     'number_of_agents_string': "'number_of_households'",
-                    'run_config': {'lottery_max_iterations': 3}
+                    'location_id_string': None,
+                    'submodel_string': None,
+                    'estimation_size_agents': None,
+                    'filter': None,
+                    'run_config': "Resources({'lottery_max_iterations': 3, })",
+                    'estimate_config': "Resources({})",
+                    'variable_package': "'urbansim'"
                     },
                 'name': 'HouseholdLocationChoiceModel'
                 },
@@ -182,7 +235,8 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'join_datasets': 'True',
                     'portion_to_unplace': 1/12.0,
                     'specification_storage': 'base_cache_storage',
-                    'specification_table': "'household_location_choice_model_specification'"
+                    'specification_table': "'household_location_choice_model_specification'",
+                    'filter': None
                     },
                 'name': 'prepare_for_estimate',
                 'output': '(specification, index)'
@@ -230,7 +284,11 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
             coefficients_table = 'coefficients_table',
             specification_table = 'specification_table',
             input_index = 'input_index',
-            maximum_runs=10
+            maximum_runs=10,
+            location_id_name='building_id',
+            estimation_size_agents = 0.5,
+            run_config = {'aaaa': "'bbbb'"},
+            estimate_config = {'xx': 45}
             )
         
         expected = Configuration({
@@ -256,9 +314,16 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'location_set': 'location_set',
                     'sample_size_locations': 2000,
                     'capacity_string': "'vacant_residential_units'",
+                    'estimation_weight_string': "'residential_units'",
                     'number_of_units_string': "'residential_units'",
                     'number_of_agents_string': "'number_of_households'",
-                    'run_config': {'lottery_max_iterations': 20}
+                    'location_id_string': "'building_id'",
+                    'submodel_string': None,
+                    'estimation_size_agents': 0.5,
+                    'filter': None,
+                    'run_config': "Resources({'lottery_max_iterations': 20, 'aaaa': 'bbbb',})",
+                    'estimate_config': "Resources({'xx': 45,})",
+                    'variable_package': "'urbansim'"
                     },
                 'name': 'HouseholdLocationChoiceModel'
                 },
@@ -272,7 +337,8 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'join_datasets': 'True',
                     'portion_to_unplace': 888.8,
                     'specification_storage': 'base_cache_storage',
-                    'specification_table': "'specification_table'"
+                    'specification_table': "'specification_table'",
+                    'filter': None
                     },
                 'name': 'prepare_for_estimate',
                 'output': '(specification, index)'

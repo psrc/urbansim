@@ -23,16 +23,20 @@ class GovernmentalEmploymentLocationChoiceModelConfigurationCreator(object):
                 location_set = 'gridcell',
                 debuglevel = 'debuglevel',
                 filter = None,
+                module_name = 'urbansim.models.scaling_jobs_model',
+                class_name = 'ScalingJobsModel',
                 input_index = 'erm_index'):
         self.agent_set = agent_set
         self.location_set = location_set
         self.debuglevel = debuglevel
         self.filter = filter
         self.input_index = input_index
+        self.module_name = module_name
+        self.class_name = class_name
         
     def execute(self):        
         return Configuration({
-            'import': {'urbansim.models.scaling_jobs_model': 'ScalingJobsModel'},
+            'import': {self.module_name: self.class_name},
             'init': {
                 'arguments': {'debuglevel': self.debuglevel,
                               'filter': get_string_or_None(self.filter),

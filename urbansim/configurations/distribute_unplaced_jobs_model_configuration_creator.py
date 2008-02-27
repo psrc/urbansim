@@ -24,17 +24,25 @@ class DistributeUnplacedJobsModelConfigurationCreator(object):
                 agent_set = 'job',
                 location_set = 'gridcell',
                 agents_filter = None,
-                filter = None):
+                filter = None,
+                module_name = None,
+                class_name = 'DistributeUnplacedJobsModel'
+                ):
         self.debuglevel = debuglevel
         self.agent_set = agent_set
         self.location_set = location_set
         self.agents_filter = agents_filter
         self.filter = filter
+        if module_name is None:
+            self.module_name = 'urbansim.models.%s' % self._model_name
+        else:
+            self.module_name = module_name
+        self.class_name = class_name
     
     def execute(self):        
         return Configuration({
             'import': {
-                'urbansim.models.%s' % self._model_name: 'DistributeUnplacedJobsModel'
+                self.module_name: self.class_name
                 },
             'init': {
                 'arguments': {'debuglevel': self.debuglevel,
