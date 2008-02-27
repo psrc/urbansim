@@ -24,35 +24,35 @@
         <param1 type="string" >foobar</param1>
       </opus_database_to_sql_config>
     </opus_database_to_sql>
-    <opus_database_to_esri type="script_batch" classification="database" setexpanded="True" >
+    <opus_database_to_esri type="script_batch" setexpanded="True" >
       <classification type="classification">database</classification> 
       <opus_database_to_esri_config type="script_config" >
         <script_hook type="script_library_ref" >opus_database_to_esri_tool</script_hook>
         <param1 type="string" >barfoo</param1>
       </opus_database_to_esri_config>
     </opus_database_to_esri>
-    <opus_dataset_to_sql type="script_batch" classification="dataset" setexpanded="True" >
+    <opus_dataset_to_sql type="script_batch" setexpanded="True" >
       <classification type="classification">dataset</classification> 
       <opus_dataset_to_sql_config type="script_config" >
         <script_hook type="script_library_ref" >opus_dataset_to_sql_tool</script_hook>
         <param1 type="string" >foobar</param1>
       </opus_dataset_to_sql_config>
     </opus_dataset_to_sql>
-    <opus_dataset_to_esri type="script_batch" classification="dataset" setexpanded="True" >
+    <opus_dataset_to_esri type="script_batch" setexpanded="True" >
       <classification type="classification">dataset</classification> 
       <opus_dataset_to_esri_config type="script_config" >
         <script_hook type="script_library_ref" >opus_dataset_to_esri_tool</script_hook>
         <param1 type="string" >barfoo</param1>
       </opus_dataset_to_esri_config>
     </opus_dataset_to_esri>
-    <opus_array_to_sql type="script_batch" classification="array" setexpanded="True" >
+    <opus_array_to_sql type="script_batch" setexpanded="True" >
       <classification type="classification">array</classification> 
       <opus_array_to_sql_config type="script_config" >
         <script_hook type="script_library_ref" >opus_array_to_sql_tool</script_hook>
         <param1 type="string" >foobar</param1>
       </opus_array_to_sql_config>
     </opus_array_to_sql>
-    <opus_array_to_esri type="script_batch" classification="array" setexpanded="True" >
+    <opus_array_to_esri type="script_batch" setexpanded="True" >
       <classification type="classification">array</classification> 
       <opus_array_to_esri_config type="script_config" >
         <script_hook type="script_library_ref" >opus_array_to_esri_tool</script_hook>

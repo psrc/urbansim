@@ -99,8 +99,8 @@ class OpusFileAction(object):
                 classificationindex = tree.model.findElementIndexByType("classification",dbindex)
                 classificationindexElement = None
                 classificationtext = ""
-                if classificationindex.isValid():
-                    classificationindexElement = classificationindex.internalPointer()
+                if classificationindex[0].isValid():
+                    classificationindexElement = classificationindex[0].internalPointer()
                     if classificationindexElement.node().hasChildNodes():
                         children = classificationindexElement.node().childNodes()
                         for x in xrange(0,children.count(),1):
