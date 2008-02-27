@@ -459,10 +459,11 @@ class ModelSystem(object):
         nyears = end_year - start_year + 1
         root_seed = resources.get("seed", 0)
         seed(root_seed) #was: seed(root_seed[0], root_seed[1])
-        seed_array = randint(1,2**30, 2*nyears)
+        seed_array = randint(1,2**30, nyears)
         skip_first_year_of_urbansim = resources.get('skip_urbansim', False)
 
         logger.log_status("Running simulation for years %d thru %d" % (start_year, end_year))
+        logger.log_status("Root seed: %s" % root_seed)
         iyear = 0
         for year in range(start_year, end_year+1):
             if (year <> start_year) or ((year == start_year) and (not skip_first_year_of_urbansim)):
