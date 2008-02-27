@@ -6,25 +6,54 @@
   <data_manager>
     <script_library type="script_library" setexpanded="True" >
       <script_path type="script_path" >projects.scripts</script_path>
-      <opus_data_to_sql_tool type="script_file" >opus_data_to_sql</opus_data_to_sql_tool>
-      <opus_data_to_esri_tool type="script_file" >opus_data_to_esri</opus_data_to_esri_tool>
+      <opus_database_to_sql_tool type="script_file" >opus_database_to_sql</opus_database_to_sql_tool>
+      <opus_database_to_esri_tool type="script_file" >opus_database_to_esri</opus_database_to_esri_tool>
+      <opus_dataset_to_sql_tool type="script_file" >opus_dataset_to_sql</opus_dataset_to_sql_tool>
+      <opus_dataset_to_esri_tool type="script_file" >opus_dataset_to_esri</opus_dataset_to_esri_tool>
+      <opus_array_to_sql_tool type="script_file" >opus_array_to_sql</opus_array_to_sql_tool>
+      <opus_array_to_esri_tool type="script_file" >opus_array_to_esri</opus_array_to_esri_tool>
       <esri_buffer_tool type="script_file" >esri_buffer</esri_buffer_tool>
       <postgis_buffer_tool type="script_file" >postgis_buffer</postgis_buffer_tool>
       <raw_sql_query type="script_file" >raw_sql</raw_sql_query>
+      <create_graphs type="script_file" >create_graphs</create_graphs>
     </script_library>
-    <opus_data_to_sql type="script_batch" setexpanded="True" >
-      <opus_data_to_sql_config type="script_config" >
-        <script_hook type="script_library_ref" >opus_data_to_sql_tool</script_hook>
+    <opus_database_to_sql type="script_batch" classification="database" setexpanded="True" >
+      <opus_database_to_sql_config type="script_config" >
+        <script_hook type="script_library_ref" >opus_database_to_sql_tool</script_hook>
         <param1 type="string" >foobar</param1>
-      </opus_data_to_sql_config>
-    </opus_data_to_sql>
-    <opus_data_to_esri type="script_batch" setexpanded="True" >
-      <opus_data_to_esri_config type="script_config" >
-        <script_hook type="script_library_ref" >opus_data_to_esri_tool</script_hook>
+      </opus_database_to_sql_config>
+    </opus_database_to_sql>
+    <opus_database_to_esri type="script_batch" classification="database" setexpanded="True" >
+      <opus_database_to_esri_config type="script_config" >
+        <script_hook type="script_library_ref" >opus_database_to_esri_tool</script_hook>
         <param1 type="string" >barfoo</param1>
-      </opus_data_to_esri_config>
-    </opus_data_to_esri>
-    <script_batch1 type="script_batch" setexpanded="True" >
+      </opus_database_to_esri_config>
+    </opus_database_to_esri>
+    <opus_dataset_to_sql type="script_batch" classification="dataset" setexpanded="True" >
+      <opus_dataset_to_sql_config type="script_config" >
+        <script_hook type="script_library_ref" >opus_dataset_to_sql_tool</script_hook>
+        <param1 type="string" >foobar</param1>
+      </opus_dataset_to_sql_config>
+    </opus_dataset_to_sql>
+    <opus_dataset_to_esri type="script_batch" classification="dataset" setexpanded="True" >
+      <opus_dataset_to_esri_config type="script_config" >
+        <script_hook type="script_library_ref" >opus_dataset_to_esri_tool</script_hook>
+        <param1 type="string" >barfoo</param1>
+      </opus_dataset_to_esri_config>
+    </opus_dataset_to_esri>
+    <opus_array_to_sql type="script_batch" classification="array" setexpanded="True" >
+      <opus_array_to_sql_config type="script_config" >
+        <script_hook type="script_library_ref" >opus_array_to_sql_tool</script_hook>
+        <param1 type="string" >foobar</param1>
+      </opus_array_to_sql_config>
+    </opus_array_to_sql>
+    <opus_array_to_esri type="script_batch" classification="array" setexpanded="True" >
+      <opus_array_to_esri_config type="script_config" >
+        <script_hook type="script_library_ref" >opus_array_to_esri_tool</script_hook>
+        <param1 type="string" >barfoo</param1>
+      </opus_array_to_esri_config>
+    </opus_array_to_esri>
+    <test_script_batch type="script_batch" setexpanded="True" >
       <roads_buffer_tool type="script_config" >
         <script_hook type="script_library_ref" >esri_buffer_tool</script_hook>
         <input_shapefile type="string" >c:\data\roads.shp</input_shapefile>
@@ -36,11 +65,14 @@
         <database_config type="string" >blahblahblah</database_config>
         <query type="string" >update some_table set some_field = blahblahblah</query>
       </roads_sql_query>
-    </script_batch1>
-    <script_batch2 type="script_batch" setexpanded="True" >
-      <script_path type="script_path" >projects.scripts</script_path>
-      <processing_script_1 type="script_file" >test</processing_script_1>
-    </script_batch2>
+    </test_script_batch>
+    <visualization_script_batch type="script_batch" setexpanded="True" >
+      <create_graphs type="script_config" >
+        <script_hook type="script_library_ref" >create_graphs</script_hook>
+        <database_config type="string" >blahblahblah</database_config>
+        <query type="string" >update some_table set some_field = blahblahblah</query>
+      </create_graphs>
+    </visualization_script_batch>
     <documentation type="documentation_path" >documentation/installation/index.html</documentation>
   </data_manager>
   <data_manager_dbstree>

@@ -62,17 +62,47 @@ class OpusFileAction(object):
             f.close()
             self.xmlFileObject.mainwindow.editorStatusLabel.setText(QString(filename))
 
-    def fillInAvailableExportScripts(self):
+    def fillInAvailableScripts(self):
         #print "Checking for scripts"
+        choices = []
+        classification = ""
+        if self.xmlFileObject.model.isDir(self.currentIndex):
+            regex = QRegExp("\\d{4}")
+            name = self.xmlFileObject.model.fileName(self.currentIndex)
+            parentname = self.xmlFileObject.model.fileName(self.xmlFileObject.model.parent(self.currentIndex))
+            isdir = self.xmlFileObject.model.isDir(self.currentIndex)
+            parentisdir = self.xmlFileObject.model.isDir(self.xmlFileObject.model.parent(self.currentIndex))
+            # print "%s %s %s %s" % (name, parentname,isdir,parentisdir)
+            if isdir and regex.exactMatch(name):
+                # We have a database dir
+                # print "Database Dir"
+                classification = "database"
+            elif parentisdir and regex.exactMatch(parentname):
+                # We have a dataset
+                # print "Dataset Dir"
+                classification = "dataset"
+        else:
+            regex = QRegExp("\\d{4}")
+            model = self.xmlFileObject.model
+            parentIndex = model.parent(self.currentIndex)
+            parentparentIndex = model.parent(parentIndex)
+            parentparentname = model.fileName(parentparentIndex)
+            parentparentisdir = model.isDir(parentparentIndex)
+            if parentparentisdir and regex.exactMatch(parentparentname):
+                # We have a file with a parentparent which is a database classification
+                classification = "array"
         tree = self.xmlFileObject.mainwindow.toolboxStuff.dataManagerTree
         dbxml = tree.model.index(0,0,QModelIndex()).parent()
         dbindexlist = tree.model.findElementIndexByType("script_batch",dbxml,True)
-        choices = []
         for dbindex in dbindexlist:
             if dbindex.isValid():
                 indexElement = dbindex.internalPointer()
                 tagName = indexElement.domNode.toElement().tagName()
-                if tagName.startsWith(QString("opus")):
+                xmlclassification = ""
+                if indexElement.domNode.toElement().hasAttribute(QString("classification")):
+                    xmlclassification = str(indexElement.domNode.toElement().attribute(QString("classification")))
+                # print "%s - %s" % (xmlclassification,tagName)
+                if xmlclassification != "" and xmlclassification == classification:
                     choices.append(tagName)
         return choices
     
@@ -88,26 +118,21 @@ class OpusFileAction(object):
     def processCustomMenu(self, position):
         self.currentColumn = self.xmlFileObject.treeview.indexAt(position).column()
         self.currentIndex = self.xmlFileObject.treeview.indexAt(position)
-        if self.xmlFileObject.model.isDir(self.currentIndex):
-            # Do stuff for directories
-            self.menu = QMenu(self.xmlFileObject.mainwindow)
-            choices = self.fillInAvailableExportScripts()
-            self.dynactions = []
-            for i,choice in enumerate(choices):
-                # Add choices with custom text...
-                #print choice
-                dynaction = QAction(self.applicationIcon, choice, self.xmlFileObject.mainwindow)
-                self.dynactions.append(dynaction)
-                self.menu.addAction(dynaction)
-            QObject.connect(self.menu, SIGNAL("triggered(QAction*)"),
-                            self.dataActionMenuFunction)
-            self.menu.exec_(QCursor.pos())
-        elif self.xmlFileObject.model.fileInfo(self.currentIndex).suffix() == "txt":
+        if self.xmlFileObject.model.fileInfo(self.currentIndex).suffix() == "txt":
             self.menu = QMenu(self.xmlFileObject.mainwindow)
             self.menu.addAction(self.actOpenTextFile)
             self.menu.exec_(QCursor.pos())
         else:
-            # got something we werent expecting... just return with no menu
-            self.menu = QMenu(self.xmlFileObject.mainwindow)
-            self.menu.addAction(self.actPlaceHolder)
-            self.menu.exec_(QCursor.pos())
+            # Do stuff for directories
+            choices = self.fillInAvailableScripts()
+            if len(choices) > 0:
+                self.menu = QMenu(self.xmlFileObject.mainwindow)
+                self.dynactions = []
+                for i,choice in enumerate(choices):
+                    # Add choices with custom text...
+                    dynaction = QAction(self.applicationIcon, choice, self.xmlFileObject.mainwindow)
+                    self.dynactions.append(dynaction)
+                    self.menu.addAction(dynaction)
+                QObject.connect(self.menu, SIGNAL("triggered(QAction*)"),
+                                self.dataActionMenuFunction)
+                self.menu.exec_(QCursor.pos())
