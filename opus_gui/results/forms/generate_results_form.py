@@ -165,7 +165,7 @@ class GenerateResultsForm(QWidget):
     def _setup_co_dataset_name(self):
         available_datasets = [
             '[select]',
-            #'parcel',
+            'gridcell',
             'zone',
             #'taz',
             #'county',

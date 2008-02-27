@@ -78,7 +78,7 @@ class OpusResultVisualizer(object):
                  domDocument, 
                  indicator_type,
                  clicked_node,
-                 kwargs):
+                 kwargs = None):
         self.xml_path = xml_path
         self.finishedCallback = None
         self.errorCallback = None
@@ -89,6 +89,8 @@ class OpusResultVisualizer(object):
         self.indicator_type = indicator_type
         self.clicked_node = clicked_node      
         self.visualizations = []
+        
+        if kwargs == None: kwargs = {}
         self.kwargs = kwargs
         
     def run(self):

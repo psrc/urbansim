@@ -67,7 +67,7 @@ class ResultManagerBase(AbstractManagerBase):
         self.guiElements.insert(0, new_form)
         self.updateGuiElements()
 
-    def addIndicatorForm(self, indicator_type, clicked_node, kwargs):
+    def addIndicatorForm(self, indicator_type, clicked_node, kwargs = None):
         #build visualizations
         domDocument = self.parent.toolboxStuff.doc
         self.indicator_type = indicator_type

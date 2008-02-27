@@ -167,11 +167,10 @@ class AdvancedVisualizationForm(QWidget):
 
     def _setup_co_result_type(self):
         available_types = [
-            'Map (Matplotlib)',
-            'Map (ArcGis)',
-            'Chart (Matplotlib)',
             'Table (one per year over selected indicators)',
             'Table (one per selected indicator)',
+            'Map (Matplotlib)',
+            'Chart (Matplotlib)',
         ]
                 
         self.co_result_type = QComboBox(self.dataGroupBox)
