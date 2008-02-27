@@ -96,13 +96,19 @@ class OpusFileAction(object):
         dbindexlist = tree.model.findElementIndexByType("script_batch",dbxml,True)
         for dbindex in dbindexlist:
             if dbindex.isValid():
-                indexElement = dbindex.internalPointer()
-                tagName = indexElement.domNode.toElement().tagName()
-                xmlclassification = ""
-                if indexElement.domNode.toElement().hasAttribute(QString("classification")):
-                    xmlclassification = str(indexElement.domNode.toElement().attribute(QString("classification")))
-                # print "%s - %s" % (xmlclassification,tagName)
-                if xmlclassification != "" and xmlclassification == classification:
+                classificationindex = tree.model.findElementIndexByType("classification",dbindex)
+                classificationindexElement = None
+                classificationtext = ""
+                if classificationindex.isValid():
+                    classificationindexElement = classificationindex.internalPointer()
+                    if classificationindexElement.node().hasChildNodes():
+                        children = classificationindexElement.node().childNodes()
+                        for x in xrange(0,children.count(),1):
+                            if children.item(x).isText():
+                                classificationtext = children.item(x).nodeValue()
+                dbindexElement = dbindex.internalPointer()
+                tagName = dbindexElement.domNode.toElement().tagName()
+                if classificationtext != "" and classificationtext == classification:
                     choices.append(tagName)
         return choices
     
