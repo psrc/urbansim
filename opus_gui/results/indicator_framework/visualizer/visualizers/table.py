@@ -36,29 +36,27 @@ class Table(Visualization):
                  output_style = ALL):
 
         if output_type == 'sql' and not isinstance(storage_location, DatabaseConfiguration):
-            raise "If Table output_type is 'sql', a Database object must be passed as storage_location."
+            raise Exception("If Table output_type is 'sql', a Database object must be passed as storage_location.")
         elif output_type in ['dbf', 'csv', 'tab', 'esri'] and \
                storage_location is not None and \
                not isinstance(storage_location,str):
-            raise "If Table output_type is %s, storage_location must be a path to the output directory"%output_type
+            raise Exception("If Table output_type is %s, storage_location must be a path to the output directory"%output_type)
         elif output_type not in ['dbf', 'csv', 'tab', 'sql', 'esri']:
             print output_type
-            raise "Table output_type must be either dbf, csv, tab, sql, or esri"
+            raise Exception("Table output_type must be either dbf, csv, tab, sql, or esri")
 
         if output_style not in [Table.ALL,
                                 Table.PER_YEAR,
                                 Table.PER_ATTRIBUTE]:
-            raise ('%s output_style is not appropriate.'%output_style,
+            raise Exception(('%s output_style is not appropriate.'%output_style,
                    'Choose from Table.ALL, Table.PER_YEAR, ',
-                   'and Table.PER_ATTRIBUTE')
+                   'and Table.PER_ATTRIBUTE'))
 
         self.output_type = output_type
         self.output_style = output_style
 
         if storage_location is None:
             storage_location = indicator_directory
-        elif output_type == 'esri':
-            storage_location = storage_location
         elif output_type == 'sql':
             server = DatabaseServer(database_server_configuration = storage_location)
             storage_location = server.get_database(

@@ -56,12 +56,11 @@ class OpusXMLAction_Results(object):
                                           "Map (Matplotlib)",
                                           self.xmlTreeObject.parent)
         QObject.connect(self.actViewResultAsMatplotlibMap, SIGNAL("triggered()"), self.viewResultsMatplotlibMap)                
-        self.actViewResultAsArcgisMap = QAction(self.acceptIcon, 
-                                          "Map (ArcGis)",
-                                          self.xmlTreeObject.parent)
-        QObject.connect(self.actViewResultAsArcgisMap, SIGNAL("triggered()"), self.viewResultsArcGisMap)                
+#        self.actViewResultAsArcgisMap = QAction(self.acceptIcon, 
+#                                          "Map (ArcGis)",
+#                                          self.xmlTreeObject.parent)
+#        QObject.connect(self.actViewResultAsArcgisMap, SIGNAL("triggered()"), self.viewResultsArcGisMap)                
 
-        
         self.actViewResultAsMatplotlibChart = QAction(self.acceptIcon, 
                                           "Chart (Matplotlib)",
                                           self.xmlTreeObject.parent)
@@ -177,7 +176,14 @@ class OpusXMLAction_Results(object):
     def viewResultsAdvanced(self):
         print "viewResultsAdvanced pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())                  
-        
+        if not self.xmlTreeObject.model.dirty:
+            self.xmlTreeObject.parent.resultManagerStuff.addAdvancedVisualizationForm()
+        else:
+            # Prompt the user to save...
+            QMessageBox.warning(self.xmlTreeObject.parent,
+                                "Warning",
+                                "Please save changes to project before generating results")
+                        
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
                self.xmlTreeObject.view.indexAt(position).column() == 0:
@@ -218,12 +224,12 @@ class OpusXMLAction_Results(object):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     visualization_menu = QMenu(self.xmlTreeObject.parent)
                     visualization_menu.setTitle(QString("View result as..."))
-                    
-                    visualization_menu.addAction(self.actViewResultAsMatplotlibMap)
-                    visualization_menu.addAction(self.actViewResultAsArcgisMap)
-                    visualization_menu.addAction(self.actViewResultAsMatplotlibChart)
+
                     visualization_menu.addAction(self.actViewResultAsTablePerYear)
-                    visualization_menu.addAction(self.actViewResultAsTablePerAttribute)
+                    visualization_menu.addAction(self.actViewResultAsTablePerAttribute)                    
+                    visualization_menu.addAction(self.actViewResultAsMatplotlibMap)
+#                    visualization_menu.addAction(self.actViewResultAsArcgisMap)
+                    visualization_menu.addAction(self.actViewResultAsMatplotlibChart)
                     visualization_menu.addAction(self.actViewResultAsAdvanced)
                     
                     self.menu.addMenu(visualization_menu)

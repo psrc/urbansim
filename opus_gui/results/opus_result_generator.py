@@ -77,7 +77,8 @@ class OpusResultVisualizer(object):
                  xml_path, 
                  domDocument, 
                  indicator_type,
-                 clicked_node):
+                 clicked_node,
+                 kwargs):
         self.xml_path = xml_path
         self.finishedCallback = None
         self.errorCallback = None
@@ -88,6 +89,7 @@ class OpusResultVisualizer(object):
         self.indicator_type = indicator_type
         self.clicked_node = clicked_node      
         self.visualizations = []
+        self.kwargs = kwargs
         
     def run(self):
         if WithOpus:
@@ -109,8 +111,9 @@ class OpusResultVisualizer(object):
         else:
             pass
     
-    
+
     def _visualize(self, configuration_path):
+
         info = get_child_values(parent = self.clicked_node,
                                 child_names = ['source_data',
                                                'indicator_name',
@@ -140,28 +143,30 @@ class OpusResultVisualizer(object):
         computed_indicator = interface.get_computed_indicator(indicator = indicator, 
                                                               source_data = source_data, 
                                                               dataset_name = dataset_name)
+        #####################
         #hack to get plausible primary keys...
-        storage_location = os.path.join(cache_directory,
+        _storage_location = os.path.join(cache_directory,
                                          'indicators',
                                          '_stored_data',
                                          repr(source_data.years[0]))
         
         storage = StorageFactory().get_storage(
                        type = 'flt_storage',
-                       storage_location = storage_location)
+                       storage_location = _storage_location)
         cols = storage.get_column_names(
                     table_name = dataset_name)
+        ##################
         
         primary_keys = [col for col in cols if col.find('id') != -1]
         computed_indicator.primary_keys = primary_keys
         print primary_keys
-        
+
         args = {}
         if self.indicator_type == 'matplotlib_map':
             viz_type = self.indicator_type
         elif self.indicator_type == 'matplotlib_chart':
             viz_type = self.indicator_type
-        elif self.indicator_type == 'arcgis_map':
+        elif self.indicator_type == 'table_esri':
             viz_type = 'table'
             args['output_type'] = Table.PER_ATTRIBUTE
             args['output_type'] = 'esri'
@@ -174,9 +179,17 @@ class OpusResultVisualizer(object):
             args['output_style'] = Table.PER_ATTRIBUTE          
             args['output_type'] = 'csv'
             
+        args.update(self.kwargs)
+        
         name = computed_indicator.get_file_name(
                                     suppress_extension_addition = True)
         viz_factory = VisualizationFactory()
+        
+        try:
+            import pydevd;pydevd.settrace()
+        except:
+            pass
+        
         self.visualizations = viz_factory.visualize(
                                   indicators_to_visualize = [name], 
                                   computed_indicators = {name:computed_indicator}, 
@@ -251,7 +264,6 @@ class OpusResultGenerator(object):
         self.config = XMLConfiguration(str(configuration_path)).get_run_configuration(scenario_name)
         
         cache_directory = self.config['cache_directory']
-        print cache_directory
         interface = IndicatorFrameworkInterface(domDocument = self.domDocument)
         
         source_data = interface.get_source_data_from_XML(

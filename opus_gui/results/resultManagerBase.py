@@ -14,6 +14,7 @@
 from PyQt4.QtCore import QObject, SIGNAL
 
 
+from opus_gui.results.forms.advanced_visualization_form import AdvancedVisualizationForm
 from opus_gui.results.forms.generate_results_form import GenerateResultsForm
 from opus_gui.results.forms.view_documentation_form import ViewDocumentationForm
 from opus_gui.results.forms.view_image_form import ViewImageForm
@@ -51,6 +52,13 @@ class AbstractManagerBase(object):
 # Main Run manager class
 class ResultManagerBase(AbstractManagerBase):        
 
+    def addAdvancedVisualizationForm(self):
+        new_form = AdvancedVisualizationForm(parent = self.parent,
+                                       result_manager = self)
+        
+        self.guiElements.insert(0, new_form)
+        self.updateGuiElements() 
+        
     def addGenerateIndicatorForm(self):
 
         new_form = GenerateResultsForm(parent = self.parent,
@@ -59,7 +67,7 @@ class ResultManagerBase(AbstractManagerBase):
         self.guiElements.insert(0, new_form)
         self.updateGuiElements()
 
-    def addIndicatorForm(self, indicator_type, clicked_node):
+    def addIndicatorForm(self, indicator_type, clicked_node, kwargs):
         #build visualizations
         domDocument = self.parent.toolboxStuff.doc
         self.indicator_type = indicator_type
@@ -67,7 +75,8 @@ class ResultManagerBase(AbstractManagerBase):
                                 xml_path = self.parent.toolboxStuff.xml_file,
                                 domDocument = domDocument,
                                 indicator_type = indicator_type,
-                                clicked_node = clicked_node)
+                                clicked_node = clicked_node,
+                                kwargs = kwargs)
         
         self.visualization_thread = OpusGuiThread(
                                   parentThread = self.parent,
