@@ -97,7 +97,6 @@ class XMLConfiguration(object):
             if submodel_name!='all_variables':
                 submodel = model[submodel_name]
                 result[submodel['submodel_id']] = submodel['variables']
-        self._merge_controllers(result)
         return result
     
     def _merge_controllers(self, config):
