@@ -16,6 +16,7 @@
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from opus_gui.run.script.opusrunscript import *
 
 
 class OpusFileAction(object):
@@ -115,10 +116,69 @@ class OpusFileAction(object):
     def dataActionMenuFunction(self,action):
         filename = self.xmlFileObject.model.filePath(self.currentIndex)
         actiontext = action.text()
-        print "%s - %s" % (filename,actiontext)
+        # print "%s - %s" % (filename,actiontext)
         QObject.disconnect(self.menu, SIGNAL("triggered(QAction*)"),self.dataActionMenuFunction)
         
         # Add in the code to take action... like run a script...
+        # First find the batch to loop over the configs to execute
+        tree = self.xmlFileObject.mainwindow.toolboxStuff.dataManagerTree
+        scriptxml = tree.model.index(0,0,QModelIndex()).parent()
+        scriptindexlist = tree.model.findElementIndexByName(actiontext,scriptxml,False)
+        scriptindex = scriptindexlist[0]
+        if scriptindex.isValid():
+            # print scriptindex.internalPointer().node().toElement().tagName()
+            # We have the script_batch... time to loop over the children and get the configs
+            configindexlist = tree.model.findElementIndexByType("script_config",scriptindex,True)
+            # print len(configindexlist)
+            for configindex in configindexlist:
+                if configindex.isValid():
+                    # Now for each config index we need to run the scripts
+                    # Now find the script that this config refers to...
+                    configNode = configindex.internalPointer().node().toElement()
+                    script_hook = configNode.elementsByTagName(QString("script_hook")).item(0)
+                    script_name = QString("")
+                    if script_hook.hasChildNodes():
+                        children = script_hook.childNodes()
+                        for x in xrange(0,children.count(),1):
+                            if children.item(x).isText():
+                                script_name = children.item(x).nodeValue()
+                    # This will be in the script_library
+                    library = configindex.model().xmlRoot.toElement().elementsByTagName(QString("script_library")).item(0)
+                    script_path = library.toElement().elementsByTagName("script_path").item(0)
+                    script = library.toElement().elementsByTagName(script_name).item(0)
+                    
+                    # First find the script path text...
+                    if script_path.hasChildNodes():
+                        children = script_path.childNodes()
+                        for x in xrange(0,children.count(),1):
+                            if children.item(x).isText():
+                                scriptPath = children.item(x).nodeValue()
+                    if script.hasChildNodes():
+                        children = script.childNodes()
+                        for x in xrange(0,children.count(),1):
+                            if children.item(x).isText():
+                                filePath = children.item(x).nodeValue()
+                    importPath = QString(scriptPath).append(QString(".")).append(QString(filePath))
+                    # print "New import ", importPath
+                    
+                    # Now loop and build up the parameters...
+                    params = {}
+                    childNodes = configNode.childNodes()
+                    for x in xrange(0,childNodes.count(),1):
+                        thisElement = childNodes.item(x)
+                        thisElementText = QString("")
+                        if thisElement.hasChildNodes():
+                            children = thisElement.childNodes()
+                            for x in xrange(0,children.count(),1):
+                                if children.item(x).isText():
+                                    thisElementText = children.item(x).nodeValue()
+                        if thisElement.toElement().tagName() == QString("path"):
+                            thisElementText = filename
+                        if thisElement.toElement().tagName() != QString("script_hook"):
+                            params[thisElement.toElement().tagName()] = thisElementText
+                    x = OpusScript(self.xmlFileObject.mainwindow,importPath,params)
+                    y = RunScriptThread(self.xmlFileObject.mainwindow,x)
+                    y.run()
         return
     
     def processCustomMenu(self, position):
