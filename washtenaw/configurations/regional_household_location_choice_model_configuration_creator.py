@@ -77,9 +77,16 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'location_set': 'gridcell',
                     'sample_size_locations': 30,
                     'capacity_string': "'vacant_residential_units'",
+                    'estimation_weight_string': "'residential_units'",
                     'number_of_units_string': "'residential_units'",
                     'number_of_agents_string': "'number_of_households'",
-                    'run_config': {'lottery_max_iterations': 5}
+                     'location_id_string': None,
+                    'submodel_string': None,
+                    'estimation_size_agents': None,
+                    'filter': None,
+                    'run_config': "Resources({'lottery_max_iterations': 5, })",
+                    'estimate_config': "Resources({})",
+                    'variable_package': "'urbansim'"
                     },
                 'name': 'RegionalHouseholdLocationChoiceModel'
                 },
@@ -93,7 +100,8 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'join_datasets': 'True',
                     'portion_to_unplace': 1/12.0,
                     'specification_storage': 'base_cache_storage',
-                    'specification_table': "'household_location_choice_model_specification'"
+                    'specification_table': "'household_location_choice_model_specification'",
+                    'filter': None
                     },
                 'name': 'prepare_for_estimate',
                 'output': '(specification, index)'
