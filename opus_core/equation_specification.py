@@ -31,16 +31,18 @@ class EquationSpecification(object):
     dim_field_prefix = 'dim_' # columns with this prefix are considered as additional dimensions of the specification
 
     def __init__(self, variables=None, coefficients=None, equations=None, submodels=None,
-                 fixed_values=None, other_fields=None, in_storage=None, out_storage=None):
+                 fixed_values=None, other_fields=None, specification_dict=None, in_storage=None, out_storage=None):
         """  variables - array of names of variables that are to be connected to coefficients.
             coefficients (coef. names), equations and submodels are arrays of the same length as variables or empty arrays.
             variables[i] is  meant to belong to coefficient[i], equations[i], submodels[i].
             fixed_values is an array with coeffcient values that should stay constant in the estimation. 
             other_fields should be a dictionary holding other columns of the specification table.
             The actual connection is done by SpecifiedCoefficients.
-
+            If variables is None and specification_dict is not None, the specification is assume to be in one of the dictionary format,
+            see doc string for get_specification_attributes_from_dictionary.
         """
-        
+        if (variables is None) and (specification_dict is not None):
+            variables, coefficients, equations, submodels, fixed_values = get_specification_attributes_from_dictionary(specification_dict)
         self.variables = tuple(map(lambda x: VariableName(x), self._none_or_array_to_array(variables)))
         self.coefficients = self._none_or_array_to_array(coefficients)
         if not isinstance(self.coefficients, ndarray):
@@ -357,7 +359,7 @@ class SpecLengthException(Exception):
     def __init__(self, name):
         self.args = "Something is wrong with the size of the specification object " + name + "!"
         
-def load_specification_from_dictionary(specification_dict):
+def get_specification_attributes_from_dictionary(specification_dict):
     """ Creates a specification object from a dictionary specification_dict. Keys of the dictionary are submodels. If there
     is only one submodel, use -2 as key. A value of specification_dict for each submodel entry is a list containing specification for the particular submodel.
     The elements of each list can be defined in one of the following forms:
@@ -399,13 +401,13 @@ def load_specification_from_dictionary(specification_dict):
 
     if where(array(fixed_values) <> 0)[0].size == 0: # no fixed values defined
         fixed_values = []
-    specification = EquationSpecification(variables=array(variables),
-                                          coefficients=array(coefficients),
-                                          equations = array(equations, dtype="int16"),
-                                          submodels = array(submodels, dtype="int16"),
-                                          fixed_values = array(fixed_values)
-                                          )
-    return specification
+    return (array(variables), array(coefficients), array(equations, dtype="int16"), array(submodels, dtype="int16"), array(fixed_values))
+
+def load_specification_from_dictionary(specification_dict):
+    """See the doc string at get_specification_attributes_from_dictionary
+    """
+    variables, coefficients, equations, submodels, fixed_values = get_specification_attributes_from_dictionary(specification_dict)
+    return EquationSpecification(variables=variables, coefficients=coefficients, equations = equations, submodels = submodels, fixed_values = fixed_values)
 
 def get_variables_coefficients_equations_for_submodel(submodel_spec, sub_model, definition={}):
     variables = []
