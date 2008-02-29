@@ -438,11 +438,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_get_estimation_specification(self):
         f = os.path.join(self.test_configs, 'estimate.xml')
         config = XMLConfiguration(f).get_estimation_specification('real_estate_price_model')
-        should_be = {'models_configuration': {'real_estate_price_model': {'controller': {'prepare_for_run': {
-              'name': 'prepare_for_run', 
-              'arguments': {'specification_storage': 'base_cache_storage', 'specification_table': 'real_estate_price_model_specification'}
-              }}}},
-          '_definition_': ['ln_cost=ln(psrc.parcel.cost)', 'unit_price=urbansim_parcel.parcel.unit_price'],
+        should_be = {'_definition_': ['ln_cost=ln(psrc.parcel.cost)', 'unit_price=urbansim_parcel.parcel.unit_price'],
           24: ['ln_cost']}
         self.assertEqual(config, should_be)
         
