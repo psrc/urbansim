@@ -1247,6 +1247,41 @@ class AbstractDataset(object):
         else:
             show()
 
+    def r_correlation_image(self, names, file=None, pdf=True):
+        """ Creates an image of the correlation matrix for attributes given by names. 
+        If 'file' is given, the plot is outputed into the file, either PDF (if pdf is True) or postscript (if pdf is False).
+        rpy package and R library fields required. 
+        """
+        tdata = self.correlation_matrix(names)
+        data = zeros(tdata.shape, dtype=float32)
+        idx = arange(tdata.shape[1]-1,-1,-1)
+        for i in range(data.shape[0]):
+            data[i,idx] = tdata[i,:]
+        xlen = data.shape[0]
+        from rpy import r
+        r.library("fields")
+        if file:
+            if pdf:
+                r.pdf(file)
+            else:
+                r.postscript(file)
+        color = r.rainbow(150)[110:0:-1]
+        seq = arange(xlen)
+        r.image_plot(z=data, x=seq, y=seq, col=color, xlab='', ylab='', xaxt='n', yaxt='n', zlim=[0,1])
+        inv_seq = arange(xlen-1, -1, -1)
+        r.text(r.rep(0, xlen), inv_seq, names, cex=0.7)
+        r.text(seq, r.rep(xlen-1, xlen), names, srt=270, cex=0.7)
+        if file:
+            r.dev_off()
+
+    def correlation_image(self, names):
+        """ Creates an image of the correlation matrix for attributes given by names. 
+        It uses the matplot library.
+        """
+        from opus_core.plot_functions import plot_matplot
+        data = self.correlation_matrix(names)
+        plot_matplot(data, xlabels = names, ylabels=names)
+        
     def openev_plot(self, name, prototype_dataset=None, template_project=None,
                     legend_file=None, legend_scheme=None, my_title=None,
                     layer_index=1, nodata=1e20,
