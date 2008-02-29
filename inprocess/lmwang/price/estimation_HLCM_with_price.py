@@ -14,9 +14,9 @@
 
 import sys
 from urbansim.models.household_location_choice_model_creator import HouseholdLocationChoiceModelCreator
-from opus_core.equation_specification import EquationSpecification
+from opus_core.equation_specification import EquationSpecification, load_specification_from_dictionary
 from opus_core.storage_factory import StorageFactory
-from urbansim.estimation.estimator import Estimator, load_specification_from_variable
+from urbansim.estimation.estimator import Estimator
 from opus_core.resources import Resources
 from opus_core.logger import logger
 from numpy.random import seed
@@ -193,7 +193,7 @@ class HLCMEstimator(Estimator):
             spec_var = spec_py.specification
         
         if spec_var is not None:
-            self.specification = load_specification_from_variable(spec_var)
+            self.specification = load_specification_from_dictionary(spec_var)
         else:
             in_storage = StorageFactory().build_storage_for_dataset(type='sql_storage', 
                                                                     storage_location=self.in_con)
