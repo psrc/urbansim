@@ -681,6 +681,8 @@ class AbstractDataset(object):
         ids = id
         if not isinstance(ids, ndarray):
             ids = array(ids, dtype="int32")
+        if ids.dtype.name.startswith('float'):
+            ids = ids.astype('int32')
         if ids.ndim > 1:
             return array(map(lambda x: self.id_mapping[tuple(x)], ids), dtype=ids.dtype.char)
         if self.id_mapping_type == "A":
