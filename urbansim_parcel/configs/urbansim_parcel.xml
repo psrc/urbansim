@@ -43,7 +43,7 @@
           <arguments type="dictionary" >
             <specification_storage type="string" >base_cache_storage</specification_storage>
             <specification_table type="string" >'real_estate_price_model_specification'</specification_table>
-            <filter_variable type="string" >'numpy.logical_and(urbansim_parcel.parcel.unit_price&gt;20.0855, urbansim_parcel.parcel.unit_price&lt;1096.63, urbansim_parcel.parcel.existing_units&gt;100)'</filter_variable>
+            <filter_variable type="string" ><![CDATA['numpy.logical_and(urbansim_parcel.parcel.unit_price>20.0855, urbansim_parcel.parcel.unit_price<1096.63, urbansim_parcel.parcel.existing_units>100)']]></filter_variable>
             <dataset type="string" >parcel</dataset>
             <threshold type="integer" >1</threshold>
           </arguments>
@@ -82,7 +82,7 @@
         <agents_for_estimation_table type="string" >jobs_for_estimation</agents_for_estimation_table>
         <number_of_units_string type="string" >total_SSS_job_space</number_of_units_string>
         <filter type="string" >building.non_residential_sqft</filter>
-        <filter_for_estimation type="string" >numpy.logical_and(job.building_id&gt;0, job.disaggregate(building.non_residential_sqft) &gt; 0)</filter_for_estimation>
+        <filter_for_estimation type="string" ><![CDATA[numpy.logical_and(job.building_id>0, job.disaggregate(building.non_residential_sqft) > 0)]]></filter_for_estimation>
         <portion_to_unplace type="integer" >0</portion_to_unplace>
         <capacity_string type="string" >vacant_SSS_job_space</capacity_string>
         <variable_package type="string" >urbansim_parcel</variable_package>
@@ -98,7 +98,7 @@
         <estimation_size_agents type="float" >0.4</estimation_size_agents>
         <number_of_units_string parser_action="empty_string_to_None" type="string" />
         <filter type="string" >numpy.logical_and(building.residential_units, building.sqft_per_unit)</filter>
-        <filter_for_estimation type="string" >numpy.logical_and(job.building_id&gt;0, job.disaggregate(building.sqft_per_unit &gt; 0))</filter_for_estimation>
+        <filter_for_estimation type="string" ><![CDATA[numpy.logical_and(job.building_id>0, job.disaggregate(building.sqft_per_unit > 0))]]></filter_for_estimation>
         <portion_to_unplace type="integer" >0</portion_to_unplace>
         <capacity_string type="string" >vacant_home_based_job_space</capacity_string>
         <variable_package type="string" >urbansim_parcel</variable_package>
@@ -110,7 +110,7 @@
         <location_set type="string" >building</location_set>
         <filter type="string" >urbansim_parcel.building.is_governmental</filter>
         <agents_filter type="string" >urbansim.job.is_in_employment_sector_group_scalable_sectors</agents_filter>
-        <module_name type="string" >urbansim_parcel.models.scaling_jobs_model</module_name>
+        <module_name type="string" >urbansim_parcel.models.distribute_unplaced_jobs_model</module_name>
       </distribute_unplaced_jobs_model>
       <governmental_employment_location_choice_model parser_action="execute" type="class" >
         <Class_name flags="hidden" type="string" >GovernmentalEmploymentLocationChoiceModelConfigurationCreator</Class_name>
@@ -118,15 +118,15 @@
         <input_index type="string" >erm_index</input_index>
         <location_set type="string" >building</location_set>
         <filter type="string" >urbansim_parcel.building.is_governmental</filter>
-        <module_name type="string" >urbansim_parcel.models.distribute_unplaced_jobs_model</module_name>
+        <module_name type="string" >urbansim_parcel.models.scaling_jobs_model</module_name>
       </governmental_employment_location_choice_model>
       <household_relocation_model parser_action="execute" type="class" >
         <Class_name flags="hidden" type="string" >HouseholdRelocationModelConfigurationCreator</Class_name>
         <Class_path flags="hidden" type="string" >urbansim.configurations.household_relocation_model_configuration_creator</Class_path>
         <agent_set type="string" >household</agent_set>
-        <location_id_name type="string" >'building_id'</location_id_name>
-        <rate_table type="string" >'annual_relocation_rates_for_households'</rate_table>
-        <probabilities type="string" >'urbansim.household_relocation_probabilities'</probabilities>
+        <location_id_name type="string" >building_id</location_id_name>
+        <rate_table type="string" >annual_relocation_rates_for_households</rate_table>
+        <probabilities type="string" >urbansim.household_relocation_probabilities</probabilities>
       </household_relocation_model>
       <process_pipeline_events type="dictionary" >
         <import type="dictionary" >
@@ -160,8 +160,8 @@
         <prepare_for_run type="dictionary" >
           <name type="string" >prepare_for_run</name>
           <arguments type="dictionary" >
-            <parcel_filter_for_new_development type="string" >'has_vacant_land=urbansim_parcel.parcel.vacant_land_area &gt; 0'</parcel_filter_for_new_development>
-            <parcel_filter_for_redevelopment type="string" >'low_improvement_ratio=urbansim_parcel.parcel.improvement_value / ( urbansim_parcel.parcel.unit_price * urbansim_parcel.parcel.existing_units ) &lt; 0.1'</parcel_filter_for_redevelopment>
+            <parcel_filter_for_new_development type="string" ><![CDATA['has_vacant_land=urbansim_parcel.parcel.vacant_land_area > 0']]></parcel_filter_for_new_development>
+            <parcel_filter_for_redevelopment type="string" ><![CDATA['low_improvement_ratio=urbansim_parcel.parcel.improvement_value / ( urbansim_parcel.parcel.unit_price * urbansim_parcel.parcel.existing_units ) < 0.1']]></parcel_filter_for_redevelopment>
             <specification_storage flags="hidden" type="string" >base_cache_storage</specification_storage>
             <specification_table type="string" >'real_estate_price_model_specification'</specification_table>
             <coefficients_storage flags="hidden" type="string" >base_cache_storage</coefficients_storage>
@@ -216,6 +216,32 @@
           </arguments>
         </run>
       </building_construction_model>
+      
+         <household_location_choice_model  parser_action="execute" type="class">
+        <Class_name flags="hidden" type="string">HouseholdLocationChoiceModelConfigurationCreator</Class_name>
+        <Class_path flags="hidden" type="string">urbansim.configurations.household_location_choice_model_configuration_creator</Class_path>
+        <location_set type="string">building</location_set>
+        <agent_set type="string">household</agent_set>
+        <capacity_string type="string">vacant_residential_units</capacity_string>
+        <records_per_chunk type="integer">50000</records_per_chunk>
+        <sample_size_locations type="integer">30</sample_size_locations>
+        <sampler type="string">opus_core.samplers.weighted_sampler</sampler>
+        <lottery_max_iterations type="integer">7</lottery_max_iterations>
+        <location_id_name type="string">building_id</location_id_name>
+        <location_filter type="string"><![CDATA[numpy.logical_and(urbansim_parcel.building.is_residential, numpy.logical_and(numpy.logical_and(building.residential_units, building.sqft_per_unit), urbansim_parcel.building.unit_price > 0))]]></location_filter>
+        <estimation_weight_string type="string">urbansim_parcel.building.vacant_residential_units</estimation_weight_string>
+        <estimation_size_agents type="float" parser_action="empty_string_to_None"></estimation_size_agents>
+        <agents_for_estimation_table_name  type="string">households_for_estimation</agents_for_estimation_table_name>
+        <location_filter_for_estimation type="string"><![CDATA[numpy.logical_and(household.building_id>0, household.disaggregate(building.sqft_per_unit>0))]]></location_filter_for_estimation>
+        <estimation_procedure type="string">opus_core.bhhh_wesml_mnl_estimation</estimation_procedure>
+        <join_agents_for_estimation_with_all_agents type="boolean">True</join_agents_for_estimation_with_all_agents>
+        <unplace_agents_for_estimation type="boolean">False</unplace_agents_for_estimation>
+        <estimate_config type="dictionary">
+          <wesml_sampling_correction_variable type="string">'psrc_parcel.building.wesml_sampling_correction_variable'</wesml_sampling_correction_variable>
+        </estimate_config>
+        <variable_package flags="hidden" type="string" >urbansim_parcel</variable_package>
+  </household_location_choice_model>
+  
     </model_system>
   </model_manager>
   <scenario_manager>
