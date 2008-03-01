@@ -149,15 +149,15 @@ class XMLConfiguration(object):
         # return None if that is a model that isn't selected to be run
         type_name = node.get('type')
         if type_name=='integer':
-            return int(node.text)
+            return self._convert_string_to_data(node, int)
         elif type_name=='float':
-            return float(node.text)
+            return self._convert_string_to_data(node, float)
         elif type_name=='string' or type_name=='password' or type_name=='variable_definition':
-            return self._convert_string_to_data(node)
+            return self._convert_string_to_data(node, str)
         elif type_name=='scenario_name':
             return node.text
         elif type_name=='unicode':
-            return unicode(node.text)
+            return self._convert_string_to_data(node, unicode)
         elif type_name=='selectable_list':
             return self._convert_list_to_data(node)
         elif type_name=='tuple':
@@ -206,14 +206,16 @@ class XMLConfiguration(object):
         inst.__init__(**keyword_args)
         return inst
     
-    def _convert_string_to_data(self, node):
+    def _convert_string_to_data(self, node, func):
         if node.text is None:
             if node.get('parser_action', '')=='empty_string_to_None':
                 return None
-            else:
+            elif func==str:
                 return ''
+            else:
+                raise ValueError, "found empty string in xml node but no parser action to convert it to None"
         else:
-            return node.text
+            return func(node.text)
         
     def _convert_list_to_data(self, node):
         r = map(lambda n: self._convert_node_to_data(n), node)
@@ -297,6 +299,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                           'year': 1980,
                           'mybool': True,
                           'ten': 10.0,
+                          'emptyint': None,
+                          'emptyfloat': None,
                           'years': (1980, 1981),
                           'list_test': [10, 20, 30],
                           'dicttest': {'str1': 'squid', 'str2': 'clam'},
@@ -461,6 +465,10 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f4 = os.path.join(self.test_configs, 'badconfig4.xml')
         config4 = XMLConfiguration(f4)
         self.assertRaises(ValueError, config4.get_run_configuration, 'test_scenario')
+        # badconfig5 has an empty string for an integer value, but no parser directive to turn it to None
+        f5 = os.path.join(self.test_configs, 'badconfig5.xml')
+        config5 = XMLConfiguration(f5)
+        self.assertRaises(ValueError, config5.get_run_configuration, 'test_scenario')
         
 if __name__ == '__main__':
     opus_unittest.main()

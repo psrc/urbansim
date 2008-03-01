@@ -9,6 +9,8 @@
       <year type="integer">1980</year>
       <mybool type="boolean" choices="True|False">True</mybool>
       <ten type="float">10.0</ten>
+      <emptyint type="integer" parser_action="empty_string_to_None" ></emptyint>
+      <emptyfloat type="float" parser_action="empty_string_to_None" ></emptyfloat>
       <years type="tuple">
         <startyear type="integer">1980</startyear>
         <endyear type="integer">1981</endyear>
