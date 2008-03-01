@@ -658,3 +658,11 @@ class BayesianMeldingFromFile(BayesianMelding):
             
     def _compute_variable_for_one_run(self, run_index, variable, dataset_name, year, dummy=None):
         return MultipleRuns._compute_variable_for_one_run(self, run_index, variable, dataset_name, year)
+
+    def get_posterior_component_mean(self):
+        # temporarily without bias (for experimentation)
+        return self.get_predicted_values()
+
+    def get_posterior_component_variance(self):
+        # temporarily without propagation factor (for experimentation)
+        return self.get_variance_for_quantity()
