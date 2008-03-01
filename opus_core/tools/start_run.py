@@ -12,13 +12,13 @@
 # other acknowledgments.
 #
 
-import sys, os
-import pickle
+import sys, pickle
 
 from opus_core.misc import get_config_from_opus_path
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
+from opus_core.configurations.xml_configuration import XMLConfiguration
 
 
 class StartRunOptionGroup(GenericOptionGroup):
@@ -29,6 +29,10 @@ class StartRunOptionGroup(GenericOptionGroup):
                                 help="Opus path to pickled configuration file.")
         self.parser.add_option("-c", "--configuration-path", dest="configuration_path", default=None, 
                                 help="Opus path to Python module defining run_configuration.")
+        self.parser.add_option("-x", "--xml-configuration", dest="xml_configuration", default=None, 
+                                help="file name of xml configuration (must also provide a scenario name using -s)")
+        self.parser.add_option("-s", "--scenario_name", dest="scenario_name", default=None, 
+                                help="name of the scenario to run")
         self.parser.add_option("--directory-to-cache", dest="existing_cache_to_copy", default=None, 
                                 help="Directory containing data to put in new cache.")
         self.parser.add_option("--years-to-cache", dest="years_to_cache", default=None, 
@@ -55,7 +59,6 @@ if __name__ == "__main__":
             config = pickle.load(f)
         finally:
             f.close()
-            
     elif options.configuration_path is not None:
         opus_path = options.configuration_path
         try:
@@ -65,6 +68,12 @@ if __name__ == "__main__":
             #       get rid of this use.
             import_stmt = 'from %s import run_configuration as config' % opus_path
             exec(import_stmt)
+        insert_auto_generated_cache_directory_if_needed(config)
+    elif options.xml_configuration is not None:
+        if options.scenario_name is None:
+            parser.print_help()
+            sys.exit(1)
+        config = XMLConfiguration(options.xml_configuration).get_run_configuration(options.scenario_name)
         insert_auto_generated_cache_directory_if_needed(config)
     else:
         parser.print_help()
