@@ -19,6 +19,7 @@ import time
 import re
 from opus_core.logger import logger
 from numpy import round_, zeros
+from numpy.random import seed
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.variables.variable_name import VariableName
 from psrc.travel_model_input_file_writer import TravelModelInputFileWriter as PSRCTravelModelInputFileWriter
@@ -73,6 +74,10 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
                 os.makedirs('%s' % logdir)
             log_file = os.path.join(logdir, self.log_file_name)
             logger.enable_file_logging(log_file)
+        if 'seed' in config.keys():
+            seed(config['seed'])
+            logger.log_status('seed: %s' % config['seed'])
+
         
     def get_variables_list(self, dataset_pool):
         self.full_variable_list = PSRCTravelModelInputFileWriter.get_variables_list(self, dataset_pool)

@@ -19,7 +19,7 @@ from opus_core.services.run_server.generic_option_group import GenericOptionGrou
 from opus_core.services.run_server.run_manager import get_date_time_string
 from opus_core.fork_process import ForkProcess
 from opus_core.logger import logger
-from numpy.random import seed
+from numpy.random import seed, randint
 from opus_emme2.models.abstract_emme2_travel_model import AbstractEmme2TravelModel
 
 class OptionGroup(GenericOptionGroup):
@@ -47,10 +47,12 @@ class RunTravelModel:
         number_of_runs = config.get('number_of_runs', 1)
         if 'seed' in config.keys():
             seed(config['seed'])
+        seed_array = randint(1,2**30, number_of_runs)
         for tmrun in range(1, number_of_runs+1):
             logger.log_status("Travel model run %s" % tmrun)
             subdir = 'emme_run_%s_%s' % (tmrun, get_date_time_string())
             tmdir = os.path.join(cache_directory, subdir)
+            config['seed']= seed_array[tmrun-1]
             success = self._do_one_run(year, config)
             if success:
                 if not os.path.exists(tmdir):
