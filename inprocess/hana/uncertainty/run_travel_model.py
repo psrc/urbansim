@@ -41,7 +41,7 @@ class RunTravelModel:
         of different characteristics. 
     """
                 
-    def run(self, year, configuration_path, cache_directory):
+    def run(self, year, configuration_path, cache_directory, log_file):
         config = get_config_from_opus_path(configuration_path)
         config['cache_directory'] = cache_directory
         number_of_runs = config.get('number_of_runs', 1)
@@ -53,11 +53,13 @@ class RunTravelModel:
             seed_array = randint(1,2**30, number_of_runs)
         logger.log_status("All seeds: %s", seed_array)
         for tmrun in range(1, number_of_runs+1):
-            logger.log_status("Travel model run %s" % tmrun)
+            logger.log_status("Travel model run %s, seed %s" % (tmrun, seed_array[tmrun-1]))
             subdir = 'emme_run_%s_%s' % (tmrun, get_date_time_string())
             tmdir = os.path.join(cache_directory, subdir)
             config['seed']= (seed_array[tmrun-1],)
+            logger.disable_file_logging(log_file)
             success = self._do_one_run(year, config)
+            logger.enable_file_logging(log_file)
             if success:
                 if not os.path.exists(tmdir):
                     os.makedirs('%s' % tmdir)
@@ -91,7 +93,7 @@ if __name__ == "__main__":
     log_file = os.path.join(options.cache_directory, 'run_travel_model.log')
     logger.enable_file_logging(log_file)
     tmrun = RunTravelModel()
-    tmrun.run(int(options.year), options.configuration_path, options.cache_directory)
+    tmrun.run(int(options.year), options.configuration_path, options.cache_directory, log_file)
  
  
 
