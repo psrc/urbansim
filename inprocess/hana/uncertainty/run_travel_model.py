@@ -45,9 +45,13 @@ class RunTravelModel:
         config = get_config_from_opus_path(configuration_path)
         config['cache_directory'] = cache_directory
         number_of_runs = config.get('number_of_runs', 1)
-        if 'seed' in config.keys():
-            seed(config['seed'])
-        seed_array = randint(1,2**30, number_of_runs)
+        if 'all_seeds' in config.keys():
+            seed_array = config['all_seeds']
+        else:
+            if 'seed' in config.keys():
+                seed(config['seed'])
+            seed_array = randint(1,2**30, number_of_runs)
+        logger.log_status("All seeds: %s", seed_array)
         for tmrun in range(1, number_of_runs+1):
             logger.log_status("Travel model run %s" % tmrun)
             subdir = 'emme_run_%s_%s' % (tmrun, get_date_time_string())
@@ -84,8 +88,8 @@ if __name__ == "__main__":
     try: import wingdbstub
     except: pass
 
-    #log_file = os.path.join(options.cache_directory, 'run_travel_model.log')
-    #logger.enable_file_logging(log_file)
+    log_file = os.path.join(options.cache_directory, 'run_travel_model.log')
+    logger.enable_file_logging(log_file)
     tmrun = RunTravelModel()
     tmrun.run(int(options.year), options.configuration_path, options.cache_directory)
  
