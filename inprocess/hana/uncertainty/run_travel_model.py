@@ -56,7 +56,7 @@ class RunTravelModel:
             logger.log_status("Travel model run %s" % tmrun)
             subdir = 'emme_run_%s_%s' % (tmrun, get_date_time_string())
             tmdir = os.path.join(cache_directory, subdir)
-            config['seed']= seed_array[tmrun-1]
+            config['seed']= (seed_array[tmrun-1],)
             success = self._do_one_run(year, config)
             if success:
                 if not os.path.exists(tmdir):
