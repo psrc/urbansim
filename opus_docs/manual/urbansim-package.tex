@@ -1605,7 +1605,7 @@ In the production run of UrbanSim, this model is called by default for members '
 \item[location_set] - A \class{GridcellDataset} object.
 \item[choices] - 'urbansim.lottery_choices'
 \end{description}
-Additionally, the member 'home_based' overwrites the arguments {\bf estimation_weight_string} by the value 'residential_units' 
+The default submodel_string is `sector_id', which associates submodels with the employment sectors defined in the table \file{employment_sectors}.  Additionally, the member 'home_based' overwrites the arguments {\bf estimation_weight_string} by the value 'residential_units' 
 and {\bf number_of_units_string} also by the value 'residential_units'.
 
 The \method{run()} method is called with the following arguments:
