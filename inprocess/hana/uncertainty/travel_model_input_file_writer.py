@@ -74,7 +74,7 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
                 os.makedirs('%s' % logdir)
             log_file = os.path.join(logdir, self.log_file_name)
             logger.enable_file_logging(log_file)
-        if 'seed' in config.keys():
+        if config is not None and 'seed' in config.keys():
             seed(config['seed'])
             logger.log_status('seed: %s' % config['seed'])
 
