@@ -33,16 +33,16 @@ class HouseholdLocationChoiceModelConfigurationCreator(object):
                 capacity_string = 'vacant_residential_units', # attribute of location set that determines capacity and weights for sampling in simulation
                 estimation_weight_string = 'residential_units', # attribute of location set that determines weights for sampling in estimation
                 sample_size_locations = 30, # how many locations should be sampled into the set of alternatives
-                portion_to_unplace = 1/12.0, # portion of households to be unpalced before estimation
+                portion_to_unplace = 1/12.0, # portion of households to be unplaced before estimation
                 nchunks = 12, # in how many chunks should the simulation run
                 records_per_chunk = None, # how many records should be in 1 chunk (if not None, it has priority over 'nchunks')
                 agents_for_estimation_table_name = 'households_for_estimation',
                 number_of_units_string = 'residential_units', # attribute of location set that determines total number of units
                 number_of_agents_string = 'number_of_households', # attribute of location set that determines number of households in each unit
                 lottery_max_iterations = 3, # parameter for 'urbansim.lottery_choices' module - how many times households can re-decide for a location if the capacity is exceeded 
-                maximum_runs = 3, # maximum number of iteration of the outer loop that compares values of number_of_units_string with values of 'number_of_agents_string'
+                maximum_runs = 3, # maximum number of iterations of the outer loop that compares values of 'number_of_units_string' with values of 'number_of_agents_string'
                 estimation_procedure = 'opus_core.bhhh_mnl_estimation',
-                estimation_size_agents = None, # number < 1. Portion of households for estimation to be used for estimation
+                estimation_size_agents = None, # Portion of households for estimation to be used for estimation (should be > 0 and <= 1)
                 location_filter_for_estimation = None, # filter variable for locations to be chosen into the set of alternatives in the estimation procedure
                 variable_package = 'urbansim', # in what package are the variables above defined 
                 run_config = {}, # additional arguments passed to simulation modules
@@ -50,7 +50,7 @@ class HouseholdLocationChoiceModelConfigurationCreator(object):
                 join_agents_for_estimation_with_all_agents = True, # should the dataset of households for estimation be (internally) attached to the houeholds dataset.
                                                                     # If it is False, it is expected, that households for estimation are contained in the households table (the same household_id)
                 unplace_agents_for_estimation = True, # should households for estimation be unplaced before estimation  (after capturing their locations for the estimation procedure)
-                input_index = 'hrm_index' # internal connector between household relocation model and HLCM
+                input_index = 'hrm_index' # internal connector between the household relocation model and HLCM
                 ):
         self.agent_set = agent_set
         self.debuglevel = debuglevel
