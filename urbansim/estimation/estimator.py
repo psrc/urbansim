@@ -21,7 +21,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.misc import load_table_from_text_file
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.datasets.dataset import Dataset
-from opus_core.equation_specification import EquationSpecification, load_specification_from_dictionary
+from opus_core.equation_specification import EquationSpecification
 from opus_core.storage_factory import StorageFactory
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
@@ -94,7 +94,7 @@ class Estimator(object):
                     submodels_to_be_deleted.remove("_definition_")
             for sm in submodels_to_be_deleted:
                 del specification_dict[sm]
-        specification = load_specification_from_dictionary(specification_dict)
+        specification = EquationSpecification(specification_dict=specification_dict)
         new_namespace = self.model_system.run_year_namespace
         new_namespace["specification"] = specification
         self.model_system.do_process(new_namespace)
@@ -117,43 +117,47 @@ class Estimator(object):
             else:
                 raise ValueError, "model_name unspecified"
 
+        out_storage_available = True
         if out_storage:
             pass
         elif 'output_configuration' in self.config:
-            config = DatabaseServerConfiguration(
-                host_name = self.config['output_configuration'].host_name,
-                user_name = self.config['output_configuration'].user_name,
-                password = self.config['output_configuration'].password
-            )
-            db_server = DatabaseServer(config)
-            database_name = self.config["output_configuration"].database_name
-
-            if not db_server.has_database(database_name):
-                db_server.create_database(database_name)
-
-            output_db = db_server.get_database(database_name)
-            out_storage = StorageFactory().get_storage(
-                type='sql_storage',
-                storage_location=output_db)
+            try:
+                config = DatabaseServerConfiguration(
+                    host_name = self.config['output_configuration'].host_name,
+                    user_name = self.config['output_configuration'].user_name,
+                    password = self.config['output_configuration'].password
+                )
+                db_server = DatabaseServer(config)
+                database_name = self.config["output_configuration"].database_name
+    
+                if not db_server.has_database(database_name):
+                    db_server.create_database(database_name)
+    
+                output_db = db_server.get_database(database_name)
+                out_storage = StorageFactory().get_storage(
+                    type='sql_storage',
+                    storage_location=output_db)
+            except:
+                logger.log_warning("Problem with connecting database given by 'output_configuration'.")
+                out_storage_available = False
         else:
-            raise StandardError, "No output_configuration given."
+            logger.log_warning("No output_configuration given.")
+            out_storage_available = False
 
         # the original model name of development_project_lcm is too long as a mysql db table name, truncate it
         if model_name.rfind("_development_project_location_choice_model") >=0:
             model_name = model_name.replace('_project', '')
         specification_table = '%s_specification' % model_name
         coefficients_table = '%s_coefficients' % model_name
-        self.specification.write(out_storage=out_storage, out_table_name=specification_table)
-        self.coefficients.write(out_storage=out_storage, out_table_name=coefficients_table)
-        self.cache_specification_and_coefficients(out_storage, specification_table, coefficients_table)
-
-    def cache_specification_and_coefficients(self, storage, specification_table, coefficients_table):
-        for table_name in [specification_table, coefficients_table]:
-            dataset = Dataset(in_storage=storage,
-                          in_table_name=table_name,
-                          id_name=[], debug = self.config.get("debuglevel",0))
-            dataset.load_dataset()
-            dataset.flush_dataset()
+        if out_storage_available:
+            logger.start_block("Writing specification and coefficients into storage given by 'output_configuration'")
+            self.specification.write(out_storage=out_storage, out_table_name=specification_table)
+            self.coefficients.write(out_storage=out_storage, out_table_name=coefficients_table)
+            logger.end_block()
+        logger.start_block("Writing specification and coefficients into %s" % AttributeCache().get_storage_location())
+        self.specification.write(out_storage=AttributeCache(), out_table_name=specification_table)
+        self.coefficients.write(out_storage=AttributeCache(), out_table_name=coefficients_table)
+        logger.end_block()
 
     def extract_coefficients_and_specification(self):
         for key in self.model_system.run_year_namespace.keys():
@@ -208,7 +212,7 @@ class Estimator(object):
 def get_specification_for_estimation(specification_dict=None, specification_storage=None,
                                         specification_table = None):
     if specification_dict is not None:
-        return load_specification_from_dictionary(specification_dict)
+        return EquationSpecification(specification_dict=specification_dict)
     from opus_core.choice_model import prepare_specification_and_coefficients
     (specification, dummy) = prepare_specification_and_coefficients(specification_storage, specification_table)
     return specification
