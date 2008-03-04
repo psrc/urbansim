@@ -22,8 +22,11 @@ class LandPriceModelConfigurationCreator(object):
                 debuglevel = 'debuglevel',
                 nchunks = 1,
                 dataset = 'gridcell',
+                submodel_string = "development_type_id",
+                filter = "urbansim.gridcell.is_in_development_type_group_developable",
                 coefficients_table = 'land_price_model_coefficients',
                 specification_table = 'land_price_model_specification',
+                filter_for_estimation = "urbansim.gridcell.total_land_value",
                 threshold = 1000,
                 estimation_procedure = "opus_core.estimate_linear_regression"
                 ):
@@ -34,7 +37,9 @@ class LandPriceModelConfigurationCreator(object):
         self.estimation_procedure = estimation_procedure
         self.coefficients_table = coefficients_table
         self.specification_table = specification_table
-        
+        self.submodel_string = submodel_string
+        self.filter = filter
+        self.filter_for_estimation = filter_for_estimation
             
     def execute(self):
         # Names of intermediate objects used to get data between steps
@@ -58,12 +63,18 @@ class LandPriceModelConfigurationCreator(object):
             'import': {
                 'urbansim.models.corrected_%s' % self._model_name: 'CorrectedLandPriceModel'
                 },
-            'init': {'name': 'CorrectedLandPriceModel'},
+            'init': {'name': 'CorrectedLandPriceModel',
+                     'arguments': {
+                        'filter': "'%s'" % self.filter,
+                        'submodel_string': "'%s'" % self.submodel_string
+                                   }
+                     },
             'prepare_for_estimate': {
                 'arguments': {
                     'dataset': self.dataset,
                     'specification_storage': 'base_cache_storage',
                     'specification_table': "'%s'" % self.specification_table,
+                    'filter_variable': "'%s'" % self.filter_for_estimation,
                     'threshold': self.threshold,
                     },
                 'name': 'prepare_for_estimate',
@@ -121,12 +132,18 @@ class TestLandPriceModelConfigurationCreator(opus_unittest.OpusTestCase):
             'import': {
                 'urbansim.models.corrected_land_price_model': 'CorrectedLandPriceModel'
                 },
-            'init': {'name': 'CorrectedLandPriceModel'},
+            'init': {'name': 'CorrectedLandPriceModel',
+                     'arguments':{
+                           'filter': "'urbansim.gridcell.is_in_development_type_group_developable'",
+                           'submodel_string': "'development_type_id'"
+                                  }
+                     },
             'prepare_for_estimate': {
                 'arguments': {
                     'dataset': 'gridcell',
                     'specification_storage': 'base_cache_storage',
                     'specification_table': "'land_price_model_specification'",
+                    'filter_variable': "'urbansim.gridcell.total_land_value'",
                     'threshold': 1000
                     },
                 'name': 'prepare_for_estimate',
@@ -183,12 +200,17 @@ class TestLandPriceModelConfigurationCreator(opus_unittest.OpusTestCase):
             'import': {
                 'urbansim.models.corrected_land_price_model': 'CorrectedLandPriceModel'
                 },
-            'init': {'name': 'CorrectedLandPriceModel'},
+            'init': {'name': 'CorrectedLandPriceModel',
+                     'arguments':{
+                           'filter': "'urbansim.gridcell.is_in_development_type_group_developable'",
+                           'submodel_string': "'development_type_id'"
+                                  }},
             'prepare_for_estimate': {
                 'arguments': {
                     'dataset': 'dataset',
                     'specification_storage': 'base_cache_storage',
                     'specification_table': "'specification_table'",
+                    'filter_variable': "'urbansim.gridcell.total_land_value'",
                     'threshold': 7777,
                     },
                 'name': 'prepare_for_estimate',
