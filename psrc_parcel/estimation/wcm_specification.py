@@ -19,6 +19,9 @@ all_variables = [
 #    "person.work_at_home",
 #    "person.edu",         
     "hh_income_x_job_is_in_employment_sector_group_fires = person.disaggregate(household.income) * urbansim.job.is_in_employment_sector_group_fires",    
+    "psrc_parcel.person_x_job.income_and_am_total_transit_time_walk_from_home_to_work",
+    "psrc_parcel.person_x_job.travel_time_hbw_am_drive_alone_from_home_to_work",
+    "psrc_parcel.person_x_job.am_total_transit_time_walk_from_home_to_work",
     ]
 
 specification = {}
@@ -28,5 +31,9 @@ specification = {
     -2:
         [
          'hh_income_x_job_is_in_employment_sector_group_fires',
+         #"psrc_parcel.person_x_job.income_and_am_total_transit_time_walk_from_home_to_work",
+         "psrc_parcel.person_x_job.travel_time_hbw_am_drive_alone_from_home_to_work",
+         #"psrc_parcel.person_x_job.am_total_transit_time_walk_from_home_to_work",
+
     ],                             
 }
