@@ -15,5 +15,6 @@
 aliases = [
            'is_worker_without_job = numpy.logical_and(person.is_worker, person.job_id <= 0)',
            'is_worker_with_job = numpy.logical_and(person.is_worker, person.job_id > 0)',
-           'is_non_home_based_worker_with_job = numpy.logical_and( numpy.logical_and(person.is_worker,  numpy.logical_not(person.work_at_home)), person.job_id > 0)',           
+           'is_non_home_based_worker_with_job = numpy.logical_and( numpy.logical_and(person.is_worker,  numpy.logical_not(person.work_at_home)), person.job_id > 0)',
+           'zone_id=person.disaggregate(household.zone_id)',                      
            ]
