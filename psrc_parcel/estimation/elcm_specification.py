@@ -33,7 +33,8 @@ all_variables = [
     "is_unit_price_le_0 = urbansim_parcel.building.unit_price <= 0",
     "ln_unit_price_trunc = ln(where(building.disaggregate(urbansim_parcel.parcel.unit_price<1500),where(building.disaggregate(urbansim_parcel.parcel.unit_price<1),1,building.disaggregate(urbansim_parcel.parcel.unit_price)),1500))",
     "avg_unit_price = building.disaggregate(zone.aggregate(urbansim_parcel.building.unit_price,function=mean,intermediates=[parcel]))",
-    "lngcdacbd=ln(building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd))",
+    "lngcdacbd=ln(building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_seattle_cbd))",
+    "lngcdacbdbell=ln(building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_bellevue_cbd))",
     "lnemp30da=ln(building.disaggregate(psrc.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))",
     "lnemp20da=ln(building.disaggregate(psrc.zone.employment_within_20_minutes_travel_time_hbw_am_drive_alone))",
     "lnemp10da=ln(building.disaggregate(psrc.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone))",
@@ -90,7 +91,7 @@ specification["home_based"] = {
     "lnpopden",
     "lnempden",
     "lngcdacbd",
-    
+    "lngcdacbdbell"
 #    "urbansim_parcel.building.residential_units",
 #    "households_in_zone = building.disaggregate(urbansim_parcel.zone.number_of_households, [parcel])",
 #    "lot_area = building.disaggregate(parcel.parcel_sqft)",             
@@ -113,7 +114,7 @@ specification["non_home_based"] = {
     #"ln_bldgage",
     #"lnsqft",
     "lngcdacbd", #ln(generalized_cost_hbw_am_drive_alone_to_cbd),
-    "lnemp30da", #ln(employment_within_30_minutes_travel_time_hbw_am_drive_alone),
+    #"lnemp30da", #ln(employment_within_30_minutes_travel_time_hbw_am_drive_alone),
     #"lnavginc", #ln(zone.average_income),
     #"lnempden", #ln(zone.number_of_jobs_per_acre),
     #"lnpopden", #ln(zone.population_per_acre),
@@ -122,6 +123,7 @@ specification["non_home_based"] = {
     #"is_industrial_building",
     "is_office_building",
 #    "is_mixed_use_building",
+    "lngcdacbdbell"
     ],
 
         2: # construction
@@ -139,7 +141,7 @@ specification["non_home_based"] = {
     "lnemp30da", #ln(employment_within_30_minutes_travel_time_hbw_am_drive_alone),
     "lnavginc", #ln(zone.average_income),
     "lnempden", #ln(zone.number_of_jobs_per_acre),
-    "lnpopden", #ln(zone.population_per_acre),
+    #"lnpopden", #ln(zone.population_per_acre),
     "inugb", #is_inside_urban_growth_boundary",
     "is_commercial_building",
     "is_industrial_building",
@@ -147,6 +149,7 @@ specification["non_home_based"] = {
 #    "is_mixed_use_building",
     "ln_zone_empden_service",
     "ln_zone_empden_basic",
+    "lngcdacbdbell"
    ],
         3: # aerospace
             [
@@ -169,6 +172,7 @@ specification["non_home_based"] = {
     "is_industrial_building",
     "is_office_building",
 #    "is_mixed_use_building",
+    "lngcdacbdbell"
    ],
         4: # other durable goods
             [
@@ -182,7 +186,7 @@ specification["non_home_based"] = {
     "ln_bldgage",
     "lnsqft",
     "lngcdacbd", #ln(generalized_cost_hbw_am_drive_alone_to_cbd),
-    "lnemp30da", #ln(employment_within_30_minutes_travel_time_hbw_am_drive_alone),
+    #"lnemp30da", #ln(employment_within_30_minutes_travel_time_hbw_am_drive_alone),
     "lnavginc", #ln(zone.average_income),
     "lnempden", #ln(zone.number_of_jobs_per_acre),
     "lnpopden", #ln(zone.population_per_acre),
@@ -191,6 +195,7 @@ specification["non_home_based"] = {
     "is_industrial_building",
     "is_office_building",
 #    "is_mixed_use_building",
+    "lngcdacbdbell"
    ],
         5: # non-durable goods
             [
@@ -214,6 +219,7 @@ specification["non_home_based"] = {
     "is_industrial_building",
     "is_office_building",
 #    "is_mixed_use_building",
+    "lngcdacbdbell"
    ],
         6: # whole sale trade
             [
@@ -239,7 +245,8 @@ specification["non_home_based"] = {
     "ln_zone_empden_service",
     #"ln_zone_empden_retail",
     "ln_zone_empden_basic",
-    "ln_job_sqft_x_bldg_sqft_per_job"
+    "ln_job_sqft_x_bldg_sqft_per_job",
+        "lngcdacbdbell"
    ],
         7: # retail
             [
@@ -253,7 +260,7 @@ specification["non_home_based"] = {
     #"ln_bldgage",
     "lnsqft",
     "lngcdacbd", #ln(generalized_cost_hbw_am_drive_alone_to_cbd),
-    "lnemp30da", #ln(employment_within_30_minutes_travel_time_hbw_am_drive_alone),
+    #"lnemp30da", #ln(employment_within_30_minutes_travel_time_hbw_am_drive_alone),
     "lnavginc", #ln(zone.average_income),
     "lnempden", #ln(zone.number_of_jobs_per_acre),
     "lnpopden", #ln(zone.population_per_acre),
@@ -262,12 +269,13 @@ specification["non_home_based"] = {
     "is_industrial_building",
    # "is_office_building",
 #    "is_mixed_use_building",
+    "lngcdacbdbell"
    ],
         8: # transportation and warehousing
             [
      "bias_nhb",
 #    "ln_invfar",
-     "far",
+    # "far",
 #    "ln_zone_empden_8",
     "ln_unit_price_trunc",
 #    "is_near_highway",    
@@ -284,6 +292,7 @@ specification["non_home_based"] = {
     #"is_industrial_building",
     "is_office_building",
 #    "is_mixed_use_building",
+    "lngcdacbdbell"
    ],
         9: # utilities
             [
@@ -306,6 +315,7 @@ specification["non_home_based"] = {
     #"is_industrial_building",
     #"is_office_building",
 #    "is_mixed_use_building",
+    "lngcdacbdbell"
    ],
         10: # telecommunications
             [
@@ -328,6 +338,7 @@ specification["non_home_based"] = {
     #"is_industrial_building",
     #"is_office_building",
 ##    "is_mixed_use_building",
+    "lngcdacbdbell"
    ],
         11: # other information
             [
@@ -341,7 +352,7 @@ specification["non_home_based"] = {
 #    "ln_bldgage",
     "lnsqft",
     #"lngcdacbd", #ln(generalized_cost_hbw_am_drive_alone_to_cbd),
-    "lnemp30da", #ln(employment_within_30_minutes_travel_time_hbw_am_drive_alone),
+    #"lnemp30da", #ln(employment_within_30_minutes_travel_time_hbw_am_drive_alone),
     #"lnavginc", #ln(zone.average_income),
     "lnempden", #ln(zone.number_of_jobs_per_acre),
     "lnpopden", #ln(zone.population_per_acre),
@@ -352,8 +363,8 @@ specification["non_home_based"] = {
 #    "is_mixed_use_building",
     "ln_zone_empden_service",
     "ln_zone_empden_retail",
-    "ln_job_sqft_x_bldg_sqft_per_job"
-    
+    "ln_job_sqft_x_bldg_sqft_per_job",
+        "lngcdacbdbell"
    ],
         12: # financial activities
             [
@@ -376,6 +387,7 @@ specification["non_home_based"] = {
     "is_industrial_building",
     "is_office_building",
 #    "is_mixed_use_building",
+    "lngcdacbdbell"
    ],
         13: # professional and business
             [
@@ -394,9 +406,10 @@ specification["non_home_based"] = {
     "lnpopden", #ln(zone.population_per_acre),
     #"inugb", #is_inside_urban_growth_boundary",
     #"is_commercial_building",
-    "is_industrial_building",
+    #"is_industrial_building",
     "is_office_building",
 ##    "is_mixed_use_building",
+    "lngcdacbdbell"
    ],
         14: # food services and drinking places
             [
@@ -419,6 +432,7 @@ specification["non_home_based"] = {
     "is_industrial_building",
     "is_office_building",
 #    "is_mixed_use_building",
+    "lngcdacbdbell"
    ],
         15: # educational services
             [
@@ -440,8 +454,9 @@ specification["non_home_based"] = {
     "is_office_building",
     #"is_mixed_use_building",
     "ln_zone_empden_service",
-    "ln_zone_empden_retail",
-    "ln_job_sqft_x_bldg_sqft_per_job"
+    #"ln_zone_empden_retail",
+    "ln_job_sqft_x_bldg_sqft_per_job",
+        "lngcdacbdbell"
    ],
            16: # health services
             [
@@ -453,7 +468,7 @@ specification["non_home_based"] = {
     "ln_bldgage",
     "lnsqft",
     "lngcdacbd", #ln(generalized_cost_hbw_am_drive_alone_to_cbd),
-    "lnemp10da", #ln(employment_within_30_minutes_travel_time_hbw_am_drive_alone),
+    #"lnemp10da", #ln(employment_within_30_minutes_travel_time_hbw_am_drive_alone),
     "lnavginc", #ln(zone.average_income),
     "lnempden", #ln(zone.number_of_jobs_per_acre),
     "lnpopden", #ln(zone.population_per_acre),
@@ -465,6 +480,7 @@ specification["non_home_based"] = {
     "ln_zone_empden_service",
     "ln_zone_empden_retail",
     #"ln_job_sqft_x_bldg_sqft_per_job"
+        "lngcdacbdbell"
    ],
         17: # other services
             [
@@ -477,7 +493,7 @@ specification["non_home_based"] = {
 #    "is_near_art",
 #    "ln_bldgage",
     "lnsqft",
-    "lngcdacbd", #ln(generalized_cost_hbw_am_drive_alone_to_cbd),
+    #"lngcdacbd", #ln(generalized_cost_hbw_am_drive_alone_to_cbd),
     "lnemp30da", #ln(employment_within_30_minutes_travel_time_hbw_am_drive_alone),
     #"lnavginc", #ln(zone.average_income),
     "lnempden", #ln(zone.number_of_jobs_per_acre),
@@ -487,5 +503,6 @@ specification["non_home_based"] = {
     "is_industrial_building",
     "is_office_building",
 #    "is_mixed_use_building",
+    #"lngcdacbdbell"
    ],
 }

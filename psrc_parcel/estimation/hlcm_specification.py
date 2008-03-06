@@ -126,7 +126,8 @@ specification = {
            #"trip_wt_avg_time_hbw_transit_walk = building.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_transit_walk)",
             #"transit_mode_share_overall = building.disaggregate(psrc.zone.mode_split_transit_trips_over_all.py)",
             #"ln_number_of_jobs_within_walking_distance = ln(building.disaggregate(psrc.parcel.number_of_jobs_within_walking_distance))",
-            "gcdacbd_1person= (household.persons==1) * building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)",
+            "gcdacbd_1person= (household.persons==1) * building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_seattle_cbd)",
+            "gcdacbdbell_1person= (household.persons==1) * building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_bellevue_cbd)",
            # "gcdacbd = building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)",
             #"ln_residential_units_within_walking_distance = ln(building.disaggregate(psrc.parcel.residential_units_within_walking_distance))",
 
