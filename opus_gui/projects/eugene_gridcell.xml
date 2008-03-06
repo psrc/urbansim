@@ -21,60 +21,60 @@
       <classification type="classification" >database</classification>
       <opus_database_to_sql_config type="script_config" >
         <script_hook type="script_library_ref" >opus_database_to_sql_tool</script_hook>
-        <path type="string" ></path>
-        <opus_database_to_sql_param1 type="string" >1</opus_database_to_sql_param1>
-        <opus_database_to_sql_param2 type="string" >2</opus_database_to_sql_param2>
+        <sql_db_name type="string" >mytestdb</sql_db_name>
+        <opus_data_directory type="string" ></opus_data_directory>
+        <opus_data_year type="string" >ALL</opus_data_year>
+        <opus_table_name type="string" >ALL</opus_table_name>
       </opus_database_to_sql_config>
     </opus_database_to_sql>
     <opus_database_to_esri type="script_batch" setexpanded="True" >
       <classification type="classification" >database</classification>
       <opus_database_to_esri_config type="script_config" >
         <script_hook type="script_library_ref" >opus_database_to_esri_tool</script_hook>
-        <path type="string" ></path>
-        <opus_database_to_esri_param1 type="string" >1</opus_database_to_esri_param1>
-        <opus_database_to_esri_param2 type="string" >2</opus_database_to_esri_param2>
+        <esri_data_path type="string" >/home/aaronr/work/urbansim_cache/eugene/esri</esri_data_path>
+        <opus_data_directory type="string" ></opus_data_directory>
+        <opus_data_year type="string" >ALL</opus_data_year>
+        <opus_table_name type="string" >ALL</opus_table_name>
       </opus_database_to_esri_config>
-      <opus_database_to_esri_config2 type="script_config" >
-        <script_hook type="script_library_ref" >opus_database_to_esri_tool</script_hook>
-        <path type="string" ></path>
-        <opus_database_to_esri_param1 type="string" >10</opus_database_to_esri_param1>
-        <opus_database_to_esri_param2 type="string" >20</opus_database_to_esri_param2>
-      </opus_database_to_esri_config2>
     </opus_database_to_esri>
     <opus_dataset_to_sql type="script_batch" setexpanded="True" >
       <classification type="classification" >dataset</classification>
       <opus_dataset_to_sql_config type="script_config" >
-        <script_hook type="script_library_ref" >opus_dataset_to_sql_tool</script_hook>
-        <path type="string" ></path>
-        <opus_dataset_to_sql_param1 type="string" >1</opus_dataset_to_sql_param1>
-        <opus_dataset_to_sql_param2 type="string" >2</opus_dataset_to_sql_param2>
+        <script_hook type="script_library_ref" >opus_database_to_sql_tool</script_hook>
+        <sql_db_name type="string" >mytestdb</sql_db_name>
+        <opus_data_directory type="string" ></opus_data_directory>
+        <opus_data_year type="string" >ALL</opus_data_year>
+        <opus_table_name type="string" >ALL</opus_table_name>
       </opus_dataset_to_sql_config>
     </opus_dataset_to_sql>
     <opus_dataset_to_esri type="script_batch" setexpanded="True" >
       <classification type="classification" >dataset</classification>
       <opus_dataset_to_esri_config type="script_config" >
-        <script_hook type="script_library_ref" >opus_dataset_to_esri_tool</script_hook>
-        <path type="string" ></path>
-        <opus_dataset_to_esri_param1 type="string" >1</opus_dataset_to_esri_param1>
-        <opus_dataset_to_esri_param2 type="string" >2</opus_dataset_to_esri_param2>
+        <script_hook type="script_library_ref" >opus_database_to_esri_tool</script_hook>
+        <esri_data_path type="string" >/home/aaronr/work/urbansim_cache/eugene/esri</esri_data_path>
+        <opus_data_directory type="string" ></opus_data_directory>
+        <opus_data_year type="string" >ALL</opus_data_year>
+        <opus_table_name type="string" >ALL</opus_table_name>
       </opus_dataset_to_esri_config>
     </opus_dataset_to_esri>
     <opus_array_to_sql type="script_batch" setexpanded="True" >
       <classification type="classification" >array</classification>
       <opus_array_to_sql_config type="script_config" >
-        <script_hook type="script_library_ref" >opus_array_to_sql_tool</script_hook>
-        <path type="string" ></path>
-        <opus_array_to_sql_param1 type="string" >1</opus_array_to_sql_param1>
-        <opus_array_to_sql_param2 type="string" >2</opus_array_to_sql_param2>
+        <script_hook type="script_library_ref" >opus_database_to_sql_tool</script_hook>
+        <sql_db_name type="string" >mytestdb</sql_db_name>
+        <opus_data_directory type="string" ></opus_data_directory>
+        <opus_data_year type="string" >ALL</opus_data_year>
+        <opus_table_name type="string" >ALL</opus_table_name>
       </opus_array_to_sql_config>
     </opus_array_to_sql>
     <opus_array_to_esri type="script_batch" setexpanded="True" >
       <classification type="classification" >array</classification>
       <opus_array_to_esri_config type="script_config" >
-        <script_hook type="script_library_ref" >opus_array_to_esri_tool</script_hook>
-        <path type="string" ></path>
-        <opus_array_to_esri_param1 type="string" >1</opus_array_to_esri_param1>
-        <opus_array_to_esri_param2 type="string" >2</opus_array_to_esri_param2>
+        <script_hook type="script_library_ref" >opus_database_to_esri_tool</script_hook>
+        <esri_data_path type="string" >/home/aaronr/work/urbansim_cache/eugene/esri</esri_data_path>
+        <opus_data_directory type="string" ></opus_data_directory>
+        <opus_data_year type="string" >ALL</opus_data_year>
+        <opus_table_name type="string" >ALL</opus_table_name>
       </opus_array_to_esri_config>
     </opus_array_to_esri>
     <test_script_batch type="script_batch" setexpanded="True" >

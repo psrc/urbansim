@@ -26,6 +26,7 @@ class OpusFileAction(object):
         
         self.currentColumn = None
         self.currentIndex = None
+        self.classification = ""
         
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
         
@@ -111,10 +112,13 @@ class OpusFileAction(object):
                 tagName = dbindexElement.domNode.toElement().tagName()
                 if classificationtext != "" and classificationtext == classification:
                     choices.append(tagName)
+        self.classification = classification
         return choices
     
     def dataActionMenuFunction(self,action):
-        filename = self.xmlFileObject.model.filePath(self.currentIndex)
+        filename = self.xmlFileObject.model.fileName(self.currentIndex)
+        filepath = self.xmlFileObject.model.filePath(self.currentIndex)
+        parentfilepath = self.xmlFileObject.model.filePath(self.currentIndex.parent())
         actiontext = action.text()
         # print "%s - %s" % (filename,actiontext)
         QObject.disconnect(self.menu, SIGNAL("triggered(QAction*)"),self.dataActionMenuFunction)
@@ -172,8 +176,27 @@ class OpusFileAction(object):
                             for x in xrange(0,children.count(),1):
                                 if children.item(x).isText():
                                     thisElementText = children.item(x).nodeValue()
-                        if thisElement.toElement().tagName() == QString("path"):
-                            thisElementText = filename
+                        if thisElement.toElement().tagName() == QString("opus_data_directory"):
+                            if self.classification == "database":
+                                thisElementText = self.xmlFileObject.model.filePath(self.currentIndex.parent())
+                            elif self.classification == "dataset":
+                                thisElementText = self.xmlFileObject.model.filePath(self.currentIndex.parent().parent())
+                            elif self.classification == "array":
+                                thisElementText = self.xmlFileObject.model.filePath(self.currentIndex.parent().parent().parent())
+                        if thisElement.toElement().tagName() == QString("opus_data_year"):
+                            if self.classification == "database":
+                                thisElementText = self.xmlFileObject.model.fileName(self.currentIndex)
+                            elif self.classification == "dataset":
+                                thisElementText = self.xmlFileObject.model.fileName(self.currentIndex.parent())
+                            elif self.classification == "array":
+                                thisElementText = self.xmlFileObject.model.fileName(self.currentIndex.parent().parent())
+                        if thisElement.toElement().tagName() == QString("opus_table_name"):
+                            if self.classification == "database":
+                                thisElementText = "ALL"
+                            elif self.classification == "dataset":
+                                thisElementText = self.xmlFileObject.model.fileName(self.currentIndex)
+                            elif self.classification == "array":
+                                thisElementText = self.xmlFileObject.model.fileName(self.currentIndex.parent())
                         if thisElement.toElement().tagName() != QString("script_hook"):
                             params[thisElement.toElement().tagName()] = thisElementText
                     x = OpusScript(self.xmlFileObject.mainwindow,importPath,params)
