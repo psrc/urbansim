@@ -20,6 +20,7 @@ from opus_gui.results.forms.view_documentation_form import ViewDocumentationForm
 from opus_gui.results.forms.view_image_form import ViewImageForm
 from opus_gui.results.forms.view_table_form import ViewTableForm
 from opus_gui.results.opus_result_generator import OpusGuiThread, OpusResultVisualizer
+from opus_gui.results.xml_helper_methods import get_child_values
 
 
 # General system includes
@@ -69,13 +70,28 @@ class ResultManagerBase(AbstractManagerBase):
 
     def addIndicatorForm(self, indicator_type, clicked_node, kwargs = None):
         #build visualizations
+        
+        info = get_child_values(parent = clicked_node,
+                                child_names = ['source_data',
+                                               'indicator_name',
+                                               'dataset_name',
+                                               'available_years'])
+        
+        source_data_name = str(info['source_data'])
+        indicator_name = str(info['indicator_name'])
+        dataset_name = str(info['dataset_name'])
+        years = [int(y) for y in str(info['available_years']).split(', ')]
+        
         domDocument = self.parent.toolboxStuff.doc
         self.indicator_type = indicator_type
         self.visualizer = OpusResultVisualizer(
                                 xml_path = self.parent.toolboxStuff.xml_file,
                                 domDocument = domDocument,
                                 indicator_type = indicator_type,
-                                clicked_node = clicked_node,
+                                source_data_name = source_data_name,
+                                indicator_name = indicator_name,
+                                dataset_name = dataset_name,
+                                years = years,
                                 kwargs = kwargs)
         
         self.visualization_thread = OpusGuiThread(

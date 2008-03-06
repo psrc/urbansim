@@ -77,7 +77,10 @@ class OpusResultVisualizer(object):
                  xml_path, 
                  domDocument, 
                  indicator_type,
-                 clicked_node,
+                 source_data_name,
+                 indicator_name,
+                 dataset_name,
+                 years,
                  kwargs = None):
         self.xml_path = xml_path
         self.finishedCallback = None
@@ -87,7 +90,10 @@ class OpusResultVisualizer(object):
         self.firstRead = True
         self.domDocument = domDocument  
         self.indicator_type = indicator_type
-        self.clicked_node = clicked_node      
+        self.source_data_name = source_data_name
+        self.indicator_name = indicator_name
+        self.dataset_name = dataset_name
+        self.years = years     
         self.visualizations = []
         
         if kwargs == None: kwargs = {}
@@ -115,36 +121,25 @@ class OpusResultVisualizer(object):
     
 
     def _visualize(self, configuration_path):
-
-        info = get_child_values(parent = self.clicked_node,
-                                child_names = ['source_data',
-                                               'indicator_name',
-                                               'dataset_name',
-                                               'available_years'])
-        
-        source_data_name = str(info['source_data'])
-        indicator_name = str(info['indicator_name'])
-        dataset_name = str(info['dataset_name'])
-        years = [int(y) for y in str(info['available_years']).split(', ')]
         
         scenario_name = get_scenario_name(domDocument = self.domDocument, 
-                                          source_data_name = source_data_name)
+                                          source_data_name = self.source_data_name)
         self.config = XMLConfiguration(str(configuration_path)).get_run_configuration(scenario_name)
 
         cache_directory = self.config['cache_directory']
         
         interface = IndicatorFrameworkInterface(domDocument = self.domDocument)
         source_data = interface.get_source_data_from_XML(
-                                     source_data_name = source_data_name, 
+                                     source_data_name = self.source_data_name, 
                                      cache_directory = cache_directory,
-                                     years = years)
+                                     years = self.years)
         indicator = interface.get_indicator_from_XML(
-                                     indicator_name = indicator_name,
-                                     dataset_name = dataset_name)
+                                     indicator_name = self.indicator_name,
+                                     dataset_name = self.dataset_name)
         
         computed_indicator = interface.get_computed_indicator(indicator = indicator, 
                                                               source_data = source_data, 
-                                                              dataset_name = dataset_name)
+                                                              dataset_name = self.dataset_name)
         #####################
         #hack to get plausible primary keys...
         _storage_location = os.path.join(cache_directory,
@@ -156,7 +151,7 @@ class OpusResultVisualizer(object):
                        type = 'flt_storage',
                        storage_location = _storage_location)
         cols = storage.get_column_names(
-                    table_name = dataset_name)
+                    table_name = self.dataset_name)
         ##################
         
         primary_keys = [col for col in cols if col.find('id') != -1]
