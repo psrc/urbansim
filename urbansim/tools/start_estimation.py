@@ -1,0 +1,43 @@
+#
+# UrbanSim software. Copyright (C) 1998-2007 University of Washington
+# 
+# You can redistribute this program and/or modify it under the terms of the
+# GNU General Public License as published by the Free Software Foundation
+# (http://www.gnu.org/copyleft/gpl.html).
+# 
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
+# and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
+# other acknowledgments.
+# 
+
+from optparse import OptionParser, OptionGroup
+from opus_core.misc import get_config_from_opus_path
+from urbansim.estimation.estimation_runner import EstimationRunner
+
+class EstimationOptionGroup:
+    def __init__(self, usage="python %prog [options]", description=""):
+            
+        self.parser = OptionParser(usage=usage, description=description)
+        self.parser.add_option("-m", "--model", dest="model_name", default = None,
+                               action="store", help="Name of the model to be estimated")
+        self.parser.add_option("-s", "--specification", dest="specification", default = None,
+                               action="store", help="Specification module containing model specification in a dictionary format")
+        self.parser.add_option("-c", "--configuration-path", dest="configuration_path", default=None, 
+                               help="Opus path to Python module defining a configuration.")
+        self.parser.add_option("--save-results", dest="save_results", default=False, action="store_true", 
+                               help="Results will be saved in the output configuration (if given) and in the cache")
+        self.parser.add_option("--group", dest="model_group", default = None,
+                               action="store", help="Name of the model group")
+        
+if __name__ == '__main__':
+    try: import wingdbstub
+    except: pass
+    option_group = EstimationOptionGroup()
+    parser = option_group.parser
+    (options, args) = parser.parse_args()
+    config = get_config_from_opus_path(options.configuration_path)
+    estimator = EstimationRunner(model=options.model_name, specification_module=options.specification, model_group=options.model_group,
+                           configuration=config, save_estimation_results=options.save_results)
+    estimator.estimate()
