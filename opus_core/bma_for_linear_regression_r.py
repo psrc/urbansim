@@ -14,6 +14,7 @@
 from rpy import r, set_default_mode, NO_CONVERSION
 from numpy import zeros, float32, array
 from opus_core.estimation_procedure import EstimationProcedure
+from opus_core.logger import logger
 
 class bma_for_linear_regression_r(EstimationProcedure):
     """    Class for variable selection in a linear regression using R package BMA.
@@ -54,14 +55,18 @@ class bma_for_linear_regression_r(EstimationProcedure):
         r.library("BMA")
         data_for_r = data.astype("float64")
         d = r.data_frame(r.matrix(data_for_r, ncol=nvar, dimnames=[[],coef_names]))
-        fit = r.bic_glm(x=d, y=outcome, glm_family="gaussian", strict=1)
-        fit[20] = '' # to have less output in the summary
-        r.summary(fit)
-        filename = resources.get('bma_imageplot_filename', None)
-        if filename is not None:
-            r.pdf(file=filename)
-            r.dev_off()
-        else:
-            r.imageplot_bma(fit)
+        try:
+            fit = r.bic_glm(x=d, y=outcome, glm_family="gaussian", strict=1)
+            fit[20] = '' # to have less output in the summary
+            r.summary(fit)
+            filename = resources.get('bma_imageplot_filename', None)
+            if filename is not None:
+                r.pdf(file=filename)
+                r.imageplot_bma(fit)
+                r.dev_off()
+            else:
+                r.imageplot_bma(fit)
+        except:
+            logger.log_warning("Error in BMA procedure.")
         return {}
 
