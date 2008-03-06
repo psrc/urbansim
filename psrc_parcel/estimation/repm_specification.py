@@ -28,7 +28,8 @@ all_variables = [
     "lnlotsqftunit=(ln(urbansim_parcel.parcel.parcel_sqft_per_unit)).astype(float32)",
     "far=(urbansim_parcel.parcel.building_sqft/(parcel.parcel_sqft).astype(float32)).astype(float32)",
     "ln_invfar=(ln(parcel.parcel_sqft/(urbansim_parcel.parcel.building_sqft).astype(float32))).astype(float32)",
-    "lngcdacbd=(ln(parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd))).astype(float32)",
+    "lngcdacbd=(ln(parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_seattle_cbd))).astype(float32)",
+    "lngcdacbdbell=(ln(parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_bellevue_cbd))).astype(float32)",
     "lnemp30da=(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))).astype(float32)",
     "lnemp20da=(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_20_minutes_travel_time_hbw_am_drive_alone))).astype(float32)",
     "lnemp10da=(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone))).astype(float32)",
@@ -97,6 +98,7 @@ specification = {
          "lngcdacbd",
          #"lnsqft",
          #"lnlotsqft",
+         "lngcdacbdbell"
          ],
  3:   #Commercial
         ['constant',
@@ -109,14 +111,15 @@ specification = {
     "lnunits",
     "ln_invfar",
     "lngcdacbd",
-    "lnemp20da",
+    #"lnemp20da",
     "lnemp20tw",
-    "lnemp10wa",
+    #"lnemp10wa",
     "lnempden",
     #"lnpopden",
     "inugb",
     "hbwavgtmda",
     #"is_pre_1940",
+    "lngcdacbdbell"
          ],
 
    7:    #Government
@@ -127,11 +130,12 @@ specification = {
          "inugb",
          "ln_bldgage",
          #"lnemp10wa",
-         "lnemp20tw",
+         #"lnemp20tw",
          "lngcdacbd",
          "lnlotsqft",
          "lnsqft",
          #"is_pre_1940",
+         "lngcdacbdbell"
          ],
                                     
    9:   #Hospital, Convalescent Center
@@ -142,6 +146,7 @@ specification = {
          "lnlotsqft",
          #"lnpopden",
          "lnsqft",
+         "lngcdacbdbell"
          ],
 
    10:  #Industrial
@@ -150,12 +155,13 @@ specification = {
          "inugb",
          "ln_bldgage",
          "ln_invfar",
-         "lnemp20tw",
+         #"lnemp20tw",
          "lnemp20wa",
          "lnempden",
          "lngcdacbd",
          #"lnpopden",
          "lnsqft",
+         "lngcdacbdbell"
          ],
 
    12:  # Mining
@@ -167,6 +173,8 @@ specification = {
     #"lnemp10da",
     "lnavginc",
     #"lnpopden",
+    #"lngcdacbdbell",
+    #"lngcdacbd"
     ], 
 
   13:   #Mobile Home Park
@@ -180,20 +188,21 @@ specification = {
     "ln_invfar",
     "lngcdacbd",
     "lnemp30da",
-    "lnemp20da",
+    #"lnemp20da",
     "lnemp30tw",
     "lnemp20tw",
     "lnavginc",
     "lnempden", 
     "inugb",
-    "hbwavgtmda",
+    #"hbwavgtmda",
     "is_pre_1940",
+    "lngcdacbdbell"
          ],
 
    14:   #Multi-Family Residential (Apartment)
         ['constant',
     #"art600",
-    "art300",
+    #"art300",
      #"hwy1000",
 #    "hwy2000",
     "hwy200",
@@ -206,7 +215,7 @@ specification = {
 #    "lnemp30da",
     "lnemp20da",
     "lnemp10da",
-    "lnemp30tw",
+    #"lnemp30tw",
     "lnemp20tw",
     "lnemp10wa",
     "lnemp20wa",
@@ -216,6 +225,7 @@ specification = {
     "inugb",
     "hbwavgtmda",
     "is_pre_1940",
+    "lngcdacbdbell"
          ],
 
   15:   #Condominium Residential
@@ -224,7 +234,7 @@ specification = {
     #"hwy1000"
     "art600",
     #"art300",
-    "ln_bldgage",
+    #"ln_bldgage",
     "lnsqft",
     "lnlotsqft",
     "lnunits",
@@ -237,6 +247,7 @@ specification = {
     "lnavginc",
     "lnempden",
     "lnpopden",
+    "lngcdacbdbell"
          ],
     
    18:    #Office
@@ -253,12 +264,13 @@ specification = {
     "lnemp30da",
     "lnemp10da",
     #"lnemp30tw",
-    "lnemp10wa",
+    #"lnemp10wa",
     "lnavginc",
     "lnempden",
     "inugb",
     "hbwavgtmda",
     #"is_pre_1940",
+    "lngcdacbdbell"
          ],
 
 
@@ -289,8 +301,8 @@ specification = {
     "lnempden",
     #"lnpopden",  
          ],
- 
-   24:   #Single Family Residential
+         
+    24:   #Single Family Residential
         ['constant',
     "hwy2000",
     #"hwy1000",
@@ -312,6 +324,7 @@ specification = {
     "inugb",
     "hbwavgtmda",
     "is_pre_1940",
+    "lngcdacbdbell"
          ],
 
      25:    #Transportation, Communication, Public Utilities
@@ -329,6 +342,7 @@ specification = {
     "lnlotsqft",
     #"lnpopden",
     #"lnavginc",
+    #"lngcdacbdbell"
          ],
 
      26:   #Vacant Developable
@@ -349,6 +363,7 @@ specification = {
     "lngcdacbd",
     "lnlotsqft",    
     "lnsqft",
+    "lngcdacbdbell"
          ],
 
    28:   #Warehousing
@@ -363,11 +378,12 @@ specification = {
     #"is_pre_1940",    
     "ln_bldgage",
     "ln_invfar",
-    "lnemp20tw",    
+    #"lnemp20tw",    
     "lnempden",
     "lngcdacbd",   
     "lnlotsqft",
-    "lnpopden",    
+    "lnpopden",
+    "lngcdacbdbell"
          ],       
                 
      30:  #Mixed Use
@@ -378,20 +394,22 @@ specification = {
     #"art300",
     #"art600",
     "ln_bldgage",
-    "lnsqft",
+    #"lnsqft",
     "lnlotsqft",
     "lnunits",
     "ln_invfar",
     "lngcdacbd",
-    "lnemp30da",
-    "lnemp20tw",
+    #"lnemp30da",
+    #"lnemp20tw",
     #"lnemp20wa",
     #"lnavginc",
     "inugb",
     "hbwavgtmda",
     #"lnempden",
     #"lnpopden",
+    "lngcdacbdbell"
          ],
  }
+
 
 
