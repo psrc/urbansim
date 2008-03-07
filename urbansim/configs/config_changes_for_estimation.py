@@ -74,7 +74,7 @@ class ConfigChangesForEstimation(Configuration):
                             "land_price_model": ["estimate"]
                                 }]
                     },
-            "development_location_choice_model": {
+            "development_project_location_choice_model": {
                     'industrial': {
                             'models': [
                                 "land_price_model",
@@ -84,9 +84,30 @@ class ConfigChangesForEstimation(Configuration):
                                 'gridcell':{}
                                 },   
                                    },
-                    'commercial': {},
-                    'residential': {}
+                    'commercial': {
+                            'models': [
+                                "land_price_model",
+                                {"commercial_development_project_location_choice_model": ["estimate"]}
+                                    ],
+                            "datasets_to_preload": {
+                                'gridcell':{}
+                                },   },
+                    'residential': {
+                            'models': [
+                                "land_price_model",
+                                {"residential_development_project_location_choice_model": ["estimate"]}
+                                    ],
+                            "datasets_to_preload": {
+                                'gridcell':{}
+                                },   
+                                    }
                         
-                                                  }
+                            },
+            "residential_land_share_model": {
+                        'models': [{
+                            "residential_land_share_model": ["estimate"]
+                                }]
+                    },
+                                             
                   }
         return config
