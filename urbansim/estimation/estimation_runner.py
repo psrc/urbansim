@@ -12,70 +12,62 @@
 # other acknowledgments.
 # 
 
+
+from opus_core.configuration import Configuration
 from urbansim.estimation.estimator import Estimator
+from urbansim.estimation.estimator import plot_utility_diagnose
 from urbansim.estimation.estimator import update_controller_by_specification_from_module
 
-
 class EstimationRunner(Estimator):
-
-    models = {
-        "hlcm": ("HLCM", "household_location_choice_model"),
-        "elcm-industrial": ("ELCM", "employment_location_choice_model", "industrial", False), # uses general ELCM and therefore type will not
-                                                                                              # be added to the model name
-        "elcm-commercial": ("ELCM", "employment_location_choice_model", "commercial", False),
-        "elcm-home_based": ("ELCM", "employment_location_choice_model", "home_based", True), 
-        "dplcm-industrial": ("DPLCM", "development_location_choice_model", "industrial"),
-        "dplcm-commercial": ("DPLCM", "development_location_choice_model", "commercial"),
-        "dplcm-residential": ("DPLCM", "development_location_choice_model", "residential"),
-        "lpm": ("LPM", "land_price_model"),
-        "rlsm": ("RLSM", "residential_land_share_model")
-        }
      
-    def __init__(self, model, specification_from_module=False, package="urbansim", 
-                  configuration={}, save_estimation_results=False, models=None):
+    def __init__(self, model, specification_module=None, model_group=None,
+                  configuration={}, save_estimation_results=False):
         """
-        'specification_from_module' is True if the specification is defined in a module rather than in a database.
-        'package' determines in what package the user-defined specification module of the model lives. 
-        It must be in the directory 'estimation' under the package.
-        'configuration' is a dictionary with which the estimation configuration is updated, therefore it should
-        contain user-specific settings.
+        If 'specification_module' is given, it contains the specification defined as a dictionary in a module.
+        If it is None, the specification is taken from the cache.
+        'configuration' is an Opus configuration. It can contain an entry 'config_changes_for_estimation' which is a dictionary
+        where keys are model names and values are controller changes for that model.
+        If save_estimation_results is True, the estimation results are saved in the oputput configuration 
+        (if given in 'configuration') and in the cache.
         """
-        if models is not None:
-            self.models = models
-    
-        model_tuple = self.models[model]
-        type = None
-        add_member_prefix = None
-        if len(model_tuple) > 2:
-            type = model_tuple[2]
-            if len(model_tuple) > 3:
-                add_member_prefix = model_tuple[3]
-        if type is None:
-            exec("from urbansim.configs.%s_estimation_config import run_configuration as config" % model_tuple[0].lower())
-            run_configuration = config.copy()
-            if specification_from_module:
-                run_configuration = update_controller_by_specification_from_module(
-                                run_configuration, model_tuple[1],
-                                "%s.estimation.%s_specification" % (package, model_tuple[0]))
-        elif add_member_prefix is not None:
-            exec("from urbansim.configs.%s_estimation_config import %s_configuration as config" % ( 
-                          model_tuple[0].lower(), model_tuple[0].lower()))        
-            conf = config(type, add_member_prefix)
-            run_configuration = conf.get_configuration()
-            if specification_from_module:
-                run_configuration = conf.get_updated_configuration_from_module(run_configuration, specification_module="%s.estimation.%s_specification" % (
-                            package, model_tuple[0]))
-            #run_configuration = conf.get_updated_configuration_from_module(run_configuration)
-        else:  #necessary for developer model estimation
-            exec("from urbansim.configs.%s_estimation_config import %s_configuration as config" % ( 
-                          model_tuple[0].lower(), model_tuple[0].lower()))        
-            conf = config(type)
-            run_configuration = conf.get_configuration()
-            if specification_from_module:
-                run_configuration = conf.get_updated_configuration_from_module(run_configuration, specification_module="%s.estimation.%s_specification" % (
-                            package, model_tuple[0]))
+        self.specification_module = specification_module
+        self.model_group = model_group
+        
+        config = Configuration(configuration)
+        config_changes = config.get('config_changes_for_estimation', {})
+        
+        if model_group is None:
+            if model in config_changes.keys():
+                config.merge(config_changes[model])
+            if specification_module is not None:
+                config = update_controller_by_specification_from_module(
+                                config, model, specification_module)
+        else:
+            if model in config_changes.keys():
+                if model_group in config_changes[model]:
+                    config.merge(config_changes[model][model_group])
+                else:
+                    config.merge(config_changes[model])       
+            if specification_module is not None:
+                if '%s_%s' % (model_group, model) in config["models_configuration"].keys():
+                    model_name_in_configuration = '%s_%s' % (model_group, model)
+                else:
+                    model_name_in_configuration = model
+                config = update_controller_by_specification_from_module(config, model_name_in_configuration, specification_module)
+                config["models_configuration"][model_name_in_configuration]["controller"]["prepare_for_estimate"]["arguments"]["specification_dict"] = "spec['%s']" % model_group
+            config['model_name'] = '%s_%s' % (model_group, model)
             
-        run_configuration.merge(configuration)
-        Estimator.__init__(self, run_configuration, save_estimation_results=save_estimation_results)
+        Estimator.__init__(self, config, save_estimation_results=save_estimation_results)
 
-    
+    def reestimate(self, submodels=None):
+        """Launch a re-estimation without recomputing all variables. 'submodels' is a list or single number of submodels to re-estimate.
+        If it is None, all submodels are re-estimated.
+        """
+        Estimator.reestimate(self, self.specification_module, type=self.model_group, submodels=submodels)
+        
+    def plot_utility(self, submodel=-2):
+        """In order to use this method, the estimation must be run with a procedure that creates a file 'util_submodel_x' 
+            (e.g. with bhhh_mnl_estimation_with_diagnose)
+        """
+        plot_utility_diagnose('util_submodel_%s' % submodel)
+

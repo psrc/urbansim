@@ -203,6 +203,11 @@ class Estimator(object):
         model = self.get_model()
         return model.observations_mapping[submodel]
     
+    def plot_correlation(self, submodel=-2):
+        ds = self.get_data_as_dataset(submodel)
+        attrs = [attr for attr in ds.get_known_attribute_names() if attr not in ds.get_id_name()]
+        ds.correlation_image(attrs)
+        
     def cleanup(self, remove_cache=True):
         """Use this only if you don't want to reestimate."""
         self.simulation_state.remove_singleton(delete_cache=remove_cache)
