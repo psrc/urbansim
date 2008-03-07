@@ -60,30 +60,4 @@ class linear_utilities_diagnose(linear_utilities):
         write_to_text_file(file_name, coef_names, delimiter=' ')
         write_table_to_text_file( file_name, diagnose_utilities, mode='ab')
         logger.log_status("Diagnosed utilities written into %s." % file_name)
-        # compute and store correlation
-        correlation = corr(*argcor)
-        file_name = resources.get("correlation_diagnose_file", "correlation")
-        if resources.get("submodel", None) is not None:
-            file_name = "%s_submodel_%s" % (file_name, resources.get("submodel", 1))
-        write_to_text_file(file_name, coef_names, delimiter=' ')
-        write_table_to_text_file( file_name, correlation, mode='ab')
-        logger.log_status("Data correlation written into %s." % file_name)
         return linear_utilities.run(self, data, coefficients, resources)
-
-
-from opus_core.tests import opus_unittest
-from numpy import array
-from numpy import ma
-class LinearUtilitiesTests(opus_unittest.OpusTestCase):
-    def test_linear_utilities_1D_coef(self):
-        # It is switched off in order not to create any files
-        data = array([[[3,5,6,5],[2,1,0,0],[7,2,3,5]],[[5,1,5,2],[4,7,9,2],[7,2,3,5]]])
-        coefficients = array([2.5, 1.2, 4, 9])
-        utilities = linear_utilities_diagnose().run(data, coefficients)
-        shoud_be = array([[ 82.5,   6.2,  76.9], [ 51.7,  72.4,  76.9]])
-        self.assertEqual(ma.allclose(utilities, shoud_be, rtol=1e-05),
-                             True, msg = "Error in test_linear_utilities_1D_coef")
-
-
-if __name__ == '__main__':
-    opus_unittest.main()
