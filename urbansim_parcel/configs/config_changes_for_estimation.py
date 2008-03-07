@@ -18,12 +18,11 @@ class ConfigChangesForEstimation(USConfigChangesForEstimation):
 
     def __init__(self):
         USConfigChangesForEstimation.__init__(self)
-        self['household_location_choice_model']['models'] = [
+        self['household_location_choice_model'] = {'models': [
                                    {"real_estate_price_model": ["run"]},                          
                                    #{"household_relocation_model": ["run"]},
                                    {"household_location_choice_model": ["estimate"]}
-                                   ]
-        del self['household_location_choice_model']['datasets_to_preload']
+                                   ]}
         self['employment_location_choice_model'] = {
                         'non_home_based': {'models': [
                                             {"real_estate_price_model_for_all_parcels": ["run"]},
