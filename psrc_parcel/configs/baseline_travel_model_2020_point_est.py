@@ -14,7 +14,7 @@
 
 from baseline import Baseline
 
-class BaselineMultipleTravelModels2020(Baseline):
+class BaselineTravelModel2020PointEst(Baseline):
     multiple_runs=True
     def __init__(self):
         config = Baseline()
@@ -22,6 +22,7 @@ class BaselineMultipleTravelModels2020(Baseline):
         config['seed'] = 1
         from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
         travel_model_configuration = create_travel_model_configuration('baseline_travel_model_psrc_fast_hana', 
+                                                                       #'baseline_travel_model_f_no_viad',
                                                                        emme2_batch_file='MODELUSim.BAT ..\\triptabs',
                                                                        mode='full', years_to_run={2020: '2020_06'})
         config['travel_model_configuration'] = travel_model_configuration
@@ -44,5 +45,3 @@ class BaselineMultipleTravelModels2020(Baseline):
         #config['travel_model_configuration'][2020]['models'].append('opus_emme2.models.restore_trip_tables')
         self.merge(config)
 
-if __name__ == "__main__":
-    config = BaselineMultipleTravelModels2020()
