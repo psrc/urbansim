@@ -12,78 +12,48 @@
 # other acknowledgments.
 # 
 
-from urbansim.estimation.estimator import Estimator
-from urbansim.estimation.estimator import update_controller_by_specification_from_module
-from urbansim.estimation.estimator import plot_utility_diagnose
-from urbansim.estimation.estimator import plot_correlation_diagnose
+##!!!!!!!!!!!
+# Calling this script is equivalent to do the following from the command line (e.g. for industrial ELCM):
+#
+# python urbansim/tools/start_estimation.py -c psrc.configs.baseline_estimation --model=employment_location_choice_model --group=industrial -s psrc.estimation.psrc.estimation_ELCM_variables --save-results
+#
+# Make you private changes in psrc.configs.baseline_estimation.
+#!!!!!!!!!!!!
 
-class EstimationRunner(object):
-    def run_estimation(self, estimation_config, model, save_estimation_results=True, diagnose=False):
-        self.model = model
-        self.spec_file = "estimation_%s_variables" % model[0]
-        ### TODO: Re-write this
-        type = None
-        add_member_prefix = False
-        if len(model) > 2:
-            type = model[2]
-            if len(model) > 3:
-                add_member_prefix = model[3]
-        if type is None:#HBCM, AOCM, HLCM, LPM, RLSM
-            exec("from urbansim.configs.%s_estimation_config import run_configuration" % model[0].lower())
-            run_configuration = update_controller_by_specification_from_module(
-                                run_configuration, model[1],
-                                "psrc.estimation.%s" % self.spec_file)
-        elif len(model)==4:#ELCM
-            exec("from psrc.config.%s_estimation_config import %s_configuration as config" % (model[0].lower(),
-                  model[0].lower()))
-            run_configuration = config(type, add_member_prefix).get_configuration()
-        else: #DPLCM, RWZCM
-            exec("from psrc.config.%s_estimation_config import %s_configuration as config" % (model[0].lower(),
-                  model[0].lower()))
-            run_configuration = config(type).get_configuration()
+from psrc.estimation.my_estimation_config import my_configuration
+from urbansim.estimation.estimation_runner import EstimationRunner
+from psrc.configs.baseline import Baseline
+from urbansim.configs.config_changes_for_estimation import ConfigChangesForEstimation
 
-        if diagnose and model[0] not in ('LPM', 'RLSM'):
-            model_name = model[1]
-            if type is not None:
-                model_name = "%s_%s" % (type, model_name)
-            run_configuration["models_configuration"][model_name]["controller"]["estimate"]["arguments"]["procedure"]=\
-                "'opus_core.bhhh_mnl_estimation_with_diagnose'"
-                
-        run_configuration.merge(estimation_config)
-        self.estimator = Estimator(run_configuration, save_estimation_results=save_estimation_results)
-        self.estimator.estimate()
-
-    def reestimate(self, submodels=None):
-        if len(self.model) > 2:
-            self.estimator.reestimate(self.spec_file, type=self.model[2], submodels=submodels)
-        else:
-            self.estimator.reestimate(self.spec_file, submodels=submodels)
-    
-    def plot_utility(self, submodel=-2):
-        plot_utility_diagnose('util_submodel_%s' % submodel)
-        
-    def plot_correlation(self, submodel=-2):
-        plot_correlation_diagnose('correlation_submodel_%s' % submodel)
+models = {
+          'hlcm': ['household_location_choice_model', 'psrc.estimation.psrc.estimation_HLCM_variables', None],
+          'elcm-industrial': ['employment_location_choice_model', 'psrc.estimation.psrc.estimation_ELCM_variables', 'industrial'],
+          'elcm-commercial': ['employment_location_choice_model', 'psrc.estimation.psrc.estimation_ELCM_variables', 'commercial'],
+          'elcm-home_based': ['employment_location_choice_model', 'psrc.estimation.psrc.estimation_ELCM_variables', 'home_based'],
+          'lpm': ['land_price_model', 'psrc.estimation.psrc.estimation_LPM_variables', None],
+          'dplcm-industrial': ['development_project_location_choice_model', 'psrc.estimation.psrc.estimation_DPLCM_variables', 'industrial'],
+          'dplcm-commercial': ['development_project_location_choice_model', 'psrc.estimation.psrc.estimation_DPLCM_variables', 'commercial'],
+          'dplcm-residential': ['development_project_location_choice_model', 'psrc.estimation.psrc.estimation_DPLCM_variables', 'residential'],
+          'rlsm': ['residential_land_share_model', 'psrc.estimation.psrc.estimation_RLSM_variables', None],
+          }
 
 if __name__ == '__main__':
-    #model = ("HBCM", "home_based_choice_model")
-    #model = ("AOCM", "auto_ownership_choice_model")
-    #model = ("HLCM", "household_location_choice_model")
-    #model = ("WHLCM", "worker_specific_household_location_choice_model") #HLCM with worker specific accessibility variables
-    #model = ("ELCM", "employment_location_choice_model", "industrial", False) # uses general ELCM and therefore type will not
-                                                                                                  # be added to the model name
-                                                                                                  
-    #model = ("ELCM", "employment_location_choice_model", "commercial", False)
-    #model = ("ELCM", "employment_location_choice_model", "home_based", False)
+    #model = 'hlcm'
+    #model = 'elcm-industrial'
+    #model = 'elcm-commercial'
+    #model = 'elcm-home_based'
+    model = 'dplcm-industrial'
+    #model = 'dplcm-commercial'
+    #model ='dplcm-residential'
+    #model = 'lpm'
+    #model = 'rlsm'
     
-    #model = ("RWZCM", "workplace_choice_model_for_resident", "dummy")
-    
-    #model = ("LPM", "land_price_model")
-    #model = ("RLSM", "residential_land_share_model")
-    #model = ("DPLCM", "development_project_location_choice_model", "industrial")
-    #model = ("DPLCM", "development_project_location_choice_model", "commercial")
-    model = ("DPLCM", "development_project_location_choice_model", "residential")
-
-    from my_estimation_config import my_configuration
-    er = EstimationRunner()
-    er.run_estimation(my_configuration, model, diagnose=True)
+    config = Baseline()
+    config.merge(my_configuration)
+    config['config_changes_for_estimation'] = ConfigChangesForEstimation()
+    estimator = EstimationRunner(models[model][0], specification_module=models[model][1], model_group=models[model][2],
+                               configuration=config,
+                               save_estimation_results=True)
+    estimator.estimate()
+    #estimator.reestimate()
+    #estimator.reestimate(submodels=[])
