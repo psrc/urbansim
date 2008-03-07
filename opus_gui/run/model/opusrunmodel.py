@@ -10,7 +10,7 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 # 
-
+#
 
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import *
@@ -43,6 +43,15 @@ class RunModelThread(QThread):
         self.parent.model.errorCallback = self.errorCallback
         self.parent.model.run()
         
+    def pause(self):
+        self.parent.model.pause()
+
+    def resume(self):
+        self.parent.model.resume()
+
+    def cancel(self):
+        self.parent.model.cancel()
+
     def progressCallback(self,percent):
         print "Ping From Model"
         self.emit(SIGNAL("runPing(PyQt_PyObject)"),percent)
@@ -63,7 +72,7 @@ class OpusModel(object):
         self.parent = parent
         self.xml_path = xml_path
         self.modeltorun = modeltorun
-        #self.thread = RunModelThread(self.parent.parent,self.xml_path)
+        self.run_manager = None
         self.progressCallback = None
         self.finishedCallback = None
         self.errorCallback = None
@@ -71,6 +80,8 @@ class OpusModel(object):
         self.config = None
         self.statusfile = None
         self.firstRead = True
+        self.running = False
+        self.paused = False
     
     def formatExceptionInfo(self,maxTBlevel=5):
         import traceback
@@ -82,6 +93,19 @@ class OpusModel(object):
             excArgs = "<no args>"
         excTb = traceback.format_tb(trbk, maxTBlevel)
         return (excName, excArgs, excTb)
+    
+    def pause(self):
+        self.paused = True
+        self._write_command_file('pause')
+    
+    def resume(self):
+        self.paused = False
+        self._write_command_file('resume')
+    
+    def cancel(self):
+        self.running = False
+        self.paused = False
+        self._write_command_file('stop')
     
     def run(self):
         if WithOpus:
@@ -97,7 +121,7 @@ class OpusModel(object):
                 parser = option_group.parser
                 # simulate 0 command line arguments by passing in []
                 (options, args) = parser.parse_args([])
-                run_manager = option_group.get_run_manager(options)
+                self.run_manager = option_group.get_run_manager(options)
                 # find the directory containing the eugene xml configurations
                 fileNameInfo = QFileInfo(self.xml_path)
                 fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
@@ -107,20 +131,26 @@ class OpusModel(object):
                 insert_auto_generated_cache_directory_if_needed(config)
                 (self.start_year, self.end_year) = config['years']
 
-                run_manager.setup_new_run(run_name = config['cache_directory'])
+                self.run_manager.setup_new_run(run_name = config['cache_directory'])
                 #statusdir = tempfile.mkdtemp()
-                statusdir = run_manager.get_current_cache_directory()
+                statusdir = self.run_manager.get_current_cache_directory()
                 statusfile = os.path.join(statusdir, 'status.txt')
                 self.statusfile = statusfile
                 self.config = config
                 config['status_file_for_gui'] = statusfile
+                self.commandfile = os.path.join(statusdir, 'command.txt')
+                config['command_file_for_gui'] = self.commandfile
                 # To test delay in writing the first log file entry...
                 # time.sleep(5)
-                run_manager.run_run(config)
+                self.running = True
+                self.run_manager.run_run(config)
+                self.running = False
                 succeeded = True
             except SimulationRunError:
+                self.running = False
                 succeeded = False
             except:
+                self.running = False
                 succeeded = False
                 errorInfo = self.formatExceptionInfo()
                 errorString = "Unexpected Error From Model :: " + str(errorInfo)
@@ -131,8 +161,7 @@ class OpusModel(object):
             self.finishedCallback(succeeded)
         else:
             pass
-    
-    """ TODO: not necessary in runmanagerbase.py anymore?
+        
     def _compute_progress(self, statusfile):
         if statusfile is None:
             return {"percentage":0,"message":"Model initializing..."}
@@ -159,7 +188,7 @@ class OpusModel(object):
                 model_name = lines[3].strip()
                 total_pieces = float(lines[4])
                 current_piece = float(lines[5])
-                piece_description = lines[6].strip()
+                # piece_description = lines[6].strip()
                 total_years = float(self.end_year - self.start_year + 1)
                 # For each year, we need to run all of the models.
                 # year_fraction_completed is the fraction completed (ignoring the currently running year)
@@ -169,11 +198,12 @@ class OpusModel(object):
                 model_fraction_completed = (current_model / total_models) / total_years
                 piece_fraction_completed = (current_piece / total_pieces) / (total_years*total_models)
                 percentage = 100.0* (year_fraction_completed + model_fraction_completed + piece_fraction_completed)
-                message = 'year: %d  model: %s %s' % (current_year, model_name, piece_description)
+                # omit the piece description for now (too long to fit)
+                # message = 'year: %d  model: %s %s' % (current_year, model_name, piece_description)
+                message = 'year: %d  model: %s' % (current_year, model_name)
                 return {"percentage": percentage, "message": message}
             except IOError:
                 return {"percentage": 0, "message":" Model initializing..."}
-"""
 
     def _get_current_log(self, key):
         newKey = key
@@ -204,3 +234,8 @@ class OpusModel(object):
                         self.guiElement.logText.insertPlainText(QString("."))
                 #self.guiElement.logText.append("ping")
         return newKey
+    
+    def _write_command_file(self, command):
+        f = open(self.commandfile, 'w')
+        f.write(command)
+        f.close()
