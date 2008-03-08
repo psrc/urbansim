@@ -35,6 +35,9 @@ class travel_time_hbw_am_drive_alone_to_seattle_cbd(Variable):
             variable_name = my_attribute_label("travel_time_hbw_am_drive_alone_to_%s" % zone_id)
             self.add_and_solve_dependencies([variable_name], dataset_pool=dataset_pool)
             min_values = minimum(min_values, zones.get_attribute(variable_name))
+            
+        min_within_cbd = min_values[where(is_in_cbd)].min()
+        min_values[where(is_in_cbd)] = min_within_cbd
         return min_values
     
 
@@ -49,7 +52,7 @@ class Tests(opus_unittest.OpusTestCase):
         test_data={
             'zone': {
                 "zone_id":array([1,3,4,7,15]),
-                "travel_time_hbw_am_drive_alone_to_3": array([2, 0, 5, 20, 10]),
+                "travel_time_hbw_am_drive_alone_to_3": array([2, 1, 5, 20, 10]),
                 "travel_time_hbw_am_drive_alone_to_15": array([1, 6, 10, 3, 0]),
                 "seattle_cbd": array([0, 1, 0, 0, 1])
             }

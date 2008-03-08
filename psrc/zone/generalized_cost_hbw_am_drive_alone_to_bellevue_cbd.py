@@ -35,4 +35,6 @@ class generalized_cost_hbw_am_drive_alone_to_bellevue_cbd(Variable):
             variable_name = my_attribute_label("generalized_cost_hbw_am_drive_alone_to_%s" % zone_id)
             self.add_and_solve_dependencies([variable_name], dataset_pool=dataset_pool)
             min_values = minimum(min_values, zones.get_attribute(variable_name))
+        min_within_cbd = min_values[where(is_in_cbd)].min()
+        min_values[where(is_in_cbd)] = min_within_cbd
         return min_values
