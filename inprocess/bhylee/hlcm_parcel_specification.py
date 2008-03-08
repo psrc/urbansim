@@ -17,19 +17,20 @@ specification = {}
 specification = {
         0:   #submodel_id
             [
-            "ln_built_sf_unit = ln(psrc.parcel.built_sf_unit)",
-            "ln_housing_value = ln(psrc.parcel.housing_value)",
-            "ln_lot_sf_unit = ln(psrc.parcel.lot_sf_unit)",
+             "ln_built_sf_unit = ln(psrc.parcel.sqft_per_unit)",
+#            "ln_built_sf_unit = ln(psrc_parcel.building.sqft_per_unit)",
+#            "ln_housing_value = ln(psrc.parcel.housing_value)",
+#            "ln_lot_sf_unit = ln(psrc.parcel.lot_sf_unit)",
             #"ln_number_of_jobs_within_walking_distance = ln(psrc.parcel.number_of_jobs_within_walking_distance)",
             #"ln_residential_units_within_walking_distance = ln(psrc.parcel.residential_units_within_walking_distance)",
-            "ln_residential_units = ln(parcel.residential_units)",
+#            "ln_residential_units = ln(parcel.residential_units)",
             #"ln_year_built = ln(parcel.year_built)",
             #"square_year_built = parcel.year_built**2",
             
-            "psrc.household_x_parcel.income_and_ln_built_sf",
-            "psrc.household_x_parcel.income_and_ln_housing_value",
-            "psrc.household_x_parcel.income_and_ln_lot_sf",
-            "psrc.household_x_parcel.income_and_ln_residential_units",
+#            "psrc.household_x_parcel.income_and_ln_built_sf",
+#            "psrc.household_x_parcel.income_and_ln_housing_value",
+#            "psrc.household_x_parcel.income_and_ln_lot_sf",
+#            "psrc.household_x_parcel.income_and_ln_residential_units",
             #"psrc.household_x_parcel.income_and_year_built",
             #"psrc.parcel.is_pre_1940",
             #"psrc.parcel.population_density_in_gridcell",
@@ -40,7 +41,7 @@ specification = {
             #"ln_employment_within_15_minutes_travel_time_hbw_am_transit_walk = parcel.disaggregate(psrc.zone.ln_employment_within_15_minutes_travel_time_hbw_am_transit_walk)",
             #"ln_employment_within_30_minutes_travel_time_hbw_am_drive_alone = parcel.disaggregate(psrc.zone.ln_employment_within_30_minutes_travel_time_hbw_am_drive_alone)",
             #"ln_employment_within_30_minutes_travel_time_hbw_am_transit_walk = parcel.disaggregate(psrc.zone.ln_employment_within_30_minutes_travel_time_hbw_am_transit_walk)",
-            "psrc.parcel.average_household_size_within_walking_distance", #SIG
+#            "psrc.parcel.average_household_size_within_walking_distance", #SIG
             #"psrc.parcel.housing_density_within_walking_distance", #SIG
             #"psrc.parcel.ln_retail_sector_employment_within_walking_distance", #SIG
             #"psrc.parcel.ln_service_sector_employment_within_walking_distance", #SIG

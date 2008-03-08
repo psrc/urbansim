@@ -20,7 +20,7 @@ estimate_config = {}
 estimate_config["export_estimation_data"]=False
 estimate_config["estimation_data_file_name"]="/tmp/HLCM_parcel_estimate_data"
 estimate_config["use_biogeme_data_format"]=True
-estimate_config["weights_for_estimation_string"]=  "has_eg_1_units=parcel.residential_units>=1" #"psrc.parcel.residential_units_when_has_eg_1_surveyed_households_and_is_in_county_033"
+estimate_config["weights_for_estimation_string"]=  "has_eg_1_units=building.residential_units>=1" #"psrc.parcel.residential_units_when_has_eg_1_surveyed_households_and_is_in_county_033"
 #"sampling_filter=(building.disaggregate(building_type.building_type_name)=='single_family_residential') + (building.disaggregate(building_type.building_type_name)=='multi_family_residential') + (building.disaggregate(building_type.building_type_name)=='condo_residential')"
 #"has_eg_1_units=urbansim.building.residential_units>=1"
     
@@ -40,7 +40,7 @@ run_configuration["models_configuration"]["household_location_choice_model"]["co
 #run_configuration["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]["location_id_string"] = "'household.parcel_id'"
 run_configuration["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]['submodel_string'] = "'psrc.household.number_of_nonhome_based_workers'"
 
-run_configuration["models_configuration"]["household_location_choice_model"]["controller"]["prepare_for_estimate"]["arguments"]["join_datasets"] = 'False'
+run_configuration["models_configuration"]["household_location_choice_model"]["controller"]["prepare_for_estimate"]["arguments"]["join_datasets"] = 'True'
 run_configuration["models_configuration"]["household_location_choice_model"]["controller"]["prepare_for_estimate"]["arguments"]["index_to_unplace"] = 'None'
 run_configuration["models_configuration"]["household_location_choice_model"]["controller"]["prepare_for_estimate"]["arguments"]["filter"] = None #"'psrc.household.customized_filter'"
 
@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     run_configuration = update_controller_by_specification_from_module(
                             run_configuration, "household_location_choice_model",
-                            "inprocess.psrc_parcel.hlcm_parcel_specification")
+                            "inprocess.bhylee.hlcm_parcel_specification")
     run_configuration.replace(my_configuration)
     estimator = Estimator(run_configuration, save_estimation_results=False)
     estimator.estimate()

@@ -15,7 +15,7 @@
 import os
 
 from opus_core.configuration import Configuration
-from opus_core.configurations.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 
@@ -59,7 +59,7 @@ class CacheConfiguration(Configuration):
             baseyear_cache = BaseyearCacheConfiguration(
                 existing_cache_to_copy = r'D:/urbansim_cache/full_psrc',
                 ),
-            cache_mysql_data = 'urbansim.model_coordinators.cache_mysql_data',
+            cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
             tables_to_cache = tables_to_cache,
             tables_to_cache_nchunks = {
                 'parcels':8,
@@ -78,7 +78,7 @@ class CacheConfiguration(Configuration):
             host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
             user_name     = os.environ.get('MYSQLUSERNAME',''),
             password      = os.environ.get('MYSQLPASSWORD',''),
-            database_name = "PSRC_2000_parcels" #'PSRC_2000_parcels',
+            database_name = "psrc_activity2006" #'PSRC_2000_parcels',
             ),
         'output_configuration':DatabaseConfiguration(
             host_name = os.environ.get('MYSQLHOSTNAME','localhost'),
