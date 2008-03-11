@@ -78,7 +78,7 @@ class CacheConfiguration(Configuration):
             host_name     = os.environ.get('MYSQLHOSTNAME','localhost'),
             user_name     = os.environ.get('MYSQLUSERNAME',''),
             password      = os.environ.get('MYSQLPASSWORD',''),
-            database_name = "psrc_activity2006" #'PSRC_2000_parcels',
+            database_name = "psrc_activity2006_ver2" # 2006 PSRC Activity Survey for households_for_estimation,
             ),
         'output_configuration':DatabaseConfiguration(
             host_name = os.environ.get('MYSQLHOSTNAME','localhost'),

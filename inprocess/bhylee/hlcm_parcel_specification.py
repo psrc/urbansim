@@ -17,7 +17,7 @@ specification = {}
 specification = {
         0:   #submodel_id
             [
-             "ln_built_sf_unit = ln(psrc.parcel.sqft_per_unit)",
+             "ln_built_sf_unit = ln(psrc_parcel.building.sqft_per_unit)",
 #            "ln_built_sf_unit = ln(psrc_parcel.building.sqft_per_unit)",
 #            "ln_housing_value = ln(psrc.parcel.housing_value)",
 #            "ln_lot_sf_unit = ln(psrc.parcel.lot_sf_unit)",
