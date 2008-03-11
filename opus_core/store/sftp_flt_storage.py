@@ -96,8 +96,7 @@ class sftp_flt_storage(file_flt_storage):
             remote_file = remote_files[i]
             self.sftp.get(remote_file.get_name(), local_file.get_name())
             
-        return file_flt_storage.load_table(self, table_name, column_names=column_names, lowercase=lowercase,
-                               id_name=id_name)
+        return file_flt_storage.load_table(self, table_name, column_names=column_names, lowercase=lowercase)
     
     def get_column_names(self, table_name, lowercase=True):
         #same as in file_flt_storage
