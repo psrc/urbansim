@@ -99,7 +99,6 @@ class RunManager(object):
             resources['base_year'] = resources['years'][0] - 1
 
         #set up resources for restarting the simulation
-        resources['flt_directory'] = os.path.join(resources['cache_directory'], str(restart_year - 1))
         resources["years"] = (restart_year, end_year)
 
         return resources
@@ -187,7 +186,7 @@ class RunManager(object):
             if run_as_multiprocess:
                 model_system.run_multiprocess(run_resources)
             else:
-                model_system.run_in_one_process(run_resources, run_in_background=run_in_background)
+                model_system.run_in_one_process(run_resources, run_in_background=run_in_background, class_path=model_system_class_path)
             
             if self.run_activity is not None:
                 self.run_activity.add_row_to_history(self.history_id, run_resources, "done")
