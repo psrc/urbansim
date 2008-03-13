@@ -416,7 +416,6 @@ class ModelSystem(object):
             
     def run_multiprocess(self, resources):
         resources = Resources(resources)
-        self._merge_resources_with_defaults(resources)
         profiler_name = resources.get("profile_filename", None)
         if resources['cache_directory'] is not None:
             cache_directory = resources['cache_directory']
@@ -454,7 +453,7 @@ class ModelSystem(object):
             logger.start_block('Running simulation for year %d in new process' % year)
             try:
                 resources['years'] = (year, year)
-                resources['seed'] = seed_array[iyear]
+                resources['seed'] = seed_array[iyear],
                 logger.disable_file_logging(log_file)
                 if profiler_name is not None:
                     resources["profile_filename"] = "%s_%s" % (profiler_name, year) # add year to the profile name

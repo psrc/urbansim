@@ -33,7 +33,7 @@ class ModelSystem(CoreModelSystem):
                 logger.start_block('Running UrbanSim for year %d in new process' % year)
                 try:
                     resources['years'] = (year, year)
-                    resources['seed'] = seed_array[iyear]
+                    resources['seed'] = seed_array[iyear],
                     logger.disable_file_logging(log_file)
                     if profiler_name is not None:
                         resources["profile_filename"] = "%s_%s" % (profiler_name, year) # add year to the profile name
