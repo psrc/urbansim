@@ -126,6 +126,7 @@ class ToolboxBase(object):
                     cache_dir_root_path = "/" + children.item(x).nodeValue()
         self.opusDataPath = self.opusDataPathOrig + cache_dir_root_path
         #print self.opusDataPath
+        self.opusDataPath = os.path.normpath(str(self.opusDataPath))
         self.resultsManagerTree = OpusXMLTree(self,"results_manager",
                                               self.parent.resultsmanager_page.layout())
         self.modelManagerTree = OpusXMLTree(self,"model_manager",
