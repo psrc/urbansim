@@ -263,7 +263,7 @@ class OpusDataModel(QAbstractItemModel):
             return False
         if role != Qt.EditRole:
             return False
-        print "ModelView setData %s" % (value.toString())
+        #print "ModelView setData %s" % (value.toString())
         # Get the item associated with the index
         item = index.internalPointer()
         domNode = item.node()
@@ -284,6 +284,14 @@ class OpusDataModel(QAbstractItemModel):
                         if self.dirty == False:
                             self.parentTree.groupBox.setTitle(self.parentTree.groupBox.title().prepend(QString("*")))
                         self.dirty = True
+            else:
+                #print "New text node to be added"
+                # We need to add a text node since it was blank
+                newText = self.domDocument.createTextNode(QString(value.toString()))
+                domNode.appendChild(newText)
+                if self.dirty == False:
+                    self.parentTree.groupBox.setTitle(self.parentTree.groupBox.title().prepend(QString("*")))
+                self.dirty = True
         return True
 
     def insertRow(self,row,parent,node):
