@@ -3,24 +3,24 @@
     <description type="string" >PSRC parcel project</description>
   </general>
   <data_manager_dbstree>
-    <database_library type="database_library" setexpanded="True">
-      <urbansim_db1 type="db_connection" setexpanded="True">
-        <host_name type="string">urbanserver</host_name>
-        <protocol type="string">xxx_protocol</protocol>
-        <user_name type="string">pwaddell</user_name>
-        <password type="password">sunshine</password>
+    <database_library type="database_library" setexpanded="True" >
+      <urbansim_db1 type="db_connection" setexpanded="True" >
+        <host_name type="string" >urbanserver</host_name>
+        <protocol type="string" >xxx_protocol</protocol>
+        <user_name type="string" >pwaddell</user_name>
+        <password type="password" >sunshine</password>
       </urbansim_db1>
-      <urbansim_db2 type="db_connection" setexpanded="True">
-        <host_name type="string">urbanserver2</host_name>
-        <protocol type="string">xxx_protocol2</protocol>
-        <user_name type="string">pwaddell2</user_name>
-        <password type="password">sunshine2</password>
+      <urbansim_db2 type="db_connection" setexpanded="True" >
+        <host_name type="string" >urbanserver2</host_name>
+        <protocol type="string" >xxx_protocol2</protocol>
+        <user_name type="string" >pwaddell2</user_name>
+        <password type="password" >sunshine2</password>
       </urbansim_db2>
     </database_library>
   </data_manager_dbstree>
   <model_manager>
-    <estimation type="dictionary" setexpanded="True">
-      <models_to_estimate type="selectable_list" setexpanded="True">
+    <estimation type="dictionary" setexpanded="True" >
+      <models_to_estimate type="selectable_list" setexpanded="True" >
         <real_estate_price_model type="model" choices="Estimate|Skip" >Estimate</real_estate_price_model>
         <household_location_choice_model type="model" choices="Estimate|Skip" >Skip</household_location_choice_model>
         <employment_location_choice_model_home_based type="model" choices="Estimate|Skip" >Skip</employment_location_choice_model_home_based>
@@ -391,7 +391,7 @@
         <output_configuration type="class" >
           <Class_name flags="hidden" type="string" >DatabaseConfiguration</Class_name>
           <Class_path flags="hidden" type="string" >opus_core.database_management.database_configuration</Class_path>
-	  <database_connection type="db_connection_hook">urbansim_db1</database_connection>
+          <database_connection type="db_connection_hook" >urbansim_db1</database_connection>
           <database_name type="string" >psrc_2005_parcel_baseyear_change_20071011</database_name>
         </output_configuration>
         <dataset_pool_configuration type="class" >

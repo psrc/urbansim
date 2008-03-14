@@ -13,6 +13,7 @@
 #
 
 import os
+import pprint
 from numpy import array
 from xml.etree.cElementTree import ElementTree
 from opus_core.configuration import Configuration
@@ -37,7 +38,13 @@ class XMLConfiguration(object):
             workspace_dir = os.path.split(opus_core_dir)[0]
             self._filepath = os.path.join(workspace_dir, filename)
         # if self._filepath doesn't exist, ElementTree will raise an IOError
-        self.root = ElementTree(file=self._filepath).getroot()
+        # Keep a reference to both the tree and the root.
+        self.tree = ElementTree(file=self._filepath)
+        self.root = self.tree.getroot()
+        # Parent map... can be used for working back up the XML tree
+        self.parent_map = dict((c, p) for p in self.tree.getiterator() for c in p)
+        # Pretty printer for debugging and viewing dicts
+        self.pp = pprint.PrettyPrinter(indent=4)
         if self.root.tag!='opus_project':
             raise ValueError, "malformed xml - expected to find a root element named 'opus_project'"
         
@@ -178,6 +185,10 @@ class XMLConfiguration(object):
             return self._convert_dictionary_to_data(node)
         elif type_name=='class':
             return self._convert_class_to_data(node)
+        elif type_name=='database_library':
+            return ''
+        elif type_name=='db_connection':
+            return ''
         elif type_name=='db_connection_hook':
             return node.text
         elif type_name=='model':
@@ -255,6 +266,25 @@ class XMLConfiguration(object):
             self._add_to_dict(child, items)
         class_name = items['Class_name']
         class_path = items['Class_path']
+        # Special case database configs as they may contain a database_connection which
+        # references another part of the XML.  We need to add those elements to the
+        # dictionary if they are defined in that config before calling _make_instance
+        if class_name == 'DatabaseConfiguration':
+            # Look for a database_connection element...
+            if items.has_key('database_connection'):
+                database_hook = items['database_connection']
+                #print "Found a database_hook = %s" % (database_hook)
+                # Next, since we have a connection we must go find it in the data manager
+                the_database = self.get_section('data_manager_dbstree/database_library/%s' %
+                                                (database_hook))
+                if the_database:
+                    #print "Converting a database connection into a class"
+                    #self.pp.pprint(the_database)
+                    items.update(the_database)
+                    #self.pp.pprint(items)
+                # Get rid of the database_connection element since we just replaced it
+                # with the real connection info
+                del items['database_connection']
         # delete the class name and class path from the dictionary -- the remaining items 
         # will be the keyword arguments to use to create the instance
         del items['Class_name']

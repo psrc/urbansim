@@ -32,7 +32,7 @@
       <opus_database_to_esri_config type="script_config" >
         <script_hook type="script_library_ref" >opus_database_to_esri_tool</script_hook>
         <esri_data_path type="string" >/home/aaronr/work/urbansim_cache/eugene/esri</esri_data_path>
-        <opus_data_directory type="string" ></opus_data_directory>
+        <opus_data_directory type="string" />
         <opus_data_year type="string" >ALL</opus_data_year>
         <opus_table_name type="string" >ALL</opus_table_name>
       </opus_database_to_esri_config>
@@ -42,7 +42,7 @@
       <opus_dataset_to_sql_config type="script_config" >
         <script_hook type="script_library_ref" >opus_database_to_sql_tool</script_hook>
         <sql_db_name type="string" >mytestdb</sql_db_name>
-        <opus_data_directory type="string" ></opus_data_directory>
+        <opus_data_directory type="string" />
         <opus_data_year type="string" >ALL</opus_data_year>
         <opus_table_name type="string" >ALL</opus_table_name>
       </opus_dataset_to_sql_config>
@@ -52,7 +52,7 @@
       <opus_dataset_to_esri_config type="script_config" >
         <script_hook type="script_library_ref" >opus_database_to_esri_tool</script_hook>
         <esri_data_path type="string" >/home/aaronr/work/urbansim_cache/eugene/esri</esri_data_path>
-        <opus_data_directory type="string" ></opus_data_directory>
+        <opus_data_directory type="string" />
         <opus_data_year type="string" >ALL</opus_data_year>
         <opus_table_name type="string" >ALL</opus_table_name>
       </opus_dataset_to_esri_config>
@@ -62,7 +62,7 @@
       <opus_array_to_sql_config type="script_config" >
         <script_hook type="script_library_ref" >opus_database_to_sql_tool</script_hook>
         <sql_db_name type="string" >mytestdb</sql_db_name>
-        <opus_data_directory type="string" ></opus_data_directory>
+        <opus_data_directory type="string" />
         <opus_data_year type="string" >ALL</opus_data_year>
         <opus_table_name type="string" >ALL</opus_table_name>
       </opus_array_to_sql_config>
@@ -72,7 +72,7 @@
       <opus_array_to_esri_config type="script_config" >
         <script_hook type="script_library_ref" >opus_database_to_esri_tool</script_hook>
         <esri_data_path type="string" >/home/aaronr/work/urbansim_cache/eugene/esri</esri_data_path>
-        <opus_data_directory type="string" ></opus_data_directory>
+        <opus_data_directory type="string" />
         <opus_data_year type="string" >ALL</opus_data_year>
         <opus_table_name type="string" >ALL</opus_table_name>
       </opus_array_to_esri_config>
@@ -102,16 +102,18 @@
   <data_manager_dbstree>
     <database_library type="database_library" setexpanded="True" >
       <urbansim_db1 type="db_connection" setexpanded="True" >
-        <host_name type="string" >urbanserver</host_name>
-        <protocol type="string" >xxx_protocol</protocol>
-        <user_name type="string" >pwaddell</user_name>
-        <password type="password" >sunshine</password>
+        <host_name type="string" />
+        <protocol type="string" />
+        <user_name type="string" />
+        <password type="password" />
+        <use_environment_variables type="boolean" choices="True|False" >True</use_environment_variables>
       </urbansim_db1>
       <urbansim_db2 type="db_connection" setexpanded="True" >
         <host_name type="string" >urbanserver2</host_name>
         <protocol type="string" >xxx_protocol2</protocol>
         <user_name type="string" >pwaddell2</user_name>
         <password type="password" >sunshine2</password>
+        <use_environment_variables type="boolean" >False</use_environment_variables>
       </urbansim_db2>
     </database_library>
   </data_manager_dbstree>
@@ -147,11 +149,7 @@
       <baseyear_database_configuration config_name="input_configuration" type="class" >
         <Class_name flags="hidden" type="string" >DatabaseConfiguration</Class_name>
         <Class_path flags="hidden" type="string" >opus_core.database_management.database_configuration</Class_path>
-        <protocol type="string" />
-        <host_name type="string" />
-        <user_name type="string" />
-        <password type="password" />
-        <use_environment_variables type="boolean" choices="True|False" >True</use_environment_variables>
+        <database_connection type="db_connection_hook" >urbansim_db1</database_connection>
         <database_name type="string" >eugene_1980_baseyear</database_name>
       </baseyear_database_configuration>
       <cache_directory parser_action="prefix_with_opus_data_path" type="directory" >eugene/eugene_1980_baseyear_cache</cache_directory>
