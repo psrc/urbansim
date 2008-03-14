@@ -28,7 +28,9 @@ class LandPriceModelConfigurationCreator(object):
                 specification_table = 'land_price_model_specification',
                 filter_for_estimation = "urbansim.gridcell.total_land_value",
                 threshold = 1000,
-                estimation_procedure = "opus_core.estimate_linear_regression"
+                estimation_procedure = "opus_core.estimate_linear_regression",
+                run_config = None, # additional arguments passed to simulation modules
+                estimate_config = None, # additional arguments passed to estimation modules
                 ):
         self.debuglevel = debuglevel
         self.nchunks = nchunks
@@ -40,7 +42,9 @@ class LandPriceModelConfigurationCreator(object):
         self.submodel_string = submodel_string
         self.filter = filter
         self.filter_for_estimation = filter_for_estimation
-            
+        self.run_config = run_config
+        self.estimate_config = estimate_config
+        
     def execute(self):
         # Names of intermediate objects used to get data between steps
         # in this model process.
@@ -66,7 +70,9 @@ class LandPriceModelConfigurationCreator(object):
             'init': {'name': 'CorrectedLandPriceModel',
                      'arguments': {
                         'filter': "'%s'" % self.filter,
-                        'submodel_string': "'%s'" % self.submodel_string
+                        'submodel_string': "'%s'" % self.submodel_string,
+                        'run_config': self.run_config,
+                        'estimate_config': self.estimate_config,
                                    }
                      },
             'prepare_for_estimate': {
@@ -135,7 +141,9 @@ class TestLandPriceModelConfigurationCreator(opus_unittest.OpusTestCase):
             'init': {'name': 'CorrectedLandPriceModel',
                      'arguments':{
                            'filter': "'urbansim.gridcell.is_in_development_type_group_developable'",
-                           'submodel_string': "'development_type_id'"
+                           'submodel_string': "'development_type_id'",
+                           'run_config': None,
+                           'estimate_config': None,
                                   }
                      },
             'prepare_for_estimate': {
@@ -183,6 +191,8 @@ class TestLandPriceModelConfigurationCreator(opus_unittest.OpusTestCase):
             threshold = 7777,
             coefficients_table = 'coefficients_table',
             specification_table = 'specification_table',
+            run_config={"aaa": "bbb"},
+            estimate_config = {}
             )
         
         expected = Configuration({
@@ -203,7 +213,9 @@ class TestLandPriceModelConfigurationCreator(opus_unittest.OpusTestCase):
             'init': {'name': 'CorrectedLandPriceModel',
                      'arguments':{
                            'filter': "'urbansim.gridcell.is_in_development_type_group_developable'",
-                           'submodel_string': "'development_type_id'"
+                           'submodel_string': "'development_type_id'",
+                           'run_config': {"aaa": "bbb"},
+                           'estimate_config': {},
                                   }},
             'prepare_for_estimate': {
                 'arguments': {

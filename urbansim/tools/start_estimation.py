@@ -14,6 +14,7 @@
 
 from optparse import OptionParser, OptionGroup
 from opus_core.misc import get_config_from_opus_path
+from opus_core.logger import logger
 from urbansim.estimation.estimation_runner import EstimationRunner
 
 class EstimationOptionGroup:
@@ -37,6 +38,12 @@ if __name__ == '__main__':
     option_group = EstimationOptionGroup()
     parser = option_group.parser
     (options, args) = parser.parse_args()
+    if options.model_name is None:
+        raise StandardError, "Model name (argument -m) must be given."
+    if options.configuration_path is None:
+        raise StandardError, "Configuration path (argument -c) must be given."
+    if options.specification is None:
+        logger.log_warning("No specification module given. Specification taken from the cache.")
     config = get_config_from_opus_path(options.configuration_path)
     estimator = EstimationRunner(model=options.model_name, specification_module=options.specification, model_group=options.model_group,
                            configuration=config, save_estimation_results=options.save_results)
