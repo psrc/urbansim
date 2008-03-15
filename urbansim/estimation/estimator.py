@@ -12,13 +12,13 @@
 # other acknowledgments.
 #
 
-from numpy import absolute, array, where, take
+from numpy import absolute, array, where, take, zeros, ones
 from opus_core.logger import logger
 from opus_core.resources import Resources
 from opus_core.coefficients import Coefficients
 from opus_core.variables.variable_name import VariableName
 from opus_core.simulation_state import SimulationState
-from opus_core.misc import load_table_from_text_file
+from opus_core.misc import load_table_from_text_file, unique_values
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.datasets.dataset import Dataset
 from opus_core.equation_specification import EquationSpecification
@@ -189,12 +189,18 @@ class Estimator(object):
     def get_model(self):
         return self.model_system.run_year_namespace["model"]
         
+    def get_choice_set(self): # works only for choice models
+        return self.get_model().model_interaction.interaction_datasets[0].get_dataset(2)
+    
     def get_choice_set_index(self): # works only for choice models
         return self.get_model().model_interaction.interaction_datasets[0].get_index(2)
         
     def get_choice_set_index_for_submodel(self, submodel): # works only for choice models
         index = self.get_choice_set_index()
         return take (index, indices=self.get_agent_set_index_for_submodel(submodel), axis=0)
+    
+    def get_agent_set(self): # works only for choice models
+        return self.get_model().model_interaction.interaction_datasets[0].get_dataset(1)
     
     def get_agent_set_index(self): # works only for choice models
         return self.get_model().model_interaction.interaction_datasets[0].get_index(1)
@@ -207,6 +213,22 @@ class Estimator(object):
         ds = self.get_data_as_dataset(submodel)
         attrs = [attr for attr in ds.get_known_attribute_names() if attr not in ds.get_id_name()]
         ds.correlation_image(attrs)
+        
+    def plot_choice_set(self):
+        choice_set = self.get_choice_set()
+        result = zeros(choice_set.size(), dtype='int16')
+        result[unique_values(self.get_choice_set_index().ravel())] = 1
+        choice_set.add_attribute(name='__sampled_for_estimation__', data=result)
+        choice_set.plot_map('__sampled_for_estimation__', background=-1)
+        choice_set.delete_one_attribute('__sampled_for_estimation__')
+        
+    def plot_choice_set_attribute(self, name):
+        choice_set = self.get_choice_set()
+        filter_var = ones(choice_set.size(), dtype='int16')
+        filter_var[unique_values(self.get_choice_set_index().ravel())] = 0
+        choice_set.add_attribute(name='__choice_set_filter_for_estimation__', data=filter_var)
+        choice_set.plot_map(name, filter='__choice_set_filter_for_estimation__')
+        choice_set.delete_one_attribute('__choice_set_filter_for_estimation__')
         
     def cleanup(self, remove_cache=True):
         """Use this only if you don't want to reestimate."""
