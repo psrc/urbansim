@@ -60,8 +60,8 @@ if __name__ == "__main__":
     #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/1211/run_4491.2007_12_11_13_58"
     #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0123/run_4960.2008_01_23_10_09"
     #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0124/run_4954.2008_01_23_09_59"
-    cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0131/run_5090.2008_01_31_14_45"
-
+    #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0131/run_5090.2008_01_31_14_45"
+    cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0307/run_5737_point_est"
     # where the true data (on a zone level) is stored in a table format 
     observed_data_dir = "/Users/hana/bm/observed_data/"
 

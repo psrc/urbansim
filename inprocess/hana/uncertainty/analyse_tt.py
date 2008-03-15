@@ -12,29 +12,23 @@
 # other acknowledgments.
 #
 
-import os
-from opus_core.misc import write_to_text_file
 from opus_core.multiple_runs import MultipleRuns
+from create_file_cache_directories import create_file_cache_directories
 
 if __name__ == "__main__":
     try: import wingdbstub
     except: pass
     
-    #cache_directory, prefix = ("/Users/hana/urbansim_cache/psrc/parcel/bm/runs_with_viaduct/run_5257_highest_weight/emme_run_1_2008_02_15_14_54", 'viad_')
-    #cache_directory, prefix = ("/Users/hana/urbansim_cache/psrc/parcel/bm/runs_with_viaduct/run_5264_second_weight/emme_run_1_2008_02_14_12_22", 'viad2_')
-    #cache_directory, prefix = ("/Users/hana/urbansim_cache/psrc/parcel/bm/runs_with_viaduct/run_5272_point_estimates/emme_run_1_2008_02_20_10_05", 'viad3_')
-    #cache_directory, prefix = ("/Users/hana/urbansim_cache/psrc/parcel/bm/runs_without_viaduct/run_5263_highest_weight/emme_run_1_2008_02_15_13_00", 'no_viad_')
-    #cache_directory, prefix = ("/Users/hana/urbansim_cache/psrc/parcel/bm/runs_without_viaduct/run_5270_second_weight/emme_run_1_2008_02_21_18_07", 'no_viad2_')
-    cache_directory, prefix = ("/Users/hana/urbansim_cache/psrc/parcel/bm/runs_without_viaduct/run_5273_point_estimates/emme_run_1_2008_02_20_10_10", 'no_viad3_')
+    #cache_directory, prefix = ("/Users/hana/urbansim_cache/psrc/parcel/bm/highest_weight_5637/with_viaduct_5714/emme_run_1_2008_03_02_20_38", 'viad1_')
+    #cache_directory, prefix = ("/Users/hana/urbansim_cache/psrc/parcel/bm/highest_weight_5637/without_viaduct_5706/emme_run_1_2008_03_01_20_38", 'no_viad1_')
+    #cache_directory, prefix = ("/Users/hana/urbansim_cache/psrc/parcel/bm/second_weight_5656/with_viaduct_5707/emme_run_1_2008_03_01_20_26", 'viad2_')
+    #cache_directory, prefix = ("/Users/hana/urbansim_cache/psrc/parcel/bm/second_weight_5656/without_viaduct_5708/emme_run_1_2008_03_01_20_30", 'no_viad2_')
+    #cache_directory, prefix = ("/Users/hana/urbansim_cache/psrc/parcel/bm/third_weight_5689/with_viaduct_5715/emme_run_1_2008_03_02_19_50", 'viad3_')
+    #cache_directory, prefix = ("/Users/hana/urbansim_cache/psrc/parcel/bm/third_weight_5689/without_viaduct_5716/emme_run_1_2008_03_02_19_52", 'no_viad3_')
+    #cache_directory, prefix = ("/Users/hana/urbansim_cache/psrc/parcel/bm/fourth_weight_5662/with_viaduct_5717/emme_run_1_2008_03_02_20_16", 'viad4_')
+    cache_directory, prefix = ("/Users/hana/urbansim_cache/psrc/parcel/bm/fourth_weight_5662/without_viaduct_5718/emme_run_1_2008_03_02_20_19", 'no_viad4_')
 
-    base_emme_dir = os.path.join(os.path.split(cache_directory)[0:-1])[0]
-    emme_dirs = os.listdir(base_emme_dir)
-    emme_dirs = [x for x in emme_dirs if x.startswith('emme_')]
-
-    for i in range(len(emme_dirs)):
-        emme_dirs[i] = os.path.join(base_emme_dir, emme_dirs[i])
-        
-    write_to_text_file(os.path.join(cache_directory, 'cache_directories'), emme_dirs)
+    create_file_cache_directories(cache_directory, prefix='emme_')
 
     mr = MultipleRuns(cache_directory, package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
     commutes = mr.get_datasets_from_multiple_runs(2021, ['commute_travel_data.sim_am_pk_travel_time', 'commute_travel_data.am_pk_travel_time'], 'commute_travel_data', name_attribute='name')
