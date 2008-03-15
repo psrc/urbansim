@@ -58,12 +58,17 @@ class RegressionModel(ChunkModel):
             self.run_config = self.model_configuration["run_config"]
         if self.run_config == None:
             self.run_config = Resources()
+        if not isinstance(self.run_config,Resources) and isinstance(self.run_config, dict):
+            self.run_config = Resources(self.run_config)
 
         self.estimate_config = estimate_config
         if estimate_config is None and model_configuration is not None and 'estimate_config' in model_configuration:
             self.estimate_config = self.model_configuration["estimate_config"]
         if self.estimate_config == None:
             self.estimate_config = Resources()
+        if not isinstance(self.estimate_config,Resources) and isinstance(self.estimate_config, dict):
+            self.estimate_config = Resources(self.estimate_config)
+            
         self.data = {}
         self.coefficient_names = {}
         ChunkModel.__init__(self)
@@ -89,6 +94,8 @@ class RegressionModel(ChunkModel):
         self.debug.flag = debuglevel
         if run_config == None:
             run_config = Resources()
+        if not isinstance(run_config,Resources) and isinstance(run_config, dict):
+            run_config = Resources(run_config)
         self.run_config = run_config.merge_with_defaults(self.run_config)
         self.run_config.merge({"debug":self.debug})
         if data_objects is not None:
@@ -165,6 +172,8 @@ class RegressionModel(ChunkModel):
         self.debug.flag = debuglevel
         if estimate_config == None:
             estimate_config = Resources()
+        if not isinstance(estimate_config,Resources) and isinstance(estimate_config, dict):
+            estimate_config = Resources(estimate_config)
         self.estimate_config = estimate_config.merge_with_defaults(self.estimate_config)
         if data_objects is not None:
             self.dataset_pool.add_datasets_if_not_included(data_objects)
