@@ -29,6 +29,7 @@ except:
 
 from opus_core.store.storage import Storage
 from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.opus_database import OpusDatabase
 
 class sql_storage(Storage):
     def __init__(self,  
@@ -48,9 +49,11 @@ class sql_storage(Storage):
         #self._my_db = storage_location
         
     def _get_db(self):
-        db_server = DatabaseServer(self.database_server_config)
-        db = db_server.get_database(self.database_name)
-        db_server.close()
+        #db_server = DatabaseServer(self.database_server_config)
+        #db = db_server.get_database(self.database_name)
+        #db_server.close()
+        #return db
+        db = OpusDatabase(self.database_server_config, self.database_name)
         return db
     
     def _dispose_db(self, db):
