@@ -41,25 +41,17 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.setupUi(self)
     
     self.toolboxStuff = ToolboxBase(self)
-
+    
+    # Loading startup options from gui configuration xml file
     startup_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('startup_options').item(0)
     splash_pix = get_child_values(parent = startup_node, 
                              child_names = ['splash_logo'])
     
     splash_pix = os.path.join('main','Images',str(splash_pix['splash_logo']))
-#    splash_pix = os.path.join('main','Images','az-smart.bmp')
     self.splashPix = QPixmap(QString(splash_pix))
     self.splashPixScaled = self.splashPix.scaled(600,252,Qt.KeepAspectRatio)
     self.splash = QSplashScreen(self.splashPixScaled)
     self.splash.show()
-
-    # We need to initialize the window sizes
-#    size_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('window_size').item(0)
-#    window_size = get_child_values(parent = size_node, 
-#                             child_names = ['x','y'])
-#    x,y = int(window_size['x']),int(window_size['y'])
-#    x,y = (550,550)
-#    self.splitter.setSizes([x,y])
 
     # Play with the project and config load/save
     QObject.connect(self.actionOpen_Project_2, SIGNAL("triggered()"), self.openConfig)
