@@ -14,6 +14,9 @@
 
 aliases = [
    "zone_id = household.disaggregate(urbansim_parcel.building.zone_id)",
-   "parcel_id = household.disaggregate(urbansim_parcel.building.parcel_id)"
+   "parcel_id = household.disaggregate(urbansim_parcel.building.parcel_id)",
+   "has_person_age_le_3 = household.aggregate(person.age<=3)",
+   "has_person_age_le_6 = household.aggregate(person.age<=6)",
+   "has_person_age_le_13 = household.aggregate(person.age<=13)",   
    
            ]
