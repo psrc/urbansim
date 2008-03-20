@@ -55,6 +55,16 @@ indicators=[
         dataset_name = 'large_area',
         source_data = source_data,
         ),
+#    Table(
+#        attribute = 'at_home_workers=district.aggregate(person.work_at_home==1, intermediates=[household, building, parcel, zone])',
+#        dataset_name = 'district',
+#        source_data = source_data,
+#        ),
+#    Table(
+#        attribute = 'psrc_parcel.district_commute.commute_trips',
+#        dataset_name = 'district_commute',
+#        source_data = source_data,
+#        ),
 #    Map(
 #        attribute = 'population=zone.aggregate(urbansim_parcel.building.population, intermediates=[parcel])',
 #        dataset_name = 'zone',
