@@ -29,7 +29,12 @@ def main(argv):
 
   # create Qt application
   app = QApplication(argv,True)
-
+  
+  # Setting these items allows for saving application state via a QSettings object
+  app.setOrganizationName("CUSPA")
+  app.setOrganizationDomain("urbansim.org")
+  app.setApplicationName("OPUS")
+  
   # Set the app style
   app.setStyle(QString("plastique"))
 

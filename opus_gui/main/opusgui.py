@@ -58,8 +58,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 #    window_size = get_child_values(parent = size_node, 
 #                             child_names = ['x','y'])
 #    x,y = int(window_size['x']),int(window_size['y'])
-    x,y = (550,550)
-    self.splitter.setSizes([x,y])
+#    x,y = (550,550)
+#    self.splitter.setSizes([x,y])
 
     # Play with the project and config load/save
     QObject.connect(self.actionOpen_Project_2, SIGNAL("triggered()"), self.openConfig)
@@ -124,6 +124,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.tabWidget.setCornerWidget(self.tabCornerWidget)
     QObject.connect(self.actionCloseCurrentTab,
                     SIGNAL("triggered()"), self.closeCurrentTab)
+    
+    # Restoring application geometry from last shut down
+    settings = QSettings()
+    self.restoreGeometry(settings.value("Geometry").toByteArray())
 
 
   def closeCurrentTab(self):
@@ -264,3 +268,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
       self.saveConfig()
 
     self.close()
+
+  def closeEvent(self, event):
+    # Saving application geometry on shut down
+    settings = QSettings()
+    settings.setValue("Geometry", QVariant(self.saveGeometry()))
+    
+    
