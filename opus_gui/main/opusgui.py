@@ -52,6 +52,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     self.splashPixScaled = self.splashPix.scaled(600,252,Qt.KeepAspectRatio)
     self.splash = QSplashScreen(self.splashPixScaled)
     self.splash.show()
+    
+    # Loading main window title from gui configuration xml file
+    application_options_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('application_options').item(0)
+    application_title_dict = get_child_values(parent = application_options_node,
+                                         child_names = ['application_title'])
+    self.application_title = application_title_dict['application_title']
+    self.setWindowTitle(application_title_dict['application_title'])
 
     # Play with the project and config load/save
     QObject.connect(self.actionOpen_Project_2, SIGNAL("triggered()"), self.openConfig)
@@ -120,6 +127,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     # Restoring application geometry from last shut down
     settings = QSettings()
     self.restoreGeometry(settings.value("Geometry").toByteArray())
+    
+    
 
 
   def closeCurrentTab(self):
@@ -211,6 +220,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     fileNameBaseName = fileNameInfo.completeBaseName()
     # Open the file and add to the Run tab...
     self.toolboxStuff.openXMLTree(fileName)
+    # Jesse
+    self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.parentTool.xml_file).filePath())
 
   def saveConfig(self):
     #print "Save Config pressed..."
@@ -222,15 +233,15 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     out = QTextStream(configFile)
     domDocument.save(out, indentSize)
     self.toolboxStuff.runManagerTree.model.dirty = False
-    self.toolboxStuff.runManagerTree.groupBox.setTitle(QFileInfo(self.toolboxStuff.runManagerTree.parentTool.xml_file).filePath())
+    self.setWindowTitle(self.windowTitle().replace("*", ""))
     self.toolboxStuff.dataManagerTree.model.dirty = False
-    self.toolboxStuff.dataManagerTree.groupBox.setTitle(QFileInfo(self.toolboxStuff.dataManagerTree.parentTool.xml_file).filePath())
+    self.setWindowTitle(self.windowTitle().replace("*", ""))
     self.toolboxStuff.dataManagerDBSTree.model.dirty = False
-    self.toolboxStuff.dataManagerDBSTree.groupBox.setTitle(QFileInfo(self.toolboxStuff.dataManagerDBSTree.parentTool.xml_file).filePath())
+    self.setWindowTitle(self.windowTitle().replace("*", ""))
     self.toolboxStuff.modelManagerTree.model.dirty = False
-    self.toolboxStuff.modelManagerTree.groupBox.setTitle(QFileInfo(self.toolboxStuff.modelManagerTree.parentTool.xml_file).filePath())
+    self.setWindowTitle(self.windowTitle().replace("*", ""))
     self.toolboxStuff.resultsManagerTree.model.dirty = False
-    self.toolboxStuff.resultsManagerTree.groupBox.setTitle(QFileInfo(self.toolboxStuff.resultsManagerTree.parentTool.xml_file).filePath())
+    self.setWindowTitle(self.windowTitle().replace("*", ""))
     #print "Save Config finished..."
 
   def saveConfigAs(self):

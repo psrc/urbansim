@@ -49,7 +49,6 @@ class OpusXMLTree(object):
     self.view.setMinimumHeight(200)
 
     self.groupBoxLayout.addWidget(self.view)
-    self.groupBox.setTitle(QFileInfo(self.parentTool.xml_file).filePath())
     self.parentWidget.addWidget(self.groupBox)
 
     # Hook up to the mousePressEvent and pressed

@@ -273,7 +273,8 @@ class OpusDataModel(QAbstractItemModel):
                 if not domElement.isNull():
                     domElement.setTagName(value.toString())
                     if self.dirty == False:
-                        self.parentTree.groupBox.setTitle(self.parentTree.groupBox.title().prepend(QString("*")))
+                        wintitle = self.parentObj.windowTitle().replace(" - ", " - *")
+                        self.parentObj.setWindowTitle(wintitle)
                     self.dirty = True
         elif index.column() == 2:
             if domNode.hasChildNodes():
@@ -282,7 +283,8 @@ class OpusDataModel(QAbstractItemModel):
                     if children.item(x).isText():
                         children.item(x).setNodeValue(QString(value.toString()))
                         if self.dirty == False:
-                            self.parentTree.groupBox.setTitle(self.parentTree.groupBox.title().prepend(QString("*")))
+                            wintitle = self.parentObj.windowTitle().replace(" - ", " - *")
+                            self.parentObj.setWindowTitle(wintitle)                         
                         self.dirty = True
             else:
                 #print "New text node to be added"
@@ -290,7 +292,8 @@ class OpusDataModel(QAbstractItemModel):
                 newText = self.domDocument.createTextNode(QString(value.toString()))
                 domNode.appendChild(newText)
                 if self.dirty == False:
-                    self.parentTree.groupBox.setTitle(self.parentTree.groupBox.title().prepend(QString("*")))
+                    wintitle = self.parentObj.windowTitle().replace(" - ", " - *")
+                    self.parentObj.setWindowTitle(wintitle)
                 self.dirty = True
         return True
 

@@ -16,7 +16,7 @@
    </font>
   </property>
   <property name="windowTitle" >
-   <string>AZ-SMART</string>
+   <string/>
   </property>
   <property name="windowIcon" >
    <iconset resource="opusmain.qrc" >:/Images/Images/cog.png</iconset>
@@ -70,7 +70,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>96</width>
+          <width>98</width>
           <height>34</height>
          </rect>
         </property>
@@ -114,7 +114,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>96</width>
+              <width>98</width>
               <height>38</height>
              </rect>
             </property>
@@ -128,7 +128,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>96</width>
+              <width>98</width>
               <height>38</height>
              </rect>
             </property>
@@ -142,7 +142,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>96</width>
+              <width>98</width>
               <height>38</height>
              </rect>
             </property>
@@ -160,7 +160,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>96</width>
+          <width>98</width>
           <height>38</height>
          </rect>
         </property>
@@ -196,8 +196,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>331</width>
-          <height>527</height>
+          <width>366</width>
+          <height>522</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -232,7 +232,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>96</width>
+          <width>98</width>
           <height>38</height>
          </rect>
         </property>
@@ -383,7 +383,7 @@
      <x>0</x>
      <y>0</y>
      <width>974</width>
-     <height>24</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject" >
