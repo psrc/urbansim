@@ -15,10 +15,10 @@
 RM = rm -f
 #RM = del
 
-all: newscriptbatch_ui.py newscriptlibrary_ui.py configurescript_ui.py
+all: newscriptbatch_ui.py newscriptlibrary_ui.py configurescript_ui.py newdbconnection_ui.py
 
 clean:
-	$(RM) newscriptbatch_ui.py newscriptlibrary_ui.py configurescript_ui.py
+	$(RM) newscriptbatch_ui.py newscriptlibrary_ui.py configurescript_ui.py newdbconnection_ui.py
 	$(RM) *.pyc
 	$(RM) *~
 
@@ -30,4 +30,7 @@ newscriptlibrary_ui.py: newscriptlibrary.ui
 
 configurescript_ui.py: configurescript.ui
 	pyuic4 -o configurescript_ui.py configurescript.ui
+
+newdbconnection_ui.py: newdbconnection.ui
+	pyuic4 -o newdbconnection_ui.py newdbconnection.ui
 

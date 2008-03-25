@@ -21,6 +21,7 @@ from PyQt4.QtXml import *
 from opus_gui.run.script.opusrunscript import *
 import opus_gui.util.documentationbase
 from opus_gui.config.datamanager.configurescript import ConfigureScriptGui
+from opus_gui.config.datamanager.newdbconnection import NewDbConnectionGui
 
 class OpusXMLAction_DataDB(object):
     def __init__(self, parent):
@@ -66,37 +67,41 @@ class OpusXMLAction_DataDB(object):
 
     def newDBConnection(self):
         print "newDBConnection pressed"
-        newNode1 = self.currentIndex.model().domDocument.createElement(QString("new_connection"))
-        newNode1.setAttribute(QString("type"),QString("db_connection"))
-
-        newNode2 = self.currentIndex.model().domDocument.createElement(QString("host_name"))
-        newNode2.setAttribute(QString("type"),QString("string"))
-        newText = self.currentIndex.model().domDocument.createTextNode(QString(""))
-        newNode2.appendChild(newText)
-
-        newNode3 = self.currentIndex.model().domDocument.createElement(QString("protocol"))
-        newNode3.setAttribute(QString("type"),QString("string"))
-        newText = self.currentIndex.model().domDocument.createTextNode(QString(""))
-        newNode3.appendChild(newText)
-
-        newNode4 = self.currentIndex.model().domDocument.createElement(QString("user_name"))
-        newNode4.setAttribute(QString("type"),QString("string"))
-        newText = self.currentIndex.model().domDocument.createTextNode(QString(""))
-        newNode4.appendChild(newText)
-
-        newNode5 = self.currentIndex.model().domDocument.createElement(QString("password"))
-        newNode5.setAttribute(QString("type"),QString("password"))
-        newText = self.currentIndex.model().domDocument.createTextNode(QString(""))
-        newNode5.appendChild(newText)
-
-        newNode1.appendChild(newNode2)
-        newNode1.appendChild(newNode3)
-        newNode1.appendChild(newNode4)
-        newNode1.appendChild(newNode5)
-        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
-                                            self.currentIndex,
-                                            newNode1)
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        window = NewDbConnectionGui(self,flags)
+        window.show()
+        #
+        #newNode1 = self.currentIndex.model().domDocument.createElement(QString("new_connection"))
+        #newNode1.setAttribute(QString("type"),QString("db_connection"))
+        #
+        #newNode2 = self.currentIndex.model().domDocument.createElement(QString("host_name"))
+        #newNode2.setAttribute(QString("type"),QString("string"))
+        #newText = self.currentIndex.model().domDocument.createTextNode(QString(""))
+        #newNode2.appendChild(newText)
+        #
+        #newNode3 = self.currentIndex.model().domDocument.createElement(QString("protocol"))
+        #newNode3.setAttribute(QString("type"),QString("string"))
+        #newText = self.currentIndex.model().domDocument.createTextNode(QString(""))
+        #newNode3.appendChild(newText)
+        #
+        #newNode4 = self.currentIndex.model().domDocument.createElement(QString("user_name"))
+        #newNode4.setAttribute(QString("type"),QString("string"))
+        #newText = self.currentIndex.model().domDocument.createTextNode(QString(""))
+        #newNode4.appendChild(newText)
+        #
+        #newNode5 = self.currentIndex.model().domDocument.createElement(QString("password"))
+        #newNode5.setAttribute(QString("type"),QString("password"))
+        #newText = self.currentIndex.model().domDocument.createTextNode(QString(""))
+        #newNode5.appendChild(newText)
+        #
+        #newNode1.appendChild(newNode2)
+        #newNode1.appendChild(newNode3)
+        #newNode1.appendChild(newNode4)
+        #newNode1.appendChild(newNode5)
+        #self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
+        #                                    self.currentIndex,
+        #                                    newNode1)
+        #self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
         
     def cloneDBConnection(self):
         print "cloneDBConnection pressed"
