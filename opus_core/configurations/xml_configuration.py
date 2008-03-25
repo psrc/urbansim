@@ -416,17 +416,6 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(config, 
                          {'datasets_to_preload': {'job': {}, 'gridcell': {'nchunks': 4}}})
 
-    def test_include(self):
-        f = os.path.join(self.test_configs, 'include_test.xml')
-        config = XMLConfiguration(f).get_run_configuration('test_scenario')
-        self.assertEqual(config, 
-                         {'description': 'a test scenario',
-                          'startyear': 2000,
-                          'endyear': 2020,
-                          'x': 10,
-                          'y': 20,
-                          'morestuff': {'x': 10, 'y': 20}})
-
     def test_class_element(self):
         # test a configuration element that is a specified class
         f = os.path.join(self.test_configs, 'database_configuration.xml')
