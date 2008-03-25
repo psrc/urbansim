@@ -286,6 +286,22 @@ def get_temp_dir_remote(ssh):
     cmdline = "python -c 'import tempfile, sys; print tempfile.mkdtemp()'"
     return get_stdout_for_ssh_cmd(ssh, cmdline)
 
+def redirect_sftp_url_to_local_tempdir(filename):
+    """ if filename is a remote sftp URL, redirect file to local tempdir
+    """
+    if type(filename) == str and re.search("^sftp://", filename):
+        local_filename = urlparse(filename).path
+        local_filename = os.path.join(tempfile.gettempdir(), 
+                                      os.path.basename( os.path.dirname(local_filename) ), 
+                                      os.path.basename(local_filename))
+        if not os.path.exists( os.path.dirname(local_filename) ):
+            os.makedirs( os.path.dirname(local_filename) )
+        
+        return local_filename
+    else:
+        return filename
+        
+        
 
 import os, sys
 from opus_core.tests import opus_unittest
