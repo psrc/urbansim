@@ -1,1 +1,1 @@
-This directory contains test xml configurations for unit tests.
+This directory contains test configurations for unit tests of XMLConfiguration.
