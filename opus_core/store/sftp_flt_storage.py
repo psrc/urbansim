@@ -19,7 +19,7 @@ from file_flt_storage import file_flt_storage, FltError
 from glob import glob
 import tempfile
 import stat
-import os
+import os, re
 
 if os.name == 'nt':
     from nturl2path import pathname2url

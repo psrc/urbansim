@@ -20,7 +20,7 @@ import traceback
 
 from gc import collect
 from opus_core.singleton import Singleton
-from opus_core.store.sftp_flt_storage import redirect_sftp_url_to_local_tempdir
+
 
 # Current code only supports memory logging on Windows with pywin32 Python package.
 _can_get_memory_usage = False
@@ -132,7 +132,7 @@ class _Logger(Singleton):
         """
         Write all logger messages to this file using the given mode.
         """
-
+        from opus_core.store.sftp_flt_storage import redirect_sftp_url_to_local_tempdir
         local_file_name = redirect_sftp_url_to_local_tempdir(file_name)
         if local_file_name != file_name:
             file_name = local_file_name
