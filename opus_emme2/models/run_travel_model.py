@@ -20,6 +20,7 @@ from opus_core.logger import logger
 from opus_emme2.models.abstract_emme2_travel_model import AbstractEmme2TravelModel
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.session_configuration import SessionConfiguration
+from opus_core.store.sftp_flt_storage import redirect_sftp_url_to_local_tempdir
 
 class RunTravelModel(AbstractEmme2TravelModel):
     """Run the travel model.
@@ -38,16 +39,9 @@ class RunTravelModel(AbstractEmme2TravelModel):
             log_file_path = os.path.join(config['cache_directory'], 'emme2_%d_log.txt' % year)
         else:
             log_file_path = output_file
-            
-        if re.search("^sftp://", log_file_path):  # if cache_directory is a remote sftp URL, redirect log file to tempdir/run_xxxx
-            import tempfile
-            from urlparse import urlparse
-            log_file_path = urlparse(log_file_path).path
-            log_file_path = os.path.join(tempfile.gettempdir(), 
-                                         os.path.basename( os.path.dirname(log_file_path) ), #run_xxxx.2007_12_19_16_32
-                                         os.path.basename(log_file_path))
-            if not os.path.exists( os.path.dirname(log_file_path) ):
-                os.makedirs( os.path.dirname(log_file_path) )
+        
+        # if log_file_path is a remote sftp URL, redirect the log file to tempdir           
+        log_file_path = redirect_sftp_url_to_local_tempdir(log_file_path)
 
         cmd = """cmd /c "%(emme2_batch_file_name)s" > %(log_file_path)s""" % {
             'emme2_batch_file_name':emme2_batch_file_path, 

@@ -12,8 +12,9 @@
 # other acknowledgments.
 # 
 
-import os
+import os, re
 from opus_emme2.models.run_macros_abstract import RunMacrosAbstract
+from opus_core.store.sftp_flt_storage import redirect_sftp_url_to_local_tempdir
 
 class RunExportMacros(RunMacrosAbstract):
     """Class to run specified Emme2 macros. run_export_macros should run before 
@@ -23,7 +24,10 @@ class RunExportMacros(RunMacrosAbstract):
     """
 
     def run(self, config, year, output_file=None):
-        RunMacrosAbstract.run(self, 'export_macros', config, year, output_file)    
+        # if output_file is a remote sftp URL, redirect it to tempdir
+        output_file = redirect_sftp_url_to_local_tempdir(output_file)
+
+        RunMacrosAbstract.run(self, 'export_macros', config, year, output_file)
     
 if __name__ == "__main__":
     try: import wingdbstub

@@ -17,6 +17,7 @@ from opus_core.store.attribute_cache import AttributeCache
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.resources import Resources
 from opus_emme2.models.abstract_emme2_travel_model import AbstractEmme2TravelModel
+from opus_core.store.sftp_flt_storage import redirect_sftp_url_to_local_tempdir
 
 class RunMacrosAbstract(AbstractEmme2TravelModel):
     """Abstract class to run specified Emme2 macros. Its children should run before 
@@ -39,6 +40,9 @@ class RunMacrosAbstract(AbstractEmme2TravelModel):
             tmp_output_file = os.path.join(config['cache_directory'], "emme2_export_macros_%s_log.txt" % year)
         else:
             tmp_output_file = output_file
+        ## if tmp_output_file is a remote sftp URL, redirect file to local tempdir
+        tmp_output_file = redirect_sftp_url_to_local_tempdir(tmp_output_file)
+        
         for macro_name, macro_info in specified_macros.iteritems():
             bank = macro_info['bank']
             bank_path = self.get_emme2_dir(config, year, bank)
