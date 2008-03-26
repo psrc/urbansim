@@ -119,6 +119,10 @@ else:
     class Tests(AbstractIndicatorTest):
         def test_create_indicator(self):
             
+            # if the environment variable DISPLAY isn't defined, exit this test
+            if 'DISPLAY' not in os.environ:
+                return
+            
             indicator_path = os.path.join(self.temp_cache_path, 'indicators')
             self.assert_(not os.path.exists(indicator_path))
             

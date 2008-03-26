@@ -136,6 +136,10 @@ from opus_core.indicator_framework.test_classes.abstract_indicator_test import A
 class Tests(AbstractIndicatorTest):
             
     def test_create_indicator(self):
+            
+        # if the environment variable DISPLAY isn't defined, exit this test
+        if 'DISPLAY' not in os.environ:
+            return
         
         indicator_path = os.path.join(self.temp_cache_path, 'indicators')
         self.assert_(not os.path.exists(indicator_path))
@@ -154,6 +158,9 @@ class Tests(AbstractIndicatorTest):
 
     def test_perfect_equality(self):
         """Perfect equality is when everybody has the same amount of something"""
+        # if the environment variable DISPLAY isn't defined, exit this test
+        if 'DISPLAY' not in os.environ:
+            return
         lorenzcurve = LorenzCurve(
                   source_data = self.source_data,
                   attribute = 'opus_core.test.attribute',
@@ -168,6 +175,9 @@ class Tests(AbstractIndicatorTest):
 
     def test_perfect_inequality(self):
         """Perfect inequality is when one person has all of something"""
+        # if the environment variable DISPLAY isn't defined, exit this test
+        if 'DISPLAY' not in os.environ:
+            return
         lorenzcurve = LorenzCurve(
                   source_data = self.source_data,
                   attribute = 'opus_core.test.attribute',
@@ -184,6 +194,9 @@ class Tests(AbstractIndicatorTest):
         
     def test_small_lorenz(self):
         """Test case for less than 100 people"""
+        # if the environment variable DISPLAY isn't defined, exit this test
+        if 'DISPLAY' not in os.environ:
+            return
         lorenzcurve = LorenzCurve(
                   source_data = self.source_data,
                   attribute = 'opus_core.test.attribute',
@@ -200,6 +213,9 @@ class Tests(AbstractIndicatorTest):
         
     def test_small_gini(self):
         """Test case for gini coefficient for the small case"""
+        # if the environment variable DISPLAY isn't defined, exit this test
+        if 'DISPLAY' not in os.environ:
+            return
         lorenzcurve = LorenzCurve(
                   source_data = self.source_data,
                   attribute = 'opus_core.test.attribute',
@@ -216,6 +232,9 @@ class Tests(AbstractIndicatorTest):
 
     def test_large_lorenz(self):
         """Test case for more than 100 people"""
+        # if the environment variable DISPLAY isn't defined, exit this test
+        if 'DISPLAY' not in os.environ:
+            return
         lorenzcurve = LorenzCurve(
                   source_data = self.source_data,
                   attribute = 'opus_core.test.attribute',
