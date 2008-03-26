@@ -228,6 +228,10 @@ else:
             self.assert_(os.path.exists(os.path.join(indicator_path, 'test__chart__attribute.png')))
 
         def test_create_indicator(self):
+            
+            # if the environment variable DISPLAY isn't defined, exit this test
+            if 'DISPLAY' not in os.environ:
+                return
                 
             indicator_path = self.source_data.get_indicator_directory()
             self.assert_(not os.path.exists(indicator_path))
