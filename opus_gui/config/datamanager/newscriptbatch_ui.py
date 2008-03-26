@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'newscriptbatch.ui'
 #
-# Created: Sun Jan 20 20:21:33 2008
-#      by: PyQt4 UI code generator 4.3.3
+# Created: Thu Mar 20 14:01:18 2008
+#      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
 

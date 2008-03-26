@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusmain.ui'
 #
-# Created: Thu Mar 20 14:01:17 2008
+# Created: Wed Mar 26 13:02:24 2008
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -273,12 +273,17 @@ class Ui_MainWindow(object):
         self.actionMap_View = QtGui.QAction(MainWindow)
         self.actionMap_View.setIcon(QtGui.QIcon(":/Images/Images/map.png"))
         self.actionMap_View.setObjectName("actionMap_View")
+
+        self.actionClose_Project = QtGui.QAction(MainWindow)
+        self.actionClose_Project.setIcon(QtGui.QIcon(":/Images/Images/folder.png"))
+        self.actionClose_Project.setObjectName("actionClose_Project")
         self.menuProject.addSeparator()
         self.menuProject.addSeparator()
         self.menuProject.addAction(self.actionOpen_Project_2)
         self.menuProject.addSeparator()
         self.menuProject.addAction(self.actionSave_Project_2)
         self.menuProject.addAction(self.actionSave_Project_As_2)
+        self.menuProject.addAction(self.actionClose_Project)
         self.menuProject.addSeparator()
         self.menuProject.addAction(self.actionExit)
         self.menuHelp.addAction(self.actionAbout)
@@ -332,5 +337,6 @@ class Ui_MainWindow(object):
         self.actionLog_View.setText(QtGui.QApplication.translate("MainWindow", "Log View", None, QtGui.QApplication.UnicodeUTF8))
         self.actionEditor_View.setText(QtGui.QApplication.translate("MainWindow", "Editor View", None, QtGui.QApplication.UnicodeUTF8))
         self.actionMap_View.setText(QtGui.QApplication.translate("MainWindow", "Map View", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionClose_Project.setText(QtGui.QApplication.translate("MainWindow", "Close Project", None, QtGui.QApplication.UnicodeUTF8))
 
 import opusmain_rc

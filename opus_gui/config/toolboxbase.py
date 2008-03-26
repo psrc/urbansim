@@ -143,6 +143,27 @@ class ToolboxBase(object):
         print "Error reading the %s configuration file" % (xml_file)
     else:
       print "There was an error removing the old config"
+  
+  def closeXMLTree(self):
+    # Try to remove all the old trees...
+    resultsManagerRemoveSuccess = True
+    if self.resultsManagerTree != None:
+      resultsManagerRemoveSuccess = self.resultsManagerTree.removeTree()
+    modelManagerRemoveSuccess = True
+    if self.modelManagerTree != None:
+      modelManagerRemoveSuccess = self.modelManagerTree.removeTree()
+    runManagerRemoveSuccess = True
+    if self.runManagerTree != None:
+      runManagerRemoveSuccess = self.runManagerTree.removeTree()
+    dataManagerRemoveSuccess = True
+    if self.dataManagerTree != None:
+      dataManagerRemoveSuccess = self.dataManagerTree.removeTree()
+    dataManagerFileRemoveSuccess = True
+    if self.dataManagerFileTree != None:
+      dataManagerFileRemoveSuccess = self.dataManagerFileTree.removeTree()
+    dataManagerDBSRemoveSuccess = True
+    if self.dataManagerDBSTree != None:
+      dataManagerDBSRemoveSuccess = self.dataManagerDBSTree.removeTree()
     
   def emit_default_gui_configuration_file(self, file_name):
       from opus_core.misc import directory_path_from_opus_path

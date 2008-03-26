@@ -20,8 +20,9 @@ from PyQt4.QtGui import *
 from opus_gui.config.filetree.opusfileaction import OpusFileAction
 
 class OpusFileTree(object):
-  def __init__(self, parent, opusDataPath, parentWidget):    
+  def __init__(self, parent, opusDataPath, parentWidget):
     self.addTree(parent,opusDataPath,parentWidget)
+    
 
   def addTree(self, parent,opusDataPath,parentWidget):
     #parent is a toolboxBase object
@@ -55,9 +56,6 @@ class OpusFileTree(object):
     self.xmlAction = OpusFileAction(self)
 
   def removeTree(self):
-    if not self.model.dirty:
       self.groupBox.hide()
       self.containerWidget.removeWidget(self.groupBox)
       return True
-    else:
-      return False

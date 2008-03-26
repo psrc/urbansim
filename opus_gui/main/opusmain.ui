@@ -396,6 +396,7 @@
     <addaction name="separator" />
     <addaction name="actionSave_Project_2" />
     <addaction name="actionSave_Project_As_2" />
+    <addaction name="actionClose_Project" />
     <addaction name="separator" />
     <addaction name="actionExit" />
    </widget>
@@ -592,6 +593,14 @@
    </property>
    <property name="text" >
     <string>Map View</string>
+   </property>
+  </action>
+  <action name="actionClose_Project" >
+   <property name="icon" >
+    <iconset resource="opusmain.qrc" >:/Images/Images/folder.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Close Project</string>
    </property>
   </action>
  </widget>

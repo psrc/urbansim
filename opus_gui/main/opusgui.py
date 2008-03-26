@@ -63,6 +63,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     # Play with the project and config load/save
     QObject.connect(self.actionOpen_Project_2, SIGNAL("triggered()"), self.openConfig)
     QObject.connect(self.actionSave_Project_2, SIGNAL("triggered()"), self.saveConfig)
+    QObject.connect(self.actionClose_Project, SIGNAL("triggered()"), self.closeConfig)
     QObject.connect(self.actionSave_Project_As_2, SIGNAL("triggered()"), self.saveConfigAs)
     # Exit
     QObject.connect(self.actionExit, SIGNAL("triggered()"), self.exitOpus)
@@ -128,9 +129,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     settings = QSettings()
     self.restoreGeometry(settings.value("Geometry").toByteArray())
     
-    
-
-
   def closeCurrentTab(self):
     widget = self.tabWidget.currentWidget()
     self.tabWidget.removeTab(self.tabWidget.currentIndex())
@@ -225,27 +223,72 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
   def saveConfig(self):
     #print "Save Config pressed..."
-    configFile = self.toolboxStuff.runManagerTree.model.configFile
-    domDocument = self.toolboxStuff.runManagerTree.model.domDocument
-    indentSize = 2
-    configFile.close()
-    configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
-    out = QTextStream(configFile)
-    domDocument.save(out, indentSize)
-    self.toolboxStuff.runManagerTree.model.dirty = False
-    self.setWindowTitle(self.windowTitle().replace("*", ""))
-    self.toolboxStuff.dataManagerTree.model.dirty = False
-    self.setWindowTitle(self.windowTitle().replace("*", ""))
-    self.toolboxStuff.dataManagerDBSTree.model.dirty = False
-    self.setWindowTitle(self.windowTitle().replace("*", ""))
-    self.toolboxStuff.modelManagerTree.model.dirty = False
-    self.setWindowTitle(self.windowTitle().replace("*", ""))
-    self.toolboxStuff.resultsManagerTree.model.dirty = False
-    self.setWindowTitle(self.windowTitle().replace("*", ""))
+    try:
+        configFile = self.toolboxStuff.runManagerTree.model.configFile
+        domDocument = self.toolboxStuff.runManagerTree.model.domDocument
+        indentSize = 2
+        configFile.close()
+        configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
+        out = QTextStream(configFile)
+        domDocument.save(out, indentSize)
+        self.toolboxStuff.runManagerTree.model.dirty = False
+        self.setWindowTitle(self.windowTitle().replace("*", ""))
+        self.toolboxStuff.dataManagerTree.model.dirty = False
+        self.setWindowTitle(self.windowTitle().replace("*", ""))
+        self.toolboxStuff.dataManagerDBSTree.model.dirty = False
+        self.setWindowTitle(self.windowTitle().replace("*", ""))
+        self.toolboxStuff.modelManagerTree.model.dirty = False
+        self.setWindowTitle(self.windowTitle().replace("*", ""))
+        self.toolboxStuff.resultsManagerTree.model.dirty = False
+        self.setWindowTitle(self.windowTitle().replace("*", ""))
+    except:
+        pass
+
     #print "Save Config finished..."
 
   def saveConfigAs(self):
-    print "Save Config As is not implemented yet..."
+    print "Save As not working yet..."
+
+    
+  def closeConfig(self):
+    try:
+        configFile = self.toolboxStuff.runManagerTree.model.configFile
+        saveBeforeOpen = QMessageBox.Discard
+        if self.toolboxStuff.resultsManagerTree and self.toolboxStuff.resultsManagerTree.model.dirty:
+          saveBeforeOpen = QMessageBox.question(self,"Warning",
+                                          "Current project contains changes... \nShould we save or discard those changes before closing?",
+                                          QMessageBox.Discard,QMessageBox.Save)
+        elif self.toolboxStuff.modelManagerTree and self.toolboxStuff.modelManagerTree.model.dirty:
+          saveBeforeOpen = QMessageBox.question(self,"Warning",
+                                          "Current project contains changes... \nShould we save or discard those changes before closing?",
+                                          QMessageBox.Discard,QMessageBox.Save)
+        elif self.toolboxStuff.runManagerTree and self.toolboxStuff.runManagerTree.model.dirty:
+          saveBeforeOpen = QMessageBox.question(self,"Warning",
+                                          "Current project contains changes... \nShould we save or discard those changes before closing?",
+                                          QMessageBox.Discard,QMessageBox.Save)
+        elif self.toolboxStuff.dataManagerTree and self.toolboxStuff.dataManagerTree.model.dirty:
+          saveBeforeOpen = QMessageBox.question(self,"Warning",
+                                          "Current project contains changes... \nShould we save or discard those changes before closing?",
+                                          QMessageBox.Discard,QMessageBox.Save)
+    
+        if saveBeforeOpen == QMessageBox.Save:
+          self.saveConfig()
+        else:
+          #if we have an existing tree we need to remove the dirty bit since we are discarding
+          if self.toolboxStuff.runManagerTree:
+            self.toolboxStuff.runManagerTree.model.dirty = False
+          if self.toolboxStuff.dataManagerTree:
+            self.toolboxStuff.dataManagerTree.model.dirty = False
+          if self.toolboxStuff.modelManagerTree:
+            self.toolboxStuff.modelManagerTree.model.dirty = False
+          if self.toolboxStuff.resultsManagerTree:
+            self.toolboxStuff.resultsManagerTree.model.dirty = False
+        
+    except:
+        pass
+    
+    self.toolboxStuff.closeXMLTree()
+    self.setWindowTitle(self.application_title)
 
   def exitOpus(self):
     print "Exit pressed..."
