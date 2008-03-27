@@ -58,7 +58,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     application_title_dict = get_child_values(parent = application_options_node,
                                          child_names = ['application_title'])
     self.application_title = application_title_dict['application_title']
-    self.setWindowTitle(application_title_dict['application_title'])
+    self.setWindowTitle(self.application_title)
 
     # Play with the project and config load/save
     QObject.connect(self.actionOpen_Project_2, SIGNAL("triggered()"), self.openConfig)
@@ -171,26 +171,33 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     wnd = UrbansimAboutGui(self,flags)
     wnd.show()
 
-  def openConfig(self):
+  def openConfig(self, config=None):
+    # config should be a path to an .xml config file
+    
     # Check to see if there are changes to the current project, if a project is open
     self._saveOrDiscardChanges()
+    
+    if config:
+        self.toolboxStuff.openXMLTree(config)
+    else:
+        from opus_core.misc import directory_path_from_opus_path
+        start_dir = directory_path_from_opus_path('opus_gui.projects')
 
-    from opus_core.misc import directory_path_from_opus_path
-    start_dir = directory_path_from_opus_path('opus_gui.projects')
-    #print "Open Config pressed..."
-    configDialog = QFileDialog()
-    filter_str = QString("*.xml")
-    fd = configDialog.getOpenFileName(self,QString("Please select an xml config file..."),
-                                      QString(start_dir), filter_str)
-    # Check for cancel
-    if len(fd) == 0:
-      return
-    fileName = QString(fd)
-    fileNameInfo = QFileInfo(QString(fd))
-    fileNameBaseName = fileNameInfo.completeBaseName()
-    # Open the file and add to the Run tab...
-    self.toolboxStuff.openXMLTree(fileName)
-    # Jesse
+        configDialog = QFileDialog()
+        filter_str = QString("*.xml")
+        fd = configDialog.getOpenFileName(self,QString("Please select an xml config file..."),
+                                          QString(start_dir), filter_str)
+        # Check for cancel
+        if len(fd) == 0:
+          return
+        fileName = QString(fd)
+        fileNameInfo = QFileInfo(QString(fd))
+        fileNameBaseName = fileNameInfo.completeBaseName()
+        # Open the file and add to the Run tab...
+        self.toolboxStuff.openXMLTree(fileName)
+
+        
+    # Add the project file's path to the title bar
     self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.parentTool.xml_file).filePath())
 
   def saveConfig(self):
@@ -216,7 +223,37 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         pass
 
   def saveConfigAs(self):
-    print "Save As not working yet..."
+    try:
+        # get the current config file on disk
+        currentConfigFile = self.toolboxStuff.runManagerTree.model.configFile
+             
+        # get the location for the new config file on disk
+        from opus_core.misc import directory_path_from_opus_path
+        start_dir = directory_path_from_opus_path('opus_gui.projects')
+        configDialog = QFileDialog()
+        filter_str = QString("*.xml")
+        fd = configDialog.getSaveFileName(self,QString("Save As..."),
+                                          QString(start_dir), filter_str)
+        # Check for cancel
+        if len(fd) == 0:
+          return
+        fileName = QString(fd)
+        
+        # Create the new file on disk
+        newConfigFile = QFile(fileName)
+        
+        # Close current file, discard changes, write new file with changes, then open it
+        domDocument = self.toolboxStuff.runManagerTree.model.domDocument
+        indentSize = 2
+        currentConfigFile.close()
+        newConfigFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
+        out = QTextStream(newConfigFile)
+        domDocument.save(out, indentSize)
+        self.toolboxStuff.runManagerTree.model.dirty = False
+        self.closeConfig()
+        self.openConfig(newConfigFile.fileName())
+    except:
+        pass
   
   def _saveOrDiscardChanges(self):
     """
