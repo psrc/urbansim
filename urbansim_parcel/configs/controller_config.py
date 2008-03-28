@@ -40,7 +40,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                        "estimation":"opus_core.bhhh_mnl_estimation",
                        "sampler":"opus_core.samplers.weighted_sampler",
                        "sample_size_locations":30,
-#                       "weights_for_estimation_string":"urbansim.zone.number_of_non_home_based_jobs",
+                       "weights_for_estimation_string":"is_placed_job=(urbansim_parcel.job.zone_id > 0).astype(int32)",
                        "compute_capacity_flag":True,
                        "capacity_string":"(job.building_type==2).astype(int32)",  # each non home-based job can only be chosen once by one person
                        "number_of_units_string":"(job.building_type==2).astype(int32)",
@@ -319,7 +319,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                "agents_index": None,
                                "agents_filter":"'urbansim_parcel.person.is_non_home_based_worker_without_job'",
                                "data_objects": "datasets",
-                               "chunk_specification":"{'records_per_chunk':5000}",
+                               "chunk_specification":"{'nchunks':10}",
                                "debuglevel": 'debuglevel',
                                },
                  },
@@ -372,12 +372,13 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                     'agents_filter': "'urbansim_parcel.person.is_worker_without_job'",
                     'data_objects': 'datasets'
                     },
-                'output': '(specification, coefficients, index)'
+                'output': '(specification, coefficients, _index)'
                 },
             'run': {
                 'arguments': {
                     'agent_set': 'person',
-                    'chunk_specification': "{'records_per_chunk':5000}",
+                    'agents_index' : '_index',
+                    'chunk_specification': "{'nchunks':1}",
                     'coefficients': 'coefficients',
                     'data_objects': 'datasets',
                     'specification': 'specification'

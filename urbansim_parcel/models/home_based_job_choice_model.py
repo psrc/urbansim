@@ -16,8 +16,10 @@ from opus_core.datasets.dataset import Dataset
 from opus_core.resources import Resources
 from opus_core.choice_model import ChoiceModel, prepare_specification_and_coefficients
 from urbansim.estimation.estimator import get_specification_for_estimation
-from numpy import arange, where
+from numpy import arange, where, ones
 from opus_core.variables.variable_name import VariableName
+from opus_core.sampling_toolbox import probsample_noreplace
+from opus_core.misc import unique_values
 
 class HomeBasedJobChoiceModel(ChoiceModel):
     """
@@ -32,25 +34,28 @@ class HomeBasedJobChoiceModel(ChoiceModel):
         self.choice_set_real = choice_set
         self.filter = filter
         kwargs['choice_attribute_name'] = choice_attribute_name
-        ChoiceModel.__init__(self, [0, 1], *args, **kwargs)
+        ChoiceModel.__init__(self, [1, 2], *args, **kwargs)
         
     def run(self, *args, **kwargs):
         choices = ChoiceModel.run(self, *args, **kwargs)
-        prob_work_at_home = self.upc_sequence.probabilities[:, 1]
+        prob_work_at_home = self.upc_sequence.probabilities[:, 0]
         
         if self.filter is not None:
             choice_set_index = where( self.choice_set_real.compute_variables(self.filter) )[0]
         else:
             choice_set_index = arange( self.choice_set_real.size() )
         
-        assigned_worker_index = probsample_noreplace(agent_index, choice_set_index.size, prob_work_at_home)
+        assigned_worker_index = probsample_noreplace(kwargs['agents_index'], choice_set_index.size, prob_work_at_home)
         
         ## each worker can only be assigned to 1 job
-        assert assigned_work_index.size == unique_values(assigned_work_index).size
+        assert assigned_worker_index.size == unique_values(assigned_worker_index).size
         
+        kwargs['agent_set'].set_values_of_one_attribute('work_at_home', 
+                                                        ones(choice_set_index.size), 
+                                                        index=assigned_worker_index)
         kwargs['agent_set'].set_values_of_one_attribute(self.choice_set_real.get_id_name()[0], 
-                                                        self.choice_set_real.get_attribute()[choice_set_index], 
-                                                        index=assigned_work_index)
+                                                        self.choice_set_real.get_id_attribute()[choice_set_index], 
+                                                        index=assigned_worker_index)
     
     def prepare_for_run(self, 
                         specification_storage=None, 
@@ -101,22 +106,23 @@ def prepare_for_estimate(specification_dict = None,
                                      in_table_name=households_for_estimation_table,
                                      id_name=household_set.get_id_name(), 
                                      dataset_name=household_set.get_dataset_name())
-            
+        
+        filter_index = arange(estimation_set.size())
         if filter:
             estimation_set.compute_variables(filter, resources=Resources(data_objects))
-            index = where(estimation_set.get_attribute(filter) > 0)[0]
-            estimation_set.subset_by_index(index, flush_attributes_if_not_loaded=False)
+            filter_index = where(estimation_set.get_attribute(filter) > 0)[0]
+            #estimation_set.subset_by_index(index, flush_attributes_if_not_loaded=False)
         
         if join_datasets:
             if hh_estimation_set is not None:
                 household_set.join_by_rows(hh_estimation_set, require_all_attributes=False,
                                            change_ids_if_not_unique=True)
-
+                
             agent_set.join_by_rows(estimation_set, require_all_attributes=False,
                                    change_ids_if_not_unique=True)
-            index = arange(agent_set.size() - estimation_set.size(), agent_set.size()) 
+            index = arange(agent_set.size() - estimation_set.size(), agent_set.size())[filter_index]
         else:
-            index = agent_set.get_id_index(estimation_set.get_id_attribute())
+            index = agent_set.get_id_index(estimation_set.get_id_attribute()[filter_index])
     else:
         if agent_set is not None:
             index = arange(agent_set.size())
