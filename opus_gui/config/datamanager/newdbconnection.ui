@@ -20,16 +20,6 @@
        <string>Select Connection Type</string>
       </property>
      </item>
-     <item>
-      <property name="text" >
-       <string>Server Database Connection</string>
-      </property>
-     </item>
-     <item>
-      <property name="text" >
-       <string>ESRI File Database Connection</string>
-      </property>
-     </item>
     </widget>
    </item>
    <item>

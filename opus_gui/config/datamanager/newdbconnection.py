@@ -26,6 +26,7 @@ class NewDbConnectionGui(QDialog, Ui_NewDbConnectionGui):
         QDialog.__init__(self, parent.mainwindow, fl)
         self.setupUi(self)
         self.parent = parent
+        self.model = parent.currentIndex.model()
         self.vars = {}
         # To test... add some dummy vars
         self.vboxlayout = QVBoxLayout(self.variableBox)
@@ -36,35 +37,19 @@ class NewDbConnectionGui(QDialog, Ui_NewDbConnectionGui):
         self.hboxlayout = []
         self.test_text = []
         self.test_line = []
+        # First find the available database connection templates to fill in types
+        templates_root = self.model.xmlRoot.toElement().elementsByTagName(QString("database_templates")).item(0)
+        if templates_root.hasChildNodes():
+            children = templates_root.childNodes()
+            for x in xrange(0,children.count(),1):
+                if children.item(x).toElement().attribute(QString("type")) == QString("db_template"):
+                    # We have a template... add it to the list
+                    self.comboBox.addItem(children.item(x).toElement().tagName())
+        # Now we hook up to the user selecting the type desired
         QObject.connect(self.comboBox, SIGNAL("currentIndexChanged(int)"),
                         self.databaseTypeSelected)
-
-        self.dbtypearray = [{}, # Nothing here as this corresponds to the no selection case
-                            {'host_name':'','protocol':'',
-                             'user_name':'','password':'',
-                             'use_environment_variables':''}, # Server connections
-                            {'Database Path':'/home/aaronr/work/urbansim'}, # ESRI type connections
-                            ]
-        #self.numberofvars = random.randint(2, 10)
-        #for x in xrange(0,self.numberofvars):
-        #    print "Looping::%d" % (x)
-        #    self.test_widget.insert(x,QWidget(self.variableBox))
-        #    self.test_widget[x].setObjectName(QString("test_widget").append(str(x)))
-        #    self.hboxlayout.insert(x,QHBoxLayout(self.test_widget[x]))
-        #    self.hboxlayout[x].setMargin(4)
-        #    self.hboxlayout[x].setSpacing(4)
-        #    self.hboxlayout[x].setObjectName(QString("hboxlayout").append(str(x)))
-        #    self.test_text.insert(x,QLabel(self.test_widget[x]))
-        #    self.test_text[x].setObjectName(QString("test1_text").append(str(x)))
-        #    self.test_text[x].setText(QString("test").append(str(x)))
-        #    self.hboxlayout[x].addWidget(self.test_text[x])
-        #    self.test_line.insert(x,QLineEdit(self.test_widget[x]))
-        #    self.test_line[x].setEnabled(True)
-        #    self.test_line[x].setMinimumSize(QSize(200,0))
-        #    self.test_line[x].setObjectName(QString("test_line").append(str(x)))
-        #    self.hboxlayout[x].addWidget(self.test_line[x])
-        #    self.vboxlayout.addWidget(self.test_widget[x])
-        
+        self.dbtypearray = []
+    
     def on_createConfig_released(self):
         print "create pressed - Need to add the config to the XML here..."
         for x in xrange(0,len(self.test_text)):
@@ -78,31 +63,54 @@ class NewDbConnectionGui(QDialog, Ui_NewDbConnectionGui):
         self.close()
 
     def databaseTypeSelected(self,index):
-        print "Got a new selection"
+        #print "Got a new selection"
         for testw in self.test_widget:
             self.vboxlayout.removeWidget(testw)
             testw.hide()
-        for key,val in self.dbtypearray[index].iteritems():
-            print "Key: %s , Val: %s" % (key,val)
+        # Now look up the selected connection type and present to the user...
+        templates_root = self.model.xmlRoot.toElement().elementsByTagName(QString("database_templates")).item(0)
+        if templates_root.hasChildNodes():
+            children = templates_root.childNodes()
+            for x in xrange(0,children.count(),1):
+                if children.item(x).toElement().tagName() == self.comboBox.itemText(index):
+                    if children.item(x).hasChildNodes():
+                        children2 = children.item(x).childNodes()
+                        for y in xrange(0,children2.count(),1):
+                            # We have a parameter... need to get tag name and text node value
+                            tagName = children2.item(y).toElement().tagName()
+                            nodeVal = QString('')
+                            if children2.item(y).hasChildNodes():
+                                children3 = children2.item(y).childNodes()
+                                for z in xrange(0,children3.count(),1):
+                                    if children3.item(z).isText():
+                                        nodeVal = children3.item(z).nodeValue()
+                            self.dbtypearray.append([tagName,nodeVal])
+        for param in self.dbtypearray:
+            #print "Key: %s , Val: %s" % (param[0],param[1])
             widgetTemp = QWidget(self.variableBox)
-            widgetTemp.setObjectName(QString("test_widget").append(str(key)))
+            widgetTemp.setObjectName(QString("test_widget").append(str(param[0])))
             self.test_widget.append(widgetTemp)
             hlayout = QHBoxLayout(widgetTemp)
             self.hboxlayout.append(hlayout)
             hlayout.setMargin(4)
             hlayout.setSpacing(4)
-            hlayout.setObjectName(QString("hboxlayout").append(str(key)))
+            hlayout.setObjectName(QString("hboxlayout").append(str(param[0])))
             test_text = QLabel(widgetTemp)
             self.test_text.append(test_text)
-            test_text.setObjectName(QString("test1_text").append(str(key)))
-            test_text.setText(QString(str(key)))
+            test_text.setObjectName(QString("test1_text").append(str(param[0])))
+            paramName = QString(str(param[0]))
+            if param[1].trimmed() == QString("Required"):
+                palette = test_text.palette()
+                palette.setColor(QPalette.WindowText,Qt.red)
+                test_text.setPalette(palette)
+            test_text.setText(paramName)
             hlayout.addWidget(test_text)
             test_line = QLineEdit(widgetTemp)
             self.test_line.append(test_line)
             test_line.setEnabled(True)
             test_line.setMinimumSize(QSize(200,0))
-            test_line.setObjectName(QString("test_line").append(str(key)))
-            test_line.setText(QString(str(val)))
+            test_line.setObjectName(QString("test_line").append(str(param[0])))
+            test_line.setText(QString(""))
             hlayout.addWidget(test_line)
             self.vboxlayout.addWidget(widgetTemp)
         

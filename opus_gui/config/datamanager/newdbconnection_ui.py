@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'newdbconnection.ui'
 #
-# Created: Mon Mar 24 22:34:36 2008
+# Created: Thu Mar 27 22:10:49 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -50,8 +50,6 @@ class Ui_NewDbConnectionGui(object):
     def retranslateUi(self, NewDbConnectionGui):
         NewDbConnectionGui.setWindowTitle(QtGui.QApplication.translate("NewDbConnectionGui", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
         self.comboBox.addItem(QtGui.QApplication.translate("NewDbConnectionGui", "Select Connection Type", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.addItem(QtGui.QApplication.translate("NewDbConnectionGui", "Server Database Connection", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.addItem(QtGui.QApplication.translate("NewDbConnectionGui", "ESRI File Database Connection", None, QtGui.QApplication.UnicodeUTF8))
         self.variableBox.setTitle(QtGui.QApplication.translate("NewDbConnectionGui", "New Database Connection", None, QtGui.QApplication.UnicodeUTF8))
         self.createConfig.setText(QtGui.QApplication.translate("NewDbConnectionGui", "Create Db Connection", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelConfig.setText(QtGui.QApplication.translate("NewDbConnectionGui", "Cancel", None, QtGui.QApplication.UnicodeUTF8))

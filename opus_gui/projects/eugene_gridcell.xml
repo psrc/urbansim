@@ -22,7 +22,7 @@
       <opus_database_to_sql_config type="script_config" >
         <script_hook type="script_library_ref" >opus_database_to_sql_tool</script_hook>
         <sql_db_name type="string" >mytestdb</sql_db_name>
-        <opus_data_directory type="string" ></opus_data_directory>
+        <opus_data_directory type="string" />
         <opus_data_year type="string" >ALL</opus_data_year>
         <opus_table_name type="string" >ALL</opus_table_name>
       </opus_database_to_sql_config>
@@ -100,6 +100,20 @@
     <documentation type="documentation_path" >documentation/installation/index.html</documentation>
   </data_manager>
   <data_manager_dbstree>
+    <database_templates type="db_templates" setexpanded="True" >
+      <server type="db_template" setexpanded="True" >
+        <host_name type="string" choices="Required|Optional" > Required </host_name>
+        <protocol type="string" choices="Required|Optional" > Required </protocol>
+        <user_name type="string" choices="Required|Optional" > Required </user_name>
+        <password type="password" choices="Required|Optional" > Required </password>
+        <use_environment_variables type="boolean" choices="Required|Optional" > Required
+	</use_environment_variables>
+      </server>
+      <esri_personal_geodb type="db_template" setexpanded="True" >
+        <database_path type="string" choices="Required|Optional" > Required </database_path>
+        <some_other_param type="string" choices="Required|Optional" > Optional </some_other_param>
+      </esri_personal_geodb>
+    </database_templates>
     <database_library type="database_library" setexpanded="True" >
       <urbansim_db1 type="db_connection" setexpanded="True" >
         <host_name type="string" />
