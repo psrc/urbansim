@@ -12,8 +12,7 @@
 # other acknowledgments.
 #
 
-import os
-import pprint
+import copy, os, pprint
 from numpy import array
 from xml.etree.cElementTree import ElementTree
 from opus_core.configuration import Configuration
@@ -24,10 +23,11 @@ class XMLConfiguration(object):
     and that can be stored or loaded from an XML file.
     """
     
-    def __init__(self, filename, default_directory=None):
+    def __init__(self, filename, default_directory=None, is_parent=False):
         """Initialize this configuration from the contents of the xml file named by 'filename'.
         Look first in the default directory if present; otherwise in the directory in which
-        the Opus code is stored."""
+        the Opus code is stored.  If is_parent is true, mark all of the nodes as inherited
+        (either from this configuration or a grandparent)."""
         self._filepath = None
         if default_directory is not None:
             f = os.path.join(default_directory, filename)
@@ -38,37 +38,32 @@ class XMLConfiguration(object):
             workspace_dir = os.path.split(opus_core_dir)[0]
             self._filepath = os.path.join(workspace_dir, filename)
         # if self._filepath doesn't exist, ElementTree will raise an IOError
-        # Keep a reference to both the tree and the root.
-        self.tree = ElementTree(file=self._filepath)
-        self.root = self.tree.getroot()
-        # Parent map... can be used for working back up the XML tree
-        self.parent_map = dict((c, p) for p in self.tree.getiterator() for c in p)
-        # Pretty printer for debugging and viewing dicts
+        # self.tree is the xml tree (without any inherited nodes); 
+        # self.full_tree is the xml tree with all the inherited nodes as well
+        # parent_map is a dictionary that can be used to work back up the XML tree
+        # these are all set by the _initialize method
+        self.tree = None
+        self.full_tree = None
+        self.parent_map = None
+        self.name = os.path.basename(self._filepath).split('.')[0]
         self.pp = pprint.PrettyPrinter(indent=4)
-        if self.root.tag!='opus_project':
-            raise ValueError, "malformed xml - expected to find a root element named 'opus_project'"
+        self._initialize(ElementTree(file=self._filepath), is_parent)
+        
+    def update(self, newconfig_str):
+        # update the contents of this configuration from the string newconfig_str
+        # note that this doesn't change the name of this configuration, or the _filepath
+        str_io = StringIO.StringIO(newconfig_str)
+        self._initialize(ElementTree(file=str_io), False)
         
     def get_section(self, name):
         """Extract the section named 'name' from this xml project, convert it to a dictionary,
-        put in default values from parent configuration (if any), and return the dictionary.
-        Return None if there isn't such a section.  If there are multiple sections with the 
-        given name, return the first one."""
-        parentnode = self.root.find('parent')
-        if parentnode is None:
-            parentconfig = None
-        else:
-            # try looking for the parent in the same directory that this XML project is located
-            default_dir = os.path.split(self._filepath)[0]
-            parentconfig = XMLConfiguration(parentnode.text, default_directory=default_dir).get_section(name)
-        x = self.root.find(name)
+        and return the dictionary.  Return None if there isn't such a section.  If there are 
+        multiple sections with the given name, return the first one."""
+        x = self._find(name)
         if x is None:
-            return parentconfig
-        section = Configuration(self._node_to_config(x))
-        if parentconfig is None:
-            return section
+            return None
         else:
-            parentconfig.merge(section)
-            return parentconfig
+            return Configuration(self._node_to_config(x))
 
     def get_run_configuration(self, name, merge_controllers=True):
         """Extract the run configuration named 'name' from this xml project and return it.
@@ -99,12 +94,86 @@ class XMLConfiguration(object):
         estimation_section = self.get_section('model_manager/estimation')
         model = estimation_section[model_name]
         result = {}
-        result['_definition_'] = model['all_variables'].values()
+        # sort the list of values to make it easier to test the results
+        vals = model['all_variables'].values()
+        vals.sort()
+        result['_definition_'] = vals
         for submodel_name in model.keys():
             if submodel_name!='all_variables':
                 submodel = model[submodel_name]
                 result[submodel['submodel_id']] = submodel['variables']
         return result
+    
+    def save(self):
+        # save this coniguration in a file with the same name as the original
+        self.save_as(self._filepath)
+        
+    def save_as(self, name):
+        # save this configuration under a new name
+        # TODO: change name???
+        self.tree.write(name)
+        
+    def _initialize(self, elementtree, is_parent):
+        self.tree = elementtree
+        self.full_tree = copy.deepcopy(self.tree)
+        full_root = self.full_tree.getroot()
+        if full_root.tag!='opus_project':
+            raise ValueError, "malformed xml - expected to find a root element named 'opus_project'"
+        parent_nodes = full_root.findall('parent')
+        default_dir = os.path.split(self._filepath)[0]
+        for p in parent_nodes:
+            x = XMLConfiguration(p.text, default_directory=default_dir, is_parent=True)
+            self._merge_parent_elements(x.full_tree.getroot(), '')
+        if is_parent:
+            for n in full_root.getiterator():
+                if n.get('inherited') is None:
+                    n.set('inherited', self.name)
+        # Parent map... can be used for working back up the XML tree
+        self.parent_map = dict((c, p) for p in self.full_tree.getiterator() for c in p)        
+
+    def _find(self, path):
+        # find path in my xml tree
+        # this is like the 'find' provided by ElementTree, except that it also works with an empty path
+        if path=='':
+            return self.full_tree.getroot()
+        else:
+            return self.full_tree.getroot().find(path)
+        
+    def _merge_parent_elements(self, parent_node, path):
+        # parent_node is a node someplace in a parent tree, and path is a path
+        # from the root to that node.  Merge in parent_node into this configuration's
+        # tree.  We are allowed to reuse bits of the xml from parent_node (the xml
+        # for it is created on demand, so we don't need to make a copy).
+        # Precondition: path gives a unique element in this configuration's xml tree.
+        prev_child = None
+        for child in parent_node.getchildren():
+            if path=='':
+                extended_path = child.tag
+            else:
+                extended_path = path + '/' + child.tag
+            if self._find(extended_path) is None:
+                # c doesn't exist in this tree, so we can just add it and
+                # all its children.  We want to insert it at a sensible place in the
+                # tree.  In the parent child is right after prev_child, and so in
+                # the new tree we put child right after the local version of prev-child.
+                if prev_child is None:
+                    self._find(path).insert(0,child)
+                else:
+                    i = 1
+                    if path=='':
+                        children = self.full_tree.getroot().getchildren()
+                    else:
+                        children = self._find(path).getchildren()
+                    for c in children:
+                        if c.tag==prev_child.tag:
+                            break  
+                        i = i+1
+                    self._find(path).insert(i,child)
+            else:
+                # c does exist in this tree.  Keep going further with
+                # its children, in case some of them don't exist in this tree
+                self._merge_parent_elements(child, extended_path)
+            prev_child = child
     
     def _merge_controllers(self, config):
         # merge in the controllers in the model_manager/model_system portion of the project (if any) into config
@@ -135,10 +204,8 @@ class XMLConfiguration(object):
             for child in node:
                 self._add_to_dict(child, result_dict)
         elif action=='include':
-            included = self.root.findall(node.text)
-            if len(included)!=1:
-                raise ValueError, "didn't find a unique match for included name %s" % node.text
-            for child in included[0]:
+            included = self._find(node.text)
+            for child in included:
                 self._add_to_dict(child, result_dict)
         elif action=='only_for_includes':
             pass
@@ -159,7 +226,7 @@ class XMLConfiguration(object):
             return self._convert_string_to_data(node, int)
         elif type_name=='float':
             return self._convert_string_to_data(node, float)
-        elif type_name=='string' or type_name=='password' or type_name=='variable_definition':
+        elif type_name=='string' or type_name=='password' or type_name=='variable_definition' or type_name=='path':
             return self._convert_string_to_data(node, str)
         elif type_name=='scenario_name':
             return node.text
@@ -310,6 +377,7 @@ class XMLConfiguration(object):
             return {name: subdict}
 
 from numpy import ma
+import StringIO
 from opus_core.tests import opus_unittest
 class XMLConfigurationTests(opus_unittest.OpusTestCase):
 
@@ -373,15 +441,15 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                                   'dir1': 'testdir', 
                                   'dir2': os.path.join(prefix, 'testdir')})
         
-    def test_inheritance(self):
-        # test inheritance with a chain of xml configurations
+    def test_scenario_inheritance(self):
+        # test inheritance of scenarios with a chain of xml configurations
         f = os.path.join(self.test_configs, 'child_scenarios.xml')
         config = XMLConfiguration(f).get_run_configuration('child_scenario')
         self.assertEqual(config, 
             {'description': 'this is the child', 'year': 2000, 'modelname': 'widgetmodel'})
             
-    def test_inheritance_external_parent(self):
-        # test inheritance with an external_parent (one with original name, one renamed)
+    def test_scenario_inheritance_external_parent(self):
+        # test inheritance of scenarios with an external_parent (one with original name, one renamed)
         f = os.path.join(self.test_configs, 'grandchild_scenario_external_parent.xml')
         config1 = XMLConfiguration(f).get_run_configuration('grandchild')
         self.assertEqual(config1, 
@@ -416,6 +484,17 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(config, 
                          {'datasets_to_preload': {'job': {}, 'gridcell': {'nchunks': 4}}})
 
+    def test_include(self):
+        f = os.path.join(self.test_configs, 'include_test.xml')
+        config = XMLConfiguration(f).get_run_configuration('test_scenario')
+        self.assertEqual(config, 
+                         {'description': 'a test scenario',
+                          'startyear': 2000,
+                          'endyear': 2020,
+                          'x': 10,
+                          'y': 20,
+                          'morestuff': {'x': 10, 'y': 20}})
+
     def test_class_element(self):
         # test a configuration element that is a specified class
         f = os.path.join(self.test_configs, 'database_configuration.xml')
@@ -448,6 +527,50 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
           'models_to_estimate': ['real_estate_price_model']}
         self.assertEqual(config, should_be)
         
+    def test_get_section_of_child(self):
+        f = os.path.join(self.test_configs, 'estimation_child.xml')
+        config = XMLConfiguration(f).get_section('model_manager/estimation')
+        should_be = {
+          'real_estate_price_model': {
+            'all_variables': {'ln_cost': 'ln_cost=ln(psrc.parcel.cost+10)',
+                              'tax': 'tax=urbansim_parcel.parcel.tax',
+                              'unit_price': 'unit_price=urbansim_parcel.parcel.unit_price'},
+            'single_family_residential': {'submodel_id': 240, 'variables': ['ln_cost']}},
+          'models_to_estimate': ['real_estate_price_model', 'household_location_choice_model']}
+        self.assertEqual(config, should_be)
+        
+    def test_inherited_attributes(self):
+        # make sure that inherited attributes are tagged as 'inherited'
+        f = os.path.join(self.test_configs, 'estimation_child.xml')
+        all_variables_node = XMLConfiguration(f).full_tree.find('model_manager/estimation/real_estate_price_model/all_variables')
+        # the ln_cost variable is redefined in estimation_child, so it shouldn't have the 'inherited' attribute
+        ln_cost_node = all_variables_node.find('ln_cost')
+        self.assertEqual(ln_cost_node.get('inherited'), None)
+        # the tax variable is new, so also shouldn't have the 'inherited' attribute
+        tax_node = all_variables_node.find('tax')
+        self.assertEqual(tax_node.get('inherited'), None)
+        # the unit_price variable is inherited and not overridden, so it should have 'inherited' set to the name of the parent
+        unit_price_node = all_variables_node.find('unit_price')
+        self.assertEqual(unit_price_node.get('inherited'), 'estimate')
+        
+    def test_grandchild_inherited_attributes(self):
+        # test two levels of inheritance, with multiple inheritance as well
+        f = os.path.join(self.test_configs, 'estimation_grandchild.xml')
+        all_variables_node = XMLConfiguration(f).full_tree.find('model_manager/estimation/real_estate_price_model/all_variables')
+        # the ln_cost variable is redefined in estimation_grandchild, so it shouldn't have the 'inherited' attribute
+        ln_cost_node = all_variables_node.find('ln_cost')
+        self.assertEqual(ln_cost_node.get('inherited'), None)
+        # the tax variable is inherited from estimation_child (there is also a definition in estimation_child2 but that 
+        # shouldn't be used)
+        tax_node = all_variables_node.find('tax')
+        self.assertEqual(tax_node.get('inherited'), 'estimation_child')
+        # the extratax variable is inherited from estimation_child2
+        extratax_node = all_variables_node.find('extratax')
+        self.assertEqual(extratax_node.get('inherited'), 'estimation_child2')
+        # the unit_price variable is inherited from estimate
+        unit_price_node = all_variables_node.find('unit_price')
+        self.assertEqual(unit_price_node.get('inherited'), 'estimate')
+        
     def test_get_controller(self):
         # test getting a run specification that includes a controller in the xml
         f = os.path.join(self.test_configs, 'controller_test.xml')
@@ -465,6 +588,43 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
           24: ['ln_cost']}
         self.assertEqual(config, should_be)
         
+    def test_get_estimation_specification_of_child(self):
+        f = os.path.join(self.test_configs, 'estimation_child.xml')
+        config = XMLConfiguration(f).get_estimation_specification('real_estate_price_model')
+        should_be = {'_definition_': ['ln_cost=ln(psrc.parcel.cost+10)', 'tax=urbansim_parcel.parcel.tax', 'unit_price=urbansim_parcel.parcel.unit_price'],
+          240: ['ln_cost']}
+        self.assertEqual(config, should_be)
+        
+    def test_save_as(self):
+        # test saving as a new file name - this should also test save()
+        f = os.path.join(self.test_configs, 'estimation_grandchild.xml')
+        c = XMLConfiguration(f)
+        str_io = StringIO.StringIO()
+        c.save_as(str_io)
+        # compare the strings removing white space
+        squished_result = str_io.getvalue().replace(' ', '').replace('\n', '')
+        # rather than typing it in here, just read the value from the file
+        est_file = open(f)
+        should_be = est_file.read().replace(' ', '').replace('\n', '')
+        self.assertEqual(squished_result, should_be)
+        str_io.close()
+        est_file.close()
+        
+    def test_update(self):
+        f = os.path.join(self.test_configs, 'estimation_grandchild.xml')
+        config = XMLConfiguration(f)
+        update_str = """<?xml version='1.0' encoding='UTF-8'?>
+            <opus_project>
+              <scenario_manager>
+                <test_scenario type="scenario">
+                  <i type="integer">42</i>
+                  </test_scenario>
+              </scenario_manager>
+            </opus_project>"""
+        config.update(update_str)
+        run_config = config.get_run_configuration('test_scenario')
+        self.assertEqual(run_config, {'i': 42})
+
     def test_error_handling(self):
         # there isn't an xml configuration named badname.xml
         self.assertRaises(IOError, XMLConfiguration, 'badname.xml')
