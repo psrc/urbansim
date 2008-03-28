@@ -56,23 +56,11 @@ if __name__ == '__main__':
     from opus_core.simulation_state import SimulationState
     from opus_core.store.attribute_cache import AttributeCache
     
-    SimulationState().set_cache_directory(my_configuration['cache_directory']) 
-    SessionConfiguration(
-        new_instance = True,
-        package_order = ['psrc','urbansim','opus_core'],
-        package_order_exceptions = {},
-        in_storage = AttributeCache()) 
-
-
-    #SessionConfiguration(new_instance=True,
-                         #package_order=['psrc','urbansim','opus_core'],
-                         #package_order_exceptions={},                              
-                         #in_storage=AttributeCache())
-
     run_configuration = update_controller_by_specification_from_module(
                             run_configuration, "household_location_choice_model",
                             "inprocess.bhylee.hlcm_parcel_specification")
     run_configuration.replace(my_configuration)
     estimator = Estimator(run_configuration, save_estimation_results=False)
+    
     estimator.estimate()
 #    estimator.reestimate("hlcm_parcel_specification")

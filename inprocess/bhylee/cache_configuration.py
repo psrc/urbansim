@@ -47,6 +47,7 @@ class CacheConfiguration(Configuration):
             'building_types',
             'urbansim_constants',
             'job_building_types',
+            'land_use_types',
             #'land_price_model_coefficients',
             #'land_price_model_specification',]
          ]

@@ -63,7 +63,7 @@ my_configuration = {
 #            } 
         },
     'dataset_pool_configuration': DatasetPoolConfiguration(
-        package_order=['psrc', 'urbansim', 'opus_core'],
+        package_order=['psrc_parcel','urbansim_parcel','psrc','urbansim','opus_core'],
         package_order_exceptions={},
         ),        
     'seed':(1,1)
