@@ -67,6 +67,10 @@ class NewDbConnectionGui(QDialog, Ui_NewDbConnectionGui):
         for testw in self.test_widget:
             self.vboxlayout.removeWidget(testw)
             testw.hide()
+        del self.dbtypearray[:]
+        del self.test_widget[:]
+        del self.test_text[:]
+        del self.test_line[:]
         # Now look up the selected connection type and present to the user...
         templates_root = self.model.xmlRoot.toElement().elementsByTagName(QString("database_templates")).item(0)
         if templates_root.hasChildNodes():
