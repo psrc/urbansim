@@ -16,6 +16,7 @@ from psrc.variables.abstract_travel_time_variable import abstract_travel_time_va
 from opus_core.misc import unique_values
 from numpy import where, repeat, ones, float32, resize, array
 from numpy import ma
+from opus_core.logger import logger
 
 class logsum_hbw_am_from_home_to_work(abstract_travel_time_variable):
     """logsum_hbw_am_from_home_to_work

@@ -38,11 +38,11 @@ models = {
 if __name__ == '__main__':
     try: import wingdbstub
     except: pass
-    model = 'hlcm'
+    #model = 'hlcm'
     #model = 'elcm-non-home-based'
     #model = 'elcm-home_based'
     #model = 'repm'
-    #model = 'wcm'
+    model = 'wcm'
     #model = 'hbjcm'
 
     config = Baseline()

@@ -13,32 +13,39 @@
 # 
 
 all_variables = [
-    "hh_size = person.disaggregate(household.persons)",
-    "hh_child = person.disaggregate(household.children > 0)",
-    "hh_income = person.disaggregate(household.income)",
-    "hh_workers = person.disaggregate(household.workers)",
-    "person.age",
-    "person.edu",       
-#    "hh_income_x_work_at_home = person.disaggregate(household.income) * (choice.work_at_home==1)",
-#    "hh_size_x_work_at_home = person.disaggregate(household.persons) * (choice.work_at_home==1)",
-    ]
+    #"hh_size = person.disaggregate(household.persons)",
+    #"hh_children = person.disaggregate(household.children > 0)",
+    #"hh_income = person.disaggregate(household.income)",
+    #"hh_workers = person.disaggregate(household.workers)",
+    #"person.age",
+    #"person.edu",       
+
+    #"hh_size_x_work_at_home = person.disaggregate(household.persons) * (choice.work_at_home==1)",
+    #"hh_children_x_work_at_home = person.disaggregate(household.children > 0) * (choice.work_at_home==1)",
+    #"hh_income_x_work_at_home = person.disaggregate(household.income) * (choice.work_at_home==1)",
+    #"hh_workers_x_work_at_home = ( person.disaggregate(household.workers) - 1 ) * (choice.work_at_home==1)",    
+   ]
 
 specification = {}
 
 specification = {
     "_definition_": all_variables,                               
-    -2:
-    {
-        "equation_ids":(0, 1),
-        #"constant":(0, "act_1"),
-        #"person.disaggregate(household.persons)":(0, "beta1_hhsize")   
-        #"hh_size":(0, "beta1_hhsize")   
-        "person.disaggregate(household.children > 0)":(0, "beta1_haschild")
-        #"hh_child":(0, "beta1_haschild")   
-        #"person.disaggregate(household.income)":(0, "beta1_income")   
-        #"hh_income":(0, "beta1_income")   
-        #"person.disaggregate(household.workers)":(0, "beta1_workers"),
-        #"person.hh_workers":(0, "beta1_workers"),
-        #"age":(0, "beta1_age")   
+    
+    -2:{
+        "equation_ids":(1, 2),  # 1:work-at-home; 2:work non-home-based
+        "constant":(0, "act_2"),
+        #"person.disaggregate(household.persons)":("beta1_hhsize", 0),
+        #"person.disaggregate(household.children > 0)":("beta1_haschild", 0),
+        "person.disaggregate(household.income)":("beta1_income", 0),
+        #"age3=person.disaggregate(urbansim_parcel.household.persons_with_age_le_3>0)":("beta1_age3", 0),
+        #"age6=person.disaggregate(urbansim_parcel.household.persons_with_age_le_6>0)":("beta1_age6", 0),
+        #"age13=person.disaggregate(urbansim_parcel.household.persons_with_age_le_13>0)":("beta1_age13", 0),
+        #"age16=person.disaggregate(urbansim_parcel.household.persons_with_age_le_16>0)":("beta1_age16", 0),
+        #"age18=person.disaggregate(urbansim_parcel.household.persons_with_age_le_18>0)":("beta1_age18", 0),        
+        #"person.disaggregate(household.workers-1)":("beta1_workers", 0),
+        "person.age":("beta1_age", 0),
+        "person.edu":("beta1_edu", 0),
+        "person.employment_status==2":("beta1_parttm", 0), ##part time worker
     }
+
 }

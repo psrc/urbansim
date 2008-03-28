@@ -29,7 +29,7 @@ from opus_core.database_management.database_configuration import DatabaseConfigu
 
 
 run_description = '(baseline 11/26/2007)'
-cache_directory = r'C:\cache\run_4168.2007_11_20_16_53'
+cache_directory = r'/urbansim_cache/psrc_parcel/run_5881.2008_03_22_10_14'
 
 #run_description = '(no build 11/26/2007)'
 #cache_directory = r'D:\urbansim_cache\run_4169.2007_11_21_00_12'
@@ -37,7 +37,7 @@ cache_directory = r'C:\cache\run_4168.2007_11_20_16_53'
 source_data = SourceData(
     cache_directory = cache_directory,
     run_description = run_description,
-    years = range(2000, 2021, 10),
+    years = [2002],  #range(2000, 2021, 10),
     dataset_pool_configuration = DatasetPoolConfiguration(
         package_order=['psrc_parcel','urbansim_parcel','psrc', 'urbansim','opus_core'],
         package_order_exceptions={},
@@ -45,26 +45,31 @@ source_data = SourceData(
 )
 
 indicators=[
-    Table(
-        attribute = 'population=large_area.aggregate(urbansim_parcel.building.population, intermediates=[parcel, zone, faz])',
-        dataset_name = 'large_area',
-        source_data = source_data,
-        ),
-    Table(
-        attribute = 'employment=large_area.aggregate(urbansim_parcel.building.number_of_jobs, intermediates=[parcel, zone, faz])',
-        dataset_name = 'large_area',
-        source_data = source_data,
-        ),
 #    Table(
-#        attribute = 'at_home_workers=district.aggregate(person.work_at_home==1, intermediates=[household, building, parcel, zone])',
-#        dataset_name = 'district',
+#        attribute = 'population=large_area.aggregate(urbansim_parcel.building.population, intermediates=[parcel, zone, faz])',
+#        dataset_name = 'large_area',
 #        source_data = source_data,
 #        ),
 #    Table(
-#        attribute = 'psrc_parcel.district_commute.commute_trips',
-#        dataset_name = 'district_commute',
+#        attribute = 'employment=large_area.aggregate(urbansim_parcel.building.number_of_jobs, intermediates=[parcel, zone, faz])',
+#        dataset_name = 'large_area',
 #        source_data = source_data,
 #        ),
+    Table(
+        attribute = 'at_home_workers=district.aggregate(person.work_at_home==1, intermediates=[household, building, parcel, zone])',
+        dataset_name = 'district',
+        source_data = source_data,
+        ),
+    DatasetTable(
+        attributes = [
+            'origin_district_id',
+            'destination_district_id',
+            'psrc_parcel.district_commute.commute_trips',
+            ],
+        dataset_name = 'district_commute',
+        source_data = source_data,
+        name = 'commutes_by_district',
+        ),
 #    Map(
 #        attribute = 'population=zone.aggregate(urbansim_parcel.building.population, intermediates=[parcel])',
 #        dataset_name = 'zone',

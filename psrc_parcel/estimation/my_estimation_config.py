@@ -22,9 +22,9 @@ from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheC
 from urbansim.configurations.creating_baseyear_cache_configuration import CreatingBaseyearCacheConfiguration
 
 my_configuration = {
-    'cache_directory' : '/urbansim_cache/psrc_parcel/persons/', # change or leave out
+    'cache_directory' : '/urbansim_cache/psrc_parcel/wcm_estimation', # change or leave out
     'output_configuration': DatabaseConfiguration(
-        database_name = 'psrc_2005_parcel_baseyear_change_20071011',
+        database_name = 'psrc_2005_parcel_baseyear_change_20080321',
         ),
     'dataset_pool_configuration': DatasetPoolConfiguration(
         package_order=['psrc_parcel', 'psrc', 'urbansim_parcel', 'urbansim', 'opus_core'],

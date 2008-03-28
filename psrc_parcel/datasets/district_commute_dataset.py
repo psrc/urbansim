@@ -19,7 +19,7 @@ from numpy import array, allclose
 
 class DistrictCommuteDataset(UrbansimDataset):
     
-    id_name_default = ["origin_district_id", "destination_district_id"]
+    id_name_default = 'commute_id'   ##["origin_district_id", "destination_district_id"]
     in_table_name_default = "district_commutes"
     out_table_name_default = "district_commutes"
     dataset_name = "district_commute"
@@ -34,6 +34,7 @@ class DistrictCommuteDataset(UrbansimDataset):
         
             storage.write_table(table_name=self.in_table_name_default,
                                 table_data={
+                                            'commute_id'     :OD_array[:,0] * 1000 + OD_array[:,1],
                                             'origin_district_id'     :OD_array[:,0],
                                             'destination_district_id':OD_array[:,1],
                                             }
@@ -59,8 +60,8 @@ class DistrictCommuteDataset(UrbansimDataset):
 
 
 from opus_core.tests import opus_unittest
-class DatasetFactoryTests(opus_unittest.OpusTestCase):
-    def test_translations(self):
+class DistrictCommuteDatasetTests(opus_unittest.OpusTestCase):
+    def test_input(self):
         storage = StorageFactory().get_storage('dict_storage')
         
         storage.write_table(table_name='districts',
@@ -74,17 +75,19 @@ class DatasetFactoryTests(opus_unittest.OpusTestCase):
                                           arguments={'in_storage':storage}
                                           )
         
-        self.assertEqual(dc.get_id_name(), ["origin_district_id", "destination_district_id"])
+        self.assertEqual(dc.get_id_name(), ['commute_id'])
+        self.assertTrue( "origin_district_id" in dc.get_known_attribute_names())
+        self.assertTrue( "destination_district_id" in dc.get_known_attribute_names())        
         self.assertEqual(dc.size(), 9)
-        self.assertTrue(allclose(dc.get_id_attribute(), array([[1,1],
-                                                       [1,3],
-                                                       [1,4],
-                                                       [3,1],
-                                                       [3,3],
-                                                       [3,4],
-                                                       [4,1],
-                                                       [4,3],
-                                                       [4,4]])
+        self.assertTrue(allclose(dc.get_id_attribute(), array([1001,
+                                                       1003,
+                                                       1004,
+                                                       3001,
+                                                       3003,
+                                                       3004,
+                                                       4001,
+                                                       4003,
+                                                       4004])
                                     ))
         
         

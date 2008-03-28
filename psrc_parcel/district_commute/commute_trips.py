@@ -31,14 +31,16 @@ class commute_trips(Variable):
         persons = dataset_pool.get_dataset("person")
         home_district_id = persons.get_attribute("home_district_id")
         workplace_district_id = persons.get_attribute("workplace_district_id")
-        od_array = dc.get_id_attribute()
+        origin_array = dc.get_attribute("origin_district_id")
+        distination_array = dc.get_attribute("destination_district_id")
+        
         for i in range(dc.size()):
-            results[i] = logical_and(home_district_id==od_array[i, 0], 
-                                     workplace_district_id==od_array[i, 1]).sum()
+            results[i] = logical_and(home_district_id==origin_array[i], 
+                                     workplace_district_id==distination_array[i]).sum()
         return results
 
 from opus_core.tests import opus_unittest
-from numpy import array
+from numpy import array, arange
 from opus_core.tests.utils.variable_tester import VariableTester
 
 class Tests(opus_unittest.OpusTestCase):
@@ -48,7 +50,8 @@ class Tests(opus_unittest.OpusTestCase):
             package_order=['psrc_parcel','urbansim_parcel', 'urbansim'],
             test_data={
                 'district_commute':
-                    { 'origin_district_id':     array([1, 1, 1, 3, 3, 3, 4, 4, 4]),
+                    { 'commute_id':arange(1, 10),
+                      'origin_district_id':     array([1, 1, 1, 3, 3, 3, 4, 4, 4]),
                       'destination_district_id':array([1, 3, 4, 1, 3, 4, 1, 3, 4])
                      },
                 'zone':
