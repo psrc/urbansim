@@ -63,6 +63,7 @@ class OpusFileAction(object):
                 self.xmlFileObject.mainwindow.editorStuff.append(l)
             f.close()
             self.xmlFileObject.mainwindow.editorStatusLabel.setText(QString(filename))
+            self.xmlFileObject.mainwindow.openEditorTab()
 
     def fillInAvailableScripts(self):
         #print "Checking for scripts"

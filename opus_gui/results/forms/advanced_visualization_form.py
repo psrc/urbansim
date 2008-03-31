@@ -230,8 +230,8 @@ class AdvancedVisualizationForm(QWidget):
 
         configDialog = QFileDialog()
         filter_str = QString("*.gdb")
-        fd = configDialog.getOpenFileName(self,QString("Please select an ESRI database file (*.gdb)..."), #, *.sde, *.mdb)..."),
-                                          QString(start_dir), filter_str)
+        fd = configDialog.getExistingDirectory(self,QString("Please select an ESRI geodatabase (*.gdb)..."), #, *.sde, *.mdb)..."),
+                                          QString(start_dir), QFileDialog.ShowDirsOnly)
         if len(fd) != 0:
             fileName = QString(fd)
             fileNameInfo = QFileInfo(QString(fd))

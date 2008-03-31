@@ -113,7 +113,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     time.sleep(1)
     self.splash.hide()
-
+    
+    # This stuff adds the 'X' button for closing tabs
     self.actionCloseCurrentTab = QAction(self)
     self.actionCloseCurrentTab.setIcon(QIcon(":/Images/Images/cross.png"))
     self.actionCloseCurrentTab.setObjectName("actionCloseCurrentTab")
