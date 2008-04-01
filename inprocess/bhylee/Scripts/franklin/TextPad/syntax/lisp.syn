@@ -1,0 +1,291 @@
+; Michael Puckett keyword syntax file for AutoCAD
+; AutoLISP programming language
+; Copyright (C) 1999, Michael Puckett
+; last edit 1999/06/03
+
+C=1
+
+[Syntax]
+Namespace1 = 6
+IgnoreCase = Yes
+InitKeyWordChars = A-Za-z*$'
+KeyWordChars = -A-Za-z0-9*:_
+BracketChars = ()
+OperatorChars = -+*/^=<>
+PreprocStart =
+SyntaxStart =
+SyntaxEnd =
+CommentStart = ;|
+CommentEnd = |;
+CommentStartAlt =
+CommentEndAlt =
+SingleComment = ;
+SingleCommentCol =
+SingleCommentAlt =
+SingleCommentColAlt =
+StringStart = "
+StringEnd = "
+StringAlt =
+StringEsc = \
+CharStart =
+CharEnd =
+CharEsc = \
+
+; ///////////////////////////
+; standard autolisp functions
+; ///////////////////////////
+[Keywords 1]
+1+
+1-
+*error*
+abs
+ads
+alert
+alloc
+and
+angle
+angtof
+angtos
+append
+apply
+arx
+arxload
+arxunload
+ascii
+assoc
+atan
+atof
+atoi
+atom
+atoms-family
+autoarxload
+autoload
+autoxload
+boole
+boundp
+caaar
+caacdr
+caadr
+caar
+cadddr
+caddr
+cadr
+car
+cdddr
+cddr
+cdr
+chr
+close
+command
+cond
+cons
+cos
+cvunit
+defun
+dictadd
+dictnext
+dictremove
+dictrename
+dictsearch
+distance
+distof
+entdel
+entget
+entlast
+entmake
+entmakex
+entmod
+entnext
+entsel
+entupd
+eq
+equal
+eval
+exit
+exp
+expand
+expt
+findfile
+fix
+float
+foreach
+gc
+gcd
+getangle
+getcfg
+getcname
+getcorner
+getdist
+getenv
+getfiled
+getint
+getkword
+getorient
+getpoint
+getreal
+getstring
+getvar
+graphscr
+grclear
+grdraw
+grread
+grtext
+grvecs
+handent
+help
+if
+initget
+inters
+itoa
+lambda
+last
+length
+list
+listp
+load
+log
+logand
+logior
+lsh
+mapcar
+max
+mem
+member
+menucmd
+menugroup
+min
+minusp
+namedobjdict
+nentsel
+nentselp
+not
+nth
+null
+numberp
+open
+or
+osnap
+polar
+prin1
+princ
+print
+progn
+prompt
+quit
+quote
+read
+read-char
+read-line
+redraw
+regapp
+rem
+repeat
+reverse
+rtos
+set
+setcfg
+setfunhelp
+setq
+setvar
+setview
+sin
+snvalid
+sqrt
+ssadd
+ssdel
+ssget
+ssgetfirst
+sslength
+ssmemb
+ssname
+ssnamex
+sssetfirst
+startapp
+strcase
+strcase
+strcat
+strlen
+subst
+substr
+tablet
+tblnext
+tblobjname
+tblsearch
+terpri
+textbox
+textpage
+textscr
+trace
+trans
+type
+untrace
+ver
+vports
+wcmatch
+while
+write-char
+write-line
+xdroom
+xdsize
+xload
+xunload
+zerop
+
+; //////////
+; true / nil
+; //////////
+[Keywords 2]
+nil
+t
+
+; //////////////////
+; externally defined
+; //////////////////
+[Keywords 3]
+acad_colordlg
+acad_helpdlg
+acad_strlsort
+
+; ////////////////////////
+; dcl based lisp functions
+; ////////////////////////
+[Keywords 4]
+action_tile
+add_list
+client_data_tile
+dimx_tile
+dimy_tile
+done_dialog
+end_image
+end_list
+fill_image
+get_attr
+get_tile
+load_dialog
+mode_tile
+new_dialog
+set_tile
+slide_image
+start_dialog
+start_image
+start_list
+term_dialog
+unload_dialog
+vector_image
+
+[Keywords 5]
+'ename
+'exrxsubr
+'file
+'int
+'list
+'pagetb
+'pickset
+'real
+'safearray
+'str
+'subr
+'sym
+'usubr
+'variant
+'vla

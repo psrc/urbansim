@@ -1,0 +1,35 @@
+
+READ
+;  Nobs  = 7512
+;  Nvar  = 20
+;  Names = cho,non3,act3d,act4d,act5d,
+	ltu,lsa,lre,psa,pre,pmi,pco,pin,pgo,
+	llv,hwy,art,flo,slo,ugb
+;  File  = C:/eclipse/workspace/Scripts/gfu/R/deriv03.csv
+$
+
+NLOGIT
+; lhs = cho
+; choices=non,t3,t4,t5
+; maxit=0
+; start=0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+; model:
+U(non) = 0 /
+U(t3,t4,t5) =
++<act3,act4,act5>
++<ltuR,ltuR,ltuR>*ltu
++<lsa3,lsa4,lsa5>*lsa
++<lreR,lreR,lreR>*lre
++<psaR,psaR,psaR>*psa
++<preR,preR,preR>*pre
++<pmi3,pmi4,0>*pmi
++<pco3,pco4,0>*pco
++<pinR,pinR,pinR>*pin
++<pgo3,pgo4,pgo5>*pgo
++<llv3,llv4,llv5>*llv
++<hwy3,hwy4,0>*hwy
++<artR,artR,artR>*art
++<floR,floR,floR>*flo
+?+<slo3,slo4,0>*slo
++<ugb3,ugb4,0>*ugb
+$

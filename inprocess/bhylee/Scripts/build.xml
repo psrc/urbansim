@@ -1,0 +1,16 @@
+<project name="Scripts" default="copy-scripts" basedir=".">
+  
+	<property name="dest.dir" 
+            location="/projects/urbansim7/scripts/private"/>
+	
+	<target name="copy-scripts">
+		<copy todir="${dest.dir}" verbose="true">
+  		<fileset dir="${basedir}">
+  			<include name="**/*"/>
+  			<exclude name="fireman.xml"/>  
+  			<exclude name="build.xml"/>  
+  		</fileset>
+  	</copy>
+	</target>
+
+</project>

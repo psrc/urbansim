@@ -1,0 +1,249 @@
+\documentclass[12pt]{article}
+
+\usepackage[sumlimits]{amsmath}
+\usepackage{txfonts}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{hyperref}
+\usepackage{alg}
+
+\voffset=-1in
+\hoffset=-1in
+%
+% Set for US Letter
+\textheight=9.0in
+\textwidth=6.5in
+% need to also set dvips config and pdflatex config to US letter
+%
+%
+\topmargin=0.5in
+\oddsidemargin=1in
+\evensidemargin=1in
+%
+\frenchspacing
+%
+%
+% xxxxxxxxx  nnnnnnnnnnnnnnnn
+%       nnnnnnnnnnnnnnnnnnnnn
+\newenvironment{longitem}
+	{\begin{list}{$\bullet$}
+				{\labelwidth=2.6cm\leftmargin=2.9cm\labelsep=0.3cm
+				\itemsep=0cm}}
+	{\end{list}}
+%
+% Vector command (sets vectors in bold roman, not italic)
+\newcommand{\vc}[1]{\boldsymbol{\mathrm{#1}}}
+%
+% Shortcuts
+\newcommand{\e}{\mathrm{e}}
+%
+\itemsep=0in
+%\href{mailto:stuff@things}{link_text}
+%
+% Change some things for the algtab environment
+\renewcommand{\algforto}[2]{\textbf{for } #1 \textbf{ to } #2\\\algbegin}
+\newcommand{\algendfor}{\algend \textbf{end for}\\}
+\newcommand{\algendif}{\algend \textbf{end if}\\}
+\newcommand{\algendwhile}{\algend \textbf{end while}\\}
+\newcommand{\alglet}{\mbox{\textbf{let }}}
+\newcommand{\algtry}[1]{\textbf{try } #1}
+%
+%
+\begin{document}
+
+%
+%
+%
+\section*{Logit Models}
+
+The discrete choice models in UrbanSim are simulated with logit models.
+In such models, the utility of alternative $i$ for decision maker $n$ is
+given by:
+\begin{equation}
+U_{ni} = u_{ni} + \epsilon_{ni},
+\end{equation}
+where the systematic part of the utility is given by the
+linear-in-parameters function
+\begin{equation}
+u_{ni} = \sum_{k=1}^{K} \beta_{ik}x_{nik},
+\end{equation}
+and the random part is assumed to be independently and identically
+distributed with the type 1 extreme
+value distribution (Gumbel), $\epsilon_{ni}\sim G(0,1)$. For brevity we
+use vector notation, and write
+\begin{equation}
+u_{ni} = \vc{X}_{ni}\vc{\beta}_{i}.
+\end{equation}
+To summarize:
+\begin{longitem}
+\item[$n$] is the number of the decision maker, $n=1,\ldots,N$,
+\item[$i$] is the number of the alternatives, $i=1,\ldots,I$,
+\item[$\vc{X}_{ni}$] is a $1\times K$ row vector of $K$ observed variables,
+\item[$x_{nik}$] is the $k$-th variable from $X_{ni}$,
+\item[$\vc{\beta}_{i}$] is a $K\times 1$ column vector of user estimated
+coefficients,
+\item[$\beta_{ik}$] is the $k$-th coefficient from $\beta_{i}$.
+\end{longitem}
+
+
+The logit model probability of decision maker $n$ choosing alternative $i$ out of a
+set of $I$ mutually exclusive alternatives is then
+\begin{equation}
+P_{ni} = \frac{\e^{\vc{X}_{ni}\vc{\beta}_{i}}}
+{\sum_{i'=1}^{I}\e^{\vc{X}_{ni'}\vc{\beta}_{i'}} }.
+\label{eq:logitprob}
+\end{equation}
+
+\subsection*{Practical Aspects of Logit Probability Computation}
+
+The logit probability can be calculated directly from
+(\ref{eq:logitprob}). However, that requires raising $\e$ to possibly
+large positive or negative powers, and summing up a possibly large
+denominator. This can result in over- or underflow in the computation.
+
+Overflow (underflow) occurs when the floating point value becomes
+larger (smaller) in absolute value than the computer memory allocated to the
+number can store. This happens at roughly $\pm\e^{709}$ for large 
+positive or negative numbers
+(the largest number that can be stored in a Java \texttt{double}
+is $1.7976931348623157\cdot 10^{308}$), 
+and at roughly $\pm\e^{-708}$ for small positive or negative numbers.
+
+The logit computation can exceed these boundaries in two ways. 
+\begin{enumerate}
+\item Individual utilities can go out of bounds when exponentiated:\\
+	$\mathrm{abs}(\vc{X}_{ni}\vc{\beta}_{i})>708$ for any $n$ and $i$,
+\item The denominator can go out of bounds:\\
+	$\sum_{i'=1}^{I}\e^{\vc{X}_{ni'}\vc{\beta}_{i'}}>\e^{709}$
+\end{enumerate}
+
+When the logit computation exceeds the boundaries it is generally an
+indication that the variable value being used is outside the range that
+was available in the data for that variable during estimation. To
+analyze such occurrences it is best to activate a logit model
+logging feature that prints to the screen any
+large individual utility terms, i.e. any
+term $\mathrm{abs}(\beta_{ik}x_{nik}) > 100$. 
+The printout contains the decision maker index (e.g. household id, grid id),
+the alternative index (e.g. the grid id, development type transition),
+the value of the coefficient ($\beta_{ik}$), the value of the variable ($x_{nik}$),
+and the value of the term ($\beta_{ik}x_{nik}$).
+
+We can avoid calculating the denominator because the ratio of the logit
+probabilities for any two alternatives is independent of the denominator for a 
+particular decision maker:
+\begin{equation}
+	\frac{P_{ni}}{P_{nj}} = \frac{\e^{u_{ni}}}{\e^{u_{nj}}} 
+	= \e^{u_{ni}-u_{nj}},
+\end{equation}
+which gives that
+\begin{equation}
+  P_{ni} = \e^{u_{ni}-u_{nj}}P_{nj}.
+\end{equation}
+This allows us to calculate the probabilities
+of each alternative in turn and handle overflows more easily since the 
+calculation of the possibly large denominator is avoided. 
+The logit computation is then performed as described below:
+
+\begin{algtab}
+\alglet $\varepsilon>0$ be the smallest noticeable difference from zero
+    in a Java \texttt{double} \\
+\alglet $\Omega\gg\varepsilon$ be the largest possible number that can be stored
+    in a Java \texttt{double} \\
+\algforto{$g=1$}{$g=G$}
+	// for each group of identical decision makers with identical alternatives\\
+	\algforto{$i=1$}{$i=I_g$}
+		// for each alternative $i$ of decision maker group $g$\\
+		// calculate the utility of $i$ for $g$\\
+		\algtry{(\alglet $u_{gi} = \sum_{k=1}^{K} \beta_{ik}x_{gik}$)}\\
+		\algif{try clause causes positive overflow}
+			\alglet $u_{gi} = \Omega$\\
+		\algelseif{try clause causes negative overflow}
+			\alglet $u_{gi} = -\Omega$\\
+		\algelsif{try clause causes underflow, i.e. too close to zero}
+			\alglet $u_{gi} = 0$\\
+		\algendif
+	\algendfor
+	find the largest utility value, $u_{\max}=u_{gj} \geq u_{gi}$ where
+	$i=1,\ldots,I_g$ and $i\neq j$ \\
+	\alglet $\mathit{temp} = u_{g1}$ \\
+	\alglet $u_{g1} = u_{\max}$ \\
+	\alglet $u_{gj} = \mathit{temp}$ \\
+	// invariant: the maximum utility is first and
+	the previous first utility is wherever the maximum utility was \\
+%	sort the alternatives by utility, $u_{gi}$, from lowest to
+%		largest\\
+%	renumber indices so that $i=1$ is the index for the alternative
+%   		with minimum utility and $i=I_g$ is the index for the alternative with
+%   		maximum utility. 
+%  		The order of equal values does not matter\\
+%  	// invariant: $u_{g1} \leq \ldots \leq u_{gi} 
+%  		\leq \ldots u_{gI_g}$ \\
+	\alglet $P^*_{g1} = 1$ // arbitrarily assign the probability of the
+     		alternative with the largest utility \\
+   	\alglet $D = P^*_{g1}$ \\
+	\algforto{$i=2$}{$i=I_g$}
+		// for each alternative \\
+		// calculate non-normalized probabilities \\
+%		\algif{$u_{gi} == u_{g,i-1}$}
+%			\alglet $P^*_{gi} = P^*_{g,i-1}$ \\
+%		\algelsif{($P^*_{g,i-1} == \varepsilon$) 
+%	    	\algor ($\vc{X}_{gi}\vc{\beta}_{i}
+%	      		-\vc{X}_{gi+1}\vc{\beta}_{i+1}<-708$)}
+%	      	\alglet $P^*_{gi} = \varepsilon$ \\
+%	    \algelse
+%	    	\algtry (\alglet $P^*_{gi} = 
+%	    		\e^{\vc{X}_{gi}\vc{\beta}_{i} - \vc{X}_{gi+1}\vc{\beta}_{i+1}}
+%				\cdot P^*_{gi+1}$)\\
+%			\algif{try causes underflow}
+%				\alglet $P^*_{gi} = \varepsilon$ \\
+%			\algendif
+%		\algendif
+
+		\algtry{(\alglet $U = \vc{X}_{gi}\vc{\beta}_{i} - 
+			\vc{X}_{g1}\vc{\beta}_{1}$ )} \\
+		// invariant: $U \leq 0$ \\
+		\algif{try clause causes underflow, i.e. $U\lessapprox 0$}
+			\alglet $P^*_{gi} = 1$ \\
+		\algelseif{ try clause causes negative overflow, i.e. $U <
+		\Omega$, \algor $U < -708$}
+			\alglet $P^*_{gi} = \varepsilon$ \\
+		\algelse
+			\alglet $P^*_{gi} = \e^{U}$ \\
+		\algendif
+		\alglet $D = D + P^*_{gi}$ \\
+		// $D$ will not overflow unless $I_g > \Omega$ \\
+
+	\algendfor
+	\algforto{$i=1$}{$i=I_g$}
+		// normalize probabilities \\
+		\alglet $P_{gi} = \frac{P^*_{gi}}{D}$ \\
+	\algendfor
+	// invariant: have probabilities for all alternatives
+    	$i=1,\ldots,I_g$ for decision maker group $g$ and $\sum_{i=1}^{I_g}
+    	P_{gi}=1\pm\delta$, where $\delta>0$ is a tolerated rounding error \\
+
+	\algforto{$n=1$}{$n=N_g$}
+		// Select a particular alternative $i$ as the choice of individual decision
+		maker $n$ in decision maker group $g$ \\
+		\alglet $r\sim U(0,1)$ be a number drawn from a uniform random distribution
+			between 0 and 1, inclusive \\
+		\alglet $i=1$ \\
+		\algwhile{$i< I_g$ \algand $r > P_{ni}$}
+			\alglet $r = r - P_{ni}$ \\
+			\alglet $i = i + 1$ \\
+		\algendwhile
+		// invariant: $i$ is the index of the chosen alternative for decision
+			maker $n$\\
+		assign the choice $i$ to individual $n$ \\
+	\algendfor
+\algendfor
+	
+\end{algtab}
+
+
+
+
+\end{document}
+
+

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<urbansim-parameters logging="contents"> 
+  <dataset>
+    <database contains="scenario-data">
+      <mysql url="jdbc:mysql://trondheim.cs.washington.edu/PSRC_2000_ELCNHB_estimation_petecaba" 
+             username="urbansim" 
+             password="UrbAnsIm4Us"/>
+    </database>
+  </dataset>
+</urbansim-parameters>

@@ -1,0 +1,565 @@
+OldDev 1
+1 to 1	non-event	60808
+1 to 1	event	65
+1 to 2	event	2021
+1 to 3	event	353
+1 to 4	event	84
+1 to 5	event	38
+1 to 9	event	44
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	1	-6.469109681	-5.028
+Constant	2	-13.85540167	-15.686
+Constant	3	-20.93193158	-21.248
+Constant	4	-31.67239097	-8.286
+Constant	5	-26.23119962	-8.279
+Constant	9	-5.288261602	-24.791
+Ln(Land value)	1	-.1448269129	-1.632
+Ln(Land value)	2	.8018872199	22.290
+Ln(Land value)	3	1.524933049	19.494
+Ln(Land value)	4	1.468192883	7.372
+Ln(Land value)	5	1.755864224	7.112
+Ln(Access to population for 1 car households)	12	.3003657059	3.430
+Ln(Access to population for 1 car households)	4	.8048250754	2.123
+Highway within 300 m	23	-.6608557737	-5.522
+Arterial within 300 m	1	.4825340064	1.758
+Arterial within 300 m	45	-.3771396933	-1.384
+Arterial within 300 m	9	1.052282533	3.415
+Percentage of commercial cells, within 600 m, before transition	RL	-.4595551732E-01	-7.086
+Percentage of commercial cells, within 600 m, before transition	9	.5389654576E-01	3.146
+Percentage of industrial cells, within 600 m, before transition	2	-.6398211169E-01	-4.617
+Percentage of industrial cells, within 600 m, before transition	9	.3749565819E-01	1.034
+Ln(L(0))	-7061.5195
+Ln(L(b))	-6101.904
+Rho^2	.13589
+Corr. rho^2	.13551
+Obs.	7815
+
+OldDev 2
+2 to 2	non-event	65869
+2 to 2	event	2752
+2 to 3	event	2680
+2 to 4	event	301
+2 to 5	event	82
+2 to 6	event	21
+2 to 9	event	52
+2 to 17	event	17
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	6	0	0
+Constant	17	0	0
+Constant	2	-11.30283577	-16.991
+Constant	3	-13.45661409	-19.958
+Constant	4	-23.42508612	-12.432
+Constant	5	-20.12796800	-16.607
+Constant	9	-2.847987635	-1.549
+Ln(Land value)	2	.3586647338	9.789
+Ln(Land value)	3	.9738597876	23.074
+Ln(Land value)	45	1.303501075	13.408
+Ln(Land value)	9	-.1852216608	-1.006
+Ln(Access to population for 1 car households)	2	.4822589876	6.972
+Ln(Access to population for 1 car households)	3	.2943487568E-01	.425
+Ln(Access to population for 1 car households)	4	.3151948524	1.770
+Highway within 300 m	23	-.5418850757	-7.521
+Highway within 300 m	4	-.8865687699	-3.061
+Highway within 300 m	5	-1.198696943	-2.028
+Arterial within 300 m	23	-.2817169085	-6.452
+Arterial within 300 m	4	-.4622546269	-2.784
+Arterial within 300 m	5	-.8768343034	-2.469
+Arterial within 300 m	9	.4496614173	1.545
+Percentage of residential cells, within 600 m, before transition	234	-.4164283241E-02	-3.754
+Percentage of residential cells, within 600 m, before transition	5	-.1440793022E-01	-2.532
+Percentage of residential cells, within 600 m, before transition	9	-.1333028782E-01	-1.399
+Percentage of commercial cells, within 600 m, before transition	23	-.3244629569E-01	-7.989
+Percentage of commercial cells, within 600 m, before transition	4	-.1694700503E-01	-1.587
+Percentage of commercial cells, within 600 m, before transition	9	.5891081610E-01	3.097
+Percentage of industrial cells, within 600 m, before transition	2	-.5180070819E-01	-4.860
+Percentage of industrial cells, within 600 m, before transition	3	-.2136110141E-01	-2.507
+Percentage of industrial cells, within 600 m, before transition	9	-.6863874608E-01	-1.015
+Ln(L(0))	-16876.3260
+Ln(L(b))	-15893.92
+Rho^2	.05821
+Corr. rho^2	.05791
+Obs.	17601
+
+OldDev 3
+3 to 3	non-event	56833
+3 to 3	event	4383
+3 to 4	event	2184
+3 to 5	event	308
+3 to 6	event	39
+3 to 7	event	23
+3 to 9	event	26
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	7	0	0
+Constant	9	0	0
+Constant	3	-6.764418095	-12.806
+Constant	4	-9.532709962	-13.484
+Constant	5	-17.68125998	-9.647
+Constant	6	-18.41366913	-3.640
+Ln(Land value)	3	.5453123395	13.902
+Ln(Land value)	45	.7636743285	14.771
+Ln(Access to population for 1 car households)	3	-.2907318680E-02	-.054
+Ln(Access to population for 1 car households)	4	-.9090000000E-01	-1.318
+Ln(Access to population for 1 car households)	5	.4889451186	3.191
+Ln(Access to population for 1 car households)	6	.9981328486	2.462
+Highway within 300 m	345	-.4483055585	-7.003
+Arterial within 300 m	345	-.2037103541	-5.014
+Percentage of residential cells, within 600 m, before transition	3	-.1518287511E-01	-12.482
+Percentage of residential cells, within 600 m, before transition	4	-.1102969854E-01	-6.839
+Percentage of residential cells, within 600 m, before transition	5	-.2572157953E-01	-8.079
+Percentage of commercial cells, within 600 m, before transition	3	-.5087325920E-01	-12.397
+Percentage of commercial cells, within 600 m, before transition	4	-.2533121706E-01	-5.450
+Percentage of commercial cells, within 600 m, before transition	5	-.3841863750E-01	-3.599
+Percentage of commercial cells, within 600 m, before transition	6	.3833267297E-01	2.383
+Percentage of industrial cells, within 600 m, before transition	3	-.4542597900E-01	-5.628
+Percentage of industrial cells, within 600 m, before transition	4	-.2639697606E-01	-2.699
+Ln(L(0))	-18877.4168
+Ln(L(b))	-18452.15
+Rho^2	.02253
+Corr. rho^2	.02228
+Obs.	20742
+
+OldDev 4
+4 to 4	non-event	45031
+4 to 4	event	3104
+4 to 5	event	1520
+4 to 6	event	60
+4 to 7	event	17
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	7	0	0
+Constant	4	-2.500709529	-3.985
+Constant	5	-3.906004834	-8.600
+Constant	6	-17.11664972	-4.024
+Ln(Land value)	45	.2712155807	7.187
+Ln(Access to population for 1 car households)	4	-.7688321549E-01	-1.430
+Ln(Access to population for 1 car households)	6	1.081892947	3.182
+Highway within 300 m	Residential	-.5307797811	-7.197
+Arterial within 300 m	45	-.2116320377	-4.321
+Arterial within 300 m	6	-.5095161388	-1.330
+Percentage of residential cells, within 600 m, before transition	4	-.1259668767E-01	-8.419
+Percentage of residential cells, within 600 m, before transition	56	-.1651505545E-01	-9.503
+Percentage of commercial cells, within 600 m, before transition	45	-.3520785231E-01	-10.082
+Percentage of commercial cells, within 600 m, before transition	6	-.2608181661E-01	-1.269
+Percentage of industrial cells, within 600 m, before transition	4	-.3370432338E-01	-4.028
+Ln(L(0))	-12193.5973
+Ln(L(b))	-12058.59
+Rho^2	.01107
+Corr. rho^2	.01074
+Obs.	14052
+
+OldDev 5
+5 to 5	non-event	54975
+5 to 5	event	2448
+5 to 6	event	494
+5 to 7	event	15
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	7	0	0
+Constant	5	1.522578066	2.007
+Constant	6	-4.539772060	-3.068
+Ln(Land value)	5	.2566594588	4.651
+Ln(Access to population for 1 car households)	5	-.3083762682	-4.355
+Ln(Access to population for 1 car households)	6	.3793564976	3.173
+Highway within 300 m	Residential	-.5715546336	-5.802
+Arterial within 300 m	Residential	-.2641894613	-4.285
+Percentage of residential cells, within 600 m, before transition	5	-.2127884638E-01	-11.290
+Percentage of residential cells, within 600 m, before transition	6	-.3219286350E-01	-11.413
+Percentage of commercial cells, within 600 m, before transition	Residential	-.4592797970E-01	-11.149
+Percentage of industrial cells, within 600 m, before transition	5	-.1962299427E-01	-2.372
+Percentage of industrial cells, within 600 m, before transition	6	-.3071758136E-01	-2.101
+Ln(L(0))	-6949.3100
+Ln(L(b))	-6796.164
+Rho^2	.02204
+Corr. rho^2	.02137
+Obs.	8826
+
+OldDev 6
+6 to 6	non-event	28118
+6 to 6	event	659
+6 to 7	event	104
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	6	-2.115051395	-1.396
+Constant	7	-3.333126025	-1.591
+Ln(Land value)	7	.2526379555	1.502
+Ln(Access to population for 1 car households)	6	.2722462974	2.196
+Highway within 300 m	6	-.4717492259	-2.540
+Arterial within 300 m	6	-.2868639686	-2.267
+Percentage of residential cells, within 600 m, before transition	6	-.2592404256E-01	-7.373
+Percentage of residential cells, within 600 m, before transition	7	-.3452990005E-01	-5.510
+Percentage of commercial cells, within 600 m, before transition	Residential	-.2888972489E-01	-4.039
+Percentage of industrial cells, within 600 m, before transition	Residential	-.3285674981E-01	-3.025
+Ln(L(0))	-1760.8053
+Ln(L(b))	-1723.895
+Rho^2	.02096
+Corr. rho^2	.01882
+Obs.	2289
+
+OldDev 7
+7 to 7	non-event	15775
+7 to 7	event	384
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	7	-2.899856453	-3.578
+Ln(Land value)	7	.1085601750	1.511
+Highway within 300 m	7	-.5963756575	-3.134
+Percentage of residential cells, within 600 m, before transition	7	.1143756316E-01	2.176
+Percentage of commercial cells, within 600 m, before transition	7	.1190060147E-01	1.303
+Percentage of industrial cells, within 600 m, before transition	7	.1753446533E-01	1.068
+Ln(L(0))	-733.2643
+Ln(L(b))	-720.6510
+Rho^2	.01720
+Corr. rho^2	.01206
+Obs.	1152
+
+OldDev 8
+8 to 8	non-event	3020
+8 to 8	event	49
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	8	-.1445483285	-.014
+Ln(Land value)	8	-2.087940243	-3.532
+Ln(Access to population for 1 car households)	8	2.026605359	2.379
+Arterial within 300 m	8	-.5801108626	-1.330
+Percentage of residential cells, within 600 m, before transition	8	.2286044025E-01	1.323
+Percentage of commercial cells, within 600 m, before transition	8	.3248087878E-01	1.301
+Percentage of industrial cells, within 600 m, before transition	8	-.1455736451	-2.767
+Ln(L(0))	-93.5676
+Ln(L(b))	-78.60660
+Rho^2	.15989
+Corr. rho^2	.11789
+Obs.	147
+
+OldDev 9
+9 to 9	non-event	33240
+9 to 9	event	482
+9 to 4	event	37
+9 to 10	event	27
+9 to 17	event	26
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	10	0	0
+Constant	17	0	0
+Constant	9	3.582808600	1.693
+Constant	4	-6.678128622	-1.134
+Ln(Land value)	9	.2723636792	2.443
+Ln(Land value)	4	1.049719059	2.466
+Ln(Access to population for 1 car households)	9	-.6733464716	-3.115
+Ln(Access to population for 1 car households)	4	-.9546581756	-1.620
+Highway within 300 m	9	-.9282211643	-4.660
+Highway within 300 m	4	-1.232781811	-1.896
+Arterial within 300 m	9	-.1330139989	-1.009
+Percentage of residential cells, within 600 m, before transition	9	.3128241628E-01	7.836
+Percentage of residential cells, within 600 m, before transition	4	.5428260171E-01	4.039
+Percentage of commercial cells, within 600 m, before transition	9	-.2234123115E-01	-2.664
+Percentage of commercial cells, within 600 m, before transition	4	-.4145763638E-01	-1.400
+Percentage of industrial cells, within 600 m, before transition	9	-.1955770413E-01	-2.266
+Percentage of industrial cells, within 600 m, before transition	4	.3142003367E-01	1.387
+Ln(L(0))	-1124.4176
+Ln(L(b))	-913.3687
+Rho^2	.18770
+Corr. rho^2	.18376
+Obs.	1557
+
+OldDev 10
+10 to 10	non-event	2569
+10 to 10	event	95
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	10	-5.729987408	-1.451
+Ln(Land value)	10	-.5660941418	-1.965
+Ln(Access to population for 1 car households)	10	.9711812105	2.412
+Highway within 300 m	10	-1.205832630	-3.088
+Arterial within 300 m	10	-.3709543859	-1.338
+Percentage of residential cells, within 600 m, before transition	10	.1073040391E-01	1.505
+Ln(L(0))	-181.4065
+Ln(L(b))	-168.0436
+Rho^2	.07366
+Corr. rho^2	.05374
+Obs.	285
+
+OldDev 11
+11 to 11	non-event	6771
+11 to 11	event	157
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	11	-1.357322152	-2.359
+Highway within 300 m	11	-.8215948733	-3.329
+Arterial within 300 m	11	-.2592252835	-1.252
+Percentage of residential cells, within 600 m, before transition	11	.1390269057E-01	1.950
+Percentage of commercial cells, within 600 m, before transition	11	.1391285166E-01	1.217
+Ln(L(0))	-299.7982
+Ln(L(b))	-288.9469
+Rho^2	.03620
+Corr. rho^2	.02585
+Obs.	471
+
+OldDev 12
+12 to 12	non-event	1181
+12 to 12	event	29
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	12	0	0
+Ln(L(0))	0
+Ln(L(b))	0
+Rho^2	0
+Corr. rho^2	0
+Obs.	0
+
+OldDev 13
+13 to 13	non-event	1617
+
+Variable	Alternative	Coefficient	t-statistic
+Ln(L(0))	
+Ln(L(b))	
+Rho^2	
+Corr. rho^2	
+Obs.	
+
+OldDev 14
+14 to 14	non-event	2102
+14 to 14	event	16
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	14	0	0
+Ln(L(0))	0
+Ln(L(b))	0
+Rho^2	0
+Corr. rho^2	0
+Obs.	0
+
+OldDev 15
+15 to 15	non-event	643
+
+Variable	Alternative	Coefficient	t-statistic
+Ln(L(0))	
+Ln(L(b))	
+Rho^2	
+Corr. rho^2	
+Obs.	
+
+OldDev 16
+16 to 16	non-event	690
+
+Variable	Alternative	Coefficient	t-statistic
+Ln(L(0))	
+Ln(L(b))	
+Rho^2	
+Corr. rho^2	
+Obs.	
+
+OldDev 17
+17 to 17	non-event	19182
+17 to 17	event	271
+17 to 11	event	59
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	17	-4.755840663	-3.114
+Constant	11	-16.78488508	-4.935
+Ln(Land value)	17	.3283469472	2.396
+Ln(Land value)	11	1.038231171	3.974
+Highway within 300 m	17	-.7790063742	-3.790
+Highway within 300 m	11	-1.143436640	-2.879
+Arterial within 300 m	17	-.6236372497	-3.650
+Arterial within 300 m	11	-.8374743961	-2.774
+Percentage of residential cells, within 600 m, before transition	17	.1922726724E-01	3.468
+Percentage of residential cells, within 600 m, before transition	11	.3363531315E-01	5.076
+Percentage of commercial cells, within 600 m, before transition	17	-.3385216132E-01	-3.644
+Percentage of industrial cells, within 600 m, before transition	17	-.4358254315E-01	-3.089
+Ln(L(0))	-785.1007
+Ln(L(b))	-658.9975
+Rho^2	.16062
+Corr. rho^2	.15550
+Obs.	990
+
+OldDev 18
+18 to 18	non-event	10396
+18 to 12	event	15
+18 to 18	event	95
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	12	0	0
+Constant	18	-1.039436646	-1.515
+Highway within 300 m	18	-.9974653902	-2.910
+Percentage of residential cells, within 600 m, before transition	18	.3535373193E-01	3.876
+Percentage of commercial cells, within 600 m, before transition	18	-.4015343761E-01	-2.707
+Percentage of industrial cells, within 600 m, before transition	18	-.2996606677E-01	-1.189
+Ln(L(0))	-181.4065
+Ln(L(b))	-129.1099
+Rho^2	.28828
+Corr. rho^2	.27557
+Obs.	285
+
+OldDev 19
+19 to 19	non-event	9487
+19 to 19	event	50
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	19	-2.499577875	-2.039
+Arterial within 300 m	19	-.7628217216	-1.571
+Percentage of residential cells, within 600 m, before transition	19	.6262546488E-01	3.530
+Percentage of commercial cells, within 600 m, before transition	19	-.2057089137E-01	-1.025
+Percentage of industrial cells, within 600 m, before transition	19	-.1556262915	-1.260
+Ln(L(0))	-95.4771
+Ln(L(b))	-55.42895
+Rho^2	.41945
+Corr. rho^2	.39943
+Obs.	150
+
+OldDev 20
+20 to 20	non-event	11414
+20 to 20	event	49
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	20	-1.600401691	-2.815
+Percentage of residential cells, within 600 m, before transition	20	.5515600884E-01	4.690
+Percentage of commercial cells, within 600 m, before transition	20	.2484863820E-01	1.610
+Percentage of industrial cells, within 600 m, before transition	20	-.1971974643E-01	-1.471
+Ln(L(0))	-93.5676
+Ln(L(b))	-64.90312
+Rho^2	.30635
+Corr. rho^2	.28695
+Obs.	147
+
+OldDev 21
+21 to 21	non-event	7345
+21 to 21	event	29
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	21	0	0
+Ln(L(0))	0
+Ln(L(b))	0
+Rho^2	0
+Corr. rho^2	0
+Obs.	0
+
+OldDev 22
+22 to 22	non-event	8308
+
+Variable	Alternative	Coefficient	t-statistic
+Ln(L(0))	
+Ln(L(b))	
+Rho^2	
+Corr. rho^2	
+Obs.	
+
+OldDev 23
+23 to 23	non-event	207057
+23 to 23	event	233
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	23	10.73853818	3.344
+Ln(Land value)	23	.6394346168	5.920
+Ln(Access to population for 1 car households)	23	-1.579018105	-5.042
+Percentage of residential cells, within 600 m, before transition	23	.2716653062E-01	5.265
+Percentage of industrial cells, within 600 m, before transition	23	-.3469413350E-01	-1.204
+Ln(L(0))	-444.9234
+Ln(L(b))	-273.0375
+Rho^2	.38633
+Corr. rho^2	.38191
+Obs.	699
+
+OldDev 24
+24 to 24	non-event	766987
+24 to 24	event	39				(removed)
+24 to 1	event	2164
+24 to 2	event	1436
+24 to 3	event	798
+24 to 4	event	276
+24 to 5	event	145
+24 to 6	event	29
+24 to 7	event	63
+24 to 9	event	296
+24 to 17	event	94
+24 to 20	event	80
+24 to 21	event	50
+24 to 22	event	22
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	BASE	0	0
+Constant	6	0	0
+Constant	22	0	0
+Constant	1	-9.442361327	-10.766
+Constant	2	-17.72370976	-18.493
+Constant	3	-19.85803903	-15.566
+Constant	4	-17.71672211	-14.086
+Constant	5	-18.36038923	-14.583
+Constant	7	-34.70437835	-6.384
+Constant	9	-15.14185507	-8.612
+Constant	17	-14.24996691	-4.234
+Constant	20	-28.64267762	-6.440
+Constant	21	-9.737550009	-2.290
+Ln(Land value)	1	.9654429027	25.804
+Ln(Land value)	2	1.608347164	31.504
+Ln(Land value)	345	2.064929317	31.025
+Ln(Land value)	7	1.182478627	5.741
+Ln(Land value)	9	.2986061947	6.745
+Ln(Land value)	Commercial 1; Industrial 1 and 2	1.165252244	13.390
+Ln(Access to population for 1 car households)	12	-.5146373216	-6.068
+Ln(Access to population for 1 car households)	345	-.8505641063	-6.905
+Ln(Access to population for 1 car households)	7	.8148165949	1.802
+Ln(Access to population for 1 car households)	9	.4656734688	2.984
+Ln(Access to population for 1 car households)	17	-.5420554888	-1.909
+Ln(Access to population for 1 car households)	20	.7195465167	1.960
+Ln(Access to population for 1 car households)	21	-.7645750175	-2.141
+Scaled distance to development (1000-distance)/1000	123	3.849598964	13.205
+Scaled distance to development (1000-distance)/1000	7	6.136981119	2.006
+Scaled distance to development (1000-distance)/1000	9	3.278996250	6.475
+Scaled distance to development (1000-distance)/1000	17	4.318070720	3.453
+Scaled distance to development (1000-distance)/1000	20	3.622987089	4.102
+Scaled distance to development (1000-distance)/1000	21	2.734266607	3.015
+Highway within 300 m	RL	-.8611171616	-7.863
+Highway within 300 m	9	.9190929332	5.824
+Arterial within 300 m	12	.3176719127	4.806
+Arterial within 300 m	7	1.221739452	4.428
+Arterial within 300 m	9	.9517375291	6.775
+Arterial within 300 m	17	.9681290507	4.159
+Arterial within 300 m	20	1.113306509	4.278
+Arterial within 300 m	21	1.665783800	5.539
+Percentage of residential cells, within 600 m, before transition	Residential	.2440604826E-01	16.167
+Percentage of residential cells, within 600 m, before transition	17	-.1167834493E-01	-2.085
+Percentage of residential cells, within 600 m, before transition	20	-.7347382323E-01	-7.222
+Percentage of residential cells, within 600 m, before transition	21	-.1230744319	-6.375
+Percentage of commercial cells, within 600 m, before transition	RL	-.6957323381E-01	-11.447
+Percentage of commercial cells, within 600 m, before transition	7	.2619166889E-01	2.031
+Percentage of industrial cells, within 600 m, before transition	12	-.6971213698E-01	-8.260
+Percentage of industrial cells, within 600 m, before transition	3457	-.3680731530E-01	-3.974
+Percentage of industrial cells, within 600 m, before transition	9	.2158316904E-01	3.216
+Ln(L(0))	-19192.6564
+Ln(L(b))	-13330.22
+Rho^2	.30545
+Corr. rho^2	.30526
+Obs.	16284
+
+OldDev 25
+25 to 25	non-event	0
+
+Variable	Alternative	Coefficient	t-statistic
+Ln(L(0))	
+Ln(L(b))	
+Rho^2	
+Corr. rho^2	
+Obs.	
+

@@ -1,0 +1,568 @@
+; Michael Puckett keyword syntax file for PowerBASIC
+; BASIC programming language (PowerBASIC 3.5 dialect)
+; Copyright (C) 1999, Michael Puckett
+; last edit 1999/02/11
+
+C=1
+
+[Syntax]
+Namespace1 = 6
+IgnoreCase = Yes
+InitKeyWordChars = $A-Za-z
+KeyWordChars = -$A-Za-z0-9_
+PreprocStart = $
+SyntaxStart =
+SyntaxEnd =
+CommentStart = $if
+CommentEnd = $endif
+CommentStartAlt =
+CommentEndAlt =
+SingleComment = '
+SingleCommentCol =
+SingleCommentAlt = rem
+SingleCommentColAlt =
+StringStart = "
+StringEnd = "
+StringAlt =
+StringEsc =
+CharStart =
+CharEnd =
+CharEsc =
+
+; //////////////
+; metastatements
+; //////////////
+[Preprocessor keywords]
+$alias
+$code
+$com
+$compile
+$cpu
+$debug
+$dim
+$dynamic
+$endif
+$error
+$event
+$float
+$huge
+$if
+$include
+$inline
+$lib
+$link
+$optimize
+$option
+$segment
+$sound
+$stack
+$static
+$string
+; /////////////////////
+; metastatement options
+; (still preprocessor)
+; /////////////////////
+all
+array
+cga
+chain
+cntlbreak
+com
+ega
+emulate
+exe
+fullfloat
+graph
+herc
+iprint
+lpt
+map
+memory
+none
+npx
+off
+path
+pbdebug
+procedure
+signed
+size
+speed
+unit
+unsigned
+vga
+
+; //////////////////
+; standard functions
+; //////////////////
+[Keywords 1]
+absolute
+access
+and
+any
+append
+array
+as
+asc
+ascend
+ascii
+asm
+at
+atn
+attrib
+base
+beep
+bin$
+binary
+bit
+bits
+bload
+bsave
+call
+case
+cbcd
+cbyt
+cdbl
+cdwd
+ceil
+cext
+cfix
+chain
+chdir
+chdrive
+chr$
+cint
+circle
+clear
+clng
+close
+cls
+codeptr
+codeseg
+collate
+color
+com
+command$
+common
+cos
+cqud
+csng
+csrlin
+curdir$
+cvb
+cvbyt
+cvd
+cvdwd
+cve
+cvf
+cvi
+cvl
+cvmd
+cvms
+cvq
+cvs
+cvwrd
+cwrd
+data
+date$
+declare
+decr
+def
+defbcd
+defdbl
+defext
+deffix
+defflx
+defint
+deflng
+defqud
+defsng
+defstr
+delay
+delete
+descend
+dim
+dir$
+do
+draw
+dynamic
+else
+elseif
+ems
+end
+endmem
+environ
+environ$
+eof
+eqv
+eradr
+erase
+erdev
+erdev$
+erl
+err
+errnum
+error
+errtest
+execute
+exit
+exp
+exp10
+exp2
+external
+extract$
+far
+field
+fileattr
+files
+fix
+fixdigits
+flexchr$
+flush
+fn
+for
+frac
+fre
+freefile
+from
+function
+get
+get$
+gosub
+goto
+hex$
+if
+imp
+impabs
+in
+incr
+inkey$
+inp
+input
+input$
+insert
+instat
+instr
+int
+interrupt
+ioctl
+ioctl$
+isfalse
+istrue
+iterate
+key
+kill
+lbound
+lcase$
+left
+left$
+len
+let
+line
+list
+loc
+local
+locate
+lock
+lof
+log
+log10
+log2
+loop
+lpos
+lprint
+lset
+ltrim$
+map
+max
+max$
+max%
+mempack
+memset
+mid$
+min
+min$
+min%
+mkb$
+mkbyt$
+mkd$
+mkdir
+mkdwd$
+mke$
+mkf$
+mki$
+mkl$
+mkmd$
+mkms$
+mkq$
+mks$
+mkwrd$
+mod
+mtimer
+multiplex
+name
+next
+not
+oct$
+off
+on
+open
+option
+or
+out
+output
+paint
+palette
+peek
+peek$
+peeki
+peekl
+pen
+play
+pmap
+point
+poke
+poke$
+pokei
+pokel
+popup
+pos
+preset
+print
+pset
+public
+put
+put$
+quiet
+random
+randomize
+read
+redim
+reg
+rem
+remove$
+repeat$
+replace
+reset
+restore
+resume
+return
+right
+right$
+rmdir
+rnd
+rotate
+round
+rset
+rtrim$
+run
+scan
+screen
+seek
+seg
+select
+setmem
+sgn
+shared
+shell
+shift
+signed
+sin
+sleep
+sort
+sound
+space$
+spc
+sqr
+static
+step
+stick
+stop
+str$
+strig
+string$
+strptr
+strseg
+stuff
+sub
+swap
+system
+tab
+tagarray
+tally
+tan
+then
+time$
+timer
+to
+troff
+tron
+type
+ubound
+ucase
+ucase$
+uevent
+union
+unlock
+until
+using
+using$
+val
+varptr
+varptr$
+varseg
+verify
+view
+wait
+wend
+while
+width
+window
+with
+write
+xor
+
+; //////////
+; data types
+; //////////
+[Keywords 2]
+any
+bcd
+byte
+double
+dword
+extended
+fix
+flex
+integer
+long
+quad
+single
+string
+word
+
+; ///////////////////
+; modifiers / options
+; ///////////////////
+[Keywords 3]
+ascend
+byval
+collate
+delete
+descend
+dynamic
+huge
+local
+preserve
+public
+shared
+static
+sort
+
+; ///////////////////////////////
+; internal procedures & variables
+; ///////////////////////////////
+[Keywords 4]
+arraycalc
+arrayinfo
+getstralloc
+getstrlen
+getstrloc
+rlsstralloc
+setonexit
+setonmempack
+setuevent
+; //////////////////
+; start variables
+; (still keywords 4)
+; //////////////////
+pbvbinbase
+pbvcpu
+pbvcursor1
+pbvcursor2
+pbvcursorvis
+pbvdefseg
+pbverr
+pbvfixdigits
+pbvflexchr
+pbvhost
+pbvminusone
+pbvnpx
+pbvone
+pbvrevision
+pbvrevltr
+pbvscrnapage
+pbvscrnbuff
+pbvscrncard
+pbvscrncols
+pbvscrnmode
+pbvscrnpxlattr
+pbvscrnrows
+pbvscrntxtattr
+pbvscrnvpage
+pbvswitch
+pbvuserarea
+pbvusingchrs
+pbvvtxtx1
+pbvvtxtx2
+pbvvtxty1
+pbvvtxty2
+pbvzero
+
+; ///////////////
+; inline assember
+; ///////////////
+[Keywords 5]
+;;;add
+call
+cmp
+dec
+in
+inc
+int
+jcxz
+je
+jmp
+jne
+jns
+jnz
+jz
+lds
+les
+lodsb
+mov
+movsw
+mul
+neg
+;;;not
+;;;or
+out
+pop
+push
+rep
+shl
+shr
+stosb
+stosw
+xor
+; //////////////////
+; cpu registers
+; (still keywords 5)
+; //////////////////
+ax
+bx
+cx
+ds
+dx
+al
+ah
+bl
+bh
+cl
+ch
+dl
+dh
+si
+es
+di
+flags
+bp

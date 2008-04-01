@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE urbansim-parameters SYSTEM "C:/eclipse/workspace/UrbanSim2/org/urbansim/indicators/urbansim-parameters.dtd">
+<urbansim-parameters>
+  <dataset>
+    <database contains="outputdata">
+        <mysql url="jdbc:mysql://trondheim.cs.washington.edu/Eugene_1980_output_jpf_1994_1B_va"
+               username="urbansim"
+           password="UwUrbAnsIm" />
+    </database>
+  </dataset>
+  <indicators>
+    <table display-indicators = "Residential units per year"                   output-filename="T:/modeler-work-specs/Sensitivity/Indicators/Eugene/ResUnitsPerYear_1B_va.tab" />
+    <table display-indicators = "Residential units added per year"             output-filename="T:/modeler-work-specs/Sensitivity/Indicators/Eugene/NewResUnitsPerYear_1B_va.tab" />
+    <table display-indicators = "Non-residential sqft per year"                output-filename="T:/modeler-work-specs/Sensitivity/Indicators/Eugene/NonResSFPerYear_1B_va.tab" />
+    <table display-indicators = "Non-residential sqft added per year"          output-filename="T:/modeler-work-specs/Sensitivity/Indicators/Eugene/NewNonResSFPerYear_1B_va.tab" />
+    <table display-indicators = "Occupied home based job spaces per year"      output-filename="T:/modeler-work-specs/Sensitivity/Indicators/Eugene/OccHBJobSpacesPerYear_1B_va.tab" />
+    <table display-indicators = "Occupied non-home based job spaces per year"  output-filename="T:/modeler-work-specs/Sensitivity/Indicators/Eugene/OccNHBJobSpacesPerYear_1B_va.tab" />
+    <table display-indicators = "Occupied residential units per year"          output-filename="T:/modeler-work-specs/Sensitivity/Indicators/Eugene/OccResUnitsPerYear_1B_va.tab" />
+    <table display-indicators = "Vacant residential units per year"            output-filename="T:/modeler-work-specs/Sensitivity/Indicators/Eugene/VacResUnitsPerYear_1B_va.tab" />
+    <table display-indicators = "Cells in development type per year"           output-filename="T:/modeler-work-specs/Sensitivity/Indicators/Eugene/CellsByDevTypePerYear_1B_va.tab" />
+    <table display-indicators = "Households per year"                          output-filename="T:/modeler-work-specs/Sensitivity/Indicators/Eugene/HHsPerYear_1B_va.tab" />
+    <table display-indicators = "Households added or deleted per year"         output-filename="T:/modeler-work-specs/Sensitivity/Indicators/Eugene/HHsAddedDeletedPerYear_1B_va.tab" />
+    <table display-indicators = "Households moving per year"                   output-filename="T:/modeler-work-specs/Sensitivity/Indicators/Eugene/HHsMovingPerYear_1B_va.tab" />
+    <table display-indicators = "Unplaced households per year"                 output-filename="T:/modeler-work-specs/Sensitivity/Indicators/Eugene/UnplacedHHsPerYear_1B_va.tab" />
+    <table display-indicators = "Jobs per year"                                output-filename="T:/modeler-work-specs/Sensitivity/Indicators/Eugene/JobsPerYear_1B.tab" />
+    <table display-indicators = "Jobs added or deleted per year"               output-filename="T:/modeler-work-specs/Sensitivity/Indicators/Eugene/JobsAddedDeletedPerYear_1B_va.tab" />
+    <table display-indicators = "Jobs moving per year"                         output-filename="T:/modeler-work-specs/Sensitivity/Indicators/Eugene/JobsMovingPerYear_1B_va.tab" />
+    <table display-indicators = "Placed jobs per year"                         output-filename="T:/modeler-work-specs/Sensitivity/Indicators/Eugene/PlacedJobsPerYear_1B_va.tab" />
+    <table display-indicators = "Unplaced jobs per year"                       output-filename="T:/modeler-work-specs/Sensitivity/Indicators/Eugene/UnplacedJobsPerYear_1B_va.tab" />
+  </indicators>  
+</urbansim-parameters>

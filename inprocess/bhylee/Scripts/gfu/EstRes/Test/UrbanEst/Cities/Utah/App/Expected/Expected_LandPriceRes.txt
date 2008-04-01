@@ -1,0 +1,56 @@
+ 
+
+Variable	Coefficient	t-statistic
+Constant	-6.911227795	-63.067
+Residential 1	-.7491462611E-01	-4.012
+Residential 2	.2313647479	11.825
+Residential 3	.3720922861	16.238
+Residential 4	.4839542677	18.257
+Residential 5	.4331360532	15.224
+Residential 6	.2585842003	7.815
+Residential 7	-.1138437340	-2.876
+Residential 8	-.3052727118	-4.525
+Mixed use 2	.2470498904	3.914
+Mixed use 3	.2552758730	5.849
+Mixed use 4	.2194407107	2.468
+Mixed use 5	.4167813305	5.232
+Mixed use 8	.6138669155	5.164
+Commercial 1	.4382629971	16.141
+Commercial 2	.7384180397	21.167
+Commercial 3	.9456770184	25.557
+Industrial 1	.3065525691	9.059
+Industrial 2	.3026147615	7.506
+Industrial 3	.6272487225	15.725
+Governmental	.1112765494	7.634
+Plantype 1	-.2018163074	-9.612
+Plantype 2	.5234362589	47.912
+Plantype 3	.7289365376	44.244
+Plantype 4	.5966072010	42.917
+Plantype 5	1.068569218	8.348
+Plantype 6	.5797266717	28.629
+Plantype 7	.5024932547	22.663
+Plantype 8	1.658765037	63.994
+Ln(Total improvement value + 1)	.7005955766E-01	51.042
+Ln(Number of units + 1)	.2468134212	24.935
+Ln(Number of units within 600 m + 1)	.1581047891	62.292
+Ln(Total employment within 600 m + 1)	.7265462639E-01	24.387
+Ln(Access to employment)	-1.812222689	-37.135
+Ln(Access to population)	2.988968165	57.339
+Ln(Percent mixed use within 600 m + 1)	-.2167856678E-01	-6.270
+Ln(Percent commercial within 600 m + 1)	.1682116735E-01	3.952
+Ln(Percent industrial within 600 m + 1)	.5719955268E-01	12.152
+Ln(Percent governmental within 600 m + 1)	.6855182201E-01	26.487
+Ln(Distance to highway + 1)	.4108562056E-01	14.646
+Distance to highway <= 300 m	.9244087236E-01	6.245
+Percent cell covered by water	-.5120192457	-13.570
+Percent cell covered by animal sanctuary	-.8899485673	-10.582
+Percent cell covered by flood plane	-.6072406053	-18.974
+Percent cell covered by wetland	-.9290138925	-25.300
+Percent cell covered by slope	-1.375179904	-59.540
+Percent cell covered by open space	.5156433993	24.547
+Percent cell covered by public space	-.4397677379	-20.882
+Percent cell covered by roads	-.2314714675	-9.652
+R^2	.746098
+Adj. R^2	.74598
+Obs.	107208
+

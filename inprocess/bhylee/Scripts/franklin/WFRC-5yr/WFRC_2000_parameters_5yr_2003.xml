@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><urbansim-parameters>
+  <models random-seed="0">
+    <accessibility-model/>
+    <employment-location-choice-model weighted-probabilities="true"/>
+    <employment-relocation-choice-model/>
+    <household-relocation-choice-model/>
+    <household-transition-model/>
+    <employment-transition-model/>
+    <household-location-choice-model weighted-probabilities="true"/>
+    <land-price-model/>
+    <developer-model-with-vacancy-adjustment/>
+  </models>
+  <dataset>
+    <database contains="scenario-data">
+      <mysql url="jdbc:mysql://localhost/WFRC_2000_scenario_5yr" username="root" password=""/>
+    </database>
+    <database contains="outputdata">
+      <mysql url="jdbc:mysql://localhost/WFRC_1997_output_5yr_2003" username="root" password=""/>
+    </database>
+  </dataset>
+  <exporter/>
+</urbansim-parameters>

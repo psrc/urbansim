@@ -1,0 +1,6 @@
+## create a temporary results diagnostic table
+create table tmp_resultdiagnose
+select f.census_block, e.EMPLOYER_ID as eEMPLOYER_ID, e.NUMBER_OF_JOBS as eNUMBER_OF_JOBS, e.STREET_NUMBER as eSTREET_NUMBER, e.PREFIX as ePREFIX, e.STREET_NAME as eSTREET_NAME, e.STREET_TYPE as eSTREET_TYPE, e.SUFFIX as eSUFFIX, p.parcel_id as pparcel_id, p.prefix as pprefix, p.street_number as pstreet_number, p.street_name as pstreet_name, p.street_type as pstreet_type, p.suffix as psuffix, f.decision from final_employers_matched_to_parcels f inner join employers e on e.employer_id=f.employer_id and e.census_block = f.census_block left outer join parcels p on p.parcel_id=f.parcel_id and p.census_block=f.census_block;
+
+##compare the matched results
+select census_block,eemployer_id,pparcel_id, eSTREET_NAME, pstreet_name, eSTREET_NUMBER, pstreet_number, eSTREET_TYPE, pstreet_type, ePREFIX, pprefix, eSUFFIX, psuffix,decision from tmp_resultdiagnose where (eprefix <> pprefix or esuffix <> psuffix or (eprefix is null and pprefix is not null) or (eprefix is not null and pprefix is null) or (esuffix is null and psuffix is not null) or (esuffix is not null and psuffix is null)) and (decision = "CLOSEST_EXACT_ADDRESS" or decision = "CLOSEST_PARCEL" or decision = "SINGLE_ADJACENT_PARCEL" or decision = "SINGLE_EXACT_ADDRESS") order by decision;

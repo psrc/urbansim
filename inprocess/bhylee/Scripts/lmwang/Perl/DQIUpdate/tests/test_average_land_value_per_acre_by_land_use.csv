@@ -1,0 +1,99 @@
+"COUNTY","LAND_USE","AVG_LAND_VAL_PER_ACRE","PARCEL_COUNT"
+King,Agriculture,8164.61,4237
+King,Civic and Quasi-Public,178832.00,1595
+King,Commercial,452890.19,8444
+King,Forest, harvestable,597.76,5
+King,Forest, protected,13808.00,130
+King,Government,305714.90,556
+King,Group Quarters,160272.42,364
+King,Hospital, Convalescent Center,473359.57,120
+King,Industrial,252192.10,1805
+King,Mining,8607.28,70
+King,Mobile Home Park,34839.01,4236
+King,Multi-Family Residential,420670.95,22194
+King,n/a,414399.47,22
+King,Office,562938.25,4420
+King,Park and Open Space,122470.60,684
+King,Parking,764585.84,1927
+King,Recreation,83978.73,662
+King,Right-of-Way,122692.64,1340
+King,School,237149.24,888
+King,Single Family Residential,154364.80,433387
+King,Transportation, Communication, Utilities,33006.68,846
+King,Vacant,7015.97,59013
+King,Warehousing,300656.69,2928
+King,Water,50590.50,58
+Kitsap,Agriculture,9711.80,244
+Kitsap,Civic and Quasi-Public,69549.42,235
+Kitsap,Commercial,154505.37,1241
+Kitsap,Fisheries,6144.42,22
+Kitsap,Forest, harvestable,9919.59,121
+Kitsap,Forest, protected,592.83,1258
+Kitsap,Government,17008.18,147
+Kitsap,Group Quarters,25823.77,6
+Kitsap,Hospital, Convalescent Center,71553.25,18
+Kitsap,Industrial,35496.18,57
+Kitsap,Mining,8084.34,42
+Kitsap,Mobile Home Park,17631.65,7176
+Kitsap,Multi-Family Residential,71816.57,2464
+Kitsap,Office,218103.30,442
+Kitsap,Park and Open Space,10084.66,1546
+Kitsap,Parking,42988.43,1690
+Kitsap,Recreation,22767.33,124
+Kitsap,Right-of-Way,232.62,187
+Kitsap,School,23668.50,89
+Kitsap,Single Family Residential,46957.89,58580
+Kitsap,Transportation, Communication, Utilities,8180.01,663
+Kitsap,Vacant,16281.60,23608
+Kitsap,Warehousing,114140.15,133
+Kitsap,Water,557.79,242
+Pierce,Agriculture,7777.70,2066
+Pierce,Civic and Quasi-Public,74788.43,817
+Pierce,Commercial,200896.84,6214
+Pierce,Fisheries,22984.51,77
+Pierce,Forest, harvestable,654.61,463
+Pierce,Forest, protected,4.19,2079
+Pierce,Government,42552.62,399
+Pierce,Group Quarters,123836.10,69
+Pierce,Hospital, Convalescent Center,87385.33,60
+Pierce,Industrial,125835.76,700
+Pierce,Military,51102.96,11
+Pierce,Mining,39023.59,67
+Pierce,Mobile Home Park,25661.02,14481
+Pierce,Multi-Family Residential,111124.74,9444
+Pierce,n/a,10522.33,1786
+Pierce,Office,235768.40,1396
+Pierce,Park and Open Space,19121.93,1397
+Pierce,Parking,239254.63,1023
+Pierce,Recreation,48701.40,387
+Pierce,Right-of-Way,6480.41,1449
+Pierce,School,85003.23,512
+Pierce,Single Family Residential,69358.94,169452
+Pierce,Transportation, Communication, Utilities,52384.71,1665
+Pierce,Vacant,13719.20,38768
+Pierce,Warehousing,153160.06,534
+Pierce,Water,6246.21,821
+Snohomish,Agriculture,11466.47,188
+Snohomish,Civic and Quasi-Public,76081.26,567
+Snohomish,Commercial,206588.65,3939
+Snohomish,Fisheries,10002.03,16
+Snohomish,Forest, harvestable,275.28,2078
+Snohomish,Forest, protected,1106.01,224
+Snohomish,Government,39802.13,47
+Snohomish,Group Quarters,39704.84,73
+Snohomish,Industrial,80616.92,679
+Snohomish,Military,206283.11,23
+Snohomish,Mining,4500.20,232
+Snohomish,Mobile Home Park,54275.83,219
+Snohomish,Multi-Family Residential,188250.15,6478
+Snohomish,Office,309514.87,1212
+Snohomish,Park and Open Space,6597.90,3659
+Snohomish,Parking,340560.21,417
+Snohomish,Recreation,42343.50,306
+Snohomish,Right-of-Way,10746.53,474
+Snohomish,School,99958.89,74
+Snohomish,Single Family Residential,70917.95,158058
+Snohomish,Transportation, Communication, Utilities,49904.06,1085
+Snohomish,Vacant,3828.77,31536
+Snohomish,Warehousing,186350.89,460
+Snohomish,Water,4993.82,351

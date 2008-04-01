@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE urbansim-parameters SYSTEM "c:/program files/urbansim/urbansim2/org/urbansim/urbansim-parameters.dtd">
+<urbansim-parameters >
+  <dataset>
+    <database contains="outputdata">
+      <mysql
+      url="jdbc:mysql://trondheim.cs.washington.edu/WFRC_2000_output_5yr_2003"
+      username="urbansim"
+      password="UwUrbAnsIm"/>
+    </database>
+  </dataset>
+  <indicators>
+    <table display-indicators = "Residential units per year"                   output-filename="//ntdfs.cs.washington.edu/cs/unix/projects/urbansim2/Projects/WFRC/5yrValid/Indicators/ResUnitsPerYear_00-03.tab" />
+    <table display-indicators = "Residential units added per year"             output-filename="//ntdfs.cs.washington.edu/cs/unix/projects/urbansim2/Projects/WFRC/5yrValid/Indicators/NewResUnitsPerYear_00-03.tab" />
+    <table display-indicators = "Non-residential sqft per year"                output-filename="//ntdfs.cs.washington.edu/cs/unix/projects/urbansim2/Projects/WFRC/5yrValid/Indicators/NonResSFPerYear_00-03.tab" />
+    <table display-indicators = "Non-residential sqft added per year"          output-filename="//ntdfs.cs.washington.edu/cs/unix/projects/urbansim2/Projects/WFRC/5yrValid/Indicators/NewNonResSFPerYear_00-03.tab" />
+    <table display-indicators = "Households per year"                          output-filename="//ntdfs.cs.washington.edu/cs/unix/projects/urbansim2/Projects/WFRC/5yrValid/Indicators/HHsPerYear_00-03.tab" />
+    <table display-indicators = "Households added or deleted per year"         output-filename="//ntdfs.cs.washington.edu/cs/unix/projects/urbansim2/Projects/WFRC/5yrValid/Indicators/HHsAddedDeletedPerYear_00-03.tab" />
+    <table display-indicators = "Jobs per year"                                output-filename="//ntdfs.cs.washington.edu/cs/unix/projects/urbansim2/Projects/WFRC/5yrValid/Indicators/JobsPerYear_1B_00-03.tab" />
+    <table display-indicators = "Jobs added or deleted per year"               output-filename="//ntdfs.cs.washington.edu/cs/unix/projects/urbansim2/Projects/WFRC/5yrValid/Indicators/JobsAddedDeletedPerYear_00-03.tab" />
+  </indicators>  
+</urbansim-parameters>

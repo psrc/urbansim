@@ -1,0 +1,43 @@
+BEGIN SYN FILE:
+
+; Keyword syntax file for Textpad
+; Generic XML syntax.
+; Syntax coloring for generic (*.xml) files
+; code@leegoddard.com 21/01/02 added ;	correct comment markup, 
+preprocStart, IgnoreCase: No, String/Char delimiters
+;	a few key words
+
+C=1
+
+[Syntax]
+Namespace1 = 6
+IgnoreCase = No
+InitKeyWordChars = A-Za-z
+KeyWordChars = A-Za-z0-9_-
+PreprocStart = ?
+SyntaxStart = <
+SyntaxEnd = >
+CommentStart = <!--
+CommentEnd = -->
+CommentStartAlt = CommentEndAlt = StringStart = " StringEnd = "
+StringAlt = StringEsc = \
+CharStart = '
+CharEnd = '
+CharEsc = \
+StringsSpanLines = Yes
+StringAlt =
+; ///////////////////
+; standard properties
+; ///////////////////
+[Keywords 1]
+xml version
+encoding
+standalone
+DOCTYPE SYSTEM
+PUBLIC
+; ///////////////////
+; other notable words
+; ///////////////////
+[Keywords 2]
+
+

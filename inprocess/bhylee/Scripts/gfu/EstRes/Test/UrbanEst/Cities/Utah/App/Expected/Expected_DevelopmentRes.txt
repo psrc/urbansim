@@ -1,0 +1,797 @@
+OldDev 1
+1 to 1	non-event	60808
+1 to 1	event	65
+1 to 2	event	2021
+1 to 3	event	353
+1 to 4	event	84
+1 to 5	event	38
+1 to 9	event	44
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	1	-6.128711272	-23.818
+Constant	2	-12.93334863	-9.291
+Constant	3	-16.87061850	-5.002
+Constant	4	-20.29576064	-2.981
+Constant	5	-24.33829363	-2.548
+Constant	9	-21.25552246	-2.188
+Scaled distance to development (1000-distance)/1000	2	7.994847707	4.943
+Scaled distance to development (1000-distance)/1000	3	14.89831623	3.752
+Scaled distance to development (1000-distance)/1000	4	16.89574995	2.108
+Scaled distance to development (1000-distance)/1000	5	20.96710692	1.866
+Scaled distance to development (1000-distance)/1000	Mixed use	17.19342774	1.528
+Transitions to mixed use, within 600 m, in last 3 years	Residential	-.1041465063	-2.280
+Transitions to industrial, within 600 m, in last 3 years	Residential	-.4279980712	-2.912
+Ln(Residential units added, within 600 m, in last 3 years)	1	.1545229607	1.835
+Ln(Residential units added, within 600 m, in last 3 years)	2	.5633391780E-01	2.785
+Ln(Residential units added, within 600 m, in last 3 years)	3	.1629607943	4.360
+Ln(Residential units added, within 600 m, in last 3 years)	4	.3045789374	4.160
+Ln(Residential units added, within 600 m, in last 3 years)	5	.2058479827	1.921
+Ln(Commercial sqft added, within 600 m, in last 3 years)	1	.1735418742	4.759
+Ln(Commercial sqft added, within 600 m, in last 3 years)	2	.3039179240E-01	2.016
+Percentage of same type cells, within 600 m, before transition	Residential	-.2680449511E-01	-7.477
+Percentage of same type cells, within 600 m, before transition	Mixed use	-.3414945712E-01	-1.496
+Percentage of residential cells, within 600 m, before transition	Residential	.1200920585E-01	7.774
+Percentage of mixed use cells, within 600 m, before transition	Residential	-.2029561949E-01	-2.968
+Percentage of mixed use cells, within 600 m, before transition	Mixed use	.3116741701E-01	1.608
+Percentage of commercial cells, within 600 m, before transition	Residential	-.9266781019E-02	-1.332
+Percentage of commercial cells, within 600 m, before transition	Mixed use	.2741113619E-01	1.331
+Percentage of governmental cells, within 600 m, before transition	Mixed use	-.6224248094E-01	-2.060
+Ln(Land value)	2	.3183064658	8.973
+Highway within 300 m	Residential	-.7074616112	-5.744
+Arterial within 300 m	Mixed use	.8207797302	2.509
+Percent cell covered by animal sanctuary	Residential	-1.396899873	-1.920
+Percent cell covered by animal sanctuary	Mixed use	-19.50990047	-1.097
+Percent cell covered by flood plane	Residential	-2.574566525	-2.898
+Percent cell covered by wetland	Residential	-2.368795294	-3.924
+Percent cell covered by slope	Mixed use	2.004035181	1.702
+Percent cell covered by open space	Residential	-.4501022784	-1.510
+Percent cell covered by public space	Residential	-1.215331795	-4.884
+Percent cell covered by roads	Residential	2.015255752	10.406
+Plantype 1	Residential	-1.374105350	-2.907
+Plantype 2	Residential	1.380730008	10.201
+Plantype 2	Mixed use	2.374877341	2.315
+Plantype 3	Residential	.6832034193	3.266
+Plantype 3	Mixed use	2.926958399	2.625
+Plantype 4	Residential	-.6549537338	-2.132
+Plantype 4	Mixed use	2.076668172	1.752
+Plantype 6	Residential	.7893933728	3.188
+Plantype 7	Residential	1.028129927	4.672
+Ln(L(0))	-15207.2878
+Ln(L(b))	-6092.225
+Rho^2	.59939
+Corr. rho^2	.59898
+Obs.	7815
+
+OldDev 2
+2 to 2	non-event	65869
+2 to 2	event	2752
+2 to 3	event	2680
+2 to 4	event	301
+2 to 5	event	82
+2 to 9	event	52
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	2	-20.35379322	-8.839
+Constant	3	-22.84645114	-9.869
+Constant	4	-31.17902363	-11.788
+Constant	5	-31.19679800	-11.310
+Constant	9	-5.687621531	-31.426
+Ln(Total residential units in cell)	2	-.9782430862E-01	-2.069
+Ln(Total residential units in cell)	3	.3642392795	8.739
+Ln(Total residential units in cell)	4	.8147227419	6.135
+Ln(Total residential units in cell)	5	.5397292999	2.542
+Scaled distance to development (1000-distance)/1000	Residential	12.61943101	4.711
+Transitions of this type, within 600 m, in last 3 years	2	.2441399106E-01	1.752
+Transitions of this type, within 600 m, in last 3 years	4	-.5551895561E-01	-1.494
+Transitions to commercial, within 600 m, in last 3 years	2	.1056529127	2.379
+Transitions to commercial, within 600 m, in last 3 years	3	.8851912029E-01	1.845
+Transitions to commercial, within 600 m, in last 3 years	Residential 4 and 5	.2879993777	3.257
+Transitions to industrial, within 600 m, in last 3 years	Residential 2 and 3	-.2789817793	-2.556
+Transitions to governmental, within 600 m, in last 3 years	3	.2092464433	2.987
+Ln(Residential units added, within 600 m, in last 3 years)	2	.5489777779E-01	3.133
+Ln(Residential units added, within 600 m, in last 3 years)	3	.6755560790E-01	4.448
+Ln(Residential units added, within 600 m, in last 3 years)	Residential 4 and 5	.1663179069	3.879
+Ln(Commercial sqft added, within 600 m, in last 3 years)	5	.8569904522E-01	1.839
+Percentage of same type cells, within 600 m, before transition	2	.9302251361E-02	3.830
+Percentage of same type cells, within 600 m, before transition	4	-.2157182062E-01	-2.770
+Percentage of same type cells, within 600 m, before transition	5	-.6436732322E-01	-3.703
+Percentage of residential cells, within 600 m, before transition	2	-.1556446614E-01	-6.604
+Percentage of residential cells, within 600 m, before transition	3	-.1165266658E-01	-6.108
+Percentage of residential cells, within 600 m, before transition	4	-.2707395430E-01	-5.035
+Percentage of residential cells, within 600 m, before transition	5	-.2205584484E-01	-2.695
+Percentage of mixed use cells, within 600 m, before transition	2	-.1262793468E-01	-2.200
+Percentage of mixed use cells, within 600 m, before transition	Residential 3 and 5	-.2233104980E-01	-3.623
+Percentage of mixed use cells, within 600 m, before transition	4	-.4543457944E-01	-2.706
+Percentage of mixed use cells, within 600 m, before transition	Mixed use	.4363923680E-01	2.260
+Percentage of commercial cells, within 600 m, before transition	Residential 2, 3, and 5	-.3543301100E-01	-8.073
+Percentage of commercial cells, within 600 m, before transition	4	-.4459024618E-01	-3.375
+Percentage of commercial cells, within 600 m, before transition	Mixed use	.4323197708E-01	2.446
+Percentage of industrial cells, within 600 m, before transition	2	-.4845650829E-01	-4.515
+Percentage of industrial cells, within 600 m, before transition	3	-.2263052289E-01	-2.564
+Percentage of governmental cells, within 600 m, before transition	2	-.7685378886E-02	-2.787
+Percentage of governmental cells, within 600 m, before transition	3	-.7619540529E-02	-2.478
+Percentage of governmental cells, within 600 m, before transition	4	-.2055505183E-01	-2.371
+Ln(Land value)	Residential 2 and 3	.7844784517	25.905
+Ln(Land value)	Residential 4 and 5	1.153454552	10.402
+Highway within 300 m	2	-.4248839243	-4.466
+Highway within 300 m	3	-.7393301097	-7.380
+Highway within 300 m	Residential 4 and 5	-1.660133680	-6.016
+Arterial within 300 m	2	-.2392234976	-4.309
+Arterial within 300 m	Resdiential 3 and 4	-.3476215704	-6.035
+Arterial within 300 m	5	-.9214617784	-2.561
+Percent cell covered by water	Residential 2 and 3	-6.592178623	-2.504
+Percent cell covered by animal sanctuary	2	-.9521343346	-1.481
+Percent cell covered by animal sanctuary	3	-3.760414807	-4.399
+Percent cell covered by animal sanctuary	Residential 4 and 5	-14.14800837	-2.694
+Percent cell covered by flood plane	2	-1.537726142	-2.189
+Percent cell covered by flood plane	3	-3.253608897	-3.292
+Percent cell covered by flood plane	4	-17.17473392	-1.851
+Percent cell covered by wetland	3	-.9737591750	-1.341
+Percent cell covered by slope	2	-.3858094558	-1.467
+Percent cell covered by slope	3	-.8915907538	-2.981
+Percent cell covered by slope	5	-4.617564491	-1.166
+Percent cell covered by slope	9	1.814492455	1.734
+Percent cell covered by open space	2	-.7586382957	-3.371
+Percent cell covered by open space	3	-1.813833202	-7.308
+Percent cell covered by open space	Residential 4 and 5	-3.160534191	-4.591
+Percent cell covered by public space	2	-.8777708701	-3.656
+Percent cell covered by public space	3	-2.138875163	-7.809
+Percent cell covered by public space	4	-5.780090226	-4.947
+Percent cell covered by public space	5	-8.151195173	-3.013
+Percent cell covered by public space	9	-4.015383921	-1.437
+Percent cell covered by roads	3	.9382178325	6.632
+Percent cell covered by roads	4	2.971808638	8.169
+Percent cell covered by roads	5	3.824881800	5.996
+Ln(L(0))	-31536.7584
+Ln(L(b))	-15491.31
+Rho^2	.50879
+Corr. rho^2	.50839
+Obs.	17601
+
+OldDev 3
+3 to 3	non-event	56833
+3 to 3	event	4383
+3 to 4	event	2184
+3 to 5	event	308
+3 to 6	event	39
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	3	-21.77958531	-5.318
+Constant	4	-25.70950596	-6.247
+Constant	5	-26.41795022	-6.144
+Constant	6	-26.64877389	-5.260
+Ln(Total residential units in cell)	Residential	-.6626174834E-01	-1.847
+Scaled distance to development (1000-distance)/1000	Residential	14.53910046	3.036
+Transitions of this type, within 600 m, in last 3 years	3	-.2932587255E-01	-3.215
+Transitions to residential, within 600 m, in last 3 years	Residential	.2410852124E-01	8.706
+Transitions to commercial, within 600 m, in last 3 years	5	.2392385420	2.855
+Transitions to governmental, within 600 m, in last 3 years	Residential	.2100977661	3.709
+Ln(Commercial sqft added, within 600 m, in last 3 years)	Residential	-.2428759351E-01	-2.233
+Percentage of same type cells, within 600 m, before transition	3	.1380419877E-01	6.964
+Percentage of same type cells, within 600 m, before transition	5	-.4592903997E-01	-6.265
+Percentage of same type cells, within 600 m, before transition	6	-.9276811944E-01	-4.571
+Percentage of residential cells, within 600 m, before transition	3	-.2639684663E-01	-14.402
+Percentage of residential cells, within 600 m, before transition	4	-.1864697795E-01	-9.546
+Percentage of residential cells, within 600 m, before transition	5	-.2044363797E-01	-4.868
+Percentage of mixed use cells, within 600 m, before transition	3	-.3826649178E-01	-7.750
+Percentage of mixed use cells, within 600 m, before transition	4	-.3348881122E-01	-5.341
+Percentage of mixed use cells, within 600 m, before transition	5	-.4133800355E-01	-2.824
+Percentage of commercial cells, within 600 m, before transition	3	-.4215034736E-01	-9.597
+Percentage of commercial cells, within 600 m, before transition	4	-.2328226629E-01	-4.580
+Percentage of commercial cells, within 600 m, before transition	5	-.3103375941E-01	-2.637
+Percentage of industrial cells, within 600 m, before transition	Residential	-.2868154924E-01	-4.397
+Percentage of governmental cells, within 600 m, before transition	Residential	-.1358797274E-01	-6.096
+Ln(Land value)	3	.8090784454	21.399
+Ln(Land value)	4	1.031986761	20.094
+Ln(Land value)	5	.9607970546	8.096
+Ln(Land value)	6	.7745158493	3.251
+Highway within 300 m	3	-.2623848078	-3.374
+Highway within 300 m	4	-.4115103541	-3.906
+Highway within 300 m	5	-.8157832280	-3.036
+Arterial within 300 m	3	-.1255886489	-2.563
+Arterial within 300 m	4	-.1680423549	-2.591
+Arterial within 300 m	5	-.2911249163	-1.755
+Percent cell covered by water	3	-21.87933248	-1.216
+Percent cell covered by animal sanctuary	3	-1.445905197	-1.743
+Percent cell covered by animal sanctuary	4	-8.124480197	-4.286
+Percent cell covered by animal sanctuary	5	-8.319723334	-1.462
+Percent cell covered by flood plane	3	-3.268557653	-2.883
+Percent cell covered by flood plane	4	-22.91572170	-4.766
+Percent cell covered by flood plane	5	-15.25376884	-1.664
+Percent cell covered by flood plane	6	5.319398801	1.093
+Percent cell covered by slope	3	-1.365884574	-4.354
+Percent cell covered by slope	4	-3.485126932	-4.907
+Percent cell covered by open space	3	-1.844992886	-7.973
+Percent cell covered by open space	4	-3.347790839	-8.158
+Percent cell covered by open space	5	-5.595083958	-3.487
+Percent cell covered by open space	6	-8.991887550	-1.175
+Percent cell covered by public space	3	-1.575755364	-7.207
+Percent cell covered by public space	4	-3.665645124	-9.775
+Percent cell covered by public space	5	-11.34875020	-5.167
+Percent cell covered by public space	6	-3.944906830	-1.637
+Percent cell covered by roads	3	-.7756114897	-6.521
+Percent cell covered by roads	4	-.2164277004	-1.402
+Percent cell covered by roads	5	2.534323322	6.817
+Plantype 2	Residential	.5046221829	7.946
+Plantype 7	Residential	.4672740975	4.101
+Ln(L(0))	-33382.9612
+Ln(L(b))	-17871.13
+Rho^2	.46466
+Corr. rho^2	.46429
+Obs.	20742
+
+OldDev 4
+4 to 4	non-event	45031
+4 to 4	event	3104
+4 to 5	event	1520
+4 to 6	event	60
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	4	-6.500308444	-11.561
+Constant	5	-7.749434753	-10.769
+Constant	6	-10.72490862	-3.598
+Ln(Total residential units in cell)	Residential	-.2341927184	-4.591
+Transitions to residential, within 600 m, in last 3 years	4	.1360389774E-01	4.211
+Transitions to residential, within 600 m, in last 3 years	5	.2352743900E-01	5.813
+Transitions to residential, within 600 m, in last 3 years	6	.4608667749E-01	2.843
+Percentage of same type cells, within 600 m, before transition	4	-.1010458918E-01	-3.705
+Percentage of same type cells, within 600 m, before transition	5	-.2208686903E-01	-5.993
+Percentage of same type cells, within 600 m, before transition	6	-.6405019078E-01	-4.036
+Percentage of residential cells, within 600 m, before transition	4	-.1846690662E-01	-7.658
+Percentage of residential cells, within 600 m, before transition	5	-.1790911003E-01	-6.316
+Percentage of mixed use cells, within 600 m, before transition	4	-.4663758958E-01	-8.324
+Percentage of mixed use cells, within 600 m, before transition	5	-.3828778117E-01	-5.532
+Percentage of commercial cells, within 600 m, before transition	4	-.3022082966E-01	-6.816
+Percentage of commercial cells, within 600 m, before transition	5	-.2774312036E-01	-5.006
+Percentage of industrial cells, within 600 m, before transition	4	-.2621264699E-01	-3.173
+Percentage of governmental cells, within 600 m, before transition	4	-.2539068986E-01	-7.468
+Percentage of governmental cells, within 600 m, before transition	5	-.2253027711E-01	-5.188
+Ln(Land value)	4	.6844579837	14.064
+Ln(Land value)	5	.7283381359	11.769
+Ln(Land value)	6	.5825432907	2.493
+Highway within 300 m	Residential	-.3839541173	-5.061
+Arterial within 300 m	Residential	-.1386839203	-2.735
+Percent cell covered by animal sanctuary	Residential	-6.883359897	-3.584
+Percent cell covered by flood plane	Residential	-5.575300502	-2.097
+Percent cell covered by wetland	Residential	-3.897289788	-2.954
+Percent cell covered by slope	Residential	-2.181470258	-3.270
+Percent cell covered by open space	Residential	-3.070626215	-8.343
+Percent cell covered by public space	Residential	-3.690857792	-9.734
+Percent cell covered by roads	Residential	-1.319895633	-11.111
+Plantype 2	Residential	.4162169933	4.855
+Plantype 4	Residential	-.6085505694	-1.968
+Plantype 7	Residential	.4702659692	2.929
+Plantype 8	Residential	-1.290889225	-1.244
+Ln(L(0))	-19480.2084
+Ln(L(b))	-11681.49
+Rho^2	.40034
+Corr. rho^2	.39984
+Obs.	14052
+
+OldDev 5
+5 to 5	non-event	54975
+5 to 5	event	2448
+5 to 6	event	494
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	6	-6.210255607	-5.252
+Ln(Total residential units in cell)	5	-.6682729662	-8.440
+Ln(Total residential units in cell)	6	.8229759887	6.130
+Transitions of this type, within 600 m, in last 3 years	5	-.3840979209E-01	-2.535
+Transitions to mixed use, within 600 m, in last 3 years	5	-.1419392401	-2.850
+Transitions to industrial, within 600 m, in last 3 years	6	.5217009359	3.846
+Transitions to governmental, within 600 m, in last 3 years	5	.3646451125	4.371
+Transitions to governmental, within 600 m, in last 3 years	6	.3582726738	2.879
+Ln(Commercial sqft added, within 600 m, in last 3 years)	5	.3771676721E-01	2.378
+Percentage of same type cells, within 600 m, before transition	5	-.1246474170E-01	-4.858
+Percentage of same type cells, within 600 m, before transition	6	-.2713859748E-01	-5.256
+Percentage of residential cells, within 600 m, before transition	5	-.1223499711E-01	-4.149
+Percentage of residential cells, within 600 m, before transition	6	-.5171623234E-01	-10.357
+Percentage of mixed use cells, within 600 m, before transition	5	-.3214048893E-01	-4.949
+Percentage of mixed use cells, within 600 m, before transition	6	-.8951897599E-01	-7.466
+Percentage of commercial cells, within 600 m, before transition	5	-.2268362257E-01	-4.702
+Percentage of commercial cells, within 600 m, before transition	6	-.4634283214E-01	-5.197
+Percentage of industrial cells, within 600 m, before transition	5	-.1541415441E-01	-1.754
+Percentage of industrial cells, within 600 m, before transition	6	-.2888033407E-01	-1.939
+Percentage of governmental cells, within 600 m, before transition	5	-.2517760974E-01	-5.792
+Percentage of governmental cells, within 600 m, before transition	6	-.3149400076E-01	-4.459
+Ln(Land value)	5	.3399916279	9.881
+Ln(Land value)	6	.2479191294	2.539
+Highway within 300 m	Residential	-.5220550773	-5.139
+Arterial within 300 m	5	-.1390154354	-2.064
+Percent cell covered by flood plane	Residential	-5.591784449	-1.521
+Percent cell covered by wetland	Residential	-7.221794971	-1.927
+Percent cell covered by slope	Residential	-3.390550515	-1.933
+Percent cell covered by open space	Residential	-2.633847575	-3.617
+Percent cell covered by public space	Residential	-1.440258551	-2.970
+Percent cell covered by roads	Residential	-1.283544329	-9.124
+Plantype 2	Residential	1.022472215	4.522
+Plantype 3	Residential	.9650597167	3.423
+Plantype 4	Residential	-.8673052338	-1.856
+Plantype 5	Residential	2.129055693	1.481
+Plantype 6	Residential	.7841356590	1.892
+Plantype 7	Residential	.8669248842	2.947
+Plantype 8	Residential	1.028578596	1.161
+Ln(L(0))	-9696.3521
+Ln(L(b))	-6517.251
+Rho^2	.32787
+Corr. rho^2	.32642
+Obs.	8826
+
+OldDev 6
+6 to 6	non-event	28118
+6 to 6	event	659
+6 to 7	event	104
+
+Variable	Alternative	Coefficient	t-statistic
+Ln(Total residential units in cell)	6	-.4984777997	-3.537
+Transitions to mixed use, within 600 m, in last 3 years	Residential	-.2085166984	-2.080
+Transitions to commercial, within 600 m, in last 3 years	Residential	-.2309529738	-1.991
+Transitions to governmental, within 600 m, in last 3 years	6	.4319192133	3.602
+Ln(Residential units added, within 600 m, in last 3 years)	Residential	.7830956866E-01	2.408
+Percentage of residential cells, within 600 m, before transition	6	-.2926139003E-01	-5.421
+Percentage of residential cells, within 600 m, before transition	7	-.3344970795E-01	-9.807
+Percentage of mixed use cells, within 600 m, before transition	6	-.3260591733E-01	-3.133
+Percentage of mixed use cells, within 600 m, before transition	7	-.3312217310E-01	-2.372
+Percentage of commercial cells, within 600 m, before transition	6	-.2317830899E-01	-2.672
+Percentage of industrial cells, within 600 m, before transition	6	-.2675576873E-01	-2.256
+Percentage of industrial cells, within 600 m, before transition	7	-.3660407619E-01	-1.503
+Percentage of governmental cells, within 600 m, before transition	6	-.1760681273E-01	-2.253
+Ln(Land value)	6	.3881256808	6.221
+Highway within 300 m	6	-.3827076880	-1.987
+Arterial within 300 m	6	-.2507590824	-1.921
+Percent cell covered by flood plane	6	7.102038492	1.150
+Percent cell covered by wetland	6	-18.11858969	-1.870
+Percent cell covered by open space	Residential	-1.319161888	-1.164
+Percent cell covered by roads	Residential	-1.676012638	-5.700
+Plantype 2	Residential	.5029742463	2.372
+Plantype 4	Residential	-1.812967912	-1.715
+Plantype 7	Residential	.8903327338	1.949
+Plantype 8	Residential	1.297539192	1.609
+Ln(L(0))	-2514.7235
+Ln(L(b))	-1662.083
+Rho^2	.33906
+Corr. rho^2	.33558
+Obs.	2289
+
+OldDev 7
+7 to 7	non-event	15775
+7 to 7	event	384
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	7	-4.833926347	-3.249
+Transitions of this type, within 600 m, in last 3 years	Residential	-.2429160827	-1.930
+Ln(Residential units added, within 600 m, in last 3 years)	Residential	.1315749605	2.822
+Percentage of same type cells, within 600 m, before transition	Residential	-.4013207366E-01	-7.601
+Percentage of residential cells, within 600 m, before transition	Residential	.1060496132E-01	2.615
+Ln(Land value)	Residential	.1395885300	1.201
+Highway within 300 m	Residential	-.4917846607	-2.521
+Percent cell covered by flood plane	Residential	-15.32343428	-1.430
+Percent cell covered by roads	Residential	.4535736686	1.078
+Plantype 2	Residential	2.035412378	1.860
+Plantype 3	Residential	1.750381108	1.556
+Plantype 4	Residential	2.089686361	1.743
+Plantype 7	Residential	2.347181342	2.029
+Ln(L(0))	-798.5056
+Ln(L(b))	-668.4290
+Rho^2	.16290
+Corr. rho^2	.15335
+Obs.	1152
+
+OldDev 8
+8 to 8	non-event	3020
+8 to 8	event	49
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	8	14.58556492	2.313
+Transitions to residential, within 600 m, in last 3 years	Residential	.2737884419	3.464
+Ln(Residential units added, within 600 m, in last 3 years)	Residential	-1.068593543	-3.004
+Percentage of same type cells, within 600 m, before transition	Residential	-.6755243200E-01	-1.712
+Percentage of industrial cells, within 600 m, before transition	Residential	-.1551301748	-2.549
+Ln(Land value)	Residential	-1.090527661	-2.320
+Percent cell covered by open space	Residential	4.909894127	2.427
+Ln(L(0))	-101.8926
+Ln(L(b))	-72.61799
+Rho^2	.28731
+Corr. rho^2	.25167
+Obs.	147
+
+OldDev 9
+9 to 9	non-event	33240
+9 to 9	event	482
+9 to 4	event	37
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	9	-5.969682862	-5.117
+Constant	4	-16.81260553	-4.354
+Ln(Total residential units in cell)	Mixed use	.4080195304	4.563
+Ln(Total residential units in cell)	Residential	.9121470563	2.978
+Transitions to commercial, within 600 m, in last 3 years	Mixed use	-.3580421905	-2.106
+Percentage of same type cells, within 600 m, before transition	Mixed use	.9226355880E-01	3.438
+Percentage of residential cells, within 600 m, before transition	Mixed use	-.1280163808E-01	-2.025
+Percentage of mixed use cells, within 600 m, before transition	Mixed use	-.1308476845	-4.999
+Percentage of commercial cells, within 600 m, before transition	Mixed use	-.4375136283E-01	-4.384
+Percentage of commercial cells, within 600 m, before transition	Residential	-.1110126606	-3.647
+Percentage of industrial cells, within 600 m, before transition	Mixed use	-.2127178530E-01	-1.995
+Percentage of governmental cells, within 600 m, before transition	Mixed use	-.2386503343E-01	-2.641
+Ln(Land value)	Mixed use	.4235461942	3.658
+Ln(Land value)	Residential	.7463678768	1.965
+Highway within 300 m	Mixed use	-.7344297555	-3.604
+Highway within 300 m	Residential	-1.294497290	-2.012
+Percent cell covered by animal sanctuary	Mixed use	3.501938738	1.426
+Percent cell covered by flood plane	Mixed use	-3.378640739	-1.215
+Percent cell covered by open space	Mixed use	-.8226370100	-1.679
+Percent cell covered by open space	Residential	-3.238937308	-1.292
+Percent cell covered by public space	Mixed use	-5.490449440	-3.757
+Percent cell covered by public space	Residential	-21.96016867	-2.074
+Percent cell covered by roads	Residential	1.367919179	1.157
+Plantype 2	Mixed use	.7342578265	4.180
+Plantype 2	Residential	.9550131810	2.190
+Plantype 4	Mixed use	-.9145968383	-3.288
+Ln(L(0))	-1710.5393
+Ln(L(b))	-808.6094
+Rho^2	.52728
+Corr. rho^2	.52330
+Obs.	1557
+
+OldDev 10
+10 to 10	non-event	2569
+10 to 10	event	95
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	10	-2.994857381	-.944
+Ln(Total residential units in cell)	Mixed use	-.4606861108	-1.407
+Percentage of mixed use cells, within 600 m, before transition	Mixed use	-.8245777465E-01	-3.220
+Ln(Land value)	Mixed use	.4956760749	1.751
+Highway within 300 m	Mixed use	-1.005438496	-2.571
+Percent cell covered by public space	Mixed use	-5.929312732	-1.326
+Percent cell covered by roads	Mixed use	-2.260460488	-2.661
+Plantype 2	Mixed use	.6169241878	1.446
+Plantype 4	Mixed use	1.730237017	2.149
+Ln(L(0))	-197.5469
+Ln(L(b))	-156.4060
+Rho^2	.20826
+Corr. rho^2	.18244
+Obs.	285
+
+OldDev 11
+11 to 11	non-event	6771
+11 to 11	event	157
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	11	-3.033991322	-1.010
+Ln(Total residential units in cell)	Mixed use	-1.247047901	-4.513
+Ln(Commercial sqft added, within 600 m, in last 3 years)	Mixed use	.2654535222	2.028
+Percentage of same type cells, within 600 m, before transition	Mixed use	-.6431801603E-01	-2.528
+Percentage of industrial cells, within 600 m, before transition	Mixed use	-.2074573041E-01	-1.201
+Percentage of governmental cells, within 600 m, before transition	Mixed use	-.5250086538E-01	-2.709
+Ln(Land value)	Mixed use	.8094580307	3.217
+Highway within 300 m	Mixed use	-.3775906285	-1.447
+Percent cell covered by animal sanctuary	Mixed use	27.37094138	1.719
+Percent cell covered by open space	Mixed use	-4.092465456	-1.153
+Percent cell covered by public space	Mixed use	-12.10829151	-2.384
+Percent cell covered by roads	Mixed use	-2.449241194	-3.382
+Plantype 2	Mixed use	1.283010338	1.711
+Plantype 3	Mixed use	.9703195250	1.261
+Plantype 6	Mixed use	4.826345091	3.220
+Ln(L(0))	-326.4723
+Ln(L(b))	-251.6972
+Rho^2	.22904
+Corr. rho^2	.20368
+Obs.	471
+
+OldDev 12
+12 to 12	non-event	1181
+
+Variable	Alternative	Coefficient	t-statistic
+Ln(L(0))	
+Ln(L(b))	
+Rho^2	
+Corr. rho^2	
+Obs.	
+
+OldDev 13
+13 to 13	non-event	1617
+
+Variable	Alternative	Coefficient	t-statistic
+Ln(L(0))	
+Ln(L(b))	
+Rho^2	
+Corr. rho^2	
+Obs.	
+
+OldDev 14
+14 to 14	non-event	2102
+
+Variable	Alternative	Coefficient	t-statistic
+Ln(L(0))	
+Ln(L(b))	
+Rho^2	
+Corr. rho^2	
+Obs.	
+
+OldDev 15
+15 to 15	non-event	643
+
+Variable	Alternative	Coefficient	t-statistic
+Ln(L(0))	
+Ln(L(b))	
+Rho^2	
+Corr. rho^2	
+Obs.	
+
+OldDev 16
+16 to 16	non-event	690
+
+Variable	Alternative	Coefficient	t-statistic
+Ln(L(0))	
+Ln(L(b))	
+Rho^2	
+Corr. rho^2	
+Obs.	
+
+OldDev 17
+17 to 17	non-event	19182
+17 to 17	event	271
+17 to 11	event	59
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	17	-5.201711436	-3.223
+Constant	11	-17.84599629	-4.800
+Ln(Total residential units in cell)	Mixed use	.9195264794	4.030
+Ln(Commercial sqft added, within 600 m, in last 3 years)	Commercial	.1451942131	2.228
+Percentage of same type cells, within 600 m, before transition	Commercial	-.5971422642E-01	-3.101
+Percentage of mixed use cells, within 600 m, before transition	Commercial	-.4219484482E-01	-3.466
+Percentage of mixed use cells, within 600 m, before transition	Mixed use	-.2494754215E-01	-1.171
+Percentage of commercial cells, within 600 m, before transition	Commercial	-.1655850672E-01	-1.429
+Percentage of industrial cells, within 600 m, before transition	Commercial	-.5843753327E-01	-4.028
+Percentage of industrial cells, within 600 m, before transition	Mixed use	-.5471023172E-01	-2.150
+Percentage of governmental cells, within 600 m, before transition	Commercial	-.3013063912E-01	-2.674
+Ln(Land value)	Commercial	.5363866567	4.132
+Ln(Land value)	Mixed use	.8979973003	2.904
+Highway within 300 m	Commercial	-.7451587827	-3.185
+Highway within 300 m	Mixed use	-1.599902852	-3.813
+Arterial within 300 m	Commercial	-.5318664427	-2.883
+Arterial within 300 m	Mixed use	-.9280024071	-2.877
+Percent cell covered by animal sanctuary	Commercial	-5.699785529	-1.246
+Percent cell covered by flood plane	Commercial	-5.321465314	-1.211
+Percent cell covered by open space	Commercial	-2.342614742	-2.650
+Percent cell covered by open space	Mixed use	-4.924508624	-1.735
+Percent cell covered by public space	Commercial	-1.819400971	-1.221
+Percent cell covered by public space	Mixed use	-23.34213486	-2.114
+Percent cell covered by roads	Commercial	1.144249901	2.108
+Percent cell covered by roads	Mixed use	1.274807184	1.344
+Plantype 2	Commercial	-.3799511769	-1.055
+Plantype 3	Commercial	-1.152101099	-3.087
+Plantype 3	Mixed use	-1.110257039	-3.135
+Plantype 4	Commercial	-.5609493417	-1.148
+Plantype 7	Commercial	-.9581599175	-1.255
+Ln(L(0))	-1087.6262
+Ln(L(b))	-606.3228
+Rho^2	.44253
+Corr. rho^2	.43395
+Obs.	990
+
+OldDev 18
+18 to 18	non-event	10396
+18 to 18	event	95
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	18	-5.019196337	-3.266
+Transitions to residential, within 600 m, in last 3 years	Commercial	.7151591989E-01	3.123
+Transitions to commercial, within 600 m, in last 3 years	Commercial	1.480353452	2.532
+Percentage of same type cells, within 600 m, before transition	Commercial	-.6199652010E-01	-1.745
+Percentage of residential cells, within 600 m, before transition	Commercial	.5708259258E-01	5.552
+Highway within 300 m	Commercial	-.8793152271	-2.392
+Percent cell covered by open space	Commercial	-11.79630005	-1.008
+Plantype 2	Commercial	2.031378099	1.515
+Plantype 3	Commercial	1.859376470	1.381
+Plantype 4	Commercial	2.596593557	1.755
+Ln(L(0))	-197.5469
+Ln(L(b))	-116.1610
+Rho^2	.41198
+Corr. rho^2	.39060
+Obs.	285
+
+OldDev 19
+19 to 19	non-event	9487
+19 to 19	event	50
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	19	-3.050831213	-2.172
+Ln(Total residential units in cell)	Commercial	-.4274791100	-1.530
+Transitions to commercial, within 600 m, in last 3 years	Commercial	1.602593901	1.118
+Ln(Commercial sqft added, within 600 m, in last 3 years)	Commercial	-.3586197850	-1.450
+Percentage of same type cells, within 600 m, before transition	Commercial	.4531833179E-01	1.074
+Percentage of residential cells, within 600 m, before transition	Commercial	.1071491709	4.763
+Percent cell covered by open space	Commercial	38.74782165	1.334
+Percent cell covered by public space	Commercial	-10.62648554	-1.359
+Percent cell covered by roads	Commercial	2.445440327	1.346
+Plantype 3	Commercial	-1.677747222	-2.895
+Ln(L(0))	-103.9721
+Ln(L(b))	-46.46365
+Rho^2	.55311
+Corr. rho^2	.52119
+Obs.	150
+
+OldDev 20
+20 to 20	non-event	11414
+20 to 20	event	49
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	20	-.6389577823	-1.311
+Transitions to commercial, within 600 m, in last 3 years	Industrial	.4724412662	1.846
+Percentage of same type cells, within 600 m, before transition	Industrial	-.9822888447E-01	-3.140
+Percentage of residential cells, within 600 m, before transition	Industrial	.4849846865E-01	4.365
+Percent cell covered by public space	Industrial	-6.321152690	-1.146
+Ln(L(0))	-101.8926
+Ln(L(b))	-58.43604
+Rho^2	.42649
+Corr. rho^2	.40630
+Obs.	147
+
+OldDev 21
+21 to 21	non-event	7345
+
+Variable	Alternative	Coefficient	t-statistic
+Ln(L(0))	
+Ln(L(b))	
+Rho^2	
+Corr. rho^2	
+Obs.	
+
+OldDev 22
+22 to 22	non-event	8308
+
+Variable	Alternative	Coefficient	t-statistic
+Ln(L(0))	
+Ln(L(b))	
+Rho^2	
+Corr. rho^2	
+Obs.	
+
+OldDev 23
+23 to 23	non-event	207057
+23 to 23	event	233
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	23	-3.555441850	-6.197
+Ln(Total residential units in cell)	Governmental	.4319803744	6.624
+Ln(Commercial sqft added, within 600 m, in last 3 years)	Governmental	-.9914248116E-01	-1.237
+Percentage of mixed use cells, within 600 m, before transition	Governmental	.5219838841E-01	1.466
+Percentage of commercial cells, within 600 m, before transition	Governmental	-.7197029743E-01	-2.699
+Highway within 300 m	Governmental	-.8185693842	-2.173
+Percent cell covered by water	Governmental	-8.046798689	-1.111
+Percent cell covered by flood plane	Governmental	-35.05824126	-1.890
+Percent cell covered by slope	Governmental	-4.488456880	-3.544
+Percent cell covered by open space	Governmental	-3.369851435	-2.127
+Percent cell covered by public space	Governmental	-2.380908062	-5.449
+Plantype 2	Governmental	3.477846320	6.261
+Plantype 3	Governmental	2.671451023	3.965
+Plantype 4	Governmental	2.625901188	4.052
+Plantype 7	Governmental	1.444098359	2.026
+Ln(L(0))	-484.5099
+Ln(L(b))	-204.1819
+Rho^2	.57858
+Corr. rho^2	.56934
+Obs.	699
+
+OldDev 24
+24 to 24	non-event	766987
+24 to 24	event	39
+24 to 1	event	2164
+24 to 2	event	1436
+24 to 3	event	798
+24 to 4	event	276
+24 to 5	event	145
+24 to 7	event	63
+24 to 9	event	296
+24 to 17	event	94
+24 to 20	event	80
+24 to 21	event	50
+
+Variable	Alternative	Coefficient	t-statistic
+Constant	1	-12.67984570	-28.537
+Constant	2	-20.87503109	-32.566
+Constant	3	-25.94800872	-29.531
+Constant	4	-28.07828115	-20.673
+Constant	5	-27.07656673	-15.399
+Constant	7	-23.02244594	-9.884
+Constant	9	-10.00357204	-14.512
+Constant	17	-16.50188178	-8.299
+Constant	20	-21.01096383	-12.033
+Constant	21	-21.48096746	-12.287
+Ln(Total residential units in cell)	2	.1693456862	4.225
+Ln(Total residential units in cell)	3	.2669047314	5.000
+Ln(Total residential units in cell)	4	.3714435189	5.958
+Ln(Total residential units in cell)	5	.4741342805	5.418
+Ln(Total residential units in cell)	7	1.647088635	10.177
+Ln(Total residential units in cell)	Commercial	.2630923905	3.562
+Ln(Total residential units in cell)	Industrial	.4496163525	4.989
+Scaled distance to development (1000-distance)/1000	Residential	3.495384492	11.655
+Scaled distance to development (1000-distance)/1000	Mixed use	2.994458152	5.564
+Scaled distance to development (1000-distance)/1000	Commercial 1; Industrial 1 and 2	1.794066369	2.565
+Transitions to residential, within 600 m, in last 3 years	Commercial	.1202250585	4.986
+Transitions to residential, within 600 m, in last 3 years	Industrial	.9528851082E-01	9.190
+Transitions to mixed use, within 600 m, in last 3 years	Residential	-.7323112885E-01	-1.698
+Transitions to commercial, within 600 m, in last 3 years	Residential	.1212501874	2.217
+Transitions to commercial, within 600 m, in last 3 years	Industrial	.5911425906	7.170
+Ln(Residential units added, within 600 m, in last 3 years)	Resdiential 3 and 4	.6006066623E-01	2.601
+Ln(Residential units added, within 600 m, in last 3 years)	5	.1316615967	2.366
+Ln(Residential units added, within 600 m, in last 3 years)	7	.2161815342	2.548
+Ln(Residential units added, within 600 m, in last 3 years)	Mixed use	.2929135079	7.062
+Ln(Residential units added, within 600 m, in last 3 years)	Commercial	-.3755840101	-2.555
+Percentage of residential cells, within 600 m, before transition	1	.2328176678E-01	14.604
+Percentage of residential cells, within 600 m, before transition	2	.1310769056E-01	5.287
+Percentage of residential cells, within 600 m, before transition	3	.9085460946E-02	3.043
+Percentage of residential cells, within 600 m, before transition	7	-.2995302662E-01	-3.663
+Percentage of residential cells, within 600 m, before transition	Industrial	-.8957919180E-01	-4.877
+Percentage of mixed use cells, within 600 m, before transition	Residential	-.1250554274E-01	-1.922
+Percentage of mixed use cells, within 600 m, before transition	Mixed use	.8381910515E-01	12.942
+Percentage of mixed use cells, within 600 m, before transition	Commercial	.9837124467E-01	8.935
+Percentage of mixed use cells, within 600 m, before transition	Industrial	.5206009528E-01	4.099
+Percentage of commercial cells, within 600 m, before transition	1	-.3892204727E-01	-4.652
+Percentage of commercial cells, within 600 m, before transition	2	-.5094815736E-01	-5.764
+Percentage of commercial cells, within 600 m, before transition	3	-.6786842600E-01	-6.242
+Percentage of commercial cells, within 600 m, before transition	4	-.6787089761E-01	-4.484
+Percentage of commercial cells, within 600 m, before transition	5	-.6469162049E-01	-3.267
+Percentage of commercial cells, within 600 m, before transition	Mixed use	.3883735881E-01	4.915
+Percentage of industrial cells, within 600 m, before transition	1	-.5411173528E-01	-4.553
+Percentage of industrial cells, within 600 m, before transition	2	-.4561851391E-01	-3.842
+Percentage of industrial cells, within 600 m, before transition	3	-.3690196073E-01	-2.759
+Percentage of industrial cells, within 600 m, before transition	Residential 4 and 5	-.3082338823E-01	-2.052
+Percentage of industrial cells, within 600 m, before transition	7	-.6031488719E-01	-1.641
+Percentage of governmental cells, within 600 m, before transition	Mixed use	-.5255772496E-01	-5.133
+Percentage of governmental cells, within 600 m, before transition	Commercial	-.3173485809E-01	-1.952
+Percentage of governmental cells, within 600 m, before transition	Industrial	-.7134701223E-01	-4.149
+Ln(Land value)	1	.7167188782	21.372
+Ln(Land value)	2	1.331196894	25.396
+Ln(Land value)	3	1.660689945	22.963
+Ln(Land value)	4	1.737844064	15.233
+Ln(Land value)	5	1.557144077	10.426
+Ln(Land value)	7	.7469822077	3.704
+Ln(Land value)	Mixed use	.3852317158	8.170
+Ln(Land value)	Commercial	.6310257046	4.286
+Ln(Land value)	Industrial	1.105361972	7.928
+Highway within 300 m	1	-.4994407488	-3.675
+Highway within 300 m	2	-.9698771888	-5.451
+Highway within 300 m	3	-1.218631880	-5.010
+Highway within 300 m	4	-.7315337336	-2.382
+Highway within 300 m	5	-.9125060897	-2.099
+Highway within 300 m	Mixed use	1.033142156	5.870
+Highway within 300 m	Commercial	1.073916842	4.063
+Percent cell covered by water	Residential	-4.630357382	-2.162
+Percent cell covered by flood plane	Residential	-1.668280501	-2.501
+Percent cell covered by flood plane	Mixed use	-2.313309915	-1.720
+Percent cell covered by slope	Residential 1, 2, 3, 4, 5, and 7; Mixed use 1; Commercial 1	-1.564668684	-7.274
+Percent cell covered by open space	Residential	-2.542406479	-13.831
+Percent cell covered by open space	Mixed use	-2.580349569	-3.763
+Percent cell covered by public space	Commercial	-6.193926949	-1.742
+Percent cell covered by roads	Residential	2.464469650	11.803
+Percent cell covered by roads	Mixed use	-1.830316652	-3.279
+Plantype 2	Residential	.9751134066	12.156
+Plantype 2	Commercial	2.279834081	2.225
+Plantype 3	Commercial	3.786341675	3.673
+Plantype 3	Industrial	2.311330515	3.858
+Plantype 4	Residential	-.8931930816	-4.917
+Plantype 4	Mixed use	.5505424622	3.797
+Plantype 4	Commercial	3.575886732	3.471
+Plantype 4	Industrial	4.000668588	8.218
+Plantype 7	Residential	.6157453816	3.583
+Plantype 8	Residential	-1.142568055	-2.566
+Ln(L(0))	-40561.1312
+Ln(L(b))	-19931.15
+Rho^2	.50861
+Corr. rho^2	.50837
+Obs.	16323
+
+OldDev 25
+25 to 25	non-event	0
+
+Variable	Alternative	Coefficient	t-statistic
+Ln(L(0))	
+Ln(L(b))	
+Rho^2	
+Corr. rho^2	
+Obs.	
+

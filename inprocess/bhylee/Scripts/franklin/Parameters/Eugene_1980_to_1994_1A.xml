@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE urbansim-parameters SYSTEM "C:/eclipse/workspace/UrbanSim2/org/urbansim/urbansim-parameters.dtd">
+<urbansim-parameters logging="on">
+  <models random-seed="0">
+  	<accessibility-model/>
+  	<employment-transition-model/>
+    <employment-location-choice-model/>
+    <employment-relocation-choice-model/>
+  	<household-transition-model/>
+    <household-location-choice-model/>
+    <household-relocation-choice-model/>
+    <land-price-model/>
+    <developer-model/>
+  </models>
+  <dataset>
+  <database contains="scenario-data">
+    <mysql url="jdbc:mysql://trondheim.cs.washington.edu/Eugene_1980_scenario_jpf_1994_1A"
+           username="urbansim"
+           password="UwUrbAnsIm" />
+  </database>
+  <database contains="outputdata">
+        <mysql url="jdbc:mysql://trondheim.cs.washington.edu/Eugene_1980_output_jpf_1994_1A"
+               username="urbansim"
+           password="UwUrbAnsIm" />
+  </database>
+  </dataset>
+<exporter years="1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994"/>
+</urbansim-parameters>

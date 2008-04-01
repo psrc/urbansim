@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE urbansim-parameters SYSTEM "../org/urbansim/urbansim-parameters.dtd">
+<urbansim-parameters >
+  <models random-seed="0">
+    <accessibility-model />
+    <employment-location-choice-model />
+    <employment-relocation-choice-model />
+    <household-relocation-choice-model />
+    <household-transition-model />
+    <employment-transition-model/>
+    <household-location-choice-model />
+    <land-price-model />
+    <developer-model />
+  </models>
+  <dataset>
+    <database contains="scenario-data">
+      <mysql
+      url="jdbc:mysql://trondheim.cs.washington.edu/WFRC_1997_scenario_jpf_2007_base"
+      username="urbansim"
+      password="UwUrbAnsIm"/>
+    </database>
+    <database contains="outputdata">
+      <mysql
+      url="jdbc:mysql://trondheim.cs.washington.edu/WFRC_1997_output_jpf_2007_0"
+      username="urbansim"
+      password="UwUrbAnsIm"/>
+    </database>
+  </dataset>
+  <exporter years="1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007"/>
+</urbansim-parameters>

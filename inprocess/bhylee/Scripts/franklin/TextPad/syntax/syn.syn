@@ -1,0 +1,71 @@
+; Michael Puckett keyword syntax file for Textpad
+; Syntax coloring for syntax (*.syn) files
+; Copyright (C) 1999, Michael Puckett
+; last edit 1999/02/03
+
+C=1
+
+[Syntax]
+Namespace1 = 6
+IgnoreCase = Yes
+BracketChars = []
+InitKeyWordChars = A-Za-z
+KeyWordChars = A-Za-z0-9
+OperatorChars = =
+PreprocStart =
+SyntaxStart =
+SyntaxEnd =
+CommentStart =
+CommentEnd =
+CommentStartAlt =
+CommentEndAlt =
+SingleComment = ;
+SingleCommentCol =
+SingleCommentAlt =
+SingleCommentColAlt =
+StringStart = "
+StringEnd = "
+StringAlt =
+StringEsc =
+CharStart =
+CharEnd =
+CharEsc =
+
+; ///////////////////
+; standard properties
+; ///////////////////
+[Keywords 1]
+BracketChars
+CharEnd
+CharEsc
+CharStart
+CommentEnd
+CommentEndAlt
+CommentStart
+CommentStartAlt
+IgnoreCase
+InitKeyWordChars
+KeyWordChars
+Namespace1
+OperatorChars
+PreprocStart
+SingleComment
+SingleCommentAlt
+SingleCommentCol
+SingleCommentColAlt
+StringAlt
+StringEnd
+StringEsc
+StringStart
+SyntaxEnd
+SyntaxStart
+
+
+; ///////////////////
+; other notable words
+; ///////////////////
+[Keywords 2]
+Keywords
+Syntax
+C
+Preprocessor

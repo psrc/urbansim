@@ -1,0 +1,34 @@
+; TextPad syntax definitions for plain text files in the DOS code set
+; Copyright (C) 1999-2000, Helios Software Solutions
+
+; WARNING: Do not attempt to add keywords to this file.
+;          They will be ignored, because it starts with
+;          "TEXT=1".  You should use one of the other
+;          syntax definition files as a starting point.
+
+TEXT=1
+
+[Syntax]
+Namespace1 = 6
+IgnoreCase = Yes
+KeyWordLength =
+BracketChars =
+OperatorChars =
+PreprocStart =
+SyntaxStart =
+SyntaxEnd =
+CommentStart =
+CommentEnd =
+CommentStartAlt =
+CommentEndAlt =
+SingleComment =
+SingleCommentCol =
+SingleCommentAlt =
+SingleCommentColAlt =
+StringStart =
+StringEnd =
+StringAlt =
+StringEsc =
+CharStart =
+CharEnd =
+CharEsc =

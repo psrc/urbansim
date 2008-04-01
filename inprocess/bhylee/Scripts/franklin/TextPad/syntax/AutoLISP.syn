@@ -1,0 +1,239 @@
+; Key Traffic Systems keyword syntax file for AutoLISP
+; Copyright (C) 1998, Key Traffic Systems
+
+C=1
+
+[Syntax]
+Namespace1 = 
+IgnoreCase = Yes
+InitKeyWordChars = A-Za-z_
+KeyWordChars = A-Za-z0-9_
+PreprocStart = 
+SyntaxStart = (
+SyntaxEnd = )
+CommentStart = 
+CommentEnd = 
+CommentStartAlt =
+CommentEndAlt =
+SingleComment = ;
+SingleCommentCol =
+SingleCommentAlt =
+SingleCommentColAlt =
+StringStart = "
+StringEnd = "
+StringAlt =
+StringEsc = \
+CharStart = '
+CharEnd = '
+CharEsc = \
+
+[Preprocessor keywords]
+
+[Keywords 1]
+abs
+acad_colordlg
+acad_strlsort
+action_tile
+add_list
+ads
+alert
+alloc
+and
+angle
+angtof
+angtos
+append
+apply
+arx
+arxload
+arxunload
+ascii
+assoc
+atan
+atof
+atoi
+atom
+atoms-family
+autoarxload
+autoload
+autoxload
+boole
+boundp
+car
+cdr
+chr
+client_data_tile
+close
+command
+cond
+cons
+cos
+cvunit
+defun
+dictadd
+dictnext
+dictremove
+dictrename
+dictsearch
+dimx_tile
+dimy_tile
+distance
+distof
+done_dialog
+end_image
+end_list
+entdel
+entget
+entlast
+entmake
+entmakex
+entmod
+entnext
+entsel
+entupd
+eq
+equal
+*error*
+eval
+exit
+exp
+expand
+expt
+fill_image
+findfile
+fix
+float
+foreach
+gc
+gcd
+get_attr
+get_tile
+getangle
+getcfg
+getcname
+getcorner
+getdist
+getenv
+getfiled
+getint
+getkword
+getorient
+getpoint
+getreal
+getstring
+getvar
+graphscr
+grclear
+grdraw
+grread
+grtext
+grvecs
+handent
+help
+if
+initget
+inters
+itoa
+lambda
+last
+length
+list
+listp
+load_dialog
+load
+log
+logand
+logior
+lsh
+mapcar
+max
+mem
+member
+menucmd
+menugroup
+min
+minusp
+mode_tile
+namedobjdict
+nentsel
+nentselp
+new_dialog
+not
+nth
+null
+numberp
+open
+or
+osnap
+polar
+prin1
+princ
+print
+progn
+prompt
+quit
+quote
+read
+read-char
+read-line
+redraw
+regapp
+rem
+repeat
+reverse
+rtos
+set
+set_tile
+setcfg
+setfunhelp
+setq
+setvar
+sin
+setview
+slide_image
+snvalid
+sqrt
+ssadd
+ssdel
+ssget
+ssgetfirst
+sslength
+ssmemb
+ssname
+ssnamex
+sssetfirst
+startapp
+start_dialog
+start_image
+start_list
+strcase
+strcat
+strlen
+subst
+substr
+tablet
+tblnext
+tblobjname
+tblsearch
+term_dialog
+terpri
+textbox
+textpage
+textscr
+trace
+trans
+type
+unload_dialog
+untrace
+vector_image
+ver
+vports
+wcmatch
+while
+write-char
+write-line
+xdroom
+xdsize
+xload
+xunload
+zerop

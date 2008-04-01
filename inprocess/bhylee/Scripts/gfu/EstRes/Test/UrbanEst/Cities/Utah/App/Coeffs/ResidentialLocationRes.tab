@@ -1,0 +1,34 @@
+ 
+
+Variable	Coefficient	t-statistic
+( ( Total residential value / Total units ) / 10 ) / Income	-.5960259757E-01	-2.643
+Dummy for devtype 1	-1.190442751	-5.230
+Dummy for devtype 2	-.8224768378	-5.940
+Dummy for devtype 3	-.5932216861	-5.918
+Dummy for devtype 4	-.3507809541	-4.047
+Dummy for devtype 5	-.1278752805	-1.704
+Dummy for devtype 6	-.2697112770	-3.337
+Ln(Total number of units in cell)	-.7425316339	-15.098
+Ln(Total improvement value) * income	.3100129729E-04	7.610
+Ln(Transit access to employment) if household has no cars	.4177264707	2.266
+Ln(Access to employment for 1 car households) if household has 1 car	.7614118466	3.098
+Ln(Access to employment for 2 car households) if household has 2 cars	.7967938750	3.304
+Ln(Number of units within 600 m) if household has no cars	.9962888929	4.594
+Ln(Number of units within 600 m) if household has 1 car	.8424003842	8.293
+Ln(Number of units within 600 m) if household has 2 cars	.3770805642	3.933
+Ln(Access to population for 1 car households)	-2.070480780	-8.535
+Number of units in cell if household has children	-.5448147977E-02	-4.321
+Income($)*Ln(Industrial sqft within 600 m)	-.5706714340E-06	-1.991
+Income($)*Ln(Commercial sqft within 600 m)	-.4731684796E-06	-2.225
+Ln(Land value/acre within 600 m)	.3222093838	3.555
+Household size * Ln(Units within 600 m)	-.6894394903E-01	-4.034
+Dummy for age of head of household under 40, in Devtype 6-8	.4759847231	4.979
+Ln(Retail emp. within 600 m) if number of household cars < workers	.1404492043	3.788
+Ln(Retail emp. within 600 m) if number of household cars >= workers	.7723818065E-01	4.445
+Log(Available residential units)	1	0
+Ln(L(0))	-5802.5144
+Ln(L(b))	-5047.968
+Rho^2	.13004
+Corr. rho^2	.12912
+Obs.	2520
+

@@ -1,0 +1,501 @@
+\section{Step 3: Assemble and Standardize Parcel Data}
+
+Initial parcel data for all four central Puget Sound counties was
+provided by the PSRC.  The goal of the process was to create a
+2000 base year flat parcel table for the central Puget Sound. For
+some counties, additional data needed to be obtained to complete
+the flat parcel attribute table.  Due to time lags in updating
+parcel files, and some systematic gaps in the Snohomish and Pierce
+County parcel file that existed in the 2000 database, GIS
+coverages of parcel boundaries for the year 2001 were collected
+and processed. Attributes of parcels were assembled from county
+tax assessor files for each county, and these were supplemented
+with information from buildable lands analyses in Pierce and
+Snohomish Counties.  For all four counties, the area of the parcel
+was obtained from the GIS area measurement for the parcel.
+
+The initial processing procedures taken to construct the flat
+parcel files were to extract the compulsory fields from the
+attribute tables and export the fields to a MySQL database. Once
+the general layout of the table were assembled a series of SQL
+queries were used to updated and organize the data.
+
+The parcel data form a foundation for the description of the land
+use and real estate inventory within the study area. These
+attributes include: Parcel Identification Number, Land Use, Lot
+Size, Housing Units, Building Square Feet, Year Built, Zoning
+Code, Assessed Land Value, Assessed Improvement Value, and Tax
+Exempt Status. These fields become the design frame in which the
+flat parcel assembly would be forged into.
+
+
+GIS Parcel Construction:
+
+For all counties each parcel shapefile was converted to a coverage
+file in order to perform spatial operations.
+
+\subsection{King County}
+
+A 2001 parcel shape file and tax assessor's file for King County
+was provided by the PSRC.  The coverage only contained a Parcel
+Identification Number (PIN) and land use code.  A total of 12
+additional tax assessor file extracts from King County were
+obtained through the Washington Geospatial Data Archive (WAGDA)
+for the following tables: apartment complex extract, condominium
+complex extract, residential buildings extract, parcel extract,
+real property account extract.
+
+\subsection{Kitsap County}
+
+A 2001 parcel shapefile and tax assessor's file for Kitsap County
+was provided by the PSRC.  The assessor's data and parcel
+shapefile matched up very well and very little additional work was
+needed to join the data sets by PIN.
+
+\subsection{Pierce County}
+
+A 2001 parcel shapefile and attribute file from Metroscan for
+Pierce County was provided by the PSRC.  The attribute file had
+several problems:  the housing units, square footage, and year
+built fields appeared to be corrupted and had unusable data, and
+the file did not include assessed land and improvement values. In
+order to generate usable data, the 2003 assessor's file was
+substituted for the 2001 file, and the attributes appeared to be
+reasonably complete in this file, but represented more recent
+conditions than the desired base year 2000.  In order to better
+reflect the 2000 baseyear, additional data sources were sought
+out.  Three buildable lands coverages with 2000 parcel data were
+provided by Pierce County via the PSRC.  One coverage was for the
+City of Tacoma, one was for several incorporated jurisdictions and
+one was for several unincorporated areas.  The buildable lands
+data sets included fields for improvement value, land value, and
+land use.  The county coverage file was updated with values from
+the buildable lands data sets so that the parcel data would better
+reflect 2000 totals.
+
+\subsection{Snohomish County}
+
+A 2001 parcel shapefile and tax assessor's file for Snohomish
+County was provided by the county.  The tax assessor's file
+appeared to have problems with the land use code and the number of
+housing units (for example, apartment housing units were not
+recorded, and duplexes frequently only recorded 1 unit), based on
+analysis of the data and interaction with county staff.  Multiple
+shape files for year 2000 buildable lands analysis were obtained
+from the PSRC and used to update housing units, land use, land
+value and improvement value in the tax assessor's file.
+
+
+For the most part, these attribute fields in the parcel tables
+share the same name and coding standards between counties.
+However, for some fields such as 'land use,' there can be
+significant variation in the land use categories used by each
+county.  An important step in this process is to standardize the
+names and coding standards used for these important fields.
+
+
+Land Use Code Standardization
+
+Each of the four counties contain a unique set of use codes and
+land use classification descriptions.  In order for all four
+counties to be consistent a generic land use reclassification
+table was created. The reclassification table is an extended
+version of the Station Land Use Study Areas Draft document
+provided by the PSRC. The table categorize the various county land
+use codes into standardized and more general land use categories.
+
+The reclassification table creates two levels of land use category
+aggregation GENERIC_LAND_USE_1 aggregated land use codes into 26
+categories and GENERIC_LAND_USE_2 aggregated land use codes into
+six broader categories (commercial, government, industrial,
+residential, non-residential, and group quarters).
+GENERIC_LAND_USE_1 is utilized later in the job allocation process
+and to help analyze data quality indicators. GENERIC_LAND_USE_2 is
+used later in Step 7 and Step 8 when parcel data is assigned to
+gridcells.  The look up table should map individual land use codes
+for each county in the study area to user-defined aggregations.
+The mapping of county specific land use codes to the aggregate
+land use categories can be made by joining the "county land use
+code" and "county identification".
+
+\subsection{Snohomish County}
+
+The Snohomish County land use codes were extracted from the
+Buildable Lands Parcel Data (shapefile_name). The attribute table
+contained a field labeled "Propclassc", which contained the
+3-digit (integer) land use code and a field labeled "Pcc_Desc",
+which contained the description of the 3-digit land use code. The
+the land use codes and their descriptions were grouped into a
+temporary county land use code table summarizing all of the county
+use codes that were applied to the parcel records in the Buildable
+Lands Parcel set.
+
+With the aid of the reclassification table from the Station Land
+Use Study Areas Draft document, the GENERIC_LAND_USE_1 and
+GENERIC_LAND_USE_2 fields were created. After an initial draft of
+the reclassification table was prepared, the file was put under
+review by the PSRC and the county specific staff members.
+
+\subsection{King County}
+
+The King County Land use codes were extracted from the Assessor's
+file (EXTR_Parcel.dbf - Parcel Record Description). The table's
+"PRESENTUSE" field contained a 3-digit (integer) land use code.
+The land use code description is located in an adjoining table
+(ExtraLookUp.csv - Look Up Record Description). The table's "Look
+Up Description" field is description of the land use code.
+
+\subsection{Pierce County}
+
+The Pierce County land use codes were assembled from the County
+Assessor's records (Master_table - Pierce Extract), a supplemental
+file from the Pierce County Planning and Land Services Department,
+and a table containing suggested reclassifications to the
+GENERIC_LAND_USE_1 and GENERIC_LAND_USE_2 categories.
+
+The Assessor's record contained a field labeled, "use_cd", which
+contained a 4-digit (integer) land use code and a field labeled,
+"use_desc", which was a description of the land use code. These
+values were then summarized into a temporary county land use code
+table. The preliminary Pierce County land use code table was then
+distributed to the PSRC and county staff members for review. The
+result of the review led to the supplemental land use code files
+in the before mentioned sources.
+
+The supplemental file (shapefile) consisted of parcel id's and
+land use codes for records the Assessor's file had missing land
+use codes for. The attributes from the shapefile containing the
+missing land use values were exported to a MySQL database and were
+used to updated the Flat Parcel file through a series of SQL
+queries (insert queries here).
+
+The Pierce County reclassification table also received updates
+from the suggested reclassifications from the PSRC and Pierce
+County Planning and Land Services Department.
+
+\subsection(Kitsap County}
+
+The Kitsap County land use codes were extracted from the County
+Assessor's records (shapefile_name). The "USECODE" field contains
+a 5-digit (integer) land use code. The "LANDUSE" field provided
+the description land use description. A summary table consisting
+of the land use codes that were applied to the parcel records was
+created.
+
+
+Parcel Address Standardization
+
+County parcel addresses often follow different naming conventions
+and need to be standardized.  A SAS script was used to parse
+parcel address fields into five separate fields: street number
+(st_no), directional prefix (st_pf), street name (st_name), street
+type (st_type), and directional suffix (st_sf).  An example of the
+SAS script used to parse Pierce County, Washington addresses is
+available here: SAS script for address parsing (add SAS script)
+
+\subsection{King County} -- Chris' input needed
+
+King County's parcel addresses were extracted from an attribute
+table associated with a King County Parcel file (.add file). The
+format of the raw parcel address file contained all elements of
+the parcel's address in one field, "Address". The King County
+parcel file was exported to a geodatabase where the "PIN" and
+"Address" fields were selected and inserted into a new table
+called, "King_address". King_address was exported to a working
+folder as a dbase format and processed through the Address Parse
+SAS script.
+
+\subsection(Kitsap County}
+
+Kitsap County's parcel addresses were extracted from the Kitsap
+parcel coverage file. The file contained the parcel record's
+"PIN", "SITENUMBER", AND "SITESTREET". The coverage file was
+exported to a geodatabase where the PIN, SITENUMBER, and
+SITESTREET were selected and inserted into a new table,
+"Kitsap_address". Kitsap_address was exported to a working folder
+as a dbase format and processed through the Address Parse SAS
+script.
+
+\subsection{Pierce County}
+
+Pierce County's parcel addresses were extracted from a second
+parcel shapefile that was received from the PSRC (pieadd.shp)
+because our current parcel file did not contain address attribute
+information. The parcel file was then exported to a geodatabase
+where the "PIN", "SITENUMBER", and "SITESTREET" were selected and
+inserted into a new table, "Pierce_address". Pierce_address was
+exported to a working folder as a dbase format and processed
+through the Address Parse SAS script.
+
+Note - Although Pierce County used a Buildable Lands file and
+Assessor's file, there was no address attributes for the Buildable
+Lands file.
+
+\subsection{Snohomish County}
+
+Snohomish County's parcel addresses were extracted from a
+combination of the Buildable Lands file and Master_Record file
+(Assessor data). Because the Snohomish County parcel coverage
+contains a 2000 and 2001 parcel coverage two preliminary parcel
+address tables needed to be completed.
+
+The first address file contained data from the 2001 Snohomish
+County Assessor's address records. The Master_Record table, which
+was a supplemental Assessor's file we received from Snohomish
+County, contained the necessary address contents and parcel
+identification. The "LRSN" and "Address" fields were selected from
+the Master_Record table and inserted into a new table,
+"Snohomish_master_address". The Snohomish_master_address table was
+exported to a working folder as a .dbf and processed through the
+Address Parse SAS script.
+
+The merged Snohomish Buildable Lands coverage file was exported to
+a geodatabase. The "LRSN" and "ST_ADDRESS" were selected from the
+parcel coverage and inserted into a new table,
+"Snohomish_buildable_address". The Snohomish_buildable_address
+table was exported to a working folder as a .dbf and processed
+through the Address Parse SAS script.
+
+The exported merged Snohomish Buildable Lands coverage file was
+used as template that would receive the updates from both the 2000
+and 2001 address attributes. The table consisted of the parcel
+identification number and address attribute place holders (i.e.
+prefix, street_number, street_name, etc.). The
+Snohomish_master_address and Snohomish_buildable_address were then
+used to update the Snohomish Buildable Lands table's address
+fields.
+
+(insert sql queries here)
+
+0623089019
+
+Land Value
+
+\subsection{King County}
+
+A 2001 King County Assessor's extract table (Extra_RPAcct.dbf) was
+used to extract the land value characteristics of the parcel
+record. The table includes a "Major", "Minor", and "ApprLandVal",
+which will be used to update the King County flat parcels table.
+
+Because the flat parcels table uses a single field (PARCEL_ID) as
+a linking key to all other tables and attributes, the major and
+minor fields in the Extra_RPAcct table needed to be concatenated
+into one single field. Therefore, an intermediate table was
+created that would contain a Parcel Identification Number
+(combination of Major and Minor fields) and the corresponding land
+values for the parcel records.
+
+In addition to the concatenate operation that was performed on the
+Major and Minor fields, a second SQL query needed to be performed
+in order to capture the entire land value for the parcel records.
+The Extra_RPAcct table includes multiple records for each Parcel
+Identification Number (PIN), therefore, each record contained a
+different land value. A SQL query was used to sum the land value
+per each unique PIN. The result of the SQL operation created a
+table containing a unique PIN and a total land value.
+
+This intermediate PIN and Land Value table was then used to update
+the flat parcels table via a SQL query (insert SQL query here?)
+
+
+\subsection(Kitsap County}
+
+The 2001 Kitsap County Assessor's file contains the Parcel
+Identification Number and Land Value for each parcel record.
+Before the "PIN" and "ASSDLAND" fields can be selected and
+inserted into a new table, a SQL query was performed that removed
+duplicate PINs that have identical Land Values and null PIN values
+(insert SQL query?).
+
+The resulting table was used to update the flat parcels table via
+a SQL query (insert SQL query here?)
+
+\subsection{Pierce County}
+
+The 2003 County Assessor's file (Master_Record) and 2000 Buildable
+Lands file was used to extracted the Land Value for each Parcel
+Identification Number. The 2003 and 2000 files were exported to a
+geodatabase, where the "parcel_num" and "land_value" fields from
+the 2003 Assessor's file were selected and inserted into a new
+table, "Pierce_assessor_land_value" (insert SQL query here?).
+
+The "TAX_PARCEL" and "LAND_VALUE" were selected from the 2000
+Buildable Lands file and inserted into a new table,
+"Pierce_buildable_land_value" (insert SQL query here?).
+
+The Pierce County's flat parcels table was updated through a set
+of queries that assembled the land values from the
+Pierce_assessor_land_value and Pierce_buildable_land_value.
+Because two tables were being used to update a single field, it
+was important to update the the land values containing the
+Buildable Lands value last, to overwrite the Assessor's land
+values where the Buildable Lands values applied (insert SQL
+query?)
+
+\subsection{Snohomish County}
+
+The 2001 County Assessor's file (Master_Record) and 2000 Buildable
+Lands file was used to assemble the Land Value for each Parcel
+Identification Number. The 2001 and 2000 files were exported to a
+geodatabase, where the "LRSN" and "AsdLanVal" selected and
+inserted into a new table, "Snohomish_assessor_land_value" (insert
+SQL query here?).
+
+The "LRSN" and "MKT_LAND" fields were selected from the 2000
+Buildable Lands file and inserted into a new table,
+"Snohomish_buildable_land_value" (insert SQL query here?).
+
+Using the two tables described above, perform an update query to
+the existing flat parcels table for Snohomish County (insert SQL
+query here?). Similarly to Pierce County, update the Buildable
+Lands value last to avoid retaining the Assessor's values where
+the Buildable Lands' value applies.
+
+
+Improvement Value
+
+\subsection{King County}
+
+The source for King County's parcel Improvement Value data is from
+the Assessor's Extract tables (EXTR_RPAcct.dfb). The table
+includes a "Major", "Minor", and "ApprImpVal", which were selected
+and inserted into a new table and will be used to update the King
+County flat parcels table.
+
+Because the flat parcels table uses a single field (PARCEL_ID) as
+a linking key to all other tables and attributes, the major and
+minor fields in the Extra_RPAcct table again needed to be
+concatenated into one single field. Therefore, an intermediate
+table was created that would contain a Parcel Identification
+Number (combination of Major and Minor fields) and the
+corresponding Improvement value for the parcel records.
+
+This intermediate PIN and Improvement Value table was then used to
+update the flat parcels table via a SQL query (insert SQL query
+here?)
+
+\subsection(Kitsap County}
+
+
+
+\subsection{Pierce County}
+
+
+
+\subsection{Snohomish County}
+
+
+
+Built Square Feet
+
+
+\subsection{King County}
+\subsection(Kitsap County}
+\subsection{Pierce County}
+\subsection{Snohomish County}
+
+Year Built
+
+
+\subsection{King County}
+\subsection(Kitsap County}
+\subsection{Pierce County}
+\subsection{Snohomish County}
+
+Residential Units
+
+
+\subsection{King County}
+\subsection(Kitsap County}
+\subsection{Pierce County}
+\subsection{Snohomish County}
+
+Imputed Residential Units
+
+
+\subsection{King County}
+\subsection(Kitsap County}
+\subsection{Pierce County}
+\subsection{Snohomish County}
+
+Residential Units Weight Residential Units
+
+
+\subsection{King County}
+\subsection(Kitsap County}
+\subsection{Pierce County}
+\subsection{Snohomish County}
+
+Weight Fraction
+
+Imputed Residential Units
+
+
+\subsection{King County}
+\subsection(Kitsap County}
+\subsection{Pierce County}
+\subsection{Snohomish County}
+
+
+
+Binary Tax Exempt Standardization
+
+The county Assessor's records contained supplemental tables
+identifying tax exempt parcels. The tax exempt coding system was
+relatively consistent throughout all four counties with the
+exception of Pierce County. Pierce County contained a unique code
+system that required a look up table in order to determine whether
+a parcel was tax exempt.
+
+\subsection{King County}
+\subsection(Kitsap County}
+\subsection{Pierce County}
+\subsection{Snohomish County}
+
+Owner Name
+
+
+\subsection{King County}
+\subsection(Kitsap County}
+\subsection{Pierce County}
+\subsection{Snohomish County}
+
+Nonprofit
+
+
+\subsection{King County}
+\subsection(Kitsap County}
+\subsection{Pierce County}
+\subsection{Snohomish County}
+
+Undevelopable Parcels
+
+
+\subsection{King County}
+\subsection(Kitsap County}
+\subsection{Pierce County}
+\subsection{Snohomish County}
+
+Census Block Association
+
+
+\subsection{King County}
+\subsection(Kitsap County}
+\subsection{Pierce County}
+\subsection{Snohomish County}
+
+Park Undevelopable Parcels
+
+
+\subsection{King County}
+\subsection(Kitsap County}
+\subsection{Pierce County}
+\subsection{Snohomish County}
+
+Lot Area
+
+\subsection{King County}
+\subsection(Kitsap County}
+\subsection{Pierce County}
+\subsection{Snohomish County}

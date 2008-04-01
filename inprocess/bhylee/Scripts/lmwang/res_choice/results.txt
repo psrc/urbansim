@@ -1,0 +1,61 @@
+> pfit.d <- glm(count ~  (restype + hhsize + income + age_range)^2,
++             data = pallvar, family = poisson)
+> summary(pfit.d)
+
+Call:
+glm(formula = count ~ (restype + hhsize + income + age_range)^2, 
+    family = poisson, data = pallvar)
+
+Deviance Residuals: 
+     Min        1Q    Median        3Q       Max  
+-14.5177   -1.3577   -0.3916    0.6805   17.0628  
+
+Coefficients:
+                         Estimate Std. Error z value Pr(>|z|)    
+(Intercept)              3.460528   0.137305  25.203  < 2e-16 ***
+restype2                -0.517198   0.195758  -2.642 0.008241 ** 
+restype4                 1.682833   0.143215  11.750  < 2e-16 ***
+restype8                -1.994025   0.309834  -6.436 1.23e-10 ***
+hhsize                  -0.421096   0.035273 -11.938  < 2e-16 ***
+income2                  1.049320   0.125227   8.379  < 2e-16 ***
+age_range>65             2.621436   0.150211  17.452  < 2e-16 ***
+age_range31-40           0.582415   0.148748   3.915 9.02e-05 ***
+age_range41-50           1.070658   0.144376   7.416 1.21e-13 ***
+age_range51-65           1.810573   0.144119  12.563  < 2e-16 ***
+restype2:hhsize         -0.217717   0.055450  -3.926 8.62e-05 ***
+restype4:hhsize         -0.390354   0.043191  -9.038  < 2e-16 ***
+restype8:hhsize          0.057858   0.057915   0.999 0.317785    
+restype2:income2        -0.703298   0.115567  -6.086 1.16e-09 ***
+restype4:income2        -1.739087   0.097526 -17.832  < 2e-16 ***
+restype8:income2        -1.478425   0.148281  -9.970  < 2e-16 ***
+restype2:age_range>65   -0.515944   0.192703  -2.677 0.007419 ** 
+restype4:age_range>65   -2.323576   0.159449 -14.573  < 2e-16 ***
+restype8:age_range>65    0.431085   0.305937   1.409 0.158817    
+restype2:age_range31-40 -0.621665   0.194371  -3.198 0.001382 ** 
+restype4:age_range31-40 -1.259460   0.138616  -9.086  < 2e-16 ***
+restype8:age_range31-40  0.099607   0.318209   0.313 0.754262    
+restype2:age_range41-50 -0.774977   0.189374  -4.092 4.27e-05 ***
+restype4:age_range41-50 -1.824138   0.143542 -12.708  < 2e-16 ***
+restype8:age_range41-50 -0.263522   0.318530  -0.827 0.408062    
+restype2:age_range51-65 -0.894819   0.189302  -4.727 2.28e-06 ***
+restype4:age_range51-65 -2.258028   0.150979 -14.956  < 2e-16 ***
+restype8:age_range51-65 -0.054274   0.313529  -0.173 0.862567    
+hhsize:income2           0.144343   0.027196   5.307 1.11e-07 ***
+hhsize:age_range>65     -0.484431   0.045534 -10.639  < 2e-16 ***
+hhsize:age_range31-40    0.004699   0.029496   0.159 0.873426    
+hhsize:age_range41-50   -0.040154   0.029727  -1.351 0.176762    
+hhsize:age_range51-65   -0.276336   0.033446  -8.262  < 2e-16 ***
+income2:age_range>65    -1.128487   0.124423  -9.070  < 2e-16 ***
+income2:age_range31-40   0.537789   0.125608   4.281 1.86e-05 ***
+income2:age_range41-50   0.434502   0.122653   3.543 0.000396 ***
+income2:age_range51-65   0.202222   0.121904   1.659 0.097144 .  
+---
+Signif. codes:  0 `***' 0.001 `**' 0.01 `*' 0.05 `.' 0.1 ` ' 1 
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 12487.4  on 192  degrees of freedom
+Residual deviance:  2550.3  on 156  degrees of freedom
+AIC: 3390.3
+
+Number of Fisher Scoring iterations: 6

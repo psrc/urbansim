@@ -1,0 +1,125 @@
+SETUP
+COEFFILE="DevelopmentCoeffs.tab"
+TABLEFILE="DevelopmentRes.tab"
+COLUMNTABLEFILE="DevelopmentColRes.tab"
+US2COEF_FILE="developer_model_coefficients.tab"
+US2SPEC_FILE="developer_model_specification.tab"
+#RESTRFILE=""
+
+PARSERULES
+PMODELID="OldDev"
+PALT="OldDev"
+PALTNUM="Number of alternatives"
+PALTCODES="Alternative codes"
+PMODEL="Discrete choice"
+PVARFORM="(\w\w\w)(\w+)"
+PSECTERM="=+"
+
+VARIABLES
+#ODT	OldDev	Old development type	ODT
+#NDT	NewDev	New development type	NDT
+#Limdep Coeff	Coeff file	Table legend	Limdep variable	UrbanSim 2 variables		
+ACT	Constant	Constant		alternative_specific_constant		
+EVE	Develop	Development constant	EVE			
+LTS	LogSqft	Ln(Total commercial sqft in cell)	LTS	ln_commercial_sqft		
+LTU	LogUnits	Ln(Total residential units in cell)	LTU	ln_residential_units		
+DST	Prx_dev	Scaled distance to development (1000-distance)/1000	DST	proximity_to_development
+N/A	DistDev	Distance to development		distance_to_development
+LSA	LagSame	Transitions of this type, within 600 m, in last 3 years	LSA	n_recent_transitions_to_same_type_within_walking_distance		
+LRE	LagRes	Transitions to residential, within 600 m, in last 3 years	LRE	n_recent_transitions_to_residential_within_walking_distance		
+LMI	LagMix	Transitions to mixed use, within 600 m, in last 3 years	LMI	n_recent_transitions_to_mixed_use_within_walking_distance		
+LCO	LagCom	Transitions to commercial, within 600 m, in last 3 years	LCO	n_recent_transitions_to_commercial_within_walking_distance		
+LIN	LagInd	Transitions to industrial, within 600 m, in last 3 years	LIN	n_recent_transitions_to_industrial_within_walking_distance		
+LGO	LagGov	Transitions to governmental, within 600 m, in last 3 years	LGO	n_recent_transitions_to_governmental_within_walking_distance		
+N/A	LagDev	LagDev				
+LUN	LagUnits	Residential units added, within 600 m, in last 3 years	LUN	n_residential_units_recently_added_within_walking_distance		
+LLU	LogLagUnits	Ln(Residential units added, within 600 m, in last 3 years)	LLU	ln_n_residential_units_recently_added_within_walking_distance		
+LSQ	LagSqft	Commercial sqft added, within 600 m, in last 3 years	LSQ	commercial_sqft_recently_added_within_walking_distance		
+LLS	LogLagSqft	Ln(Commercial sqft added, within 600 m, in last 3 years)	LLS	ln_commercial_sqft_recently_added_within_walking_distance
+PSA	PctSame	Percentage of same type cells, within 600 m, before transition	PSA	percent_same_type_cells_within_walking_distance
+PRE	PctRes	Percentage of residential cells, within 600 m, before transition	PRE	percent_residential_within_walking_distance
+PMI	PctMix	Percentage of mixed use cells, within 600 m, before transition	PMI	percent_mixed_use_within_walking_distance
+PCO	PctCom	Percentage of commercial cells, within 600 m, before transition	PCO	percent_commercial_within_walking_distance
+PIN	PctInd	Percentage of industrial cells, within 600 m, before transition	PIN	percent_industrial_within_walking_distance
+PGO	PctGov	Percentage of governmental cells, within 600 m, before transition	PGO	percent_governmental_within_walking_distance
+N/A	PctDev	PctDev		
+LLV	LogLandval	Ln(Land value)	LLV	ln_land_value
+HWY	Hwy	Highway within 300 m	HWY	is_near_highway
+ART	Art	Arterial within 300 m	ART	is_near_arterial
+FLO	Flood	Flood plane	FLO	is_in_floodplain
+SLO	Slope	Slope	SLO	is_on_steep_slope
+STR	Stream	Stream within 300 m	STR	is_in_stream_buffer
+UGB	UGB	Within urban growth boundary	UGB	is_outside_urban_growth_boundary
+WET	Wetland	Wetland within 300 m	WET	is_in_wetland
+CWA	PartialWaterPct	Percent cell covered by water	CWA	percent_water
+CRI	PartialRiparianPct	Percent cell covered by animal sanctuary	CRI	percent_stream_buffer
+CFL	PartialFloodPct	Percent cell covered by flood plane	CFL	percent_floodplain
+CWE	PartialWetlandPct	Percent cell covered by wetland	CWE	percent_wetland
+CSL	PartialSlopePct	Percent cell covered by slope	CSL	percent_slope
+COP	PartialOpenPct	Percent cell covered by open space	COP	percent_open_space
+CPU	PartialPublicPct	Percent cell covered by public space	CPU	percent_public_space
+CRO	PartialRoadsPct	Percent cell covered by roads	CRO	percent_roads
+#CSB	PartialStreamBuffer	Percent cell covered by stream buffer	CSB	percent_stream_buffer
+P00	Plantype_0	Plantype 0		plantype_0
+P01	Plantype_1	Plantype 1		plantype_1
+P02	Plantype_2	Plantype 2		plantype_2
+P03	Plantype_3	Plantype 3		plantype_3
+P04	Plantype_4	Plantype 4		plantype_4
+P05	Plantype_5	Plantype 5		plantype_5
+P06	Plantype_6	Plantype 6		plantype_6
+P07	Plantype_7	Plantype 7		plantype_7
+P08	Plantype_8	Plantype 8		plantype_8
+P09	Plantype_9	Plantype 9		plantype_9
+P10	Plantype_10	Plantype 10		plantype_10
+P11	Plantype_11	Plantype 11		plantype_11
+P99	Plantype_99	Plantype 99		plantype_99
+P12	Plantype_12	Plantype 12		plantype_12
+#P13	Plantype_13	Plantype 13		plantype_13
+#P14	Plantype_14	Plantype 14		plantype_14
+P15	Plantype_15	Plantype 15		plantype_15
+P16	Plantype_16	Plantype 16		plantype_16
+P17	Plantype_17	Plantype 17		plantype_17
+#P18	Plantype_18	Plantype 18		plantype_18
+#P19	Plantype_19	Plantype 19		plantype_19
+#P20	Plantype_20	Plantype 20		plantype_20
+#P21	Plantype_21	Plantype 21		plantype_21
+#P22	Plantype_22	Plantype 22		plantype_22
+#P23	Plantype_23	Plantype 23		plantype_23
+P24	Plantype_24	Plantype 24		plantype_24
+#P25	Plantype_25	Plantype 25		plantype_25
+#P26	Plantype_26	Plantype 26		plantype_26
+#P27	Plantype_27	Plantype 27		plantype_27
+N/A	Cost	Cost
+N/A	Revenue	Revenue
+N/A	Vacancy	Vacancy
+N/A	Profit	Profit
+#Y77	Year_77	Year 1977
+#Y78	Year_78	Year 1978
+#Y79	Year_79	Year 1979
+#Y80	Year_80	Year 1980
+#Y81	Year_81	Year 1981
+#Y82	Year_82	Year 1982
+#Y83	Year_83	Year 1983
+#Y84	Year_84	Year 1984
+#Y85	Year_85	Year 1985
+#Y86	Year_86	Year 1986
+#Y87	Year_87	Year 1987
+#Y88	Year_88	Year 1988
+#Y89	Year_89	Year 1989
+#Y90	Year_90	Year 1990
+#Y91	Year_91	Year 1991
+#Y92	Year_92	Year 1992
+#Y93	Year_93	Year 1993
+
+
+ALTERNATIVES
+R	Residential
+M	Mixed use
+C	Commercial
+I	Industrial
+G	Governmental
+AL	All events
+R12	Residential 1 and 2
+R23	Residential 2 and 3
+R123	Residential 1, 2, and 3
+

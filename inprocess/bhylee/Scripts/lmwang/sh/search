@@ -1,0 +1,16 @@
+#!/bin/bash
+SEARCH_PATH="/projects/urbansim/:/projects/urbansim0/:/projects/urbansim2/:/projects/urbansim3/:\
+/projects/urbansim4/:/projects/urbansim5/:/projects/urbansim6/:/projects/urbansim7/:\
+/projects/urbansim8/:/projects/urbansim9/"
+SEARCH_STRING="accessibilities_trips_time:accessibilities_avg_util:lhae0:hbnw_car_accessibilities"
+logfile="./search.log"
+
+IFS=:
+for path in $SEARCH_PATH; do
+        echo searching in $path
+	contents=$(find "$path" 2>/dev/null)
+	echo $contents | head
+	for string in $SEARCH_STRING; do
+	    echo $contents | grep -n "$string" >> ./search.log
+	done
+done

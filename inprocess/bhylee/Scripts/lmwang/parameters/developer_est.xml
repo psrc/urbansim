@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<urbansim-parameters logging="contents">
+<dataset>
+<database contains="scenario-data">
+<mysql
+url="jdbc:mysql://trondheim.cs.washington.edu/PSRC_2000_baseyear_lmwang"
+username="urbansim"
+password="UrbAnsIm4Us" />
+</database>
+<database contains="new-scenario-data">
+<mysql
+url="jdbc:mysql://trondheim.cs.washington.edu/PSRC_2000_baseyear_lmwang_unrolled"
+username="urbansim"
+password="UrbAnsIm4Us" />
+</database>
+</dataset>
+</urbansim-parameters>

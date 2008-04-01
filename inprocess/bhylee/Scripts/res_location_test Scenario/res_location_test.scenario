@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<urbansim-parameters>
+  <models random-seed="0">
+    <accessibility-model />
+    <employment-location-choice-model />
+    <!--<household-transition-model />
+    <household-location-choice-model />
+    <employment-transition-model/>
+    <land-price-model />
+    <household-relocation-choice-model />
+    <employment-relocation-choice-model />
+    <developer-model-with-vacancy-adjustment use-development-caps="false" /> -->
+  </models>
+  <dataset>
+    <database contains="scenario-data">
+      <mysql url="jdbc:mysql://trondheim.cs.washington.edu/PSRC_2000_baseyear_cc_passer" 
+             username="urbansim" 
+             password="UwUrbAnsIm"/>
+    </database>
+  </dataset>
+  <create-estimation-data-tables output-path="R:\Projects\PSRC\Estimation\Tables\res_location" />
+</urbansim-parameters>

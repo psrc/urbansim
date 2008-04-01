@@ -1,0 +1,55 @@
+#
+#  UrbanSim software.
+#  Copyright (C) 1998-2003 University of Washington
+#  
+#  You can redistribute this program and/or modify it under the
+#  terms of the GNU General Public License as published by the
+#  Free Software Foundation (http://www.gnu.org/copyleft/gpl.html).
+#  
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  file LICENSE.htm for copyright and licensing information, and the
+#  file ACKNOWLEDGMENTS.htm for funding and other acknowledgments.
+#
+#  Author: Jeff Hepinstall
+
+/* idgrid.aml
+/* process a 150 meter id grid for cells in the taz coverage area
+/* The macro runs in Arc/Info, using the Grid extension.
+/* First, rasterize a polygon coverage that contains the desired boundary 
+/* of the study area.  In the example below, we used a Traffic Analysis Zone
+/* coverage, gridded it at 15m meter resolution, and called the result taz150.
+/* Invoke the macro using: &run idgrid idgrid.
+
+&args routine
+&if [null %routine%] &then
+  &return &inform &run uagrid <routine(grid to process)>
+
+/* set path variables...
+&s data /gis/Eugene
+&s home [show workspace]
+
+&echo &on
+&watch %routine%.watch
+&call %routine%
+&echo &off
+&watch &off
+&return
+/* ------------------------------------------------
+&routine idgrid
+&workspace %data%/grid
+grid
+setcell %data%/grid/taz150
+setwindow %data%/grid/taz150 %data%/grid/taz150
+val = scalar(0)
+docell
+ if(%data%/grid/taz150 gt 0)
+  begin
+   val := val + 1
+   id150 = val
+  end
+end
+quit /* grid
+
+&return

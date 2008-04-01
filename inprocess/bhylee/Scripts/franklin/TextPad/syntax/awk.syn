@@ -1,0 +1,102 @@
+; TextPad keyword syntax file for AWK
+; Contributed by Marco Montagnana, 21/12/98
+; Updated 16/7/99
+
+C=1
+
+[Syntax]
+Namespace1=6
+IgnoreCase = Yes
+InitKeyWordChars = A-Za-z_
+KeyWordChars = A-Za-z0-9_
+BracketChars = {[()]}
+OperatorChars = +-*/<>!~%^&|=
+PreprocStart =
+SyntaxStart =
+SyntaxEnd =
+CommentStart =
+CommentEnd =
+CommentStartAlt =
+CommentEndAlt =
+SingleComment = #
+SingleCommentCol =
+SingleCommentAlt =
+SingleCommentColAlt =
+StringStart = "
+StringEnd = "
+StringAlt =
+StringEsc = \
+CharStart = '
+CharEnd = '
+CharEsc = \
+
+[Keywords 1]
+BEGIN
+break
+continue
+do
+else
+END
+exit
+for
+function
+if
+in
+next
+nextfile
+return
+while
+
+[Keywords 2]
+atan2
+close
+cos
+delete
+exp
+fflush
+gensub
+getline
+gsub
+index
+int
+length
+log
+match
+print
+printf
+rand
+sin
+split
+sprintf
+sqrt
+srand
+strftime
+sub
+substr
+system
+systime
+tolower
+toupper
+
+[Keywords 3]
+ARGC
+ARGIND
+ARGV
+CONVFMT
+ENVIRON
+ERRNO
+FIELDWIDTHS
+FILENAME
+FNR
+FS
+IGNORECASE
+NF
+NR
+OFMT
+OFS
+ORS
+RLENGTH
+RS
+RSTART
+RT
+SUBSEP

@@ -1,0 +1,238 @@
+; TextPad keyword syntax file for F
+; Copyright (C) 1998, Helios Software Solutions
+
+C=1
+
+[Syntax]
+Namespace1 = 1
+IgnoreCase = No
+InitKeyWordChars = a-z
+KeyWordChars = a-z0-9_
+PreprocStart = 
+SyntaxStart =
+SyntaxEnd =
+CommentStart = 
+CommentEnd = 
+CommentStartAlt =
+CommentEndAlt =
+SingleComment = !
+SingleCommentCol =
+SingleCommentAlt =
+SingleCommentColAlt =
+StringStart = "
+StringEnd = "
+StringAlt =
+StringEsc = 
+CharStart =  
+CharEnd =  
+CharEsc =  
+
+[Keywords 1]
+abs                 
+achar
+acos                
+adjustl             
+adjustr             
+aimag               
+aint                
+all           
+allocatable
+allocate
+allocated           
+and 
+anint               
+any                 
+asin                
+assignment
+associated          
+atan                
+atan2               
+backspace
+bit_size            
+btest               
+call
+case
+ceiling             
+char                
+character
+close
+cmplx               
+complex
+conjg               
+contains
+cos                 
+cosh                
+count               
+cpu_time
+cshift              
+cycle
+date_and_time       
+dble 
+deallocate
+default
+digits              
+dim
+dimension
+do
+dot_product         
+dprod
+elemental
+else
+elseif
+elsewhere
+end
+enddo
+endfile
+endforall
+endfunction
+endif
+endinterface
+endmodule
+endprogram
+endselect
+endsubroutine
+endtype
+endwhere
+eoshift             
+epsilon             
+eq
+eqv
+exit
+exp                 
+exponent            
+external
+false
+file
+floor               
+forall
+fraction            
+function
+ge
+go
+goto
+gt
+huge                
+iachar
+iand                
+ibclr               
+ibits               
+ibset               
+ichar               
+ieor                
+if
+implicit
+in
+index               
+inout
+inquire
+int                 
+integer
+intent
+interface
+intrinsic
+ior                 
+ishift              
+ishiftc             
+kind                
+lbound              
+le
+len                 
+len_trim            
+lge
+lgt
+lle
+llt
+log                 
+log10               
+logical
+lt
+matmul              
+max                 
+maxexponent         
+maxloc              
+maxval              
+merge               
+min                 
+minexponent         
+minloc              
+minval              
+mod
+module
+modulo              
+mvbits              
+ne
+nearest             
+neqv
+nint                
+none
+not                 
+null
+nullify
+only
+open
+operator
+optional
+or
+out
+pack                
+parameter
+pointer
+precision           
+present              
+print
+private
+procedure
+product             
+program
+public
+pure
+radix               
+random_number       
+random_seed         
+range               
+read
+real
+recursive
+repeat              
+reshape             
+result
+return
+rewind
+rrspacing           
+save
+scale               
+scan                
+select
+selectcase
+selected_int_kind   
+selected_real_kind  
+set_exponent        
+shape               
+sign                
+sin                 
+sinh                
+size                
+spacing             
+spread              
+sqrt                
+stop
+subroutine
+sum                 
+system_clock        
+tan                 
+tanh                
+target
+then
+tiny                
+to
+transfer
+transpose           
+trim                
+true
+type
+ubound              
+unpack              
+use
+verify              
+where
+write

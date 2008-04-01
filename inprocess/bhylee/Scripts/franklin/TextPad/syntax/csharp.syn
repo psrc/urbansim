@@ -1,0 +1,126 @@
+; TextPad syntax definitions for C#
+
+; Simple syntax
+; Keywords 1: C# Keywords except operators
+; Keywords 2: C# Operators
+; For better results, use same color for Keywords 2 and Operators
+
+C=1
+
+[Syntax]
+IgnoreCase = No
+InitKeyWordChars = A-Za-z_
+KeyWordChars = A-Za-z0-9_
+BracketChars = {[()]}
+OperatorChars = -+*/<>!~%^&|=.?:
+PreprocStart = #
+SyntaxStart =
+SyntaxEnd =
+CommentStart = /*
+CommentEnd = */
+CommentStartAlt =
+CommentEndAlt =
+SingleComment = //
+SingleCommentCol =
+SingleCommentAlt =
+SingleCommentColAlt =
+StringStart = "
+StringEnd = "
+StringAlt =
+StringEsc = \
+CharStart = '
+CharEnd = '
+CharEsc = \
+
+[Keywords 1]
+abstract
+enum
+long
+stackalloc
+as
+event
+namespace
+static
+base
+explicit
+string
+bool
+extern
+null
+struct
+break
+object
+switch
+byte
+finally
+operator
+this
+case
+fixed
+out
+throw 
+catch
+float
+override
+char
+for
+params
+try 
+foreach
+private
+class
+goto
+protected
+uint
+const
+if
+public
+ulong
+continue
+implicit
+readonly
+decimal
+in
+ref
+unsafe
+default
+int
+return
+ushort
+delegate
+interface
+sbyte
+using
+do
+internal
+sealed
+virtual
+double
+short
+void
+else
+lock
+while 
+
+[Keywords 2]
+true
+false
+new
+sizeof
+typeof
+is
+checked
+unchecked
+
+[Preprocessor keywords]
+#if
+#else
+#elif
+#endif
+#define
+#undef
+#warning
+#error
+#line
+#region
+#endregion

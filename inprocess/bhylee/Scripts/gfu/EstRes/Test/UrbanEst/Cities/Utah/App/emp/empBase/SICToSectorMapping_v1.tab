@@ -1,0 +1,19 @@
+from	to	sector	Description
+1	98	-1	other
+99	999	0	Agriculture
+1000	1499	6	Mining
+1500	1799	5	Construction
+2000	2099	3	Food Products
+2100	2399	4	Other Nondurable
+2400	2499	1	Lumber and Wood
+2500	2599	2	Other Durable
+2600	3199	4	Other Nondurable
+3200	3999	2	Other Durable
+4000	4999	7	Transportation
+5000	5199	8	Wholesale Trade
+5200	5999	9	Retail Trade
+6000	6999	10	Fire
+7000	8199	11	Services
+8200	8299	14	Education
+8300	8999	11	Services
+9000	INFINITY	15	Government

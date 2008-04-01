@@ -1,0 +1,55 @@
+; TextPad syntax definitions for CAGT DNA sequences.
+; (Cytosine, Adenine, Guanine, and Thymine.) 
+; Copyright (C) 2000, Helios Software Solutions
+;
+; This file may be freely distributed for use with TextPad.
+;
+; Suggested color assignments:
+;  Keywords 1 = Blue
+;  Keywords 2 = Green
+;  Keywords 3 = Yellow
+;  Keywords 4 = Red
+
+C=1
+
+[Syntax]
+Namespace1 = 6
+IgnoreCase = No
+KeyWordLength = 1
+BracketChars =
+OperatorChars =
+PreprocStart =
+SyntaxStart =
+SyntaxEnd =
+HexPrefix =
+CommentStart = /*
+CommentEnd = */
+CommentStartAlt =
+CommentEndAlt =
+SingleComment = //
+SingleCommentCol =
+SingleCommentAlt =
+SingleCommentColAlt =
+SingleCommentEsc =
+StringsSpanLines =
+StringStart =
+StringEnd =
+StringAlt =
+StringEsc =
+CharStart =
+CharEnd =
+CharEsc =
+
+[Preprocessor keywords]
+
+[Keywords 1]
+C
+
+[Keywords 2]
+A
+
+[Keywords 3]
+G
+
+[Keywords 4]
+T

@@ -1,0 +1,7 @@
+/README.txt////*///
+/collate_all_jobs_tables.sql////*///
+/get_jobs_per_zone.sql////*///
+/input_table_creation_scratch.sql////*///
+/parcel_jobs_to_gridcells.sql////*///
+/proprietors_allocation_to_gridcells.pl////*///
+/proprietors_distributor.pl////*///

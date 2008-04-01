@@ -1,0 +1,26 @@
+SUB_MODEL_ID	COEFFICIENT_NAME	ESTIMATE	STANDARD_ERROR	T_STATISTIC	P_VALUE
+		-.5960259757E-01	.22549387E-01	-2.643	.0082
+	devtype_1	-1.190442751	.22761283	-5.230	.0000
+	devtype_2	-.8224768378	.13846317	-5.940	.0000
+	devtype_3	-.5932216861	.10023183	-5.918	.0000
+	devtype_4	-.3507809541	.86674645E-01	-4.047	.0001
+	devtype_5	-.1278752805	.75040831E-01	-1.704	.0884
+	devtype_6	-.2697112770	.80826614E-01	-3.337	.0008
+	ln_residential_units	-.7425316339	.49181860E-01	-15.098	.0000
+		.3100129729E-04	.40736885E-05	7.610	.0000
+	ln_home_access_to_employment_0_cars	.4177264707	.18430729	2.266	.0234
+	ln_home_access_to_employment_1_car	.7614118466	.24578646	3.098	.0019
+	ln_home_access_to_employment_2_cars	.7967938750	.24115736	3.304	.0010
+	ln_residential_units_within_walking_distance_0_cars	.9962888929	.21688569	4.594	.0000
+	ln_residential_units_within_walking_distance_1_car	.8424003842	.10158442	8.293	.0000
+	ln_residential_units_within_walking_distance_2_cars	.3770805642	.95879141E-01	3.933	.0001
+	ln_home_access_to_population_1	-2.070480780	.24257879	-8.535	.0000
+	residential_units_when_household_has_children	-.5448147977E-02	.12609110E-02	-4.321	.0000
+	income_and_ln_industrial_sqft_within_walking_distance	-.5706714340E-06	.28663689E-06	-1.991	.0465
+	income_and_ln_commercial_sqft_within_walking_distance	-.4731684796E-06	.21263522E-06	-2.225	.0261
+	ln_total_land_value_per_acre_within_walking_distance	.3222093838	.90640108E-01	3.555	.0004
+	household_size_and_ln_residential_units_within_walking_distance	-.6894394903E-01	.17091162E-01	-4.034	.0001
+	young_household_in_high_density_residential	.4759847231	.95605372E-01	4.979	.0000
+	ln_retail_within_walking_distance_fewer_cars_than_workers	.1404492043	.37075166E-01	3.788	.0002
+		.7723818065E-01	.17376750E-01	4.445	.0000
+	ln_available_residential_units	1	0	0	0

@@ -1,0 +1,74 @@
+????????????????????????????
+?
+? Utah
+?
+? Variable definitions
+?
+?
+?
+create
+; if (yea=1977) y77=1	; (else) y77=0
+; if (yea=1978) y78=1	; (else) y78=0
+; if (yea=1979) y79=1	; (else) y79=0
+; if (yea=1980) y80=1	; (else) y80=0
+; if (yea=1981) y81=1	; (else) y81=0
+; if (yea=1982) y82=1	; (else) y82=0
+; if (yea=1983) y83=1	; (else) y83=0
+; if (yea=1984) y84=1	; (else) y84=0
+; if (yea=1985) y85=1	; (else) y85=0
+; if (yea=1986) y86=1	; (else) y86=0
+; if (yea=1987) y87=1	; (else) y87=0
+; if (yea=1988) y88=1	; (else) y88=0
+; if (yea=1989) y89=1	; (else) y89=0
+; if (yea=1990) y90=1	; (else) y90=0
+; if (yea=1991) y91=1	; (else) y91=0
+; if (yea=1992) y92=1	; (else) y92=0
+; if (yea=1993) y93=1	; (else) y93=0
+$
+create
+; cwa = pwa/25
+; cri = pri/25
+; cfl = pfl/25
+; cwe = pwe/25
+; csl = psl/25
+; cop = pop/25
+; cpu = ppu/25
+; cro = pro/25
+$
+create
+; if (pla=1)  p01=1 ; (else) p01=0
+; if (pla=2)  p02=1 ; (else) p02=0
+; if (pla=3)  p03=1 ; (else) p03=0
+; if (pla=4)  p04=1 ; (else) p04=0
+; if (pla=5)  p05=1 ; (else) p05=0
+; if (pla=6)  p06=1 ; (else) p06=0
+; if (pla=7)  p07=1 ; (else) p07=0
+; if (pla=8)  p08=1 ; (else) p08=0
+; if (pla=9)  p09=1 ; (else) p09=0
+; if (pla=10) p10=1 ; (else) p10=0
+$
+
+create
+; sdi=dis/150
+; dst=(1000-dis)/1000
+$
+create
+; if (tsq>=1) lts=log(tsq) ; (else) lts=0
+; if (tun>=1) ltu=log(tun) ; (else) ltu=0
+; if (lun>=1) llu=log(lun) ; (else) llu=0
+; if (lsq>=1) lls=log(lsq) ; (else) lls=0
+; if (lva>=1) llv=log(lva) ; (else) llv=0
+; if (aun>=1) lau=log(aun) ; (else) lau=0
+; if (asq>=1) las=log(asq) ; (else) las=0
+$
+skip $
+dstat	; rhs=y77,y78,y79,y80,y81,y82,y83,y84,y85,y86,y87,y88,y89,
+y90,y91,y92,y93,
+sdi,dst,psa,pre,pmi,pco,pin,pgo,lts,ltu,llu,lls,llv,lau,las
+$
+dstat ; rhs=
+cwa,cri,cfl,cwe,csl,cop,cpu,cro
+$
+dstat ; rhs=
+p01,p02,p03,p04,p05,p06,p07,p08,p09,p10
+$
