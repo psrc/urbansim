@@ -20,8 +20,9 @@ from PyQt4.QtXml import *
 
 from opus_gui.config.xmltree.opusxmltree import OpusXMLTree
 from opus_gui.config.filetree.opusfiletree import OpusFileTree
+from opus_core.configurations.xml_configuration import XMLConfiguration
 
-import os
+import os,tempfile
 
 # Main class for the toolbox
 class ToolboxBase(object):
@@ -37,6 +38,7 @@ class ToolboxBase(object):
     self.xml_file = None
     self.doc = None
     self.configFile = None
+    self.configFileTemp = None
 
     # These are the trees that are displayed for each toolbox
     self.view = None
@@ -106,14 +108,30 @@ class ToolboxBase(object):
            runManagerRemoveSuccess and dataManagerRemoveSuccess and \
            dataManagerFileRemoveSuccess and dataManagerDBSRemoveSuccess:
       # We have successfully removed the old XML trees
-      # Opening a project XML
+
+      # (OLD) Opening a project XML
+      #self.xml_file = xml_file
+      #self.configFile = QFile(xml_file)
+      #if self.configFile.open(QIODevice.ReadWrite):
+
+      # (NEW) Open the XML by first passing to the xml_configuration and letting
+      # opus core return the nested XML based on inheritence
       self.xml_file = xml_file
       self.configFile = QFile(xml_file)
-      if self.configFile.open(QIODevice.ReadWrite):
+      fileNameInfo = QFileInfo(self.xml_file)
+      fileName = fileNameInfo.fileName().trimmed()
+      fileNamePath = fileNameInfo.absolutePath().trimmed()
+      tempXMLTree = XMLConfiguration(str(fileName),str(fileNamePath))
+      [tempFile,tempFilePath] = tempfile.mkstemp()
+      print tempFile,tempFilePath
+      tempXMLTree.tree.write(tempFilePath)
+      self.configFileTemp = QFile(tempFilePath)
+      if self.configFile and self.configFileTemp:
+        self.configFileTemp.open(QIODevice.ReadWrite)
+        self.doc = QDomDocument()
+        self.doc.setContent(self.configFileTemp)
         self.opusDataPathOrig = os.getenv("OPUS_DATA_PATH")
         #Then append the cache_directory_root from the modelmanager section of the XML
-        self.doc = QDomDocument()
-        self.doc.setContent(self.configFile)
         cache_dir_root_path = ""
         cache_dir_root_list = self.doc.elementsByTagName(QString("cache_directory_root"))
         if cache_dir_root_list.length() > 0:
