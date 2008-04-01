@@ -203,59 +203,56 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
   def saveConfig(self):
     try:
-        configFile = self.toolboxStuff.runManagerTree.model.configFile
-        domDocument = self.toolboxStuff.runManagerTree.model.domDocument
-        indentSize = 2
-        configFile.close()
-        configFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
-        out = QTextStream(configFile)
-        domDocument.save(out, indentSize)
-        self.toolboxStuff.runManagerTree.model.dirty = False
-        self.setWindowTitle(self.windowTitle().replace("*", ""))
-        self.toolboxStuff.dataManagerTree.model.dirty = False
-        self.setWindowTitle(self.windowTitle().replace("*", ""))
-        self.toolboxStuff.dataManagerDBSTree.model.dirty = False
-        self.setWindowTitle(self.windowTitle().replace("*", ""))
-        self.toolboxStuff.modelManagerTree.model.dirty = False
-        self.setWindowTitle(self.windowTitle().replace("*", ""))
-        self.toolboxStuff.resultsManagerTree.model.dirty = False
-        self.setWindowTitle(self.windowTitle().replace("*", ""))
+      domDocument = self.toolboxStuff.doc
+      opusXMLTree = self.toolboxStuff.opusXMLTree
+      indentSize = 2
+      opusXMLTree.update(str(domDocument.toString(indentSize)))
+      opusXMLTree.save()
+      self.toolboxStuff.runManagerTree.model.dirty = False
+      self.setWindowTitle(self.windowTitle().replace("*", ""))
+      self.toolboxStuff.dataManagerTree.model.dirty = False
+      self.setWindowTitle(self.windowTitle().replace("*", ""))
+      self.toolboxStuff.dataManagerDBSTree.model.dirty = False
+      self.setWindowTitle(self.windowTitle().replace("*", ""))
+      self.toolboxStuff.modelManagerTree.model.dirty = False
+      self.setWindowTitle(self.windowTitle().replace("*", ""))
+      self.toolboxStuff.resultsManagerTree.model.dirty = False
+      self.setWindowTitle(self.windowTitle().replace("*", ""))
     except:
-        pass
+      print "Unexpected error:", sys.exc_info()[0]
 
   def saveConfigAs(self):
     try:
-        # get the current config file on disk
-        currentConfigFile = self.toolboxStuff.runManagerTree.model.configFile
-             
-        # get the location for the new config file on disk
-        from opus_core.misc import directory_path_from_opus_path
-        start_dir = directory_path_from_opus_path('opus_gui.projects')
-        configDialog = QFileDialog()
-        filter_str = QString("*.xml")
-        fd = configDialog.getSaveFileName(self,QString("Save As..."),
-                                          QString(start_dir), filter_str)
-        # Check for cancel
-        if len(fd) == 0:
-          return
-        fileName = QString(fd)
-        
-        # Create the new file on disk
-        newConfigFile = QFile(fileName)
-        
-        # Close current file, discard changes, write new file with changes, then open it
-        domDocument = self.toolboxStuff.runManagerTree.model.domDocument
-        indentSize = 2
-        currentConfigFile.close()
-        newConfigFile.open(QIODevice.ReadWrite | QIODevice.Truncate)
-        out = QTextStream(newConfigFile)
-        domDocument.save(out, indentSize)
-        self.toolboxStuff.runManagerTree.model.dirty = False
-        self.closeConfig()
-        self.openConfig(newConfigFile.fileName())
+      # get the location for the new config file on disk
+      from opus_core.misc import directory_path_from_opus_path
+      start_dir = directory_path_from_opus_path('opus_gui.projects')
+      configDialog = QFileDialog()
+      filter_str = QString("*.xml")
+      fd = configDialog.getSaveFileName(self,QString("Save As..."),
+                                        QString(start_dir), filter_str)
+      # Check for cancel
+      if len(fd) == 0:
+        return
+      fileName = QString(fd)
+      
+      domDocument = self.toolboxStuff.doc
+      opusXMLTree = self.toolboxStuff.opusXMLTree
+      indentSize = 2
+      opusXMLTree.update(str(domDocument.toString(indentSize)))
+      opusXMLTree.save_as(str(fileName))
+      self.toolboxStuff.runManagerTree.model.dirty = False
+      self.setWindowTitle(self.windowTitle().replace("*", ""))
+      self.toolboxStuff.dataManagerTree.model.dirty = False
+      self.setWindowTitle(self.windowTitle().replace("*", ""))
+      self.toolboxStuff.dataManagerDBSTree.model.dirty = False
+      self.setWindowTitle(self.windowTitle().replace("*", ""))
+      self.toolboxStuff.modelManagerTree.model.dirty = False
+      self.setWindowTitle(self.windowTitle().replace("*", ""))
+      self.toolboxStuff.resultsManagerTree.model.dirty = False
+      self.setWindowTitle(self.windowTitle().replace("*", ""))
     except:
-        pass
-  
+      print "Unexpected error:", sys.exc_info()[0]
+      
   def _saveOrDiscardChanges(self):
     """
     Checks for changes to the currently open project (if any)

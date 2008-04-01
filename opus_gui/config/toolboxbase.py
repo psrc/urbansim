@@ -121,10 +121,10 @@ class ToolboxBase(object):
       fileNameInfo = QFileInfo(self.xml_file)
       fileName = fileNameInfo.fileName().trimmed()
       fileNamePath = fileNameInfo.absolutePath().trimmed()
-      tempXMLTree = XMLConfiguration(str(fileName),str(fileNamePath))
+      self.opusXMLTree = XMLConfiguration(str(fileName),str(fileNamePath))
       [tempFile,tempFilePath] = tempfile.mkstemp()
-      print tempFile,tempFilePath
-      tempXMLTree.tree.write(tempFilePath)
+      #print tempFile,tempFilePath
+      self.opusXMLTree.tree.write(tempFilePath)
       self.configFileTemp = QFile(tempFilePath)
       if self.configFile and self.configFileTemp:
         self.configFileTemp.open(QIODevice.ReadWrite)
