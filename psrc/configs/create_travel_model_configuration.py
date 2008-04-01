@@ -57,6 +57,11 @@ def create_travel_model_configuration(travel_model_dir_name,
             
             'au1dis': 'single_vehicle_to_work_travel_distance',
             
+            "lsum1" : 'logsum_hbw_am_income_1',
+            "lsum2" : 'logsum_hbw_am_income_2',
+            "lsum3" : 'logsum_hbw_am_income_3',
+            "lsum4" : 'logsum_hbw_am_income_4',
+            
 #            'mf91':'am_vehicle_miles_traveled',
 #
 #            'hbwdap':'hbw_daily_drive_alone_person_trip_table',
@@ -76,6 +81,13 @@ def create_travel_model_configuration(travel_model_dir_name,
             },
         'bank2':{
             'mf91':'md_vehicle_miles_traveled',
+            
+            "nweuda" : 'nweuda',
+            "nweus2" : 'nweus2',
+            "nweus3" : 'nweus3',
+            "nweutw" : 'nweutw',
+            "nweubk" : 'nweubk',
+            "nweuwk" : 'nweuwk',
             
 #            'off1tm':'md_single_vehicle_to_work_travel_time',
 #            'off2tm':'md_double_vehicle_to_work_travel_time',
