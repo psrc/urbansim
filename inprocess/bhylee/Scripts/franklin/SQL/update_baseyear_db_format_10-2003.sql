@@ -1,2 +1,0 @@
-update table urbansim_constants rename column logit_choice_threshold to developer_model_estimation_threshold_count;
-update table 

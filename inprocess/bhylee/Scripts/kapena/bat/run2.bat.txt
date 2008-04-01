@@ -1,2 +1,0 @@
-cd program files\urbansim
-urbansim.bat C:\eclipse\workspace\Scripts\kapena\parameters\WFRC_1997_parameters_random2.xml
