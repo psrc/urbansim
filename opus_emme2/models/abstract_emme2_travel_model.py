@@ -19,11 +19,14 @@ class AbstractEmme2TravelModel(Model):
     """Basic functionality used by all of the emme/2 models.
     Must be subclassed before use.
     """
-    
-    def get_emme2_dir(self, config, year, subdir=None):
+    def __init__(self, config):
+        self.config = config
+        self.emme_cmd = config['travel_model_configuration'].get('emme_command', 'emme2')
+        
+    def get_emme2_dir(self, year, subdir=None):
         """Returns the full path to the given subdirectory of the emme/2 'database'.
         """
-        year_config = config['travel_model_configuration'][year]
+        year_config = self.config['travel_model_configuration'][year]
         bank_path_parts = year_config['bank']
         path = os.path.sep.join(bank_path_parts)
         path = os.path.join(os.environ['TRAVELMODELROOT'], path)
@@ -31,8 +34,8 @@ class AbstractEmme2TravelModel(Model):
             path = os.path.join(path, subdir)
         return path
     
-    def get_emme2_base_dir(self, config):
-        return os.path.join(os.environ['TRAVELMODELROOT'], config['travel_model_configuration']['travel_model_base_directory'])
+    def get_emme2_base_dir(self):
+        return os.path.join(os.environ['TRAVELMODELROOT'], self.config['travel_model_configuration']['travel_model_base_directory'])
     
 from opus_core.tests import opus_unittest
 class AbstractEmme2TravelModelTests(opus_unittest.OpusTestCase):
@@ -52,11 +55,11 @@ class AbstractEmme2TravelModelTests(opus_unittest.OpusTestCase):
                         },
                     }, 
                 }
-            m = AbstractEmme2TravelModel()
+            m = AbstractEmme2TravelModel(config)
             path = os.path.join(os.environ['TRAVELMODELROOT'], 'baseline_travel_model_psrc', '2000_06')
-            self.assertEqual(m.get_emme2_dir(config, 2001), path)
+            self.assertEqual(m.get_emme2_dir(2001), path)
             path = os.path.join(os.environ['TRAVELMODELROOT'], 'baseline_travel_model_psrc', '2000_06', 'tripgen')
-            self.assertEqual(m.get_emme2_dir(config, 2001, 'tripgen'), path)
+            self.assertEqual(m.get_emme2_dir(2001, 'tripgen'), path)
         
 if __name__ == '__main__':
     opus_unittest.main()

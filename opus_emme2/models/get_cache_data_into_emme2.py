@@ -27,29 +27,29 @@ class GetCacheDataIntoEmme2(AbstractEmme2TravelModel):
     """Get needed emme/2 data from UrbanSim cache into inputs for travel model.
     """
 
-    def run(self, config, year):
-        """This is the main entry point.  It gets the appropriate configuration info from the 
+    def run(self, year):
+        """This is the main entry point.  The class is initialized with the appropriate configuration info from the 
         travel_model_configuration part of this config, and then copies the specified 
         UrbanSim data into files for emme/2 to read.  
         If households and jobs do not have a primary attribute zone_id, the entry 'locations_to_disaggregate'
         in the travel_model_configuration should be a list of dataset names over which the zone_id 
         will be dissaggregated, ordered from higher to lower aggregation level, e.g. ['parcel', 'building']
         """
-        cache_directory = config['cache_directory']
+        cache_directory = self.config['cache_directory']
         simulation_state = SimulationState()
         simulation_state.set_cache_directory(cache_directory)
         simulation_state.set_current_time(year)
         attribute_cache = AttributeCache()
         sc = SessionConfiguration(new_instance=True,
-                                  package_order=config['dataset_pool_configuration'].package_order,
-                                  package_order_exceptions=config['dataset_pool_configuration'].package_order_exceptions, 
+                                  package_order=self.config['dataset_pool_configuration'].package_order,
+                                  package_order_exceptions=self.config['dataset_pool_configuration'].package_order_exceptions, 
                                   in_storage=attribute_cache)
         dataset_pool = sc.get_dataset_pool()
 
         hh_set = dataset_pool.get_dataset('household')
         zone_set = dataset_pool.get_dataset('zone')
         job_set = dataset_pool.get_dataset('job')
-        locations_to_disaggregate = config['travel_model_configuration']['locations_to_disaggregate']
+        locations_to_disaggregate = self.config['travel_model_configuration']['locations_to_disaggregate']
         len_locations_to_disaggregate = len(locations_to_disaggregate)
         if len_locations_to_disaggregate > 0:
             primary_location = locations_to_disaggregate[0]
@@ -69,14 +69,14 @@ class GetCacheDataIntoEmme2(AbstractEmme2TravelModel):
                                                                             intermediates_string)], 
                                        dataset_pool=dataset_pool)
         
-        return self._call_input_file_writer(config, year, dataset_pool)
+        return self._call_input_file_writer(year, dataset_pool)
 
-    def _call_input_file_writer(self, config, year, dataset_pool):
-        writer_module = config['travel_model_configuration'].get('travel_model_input_file_writer')
+    def _call_input_file_writer(self, year, dataset_pool):
+        writer_module = self.config['travel_model_configuration'].get('travel_model_input_file_writer')
         writer_class = get_camel_case_class_name_from_opus_path(writer_module)
         file_writer = ClassFactory().get_class( writer_module, class_name=writer_class )
-        current_year_emme2_dir = self.get_emme2_dir(config, year)
-        filename = file_writer.run(current_year_emme2_dir, year, dataset_pool, config=config)
+        current_year_emme2_dir = self.get_emme2_dir(year)
+        filename = file_writer.run(current_year_emme2_dir, year, dataset_pool, config=self.config)
         if isinstance(filename, list):
             return filename
         return [filename]
@@ -99,7 +99,7 @@ if __name__ == "__main__":
     resources = Resources(get_resources_from_file(options.resources_file_name))
 
 #    logger.enable_memory_logging()
-    files = GetCacheDataIntoEmme2().run(resources, options.year)
+    files = GetCacheDataIntoEmme2(resources).run(options.year)
     if options.destination_directory is not None:
         for file in files:
             copy(file, options.destination_directory)

@@ -24,8 +24,8 @@ class RunMacrosAbstract(AbstractEmme2TravelModel):
        opus_emme2.models.get_emme2_data_into_cache.
     """
 
-    def run(self, macro_group_name, config, year, output_file=None):
-        """This is the main entry point.  It gets the appropriate values from the 
+    def run(self, macro_group_name, year, output_file=None):
+        """This is the main entry point.  It is initialized with the appropriate values from the 
         travel_model_configuration part of this config, and then runs the specified 
         emme/2 macros. The macro specification should also have a specification of the bank it should run in.
         'macro_group_name' is the group name of the macros, such as 'export_macros'.
@@ -34,7 +34,7 @@ class RunMacrosAbstract(AbstractEmme2TravelModel):
         """
         from opus_emme2.travel_model_output import TravelModelOutput
         import opus_emme2
-        tm_output = TravelModelOutput()
+        tm_output = TravelModelOutput(self.emme_cmd)
         specified_macros = config['travel_model_configuration'][year][macro_group_name]
         if output_file is None:
             tmp_output_file = os.path.join(config['cache_directory'], "emme2_export_macros_%s_log.txt" % year)
@@ -45,8 +45,8 @@ class RunMacrosAbstract(AbstractEmme2TravelModel):
         
         for macro_name, macro_info in specified_macros.iteritems():
             bank = macro_info['bank']
-            bank_path = self.get_emme2_dir(config, year, bank)
-            macro_path = os.path.join(self.get_emme2_base_dir(config), macro_info.get('path',''), macro_name)
+            bank_path = self.get_emme2_dir(year, bank)
+            macro_path = os.path.join(self.get_emme2_base_dir(), macro_info.get('path',''), macro_name)
             tm_output.run_emme2_macro(macro_path, bank_path, macro_info['scenario'], output_file=tmp_output_file)
 
 

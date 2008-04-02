@@ -25,13 +25,13 @@ from opus_core.store.sftp_flt_storage import redirect_sftp_url_to_local_tempdir
 class RunTravelModel(AbstractEmme2TravelModel):
     """Run the travel model.
     """
-
+        
     def run(self, config, year, output_file=None):
         """Runs the emme2 executables, using appropriate info from config. 
         Assumes the emme2 input files are present. 
         Raise an exception if the emme2 run fails. 
         """        
-        emme2_dir = self.get_emme2_dir(config, year)
+        emme2_dir = self.get_emme2_dir(year)
         logger.log_status('Using emme2 dir %s for year %d' % (emme2_dir, year))
         os.chdir(emme2_dir)
         emme2_batch_file_path = config['travel_model_configuration'][year]['emme2_batch_file_name']
@@ -42,11 +42,11 @@ class RunTravelModel(AbstractEmme2TravelModel):
         
         # if log_file_path is a remote sftp URL, redirect the log file to tempdir           
         log_file_path = redirect_sftp_url_to_local_tempdir(log_file_path)
-
-        cmd = """cmd /c "%(emme2_batch_file_name)s" > %(log_file_path)s""" % {
-            'emme2_batch_file_name':emme2_batch_file_path, 
-            'log_file_path':log_file_path,
-            }
+        cmd = """%(system_cmd) "%(emme2_batch_file_name)s" > %(log_file_path)s""" % {
+                'system_cmd': config['travel_model_configuration'].get('system_command', 'cmd /c'),
+                'emme2_batch_file_name':emme2_batch_file_path, 
+                'log_file_path':log_file_path,
+                } 
         logger.log_status('Running command %s' % cmd)
         cmd_result = os.system(cmd)
         if cmd_result != 0:
@@ -77,4 +77,4 @@ if __name__ == "__main__":
                          in_storage=AttributeCache())
 
 #    logger.enable_memory_logging()
-    RunTravelModel().run(resources, options.year, options.output_file)
+    RunTravelModel(resources).run(options.year, options.output_file)

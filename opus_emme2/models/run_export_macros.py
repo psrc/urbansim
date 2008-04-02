@@ -23,11 +23,11 @@ class RunExportMacros(RunMacrosAbstract):
        The macro specification should also have a specification of the bank it should run in.
     """
 
-    def run(self, config, year, output_file=None):
+    def run(self, year, output_file=None):
         # if output_file is a remote sftp URL, redirect it to tempdir
         output_file = redirect_sftp_url_to_local_tempdir(output_file)
 
-        RunMacrosAbstract.run(self, 'export_macros', config, year, output_file)
+        RunMacrosAbstract.run(self, 'export_macros', year, output_file)
     
 if __name__ == "__main__":
     try: import wingdbstub
@@ -36,4 +36,4 @@ if __name__ == "__main__":
     from opus_emme2.models.run_macros_abstract import prepare_for_running_macro
     parser = OptionParser()
     resources, options = prepare_for_running_macro(parser)
-    RunExportMacros().run(resources, options.year, options.output_file)    
+    RunExportMacros(resources).run(options.year, options.output_file)    

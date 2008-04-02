@@ -25,8 +25,8 @@ from opus_core.store.attribute_cache import AttributeCache
 class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
     """Class to copy travel model results into the UrbanSim cache.
     """
-
-    def run(self, config, year, matrix_directory=None):
+    
+    def run(self, year, matrix_directory=None):
         """This is the main entry point.  It gets the appropriate values from the 
         travel_model_configuration part of this config, and then copies the specified 
         emme/2 matrices into the specified travel_data variable names.  Results in
@@ -34,20 +34,20 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
         If matrix_directory is not None, it is assumed the matrices files are already created 
         in the given directory.
         """
-        cache_directory = config['cache_directory']
+        cache_directory = self.config['cache_directory']
         simulation_state = SimulationState()
         simulation_state.set_current_time(year)
         simulation_state.set_cache_directory(cache_directory)
         
-        year_config = config['travel_model_configuration'][year]
+        year_config = self.config['travel_model_configuration'][year]
         matrices_created = False
         if matrix_directory is not None:
             matrices_created = True    
-        reports = config['travel_model_configuration'].get('reports_to_copy', [])
+        reports = self.config['travel_model_configuration'].get('reports_to_copy', [])
         
         for x in 1,2,3:
             if matrix_directory is None:
-                bank_dir = self.get_emme2_dir(config, year, "bank%i" % x)
+                bank_dir = self.get_emme2_dir(year, "bank%i" % x)
             else:
                 bank_dir = os.path.join(matrix_directory, "bank%i" % x)
             if "bank%i" % x in year_config['matrix_variable_map']:
@@ -63,14 +63,14 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
                 if len(node_variable_map.keys()) > 0:
                     self.get_needed_node_matrices_from_emme2(year, year_config['cache_directory'], bank_dir, node_variable_map)
                     
-    def create_output_matrix_files(self, config, year, max_zone_id):
+    def create_output_matrix_files(self, year, max_zone_id):
         """Create data files with emme2 matrices."""
         from opus_emme2.travel_model_output import TravelModelOutput
-        tm_output = TravelModelOutput()
-        year_config = config['travel_model_configuration'][year]
+        tm_output = TravelModelOutput(self.emme_cmd)
+        year_config = self.config['travel_model_configuration'][year]
         for x in 1,2,3:
             if "bank%i" % x in year_config['matrix_variable_map']:
-                bank_dir = self.get_emme2_dir(config, year, "bank%i" % x)
+                bank_dir = self.get_emme2_dir(year, "bank%i" % x)
                 for matrix_name in year_config['matrix_variable_map']["bank%i" % x].keys():
                     tm_output._get_matrix_into_data_file(matrix_name, max_zone_id, bank_dir, "%s_one_matrix.txt" % matrix_name)
             
@@ -122,7 +122,7 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
         {"au1tim":"single_vehicle_to_work_travel_time"}
         """
         from opus_emme2.travel_model_output import TravelModelOutput
-        tm_output = TravelModelOutput()
+        tm_output = TravelModelOutput(self.emme_cmd)
         return tm_output.get_travel_data_set(zone_set, matrix_variable_map, bank_dir, matrices_created = matrices_created)
     
     def get_node_travel_data_from_emme2(self, bank_dir, node_matrix_variable_map):
@@ -133,7 +133,7 @@ class GetEmme2DataIntoCache(AbstractEmme2TravelModel):
         {"au1tim":"single_vehicle_to_work_travel_time"}
         """
         from opus_emme2.travel_model_output import TravelModelOutput
-        tm_output = TravelModelOutput()
+        tm_output = TravelModelOutput(self.emme_cmd)
         return tm_output.get_node_travel_data_set(node_matrix_variable_map, bank_dir)
        
     def copy_report_to_cache(self, report_name, year, cache_directory, bank_dir):
@@ -169,9 +169,9 @@ if __name__ == "__main__":
         
 #    logger.enable_memory_logging()
     if options.matrices_only:
-        GetEmme2DataIntoCache().create_output_matrix_files(resources, options.year, options.max_zone_id)
+        GetEmme2DataIntoCache(resources).create_output_matrix_files(options.year, options.max_zone_id)
     else:
-        GetEmme2DataIntoCache().run(resources, options.year, options.matrix_directory)    
+        GetEmme2DataIntoCache(resources).run(options.year, options.matrix_directory)    
     #from opus_core.configuration import Configuration
     #config = Configuration({
         #'cache_directory':r'D:\urbansim_cache\test_data',

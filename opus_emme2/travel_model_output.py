@@ -26,6 +26,9 @@ class TravelModelOutput(object):
     A class to access the output of emme/2 travel models.
     Can be used to get the values of any matrix in an emme/2 data bank.
     """
+    def __init__(self, emme_cmd='emme2'):
+        self.emme_cmd = emme_cmd
+        
     def get_travel_data_set(self, zone_set, matrix_attribute_name_map, bank_path, out_storage=None, matrices_created=False):
         """
         Returns a new travel data set containing the given set of emme/2 matrices 
@@ -114,7 +117,7 @@ class TravelModelOutput(object):
         try:
             os.chdir(bank_path)
             shutil.copy(macro_path, temp_macro_file_name)
-            cmd = "emme2 000 -m %s" % temp_macro_file_name
+            cmd = "%s 000 -m %s" % (self.emme_cmd, temp_macro_file_name)
             if scenario_number != -1:
                 cmd = "%s %s" % (cmd, scenario_number)
             cmd = "%s%s" % (cmd, out)
