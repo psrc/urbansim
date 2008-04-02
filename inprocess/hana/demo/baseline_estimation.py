@@ -32,15 +32,12 @@ class BaselineEstimation(Baseline):
         self['low_memory_mode'] = False
         self['base_year'] = 1980
         self['years'] = (1980,1980)
-        self['seed'] = 10
-        #self['models_configuration']['land_price_model']['controller']['estimate']['arguments']['procedure'] = "'opus_core.bma_for_linear_regression_r'"
-        #self['models_configuration']['land_price_model']['controller']['init']['arguments']['estimate_config'] = {'bma_imageplot_filename': 'bma_image.pdf'}
-
+        self['seed'] = 10
         self['models_configuration']['land_price_model']['controller'] = LandPriceModelConfigurationCreator(
-                                       estimation_procedure='opus_core.bma_for_linear_regression_r',
-                                       estimate_config={'bma_imageplot_filename': 'bma_image.pdf'}
+                                       #estimation_procedure='opus_core.bma_for_linear_regression_r',
+                                       #estimate_config={'bma_imageplot_filename': 'bma_image.pdf'}
                                                                                    ).execute()
         self['models_configuration']['household_location_choice_model']['controller'] = HouseholdLocationChoiceModelConfigurationCreator(
-                                    estimation_procedure='opus_core.bhhh_mnl_estimation_with_diagnose',
+                                    #estimation_procedure='opus_core.bhhh_mnl_estimation_with_diagnose',
                                                                                    ).execute()
 
