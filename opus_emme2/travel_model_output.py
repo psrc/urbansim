@@ -217,6 +217,7 @@ class TravelModelOutput(object):
 ~/ 3) - - to the new file trips_and_times_by_mode.dat
 ~/ 4) And exits both the program and EMME/2
 ~/
+~o=39
 ~!if exist %(output_file_name)s erase %(output_file_name)s
 reports=?
 3.14
