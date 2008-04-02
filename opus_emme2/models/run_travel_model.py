@@ -26,7 +26,7 @@ class RunTravelModel(AbstractEmme2TravelModel):
     """Run the travel model.
     """
         
-    def run(self, config, year, output_file=None):
+    def run(self, year, output_file=None):
         """Runs the emme2 executables, using appropriate info from config. 
         Assumes the emme2 input files are present. 
         Raise an exception if the emme2 run fails. 
