@@ -42,8 +42,8 @@ class RunTravelModel(AbstractEmme2TravelModel):
         
         # if log_file_path is a remote sftp URL, redirect the log file to tempdir           
         log_file_path = redirect_sftp_url_to_local_tempdir(log_file_path)
-        cmd = """%(system_cmd) "%(emme2_batch_file_name)s" > %(log_file_path)s""" % {
-                'system_cmd': self.config['travel_model_configuration'].get('system_command', 'cmd /c'),
+        cmd = """%(system_cmd)s"%(emme2_batch_file_name)s" > %(log_file_path)s""" % {
+                'system_cmd': self.config['travel_model_configuration'].get('system_command', 'cmd /c '),
                 'emme2_batch_file_name':emme2_batch_file_path, 
                 'log_file_path':log_file_path,
                 } 
