@@ -20,7 +20,7 @@ import os
 from sets import Set
 from glob import glob
 
-from numpy import array, where, float32, int32, sort, argsort, reshape, dtype, any
+from numpy import array, where, float32, int32, sort, argsort, reshape, dtype, any, abs
 from numpy import zeros, arange, ones, clip, ndarray, concatenate, searchsorted, resize
 from numpy import compress, transpose, logical_and, ma, isscalar
 from scipy import ndimage
@@ -1281,7 +1281,7 @@ class AbstractDataset(object):
         It uses the matplot library.
         """
         from opus_core.plot_functions import plot_matplot
-        data = self.correlation_matrix(names)
+        data = abs(self.correlation_matrix(names))
         plot_matplot(data, xlabels = names, ylabels=names)
         
     def openev_plot(self, name, prototype_dataset=None, template_project=None,
