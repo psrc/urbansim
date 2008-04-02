@@ -20,7 +20,6 @@ from opus_core.services.run_server.run_manager import get_date_time_string
 from opus_core.fork_process import ForkProcess
 from opus_core.logger import logger
 from numpy.random import seed, randint
-from opus_emme2.models.abstract_emme2_travel_model import AbstractEmme2TravelModel
 
 class OptionGroup(GenericOptionGroup):
     def __init__(self, **kwargs):
@@ -75,7 +74,6 @@ class RunTravelModel:
         if not config['travel_model_configuration'].has_key(year):
             logger.log_status("No configuration for year %s" % year)
             return False
-        tm = AbstractEmme2TravelModel()
         for full_model_path in config['travel_model_configuration'][year].get('models'):
             optional_args='-y %d' % year
             ForkProcess().fork_new_process(full_model_path, config, optional_args=optional_args)
