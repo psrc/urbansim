@@ -34,16 +34,16 @@ class RunTravelModel(AbstractEmme2TravelModel):
         emme2_dir = self.get_emme2_dir(year)
         logger.log_status('Using emme2 dir %s for year %d' % (emme2_dir, year))
         os.chdir(emme2_dir)
-        emme2_batch_file_path = config['travel_model_configuration'][year]['emme2_batch_file_name']
+        emme2_batch_file_path = self.config['travel_model_configuration'][year]['emme2_batch_file_name']
         if output_file is None:
-            log_file_path = os.path.join(config['cache_directory'], 'emme2_%d_log.txt' % year)
+            log_file_path = os.path.join(self.config['cache_directory'], 'emme2_%d_log.txt' % year)
         else:
             log_file_path = output_file
         
         # if log_file_path is a remote sftp URL, redirect the log file to tempdir           
         log_file_path = redirect_sftp_url_to_local_tempdir(log_file_path)
         cmd = """%(system_cmd) "%(emme2_batch_file_name)s" > %(log_file_path)s""" % {
-                'system_cmd': config['travel_model_configuration'].get('system_command', 'cmd /c'),
+                'system_cmd': self.config['travel_model_configuration'].get('system_command', 'cmd /c'),
                 'emme2_batch_file_name':emme2_batch_file_path, 
                 'log_file_path':log_file_path,
                 } 
