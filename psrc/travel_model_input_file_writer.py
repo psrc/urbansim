@@ -82,12 +82,7 @@ class TravelModelInputFileWriter(object):
         return self._write_to_file(zone_set, variables_list, tm_input_file)
 
     def get_variables_list(self, dataset_pool):
-        household_set = dataset_pool.get_dataset("household")
-        # setup for calculating quartile information
-        hh_income = household_set.get_attribute("income")
-        median_income = median(hh_income)
-        first_quarter = median(hh_income[where(hh_income<median_income)])
-        third_quarter = median(hh_income[where(hh_income>median_income)])
+        first_quarter, median_income, third_quarter = self._get_income_group_quartiles(dataset_pool)
         return [
             "pctmf",  #101
             "hhs_of_first_quarter = zone.aggregate(household.income < %s)" % first_quarter, #102
@@ -115,6 +110,15 @@ class TravelModelInputFileWriter(object):
             'zone.gqn * zone.v124'       #124
             ]
         
+    def _get_income_group_quartiles(self, dataset_pool):
+        household_set = dataset_pool.get_dataset("household")
+        # setup for calculating quartile information
+        hh_income = household_set.get_attribute("income")
+        median_income = median(hh_income)
+        first_quarter = median(hh_income[where(hh_income<median_income)])
+        third_quarter = median(hh_income[where(hh_income>median_income)])
+        return (first_quarter, median_income, third_quarter)
+    
     def _write_to_file(self, zone_set, variables_list, tm_input_file):
         logger.start_block("Writing to emme2 input file: " + tm_input_file)
         try:
