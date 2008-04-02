@@ -76,10 +76,10 @@ class GetCacheDataIntoEmme2(AbstractEmme2TravelModel):
         writer_class = get_camel_case_class_name_from_opus_path(writer_module)
         file_writer = ClassFactory().get_class( writer_module, class_name=writer_class )
         current_year_emme2_dir = self.get_emme2_dir(config, year)
-        resulting_files = []
         filename = file_writer.run(current_year_emme2_dir, year, dataset_pool, config=config)
-        resulting_files.append(filename)
-        return resulting_files
+        if isinstance(filename, list):
+            return filename
+        return [filename]
     
 if __name__ == "__main__":
     try: import wingdbstub
