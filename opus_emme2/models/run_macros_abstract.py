@@ -35,9 +35,9 @@ class RunMacrosAbstract(AbstractEmme2TravelModel):
         from opus_emme2.travel_model_output import TravelModelOutput
         import opus_emme2
         tm_output = TravelModelOutput(self.emme_cmd)
-        specified_macros = config['travel_model_configuration'][year][macro_group_name]
+        specified_macros = self.config['travel_model_configuration'][year][macro_group_name]
         if output_file is None:
-            tmp_output_file = os.path.join(config['cache_directory'], "emme2_export_macros_%s_log.txt" % year)
+            tmp_output_file = os.path.join(self.config['cache_directory'], "emme2_export_macros_%s_log.txt" % year)
         else:
             tmp_output_file = output_file
         ## if tmp_output_file is a remote sftp URL, redirect file to local tempdir
