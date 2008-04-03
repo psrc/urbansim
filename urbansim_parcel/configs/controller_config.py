@@ -42,8 +42,22 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                        "sample_size_locations":30,
                        "weights_for_estimation_string":"is_placed_job=(urbansim_parcel.job.zone_id > 0).astype(int32)",
                        "compute_capacity_flag":True,
-                       "capacity_string":"(job.building_type==2).astype(int32)",  # each non home-based job can only be chosen once by one person
+                       "capacity_string":"(job.building_type==2).astype(int32)",  
+                         ### each non home-based job can only be chosen once by one person
                        "number_of_units_string":"(job.building_type==2).astype(int32)",
+
+#                       "sampler":"opus_core.samplers.stratified_sampler",
+#                       "stratum":"district_id = job.disaggregate(psrc_parcel.building.district_id)",
+#                       "sample_size_from_each_stratum": 5,
+#                       "sample_size_from_chosen_stratum":4,
+#                       "include_chosen_choice":True,
+#                       "sample_size_locations":95,
+#                       "weights_for_estimation_string":"is_placed_job=(urbansim_parcel.job.zone_id > 0).astype(int32)",
+#                       "compute_capacity_flag":True,
+#                       "capacity_string":"(job.building_type==2).astype(int32)",  
+#                        ### each non home-based job can only be chosen once by one person
+#                       "number_of_units_string":"(job.building_type==2).astype(int32)",
+
         }
         
         my_controller_configuration = {
