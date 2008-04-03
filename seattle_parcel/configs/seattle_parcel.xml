@@ -35,6 +35,8 @@
   <data_manager>
     <script_library type="script_library">
       <script_path type="script_path">projects.scripts</script_path>
+      <opus_database_to_sql_tool type="script_file" >opus_database_to_sql</opus_database_to_sql_tool>
+      <opus_database_to_esri_tool type="script_file" >opus_database_to_esri</opus_database_to_esri_tool>
       <esri_buffer_tool type="script_file">esri_buffer</esri_buffer_tool>
       <esri_data_to_opus type="script_file">esri_data_to_opus</esri_data_to_opus>
       <sql_data_to_opus type="script_file">sql_data_to_opus</sql_data_to_opus>
