@@ -41,5 +41,6 @@ for bt in observed_shares.keys()[1:len(observed_shares.keys())]:
 aliases = [
        observed_share_var,
        sampled_share_var,
-       "wesml_sampling_correction_variable = safe_array_divide(psrc_parcel.building.observed_building_type_share, psrc_parcel.building.sampled_building_type_share)"
+       "wesml_sampling_correction_variable = safe_array_divide(psrc_parcel.building.observed_building_type_share, psrc_parcel.building.sampled_building_type_share)",
+       "district_id = building.disaggregate(zone.district_id, intermediates=[parcel])",
            ]

@@ -29,7 +29,7 @@ from opus_core.database_management.database_configuration import DatabaseConfigu
 
 
 run_description = '(baseline 11/26/2007)'
-cache_directory = r'/urbansim_cache/psrc_parcel/run_5881.2008_03_22_10_14'
+cache_directory = r'/urbansim_cache/psrc_parcel/run_5900.2008_04_02_12_40'
 
 #run_description = '(no build 11/26/2007)'
 #cache_directory = r'D:\urbansim_cache\run_4169.2007_11_21_00_12'

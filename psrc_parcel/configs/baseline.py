@@ -43,7 +43,7 @@ class Baseline(UrbansimParcelConfiguration):
                     #existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
                     #existing_cache_to_copy = r'/home/hana/urbansim_cache/psrc/cache_source_parcel',
                     years_to_cache = [2000],
-                    existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/workers_assignment_cache_source',
+                    existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/wcm_estimation',
                     #existing_cache_to_copy = r'/workspace/urbansim_cache/psrc_parcel/estimation',
                     ),
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',

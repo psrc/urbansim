@@ -51,6 +51,6 @@ if __name__ == '__main__':
     config.merge(my_configuration)
     config['config_changes_for_estimation'] = ConfigChangesForEstimation()
     er = EstimationRunner(models[model][0], specification_module=models[model][1], model_group=models[model][2],
-                           configuration=config, save_estimation_results=False)
+                           configuration=config, save_estimation_results=True)
     er.estimate()
     
