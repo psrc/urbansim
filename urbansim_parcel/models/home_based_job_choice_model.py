@@ -29,34 +29,38 @@ class HomeBasedJobChoiceModel(ChoiceModel):
     model_name = "Home Based Job Choice Model"
     model_short_name = "HBJCM"
 
-    def __init__(self, choice_set, filter=None, choice_attribute_name='work_at_home', *args, **kwargs):
-        
-        self.choice_set_real = choice_set
+    def __init__(self, choice_set, filter=None, choice_attribute_name='work_at_home', location_id_name='urbansim_parcel.person.building_id', **kwargs):
+        self.job_set = choice_set
         self.filter = filter
-        kwargs['choice_attribute_name'] = choice_attribute_name
-        ChoiceModel.__init__(self, [1, 2], *args, **kwargs)
+        self.choice_attribute_name = choice_attribute_name
+        self.location_id_name = location_id_name
+        ChoiceModel.__init__(self, [1, 2], choice_attribute_name=choice_attribute_name, **kwargs)
         
     def run(self, *args, **kwargs):
         choices = ChoiceModel.run(self, *args, **kwargs)
         prob_work_at_home = self.upc_sequence.probabilities[:, 0]
         
         if self.filter is not None:
-            choice_set_index = where( self.choice_set_real.compute_variables(self.filter) )[0]
+            choice_set_index = where( self.job_set.compute_variables(self.filter) )[0]
         else:
-            choice_set_index = arange( self.choice_set_real.size() )
+            choice_set_index = arange( self.job_set.size() )
         
         assigned_worker_index = probsample_noreplace(kwargs['agents_index'], choice_set_index.size, prob_work_at_home)
         
         ## each worker can only be assigned to 1 job
         assert assigned_worker_index.size == unique_values(assigned_worker_index).size
-        
-        kwargs['agent_set'].set_values_of_one_attribute('work_at_home', 
+        agent_set = kwargs['agent_set']
+        agent_set.set_values_of_one_attribute(self.choice_attribute_name, 
                                                         ones(choice_set_index.size), 
                                                         index=assigned_worker_index)
-        kwargs['agent_set'].set_values_of_one_attribute(self.choice_set_real.get_id_name()[0], 
-                                                        self.choice_set_real.get_id_attribute()[choice_set_index], 
+        agent_set.set_values_of_one_attribute(self.job_set.get_id_name()[0], 
+                                                        self.job_set.get_id_attribute()[choice_set_index], 
                                                         index=assigned_worker_index)
-    
+        agent_set.compute_variables([self.location_id_name], dataset_pool=self.dataset_pool)
+        self.job_set.modify_attribute(name=VariableName(self.location_id_name).get_alias(), 
+                                      data=agent_set.get_attribute_by_index(self.location_id_name, assigned_worker_index),
+                                      index=choice_set_index)
+        
     def prepare_for_run(self, 
                         specification_storage=None, 
                         specification_table=None,
