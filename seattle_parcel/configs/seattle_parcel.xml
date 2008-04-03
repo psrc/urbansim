@@ -35,8 +35,8 @@
   <data_manager>
     <script_library type="script_library">
       <script_path type="script_path">projects.scripts</script_path>
-      <opus_database_to_sql_tool type="script_file" >opus_database_to_sql</opus_database_to_sql_tool>
-      <opus_database_to_esri_tool type="script_file" >opus_database_to_esri</opus_database_to_esri_tool>
+      <opus_database_to_sql_tool type="script_file">opus_database_to_sql</opus_database_to_sql_tool>
+      <opus_database_to_esri_tool type="script_file">opus_database_to_esri</opus_database_to_esri_tool>
       <esri_buffer_tool type="script_file">esri_buffer</esri_buffer_tool>
       <esri_data_to_opus type="script_file">esri_data_to_opus</esri_data_to_opus>
       <sql_data_to_opus type="script_file">sql_data_to_opus</sql_data_to_opus>
@@ -562,7 +562,7 @@
         <database_connection type="db_connection_hook">urbansim_db1</database_connection>
         <database_name type="string">eugene_1980_baseyear</database_name>
       </baseyear_database_configuration>
-      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel_cache/run_5006.2008_01_28_10_11</cache_directory>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/run_4836.2008_01_15_16_02</cache_directory>
       <creating_baseyear_cache_configuration type="class">
         <Class_name flags="hidden" type="string">CreatingBaseyearCacheConfiguration</Class_name>
         <Class_path flags="hidden" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
@@ -658,23 +658,67 @@
   </scenario_manager>
   <results_manager>
     <Indicator_libraries setexpanded="True" type="group">
-      <model.parcel type="indicator_library">
+      <standard_indicators type="indicator_library">
+        <population type="indicator">
+          <package type="string">urbansim</package>
+          <valid_datasets type="string">GEOGRAPHY</valid_datasets>
+          <documentation_link type="string" />
+          <expression type="string">urbansim.DATASET.population</expression>
+        </population>
         <number_of_jobs type="indicator">
           <package type="string">urbansim</package>
-          <valid_datasets type="string">zone</valid_datasets>
+          <valid_datasets type="string">GEOGRAPHY</valid_datasets>
           <documentation_link type="string" />
-          <expression type="string">urbansim_parcel.DATASET.number_of_jobs</expression>
+          <expression type="string">urbansim.DATASET.number_of_jobs</expression>
         </number_of_jobs>
-      </model.parcel>
+        <industrial_sqft type="indicator">
+          <package type="string">urbansim</package>
+          <valid_datasets type="string">GEOGRAPHY</valid_datasets>
+          <documentation_link type="string" />
+          <expression type="string">urbansim.DATASET.industrial_sqft</expression>
+        </industrial_sqft>
+        <total_land_value type="indicator">
+          <package type="string">urbansim</package>
+          <valid_datasets type="string">GEOGRAPHY</valid_datasets>
+          <documentation_link type="string" />
+          <expression type="string">urbansim.DATASET.total_land_value</expression>
+        </total_land_value>
+        <population_density type="indicator">
+          <package type="string">urbansim</package>
+          <valid_datasets type="string">gridcell</valid_datasets>
+          <documentation_link type="string" />
+          <expression type="string">urbansim.DATASET.population_density</expression>
+        </population_density>
+      </standard_indicators>
+      <shared_indicators type="indicator_library">
+        <global_population_density type="indicator">
+          <package type="string">urbansim</package>
+          <valid_datasets type="string">alldata</valid_datasets>
+          <documentation_link type="string" />
+          <expression type="string">alldata.aggregate_all(urbansim.gridcell.population_density, function=sum)</expression>
+        </global_population_density>
+      </shared_indicators>
+      <my_indicators append_to="True" type="indicator_library">
+        <employment type="indicator"><package type="string">urbansim_parcel</package>
+          <expression type="string">urbansim_parcel.zone.employment</expression>
+        </employment>
+        <residential_units type="indicator">
+          <package type="string">urbansim</package>
+          <valid_datasets type="string">alldata</valid_datasets>
+          <documentation_link type="string" />
+          <expression type="string">alldata.aggregate_all(urbansim.gridcell.residential_units, function=sum)</expression>
+        </residential_units>
+      </my_indicators>
     </Indicator_libraries>
-    <Data_sources setexpanded="True" type="all_source_data">
-      <seattle_parcel_baseline type="source_data">
-        <start_year type="integer">2000</start_year>
-        <end_year type="integer">2006</end_year>
-        <run_name type="string">run_5006</run_name>
+    <Simulation_runs setexpanded="True" type="all_source_data">
+      <Seattle_baseline.run4836 type="source_data">
         <scenario_name type="string">Seattle_baseline</scenario_name>
-      </seattle_parcel_baseline>
-    </Data_sources>
-    <Results setexpanded="True" type="selectable_list" />
+        <run_name type="string">run4836</run_name>
+        <start_year type="integer">2000</start_year>
+        <end_year type="integer">2030</end_year>
+      </Seattle_baseline.run4836>
+    </Simulation_runs>
+    <Results setexpanded="True" type="selectable_list">
+    </Results>
   </results_manager>
 </opus_project>
