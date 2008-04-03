@@ -19,7 +19,7 @@ from opus_core.misc import get_temp_file_name
 from numpy import zeros, float32, indices, round_, concatenate
 from opus_core.storage_factory import StorageFactory
 from os.path import join
-import os, shutil
+import os, shutil, sys
 
 class TravelModelOutput(object):
     """
@@ -208,6 +208,10 @@ class TravelModelOutput(object):
                 
     def _create_emme2_macro_to_extract_this_matrix(self, matrix_name, max_zone_id, file_name="_one_matrix.txt"):
         """Return an emme/2 macrot that will extract this matrix's values."""
+        if sys.platform == 'win32':
+            external_command = """if exist %(output_file_name)s erase %(output_file_name)s""" % {"output_file_name":file_name}
+        else:
+            external_command = """rm -f %(output_file_name)s""" % {"output_file_name":file_name}
         emme2_macro = """
 ~/ one_matrix.dat
 ~/ This macro:
@@ -218,7 +222,7 @@ class TravelModelOutput(object):
 ~/ 4) And exits both the program and EMME/2
 ~/
 ~o=39
-~!if exist %(output_file_name)s erase %(output_file_name)s
+~!%(external_command)s
 reports=?
 3.14
 ~+|4|2|8,4|y|4|n
@@ -229,9 +233,10 @@ q
 q
         """
         return emme2_macro % {
+            "external_command": external_command,
             "matrix_name":matrix_name, 
-            "max_zone_id":max_zone_id, 
-            "output_file_name":file_name,
+            "max_zone_id":max_zone_id,
+            "output_file_name":file_name
             }
         
 #================================================================================
@@ -258,15 +263,11 @@ class TravelModelOutputTests(opus_unittest.OpusTestCase):
                                                'bank1')
         
     def test_get_macro(self):
-        if self._has_travel_model:
-            from string import find, count
-            tm_output = TravelModelOutput()
-            macro = tm_output._create_emme2_macro_to_extract_this_matrix('xoxoxo', 9999)
-            self.assert_(find(macro, 'xoxoxo'))
-            self.assertEqual(count(macro, '9999'), 4)
-        else:
-            logger.log_warning('Test skipped. TRAVELMODELROOT environment '
-                'variable not found.')
+        from string import find, count
+        tm_output = TravelModelOutput()
+        macro = tm_output._create_emme2_macro_to_extract_this_matrix('xoxoxo', 9999)
+        self.assert_(find(macro, 'xoxoxo'))
+        self.assertEqual(count(macro, '9999'), 4)
         
     def test_running_emme2_to_get_matrix(self):
         if self._has_travel_model:
