@@ -104,8 +104,8 @@ class HouseholdTransitionModel(Model):
             i+=1
 
         number_of_combinations = int(number_of_combinations)
-        marginal_char_idx = array(marginal_char_idx)
-        nonmarginal_char_idx = array(nonmarginal_char_idx)
+        self.marginal_char_idx = array(marginal_char_idx)
+        self.nonmarginal_char_idx = array(nonmarginal_char_idx)
         idx_tmp = indices(tuple(idx_shape))
         num_attributes=len(all_characteristics)
         categories_index = zeros((number_of_combinations,num_attributes))
@@ -142,13 +142,13 @@ class HouseholdTransitionModel(Model):
             values_array[:,i] = clip(values_array[:,i], 0, self.arrays_from_categories[all_characteristics[i]].size-1)
 
         # determine for each household to what category it belongs to
-        household_categories = array(map(lambda x: get_category(x), values_array)) # performance bottleneck
+        self.household_categories = array(map(lambda x: get_category(x), values_array)) # performance bottleneck
 
-        number_of_households_in_categories = array(ndimage_sum(ones((household_categories.size,)),
-                                                                labels=household_categories+1,
+        number_of_households_in_categories = array(ndimage_sum(ones((self.household_categories.size,)),
+                                                                labels=self.household_categories+1,
                                                                 index = arange(number_of_combinations)+1))
 
-        g=arange(marginal_char_idx.size)
+        g=arange(self.marginal_char_idx.size)
 
         #iterate over marginal characteristics
         for group in groups:
@@ -159,19 +159,19 @@ class HouseholdTransitionModel(Model):
             group_element = self.control_totals_for_this_year.get_data_element_by_id(id)
             total = group_element.total_number_of_households
             for i in range(g.size):
-                g[i] = eval("group_element."+self.arrays_from_categories.keys()[marginal_char_idx[i]])
+                g[i] = eval("group_element."+self.arrays_from_categories.keys()[self.marginal_char_idx[i]])
             if g.size <= 0:
                 l = ones((number_of_households_in_categories.size,))
             else:
-                l = categories_index[:,marginal_char_idx[0]] == g[0]
-                for i in range(1,marginal_char_idx.size):
-                    l = logical_and(l, categories_index[:,marginal_char_idx[i]] == g[i])
+                l = categories_index[:,self.marginal_char_idx[0]] == g[0]
+                for i in range(1,self.marginal_char_idx.size):
+                    l = logical_and(l, categories_index[:,self.marginal_char_idx[i]] == g[i])
             # l has 1's for combinations of this group
             indices_of_group_combinations = where(l)[0]
             number_in_group = array(ndimage_sum(number_of_households_in_categories, labels=l, index = 1))
             diff = int(total - number_in_group)
             if diff < 0: # households to be removed
-                is_in_group = l[household_categories]
+                is_in_group = l[self.household_categories]
                 w = where(is_in_group)[0]
                 sample_array, non_placed, size_non_placed = \
                     get_array_without_non_placed_agents(household_set, w, -1*diff,
@@ -179,88 +179,91 @@ class HouseholdTransitionModel(Model):
                 self.remove_households = concatenate((self.remove_households, non_placed, sample_noreplace(sample_array,
                                                                                    max(0,abs(diff)-size_non_placed))))
             if diff > 0: # households to be created
-                distr = number_of_households_in_categories[where(l)]
-                if distr.size == 0:
-                    continue
-                if distr.sum() <= 0: # if there are no households of these categories, the distribution is uniform
-                    distr = ones((distr.size,))
-                # sample categories
-                sample_array = probsample_replace(arange(distr.size), diff,
-                                                  prob_array=distr/float(distr.sum())) # indices of chosen bins
-                # assign grid_id and household_id
-                self.new_households[self.location_id_name] = concatenate((self.new_households[self.location_id_name],
-                                      zeros((diff,), dtype=self.new_households[self.location_id_name].dtype.type)))
-                new_max_id = self.max_id+diff
-                self.new_households[self.household_id_name]=concatenate((self.new_households[self.household_id_name],
-                                                                     arange(self.max_id+1, new_max_id+1)))
-                self.max_id = new_max_id
-                # assign marginal characteristics
-                for attr in self.marginal_characteristic_names:
-                    value = eval("group_element."+attr)
-                    if attr in self.scaled_characteristic_names: # sample from min-max range
-                        # get minimum and maximum for this attribute category
-                        min_max = self.arrays_from_categories_mapping[attr][value]
-                        if min_max[0] == min_max[1]: # if min == max
-                            self.new_households[attr]=concatenate((self.new_households[attr],
-                                   (resize(array([min_max[0]], dtype=self.new_households[attr].dtype.type), diff))))
-                        else: #sample
-                            if (attr == "age_of_head"): # maximum sampled age is 100, minimum 15; TODO: get these from config
-                                rn = sample_replace(arange(max(15,int(min_max[0])),min(int(min_max[1]),100)+1), diff)
-                            elif attr == "income": # min and max are 10th of the real values; TODO: get these from config
-                                # TODO: Get min / max sampled age from configuration
-                                rn = sample_replace(arange(int(10*min_max[0]),int(10*min_max[1])+1,10),diff)
-                            else:
-                                rn = sample_replace(arange(int(min_max[0]),int(min_max[1])+1), diff)
-                            self.new_households[attr]=concatenate((self.new_households[attr],
-                                                       rn.astype(self.new_households[attr].dtype.type)))
-                    else: # attribute is not in the characteristics dataset
-                        self.new_households[attr]=concatenate((self.new_households[attr],
-                                               (resize(array([value], dtype=self.new_households[attr].dtype.type), diff))))
-
-                # iterate over non-marginal characteristics
-                for i in nonmarginal_char_idx:
-                    attr = all_characteristics[i]
-                    # get minima and maxima for this attribute of all sampled categories
-                    min_max = array(map(lambda x: \
-                                        self.arrays_from_categories_mapping[attr][categories_index[indices_of_group_combinations[x],i]],
-                                        sample_array))
-                    is_min_equal_max = min_max[:,0] == min_max[:,1]
-                    # assign those whose minimum equals maximum
+                self._create_households(diff, number_of_households_in_categories, group_element, l, all_characteristics, categories_index, indices_of_group_combinations)
+            
+    def _create_households(self, diff, number_of_households_in_categories, group_element, l, all_characteristics, categories_index, indices_of_group_combinations):
+        distr = number_of_households_in_categories[where(l)]
+        if distr.size == 0:
+            return
+        if distr.sum() <= 0: # if there are no households of these categories, the distribution is uniform
+            distr = ones((distr.size,))
+        # sample categories
+        sample_array = probsample_replace(arange(distr.size), diff,
+                                          prob_array=distr/float(distr.sum())) # indices of chosen bins
+        # assign location id (unplaced) and household_id
+        self.new_households[self.location_id_name] = concatenate((self.new_households[self.location_id_name],
+                              zeros((diff,), dtype=self.new_households[self.location_id_name].dtype.type)))
+        new_max_id = self.max_id+diff
+        self.new_households[self.household_id_name]=concatenate((self.new_households[self.household_id_name],
+                                                             arange(self.max_id+1, new_max_id+1)))
+        self.max_id = new_max_id
+        # assign marginal characteristics
+        for attr in self.marginal_characteristic_names:
+            value = eval("group_element."+attr)
+            if attr in self.scaled_characteristic_names: # sample from min-max range
+                # get minimum and maximum for this attribute category
+                min_max = self.arrays_from_categories_mapping[attr][value]
+                if min_max[0] == min_max[1]: # if min == max
                     self.new_households[attr]=concatenate((self.new_households[attr],
-                                   min_max[is_min_equal_max,:][:,0].astype(self.new_households[attr].dtype.type)))
-                    # iterate over the remaining ones
-                    w = where(logical_not(is_min_equal_max))[0]
-                    if w.size > 0:
-                        remaining_categories = sample_array[w]
-                        ind_sorted = argsort(remaining_categories)
-                        remaining_categories_sorted = remaining_categories[ind_sorted]
-                        unique_categories = unique_values(remaining_categories_sorted)
-                        number_of_bins_in_each_category = ndimage_sum(ones((remaining_categories_sorted.size,)),
-                                labels=remaining_categories_sorted+1, index=unique_categories+1)
-                        if not isinstance(number_of_bins_in_each_category, list): # if there is only one element in w,
-                            # the previous function returns a single number and not a list
-                            number_of_bins_in_each_category = [number_of_bins_in_each_category]
-                        #TODO: Here, it takes unique categories among all combinations. We could reduce the
-                        #      runtime considerably, if we work with unique categories among categories
-                        #      just for this attribute.
-                        j=0
-                        for bin in unique_categories:
-                            k = where(remaining_categories == bin)[0]
-                            #sample between maximum and minimum (with two exceptions)
-                            this_min, this_max = min_max[k[0],:]
-                            if attr == "age_of_head": # maximum sampled age is 100, minimum 15; TODO: get these from config
-                                rn = sample_replace(arange(max(15,int(this_min)),
-                                                       min(int(this_max),100)+1),
-                                                       int(number_of_bins_in_each_category[j]))
-                            elif attr == "income": # min and max are 10th of the real values; TODO: get these from config
-                                rn = sample_replace(arange(int(10*this_min),int(10*this_max)+1,10),
-                                    int(number_of_bins_in_each_category[j]))
-                            else:
-                                rn = sample_replace(arange(int(this_min),int(this_max)+1),
-                                    int(number_of_bins_in_each_category[j]))
-                            self.new_households[attr]=concatenate((self.new_households[attr],
-                                                       rn.astype(self.new_households[attr].dtype.type)))
-                            j+=1
+                           (resize(array([min_max[0]], dtype=self.new_households[attr].dtype.type), diff))))
+                else: #sample
+                    if (attr == "age_of_head"): # maximum sampled age is 100, minimum 15; TODO: get these from config
+                        rn = sample_replace(arange(max(15,int(min_max[0])),min(int(min_max[1]),100)+1), diff)
+                    elif attr == "income": # min and max are 10th of the real values; TODO: get these from config
+                        # TODO: Get min / max sampled age from configuration
+                        rn = sample_replace(arange(int(10*min_max[0]),int(10*min_max[1])+1,10),diff)
+                    else:
+                        rn = sample_replace(arange(int(min_max[0]),int(min_max[1])+1), diff)
+                    self.new_households[attr]=concatenate((self.new_households[attr],
+                                               rn.astype(self.new_households[attr].dtype.type)))
+            else: # attribute is not in the characteristics dataset
+                self.new_households[attr]=concatenate((self.new_households[attr],
+                                       (resize(array([value], dtype=self.new_households[attr].dtype.type), diff))))
+
+        # iterate over non-marginal characteristics
+        for i in self.nonmarginal_char_idx:
+            attr = all_characteristics[i]
+            # get minima and maxima for this attribute of all sampled categories
+            min_max = array(map(lambda x: \
+                                self.arrays_from_categories_mapping[attr][categories_index[indices_of_group_combinations[x],i]],
+                                sample_array))
+            is_min_equal_max = min_max[:,0] == min_max[:,1]
+            # assign those whose minimum equals maximum
+            self.new_households[attr]=concatenate((self.new_households[attr],
+                           min_max[is_min_equal_max,:][:,0].astype(self.new_households[attr].dtype.type)))
+            # iterate over the remaining ones
+            w = where(logical_not(is_min_equal_max))[0]
+            if w.size > 0:
+                remaining_categories = sample_array[w]
+                ind_sorted = argsort(remaining_categories)
+                remaining_categories_sorted = remaining_categories[ind_sorted]
+                unique_categories = unique_values(remaining_categories_sorted)
+                number_of_bins_in_each_category = ndimage_sum(ones((remaining_categories_sorted.size,)),
+                        labels=remaining_categories_sorted+1, index=unique_categories+1)
+                if not isinstance(number_of_bins_in_each_category, list): # if there is only one element in w,
+                    # the previous function returns a single number and not a list
+                    number_of_bins_in_each_category = [number_of_bins_in_each_category]
+                #TODO: Here, it takes unique categories among all combinations. We could reduce the
+                #      runtime considerably, if we work with unique categories among categories
+                #      just for this attribute.
+                j=0
+                for bin in unique_categories:
+                    k = where(remaining_categories == bin)[0]
+                    #sample between maximum and minimum (with two exceptions)
+                    this_min, this_max = min_max[k[0],:]
+                    if attr == "age_of_head": # maximum sampled age is 100, minimum 15; TODO: get these from config
+                        rn = sample_replace(arange(max(15,int(this_min)),
+                                               min(int(this_max),100)+1),
+                                               int(number_of_bins_in_each_category[j]))
+                    elif attr == "income": # min and max are 10th of the real values; TODO: get these from config
+                        rn = sample_replace(arange(int(10*this_min),int(10*this_max)+1,10),
+                            int(number_of_bins_in_each_category[j]))
+                    else:
+                        rn = sample_replace(arange(int(this_min),int(this_max)+1),
+                            int(number_of_bins_in_each_category[j]))
+                    self.new_households[attr]=concatenate((self.new_households[attr],
+                                               rn.astype(self.new_households[attr].dtype.type)))
+                    j+=1
 
 
 
