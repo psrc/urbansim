@@ -28,7 +28,7 @@ from numpy.random import randint
 from numpy import ma
 
 from opus_core.session_configuration import SessionConfiguration
-from opus_core.misc import create_list_string, get_field_names, all_in_list
+from opus_core.misc import create_list_string, get_field_names, all_in_list, is_masked_array
 from opus_core.misc import get_distinct_list, do_id_mapping_dict_from_array, do_id_mapping_array_from_array
 from opus_core.misc import DebugPrinter, corr
 from opus_core.variables.variable_factory import VariableFactory
@@ -159,7 +159,7 @@ class AbstractDataset(object):
         'metadata' should be of type AttributeType (PRIMARY=1, COMPUTED=2).
         The method increments and returns the version number of the attribute.
         """
-        if not (isinstance(data, ndarray) or isinstance(data, ma.array)):
+        if not (isinstance(data, ndarray) or is_masked_array(data)):
             data=array(data)
         name = self.create_and_check_qualified_variable_name(name)
         short_name = name.get_alias()
@@ -311,10 +311,7 @@ class AbstractDataset(object):
         miny = int(ma.minimum.reduce(y))
         difx = maxx-minx
         dify = maxy-miny
-        if isinstance(attribute_data, ma.array):
-            type = attribute_data.raw_data().dtype.type
-        else:
-            type = attribute_data.dtype.type
+        type = attribute_data.dtype.type
         two_d_array = resize(array([minz-1], dtype=type), (difx+1, dify+1))
         # fill the array with the proper values
         two_d_array[x-minx, y-miny] = ma.filled(attribute_data,minz-1)[:]
@@ -890,7 +887,7 @@ class AbstractDataset(object):
                                      (functions supported by scipy.ndimage)
         """
         myids = self.get_id_attribute()
-        if isinstance(what, ma.array):
+        if is_masked_array(what):
             where_masked = where(what.mask)[0]
             ids_local = ids.copy()
             ids_local[where_masked] = 0 # do not consider those elements in the computation
@@ -968,7 +965,7 @@ class AbstractDataset(object):
     def aggregate_all(self, function='sum', attribute_name=None):
         """Aggregate atttribute (given by 'attribute_name') by applying the given function. 'attribute_name' must be given."""
         what = self.get_attribute(attribute_name)
-        if isinstance(what, ma.array):
+        if is_masked_array(what):
             filled_what = ma.filled(what, 0)
         else:
             filled_what = what
