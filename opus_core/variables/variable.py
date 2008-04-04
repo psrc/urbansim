@@ -186,10 +186,7 @@ class Variable(object):
         If "should_check" is defined, first check for 
         values that are too large for the destination type or
         integer wrap-around."""
-        if isinstance(values, ma.array):
-            type = values.raw_data().dtype.str
-        else:
-            type = values.dtype.str
+        type = values.dtype.str
         if self._return_type == type:
             return values
         if self.should_check(arguments):
