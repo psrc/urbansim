@@ -26,10 +26,6 @@
         <password type="password" />
         <use_environment_variables choices="True|False" type="boolean">True</use_environment_variables>
       </urbansim_db1_example>
-      <esri_pgdb_test type="db_connection">
-        <database_path type="string">c:\opus\opus_data\seattle_parcel\output_geodb.gdb</database_path>
-        <some_other_param type="string" />
-      </esri_pgdb_test>
     </database_library>
   </data_manager_dbstree>
   <data_manager>
@@ -665,49 +661,16 @@
           <documentation_link type="string" />
           <expression type="string">urbansim.DATASET.population</expression>
         </population>
-        <number_of_jobs type="indicator">
-          <package type="string">urbansim</package>
-          <valid_datasets type="string">GEOGRAPHY</valid_datasets>
-          <documentation_link type="string" />
-          <expression type="string">urbansim.DATASET.number_of_jobs</expression>
-        </number_of_jobs>
-        <industrial_sqft type="indicator">
-          <package type="string">urbansim</package>
-          <valid_datasets type="string">GEOGRAPHY</valid_datasets>
-          <documentation_link type="string" />
-          <expression type="string">urbansim.DATASET.industrial_sqft</expression>
-        </industrial_sqft>
-        <total_land_value type="indicator">
-          <package type="string">urbansim</package>
-          <valid_datasets type="string">GEOGRAPHY</valid_datasets>
-          <documentation_link type="string" />
-          <expression type="string">urbansim.DATASET.total_land_value</expression>
-        </total_land_value>
-        <population_density type="indicator">
-          <package type="string">urbansim</package>
-          <valid_datasets type="string">gridcell</valid_datasets>
-          <documentation_link type="string" />
-          <expression type="string">urbansim.DATASET.population_density</expression>
-        </population_density>
       </standard_indicators>
-      <shared_indicators type="indicator_library">
+      <indicators_from_bob type="indicator_library">
         <global_population_density type="indicator">
           <package type="string">urbansim</package>
           <valid_datasets type="string">alldata</valid_datasets>
           <documentation_link type="string" />
           <expression type="string">alldata.aggregate_all(urbansim.gridcell.population_density, function=sum)</expression>
         </global_population_density>
-      </shared_indicators>
+      </indicators_from_bob>
       <my_indicators append_to="True" type="indicator_library">
-        <employment type="indicator"><package type="string">urbansim_parcel</package>
-          <expression type="string">urbansim_parcel.zone.employment</expression>
-        </employment>
-        <residential_units type="indicator">
-          <package type="string">urbansim</package>
-          <valid_datasets type="string">alldata</valid_datasets>
-          <documentation_link type="string" />
-          <expression type="string">alldata.aggregate_all(urbansim.gridcell.residential_units, function=sum)</expression>
-        </residential_units>
       </my_indicators>
     </Indicator_libraries>
     <Simulation_runs setexpanded="True" type="all_source_data">
