@@ -667,14 +667,14 @@
         </number_of_jobs>
       </model.parcel>
     </Indicator_libraries>
-    <Data_sources type="all_source_data" setexpanded="True" >
+    <Simulation_runs type="all_source_data" setexpanded="True" >
       <seattle_parcel_baseline type="source_data" >
         <start_year type="integer" >2000</start_year>
         <end_year type="integer" >2006</end_year>
         <run_name type="string" >run_5006</run_name>
         <scenario_name type="string" >Seattle_baseline</scenario_name>
       </seattle_parcel_baseline>
-    </Data_sources>
+    </Simulation_runs>
     <Results type="selectable_list" setexpanded="True" />
   </results_manager>
 </opus_project>
