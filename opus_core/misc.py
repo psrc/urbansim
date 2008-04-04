@@ -24,7 +24,7 @@ import sys
 import tempfile
 
 from opus_core.logger import logger
-#from numpy import float32
+from numpy import ma
 from scipy.ndimage import standard_deviation
 from inspect import getmembers, ismethod
 from exceptions import Exception
@@ -560,6 +560,13 @@ def quantile(values, probs):
     sorted_values = sort(values)
     return sorted_values[maximum((probs*values.size-1).astype("int32"),0)]
 
+def is_masked_array(a):
+    """test whether the argument is a masked array.  (This is a function because ma.array used
+    to be a class, and now it's a function, and the actual class changed subpackage, so we can't just
+    test it directly.)"""
+    ma_array_type = type(ma.array([3]))
+    return isinstance(a, ma_array_type)
+
 def unique_values(input_array, sort_values=True):
     """return unique elements of input_array
     input_array - a sortable numpy array or list object
@@ -993,6 +1000,13 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
             result = directory_path_from_opus_path(input)
             self.assertEqual(result, output)
 
+    def test_is_masked_array(self):
+        import numpy
+        a1 = ma.array([3])
+        self.assert_(is_masked_array(a1))
+        a2 = numpy.array([4])
+        self.assert_(not is_masked_array(a2))
+        
     def test_copytree(self):
         temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
         dest = os.path.join(temp_dir, 'dest')

@@ -18,7 +18,7 @@ from numpy import array, asarray, arange, zeros, ones, concatenate, sum, resize
 from numpy import sometrue, where, equal, not_equal, ndarray
 from numpy import reshape, sort, searchsorted, repeat, argsort
 from numpy import float32, float64, newaxis, rank, take, alltrue, ma, argmax, unique1d
-from opus_core.misc import ncumsum, unique_values
+from opus_core.misc import ncumsum, unique_values, is_masked_array
 from opus_core.logger import logger
 from numpy.random import uniform, randint
 
@@ -263,7 +263,7 @@ def prob2dsample(source_array, sample_size, prob_array=None, exclude_index=None,
     if prob_array is None:
         prob_array = ones(source_array_size)
 
-    if not (isinstance(prob_array, ndarray) or isinstance(prob_array, ma.array)):
+    if not (isinstance(prob_array, ndarray) or is_masked_array(prob_array)):
         raise TypeError, "prob_array must be of type ndarray"
 
 #    prob_array_size = nonzerocounts(prob_array)
