@@ -35,7 +35,7 @@ class RunModelThread(QThread):
         self.xml_file = xml_file
         
     def run(self):
-        self.parent.progressBar.setRange(0,100)
+        #self.parent.progressBar.setRange(0,100)
         #self.model = OpusModel(self,self.xml_file)
         #self.model.run()
         self.parent.model.progressCallback = self.progressCallback

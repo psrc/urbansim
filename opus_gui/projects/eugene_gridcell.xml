@@ -137,7 +137,7 @@
       <base_year type="integer" >1980</base_year>
       <years_to_run config_name="years" type="tuple" >
         <startyear type="integer" >1981</startyear>
-        <endyear type="integer" >1981</endyear>
+        <endyear type="integer" >1983</endyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list" >
         <prescheduled_events type="model" choices="Run|Skip" >Run</prescheduled_events>
@@ -166,7 +166,7 @@
         <database_connection type="db_connection_hook" >urbansim_db1</database_connection>
         <database_name type="string" >eugene_1980_baseyear</database_name>
       </baseyear_database_configuration>
-      <cache_directory parser_action="prefix_with_opus_data_path" type="directory" >eugene/eugene_1980_baseyear_cache</cache_directory>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory" >eugene/runs/2008_03_12_00_33</cache_directory>
       <creating_baseyear_cache_configuration type="class" >
         <Class_name flags="hidden" type="string" >CreatingBaseyearCacheConfiguration</Class_name>
         <Class_path flags="hidden" type="string" >urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
@@ -311,7 +311,7 @@
         <scenario_name type="string" >Eugene_baseline</scenario_name>
         <run_name type="string" >run1900</run_name>
         <start_year type="integer" >1980</start_year>
-        <end_year type="integer" >1980</end_year>
+        <end_year type="integer" >1982</end_year>
       </Eugene_baseline.run1900>
       <Tunnel_scenario.run1834 type="source_data" >
         <scenario_name type="string" >Tunnel_scenario</scenario_name>
@@ -326,6 +326,22 @@
         <end_year type="integer" >1980</end_year>
       </Rebuild_scenario.run1835>
     </Simulation_runs>
-    <Results type="selectable_list" setexpanded="True" />
+    <Results type="selectable_list" setexpanded="True" >
+      <population.gridcell.Eugene_baseline.run1900 type="indicator_result" ><available_years type="string" >1980, 1981, 1982</available_years>
+        <source_data type="string" >Eugene_baseline.run1900</source_data>
+        <indicator_name type="string" >population</indicator_name>
+        <dataset_name type="string" >gridcell</dataset_name>
+      </population.gridcell.Eugene_baseline.run1900>
+      <population.gridcell.Eugene_baseline.run1900 type="indicator_result" ><available_years type="string" >1980</available_years>
+        <source_data type="string" >Eugene_baseline.run1900</source_data>
+        <indicator_name type="string" >population</indicator_name>
+        <dataset_name type="string" >gridcell</dataset_name>
+      </population.gridcell.Eugene_baseline.run1900>
+      <population.gridcell.Eugene_baseline.run1900 type="indicator_result" ><available_years type="string" >1980, 1981</available_years>
+        <source_data type="string" >Eugene_baseline.run1900</source_data>
+        <indicator_name type="string" >population</indicator_name>
+        <dataset_name type="string" >gridcell</dataset_name>
+      </population.gridcell.Eugene_baseline.run1900>
+    </Results>
   </results_manager>
 </opus_project>
