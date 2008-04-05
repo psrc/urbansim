@@ -189,6 +189,7 @@ class AbstractDataset(object):
         an attribute missing in 'data', it is filled with 0's.
         If the joined ids are not unique and 'change_ids_if_not_unique' is True, the ids
         of the new rows are modified to unique ids. Otherwise it raises an exception.
+        It returns index of the new elements.
         """
         # Before we append rows, we first need to load the rows that are in the storage.
         attributes = self.get_nonloaded_attribute_names()
@@ -243,7 +244,16 @@ class AbstractDataset(object):
                               % create_list_string(self.get_id_name(), ","))
         self._update_id_mapping()
         self.update_size()
+        return arange(self.size()-data_size, self.size())
 
+    def duplicate_rows(self, index):
+        """Duplicates rows given by index."""
+        attrs = self.get_known_attribute_names()
+        data = {}
+        for attr in attrs:
+            data[attr] = self.get_attribute_by_index(attr, index)
+        return self.add_elements(data=data, change_ids_if_not_unique=True)
+        
     ##################################################################################
     ## Methods for obtaining columns
     ##################################################################################
@@ -1610,9 +1620,12 @@ class AbstractDataset(object):
         if self.id_mapping_type == "A":
             if id < 0:
                 raise KeyError, "No id " + str(id) + " in dataset."
-            return self.id_mapping[id - self.id_mapping_shift]
+            idx = self.id_mapping[id - self.id_mapping_shift]
         else:
-            return self.id_mapping[id]
+            idx = self.id_mapping[id]
+        if idx < 0:
+            raise KeyError, "No id " + str(id) + " in dataset."
+        return idx
 
     def _get_attribute_box(self, name):
         if not isinstance(name, VariableName):
