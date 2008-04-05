@@ -26,7 +26,9 @@ from copy import copy
 from time import time
 
 class HouseholdTransitionModel(Model):
-    """Creates and removes households from household_set."""
+    """Creates and removes households from household_set. New households are duplicated from the existing households, keeping 
+       the joint distribution of all characteristics. 
+    """
 
     model_name = "Household Transition Model"
     location_id_name = "grid_id"
@@ -50,8 +52,17 @@ class HouseholdTransitionModel(Model):
         return self._update_household_set(household_set)
         
     def _update_household_set(self, household_set):
+        index_of_duplicated_hhs = household_set.duplicate_rows(self.mapping_existing_hhs_to_new_hhs)
+        household_set.modify_attribute(name=self.location_id_name, data=zeros((index_of_duplicated_hhs.size,), 
+                                                                              dtype=household_set.get_data_type(self.location_id_name)),
+                                                                          index=index_of_duplicated_hhs)
         household_set.remove_elements(self.remove_households)
-        household_set.add_elements(self.new_households, require_all_attributes=False)
+        if self.new_households[self.location_id_name].size > 0:
+            max_id = household_set.get_id_attribute().max()
+            self.new_households[self.household_id_name]=concatenate((self.new_households[self.household_id_name],
+                                                             arange(max_id+1, max_id+self.new_households[self.location_id_name].size+1)))
+            household_set.add_elements(self.new_households, require_all_attributes=False)
+
         difference = household_set.size()-self.household_size
         self.debug.print_debug("Difference in number of households: %s"
             " (original %s, new %s, created %s, deleted %s)"
@@ -78,14 +89,15 @@ class HouseholdTransitionModel(Model):
         self.max_id = household_set.get_id_attribute().max()
         self.arrays_from_categories = {}
         self.arrays_from_categories_mapping = {}
-
+        self.mapping_existing_hhs_to_new_hhs = array([], dtype=household_set.get_data_type(self.household_id_name, int32))
         
     def _do_run_for_this_year(self, household_set):
+        self.household_set = household_set
         groups = self.control_totals_for_this_year.get_id_attribute()
-        self.create_arrays_from_categories(household_set)
+        self.create_arrays_from_categories(self.household_set)
 
         all_characteristics = self.arrays_from_categories.keys()
-        household_set.load_dataset_if_not_loaded(attributes = all_characteristics) # prevents from lazy loading to save runtime
+        self.household_set.load_dataset_if_not_loaded(attributes = all_characteristics) # prevents from lazy loading to save runtime
         idx_shape = []
         number_of_combinations=1
         marginal_char_idx = []
@@ -96,25 +108,25 @@ class HouseholdTransitionModel(Model):
             idx_shape.append(max_bins)
             number_of_combinations=number_of_combinations*max_bins
             if attr not in self.new_households.keys():
-                self.new_households[attr] = array([], dtype=household_set.get_data_type(attr, float32))
+                self.new_households[attr] = array([], dtype=self.household_set.get_data_type(attr, float32))
             if attr in self.marginal_characteristic_names:
                 marginal_char_idx.append(i)
             else:
                 nonmarginal_char_idx.append(i)
             i+=1
 
-        number_of_combinations = int(number_of_combinations)
+        self.number_of_combinations = int(number_of_combinations)
         self.marginal_char_idx = array(marginal_char_idx)
         self.nonmarginal_char_idx = array(nonmarginal_char_idx)
         idx_tmp = indices(tuple(idx_shape))
         num_attributes=len(all_characteristics)
-        categories_index = zeros((number_of_combinations,num_attributes))
+        categories_index = zeros((self.number_of_combinations,num_attributes))
 
         for i in range(num_attributes): #create indices of all combinations
             categories_index[:,i] = idx_tmp[i].ravel()
 
         categories_index_mapping = {}
-        for i in range(number_of_combinations):
+        for i in range(self.number_of_combinations):
             categories_index_mapping[tuple(categories_index[i,].tolist())] = i
 
         def get_category(values):
@@ -131,22 +143,22 @@ class HouseholdTransitionModel(Model):
                 raise KeyError, msg
 
         # the next array must be a copy of the household values, otherwise, it changes the original values
-        values_array = reshape(array(household_set.get_attribute(all_characteristics[0])), (household_set.size(),1))
+        values_array = reshape(array(self.household_set.get_attribute(all_characteristics[0])), (self.household_set.size(),1))
         if num_attributes > 1:
             for attr in all_characteristics[1:]:
-                values_array = concatenate((values_array, reshape(array(household_set.get_attribute(attr)),
-                                                                  (household_set.size(),1))), axis=1)
+                values_array = concatenate((values_array, reshape(array(self.household_set.get_attribute(attr)),
+                                                                  (self.household_set.size(),1))), axis=1)
         for i in range(values_array.shape[1]):
             if values_array[:,i].max() > 10000:
                 values_array[:,i] = values_array[:,i]/10
             values_array[:,i] = clip(values_array[:,i], 0, self.arrays_from_categories[all_characteristics[i]].size-1)
 
-        # determine for each household to what category it belongs to
+        # determine for each household to what category it belongs to (includes marginal and scaled characteristics)
         self.household_categories = array(map(lambda x: get_category(x), values_array)) # performance bottleneck
 
         number_of_households_in_categories = array(ndimage_sum(ones((self.household_categories.size,)),
                                                                 labels=self.household_categories+1,
-                                                                index = arange(number_of_combinations)+1))
+                                                                index = arange(self.number_of_combinations)+1))
 
         g=arange(self.marginal_char_idx.size)
 
@@ -174,7 +186,7 @@ class HouseholdTransitionModel(Model):
                 is_in_group = l[self.household_categories]
                 w = where(is_in_group)[0]
                 sample_array, non_placed, size_non_placed = \
-                    get_array_without_non_placed_agents(household_set, w, -1*diff,
+                    get_array_without_non_placed_agents(self.household_set, w, -1*diff,
                                                           self.location_id_name)
                 self.remove_households = concatenate((self.remove_households, non_placed, sample_noreplace(sample_array,
                                                                                    max(0,abs(diff)-size_non_placed))))
@@ -182,21 +194,37 @@ class HouseholdTransitionModel(Model):
                 self._create_households(diff, number_of_households_in_categories, group_element, l, all_characteristics, categories_index, indices_of_group_combinations)
             
     def _create_households(self, diff, number_of_households_in_categories, group_element, l, all_characteristics, categories_index, indices_of_group_combinations):
-        distr = number_of_households_in_categories[where(l)]
-        if distr.size == 0:
+        # number of existing households in each category
+        distribution = number_of_households_in_categories[where(l)] 
+        if distribution.size == 0:
             return
-        if distr.sum() <= 0: # if there are no households of these categories, the distribution is uniform
+        if distribution.sum() <= 0: # if there are no households of these categories, the distribution is uniform
             distr = ones((distr.size,))
+        else:
+            distr = distribution
         # sample categories
         sample_array = probsample_replace(arange(distr.size), diff,
                                           prob_array=distr/float(distr.sum())) # indices of chosen bins
+        number_of_new_households_in_categories = array(ndimage_sum(ones((diff,)), labels=sample_array+1,
+                                                                index = arange(self.number_of_combinations)+1)).astype(int32)
+        # sample existing households to copy
+        is_hh_in_group = l[self.household_categories]
+        for icat in range(distribution.size):
+            if distribution[icat] > 0:
+                consider_hhs_idx = where(logical_and(is_hh_in_group, self.household_categories == icat))[0]
+                if consider_hhs_idx.size > 0:
+                    sample_from_existing_hhs = sample_replace(consider_hhs_idx, number_of_new_households_in_categories[icat])
+                    self.mapping_existing_hhs_to_new_hhs = concatenate((self.mapping_existing_hhs_to_new_hhs, sample_from_existing_hhs))
+                else:
+                    self._create_households_if_group_empty(icat, sample_array, number_of_new_households_in_categories[icat], number_of_households_in_categories, group_element, all_characteristics, categories_index, indices_of_group_combinations)
+            else:
+                self._create_households_if_group_empty(icat, sample_array, number_of_new_households_in_categories[icat], number_of_households_in_categories, group_element, all_characteristics, categories_index, indices_of_group_combinations)
+            
+    def _create_households_if_group_empty(self, category, sample_array, diff, number_of_households_in_categories, group_element, all_characteristics, categories_index, indices_of_group_combinations):
+        """This code is only used if there are no households in one category."""
         # assign location id (unplaced) and household_id
         self.new_households[self.location_id_name] = concatenate((self.new_households[self.location_id_name],
                               zeros((diff,), dtype=self.new_households[self.location_id_name].dtype.type)))
-        new_max_id = self.max_id+diff
-        self.new_households[self.household_id_name]=concatenate((self.new_households[self.household_id_name],
-                                                             arange(self.max_id+1, new_max_id+1)))
-        self.max_id = new_max_id
         # assign marginal characteristics
         for attr in self.marginal_characteristic_names:
             value = eval("group_element."+attr)
@@ -237,33 +265,27 @@ class HouseholdTransitionModel(Model):
                 remaining_categories = sample_array[w]
                 ind_sorted = argsort(remaining_categories)
                 remaining_categories_sorted = remaining_categories[ind_sorted]
-                unique_categories = unique_values(remaining_categories_sorted)
-                number_of_bins_in_each_category = ndimage_sum(ones((remaining_categories_sorted.size,)),
-                        labels=remaining_categories_sorted+1, index=unique_categories+1)
-                if not isinstance(number_of_bins_in_each_category, list): # if there is only one element in w,
+                number_of_bins_in_category = ndimage_sum(ones((remaining_categories_sorted.size,)),
+                        labels=remaining_categories_sorted+1, index=array([category])+1)
+                if not isinstance(number_of_bins_in_category, list): # if there is only one element in w,
                     # the previous function returns a single number and not a list
-                    number_of_bins_in_each_category = [number_of_bins_in_each_category]
-                #TODO: Here, it takes unique categories among all combinations. We could reduce the
-                #      runtime considerably, if we work with unique categories among categories
-                #      just for this attribute.
-                j=0
-                for bin in unique_categories:
-                    k = where(remaining_categories == bin)[0]
-                    #sample between maximum and minimum (with two exceptions)
-                    this_min, this_max = min_max[k[0],:]
-                    if attr == "age_of_head": # maximum sampled age is 100, minimum 15; TODO: get these from config
-                        rn = sample_replace(arange(max(15,int(this_min)),
-                                               min(int(this_max),100)+1),
-                                               int(number_of_bins_in_each_category[j]))
-                    elif attr == "income": # min and max are 10th of the real values; TODO: get these from config
-                        rn = sample_replace(arange(int(10*this_min),int(10*this_max)+1,10),
-                            int(number_of_bins_in_each_category[j]))
-                    else:
-                        rn = sample_replace(arange(int(this_min),int(this_max)+1),
-                            int(number_of_bins_in_each_category[j]))
-                    self.new_households[attr]=concatenate((self.new_households[attr],
-                                               rn.astype(self.new_households[attr].dtype.type)))
-                    j+=1
+                    number_of_bins_in_category = [number_of_bins_in_category]
+
+                k = where(remaining_categories == category)[0]
+                #sample between maximum and minimum (with two exceptions)
+                this_min, this_max = min_max[k[0],:]
+                if attr == "age_of_head": # maximum sampled age is 100, minimum 15; TODO: get these from config
+                    rn = sample_replace(arange(max(15,int(this_min)),
+                                           min(int(this_max),100)+1),
+                                           int(number_of_bins_in_category[0]))
+                elif attr == "income": # min and max are 10th of the real values; TODO: get these from config
+                    rn = sample_replace(arange(int(10*this_min),int(10*this_max)+1,10),
+                        int(number_of_bins_in_category[0]))
+                else:
+                    rn = sample_replace(arange(int(this_min),int(this_max)+1),
+                        int(number_of_bins_in_category[0]))
+                self.new_households[attr]=concatenate((self.new_households[attr],
+                                           rn.astype(self.new_households[attr].dtype.type)))
 
 
 
