@@ -12,18 +12,7 @@
 # other acknowledgments.
 #
 
-from opus_core.resources import Resources
-from opus_core.misc import DebugPrinter, remove_from_array, get_distinct_names, unique_values
-from opus_core.datasets.dataset import DatasetSubset
-from urbansim.models.employment_transition_model import get_array_without_non_placed_agents
-from numpy import arange, array, where, int8, zeros, ones, compress, logical_and, resize
-from numpy import indices, bool8, int32, float32, reshape, clip, take, logical_not, argsort, concatenate
-from scipy.ndimage import sum as ndimage_sum
-from opus_core.sampling_toolbox import sample_replace, sample_noreplace, probsample_replace
-from opus_core.storage_factory import StorageFactory
-from opus_core.model import Model
-from copy import copy
-from time import time
+from numpy import arange, array, where, zeros, ones, concatenate, int32, int8
 from urbansim.models.household_transition_model import HouseholdTransitionModel as USHouseholdTransitionModel
 
 class HouseholdTransitionModel(USHouseholdTransitionModel):
@@ -65,6 +54,7 @@ class HouseholdTransitionModel(USHouseholdTransitionModel):
 
 from opus_core.tests import opus_unittest
 from opus_core.resources import Resources
+from opus_core.storage_factory import StorageFactory
 from numpy import array, logical_and
 from numpy import ma
 from urbansim.datasets.household_dataset import HouseholdDataset
