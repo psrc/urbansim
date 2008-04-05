@@ -203,7 +203,31 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                         "output": "scheduled_development_events"
                         }
                  },
-        
+                 
+        'household_transition_model': {
+            'import': {
+                'urbansim_parcel.models.household_transition_model': 'HouseholdTransitionModel'
+                },
+            'init': {
+                'arguments': {'debuglevel': 'debuglevel'},
+                'name': 'HouseholdTransitionModel'
+                },
+            'prepare_for_run': {
+                'arguments': {'storage': 'base_cache_storage'},
+                'name': 'prepare_for_run',
+                'output': '(control_totals, characteristics)'
+                },
+            'run': {
+                'arguments': {
+                    'characteristics': 'characteristics',
+                    'control_totals': 'control_totals',
+                    'person_set': 'person',
+                    'household_set': 'household',
+                    'year': 'year'
+                    }
+                }
+            },
+            
         # configuration for parcel-based developer model
          'expected_sale_price_model': {
             "import": {"urbansim_parcel.models.development_project_proposal_regression_model":
