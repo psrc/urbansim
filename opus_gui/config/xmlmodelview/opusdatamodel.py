@@ -203,7 +203,16 @@ class OpusDataModel(QAbstractItemModel):
         if not index.isValid():
             return Qt.ItemIsEnabled
         if self.editable == True:
-            if index.column() == 2 or index.column() == 0:
+            element = index.internalPointer().domNode.toElement()
+            if not element.isNull():
+                # Check if this node is an inherited node type
+                if element.hasAttribute(QString("inherited")):
+                    # We have a node that is inherited...
+                    #return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+                    return Qt.ItemIsSelectable
+            if index.column() == 0:
+                return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable                
+            elif index.column() == 2:
                 return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
             else:
                 return Qt.ItemIsEnabled | Qt.ItemIsSelectable

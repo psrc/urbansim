@@ -74,6 +74,12 @@ class OpusXMLAction_Scenario(object):
         QObject.connect(self.actPlaceHolder,
                         SIGNAL("triggered()"),
                         self.placeHolderAction)
+        self.actCloneNode = QAction(self.applicationIcon,
+                                    "Clone Down To Child",
+                                    self.xmlTreeObject.parent)
+        QObject.connect(self.actCloneNode,
+                        SIGNAL("triggered()"),
+                        self.cloneNodeAction)
         
         
     def runModel(self):
@@ -161,6 +167,9 @@ class OpusXMLAction_Scenario(object):
             f.close()
             self.xmlTreeObject.parent.editorStatusLabel.setText(QString(fileName))
 
+    def cloneNodeAction(self):
+        print "Clone Node pressed..."
+    
     def placeHolderAction(self):
         pass
     
@@ -178,7 +187,11 @@ class OpusXMLAction_Scenario(object):
                 domElement = domNode.toElement()
                 if domElement.isNull():
                     return
-                if domElement.attribute(QString("executable")) == QString("True"):
+                if domElement.hasAttribute(QString("inherited")):
+                    self.menu = QMenu(self.xmlTreeObject.parent)
+                    self.menu.addAction(self.actCloneNode)
+                    self.menu.exec_(QCursor.pos())
+                elif domElement.attribute(QString("executable")) == QString("True"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actRunModel)
                     self.menu.addSeparator()
