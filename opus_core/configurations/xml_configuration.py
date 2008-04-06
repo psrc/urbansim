@@ -50,10 +50,14 @@ class XMLConfiguration(object):
         self._initialize(ElementTree(file=self._filepath), is_parent)
         
     def update(self, newconfig_str):
-        # update the contents of this configuration from the string newconfig_str
-        # note that this doesn't change the name of this configuration, or the _filepath
+        # Update the contents of this configuration from the string newconfig_str 
+        # (which is a string representing an xml configuration).  Ignore any inherited
+        # nodes in newconfig_str.
+        # Note that this doesn't change the name of this configuration, or the _filepath
         str_io = StringIO.StringIO(newconfig_str)
-        self._initialize(ElementTree(file=str_io), False)
+        etree = ElementTree(file=str_io)
+        self._remove_inherited_nodes(etree.getroot())
+        self._initialize(etree, False)
         
     def get_section(self, name):
         """Extract the section named 'name' from this xml project, convert it to a dictionary,
@@ -174,6 +178,16 @@ class XMLConfiguration(object):
                 # its children, in case some of them don't exist in this tree
                 self._merge_parent_elements(child, extended_path)
             prev_child = child
+            
+    def _remove_inherited_nodes(self, etree):
+        # remove any nodes with the 'inherited' attribute from etree
+        i = 0
+        while i<len(etree):
+            if etree[i].get('inherited') is not None:
+                del etree[i]
+            else:
+                self._remove_inherited_nodes(etree[i])
+                i = i+1
     
     def _merge_controllers(self, config):
         # merge in the controllers in the model_manager/model_system portion of the project (if any) into config
@@ -610,7 +624,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         str_io.close()
         est_file.close()
         
-    def test_update(self):
+    def test_update_1(self):
+        # try update with a completely different project - make sure stuff gets replaced
         f = os.path.join(self.test_configs, 'estimation_grandchild.xml')
         config = XMLConfiguration(f)
         update_str = """<?xml version='1.0' encoding='UTF-8'?>
@@ -624,6 +639,39 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config.update(update_str)
         run_config = config.get_run_configuration('test_scenario')
         self.assertEqual(run_config, {'i': 42})
+
+    def test_update_2(self):
+        # make sure nodes marked as inherited are filtered out when doing the update
+        f = os.path.join(self.test_configs, 'estimation_grandchild.xml')
+        config = XMLConfiguration(f)
+        update_str = """<opus_project>
+            <parent type="file">estimation_child.xml</parent>
+            <parent type="file">estimation_child2.xml</parent>
+            <data_manager inherited="someplace">
+            </data_manager>
+            <model_manager>
+              <estimation type="dictionary" >
+                <real_estate_price_model type="dictionary" >
+                  <all_variables type="dictionary" >
+                    <ln_cost type="variable_definition" >ln_cost=ln(psrc.parcel.cost+100)</ln_cost>
+                    <tax type="variable_definition" inherited="estimation_child">tax=urbansim_parcel.parcel.tax</tax>
+                  </all_variables>
+                 </real_estate_price_model>
+               </estimation>
+            </model_manager>
+           <scenario_manager/>
+          </opus_project>"""
+        config.update(update_str)
+        str_io = StringIO.StringIO()
+        config.save_as(str_io)
+        # compare the strings removing white space
+        squished_result = str_io.getvalue().replace(' ', '').replace('\n', '')
+        # rather than typing it in here, just read the value from the file
+        est_file = open(f)
+        should_be = est_file.read().replace(' ', '').replace('\n', '')
+        self.assertEqual(squished_result, should_be)
+        str_io.close()
+        est_file.close()
 
     def test_error_handling(self):
         # there isn't an xml configuration named badname.xml
