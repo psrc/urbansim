@@ -61,8 +61,8 @@ def version_number():
                 (svn_response, err) = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
             if err=='':
                 # if no error, the last line of the response will be something like
-                # 'Updated to revision 3024' -- get the '3024' part
-                revision= svn_response[-1].split()[-1]
+                # 'Updated to revision 3024', with a newline following -- get the '3024' part
+                revision= svn_response.split()[-1]
         else:
             # it's Mac or linux -- use svnversion.  This just returns a number if it succeeds, 
             # perhaps with an M following if the files have been modified.
