@@ -161,7 +161,7 @@ Libraries</a></h2>
 
 <p> Unfortunately, there is no download for the Mac that contains
 all of the Python libraries needed by Opus and UrbanSim, so several steps are
-needed to install the Python libraries.</p>
+needed to install the Python libraries.  </p>
 
 <p>In some cases, you'll need to compile the library from source (if it uses C or C++ routines
 rather than pure Python).  To get ready for doing this, install the optional Xcode package on one of the 
@@ -173,7 +173,12 @@ this may be the problem. To fix it, get the latest version of Xcode Tools from
 the <a href="http://developer.apple.com/tools/download/">Apple Tools Download page</a>. 
 (You'll need to register and login, but it's free. The file is huge - 924 MB.)</p>
 
-<p>Onward to the packages themselves.  In most cases, obtaining these packages
+<p>Onward to the packages themselves.  Many packages are available from the 
+<a href="http://www.urbansim.org/opus/third-party/macintosh/">UrbanSim third-party software directory</a>.  You can also obtain
+the packages from the download sites of their respective devlopers, which we will provide links to.</p>
+
+
+<p>In many cases, installing  packages
  is made simpler by the use of Easy Install, a python module that can help you 
  download and build python packages.  For more on Easy Install, 
  <a href="http://peak.telecommunity.com/DevCenter/EasyInstall">visit the PEAK webpage</a>.</p>
@@ -190,23 +195,42 @@ We will use this later to install a number of packages.</p>
 <p>If you are running a version of OS X earlier than 10.5, such as 10.4.9, download and install the following:
 <ul>
 
-<li><b>pytz</b> from <a href="http://pythonmac.org/packages/py25-fat/index.html">the downloads page on pythonmac.org</a>.  This is also not necessary on 10.5/Leopard.</li>
+<li><b>pytz</b> from <a href="http://pythonmac.org/packages/py25-fat/index.html">the downloads page on pythonmac.org</a>.  </li>
 
 <li><b>python-dateutil</b>, also from <a href="http://pythonmac.org/packages/py25-fat/index.html">pythonmac.org</a>.</li>
 
 </ul>
 
-<p>If you are running 10.5/Leopard, the two packages above are not necessary.</p>
+<p><i>If you are running 10.5/Leopard, the two packages above are not necessary.</i></p>
 
-<p>Now download and install the Superpack from <a href="http://trichech.us/?page_id=5">http://trichech.us/?page_id=5</a>.
-  This includes the packages NumPy 1.0.4, SciPi 0.7 and matplotlib 0.90.1, all of which are necessary.</p>
+<p>Download and install the following packages:
 
-Install the following package using Easy Install:
+<ul>
+
+<li><b>NumPy</b> 1.0.5</li>
+<li><b>SciPy</b> 0.7 </li>
+<li><b>MatPlotLib</b> 0.91.2</li>
+
+
+</ul>
+
+<p>There are a number of ways to do this.  The simplest is probably to install the Superpack from 
+<a href="http://trichech.us/?page_id=5">http://trichech.us/?page_id=5</a> (or the local urbansim copy). However, this will
+install the wrong version of MatPlotLib, so you must then delete the installed MatPlotLib from your <i>site-packages</i> 
+directory and install the correct version 
+from <a href="http://pythonmac.org/packages/py25-fat/index.html">pythonmac.org</a>.</p>
+
+<p>Alternately, you can install all the packages manually.   First follow the <a href="http://www.scipy.org/Installing_SciPy/Mac_OS_X">
+instructions for installing NumPy and SciPy</a> from the SciPy website.  (Note that SciPy has a number of non-trivial 
+dependencies, including a Fortran compiler, and this may take a while.) Then install MatPlotLib as above. 
+MathPlotLib depends on Numpy, so you must do this last.</p>
+
+<p>Install the following package using Easy Install:
 
 <ul>
 
 	 <li><b>SQLAlchemy 0.4:</b> Download the tarball (currently for SQLAlchehmy 0.4 from 
-	 <a href="http://www.sqlalchemy.org/download.html">http://www.sqlalchemy.org/download.html</a>.  
+	 <a href="http://www.sqlalchemy.org/download.html">http://www.sqlalchemy.org/download.html</a>).  
 	 Then run the command
 	 <pre>$ easy_install [<i>filename</i>]</pre>
 	 where [<i>filename</i>] is the path of the file you just downloaded. (As of this writing the name of the file you want is SQLAlchemy-0.4.0.tar.gz.)</li>
@@ -370,7 +394,7 @@ environment variables are seen by the various different shells (see <a href="htt
 Here is the sample contents of the file for these variables:</p>
 
 
-<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br>&lt;!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"<br>"http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;<br>&lt;plist version="1.0"&gt;<br> &lt;dict&gt;<br> &lt;key&gt;DISPLAY&lt;/key&gt;<br> &lt;string&gt;:0.0&lt;/string&gt;<br><br> &lt;key&gt;MYSQLHOSTNAME&lt;/key&gt;<br> &lt;string&gt;localhost&lt;/string&gt;<br><br> &lt;key&gt;MYSQLUSERNAME&lt;/key&gt;<br> &lt;string&gt;urbansim&lt;/string&gt;<br><br> &lt;key&gt;MYSQLPASSWORD&lt;/key&gt;<br> &lt;string&gt;thesecretpassword&lt;/string&gt;<br><br> &lt;key&gt;PYTHONPATH&lt;/key&gt;<br> &lt;string&gt;/Users/yourusername/opusworkspace&lt;/string&gt;<br><br> &lt;/dict&gt;<br>&lt;/plist&gt;</pre>
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br>&lt;!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"<br>"http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;<br>&lt;plist version="1.0"&gt;<br> &lt;dict&gt;<br> &lt;key&gt;DISPLAY&lt;/key&gt;<br> &lt;string&gt;:0.0&lt;/string&gt;<br><br> &lt;key&gt;MYSQLHOSTNAME&lt;/key&gt;<br> &lt;string&gt;localhost&lt;/string&gt;<br><br> &lt;key&gt;MYSQLHOSTNAMEFORTESTS&lt;/key&gt;<br> &lt;string&gt;localhost&lt;/string&gt;<br><br> &lt;key&gt;MYSQLUSERNAME&lt;/key&gt;<br> &lt;string&gt;urbansim&lt;/string&gt;<br><br> &lt;key&gt;MYSQLPASSWORD&lt;/key&gt;<br> &lt;string&gt;thesecretpassword&lt;/string&gt;<br><br> &lt;key&gt;PYTHONPATH&lt;/key&gt;<br> &lt;string&gt;/Users/yourusername/opusworkspace&lt;/string&gt;<br><br> &lt;key&gt;OPUS_DATA_PATH&lt;/key&gt;<br> &lt;string&gt;/Users/yourusername/urbansim_cache&lt;/string&gt;<br><br> &lt;/dict&gt;<br>&lt;/plist&gt;</pre>
 
 
 <h2>Step 6: <a name="test">Testing your installation</a></h2>
