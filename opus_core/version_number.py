@@ -12,7 +12,7 @@
 # other acknowledgments.
 # 
 
-import sys
+import sys, re
 from subprocess import Popen, PIPE
 
 def version_number():
@@ -64,12 +64,16 @@ def version_number():
                 # 'Updated to revision 3024', with a newline following -- get the '3024' part
                 revision= svn_response.split()[-1]
         else:
-            # it's Mac or linux -- use svnversion.  This just returns a number if it succeeds, 
-            # perhaps with an M following if the files have been modified.
-            cmds = ('svnversion', '-n', opus_core_dir)
+            # it's Mac or linux -- use svnversion.  This returns a number if it succeeds, 
+            # with an M following if the files have been modified, and with two numbers separated
+            # by : for mixed revisions.  Get the last number out of the response, and use that.
+            # (So for example if svnversion returns 4123:4168MS, get 4168 as the revision number.)
+            cmds = ('svnversion', opus_core_dir)
             (svn_response, err) = Popen(cmds, stdout=PIPE, stderr=PIPE).communicate()
             if err=='':
-                revision= svn_response
+                ns = re.findall(r'\d+', svn_response)
+                if len(ns)>0:
+                    revision= ns[-1]
     except:
         pass
     return first_part + '-dev' + revision
