@@ -1,0 +1,76 @@
+#
+# UrbanSim software. Copyright (C) 1998-2007 University of Washington
+# 
+# You can redistribute this program and/or modify it under the terms of the
+# GNU General Public License as published by the Free Software Foundation
+# (http://www.gnu.org/copyleft/gpl.html).
+# 
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.html for copyright
+# and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
+# other acknowledgments.
+# 
+
+import sys
+from subprocess import Popen, PIPE
+
+def version_number():
+    """Return a string with the version number for this version of the Opus code.  
+    The variable __version__ is set to this string in each Opus/UrbanSim package.
+    For stable releases, the version is something like '4.2.1', where 4 is the major
+    release number (i.e. UrbanSim 4), 2 is the minor number, and 1 is the micro number.
+    For development versions, the version is something like '4.2.2-dev3216' where 3216 
+    is the svn revision number for this version.  When this development version is 
+    released as a stable release, it will become just '4.2.2'.  The svn revision number
+    is found using either the svnversion program (Mac/Linux) or SubWCRev from TortoiseSVN 
+    (Windows) -- if the program isn't available or the code is missing the svn information, the
+    version for a development version will be e.g. '4.2.2-dev (revision number not available)'
+    """
+    
+    # edit the following constants to change the major, minor, and micro numbers,
+    # and to change from development to stable releases
+    major = 4
+    minor = 2
+    micro = 0
+    stable = False
+    # ********* end of part to edit to change version number ********* 
+    
+    first_part = "%d.%d.%d" % (major, minor, micro)
+    if stable:
+        return first_part
+    # it's a development version -- try to find the svn revision number
+    # default phrase for the revision -- override if we can find the real number
+    revision = ' (revision number not available)'
+    # There are various things that can go wrong with getting the revision number
+    # (svn information missing, etc etc).  We don't want to crash just finding the
+    # version number, so wrap the whole thing in a try/except block that will catch
+    # any exception.  (Normally bad programming practice ...)
+    try:
+        # locate where opus_core is living
+        opus_core_dir = __import__('opus_core').__path__[0]
+        if sys.platform=='win32':
+            # It's a windows machine -- use SubWCRev.  This may not be on the user's search
+            # path, so if just calling it doesn't work try guessing where it is.  (This is 
+            # where TortoiseSVN installs it by default). 
+            try:
+                cmd = r'SubWCRev ' + opus_core_dir
+                (svn_response, err) = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
+            except WindowsError:
+                cmd = r'C:\Program Files\TortoiseSVN\bin\SubWCRev ' + opus_core_dir
+                (svn_response, err) = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
+            if err=='':
+                # if no error, the last line of the response will be something like
+                # 'Updated to revision 3024' -- get the '3024' part
+                revision= svn_response[-1].split()[-1]
+        else:
+            # it's Mac or linux -- use svnversion.  This just returns a number if it succeeds, 
+            # perhaps with an M following if the files have been modified.
+            cmds = ('svnversion', '-n', opus_core_dir)
+            (svn_response, err) = Popen(cmds, stdout=PIPE, stderr=PIPE).communicate()
+            if err=='':
+                revision= svn_response
+    except:
+        pass
+    return first_part + '-dev' + revision
+    

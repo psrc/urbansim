@@ -322,7 +322,7 @@ SUBPATTERN_AGGREGATION =  \
      ['?', (token.COMMA, ',')],
      ['?', ['arg3']])
 
- # match an argument, optionally with a keyword
+# match an argument, optionally with a keyword
 SUBPATTERN_ARGUMENT = \
     (symbol.argument,
      ['part1'],
@@ -372,7 +372,7 @@ SUBPATTERN_DATASET_QUALIFIED_VARIABLE_ARG =  \
                     (token.DOT, '.'),
                     (token.NAME, ['shortname'])))))))))))))))
 
- # match an argument consisting of just a name
+# match an argument consisting of just a name
 SUBPATTERN_NAME_ARG = \
     (symbol.test,
      _or_test_subtree(           

@@ -11,3 +11,7 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 # 
+
+# set the version number for this package
+import opus_core.version_number
+__version__ = opus_core.version_number.version_number()
