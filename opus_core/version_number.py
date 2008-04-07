@@ -15,17 +15,18 @@
 import sys, re
 from subprocess import Popen, PIPE
 
-def version_number():
+def version_number(package_name='opus_core'):
     """Return a string with the version number for this version of the Opus code.  
-    The variable __version__ is set to this string in each Opus/UrbanSim package.
-    For stable releases, the version is something like '4.2.1', where 4 is the major
-    release number (i.e. UrbanSim 4), 2 is the minor number, and 1 is the micro number.
-    For development versions, the version is something like '4.2.2-dev3216' where 3216 
-    is the svn revision number for this version.  When this development version is 
-    released as a stable release, it will become just '4.2.2'.  The svn revision number
-    is found using either the svnversion program (Mac/Linux) or SubWCRev from TortoiseSVN 
-    (Windows) -- if the program isn't available or the code is missing the svn information, the
-    version for a development version will be e.g. '4.2.2-dev (revision number not available)'
+    The variable opus_core.__version__ is set to this string (and maybe later in 
+    all Opus/UrbanSim packages).  For stable releases, the version is something like 
+    '4.2.1', where 4 is the major release number (i.e. UrbanSim 4), 2 is the minor number, 
+    and 1 is the micro number.  For development versions, the version is something like 
+    '4.2.2-dev3216' where 3216 is the svn revision number for this version.  When this 
+    development version is released as a stable release, it will become just '4.2.2'.  
+    The svn revision number is found using either the svnversion program (Mac/Linux) or 
+    SubWCRev from TortoiseSVN (Windows) -- if the program isn't available or the code is 
+    missing the svn information, the version for a development version will be e.g. 
+    '4.2.2-dev (revision number not available)'
     """
     
     # edit the following constants to change the major, minor, and micro numbers,
@@ -48,16 +49,16 @@ def version_number():
     # any exception.  (Normally bad programming practice ...)
     try:
         # locate where opus_core is living
-        opus_core_dir = __import__('opus_core').__path__[0]
+        package_dir = __import__(package_name).__path__[0]
         if sys.platform=='win32':
             # It's a windows machine -- use SubWCRev.  This may not be on the user's search
             # path, so if just calling it doesn't work try guessing where it is.  (This is 
             # where TortoiseSVN installs it by default). 
             try:
-                cmd = r'SubWCRev ' + opus_core_dir
+                cmd = r'SubWCRev ' + package_dir
                 (svn_response, err) = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
             except WindowsError:
-                cmd = r'C:\Program Files\TortoiseSVN\bin\SubWCRev ' + opus_core_dir
+                cmd = r'C:\Program Files\TortoiseSVN\bin\SubWCRev ' + package_dir
                 (svn_response, err) = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
             if err=='':
                 # if no error, the last line of the response will be something like
@@ -68,7 +69,7 @@ def version_number():
             # with an M following if the files have been modified, and with two numbers separated
             # by : for mixed revisions.  Get the last number out of the response, and use that.
             # (So for example if svnversion returns 4123:4168MS, get 4168 as the revision number.)
-            cmds = ('svnversion', opus_core_dir)
+            cmds = ('svnversion', package_dir)
             (svn_response, err) = Popen(cmds, stdout=PIPE, stderr=PIPE).communicate()
             if err=='':
                 ns = re.findall(r'\d+', svn_response)

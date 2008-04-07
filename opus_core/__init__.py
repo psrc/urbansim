@@ -14,4 +14,4 @@
 
 # set the version number for this package
 import opus_core.version_number
-__version__ = opus_core.version_number.version_number()
+__version__ = opus_core.version_number.version_number(__name__)
