@@ -199,7 +199,7 @@ class HouseholdTransitionModel(Model):
         if distribution.size == 0:
             return
         if distribution.sum() <= 0: # if there are no households of these categories, the distribution is uniform
-            distr = ones((distr.size,))
+            distr = ones((distribution.size,))
         else:
             distr = distribution
         # sample categories
