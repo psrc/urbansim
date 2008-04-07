@@ -47,6 +47,7 @@ class RegionalHouseholdTransitionModel(HouseholdTransitionModel):
             households_for_this_area = DatasetSubset(household_set, households_index)
             logger.log_status("HTM for area %s (currently %s households)" % (area, households_for_this_area.size()))
             last_remove_idx = self.remove_households.size
+            last_new_hhs_idx = self.mapping_existing_hhs_to_new_hhs.size
             self._do_run_for_this_year(households_for_this_area)
             add_hhs_size = self.new_households[self.location_id_name].size-self.new_households["large_area_id"].size
             remove_hhs_size = self.remove_households.size-last_remove_idx
@@ -57,6 +58,8 @@ class RegionalHouseholdTransitionModel(HouseholdTransitionModel):
                                             array(add_hhs_size*[area], dtype="int32")))
             # transform indices of removing households into indices of the whole dataset
             self.remove_households[last_remove_idx:self.remove_households.size] = all_households_index[households_index[self.remove_households[last_remove_idx:self.remove_households.size]]]
+            # do the same for households to be duplicated
+            self.mapping_existing_hhs_to_new_hhs[last_new_hhs_idx:self.mapping_existing_hhs_to_new_hhs.size] = all_households_index[households_index[self.mapping_existing_hhs_to_new_hhs[last_new_hhs_idx:self.mapping_existing_hhs_to_new_hhs.size]]]
             
         self._update_household_set(household_set)
         idx_new_households = arange(household_set.size()-self.new_households["large_area_id"].size, household_set.size())
