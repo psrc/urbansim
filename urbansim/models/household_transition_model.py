@@ -195,7 +195,7 @@ class HouseholdTransitionModel(Model):
             
     def _create_households(self, diff, number_of_households_in_categories, group_element, l, all_characteristics, categories_index, indices_of_group_combinations):
         # number of existing households in each category
-        distribution = number_of_households_in_categories[where(l)] 
+        distribution = number_of_households_in_categories[indices_of_group_combinations] 
         if distribution.size == 0:
             return
         if distribution.sum() <= 0: # if there are no households of these categories, the distribution is uniform
@@ -207,18 +207,19 @@ class HouseholdTransitionModel(Model):
                                           prob_array=distr/float(distr.sum())) # indices of chosen bins
         number_of_new_households_in_categories = array(ndimage_sum(ones((diff,)), labels=sample_array+1,
                                                                 index = arange(self.number_of_combinations)+1)).astype(int32)
+        non_zero_categories = where(number_of_new_households_in_categories > 0)[0]
         # sample existing households to copy
         is_hh_in_group = l[self.household_categories]
-        for icat in range(distribution.size):
-            if distribution[icat] > 0:
-                consider_hhs_idx = where(logical_and(is_hh_in_group, self.household_categories == icat))[0]
+        for icat in range(non_zero_categories.size):
+            if distribution[non_zero_categories[icat]] > 0:
+                consider_hhs_idx = where(logical_and(is_hh_in_group, self.household_categories == indices_of_group_combinations[non_zero_categories[icat]]))[0]
                 if consider_hhs_idx.size > 0:
-                    sample_from_existing_hhs = sample_replace(consider_hhs_idx, number_of_new_households_in_categories[icat])
+                    sample_from_existing_hhs = sample_replace(consider_hhs_idx, number_of_new_households_in_categories[non_zero_categories[icat]])
                     self.mapping_existing_hhs_to_new_hhs = concatenate((self.mapping_existing_hhs_to_new_hhs, sample_from_existing_hhs))
                 else:
-                    self._create_households_if_group_empty(icat, sample_array, number_of_new_households_in_categories[icat], number_of_households_in_categories, group_element, all_characteristics, categories_index, indices_of_group_combinations)
+                    self._create_households_if_group_empty(indices_of_group_combinations[non_zero_categories[icat]], sample_array, number_of_new_households_in_categories[icat], number_of_households_in_categories, group_element, all_characteristics, categories_index, indices_of_group_combinations)
             else:
-                self._create_households_if_group_empty(icat, sample_array, number_of_new_households_in_categories[icat], number_of_households_in_categories, group_element, all_characteristics, categories_index, indices_of_group_combinations)
+                self._create_households_if_group_empty(indices_of_group_combinations[non_zero_categories[icat]], sample_array, number_of_new_households_in_categories[icat], number_of_households_in_categories, group_element, all_characteristics, categories_index, indices_of_group_combinations)
             
     def _create_households_if_group_empty(self, category, sample_array, diff, number_of_households_in_categories, group_element, all_characteristics, categories_index, indices_of_group_combinations):
         """This code is only used if there are no households in one category."""
@@ -276,16 +277,16 @@ class HouseholdTransitionModel(Model):
                 this_min, this_max = min_max[k[0],:]
                 if attr == "age_of_head": # maximum sampled age is 100, minimum 15; TODO: get these from config
                     rn = sample_replace(arange(max(15,int(this_min)),
-                                           min(int(this_max),100)+1),
-                                           int(number_of_bins_in_category[0]))
+                                       min(int(this_max),100)+1),
+                                       int(number_of_bins_in_category[0]))
                 elif attr == "income": # min and max are 10th of the real values; TODO: get these from config
                     rn = sample_replace(arange(int(10*this_min),int(10*this_max)+1,10),
-                        int(number_of_bins_in_category[0]))
+                                        int(number_of_bins_in_category[0]))
                 else:
                     rn = sample_replace(arange(int(this_min),int(this_max)+1),
-                        int(number_of_bins_in_category[0]))
+                                        int(number_of_bins_in_category[0]))
                 self.new_households[attr]=concatenate((self.new_households[attr],
-                                           rn.astype(self.new_households[attr].dtype.type)))
+                                       rn.astype(self.new_households[attr].dtype.type)))
 
 
 
