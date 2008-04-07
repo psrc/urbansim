@@ -174,8 +174,9 @@ the <a href="http://developer.apple.com/tools/download/">Apple Tools Download pa
 (You'll need to register and login, but it's free. The file is huge - 924 MB.)</p>
 
 <p>Onward to the packages themselves.  Many packages are available from the 
-<a href="http://www.urbansim.org/opus/third-party/macintosh/">UrbanSim third-party software directory</a>.  You can also obtain
-the packages from the download sites of their respective devlopers, which we will provide links to.</p>
+<a href="http://www.urbansim.org/opus/third-party/">UrbanSim third-party software directory</a> (either under the Macintosh 
+or Source subpages, depending on whether it's a Mac-specific dmg or source file, or platform-independent source file).  You can also obtain
+the packages from the download sites of their respective developers, which we will provide links to.</p>
 
 
 <p>In many cases, installing  packages
@@ -229,11 +230,12 @@ MathPlotLib depends on Numpy, so you must do this last.</p>
 
 <ul>
 
-	 <li><b>SQLAlchemy 0.4:</b> Download the tarball (currently for SQLAlchehmy 0.4 from 
+	 <li><b>SQLAlchemy 0.4:</b> Download the tarball for SQLAlchemy 0.4.0 or later from 
 	 <a href="http://www.sqlalchemy.org/download.html">http://www.sqlalchemy.org/download.html</a>).  
 	 Then run the command
 	 <pre>$ easy_install [<i>filename</i>]</pre>
-	 where [<i>filename</i>] is the path of the file you just downloaded. (As of this writing the name of the file you want is SQLAlchemy-0.4.0.tar.gz.)</li>
+	 where [<i>filename</i>] is the path of the file you just downloaded. (As of this writing the name of the file you want is SQLAlchemy-0.4.5.tar.gz;
+	 however, SQLAlchemy is evolving rapidly.)</li>
 
  </ul>
 
@@ -266,7 +268,7 @@ by ArcGIS), install <b>dbfpy</b> (<a href="http://sourceforge.net/projects/dbfpy
 <br>This may happen because the library it is looking for is in /usr/local/mysql/lib/, and not in a subfolder called mysql.  Moving the files or creating aliases should fix the problem.</p>
 
 <p>Lastly, install <a href="http://www.riverbankcomputing.co.uk/pyqt/index.php">PyQt</a> and 
-<a href="http://www.riverbankcomputing.co.uk/qscintilla/index.php">QScintilla</a>.  You need to install Qt (version 4), SIP and finally PyQt.  
+<a href="http://www.riverbankcomputing.co.uk/qscintilla/index.php">QScintilla</a>.  You need to install Qt (version 4.3.3 or later), SIP and finally PyQt.  
 For Leopard, currently you need to build Qt from source (don't use the dmg file), although presumably this will get fixed at some point.
 For Tiger, the dmg file will probably work.
 The page <a href="http://phanatic.hu/archives/2007/11/building-qt-4-and-pyqt-on-mac-os-x-leopard/">
