@@ -217,9 +217,9 @@ class HouseholdTransitionModel(Model):
                     sample_from_existing_hhs = sample_replace(consider_hhs_idx, number_of_new_households_in_categories[non_zero_categories[icat]])
                     self.mapping_existing_hhs_to_new_hhs = concatenate((self.mapping_existing_hhs_to_new_hhs, sample_from_existing_hhs))
                 else:
-                    self._create_households_if_group_empty(indices_of_group_combinations[non_zero_categories[icat]], sample_array, number_of_new_households_in_categories[icat], number_of_households_in_categories, group_element, all_characteristics, categories_index, indices_of_group_combinations)
+                    self._create_households_if_group_empty(non_zero_categories[icat], sample_array, number_of_new_households_in_categories[icat], number_of_households_in_categories, group_element, all_characteristics, categories_index, indices_of_group_combinations)
             else:
-                self._create_households_if_group_empty(indices_of_group_combinations[non_zero_categories[icat]], sample_array, number_of_new_households_in_categories[icat], number_of_households_in_categories, group_element, all_characteristics, categories_index, indices_of_group_combinations)
+                self._create_households_if_group_empty(non_zero_categories[icat], sample_array, number_of_new_households_in_categories[icat], number_of_households_in_categories, group_element, all_characteristics, categories_index, indices_of_group_combinations)
             
     def _create_households_if_group_empty(self, category, sample_array, diff, number_of_households_in_categories, group_element, all_characteristics, categories_index, indices_of_group_combinations):
         """This code is only used if there are no households in one category."""
@@ -264,6 +264,9 @@ class HouseholdTransitionModel(Model):
             w = where(logical_not(is_min_equal_max))[0]
             if w.size > 0:
                 remaining_categories = sample_array[w]
+                k = where(remaining_categories == category)[0]
+                if k.size <= 0:
+                    continue
                 ind_sorted = argsort(remaining_categories)
                 remaining_categories_sorted = remaining_categories[ind_sorted]
                 number_of_bins_in_category = ndimage_sum(ones((remaining_categories_sorted.size,)),
@@ -271,8 +274,6 @@ class HouseholdTransitionModel(Model):
                 if not isinstance(number_of_bins_in_category, list): # if there is only one element in w,
                     # the previous function returns a single number and not a list
                     number_of_bins_in_category = [number_of_bins_in_category]
-
-                k = where(remaining_categories == category)[0]
                 #sample between maximum and minimum (with two exceptions)
                 this_min, this_max = min_max[k[0],:]
                 if attr == "age_of_head": # maximum sampled age is 100, minimum 15; TODO: get these from config
