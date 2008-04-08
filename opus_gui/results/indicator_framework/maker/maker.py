@@ -178,6 +178,7 @@ class Maker(object):
             attribute = indicator.attribute
             package = VariableName(attribute).get_package_name()
             if package != None and package not in self.package_order:
+                print self.package_order
                 raise IntegrityError('Package %s is not available'%package)
             
 

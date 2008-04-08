@@ -72,9 +72,9 @@ class RunModelThread(QThread):
         xml_tree = toolboxStuff.resultsManagerTree        
         model = xml_tree.model
 
+        cache_directory = self.parent.model.config['cache_directory']
         scenario_name = str(self.parent.model.modeltorun)
-        run_name = os.path.basename(self.parent.model.config['cache_directory'])
-        print self.parent.model.config['years']
+        run_name = os.path.basename(cache_directory)
         (start_year, end_year) = self.parent.model.config['years']
         
         name = '%s.%s'%(scenario_name, run_name)
@@ -93,7 +93,12 @@ class RunModelThread(QThread):
                                     name = 'run_name', 
                                     type = 'string', 
                                     value = run_name)
-
+        
+        cache_directory_node = model.create_node(document = document, 
+                                    name = 'cache_directory', 
+                                    type = 'string', 
+                                    value = cache_directory)
+        
         start_year_node = model.create_node(document = document, 
                                     name = 'start_year', 
                                     type = 'integer', 
@@ -104,7 +109,7 @@ class RunModelThread(QThread):
                                     type = 'integer', 
                                     value = str(end_year))    
            
-        parent = model.index(0,0,QModelIndex()).parent()
+        parent = model.index(0, 0, QModelIndex()).parent()
         index = model.findElementIndexByName("Simulation_runs", parent)[0]
         if index.isValid():
             model.insertRow(0, index, newNode)
@@ -113,7 +118,8 @@ class RunModelThread(QThread):
         
         child_index = model.findElementIndexByName(name, parent)[0]
         if child_index.isValid():
-            for node in [end_year_node, start_year_node, scenario_name_node, run_name_node]:
+            for node in [end_year_node, start_year_node, 
+                         cache_directory_node, scenario_name_node, run_name_node]:
                 model.insertRow(0, child_index, node)
         else:
             print "No valid node was found..."
