@@ -59,10 +59,68 @@ class RunModelThread(QThread):
     def finishedCallback(self,success):
         if success:
             print "Success returned from Model"
+            self.add_run_to_run_manager_xml()
         else:
             print "Error returned from Model"
         self.emit(SIGNAL("runFinished(PyQt_PyObject)"),success)
+        
+    def add_run_to_run_manager_xml(self):
+        '''add this completed run to the run manager section of the results manager'''
+        
+        toolboxStuff = self.parent.parent.toolboxStuff
+        document = toolboxStuff.doc
+        xml_tree = toolboxStuff.resultsManagerTree        
+        model = xml_tree.model
 
+        scenario_name = str(self.parent.model.modeltorun)
+        run_name = os.path.basename(self.parent.model.config['cache_directory'])
+        print self.parent.model.config['years']
+        (start_year, end_year) = self.parent.model.config['years']
+        
+        name = '%s.%s'%(scenario_name, run_name)
+        
+        newNode = model.create_node(document = document, 
+                                    name = name, 
+                                    type = 'source_data', 
+                                    value = '')
+        
+        scenario_name_node = model.create_node(document = document, 
+                                    name = 'scenario_name', 
+                                    type = 'string', 
+                                    value = scenario_name)
+
+        run_name_node = model.create_node(document = document, 
+                                    name = 'run_name', 
+                                    type = 'string', 
+                                    value = run_name)
+
+        start_year_node = model.create_node(document = document, 
+                                    name = 'start_year', 
+                                    type = 'integer', 
+                                    value = str(start_year))
+        
+        end_year_node = model.create_node(document = document, 
+                                    name = 'end_year', 
+                                    type = 'integer', 
+                                    value = str(end_year))    
+           
+        parent = model.index(0,0,QModelIndex()).parent()
+        index = model.findElementIndexByName("Simulation_runs", parent)[0]
+        if index.isValid():
+            model.insertRow(0, index, newNode)
+        else:
+            print "No valid node was found..."
+        
+        child_index = model.findElementIndexByName(name, parent)[0]
+        if child_index.isValid():
+            for node in [end_year_node, start_year_node, scenario_name_node, run_name_node]:
+                model.insertRow(0, child_index, node)
+        else:
+            print "No valid node was found..."
+        
+        model.emit(SIGNAL("layoutChanged()"))
+        
+        
     def errorCallback(self,errorMessage):
         self.emit(SIGNAL("runError(PyQt_PyObject)"),errorMessage)
 
@@ -128,10 +186,12 @@ class OpusModel(object):
                 print fileNameAbsolute
                 print self.modeltorun
                 config = XMLConfiguration(str(fileNameAbsolute)).get_run_configuration(str(self.modeltorun))
+            
                 insert_auto_generated_cache_directory_if_needed(config)
                 (self.start_year, self.end_year) = config['years']
 
                 self.run_manager.setup_new_run(run_name = config['cache_directory'])
+                                
                 #statusdir = tempfile.mkdtemp()
                 statusdir = self.run_manager.get_current_cache_directory()
                 statusfile = os.path.join(statusdir, 'status.txt')
