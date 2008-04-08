@@ -1088,19 +1088,25 @@ zero, nothing is done.
 
 When creating households, the method samples $d$ bins from the scaled
 characteristics bins that this marginal bin applies to. These represent
-categories to which the $d$ new households belong to. For each new household
+categories to which the $d$ new households belong to. For each new household 
+an existing household from the same category is sampled. Values of all attributes 
+(except of the id attribute and the location attribute)
+of this existing household are duplicated. If there is no existing household 
+in the category,
 the value of each characteristics is randomly sampled between the category
 minimum and maximum (as an integer value). There are two exceptions:
 characteristics ``age_of_head'' is never smaller than 15. Sampled values of
-the characteristics ``income'' are rounded to the nearest 10.
+the characteristics ``income'' are rounded to the nearest 10. New ids are assigned 
+to all new households and their location is set to 'unplaced'.  
+Households are considered as unplaced if their
+attribute \attributesindex given by the class property \verb|location_id_name| (which is by
+default ``grid_id'') is smaller equal zero.
 
 To remove households, first unplaced households from the bin are removed. If
 the number $n_u$ of those unplaced households is larger than $d$, only $d$
 households are randomly sampled for deletion. If $n_u$ is smaller than $d$,
 then $d-n_u$ households from the set of placed households of that bin are
-randomly sampled and deleted. Households are considered as unplaced if their
-attribute \attributesindex given by the class property \verb|location_id_name| (which is by
-default ``grid_id'') is smaller equal zero.
+randomly sampled and deleted. 
 
 {\it Output}:~\\[1mm]
 The method returns the total difference between the sizes of the household
