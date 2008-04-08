@@ -23,7 +23,7 @@ from opus_gui.results.opus_result_generator import OpusGuiThread, OpusResultGene
 from opus_gui.config.xmlmodelview.opusdataitem import OpusDataItem
 
 class GenerateResultsForm(QWidget):
-    def __init__(self, parent, result_manager):
+    def __init__(self, parent, result_manager, selected_item = None):
         QWidget.__init__(self, parent)
         #parent is an OpusGui
         self.parent = parent
@@ -54,7 +54,7 @@ class GenerateResultsForm(QWidget):
         self.dataGroupBox = QGroupBox(self)
         self.widgetLayout.addWidget(self.dataGroupBox)
         
-        self._setup_definition_widget()
+        self._setup_definition_widget(selected_item)
 
         self._setup_buttons()
         self._setup_tabs()
@@ -84,7 +84,7 @@ class GenerateResultsForm(QWidget):
         self.widgetLayout.addWidget(self.tabWidget)
         
 #
-    def _setup_definition_widget(self):
+    def _setup_definition_widget(self, selected_item):
         
         #### setup indicators group box ####
         
@@ -96,7 +96,7 @@ class GenerateResultsForm(QWidget):
         self.lbl_indicator_name.setText(QString("Indicator"))
         self.gridlayout.addWidget(self.lbl_indicator_name,0,0,1,1)
 
-        self._setup_co_indicator_name()
+        self._setup_co_indicator_name(selected_item)
         self.gridlayout.addWidget(self.co_indicator_name,0,1,1,1)
 
         self.lbl_dataset_name = QLabel(self.indicatorsGroupBox)
@@ -116,7 +116,7 @@ class GenerateResultsForm(QWidget):
         self.lbl_source_data.setText(QString("Simulation data"))
         self.gridlayout2.addWidget(self.lbl_source_data,0,0,1,3)
         
-        self._setup_co_source_data()
+        self._setup_co_source_data(selected_item)
         self.gridlayout2.addWidget(self.co_source_data,0,3,1,4) 
         
         self.lbl_yr1 = QLabel(self.indicatorsGroupBox)
@@ -148,10 +148,11 @@ class GenerateResultsForm(QWidget):
         QObject.connect(self.co_source_data, SIGNAL("currentIndexChanged(int)"),
                 self.on_co_source_data_value_changed)
 
-    def _setup_co_indicator_name(self):
+    def _setup_co_indicator_name(self, selected_item):
         
         self.co_indicator_name = QComboBox(self.indicatorsGroupBox)
         self.co_indicator_name.setObjectName("co_indicator_name")
+        
         self.co_indicator_name.addItem(QString("[select]"))
         
         node_list = elementsByAttributeValue(domDocument = self.domDocument, 
@@ -160,6 +161,10 @@ class GenerateResultsForm(QWidget):
             
         for element, node in node_list:
             self.co_indicator_name.addItem(QString(element.nodeName()))
+            
+        idx = self.co_indicator_name.findText(selected_item)
+        if idx != -1:
+            self.co_indicator_name.setCurrentIndex(idx)
         
         
     def _setup_co_dataset_name(self):
@@ -177,9 +182,10 @@ class GenerateResultsForm(QWidget):
         for dataset in available_datasets:
             self.co_dataset_name.addItem(QString(dataset))
             
-    def _setup_co_source_data(self):
+    def _setup_co_source_data(self, selected_item):
         self.co_source_data = QComboBox(self.indicatorsGroupBox)
         self.co_source_data.setObjectName("co_source_data")
+        
         self.co_source_data.addItem(QString("[select]"))
         
         node_list = elementsByAttributeValue(domDocument = self.domDocument, 
@@ -194,6 +200,11 @@ class GenerateResultsForm(QWidget):
             self.available_years_for_simulation_runs[element.nodeName()] = (vals['start_year'],
                                                                          vals['end_year'])
 
+        idx = self.co_source_data.findText(selected_item)
+        if idx != -1:
+            self.co_source_data.setCurrentIndex(idx)
+            
+            
     def _setup_co__years(self):
         self.co_start_year = QComboBox(self.dataGroupBox)
         self.co_start_year.setObjectName("co_start_year")

@@ -134,7 +134,8 @@ class OpusXMLAction_Results(object):
         print "generateResults pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
         if not self.xmlTreeObject.model.dirty:
-            self.xmlTreeObject.parent.resultManagerStuff.addGenerateIndicatorForm()
+            self.xmlTreeObject.parent.resultManagerStuff.addGenerateIndicatorForm(
+                selected_item = self.currentIndex.internalPointer().node().toElement().tagName())
         else:
             # Prompt the user to save...
             QMessageBox.warning(self.xmlTreeObject.parent,

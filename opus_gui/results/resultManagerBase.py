@@ -60,10 +60,11 @@ class ResultManagerBase(AbstractManagerBase):
         self.guiElements.insert(0, new_form)
         self.updateGuiElements() 
         
-    def addGenerateIndicatorForm(self):
+    def addGenerateIndicatorForm(self, selected_item):
 
         new_form = GenerateResultsForm(parent = self.parent,
-                                       result_manager = self)
+                                       result_manager = self,
+                                       selected_item = selected_item)
         
         self.guiElements.insert(0, new_form)
         self.updateGuiElements()
