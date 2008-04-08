@@ -346,7 +346,7 @@
   </model_manager>
   <scenario_manager>
     <default_scenario type="scenario">
-      <data parser_action="category" type="dictionary">
+      <data parser_action="category" type="dictionary" cloneable="True">
         <baseyear_database config_name="input_configuration" type="class">
           <Class_name flags="hidden" type="string">DatabaseConfiguration</Class_name>
           <Class_path flags="hidden" type="string">opus_core.database_management.database_configuration</Class_path>

@@ -19,10 +19,12 @@ from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
 from opus_gui.run.model.opusrunmodel import OpusModel
+from opus_gui.config.scenariomanager.cloneinherited import CloneInheritedGui
 
 class OpusXMLAction_Scenario(object):
     def __init__(self, parent):
         self.parent = parent
+        self.mainwindow = parent.mainwindow
         self.xmlTreeObject = parent.xmlTreeObject
         
         self.currentColumn = None
@@ -169,6 +171,9 @@ class OpusXMLAction_Scenario(object):
 
     def cloneNodeAction(self):
         print "Clone Node pressed..."
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        window = CloneInheritedGui(self,flags)
+        window.show()
     
     def placeHolderAction(self):
         pass
