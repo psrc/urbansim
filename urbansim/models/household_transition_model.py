@@ -217,79 +217,46 @@ class HouseholdTransitionModel(Model):
                     sample_from_existing_hhs = sample_replace(consider_hhs_idx, number_of_new_households_in_categories[non_zero_categories[icat]])
                     self.mapping_existing_hhs_to_new_hhs = concatenate((self.mapping_existing_hhs_to_new_hhs, sample_from_existing_hhs))
                 else:
-                    self._create_households_if_group_empty(non_zero_categories[icat], sample_array, number_of_new_households_in_categories[icat], number_of_households_in_categories, group_element, all_characteristics, categories_index, indices_of_group_combinations)
+                    self._create_households_if_group_empty(non_zero_categories[icat], number_of_new_households_in_categories[non_zero_categories[icat]], group_element, all_characteristics, categories_index, indices_of_group_combinations)
             else:
-                self._create_households_if_group_empty(non_zero_categories[icat], sample_array, number_of_new_households_in_categories[icat], number_of_households_in_categories, group_element, all_characteristics, categories_index, indices_of_group_combinations)
+                self._create_households_if_group_empty(non_zero_categories[icat], number_of_new_households_in_categories[non_zero_categories[icat]], group_element, all_characteristics, categories_index, indices_of_group_combinations)
             
-    def _create_households_if_group_empty(self, category, sample_array, diff, number_of_households_in_categories, group_element, all_characteristics, categories_index, indices_of_group_combinations):
+    def _create_households_if_group_empty(self, category, n, group_element, all_characteristics, categories_index, indices_of_group_combinations):
         """This code is only used if there are no households in one category."""
         # assign location id (unplaced) and household_id
         self.new_households[self.location_id_name] = concatenate((self.new_households[self.location_id_name],
-                              zeros((diff,), dtype=self.new_households[self.location_id_name].dtype.type)))
+                              zeros((n,), dtype=self.new_households[self.location_id_name].dtype.type)))
         # assign marginal characteristics
         for attr in self.marginal_characteristic_names:
             value = eval("group_element."+attr)
             if attr in self.scaled_characteristic_names: # sample from min-max range
                 # get minimum and maximum for this attribute category
                 min_max = self.arrays_from_categories_mapping[attr][value]
-                if min_max[0] == min_max[1]: # if min == max
-                    self.new_households[attr]=concatenate((self.new_households[attr],
-                           (resize(array([min_max[0]], dtype=self.new_households[attr].dtype.type), diff))))
-                else: #sample
-                    if (attr == "age_of_head"): # maximum sampled age is 100, minimum 15; TODO: get these from config
-                        rn = sample_replace(arange(max(15,int(min_max[0])),min(int(min_max[1]),100)+1), diff)
-                    elif attr == "income": # min and max are 10th of the real values; TODO: get these from config
-                        # TODO: Get min / max sampled age from configuration
-                        rn = sample_replace(arange(int(10*min_max[0]),int(10*min_max[1])+1,10),diff)
-                    else:
-                        rn = sample_replace(arange(int(min_max[0]),int(min_max[1])+1), diff)
-                    self.new_households[attr]=concatenate((self.new_households[attr],
-                                               rn.astype(self.new_households[attr].dtype.type)))
+                self._sample_from_min_max_range(n, attr, min_max[0], min_max[1])
             else: # attribute is not in the characteristics dataset
                 self.new_households[attr]=concatenate((self.new_households[attr],
-                                       (resize(array([value], dtype=self.new_households[attr].dtype.type), diff))))
+                                       (resize(array([value], dtype=self.new_households[attr].dtype), n))))
 
         # iterate over non-marginal characteristics
         for i in self.nonmarginal_char_idx:
             attr = all_characteristics[i]
-            # get minima and maxima for this attribute of all sampled categories
-            min_max = array(map(lambda x: \
-                                self.arrays_from_categories_mapping[attr][categories_index[indices_of_group_combinations[x],i]],
-                                sample_array))
-            is_min_equal_max = min_max[:,0] == min_max[:,1]
-            # assign those whose minimum equals maximum
-            self.new_households[attr]=concatenate((self.new_households[attr],
-                           min_max[is_min_equal_max,:][:,0].astype(self.new_households[attr].dtype.type)))
-            # iterate over the remaining ones
-            w = where(logical_not(is_min_equal_max))[0]
-            if w.size > 0:
-                remaining_categories = sample_array[w]
-                k = where(remaining_categories == category)[0]
-                if k.size <= 0:
-                    continue
-                ind_sorted = argsort(remaining_categories)
-                remaining_categories_sorted = remaining_categories[ind_sorted]
-                number_of_bins_in_category = ndimage_sum(ones((remaining_categories_sorted.size,)),
-                        labels=remaining_categories_sorted+1, index=array([category])+1)
-                if not isinstance(number_of_bins_in_category, list): # if there is only one element in w,
-                    # the previous function returns a single number and not a list
-                    number_of_bins_in_category = [number_of_bins_in_category]
-                #sample between maximum and minimum (with two exceptions)
-                this_min, this_max = min_max[k[0],:]
-                if attr == "age_of_head": # maximum sampled age is 100, minimum 15; TODO: get these from config
-                    rn = sample_replace(arange(max(15,int(this_min)),
-                                       min(int(this_max),100)+1),
-                                       int(number_of_bins_in_category[0]))
-                elif attr == "income": # min and max are 10th of the real values; TODO: get these from config
-                    rn = sample_replace(arange(int(10*this_min),int(10*this_max)+1,10),
-                                        int(number_of_bins_in_category[0]))
-                else:
-                    rn = sample_replace(arange(int(this_min),int(this_max)+1),
-                                        int(number_of_bins_in_category[0]))
-                self.new_households[attr]=concatenate((self.new_households[attr],
-                                       rn.astype(self.new_households[attr].dtype.type)))
+            # get minima and maxima for this attribute
+            min_max = self.arrays_from_categories_mapping[attr][categories_index[indices_of_group_combinations[category],i]]
+            self._sample_from_min_max_range(n, attr, min_max[0], min_max[1])
 
-
+    def _sample_from_min_max_range(self, n, attribute, min_value, max_value):
+        if min_value == max_value: 
+            self.new_households[attribute]=concatenate((self.new_households[attribute],
+                   (resize(array([min_value], dtype=self.new_households[attribute].dtype), n))))
+        else: #sample
+            if (attribute == "age_of_head"): # maximum sampled age is 100, minimum 15; TODO: get these from config
+                rn = sample_replace(arange(max(15,int(min_value)),min(int(max_value),100)+1), n)
+            elif attribute == "income": # min and max are 10th of the real values; TODO: get these from config
+                rn = sample_replace(arange(int(10*min_value),int(10*max_value)+1,10), n)
+            else:
+                rn = sample_replace(arange(int(min_value),int(max_value)+1), n)
+            self.new_households[attribute]=concatenate((self.new_households[attribute],
+                                       rn.astype(self.new_households[attribute].dtype)))
 
     def create_arrays_from_categories(self, household_set):
         # cleanup in case there was a previous run
