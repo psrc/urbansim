@@ -123,13 +123,19 @@ class ToolboxBase(object):
             fileNamePath = fileNameInfo.absolutePath().trimmed()
             self.opusXMLTree = XMLConfiguration(str(fileName),str(fileNamePath))
             [tempFile,tempFilePath] = tempfile.mkstemp()
+            [tempFile2,tempFilePath2] = tempfile.mkstemp()
             #print tempFile,tempFilePath
             self.opusXMLTree.full_tree.write(tempFilePath)
+            self.opusXMLTree.tree.write(tempFilePath2)
             self.configFileTemp = QFile(tempFilePath)
+            self.configFileTemp2 = QFile(tempFilePath2)
             if self.configFile and self.configFileTemp:
                 self.configFileTemp.open(QIODevice.ReadWrite)
+                self.configFileTemp2.open(QIODevice.ReadWrite)
                 self.doc = QDomDocument()
+                self.doc2 = QDomDocument()
                 self.doc.setContent(self.configFileTemp)
+                self.doc2.setContent(self.configFileTemp2)
                 self.opusDataPathOrig = os.getenv("OPUS_DATA_PATH")
                 #Then append the cache_directory_root from the modelmanager section of the XML
                 cache_dir_root_path = ""
