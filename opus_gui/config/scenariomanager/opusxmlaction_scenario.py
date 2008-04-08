@@ -187,7 +187,9 @@ class OpusXMLAction_Scenario(object):
                 domElement = domNode.toElement()
                 if domElement.isNull():
                     return
-                if domElement.hasAttribute(QString("inherited")):
+                if domElement.hasAttribute(QString("inherited")) and \
+                       domElement.hasAttribute(QString("cloneable")) and \
+                       domElement.attribute(QString("cloneable")) == QString("True"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actCloneNode)
                     self.menu.exec_(QCursor.pos())
