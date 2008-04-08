@@ -4,6 +4,14 @@
     <description type="string" >Default UrbanSim parcel project</description>
     <available_datasets type="list">['parcel','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
   </general>
+  <project_wide_configurations>
+    <dataset_pool_configuration type="class">
+      <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
+      <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+      <package_order type="list">['urbansim_parcel','urbansim', 'opus_core']</package_order>
+      <package_order_exceptions type="dictionary" />
+    </dataset_pool_configuration>  
+  </project_wide_configurations>
   <model_manager>
     <model_system type="dictionary" >
       <real_estate_price_model type="dictionary" >

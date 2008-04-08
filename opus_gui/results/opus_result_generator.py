@@ -27,7 +27,8 @@ try:
     from opus_gui.results.xml_helper_methods import get_child_values
     from opus_gui.results.indicator_framework.visualizer.visualizers.table import Table
     from opus_core.storage_factory import StorageFactory
-    
+    from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfiguration    
+
 except ImportError:
     WithOpus = False
     print "Unable to import opus core libs"
@@ -71,6 +72,19 @@ class OpusGuiThread(QThread):
 
     def errorCallback(self,errorMessage):
         self.emit(SIGNAL("runError(PyQt_PyObject)"),errorMessage)
+
+def _get_dataset_pool_configuration(domDocument):
+    dataset_pool_config_node = domDocument.elementsByTagName(QString('dataset_pool_configuration')).item(0)
+    dataset_pool_config_options = get_child_values(parent = dataset_pool_config_node, 
+                                                   child_names = ['package_order'])
+    
+    package_order = str(dataset_pool_config_options['package_order'])[1:-1].split(',')
+    dataset_pool_configuration = DatasetPoolConfiguration(
+         package_order= package_order,
+         package_order_exceptions={},
+         )
+
+    return dataset_pool_configuration
 
 class OpusResultVisualizer(object):
     def __init__(self, 
@@ -120,6 +134,7 @@ class OpusResultVisualizer(object):
             pass
     
 
+        
     def _visualize(self, configuration_path):
         
         scenario_name = get_scenario_name(domDocument = self.domDocument, 
@@ -127,12 +142,15 @@ class OpusResultVisualizer(object):
         self.config = XMLConfiguration(str(configuration_path)).get_run_configuration(scenario_name)
 
         cache_directory = self.config['cache_directory']
-        
+
+        dataset_pool_configuration = _get_dataset_pool_configuration(self.domDocument)
+
         interface = IndicatorFrameworkInterface(domDocument = self.domDocument)
         source_data = interface.get_source_data_from_XML(
                                      source_data_name = self.source_data_name, 
                                      cache_directory = cache_directory,
-                                     years = self.years)
+                                     years = self.years,
+                                     dataset_pool_configuration = dataset_pool_configuration)
         indicator = interface.get_indicator_from_XML(
                                      indicator_name = self.indicator_name,
                                      dataset_name = self.dataset_name)
@@ -263,10 +281,13 @@ class OpusResultGenerator(object):
         cache_directory = self.config['cache_directory']
         interface = IndicatorFrameworkInterface(domDocument = self.domDocument)
         
+        dataset_pool_configuration = _get_dataset_pool_configuration(self.domDocument)
+        
         source_data = interface.get_source_data_from_XML(
                                      source_data_name = self.source_data_name, 
                                      cache_directory = cache_directory,
-                                     years = self.years)
+                                     years = self.years,
+                                     dataset_pool_configuration = dataset_pool_configuration)
         indicator = interface.get_indicator_from_XML(
                                      indicator_name = self.indicator_name,
                                      dataset_name = self.dataset_name)

@@ -3,7 +3,7 @@
   <general>
     <description type="string">Sample Seattle project</description>
   </general>
-  <data_manager_dbstree>
+  <project_wide_configurations>
     <database_templates setexpanded="True" type="db_templates">
       <ms_sql_server_template setexpanded="False" type="db_template">
         <host_name choices="Required|Optional" type="string"> Required </host_name>
@@ -27,7 +27,13 @@
         <use_environment_variables choices="True|False" type="boolean">True</use_environment_variables>
       </urbansim_db1_example>
     </database_library>
-  </data_manager_dbstree>
+    <dataset_pool_configuration type="class">
+      <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
+      <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+      <package_order type="list">['seattle_parcel','urbansim_parcel','urbansim']</package_order>
+      <package_order_exceptions type="dictionary" />
+    </dataset_pool_configuration>
+  </project_wide_configurations>
   <data_manager>
     <script_library type="script_library">
       <script_path type="script_path">projects.scripts</script_path>

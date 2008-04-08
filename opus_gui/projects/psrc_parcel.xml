@@ -2,7 +2,7 @@
   <general>
     <description type="string" >PSRC parcel project</description>
   </general>
-  <data_manager_dbstree>
+  <project_wide_configurations>
     <database_library type="database_library" setexpanded="True" >
       <urbansim_db1 type="db_connection" setexpanded="True" >
         <host_name type="string" >urbanserver</host_name>
@@ -17,7 +17,13 @@
         <password type="password" >sunshine2</password>
       </urbansim_db2>
     </database_library>
-  </data_manager_dbstree>
+    <dataset_pool_configuration type="class" >
+      <Class_name flags="hidden" type="string" >DatasetPoolConfiguration</Class_name>
+      <Class_path flags="hidden" type="string" >opus_core.configurations.dataset_pool_configuration</Class_path>
+      <package_order type="list" >['psrc_parcel', 'psrc', 'urbansim_parcel', 'urbansim', 'opus_core']</package_order>
+      <package_order_exceptions type="dictionary" />
+    </dataset_pool_configuration>
+  </project_wide_configurations>
   <model_manager>
     <estimation type="dictionary" setexpanded="True" >
       <models_to_estimate type="selectable_list" setexpanded="True" >

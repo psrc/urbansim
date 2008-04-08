@@ -356,7 +356,7 @@ class XMLConfiguration(object):
                 database_hook = items['database_connection']
                 #print "Found a database_hook = %s" % (database_hook)
                 # Next, since we have a connection we must go find it in the data manager
-                the_database = self.get_section('data_manager_dbstree/database_library/%s' %
+                the_database = self.get_section('project_wide_configurations/database_library/%s' %
                                                 (database_hook))
                 if the_database:
                     #print "Converting a database connection into a class"
