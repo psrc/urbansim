@@ -2,6 +2,7 @@
 <opus_project>
   <general>
     <description type="string" >Default UrbanSim parcel project</description>
+    <available_datasets type="list">['parcel','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
   </general>
   <model_manager>
     <model_system type="dictionary" >

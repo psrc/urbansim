@@ -1,6 +1,7 @@
 <opus_project>
   <general>
     <description type="string">Base UrbanSim gridcell project</description>
+    <available_datasets type="list">['gridcell','zone','faz','large_area','city','county','alldata']</available_datasets>
   </general>
   <model_manager>
     <default_model_configurations type="dictionary">

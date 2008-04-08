@@ -178,9 +178,15 @@ class GenerateResultsForm(QWidget):
         ]
         self.co_dataset_name = QComboBox(self.indicatorsGroupBox)
         self.co_dataset_name.setObjectName("co_dataset_name")
+
+        general_node = self.domDocument.elementsByTagName(QString('general')).item(0)
+        available_datasets = get_child_values(parent = general_node, 
+                                 child_names = ['available_datasets'])
+        
+        available_datasets = str(available_datasets['available_datasets'])[1:-1].split(',')
         
         for dataset in available_datasets:
-            self.co_dataset_name.addItem(QString(dataset))
+            self.co_dataset_name.addItem(QString(dataset[1:-1]))
             
     def _setup_co_source_data(self, selected_item):
         self.co_source_data = QComboBox(self.indicatorsGroupBox)
