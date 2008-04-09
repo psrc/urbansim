@@ -12,8 +12,11 @@
 # other acknowledgments.
 #
 
-from numpy import arange, array, where, zeros, ones, concatenate, int32, int8
+from numpy import arange, array, where, zeros, ones, concatenate, int32, int8, logical_not, append, resize
+from opus_core.misc import ismember
 from urbansim.models.household_transition_model import HouseholdTransitionModel as USHouseholdTransitionModel
+from opus_core.logger import logger
+
 
 class HouseholdTransitionModel(USHouseholdTransitionModel):
     """Creates and removes households from household_set. Also updates the persons table."""
@@ -27,28 +30,44 @@ class HouseholdTransitionModel(USHouseholdTransitionModel):
         
     def _update_household_set(self, household_set):
         """Updates also person set."""
-        hh_ids_to_copy = household_set.get_id_attribute()[self.mapping_existing_hhs_to_new_hhs]
-        result = USHouseholdTransitionModel._update_household_set(self, household_set)
-        # remove person that have non-existing households
-        person_attr_index = household_set.try_get_id_index(self.person_set.get_attribute(household_set.get_id_name()[0]), return_value_if_not_found=-9)
-        eliminate_index = where(person_attr_index==-9)[0]
-        self.person_set.remove_elements(eliminate_index)
-
-        person_attr_index = household_set.get_id_index(self.person_set.get_attribute(household_set.get_id_name()[0]))
+        hh_ids_to_copy = household_set.get_id_attribute()[self.mapping_existing_hhs_to_new_hhs]       
         hhs_to_duplicate = zeros(household_set.size(), dtype='bool8')
-        hhs_to_duplicate[self.mapping_existing_hhs_to_new_hhs] = True
-        
-        persons_to_duplicate = zeros(self.person_set.size(), dtype='bool8')
-        persons_to_duplicate[hhs_to_duplicate[person_attr_index]] = True
-        if persons_to_duplicate.sum() <= 0:
-            return result
-        new_persons_idx = self.person_set.duplicate_rows(where(persons_to_duplicate))
-        self.person_set.modify_attribute(name='job_id', data=zeros(new_persons_idx.size, dtype=self.person_set.get_data_type('job_id')), index=new_persons_idx)
         npersons_in_hhs = household_set.get_attribute_by_index('persons', self.mapping_existing_hhs_to_new_hhs)
-        hh_ids = array([], dtype='int32')
+        
+        result = USHouseholdTransitionModel._update_household_set(self, household_set)
+        
+        new_hh_ids = household_set.get_id_attribute()[(household_set.size()-self.mapping_existing_hhs_to_new_hhs.size):household_set.size()]
+        
+        # remove person that have non-existing households
+        eliminate_index = where(logical_not(ismember(self.person_set.get_attribute(household_set.get_id_name()[0]), household_set.get_id_attribute())))[0]
+        self.person_set.remove_elements(eliminate_index)
+        person_attr_index = household_set.get_id_index(self.person_set.get_attribute(household_set.get_id_name()[0]))
+        
+        # duplicate persons
+        persons_to_duplicate = array([], dtype=int32)
+        new_person_hh_ids = array([], dtype=int32)
+        all_person_hh_ids = self.person_set.get_attribute(household_set.get_id_name()[0])
         for i in arange(hh_ids_to_copy.size):
-            hh_ids = concatenate((hh_ids, array([hh_ids_to_copy[i]]*npersons_in_hhs[i])))
-        self.person_set.modify_attribute(name='household_id', data=hh_ids, index=new_persons_idx)
+            idx = where(all_person_hh_ids == hh_ids_to_copy[i])[0]
+            persons_to_duplicate = append(persons_to_duplicate, idx)
+            new_person_hh_ids = append(new_person_hh_ids, resize(array([new_hh_ids[i]]), (npersons_in_hhs[i],)))
+            
+        if persons_to_duplicate.size <= 0:
+            return result
+            
+        new_persons_idx = self.person_set.duplicate_rows(persons_to_duplicate)
+        
+        # assign job_id to 'no job'
+        self.person_set.modify_attribute(name='job_id', data=zeros(new_persons_idx.size, dtype=self.person_set.get_data_type('job_id')), index=new_persons_idx)
+        
+        # assign the right household_id
+        self.person_set.modify_attribute(name=household_set.get_id_name()[0], data=new_person_hh_ids, index=new_persons_idx)
+
+        self.debug.print_debug("Created %s persons." %  new_persons_idx.size, 3)
+        # check if number of persons in the household_set correspond to those in person set
+        if household_set.get_attribute('persons').sum() <> self.person_set.size():
+            logger.log_warning('Number of persons in household set (%s) does not correspond to those in person set (%s).' % (household_set.get_attribute('persons').sum(),
+                                                                                                                          self.person_set.size()))
         return result
 
 
@@ -502,5 +521,49 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = hct_set.get_attribute("total_number_of_households")[6:9]
         self.assertEqual(ma.allclose(results, should_be, rtol=1e-6),
                          True, "Error, should_be: %s, but result: %s" % (should_be, results))
+        
+    def test_person_dataset(self):
+        households_data = {
+            "household_id":arange(4)+1,
+            "building_id": array([3,6,1,2], dtype=int32),
+            "persons": array([1,2,2,4], dtype=int32)
+            }
+        household_characteristics_for_ht_data = {
+            "characteristic": array(2*['persons']),
+            "min": array([1, 3]),
+            "max": array([2,-1])
+            }
+        person_data = {
+            "person_id": arange(9)+1,
+            "household_id": array([1,2,2,3,3,4,4,4,4]),
+            "job_id": array([30, 50, 0, 1, 23, 54, 78, 2, 6]),
+                           }
+        annual_household_control_totals_data = {
+            "year": array(2*[2000]),
+            "persons": array([0,1]),
+            "total_number_of_households": array([0, 4])
+            }
+        
+        storage = StorageFactory().get_storage('dict_storage')
+
+        storage.write_table(table_name='hh_set', table_data=households_data)
+        hh_set = HouseholdDataset(in_storage=storage, in_table_name='hh_set')
+
+        storage.write_table(table_name='prs_set', table_data=person_data)
+        prs_set = PersonDataset(in_storage=storage, in_table_name='prs_set')
+        
+        storage.write_table(table_name='hct_set', table_data=annual_household_control_totals_data)
+        hct_set = ControlTotalDataset(in_storage=storage, in_table_name='hct_set', what="household", id_name=["year", "persons"])
+
+        storage.write_table(table_name='hc_set', table_data=household_characteristics_for_ht_data)
+        hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
+
+        model = HouseholdTransitionModel(debuglevel=3)
+        model.run(year=2000, person_set=prs_set, household_set=hh_set, control_totals=hct_set, characteristics=hc_set)
+        # The run should remove the first three households and first 5 persons and add 3 copies of the last household, i.e. 12 persons
+        self.assertEqual(prs_set.size(), 16, "Error in size of the person_set. Should be 16, is %s." % prs_set.size())
+        self.assertEqual(ma.allequal(prs_set.get_attribute('household_id'), array([4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7])), True,
+                                    "Error in assigning household_id to new persons.")
+
 if __name__=='__main__':
     opus_unittest.main()

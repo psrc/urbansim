@@ -69,7 +69,7 @@ class HouseholdTransitionModel(Model):
                 % (difference,
                    self.household_size,
                    household_set.size(),
-                   self.new_households[self.household_id_name].size,
+                   self.new_households[self.household_id_name].size + self.mapping_existing_hhs_to_new_hhs.size,
                    self.remove_households.size),
             3)
         if self.location_id_name in household_set.get_attribute_names():
