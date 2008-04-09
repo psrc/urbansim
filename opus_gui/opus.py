@@ -27,15 +27,15 @@ from opus_gui.main.opusgui import *
 def main(argv):
     # create Qt application
     app = QApplication(argv,True)
-    
+
     # Setting these items allows for saving application state via a QSettings object
     app.setOrganizationName("CUSPA")
     app.setOrganizationDomain("urbansim.org")
     app.setApplicationName("OPUS")
-    
+
     # Set the app style
     app.setStyle(QString("plastique"))
-    
+
     # QGIS References are removed for the time being...
     #try:
     #  # QGIS bindings for mapping functions
@@ -47,17 +47,17 @@ def main(argv):
     #  qgis.core.QgsApplication.initQgis()
     #except ImportError:
     #    print "Unable to import QGIS"
-    
+
     # create main window
     wnd = OpusGui()
     wnd.show()
-    
+
     # Create signal for app finish
     app.connect(app, SIGNAL("lastWindowClosed()"), app, SLOT("quit()"))
-    
+
     # Start the app up
     retval = app.exec_()
-    
+
     # QGIS References are removed for the time being...
     #try:
     #  import qgis.core
@@ -65,7 +65,7 @@ def main(argv):
     #  qgis.core.QgsApplication.exitQgis()
     #except ImportError:
     #  pass
-    
+
     sys.exit(retval)
 
 if __name__ == "__main__":
