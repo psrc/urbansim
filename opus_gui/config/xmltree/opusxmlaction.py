@@ -27,7 +27,7 @@ class OpusXMLAction(object):
         self.parent = parent
         self.mainwindow = parent.mainwindow
         self.xmlTreeObject = parent
-        
+
         self.actionObject = self.getXMLActionObjectByType(self.xmlTreeObject.xmlType)
         QObject.connect(self.xmlTreeObject.view,
                         SIGNAL("customContextMenuRequested(const QPoint &)"),

@@ -23,42 +23,42 @@ from opus_gui.config.xmlmodelview.opusdatadelegate import OpusDataDelegate
 from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
 
 class OpusXMLTree(object):
-  def __init__(self, parent,xmlType,parentWidget):
-    self.mainwindow = parent.mainwindow
-    self.addTree(parent,xmlType,parentWidget)
+    def __init__(self, parent,xmlType,parentWidget):
+        self.mainwindow = parent.mainwindow
+        self.addTree(parent,xmlType,parentWidget)
 
-  def addTree(self, parent,xmlType,parentWidget):
-    #parent is a toolboxBase object
-    self.parent = parent.parent
-    self.parentTool = parent
-    self.xmlType = xmlType
-    self.parentWidget = parentWidget
-    self.groupBox = QGroupBox(self.parent)
-    self.groupBoxLayout = QVBoxLayout(self.groupBox)
-    self.model = OpusDataModel(self,self.parentTool.doc, self.parent,
-                               self.parentTool.configFile, self.xmlType, True)
-    self.view = OpusDataView(self.parent)
-    self.delegate = OpusDataDelegate(self.view)
-    self.view.setItemDelegate(self.delegate)
-    self.view.setModel(self.model)
-    # Need to traverse the whole tree and expand the nodes if they default to open
-    self.view.openDefaultItems()
-    self.view.setAnimated(True)
-    self.view.setColumnWidth(0,200)
-    self.view.setColumnWidth(1,50)
-    self.view.setMinimumHeight(200)
+    def addTree(self, parent,xmlType,parentWidget):
+        #parent is a toolboxBase object
+        self.parent = parent.parent
+        self.parentTool = parent
+        self.xmlType = xmlType
+        self.parentWidget = parentWidget
+        self.groupBox = QGroupBox(self.parent)
+        self.groupBoxLayout = QVBoxLayout(self.groupBox)
+        self.model = OpusDataModel(self,self.parentTool.doc, self.parent,
+                                   self.parentTool.configFile, self.xmlType, True)
+        self.view = OpusDataView(self.parent)
+        self.delegate = OpusDataDelegate(self.view)
+        self.view.setItemDelegate(self.delegate)
+        self.view.setModel(self.model)
+        # Need to traverse the whole tree and expand the nodes if they default to open
+        self.view.openDefaultItems()
+        self.view.setAnimated(True)
+        self.view.setColumnWidth(0,200)
+        self.view.setColumnWidth(1,50)
+        self.view.setMinimumHeight(200)
 
-    self.groupBoxLayout.addWidget(self.view)
-    self.parentWidget.addWidget(self.groupBox)
+        self.groupBoxLayout.addWidget(self.view)
+        self.parentWidget.addWidget(self.groupBox)
 
-    # Hook up to the mousePressEvent and pressed
-    self.view.setContextMenuPolicy(Qt.CustomContextMenu)
-    self.xmlAction = OpusXMLAction(self)
+        # Hook up to the mousePressEvent and pressed
+        self.view.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.xmlAction = OpusXMLAction(self)
 
-  def removeTree(self):
-    if not self.model.dirty:
-      self.groupBox.hide()
-      self.parentWidget.removeWidget(self.groupBox)
-      return True
-    else:
-      return False
+    def removeTree(self):
+        if not self.model.dirty:
+            self.groupBox.hide()
+            self.parentWidget.removeWidget(self.groupBox)
+            return True
+        else:
+            return False
