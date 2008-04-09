@@ -217,7 +217,7 @@ class OpusDataModel(QAbstractItemModel):
             else:
                 return Qt.ItemIsEnabled | Qt.ItemIsSelectable
         else:
-            return Qt.ItemIsEnabled
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
 
     def headerData(self, section, oreientation, role):
