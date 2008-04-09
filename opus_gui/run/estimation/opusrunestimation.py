@@ -96,19 +96,19 @@ class OpusEstimation(object):
         self.paused = True
         print "Pause pressed"
         # Can access the estimation manager via self.er
-    
+
     def resume(self):
         self.paused = False
         print "Resume pressed"
         # Can access the estimation manager via self.er
-    
+
     def cancel(self):
         self.running = False
         self.paused = False
         self.cancelled = True
         print "Cancel pressed"
         # Can access the estimation manager via self.er
-    
+
     def run(self):
         if WithOpus:
             # Run the Eugene model using the XML version of the Eugene configuration.

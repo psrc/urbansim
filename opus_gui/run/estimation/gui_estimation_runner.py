@@ -72,7 +72,7 @@ class EstimationRunner(object):
                                                                                                             "'opus_core.bhhh_mnl_estimation'")
             run_configuration["models_configuration"][model_name]["controller"]["estimate"]["arguments"]["procedure"]= "'%s_with_diagnose'" % \
                 procedure_name[1:(len(procedure_name)-1)]
-                
+
         run_configuration.replace(estimation_config)
         self.estimator = Estimator(run_configuration, save_estimation_results=save_estimation_results)
         self.estimator.estimate()
