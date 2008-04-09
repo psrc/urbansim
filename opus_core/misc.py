@@ -611,6 +611,17 @@ def unique_values(input_array, sort_values=True):
             unsorted_index.sort()
             return [input_array[n] for n in unsorted_index]
        
+def ismember(ar1, ar2) :
+    """Return a Boolean 1-d array of the length of ar1 which is True whenever that 
+    element is contained in ar2 and False when it is not.
+    (The numpy function setmember1d claims to do the same but works only on ar1 with unique values.) 
+    """
+    from numpy import sort
+    a = sort(ar2)
+    il = a.searchsorted(ar1, side='left')
+    ir = a.searchsorted(ar1, side='right')
+    return ir != il
+
 def get_host_name():
     """Get the host name of this computer in a platform-independent manner."""
     fullname = socket.gethostname()
