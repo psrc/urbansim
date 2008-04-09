@@ -113,7 +113,9 @@ class ModelGuiElement(QWidget):
         self.logFileKey = 0
         self.running = False
         self.paused = False
-
+        self.timer = None
+        self.runThread = None
+        
         # Grab the path to the base XML used to run this model
         self.xml_path = model.xml_path
 
@@ -164,7 +166,7 @@ class ModelGuiElement(QWidget):
         self.vboxlayout2 = QVBoxLayout(self.modelControlWidget)
         self.vboxlayout2.setObjectName("vboxlayout2")
 
-### Code for the buttons that start the simulation and remove from queue
+        ### Code for the buttons that start the simulation and remove from queue
 
         self.startWidget = QWidget(self.groupBox)
         self.startWidget.setObjectName("startWidget")
@@ -200,7 +202,7 @@ class ModelGuiElement(QWidget):
         self.simprogressGroupBox.setObjectName("simprogressGroupBox")
         self.simprogressGroupBox.setTitle("Progress Display")
 
-### Progress display stuff goes in here
+        ### Progress display stuff goes in here
         self.simprogressLayoutInner = QGridLayout(self.simprogressGroupBox)    
 
         ### Year Range Label
@@ -377,40 +379,40 @@ class ModelGuiElement(QWidget):
         self.domDocument = self.toolboxStuff.doc
 
 
-# initialize indicator selection combobox
-#
-#    self.co_indicator_name = QComboBox()
-#    self.co_indicator_name.setObjectName("co_indicator_name")
-#    self.co_indicator_name.addItem(QString("[select]"))
-#        
-#    node_list = elementsByAttributeValue(domDocument = self.domDocument, 
-#                                              attribute = 'type', 
-#                                              value = 'indicator')
-#            
-#    for element, node in node_list:
-#        self.co_indicator_name.addItem(QString(element.nodeName()))
+        # initialize indicator selection combobox
+        #
+        #    self.co_indicator_name = QComboBox()
+        #    self.co_indicator_name.setObjectName("co_indicator_name")
+        #    self.co_indicator_name.addItem(QString("[select]"))
+        #        
+        #    node_list = elementsByAttributeValue(domDocument = self.domDocument, 
+        #                                              attribute = 'type', 
+        #                                              value = 'indicator')
+        #            
+        #    for element, node in node_list:
+        #        self.co_indicator_name.addItem(QString(element.nodeName()))
+        #
+        # end indicator combo box
+        #
+        # initialize source combobox
+        #
+        #    self.co_source_data = QComboBox()
+        #    self.co_source_data.setObjectName("co_source_data")
+        #    self.co_source_data.addItem(QString("[select]"))
+        #        
+        #    node_list = elementsByAttributeValue(domDocument = self.domDocument, 
+        #                                              attribute = 'type', 
+        #                                              value = 'source_data')
+        #        
+        #    for element, node in node_list:
+        #        self.co_source_data.addItem(QString(element.nodeName()))
+        #        vals = get_child_values(parent = node, 
+        #                                    child_names = ['start_year', 'end_year'])
+        #            
+        #        self.available_years_for_simulation_runs[element.nodeName()] = (vals['start_year'],
+        #                                                                         vals['end_year'])
 
-# end indicator combo box
-
-# initialize source combobox
-
-#    self.co_source_data = QComboBox()
-#    self.co_source_data.setObjectName("co_source_data")
-#    self.co_source_data.addItem(QString("[select]"))
-#        
-#    node_list = elementsByAttributeValue(domDocument = self.domDocument, 
-#                                              attribute = 'type', 
-#                                              value = 'source_data')
-#        
-#    for element, node in node_list:
-#        self.co_source_data.addItem(QString(element.nodeName()))
-#        vals = get_child_values(parent = node, 
-#                                    child_names = ['start_year', 'end_year'])
-#            
-#        self.available_years_for_simulation_runs[element.nodeName()] = (vals['start_year'],
-#                                                                         vals['end_year'])
-
-# end source combobox
+        # end source combobox
         self.result_generator = OpusResultGenerator(
                                         xml_path = self.toolboxStuff.xml_file,
                                         domDocument = self.domDocument)  
@@ -420,20 +422,20 @@ class ModelGuiElement(QWidget):
 
 
         self.indicatorWidget = QWidget() 
-#    self.indicatorVBoxLayout = QVBoxLayout(self.indicatorWidget)  
+        #    self.indicatorVBoxLayout = QVBoxLayout(self.indicatorWidget)  
         self.indicatorGridBoxLayout = QGridLayout(self.indicatorWidget)
-#    self.indicatorWidget.addLayout(self.indicatorVBoxLayout)
+        #    self.indicatorWidget.addLayout(self.indicatorVBoxLayout)
 
         self.indicatorComboBox = QComboBox()
         self.tabWidget.addTab(self.indicatorWidget,"Diagnostics")
 
         config = XMLConfiguration(str(self.xml_path)).get_run_configuration('Eugene_baseline')
-#    QComboBox.addItem(self.indicatorComboBox, QString("<Select Year>"), QVariant())
+        #    QComboBox.addItem(self.indicatorComboBox, QString("<Select Year>"), QVariant())
         years = range(config["years"][0],config["years"][1]+1)
         self.yearItems = []
         for year in years:
-#        self.string = QString(year)
-#        QComboBox.addItem(self.indicatorComboBox, QString(str(year)), QVariant(year))
+            #        self.string = QString(year)
+            #        QComboBox.addItem(self.indicatorComboBox, QString(str(year)), QVariant(year))
             self.yearItems.append([year, False]); 
             #the second value in the list determines if it is already added to the drop down
 
@@ -465,43 +467,42 @@ class ModelGuiElement(QWidget):
             self.diagnostic_dataset_name.addItem(QString(dataset))
 
 
-#    self.indicatorText = QTextEdit(self.groupBox)
-#    self.indicatorText.setReadOnly(True)
-#    self.indicatorText.setLineWidth(0)
-#    self.indicatorText.insertPlainText("<No year selected>")
+        #    self.indicatorText = QTextEdit(self.groupBox)
+        #    self.indicatorText.setReadOnly(True)
+        #    self.indicatorText.setLineWidth(0)
+        #    self.indicatorText.insertPlainText("<No year selected>")
         self.indicatorResultsTab = QTabWidget()
 
         QObject.connect(self.indicatorComboBox,SIGNAL("activated(QString)"),self.on_indicatorBox)
 
-#    self.testvariant = QVariant(1)
-#    self.indicatorText.insertPlainText(self.testvariant.toString())
+        #    self.testvariant = QVariant(1)
+        #    self.indicatorText.insertPlainText(self.testvariant.toString())
 
-#    self.indicatorVBoxLayout.addWidget(self.indicatorComboBox)
-#    self.indicatorVBoxLayout.addWidget(self.indicatorText)
+        #    self.indicatorVBoxLayout.addWidget(self.indicatorComboBox)
+        #    self.indicatorVBoxLayout.addWidget(self.indicatorText)
         self.indicatorGridBoxLayout.addWidget(self.indicatorComboBox,0,0)
         self.indicatorGridBoxLayout.addWidget(self.diagnostic_indicator_name,0,1)
         self.indicatorGridBoxLayout.addWidget(self.diagnostic_dataset_name,0,2)
         # new combo boxes
-#    self.indicatorGridBoxLayout.addWidget(self.co_indicator_name,1,0)
-#    self.indicatorGridBoxLayout.addWidget(self.co_source_data,2,0)
+        #    self.indicatorGridBoxLayout.addWidget(self.co_indicator_name,1,0)
+        #    self.indicatorGridBoxLayout.addWidget(self.co_source_data,2,0)
 
-#    self.indicatorGridBoxLayout.addWidget(self.indicatorText,1,0,3,3)
+        #    self.indicatorGridBoxLayout.addWidget(self.indicatorText,1,0,3,3)
         self.indicatorGridBoxLayout.addWidget(self.indicatorResultsTab,1,0,3,3)
 
-# end indicator tab
+        # end indicator tab
 
         # For use when printing the year and model
         self.yearString = ""
         self.modelString = ""
     def on_indicatorBox(self,val):
-#    self.indicatorText.clear()
-#    self.indicatorText.insertPlainText("Year: ") 
-#    self.indicatorText.insertPlainText(val) 
-
-#    source_text = QString(self.co_source_data.currentText())
-#    if str(source_text) == '[select]':
-#        raise 'need to select a data source!!'
-#       
+        #    self.indicatorText.clear()
+        #    self.indicatorText.insertPlainText("Year: ")
+        #    self.indicatorText.insertPlainText(val)
+        #    source_text = QString(self.co_source_data.currentText())
+        #    if str(source_text) == '[select]':
+        #        raise 'need to select a data source!!'
+        #       
         indicator_name = QString(self.diagnostic_indicator_name.currentText())
         if str(indicator_name) == '[select indicator]':
             raise 'need to select an indicator!!'
@@ -552,12 +553,13 @@ class ModelGuiElement(QWidget):
             self.indicatorResultsTab.insertTab(0,guiElement,guiElement.tabIcon,guiElement.tabLabel)
 
     def on_pbnRemoveModel_released(self):
-#    if(self.running == True):
-        self.runThread.cancel()
-        self.timer.stop()
+        #    if(self.running == True):
+        if self.runThread:
+            self.runThread.cancel()
+        if self.timer:
+            self.timer.stop()
         self.running = False
         self.paused = False
-
         self.runManager.removeModelElement(self)
         self.runManager.updateModelElements()
 
@@ -752,6 +754,8 @@ class EstimationGuiElement(QWidget):
         self.logFileKey = 0
         self.running = False
         self.paused = False
+        self.timer = None
+        self.runThread = None
 
         # Grab the path to the base XML used to run this model
         self.xml_path = estimation.xml_path
@@ -863,10 +867,12 @@ class EstimationGuiElement(QWidget):
         self.vboxlayout.addWidget(self.tabWidget)
 
     def on_pbnRemoveModel_released(self):
+        if self.runThread:
+            self.runThread.cancel()
+        if self.timer:
+            self.timer.stop()
         self.running = False
         self.paused = False
-        self.timer.stop()
-        self.runThread.cancel()
         self.runManager.removeEstimationElement(self)
         self.runManager.updateEstimationElements()
 
