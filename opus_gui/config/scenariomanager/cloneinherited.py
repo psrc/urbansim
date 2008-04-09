@@ -49,7 +49,7 @@ class CloneInheritedGui(QDialog, Ui_CloneInheritedGui):
         self.view.setColumnWidth(1,50)
         self.view.setMinimumHeight(200)
         self.vboxlayout.addWidget(self.view)
-        
+
     def on_createXML_released(self):
         # Clone the node and drop it in...
         item = self.view.currentIndex().internalPointer()

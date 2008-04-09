@@ -26,50 +26,50 @@ class OpusXMLAction_Scenario(object):
         self.parent = parent
         self.mainwindow = parent.mainwindow
         self.xmlTreeObject = parent.xmlTreeObject
-        
+
         self.currentColumn = None
         self.currentIndex = None
-        
+
         self.acceptIcon = QIcon(":/Images/Images/accept.png")
         self.removeIcon = QIcon(":/Images/Images/delete.png")
         self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
-        
+
         self.actRunModel = QAction(self.acceptIcon,
                                    "Run This Model",
                                    self.xmlTreeObject.parent)
         QObject.connect(self.actRunModel,
                         SIGNAL("triggered()"),
                         self.runModel)
-        
+
         self.actRemoveTree = QAction(self.removeIcon,
                                      "Remove this tree from the GUI",
                                      self.xmlTreeObject.parent)
         QObject.connect(self.actRemoveTree,
                         SIGNAL("triggered()"),
                         self.removeTree)
-        
+
         self.actOpenXMLFile = QAction(self.calendarIcon,
                                       "Open XML File",
                                       self.xmlTreeObject.parent)
         QObject.connect(self.actOpenXMLFile,
                         SIGNAL("triggered()"),
                         self.openXMLFile)
-        
+
         self.actEditXMLFileGlobal = QAction(self.calendarIcon,
                                             "Edit XML File Global",
                                             self.xmlTreeObject.parent)
         QObject.connect(self.actEditXMLFileGlobal,
                         SIGNAL("triggered()"),
                         self.editXMLFileGlobal)
-        
+
         self.actEditXMLFileLocal = QAction(self.calendarIcon,
                                            "Edit XML File Local",
                                            self.xmlTreeObject.parent)
         QObject.connect(self.actEditXMLFileLocal,
                         SIGNAL("triggered()"),
                         self.editXMLFileLocal)
-        
+
         self.actPlaceHolder = QAction(self.applicationIcon,
                                       "Placeholder",
                                       self.xmlTreeObject.parent)
@@ -82,8 +82,8 @@ class OpusXMLAction_Scenario(object):
         QObject.connect(self.actCloneNode,
                         SIGNAL("triggered()"),
                         self.cloneNodeAction)
-        
-        
+
+
     def runModel(self):
         # If the XML is not dirty we can go ahead and run... else prompt for saving
         if not self.xmlTreeObject.model.dirty:
@@ -98,7 +98,7 @@ class OpusXMLAction_Scenario(object):
             QMessageBox.warning(self.xmlTreeObject.parent,
                                 "Warning",
                                 "Please save changes to project before running model")
-      
+
     def removeTree(self):
         if not self.xmlTreeObject.model.dirty:
             self.xmlTreeObject.groupBox.hide()
@@ -106,7 +106,7 @@ class OpusXMLAction_Scenario(object):
             return True
         else:
             return False
-    
+
     def openXMLFile(self):
         filePath = ""
         if self.currentIndex.internalPointer().node().hasChildNodes():
@@ -121,7 +121,7 @@ class OpusXMLAction_Scenario(object):
         #print "Test - ", newFile.absoluteFilePath()
         self.xmlTreeObject.parentTool.openXMLTree(newFile.absoluteFilePath())
 
-    
+
     def editXMLFileLocal(self):
         filePath = ""
         if self.currentIndex.internalPointer().node().hasChildNodes():
@@ -141,7 +141,7 @@ class OpusXMLAction_Scenario(object):
             import opus_gui.util.editorbase
             fileName = newFile.absoluteFilePath()
             x = util.editorbase.EditorTab(self.xmlTreeObject.parent, QString(fileName))
-    
+
     def editXMLFileGlobal(self):
         filePath = ""
         if self.currentIndex.internalPointer().node().hasChildNodes():
@@ -174,10 +174,10 @@ class OpusXMLAction_Scenario(object):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         window = CloneInheritedGui(self,flags,self.xmlTreeObject.model)
         window.show()
-    
+
     def placeHolderAction(self):
         pass
-    
+
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
                self.xmlTreeObject.view.indexAt(position).column() == 0:
@@ -216,5 +216,5 @@ class OpusXMLAction_Scenario(object):
                     self.menu.addAction(self.actPlaceHolder)
                     self.menu.exec_(QCursor.pos())
         return
-    
-    
+
+
