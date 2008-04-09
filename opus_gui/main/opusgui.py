@@ -34,281 +34,281 @@ import sys,time,tempfile
 # Main window used for houseing the canvas, toolbars, and dialogs
 class OpusGui(QMainWindow, Ui_MainWindow):
 
-  def __init__(self):
-    QMainWindow.__init__(self)
+    def __init__(self):
+        QMainWindow.__init__(self)
 
-    # required by Qt4 to initialize the UI
-    self.setupUi(self)
-    
-    self.toolboxStuff = ToolboxBase(self)
-    
-    # Loading startup options from gui configuration xml file
-    startup_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('startup_options').item(0)
-    splash_pix = get_child_values(parent = startup_node, 
-                             child_names = ['splash_logo'])
-    
-    splash_pix = os.path.join('main','Images',str(splash_pix['splash_logo']))
-    self.splashPix = QPixmap(QString(splash_pix))
-    self.splashPixScaled = self.splashPix.scaled(600,252,Qt.KeepAspectRatio)
-    self.splash = QSplashScreen(self.splashPixScaled)
-    self.splash.show()
-    
-    # Loading main window title from gui configuration xml file
-    application_options_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('application_options').item(0)
-    application_title_dict = get_child_values(parent = application_options_node,
-                                         child_names = ['application_title'])
-    self.application_title = application_title_dict['application_title']
-    self.setWindowTitle(self.application_title)
+        # required by Qt4 to initialize the UI
+        self.setupUi(self)
 
-    # Play with the project and config load/save
-    QObject.connect(self.actionOpen_Project_2, SIGNAL("triggered()"), self.openConfig)
-    QObject.connect(self.actionSave_Project_2, SIGNAL("triggered()"), self.saveConfig)
-    QObject.connect(self.actionClose_Project, SIGNAL("triggered()"), self.closeConfig)
-    QObject.connect(self.actionSave_Project_As_2, SIGNAL("triggered()"), self.saveConfigAs)
-    # Exit
-    QObject.connect(self.actionExit, SIGNAL("triggered()"), self.close)
-    # About
-    QObject.connect(self.actionAbout, SIGNAL("triggered()"), self.openAbout)
-    
-    # QGIS References are removed for the time being...
-    #Add map tab
-    #QObject.connect(self.actionMap_View, SIGNAL("triggered()"), self.openMapTab)
-    
-    #Add editor tab
-    QObject.connect(self.actionEditor_View, SIGNAL("triggered()"), self.openEditorTab)
-    #Add python tab
-    QObject.connect(self.actionPython_View, SIGNAL("triggered()"), self.openPythonTab)
-    #Add log tab
-    QObject.connect(self.actionLog_View, SIGNAL("triggered()"), self.openLogTab)
+        self.toolboxStuff = ToolboxBase(self)
 
-    self.tempDir = tempfile.mkdtemp(prefix='opus_gui')
+        # Loading startup options from gui configuration xml file
+        startup_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('startup_options').item(0)
+        splash_pix = get_child_values(parent = startup_node, 
+                                 child_names = ['splash_logo'])
 
-    # QGIS References are removed for the time being...
-    #try:
-    #  import qgis.core
-    #  import map.mapbase
-    #  # Only load the map stuff if QGIS is loadable
-    #  self.mapStuff = map.mapbase.MapBase(self)
-    #except ImportError:
-    #  self.mapStuff = None
+        splash_pix = os.path.join('main','Images',str(splash_pix['splash_logo']))
+        self.splashPix = QPixmap(QString(splash_pix))
+        self.splashPixScaled = self.splashPix.scaled(600,252,Qt.KeepAspectRatio)
+        self.splash = QSplashScreen(self.splashPixScaled)
+        self.splash.show()
 
-    self.consoleStuff = ConsoleBase(self)
-    self.runManagerStuff = RunManagerBase(self)
-    self.runManagerStuff.setGui(self)
+        # Loading main window title from gui configuration xml file
+        application_options_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('application_options').item(0)
+        application_title_dict = get_child_values(parent = application_options_node,
+                                             child_names = ['application_title'])
+        self.application_title = application_title_dict['application_title']
+        self.setWindowTitle(self.application_title)
 
-    self.resultManagerStuff = ResultManagerBase(self)
-    self.resultManagerStuff.setGui(self)
+        # Play with the project and config load/save
+        QObject.connect(self.actionOpen_Project_2, SIGNAL("triggered()"), self.openConfig)
+        QObject.connect(self.actionSave_Project_2, SIGNAL("triggered()"), self.saveConfig)
+        QObject.connect(self.actionClose_Project, SIGNAL("triggered()"), self.closeConfig)
+        QObject.connect(self.actionSave_Project_As_2, SIGNAL("triggered()"), self.saveConfigAs)
+        # Exit
+        QObject.connect(self.actionExit, SIGNAL("triggered()"), self.close)
+        # About
+        QObject.connect(self.actionAbout, SIGNAL("triggered()"), self.openAbout)
 
-    try:
-      import opus_gui.util.editorbase
-      self.editorStatusLabel = QLabel(self)
-      self.editorStatusLabel.setAlignment(Qt.AlignCenter)
-      self.editorStatusLabel.setObjectName("editorStatusLabel")
-      self.editorStatusLabel.setText(QString("No files currently loaded..."))
-      self.tab_editorView.layout().addWidget(self.editorStatusLabel)
-      self.editorStuff = opus_gui.util.editorbase.EditorBase(self)
-      self.tab_editorView.layout().addWidget(self.editorStuff)
-    except ImportError:
-      self.editorStuff = None
+        # QGIS References are removed for the time being...
+        #Add map tab
+        #QObject.connect(self.actionMap_View, SIGNAL("triggered()"), self.openMapTab)
 
-    time.sleep(1)
-    self.splash.hide()
-    
-    # This stuff adds the 'X' button for closing tabs
-    self.actionCloseCurrentTab = QAction(self)
-    self.actionCloseCurrentTab.setIcon(QIcon(":/Images/Images/cross.png"))
-    self.actionCloseCurrentTab.setObjectName("actionCloseCurrentTab")
-    self.tabCornerWidget = QToolButton()
-    self.tabCornerWidget.setDefaultAction(self.actionCloseCurrentTab)
-    self.tabCornerWidget.setWhatsThis(QString("Close Current Tab"))
-    self.tabCornerWidget.setToolTip(QString("Close Current Tab"))
-    self.tabWidget.setCornerWidget(self.tabCornerWidget)
-    QObject.connect(self.actionCloseCurrentTab,
-                    SIGNAL("triggered()"), self.closeCurrentTab)
-    
-    # Restoring application geometry from last shut down
-    settings = QSettings()
-    self.restoreGeometry(settings.value("Geometry").toByteArray())
-    
-  def closeCurrentTab(self):
-    widget = self.tabWidget.currentWidget()
-    self.tabWidget.removeTab(self.tabWidget.currentIndex())
-    try:
-      widget.hide()
-    except:
-      pass
-    # Do something with the widget if we need to...
+        #Add editor tab
+        QObject.connect(self.actionEditor_View, SIGNAL("triggered()"), self.openEditorTab)
+        #Add python tab
+        QObject.connect(self.actionPython_View, SIGNAL("triggered()"), self.openPythonTab)
+        #Add log tab
+        QObject.connect(self.actionLog_View, SIGNAL("triggered()"), self.openLogTab)
 
-  def openMapTab(self):
-    if self.tabWidget.indexOf(self.tab_mapView) == -1:
-      self.tab_mapView.show()
-      self.tabWidget.insertTab(0,self.tab_mapView,
-                               QIcon(":/Images/Images/map.png"),"Map View")
-      self.tabWidget.setCurrentWidget(self.tab_mapView)
+        self.tempDir = tempfile.mkdtemp(prefix='opus_gui')
 
-  def openPythonTab(self):
-    if self.tabWidget.indexOf(self.tab_pythonView) == -1:
-      self.tab_pythonView.show()
-      self.tabWidget.insertTab(0,self.tab_pythonView,
-                               QIcon(":/Images/Images/python_type.png"),"Python Console")
-      self.tabWidget.setCurrentWidget(self.tab_pythonView)
+        # QGIS References are removed for the time being...
+        #try:
+        #  import qgis.core
+        #  import map.mapbase
+        #  # Only load the map stuff if QGIS is loadable
+        #  self.mapStuff = map.mapbase.MapBase(self)
+        #except ImportError:
+        #  self.mapStuff = None
 
-  def openEditorTab(self):
-    if self.tabWidget.indexOf(self.tab_editorView) == -1:
-      self.tab_editorView.show()
-      self.tabWidget.insertTab(0,self.tab_editorView,
-                               QIcon(":/Images/Images/table.png"),"Editor View")
-      self.tabWidget.setCurrentWidget(self.tab_editorView)
+        self.consoleStuff = ConsoleBase(self)
+        self.runManagerStuff = RunManagerBase(self)
+        self.runManagerStuff.setGui(self)
 
-  def openLogTab(self):
-    if self.tabWidget.indexOf(self.tab_logView) == -1:
-      self.tab_logView.show()
-      self.tabWidget.insertTab(0,self.tab_logView,
-                               QIcon(":/Images/Images/folder.png"),"Log View")
-      self.tabWidget.setCurrentWidget(self.tab_logView)
+        self.resultManagerStuff = ResultManagerBase(self)
+        self.resultManagerStuff.setGui(self)
 
-  def openAbout(self):
-    flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-    wnd = UrbansimAboutGui(self,flags)
-    wnd.show()
+        try:
+            import opus_gui.util.editorbase
+            self.editorStatusLabel = QLabel(self)
+            self.editorStatusLabel.setAlignment(Qt.AlignCenter)
+            self.editorStatusLabel.setObjectName("editorStatusLabel")
+            self.editorStatusLabel.setText(QString("No files currently loaded..."))
+            self.tab_editorView.layout().addWidget(self.editorStatusLabel)
+            self.editorStuff = opus_gui.util.editorbase.EditorBase(self)
+            self.tab_editorView.layout().addWidget(self.editorStuff)
+        except ImportError:
+            self.editorStuff = None
 
-  def openConfig(self, config=None):
-    # config should be a path to an .xml config file
-    
-    # Check to see if there are changes to the current project, if a project is open
-    self._saveOrDiscardChanges()
-    
-    if config:
-        self.toolboxStuff.openXMLTree(config)
-    else:
-        from opus_core.misc import directory_path_from_opus_path
-        start_dir = directory_path_from_opus_path('opus_gui.projects')
+        time.sleep(1)
+        self.splash.hide()
 
-        configDialog = QFileDialog()
-        filter_str = QString("*.xml")
-        fd = configDialog.getOpenFileName(self,QString("Please select an xml config file..."),
-                                          QString(start_dir), filter_str)
-        # Check for cancel
-        if len(fd) == 0:
-          return
-        fileName = QString(fd)
-        fileNameInfo = QFileInfo(QString(fd))
-        fileNameBaseName = fileNameInfo.completeBaseName()
-        # Open the file and add to the Run tab...
-        self.toolboxStuff.openXMLTree(fileName)
+        # This stuff adds the 'X' button for closing tabs
+        self.actionCloseCurrentTab = QAction(self)
+        self.actionCloseCurrentTab.setIcon(QIcon(":/Images/Images/cross.png"))
+        self.actionCloseCurrentTab.setObjectName("actionCloseCurrentTab")
+        self.tabCornerWidget = QToolButton()
+        self.tabCornerWidget.setDefaultAction(self.actionCloseCurrentTab)
+        self.tabCornerWidget.setWhatsThis(QString("Close Current Tab"))
+        self.tabCornerWidget.setToolTip(QString("Close Current Tab"))
+        self.tabWidget.setCornerWidget(self.tabCornerWidget)
+        QObject.connect(self.actionCloseCurrentTab,
+                        SIGNAL("triggered()"), self.closeCurrentTab)
 
-        
-    # Add the project file's path to the title bar
-    self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.parentTool.xml_file).filePath())
+        # Restoring application geometry from last shut down
+        settings = QSettings()
+        self.restoreGeometry(settings.value("Geometry").toByteArray())
 
-  def saveConfig(self):
-    try:
-      domDocument = self.toolboxStuff.doc
-      opusXMLTree = self.toolboxStuff.opusXMLTree
-      indentSize = 2
-      opusXMLTree.update(str(domDocument.toString(indentSize)))
-      opusXMLTree.save()
-      self.toolboxStuff.runManagerTree.model.dirty = False
-      self.setWindowTitle(self.windowTitle().replace("*", ""))
-      self.toolboxStuff.dataManagerTree.model.dirty = False
-      self.setWindowTitle(self.windowTitle().replace("*", ""))
-      self.toolboxStuff.dataManagerDBSTree.model.dirty = False
-      self.setWindowTitle(self.windowTitle().replace("*", ""))
-      self.toolboxStuff.modelManagerTree.model.dirty = False
-      self.setWindowTitle(self.windowTitle().replace("*", ""))
-      self.toolboxStuff.resultsManagerTree.model.dirty = False
-      self.setWindowTitle(self.windowTitle().replace("*", ""))
-    except:
-      print "Unexpected error:", sys.exc_info()[0]
+    def closeCurrentTab(self):
+        widget = self.tabWidget.currentWidget()
+        self.tabWidget.removeTab(self.tabWidget.currentIndex())
+        try:
+            widget.hide()
+        except:
+            pass
+        # Do something with the widget if we need to...
 
-  def saveConfigAs(self):
-    try:
-      # get the location for the new config file on disk
-      from opus_core.misc import directory_path_from_opus_path
-      start_dir = directory_path_from_opus_path('opus_gui.projects')
-      configDialog = QFileDialog()
-      filter_str = QString("*.xml")
-      fd = configDialog.getSaveFileName(self,QString("Save As..."),
-                                        QString(start_dir), filter_str)
-      # Check for cancel
-      if len(fd) == 0:
-        return
-      fileName = QString(fd)
-      
-      domDocument = self.toolboxStuff.doc
-      opusXMLTree = self.toolboxStuff.opusXMLTree
-      indentSize = 2
-      opusXMLTree.update(str(domDocument.toString(indentSize)))
-      opusXMLTree.save_as(str(fileName))
-      self.toolboxStuff.runManagerTree.model.dirty = False
-      self.setWindowTitle(self.windowTitle().replace("*", ""))
-      self.toolboxStuff.dataManagerTree.model.dirty = False
-      self.setWindowTitle(self.windowTitle().replace("*", ""))
-      self.toolboxStuff.dataManagerDBSTree.model.dirty = False
-      self.setWindowTitle(self.windowTitle().replace("*", ""))
-      self.toolboxStuff.modelManagerTree.model.dirty = False
-      self.setWindowTitle(self.windowTitle().replace("*", ""))
-      self.toolboxStuff.resultsManagerTree.model.dirty = False
-      self.setWindowTitle(self.windowTitle().replace("*", ""))
-    except:
-      print "Unexpected error:", sys.exc_info()[0]
-      
-  def _saveOrDiscardChanges(self):
-    """
-    Checks for changes to the currently open project (if any)
-    and prompts user to save or discard changes.
-    """
-    saveBeforeOpen = QMessageBox.Discard
-    if self.toolboxStuff.resultsManagerTree and self.toolboxStuff.resultsManagerTree.model.dirty:
-      saveBeforeOpen = QMessageBox.question(self,"Warning",
-                                      "Current project contains changes... \nShould we save or discard those changes?",
-                                      QMessageBox.Discard,QMessageBox.Save)
-    elif self.toolboxStuff.modelManagerTree and self.toolboxStuff.modelManagerTree.model.dirty:
-      saveBeforeOpen = QMessageBox.question(self,"Warning",
-                                      "Current project contains changes... \nShould we save or discard those changes?",
-                                      QMessageBox.Discard,QMessageBox.Save)
-    elif self.toolboxStuff.runManagerTree and self.toolboxStuff.runManagerTree.model.dirty:
-      saveBeforeOpen = QMessageBox.question(self,"Warning",
-                                      "Current project contains changes... \nShould we save or discard those changes?",
-                                      QMessageBox.Discard,QMessageBox.Save)
-    elif self.toolboxStuff.dataManagerTree and self.toolboxStuff.dataManagerTree.model.dirty:
-      saveBeforeOpen = QMessageBox.question(self,"Warning",
-                                      "Current project contains changes... \nShould we save or discard those changes?",
-                                      QMessageBox.Discard,QMessageBox.Save)
+    def openMapTab(self):
+        if self.tabWidget.indexOf(self.tab_mapView) == -1:
+            self.tab_mapView.show()
+            self.tabWidget.insertTab(0,self.tab_mapView,
+                                     QIcon(":/Images/Images/map.png"),"Map View")
+            self.tabWidget.setCurrentWidget(self.tab_mapView)
 
-    if saveBeforeOpen == QMessageBox.Save:
-      self.saveConfig()
-    else:
-      #if we have an existing tree we need to remove the dirty bit since we are discarding
-      if self.toolboxStuff.runManagerTree:
-        self.toolboxStuff.runManagerTree.model.dirty = False
-      if self.toolboxStuff.dataManagerTree:
-        self.toolboxStuff.dataManagerTree.model.dirty = False
-      if self.toolboxStuff.modelManagerTree:
-        self.toolboxStuff.modelManagerTree.model.dirty = False
-      if self.toolboxStuff.resultsManagerTree:
-        self.toolboxStuff.resultsManagerTree.model.dirty = False
-      
-  def closeConfig(self):
-    """
-    Closes the current project, if one is open.
-    """
-    
-    try:
-        configFile = self.toolboxStuff.runManagerTree.model.configFile
-    except:
-        pass
-    
-    # Check to see if there are changes to the current project, if a project is open
-    self._saveOrDiscardChanges()
-    self.toolboxStuff.closeXMLTree()
-    self.setWindowTitle(self.application_title)
+    def openPythonTab(self):
+        if self.tabWidget.indexOf(self.tab_pythonView) == -1:
+            self.tab_pythonView.show()
+            self.tabWidget.insertTab(0,self.tab_pythonView,
+                                     QIcon(":/Images/Images/python_type.png"),"Python Console")
+            self.tabWidget.setCurrentWidget(self.tab_pythonView)
 
-  def closeEvent(self, event):
-    # Check to see if there are changes to the current project, if a project is open
-    self._saveOrDiscardChanges()
-    # Save application geometry on shut down
-    settings = QSettings()
-    settings.setValue("Geometry", QVariant(self.saveGeometry()))
-    
-    
+    def openEditorTab(self):
+        if self.tabWidget.indexOf(self.tab_editorView) == -1:
+            self.tab_editorView.show()
+            self.tabWidget.insertTab(0,self.tab_editorView,
+                                     QIcon(":/Images/Images/table.png"),"Editor View")
+            self.tabWidget.setCurrentWidget(self.tab_editorView)
+
+    def openLogTab(self):
+        if self.tabWidget.indexOf(self.tab_logView) == -1:
+            self.tab_logView.show()
+            self.tabWidget.insertTab(0,self.tab_logView,
+                                     QIcon(":/Images/Images/folder.png"),"Log View")
+            self.tabWidget.setCurrentWidget(self.tab_logView)
+
+    def openAbout(self):
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        wnd = UrbansimAboutGui(self,flags)
+        wnd.show()
+
+    def openConfig(self, config=None):
+        # config should be a path to an .xml config file
+
+        # Check to see if there are changes to the current project, if a project is open
+        self._saveOrDiscardChanges()
+
+        if config:
+            self.toolboxStuff.openXMLTree(config)
+        else:
+            from opus_core.misc import directory_path_from_opus_path
+            start_dir = directory_path_from_opus_path('opus_gui.projects')
+
+            configDialog = QFileDialog()
+            filter_str = QString("*.xml")
+            fd = configDialog.getOpenFileName(self,QString("Please select an xml config file..."),
+                                              QString(start_dir), filter_str)
+            # Check for cancel
+            if len(fd) == 0:
+                return
+            fileName = QString(fd)
+            fileNameInfo = QFileInfo(QString(fd))
+            fileNameBaseName = fileNameInfo.completeBaseName()
+            # Open the file and add to the Run tab...
+            self.toolboxStuff.openXMLTree(fileName)
+
+
+        # Add the project file's path to the title bar
+        self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.parentTool.xml_file).filePath())
+
+    def saveConfig(self):
+        try:
+            domDocument = self.toolboxStuff.doc
+            opusXMLTree = self.toolboxStuff.opusXMLTree
+            indentSize = 2
+            opusXMLTree.update(str(domDocument.toString(indentSize)))
+            opusXMLTree.save()
+            self.toolboxStuff.runManagerTree.model.dirty = False
+            self.setWindowTitle(self.windowTitle().replace("*", ""))
+            self.toolboxStuff.dataManagerTree.model.dirty = False
+            self.setWindowTitle(self.windowTitle().replace("*", ""))
+            self.toolboxStuff.dataManagerDBSTree.model.dirty = False
+            self.setWindowTitle(self.windowTitle().replace("*", ""))
+            self.toolboxStuff.modelManagerTree.model.dirty = False
+            self.setWindowTitle(self.windowTitle().replace("*", ""))
+            self.toolboxStuff.resultsManagerTree.model.dirty = False
+            self.setWindowTitle(self.windowTitle().replace("*", ""))
+        except:
+            print "Unexpected error:", sys.exc_info()[0]
+
+    def saveConfigAs(self):
+        try:
+            # get the location for the new config file on disk
+            from opus_core.misc import directory_path_from_opus_path
+            start_dir = directory_path_from_opus_path('opus_gui.projects')
+            configDialog = QFileDialog()
+            filter_str = QString("*.xml")
+            fd = configDialog.getSaveFileName(self,QString("Save As..."),
+                                              QString(start_dir), filter_str)
+            # Check for cancel
+            if len(fd) == 0:
+                return
+            fileName = QString(fd)
+
+            domDocument = self.toolboxStuff.doc
+            opusXMLTree = self.toolboxStuff.opusXMLTree
+            indentSize = 2
+            opusXMLTree.update(str(domDocument.toString(indentSize)))
+            opusXMLTree.save_as(str(fileName))
+            self.toolboxStuff.runManagerTree.model.dirty = False
+            self.setWindowTitle(self.windowTitle().replace("*", ""))
+            self.toolboxStuff.dataManagerTree.model.dirty = False
+            self.setWindowTitle(self.windowTitle().replace("*", ""))
+            self.toolboxStuff.dataManagerDBSTree.model.dirty = False
+            self.setWindowTitle(self.windowTitle().replace("*", ""))
+            self.toolboxStuff.modelManagerTree.model.dirty = False
+            self.setWindowTitle(self.windowTitle().replace("*", ""))
+            self.toolboxStuff.resultsManagerTree.model.dirty = False
+            self.setWindowTitle(self.windowTitle().replace("*", ""))
+        except:
+            print "Unexpected error:", sys.exc_info()[0]
+
+    def _saveOrDiscardChanges(self):
+        """
+        Checks for changes to the currently open project (if any)
+        and prompts user to save or discard changes.
+        """
+        saveBeforeOpen = QMessageBox.Discard
+        if self.toolboxStuff.resultsManagerTree and self.toolboxStuff.resultsManagerTree.model.dirty:
+            saveBeforeOpen = QMessageBox.question(self,"Warning",
+                                            "Current project contains changes... \nShould we save or discard those changes?",
+                                            QMessageBox.Discard,QMessageBox.Save)
+        elif self.toolboxStuff.modelManagerTree and self.toolboxStuff.modelManagerTree.model.dirty:
+            saveBeforeOpen = QMessageBox.question(self,"Warning",
+                                            "Current project contains changes... \nShould we save or discard those changes?",
+                                            QMessageBox.Discard,QMessageBox.Save)
+        elif self.toolboxStuff.runManagerTree and self.toolboxStuff.runManagerTree.model.dirty:
+            saveBeforeOpen = QMessageBox.question(self,"Warning",
+                                            "Current project contains changes... \nShould we save or discard those changes?",
+                                            QMessageBox.Discard,QMessageBox.Save)
+        elif self.toolboxStuff.dataManagerTree and self.toolboxStuff.dataManagerTree.model.dirty:
+            saveBeforeOpen = QMessageBox.question(self,"Warning",
+                                            "Current project contains changes... \nShould we save or discard those changes?",
+                                            QMessageBox.Discard,QMessageBox.Save)
+
+        if saveBeforeOpen == QMessageBox.Save:
+            self.saveConfig()
+        else:
+            #if we have an existing tree we need to remove the dirty bit since we are discarding
+            if self.toolboxStuff.runManagerTree:
+                self.toolboxStuff.runManagerTree.model.dirty = False
+            if self.toolboxStuff.dataManagerTree:
+                self.toolboxStuff.dataManagerTree.model.dirty = False
+            if self.toolboxStuff.modelManagerTree:
+                self.toolboxStuff.modelManagerTree.model.dirty = False
+            if self.toolboxStuff.resultsManagerTree:
+                self.toolboxStuff.resultsManagerTree.model.dirty = False
+
+    def closeConfig(self):
+        """
+        Closes the current project, if one is open.
+        """
+
+        try:
+            configFile = self.toolboxStuff.runManagerTree.model.configFile
+        except:
+            pass
+
+        # Check to see if there are changes to the current project, if a project is open
+        self._saveOrDiscardChanges()
+        self.toolboxStuff.closeXMLTree()
+        self.setWindowTitle(self.application_title)
+
+    def closeEvent(self, event):
+        # Check to see if there are changes to the current project, if a project is open
+        self._saveOrDiscardChanges()
+        # Save application geometry on shut down
+        settings = QSettings()
+        settings.setValue("Geometry", QVariant(self.saveGeometry()))
+
+

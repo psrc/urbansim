@@ -29,7 +29,7 @@ class UrbansimAboutGui(QDialog, Ui_UrbansimAbout):
     def on_webPushButton_released(self):
         #print "webPushButton pressed"
         QDesktopServices.openUrl(QUrl(QString("http://www.urbansim.org/")))
-        
+
     def on_docPushButton_released(self):
         #print "docPushButton pressed"
         QDesktopServices.openUrl(QUrl(QString("http://www.urbansim.org/docs/opus-userguide/")))
