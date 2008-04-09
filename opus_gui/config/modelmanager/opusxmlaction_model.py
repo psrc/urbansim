@@ -19,18 +19,18 @@ from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
 from opus_gui.run.estimation.opusrunestimation import OpusEstimation
-        
+
 
 class OpusXMLAction_Model(object):
     def __init__(self, parent):
         self.parent = parent
         self.xmlTreeObject = parent.xmlTreeObject
-        
+
         self.currentColumn = None
         self.currentIndex = None
-        
+
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
-        
+
         self.actPlaceHolder = QAction(self.applicationIcon,
                                       "Placeholder",
                                       self.xmlTreeObject.parent)
@@ -50,7 +50,7 @@ class OpusXMLAction_Model(object):
         #      (self.currentColumn,
         #       self.currentIndex.internalPointer().node().toElement().tagName())
         pass
-    
+
     def runEstimationAction(self):
         # First confirm that the project file needs to be saved
         # before running the estimation...
@@ -63,7 +63,7 @@ class OpusXMLAction_Model(object):
             QMessageBox.warning(self.xmlTreeObject.parent,
                                 "Warning",
                                 "Save changes to project before running estimation")
-        
+
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
                self.xmlTreeObject.view.indexAt(position).column() == 0:
