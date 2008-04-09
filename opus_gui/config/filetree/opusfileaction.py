@@ -23,13 +23,13 @@ class OpusFileAction(object):
     def __init__(self, parent):
         self.parent = parent
         self.xmlFileObject = parent
-        
+
         self.currentColumn = None
         self.currentIndex = None
         self.classification = ""
-        
+
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
-        
+
         self.actPlaceHolder = QAction(self.applicationIcon, "Placeholder",
                                       self.xmlFileObject.mainwindow)
         QObject.connect(self.actPlaceHolder, SIGNAL("triggered()"),
@@ -39,15 +39,15 @@ class OpusFileAction(object):
                                        self.xmlFileObject.mainwindow)
         QObject.connect(self.actOpenTextFile, SIGNAL("triggered()"),
                         self.openTextFile)
-        
+
         QObject.connect(self.xmlFileObject.treeview,
                         SIGNAL("customContextMenuRequested(const QPoint &)"),
                         self.processCustomMenu)
-        
+
     def placeHolderAction(self):
         print "placeHolderAction pressed with column = %s" % \
               (self.currentColumn)
-        
+
     def openTextFile(self):
         print "openTextFile pressed with column = %s and item = %s" % \
               (self.currentColumn, self.xmlFileObject.model.filePath(self.currentIndex))
@@ -115,7 +115,7 @@ class OpusFileAction(object):
                     choices.append(tagName)
         self.classification = classification
         return choices
-    
+
     def dataActionMenuFunction(self,action):
         filename = self.xmlFileObject.model.fileName(self.currentIndex)
         filepath = self.xmlFileObject.model.filePath(self.currentIndex)
@@ -123,7 +123,7 @@ class OpusFileAction(object):
         actiontext = action.text()
         # print "%s - %s" % (filename,actiontext)
         QObject.disconnect(self.menu, SIGNAL("triggered(QAction*)"),self.dataActionMenuFunction)
-        
+
         # Add in the code to take action... like run a script...
         # First find the batch to loop over the configs to execute
         tree = self.xmlFileObject.mainwindow.toolboxStuff.dataManagerTree
@@ -151,7 +151,7 @@ class OpusFileAction(object):
                     library = configindex.model().xmlRoot.toElement().elementsByTagName(QString("script_library")).item(0)
                     script_path = library.toElement().elementsByTagName("script_path").item(0)
                     script = library.toElement().elementsByTagName(script_name).item(0)
-                    
+
                     # First find the script path text...
                     if script_path.hasChildNodes():
                         children = script_path.childNodes()
@@ -165,7 +165,7 @@ class OpusFileAction(object):
                                 filePath = children.item(x).nodeValue()
                     importPath = QString(scriptPath).append(QString(".")).append(QString(filePath))
                     # print "New import ", importPath
-                    
+
                     # Now loop and build up the parameters...
                     params = {}
                     childNodes = configNode.childNodes()
@@ -204,7 +204,7 @@ class OpusFileAction(object):
                     y = RunScriptThread(self.xmlFileObject.mainwindow,x)
                     y.run()
         return
-    
+
     def processCustomMenu(self, position):
         self.currentColumn = self.xmlFileObject.treeview.indexAt(position).column()
         self.currentIndex = self.xmlFileObject.treeview.indexAt(position)

@@ -20,42 +20,42 @@ from PyQt4.QtGui import *
 from opus_gui.config.filetree.opusfileaction import OpusFileAction
 
 class OpusFileTree(object):
-  def __init__(self, parent, opusDataPath, parentWidget):
-    self.addTree(parent,opusDataPath,parentWidget)
-    
+    def __init__(self, parent, opusDataPath, parentWidget):
+        self.addTree(parent,opusDataPath,parentWidget)
 
-  def addTree(self, parent,opusDataPath,parentWidget):
-    #parent is a toolboxBase object
-    self.mainwindow = parent.parent
-    self.toolboxBase = parent
-    self.containerWidget = parentWidget
-    self.opusDataPath = opusDataPath
-    
-    self.groupBox = QGroupBox(self.mainwindow)
-    self.groupBoxLayout = QVBoxLayout(self.groupBox)
 
-    self.treeview = QTreeView(self.mainwindow)
-    filters = QStringList()
-    filters.append("*.*")
-    #filters.append("*.py")
-    #filters.append("*.shp")
-    #filters.append("*.tif")
-    self.model = QDirModel(filters, QDir.Files|QDir.AllDirs|QDir.NoDotAndDotDot, QDir.Name)
-    self.treeview.setModel(self.model)
-    if self.opusDataPath:
-      self.treeview.setRootIndex(self.model.index(self.opusDataPath))
-    self.treeview.setColumnWidth(0,200)
-    self.treeview.hideColumn(2)
-    self.treeview.hideColumn(3)
-    self.groupBoxLayout.addWidget(self.treeview)
-    #self.groupBox.setTitle(QFileInfo(self.parentTool.xml_file).filePath())
-    self.containerWidget.addWidget(self.groupBox)
-    
-    # Hook up to the mousePressEvent and pressed
-    self.treeview.setContextMenuPolicy(Qt.CustomContextMenu)
-    self.xmlAction = OpusFileAction(self)
+    def addTree(self, parent,opusDataPath,parentWidget):
+        #parent is a toolboxBase object
+        self.mainwindow = parent.parent
+        self.toolboxBase = parent
+        self.containerWidget = parentWidget
+        self.opusDataPath = opusDataPath
 
-  def removeTree(self):
-      self.groupBox.hide()
-      self.containerWidget.removeWidget(self.groupBox)
-      return True
+        self.groupBox = QGroupBox(self.mainwindow)
+        self.groupBoxLayout = QVBoxLayout(self.groupBox)
+
+        self.treeview = QTreeView(self.mainwindow)
+        filters = QStringList()
+        filters.append("*.*")
+        #filters.append("*.py")
+        #filters.append("*.shp")
+        #filters.append("*.tif")
+        self.model = QDirModel(filters, QDir.Files|QDir.AllDirs|QDir.NoDotAndDotDot, QDir.Name)
+        self.treeview.setModel(self.model)
+        if self.opusDataPath:
+            self.treeview.setRootIndex(self.model.index(self.opusDataPath))
+        self.treeview.setColumnWidth(0,200)
+        self.treeview.hideColumn(2)
+        self.treeview.hideColumn(3)
+        self.groupBoxLayout.addWidget(self.treeview)
+        #self.groupBox.setTitle(QFileInfo(self.parentTool.xml_file).filePath())
+        self.containerWidget.addWidget(self.groupBox)
+
+        # Hook up to the mousePressEvent and pressed
+        self.treeview.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.xmlAction = OpusFileAction(self)
+
+    def removeTree(self):
+        self.groupBox.hide()
+        self.containerWidget.removeWidget(self.groupBox)
+        return True
