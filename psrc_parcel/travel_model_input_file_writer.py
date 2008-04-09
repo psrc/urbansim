@@ -49,7 +49,7 @@ class TravelModelInputFileWriter(HHJobsTravelModelInputFileWriter):
                               "income_group_3 = person.disaggregate(numpy.logical_and(household.income >= %s, household.income < %s))" % (median_income, third_quarter),
                               "income_group_4 = person.disaggregate(household.income >= %s)" % third_quarter,
                               "urbansim_parcel.person.zone_id",
-                              "urbansim_parcel.person.is_non_home_based_worker_with_job",
+                              "urbansim_parcel.person.is_placed_non_home_based_worker_with_job",
                               "job_zone_id = person.disaggregate(urbansim_parcel.job.zone_id)"
                                 ]
         
@@ -72,8 +72,8 @@ class TravelModelInputFileWriter(HHJobsTravelModelInputFileWriter):
 t matrices
 m matrix=mf9%s default=incr
 """ % (time.strftime("%c", time.localtime(time.time())), igroup+1))
-                    line_template = "%3d    %3d    1 \n"
-                    person_idx = where(logical_and(person_set.get_attribute("is_non_home_based_worker_with_job"), 
+                    line_template = " %3d    %3d    1 \n"
+                    person_idx = where(logical_and(person_set.get_attribute("is_placed_non_home_based_worker_with_job"), 
                                                    person_set.get_attribute("income_group_%s" % (igroup+1))))[0]
                     for i in person_idx:
                         newfile.write(line_template % (home_zones[i], job_zones[i]))
