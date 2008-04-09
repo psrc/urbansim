@@ -43,21 +43,21 @@ class OpusXMLAction_DataDB(object):
         QObject.connect(self.actCloneDBConnection,
                         SIGNAL("triggered()"),
                         self.cloneDBConnection)
-        
+
         self.actNewDBConnection = QAction(self.calendarIcon,
                                           "New DB Connection",
                                           self.xmlTreeObject.parent)
         QObject.connect(self.actNewDBConnection,
                         SIGNAL("triggered()"),
                         self.newDBConnection)
-        
+
         self.actTestDBConnection = QAction(self.calendarIcon,
                                            "Test DB Connection",
                                            self.xmlTreeObject.parent)
         QObject.connect(self.actTestDBConnection,
                         SIGNAL("triggered()"),
                         self.testDBConnection)
-        
+
         self.actPlaceHolder = QAction(self.applicationIcon,
                                       "Placeholder",
                                       self.xmlTreeObject.parent)
@@ -102,7 +102,7 @@ class OpusXMLAction_DataDB(object):
         #                                    self.currentIndex,
         #                                    newNode1)
         #self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
-        
+
     def cloneDBConnection(self):
         print "cloneDBConnection pressed"
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
@@ -114,7 +114,7 @@ class OpusXMLAction_DataDB(object):
 
     def testDBConnection(self):
         print "testDBConnection pressed - Not yet implemented"
-        
+
     def placeHolderAction(self):
         print "Placeholder pressed"
 

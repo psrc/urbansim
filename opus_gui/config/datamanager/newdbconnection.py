@@ -50,7 +50,7 @@ class NewDbConnectionGui(QDialog, Ui_NewDbConnectionGui):
         QObject.connect(self.comboBox, SIGNAL("currentIndexChanged(int)"),
                         self.databaseTypeSelected)
         self.dbtypearray = []
-    
+
     def on_createConfig_released(self):
         # print "create pressed - Need to add the config to the XML here..."
         databasename = self.test_line[0].text()
@@ -150,4 +150,4 @@ class NewDbConnectionGui(QDialog, Ui_NewDbConnectionGui):
             test_line.setText(QString(""))
             hlayout.addWidget(test_line)
             self.vboxlayout.addWidget(widgetTemp)
-        
+

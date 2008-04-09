@@ -55,7 +55,7 @@ class ConfigureScriptGui(QDialog, Ui_ConfigureScriptGui):
             self.test_line[x].setObjectName(QString("test_line").append(str(x)))
             self.hboxlayout[x].addWidget(self.test_line[x])
             self.vboxlayout.addWidget(self.test_widget[x])
-        
+
     def on_createConfig_released(self):
         print "create pressed"
         for x in xrange(0,self.numberofvars):

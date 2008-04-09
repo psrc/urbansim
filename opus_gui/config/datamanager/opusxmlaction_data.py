@@ -275,7 +275,7 @@ class OpusXMLAction_Data(object):
                              index.row())
         else:
             print "No valid node was found..."
-    
+
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
                self.xmlTreeObject.view.indexAt(position).column() == 0:
