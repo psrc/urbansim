@@ -22,13 +22,13 @@ class RunScriptThread(QThread):
         QThread.__init__(self, parent)
         self.parent = parent
         self.opusScript = opusScript
-        
+
     def run(self):
         self.opusScript.progressCallback = self.progressCallback
         self.opusScript.logCallback = self.logCallback
         self.opusScript.finishedCallback = self.finishedCallback
         self.opusScript.run()
-    
+
     def StartingCallback(self):
         self.emit(SIGNAL("scriptStarting()"))
 
@@ -45,7 +45,7 @@ class RunScriptThread(QThread):
         #else:
         #    print "Error returned from Model"
         self.emit(SIGNAL("scriptFinished(PyQt_PyObject)"),success)
-            
+
 
 class OpusScript(object):
     def __init__(self,parent,scriptInclude,scriptVars=[]):
@@ -59,7 +59,7 @@ class OpusScript(object):
 
     def buildparams(self):
         return {'param1':'val1','param2':'val2'}
-    
+
     def run(self):
         # Call the script, passing in the callbacks
         #
@@ -88,4 +88,4 @@ class OpusScript(object):
         except ImportError:
             print "Error importing ",self.scriptInclude
             return
-        
+
