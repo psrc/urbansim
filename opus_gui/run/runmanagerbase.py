@@ -371,7 +371,7 @@ class ModelGuiElement(QWidget):
         # Finally add the tab to the model page
         self.vboxlayout.addWidget(self.tabWidget)
 
-# start indicator tab 
+        # start indicator tab 
 
         self.toolboxStuff = self.parent.toolboxStuff
         self.domDocument = self.toolboxStuff.doc
@@ -576,10 +576,8 @@ class ModelGuiElement(QWidget):
             self.pbnStartModel.setText(QString("Pause Model..."))
         elif self.running == False:
             # Fire up a new thread and run the model
-
-                self.pbnStartModel.setText(QString("Pause Model..."))
-
-        # References to the GUI elements for status for this run...
+            self.pbnStartModel.setText(QString("Pause Model..."))
+            # References to the GUI elements for status for this run...
             self.progressBarTotal = self.runProgressBarTotal
             self.progressBarYear = self.runProgressBarYear
             self.progressBarModel = self.runProgressBarModel
