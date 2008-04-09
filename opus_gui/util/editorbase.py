@@ -20,7 +20,7 @@ from PyQt4.Qsci import *
 # General system includes
 import sys,string
 
-  
+
 # Main 
 class EditorBase(QsciScintilla):
     def __init__(self, parent):
@@ -30,12 +30,12 @@ class EditorBase(QsciScintilla):
 class EditorTab(object):
     def __init__(self, parent, filePath):
         self.parent = parent
-        
+
         self.tabIcon = QIcon(":/Images/Images/cog.png")
         self.tabLabel = "Editor Dyn Tab"
 
         self.tab = QWidget(parent)
-        
+
         self.widgetLayout = QVBoxLayout(self.tab)
         self.widgetLayout.setAlignment(Qt.AlignTop)
         self.editorStatusLabel = QLabel(self.tab)

@@ -17,15 +17,15 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from opus_gui.util.pythongui import OpusPythonShell
-  
+
 # Main console class for the python console
 class ConsoleBase(object):
-  def __init__(self, parent):
-    self.parent = parent
+    def __init__(self, parent):
+        self.parent = parent
 
-    self.pythonGui = OpusPythonShell(self.parent.pythonWidget,self.parent.pythonLineEdit,self.parent.__dict__)
-    self.pythonLayout = QGridLayout(self.parent.pythonWidget)
-    self.pythonLayout.setMargin(9)
-    self.pythonLayout.setSpacing(6)
-    self.pythonLayout.setObjectName("pythonLayout")
-    self.pythonLayout.addWidget(self.pythonGui)
+        self.pythonGui = OpusPythonShell(self.parent.pythonWidget,self.parent.pythonLineEdit,self.parent.__dict__)
+        self.pythonLayout = QGridLayout(self.parent.pythonWidget)
+        self.pythonLayout.setMargin(9)
+        self.pythonLayout.setSpacing(6)
+        self.pythonLayout.setObjectName("pythonLayout")
+        self.pythonLayout.addWidget(self.pythonGui)

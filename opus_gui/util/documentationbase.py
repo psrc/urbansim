@@ -19,7 +19,7 @@ from PyQt4.QtGui import *
 # General system includes
 import sys,string
 
-  
+
 # Main 
 class DocumentationBase(QTextBrowser):
     def __init__(self, parent,src):
@@ -28,18 +28,18 @@ class DocumentationBase(QTextBrowser):
         self.src = src
         self.setOpenExternalLinks(True)
         self.setSource(QUrl(self.src))
-        
+
 
 class DocumentationTab(QWidget):
     def __init__(self, parent, filePath):
         QWidget.__init__(self, parent)
         self.parent = parent
-        
+
         self.tabIcon = QIcon(":/Images/Images/chart_organisation.png")
         self.tabLabel = "Documentation Tab"
 
         self.tab = QWidget(parent)
-        
+
         self.widgetLayout = QVBoxLayout(self.tab)
         self.widgetLayout.setAlignment(Qt.AlignTop)
         self.docStatusLabel = QLabel(self.tab)
