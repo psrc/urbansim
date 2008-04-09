@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from numpy import arange, array, where, zeros, ones, concatenate, int32, int8, logical_not, append, resize
+from numpy import arange, array, where, zeros, ones, concatenate, int32, int8, logical_not
 from opus_core.misc import ismember
 from urbansim.models.household_transition_model import HouseholdTransitionModel as USHouseholdTransitionModel
 from opus_core.logger import logger
@@ -33,7 +33,7 @@ class HouseholdTransitionModel(USHouseholdTransitionModel):
         hh_ids_to_copy = household_set.get_id_attribute()[self.mapping_existing_hhs_to_new_hhs]       
         hhs_to_duplicate = zeros(household_set.size(), dtype='bool8')
         npersons_in_hhs = household_set.get_attribute_by_index('persons', self.mapping_existing_hhs_to_new_hhs)
-        
+
         result = USHouseholdTransitionModel._update_household_set(self, household_set)
         
         new_hh_ids = household_set.get_id_attribute()[(household_set.size()-self.mapping_existing_hhs_to_new_hhs.size):household_set.size()]
@@ -44,13 +44,22 @@ class HouseholdTransitionModel(USHouseholdTransitionModel):
         person_attr_index = household_set.get_id_index(self.person_set.get_attribute(household_set.get_id_name()[0]))
         
         # duplicate persons
-        persons_to_duplicate = array([], dtype=int32)
-        new_person_hh_ids = array([], dtype=int32)
+        npersons_in_hhs_sum = npersons_in_hhs.sum()
+        persons_to_duplicate = -1*ones(npersons_in_hhs_sum, dtype=int32)
+        new_person_hh_ids = zeros(npersons_in_hhs_sum, dtype=int32)
+        
         all_person_hh_ids = self.person_set.get_attribute(household_set.get_id_name()[0])
+        j = 0
         for i in arange(hh_ids_to_copy.size):
             idx = where(all_person_hh_ids == hh_ids_to_copy[i])[0]
-            persons_to_duplicate = append(persons_to_duplicate, idx)
-            new_person_hh_ids = append(new_person_hh_ids, resize(array([new_hh_ids[i]]), (npersons_in_hhs[i],)))
+            if idx.size == npersons_in_hhs[i]:
+                persons_to_duplicate[j:(j+npersons_in_hhs[i])] = idx
+                new_person_hh_ids[j:(j+npersons_in_hhs[i])] = new_hh_ids[i]
+                j+=npersons_in_hhs[i]
+        if hh_ids_to_copy.size > 0:
+            if j < npersons_in_hhs_sum:
+                persons_to_duplicate = persons_to_duplicate[0:j]
+                new_person_hh_ids = new_person_hh_ids[0:j]
             
         if persons_to_duplicate.size <= 0:
             return result
