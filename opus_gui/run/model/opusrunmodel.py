@@ -33,7 +33,7 @@ class RunModelThread(QThread):
         QThread.__init__(self, parentThread)
         self.parent = parent
         self.xml_file = xml_file
-        
+
     def run(self):
         #self.parent.progressBar.setRange(0,100)
         #self.model = OpusModel(self,self.xml_file)
@@ -42,7 +42,7 @@ class RunModelThread(QThread):
         self.parent.model.finishedCallback = self.finishedCallback
         self.parent.model.errorCallback = self.errorCallback
         self.parent.model.run()
-        
+
     def pause(self):
         self.parent.model.pause()
 
@@ -63,10 +63,10 @@ class RunModelThread(QThread):
         else:
             print "Error returned from Model"
         self.emit(SIGNAL("runFinished(PyQt_PyObject)"),success)
-        
+
     def add_run_to_run_manager_xml(self):
         '''add this completed run to the run manager section of the results manager'''
-        
+
         toolboxStuff = self.parent.parent.toolboxStuff
         document = toolboxStuff.doc
         xml_tree = toolboxStuff.resultsManagerTree        
@@ -76,14 +76,14 @@ class RunModelThread(QThread):
         scenario_name = str(self.parent.model.modeltorun)
         run_name = os.path.basename(cache_directory)
         (start_year, end_year) = self.parent.model.config['years']
-        
+
         name = '%s.%s'%(scenario_name, run_name)
-        
+
         newNode = model.create_node(document = document, 
                                     name = name, 
                                     type = 'source_data', 
                                     value = '')
-        
+
         scenario_name_node = model.create_node(document = document, 
                                     name = 'scenario_name', 
                                     type = 'string', 
@@ -93,29 +93,29 @@ class RunModelThread(QThread):
                                     name = 'run_name', 
                                     type = 'string', 
                                     value = run_name)
-        
+
         cache_directory_node = model.create_node(document = document, 
                                     name = 'cache_directory', 
                                     type = 'string', 
                                     value = cache_directory)
-        
+
         start_year_node = model.create_node(document = document, 
                                     name = 'start_year', 
                                     type = 'integer', 
                                     value = str(start_year))
-        
+
         end_year_node = model.create_node(document = document, 
                                     name = 'end_year', 
                                     type = 'integer', 
                                     value = str(end_year))    
-           
+
         parent = model.index(0, 0, QModelIndex()).parent()
         index = model.findElementIndexByName("Simulation_runs", parent)[0]
         if index.isValid():
             model.insertRow(0, index, newNode)
         else:
             print "No valid node was found..."
-        
+
         child_index = model.findElementIndexByName(name, parent)[0]
         if child_index.isValid():
             for node in [end_year_node, start_year_node, 
@@ -123,10 +123,10 @@ class RunModelThread(QThread):
                 model.insertRow(0, child_index, node)
         else:
             print "No valid node was found..."
-        
+
         model.emit(SIGNAL("layoutChanged()"))
-        
-        
+
+
     def errorCallback(self,errorMessage):
         self.emit(SIGNAL("runError(PyQt_PyObject)"),errorMessage)
 
@@ -146,7 +146,7 @@ class OpusModel(object):
         self.firstRead = True
         self.running = False
         self.paused = False
-    
+
     def formatExceptionInfo(self,maxTBlevel=5):
         import traceback
         cla, exc, trbk = sys.exc_info()
@@ -157,20 +157,20 @@ class OpusModel(object):
             excArgs = "<no args>"
         excTb = traceback.format_tb(trbk, maxTBlevel)
         return (excName, excArgs, excTb)
-    
+
     def pause(self):
         self.paused = True
         self._write_command_file('pause')
-    
+
     def resume(self):
         self.paused = False
         self._write_command_file('resume')
-    
+
     def cancel(self):
         self.running = False
         self.paused = False
         self._write_command_file('stop')
-    
+
     def run(self):
         if WithOpus:
             # Run the Eugene model using the XML version of the Eugene configuration.
@@ -192,12 +192,12 @@ class OpusModel(object):
                 print fileNameAbsolute
                 print self.modeltorun
                 config = XMLConfiguration(str(fileNameAbsolute)).get_run_configuration(str(self.modeltorun))
-            
+
                 insert_auto_generated_cache_directory_if_needed(config)
                 (self.start_year, self.end_year) = config['years']
 
                 self.run_manager.setup_new_run(run_name = config['cache_directory'])
-                                
+
                 #statusdir = tempfile.mkdtemp()
                 statusdir = self.run_manager.get_current_cache_directory()
                 statusfile = os.path.join(statusdir, 'status.txt')
@@ -227,7 +227,7 @@ class OpusModel(object):
             self.finishedCallback(succeeded)
         else:
             pass
-        
+
     def _compute_progress(self, statusfile):
         if statusfile is None:
             return {"percentage":0,"message":"Model initializing..."}
@@ -300,7 +300,7 @@ class OpusModel(object):
                         self.guiElement.logText.insertPlainText(QString("."))
                 #self.guiElement.logText.append("ping")
         return newKey
-    
+
     def _write_command_file(self, command):
         f = open(self.commandfile, 'w')
         f.write(command)
