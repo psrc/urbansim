@@ -422,6 +422,23 @@ class OpusDataModel(QAbstractItemModel):
             finds.append(QModelIndex())
         return finds
 
+    # This function needs to be tested... but is here for the future
+    #def stripAttribute(self,attribute,parent,recursive=True):
+    #    rows = self.rowCount(parent)
+    #    for x in xrange(0,rows,1):
+    #        child = self.index(x,0,parent)
+    #        childElement = child.internalPointer().domNode.toElement()
+    #        if not childElement.isNull():
+    #            # Check if this is the one we want...
+    #            if childElement.hasAttribute(QString(attribute)):
+    #                # remove the attribute
+    #                childElement.removeAttribute(QString(attribute))
+    #                if recursive == False:
+    #                    return
+    #            # If this child has other children then we recurse
+    #            if self.rowCount(child)>0:
+    #                self.stripAttribute(attribute,child,recursive)
+
     def create_node(self, document, name, type, value):
         newNode = document.createElement(QString(name))
         newNode.setAttribute(QString("type"),QString(type))

@@ -171,8 +171,9 @@ class OpusXMLAction_Scenario(object):
 
     def cloneNodeAction(self):
         print "Clone Node pressed..."
+        clone = self.currentIndex.internalPointer().domNode.cloneNode()
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        window = CloneInheritedGui(self,flags,self.xmlTreeObject.model)
+        window = CloneInheritedGui(self,flags,self.xmlTreeObject.model,clone)
         window.show()
 
     def placeHolderAction(self):

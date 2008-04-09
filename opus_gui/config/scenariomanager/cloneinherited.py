@@ -25,17 +25,15 @@ from opus_gui.config.scenariomanager.cloneinherited_ui import Ui_CloneInheritedG
 import random
 
 class CloneInheritedGui(QDialog, Ui_CloneInheritedGui):
-    def __init__(self, parent, fl, model):
+    def __init__(self, parent, fl, model, clone):
         QDialog.__init__(self, parent.mainwindow, fl)
         self.setupUi(self)
         self.parent = parent
         self.model = model
+        self.clone = self.stripAttribute("inherited",clone)
+        # Since we are referencing the main model we want to now make it
+        # read-only while traversing it...
         self.model.editable = False;
-        #self.model = OpusDataModel(self.parent.xmlTreeObject,
-        #                           self.parent.xmlTreeObject.parentTool.doc2,
-        #                           self.parent.xmlTreeObject.parentTool.parent,
-        #                           self.parent.xmlTreeObject.parentTool.configFile,
-        #                           "scenario_manager", False)
         # Add in the base XML for user to select the drop point
         self.vboxlayout = QVBoxLayout(self.xmlBox)
         self.vboxlayout.setObjectName("vboxlayout")
@@ -50,6 +48,27 @@ class CloneInheritedGui(QDialog, Ui_CloneInheritedGui):
         self.view.setMinimumHeight(200)
         self.vboxlayout.addWidget(self.view)
 
+    def stripAttribute(self,attribute,parent,recursive=True):
+        if parent.toElement().hasAttribute(QString(attribute)):
+            # remove the attribute
+            parent.toElement().removeAttribute(QString(attribute))
+        rows = parent.childNodes().count()
+        for x in xrange(0,rows,1):
+            child = parent.childNodes().item(x)
+            childElement = child.toElement()
+            if not childElement.isNull():
+                # Check if this is the one we want...
+                if childElement.hasAttribute(QString(attribute)):
+                    # remove the attribute
+                    childElement.removeAttribute(QString(attribute))
+                    if recursive == False:
+                        return
+                # If this child has other children then we recurse
+                childRows = child.childNodes().count()
+                if childRows>0:
+                    self.stripAttribute(attribute,child,recursive)
+        return parent
+
     def on_createXML_released(self):
         # Clone the node and drop it in...
         item = self.view.currentIndex().internalPointer()
@@ -62,11 +81,25 @@ class CloneInheritedGui(QDialog, Ui_CloneInheritedGui):
             if domElement.isNull():
                 return
             print domElement.tagName()
+            # Here we can drop the clone into the model at the right spot
+            parent = self.view.currentIndex()
+            self.model.insertRow(self.model.rowCount(parent),
+                                 parent,
+                                 self.clone)
+            if self.model.dirty == False:
+                wintitle = self.model.parentObj.windowTitle().replace(" - ", " - *")
+                self.model.parentObj.setWindowTitle(wintitle)
+            self.model.dirty = True
+            self.model.emit(SIGNAL("layoutChanged()"))
+        # Since we are referencing the main model we want to now make it
+        # editable again...
         self.model.editable = True;
         self.close()
 
     def on_cancelXML_released(self):
         # Close things up...
+        # Since we are referencing the main model we want to now make it
+        # editable again...
         self.model.editable = True;
         self.close()
 
