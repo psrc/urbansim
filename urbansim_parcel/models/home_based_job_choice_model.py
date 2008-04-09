@@ -20,6 +20,7 @@ from numpy import arange, where, ones
 from opus_core.variables.variable_name import VariableName
 from opus_core.sampling_toolbox import probsample_noreplace
 from opus_core.misc import unique_values
+from opus_core.logger import logger
 
 class HomeBasedJobChoiceModel(ChoiceModel):
     """
@@ -60,6 +61,12 @@ class HomeBasedJobChoiceModel(ChoiceModel):
         self.job_set.modify_attribute(name=VariableName(self.location_id_name).get_alias(), 
                                       data=agent_set.get_attribute_by_index(self.location_id_name, assigned_worker_index),
                                       index=choice_set_index)
+        logger.log_status("%s workers chose home-based jobs, %s workers chose non-home-based jobs." % 
+                          (where(agent_set.get_attribute_by_index(self.choice_attribute_name, kwargs['agents_index']) == 1)[0].size,
+                           where(agent_set.get_attribute_by_index(self.choice_attribute_name, kwargs['agents_index']) == 0)[0].size))
+        logger.log_status("Total: %s workers have home-based jobs, %s workers have non-home-based jobs." % 
+                          (where(agent_set.get_attribute(self.choice_attribute_name) == 1)[0].size,
+                           where(agent_set.get_attribute(self.choice_attribute_name) == 0)[0].size))
         
     def prepare_for_run(self, 
                         specification_storage=None, 
