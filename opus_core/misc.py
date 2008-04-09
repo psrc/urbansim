@@ -622,6 +622,13 @@ def ismember(ar1, ar2) :
     ir = a.searchsorted(ar1, side='right')
     return ir != il
 
+def flatten(l):
+    """Flattens a list."""
+    if isinstance(l,list):
+        return sum(map(flatten,l),[])
+    else:
+        return [l]
+
 def get_host_name():
     """Get the host name of this computer in a platform-independent manner."""
     fullname = socket.gethostname()
