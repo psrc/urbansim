@@ -23,7 +23,7 @@ class OpusDataItem:
         self.domNode = node
         self.parentItem = parent
         self.childItems = []
-    
+
     def initAsRootItem(self):
         i = 0
         for x in xrange(0,self.domNode.childNodes().count(),1):
@@ -39,10 +39,10 @@ class OpusDataItem:
 
     def node(self):
         return self.domNode
-    
+
     def parent(self):
         return self.parentItem
-    
+
     def child(self,i):
         #print "DataItem.child ", i
         if len(self.childItems) > i:
@@ -63,7 +63,7 @@ class OpusDataItem:
                 self.childItems.append(childItem)
                 return childItem
         return None
-    
+
     def row(self):
         #return self.rowNumber
         return self.parentItem.childItems.index(self)

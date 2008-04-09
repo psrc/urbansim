@@ -22,7 +22,7 @@ class OpusDataDelegate(QItemDelegate):
         QItemDelegate.__init__(self, parent)
         self.parent = parent
         self.signalMapper = QSignalMapper(self)
-        
+
     def createEditor(self, parent, option, index):
         if not index.isValid():
             return QItemDelegate.createEditor(self, parent, option, index)
@@ -79,19 +79,19 @@ class OpusDataDelegate(QItemDelegate):
                 return editor
             else:
                 return QItemDelegate.createEditor(self, parent, option, index)
-    
+
     def setEditorData(self,editor,index):
         pass
-        
-    
+
+
     def setModelData(self,editor,model,index):
         #print "setModelData"
         if type(editor) == QComboBox:
             model.setData(index,QVariant(editor.currentText()),Qt.EditRole)
         else:
             QItemDelegate.setModelData(self,editor,model,index)
-        
-    
+
+
     def updateEditorGeometry(self, editor, option, index):
         editor.setGeometry(option.rect)
 

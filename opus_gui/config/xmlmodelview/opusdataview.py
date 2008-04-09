@@ -20,7 +20,7 @@ class OpusDataView(QTreeView):
     def __init__(self, parent):
         QTreeView.__init__(self, parent)
         self.parent = parent
-        
+
     def openDefaultItems(self):
         # Loop through all the data model items displayed and expand
         # if they are marked to be expanded by default
