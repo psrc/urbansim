@@ -68,10 +68,6 @@ if does_test_database_server_exist(module_name=__name__):
                                  package_order = ['urbansim', 'psrc'],
                                  in_storage=in_storage)
             dataset_pool = sc.get_dataset_pool()
-            #zone_set = dataset_pool.get_dataset('zone')
-            #hh_set = dataset_pool.get_dataset('household')
-            #job_set = dataset_pool.get_dataset('job')
-            #taz_col_set = dataset_pool.get_dataset('constant_taz_column')
             
             TravelModelInputFileWriter().run(self.tempdir_path, 2000, dataset_pool)
             
@@ -84,9 +80,9 @@ if does_test_database_server_exist(module_name=__name__):
                                 }
             # get real data from file
             real_tazdata = {1:[],2:[], 3:[], 4:[]}
-            # income group 1
+            # income groups 1 to 4
             for i in [1,2,3,4]:
-                tazdata_file = open(os.path.join(self.tempdir_path, 'tripgen', 'inputtg', 'TAZDATA.mf9%s' % i), 'r')
+                tazdata_file = open(os.path.join(self.tempdir_path, 'tripgen', 'inputtg', 'tazdata.mf9%s' % i), 'r')
                 for a_line in tazdata_file.readlines():
                     if a_line[0].isspace():
                         numbers = a_line.split()
@@ -101,8 +97,8 @@ if does_test_database_server_exist(module_name=__name__):
 
         def create_households_table(self, database):
             database.DoQuery("drop table if exists households")
-            database.DoQuery("create table households (household_id int(11), zone_id int(11), income int(11), year int(11))")
-            database.DoQuery("insert into households values(1, 1, 10, 2000), (2, 1, 11, 2000), (3, 2, 12, 2000), (4, 2, 13, 2000), (5, 2, 14, 2000), (6, 1, 15, 2000), (7, 2, 16, 2000), (8, 2, 16, 2000), (9, 2, 17, 2000)")
+            database.DoQuery("create table households (household_id int(11), zone_id int(11), income int(11), year int(11), building_id int(11))")
+            database.DoQuery("insert into households values(1, 1, 10, 2000, 1), (2, 1, 11, 2000, 2), (3, 2, 12, 2000, 4), (4, 2, 13, 2000, 4), (5, 2, 14, 2000, 5), (6, 1, 15, 2000, 1), (7, 2, 16, 2000, 5), (8, 2, 16, 2000, 6), (9, 2, 17, 2000, 7)")
             # 9 houses total
             #incomes: 10, 11, 12, 13, 14, 15, 16, 16, 17
             # med=14, low_med=11.5, upper_med=16

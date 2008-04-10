@@ -91,7 +91,7 @@ if does_test_database_server_exist(module_name=__name__):
             
             # get real data from file
             real_tazdata = {1:{},2:{}}
-            tazdata_file = open(os.path.join(self.tempdir_path, 'tripgen', 'inputtg', 'TAZDATA.MA2'), 'r')
+            tazdata_file = open(os.path.join(self.tempdir_path, 'tripgen', 'inputtg', 'tazdata.ma2'), 'r')
             for a_line in tazdata_file.readlines():
                 if a_line[0].isspace():
                     numbers = a_line.replace(':', ' ').split() # data line format:  1   101:  15.5
