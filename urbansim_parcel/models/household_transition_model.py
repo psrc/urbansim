@@ -31,7 +31,6 @@ class HouseholdTransitionModel(USHouseholdTransitionModel):
     def _update_household_set(self, household_set):
         """Updates also person set."""
         hh_ids_to_copy = household_set.get_id_attribute()[self.mapping_existing_hhs_to_new_hhs]       
-        hhs_to_duplicate = zeros(household_set.size(), dtype='bool8')
         npersons_in_hhs = household_set.get_attribute_by_index('persons', self.mapping_existing_hhs_to_new_hhs)
 
         result = USHouseholdTransitionModel._update_household_set(self, household_set)
@@ -41,19 +40,19 @@ class HouseholdTransitionModel(USHouseholdTransitionModel):
         # remove person that have non-existing households
         eliminate_index = where(logical_not(ismember(self.person_set.get_attribute(household_set.get_id_name()[0]), household_set.get_id_attribute())))[0]
         self.person_set.remove_elements(eliminate_index)
-        person_attr_index = household_set.get_id_index(self.person_set.get_attribute(household_set.get_id_name()[0]))
         
         # duplicate persons
+        unique_persons_to_duplicate = ismember(self.person_set.get_attribute(household_set.get_id_name()[0]), hh_ids_to_copy)
+        person_considered_idx = where(unique_persons_to_duplicate)[0]
         npersons_in_hhs_sum = npersons_in_hhs.sum()
         persons_to_duplicate = -1*ones(npersons_in_hhs_sum, dtype=int32)
         new_person_hh_ids = zeros(npersons_in_hhs_sum, dtype=int32)
-        
-        all_person_hh_ids = self.person_set.get_attribute(household_set.get_id_name()[0])
+        considered_person_hh_ids = self.person_set.get_attribute(household_set.get_id_name()[0])[person_considered_idx]
         j = 0
         for i in arange(hh_ids_to_copy.size):
-            idx = where(all_person_hh_ids == hh_ids_to_copy[i])[0]
+            idx = where(considered_person_hh_ids == hh_ids_to_copy[i])[0]
             if idx.size == npersons_in_hhs[i]:
-                persons_to_duplicate[j:(j+npersons_in_hhs[i])] = idx
+                persons_to_duplicate[j:(j+npersons_in_hhs[i])] = person_considered_idx[idx]
                 new_person_hh_ids[j:(j+npersons_in_hhs[i])] = new_hh_ids[i]
                 j+=npersons_in_hhs[i]
         if hh_ids_to_copy.size > 0:
@@ -63,9 +62,8 @@ class HouseholdTransitionModel(USHouseholdTransitionModel):
             
         if persons_to_duplicate.size <= 0:
             return result
-            
         new_persons_idx = self.person_set.duplicate_rows(persons_to_duplicate)
-        
+
         # assign job_id to 'no job'
         self.person_set.modify_attribute(name='job_id', data=zeros(new_persons_idx.size, dtype=self.person_set.get_data_type('job_id')), index=new_persons_idx)
         
