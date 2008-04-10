@@ -34,8 +34,8 @@ my_configuration = {
     'datasets_to_cache_after_each_model':[],
     'low_memory_mode':False,
     'cache_directory':r'C:\tmp\urbansim_cache\psrc_parcel', # change or leave out
-    'base_year': 2000,
-    'years': (2000,2000),
+    'base_year': 2006,
+    'years': (2006,2006),
     'datasets_to_preload' :{
         'gridcell':{
             'package_name':'urbansim',
