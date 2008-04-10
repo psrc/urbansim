@@ -20,7 +20,7 @@ from psrc.travel_model_input_file_writer import TravelModelInputFileWriter as HH
 
 class TravelModelInputFileWriter(HHJobsTravelModelInputFileWriter):
     """Write urbansim simulation information into a (file) format that the emme2 travel model understands. 
-        It creates TAZDATA.MA2 with informations about households and jobs, and TAZDATA.mf91, TAZDATA.mf92, TAZDATA.mf93, TAZDATA.mf94
+        It creates tazdata.MA2 with informations about households and jobs, and tazdata.mf91, tazdata.mf92, tazdata.mf93, tazdata.mf94
         with information about people's workplaces.
     """
 
@@ -36,10 +36,10 @@ class TravelModelInputFileWriter(HHJobsTravelModelInputFileWriter):
         except:
             raise "Dataset %s is missing from dataset_pool" % missing_dataset
         
-        """specify travel input file name: [current_year_emme2_dir]/tripgen/inputtg/TAZDATA.MA2 """
+        """specify travel input file name: [current_year_emme2_dir]/tripgen/inputtg/tazdata.ma2 """
         full_path = os.path.join(current_year_emme2_dir, 'tripgen', 'inputtg')
-        tm_input_files = [os.path.join(full_path, 'TAZDATA.mf91'), os.path.join(full_path, 'TAZDATA.mf92'),
-                         os.path.join(full_path, 'TAZDATA.mf93'), os.path.join(full_path, 'TAZDATA.mf94')]
+        tm_input_files = [os.path.join(full_path, 'tazdata.mf91'), os.path.join(full_path, 'tazdata.mf92'),
+                         os.path.join(full_path, 'tazdata.mf93'), os.path.join(full_path, 'tazdata.mf94')]
                 
         first_quarter, median_income, third_quarter = self._get_income_group_quartiles(dataset_pool)
         logger.log_status("calculating entries for emme2 *.mf9x input files")

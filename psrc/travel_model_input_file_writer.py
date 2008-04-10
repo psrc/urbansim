@@ -41,11 +41,11 @@ class TravelModelInputFileWriter(object):
         except:
             raise "Dataset %s is missing from dataset_pool" % missing_dataset
         
-        """specify travel input file name: [current_year_emme2_dir]/tripgen/inputtg/TAZDATA.MA2 """
+        """specify travel input file name: [current_year_emme2_dir]/tripgen/inputtg/tazdata.ma2 """
         full_path = os.path.join(current_year_emme2_dir, 'tripgen', 'inputtg')
         if not os.path.exists(full_path):
             os.makedirs(full_path)
-        tm_input_file = os.path.join(full_path, 'TAZDATA.MA2')
+        tm_input_file = os.path.join(full_path, 'tazdata.ma2')
         
         tm_year = self._decade_floor(current_year)
         
