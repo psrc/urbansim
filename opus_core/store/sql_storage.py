@@ -17,7 +17,7 @@ from numpy import array, dtype
 try:
     import sqlalchemy
     from sqlalchemy import Table, Column, select
-    from sqlalchemy.types import Integer, Numeric, String, Float, Boolean    
+    from sqlalchemy.types import Integer, Numeric, Text, Float, Boolean    
 except ImportError:
     sqlalchemy = None
     
@@ -194,7 +194,7 @@ class sql_storage(Storage):
         mapping = {
             'i':Integer,
             'f':Float,
-            'S':String,
+            'S':Text,
             'b':Boolean
             }
         
@@ -212,7 +212,7 @@ class sql_storage(Storage):
         if isinstance(column_type, Numeric):
             return dtype('f')
         
-        if isinstance(column_type, String):
+        if isinstance(column_type, Text):
             return dtype('S')
         
         if isinstance(column_type, Boolean):
@@ -400,7 +400,7 @@ else:
             actual_sql_alchemy_type = self.storage._get_sql_alchemy_type_from_numpy_dtype(dtype('f'))
             self.assertEqual(expected_sql_alchemy_type, actual_sql_alchemy_type)
             
-            expected_sql_alchemy_type = String
+            expected_sql_alchemy_type = Text
             actual_sql_alchemy_type = self.storage._get_sql_alchemy_type_from_numpy_dtype(dtype('S'))
             self.assertEqual(expected_sql_alchemy_type, actual_sql_alchemy_type)
             
@@ -414,7 +414,7 @@ else:
             self.assertEqual(expected_numpy_type, actual_numpy_type)
             
             expected_numpy_type = dtype('S')
-            actual_numpy_type = self.storage._get_numpy_dtype_from_sql_alchemy_type(String())
+            actual_numpy_type = self.storage._get_numpy_dtype_from_sql_alchemy_type(Text())
             self.assertEqual(expected_numpy_type, actual_numpy_type)
             
         

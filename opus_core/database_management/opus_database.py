@@ -19,7 +19,7 @@ from opus_core.database_management.database_server_configuration import Database
 from sqlalchemy.schema import MetaData, Column, Table
 from sqlalchemy.types import Integer, SmallInteger, \
                              Numeric, Float, \
-                             VARCHAR, TEXT, String, CHAR, CLOB, \
+                             VARCHAR, String, CLOB, \
                              Boolean, DateTime
 from sqlalchemy import create_engine
 
