@@ -563,9 +563,9 @@
         <Class_name flags="hidden" type="string" >DatabaseConfiguration</Class_name>
         <Class_path flags="hidden" type="string" >opus_core.database_management.database_configuration</Class_path>
         <database_connection type="db_connection_hook" >urbansim_db1</database_connection>
-        <database_name type="string" >eugene_1980_baseyear</database_name>
+        <database_name type="string" >seattle_2000_parcel_baseyear_data</database_name>
       </baseyear_database_configuration>
-      <cache_directory parser_action="prefix_with_opus_data_path" type="directory" >seattle_parcel/run_4836.2008_01_15_16_02</cache_directory>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory" >seattle_parcel/seattle_parcel_2000_cache</cache_directory>
       <creating_baseyear_cache_configuration type="class" >
         <Class_name flags="hidden" type="string" >CreatingBaseyearCacheConfiguration</Class_name>
         <Class_path flags="hidden" type="string" >urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
