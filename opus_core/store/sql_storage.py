@@ -107,7 +107,7 @@ class sql_storage(Storage):
                     
         for col_name, (column, col_type) in col_data.items():
             table_data[col_name] = array(table_data[col_name], dtype=col_type)
-                       
+                   
         self._dispose_db(db)
         return table_data
         
@@ -202,7 +202,15 @@ class sql_storage(Storage):
         
     def _get_numpy_dtype_from_sql_alchemy_type(self, column_type):
 
-            
+        try:
+            if isinstance(column_type, MSBigInteger):
+                return dtype('int64')
+            if isinstance(column_type, MSString):
+                return dtype('S')
+            if isinstance(column_type, MSChar):
+                return dtype('S')
+        except: pass
+        
         if isinstance(column_type, Integer):
             return dtype('i')
         
@@ -215,15 +223,6 @@ class sql_storage(Storage):
         if isinstance(column_type, Boolean):
             return dtype('b')        
         
-        try:
-            if isinstance(column_type, MSBigInteger):
-                return dtype('int64')
-            if isinstance(column_type, MSString):
-                return dtype('S')
-            if isinstance(column_type, MSChar):
-                return dtype('S')
-        
-        except: pass        
         raise ValueError('Unrecognized column type: %s' % column_type)
         
     
