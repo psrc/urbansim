@@ -38,7 +38,7 @@
       <opus_database_to_sql_config type="script_config" >
         <script_hook type="script_library_ref" >opus_database_to_sql_tool</script_hook>
         <sql_db_name type="string" >mytestdb</sql_db_name>
-        <opus_data_directory type="string" ></opus_data_directory>
+        <opus_data_directory type="string" />
         <opus_data_year type="string" >ALL</opus_data_year>
         <opus_table_name type="string" >ALL</opus_table_name>
       </opus_database_to_sql_config>
@@ -48,7 +48,7 @@
       <opus_database_to_esri_config type="script_config" >
         <script_hook type="script_library_ref" >opus_database_to_esri_tool</script_hook>
         <esri_data_path type="string" >/home/aaronr/work/urbansim_cache/eugene/esri</esri_data_path>
-        <opus_data_directory type="string" ></opus_data_directory>
+        <opus_data_directory type="string" />
         <opus_data_year type="string" >ALL</opus_data_year>
         <opus_table_name type="string" >ALL</opus_table_name>
       </opus_database_to_esri_config>
@@ -58,7 +58,7 @@
       <opus_dataset_to_sql_config type="script_config" >
         <script_hook type="script_library_ref" >opus_database_to_sql_tool</script_hook>
         <sql_db_name type="string" >mytestdb</sql_db_name>
-        <opus_data_directory type="string" ></opus_data_directory>
+        <opus_data_directory type="string" />
         <opus_data_year type="string" >ALL</opus_data_year>
         <opus_table_name type="string" >ALL</opus_table_name>
       </opus_dataset_to_sql_config>
@@ -68,7 +68,7 @@
       <opus_dataset_to_esri_config type="script_config" >
         <script_hook type="script_library_ref" >opus_database_to_esri_tool</script_hook>
         <esri_data_path type="string" >/home/aaronr/work/urbansim_cache/eugene/esri</esri_data_path>
-        <opus_data_directory type="string" ></opus_data_directory>
+        <opus_data_directory type="string" />
         <opus_data_year type="string" >ALL</opus_data_year>
         <opus_table_name type="string" >ALL</opus_table_name>
       </opus_dataset_to_esri_config>
@@ -504,7 +504,6 @@
           <package_order type="list" >['seattle_parcel','urbansim_parcel','urbansim']</package_order>
           <package_order_exceptions type="dictionary" />
         </dataset_pool_configuration>
-        
         <datasets_to_cache_after_each_model type="list" >[]</datasets_to_cache_after_each_model>
         <low_memory_mode type="boolean" >False</low_memory_mode>
         <base_year type="integer" >2000</base_year>
@@ -674,8 +673,7 @@
         </number_of_jobs>
       </model.parcel>
     </Indicator_libraries>
-    <Simulation_runs type="all_source_data" setexpanded="True" >
-    </Simulation_runs>
+    <Simulation_runs type="all_source_data" setexpanded="True" />
     <Results type="selectable_list" setexpanded="True" />
   </results_manager>
 </opus_project>
