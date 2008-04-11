@@ -22,7 +22,7 @@ except ImportError:
     sqlalchemy = None
     
 try:
-    from sqlalchemy.databases.mysql import MSBigInteger
+    from sqlalchemy.databases.mysql import MSBigInteger, MSString
 except:
     pass
     
@@ -201,10 +201,7 @@ class sql_storage(Storage):
         return mapping[column_dtype.kind]
         
     def _get_numpy_dtype_from_sql_alchemy_type(self, column_type):
-        try:
-            if isinstance(column_type, MSBigInteger):
-                return dtype('int64')
-        except: pass        
+
             
         if isinstance(column_type, Integer):
             return dtype('i')
@@ -217,7 +214,14 @@ class sql_storage(Storage):
         
         if isinstance(column_type, Boolean):
             return dtype('b')        
-
+        
+        try:
+            if isinstance(column_type, MSBigInteger):
+                return dtype('int64')
+            if isinstance(column_type, MSString):
+                return dtype('S')
+        
+        except: pass        
         raise ValueError('Unrecognized column type: %s' % column_type)
         
     
