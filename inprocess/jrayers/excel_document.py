@@ -33,7 +33,7 @@ else:
             self.app = Dispatch("Excel.Application")
             self.app.Visible = visible
             self.sheet = 1
-        
+                    
         def open(self, filename):
             """
             Open an existing Excel workbook.
@@ -52,6 +52,17 @@ else:
             The variable 'excel_range' should be specified as a string, e.g. 'D10:F22'
             """
             return self.app.ActiveWorkbook.Sheets(self.sheet).Range(excel_range)
+        
+        def get_range_values_as_list(self, excel_range):
+            """
+            Gets a range object for the specified range or single cell.
+            Returns this range as a Python list.
+            """
+            range_values = self.get_range_values(excel_range)
+            range_list = []
+            for i in range_values:
+                range_list.append(i.value)
+            return range_list
           
         def get_cell_value(self, cell):
             """
@@ -63,64 +74,33 @@ else:
                 value = [v[0] for v in value]
             return value
         
-        def get_range_values_as_dict(self, excel_range):
+        def get_dict_table_from_column_names_and_ranges(self, column_names_and_ranges):
             """
-            Get the values of a range as a dictionary compatible with OPUS
-            storage objects.  Assumes that the top row of a range contains names
-            suitable for use as column names and remaining rows are made up of integers
-            or floats.
+            Returs a dictionary with column names as keys and numpy arrays as values.
+            list_of_column_names should be a python list containing the column names.
+            list_of_ranges should be a python list containing strings of excel ranges.
             """
+            #if len(list_of_column_names) != len(list_of_ranges):
+            #    print 'The are a different number of column names and ranges'
+            #    return
             
-            # Put range values in a list
-            range_values = self.get_range_values(excel_range)
-            range_list = []
-            for i in range_values:
-                range_list.append(i.value)
+            dic = {}
+            #for i in range(0,len(list_of_column_names)):
+            #    dic[list_of_column_names[i]] = array(self.get_range_values_as_list(list_of_ranges[i]))
             
-            # Get number of columns and list of column names
-            column_names = []
-            number_of_columns = 0
-            for i in range_list:
-                if isinstance(i, unicode):
-                    number_of_columns += 1
-                    column_names.append(str(i))
             
-            # Get number of data rows
-            number_data_rows = len(range_list)/number_of_columns - 1
-            
-            # Get rows as list of lists
-            new_num_cols = 0
-            lst = []
-            for i in range(number_data_rows):
-                new_num_cols = new_num_cols + number_of_columns
-                temp_list = range_list[new_num_cols:new_num_cols + number_of_columns]
-                lst.append(temp_list)
-            
-            # Create dictionary of columns to populate with values
-            table = {}
-            x = 0
-            for i in range(0,number_of_columns):
-                col_name = str(range_list[i])
-                table[col_name] = empty(0, 'f')
-                       
-            # Populate dictionary with values
-            for i in lst:
-                index_counter = 0
-                for j in i:
-                    column_name = column_names[index_counter]
-                    table[column_name] = append(table[column_name], j)
-                    index_counter += 1
-
-            return table
-            
+            for column_name, data_range in column_names_and_ranges.iteritems():
+                dic[column_name] = array(self.get_range_values_as_list(data_range))
+            return dic
+        
         def close(self):
             """
-            Close the active workbook.
+            Close the active workbook without saving.
             """
-            self.app.ActiveWorkbook.Close()
+            self.app.ActiveWorkbook.Close(SaveChanges=0)
           
         def quit(self):
             """
             Quit Excel.
             """
-            return self.app.Quit()
+            self.app.Quit()
