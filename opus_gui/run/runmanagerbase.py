@@ -140,7 +140,7 @@ class ModelGuiElement(QWidget):
         # Bring up the XML file and grab the start year and end year
         fileNameInfo = QFileInfo(self.xml_path)
         fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
-        config = XMLConfiguration(str(fileNameAbsolute)).get_run_configuration('Eugene_baseline')
+        config = XMLConfiguration(str(fileNameAbsolute)).get_run_configuration(str(self.model.modeltorun))
         insert_auto_generated_cache_directory_if_needed(config)
         (self.start_year, self.end_year) = config['years']
 
@@ -427,9 +427,9 @@ class ModelGuiElement(QWidget):
         #    self.indicatorWidget.addLayout(self.indicatorVBoxLayout)
 
         self.indicatorComboBox = QComboBox()
-        self.tabWidget.addTab(self.indicatorWidget,"Diagnostics")
+        #self.tabWidget.addTab(self.indicatorWidget,"Diagnostics")
 
-        config = XMLConfiguration(str(self.xml_path)).get_run_configuration('Eugene_baseline')
+        config = XMLConfiguration(str(self.xml_path)).get_run_configuration(str(self.model.modeltorun))
         #    QComboBox.addItem(self.indicatorComboBox, QString("<Select Year>"), QVariant())
         years = range(config["years"][0],config["years"][1]+1)
         self.yearItems = []
