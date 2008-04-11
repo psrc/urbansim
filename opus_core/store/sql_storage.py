@@ -22,7 +22,7 @@ except ImportError:
     sqlalchemy = None
     
 try:
-    from sqlalchemy.databases.mysql import MSBigInteger, MSString
+    from sqlalchemy.databases.mysql import MSBigInteger, MSString, MSChar
 except:
     pass
     
@@ -219,6 +219,8 @@ class sql_storage(Storage):
             if isinstance(column_type, MSBigInteger):
                 return dtype('int64')
             if isinstance(column_type, MSString):
+                return dtype('S')
+            if isinstance(column_type, MSChar):
                 return dtype('S')
         
         except: pass        
