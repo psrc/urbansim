@@ -163,6 +163,7 @@
           <hbwavgtmda type="variable_definition" >hbwavgtmda = parcel.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_drive_alone)</hbwavgtmda>
           <is_pre_1940 type="variable_definition" >is_pre_1940 = parcel.aggregate(building.year_built * numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, 1),function=mean) &lt; 1940</is_pre_1940>
         </all_variables>
+        <!-- <_definition_ flags="hidden" type="string" >all_variables</_definition_>   -->
         <agriculture type="submodel" >
           <submodel_id type="integer" >1</submodel_id>
           <variables type="selectable_list" >
