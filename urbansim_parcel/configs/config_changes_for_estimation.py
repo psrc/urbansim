@@ -57,8 +57,8 @@ class ConfigChangesForEstimation(USConfigChangesForEstimation):
                                                             ]
                                                 }
                                 
-        self["home_based_job_choice_model"] = {'models': [
-                                {"home_based_job_choice_model": ["estimate"]}
+        self["work_at_home_choice_model"] = {'models': [
+                                {"work_at_home_choice_model": ["estimate"]}
                                                     ]
                                                 }
                                      

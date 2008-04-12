@@ -22,13 +22,13 @@ from opus_core.sampling_toolbox import probsample_noreplace
 from opus_core.misc import unique_values
 from opus_core.logger import logger
 
-class HomeBasedJobChoiceModel(ChoiceModel):
+class WorkAtHomeChoiceModel(ChoiceModel):
     """
     This model first predicts the probability of workers working at home, 
     then assigns them to one of the home-based jobs 
     """
-    model_name = "Home Based Job Choice Model"
-    model_short_name = "HBJCM"
+    model_name = "Work At Home Choice Model"
+    model_short_name = "WAHCM"
 
     def __init__(self, choice_set, filter=None, choice_attribute_name='work_at_home', location_id_name='urbansim_parcel.person.building_id', **kwargs):
         self.job_set = choice_set
@@ -61,12 +61,12 @@ class HomeBasedJobChoiceModel(ChoiceModel):
         self.job_set.modify_attribute(name=VariableName(self.location_id_name).get_alias(), 
                                       data=agent_set.get_attribute_by_index(self.location_id_name, assigned_worker_index),
                                       index=choice_set_index)
-        logger.log_status("%s workers chose home-based jobs, %s workers chose non-home-based jobs." % 
+        logger.log_status("%s workers chose to work at home, %s workers chose to work out of home." % 
                           (where(agent_set.get_attribute_by_index(self.choice_attribute_name, kwargs['agents_index']) == 1)[0].size,
-                           where(agent_set.get_attribute_by_index(self.choice_attribute_name, kwargs['agents_index']) == 0)[0].size))
-        logger.log_status("Total: %s workers have home-based jobs, %s workers have non-home-based jobs." % 
+                           where(agent_set.get_attribute_by_index(self.choice_attribute_name, kwargs['agents_index']) == 2)[0].size))
+        logger.log_status("Total: %s workers work at home, %s workers work out of home." % 
                           (where(agent_set.get_attribute(self.choice_attribute_name) == 1)[0].size,
-                           where(agent_set.get_attribute(self.choice_attribute_name) == 0)[0].size))
+                           where(agent_set.get_attribute(self.choice_attribute_name) == 2)[0].size))
         
     def prepare_for_run(self, 
                         specification_storage=None, 

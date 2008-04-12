@@ -388,9 +388,9 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                  "output": "(coefficients, dummy)"                     
                  },
              },
-         'home_based_job_choice_model': {
+         'work_at_home_choice_model': {
             'import': {
-                'urbansim_parcel.models.home_based_job_choice_model': 'HomeBasedJobChoiceModel'
+                'urbansim_parcel.models.work_at_home_choice_model': 'HomeBasedJobChoiceModel'
                 },
             'init': {
                 'arguments': {
@@ -403,9 +403,9 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                 "name": "prepare_for_run",
                 'arguments': {
                     'coefficients_storage': 'base_cache_storage',
-                    'coefficients_table': "'home_based_job_choice_model_coefficients'",
+                    'coefficients_table': "'work_at_home_choice_model_coefficients'",
                     'specification_storage': 'base_cache_storage',
-                    'specification_table': "'home_based_job_choice_model_specification'",
+                    'specification_table': "'work_at_home_choice_model_specification'",
                     'agent_set': 'person',
                     'agents_filter': "'urbansim_parcel.person.is_worker_without_job'",
                     'data_objects': 'datasets'

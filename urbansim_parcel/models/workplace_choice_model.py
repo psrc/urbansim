@@ -15,7 +15,7 @@
 from opus_core.datasets.dataset import Dataset
 from opus_core.resources import Resources
 from urbansim.models.agent_location_choice_model import AgentLocationChoiceModel
-from urbansim_parcel.models.home_based_job_choice_model import prepare_for_estimate
+from urbansim_parcel.models.work_at_home_choice_model import prepare_for_estimate
 from urbansim.estimation.estimator import get_specification_for_estimation
 from numpy import arange, where
 from opus_core.variables.variable_name import VariableName
