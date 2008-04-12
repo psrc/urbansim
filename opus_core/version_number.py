@@ -20,27 +20,25 @@ def version_number(package_name='opus_core'):
     The variable opus_core.__version__ is set to this string (and maybe later in 
     all Opus/UrbanSim packages).  For stable releases, the version is something like 
     '4.2.1', where 4 is the major release number (i.e. UrbanSim 4), 2 is the minor number, 
-    and 1 is the micro number.  For development versions, the version is something like 
-    '4.2.2-dev3216' where 3216 is the svn revision number for this version.  When this 
-    development version is released as a stable release, it will become just '4.2.2'.  
+    and 1 is the bugfix number.  For development versions, the version is something like 
+    '4.3-dev3216' where 3216 is the svn revision number for this version.  When this 
+    development version is first released as a stable release, it will become '4.3.0'.  
     The svn revision number is found using either the svnversion program (Mac/Linux) or 
     SubWCRev from TortoiseSVN (Windows) -- if the program isn't available or the code is 
     missing the svn information, the version for a development version will be e.g. 
-    '4.2.2-dev (revision number not available)'
+    '4.3-dev (revision number not available)'
     """
     
-    # edit the following constants to change the major, minor, and micro numbers,
-    # and to change from development to stable releases
-    major = 4
-    minor = 2
-    micro = 0
+    # edit the following constant to change the major, minor, and bugfix numbers,
+    # or to change from development to stable releases
+    version = '4.2'
     stable = False
+    # if this is a stable release, change version to include a bugfix number (e.g. '4.2.3'), and stable to True
     # ********* end of part to edit to change version number ********* 
     
-    first_part = "%d.%d.%d" % (major, minor, micro)
     if stable:
-        return first_part
-    # it's a development version -- try to find the svn revision number
+        return version
+    # it's a development version - try to find the svn revision number
     # default phrase for the revision -- override if we can find the real number
     revision = ' (revision number not available)'
     # There are various things that can go wrong with getting the revision number
@@ -77,5 +75,5 @@ def version_number(package_name='opus_core'):
                     revision= ns[-1]
     except:
         pass
-    return first_part + '-dev' + revision
+    return "%s-dev%s" % (version, revision)
     
