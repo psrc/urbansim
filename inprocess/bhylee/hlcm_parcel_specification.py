@@ -24,7 +24,7 @@ specification = {
 #             "A_ln_land_area = ln(psrc_parcel.building.land_area)",
 #             "A_ln_parcel_sf_per_unit = ln(urbansim_parcel.building.parcel_sqft_per_unit)",
 #             "A_ln_price_per_sqft = ln(urbansim_parcel.building.unit_price)",
-             "A_ln_price_per_unit = ln((urbansim_parcel.building.unit_price) * urbansim_parcel.building.building_sqft_per_unit)",
+#             "A_ln_price_per_unit = ln((urbansim_parcel.building.unit_price) * urbansim_parcel.building.building_sqft_per_unit)",
 #             "A_ln_residential_units = ln(psrc_parcel.building.residential_units)",
 #             "A_unit_price = urbansim_parcel.building.unit_price * urbansim_parcel.building.building_sqft_per_unit",
                           
@@ -39,7 +39,7 @@ specification = {
 #             "B_percent_high_income_households_within_walking_distance = building.disaggregate(psrc.parcel.percent_high_income_households_within_walking_distance)",
 #             "B_percent_low_income_households_within_walking_distance = building.disaggregate(psrc.parcel.percent_low_income_households_within_walking_distance)",
 #             "B_percent_med_income_households_within_walking_distance = building.disaggregate(psrc.parcel.percent_mid_income_households_within_walking_distance)",
-             "B_percent_young_households_within_walking_distance = building.disaggregate(psrc.parcel.percent_young_households_within_walking_distance)",
+#             "B_percent_young_households_within_walking_distance = building.disaggregate(psrc.parcel.percent_young_households_within_walking_distance)",
 #             "urbansim_parcel.household_x_building.ln_sampling_probability_for_bias_correction_mnl_vacant_residential_units",
 
 
@@ -53,11 +53,15 @@ specification = {
 #             "C_is_high_income_x_percent_high_income_households_within_walking_distance = urbansim.household.is_high_income * building.disaggregate(psrc.parcel.percent_high_income_households_within_walking_distance)",
 #             "C_is_high_income_x_ln_zonal_pop_den = urbansim.household.is_high_income * (ln(building.disaggregate(urbansim_parcel.zone.population_per_acre))).astype(float32)",
 #             "C_is_low_income_x_is_condo_residential = urbansim.household.is_low_income * urbansim.building.is_condo_residential",
-             "C_is_low_income_x_is_multi_family_residential = urbansim.household.is_low_income * urbansim.building.is_multi_family_residential",
+#             "C_is_low_income_x_is_multi_family_residential = urbansim.household.is_low_income * urbansim.building.is_multi_family_residential",
 #             "C_is_low_income_x_is_not_single_family_residential = urbansim.household.is_low_income * numpy.logical_not(urbansim.building.is_single_family_residential)",
 #             "C_is_low_income_x_ln_zonal_pop_den = urbansim.household.is_low_income * (ln(building.disaggregate(urbansim_parcel.zone.population_per_acre))).astype(float32)",
+#             "C_is_mid_income_x_ln_average_income_within_walking_distance = urbansim.household.is_mid_income * ln(building.disaggregate(psrc.parcel.average_income_within_walking_distance))",
              "C_is_single_person_x_is_not_single_family_residential = (household.persons < 2) * numpy.logical_not(urbansim.building.is_single_family_residential)",
-             "C_ln_income_less_price_per_unit = ln_bounded(household.income - (urbansim_parcel.building.unit_price/10.))", # * urbansim_parcel.building.building_sqft_per_unit
+#             "C_is_young_x_percent_young_households_within_walking_distance = urbansim.household.is_young * building.disaggregate(psrc.parcel.percent_young_households_within_walking_distance)",
+             "C_ln_income_x_is_condo_residential = ln(household.income) * urbansim.building.is_condo_residential",
+             "C_ln_income_x_is_multi_family_residential = ln(household.income) * urbansim.building.is_multi_family_residential",
+             "C_ln_income_less_price_per_unit = ln_bounded(household.income - ((urbansim_parcel.building.unit_price/10.) * urbansim_parcel.building.building_sqft_per_unit))", # 
 #             "C_ln_income_x_is_new_construction = ln(household.income) * (urbansim_parcel.building.age_masked < 2)",
 #             "C_ln_income_x_is_pre1945 = ln(household.income) * (urbansim_parcel.building.age_masked > 60)",
 #             "C_ln_income_x_ln_average_income_within_walking_distance = ln(household.income) * ln(building.disaggregate(psrc.parcel.average_income_within_walking_distance))",
@@ -70,13 +74,25 @@ specification = {
              
                           
 #        ACCESSIBILITY
+             
+#             "D_has_workers_x_ln_emp_30min_hbw_drive_alone = (household.workers > 0) * building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))",
+#             "D_is_single_person_x_generalized_cost_hbw_am_drive_alone_to_bellevue_cbd = (household.persons==1) * building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_bellevue_cbd)",
+#             "D_generalized_cost_hbw_am_drive_alone_to_cbd = building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd)",
+             "D_generalized_cost_hbw_am_drive_alone_to_seattle_cbd = building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_seattle_cbd)",
+#             "D_logsum_income_break1_x_trip_weighted_average_logsum_hbw_am_income_1 = (psrc.household.logsum_income_break==1) * building.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_1)",
+#             "D_logsum_income_break2_x_trip_weighted_average_logsum_hbw_am_income_2 = (psrc.household.logsum_income_break==2) * building.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_2)",
+#             "D_logsum_income_break3_x_trip_weighted_average_logsum_hbw_am_income_3 = (psrc.household.logsum_income_break==3) * building.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_3)",
+#             "D_logsum_income_break4_x_trip_weighted_average_logsum_hbw_am_income_4 = (psrc.household.logsum_income_break==4) * building.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_4)",
 #             "D_ln_employment_within_30_minutes_travel_time_hbw_am_drive_alone = ln(urbansim.building.ln_employment_within_30_minutes_travel_time_hbw_am_drive_alone)",
 #             "D_ln_employment_within_30_minutes_travel_time_hbw_am_transit_walk = ln(urbansim.building.ln_employment_within_30_minutes_travel_time_hbw_am_transit_walk)",
 #             "D_ln_generalized_cost_weighted_access_to_employment_hbw_am_drive_alone = ln(building.disaggregate(psrc.zone.generalized_cost_weighted_access_to_employment_hbw_am_drive_alone))",
 #             "D_ln_generalized_cost_weighted_access_to_employment_hbw_am_transit_walk = ln(building.disaggregate(psrc.zone.generalized_cost_weighted_access_to_employment_hbw_am_transit_walk))",
 #             "D_ln_trip_weighted_average_time_hbw_from_home_am_drive_alone = ln(building.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_drive_alone))",
 #             "D_ln_trip_weighted_average_time_hbw_from_home_am_transit_walk = ln(building.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_transit_walk))",
-
+#             "D_trip_weighted_average_time_hbw_from_home_am_drive_alone = building.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_drive_alone)",
+#             "D_trip_weighted_average_time_hbw_from_home_am_transit_walk = building.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_transit_walk)",
+#             "D_trip_weighted_average_logsum_hbw_am = ((psrc.household.logsum_income_break==1) * building.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_1)) + ((psrc.household.logsum_income_break==2) * building.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_2)) + ((psrc.household.logsum_income_break==3) * building.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_3)) + ((psrc.household.logsum_income_break==4) * building.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_4))",
+#             "D_workers_x_ln_emp_30min_hbw_drive_alone = household.workers * building.disaggregate(ln_bounded(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))",
             ],
           
     }

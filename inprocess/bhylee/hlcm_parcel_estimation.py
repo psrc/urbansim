@@ -59,12 +59,14 @@ if __name__ == '__main__':
     from urbansim.estimation.estimator import update_controller_by_specification_from_module
     from opus_core.simulation_state import SimulationState
     from opus_core.store.attribute_cache import AttributeCache
-    
+
+    run_configuration = HlcmParcelEstimation()
+    run_configuration.update_config()
     run_configuration = update_controller_by_specification_from_module(
                             run_configuration, "household_location_choice_model",
                             "inprocess.bhylee.hlcm_parcel_specification")
     run_configuration.replace(my_configuration)
-    estimator = Estimator(run_configuration, save_estimation_results=False)
+    er = Estimator(run_configuration, save_estimation_results=False)
     
-    estimator.estimate()
-#    estimator.reestimate("hlcm_parcel_specification")
+    er.estimate()
+#    er.reestimate("hlcm_parcel_specification")
