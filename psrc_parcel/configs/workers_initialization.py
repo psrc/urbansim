@@ -21,7 +21,7 @@ class WorkersInitialization(Baseline):
 
         config_changes = {
             'description':'assigning jobs to workers',
-            'models_in_year':{2001:[ "home_based_job_choice_model",],
+            'models_in_year':{2001:[ "work_at_home_choice_model",],
                               2002:[ "workplace_choice_model_for_resident" ] },
             'years': (2001,2002),
             'datasets_to_cache_after_each_model':['person'],

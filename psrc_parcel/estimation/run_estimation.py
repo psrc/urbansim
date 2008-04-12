@@ -32,7 +32,7 @@ models = {
           'elcm-home_based': ['employment_location_choice_model', 'psrc_parcel.estimation.elcm_specification', 'home_based'],
           'repm': ['real_estate_price_model', 'psrc_parcel.estimation.repm_specification', None],
           'wcm' : ['workplace_choice_model_for_resident', 'wcm_specification', None],
-          'hbjcm': ['home_based_job_choice_model', 'hbjcm_specification', None]
+          'wahcm': ['work_at_home_choice_model', 'wahcm_specification', None]
           }
 
 if __name__ == '__main__':
