@@ -644,6 +644,9 @@
         <parcel type="dictionary" >
           <package_name type="string" >urbansim_parcel</package_name>
         </parcel>
+        <person type="dictionary" >
+          <package_name type="string" >urbansim_parcel</package_name>
+        </person>
         <development_template type="dictionary" >
           <package_name type="string" >urbansim_parcel</package_name>
         </development_template>
