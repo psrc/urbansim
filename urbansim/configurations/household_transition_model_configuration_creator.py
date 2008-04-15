@@ -20,9 +20,11 @@ class HouseholdTransitionModelConfigurationCreator(object):
     
     def __init__(self,
                  debuglevel = 'debuglevel',
-                 household_set = 'household'):
+                 household_set = 'household',
+                 location_id_name = 'grid_id'):
         self.debuglevel = debuglevel
         self.household_set = household_set
+        self.location_id_name = location_id_name
         
     def execute(self):
         # Names of intermediate objects used to get data between steps
@@ -35,7 +37,8 @@ class HouseholdTransitionModelConfigurationCreator(object):
                 'urbansim.models.%s' % self._model_name: 'HouseholdTransitionModel'
                 },
             'init': {
-                'arguments': {'debuglevel': self.debuglevel},
+                'arguments': {'debuglevel': self.debuglevel,
+                              'location_id_name': self.location_id_name},
                 'name': 'HouseholdTransitionModel'
                 },
             'prepare_for_run': {
@@ -72,7 +75,8 @@ class TestHouseholdTransitionModelConfigurationCreator(opus_unittest.OpusTestCas
                 'urbansim.models.household_transition_model': 'HouseholdTransitionModel'
                 },
             'init': {
-                'arguments': {'debuglevel': 'debuglevel'},
+                'arguments': {'debuglevel': 'debuglevel',
+                              'location_id_name': 'grid_id'},
                 'name': 'HouseholdTransitionModel'
                 },
             'prepare_for_run': {
@@ -97,6 +101,7 @@ class TestHouseholdTransitionModelConfigurationCreator(opus_unittest.OpusTestCas
         creator = HouseholdTransitionModelConfigurationCreator(
             debuglevel = 9999,
             household_set = 'household_set',
+            location_id_name='zone_id'
             )
         
         expected = Configuration({
@@ -104,7 +109,8 @@ class TestHouseholdTransitionModelConfigurationCreator(opus_unittest.OpusTestCas
                 'urbansim.models.household_transition_model': 'HouseholdTransitionModel'
                 },
             'init': {
-                'arguments': {'debuglevel': 9999},
+                'arguments': {'debuglevel': 9999,
+                              'location_id_name': 'zone_id'},
                 'name': 'HouseholdTransitionModel'
                 },
             'prepare_for_run': {
