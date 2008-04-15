@@ -143,14 +143,21 @@ class RegressionModel(ChunkModel):
                         resources=self.run_config).astype(outcome.dtype)
         return outcome
 
-    def correct_infinite_values(self, dataset, outcome_attribute_name, maxvalue=1e+38):
+    def correct_infinite_values(self, dataset, outcome_attribute_name, maxvalue=1e+38, clip_all_larger_values=False):
         """Check if the model resulted in infinite values. If yes,
-        print warning and clip the values to maxvalue"""
+        print warning and clip the values to maxvalue. 
+        If clip_all_larger_values is True, all values larger than maxvalue are clip to maxvalue.
+        """
         infidx = where(dataset.get_attribute(outcome_attribute_name) == inf)[0]
 
         if infidx.size > 0:
             logger.log_warning("Infinite values in %s. Clipped to %s." % (outcome_attribute_name, maxvalue))
             dataset.set_values_of_one_attribute(outcome_attribute_name, maxvalue, infidx)
+        if clip_all_larger_values:
+            idx = where(dataset.get_attribute(outcome_attribute_name) > maxvalue)[0]
+            if idx.size > 0:
+                logger.log_warning("Values in %s larger than %s. Clipped to %s." % (outcome_attribute_name, maxvalue, maxvalue))
+                dataset.set_values_of_one_attribute(outcome_attribute_name, maxvalue, idx)
             
     def estimate(self, specification, dataset, outcome_attribute, index = None, procedure=None, data_objects=None,
                         estimate_config=None,  debuglevel=0):

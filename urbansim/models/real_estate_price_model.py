@@ -71,7 +71,7 @@ class RealEstatePriceModel(RegressionModelWithAdditionInitialResiduals):
             values = zeros(dataset.size(), float32)
         values[index] = outcome
         dataset.add_primary_attribute(name=outcome_attribute_name, data=values)
-        self.correct_infinite_values(dataset, outcome_attribute_name)
+        self.correct_infinite_values(dataset, outcome_attribute_name, clip_all_larger_values=True)
         return outcome
 
     def estimate(self, specification, dataset, outcome_attribute="unit_price", index = None,
