@@ -38,7 +38,7 @@ class HouseholdTransitionModelConfigurationCreator(object):
                 },
             'init': {
                 'arguments': {'debuglevel': self.debuglevel,
-                              'location_id_name': self.location_id_name},
+                              'location_id_name': "'%s'" % self.location_id_name},
                 'name': 'HouseholdTransitionModel'
                 },
             'prepare_for_run': {
@@ -76,7 +76,7 @@ class TestHouseholdTransitionModelConfigurationCreator(opus_unittest.OpusTestCas
                 },
             'init': {
                 'arguments': {'debuglevel': 'debuglevel',
-                              'location_id_name': 'grid_id'},
+                              'location_id_name': "'grid_id'"},
                 'name': 'HouseholdTransitionModel'
                 },
             'prepare_for_run': {
@@ -110,7 +110,7 @@ class TestHouseholdTransitionModelConfigurationCreator(opus_unittest.OpusTestCas
                 },
             'init': {
                 'arguments': {'debuglevel': 9999,
-                              'location_id_name': 'zone_id'},
+                              'location_id_name': "'zone_id'"},
                 'name': 'HouseholdTransitionModel'
                 },
             'prepare_for_run': {

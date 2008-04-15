@@ -46,7 +46,7 @@ class TestHouseholdTransitionModelConfigurationCreator(opus_unittest.OpusTestCas
                 },
             'init': {
                 'arguments': {'debuglevel': 'debuglevel',
-                              'location_id_name': 'grid_id'},
+                              'location_id_name': "'grid_id'"},
                 'name': 'RegionalHouseholdTransitionModel'
                 },
             'prepare_for_run': {
