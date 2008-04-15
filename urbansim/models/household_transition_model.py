@@ -31,10 +31,10 @@ class HouseholdTransitionModel(Model):
     """
 
     model_name = "Household Transition Model"
-    location_id_name = "grid_id"
 
-    def __init__(self, debuglevel=0):
+    def __init__(self, location_id_name="grid_id", debuglevel=0):
         self.debug = DebugPrinter(debuglevel)
+        self.location_id_name = location_id_name
 
     def run(self, year, household_set, control_totals, characteristics, resources=None):
         self._do_initialize_for_run(household_set)

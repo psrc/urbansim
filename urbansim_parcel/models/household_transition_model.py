@@ -22,7 +22,9 @@ class HouseholdTransitionModel(USHouseholdTransitionModel):
     """Creates and removes households from household_set. Also updates the persons table."""
 
     model_name = "Household Transition Model with Persons Update"
-    location_id_name = "building_id"
+
+    def __init__(self, location_id_name="building_id", **kwargs):
+        USHouseholdTransitionModel.__init__(self, location_id_name=location_id_name, **kwargs)
 
     def run(self, year, household_set, person_set, control_totals, characteristics, resources=None):
         self.person_set = person_set

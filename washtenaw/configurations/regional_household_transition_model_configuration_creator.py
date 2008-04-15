@@ -45,7 +45,8 @@ class TestHouseholdTransitionModelConfigurationCreator(opus_unittest.OpusTestCas
                 'washtenaw.models.regional_household_transition_model': 'RegionalHouseholdTransitionModel'
                 },
             'init': {
-                'arguments': {'debuglevel': 'debuglevel'},
+                'arguments': {'debuglevel': 'debuglevel',
+                              'location_id_name': 'grid_id'},
                 'name': 'RegionalHouseholdTransitionModel'
                 },
             'prepare_for_run': {
