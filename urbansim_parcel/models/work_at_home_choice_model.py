@@ -52,8 +52,8 @@ class WorkAtHomeChoiceModel(ChoiceModel):
             assigned_worker_index = sample_noreplace(at_home_worker_index, choice_set_index.size)
             assigned_choice_index = choice_set_index
         else:
-            assigned_worker_index = at_home_work_index
-            assigned_choice_index=sample_noreplace(choice_set_index, at_home_work_index.size)
+            assigned_worker_index = at_home_worker_index
+            assigned_choice_index=sample_noreplace(choice_set_index, at_home_worker_index.size)
         
         ## each worker can only be assigned to 1 job
         #assert assigned_worker_index.size == unique_values(assigned_worker_index).size
