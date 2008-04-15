@@ -492,7 +492,7 @@
         </mixed_use>
       </real_estate_price_model>
       <estimation_config type="dictionary">
-        <cache_directory parser_action="prefix_with_opus_data_path" type="directory">seattle/base_year_data</cache_directory>
+        <cache_directory parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/base_year_data</cache_directory>
         <output_configuration type="class">
           <Class_name flags="hidden" type="string">DatabaseConfiguration</Class_name>
           <Class_path flags="hidden" type="string">opus_core.database_management.database_configuration</Class_path>
@@ -564,16 +564,16 @@
         <database_connection type="db_connection_hook">urbansim_db1</database_connection>
         <database_name type="string">seattle_2000_parcel_baseyear_data</database_name>
       </baseyear_database_configuration>
-      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">seattle/base_year_data</cache_directory>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
         <Class_name flags="hidden" type="string">CreatingBaseyearCacheConfiguration</Class_name>
         <Class_path flags="hidden" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
-        <cache_directory_root parser_action="prefix_with_opus_data_path" type="directory">seattle/runs</cache_directory_root>
+        <cache_directory_root parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/runs</cache_directory_root>
         <cache_from_mysql choices="True|False" type="boolean">False</cache_from_mysql>
         <baseyear_cache type="class">
           <Class_name flags="hidden" type="string">BaseyearCacheConfiguration</Class_name>
           <Class_path flags="hidden" type="string">opus_core.configurations.baseyear_cache_configuration</Class_path>
-          <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory">seattle/base_year_data</existing_cache_to_copy>
+          <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/base_year_data</existing_cache_to_copy>
         </baseyear_cache>
         <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
         <tables_to_cache type="selectable_list">
@@ -682,12 +682,6 @@
       <my_indicators append_to="True" type="indicator_library" />
     </Indicator_libraries>
     <Simulation_runs setexpanded="True" type="all_source_data">
-      <Seattle_baseline.run_5993.2008_04_15_08_23 type="source_data"><run_name type="string">run_5993.2008_04_15_08_23</run_name>
-        <scenario_name type="string">Seattle_baseline</scenario_name>
-        <cache_directory type="string">e:\opus_data\seattle/runs\run_5993.2008_04_15_08_23</cache_directory>
-        <start_year type="integer">2001</start_year>
-        <end_year type="integer">2002</end_year>
-      </Seattle_baseline.run_5993.2008_04_15_08_23>
     </Simulation_runs>
     <Results setexpanded="True" type="selectable_list" />
   </results_manager>
