@@ -172,7 +172,7 @@
         <database_connection type="db_connection_hook">urbansim_db1</database_connection>
         <database_name type="string">eugene_1980_baseyear</database_name>
       </baseyear_database_configuration>
-      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">eugene/eugene_1980_baseyear_cache</cache_directory>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">eugene/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
         <Class_name flags="hidden" type="string">CreatingBaseyearCacheConfiguration</Class_name>
         <Class_path flags="hidden" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
@@ -181,7 +181,7 @@
         <baseyear_cache type="class">
           <Class_name flags="hidden" type="string">BaseyearCacheConfiguration</Class_name>
           <Class_path flags="hidden" type="string">opus_core.configurations.baseyear_cache_configuration</Class_path>
-          <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory">eugene/eugene_1980_baseyear_cache</existing_cache_to_copy>
+          <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory">eugene/base_year_data</existing_cache_to_copy>
         </baseyear_cache>
         <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
         <tables_to_cache type="selectable_list">
@@ -312,10 +312,7 @@
         </residential_units>
       </my_indicators>
     </Indicator_libraries>
-    <Simulation_runs setexpanded="True" type="all_source_data">
-
-    </Simulation_runs>
-    <Results setexpanded="True" type="selectable_list">
-    </Results>
+    <Simulation_runs setexpanded="True" type="all_source_data" />
+    <Results setexpanded="True" type="selectable_list" />
   </results_manager>
 </opus_project>
