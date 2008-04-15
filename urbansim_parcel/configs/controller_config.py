@@ -312,19 +312,19 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
 #                          }
 #                },
 #            },
-#         'job_person_consistency_keeper':{
-#             "import": {"urbansim_parcel.models.persons_consistency_keeper_model":"PersonDatasetConsistencyKeeperModel"},
-#             "init": { 
-#                 "name": "PersonDatasetConsistencyKeeperModel",
-#                 "arguments": {},
-#                 },                                  
-#             "run": {
-#                 "arguments": {"job_set": "job",
-#                               "person_set":"person",
-#                               "expand_person_set":False,
-#                           }
-#                 },
-#             },
+         'job_person_consistency_keeper':{
+             "import": {"urbansim_parcel.models.persons_consistency_keeper_model":"PersonDatasetConsistencyKeeperModel"},
+             "init": { 
+                 "name": "PersonDatasetConsistencyKeeperModel",
+                 "arguments": {},
+                 },                                  
+             "run": {
+                 "arguments": {"job_set": "job",
+                               "person_set":"person",
+                               "expand_person_set":False,
+                           }
+                 },
+             },
              
          'workplace_choice_model_for_resident': {
              "import": {"urbansim_parcel.models.workplace_choice_model":"WorkplaceChoiceModel"},
@@ -390,14 +390,14 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
              },
          'work_at_home_choice_model': {
             'import': {
-                'urbansim_parcel.models.work_at_home_choice_model': 'HomeBasedJobChoiceModel'
+                'urbansim_parcel.models.work_at_home_choice_model': 'WorkAtHomeChoiceModel'
                 },
             'init': {
                 'arguments': {
                     'choice_set': 'job',
                     'filter': "'urbansim_parcel.job.is_untaken_home_based_job'",
                     },
-                'name': 'HomeBasedJobChoiceModel'
+                'name': 'WorkAtHomeChoiceModel'
                 },
             'prepare_for_run': {
                 "name": "prepare_for_run",
