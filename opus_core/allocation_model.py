@@ -57,6 +57,9 @@ class AllocationModel(Model):
         
         # create subset of control totals for the current year
         year_index = where(control_totals.get_attribute(year_attribute) == current_year)[0]
+        if year_index.size <= 0:
+            logger.log_warning("No control total for year %s" % current_year)
+            return None
         control_totals_for_this_year = DatasetSubset(control_totals, year_index)
         
         # check capacity
