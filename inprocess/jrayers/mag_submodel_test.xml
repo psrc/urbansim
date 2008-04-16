@@ -1,0 +1,49 @@
+<opus_project>
+  <parent type="file">seattle_parcel/configs/seattle_parcel.xml</parent>
+  <model_manager>
+    <model_system type="dictionary">
+      <allocation_model_hotels type="dictionary">
+        <import type="dictionary">
+          <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">AllocationModel</name>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <dataset type="string" />
+            <control_totals type="string" />
+            <excel_path type="string">c:\\tmp\\TransientModel.xls</excel_path>
+            <excel_data_info type="string">{'year':''d22:d32', 'persons':'k22:k32'}</excel_data_info>
+            <esri_storage_location type="string">c:\\tmp\\tmp.gdb</esri_storage_location>
+            <dataset_name type="string">hotel</dataset_name>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+          <output flags="hidden" type="string">(aux_dataset, aux_control_totals)</output>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <dataset type="string">aux_dataset</dataset>
+            <outcome_attribute type="string">persons</outcome_attribute>
+            <weight_attribute type="string">rooms</weight_attribute>
+            <control_totals type="string">aux_control_totals</control_totals>
+            <current_year type="integer">2000</current_year>
+            <control_total_attribute type="string">persons</control_total_attribute>
+            <year_attribute type="string" />
+            <capacity_attribute type="string" />
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+      </allocation_model_hotels>
+    </model_system>
+  </model_manager>
+  <scenario_manager>
+    <hotels_test executable="True" type="scenario">
+      <parent type="scenario_name">Seattle_baseline</parent>
+      <models_to_run config_name="models" type="selectable_list">
+        <allocation_model_hotels choices="Run|Skip" type="model">Run</allocation_model_hotels>
+      </models_to_run>
+    </hotels_test>
+  </scenario_manager>
+</opus_project>
