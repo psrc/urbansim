@@ -72,10 +72,10 @@ class ModelSystem(object):
             logger.start_block('Start simulation run')
             
             try:
-                models = resources.get("models", None)
+                models = resources.get("models", [])
                 models_in_years = resources.get("models_in_year",  {})
     
-                if (not models) or (len(models) <=0):
+                if (len(models) <=0) and (len(models_in_years.keys()) <= 0):
                     logger.log_status("No models specified. Nothing to be run.")
                     return
     
