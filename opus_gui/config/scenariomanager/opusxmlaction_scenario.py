@@ -19,7 +19,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
 from opus_gui.run.model.opusrunmodel import OpusModel
-from opus_gui.config.scenariomanager.cloneinherited import CloneInheritedGui
+from opus_gui.config.managerbase.cloneinherited import CloneInheritedGui
 
 class OpusXMLAction_Scenario(object):
     def __init__(self, parent):
