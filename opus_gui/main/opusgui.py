@@ -60,6 +60,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.application_title = application_title_dict['application_title']
         self.setWindowTitle(self.application_title)
 
+        self.splitter.setSizes([400,500])
+
         # Play with the project and config load/save
         QObject.connect(self.actionOpen_Project_2, SIGNAL("triggered()"), self.openConfig)
         QObject.connect(self.actionSave_Project_2, SIGNAL("triggered()"), self.saveConfig)
