@@ -22,6 +22,7 @@ from opus_gui.run.script.opusrunscript import *
 import opus_gui.util.documentationbase
 from opus_gui.config.datamanager.configurescript import ConfigureScriptGui
 from opus_gui.config.datamanager.newdbconnection import NewDbConnectionGui
+from opus_gui.config.managerbase.cloneinherited import CloneInheritedGui
 
 class OpusXMLAction_DataDB(object):
     def __init__(self, parent):
@@ -64,6 +65,13 @@ class OpusXMLAction_DataDB(object):
         QObject.connect(self.actPlaceHolder,
                         SIGNAL("triggered()"),
                         self.placeHolderAction)
+
+        self.actCloneNode = QAction(self.applicationIcon,
+                                    "Clone Down To Child",
+                                    self.xmlTreeObject.parent)
+        QObject.connect(self.actCloneNode,
+                        SIGNAL("triggered()"),
+                        self.cloneNodeAction)
 
     def newDBConnection(self):
         print "newDBConnection pressed"
@@ -118,6 +126,13 @@ class OpusXMLAction_DataDB(object):
     def placeHolderAction(self):
         print "Placeholder pressed"
 
+    def cloneNodeAction(self):
+        print "Clone Node pressed..."
+        clone = self.currentIndex.internalPointer().domNode.cloneNode()
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        window = CloneInheritedGui(self,flags,self.xmlTreeObject.model,clone)
+        window.show()
+
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
                self.xmlTreeObject.view.indexAt(position).column() == 0:
@@ -132,7 +147,13 @@ class OpusXMLAction_DataDB(object):
                 domElement = domNode.toElement()
                 if domElement.isNull():
                     return
-                if domElement.attribute(QString("type")) == QString("database_library"):
+                if domElement.hasAttribute(QString("inherited")) and \
+                       domElement.hasAttribute(QString("cloneable")) and \
+                       domElement.attribute(QString("cloneable")) == QString("True"):
+                    self.menu = QMenu(self.xmlTreeObject.parent)
+                    self.menu.addAction(self.actCloneNode)
+                    self.menu.exec_(QCursor.pos())
+                elif domElement.attribute(QString("type")) == QString("database_library"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actNewDBConnection)
                     self.menu.exec_(QCursor.pos())

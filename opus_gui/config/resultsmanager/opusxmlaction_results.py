@@ -18,10 +18,12 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
+from opus_gui.config.managerbase.cloneinherited import CloneInheritedGui
 
 class OpusXMLAction_Results(object):
     def __init__(self, parent):
         self.parent = parent
+        self.mainwindow = parent.mainwindow
         self.xmlTreeObject = parent.xmlTreeObject
 
         self.currentColumn = None
@@ -83,6 +85,14 @@ class OpusXMLAction_Results(object):
 
         self.actViewDocumentation = QAction(self.applicationIcon, "View documentation", self.xmlTreeObject.parent)
         QObject.connect(self.actViewDocumentation, SIGNAL("triggered()"), self.viewDocumentation)
+
+        self.actCloneNode = QAction(self.applicationIcon,
+                                    "Clone Down To Child",
+                                    self.xmlTreeObject.parent)
+        QObject.connect(self.actCloneNode,
+                        SIGNAL("triggered()"),
+                        self.cloneNodeAction)
+
 
     def addNewIndicator(self):
         print "addNewIndicator pressed with column = %s and item = %s" % \
@@ -185,6 +195,13 @@ class OpusXMLAction_Results(object):
                                 "Warning",
                                 "Please save changes to project before generating results")
 
+    def cloneNodeAction(self):
+        print "Clone Node pressed..."
+        clone = self.currentIndex.internalPointer().domNode.cloneNode()
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        window = CloneInheritedGui(self,flags,self.xmlTreeObject.model,clone)
+        window.show()
+
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
                self.xmlTreeObject.view.indexAt(position).column() == 0:
@@ -199,7 +216,13 @@ class OpusXMLAction_Results(object):
                 domElement = domNode.toElement()
                 if domElement.isNull():
                     return
-                if domElement.attribute(QString("type")) == QString("indicator_library") and \
+                if domElement.hasAttribute(QString("inherited")) and \
+                       domElement.hasAttribute(QString("cloneable")) and \
+                       domElement.attribute(QString("cloneable")) == QString("True"):
+                    self.menu = QMenu(self.xmlTreeObject.parent)
+                    self.menu.addAction(self.actCloneNode)
+                    self.menu.exec_(QCursor.pos())
+                elif domElement.attribute(QString("type")) == QString("indicator_library") and \
                    domElement.attribute(QString("append_to")) == QString("True"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actAddNewIndicator)

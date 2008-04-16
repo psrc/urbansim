@@ -19,11 +19,13 @@ from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
 from opus_gui.run.estimation.opusrunestimation import OpusEstimation
+from opus_gui.config.managerbase.cloneinherited import CloneInheritedGui
 
 
 class OpusXMLAction_Model(object):
     def __init__(self, parent):
         self.parent = parent
+        self.mainwindow = parent.mainwindow
         self.xmlTreeObject = parent.xmlTreeObject
 
         self.currentColumn = None
@@ -45,6 +47,13 @@ class OpusXMLAction_Model(object):
                         SIGNAL("triggered()"),
                         self.runEstimationAction)
 
+        self.actCloneNode = QAction(self.applicationIcon,
+                                    "Clone Down To Child",
+                                    self.xmlTreeObject.parent)
+        QObject.connect(self.actCloneNode,
+                        SIGNAL("triggered()"),
+                        self.cloneNodeAction)
+
     def placeHolderAction(self):
         #print "placeHolderAction pressed with column = %s and item = %s" % \
         #      (self.currentColumn,
@@ -64,6 +73,13 @@ class OpusXMLAction_Model(object):
                                 "Warning",
                                 "Save changes to project before running estimation")
 
+    def cloneNodeAction(self):
+        print "Clone Node pressed..."
+        clone = self.currentIndex.internalPointer().domNode.cloneNode()
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        window = CloneInheritedGui(self,flags,self.xmlTreeObject.model,clone)
+        window.show()
+
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
                self.xmlTreeObject.view.indexAt(position).column() == 0:
@@ -78,7 +94,13 @@ class OpusXMLAction_Model(object):
                 domElement = domNode.toElement()
                 if domElement.isNull():
                     return
-                if domElement.tagName() == QString("models_to_estimate"):
+                if domElement.hasAttribute(QString("inherited")) and \
+                       domElement.hasAttribute(QString("cloneable")) and \
+                       domElement.attribute(QString("cloneable")) == QString("True"):
+                    self.menu = QMenu(self.xmlTreeObject.parent)
+                    self.menu.addAction(self.actCloneNode)
+                    self.menu.exec_(QCursor.pos())
+                elif domElement.tagName() == QString("models_to_estimate"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actRunEstimation)
                     self.menu.exec_(QCursor.pos())

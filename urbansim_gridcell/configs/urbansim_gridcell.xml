@@ -13,7 +13,7 @@
   </project_wide_configurations>
   <model_manager>
     <default_model_configurations type="dictionary">
-      <development_project_types parser_action="execute" type="class">
+      <development_project_types parser_action="execute" type="class" cloneable="True">
         <Class_name flags="hidden" type="string">DevelopmentProjectTypesConfigurationCreator</Class_name>
         <Class_path flags="hidden" type="string">urbansim.configurations.development_project_types_configuration_creator</Class_path>
         <commercial type="class">

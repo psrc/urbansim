@@ -137,6 +137,10 @@
       <package_order_exceptions type="dictionary" />
     </dataset_pool_configuration>
   </project_wide_configurations>
+  <model_manager>
+    <test_model_config type="string">
+    </test_model_config>
+  </model_manager>
   <scenario_manager>
     <Eugene_baseline executable="True" setexpanded="True" type="scenario">
       <parent type="scenario_name">default_scenario</parent>
