@@ -281,6 +281,8 @@ class XMLConfiguration(object):
             return self._convert_custom_type_to_data(node, "Skip")
         elif type_name=='variable':
             return self._convert_custom_type_to_data(node, "Skip")
+        elif type_name=='python_code':
+            return eval(node.text)
         else:
             raise ValueError, 'unknown type: %s' % type_name
             
