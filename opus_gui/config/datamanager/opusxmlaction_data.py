@@ -93,7 +93,7 @@ class OpusXMLAction_Data(object):
                         SIGNAL("triggered()"),
                         self.openDocumentation)
 
-        self.actRemoveNode = QAction(self.calendarIcon,
+        self.actRemoveNode = QAction(self.removeIcon,
                                      "Remove Node",
                                      self.xmlTreeObject.parent)
         QObject.connect(self.actRemoveNode,
@@ -315,11 +315,14 @@ class OpusXMLAction_Data(object):
                     self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("script_file"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
-                    self.menu.addAction(self.actNewConfig)
                     self.menu.addAction(self.actExecScriptFile)
+                    self.menu.addSeparator()
+                    self.menu.addAction(self.actNewConfig)
                     self.menu.addAction(self.actCloneScript)
+                    self.menu.addSeparator()
                     self.menu.addAction(self.actMoveNodeUp)
                     self.menu.addAction(self.actMoveNodeDown)
+                    self.menu.addSeparator()
                     self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("script_library"):
@@ -332,25 +335,31 @@ class OpusXMLAction_Data(object):
                     self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("script_batch"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
-                    self.menu.addAction(self.actNewConfig)
-                    self.menu.addAction(self.actCloneBatch)
-                    self.menu.addAction(self.actMoveNodeUp)
-                    self.menu.addAction(self.actMoveNodeDown)
-                    self.menu.addAction(self.actRemoveNode)
                     #jesse testing
                     self.menu.addAction(self.actExecBatch)
+                    self.menu.addSeparator()
+                    self.menu.addAction(self.actNewConfig)
+                    self.menu.addAction(self.actCloneBatch)
+                    self.menu.addSeparator()
+                    self.menu.addAction(self.actMoveNodeUp)
+                    self.menu.addAction(self.actMoveNodeDown)
+                    self.menu.addSeparator()
+                    self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("documentation_path"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actOpenDocumentation)
+                    self.menu.addSeparator()
                     self.menu.addAction(self.actCloneNode)
+                    self.menu.addSeparator()
                     self.menu.addAction(self.actMoveNodeUp)
                     self.menu.addAction(self.actMoveNodeDown)
+                    self.menu.addSeparator()
                     self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
                 else:
                     self.menu = QMenu(self.xmlTreeObject.parent)
-                    self.menu.addAction(self.actPlaceHolder)
+                    self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
         return
 

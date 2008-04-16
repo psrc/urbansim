@@ -31,6 +31,7 @@ class OpusXMLAction_Model(object):
         self.currentColumn = None
         self.currentIndex = None
 
+        self.removeIcon = QIcon(":/Images/Images/delete.png")
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
 
         self.actPlaceHolder = QAction(self.applicationIcon,
@@ -46,6 +47,13 @@ class OpusXMLAction_Model(object):
         QObject.connect(self.actRunEstimation,
                         SIGNAL("triggered()"),
                         self.runEstimationAction)
+
+        self.actRemoveNode = QAction(self.removeIcon,
+                                     "Remove Node",
+                                     self.xmlTreeObject.parent)
+        QObject.connect(self.actRemoveNode,
+                        SIGNAL("triggered()"),
+                        self.removeNode)
 
         self.actCloneNode = QAction(self.applicationIcon,
                                     "Clone Down To Child",
@@ -72,6 +80,12 @@ class OpusXMLAction_Model(object):
             QMessageBox.warning(self.xmlTreeObject.parent,
                                 "Warning",
                                 "Save changes to project before running estimation")
+
+    def removeNode(self):
+        #print "Remove Node Pressed"
+        self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
+                                            self.currentIndex.model().parent(self.currentIndex))
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def cloneNodeAction(self):
         print "Clone Node pressed..."
@@ -103,10 +117,12 @@ class OpusXMLAction_Model(object):
                 elif domElement.tagName() == QString("models_to_estimate"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actRunEstimation)
+                    self.menu.addSeparator()
+                    self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
                 else:
                     self.menu = QMenu(self.xmlTreeObject.parent)
-                    self.menu.addAction(self.actPlaceHolder)
+                    self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
         return
 

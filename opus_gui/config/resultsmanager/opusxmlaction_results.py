@@ -86,6 +86,13 @@ class OpusXMLAction_Results(object):
         self.actViewDocumentation = QAction(self.applicationIcon, "View documentation", self.xmlTreeObject.parent)
         QObject.connect(self.actViewDocumentation, SIGNAL("triggered()"), self.viewDocumentation)
 
+        self.actRemoveNode = QAction(self.removeIcon,
+                                     "Remove Node",
+                                     self.xmlTreeObject.parent)
+        QObject.connect(self.actRemoveNode,
+                        SIGNAL("triggered()"),
+                        self.removeNode)
+
         self.actCloneNode = QAction(self.applicationIcon,
                                     "Clone Down To Child",
                                     self.xmlTreeObject.parent)
@@ -195,6 +202,12 @@ class OpusXMLAction_Results(object):
                                 "Warning",
                                 "Please save changes to project before generating results")
 
+    def removeNode(self):
+        #print "Remove Node Pressed"
+        self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
+                                            self.currentIndex.model().parent(self.currentIndex))
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
     def cloneNodeAction(self):
         print "Clone Node pressed..."
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
@@ -226,37 +239,41 @@ class OpusXMLAction_Results(object):
                    domElement.attribute(QString("append_to")) == QString("True"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actAddNewIndicator)
+                    self.menu.addSeparator()
+                    self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
-
                 elif domElement.attribute(QString("type")) == QString("source_data"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actGenerateResults)
+                    self.menu.addSeparator()
+                    self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
-
                 elif domElement.attribute(QString("type")) == QString("all_source_data"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actAddNewResultTemplate)
+                    self.menu.addSeparator()
+                    self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
-
                 elif domElement.attribute(QString("type")) == QString("indicator"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actViewDocumentation)
                     self.menu.addAction(self.actGenerateResults)
+                    self.menu.addSeparator()
+                    self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
-
                 elif domElement.attribute(QString("type")) == QString("indicator_result"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     visualization_menu = QMenu(self.xmlTreeObject.parent)
                     visualization_menu.setTitle(QString("View result as..."))
-
                     visualization_menu.addAction(self.actViewResultAsTablePerYear)
                     visualization_menu.addAction(self.actViewResultAsTablePerAttribute)                    
                     visualization_menu.addAction(self.actViewResultAsMatplotlibMap)
 #                    visualization_menu.addAction(self.actViewResultAsArcgisMap)
                     visualization_menu.addAction(self.actViewResultAsMatplotlibChart)
                     visualization_menu.addAction(self.actViewResultAsAdvanced)
-
                     self.menu.addMenu(visualization_menu)
+                    self.menu.addSeparator()
+                    self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
 
         return

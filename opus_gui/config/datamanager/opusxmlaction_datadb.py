@@ -66,6 +66,13 @@ class OpusXMLAction_DataDB(object):
                         SIGNAL("triggered()"),
                         self.placeHolderAction)
 
+        self.actRemoveNode = QAction(self.removeIcon,
+                                     "Remove Node",
+                                     self.xmlTreeObject.parent)
+        QObject.connect(self.actRemoveNode,
+                        SIGNAL("triggered()"),
+                        self.removeNode)
+
         self.actCloneNode = QAction(self.applicationIcon,
                                     "Clone Down To Child",
                                     self.xmlTreeObject.parent)
@@ -126,6 +133,12 @@ class OpusXMLAction_DataDB(object):
     def placeHolderAction(self):
         print "Placeholder pressed"
 
+    def removeNode(self):
+        #print "Remove Node Pressed"
+        self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
+                                            self.currentIndex.model().parent(self.currentIndex))
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
     def cloneNodeAction(self):
         print "Clone Node pressed..."
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
@@ -156,15 +169,19 @@ class OpusXMLAction_DataDB(object):
                 elif domElement.attribute(QString("type")) == QString("database_library"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actNewDBConnection)
+                    self.menu.addSeparator()
+                    self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("db_connection"):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actCloneDBConnection)
                     self.menu.addAction(self.actTestDBConnection)
+                    self.menu.addSeparator()
+                    self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
                 else:
                     self.menu = QMenu(self.xmlTreeObject.parent)
-                    self.menu.addAction(self.actPlaceHolder)
+                    self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
         return
 

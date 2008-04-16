@@ -76,12 +76,20 @@ class OpusXMLAction_Scenario(object):
         QObject.connect(self.actPlaceHolder,
                         SIGNAL("triggered()"),
                         self.placeHolderAction)
+
         self.actCloneNode = QAction(self.applicationIcon,
                                     "Clone Down To Child",
                                     self.xmlTreeObject.parent)
         QObject.connect(self.actCloneNode,
                         SIGNAL("triggered()"),
                         self.cloneNodeAction)
+
+        self.actRemoveNode = QAction(self.removeIcon,
+                                     "Remove Node",
+                                     self.xmlTreeObject.parent)
+        QObject.connect(self.actRemoveNode,
+                        SIGNAL("triggered()"),
+                        self.removeNode)
 
 
     def runModel(self):
@@ -106,6 +114,12 @@ class OpusXMLAction_Scenario(object):
             return True
         else:
             return False
+
+    def removeNode(self):
+        #print "Remove Node Pressed"
+        self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
+                                            self.currentIndex.model().parent(self.currentIndex))
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def openXMLFile(self):
         filePath = ""
@@ -203,6 +217,7 @@ class OpusXMLAction_Scenario(object):
                     self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actRunModel)
                     self.menu.addSeparator()
+                    self.menu.addAction(self.actRemoveNode)
                     self.menu.addAction(self.actRemoveTree)
                     self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("file"):
@@ -211,10 +226,12 @@ class OpusXMLAction_Scenario(object):
                     self.menu.addSeparator()
                     self.menu.addAction(self.actEditXMLFileGlobal)
                     self.menu.addAction(self.actEditXMLFileLocal)
+                    self.menu.addSeparator()
+                    self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
                 else:
                     self.menu = QMenu(self.xmlTreeObject.parent)
-                    self.menu.addAction(self.actPlaceHolder)
+                    self.menu.addAction(self.actRemoveNode)
                     self.menu.exec_(QCursor.pos())
         return
 
