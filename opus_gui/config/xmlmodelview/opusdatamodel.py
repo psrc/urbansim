@@ -35,7 +35,7 @@ class OpusDataModel(QAbstractItemModel):
         # Root data for use in column headers
         self.rootData = []
         self.rootData.append(QVariant("Name"))
-        self.rootData.append(QVariant("Type"))
+        #self.rootData.append(QVariant("Type"))
         self.rootData.append(QVariant("Value"))
 
         # Get the XML config data
@@ -147,7 +147,7 @@ class OpusDataModel(QAbstractItemModel):
     # We only allow for one child colum per branch in the tree
     def columnCount(self, parent):
         #return 1
-        return 3
+        return 2
 
     def data(self, index, role):
         if not index.isValid():
@@ -170,14 +170,14 @@ class OpusDataModel(QAbstractItemModel):
                     return QVariant(domElement.tagName())
                 else:
                     return QVariant()
+            #elif index.column() == 1:
+            #    if role == Qt.DecorationRole:
+            #        return QVariant()
+            #    elif role == Qt.DisplayRole:
+            #        return QVariant(domElement.attribute(QString("type")))
+            #    else:
+            #        return QVariant()
             elif index.column() == 1:
-                if role == Qt.DecorationRole:
-                    return QVariant()
-                elif role == Qt.DisplayRole:
-                    return QVariant(domElement.attribute(QString("type")))
-                else:
-                    return QVariant()
-            elif index.column() == 2:
                 if role == Qt.DecorationRole:
                     return QVariant()
                 elif role == Qt.DisplayRole:
@@ -212,7 +212,7 @@ class OpusDataModel(QAbstractItemModel):
                     return Qt.ItemIsSelectable
             if index.column() == 0:
                 return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable                
-            elif index.column() == 2:
+            elif index.column() == 1:
                 return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
             else:
                 return Qt.ItemIsEnabled | Qt.ItemIsSelectable
@@ -285,7 +285,7 @@ class OpusDataModel(QAbstractItemModel):
                         wintitle = self.parentObj.windowTitle().replace(" - ", " - *")
                         self.parentObj.setWindowTitle(wintitle)
                     self.dirty = True
-        elif index.column() == 2:
+        elif index.column() == 1:
             if domNode.hasChildNodes():
                 children = domNode.childNodes()
                 for x in xrange(0,children.count(),1):

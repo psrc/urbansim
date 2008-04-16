@@ -36,8 +36,8 @@ class OpusDataDelegate(QItemDelegate):
             domElement = domNode.toElement()
             if domElement.isNull():
                 return QItemDelegate.createEditor(self, parent, option, index)
-            # So we have a valid element and our column is 2 we need to make a editor
-            if index.column() == 2:
+            # So we have a valid element and our column is 1 we need to make a editor
+            if index.column() == 1:
                 if domElement.hasAttribute(QString("choices")):
                     editor = QComboBox(parent)
                     choices = domElement.attribute(QString("choices"))
