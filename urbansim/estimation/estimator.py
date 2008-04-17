@@ -26,7 +26,6 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 from opus_core.session_configuration import SessionConfiguration
-
 from urbansim.model_coordinators.model_system import ModelSystem
 
 class Estimator(object):
@@ -102,6 +101,39 @@ class Estimator(object):
         if self.save_estimation_results:
             self.save_results(out_storage=out_storage)
 
+    def predict(self):
+        """ Run prediction. Currently makes sense only for choice models."""
+        # Create temporary configuration where all words 'estimate' are replaced by 'run'
+        tmp_config = Resources(self.config)
+        models = tmp_config.get('models',[])
+        for model in models:
+            if isinstance(model, dict):
+                model_name = model.keys()[0]
+                if (model[model_name] == "estimate"):
+                    model[model_name] = 'run'
+                elif (isinstance(model[model_name], list) and ("estimate" in model[model_name])):
+                    for i in range(len(model[model_name])):
+                        if model[model_name][i] == 'estimate':
+                            model[model_name][i] = 'run'
+        tmp_config['models'] = models
+        # save current locations of agents
+        is_choice_model = True
+        try:
+            agents = self.get_agent_set()
+            choice_id_name = self.get_choice_set().get_id_name()[0]
+            current_choices = agents.get_attribute(choice_id_name).copy()
+        except:
+            is_choice_model = False
+        # run the model
+        self.model_system.run(tmp_config, write_datasets_to_cache_at_end_of_year=False)
+        # replace new chices with the original ones and put predictions into new attribute
+        if is_choice_model:
+            agents = self.get_agent_set()
+            new_choices = agents.get_attribute(choice_id_name).copy()
+            agents.modify_attribute(name=choice_id_name, data=current_choices)
+            agents.add_primary_attribute(name='predicted_%s' % choice_id_name, data=new_choices)
+            logger.log_status("Predictions saved into attribute 'predicted_%s'" % choice_id_name)
+        
     def save_results(self, out_storage=None, model_name=None):
         if self.specification is None or self.coefficients is None:
             raise ValueError, "model specification or coefficient is None"
