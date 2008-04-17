@@ -16,7 +16,7 @@ import os
 import gc
 from numpy import zeros, arange
 from opus_core.session_configuration import SessionConfiguration
-from opus_core.misc import load_from_text_file, write_table_to_text_file
+from opus_core.misc import load_from_text_file, write_table_to_text_file, write_to_text_file
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.variables.variable_name import VariableName
@@ -29,26 +29,45 @@ class MultipleRuns:
 
     caches_file_name = "cache_directories"
     
-    def __init__(self, cache_directory, package_order=['core']):
-        """'cache_directory' must contain a file called 'cache_directories' which contains a list of all caches that
-        belong to this set of runs (one line per directory). This list is read and stored in self.cache_set.
+    def __init__(self, cache_file_location, prefix='run_', package_order=['core']):
+        """'cache_file_location' is either a file that contains a list of all caches that
+        belong to this set of runs (one line per directory). Alternatively, it can be a directory. In such a case
+        the code looks for a file called "cache_directories" (value of self.caches_file_name) in this location.
+        If it exists, it should contain a list of all caches as described above. If such file does not exist,
+        it is created from all entries in 'cache_file_location' that have the given 'prefix'. 
+        
+        The list of all caches is stored in self.cache_set.
         """
-        self.set_cache_attributes(cache_directory)
+        self.set_cache_attributes(cache_file_location, prefix=prefix)
         self.number_of_runs = self.cache_set.size
         self.package_order = package_order
         self.values_from_mr = {}
         
-    def set_cache_attributes(self, cache_directory):
-        file = os.path.join(cache_directory, self.caches_file_name)
-        if not os.path.exists(file):
-            raise StandardError, "Directory %s must contain a file '%s'." % (cache_directory,
-                                                                             self.caches_file_name)
-        self.cache_directory = cache_directory
-        self.cache_set = load_from_text_file(file) # it is an array
+    def set_cache_attributes(self, cache_file_location, prefix=''):
+        if os.path.isfile(cache_file_location):
+            self._set_cache_set(cache_file_location)
+            return
+        if os.path.isdir(cache_file_location):
+            filename = os.path.join(cache_file_location, self.caches_file_name)
+            if os.path.exists(filename):
+                self._set_cache_set(filename)
+                return
+            create_file_cache_directories(directory=cache_file_location, prefix=prefix, file_name=self.caches_file_name)
+            self._set_cache_set(filename)
+            return 
+        raise StandardError, "Location %s not found." % (cache_file_location)
+        
+    def _set_cache_set(self, filename):
+        self.cache_set = load_from_text_file(filename)
+        logger.log_status('Multiple Runs consist of %s runs (loaded from %s)' % (self.cache_set.size, filename))
         
     def _compute_variable_for_one_run(self, run_index, variable, dataset_name, year):
         dataset_pool = setup_environment(self.cache_set[run_index], year, self.package_order)
-        ds = dataset_pool.get_dataset(dataset_name)
+        try:
+            ds = dataset_pool.get_dataset(dataset_name)
+        except:
+            ds = Dataset(in_table_name=dataset_name, in_storage=dataset_pool.get_storage(), dataset_name=dataset_name, id_name=[])
+            dataset_pool._add_dataset(dataset_name, ds)
         ds.compute_variables(variable, dataset_pool=dataset_pool)            
         return ds
     
@@ -108,8 +127,55 @@ class MultipleRuns:
         for var in vars:
             filename = os.path.join(directory, "%s%s" % (prefix, VariableName(var).get_alias()))
             write_table_to_text_file(filename, self.values_from_mr[var])
-        
             
+    def plot_values_as_boxplot_r(self, filename=None):
+        """Create a plot of boxplots (using R), one boxplot per variable in self.values_from_mr.
+        If filename is given, the plot goes into that file as pdf.
+        """
+        from rpy import r
+        count = 0
+        maxi = -2**30
+        mini = 2**30
+        for var, values in self.values_from_mr.iteritems():
+            if values.ndim > 1:
+                count += values.shape[0]
+            else:
+                count += 1
+            maxi = max(maxi, values.max())
+            mini = min(mini, values.min())
+            
+        if filename is not None:
+            r.pdf(file=filename)
+        first_plot = True
+        c = 1
+        for var, values in self.values_from_mr.iteritems():
+            if values.ndim == 1:
+                v = resize(values, (1, values.size))
+            else:
+                v = values
+            for i in range(v.shape[0]):
+                if first_plot:
+                    r.boxplot(v[i,:], xlim=[0,count+1], ylim=r.c(mini, maxi), range=0)
+                    first_plot = False
+                else:
+                    r.boxplot(v[i,:], at=c, add=True, range=0)
+                c += 1
+        if filename is not None:
+            r.dev_off()
+            
+def create_file_cache_directories(directory, prefix='', file_name='cache_directories'):
+    logger.start_block('Creating file %s in %s' % (file_name, directory))
+    all_dirs = os.listdir(directory)
+    all_dirs = [x for x in all_dirs if x.startswith(prefix)]
+    if not prefix.startswith('.'):
+        all_dirs = [x for x in all_dirs if not x.startswith('.')]
+
+    for i in range(len(all_dirs)):
+        all_dirs[i] = os.path.join(directory, all_dirs[i])
+        
+    write_to_text_file(os.path.join(directory, file_name), all_dirs)
+    logger.end_block()
+               
 def setup_environment(cache_directory, year, package_order):
     gc.collect()
     ss = SimulationState(new_instance=True)
