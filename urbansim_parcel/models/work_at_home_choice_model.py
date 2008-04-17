@@ -82,12 +82,13 @@ class WorkAtHomeChoiceModel(ChoiceModel):
                         coefficients_table=None,
                         agent_set=None,
                         agents_filter=None,
-                        data_objects=None):
+                        data_objects=None,
+                        **kwargs):
         
         spec, coeff = prepare_specification_and_coefficients(specification_storage=specification_storage,
                                                specification_table=specification_table, 
                                                coefficients_storage=coefficients_storage,
-                                               coefficients_table=coefficients_table)
+                                               coefficients_table=coefficients_table, **kwargs)
         
         if agents_filter is not None:
             agent_set.compute_variables(agents_filter, resources=Resources(data_objects))
