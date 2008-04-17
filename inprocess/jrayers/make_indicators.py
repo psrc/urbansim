@@ -55,12 +55,25 @@ source_data = SourceData(
 
 multi_year_requests = [
     Table(
-        attribute = 'employment=faz.aggregate(urbansim_parcel.building.number_of_jobs, intermediates=[parcel, zone])',
-        dataset_name = 'faz',
+        attribute = 'psrc_parcel.faz_sector.total_home_based_employment',
+        dataset_name = 'faz_sector',
         source_data = source_data,
-        name = 'test'
+        name = 'total_home_based_employment'
         ),
-    ]
+    Table(
+        attribute = 'psrc_parcel.faz_sector.total_non_home_based_employment',
+        dataset_name = 'faz_sector',
+        source_data = source_data,
+        name = 'total_non_home_based_employment'
+        ),
+    Table(
+        attribute = 'psrc_parcel.faz_persons.total_number_of_households',
+        dataset_name = 'faz_persons',
+        source_data = source_data,
+        name = 'total_number_of_households'
+        ),
+
+]
 
 if __name__ == '__main__':
     from opus_core.indicator_framework.core.indicator_factory import IndicatorFactory
