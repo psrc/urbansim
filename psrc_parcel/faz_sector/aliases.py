@@ -13,11 +13,6 @@
 # 
 
 aliases = [
-   "zone_id = job.disaggregate(urbansim_parcel.building.zone_id)",
-   "parcel_id = job.disaggregate(building.parcel_id)",
-   "grid_id = job.disaggregate(urbansim_parcel.building.grid_id)",
-   "is_untaken_non_home_based_job = numpy.logical_and(job.number_of_agents(person)==0, job.building_type==2)",   
-   "is_untaken_home_based_job = numpy.logical_and(job.number_of_agents(person)==0, job.building_type==1)",
-   "faz_id = job.disaggregate(zone.faz_id, intermediates=[parcel, building])",
-   "dummy_id = urbansim_parcel.job.faz_id * 100 + job.sector_id"
+#          "total_home_based_employment = faz_sector.aggregate(job.building_type==1)",
+#          "total_non_home_based_employment = faz_sector.aggregate(job.building_type==2)",
            ]

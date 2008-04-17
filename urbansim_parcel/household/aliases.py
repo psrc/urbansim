@@ -21,5 +21,8 @@ aliases = [
    "persons_with_age_le_13 = household.aggregate(person.age<=13)",   
    "persons_with_age_le_16 = household.aggregate(person.age<=16)",      
    "persons_with_age_le_18 = household.aggregate(person.age<=18)",
+
+   "faz_id = household.disaggregate(zone.faz_id, intermediates=[parcel, building])",
+   "dummy_id = urbansim_parcel.household.faz_id * 100 + household.persons"
    
            ]
