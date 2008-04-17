@@ -133,6 +133,65 @@ class Estimator(object):
             agents.modify_attribute(name=choice_id_name, data=current_choices)
             agents.add_primary_attribute(name='predicted_%s' % choice_id_name, data=new_choices)
             logger.log_status("Predictions saved into attribute 'predicted_%s'" % choice_id_name)
+
+    def _replace_estimate_with_run_method(self):
+        """ Run prediction. Currently makes sense only for choice models."""
+        # Create temporary configuration where all words 'estimate' are replaced by 'run'
+        tmp_config = Resources(self.config)
+        models = tmp_config.get('models',[])
+        for model in models:
+            if isinstance(model, dict):
+                model_name = model.keys()[0]
+                if (model[model_name] == "estimate"):
+                    model[model_name] = 'run'
+                elif (isinstance(model[model_name], list) and ("estimate" in model[model_name])):
+                    for i in range(len(model[model_name])):
+                        if model[model_name][i] == 'estimate':
+                            model[model_name][i] = 'run'
+        tmp_config['models'] = models
+        
+        return tmp_config
+
+            
+    def create_prediction_success_table(self, 
+                                        choice_geography_id="fazdistrict_id=building.disaggregate(faz.fazdistrict_id)",
+                                        predicted_choice_id_name="predicted_building_id"):
+        agents = self.get_agent_set()
+        choices = self.get_choice_set()
+        
+        if not predicted_choice_id_name in agents.get_known_attribute_names():
+            self.predict()
+        
+        geography_id = choices.compute_variables(choice_geography_id)
+        agents_index = self.get_agent_set_index()
+        chosen_choice_id = agents.get_attribute_by_index(choices.get_id_name()[0], agents_index)
+        predicted_choice_id = agents.get_attribute_by_index(choices.get_attribute(predicted_choice_id_name)[0], agents_index)
+        chosen_choice_index = choices.get_id_index(chosen_choice_id)
+        predicted_choice_index = choices.get_id_index(predicted_choice_id)
+        
+        chosen_geography_id = geography_id[chosen_choice_index]
+        predicted_geography_id = geography_id[predicted_choice_index]
+
+        unique_geography_id = unique_values(geography_id)
+        # observed on row, predicted on column
+        prediction_matrix = zeros( (unique_geography_id.size, unique_geography_id.size), dtype="int32" )
+        success_rate = zeros( unique_geography_id.size, dtype="float32" )
+        i = 0
+
+        def _convert_array_to_tab_delimited_string(an_array):
+            return "\t".join([str(item) for item in an_array])
+        
+        logger.log_status("Observed_id\tSuccess_rate\t%s" % \
+                          _convert_array_to_tab_delimited_string(unique_geography_id) )
+        for observed_id in unique_geography_id:
+            predicted_id = predicted_geography_id[chosen_choice_id==observed_id]
+            from scipy import ndimage
+            prediction_matrix[i] = ndimage.sum(ones(predicted_id.size), labels=predicted_id, index=unique_geography_id )
+            if prediction_matrix[i].sum() > 0:
+                success_rate[i] = float(prediction_matrix[i, i]) / prediction_matrix[i].sum()
+            i+=1
+            logger.log_status("%s\t%s\t%s" % (observed_id, success_rate[i], 
+                                              _convert_array_to_tab_delimited_string(prediction_matrix[i]) ) )
         
     def save_results(self, out_storage=None, model_name=None):
         if self.specification is None or self.coefficients is None:
