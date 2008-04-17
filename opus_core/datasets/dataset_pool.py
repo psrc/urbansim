@@ -47,6 +47,9 @@ class DatasetPool(object):
     def get_package_order_exceptions(self):
         return self._package_order_exceptions
         
+    def get_storage(self):
+        return self._storage
+    
     def get_dataset(self, dataset_name, dataset_arguments={}):
         """Return object for this dataset.
         
