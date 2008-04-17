@@ -266,8 +266,14 @@ class OpusDataModel(QAbstractItemModel):
             parentItem = parent.internalPointer()
         return len(parentItem.childItems)
 
-    def setData(self,index,value,role):
+    def markAsDirty(self):
+        if self.dirty == False:
+            wintitle = self.parentObj.windowTitle().replace(" - ", " - *")
+            self.parentObj.setWindowTitle(wintitle)
+        self.dirty = True
+        
 
+    def setData(self,index,value,role):
         if not index.isValid():
             return False
         if role != Qt.EditRole:
@@ -446,3 +452,34 @@ class OpusDataModel(QAbstractItemModel):
         newNode.appendChild(newText)
         return newNode
 
+    def stripAttributeDown(self,attribute,parent):
+        parentElement = parent.toElement()
+        if not parentElement.isNull():
+            if parentElement.hasAttribute(QString(attribute)):
+                # remove the attribute
+                parentElement.removeAttribute(QString(attribute))
+            rows = parent.childNodes().count()
+            for x in xrange(0,rows,1):
+                child = parent.childNodes().item(x)
+                childElement = child.toElement()
+                if not childElement.isNull():
+                    # Check if this is the one we want...
+                    if childElement.hasAttribute(QString(attribute)):
+                        # remove the attribute
+                        childElement.removeAttribute(QString(attribute))
+                    # If this child has other children then we recurse
+                    childRows = child.childNodes().count()
+                    if childRows>0:
+                        self.stripAttributeDown(attribute,child)
+        return parent
+
+    def stripAttributeUp(self,attribute,parent):
+        parentElement = parent.toElement()
+        if not parentElement.isNull():
+            if parentElement.hasAttribute(QString(attribute)):
+                # remove the attribute
+                parentElement.removeAttribute(QString(attribute))
+            grandParent = parent.parentNode()
+            if not grandParent.isNull():
+                self.stripAttributeUp(attribute,grandParent)
+        return parent

@@ -129,12 +129,12 @@ class OpusXMLAction_Data(object):
                         SIGNAL("triggered()"),
                         self.execBatch)
 
-        self.actCloneNode = QAction(self.applicationIcon,
-                                    "Clone Down To Child",
-                                    self.xmlTreeObject.parent)
-        QObject.connect(self.actCloneNode,
+        self.actMakeEditable = QAction(self.applicationIcon,
+                                       "Make Editable",
+                                       self.xmlTreeObject.parent)
+        QObject.connect(self.actMakeEditable,
                         SIGNAL("triggered()"),
-                        self.cloneNodeAction)
+                        self.makeEditableAction)
 
 
     def addScriptFile(self):
@@ -293,6 +293,19 @@ class OpusXMLAction_Data(object):
         window = CloneInheritedGui(self,flags,self.xmlTreeObject.model,clone)
         window.show()
 
+    def makeEditableAction(self):
+        thisNode = self.currentIndex.internalPointer().node()
+
+        # Strip the inherited attribute down the tree
+        self.currentIndex.model().stripAttributeDown('inherited',thisNode)
+        # Now up the tree, only hitting parent nodes and not sibblings
+        self.currentIndex.model().stripAttributeUp('inherited',thisNode)
+
+        self.currentIndex.model().markAsDirty()
+
+        # Finally we refresh the tree to indicate that there has been a change
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
                self.xmlTreeObject.view.indexAt(position).column() == 0:
@@ -307,14 +320,9 @@ class OpusXMLAction_Data(object):
                 domElement = domNode.toElement()
                 if domElement.isNull():
                     return
-                if domElement.hasAttribute(QString("inherited")) and \
-                       domElement.hasAttribute(QString("cloneable")) and \
-                       domElement.attribute(QString("cloneable")) == QString("True"):
-                    self.menu = QMenu(self.xmlTreeObject.parent)
-                    self.menu.addAction(self.actCloneNode)
-                    self.menu.exec_(QCursor.pos())
-                elif domElement.attribute(QString("type")) == QString("script_file"):
-                    self.menu = QMenu(self.xmlTreeObject.parent)
+
+                self.menu = QMenu(self.xmlTreeObject.parent)
+                if domElement.attribute(QString("type")) == QString("script_file"):
                     self.menu.addAction(self.actExecScriptFile)
                     self.menu.addSeparator()
                     self.menu.addAction(self.actNewConfig)
@@ -322,19 +330,11 @@ class OpusXMLAction_Data(object):
                     self.menu.addSeparator()
                     self.menu.addAction(self.actMoveNodeUp)
                     self.menu.addAction(self.actMoveNodeDown)
-                    self.menu.addSeparator()
-                    self.menu.addAction(self.actRemoveNode)
-                    self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("script_library"):
-                    self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actAddScriptFile)
-                    self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("script_config"):
-                    self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actExecScriptConfig)
-                    self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("script_batch"):
-                    self.menu = QMenu(self.xmlTreeObject.parent)
                     #jesse testing
                     self.menu.addAction(self.actExecBatch)
                     self.menu.addSeparator()
@@ -343,23 +343,23 @@ class OpusXMLAction_Data(object):
                     self.menu.addSeparator()
                     self.menu.addAction(self.actMoveNodeUp)
                     self.menu.addAction(self.actMoveNodeDown)
-                    self.menu.addSeparator()
-                    self.menu.addAction(self.actRemoveNode)
-                    self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("documentation_path"):
-                    self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actOpenDocumentation)
                     self.menu.addSeparator()
                     self.menu.addAction(self.actCloneNode)
                     self.menu.addSeparator()
                     self.menu.addAction(self.actMoveNodeUp)
                     self.menu.addAction(self.actMoveNodeDown)
+
+                if self.menu:
+                    # Last minute chance to add items that all menues should have
                     self.menu.addSeparator()
-                    self.menu.addAction(self.actRemoveNode)
-                    self.menu.exec_(QCursor.pos())
-                else:
-                    self.menu = QMenu(self.xmlTreeObject.parent)
-                    self.menu.addAction(self.actRemoveNode)
+                    if domElement.hasAttribute(QString("inherited")):
+                        # Tack on a make editable if the node is inherited
+                        self.menu.addAction(self.actMakeEditable)
+                    else:
+                        self.menu.addAction(self.actRemoveNode)
+                    # No matter what, if we have a menu display it
                     self.menu.exec_(QCursor.pos())
         return
 

@@ -77,12 +77,12 @@ class OpusXMLAction_Scenario(object):
                         SIGNAL("triggered()"),
                         self.placeHolderAction)
 
-        self.actCloneNode = QAction(self.applicationIcon,
-                                    "Clone Down To Child",
+        self.actMakeEditable = QAction(self.applicationIcon,
+                                    "Make Editable",
                                     self.xmlTreeObject.parent)
-        QObject.connect(self.actCloneNode,
+        QObject.connect(self.actMakeEditable,
                         SIGNAL("triggered()"),
-                        self.cloneNodeAction)
+                        self.makeEditableAction)
 
         self.actRemoveNode = QAction(self.removeIcon,
                                      "Remove Node",
@@ -190,6 +190,19 @@ class OpusXMLAction_Scenario(object):
         window = CloneInheritedGui(self,flags,self.xmlTreeObject.model,clone)
         window.show()
 
+    def makeEditableAction(self):
+        thisNode = self.currentIndex.internalPointer().node()
+
+        # Strip the inherited attribute down the tree
+        self.currentIndex.model().stripAttributeDown('inherited',thisNode)
+        # Now up the tree, only hitting parent nodes and not sibblings
+        self.currentIndex.model().stripAttributeUp('inherited',thisNode)
+
+        self.currentIndex.model().markAsDirty()
+
+        # Finally we refresh the tree to indicate that there has been a change
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
     def placeHolderAction(self):
         pass
 
@@ -207,31 +220,27 @@ class OpusXMLAction_Scenario(object):
                 domElement = domNode.toElement()
                 if domElement.isNull():
                     return
-                if domElement.hasAttribute(QString("inherited")) and \
-                       domElement.hasAttribute(QString("cloneable")) and \
-                       domElement.attribute(QString("cloneable")) == QString("True"):
-                    self.menu = QMenu(self.xmlTreeObject.parent)
-                    self.menu.addAction(self.actCloneNode)
-                    self.menu.exec_(QCursor.pos())
-                elif domElement.attribute(QString("executable")) == QString("True"):
-                    self.menu = QMenu(self.xmlTreeObject.parent)
+
+                self.menu = QMenu(self.xmlTreeObject.parent)
+                if domElement.attribute(QString("executable")) == QString("True"):
                     self.menu.addAction(self.actRunModel)
                     self.menu.addSeparator()
-                    self.menu.addAction(self.actRemoveNode)
                     self.menu.addAction(self.actRemoveTree)
-                    self.menu.exec_(QCursor.pos())
                 elif domElement.attribute(QString("type")) == QString("file"):
-                    self.menu = QMenu(self.xmlTreeObject.parent)
                     self.menu.addAction(self.actOpenXMLFile)
                     self.menu.addSeparator()
                     self.menu.addAction(self.actEditXMLFileGlobal)
                     self.menu.addAction(self.actEditXMLFileLocal)
+
+                if self.menu:
+                    # Last minute chance to add items that all menues should have
                     self.menu.addSeparator()
-                    self.menu.addAction(self.actRemoveNode)
-                    self.menu.exec_(QCursor.pos())
-                else:
-                    self.menu = QMenu(self.xmlTreeObject.parent)
-                    self.menu.addAction(self.actRemoveNode)
+                    if domElement.hasAttribute(QString("inherited")):
+                        # Tack on a make editable if the node is inherited
+                        self.menu.addAction(self.actMakeEditable)
+                    else:
+                        self.menu.addAction(self.actRemoveNode)
+                    # No matter what, if we have a menu display it
                     self.menu.exec_(QCursor.pos())
         return
 
