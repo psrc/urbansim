@@ -19,10 +19,12 @@ class MultipleRunsModification:
              "real_estate_price_model",
              "employment_location_choice_model", "home_based_employment_location_choice_model",
              "household_location_choice_model",
+             'workplace_choice_model_for_resident',
+             'work_at_home_choice_model',
              ]
     models_with_sampled_control_totals = [
-                       "employment_transition_model",
-                       "household_transition_model"
+#                       "employment_transition_model",
+#                       "household_transition_model"
                        ]
     models_with_sampled_relocation_rates = [
                        "employment_relocation_model",
@@ -41,13 +43,18 @@ class MultipleRunsModification:
                 "expected_sale_price_model",
                 "development_proposal_choice_model",
                 "building_construction_model",
-                "household_transition_model_with_sampled_ct",
-                "employment_transition_model_with_sampled_ct",
+#                "household_transition_model_with_sampled_ct",
+               "household_transition_model", 
+#                "employment_transition_model_with_sampled_ct",
+               "employment_transition_model",
+               'job_person_consistency_keeper',
                 "household_relocation_model_with_sampled_rr",
                 "household_location_choice_model_with_sampled_coef",
                 "employment_relocation_model_with_sampled_rr",
-                {"employment_location_choice_model_with_sampled_coef":{'group_members': ['_all_']}},
-                'distribute_unplaced_jobs_model'
+                {"employment_location_choice_model_with_sampled_coef":{'group_members': ['non_home_based']}},
+                'distribute_unplaced_jobs_model',
+                'work_at_home_choice_model',
+                'workplace_choice_model_for_resident'
                 ]
         
     def modify_controller_for_first_year(self, config):

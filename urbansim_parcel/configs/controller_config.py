@@ -357,7 +357,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                                "agents_index": None,
                                "agents_filter":"'urbansim_parcel.person.is_non_home_based_worker_without_job'",
                                "data_objects": "datasets",
-                               "chunk_specification":"{'nchunks':10}",
+                               "chunk_specification":"{'records_per_chunk':16000}",
                                "debuglevel": 'debuglevel',
                                },
                  },
