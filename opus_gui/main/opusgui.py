@@ -184,8 +184,12 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.toolboxStuff.openXMLTree(config)
         else:
             import os
-            start_dir = os.path.join(os.environ.get('opus_home'), 'user_configs')
-
+            start_dir = ''
+            opus_home = os.environ.get('OPUS_HOME')
+            if opus_home:
+                start_dir_test = os.path.join(opus_home, 'user_configs')
+                if start_dir_test:
+                    start_dir = start_dir_test
             configDialog = QFileDialog()
             filter_str = QString("*.xml")
             fd = configDialog.getOpenFileName(self,QString("Please select an xml config file..."),
