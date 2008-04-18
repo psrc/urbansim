@@ -638,28 +638,28 @@
                                                       'development_project_proposal_component',
                                                       'development_project_proposal', 'travel_data']</datasets_to_cache_after_each_model>
       <unroll_gridcells type="boolean">False</unroll_gridcells>
-      <datasets_to_preload type="dictionary">
-         <zone type="dictionary" />
-         <household type="dictionary" />
-         <building type="dictionary" />
-         <parcel type="dictionary">
+      <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+         <zone type="dataset" choices="Load|Skip">Load</zone>
+         <household type="dataset" choices="Load|Skip">Load</household>
+         <building type="dataset" choices="Load|Skip">Load</building>
+         <parcel type="dataset" choices="Load|Skip">Load
            <package_name type="string">urbansim_parcel</package_name>
          </parcel>
-         <person type="dictionary">
+         <person type="dataset" choices="Load|Skip">Load
            <package_name type="string">urbansim_parcel</package_name>
          </person>
-         <development_template type="dictionary">
+         <development_template type="dataset" choices="Load|Skip">Load
            <package_name type="string">urbansim_parcel</package_name>
          </development_template>
-         <development_template_component type="dictionary">
+         <development_template_component type="dataset" choices="Load|Skip">Load
            <package_name type="string">urbansim_parcel</package_name>
          </development_template_component>
-         <job type="dictionary" />
-         <building_type type="dictionary">
+         <job type="dataset" choices="Load|Skip">Load</job>
+         <building_type type="dataset" choices="Load|Skip">Load
            <package_name type="string">urbansim_parcel</package_name>
          </building_type>
-         <travel_data type="dictionary" />
-         <job_building_type type="dictionary" />
+         <travel_data type="dataset" choices="Load|Skip">Load</travel_data>
+         <job_building_type type="dataset" choices="Load|Skip">Load</job_building_type>
        </datasets_to_preload>
     </Seattle_baseline>
   </scenario_manager>
