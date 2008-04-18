@@ -12,6 +12,8 @@
 # other acknowledgments.
 #
 
+import copy
+from scipy import ndimage
 from numpy import absolute, array, where, take, zeros, ones
 from opus_core.logger import logger
 from opus_core.resources import Resources
@@ -105,33 +107,42 @@ class Estimator(object):
         """ Run prediction. Currently makes sense only for choice models."""
         # Create temporary configuration where all words 'estimate' are replaced by 'run'
         tmp_config = Resources(self.config)
-        models = []
-        for model in tmp_config.get('models',[]):
-            if isinstance(model, dict):
-                model_name = model.keys()[0]
-                if self.model_name == model_name:
-                    if (model[model_name] == "estimate"):
-                        model[model_name] = 'run'
-                    elif (isinstance(model[model_name], list) and ("estimate" in model[model_name])):
-                        for i in range(len(model[model_name])):
-                            if model[model_name][i] == 'estimate':
-                                model[model_name][i] = 'run'
-                    models.append(model)
-   
-        tmp_config['models'] = models
+
         self.agents_index_for_prediction = self.get_agent_set_index().copy()
-        tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['agents_index'] = self.agents_index_for_prediction
+        tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['agents_index'] = "index"
+        tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['chunk_specification'] = "{'nchunks':1}"
+
+        ### save specification and coefficients to cache (no matter the save_estimation_results flag)
+        ### so that the prepare_for_run method could load specification and coefficients from there
+        #output_configuration = self.config['output_configuration']
+        #del self.config['output_configuration']
+        #self.save_results()
+        
+        #self.config['output_configuration'] = output_configuration
+        
+        #self.model_system.run_year_namespace["coefficients"] = self.coefficients
+        del tmp_config['models_configuration'][self.model_name]['controller']['prepare_for_run']
         
         try:
-            agents = self.get_agent_set()            
+            run_year_namespace = copy.copy(self.model_system.run_year_namespace)
+        except AttributeError:
+            logger.log_error("The estimate() method must be run first")
+            return
+        
+        try:
+            agents = self.get_agent_set()
             choice_id_name = self.get_choice_set().get_id_name()[0]
             # save current locations of agents
             current_choices = agents.get_attribute(choice_id_name).copy()
 
             if preidcted_choice_id_name is None or len(preidcted_choice_id_name) == 0:
                 preidcted_choice_id_name = preidcted_choice_id_prefix + choice_id_name
+
+            run_year_namespace["process"] = "run"
+            run_year_namespace["processmodel_config"] = tmp_config['models_configuration'][self.model_name]['controller']['run']
+            self.model_system.do_process(run_year_namespace)
             
-            self.model_system.run(tmp_config, write_datasets_to_cache_at_end_of_year=False)
+            #self.model_system.run(tmp_config, write_datasets_to_cache_at_end_of_year=False)
             new_choices = agents.get_attribute(choice_id_name).copy()
             agents.modify_attribute(name=choice_id_name, data=current_choices)
             agents.add_primary_attribute(name=preidcted_choice_id_name, data=new_choices)
@@ -140,7 +151,6 @@ class Estimator(object):
             logger.log_error("Error encountered in prediction: %s" % e)
             logger.log_stack_trace()
 
-            
     def create_prediction_success_table(self, 
                                         choice_geography_id="fazdistrict_id=building.disaggregate(faz.fazdistrict_id, intermediates=[zone, parcel])",
                                         predicted_choice_id_name="predicted_building_id"):
@@ -151,7 +161,7 @@ class Estimator(object):
             self.predict()
         
         geography_id = choices.compute_variables(choice_geography_id)
-        agents_index = self.get_agent_set_index()
+        agents_index = self.agents_index_for_prediction
         chosen_choice_id = agents.get_attribute_by_index(choices.get_id_name()[0], agents_index)
         predicted_choice_id = agents.get_attribute_by_index(predicted_choice_id_name, agents_index)
         chosen_choice_index = choices.get_id_index(chosen_choice_id)
@@ -173,13 +183,13 @@ class Estimator(object):
                           _convert_array_to_tab_delimited_string(unique_geography_id) )
         for observed_id in unique_geography_id:
             predicted_id = predicted_geography_id[chosen_geography_id==observed_id]
-            from scipy import ndimage
             prediction_matrix[i] = ndimage.sum(ones(predicted_id.size), labels=predicted_id, index=unique_geography_id )
             if prediction_matrix[i].sum() > 0:
                 success_rate[i] = float(prediction_matrix[i, i]) / prediction_matrix[i].sum()
-            i+=1
-            logger.log_status("%s\t%s\t%s" % (observed_id, success_rate[i], 
+            logger.log_status("%s\t\t%5.4f\t\t%s" % (observed_id, success_rate[i], 
                                               _convert_array_to_tab_delimited_string(prediction_matrix[i]) ) )
+            
+            i+=1
         
     def save_results(self, out_storage=None, model_name=None):
         if self.specification is None or self.coefficients is None:
@@ -241,7 +251,7 @@ class Estimator(object):
     def extract_coefficients_and_specification(self):
         for key in self.model_system.run_year_namespace.keys():
             if isinstance(self.model_system.run_year_namespace[key], Coefficients):
-                self.coefficients = self.model_system.run_year_namespace[key]
+                self.coefficients = self.model_system.run_year_namespace[key]                
             if isinstance(self.model_system.run_year_namespace[key], EquationSpecification):
                 self.specification = self.model_system.run_year_namespace[key]
        #for key in self.model_system.vardict.keys():
