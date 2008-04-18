@@ -101,40 +101,7 @@ class Estimator(object):
         if self.save_estimation_results:
             self.save_results(out_storage=out_storage)
 
-    def predict(self):
-        """ Run prediction. Currently makes sense only for choice models."""
-        # Create temporary configuration where all words 'estimate' are replaced by 'run'
-        tmp_config = Resources(self.config)
-        models = tmp_config.get('models',[])
-        for model in models:
-            if isinstance(model, dict):
-                model_name = model.keys()[0]
-                if (model[model_name] == "estimate"):
-                    model[model_name] = 'run'
-                elif (isinstance(model[model_name], list) and ("estimate" in model[model_name])):
-                    for i in range(len(model[model_name])):
-                        if model[model_name][i] == 'estimate':
-                            model[model_name][i] = 'run'
-        tmp_config['models'] = models
-        # save current locations of agents
-        is_choice_model = True
-        try:
-            agents = self.get_agent_set()
-            choice_id_name = self.get_choice_set().get_id_name()[0]
-            current_choices = agents.get_attribute(choice_id_name).copy()
-        except:
-            is_choice_model = False
-        # run the model
-        self.model_system.run(tmp_config, write_datasets_to_cache_at_end_of_year=False)
-        # replace new chices with the original ones and put predictions into new attribute
-        if is_choice_model:
-            agents = self.get_agent_set()
-            new_choices = agents.get_attribute(choice_id_name).copy()
-            agents.modify_attribute(name=choice_id_name, data=current_choices)
-            agents.add_primary_attribute(name='predicted_%s' % choice_id_name, data=new_choices)
-            logger.log_status("Predictions saved into attribute 'predicted_%s'" % choice_id_name)
-
-    def _replace_estimate_with_run_method(self):
+    def predict(self, preidcted_choice_id_prefix="predicted_", preidcted_choice_id_name=None):
         """ Run prediction. Currently makes sense only for choice models."""
         # Create temporary configuration where all words 'estimate' are replaced by 'run'
         tmp_config = Resources(self.config)
@@ -150,11 +117,27 @@ class Estimator(object):
                             model[model_name][i] = 'run'
         tmp_config['models'] = models
         
-        return tmp_config
+        try:
+            agents = self.get_agent_set()            
+            choice_id_name = self.get_choice_set().get_id_name()[0]
+            # save current locations of agents
+            current_choices = agents.get_attribute(choice_id_name).copy()
+
+            if preidcted_choice_id_name is None or len(preidcted_choice_id_name) == 0:
+                preidcted_choice_id_name = preidcted_choice_id_prefix + choice_id_name
+            
+            self.model_system.run(tmp_config, write_datasets_to_cache_at_end_of_year=False)
+            new_choices = agents.get_attribute(choice_id_name).copy()
+            agents.modify_attribute(name=choice_id_name, data=current_choices)
+            agents.add_primary_attribute(name=preidcted_choice_id_name, data=new_choices)
+            logger.log_status("Predictions saved into attribute " + preidcted_choice_id_name)
+        except Exception, e:
+            logger.log_error("Error encountered in prediction: %s" % e)
+            logger.log_stack_trace()
 
             
     def create_prediction_success_table(self, 
-                                        choice_geography_id="fazdistrict_id=building.disaggregate(faz.fazdistrict_id)",
+                                        choice_geography_id="fazdistrict_id=building.disaggregate(faz.fazdistrict_id, intermediates=[zone, parcel])",
                                         predicted_choice_id_name="predicted_building_id"):
         agents = self.get_agent_set()
         choices = self.get_choice_set()
@@ -165,7 +148,7 @@ class Estimator(object):
         geography_id = choices.compute_variables(choice_geography_id)
         agents_index = self.get_agent_set_index()
         chosen_choice_id = agents.get_attribute_by_index(choices.get_id_name()[0], agents_index)
-        predicted_choice_id = agents.get_attribute_by_index(choices.get_attribute(predicted_choice_id_name)[0], agents_index)
+        predicted_choice_id = agents.get_attribute_by_index(predicted_choice_id_name, agents_index)
         chosen_choice_index = choices.get_id_index(chosen_choice_id)
         predicted_choice_index = choices.get_id_index(predicted_choice_id)
         
@@ -184,7 +167,7 @@ class Estimator(object):
         logger.log_status("Observed_id\tSuccess_rate\t%s" % \
                           _convert_array_to_tab_delimited_string(unique_geography_id) )
         for observed_id in unique_geography_id:
-            predicted_id = predicted_geography_id[chosen_choice_id==observed_id]
+            predicted_id = predicted_geography_id[chosen_geography_id==observed_id]
             from scipy import ndimage
             prediction_matrix[i] = ndimage.sum(ones(predicted_id.size), labels=predicted_id, index=unique_geography_id )
             if prediction_matrix[i].sum() > 0:
