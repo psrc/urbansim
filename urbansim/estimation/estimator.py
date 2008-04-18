@@ -105,17 +105,22 @@ class Estimator(object):
         """ Run prediction. Currently makes sense only for choice models."""
         # Create temporary configuration where all words 'estimate' are replaced by 'run'
         tmp_config = Resources(self.config)
-        models = tmp_config.get('models',[])
-        for model in models:
+        models = []
+        for model in tmp_config.get('models',[]):
             if isinstance(model, dict):
                 model_name = model.keys()[0]
-                if (model[model_name] == "estimate"):
-                    model[model_name] = 'run'
-                elif (isinstance(model[model_name], list) and ("estimate" in model[model_name])):
-                    for i in range(len(model[model_name])):
-                        if model[model_name][i] == 'estimate':
-                            model[model_name][i] = 'run'
+                if self.model_name == model_name:
+                    if (model[model_name] == "estimate"):
+                        model[model_name] = 'run'
+                    elif (isinstance(model[model_name], list) and ("estimate" in model[model_name])):
+                        for i in range(len(model[model_name])):
+                            if model[model_name][i] == 'estimate':
+                                model[model_name][i] = 'run'
+                    models.append(model)
+   
         tmp_config['models'] = models
+        self.agents_index_for_prediction = self.get_agent_set_index().copy()
+        tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['agents_index'] = self.agents_index_for_prediction
         
         try:
             agents = self.get_agent_set()            
