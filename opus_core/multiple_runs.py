@@ -59,6 +59,7 @@ class MultipleRuns:
         
     def _set_cache_set(self, filename):
         self.cache_set = load_from_text_file(filename)
+        self.full_cache_file_name = filename
         logger.log_status('Multiple Runs consist of %s runs (loaded from %s)' % (self.cache_set.size, filename))
         
     def _compute_variable_for_one_run(self, run_index, variable, dataset_name, year):
@@ -66,6 +67,8 @@ class MultipleRuns:
         try:
             ds = dataset_pool.get_dataset(dataset_name)
         except:
+            logger.log_warning('Dataset %s could not be loaded from dataset pool using package order %s' % (dataset_name, self.package_order))
+            logger.log_warning('Generic dataset will be created.')
             ds = Dataset(in_table_name=dataset_name, in_storage=dataset_pool.get_storage(), dataset_name=dataset_name, id_name=[])
             dataset_pool._add_dataset(dataset_name, ds)
         ds.compute_variables(variable, dataset_pool=dataset_pool)            
@@ -128,14 +131,18 @@ class MultipleRuns:
             filename = os.path.join(directory, "%s%s" % (prefix, VariableName(var).get_alias()))
             write_table_to_text_file(filename, self.values_from_mr[var])
             
-    def plot_values_as_boxplot_r(self, filename=None):
+    def plot_values_as_boxplot_r(self, filename=None, logy=False):
         """Create a plot of boxplots (using R), one boxplot per variable in self.values_from_mr.
-        If filename is given, the plot goes into that file as pdf.
+        If filename is given, the plot goes into that file as pdf. If 'logy' is  True, the y-axis
+        is plotted on the log scale.
         """
         from rpy import r
         count = 0
         maxi = -2**30
         mini = 2**30
+        logstring = ''
+        if logy:
+            logstring='y'
         for var, values in self.values_from_mr.iteritems():
             if values.ndim > 1:
                 count += values.shape[0]
@@ -155,10 +162,10 @@ class MultipleRuns:
                 v = values
             for i in range(v.shape[0]):
                 if first_plot:
-                    r.boxplot(v[i,:], xlim=[0,count+1], ylim=r.c(mini, maxi), range=0)
+                    r.boxplot(v[i,:], xlim=[0,count+1], ylim=r.c(mini, maxi), range=0, log=logstring)
                     first_plot = False
                 else:
-                    r.boxplot(v[i,:], at=c, add=True, range=0)
+                    r.boxplot(v[i,:], at=c, add=True, range=0, log=logstring)
                 c += 1
         if filename is not None:
             r.dev_off()
@@ -188,3 +195,9 @@ def setup_environment(cache_directory, year, package_order):
                          in_storage=ac)
     logger.log_status("Setup environment for year %s. Use cache directory %s." % (year, storage.get_storage_location()))
     return sc.get_dataset_pool()
+
+if __name__=='__main__':
+    from opus_core.multiple_runs import MultipleRuns
+    mr = MultipleRuns('/Users/hana/urbansim_cache/psrc/parcel/bm/0416')
+    mr.set_values_from_mr(2005, ['urbansim_parcel.zone.number_of_households'])
+    

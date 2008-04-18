@@ -203,16 +203,18 @@ class BayesianMelding(MultipleRuns):
     variance_file_name = "variance"
     bias_file_name = "bias"
     
-    def __init__(self, cache_directory, observed_data,
-                 base_year=0,  package_order=['core']):
+    def __init__(self, cache_file_location, observed_data,
+                 base_year=0,  prefix='run_', package_order=['core']):
         """ Class used in the Bayesian melding analysis.
-        'cache_directory' is the first directory created by start_run_set.py. It should
-        contain a file called 'cache_directories' which contains a list of all caches that
-        belong to this set of runs. This list is read and stored in self.cache_set.
+        'cache_file_location' is location (either file or directory) with information about all caches
+        (see doc string for MultipleRuns).
         'observed_data' is an object of ObservedData that contains all the information about observed data.
         """
-        MultipleRuns.__init__(self, cache_directory, package_order=package_order)
-    
+        MultipleRuns.__init__(self, cache_file_location, prefix=prefix, package_order=package_order)
+        self.output_directory = os.path.join(os.path.split(self.full_cache_file_name)[0], 'bm_output')
+        logger.log_status('Output directory set to %s.' % self.output_directory)
+        if not os.path.exists(self.output_directory):
+            os.mkdir(self.output_directory)
         self.observed_data = observed_data
         self.base_year = base_year
         self.propagation_factor = None
@@ -233,8 +235,6 @@ class BayesianMelding(MultipleRuns):
         """ Launches the run method of the given 'procedure'. This should return the actual BM weights.
         The method passes self as first argument into the run method.
         If 'procedure' is not given, the method returns equal weights.
-        The result is written into file called 'weights' into the cache directory
-        given in the init method.
         """
         self.compute_y()
         self.estimate_mu()
@@ -245,7 +245,7 @@ class BayesianMelding(MultipleRuns):
             self.weights, self.weight_components = procedure_class.run(self, **kwargs)
         else:
             self.weights = 1.0/self.number_of_runs * ones(self.number_of_runs)
-        write_to_text_file(os.path.join(self.cache_directory, self.weights_file_name),
+        write_to_text_file(os.path.join(self.output_directory, self.weights_file_name),
                            self.weights)
         return self.weights
     
@@ -299,7 +299,7 @@ class BayesianMelding(MultipleRuns):
             #self.ahat[l] = mean(reshape(self.y[l], (self.y[l].size,1)) - self.mu[l], axis=1)
             if l > 0:
                 mode="ab" # add to existing file
-            write_to_text_file(os.path.join(self.cache_directory, self.bias_file_name),
+            write_to_text_file(os.path.join(self.output_directory, self.bias_file_name),
                            array([self.ahat[l]]), mode=mode)
                            # for zone-specific bias
                            #self.ahat[l], mode=mode, delimiter=" ")
@@ -312,7 +312,7 @@ class BayesianMelding(MultipleRuns):
                 self.v[l][i] = ((self.y[l] - self.ahat[l] - self.mu[l][:,i])**2.0).mean()
             if l > 0:
                 mode="ab" # add to existing file
-            write_to_text_file(os.path.join(self.cache_directory, self.variance_file_name),
+            write_to_text_file(os.path.join(self.output_directory, self.variance_file_name),
                            self.v[l], mode=mode, delimiter=" ")
 
     def get_expected_values(self):
@@ -393,10 +393,10 @@ class BayesianMelding(MultipleRuns):
 
     def get_bias_and_variance_from_files(self):
         bias = array(load_from_text_file(
-                         os.path.join(self.cache_directory, self.bias_file_name),
+                         os.path.join(self.output_directory, self.bias_file_name),
                                                  convert_to_float=True))
         variance = array(load_from_text_file(
-                                 os.path.join(self.cache_directory, self.variance_file_name),
+                                 os.path.join(self.output_directory, self.variance_file_name),
                                                  convert_to_float=True))
         ahat={}
         v = {}
@@ -409,9 +409,9 @@ class BayesianMelding(MultipleRuns):
         return (ahat, v)
 
     def get_weights_from_file(self):
-        file = os.path.join(self.cache_directory, self.weights_file_name)
+        file = os.path.join(self.output_directory, self.weights_file_name)
         if not os.path.exists(file):
-            raise StandardError, "Directory %s must contain a file '%s'. Use method 'compute_weights'." % (self.cache_directory,
+            raise StandardError, "Directory %s must contain a file '%s'. Use method 'compute_weights'." % (self.output_directory,
                                                                              self.weights_file_name)
         return array(load_from_text_file(file, convert_to_float=True))
 
@@ -616,15 +616,6 @@ class BayesianMeldingFromFile(BayesianMelding):
             self.simulated_values = try_transformation(self.simulated_values,
                                                        self.transformation_pair_for_prediction[1])
         return self.simulated_values
-    
-    def set_cache_attributes(self, cache_directory):
-        file = os.path.join(cache_directory, self.caches_file_name)
-        if not os.path.exists(file):
-            # if the file cache_directores does not exist, consider this directory as the only directory in the set
-            self.cache_set = array([cache_directory])
-        else:
-            self.cache_set = load_from_text_file(file) # it is an array
-        self.cache_directory = cache_directory
         
     def set_posterior(self, year, quantity_of_interest, values=None, ids=None, use_bias_and_variance_from=None, transformation_pair = (None, None)):
         self.set_propagation_factor(year)
