@@ -254,14 +254,14 @@ class EventsCoordinatorTests(opus_unittest.OpusTestCase):
         storage.write_table(
             table_name='dev_events',
             table_data={
-                "residential_units": array([2,  0,  11]),
-                "commercial_sqft": array( [0,  11, 0]),
-                "industrial_sqft": array( [0,  11, 0]),
-                "commercial_improvement_value": array([1, 2, 3]),
-                "industrial_improvement_value": array([1, 2, 3]),
-                "residential_improvement_value": array([1, 2, 3]),
-                "scheduled_year": array([2000, 2000, 2001]),
-                "grid_id": array([1,2,3]),
+                "residential_units": array([2,  0,  11, 10]),
+                "commercial_sqft": array( [0,  11, 0, 0]),
+                "industrial_sqft": array( [0,  11, 0, 0]),
+                "commercial_improvement_value": array([1, 2, 3, 0]),
+                "industrial_improvement_value": array([1, 2, 3, 0]),
+                "residential_improvement_value": array([1, 2, 3, 10]),
+                "scheduled_year": array([2000, 2000, 2001, 2001]),
+                "grid_id": array([1,2,3, -1]),
                 # default type_of_change is ADD
                 }
             )
