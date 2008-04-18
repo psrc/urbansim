@@ -26,6 +26,9 @@ class travel_time_hbw_am_drive_alone_to_DDD(Variable):
         self.variable_name = "travel_time_hbw_am_drive_alone_to_" + str(int(number))
         Variable.__init__(self)
 
+    def dependencies(self):
+        return ['travel_data.am_single_vehicle_to_work_travel_time']
+    
     def compute(self, dataset_pool):
         zone_id = self.get_dataset().get_id_attribute()
         keys = map(lambda x: (x, self.tnumber), zone_id)

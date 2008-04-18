@@ -16,4 +16,4 @@ from opus_core.opus_package import OpusPackage
 
 class package(OpusPackage):
     name = 'eugene'
-    required_opus_packages = ['opus_core']
+    required_opus_packages = ['opus_core', 'urbansim']
