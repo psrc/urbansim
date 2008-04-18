@@ -142,7 +142,7 @@
     </test_model_config>
   </model_manager>
   <scenario_manager>
-    <Eugene_baseline executable="True" setexpanded="True" type="scenario">
+    <Eugene_baseline executable="True" setexpanded="True" type="scenario" copyable="True">
       <parent type="scenario_name">default_scenario</parent>
       <base_year type="integer">1980</base_year>
       <years_to_run config_name="years" type="tuple">

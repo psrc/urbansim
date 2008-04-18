@@ -299,6 +299,11 @@ class OpusXMLAction_Data(object):
                self.xmlTreeObject.view.indexAt(position).column() == 0:
             self.currentColumn = self.xmlTreeObject.view.indexAt(position).column()
             self.currentIndex = self.xmlTreeObject.view.indexAt(position)
+            parentElement = None
+            parentIndex = self.currentIndex.model().parent(self.currentIndex)
+            if parentIndex and parentIndex.isValid():
+                parentNode = parentIndex.internalPointer().node()
+                parentElement = parentNode.toElement()
             item = self.currentIndex.internalPointer()
             domNode = item.node()
             if domNode.isNull():
@@ -341,17 +346,24 @@ class OpusXMLAction_Data(object):
 
                 if self.menu:
                     # Last minute chance to add items that all menues should have
-                    self.menu.addSeparator()
                     if domElement.hasAttribute(QString("inherited")):
                         # Tack on a make editable if the node is inherited
+                        self.menu.addSeparator()
                         self.menu.addAction(self.actMakeEditable)
                     else:
                         if domElement.hasAttribute(QString("copyable")) and \
                                domElement.attribute(QString("copyable")) == QString("True"):
-                            self.menu.addAction(self.actCloneNode)
                             self.menu.addSeparator()
-                        self.menu.addAction(self.actRemoveNode)
-                    # No matter what, if we have a menu display it
+                            self.menu.addAction(self.actCloneNode)
+                        if parentElement and (not parentElement.isNull()) and \
+                               parentElement.hasAttribute(QString("type")) and \
+                               ((parentElement.attribute(QString("type")) == QString("dictionary")) or \
+                                (parentElement.attribute(QString("type")) == QString("selectable_list")) or \
+                                (parentElement.attribute(QString("type")) == QString("list"))):
+                            self.menu.addSeparator()
+                            self.menu.addAction(self.actRemoveNode)
+                # Check if the menu has any elements before exec is called
+                if not self.menu.isEmpty():
                     self.menu.exec_(QCursor.pos())
         return
 
