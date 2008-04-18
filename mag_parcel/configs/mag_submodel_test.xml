@@ -42,21 +42,6 @@
     <hotels_test executable="True" type="scenario">
       <parent type="scenario_name">Seattle_baseline</parent>
       <models_to_run_in_years config_name="models_in_year" type="python_code">{2005:['allocation_model_hotels']}</models_to_run_in_years>
-      <cache_directory_root cloneable="True" parser_action="prefix_with_opus_data_path" type="directory">mag_parcel/runs</cache_directory_root>
-      <models_to_run cloneable="True" config_name="models" type="selectable_list">
-        <real_estate_price_model choices="Run|Skip" type="model">Skip</real_estate_price_model>
-        <expected_sale_price_model choices="Run|Skip" type="model">Skip</expected_sale_price_model>
-        <development_proposal_choice_model choices="Run|Skip" type="model">Skip</development_proposal_choice_model>
-        <building_construction_model choices="Run|Skip" type="model">Skip</building_construction_model>
-        <household_transition_model choices="Run|Skip" type="model">Skip</household_transition_model>
-        <employment_transition_model choices="Run|Skip" type="model">Skip</employment_transition_model>
-        <household_relocation_model choices="Run|Skip" type="model">Skip</household_relocation_model>
-        <household_location_choice_model choices="Run|Skip" type="model">Skip</household_location_choice_model>
-        <employment_relocation_model choices="Run|Skip" type="model">Skip</employment_relocation_model>
-        <employment_location_choice_model choices="Run|Skip" type="model">Skip<group_members type="string">non_home_based</group_members>
-        </employment_location_choice_model>
-        <distribute_unplaced_jobs_model choices="Run|Skip" type="model">Skip</distribute_unplaced_jobs_model>
-      </models_to_run>
     </hotels_test>
   </scenario_manager>
   </opus_project>
