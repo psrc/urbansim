@@ -20,6 +20,7 @@ from PyQt4.QtXml import *
 
 from opus_gui.run.model.opusrunmodel import OpusModel
 from opus_gui.config.managerbase.cloneinherited import CloneInheritedGui
+from opus_gui.config.managerbase.clonenode import CloneNodeGui
 
 class OpusXMLAction_Scenario(object):
     def __init__(self, parent):
@@ -70,13 +71,6 @@ class OpusXMLAction_Scenario(object):
                         SIGNAL("triggered()"),
                         self.editXMLFileLocal)
 
-        self.actPlaceHolder = QAction(self.applicationIcon,
-                                      "Placeholder",
-                                      self.xmlTreeObject.parent)
-        QObject.connect(self.actPlaceHolder,
-                        SIGNAL("triggered()"),
-                        self.placeHolderAction)
-
         self.actMakeEditable = QAction(self.applicationIcon,
                                     "Make Editable",
                                     self.xmlTreeObject.parent)
@@ -90,6 +84,13 @@ class OpusXMLAction_Scenario(object):
         QObject.connect(self.actRemoveNode,
                         SIGNAL("triggered()"),
                         self.removeNode)
+
+        self.actCloneNode = QAction(self.calendarIcon,
+                                    "Copy Node",
+                                    self.xmlTreeObject.parent)
+        QObject.connect(self.actCloneNode,
+                        SIGNAL("triggered()"),
+                        self.cloneNode)
 
 
     def runModel(self):
@@ -106,20 +107,6 @@ class OpusXMLAction_Scenario(object):
             QMessageBox.warning(self.xmlTreeObject.parent,
                                 "Warning",
                                 "Please save changes to project before running model")
-
-    def removeTree(self):
-        if not self.xmlTreeObject.model.dirty:
-            self.xmlTreeObject.groupBox.hide()
-            self.xmlTreeObject.parentWidget.removeWidget(self.xmlTreeObject.groupBox)
-            return True
-        else:
-            return False
-
-    def removeNode(self):
-        #print "Remove Node Pressed"
-        self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
-                                            self.currentIndex.model().parent(self.currentIndex))
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def openXMLFile(self):
         filePath = ""
@@ -183,6 +170,33 @@ class OpusXMLAction_Scenario(object):
             f.close()
             self.xmlTreeObject.parent.editorStatusLabel.setText(QString(fileName))
 
+    def removeNode(self):
+        #print "Remove Node Pressed"
+        self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
+                                            self.currentIndex.model().parent(self.currentIndex))
+        self.currentIndex.model().markAsDirty()
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
+    def cloneNode(self):
+        #print "cloneNode Pressed"
+        clone = self.currentIndex.internalPointer().domNode.cloneNode()
+        parent = self.currentIndex.model().parent(self.currentIndex)
+        model = self.currentIndex.model()
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        window = CloneNodeGui(self,flags,clone,parent,model)
+        window.show()
+
+    def makeEditableAction(self):
+        thisNode = self.currentIndex.internalPointer().node()
+        # Strip the inherited attribute down the tree
+        self.currentIndex.model().stripAttributeDown('inherited',thisNode)
+        # Now up the tree, only hitting parent nodes and not sibblings
+        self.currentIndex.model().stripAttributeUp('inherited',thisNode)
+        self.currentIndex.model().markAsDirty()
+        # Finally we refresh the tree to indicate that there has been a change
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
+    #################### Old methods not currently used ###################
     def cloneNodeAction(self):
         print "Clone Node pressed..."
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
@@ -190,21 +204,14 @@ class OpusXMLAction_Scenario(object):
         window = CloneInheritedGui(self,flags,self.xmlTreeObject.model,clone)
         window.show()
 
-    def makeEditableAction(self):
-        thisNode = self.currentIndex.internalPointer().node()
-
-        # Strip the inherited attribute down the tree
-        self.currentIndex.model().stripAttributeDown('inherited',thisNode)
-        # Now up the tree, only hitting parent nodes and not sibblings
-        self.currentIndex.model().stripAttributeUp('inherited',thisNode)
-
-        self.currentIndex.model().markAsDirty()
-
-        # Finally we refresh the tree to indicate that there has been a change
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
-
-    def placeHolderAction(self):
-        pass
+    def removeTree(self):
+        if not self.xmlTreeObject.model.dirty:
+            self.xmlTreeObject.groupBox.hide()
+            self.xmlTreeObject.parentWidget.removeWidget(self.xmlTreeObject.groupBox)
+            return True
+        else:
+            return False
+    ##################################################3####################
 
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
@@ -239,6 +246,10 @@ class OpusXMLAction_Scenario(object):
                         # Tack on a make editable if the node is inherited
                         self.menu.addAction(self.actMakeEditable)
                     else:
+                        if domElement.hasAttribute(QString("copyable")) and \
+                               domElement.attribute(QString("copyable")) == QString("True"):
+                            self.menu.addAction(self.actCloneNode)
+                            self.menu.addSeparator()
                         self.menu.addAction(self.actRemoveNode)
                     # No matter what, if we have a menu display it
                     self.menu.exec_(QCursor.pos())

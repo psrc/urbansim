@@ -22,6 +22,7 @@ from opus_gui.run.script.opusrunscript import *
 import opus_gui.util.documentationbase
 from opus_gui.config.datamanager.configurescript import ConfigureScriptGui
 from opus_gui.config.managerbase.cloneinherited import CloneInheritedGui
+from opus_gui.config.managerbase.clonenode import CloneNodeGui
 
 class OpusXMLAction_Data(object):
     def __init__(self, parent):
@@ -79,13 +80,6 @@ class OpusXMLAction_Data(object):
                         SIGNAL("triggered()"),
                         self.cloneNode)
 
-        self.actCloneNode = QAction(self.calendarIcon,
-                                    "Clone Node",
-                                    self.xmlTreeObject.parent)
-        QObject.connect(self.actCloneNode,
-                        SIGNAL("triggered()"),
-                        self.cloneNode)
-
         self.actOpenDocumentation = QAction(self.calendarIcon,
                                             "Open Documentation",
                                             self.xmlTreeObject.parent)
@@ -114,13 +108,6 @@ class OpusXMLAction_Data(object):
                         SIGNAL("triggered()"),
                         self.moveNodeDown)
 
-        self.actPlaceHolder = QAction(self.applicationIcon,
-                                      "Placeholder",
-                                      self.xmlTreeObject.parent)
-        QObject.connect(self.actPlaceHolder,
-                        SIGNAL("triggered()"),
-                        self.placeHolderAction)
-
         #jesse testing
         self.actExecBatch = QAction(self.applicationIcon,
                                       "Execute batch (TESTING)",
@@ -136,6 +123,13 @@ class OpusXMLAction_Data(object):
                         SIGNAL("triggered()"),
                         self.makeEditableAction)
 
+        self.actCloneNode = QAction(self.calendarIcon,
+                                    "Copy Node",
+                                    self.xmlTreeObject.parent)
+        QObject.connect(self.actCloneNode,
+                        SIGNAL("triggered()"),
+                        self.cloneNode)
+
 
     def addScriptFile(self):
         #print "Add Script Pressed"
@@ -146,6 +140,7 @@ class OpusXMLAction_Data(object):
         self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
                                             self.currentIndex,
                                             newNode)
+        self.currentIndex.model().markAsDirty()
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def newConfig(self):
@@ -155,29 +150,16 @@ class OpusXMLAction_Data(object):
         window.show()
         # Connect to a signal when the GUI collects the vars to add the element
 
-    def cloneNode(self):
-        #print "cloneNode Pressed"
-        clone = self.currentIndex.internalPointer().domNode.cloneNode()
-        parent = self.currentIndex.model().parent(self.currentIndex)
-        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(parent),
-                                            parent,
-                                            clone)
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
-
-    def removeNode(self):
-        #print "Remove Node Pressed"
-        self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
-                                            self.currentIndex.model().parent(self.currentIndex))
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
-
     def moveNodeUp(self):
         #print "Move Up Pressed"
         self.currentIndex.model().moveUp(self.currentIndex)
+        self.currentIndex.model().markAsDirty()
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def moveNodeDown(self):
         #print "Move Down Pressed"
         self.currentIndex.model().moveDown(self.currentIndex)
+        self.currentIndex.model().markAsDirty()
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def openDocumentation(self):
@@ -275,17 +257,33 @@ class OpusXMLAction_Data(object):
     def execBatch(self):
         print "Execute batch (TESTING) pressed..."
 
-    def placeHolderAction(self):
-        # Test the finding of an index based on node name
-        parent = self.currentIndex.model().index(0,0,QModelIndex()).parent()
-        index = self.currentIndex.model().findElementIndexByName("buffer_size",parent)[0]
-        if index.isValid():
-            indexElement = index.internalPointer()
-            print "%s,%d" % (indexElement.node().nodeName(),
-                             index.row())
-        else:
-            print "No valid node was found..."
+    def cloneNode(self):
+        #print "cloneNode Pressed"
+        clone = self.currentIndex.internalPointer().domNode.cloneNode()
+        parent = self.currentIndex.model().parent(self.currentIndex)
+        model = self.currentIndex.model()
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        window = CloneNodeGui(self,flags,clone,parent,model)
+        window.show()
 
+    def removeNode(self):
+        #print "Remove Node Pressed"
+        self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
+                                            self.currentIndex.model().parent(self.currentIndex))
+        self.currentIndex.model().markAsDirty()
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
+    def makeEditableAction(self):
+        thisNode = self.currentIndex.internalPointer().node()
+        # Strip the inherited attribute down the tree
+        self.currentIndex.model().stripAttributeDown('inherited',thisNode)
+        # Now up the tree, only hitting parent nodes and not sibblings
+        self.currentIndex.model().stripAttributeUp('inherited',thisNode)
+        self.currentIndex.model().markAsDirty()
+        # Finally we refresh the tree to indicate that there has been a change
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
+    #################### Old methods not currently used ###################
     def cloneNodeAction(self):
         print "Clone Node pressed..."
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
@@ -293,18 +291,8 @@ class OpusXMLAction_Data(object):
         window = CloneInheritedGui(self,flags,self.xmlTreeObject.model,clone)
         window.show()
 
-    def makeEditableAction(self):
-        thisNode = self.currentIndex.internalPointer().node()
+    ##################################################3####################
 
-        # Strip the inherited attribute down the tree
-        self.currentIndex.model().stripAttributeDown('inherited',thisNode)
-        # Now up the tree, only hitting parent nodes and not sibblings
-        self.currentIndex.model().stripAttributeUp('inherited',thisNode)
-
-        self.currentIndex.model().markAsDirty()
-
-        # Finally we refresh the tree to indicate that there has been a change
-        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
@@ -358,6 +346,10 @@ class OpusXMLAction_Data(object):
                         # Tack on a make editable if the node is inherited
                         self.menu.addAction(self.actMakeEditable)
                     else:
+                        if domElement.hasAttribute(QString("copyable")) and \
+                               domElement.attribute(QString("copyable")) == QString("True"):
+                            self.menu.addAction(self.actCloneNode)
+                            self.menu.addSeparator()
                         self.menu.addAction(self.actRemoveNode)
                     # No matter what, if we have a menu display it
                     self.menu.exec_(QCursor.pos())

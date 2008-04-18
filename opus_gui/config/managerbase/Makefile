@@ -15,14 +15,18 @@
 RM = rm -f
 #RM = del
 
-all: cloneinherited_ui.py
+all: cloneinherited_ui.py clonenode_ui.py
 
 clean:
 	$(RM) cloneinherited_ui.py
+	$(RM) clonenode_ui.py
 	$(RM) *.pyc
 	$(RM) *~
 
 cloneinherited_ui.py: cloneinherited.ui
 	pyuic4 -o cloneinherited_ui.py cloneinherited.ui
+
+clonenode_ui.py: clonenode.ui
+	pyuic4 -o clonenode_ui.py clonenode.ui
 
 

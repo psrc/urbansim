@@ -23,6 +23,7 @@ import opus_gui.util.documentationbase
 from opus_gui.config.datamanager.configurescript import ConfigureScriptGui
 from opus_gui.config.datamanager.newdbconnection import NewDbConnectionGui
 from opus_gui.config.managerbase.cloneinherited import CloneInheritedGui
+from opus_gui.config.managerbase.clonenode import CloneNodeGui
 
 class OpusXMLAction_DataDB(object):
     def __init__(self, parent):
@@ -59,13 +60,6 @@ class OpusXMLAction_DataDB(object):
                         SIGNAL("triggered()"),
                         self.testDBConnection)
 
-        self.actPlaceHolder = QAction(self.applicationIcon,
-                                      "Placeholder",
-                                      self.xmlTreeObject.parent)
-        QObject.connect(self.actPlaceHolder,
-                        SIGNAL("triggered()"),
-                        self.placeHolderAction)
-
         self.actRemoveNode = QAction(self.removeIcon,
                                      "Remove Node",
                                      self.xmlTreeObject.parent)
@@ -80,43 +74,18 @@ class OpusXMLAction_DataDB(object):
                         SIGNAL("triggered()"),
                         self.makeEditableAction)
 
+        self.actCloneNode = QAction(self.calendarIcon,
+                                    "Copy Node",
+                                    self.xmlTreeObject.parent)
+        QObject.connect(self.actCloneNode,
+                        SIGNAL("triggered()"),
+                        self.cloneNode)
+
     def newDBConnection(self):
         print "newDBConnection pressed"
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         window = NewDbConnectionGui(self,flags)
         window.show()
-        #
-        #newNode1 = self.currentIndex.model().domDocument.createElement(QString("new_connection"))
-        #newNode1.setAttribute(QString("type"),QString("db_connection"))
-        #
-        #newNode2 = self.currentIndex.model().domDocument.createElement(QString("host_name"))
-        #newNode2.setAttribute(QString("type"),QString("string"))
-        #newText = self.currentIndex.model().domDocument.createTextNode(QString(""))
-        #newNode2.appendChild(newText)
-        #
-        #newNode3 = self.currentIndex.model().domDocument.createElement(QString("protocol"))
-        #newNode3.setAttribute(QString("type"),QString("string"))
-        #newText = self.currentIndex.model().domDocument.createTextNode(QString(""))
-        #newNode3.appendChild(newText)
-        #
-        #newNode4 = self.currentIndex.model().domDocument.createElement(QString("user_name"))
-        #newNode4.setAttribute(QString("type"),QString("string"))
-        #newText = self.currentIndex.model().domDocument.createTextNode(QString(""))
-        #newNode4.appendChild(newText)
-        #
-        #newNode5 = self.currentIndex.model().domDocument.createElement(QString("password"))
-        #newNode5.setAttribute(QString("type"),QString("password"))
-        #newText = self.currentIndex.model().domDocument.createTextNode(QString(""))
-        #newNode5.appendChild(newText)
-        #
-        #newNode1.appendChild(newNode2)
-        #newNode1.appendChild(newNode3)
-        #newNode1.appendChild(newNode4)
-        #newNode1.appendChild(newNode5)
-        #self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
-        #                                    self.currentIndex,
-        #                                    newNode1)
-        #self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def cloneDBConnection(self):
         print "cloneDBConnection pressed"
@@ -125,25 +94,26 @@ class OpusXMLAction_DataDB(object):
         self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(parent),
                                             parent,
                                             clone)
+        self.currentIndex.model().markAsDirty()
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def testDBConnection(self):
         print "testDBConnection pressed - Not yet implemented"
 
-    def placeHolderAction(self):
-        print "Placeholder pressed"
-
     def removeNode(self):
         #print "Remove Node Pressed"
         self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
                                             self.currentIndex.model().parent(self.currentIndex))
+        self.currentIndex.model().markAsDirty()
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
-    def cloneNodeAction(self):
-        print "Clone Node pressed..."
+    def cloneNode(self):
+        #print "cloneNode Pressed"
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
+        parent = self.currentIndex.model().parent(self.currentIndex)
+        model = self.currentIndex.model()
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        window = CloneInheritedGui(self,flags,self.xmlTreeObject.model,clone)
+        window = CloneNodeGui(self,flags,clone,parent,model)
         window.show()
 
     def makeEditableAction(self):
@@ -153,11 +123,19 @@ class OpusXMLAction_DataDB(object):
         self.currentIndex.model().stripAttributeDown('inherited',thisNode)
         # Now up the tree, only hitting parent nodes and not sibblings
         self.currentIndex.model().stripAttributeUp('inherited',thisNode)
-
         self.currentIndex.model().markAsDirty()
-
         # Finally we refresh the tree to indicate that there has been a change
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
+    #################### Old methods not currently used ###################
+    def cloneNodeAction(self):
+        print "Clone Node pressed..."
+        clone = self.currentIndex.internalPointer().domNode.cloneNode()
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        window = CloneInheritedGui(self,flags,self.xmlTreeObject.model,clone)
+        window.show()
+
+    ##################################################3####################
 
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
@@ -188,6 +166,10 @@ class OpusXMLAction_DataDB(object):
                         # Tack on a make editable if the node is inherited
                         self.menu.addAction(self.actMakeEditable)
                     else:
+                        if domElement.hasAttribute(QString("copyable")) and \
+                               domElement.attribute(QString("copyable")) == QString("True"):
+                            self.menu.addAction(self.actCloneNode)
+                            self.menu.addSeparator()
                         self.menu.addAction(self.actRemoveNode)
                     # No matter what, if we have a menu display it
                     self.menu.exec_(QCursor.pos())
