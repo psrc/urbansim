@@ -4,6 +4,14 @@
     <description type="string">Sample Seattle project</description>
     </general>
   <project_wide_configurations>
+    <dataset_pool_configuration type="class">
+      <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
+      <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+      <package_order type="list">['seattle_parcel','urbansim_parcel','urbansim']</package_order>
+      <package_order_exceptions type="dictionary" />
+    </dataset_pool_configuration>
+  </project_wide_configurations>
+  <data_manager_dbstree>
     <database_templates setexpanded="True" type="db_templates">
       <ms_sql_server_template setexpanded="False" type="db_template">
         <host_name choices="Required|Optional" type="string"> Required </host_name>
@@ -27,13 +35,7 @@
         <use_environment_variables choices="True|False" type="boolean">True</use_environment_variables>
       </urbansim_db1_example>
     </database_library>
-    <dataset_pool_configuration type="class">
-      <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
-      <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
-      <package_order type="list">['seattle_parcel','urbansim_parcel','urbansim']</package_order>
-      <package_order_exceptions type="dictionary" />
-    </dataset_pool_configuration>
-  </project_wide_configurations>
+  </data_manager_dbstree>
   <data_manager>
     <script_library type="script_library">
       <script_path type="script_path">projects.scripts</script_path>
@@ -636,29 +638,6 @@
                                                       'development_project_proposal_component',
                                                       'development_project_proposal', 'travel_data']</datasets_to_cache_after_each_model>
       <unroll_gridcells type="boolean">False</unroll_gridcells>
-      <datasets_to_preload type="dictionary">
-        <zone type="dictionary" />
-        <household type="dictionary" />
-        <building type="dictionary" />
-        <parcel type="dictionary">
-          <package_name type="string">urbansim_parcel</package_name>
-        </parcel>
-        <person type="dictionary">
-          <package_name type="string">urbansim_parcel</package_name>
-        </person>
-        <development_template type="dictionary">
-          <package_name type="string">urbansim_parcel</package_name>
-        </development_template>
-        <development_template_component type="dictionary">
-          <package_name type="string">urbansim_parcel</package_name>
-        </development_template_component>
-        <job type="dictionary" />
-        <building_type type="dictionary">
-          <package_name type="string">urbansim_parcel</package_name>
-        </building_type>
-        <travel_data type="dictionary" />
-        <job_building_type type="dictionary" />
-      </datasets_to_preload>
     </Seattle_baseline>
   </scenario_manager>
   <results_manager>

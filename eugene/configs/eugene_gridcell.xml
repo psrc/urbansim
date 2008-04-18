@@ -3,6 +3,46 @@
   <general>
     <description type="string">Sample Eugene project</description>
     </general>
+  <project_wide_configurations>
+    <dataset_pool_configuration type="class">
+      <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
+      <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
+      <package_order type="list">['eugene', 'urbansim', 'opus_core']</package_order>
+      <package_order_exceptions type="dictionary" />
+    </dataset_pool_configuration>
+  </project_wide_configurations>
+  <data_manager_dbstree>
+    <database_templates setexpanded="True" type="db_templates">
+      <server setexpanded="True" type="db_template">
+        <host_name choices="Required|Optional" type="string"> Required </host_name>
+        <protocol choices="Required|Optional" type="string"> Required </protocol>
+        <user_name choices="Required|Optional" type="string"> Required </user_name>
+        <password choices="Required|Optional" type="password"> Required </password>
+        <use_environment_variables choices="Required|Optional" type="boolean"> Required
+    </use_environment_variables>
+      </server>
+      <esri_personal_geodb setexpanded="True" type="db_template">
+        <database_path choices="Required|Optional" type="string"> Required </database_path>
+        <some_other_param choices="Required|Optional" type="string"> Optional </some_other_param>
+      </esri_personal_geodb>
+    </database_templates>
+    <database_library setexpanded="True" type="database_library">
+      <urbansim_db1 setexpanded="True" type="db_connection">
+        <host_name type="string" />
+        <protocol type="string" />
+        <user_name type="string" />
+        <password type="password" />
+        <use_environment_variables choices="True|False" type="boolean">True</use_environment_variables>
+      </urbansim_db1>
+      <urbansim_db2 setexpanded="True" type="db_connection">
+        <host_name type="string">urbanserver2</host_name>
+        <protocol type="string">xxx_protocol2</protocol>
+        <user_name type="string">pwaddell2</user_name>
+        <password type="password">sunshine2</password>
+        <use_environment_variables type="boolean">False</use_environment_variables>
+      </urbansim_db2>
+    </database_library>
+  </data_manager_dbstree>
   <data_manager>
     <script_library setexpanded="True" type="script_library">
       <script_path type="script_path">projects.scripts</script_path>
@@ -99,44 +139,6 @@
     </visualization_script_batch>
     <documentation type="documentation_path">documentation/installation/index.html</documentation>
   </data_manager>
-  <project_wide_configurations>
-    <database_templates setexpanded="True" type="db_templates">
-      <server setexpanded="True" type="db_template">
-        <host_name choices="Required|Optional" type="string"> Required </host_name>
-        <protocol choices="Required|Optional" type="string"> Required </protocol>
-        <user_name choices="Required|Optional" type="string"> Required </user_name>
-        <password choices="Required|Optional" type="password"> Required </password>
-        <use_environment_variables choices="Required|Optional" type="boolean"> Required
-	</use_environment_variables>
-      </server>
-      <esri_personal_geodb setexpanded="True" type="db_template">
-        <database_path choices="Required|Optional" type="string"> Required </database_path>
-        <some_other_param choices="Required|Optional" type="string"> Optional </some_other_param>
-      </esri_personal_geodb>
-    </database_templates>
-    <database_library setexpanded="True" type="database_library">
-      <urbansim_db1 setexpanded="True" type="db_connection">
-        <host_name type="string" />
-        <protocol type="string" />
-        <user_name type="string" />
-        <password type="password" />
-        <use_environment_variables choices="True|False" type="boolean">True</use_environment_variables>
-      </urbansim_db1>
-      <urbansim_db2 setexpanded="True" type="db_connection">
-        <host_name type="string">urbanserver2</host_name>
-        <protocol type="string">xxx_protocol2</protocol>
-        <user_name type="string">pwaddell2</user_name>
-        <password type="password">sunshine2</password>
-        <use_environment_variables type="boolean">False</use_environment_variables>
-      </urbansim_db2>
-    </database_library>
-    <dataset_pool_configuration type="class">
-      <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
-      <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
-      <package_order type="list">['eugene', 'urbansim', 'opus_core']</package_order>
-      <package_order_exceptions type="dictionary" />
-    </dataset_pool_configuration>
-  </project_wide_configurations>
   <model_manager>
     <test_model_config type="string">
     </test_model_config>
