@@ -35,7 +35,8 @@ class CloneNodeGui(QDialog, Ui_CloneNodeGui):
         self.clone = clone
 
     def on_createXML_released(self):
-        newName = self.newName.text()
+        newNameWithSpace = self.newName.text()
+        newName = newNameWithSpace.replace(QString(" "),QString("_"))
         nodeElement = self.clone.toElement()
         if not nodeElement.isNull():
             nodeElement.setTagName(newName)
