@@ -12,11 +12,23 @@
 # other acknowledgments.
 # 
 
-sampled_shares = {
-4: 0.007159353,
-11: 0.02517321,
-12: 0.037413395, 
-19: 0.930254042,
+sampled_shares = { 
+#4: 0.007159353,
+#11: 0.02517321,
+#12: 0.037413395, 
+#19: 0.930254042,
+
+#psrc_2005_parcel_baseyear_change_20080408.households_for_estimation
+4: 0.059584914,
+11:0.014728855,
+12:0.131667039,
+19:0.794019192,
+
+#psrc_activity2006_ver2.households_for_estimation 080415
+#4: 0.060772314,
+#11:0.014138003,
+#12:0.130196243,
+#19:0.794893437,
 }
 
 observed_shares = {
