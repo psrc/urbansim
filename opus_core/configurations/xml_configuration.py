@@ -123,7 +123,7 @@ class XMLConfiguration(object):
         full_root = self.full_tree.getroot()
         if full_root.tag!='opus_project':
             raise ValueError, "malformed xml - expected to find a root element named 'opus_project'"
-        parent_nodes = full_root.findall('parent')
+        parent_nodes = full_root.findall('general/parent')
         default_dir = os.path.split(self._filepath)[0]
         for p in parent_nodes:
             x = XMLConfiguration(p.text, default_directory=default_dir, is_parent=True)
@@ -358,7 +358,7 @@ class XMLConfiguration(object):
                 database_hook = items['database_connection']
                 #print "Found a database_hook = %s" % (database_hook)
                 # Next, since we have a connection we must go find it in the data manager
-                the_database = self.get_section('project_wide_configurations/database_library/%s' %
+                the_database = self.get_section('general/database_library/%s' %
                                                 (database_hook))
                 if the_database:
                     #print "Converting a database connection into a class"
@@ -647,8 +647,10 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'estimation_grandchild.xml')
         config = XMLConfiguration(f)
         update_str = """<opus_project>
-            <parent type="file">estimation_child.xml</parent>
-            <parent type="file">estimation_child2.xml</parent>
+            <general>
+              <parent type="file">estimation_child.xml</parent>
+              <parent type="file">estimation_child2.xml</parent>
+            </general>
             <data_manager inherited="someplace">
             </data_manager>
             <model_manager>

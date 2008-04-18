@@ -161,7 +161,7 @@ class ToolboxBase(object):
                                                    self.parent.datamanager_xmlconfig.layout())
                 self.dataManagerFileTree = OpusFileTree(self,self.opusDataPath,
                                                         self.parent.datamanager_dirview.layout())
-                self.dataManagerDBSTree = OpusXMLTree(self, "project_wide_configurations",
+                self.dataManagerDBSTree = OpusXMLTree(self, "general",
                                                       self.parent.datamanager_dbsconnections.layout())
             else:
                 print "Error reading the %s configuration file" % (xml_file)

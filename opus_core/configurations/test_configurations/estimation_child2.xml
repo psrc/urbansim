@@ -1,5 +1,7 @@
 <opus_project>
-  <parent type="file">estimate.xml</parent>
+  <general>
+    <parent type="file">estimate.xml</parent>
+  </general>
   <model_manager>
     <estimation type="dictionary" >
       <real_estate_price_model type="dictionary" >

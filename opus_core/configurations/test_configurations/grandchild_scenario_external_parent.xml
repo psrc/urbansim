@@ -1,6 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
-  <parent type="file">child_scenarios.xml</parent>
+  <general>
+    <parent type="file">child_scenarios.xml</parent>
+  </general>
   <scenario_manager>
     <grandchild type="scenario">
       <parent type="scenario_name">child_scenario</parent>

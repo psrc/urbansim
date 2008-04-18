@@ -1,5 +1,7 @@
 <opus_project>
-  <parent type="file">seattle_parcel/configs/seattle_parcel.xml</parent>
+  <general>
+    <parent type="file">seattle_parcel/configs/seattle_parcel.xml</parent>
+  </general>
   <model_manager>
     <model_system type="dictionary">
       <allocation_model_hotels type="dictionary">

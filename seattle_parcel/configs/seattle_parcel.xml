@@ -1,16 +1,14 @@
 <opus_project>
-  <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
   <general>
     <description type="string">Sample Seattle project</description>
-    </general>
-  <project_wide_configurations>
+    <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
     <dataset_pool_configuration type="class">
       <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
       <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
       <package_order type="list">['seattle_parcel','urbansim_parcel','urbansim']</package_order>
       <package_order_exceptions type="dictionary" />
     </dataset_pool_configuration>
-  </project_wide_configurations>
+  </general>
   <data_manager_dbstree>
     <database_templates setexpanded="True" type="db_templates">
       <ms_sql_server_template setexpanded="False" type="db_template">

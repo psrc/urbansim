@@ -42,7 +42,7 @@ class OpusXMLAction(object):
             return OpusXMLAction_Scenario(self)
         elif xmlType == "data_manager":
             return OpusXMLAction_Data(self)
-        elif xmlType == "project_wide_configurations":
+        elif xmlType == "general":
             return OpusXMLAction_DataDB(self)
         else:
             #error out

@@ -1,16 +1,15 @@
 <opus_project>
   <general>
     <description type="string">Base UrbanSim gridcell project</description>
+    <parent type="file">urbansim/configs/urbansim.xml</parent>
     <available_datasets type="list">['gridcell','zone','faz','large_area','city','county','alldata']</available_datasets>
-  </general>
-  <project_wide_configurations>
     <dataset_pool_configuration type="class">
       <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
       <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
       <package_order type="list">['urbansim', 'opus_core']</package_order>
       <package_order_exceptions type="dictionary" />
     </dataset_pool_configuration>
-  </project_wide_configurations>
+  </general>
   <model_manager>
     <default_model_configurations type="dictionary">
       <development_project_types parser_action="execute" type="class" cloneable="True">
