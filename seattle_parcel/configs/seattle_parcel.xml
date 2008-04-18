@@ -638,6 +638,29 @@
                                                       'development_project_proposal_component',
                                                       'development_project_proposal', 'travel_data']</datasets_to_cache_after_each_model>
       <unroll_gridcells type="boolean">False</unroll_gridcells>
+      <datasets_to_preload type="dictionary">
+         <zone type="dictionary" />
+         <household type="dictionary" />
+         <building type="dictionary" />
+         <parcel type="dictionary">
+           <package_name type="string">urbansim_parcel</package_name>
+         </parcel>
+         <person type="dictionary">
+           <package_name type="string">urbansim_parcel</package_name>
+         </person>
+         <development_template type="dictionary">
+           <package_name type="string">urbansim_parcel</package_name>
+         </development_template>
+         <development_template_component type="dictionary">
+           <package_name type="string">urbansim_parcel</package_name>
+         </development_template_component>
+         <job type="dictionary" />
+         <building_type type="dictionary">
+           <package_name type="string">urbansim_parcel</package_name>
+         </building_type>
+         <travel_data type="dictionary" />
+         <job_building_type type="dictionary" />
+       </datasets_to_preload>
     </Seattle_baseline>
   </scenario_manager>
   <results_manager>
