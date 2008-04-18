@@ -29,7 +29,9 @@ class AllocationModel(AM):
             #list_of_column_names = ['year', 'persons']
             #list_of_ranges = ['d22:d32', 'k22:k32']
             control_total_data = excel_doc.get_dict_table_from_column_names_and_ranges(excel_data_info)
-            
+            excel_doc.close()
+            excel_doc.quit()
+            del excel_doc
             #print control_total_data
             
             print "getting dict storage"

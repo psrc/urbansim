@@ -18,7 +18,7 @@ try:
     import arcgisscripting, types, pywintypes, os
     from opus_core.store.storage import Storage
     from numpy import empty, append, ma, array
-    from string import count
+    from string import count, lower as lwr
     from random import randint
 
 except:
@@ -218,10 +218,10 @@ else:
 
             # Get column types
             column_types = self._get_column_types_esri(table_name)
-            numpy_column_dtypes = []
-            for i in column_types:
-                numpy_type = self._get_numpy_dtype_from_esri_dtype(i)
-                numpy_column_dtypes.append(numpy_type)
+            numpy_column_dtypes = {}
+            for i, j in column_types.iteritems():
+                numpy_type = self._get_numpy_dtype_from_esri_dtype(j)
+                numpy_column_dtypes[i] = numpy_type
 
             # Get rows
             rows = self.gp.SearchCursor(full_table_name)
@@ -237,10 +237,8 @@ else:
 
             # Create dictionary to populate with table values
             table = {}
-            x = 0
             for i in columns:
-                table[i] = empty(0, numpy_column_dtypes[x])
-                x += 1
+                table[i] = empty(0, numpy_column_dtypes[i])
 
             # Populate dictionary with table values while
             # converting unicode and the special 'PyTime'
@@ -305,7 +303,7 @@ else:
 
         def _get_column_types_esri(self, table_name):
             """
-            Returns a list of ESRI column types.  Omits columns of
+            Returns a dictionary of ESRI column types.  Omits columns of
             type 'OID' and 'Geometry' and those containing '.'
             (e.g. SHAPE.area, SHAPE.len).
             """
@@ -322,7 +320,8 @@ else:
             fields = self.gp.ListFields(full_table_name)
             fields.Reset()
             field = fields.Next()
-            esri_column_types = []
+            #esri_column_types = []
+            esri_column_types = {}
             while field:
                 if str(field.Type) == 'OID':
                     pass
@@ -331,7 +330,8 @@ else:
                 elif '.' in field.Name:
                     pass
                 else:
-                    esri_column_types.append(str(field.Type))
+                    #esri_column_types.append(str(field.Type))
+                    esri_column_types[str(lwr(field.Name))] = str(field.Type)
                 field = fields.Next()
 
             return esri_column_types
