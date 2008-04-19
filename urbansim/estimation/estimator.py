@@ -103,7 +103,7 @@ class Estimator(object):
         if self.save_estimation_results:
             self.save_results(out_storage=out_storage)
 
-    def predict(self, preidcted_choice_id_prefix="predicted_", preidcted_choice_id_name=None):
+    def predict(self, predicted_choice_id_prefix="predicted_", predicted_choice_id_name=None):
         """ Run prediction. Currently makes sense only for choice models."""
         # Create temporary configuration where all words 'estimate' are replaced by 'run'
         tmp_config = Resources(self.config)
@@ -121,11 +121,11 @@ class Estimator(object):
         #self.config['output_configuration'] = output_configuration
         
         #self.model_system.run_year_namespace["coefficients"] = self.coefficients
-        del tmp_config['models_configuration'][self.model_name]['controller']['prepare_for_run']
+        #del tmp_config['models_configuration'][self.model_name]['controller']['prepare_for_run']
         
         try:
             run_year_namespace = copy.copy(self.model_system.run_year_namespace)
-        except AttributeError:
+        except:
             logger.log_error("The estimate() method must be run first")
             return
         
@@ -135,8 +135,8 @@ class Estimator(object):
             # save current locations of agents
             current_choices = agents.get_attribute(choice_id_name).copy()
 
-            if preidcted_choice_id_name is None or len(preidcted_choice_id_name) == 0:
-                preidcted_choice_id_name = preidcted_choice_id_prefix + choice_id_name
+            if predicted_choice_id_name is None or len(predicted_choice_id_name) == 0:
+                predicted_choice_id_name = predicted_choice_id_prefix + choice_id_name
 
             run_year_namespace["process"] = "run"
             run_year_namespace["processmodel_config"] = tmp_config['models_configuration'][self.model_name]['controller']['run']
@@ -145,21 +145,34 @@ class Estimator(object):
             #self.model_system.run(tmp_config, write_datasets_to_cache_at_end_of_year=False)
             new_choices = agents.get_attribute(choice_id_name).copy()
             agents.modify_attribute(name=choice_id_name, data=current_choices)
-            agents.add_primary_attribute(name=preidcted_choice_id_name, data=new_choices)
-            logger.log_status("Predictions saved into attribute " + preidcted_choice_id_name)
+            agents.add_primary_attribute(name=predicted_choice_id_name, data=new_choices)
+            logger.log_status("Predictions saved into attribute " + predicted_choice_id_name)
+            return True
         except Exception, e:
             logger.log_error("Error encountered in prediction: %s" % e)
             logger.log_stack_trace()
+        
+        return False
 
     def create_prediction_success_table(self, 
                                         choice_geography_id="fazdistrict_id=building.disaggregate(faz.fazdistrict_id, intermediates=[zone, parcel])",
-                                        predicted_choice_id_name="predicted_building_id"):
+                                        predicted_choice_id_prefix="predicted_", 
+                                        predicted_choice_id_name=None,
+                                        log_to_file=None):
         agents = self.get_agent_set()
         choices = self.get_choice_set()
-        
+        choice_id_name = choices.get_id_name()[0]
+        if predicted_choice_id_name is None or len(predicted_choice_id_name) == 0:
+            predicted_choice_id_name = predicted_choice_id_prefix + choice_id_name
+            
         if not predicted_choice_id_name in agents.get_known_attribute_names():
-            self.predict()
-        
+            if not self.predict(predicted_choice_id_prefix=predicted_choice_id_prefix, 
+                                predicted_choice_id_name=predicted_choice_id_name):
+                return
+
+        if log_to_file is not None and len(log_to_file) > 0:
+            logger.enable_file_logging(log_to_file)
+            
         geography_id = choices.compute_variables(choice_geography_id)
         agents_index = self.agents_index_for_prediction
         chosen_choice_id = agents.get_attribute_by_index(choices.get_id_name()[0], agents_index)
@@ -173,14 +186,17 @@ class Estimator(object):
         unique_geography_id = unique_values(geography_id)
         # observed on row, predicted on column
         prediction_matrix = zeros( (unique_geography_id.size, unique_geography_id.size), dtype="int32" )
-        success_rate = zeros( unique_geography_id.size, dtype="float32" )
-        i = 0
 
         def _convert_array_to_tab_delimited_string(an_array):
+            from numpy import dtype
+            if an_array.dtype == dtype('f'):
+                return "\t".join(["%5.4f" % item for item in an_array])
             return "\t".join([str(item) for item in an_array])
         
         logger.log_status("Observed_id\tSuccess_rate\t%s" % \
                           _convert_array_to_tab_delimited_string(unique_geography_id) )
+        i = 0
+        success_rate = zeros( unique_geography_id.size, dtype="float32" )
         for observed_id in unique_geography_id:
             predicted_id = predicted_geography_id[chosen_geography_id==observed_id]
             prediction_matrix[i] = ndimage.sum(ones(predicted_id.size), labels=predicted_id, index=unique_geography_id )
@@ -188,8 +204,15 @@ class Estimator(object):
                 success_rate[i] = float(prediction_matrix[i, i]) / prediction_matrix[i].sum()
             logger.log_status("%s\t\t%5.4f\t\t%s" % (observed_id, success_rate[i], 
                                               _convert_array_to_tab_delimited_string(prediction_matrix[i]) ) )
-            
             i+=1
+
+        success_rate2 = zeros( i, dtype="float32" )
+        for j in range(i):
+            success_rate2[j]=float(prediction_matrix[:,j].sum()) / prediction_matrix[j, :].sum()
+        
+        logger.log_status("%s\t\t%s\t\t%s" % ('', '', 
+                                                 _convert_array_to_tab_delimited_string( success_rate2 ) ))
+        logger.disable_file_logging(filename=log_to_file)
         
     def save_results(self, out_storage=None, model_name=None):
         if self.specification is None or self.coefficients is None:
