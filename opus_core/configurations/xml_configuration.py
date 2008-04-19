@@ -457,13 +457,13 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assert_(ma.allclose(config['arraytest'], should_be, rtol=1e-6))
         
     def test_files_directories(self):
-        f = os.path.join(self.test_configs, 'files_directories.xml')
-        x = XMLConfiguration(f)
-        config = x.get_run_configuration('test_scenario')
         # if the OPUS_HOME environment variable isn't set, temporarily set it so that
         # the prefix_with_opus_data_path parser command can be tested
         if 'OPUS_HOME' not in os.environ:
             os.environ['OPUS_HOME'] = os.path.expanduser('~/opus')
+        f = os.path.join(self.test_configs, 'files_directories.xml')
+        x = XMLConfiguration(f)
+        config = x.get_run_configuration('test_scenario')
         prefix = x.get_opus_data_path()
         self.assertEqual(config, {'file1': 'testfile', 
                                   'file2': os.path.join(prefix, 'testfile'),
