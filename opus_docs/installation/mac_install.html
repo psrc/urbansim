@@ -208,8 +208,8 @@ We will use this later to install a number of packages.</p>
 
 <ul>
 
-<li><b>NumPy</b> 1.0.5</li>
-<li><b>SciPy</b> 0.7 </li>
+<li><b>NumPy</b> 1.0.4</li>
+<li><b>SciPy</b> 0.6.0 </li>
 <li><b>MatPlotLib</b> 0.91.2</li>
 
 
@@ -217,8 +217,8 @@ We will use this later to install a number of packages.</p>
 
 <p>There are a number of ways to do this.  The simplest is probably to install the Superpack from 
 <a href="http://trichech.us/?page_id=5">http://trichech.us/?page_id=5</a> (or the local urbansim copy). However, this will
-install the wrong version of MatPlotLib, so you must then delete the installed MatPlotLib from your <i>site-packages</i> 
-directory and install the correct version 
+install the wrong versions of numpy and MatPlotLib, so you must then delete the installed numpy and MatPlotLib from your <i>site-packages</i> 
+directory and install the correct versions 
 from <a href="http://pythonmac.org/packages/py25-fat/index.html">pythonmac.org</a>.</p>
 
 <p>Alternately, you can install all the packages manually.   First follow the <a href="http://www.scipy.org/Installing_SciPy/Mac_OS_X">
@@ -230,7 +230,7 @@ MathPlotLib depends on Numpy, so you must do this last.</p>
 
 <ul>
 
-	 <li><b>SQLAlchemy 0.4:</b> Download the tarball for SQLAlchemy 0.4.0 or later from 
+	 <li><b>SQLAlchemy 0.4:</b> Download the tarball for SQLAlchemy 0.4.5 or later from 
 	 <a href="http://www.sqlalchemy.org/download.html">http://www.sqlalchemy.org/download.html</a>).  
 	 Then run the command
 	 <pre>$ easy_install [<i>filename</i>]</pre>
@@ -279,11 +279,19 @@ To get PyQt to compile, you may also need to comment out all OpenGL components f
 <p>The process is similar on Tiger/10.4, but seems to vary from user to user for reasons we haven't been able to pin down.  
 <a href="http://www.riverbankcomputing.com/pipermail/qscintilla/2007-July/000110.html">This page</a> has been useful to some users.</p>
 
-<h2>Step 4: <a name="opus">Installing Opus and
-UrbanSim</a></h2>
+<h2>Step 4: <a name="opus">Installing Opus and UrbanSim</a></h2>
 
+<p>We provide a zip file that includes sample data for Eugene and Seattle projects, template configurations for running simulations 
+using these projects, and a directory in which to insert the source code.  
+Download the zip file with data for the latest development version from
+<a href="http://www.urbansim.org/opus/releases/opus-4-2-dev/opus-4-2-dev.tar.gz">http://www.urbansim.org/opus/releases/opus-4-2-dev/opus-4-2-dev.tar.gz</a>.
+Unzip the file, which will result in a directory called <tt>opus</tt> with various subdirectories.  Put
+this directory some convenient place on your local disk. (We suggest putting it in your home directory.)
+See <a href="opus_directory_tree.html">Opus Directory Tree</a> for more information on these directories and
+sample data.</p>
 
-<p>You should download the Opus/Urbansim code directly from our subversion repository. &nbsp;(For you modeler
+For the development version, you should check out the
+source code directly from our subversion repository. &nbsp;(For you modeler
 types, <a href="http://subversion.tigris.org/">subversion</a>
 in this context is the name of a version control system that nicely
 manages keeping track of different versions of the code; we're not
@@ -293,10 +301,7 @@ request any particular version of the code from subversion.
 &nbsp;However, you do have to have a subversion client installed on
 your machine.</p>
 
-<p>Here are two ways to get the code. For each of these options, you construct a 
-workspace, called say '/Users/yourusername/opusworkspace'. You'll then need to
-add&nbsp;/Users/yourusername/opusworkspace to your Python path (see <a href="mac_install.html#Step_5:_Defining_Environment_Variables_">Step 5</a>
-for how to do this). &nbsp;The workspace will have subdirectories with
+<p>Here are two ways to get the code. The source code directory will have subdirectories with
 the code for opus_core, urbansim, and other packages, and also a file
 docs with all of the documentation for that version. &nbsp;The manual
 is in the subdirectory <i>opus_docs/manual</i> of the opus workspace, 
@@ -304,12 +309,12 @@ and the tutorials are in the <i>tutorials</i> subdirectory.</p>
 
 <h3>Option 1: Getting Opus and UrbanSim using a command line interface to subversion</h3>
 
-<p>First, make sure you have a subversion client installed. &nbsp;If not, you can get one 
+<p>First, make sure you have a subversion client installed. (Leopard already comes with one.)  &nbsp;If not, you can get one 
 from <a href="http://subversion.tigris.org/project_packages.html">http://subversion.tigris.org/project_packages.html</a>. &nbsp;
-Next, in a shell (i.e. a terminal window), type the following commands:</p>
+Next, in a shell (i.e. a terminal window), type the following commands.  These commands assume you start the shell in
+whatever directory holds your <tt>opus</tt> directory.</p>
 <pre>
-mkdir opusworkspace
-cd opusworkspace
+cd opus/src
 svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/opus_core
 svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/urbansim
 svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/eugene
@@ -320,9 +325,8 @@ svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/inprocess
 <p>This checks out just the minimal set of packages needed for the tutorial.  If you have a fast
 connection and enough disk space, you can get all of the Opus packages at once using these commands:
 <pre>
-mkdir opusworkspace
-cd opusworkspace
-svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/
+cd opus
+svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/ src
 </pre>
 
 <p>The above commands check out the latest development version of the code -- adjust the URLs 
@@ -337,28 +341,33 @@ Environment Variables</a>&nbsp;</h2>
 
 <p>UrbanSim requires the following environment variables.&nbsp; The first
 tells the Python interpreter where to find the Opus/UrbanSim code.  The second tells the GUI 
-where to find your
-cached data. The remaining
+where to find your cached data and configurations. The remaining
 variables describe how to connect to MySQL -- leave those four out if you aren't
 installing MySQL.</p>
 
 <ul>
 
-
-  <li><b>PYTHONPATH</b> - This environment variable
+<li><b>PYTHONPATH</b> - This environment variable
 tells Python where to look for files outside of Python's
 'site-packages' directory (which is the default location for Python
 installers). Change PYTHONPATH to include the path to the directory
 containing the packages opus_core, urbansim, and so forth, that you downloaded in Step 4, e.g.
-'/Users/yourname/opusworkspace'  (if you checked out the packages one at a time),
-or '/Users/yourname/opusworkspace/opus' (if you checked them all out).&nbsp; In other words,
-your PYTHONPATH should point to the directory that contains opus_core, urbansim, opus_gui, and so
-forth.
+<tt>/Users/yourname/opus/src</tt>.
+<!--
 On 10.5 or later, you also need to add the directory
 /Library/Frameworks/Python.framework/Versions/2.5/lib/python2.5/site-packages, as the preinstalled
- version of Python uses a different directory for sitepackages.</li>
+ version of Python uses a different directory for sitepackages. -->
+ </li>
 
-<li><b>OPUS_DATA_PATH</b> - The directory where you keep your caches of data for particular runs, for example 'Users/yourname/urbansim_cache.</li>
+<li><b>OPUS_HOME</b> - The Opus home directory (surprise).  This includes subdirectories with
+sample data for Eugene and Seattle projects, output from runs, template configurations for running simulations 
+using these projects, and probably your source code and documentation.  This is the directory you downloaded from the
+zip file and installed in Step 4.  So if you put this unzipped directory just in your home directory, set this variable
+to <tt>/Users/yourname/opus</tt>.</li>
+
+<li><b>OPUS_DATA_PATH</b> (optional) - The directory where you keep your sample data and
+caches of data for particular runs.  It defaults to the <tt>data</tt> subdirectory under <tt>OPUS_HOME</tt>,
+so if you leave the data at the default location from the zip file, don't set this variable.</li>
 
   <li><b>MYSQLHOSTNAMEFORTESTS</b> - This environment
 variable is only used for running unit tests that use MySQL. These

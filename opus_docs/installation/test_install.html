@@ -56,7 +56,7 @@ Python can find them by checking that you can get the package info for them:</p>
 &gt;&gt;&gt; opus_core.opus_package_info.package().info()
 Opus package opus_core
 Required Opus packages for opus_core: []
-Required external packages for opus_core: ['numpy&gt;=1.0.1', 'MySQL-python&gt;=1.2.0']
+Required external packages for opus_core: ['numpy&gt;=1.0.4', 'matplotlib&gt;=0.91.2', 'sqlalchemy&gt;=0.4.5', 'scipy&gt;=0.7']
 
 &gt;&gt;&gt; import urbansim.opus_package_info
 &gt;&gt;&gt; urbansim.opus_package_info.package().info()
@@ -64,14 +64,7 @@ Opus package urbansim
 Required Opus packages for urbansim: ['opus_core']
 Required external packages for urbansim: []
 &gt;&gt;&gt;</pre>
-<p>If you have already created your new Opus package it also should work
-(replace 'atlantis' with your package's name):</p>
-<pre>&gt;&gt;&gt; import atlantis.opus_package_info
-&gt;&gt;&gt; atlantis.opus_package_info.package().info()
-Opus package atlantis
-Required Opus packages for atlantis: ['opus_core']
-Required external packages for atlantis: ['numpy&gt;=1.0.1', 'MySQL-python&gt;=1.2.0']
-&gt;&gt;&gt;</pre>
+
 <h2>Do the unit tests pass?</h2>
 <p>As an optional part of testing the installation, all of the base Opus
 packages have unit tests that should succeed. </p>

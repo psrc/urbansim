@@ -67,11 +67,17 @@ the Mac).&nbsp; Then double-click on the Eclipse app to start it.&nbsp;&nbsp; </
 <p>
 Directions for installing and configuring PyDev are on the <a href="http://pydev.sourceforge.net/faq.html">PyDev
 FAQ page</a>.&nbsp;&nbsp;</p>
-<p>You will also want a subversion client -- we recommend <a href="http://www.polarion.org/index.php?page=overview&amp;project=subversive">subversive</a>.
-&nbsp;Direct your Eclipse to the Polarion update site and install it.
-&nbsp;(See the directions on the subversive download page for
+<p>You will also want a subversion client -- we recommend <a href="http://subclipse.tigris.org/">subclipse</a>.
+&nbsp;Direct your Eclipse to the subclipse update site and install it.
+&nbsp;(See the directions on the subclipse download page for
 information on how to do this.) </p>
 
+
+<h2>The Eclipse Workspace</h2>
+
+<p>Eclipse has a 'workspace' in which it keeps the source code and configuration information.  You can put this anywhere you want --
+just make sure your PYTHONPATH is set to find the code.  If you want to keep your source code in the <tt>opus/src</tt> directory
+as suggested in <a href="opus_directory_tree.html">Opus Directory Tree</a>, set your workspace to be the <tt>opus/src</tt> directory.</p>
 
 <h2>Configuring Eclipse </h2>
 
@@ -121,7 +127,7 @@ information on how to do this.) </p>
           <li><b>Name:</b> Python</li>
 
           <li><b>Location:</b>
-            C:\Python24\python.exe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            C:\Python25\python.exe&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             (a common path for Windows)<br>
 
             or browse to your Python location via the <b>Browse File System&hellip;</b> button.<br>
@@ -155,7 +161,7 @@ information on how to do this.) </p>
        
        <li>Next to the 'Python Interpreters' box click 'Add'</li>
        
-       <li>Browse to your python.exe (e.g. c:\python24\python.exe)</li>
+       <li>Browse to your python.exe (e.g. c:\python25\python.exe)</li>
      
      </ol>
     
@@ -165,6 +171,17 @@ information on how to do this.) </p>
   </li>
 
 </ol>
+
+
+<h2>Checking out the Source Code</h2>
+
+<p>Assuming you've set your Eclipse workspace to the <tt>opus/src</tt> directory, you want to check out code so that the 
+packages are directly under this directory, e.g. <tt>opus/src/opus_core</tt>, <tt>opus/src/urbansim</tt>, etc.  
+Using subclipse, you can either check out the desired packages one at a time, or use multiple select to get the lot of them.</p>
+
+<p>For advanced users only: you can also select the next-level-up node in subversion,
+e.g. <tt>trunk</tt> or a specific version e.g. <tt>tags/4.1.2</tt> -- but in this case be careful!  You'll end up with an extra layer
+of directories under <tt>opus/src</tt>, such as <tt>opus/src/trunk</tt> -- in this case adjust your PYTHONPATH appropriately.</p> 
 
 <h2>Using Eclipse</h2>
 

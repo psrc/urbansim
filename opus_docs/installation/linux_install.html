@@ -166,7 +166,17 @@ Administrator</a>. These are both available as binaries, and may be available th
 
 <h2>Step 3: <a name="opus">Installing Opus and UrbanSim</a></h2>
 
-<p>You should download the Opus/Urbansim code directly from our subversion repository. &nbsp;(For you modeler
+<p>We provide a zip file that includes sample data for Eugene and Seattle projects, template configurations for running simulations 
+using these projects, and a directory in which to insert the source code.  
+Download the zip file with data for the latest development version from
+<a href="http://www.urbansim.org/opus/releases/opus-4-2-dev/opus-4-2-dev.tar.gz">http://www.urbansim.org/opus/releases/opus-4-2-dev/opus-4-2-dev.tar.gz</a>.
+Unzip the file, which will result in a directory called <tt>opus</tt> with various subdirectories.  Put
+this directory some convenient place on your local disk. (We suggest putting it in your home directory.)
+See <a href="opus_directory_tree.html">Opus Directory Tree</a> for more information on these directories and
+sample data.</p>
+
+For the development version, you should check out the
+source code directly from our subversion repository. &nbsp;(For you modeler
 types, <a href="http://subversion.tigris.org/">subversion</a>
 in this context is the name of a version control system that nicely
 manages keeping track of different versions of the code; we're not
@@ -176,10 +186,7 @@ request any particular version of the code from subversion.
 &nbsp;However, you do have to have a subversion client installed on
 your machine.</p>
 
-<p>Here are two ways to get the code. For each of these options, you construct a 
-workspace, called say '~/opusworkspace'. You'll then need to
-add&nbsp;/Users/yourusername/opusworkspace to your Python path (see <a href="mac_install.html#Step_5:_Defining_Environment_Variables_">Step 5</a>
-for how to do this). &nbsp;The workspace will have subdirectories with
+<p>Here are two ways to get the code. The source code directory will have subdirectories with
 the code for opus_core, urbansim, and other packages, and also a file
 docs with all of the documentation for that version. &nbsp;The manual
 is in the subdirectory <i>opus_docs/manual</i> of the opus workspace, 
@@ -187,12 +194,12 @@ and the tutorials are in the <i>tutorials</i> subdirectory.</p>
 
 <h3>Option 1: Getting Opus and UrbanSim using a command line interface to subversion</h3>
 
-<p>First, make sure you have a subversion client installed. &nbsp;If not, you can get one 
+<p>First, make sure you have a subversion client installed. (Most linux distributes already come with one.)  &nbsp;If not, you can get one 
 from <a href="http://subversion.tigris.org/project_packages.html">http://subversion.tigris.org/project_packages.html</a>. &nbsp;
-Next, in a shell (i.e. a terminal window), type the following commands:</p>
+Next, in a shell (i.e. a terminal window), type the following commands.  These commands assume you start the shell in
+whatever directory holds your <tt>opus</tt> directory.</p>
 <pre>
-mkdir opusworkspace
-cd opusworkspace
+cd opus/src
 svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/opus_core
 svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/urbansim
 svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/eugene
@@ -203,9 +210,8 @@ svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/inprocess
 <p>This checks out just the minimal set of packages needed for the tutorial.  If you have a fast
 connection and enough disk space, you can get all of the Opus packages at once using these commands:
 <pre>
-mkdir opusworkspace
-cd opusworkspace
-svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/
+cd opus
+svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/ src
 </pre>
 
 <p>The above commands check out the latest development version of the code -- adjust the URLs 
@@ -224,18 +230,23 @@ installing MySQL.</p>
 
 <ul>
 
-  <li><b>PYTHONPATH</b> - This environment variable
+<li><b>PYTHONPATH</b> - This environment variable
 tells Python where to look for files outside of Python's
 'site-packages' directory (which is the default location for Python
 installers). Change PYTHONPATH to include the path to the directory
 containing the packages opus_core, urbansim, and so forth, that you downloaded in Step 4, e.g.
-'~/opusworkspace'  (if you checked out the packages one at a time),
-or '~/opusworkspace/opus' (if you checked them all out).&nbsp; In other words,
-your PYTHONPATH should point to the directory that contains opus_core, urbansim, opus_gui, and so
-forth.</li>
+<tt>~/opus/src</tt>.
+ </li>
 
-  <li><b>OPUS_DATA_PATH</b> - This environment variable tells Python where to look
-    for caches of data for particular simulations.  It might be something like ~/urbansim_cache.</li>
+<li><b>OPUS_HOME</b> - The Opus home directory (surprise).  This includes subdirectories with
+sample data for Eugene and Seattle projects, output from runs, template configurations for running simulations 
+using these projects, and probably your source code and documentation.  This is the directory you downloaded from the
+zip file and installed in Step 4.  So if you put this unzipped directory just in your home directory, set this variable
+to <tt>~/opus</tt>.</li>
+
+<li><b>OPUS_DATA_PATH</b> (optional) - The directory where you keep your sample data and
+caches of data for particular runs.  It defaults to the <tt>data</tt> subdirectory under <tt>OPUS_HOME</tt>,
+so if you leave the data at the default location from the zip file, don't set this variable.</li>
 
   <li><b>MYSQLHOSTNAMEFORTESTS</b> - This environment variable is only used
     for running unit tests that use MySQL. These tests use the MySQL database

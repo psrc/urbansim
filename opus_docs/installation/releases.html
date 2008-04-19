@@ -51,10 +51,9 @@ For example, version 4.1.1 is at
 <p>The current development version is under this URL: 
 <a href="https://trondheim.cs.washington.edu/svn/opus/trunk/">https://trondheim.cs.washington.edu/svn/opus/trunk/</a>.</p>
 
-<p>Finally, you will notice a <tt>branches</tt>directory under https://trondheim.cs.washington.edu/svn/opus/branches.
+<p>Finally, you will notice a <tt>branches</tt> directory under https://trondheim.cs.washington.edu/svn/opus/branches.
 This is for branches off of the main trunk -- generally users shouldn't need to be concerned with those.  (Branches are used,
-for example, to make a patched version of a stable release, when the trunk has lots of additional changes in it that aren't 
-ready for the patched version.)
+for example, for stable releases -- a given release is just a tagged revision in a branch.)
 </p>
 
 <h2>Checking Out All the Packages at Once</h2>
@@ -67,18 +66,20 @@ svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/4.1.1/urbansim
 svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/4.1.1/eugene
 </pre>
 
-<p>You can also get all of the Opus and UrbanSim packages using these
+<p>You can also get all of the Opus and UrbanSim packages using the following
 commands instead, but only do this if you have a fast internet
 connection and enough disk space (since there will be a lot of data).</p>
 <pre>
-svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/4.1.1/
+svn checkout https://trondheim.cs.washington.edu/svn/opus/tags/4.1.1/ src
 </pre>
 or
 <pre>
-svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/
+svn checkout https://trondheim.cs.washington.edu/svn/opus/trunk/ src
 </pre>
 
-<p>If you check all the packages out at once as above, you'll need to adjust your PYTHONPATH appropriately
-to point to the directory containing the packages.</p>
+<p>Caution!  If you check out all the packages at once, usually you'll want to specify the directory 
+in which to check out the packages, since otherwise svn will make a directory called <tt>4.1.1</tt> 
+or <tt>trunk</tt> and put the packages in that directory.  In the examples above we assume you are 
+in a directory (e.g. <tt>opus</tt>) that contains the source code directory <tt>src</tt>.</p>
 </body>
 </html>

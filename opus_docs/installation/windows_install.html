@@ -146,8 +146,17 @@ Administrator</a>. These are both available as binaries.</p>
 
 <h2>Step 5: <a name="opus">Installing Opus and UrbanSim</a></h2>
 
+<p>We provide a zip file that includes sample data for Eugene and Seattle projects, template configurations for running simulations 
+using these projects, and a directory in which to insert the source code.  
+Download the zip file with data for the latest development version from
+<a href="http://www.urbansim.org/opus/releases/opus-4-2-dev/opus-4-2-dev.tar.gz">http://www.urbansim.org/opus/releases/opus-4-2-dev/opus-4-2-dev.tar.gz</a>.
+Unzip the file, which will result in a directory called <tt>opus</tt> with various subdirectories.  Put
+this directory some convenient place on your local disk (perhaps in <tt>C:\</tt>).
+See <a href="opus_directory_tree.html">Opus Directory Tree</a> for more information on these directories and
+sample data.</p>
 
-<p>You should download the Opus/Urbansim code directly from our subversion repository. &nbsp;(For you modeler
+For the development version, you should check out the
+source code directly from our subversion repository. &nbsp;(For you modeler
 types, <a href="http://subversion.tigris.org/">subversion</a>
 in this context is the name of a version control system that nicely
 manages keeping track of different versions of the code; we're not
@@ -157,10 +166,11 @@ request any particular version of the code from subversion.
 &nbsp;However, you do have to have a subversion client installed on
 your machine.</p>
 
-
-<p>Here are two ways to get the code.  For each of these options, you construct a workspace, called say 'c:\opusworkspace'. 
-&nbsp;The workspace will have subdirectories with
-the code for opus_core, urbansim, and other packages.
+<p>Here are two ways to get the code. The source code directory will have subdirectories with
+the code for opus_core, urbansim, and other packages, and also a file
+docs with all of the documentation for that version. &nbsp;The manual
+is in the subdirectory <i>opus_docs\manual</i> of the opus workspace, 
+and the tutorials are in the <i>tutorials</i> subdirectory.</p>
 
 <h3>Option 1: Getting Opus and UrbanSim using TortiseSVN or command-line subversion client</h3>
 
@@ -169,33 +179,23 @@ subversion client -- if you don't have it already, download it by
 following the link. &nbsp;(You can use another client if you prefer,
 though -- see <a href="http://subversion.tigris.org/project_packages.html">http://subversion.tigris.org/project_packages.html</a> for a list.)</p>
 
-<p>Create a workspace directory, say 'c:\opusworkspace'. &nbsp;In Windows
-explorer, open up this directory and right-click in an empty region.
-&nbsp;Select 'SVN Checkout ...', and fill in the dialog box.</p>
-
-<p>At this point, you can either get all of the Opus and UrbanSim
+<p>You're going to check out the source code into the <tt>opus\src</tt> directory.
+You can either get all of the Opus and UrbanSim
 packages, or just the ones you need. &nbsp;Getting them all is simpler
 but only do
 this if you have a fast internet connection and enough disk space
-(since there will be a lot of data)</p>
+(since there will be a lot of data).</p>
 
 <p>To get them all for 
-latest development release, in Windows explorer, open up the workspace directory and right-click in an empty
-region. &nbsp;Select 'SVN Checkout ...', and fill in the "URL of repository' field in the dialog box with: '<span style="font-family: monospace;">https://trondheim.cs.washington.edu/svn/opus/trunk/</span>'
+latest development release, in Windows explorer, open up the <tt>opus\src</tt> directory and right-click in an empty
+region. &nbsp;Select 'SVN Checkout ...', and fill in the "URL of repository' field in the dialog box with: 
+'<span style="font-family: monospace;">https://trondheim.cs.washington.edu/svn/opus/trunk/</span>'
 (without the quotes). &nbsp;The checkout directory should be already
 filled in with your workspace folder. &nbsp;Pick 'OK', and your system
 should download all of the Opus/Urbansim packages.</p>
 
-<p>If you get all of the packages, you should end up with a directory structure like this:</p>
-<pre>c:\opusworkspace
-    opus
-        opus_core
-        urbansim
-        eugene
-        ....</pre>
-
 <p>Alternatively, to get just the packages you need, again in Windows
-explorer, open up&nbsp;the workspace directory and right-click in an
+explorer, open up the <tt>opus\src</tt> directory and right-click in an
 empty
 region. &nbsp;Select 'SVN Checkout ...', and fill in the "URL of
 repository' field in the dialog box with: '<span style="font-family: monospace;">https://trondheim.cs.washington.edu/svn/opus/trunk/opus_core/'</span>.
@@ -203,7 +203,7 @@ repository' field in the dialog box with: '<span style="font-family: monospace;"
 filled
 in with your workspace folder -- but to this append '\opus_core'.
 &nbsp;(So if you used the suggested location for the workspace, the
-whole name will be '<span style="font-family: monospace;">c:\opusworkspace\opus_core</span>'.
+whole name will be '<span style="font-family: monospace;">c:\opus\src\opus_core</span>'.
 &nbsp;Pick 'OK', and your system should
 download the opus_core package. &nbsp;Do the same thing for the other
 packages you need, minimally 'urbansim' and 'eugene'; and for the GUI,
@@ -218,14 +218,17 @@ words, the repository addresses for these packages are:</p>
   <li>https://trondheim.cs.washington.edu/svn/opus/trunk/inprocess</li>
 </ul>
 
-<p>So, if you get just the packages you need, you should end up with a directory structure like this:</p>
-
-
-<pre>c:\opusworkspace<br>    opus_core<br>    urbansim<br>    eugene<br>    ....</pre>
-
-
-<p>In either case, later, you can update a package to the latest version from the
-repository by right-clicking on its folder and picking 'SVN Update'.</p>
+<p>In either case, you should end up with a directory structure like this:</p>
+<pre>c:\opus
+    src
+        opus_core
+        urbansim
+        eugene
+        ....
+</pre>
+Later, you can update a package to the latest version from the
+repository by right-clicking on its folder and picking 'SVN Update'.  You can also select several packages
+at once by selecting the whole group.</p>
 
 
 <p>The above commands check out the latest development version of the code -- adjust the URLs 
@@ -246,14 +249,23 @@ installing MySQL.</p>
 
 <ul>
 
-  <li><b>PYTHONPATH</b> - This environment variable tells Python where to look
-    for files outside of Python&rsquo;s &lsquo;site-packages&rsquo; directory (which is the
-    default location for Python installers).&nbsp; Change PYTHONPATH to include the
-    path to the directory containing the packages 
-    &lsquo;opus_core&rsquo;, &lsquo;urbansim&rsquo;, and so on.  If you checked out
-    just the packages you need, the path will likely be &lsquo;c:\opusworkspace&rsquo;.
-    If you checked out everything, there will likely be an additional directory layer:
-    &lsquo;c:\opusworkspace\opus&rsquo;.</li>
+
+<li><b>PYTHONPATH</b> - This environment variable
+tells Python where to look for files outside of Python's
+'site-packages' directory (which is the default location for Python
+installers). Change PYTHONPATH to include the path to the directory
+containing the packages opus_core, urbansim, and so forth, that you downloaded in Step 4, e.g.
+<tt>C:\opus\src</tt>.
+
+<li><b>OPUS_HOME</b> - The Opus home directory (surprise).  This includes subdirectories with
+sample data for Eugene and Seattle projects, output from runs, template configurations for running simulations 
+using these projects, and probably your source code and documentation.  This is the directory you downloaded from the
+zip file and installed in Step 4.  So if you put this unzipped directory just in <tt>C:</tt>, set this variable
+to <tt>C:\opus</tt>.</li>
+
+<li><b>OPUS_DATA_PATH</b> (optional) - The directory where you keep your sample data and
+caches of data for particular runs.  It defaults to the <tt>data</tt> subdirectory under <tt>OPUS_HOME</tt>,
+so if you leave the data at the default location from the zip file, don't set this variable.</li>
 
   <li><b>MYSQLHOSTNAMEFORTESTS</b> - This environment variable is only used
     for running unit tests that use MySQL. These tests use the MySQL database
@@ -272,8 +284,6 @@ installing MySQL.</p>
   <li><b>MYSQLPASSWORD</b> - The password for the MySQL user name given
     above.&nbsp;</li>
     
-    <li><b>OPUS_DATA_PATH</b> - The directory where you store the caches for UrbanSim runs, e.g. &lsquo;c:\urbansim_cache&rsquo;. &nbsp;</li>
-
 </ul>
 
 
