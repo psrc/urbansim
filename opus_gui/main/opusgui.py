@@ -187,7 +187,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             start_dir = ''
             opus_home = os.environ.get('OPUS_HOME')
             if opus_home:
-                start_dir_test = os.path.join(opus_home, 'user_configs')
+                start_dir_test = os.path.join(opus_home, 'project_configs')
                 if start_dir_test:
                     start_dir = start_dir_test
             configDialog = QFileDialog()
