@@ -49,7 +49,10 @@ class ToolboxBase(object):
         self.dataManagerFileTree = None
         self.dataManagerDBSTree = None
 
-        self.gui_configuration_file = os.path.join(os.environ['OPUS_HOME'], 'gui_config.xml')
+        gui_directory = os.path.join(os.environ['OPUS_HOME'], 'gui')
+        if not os.path.exists(gui_directory):
+            os.mkdir(gui_directory)
+        self.gui_configuration_file = os.path.join(gui_directory, 'gui_config.xml')
         if not os.path.exists(self.gui_configuration_file):
             self.emit_default_gui_configuration_file(file_name = self.gui_configuration_file)
 
@@ -136,7 +139,7 @@ class ToolboxBase(object):
                 self.doc2 = QDomDocument()
                 self.doc.setContent(self.configFileTemp)
                 self.doc2.setContent(self.configFileTemp2)
-                self.opusDataPathOrig = os.getenv("OPUS_DATA_PATH")
+                self.opusDataPathOrig = self.opusXMLTree.get_opus_data_path()
                 #Then append the cache_directory_root from the modelmanager section of the XML
                 cache_dir_root_path = ""
                 cache_dir_root_list = self.doc.elementsByTagName(QString("cache_directory_root"))

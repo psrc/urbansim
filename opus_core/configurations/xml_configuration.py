@@ -50,9 +50,8 @@ class XMLConfiguration(object):
         self._initialize(ElementTree(file=self._filepath), is_parent)
         
     def update(self, newconfig_str):
-        # Update the contents of this configuration from the string newconfig_str 
-        # (which is a string representing an xml configuration).  Ignore any inherited
-        # nodes in newconfig_str.
+        """Update the contents of this configuration from the string newconfig_str 
+        (a string representing an xml configuration).  Ignore any inherited nodes in newconfig_str."""
         # Note that this doesn't change the name of this configuration, or the _filepath
         str_io = StringIO.StringIO(newconfig_str)
         etree = ElementTree(file=str_io)
@@ -109,13 +108,19 @@ class XMLConfiguration(object):
         return result
     
     def save(self):
-        # save this coniguration in a file with the same name as the original
+        """save this configuration in a file with the same name as the original"""
         self.save_as(self._filepath)
         
     def save_as(self, name):
-        # save this configuration under a new name
+        """save this configuration under a new name"""
         # TODO: change name???
         self.tree.write(name)
+        
+    def get_opus_data_path(self):
+        """return the path to the opus_data directory.  This is found in the environment variable
+        OPUS_DATA_PATH, or if that environment variable doesn't exist, as the contents of the 
+        environment variable OPUS_HOME followed by 'data' """
+        return os.environ.get('OPUS_DATA_PATH', os.path.join(os.environ.get('OPUS_HOME'), 'data'))
         
     def _initialize(self, elementtree, is_parent):
         self.tree = elementtree
@@ -332,8 +337,7 @@ class XMLConfiguration(object):
         
     def _convert_file_or_directory_to_data(self, node):
         if node.get('parser_action', '')=='prefix_with_opus_data_path':
-            prefix = os.environ.get('OPUS_DATA_PATH', '')
-            return os.path.join(prefix, node.text)
+            return os.path.join(self.get_opus_data_path(), node.text)
         else:
             return node.text
         
@@ -451,7 +455,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_files_directories(self):
         f = os.path.join(self.test_configs, 'files_directories.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
-        prefix = os.environ.get('OPUS_DATA_PATH', '')
+        prefix = config.get_opus_data_path()
         self.assertEqual(config, {'file1': 'testfile', 
                                   'file2': os.path.join(prefix, 'testfile'),
                                   'dir1': 'testdir', 
