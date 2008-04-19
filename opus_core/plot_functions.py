@@ -92,3 +92,34 @@ def plot_matplot(*args, **kwargs):
 def show_plots():
     from matplotlib.pylab import show
     show()
+    
+def plot_values_as_boxplot_r(values_dict, filename=None, logy=False):
+    """Create a set of boxplots (using R), one plot per variable in values_dict (dictionary of 
+    varible name and values (1- or 2-D array)), one box per row.
+    If filename is given, the plot goes into that file as pdf. If 'logy' is  True, the y-axis
+    is plotted on the log scale.
+    """
+    from rpy import r
+    logstring = ''
+    if logy:
+        logstring='y'
+        
+    if filename is not None:
+        r.pdf(file=filename)
+
+    for var, values in values_dict.iteritems():
+        plot_one_boxplot_r(values, var, logstring)
+
+    if filename is not None:
+        r.dev_off()
+            
+def plot_one_boxplot_r(values, main="", logstring=""):
+    from rpy import r
+    if values.ndim == 1:
+        v = resize(values, (1, values.size))
+    else:
+        v = values
+    r.boxplot(v[0,:], xlim=[0,v.shape[0]+1], ylim=r.c(values.min(), values.max()), range=0, log=logstring,
+              main=main)
+    for i in range(1, v.shape[0]):
+        r.boxplot(v[i,:], at=i, add=True, range=0, log=logstring)

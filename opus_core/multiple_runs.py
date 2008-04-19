@@ -17,6 +17,7 @@ import gc
 from numpy import zeros, arange
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.misc import load_from_text_file, write_table_to_text_file, write_to_text_file
+from opus_core.plot_functions import plot_values_as_boxplot_r
 from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.variables.variable_name import VariableName
@@ -131,45 +132,14 @@ class MultipleRuns:
             filename = os.path.join(directory, "%s%s" % (prefix, VariableName(var).get_alias()))
             write_table_to_text_file(filename, self.values_from_mr[var])
             
-    def plot_values_as_boxplot_r(self, filename=None, logy=False):
-        """Create a plot of boxplots (using R), one boxplot per variable in self.values_from_mr.
-        If filename is given, the plot goes into that file as pdf. If 'logy' is  True, the y-axis
-        is plotted on the log scale.
+    def plot_current_values_as_boxplot_r(self, filename=None, logy=False):
+        """Create a set of boxplots (using R), one plot per variable in self.values_from_mr.
+        (see docstring in plot_functions.plot_values_as_boxplot_r)
         """
-        from rpy import r
-        count = 0
-        maxi = -2**30
-        mini = 2**30
-        logstring = ''
-        if logy:
-            logstring='y'
-        for var, values in self.values_from_mr.iteritems():
-            if values.ndim > 1:
-                count += values.shape[0]
-            else:
-                count += 1
-            maxi = max(maxi, values.max())
-            mini = min(mini, values.min())
-            
-        if filename is not None:
-            r.pdf(file=filename)
-        first_plot = True
-        c = 1
-        for var, values in self.values_from_mr.iteritems():
-            if values.ndim == 1:
-                v = resize(values, (1, values.size))
-            else:
-                v = values
-            for i in range(v.shape[0]):
-                if first_plot:
-                    r.boxplot(v[i,:], xlim=[0,count+1], ylim=r.c(mini, maxi), range=0, log=logstring)
-                    first_plot = False
-                else:
-                    r.boxplot(v[i,:], at=c, add=True, range=0, log=logstring)
-                c += 1
-        if filename is not None:
-            r.dev_off()
-            
+        plot_values_as_boxplot_r(self.values_from_mr, filename=filename, logy=logy)
+        
+
+    
 def create_file_cache_directories(directory, prefix='', file_name='cache_directories'):
     logger.start_block('Creating file %s in %s' % (file_name, directory))
     all_dirs = os.listdir(directory)

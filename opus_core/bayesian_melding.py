@@ -30,6 +30,7 @@ from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.session_configuration import SessionConfiguration
 from opus_core.storage_factory import StorageFactory
 from opus_core.multiple_runs import MultipleRuns, setup_environment
+from opus_core.plot_functions import plot_one_boxplot_r
 from opus_core.logger import logger
 
 class ObservedData:
@@ -260,6 +261,7 @@ class BayesianMelding(MultipleRuns):
     
     def estimate_mu(self):
         iout = -1
+        self.values_from_mr = {}
         for quantity in self.observed_data.get_quantity_objects():
             dataset_name = quantity.get_dataset_name()
             variable = quantity.get_variable_name()
@@ -282,6 +284,7 @@ class BayesianMelding(MultipleRuns):
                 values = scale[matching_index] * ds.get_attribute(variable)[matching_index]
                 self.mu[iout][:,i] = try_transformation(values, quantity.get_transformation())
                 
+            self.values_from_mr[variable.get_expression()] = self.mu[iout]
             if dimension_reduced:
                 self.y[iout] = self.y[iout][quantity.get_dataset().get_id_index(ids)]
 
@@ -564,7 +567,56 @@ class BayesianMelding(MultipleRuns):
         """Rerturn variable names of the observed quantities that match the given dataset_name."""
         return [var for var in self.get_variable_names() if VariableName(var).get_dataset_name() == dataset_name]
 
+    def get_index_of_n_highest_weights(self, n=1):
+        w = self.get_weights()
+        return argsort(w)[-n:w.size]
     
+    def get_index_of_weights_over_threshold(self, threshold=0):
+        w = self.get_weights()
+        return where(w >= threshold)[0]
+    
+    def get_index_of_n_highest_component_weights(self, component_index, n=1):
+        w = self.get_weight_components()[component_index]
+        return argsort(w)[-n:w.size]
+    
+    def get_index_of_component_weights_over_threshold(self, component_index, threshold=0):
+        w = self.get_weight_components()[component_index]
+        return where(w >= threshold)[0]
+    
+    def plot_boxplot_r(self, filename=None, n_highest_weights=1, n_highest_weights_for_quantity=1, weight_threshold=None, logy=False):
+        from rpy import r
+        logstring = ''
+        if logy:
+            logstring='y'
+            
+        if filename is not None:
+            r.pdf(file=filename)
+    
+        for var, values in self.values_from_mr.iteritems():
+            plot_one_boxplot_r(values, var, logstring)
+            if values.ndim == 1:
+                v = resize(values, (1, values.size))
+            else:
+                v = values
+            ivar = self.get_index_for_quantity(var)
+            if weight_threshold is not None:
+                for i in range(0, v.shape[0]):
+                    iw = self.get_index_of_component_weights_over_threshold(ivar, weight_threshold)
+                    if iw.size > 0:
+                        r.points(i+1, v[i:(i+iw.size),iw], col='yellow', cex=0.5)
+                    iw = self.get_index_of_weights_over_threshold(weight_threshold)
+                    if iw.size > 0:
+                        r.points(i+1, v[i:(i+iw.size),iw], col='blue', cex=0.5)
+            if n_highest_weights_for_quantity > 0:
+                for i in range(0, v.shape[0]):
+                    r.points(i+1, v[i,self.get_index_of_n_highest_component_weights(ivar, n_highest_weights_for_quantity)], col='green', cex=0.5)
+            if n_highest_weights > 0:
+                for i in range(0, v.shape[0]):
+                    r.points(i+1, v[i,self.get_index_of_n_highest_weights(n_highest_weights)], col='red', cex=0.5)
+                    
+        if filename is not None:
+            r.dev_off()
+        
 class BayesianMeldingFromFile(BayesianMelding):
     """ Class to be used if bm parameters were stored previously using export_bm_parameters of BayesianMelding class.
         It can be passed into bm_normal_posterior.py.
