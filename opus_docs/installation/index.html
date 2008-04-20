@@ -87,24 +87,16 @@ by hand is the only option.</P>
 <p><a href="http://trondheim.cs.washington.edu/cgi-bin/trac.cgi/wiki/ReleaseNotes">Check the release notes</a> 
 for significant code or data changes.&nbsp; If you have your own Opus package or an existing baseyear
 database you may need to modify your code and data.</p>
+
 <p>The result of an install will be a number of packages in the Python
-'site-packages' directory for the supporting software, and a
-'workspace' directory that holds Opus and UrbanSim. &nbsp;The workspace
-directory will look something like this on Windows (with an analogous
-structure on other platforms):</p>
-
-<pre>C:\opusworkspace<br>    atlantis/<br>        docs/<br>        ... <i>(more directories and files) ...</i>
-        __init__.py
-        opus_package_info.p
-    opus_core/
-    urbansim/
-    ... <i>(more Opus packages) ...</i></pre>
-
+'site-packages' directory for the supporting software, and an <a href="opus_directory_tree.html">Opus directory tree</a>
+that holds the source code, sample project data, and xml configurations for use by the GUI.
 
 <h1>Uninstalling Opus</h1>
 
 <p>If you no longer wish to have Opus on your computer, just remove the
-workspace directory from your Python path, and delete that directory.
+Opus source code directory from your Python path, delete any other environment variables,
+and delete the Opus directory tree.
 &nbsp;(If you want to save space, you can also uninstall any supporting
 software that you downloaded just to use with Opus.)</p>
 <p></p>
