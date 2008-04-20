@@ -80,6 +80,7 @@ class OpusEstimation(object):
         self.running = False
         self.paused = False
         self.cancelled = False
+        self.statusfile = None
 
     def formatExceptionInfo(self,maxTBlevel=5):
         import traceback
@@ -159,8 +160,8 @@ class OpusEstimation(object):
         else:
             pass
 
-    def _compute_progress(self, statusfile):
-        if statusfile is None:
+    def _compute_progress(self):
+        if self.statusfile is None:
             return {"percentage":0,"message":"Estimation initializing..."}
         if WithOpus:
             # Compute percent progress for the progress bar.

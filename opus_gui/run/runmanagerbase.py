@@ -902,7 +902,7 @@ class EstimationGuiElement(QWidget):
         self.pbnStartModel.setText(QString("Start Estimation..."))
 
     def runStatusFromThread(self):
-        status = self.runThread.parent.estimation._compute_progress(self.runThread.parent.estimation.statusfile)
+        status = self.runThread.parent.estimation._compute_progress()
         self.progressBar.setValue(status["percentage"])
         newString = QString(status["message"])
         newString.leftJustified(60)

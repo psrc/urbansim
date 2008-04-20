@@ -104,6 +104,7 @@ class OpusModel(object):
         self.firstRead = True
         self.running = False
         self.paused = False
+        self.statusfile = None
 
     def formatExceptionInfo(self,maxTBlevel=5):
         import traceback
@@ -136,7 +137,6 @@ class OpusModel(object):
             # statusdir is a temporary directory into which to write a status file
             # regarding the progress of the simulation - the progress bar reads this file
             statusdir = None
-            statusfile = None
             succeeded = False
             try:
                 
@@ -159,10 +159,9 @@ class OpusModel(object):
 
                 #statusdir = tempfile.mkdtemp()
                 statusdir = self.run_manager.get_current_cache_directory()
-                statusfile = os.path.join(statusdir, 'status.txt')
-                self.statusfile = statusfile
+                self.statusfile = os.path.join(statusdir, 'status.txt')
                 self.config = config
-                config['status_file_for_gui'] = statusfile
+                config['status_file_for_gui'] = self.statusfile
                 self.commandfile = os.path.join(statusdir, 'command.txt')
                 config['command_file_for_gui'] = self.commandfile
                 # To test delay in writing the first log file entry...
@@ -181,14 +180,14 @@ class OpusModel(object):
                 errorString = "Unexpected Error From Model :: " + str(errorInfo)
                 print errorInfo
                 self.errorCallback(errorString)
-            if statusfile is not None:
-                os.remove(statusfile)
+            if self.statusfile is not None:
+                os.remove(self.statusfile)
             self.finishedCallback(succeeded)
         else:
             pass
 
-    def _compute_progress(self, statusfile):
-        if statusfile is None:
+    def _compute_progress(self):
+        if self.statusfile is None:
             return {"percentage":0,"message":"Model initializing..."}
         if WithOpus:
             # Compute percent progress for the progress bar.
@@ -203,7 +202,7 @@ class OpusModel(object):
             #   number of current piece
             #   description of current piece (empty string if no description)
             try:
-                f = open(statusfile)
+                f = open(self.statusfile)
                 lines = f.readlines()
                 f.close()
                 # use float for all numbers to help with percent computation
@@ -239,18 +238,32 @@ class OpusModel(object):
             # what has happened since last time this function was called.
             # In this example we use the key to indicate where in a logfile we last stopped reading
             # and seek into that file point and read to the end of the file and append to the
-            # log text edit field in the GUI.
+            # log text edit field in the GUI. 
+            # Since there is a different log file for each simulation year, we also need to figure out 
+            # the name of the current log file. The current year is found by looking in the status.txt
+            # file (also used by the progress bar).  If this file doesn't exist, the current year is 
+            # the start year.  (We open the status.txt file separately from the compute progress method,
+            # since there are separate threads that may be using these methods.)
+            year = self.start_year
+            if self.statusfile is not None:
+                try:
+                    # the current year is in the first line of the status file
+                    f = open(self.statusfile)
+                    year = int(f.readline())
+                    f.close()
+                except IOError:
+                    pass
             if self.config is not None and 'cache_directory' in self.config:
                 try:
-                    f = open(os.path.join(self.config['cache_directory'],'year_1981_log.txt'))
-                    f.seek(key)
-                    lines = f.read()
-                    newKey = f.tell()
+                    logfile = open(os.path.join(self.config['cache_directory'],'year_%d_log.txt' % year))
+                    logfile.seek(key)
+                    lines = logfile.read()
+                    newKey = logfile.tell()
                     if newKey != key:
                         self.guiElement.logText.append(lines)
                     else:
                         self.guiElement.logText.insertPlainText(QString("."))
-                    f.close()
+                    logfile.close()
                 except IOError:
                     if self.firstRead == True:
                         self.guiElement.logText.append("No logfile yet")

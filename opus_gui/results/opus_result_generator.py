@@ -274,7 +274,7 @@ class OpusResultGenerator(object):
         newKey = key
         if WithOpus:
             # We attempt to keep up on the current progress of the model run.  We pass into this
-            # function an intial "key" value of 0 and expect to get back a new "key" after the
+            # function an initial "key" value of 0 and expect to get back a new "key" after the
             # function returns.  It is up to us in this function to use this key to determine
             # what has happened since last time this function was called.
             # In this example we use the key to indicate where in a logfile we last stopped reading
