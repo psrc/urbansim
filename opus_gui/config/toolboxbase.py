@@ -48,6 +48,7 @@ class ToolboxBase(object):
         self.dataManagerTree = None
         self.dataManagerFileTree = None
         self.dataManagerDBSTree = None
+        self.generalManagerTree = None
 
         gui_directory = os.path.join(os.environ['OPUS_HOME'], 'gui')
         if not os.path.exists(gui_directory):
@@ -86,8 +87,13 @@ class ToolboxBase(object):
                 self.modelManagerTree.model.dirty = False
             if self.resultsManagerTree:
                 self.resultsManagerTree.model.dirty = False
+            if self.generalManagerTree:
+                self.generalManagerTree.model.dirty = False
 
         # Try to remove all the old trees...
+        generalManagerRemoveSuccess = True
+        if self.generalManagerTree != None:
+            generalManagerRemoveSuccess = self.generalManagerTree.removeTree()
         resultsManagerRemoveSuccess = True
         if self.resultsManagerTree != None:
             resultsManagerRemoveSuccess = self.resultsManagerTree.removeTree()
@@ -109,15 +115,11 @@ class ToolboxBase(object):
 
         if resultsManagerRemoveSuccess and modelManagerRemoveSuccess and \
                runManagerRemoveSuccess and dataManagerRemoveSuccess and \
-               dataManagerFileRemoveSuccess and dataManagerDBSRemoveSuccess:
+               dataManagerFileRemoveSuccess and dataManagerDBSRemoveSuccess and \
+               generalManagerRemoveSuccess:
             # We have successfully removed the old XML trees
 
-            # (OLD) Opening a project XML
-            #self.xml_file = xml_file
-            #self.configFile = QFile(xml_file)
-            #if self.configFile.open(QIODevice.ReadWrite):
-
-            # (NEW) Open the XML by first passing to the xml_configuration and letting
+            # Open the XML by first passing to the xml_configuration and letting
             # opus core return the nested XML based on inheritence
             self.xml_file = xml_file
             self.configFile = QFile(xml_file)
@@ -154,6 +156,8 @@ class ToolboxBase(object):
                 self.opusDataPath = self.opusDataPathOrig + cache_dir_root_path
                 #print self.opusDataPath
                 self.opusDataPath = os.path.normpath(str(self.opusDataPath))
+                self.generalManagerTree = OpusXMLTree(self,"general",
+                                                      self.parent.generalmanager_page.layout())
                 self.resultsManagerTree = OpusXMLTree(self,"results_manager",
                                                       self.parent.resultsmanager_page.layout())
                 self.modelManagerTree = OpusXMLTree(self,"model_manager",
@@ -173,6 +177,9 @@ class ToolboxBase(object):
 
     def closeXMLTree(self):
         # Try to remove all the old trees...
+        generalManagerRemoveSuccess = True
+        if self.generalManagerTree != None:
+            generalManagerRemoveSuccess = self.generalManagerTree.removeTree()
         resultsManagerRemoveSuccess = True
         if self.resultsManagerTree != None:
             resultsManagerRemoveSuccess = self.resultsManagerTree.removeTree()

@@ -16,6 +16,7 @@
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import *
 
+from opus_gui.config.generalmanager.opusxmlaction_general import OpusXMLAction_General
 from opus_gui.config.resultsmanager.opusxmlaction_results import OpusXMLAction_Results
 from opus_gui.config.modelmanager.opusxmlaction_model import OpusXMLAction_Model
 from opus_gui.config.scenariomanager.opusxmlaction_scenario import OpusXMLAction_Scenario
@@ -44,6 +45,8 @@ class OpusXMLAction(object):
             return OpusXMLAction_Data(self)
         elif xmlType == "data_manager_dbstree":
             return OpusXMLAction_DataDB(self)
+        elif xmlType == "general":
+            return OpusXMLAction_General(self)
         else:
             #error out
             pass
