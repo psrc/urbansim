@@ -11,7 +11,7 @@
 # other acknowledgments.
 # 
 
-from PyQt4.QtCore import QObject, SIGNAL, QModelIndex
+from PyQt4.QtCore import QObject, SIGNAL, QModelIndex, QString
 
 
 from opus_gui.results.forms.advanced_visualization_form import AdvancedVisualizationForm
@@ -20,7 +20,7 @@ from opus_gui.results.forms.view_documentation_form import ViewDocumentationForm
 from opus_gui.results.forms.view_image_form import ViewImageForm
 from opus_gui.results.forms.view_table_form import ViewTableForm
 from opus_gui.results.opus_result_generator import OpusGuiThread, OpusResultVisualizer
-from opus_gui.results.xml_helper_methods import get_child_values
+from opus_gui.results.xml_helper_methods import get_child_values, elementsByAttributeValue
 
 
 # General system includes
@@ -57,12 +57,26 @@ class ResultManagerBase(AbstractManagerBase):
         AbstractManagerBase.__init__(self, parent)        
         
     def scan_for_runs(self):
-        
+        '''scans all the runs directories in the opus_data folder for existing
+           simulation data and adds it to the XML if its not already there'''
+           
         toolboxStuff = self.parent.toolboxStuff
         document = toolboxStuff.doc
         xml_tree = toolboxStuff.resultsManagerTree        
         model = xml_tree.model
         
+        #get existing cache directories, use as primary key to check for duplicates
+        parent = model.index(0, 0, QModelIndex()).parent()        
+        node_list = elementsByAttributeValue(domDocument = document, 
+                                              attribute = 'type', 
+                                              value = 'source_data')
+        
+        existing_cache_directories = {}
+        for element, node in node_list:
+            vals = get_child_values(parent = node, 
+                                    child_names = ['cache_directory'])
+            existing_cache_directories[str(vals['cache_directory'])] = 1
+
         if 'OPUS_DATA_PATH' in os.environ:
             path = os.path.join(os.environ.get('OPUS_DATA_PATH'))
             for scenario_name in os.listdir(path):
@@ -74,7 +88,8 @@ class ResultManagerBase(AbstractManagerBase):
                     try:
                         cache_directory = os.path.join(runs_path,run_name)
                         years = []
-                        if not os.path.isdir(cache_directory): continue
+                        if not os.path.isdir(cache_directory) or \
+                            cache_directory in existing_cache_directories: continue
                         for dir in os.listdir(cache_directory):
                             if len(dir) == 4 and dir.isdigit():
                                 years.append(int(dir))
@@ -91,6 +106,8 @@ class ResultManagerBase(AbstractManagerBase):
                                     cache_directory, 
                                     scenario_name, run_name, 
                                     start_year, end_year):
+
+        parent = model.index(0, 0, QModelIndex()).parent()
 
         name = '%s.%s'%(scenario_name, run_name)
 
@@ -124,7 +141,6 @@ class ResultManagerBase(AbstractManagerBase):
                                     type = 'integer', 
                                     value = str(end_year))    
 
-        parent = model.index(0, 0, QModelIndex()).parent()
         index = model.findElementIndexByName("Simulation_runs", parent)[0]
         if index.isValid():
             model.insertRow(0, index, newNode)
