@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'opusmain.ui'
 #
-# Created: Wed Mar 26 13:02:24 2008
-#      by: PyQt4 UI code generator 4.3.1
+# Created: Sat Apr 19 21:55:27 2008
+#      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -42,14 +42,21 @@ class Ui_MainWindow(object):
         self.toolBox.setBaseSize(QtCore.QSize(0,0))
         self.toolBox.setObjectName("toolBox")
 
+        self.generalmanager_page = QtGui.QWidget()
+        self.generalmanager_page.setObjectName("generalmanager_page")
+
+        self.gridlayout1 = QtGui.QGridLayout(self.generalmanager_page)
+        self.gridlayout1.setObjectName("gridlayout1")
+        self.toolBox.addItem(self.generalmanager_page,QtGui.QIcon(":/Images/Images/application_side_tree.png"),"")
+
         self.datamanager_page = QtGui.QWidget()
-        self.datamanager_page.setGeometry(QtCore.QRect(0,0,98,34))
+        self.datamanager_page.setGeometry(QtCore.QRect(0,0,313,479))
         self.datamanager_page.setObjectName("datamanager_page")
 
-        self.gridlayout1 = QtGui.QGridLayout(self.datamanager_page)
-        self.gridlayout1.setMargin(9)
-        self.gridlayout1.setSpacing(6)
-        self.gridlayout1.setObjectName("gridlayout1")
+        self.gridlayout2 = QtGui.QGridLayout(self.datamanager_page)
+        self.gridlayout2.setMargin(9)
+        self.gridlayout2.setSpacing(6)
+        self.gridlayout2.setObjectName("gridlayout2")
 
         self.dataManager_toolBox = QtGui.QToolBox(self.datamanager_page)
 
@@ -59,59 +66,59 @@ class Ui_MainWindow(object):
         self.dataManager_toolBox.setObjectName("dataManager_toolBox")
 
         self.datamanager_dbsconnections = QtGui.QWidget()
-        self.datamanager_dbsconnections.setGeometry(QtCore.QRect(0,0,98,38))
+        self.datamanager_dbsconnections.setGeometry(QtCore.QRect(0,0,96,38))
         self.datamanager_dbsconnections.setObjectName("datamanager_dbsconnections")
 
-        self.gridlayout2 = QtGui.QGridLayout(self.datamanager_dbsconnections)
-        self.gridlayout2.setObjectName("gridlayout2")
+        self.gridlayout3 = QtGui.QGridLayout(self.datamanager_dbsconnections)
+        self.gridlayout3.setObjectName("gridlayout3")
         self.dataManager_toolBox.addItem(self.datamanager_dbsconnections,"")
 
         self.datamanager_xmlconfig = QtGui.QWidget()
-        self.datamanager_xmlconfig.setGeometry(QtCore.QRect(0,0,98,38))
+        self.datamanager_xmlconfig.setGeometry(QtCore.QRect(0,0,295,389))
         self.datamanager_xmlconfig.setObjectName("datamanager_xmlconfig")
 
-        self.gridlayout3 = QtGui.QGridLayout(self.datamanager_xmlconfig)
-        self.gridlayout3.setObjectName("gridlayout3")
+        self.gridlayout4 = QtGui.QGridLayout(self.datamanager_xmlconfig)
+        self.gridlayout4.setObjectName("gridlayout4")
         self.dataManager_toolBox.addItem(self.datamanager_xmlconfig,"")
 
         self.datamanager_dirview = QtGui.QWidget()
-        self.datamanager_dirview.setGeometry(QtCore.QRect(0,0,98,38))
+        self.datamanager_dirview.setGeometry(QtCore.QRect(0,0,96,38))
         self.datamanager_dirview.setObjectName("datamanager_dirview")
 
-        self.gridlayout4 = QtGui.QGridLayout(self.datamanager_dirview)
-        self.gridlayout4.setObjectName("gridlayout4")
+        self.gridlayout5 = QtGui.QGridLayout(self.datamanager_dirview)
+        self.gridlayout5.setObjectName("gridlayout5")
         self.dataManager_toolBox.addItem(self.datamanager_dirview,"")
-        self.gridlayout1.addWidget(self.dataManager_toolBox,0,0,1,1)
+        self.gridlayout2.addWidget(self.dataManager_toolBox,0,0,1,1)
         self.toolBox.addItem(self.datamanager_page,QtGui.QIcon(":/Images/Images/database_table.png"),"")
 
         self.modelmanager_page = QtGui.QWidget()
-        self.modelmanager_page.setGeometry(QtCore.QRect(0,0,98,38))
+        self.modelmanager_page.setGeometry(QtCore.QRect(0,0,313,479))
         self.modelmanager_page.setObjectName("modelmanager_page")
 
-        self.gridlayout5 = QtGui.QGridLayout(self.modelmanager_page)
-        self.gridlayout5.setMargin(9)
-        self.gridlayout5.setSpacing(6)
-        self.gridlayout5.setObjectName("gridlayout5")
-        self.toolBox.addItem(self.modelmanager_page,QtGui.QIcon(":/Images/Images/chart_organisation.png"),"")
-
-        self.runmanager_page = QtGui.QWidget()
-        self.runmanager_page.setGeometry(QtCore.QRect(0,0,366,522))
-        self.runmanager_page.setObjectName("runmanager_page")
-
-        self.gridlayout6 = QtGui.QGridLayout(self.runmanager_page)
+        self.gridlayout6 = QtGui.QGridLayout(self.modelmanager_page)
         self.gridlayout6.setMargin(9)
         self.gridlayout6.setSpacing(6)
         self.gridlayout6.setObjectName("gridlayout6")
-        self.toolBox.addItem(self.runmanager_page,QtGui.QIcon(":/Images/Images/cog.png"),"")
+        self.toolBox.addItem(self.modelmanager_page,QtGui.QIcon(":/Images/Images/chart_organisation.png"),"")
 
-        self.resultsmanager_page = QtGui.QWidget()
-        self.resultsmanager_page.setGeometry(QtCore.QRect(0,0,98,38))
-        self.resultsmanager_page.setObjectName("resultsmanager_page")
+        self.runmanager_page = QtGui.QWidget()
+        self.runmanager_page.setGeometry(QtCore.QRect(0,0,331,527))
+        self.runmanager_page.setObjectName("runmanager_page")
 
-        self.gridlayout7 = QtGui.QGridLayout(self.resultsmanager_page)
+        self.gridlayout7 = QtGui.QGridLayout(self.runmanager_page)
         self.gridlayout7.setMargin(9)
         self.gridlayout7.setSpacing(6)
         self.gridlayout7.setObjectName("gridlayout7")
+        self.toolBox.addItem(self.runmanager_page,QtGui.QIcon(":/Images/Images/cog.png"),"")
+
+        self.resultsmanager_page = QtGui.QWidget()
+        self.resultsmanager_page.setGeometry(QtCore.QRect(0,0,96,38))
+        self.resultsmanager_page.setObjectName("resultsmanager_page")
+
+        self.gridlayout8 = QtGui.QGridLayout(self.resultsmanager_page)
+        self.gridlayout8.setMargin(9)
+        self.gridlayout8.setSpacing(6)
+        self.gridlayout8.setObjectName("gridlayout8")
         self.toolBox.addItem(self.resultsmanager_page,QtGui.QIcon(":/Images/Images/map_go.png"),"")
 
         self.tabWidget = QtGui.QTabWidget(self.splitter)
@@ -120,19 +127,19 @@ class Ui_MainWindow(object):
         self.tab_editorView = QtGui.QWidget()
         self.tab_editorView.setObjectName("tab_editorView")
 
-        self.gridlayout8 = QtGui.QGridLayout(self.tab_editorView)
-        self.gridlayout8.setMargin(9)
-        self.gridlayout8.setSpacing(6)
-        self.gridlayout8.setObjectName("gridlayout8")
+        self.gridlayout9 = QtGui.QGridLayout(self.tab_editorView)
+        self.gridlayout9.setMargin(9)
+        self.gridlayout9.setSpacing(6)
+        self.gridlayout9.setObjectName("gridlayout9")
         self.tabWidget.addTab(self.tab_editorView,QtGui.QIcon(":/Images/Images/table_lightning.png"),"")
 
         self.tab_pythonView = QtGui.QWidget()
         self.tab_pythonView.setObjectName("tab_pythonView")
 
-        self.gridlayout9 = QtGui.QGridLayout(self.tab_pythonView)
-        self.gridlayout9.setMargin(9)
-        self.gridlayout9.setSpacing(6)
-        self.gridlayout9.setObjectName("gridlayout9")
+        self.gridlayout10 = QtGui.QGridLayout(self.tab_pythonView)
+        self.gridlayout10.setMargin(9)
+        self.gridlayout10.setSpacing(6)
+        self.gridlayout10.setObjectName("gridlayout10")
 
         self.pythonLineWidget = QtGui.QWidget(self.tab_pythonView)
 
@@ -155,11 +162,11 @@ class Ui_MainWindow(object):
         self.pythonLineEdit = QtGui.QLineEdit(self.pythonLineWidget)
         self.pythonLineEdit.setObjectName("pythonLineEdit")
         self.hboxlayout.addWidget(self.pythonLineEdit)
-        self.gridlayout9.addWidget(self.pythonLineWidget,1,0,1,1)
+        self.gridlayout10.addWidget(self.pythonLineWidget,1,0,1,1)
 
         self.pythonWidget = QtGui.QWidget(self.tab_pythonView)
         self.pythonWidget.setObjectName("pythonWidget")
-        self.gridlayout9.addWidget(self.pythonWidget,0,0,1,1)
+        self.gridlayout10.addWidget(self.pythonWidget,0,0,1,1)
         self.tabWidget.addTab(self.tab_pythonView,QtGui.QIcon(":/Images/Images/python_type.png"),"")
 
         self.tab_logView = QtGui.QWidget()
@@ -169,7 +176,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0,0,974,21))
+        self.menubar.setGeometry(QtCore.QRect(0,0,974,24))
         self.menubar.setObjectName("menubar")
 
         self.menuProject = QtGui.QMenu(self.menubar)
@@ -295,12 +302,13 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.toolBox.setCurrentIndex(2)
+        self.toolBox.setCurrentIndex(0)
         self.dataManager_toolBox.setCurrentIndex(1)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
+        self.toolBox.setItemText(self.toolBox.indexOf(self.generalmanager_page), QtGui.QApplication.translate("MainWindow", "General Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.dataManager_toolBox.setItemText(self.dataManager_toolBox.indexOf(self.datamanager_dbsconnections), QtGui.QApplication.translate("MainWindow", "Database Server Connections", None, QtGui.QApplication.UnicodeUTF8))
         self.dataManager_toolBox.setItemText(self.dataManager_toolBox.indexOf(self.datamanager_xmlconfig), QtGui.QApplication.translate("MainWindow", "Opus Scripts", None, QtGui.QApplication.UnicodeUTF8))
         self.dataManager_toolBox.setItemText(self.dataManager_toolBox.indexOf(self.datamanager_dirview), QtGui.QApplication.translate("MainWindow", "Opus Data", None, QtGui.QApplication.UnicodeUTF8))
