@@ -104,7 +104,9 @@ class OpusModel(object):
         self.firstRead = True
         self.running = False
         self.paused = False
-        self.statusfile = None
+        self.start_year = None
+        self.currentLogfileYear = None
+        self.currentLogfileKey = None
 
     def formatExceptionInfo(self,maxTBlevel=5):
         import traceback
@@ -148,8 +150,8 @@ class OpusModel(object):
                 # find the directory containing the eugene xml configurations
                 fileNameInfo = QFileInfo(self.xml_path)
                 fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
-#                print fileNameAbsolute
-#                print self.modeltorun
+                #print fileNameAbsolute
+                #print self.modeltorun
                 config = XMLConfiguration(str(fileNameAbsolute)).get_run_configuration(str(self.modeltorun))
 
                 insert_auto_generated_cache_directory_if_needed(config)
@@ -160,6 +162,9 @@ class OpusModel(object):
                 #statusdir = tempfile.mkdtemp()
                 statusdir = self.run_manager.get_current_cache_directory()
                 self.statusfile = os.path.join(statusdir, 'status.txt')
+                #print self.statusfile
+                self.currentLogfileYear = self.start_year
+                self.currentLogfileKey = 0
                 self.config = config
                 config['status_file_for_gui'] = self.statusfile
                 self.commandfile = os.path.join(statusdir, 'command.txt')
@@ -229,6 +234,27 @@ class OpusModel(object):
             except IOError:
                 return {"percentage": 0, "message":" Model initializing..."}
 
+    def _read_log(self,filename,key):
+        newKey = key
+        logText = QString("")
+        try:
+            logfile = open(filename)
+            logfile.seek(key)
+            lines = logfile.read()
+            newKey = logfile.tell()
+            if newKey != key:
+                logText.append(lines)
+            else:
+                logText.append(QString(".."))
+            logfile.close()
+        except IOError:
+            if self.firstRead == True:
+                logText.append("No logfile yet")
+                self.firstRead = False
+            else:
+                logText.append(QString("."))
+        return [newKey,logText]
+    
     def _get_current_log(self, key):
         newKey = key
         if WithOpus:
@@ -246,31 +272,38 @@ class OpusModel(object):
             # since there are separate threads that may be using these methods.)
             year = self.start_year
             if self.statusfile is not None:
+                #print self.statusfile
                 try:
                     # the current year is in the first line of the status file
                     f = open(self.statusfile)
                     year = int(f.readline())
                     f.close()
                 except IOError:
-                    pass
+                    if year != self.currentLogfileYear:
+                        # if the current is not the first year then we must be at the end. Set
+                        # year = self.currentLogfileYear so we still pick up the last log bits
+                        # from the last year...
+                        year = self.currentLogfileYear
+
             if self.config is not None and 'cache_directory' in self.config:
-                try:
-                    logfile = open(os.path.join(self.config['cache_directory'],'year_%d_log.txt' % year))
-                    logfile.seek(key)
-                    lines = logfile.read()
-                    newKey = logfile.tell()
-                    if newKey != key:
-                        self.guiElement.logText.append(lines)
-                    else:
-                        self.guiElement.logText.insertPlainText(QString("."))
-                    logfile.close()
-                except IOError:
-                    if self.firstRead == True:
-                        self.guiElement.logText.append("No logfile yet")
-                        self.firstRead = False
-                    else:
-                        self.guiElement.logText.insertPlainText(QString("."))
-                #self.guiElement.logText.append("ping")
+                # Now we know we have a cache directory and year to look for our file
+                currentYearLogfile = os.path.join(self.config['cache_directory'],'year_%d_log.txt' % year)
+                # Check if we have jumped to the next year
+                if year != self.currentLogfileYear:
+                    # We have switched to the next year and need to grab the last of the previous years
+                    # log and then the first part of the new log...
+                    lastYearLogfile = os.path.join(self.config['cache_directory'],'year_%d_log.txt' % self.currentLogfileYear)
+                    [newKey,logText] = self._read_log(lastYearLogfile,key)
+                    self.guiElement.logText.insertPlainText(logText)
+                    # Reset the key and bump the year since we are switching files
+                    key = 0
+                    self.currentLogfileYear = year
+                    # Mark the transition in the GUI log so it is easier to see
+                    self.guiElement.logText.insertPlainText(QString("\n\n\n ******** Moving to next year logfile *********\n\n\n"))
+                # Now we can read in from the current log for the current year
+                [newKey,logText] = self._read_log(currentYearLogfile,key)
+                self.guiElement.logText.insertPlainText(logText)
+        # Return the new key to the caller
         return newKey
 
     def _write_command_file(self, command):
