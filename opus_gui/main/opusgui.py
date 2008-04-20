@@ -131,7 +131,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # Restoring application geometry from last shut down
         settings = QSettings()
         self.restoreGeometry(settings.value("Geometry").toByteArray())
-
+        
     def closeCurrentTab(self):
         widget = self.tabWidget.currentWidget()
         self.tabWidget.removeTab(self.tabWidget.currentIndex())
@@ -202,6 +202,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             fileNameBaseName = fileNameInfo.completeBaseName()
             # Open the file and add to the Run tab...
             self.toolboxStuff.openXMLTree(fileName)
+            self.resultManagerStuff.scan_for_runs()
 
 
         # Add the project file's path to the title bar

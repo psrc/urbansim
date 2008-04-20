@@ -11,7 +11,7 @@
 # other acknowledgments.
 # 
 
-from PyQt4.QtCore import QObject, SIGNAL
+from PyQt4.QtCore import QObject, SIGNAL, QModelIndex
 
 
 from opus_gui.results.forms.advanced_visualization_form import AdvancedVisualizationForm
@@ -51,8 +51,96 @@ class AbstractManagerBase(object):
         self.gui = gui
     
 # Main Run manager class
-class ResultManagerBase(AbstractManagerBase):        
+class ResultManagerBase(AbstractManagerBase):  
+    
+    def __init__(self, parent):
+        AbstractManagerBase.__init__(self, parent)        
+        
+    def scan_for_runs(self):
+        
+        toolboxStuff = self.parent.toolboxStuff
+        document = toolboxStuff.doc
+        xml_tree = toolboxStuff.resultsManagerTree        
+        model = xml_tree.model
+        
+        if 'OPUS_DATA_PATH' in os.environ:
+            path = os.path.join(os.environ.get('OPUS_DATA_PATH'))
+            for scenario_name in os.listdir(path):
+                if not os.path.isdir(os.path.join(path,scenario_name)): continue
+                runs_path = os.path.join(path, scenario_name, 'runs')
+                if not os.path.exists(runs_path): continue
+                
+                for run_name in os.listdir(runs_path):
+                    try:
+                        cache_directory = os.path.join(runs_path,run_name)
+                        years = []
+                        if not os.path.isdir(cache_directory): continue
+                        for dir in os.listdir(cache_directory):
+                            if len(dir) == 4 and dir.isdigit():
+                                years.append(int(dir))
+                        start_year = min(years)
+                        end_year = max(years)
+                        self.add_run_to_run_manager_xml(model, document,
+                                                         cache_directory,
+                                                         scenario_name,
+                                                         run_name,
+                                                         start_year, end_year)
+                    except: pass
+                
+    def add_run_to_run_manager_xml(self, model, document,
+                                    cache_directory, 
+                                    scenario_name, run_name, 
+                                    start_year, end_year):
 
+        name = '%s.%s'%(scenario_name, run_name)
+
+        newNode = model.create_node(document = document, 
+                                    name = name, 
+                                    type = 'source_data', 
+                                    value = '')
+
+        scenario_name_node = model.create_node(document = document, 
+                                    name = 'scenario_name', 
+                                    type = 'string', 
+                                    value = scenario_name)
+
+        run_name_node = model.create_node(document = document, 
+                                    name = 'run_name', 
+                                    type = 'string', 
+                                    value = run_name)
+
+        cache_directory_node = model.create_node(document = document, 
+                                    name = 'cache_directory', 
+                                    type = 'string', 
+                                    value = cache_directory)
+
+        start_year_node = model.create_node(document = document, 
+                                    name = 'start_year', 
+                                    type = 'integer', 
+                                    value = str(start_year))
+
+        end_year_node = model.create_node(document = document, 
+                                    name = 'end_year', 
+                                    type = 'integer', 
+                                    value = str(end_year))    
+
+        parent = model.index(0, 0, QModelIndex()).parent()
+        index = model.findElementIndexByName("Simulation_runs", parent)[0]
+        if index.isValid():
+            model.insertRow(0, index, newNode)
+        else:
+            print "No valid node was found..."
+
+        child_index = model.findElementIndexByName(name, parent)[0]
+        if child_index.isValid():
+            for node in [end_year_node, start_year_node, 
+                         cache_directory_node, scenario_name_node, run_name_node]:
+                model.insertRow(0, child_index, node)
+        else:
+            print "No valid node was found..."
+
+        model.emit(SIGNAL("layoutChanged()"))    
+        
     def addAdvancedVisualizationForm(self):
         new_form = AdvancedVisualizationForm(parent = self.parent,
                                        result_manager = self)
