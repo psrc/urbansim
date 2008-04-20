@@ -119,24 +119,6 @@ class ModelGuiElement(QWidget):
         # Grab the path to the base XML used to run this model
         self.xml_path = model.xml_path
 
-        # Need to make a copy of the project environment to work from
-        self.originalFile = QFileInfo(self.xml_path)
-        self.originalDirName = self.originalFile.dir().dirName()
-        self.copyDir = QString(self.parent.tempDir)
-        self.projectCopyDir = QDir(QString(tempfile.mkdtemp(prefix='opus_model',dir=str(self.copyDir))))
-        # Copy the project dir from original to copy...
-        tmpPathDir = self.originalFile.dir()
-        tmpPathDir.cdUp()
-        #print "%s, %s" % (tmpPathDir.absolutePath(), self.projectCopyDir.absolutePath())
-        # Go ahead and copy from one dir up (assumed to be the project space...
-        shutil.copytree(str(tmpPathDir.absolutePath()),
-                        str(self.projectCopyDir.absolutePath().append(QString("/").append(tmpPathDir.dirName()))))
-        # Now we can build the new path to the copy of the original file but in the temp space...
-        self.xml_path = self.projectCopyDir.absolutePath().append(QString("/"))
-        self.xml_path = self.xml_path.append(tmpPathDir.dirName().append("/").append(self.originalDirName))
-        self.xml_path = self.xml_path.append(QString("/"))
-        self.xml_path = self.xml_path.append(QFileInfo(self.originalFile.fileName()).fileName())
-
         # Bring up the XML file and grab the start year and end year
         fileNameInfo = QFileInfo(self.xml_path)
         fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
@@ -145,7 +127,7 @@ class ModelGuiElement(QWidget):
         (self.start_year, self.end_year) = config['years']
 
         self.tabIcon = QIcon(":/Images/Images/cog.png")
-        self.tabLabel = self.originalFile.fileName()
+        self.tabLabel = fileNameInfo.fileName()
 
         # LAYOUT FOR THE MODEL ELEMENT IN THE GUI
         self.widgetLayout = QVBoxLayout(self)
@@ -760,25 +742,11 @@ class EstimationGuiElement(QWidget):
         # Grab the path to the base XML used to run this model
         self.xml_path = estimation.xml_path
 
-        # Need to make a copy of the project environment to work from
-        self.originalFile = QFileInfo(self.xml_path)
-        self.originalDirName = self.originalFile.dir().dirName()
-        self.copyDir = QString(self.parent.tempDir)
-        self.projectCopyDir = QDir(QString(tempfile.mkdtemp(prefix='opus_estimation',dir=str(self.copyDir))))
-        # Copy the project dir from original to copy...
-        tmpPathDir = self.originalFile.dir()
-        tmpPathDir.cdUp()
-        # Go ahead and copy from one dir up (assumed to be the project space...
-        shutil.copytree(str(tmpPathDir.absolutePath()),
-                        str(self.projectCopyDir.absolutePath().append(QString("/").append(tmpPathDir.dirName()))))
-        # Now we can build the new path to the copy of the original file but in the temp space...
-        self.xml_path = self.projectCopyDir.absolutePath().append(QString("/"))
-        self.xml_path = self.xml_path.append(tmpPathDir.dirName().append("/").append(self.originalDirName))
-        self.xml_path = self.xml_path.append(QString("/"))
-        self.xml_path = self.xml_path.append(QFileInfo(self.originalFile.fileName()).fileName())
+        fileNameInfo = QFileInfo(self.xml_path)
+        fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
 
         self.tabIcon = QIcon(":/Images/Images/cog.png")
-        self.tabLabel = self.originalFile.fileName()
+        self.tabLabel = fileNameInfo.fileName()
 
         # LAYOUT FOR THE MODEL ELEMENT IN THE GUI
         self.widgetLayout = QVBoxLayout(self)
