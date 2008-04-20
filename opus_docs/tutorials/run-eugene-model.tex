@@ -84,7 +84,8 @@ We have tested this tutorial on Windows, Mac and Linux.
 \section*{Install Software and Download Sample Data}
 
 If you have not already done so, install Opus and UrbanSim, along with
-any needed supporting software.  Directions for the current version of
+any needed supporting software, and download the sample data and configurations.  
+Directions for the current version of
 the code are at \url{http://www.urbansim.org/docs/installation/}.  
 This tutorial is for the development version of the code currently in 
 the svn repository.    It relies on the PyQt package to produce its 
@@ -96,11 +97,6 @@ at \url{http://www.urbansim.org/download/} includes a link to the
 tutorials and installation
 instructions corresponding to that particular version.
 
-Next, download the Eugene 1980 baseyear cache zip file by following the 
-appropriate link on the download page 
-\url{http://www.urbansim.org/download/} in the ``Latest Development Version''
-section.
-
 %% If you are using the source code for a stable release, there will be a link
 %% to the Eugene 1980 baseyear cache file that works with this version in the
 %% table of stable release versions.  Alternatively, if you are getting the
@@ -108,14 +104,6 @@ section.
 %% in the ``Current Source Code'' section.  (We frequently update the Opus and
 %% UrbanSim source code, but the sample database doesn't change very often ---
 %% so the stable release version and latest version will likely be the same.)
-
-Unzip the file into a directory named \verb|eugene| inside the directory specified by the
-OPUS_DATA_PATH variable (this was set while installing UrbanSim).  So for 
-example, if your OPUS_DATA_PATH was \verb|c:\urbansim_cache|,
-you'll want to unzip the file into \verb|c:\urbansim_cache\eugene|.  This will create a directory
-named \verb|eugene_1980_baseyear_cache| inside the \verb|eugene| directory. This example 
-Eugene-Springfield database contains all of the data that UrbanSim needs to 
-run a simulation of Eugene starting in simulated year 1980.
 
 \section*{Running a Simulation}
 
