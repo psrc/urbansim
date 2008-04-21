@@ -416,6 +416,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                 'arguments': {
                     'agent_set': 'person',
                     'agents_index' : '_index',
+                    'choose_job_only_in_residence_zone': False,
                     'chunk_specification': "{'nchunks':1}",
                     'coefficients': 'coefficients',
                     'data_objects': 'datasets',

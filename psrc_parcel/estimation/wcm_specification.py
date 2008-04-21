@@ -67,27 +67,35 @@ specification = {
 #         "psrc_parcel.person_x_job.am_total_transit_time_walk_from_home_to_work",
          #'lnempden',
 
-"euclidean_distance_in_miles = psrc_parcel.person_x_job.euclidean_distance_from_home_to_work/1609.3",
+#"euclidean_distance_in_miles = psrc_parcel.person_x_job.euclidean_distance_from_home_to_work/1609.3",
+"psrc_parcel.person_x_job.network_distance_from_home_to_work",
+#"psrc_parcel.person_x_job.travel_cost_from_home_to_work",
 
 "psrc_parcel.person_x_job.home_district_is_same_as_workplace_district",
 
-## "psrc_parcel.person_x_job.home_area_type_is_same_as_workplace_area_type",
+"home_dist_19_workplace_dist_19=(person.disaggregate(zone.district_id)==19) * (job.disaggregate(zone.district_id)==19)",
+#"home_19_workplace_ne_19=(person.disaggregate(zone.district_id)==19) * (job.disaggregate(zone.district_id)!=19)",
+
+# "psrc_parcel.person_x_job.home_area_type_is_same_as_workplace_area_type",
           ## area_types: 1-metropolitan cities; 2-core & larger suburban cities; 
           ##             3-smaller suburban and unincorporated UGA
           ##             4-rural areas 
         #"psrc_parcel.person_x_job.home_area_type_1_workplace_area_type_1",
-#!        "psrc_parcel.person_x_job.home_area_type_1_workplace_area_type_2",
-        #"psrc_parcel.person_x_job.home_area_type_1_workplace_area_type_3",
-#"psrc_parcel.person_x_job.home_area_type_1_workplace_area_type_4",
+        "psrc_parcel.person_x_job.home_area_type_1_workplace_area_type_2",
+        #+!"psrc_parcel.person_x_job.home_area_type_1_workplace_area_type_3",
+        #+!"psrc_parcel.person_x_job.home_area_type_1_workplace_area_type_4",
+
         #"psrc_parcel.person_x_job.home_area_type_2_workplace_area_type_1",
         #"psrc_parcel.person_x_job.home_area_type_2_workplace_area_type_2",
         #"psrc_parcel.person_x_job.home_area_type_2_workplace_area_type_3",
-#"psrc_parcel.person_x_job.home_area_type_2_workplace_area_type_4", 
-#!        "psrc_parcel.person_x_job.home_area_type_3_workplace_area_type_1",
+        #"psrc_parcel.person_x_job.home_area_type_2_workplace_area_type_4", 
+
+        #"psrc_parcel.person_x_job.home_area_type_3_workplace_area_type_1",
         #"psrc_parcel.person_x_job.home_area_type_3_workplace_area_type_2",
         #"psrc_parcel.person_x_job.home_area_type_3_workplace_area_type_3",
         #"psrc_parcel.person_x_job.home_area_type_3_workplace_area_type_4",
-        "psrc_parcel.person_x_job.home_area_type_4_workplace_area_type_1",
+
+        #"psrc_parcel.person_x_job.home_area_type_4_workplace_area_type_1",
         "psrc_parcel.person_x_job.home_area_type_4_workplace_area_type_2",
         #"psrc_parcel.person_x_job.home_area_type_4_workplace_area_type_3",
         #"psrc_parcel.person_x_job.home_area_type_4_workplace_area_type_4",

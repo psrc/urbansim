@@ -16,7 +16,7 @@ from opus_core.datasets.dataset import Dataset
 from opus_core.resources import Resources
 from opus_core.choice_model import ChoiceModel, prepare_specification_and_coefficients
 from urbansim.estimation.estimator import get_specification_for_estimation
-from numpy import arange, where, ones
+from numpy import array, arange, where, ones, concatenate
 from opus_core.variables.variable_name import VariableName
 from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.misc import unique_values
@@ -37,44 +37,65 @@ class WorkAtHomeChoiceModel(ChoiceModel):
         self.location_id_name = location_id_name
         ChoiceModel.__init__(self, [1, 2], choice_attribute_name=choice_attribute_name, **kwargs)
         
-    def run(self, *args, **kwargs):
+    def run(self, choose_job_only_in_residence_zone=True, *args, **kwargs):
         choices = ChoiceModel.run(self, *args, **kwargs)
         #prob_work_at_home = self.upc_sequence.probabilities[:, 0]
-        
+        agent_set = kwargs['agent_set']
+
         if self.filter is not None:
-            choice_set_index = where( self.job_set.compute_variables(self.filter) )[0]
+            jobs_set_index = where( self.job_set.compute_variables(self.filter) )[0]
         else:
-            choice_set_index = arange( self.job_set.size() )
-        
+            jobs_set_index = arange( self.job_set.size() )
         at_home_worker_index = kwargs['agents_index'][choices==1]
-        if at_home_worker_index.size >= choice_set_index.size: 
-           #number of at home workers is greater than the available choice (home_based jobs by default)
-            assigned_worker_index = sample_noreplace(at_home_worker_index, choice_set_index.size)
-            assigned_choice_index = choice_set_index
+
+        if not choose_job_only_in_residence_zone:
+            assigned_worker_index, assigned_job_index = self._assign_job_to_worker(at_home_worker_index, jobs_set_index)
         else:
-            assigned_worker_index = at_home_worker_index
-            assigned_choice_index=sample_noreplace(choice_set_index, at_home_worker_index.size)
-        
+            agent_set.compute_variables("urbansim_parcel.person.zone_id")
+            self.job_set.compute_variables("urbansim_parcel.job.zone_id")
+            agent_zone_ids = agent_set.get_attribute_by_index('zone_id', at_home_worker_index)
+            job_zone_ids = self.job_set.get_attribute_by_index('zone_id', jobs_set_index)
+            unique_zones = unique_values(job_zone_ids)
+            assigned_worker_index = array([], dtype="int32")
+            assigned_job_index = array([], dtype="int32")
+            for this_zone in unique_zones:
+                if this_zone <= 0: continue
+                at_home_worker_in_this_zone = where(agent_zone_ids == this_zone)[0]
+                job_set_in_this_zone = where(job_zone_ids == this_zone)[0]
+                assigned_worker_in_this_zone, assigned_job_set_in_this_zone = self._assign_job_to_worker(at_home_worker_in_this_zone, job_set_in_this_zone)
+                assigned_worker_index = concatenate((assigned_worker_index, at_home_worker_index[assigned_worker_in_this_zone]))
+                assigned_job_index = concatenate((assigned_job_index, jobs_set_index[assigned_job_set_in_this_zone]))
+
         ## each worker can only be assigned to 1 job
         #assert assigned_worker_index.size == unique_values(assigned_worker_index).size
-        agent_set = kwargs['agent_set']
         agent_set.set_values_of_one_attribute(self.choice_attribute_name, 
                                               choices, 
                                               index=kwargs['agents_index'])
         agent_set.set_values_of_one_attribute(self.job_set.get_id_name()[0], 
-                                              self.job_set.get_id_attribute()[assigned_choice_index], 
+                                              self.job_set.get_id_attribute()[assigned_job_index], 
                                               index=assigned_worker_index)
         agent_set.compute_variables([self.location_id_name], dataset_pool=self.dataset_pool)
         self.job_set.modify_attribute(name=VariableName(self.location_id_name).get_alias(), 
                                       data=agent_set.get_attribute_by_index(self.location_id_name, assigned_worker_index),
-                                      index=assigned_choice_index)
+                                      index=assigned_job_index)
         logger.log_status("%s workers chose to work at home, %s workers chose to work out of home." % 
                           (where(agent_set.get_attribute_by_index(self.choice_attribute_name, kwargs['agents_index']) == 1)[0].size,
                            where(agent_set.get_attribute_by_index(self.choice_attribute_name, kwargs['agents_index']) == 2)[0].size))
         logger.log_status("Total: %s workers work at home, %s workers work out of home." % 
                           (where(agent_set.get_attribute(self.choice_attribute_name) == 1)[0].size,
                            where(agent_set.get_attribute(self.choice_attribute_name) == 2)[0].size))
+
+    def _assign_job_to_worker(self, worker_index, job_index):
+        if worker_index.size >= job_index.size: 
+           #number of at home workers is greater than the available choice (home_based jobs by default)
+            assigned_worker_index = sample_noreplace(worker_index, job_index.size)
+            assigned_job_index = job_index
+        else:
+            assigned_worker_index = worker_index
+            assigned_job_index=sample_noreplace(job_index,worker_index.size)
         
+        return (assigned_worker_index, assigned_job_index)
+ 
     def prepare_for_run(self, 
                         specification_storage=None, 
                         specification_table=None,
