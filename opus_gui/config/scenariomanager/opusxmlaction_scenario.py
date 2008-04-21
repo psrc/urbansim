@@ -37,7 +37,7 @@ class OpusXMLAction_Scenario(object):
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
 
         self.actRunModel = QAction(self.acceptIcon,
-                                   "Run This Model",
+                                   "Run This Scenario",
                                    self.xmlTreeObject.parent)
         QObject.connect(self.actRunModel,
                         SIGNAL("triggered()"),
