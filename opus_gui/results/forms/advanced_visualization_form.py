@@ -107,7 +107,7 @@ class AdvancedVisualizationForm(QWidget):
         self.gridlayout.addWidget(self.lbl_results,0,0,1,3)
 
         self._setup_co_results()
-        self.gridlayout.addWidget(self.co_results,0,2,1,10)
+        self.gridlayout.addWidget(self.co_results,0,3,1,10)
 
         self.pbn_add = QPushButton(self.resultsGroupBox)
         self.pbn_add.setObjectName('pbn_add')

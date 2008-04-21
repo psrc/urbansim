@@ -174,23 +174,39 @@ class ResultManagerBase(AbstractManagerBase):
         self.guiElements.insert(0, new_form)
         self.updateGuiElements()
 
+    
+    def _get_indicator_info_from_node(self, node):
+        info = get_child_values(parent = node,
+                                child_names = ['source_data',
+                                               'indicator_name',
+                                               'dataset_name',
+                                               'available_years'])
+        indicator = {}
+        indicator['source_data_name'] = str(info['source_data'])
+        indicator['indicator_name'] = str(info['indicator_name'])
+        indicator['dataset_name'] = str(info['dataset_name'])
+        indicator['years'] = [int(y) for y in str(info['available_years']).split(', ')]        
+        return indicator
+                
+    def addIndicatorFormFromNode(self, indicator_type, clicked_node, kwargs = None):
+        indicator_info = [self._get_indicator_info_from_node(clicked_node)]
+        self._addIndicatorForm(indicator_type = indicator_type, 
+                               indicator_info = indicator_info,
+                               kwargs = kwargs)
+        
     def addIndicatorForm(self, indicator_type, indicator_names, kwargs = None):
         #build visualizations
         indicator_info = []
         for indicator_name in indicator_names:
             node = self.toolboxStuff.doc.elementsByTagName(indicator_name).item(0)
-    
-            info = get_child_values(parent = node,
-                                    child_names = ['source_data',
-                                                   'indicator_name',
-                                                   'dataset_name',
-                                                   'available_years'])
-            indicator = {}
-            indicator['source_data_name'] = str(info['source_data'])
-            indicator['indicator_name'] = str(info['indicator_name'])
-            indicator['dataset_name'] = str(info['dataset_name'])
-            indicator['years'] = [int(y) for y in str(info['available_years']).split(', ')]        
+            indicator = self._get_indicator_info_from_node(node)
             indicator_info.append(indicator)
+        
+        self._addIndicatorForm(indicator_type = indicator_type, 
+                               indicator_info = indicator_info,
+                               kwargs = kwargs)
+        
+    def _addIndicatorForm(self, indicator_type, indicator_info, kwargs):
         
         domDocument = self.parent.toolboxStuff.doc
         self.indicator_type = indicator_type

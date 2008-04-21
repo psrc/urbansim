@@ -68,18 +68,18 @@ class OpusXMLAction_Results(object):
                                           "Chart (Matplotlib)",
                                           self.xmlTreeObject.parent)
         QObject.connect(self.actViewResultAsMatplotlibChart, SIGNAL("triggered()"), self.viewResultsMatplotlibChart) 
-        self.actViewResultAsTablePerYear = QAction(self.acceptIcon, 
-                                          "Table (one per year over selected indicators)",
-                                          self.xmlTreeObject.parent)
-        QObject.connect(self.actViewResultAsTablePerYear, SIGNAL("triggered()"), self.viewResultsTablePerYear) 
+#        self.actViewResultAsTablePerYear = QAction(self.acceptIcon, 
+#                                          "Table (one per year over selected indicators)",
+#                                          self.xmlTreeObject.parent)
+        #QObject.connect(self.actViewResultAsTablePerYear, SIGNAL("triggered()"), self.viewResultsTablePerYear) 
         self.actViewResultAsTablePerAttribute = QAction(self.acceptIcon, 
-                                          "Table (one per selected indicator)",
+                                          "Table",
                                           self.xmlTreeObject.parent)
         QObject.connect(self.actViewResultAsTablePerAttribute, SIGNAL("triggered()"), self.viewResultsTablePerAttribute) 
 
         #launch advanced view results window...
         self.actViewResultAsAdvanced = QAction(self.acceptIcon, 
-                                          "[Advanced configuration]",
+                                          "Advanced visualization...",
                                           self.xmlTreeObject.parent)
         QObject.connect(self.actViewResultAsAdvanced, SIGNAL("triggered()"), self.viewResultsAdvanced) 
 
@@ -170,30 +170,30 @@ class OpusXMLAction_Results(object):
 
     def viewResultsMatplotlibMap(self):
         clicked_node = self.currentIndex.internalPointer().node().toElement()          
-        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorForm(
+        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorFormFromNode(
                                                           indicator_type = 'matplotlib_map',
                                                           clicked_node = clicked_node)
 
     def viewResultsArcGisMap(self):
         clicked_node = self.currentIndex.internalPointer().node().toElement()          
-        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorForm(
+        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorFormFromNode(
                                                           indicator_type = 'arcgis_map',
                                                           clicked_node = clicked_node)           
     def viewResultsMatplotlibChart(self):
         clicked_node = self.currentIndex.internalPointer().node().toElement()           
-        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorForm(
+        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorFormFromNode(
                                                           indicator_type = 'matplotlib_chart',
                                                           clicked_node = clicked_node)
 
     def viewResultsTablePerAttribute(self):
         clicked_node = self.currentIndex.internalPointer().node().toElement()           
-        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorForm(
+        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorFormFromNode(
                                                           indicator_type = 'table_per_attribute',
                                                           clicked_node = clicked_node)
 
     def viewResultsTablePerYear(self):
         clicked_node = self.currentIndex.internalPointer().node().toElement()           
-        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorForm(
+        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorFormFromNode(
                                                           indicator_type = 'table_per_year',
                                                           clicked_node = clicked_node)
 
@@ -281,7 +281,7 @@ class OpusXMLAction_Results(object):
                 elif domElement.attribute(QString("type")) == QString("indicator_result"):
                     visualization_menu = QMenu(self.xmlTreeObject.parent)
                     visualization_menu.setTitle(QString("View result as..."))
-                    visualization_menu.addAction(self.actViewResultAsTablePerYear)
+                    #visualization_menu.addAction(self.actViewResultAsTablePerYear)
                     visualization_menu.addAction(self.actViewResultAsTablePerAttribute)                    
                     visualization_menu.addAction(self.actViewResultAsMatplotlibMap)
                     #visualization_menu.addAction(self.actViewResultAsArcgisMap)
