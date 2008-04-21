@@ -115,10 +115,7 @@ class GenerateResultsForm(QWidget):
         self.lbl_source_data.setObjectName("lbl_source_data")
         self.lbl_source_data.setText(QString("Simulation data"))
         self.gridlayout2.addWidget(self.lbl_source_data,0,0,1,3)
-        
-        self._setup_co_source_data(selected_item)
-        self.gridlayout2.addWidget(self.co_source_data,0,3,1,4) 
-        
+                
         self.lbl_yr1 = QLabel(self.indicatorsGroupBox)
         self.lbl_yr1.setObjectName("lbl_yr1")
         self.lbl_yr1.setText(QString("From"))
@@ -136,6 +133,9 @@ class GenerateResultsForm(QWidget):
         self.lbl_yr4.setText(QString("<center>years</center>"))
         
         self._setup_co__years()
+
+        self._setup_co_source_data(selected_item)
+        self.gridlayout2.addWidget(self.co_source_data,0,3,1,4) 
         
         self.gridlayout2.addWidget(self.lbl_yr1,1,0,1,1)
         self.gridlayout2.addWidget(self.co_start_year,1,1,1,1)
@@ -168,14 +168,7 @@ class GenerateResultsForm(QWidget):
         
         
     def _setup_co_dataset_name(self):
-        available_datasets = [
-            '[select]',
-            'gridcell',
-            'zone',
-            #'taz',
-            #'county',
-            #'alldata'
-        ]
+
         self.co_dataset_name = QComboBox(self.indicatorsGroupBox)
         self.co_dataset_name.setObjectName("co_dataset_name")
 
@@ -209,6 +202,7 @@ class GenerateResultsForm(QWidget):
         idx = self.co_source_data.findText(selected_item)
         if idx != -1:
             self.co_source_data.setCurrentIndex(idx)
+            self.on_co_source_data_value_changed(idx)
             
             
     def _setup_co__years(self):
