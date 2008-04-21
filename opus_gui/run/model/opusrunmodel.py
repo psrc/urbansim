@@ -303,6 +303,7 @@ class OpusModel(object):
                 # Now we can read in from the current log for the current year
                 [newKey,logText] = self._read_log(currentYearLogfile,key)
                 self.guiElement.logText.insertPlainText(logText)
+                self.guiElement.logText.ensureCursorVisible()
         # Return the new key to the caller
         return newKey
 
