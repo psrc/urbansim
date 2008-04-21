@@ -175,7 +175,7 @@ else:
                 for column_name, column_value in table_data.iteritems():
                     # Check for string value, if yes, insert quotes
                     if column_value[i].dtype.kind == 'S':
-                        strng = "'" + column_value[i] + "'"
+                        strng = '''"''' + column_value[i] + '''"'''
                         exec_stmt = "row.%s = %s" % (column_names_mapping[column_name], strng)
                     else:
                         exec_stmt = "row.%s = %s" % (column_names_mapping[column_name], column_value[i])

@@ -61,7 +61,7 @@
       <classification type="classification">database</classification>
       <opus_database_to_esri_config type="script_config">
         <script_hook type="script_library_ref">opus_database_to_esri_tool</script_hook>
-        <esri_data_path type="string">c:\opus\opus_data\seattle_parcel\output_geodb.gdb</esri_data_path>
+        <esri_data_path type="string">c:\opus\data\seattle_parcel\output_geodb.gdb</esri_data_path>
         <opus_data_directory type="string" />
         <opus_data_year type="string">ALL</opus_data_year>
         <opus_table_name type="string">ALL</opus_table_name>
@@ -81,7 +81,7 @@
       <classification type="classification">dataset</classification>
       <opus_dataset_to_esri_config type="script_config">
         <script_hook type="script_library_ref">opus_database_to_esri_tool</script_hook>
-        <esri_data_path type="string">c:\opus\opus_data\seattle_parcel\output_geodb.gdb</esri_data_path>
+        <esri_data_path type="string">c:\opus\data\seattle_parcel\output_geodb.gdb</esri_data_path>
         <opus_data_directory type="string" />
         <opus_data_year type="string">ALL</opus_data_year>
         <opus_table_name type="string">ALL</opus_table_name>
@@ -90,36 +90,36 @@
     <script_batch type="script_batch">
       <esri_buffer_tool type="script_config">
         <script_hook type="script_library_ref">esri_buffer_tool</script_hook>
-        <input_shapefile type="string">c:\opus\opus_data\seattle_parcel\seattle_parcel.gdb\feature_classes\fazes_fc</input_shapefile>
-        <output_shapefile type="string">c:\opus\opus_data\seattle_parcel\output_geodb.gdb\fazes_fc_500</output_shapefile>
+        <input_shapefile type="string">c:\opus\data\seattle_parcel\seattle_parcel.gdb\feature_classes\fazes_fc</input_shapefile>
+        <output_shapefile type="string">c:\opus\data\seattle_parcel\output_geodb.gdb\fazes_fc_500</output_shapefile>
         <buffer_size type="integer">500</buffer_size>
       </esri_buffer_tool>
       <esri_data_to_opus type="script_config">
         <script_hook type="script_library_ref">esri_data_to_opus</script_hook>
-        <esri_data_path type="string">c:\opus\opus_data\geodatabases\seattle_parcel.gdb</esri_data_path>
+        <esri_data_path type="string">c:\opus\data\geodatabases\seattle_parcel.gdb</esri_data_path>
         <esri_table_name type="string">zones</esri_table_name>
-        <opus_data_directory type="string">c:\opus\opus_data\testing</opus_data_directory>
+        <opus_data_directory type="string">c:\opus\data\testing</opus_data_directory>
         <opus_data_year type="string">1951</opus_data_year>
       </esri_data_to_opus>
       <sql_data_to_opus type="script_config">
         <script_hook type="script_library_ref">sql_data_to_opus</script_hook>
         <sql_db_name type="string">some_sql_database_name</sql_db_name>
         <table_name type="string">ALL</table_name>
-        <opus_data_directory type="string">C:\opus\opus_data\seattle_parcel</opus_data_directory>
+        <opus_data_directory type="string">C:\opus\data\seattle_parcel</opus_data_directory>
         <opus_data_year type="string">2000</opus_data_year>
       </sql_data_to_opus>
       <opus_data_to_sql type="script_config">
         <script_hook type="script_library_ref">opus_data_to_sql</script_hook>
         <sql_db_name type="string">some_sql_database_name</sql_db_name>
         <table_name type="string">ALL</table_name>
-        <opus_data_directory type="string">C:\opus\opus_data\seattle_parcel</opus_data_directory>
+        <opus_data_directory type="string">C:\opus\data\seattle_parcel</opus_data_directory>
         <opus_data_year type="string">2000</opus_data_year>
       </opus_data_to_sql>
       <opus_data_to_esri type="script_config">
         <script_hook type="script_library_ref">opus_data_to_esri</script_hook>
-        <esri_data_path type="string">c:\opus\opus_data\geodatabases\output_geodb.gdb</esri_data_path>
+        <esri_data_path type="string">c:\opus\data\geodatabases\output_geodb.gdb</esri_data_path>
         <opus_table_name type="string">zones</opus_table_name>
-        <opus_data_directory type="string">C:\opus\opus_data\seattle_parcel</opus_data_directory>
+        <opus_data_directory type="string">C:\opus\data\seattle_parcel</opus_data_directory>
         <opus_data_year type="string">2000</opus_data_year>
       </opus_data_to_esri>
     </script_batch>
