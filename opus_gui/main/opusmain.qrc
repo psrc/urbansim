@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/Images" >
+        <file>Images/arrow_refresh.png</file>
         <file>Images/accept.png</file>
         <file>Images/application_side_tree.png</file>
         <file>Images/bullet_black.png</file>

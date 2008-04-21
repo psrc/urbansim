@@ -29,11 +29,12 @@ class OpusFileAction(object):
         self.classification = ""
 
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
+        self.refreshIcon = QIcon(":/Images/Images/arrow_refresh.png")
 
-        self.actPlaceHolder = QAction(self.applicationIcon, "Placeholder",
-                                      self.xmlFileObject.mainwindow)
-        QObject.connect(self.actPlaceHolder, SIGNAL("triggered()"),
-                        self.placeHolderAction)
+        self.actRefresh = QAction(self.refreshIcon, "Refresh Tree",
+                                  self.xmlFileObject.mainwindow)
+        QObject.connect(self.actRefresh, SIGNAL("triggered()"),
+                        self.refreshAction)
 
         self.actOpenTextFile = QAction(self.applicationIcon, "Open Text File",
                                        self.xmlFileObject.mainwindow)
@@ -44,9 +45,9 @@ class OpusFileAction(object):
                         SIGNAL("customContextMenuRequested(const QPoint &)"),
                         self.processCustomMenu)
 
-    def placeHolderAction(self):
-        print "placeHolderAction pressed with column = %s" % \
-              (self.currentColumn)
+    def refreshAction(self):
+        #print "refreshAction"
+        self.xmlFileObject.model.refresh(self.xmlFileObject.treeview.rootIndex())
 
     def openTextFile(self):
         print "openTextFile pressed with column = %s and item = %s" % \
@@ -117,107 +118,108 @@ class OpusFileAction(object):
         return choices
 
     def dataActionMenuFunction(self,action):
-        filename = self.xmlFileObject.model.fileName(self.currentIndex)
-        filepath = self.xmlFileObject.model.filePath(self.currentIndex)
-        parentfilepath = self.xmlFileObject.model.filePath(self.currentIndex.parent())
-        actiontext = action.text()
         # print "%s - %s" % (filename,actiontext)
         QObject.disconnect(self.menu, SIGNAL("triggered(QAction*)"),self.dataActionMenuFunction)
 
-        # Add in the code to take action... like run a script...
-        # First find the batch to loop over the configs to execute
-        tree = self.xmlFileObject.mainwindow.toolboxStuff.dataManagerTree
-        scriptxml = tree.model.index(0,0,QModelIndex()).parent()
-        scriptindexlist = tree.model.findElementIndexByName(actiontext,scriptxml,False)
-        scriptindex = scriptindexlist[0]
-        if scriptindex.isValid():
-            # print scriptindex.internalPointer().node().toElement().tagName()
-            # We have the script_batch... time to loop over the children and get the configs
-            configindexlist = tree.model.findElementIndexByType("script_config",scriptindex,True)
-            # print len(configindexlist)
-            for configindex in configindexlist:
-                if configindex.isValid():
-                    # Now for each config index we need to run the scripts
-                    # Now find the script that this config refers to...
-                    configNode = configindex.internalPointer().node().toElement()
-                    script_hook = configNode.elementsByTagName(QString("script_hook")).item(0)
-                    script_name = QString("")
-                    if script_hook.hasChildNodes():
-                        children = script_hook.childNodes()
-                        for x in xrange(0,children.count(),1):
-                            if children.item(x).isText():
-                                script_name = children.item(x).nodeValue()
-                    # This will be in the script_library
-                    library = configindex.model().xmlRoot.toElement().elementsByTagName(QString("script_library")).item(0)
-                    script_path = library.toElement().elementsByTagName("script_path").item(0)
-                    script = library.toElement().elementsByTagName(script_name).item(0)
-
-                    # First find the script path text...
-                    if script_path.hasChildNodes():
-                        children = script_path.childNodes()
-                        for x in xrange(0,children.count(),1):
-                            if children.item(x).isText():
-                                scriptPath = children.item(x).nodeValue()
-                    if script.hasChildNodes():
-                        children = script.childNodes()
-                        for x in xrange(0,children.count(),1):
-                            if children.item(x).isText():
-                                filePath = children.item(x).nodeValue()
-                    importPath = QString(scriptPath).append(QString(".")).append(QString(filePath))
-                    # print "New import ", importPath
-
-                    # Now loop and build up the parameters...
-                    params = {}
-                    childNodes = configNode.childNodes()
-                    for x in xrange(0,childNodes.count(),1):
-                        thisElement = childNodes.item(x)
-                        thisElementText = QString("")
-                        if thisElement.hasChildNodes():
-                            children = thisElement.childNodes()
+        if action != self.actRefresh:
+            actiontext = action.text()
+            filename = self.xmlFileObject.model.fileName(self.currentIndex)
+            filepath = self.xmlFileObject.model.filePath(self.currentIndex)
+            parentfilepath = self.xmlFileObject.model.filePath(self.currentIndex.parent())
+            # Add in the code to take action... like run a script...
+            # First find the batch to loop over the configs to execute
+            tree = self.xmlFileObject.mainwindow.toolboxStuff.dataManagerTree
+            scriptxml = tree.model.index(0,0,QModelIndex()).parent()
+            scriptindexlist = tree.model.findElementIndexByName(actiontext,scriptxml,False)
+            scriptindex = scriptindexlist[0]
+            if scriptindex.isValid():
+                # print scriptindex.internalPointer().node().toElement().tagName()
+                # We have the script_batch... time to loop over the children and get the configs
+                configindexlist = tree.model.findElementIndexByType("script_config",scriptindex,True)
+                # print len(configindexlist)
+                for configindex in configindexlist:
+                    if configindex.isValid():
+                        # Now for each config index we need to run the scripts
+                        # Now find the script that this config refers to...
+                        configNode = configindex.internalPointer().node().toElement()
+                        script_hook = configNode.elementsByTagName(QString("script_hook")).item(0)
+                        script_name = QString("")
+                        if script_hook.hasChildNodes():
+                            children = script_hook.childNodes()
                             for x in xrange(0,children.count(),1):
                                 if children.item(x).isText():
-                                    thisElementText = children.item(x).nodeValue()
-                        if thisElement.toElement().tagName() == QString("opus_data_directory"):
-                            if self.classification == "database":
-                                thisElementText = self.xmlFileObject.model.filePath(self.currentIndex.parent())
-                            elif self.classification == "dataset":
-                                thisElementText = self.xmlFileObject.model.filePath(self.currentIndex.parent().parent())
-                            elif self.classification == "array":
-                                thisElementText = self.xmlFileObject.model.filePath(self.currentIndex.parent().parent().parent())
-                        if thisElement.toElement().tagName() == QString("opus_data_year"):
-                            if self.classification == "database":
-                                thisElementText = self.xmlFileObject.model.fileName(self.currentIndex)
-                            elif self.classification == "dataset":
-                                thisElementText = self.xmlFileObject.model.fileName(self.currentIndex.parent())
-                            elif self.classification == "array":
-                                thisElementText = self.xmlFileObject.model.fileName(self.currentIndex.parent().parent())
-                        if thisElement.toElement().tagName() == QString("opus_table_name"):
-                            if self.classification == "database":
-                                thisElementText = "ALL"
-                            elif self.classification == "dataset":
-                                thisElementText = self.xmlFileObject.model.fileName(self.currentIndex)
-                            elif self.classification == "array":
-                                thisElementText = self.xmlFileObject.model.fileName(self.currentIndex.parent())
-                        if thisElement.toElement().tagName() != QString("script_hook"):
-                            params[thisElement.toElement().tagName()] = thisElementText
-                    x = OpusScript(self.xmlFileObject.mainwindow,importPath,params)
-                    y = RunScriptThread(self.xmlFileObject.mainwindow,x)
-                    y.run()
+                                    script_name = children.item(x).nodeValue()
+                        # This will be in the script_library
+                        library = configindex.model().xmlRoot.toElement().elementsByTagName(QString("script_library")).item(0)
+                        script_path = library.toElement().elementsByTagName("script_path").item(0)
+                        script = library.toElement().elementsByTagName(script_name).item(0)
+
+                        # First find the script path text...
+                        if script_path.hasChildNodes():
+                            children = script_path.childNodes()
+                            for x in xrange(0,children.count(),1):
+                                if children.item(x).isText():
+                                    scriptPath = children.item(x).nodeValue()
+                        if script.hasChildNodes():
+                            children = script.childNodes()
+                            for x in xrange(0,children.count(),1):
+                                if children.item(x).isText():
+                                    filePath = children.item(x).nodeValue()
+                        importPath = QString(scriptPath).append(QString(".")).append(QString(filePath))
+                        # print "New import ", importPath
+
+                        # Now loop and build up the parameters...
+                        params = {}
+                        childNodes = configNode.childNodes()
+                        for x in xrange(0,childNodes.count(),1):
+                            thisElement = childNodes.item(x)
+                            thisElementText = QString("")
+                            if thisElement.hasChildNodes():
+                                children = thisElement.childNodes()
+                                for x in xrange(0,children.count(),1):
+                                    if children.item(x).isText():
+                                        thisElementText = children.item(x).nodeValue()
+                            if thisElement.toElement().tagName() == QString("opus_data_directory"):
+                                if self.classification == "database":
+                                    thisElementText = self.xmlFileObject.model.filePath(self.currentIndex.parent())
+                                elif self.classification == "dataset":
+                                    thisElementText = self.xmlFileObject.model.filePath(self.currentIndex.parent().parent())
+                                elif self.classification == "array":
+                                    thisElementText = self.xmlFileObject.model.filePath(self.currentIndex.parent().parent().parent())
+                            if thisElement.toElement().tagName() == QString("opus_data_year"):
+                                if self.classification == "database":
+                                    thisElementText = self.xmlFileObject.model.fileName(self.currentIndex)
+                                elif self.classification == "dataset":
+                                    thisElementText = self.xmlFileObject.model.fileName(self.currentIndex.parent())
+                                elif self.classification == "array":
+                                    thisElementText = self.xmlFileObject.model.fileName(self.currentIndex.parent().parent())
+                            if thisElement.toElement().tagName() == QString("opus_table_name"):
+                                if self.classification == "database":
+                                    thisElementText = "ALL"
+                                elif self.classification == "dataset":
+                                    thisElementText = self.xmlFileObject.model.fileName(self.currentIndex)
+                                elif self.classification == "array":
+                                    thisElementText = self.xmlFileObject.model.fileName(self.currentIndex.parent())
+                            if thisElement.toElement().tagName() != QString("script_hook"):
+                                params[thisElement.toElement().tagName()] = thisElementText
+                        x = OpusScript(self.xmlFileObject.mainwindow,importPath,params)
+                        y = RunScriptThread(self.xmlFileObject.mainwindow,x)
+                        y.run()
         return
+
 
     def processCustomMenu(self, position):
         self.currentColumn = self.xmlFileObject.treeview.indexAt(position).column()
         self.currentIndex = self.xmlFileObject.treeview.indexAt(position)
+
+        self.menu = QMenu(self.xmlFileObject.mainwindow)
         if self.currentIndex.isValid():
             if self.xmlFileObject.model.fileInfo(self.currentIndex).suffix() == "txt":
-                self.menu = QMenu(self.xmlFileObject.mainwindow)
                 self.menu.addAction(self.actOpenTextFile)
-                self.menu.exec_(QCursor.pos())
             else:
                 # Do stuff for directories
                 choices = self.fillInAvailableScripts()
                 if len(choices) > 0:
-                    self.menu = QMenu(self.xmlFileObject.mainwindow)
                     self.dynactions = []
                     for i,choice in enumerate(choices):
                         # Add choices with custom text...
@@ -226,4 +228,7 @@ class OpusFileAction(object):
                         self.menu.addAction(dynaction)
                     QObject.connect(self.menu, SIGNAL("triggered(QAction*)"),
                                     self.dataActionMenuFunction)
-                    self.menu.exec_(QCursor.pos())
+        # Now tack on a refresh for all right clicks
+        #print "Setting model refresh"
+        self.menu.addAction(self.actRefresh)
+        self.menu.exec_(QCursor.pos())
