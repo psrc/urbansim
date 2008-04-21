@@ -208,21 +208,22 @@ class OpusFileAction(object):
     def processCustomMenu(self, position):
         self.currentColumn = self.xmlFileObject.treeview.indexAt(position).column()
         self.currentIndex = self.xmlFileObject.treeview.indexAt(position)
-        if self.xmlFileObject.model.fileInfo(self.currentIndex).suffix() == "txt":
-            self.menu = QMenu(self.xmlFileObject.mainwindow)
-            self.menu.addAction(self.actOpenTextFile)
-            self.menu.exec_(QCursor.pos())
-        else:
-            # Do stuff for directories
-            choices = self.fillInAvailableScripts()
-            if len(choices) > 0:
+        if self.currentIndex.isValid():
+            if self.xmlFileObject.model.fileInfo(self.currentIndex).suffix() == "txt":
                 self.menu = QMenu(self.xmlFileObject.mainwindow)
-                self.dynactions = []
-                for i,choice in enumerate(choices):
-                    # Add choices with custom text...
-                    dynaction = QAction(self.applicationIcon, choice, self.xmlFileObject.mainwindow)
-                    self.dynactions.append(dynaction)
-                    self.menu.addAction(dynaction)
-                QObject.connect(self.menu, SIGNAL("triggered(QAction*)"),
-                                self.dataActionMenuFunction)
+                self.menu.addAction(self.actOpenTextFile)
                 self.menu.exec_(QCursor.pos())
+            else:
+                # Do stuff for directories
+                choices = self.fillInAvailableScripts()
+                if len(choices) > 0:
+                    self.menu = QMenu(self.xmlFileObject.mainwindow)
+                    self.dynactions = []
+                    for i,choice in enumerate(choices):
+                        # Add choices with custom text...
+                        dynaction = QAction(self.applicationIcon, choice, self.xmlFileObject.mainwindow)
+                        self.dynactions.append(dynaction)
+                        self.menu.addAction(dynaction)
+                    QObject.connect(self.menu, SIGNAL("triggered(QAction*)"),
+                                    self.dataActionMenuFunction)
+                    self.menu.exec_(QCursor.pos())
