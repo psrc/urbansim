@@ -79,10 +79,7 @@ class OpusResultVisualizer(object):
                  xml_path, 
                  domDocument, 
                  indicator_type,
-                 source_data_name,
-                 indicator_name,
-                 dataset_name,
-                 years,
+                 indicators, 
                  kwargs = None):
         self.xml_path = xml_path
         self.finishedCallback = None
@@ -92,10 +89,7 @@ class OpusResultVisualizer(object):
         self.firstRead = True
         self.domDocument = domDocument  
         self.indicator_type = indicator_type
-        self.source_data_name = source_data_name
-        self.indicator_name = indicator_name
-        self.dataset_name = dataset_name
-        self.years = years     
+        self.indicators = indicators
         self.visualizations = []
         
         if kwargs == None: kwargs = {}
@@ -124,38 +118,58 @@ class OpusResultVisualizer(object):
 
         
     def _visualize(self, configuration_path):
-
+        indicators_to_visualize = {}
         interface = IndicatorFrameworkInterface(domDocument = self.domDocument)
-        source_data = interface.get_source_data_from_XML(
-                                     source_data_name = self.source_data_name, 
-                                     years = self.years)
-
-        indicator = interface.get_indicator_from_XML(
-                                     indicator_name = self.indicator_name,
-                                     dataset_name = self.dataset_name)
         
-        computed_indicator = interface.get_computed_indicator(indicator = indicator, 
-                                                              source_data = source_data, 
-                                                              dataset_name = self.dataset_name)
-        #####################
-        #hack to get plausible primary keys...
-        cache_directory = interface._get_cache_directory(self.source_data_name)
-        _storage_location = os.path.join(cache_directory,
-                                         'indicators',
-                                         '_stored_data',
-                                         repr(source_data.years[0]))
+        #get common years
+        years = set([])
+        for indicator in self.indicators:
+            years |= set(indicator['years'])
+            
+        source_data_objs = {}
+        for indicator in self.indicators:
+            indicator_name = indicator['indicator_name']
+            source_data_name = indicator['source_data_name']
+            dataset_name = indicator['dataset_name']
+            
+            if source_data_name not in source_data_objs:                
+                source_data = interface.get_source_data_from_XML(
+                                             source_data_name = source_data_name, 
+                                             years = list(years))
+                source_data_objs[source_data_name] = source_data
+            else:
+                source_data = source_data_objs[source_data_name]
+    
+            indicator = interface.get_indicator_from_XML(
+                                         indicator_name = indicator_name,
+                                         dataset_name = dataset_name)
+            
+            computed_indicator = interface.get_computed_indicator(indicator = indicator, 
+                                                                  source_data = source_data, 
+                                                                  dataset_name = dataset_name)
+            #####################
+            #hack to get plausible primary keys...
+            cache_directory = interface._get_cache_directory(source_data_name)
+            _storage_location = os.path.join(cache_directory,
+                                             'indicators',
+                                             '_stored_data',
+                                             repr(source_data.years[0]))
+            
+            storage = StorageFactory().get_storage(
+                           type = 'flt_storage',
+                           storage_location = _storage_location)
+            cols = storage.get_column_names(
+                        table_name = dataset_name)
+            ##################
+            
+            primary_keys = [col for col in cols if col.find('id') != -1]
+            computed_indicator.primary_keys = primary_keys
+            
+            name = computed_indicator.get_file_name(
+                suppress_extension_addition = True)
         
-        storage = StorageFactory().get_storage(
-                       type = 'flt_storage',
-                       storage_location = _storage_location)
-        cols = storage.get_column_names(
-                    table_name = self.dataset_name)
-        ##################
-        
-        primary_keys = [col for col in cols if col.find('id') != -1]
-        computed_indicator.primary_keys = primary_keys
-        print primary_keys
-
+            indicators_to_visualize[name] = computed_indicator
+            
         args = {}
         if self.indicator_type == 'matplotlib_map':
             viz_type = self.indicator_type
@@ -176,18 +190,15 @@ class OpusResultVisualizer(object):
             
         args.update(self.kwargs)
         
-        name = computed_indicator.get_file_name(
-                                    suppress_extension_addition = True)
-        viz_factory = VisualizationFactory()
-        
         try:
             import pydevd;pydevd.settrace()
         except:
             pass
         
+        viz_factory = VisualizationFactory()        
         self.visualizations = viz_factory.visualize(
-                                  indicators_to_visualize = [name], 
-                                  computed_indicators = {name:computed_indicator}, 
+                                  indicators_to_visualize = indicators_to_visualize.keys(), 
+                                  computed_indicators = indicators_to_visualize, 
                                   visualization_type = viz_type, **args)
     
     def get_visualizations(self):

@@ -54,13 +54,14 @@ class AbstractManagerBase(object):
 class ResultManagerBase(AbstractManagerBase):  
     
     def __init__(self, parent):
-        AbstractManagerBase.__init__(self, parent)        
+        AbstractManagerBase.__init__(self, parent) 
+        self.toolboxStuff = self.parent.toolboxStuff       
         
     def scan_for_runs(self):
         '''scans all the runs directories in the opus_data folder for existing
            simulation data and adds it to the XML if its not already there'''
            
-        toolboxStuff = self.parent.toolboxStuff
+        toolboxStuff = self.toolboxStuff
         document = toolboxStuff.doc
         xml_tree = toolboxStuff.resultsManagerTree        
         model = xml_tree.model
@@ -173,19 +174,23 @@ class ResultManagerBase(AbstractManagerBase):
         self.guiElements.insert(0, new_form)
         self.updateGuiElements()
 
-    def addIndicatorForm(self, indicator_type, clicked_node, kwargs = None):
+    def addIndicatorForm(self, indicator_type, indicator_names, kwargs = None):
         #build visualizations
-        
-        info = get_child_values(parent = clicked_node,
-                                child_names = ['source_data',
-                                               'indicator_name',
-                                               'dataset_name',
-                                               'available_years'])
-        
-        source_data_name = str(info['source_data'])
-        indicator_name = str(info['indicator_name'])
-        dataset_name = str(info['dataset_name'])
-        years = [int(y) for y in str(info['available_years']).split(', ')]
+        indicator_info = []
+        for indicator_name in indicator_names:
+            node = self.toolboxStuff.doc.elementsByTagName(indicator_name).item(0)
+    
+            info = get_child_values(parent = node,
+                                    child_names = ['source_data',
+                                                   'indicator_name',
+                                                   'dataset_name',
+                                                   'available_years'])
+            indicator = {}
+            indicator['source_data_name'] = str(info['source_data'])
+            indicator['indicator_name'] = str(info['indicator_name'])
+            indicator['dataset_name'] = str(info['dataset_name'])
+            indicator['years'] = [int(y) for y in str(info['available_years']).split(', ')]        
+            indicator_info.append(indicator)
         
         domDocument = self.parent.toolboxStuff.doc
         self.indicator_type = indicator_type
@@ -193,10 +198,7 @@ class ResultManagerBase(AbstractManagerBase):
                                 xml_path = self.parent.toolboxStuff.xml_file,
                                 domDocument = domDocument,
                                 indicator_type = indicator_type,
-                                source_data_name = source_data_name,
-                                indicator_name = indicator_name,
-                                dataset_name = dataset_name,
-                                years = years,
+                                indicators = indicator_info,
                                 kwargs = kwargs)
         
         self.visualization_thread = OpusGuiThread(

@@ -100,6 +100,7 @@ class Table(Visualization):
             if name not in indicators_to_visualize: continue
 
             if computed_indicator.source_data != source_data:
+                print source_data, computed_indicator.source_data
                 raise 'result templates in indicator batch must all be the same.'
             dataset_name = computed_indicator.indicator.dataset_name
             if dataset_name not in dataset_to_attribute_map:

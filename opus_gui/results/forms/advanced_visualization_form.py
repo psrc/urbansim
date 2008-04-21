@@ -16,7 +16,7 @@ from PyQt4.QtCore import QString, QObject, SIGNAL, \
 from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
                         QTextEdit, QTabWidget, QWidget, QPushButton, \
                         QGroupBox, QVBoxLayout, QIcon, QLabel, \
-                        QFileDialog, QLineEdit
+                        QFileDialog, QLineEdit, QListWidget
 
 from opus_gui.results.xml_helper_methods import elementsByAttributeValue, get_child_values
 
@@ -43,7 +43,7 @@ class AdvancedVisualizationForm(QWidget):
         self.result_generator.guiElement = self
         
         self.tabIcon = QIcon(':/Images/Images/cog.png')
-        self.tabLabel = 'Generate results'
+        self.tabLabel = 'Advanced Visualization'
 
         self.widgetLayout = QVBoxLayout(self)
         self.widgetLayout.setAlignment(Qt.AlignTop)
@@ -104,10 +104,33 @@ class AdvancedVisualizationForm(QWidget):
         self.lbl_results = QLabel(self.resultsGroupBox)
         self.lbl_results.setObjectName('lbl_results')
         self.lbl_results.setText(QString('Results'))
-        self.gridlayout.addWidget(self.lbl_results,0,0,1,1)
+        self.gridlayout.addWidget(self.lbl_results,0,0,1,3)
 
         self._setup_co_results()
-        self.gridlayout.addWidget(self.co_results,0,1,1,2)
+        self.gridlayout.addWidget(self.co_results,0,2,1,10)
+
+        self.pbn_add = QPushButton(self.resultsGroupBox)
+        self.pbn_add.setObjectName('pbn_add')
+        self.pbn_add.setText(QString('+'))
+        
+        QObject.connect(self.pbn_add, SIGNAL('released()'),
+                        self.on_pbn_add_released)
+        self.gridlayout.addWidget(self.pbn_add, 0, 14, 1, 1)
+
+        self.lw_indicators = QListWidget(self.resultsGroupBox)
+        self.lw_indicators.setObjectName('lw_indicators')
+        self.gridlayout.addWidget(self.lw_indicators,1,1,1,13)
+
+        self.pbn_remove = QPushButton(self.resultsGroupBox)
+        self.pbn_remove.setObjectName('pbn_remove')
+        self.pbn_remove.setText(QString('-'))
+        
+        QObject.connect(self.pbn_remove, SIGNAL('released()'),
+                        self.on_pbn_remove_released)
+        self.gridlayout.addWidget(self.pbn_remove, 1, 14, 1, 1)
+
+
+
 
         #### setup data group box ####
 
@@ -134,6 +157,7 @@ class AdvancedVisualizationForm(QWidget):
         self.le_esri_storage_location.setObjectName('le_esri_storage_location')
         self.le_esri_storage_location.setText('[set path]')
         self.le_esri_storage_location.hide()
+        self.optionsGroupBox.hide()
 
         
         QObject.connect(self.co_result_style, SIGNAL('currentIndexChanged(int)'),
@@ -167,10 +191,10 @@ class AdvancedVisualizationForm(QWidget):
 
     def _setup_co_result_type(self):
         available_types = [
-            'Table (one per year over selected indicators)',
-            'Table (one per selected indicator)',
-            'Map (Matplotlib)',
-            'Chart (Matplotlib)',
+            'Table (per year, spans indicators)',
+            'Chart (per indicator, spans years)',
+            'Map (per indicator per year)',
+            'Chart (per indicator, spans years)',
         ]
                 
         self.co_result_type = QComboBox(self.dataGroupBox)
@@ -183,13 +207,25 @@ class AdvancedVisualizationForm(QWidget):
         self.result_manager.removeTab(self)
         self.result_manager.updateGuiElements()
         
+    def on_pbn_add_released(self):
+        cur_selected = self.co_results.currentText()        
+        for i in range(self.lw_indicators.count()):
+            if self.lw_indicators.item(i).text() == cur_selected:
+                return
+        
+        self.lw_indicators.addItem(cur_selected)
+        
+    def on_pbn_remove_released(self):
+        selected_idxs = self.lw_indicators.selectedIndexes()
+        for idx in selected_idxs:
+            self.lw_indicators.takeItem(idx.row())
+        
     def on_co_result_style_changed(self, ind):
-        print 'co_result_style_changed'
         available_viz_types = [
-            'Table (one per year over selected indicators)',
-            'Table (one per selected indicator)',
-            'Map (Matplotlib)',
-            'Chart (Matplotlib)',
+            'Table (per year, spans indicators)',
+            'Chart (per indicator, spans years)',
+            'Map (per indicator per year)',
+            'Chart (per indicator, spans years)',
         ]
         
         available_export_types = [
@@ -208,9 +244,10 @@ class AdvancedVisualizationForm(QWidget):
             self.co_result_type.addItem(r_type)
     
     def on_co_result_type_changed(self, ind):
-        print 'co_result_type_changed'
         self.gridlayout3.removeWidget(self.le_esri_storage_location)
         self.gridlayout3.removeWidget(self.pbn_set_esri_storage_location)
+        self.optionsGroupBox.hide()
+        
         self.pbn_set_esri_storage_location.hide()
         self.le_esri_storage_location.hide()
         
@@ -221,7 +258,8 @@ class AdvancedVisualizationForm(QWidget):
             self.pbn_set_esri_storage_location.show()   
             self.le_esri_storage_location.show()   
             self.gridlayout3.addWidget(self.le_esri_storage_location,0,1,1,6)
-            self.gridlayout3.addWidget(self.pbn_set_esri_storage_location,0,7,1,1)      
+            self.gridlayout3.addWidget(self.pbn_set_esri_storage_location,0,7,1,1)   
+            self.optionsGroupBox.show()   
             
     def on_pbn_set_esri_storage_location_released(self):
         print 'pbn_set_esri_storage_location released'
@@ -246,14 +284,17 @@ class AdvancedVisualizationForm(QWidget):
         # References to the GUI elements for status for this run...
         #self.statusLabel = self.runStatusLabel
         #self.statusLabel.setText(QString('Model initializing...'))
-        result_node = self.toolboxStuff.doc.elementsByTagName(self.co_results.currentText()).item(0)
-
+        
+        indicator_names = []
+        for i in range(self.lw_indicators.count()):
+            indicator_names.append(str(self.lw_indicators.item(i).text()))
+                
         indicator_type = str(self.co_result_type.currentText())
         indicator_type = {
-            'Map (Matplotlib)':'matplotlib_map',
-            'Chart (Matplotlib)':'matplotlib_chart',
-            'Table (one per selected indicator)':'table_per_attribute',
-            'Table (one per year over selected indicators)':'table_per_year',
+            'Map (per indicator per year)':'matplotlib_map',
+            'Chart (per indicator, spans years)':'matplotlib_chart',
+            'Chart (per indicator, spans years)':'table_per_attribute',
+            'Table (per year, spans indicators)':'table_per_year',
             'ESRI table (for loading in ArcGIS)':'table_esri'
         }[indicator_type]
         
@@ -265,7 +306,7 @@ class AdvancedVisualizationForm(QWidget):
             kwargs['storage_location'] = storage_location
         
         self.result_manager.addIndicatorForm(indicator_type = indicator_type,
-                                             clicked_node = result_node,
+                                             indicator_names = indicator_names,
                                              kwargs = kwargs)
 
     def runUpdateLog(self):
