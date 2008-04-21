@@ -75,3 +75,5 @@ class ViewTableForm(QWidget):
                 item.setText(QString(repr(table_data[key][i])))
                 self.tableWidget.setItem(i,j,item)
                 j += 1
+                
+        self.tableWidget.resizeColumnsToContents()
