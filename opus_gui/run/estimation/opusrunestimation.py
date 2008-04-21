@@ -175,7 +175,7 @@ class OpusEstimation(object):
         newKey = key
         if WithOpus:
             # We attempt to keep up on the current progress of the model run.  We pass into this
-            # function an intial "key" value of 0 and expect to get back a new "key" after the
+            # function an initial "key" value of 0 and expect to get back a new "key" after the
             # function returns.  It is up to us in this function to use this key to determine
             # what has happened since last time this function was called.
             # In this example we use the key to indicate where in a logfile we last stopped reading
@@ -183,7 +183,8 @@ class OpusEstimation(object):
             # log text edit field in the GUI.
             if self.config is not None and 'cache_directory' in self.config:
                 try:
-                    f = open(os.path.join(self.config['cache_directory'],'year_2000_log.txt'))
+                    base_year = self.config['base_year']
+                    f = open(os.path.join(self.config['cache_directory'],'year_%d_log.txt' % base_year))
                     f.seek(key)
                     lines = f.read()
                     newKey = f.tell()
