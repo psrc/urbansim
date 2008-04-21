@@ -88,14 +88,14 @@ but different suffix can be copied under the new name.
         attr_names = eval(options.attribute_names) # in case it is a list
     except:
         attr_names = options.attribute_names
-    print attr_names
+
     try:
         postfices = eval(options.files_to_copy_postfix) # in case it is a list
     except:
         postfices = options.files_to_copy_postfix
     if not isinstance(postfices, list):
         postfices = [postfices]
-    print postfices
+
     SpatialTableJoin().run(spatial_table_name=options.spatial_table_name, storage_type=options.storage_type, 
                            data_path=options.data_path, dataset=dataset, attribute_names=attr_names, 
                            join_attribute=options.join_attribute, new_table_name=options.new_table_name,
