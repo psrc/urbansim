@@ -11,10 +11,8 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 # 
-f= open('/projects/urbansim99/cruisetest/test/log.txt', 'w')
 
-f.write("***** starting build_docs *****\n")
-f.flush()
+
 import os
 import opus_docs
 
@@ -25,11 +23,7 @@ cwd = os.getcwd()
 os.chdir(path)    
 
 modules = ["opus-userguide"]
-f.write("***** starting loop *****\n")
-f.flush()
 for module in modules:
-    f.write("***** module: %s *****\n" % module)
-    f.flush()
     # run latex, make the index, then run latex twice more to resolve cross-references correctly and include the index
     os.system("pdflatex -interaction=nonstopmode " + module + ".tex")
     # The makeindex command will fail if the module doesn't have an index - so it's important NOT to check 
@@ -45,8 +39,6 @@ for module in modules:
     os.system( latex2html_call )
 
 os.chdir(cwd)
-f.write("***** leaving build_docs *****\n")
-f.flush()
 
 # The old script called latex (rather than pdflatex), followed by dvips and ps2pdf
 #  -  pdflatex works better that latex followed by  dvips and ps2pdf for producing pdf files if there are no figures
