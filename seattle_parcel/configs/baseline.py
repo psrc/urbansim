@@ -33,11 +33,11 @@ class Baseline(UrbansimParcelConfiguration):
             'description':'Seattle parcel baseline',
             'cache_directory':None,
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-            cache_directory_root = r'/Users/borning/opus_home/data/seattle_parcel/runs',
+            cache_directory_root = r'c:/opus/data/seattle_parcel/runs',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     years_to_cache = [2000],
-                    existing_cache_to_copy = r'/Users/borning/opus_home/data/seattle_parcel/base_year_data',
+                    existing_cache_to_copy = r'c:/opus/data/seattle_parcel/base_year_data',
                     ),
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
@@ -86,28 +86,28 @@ class Baseline(UrbansimParcelConfiguration):
                 unroll_gridcells = False
                 ),
             'input_configuration': DatabaseConfiguration(
-                database_name = 'psrc_2005_parcel_baseyear_subset_seattle',
+                database_name = 'seattle_2000_parcel_baseyear_data',
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
-                package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
+                package_order=['seattle_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
                 package_order_exceptions={},
                 ),
 
             'base_year':2000,
-            'years':(2001, 2006),
+            'years':(2001, 2002),
             'models':[ # models are executed in the same order as in this list
                 #"process_pipeline_events",
-                "real_estate_price_model",
-                "expected_sale_price_model",
-                "development_proposal_choice_model",
-                "building_construction_model",
+                #"real_estate_price_model",
+                #"expected_sale_price_model",
+                #development_proposal_choice_model",
+                #"building_construction_model",
                 "household_transition_model",
-                "employment_transition_model",
+                #"employment_transition_model",
                 "household_relocation_model",
-                "household_location_choice_model",
-                "employment_relocation_model",
-                {"employment_location_choice_model":{'group_members': '_all_'}},
-                'distribute_unplaced_jobs_model'
+                #"household_location_choice_model",
+                #"employment_relocation_model",
+                #{"employment_location_choice_model":{'group_members': '_all_'}},
+                #'distribute_unplaced_jobs_model'
                 ],
             'models_in_year': {2000: [ # This is not run anymore, since all jobs are located and only a few households are not.
                  "household_relocation_model_for_2000",
@@ -138,7 +138,15 @@ class Baseline(UrbansimParcelConfiguration):
                 }
         }
         config.replace(config_changes)
-
+        
+        config['models_configuration']["household_relocation_model"]["controller"]["import"] = \
+                {"seattle_parcel.models.regional_agent_relocation_model" : "RegionalAgentRelocationModel"}
+        config['models_configuration']["household_relocation_model"]["controller"]["init"]["name"] = \
+                "RegionalAgentRelocationModel"        
+        config['models_configuration']["household_transition_model"]["controller"]["import"] = \
+                {"seattle_parcel.models.regional_household_transition_model" : "RegionalHouseholdTransitionModel"}
+        config['models_configuration']["household_transition_model"]["controller"]["init"]["name"] = \
+                "RegionalHouseholdTransitionModel"
         config['models_configuration']["household_location_choice_model"]["controller"]["import"] = \
                 {"psrc_parcel.models.household_location_choice_model" : "HouseholdLocationChoiceModel"}
         config['models_configuration']["employment_location_choice_model"]['controller']["import"] = \
