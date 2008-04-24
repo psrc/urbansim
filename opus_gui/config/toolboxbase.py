@@ -141,21 +141,7 @@ class ToolboxBase(object):
                 self.doc2 = QDomDocument()
                 self.doc.setContent(self.configFileTemp)
                 self.doc2.setContent(self.configFileTemp2)
-                self.opusDataPathOrig = self.opusXMLTree.get_opus_data_path()
-                #Then append the cache_directory_root from the modelmanager section of the XML
-                cache_dir_root_path = ""
-                cache_dir_root_list = self.doc.elementsByTagName(QString("cache_directory_root"))
-                if cache_dir_root_list.length() > 0:
-                    # We have a dir then we append it
-                    cache_dir_root = cache_dir_root_list.item(0)
-                    if cache_dir_root.hasChildNodes():
-                        children = cache_dir_root.childNodes()
-                        for x in xrange(0,children.count(),1):
-                            if children.item(x).isText():
-                                cache_dir_root_path = "/" + children.item(x).nodeValue()
-                self.opusDataPath = self.opusDataPathOrig + cache_dir_root_path
-                #print self.opusDataPath
-                self.opusDataPath = os.path.normpath(str(self.opusDataPath))
+                self.opusDataPath = self.opusXMLTree.get_opus_data_path()
                 self.generalManagerTree = OpusXMLTree(self,"general",
                                                       self.parent.generalmanager_page.layout())
                 self.resultsManagerTree = OpusXMLTree(self,"results_manager",
