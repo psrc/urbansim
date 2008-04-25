@@ -107,7 +107,7 @@ class lottery_choices(Choices):
             fullarray = (choice_capacity_diff <= 0).astype("int8") # what alts are full
             full = compress(fullarray[unique_index], arange(unique_index.size))
             over = where(choice_capacity_diff < 0)[0]
-        logger.log_status("Number of unplaced agents: " + str(where(choices <= 0)[0].size) + " (in " + str(iter) + " iterations)")
+        logger.log_status("Number of unplaced agents: " + str(where(choices < 0)[0].size) + " (in " + str(iter) + " iterations)")
         return choices
 
     def get_choice_histogram(self, units_to_occupy, choices, nchoices):
