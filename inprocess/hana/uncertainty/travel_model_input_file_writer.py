@@ -18,27 +18,39 @@ import sys
 import time
 import re
 from opus_core.logger import logger
-from numpy import round_, zeros
+from numpy import round_, zeros, ones, arange, logical_and, resize, concatenate, where, array
 from numpy.random import seed
+from scipy import ndimage
 from opus_core.datasets.dataset import DatasetSubset
+from opus_core.datasets.dataset import Dataset
+from opus_core.resources import Resources
+from opus_core.storage_factory import StorageFactory
 from opus_core.variables.variable_name import VariableName
-from psrc.travel_model_input_file_writer import TravelModelInputFileWriter as PSRCTravelModelInputFileWriter
+from psrc_parcel.travel_model_input_file_writer import TravelModelInputFileWriter as PSRCTravelModelInputFileWriter
 from opus_core.bayesian_melding import BayesianMeldingFromFile
 from opus_core.bm_normal_posterior import bm_normal_posterior
 from opus_core.misc import safe_array_divide
+from opus_core.sampling_toolbox import sample_replace
+from urbansim.lottery_choices import lottery_choices
 
 class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
     """Write urbansim simulation information into a (file) format that the emme2 travel model understands. 
-        It simulates nubmer of househodls and number of jobs from a posterior distribution of a bayesian melding analysis.
+        It simulates number of households and number of jobs from a posterior distribution of a bayesian melding analysis.
     """
 
+    zone_variables_to_precompute = ['number_of_non_home_based_jobs = zone.aggregate(urbansim.job.is_non_home_based_job)',
+                        'number_of_nhb_workers = zone.aggregate(urbansim_parcel.household.number_of_non_home_based_workers_with_job, [building, parcel])'
+                            ]
     variables_to_scale = {
         'household': {
             "hhs_of_first_quarter" : None,
             "hhs_of_second_quarter": None,
             "hhs_of_third_quarter": None,
             "hhs_of_fourth_quarter": None,
-                    }
+                    },
+        'job': {
+            'number_of_non_home_based_jobs': None
+                }
         }
     variables_for_direct_matching = {
           'job': [
@@ -81,12 +93,16 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         
     def get_variables_list(self, dataset_pool):
         self.full_variable_list = PSRCTravelModelInputFileWriter.get_variables_list(self, dataset_pool)
-        return self.full_variable_list[0:8] + self.full_variable_list[20:24] # some job variables removed, since they are computed within _determine_simulated_values
+        return self.zone_variables_to_precompute + self.full_variable_list[0:8] + self.full_variable_list[20:24] # some job variables removed, since they are computed within _determine_simulated_values
         
     def _write_to_file(self, zone_set, variables_list, tm_input_file):
         self.generate_travel_model_input(zone_set)
         PSRCTravelModelInputFileWriter._write_to_file(self, zone_set, self.full_variable_list, tm_input_file)
 
+    def _write_workplaces_to_files(self, person_set, tm_input_files):
+        new_person_set = self.generate_workplaces(person_set)
+        return PSRCTravelModelInputFileWriter._write_workplaces_to_files(self, new_person_set, tm_input_files)
+        
     def generate_travel_model_input(self, zone_set):
         self.bm_generate_from_posterior(zone_set)
         
@@ -119,36 +135,137 @@ class TravelModelInputFileWriter(PSRCTravelModelInputFileWriter):
         if len(variables_to_compute) > 0:
             zone_set.compute_variables(variables_to_compute, dataset_pool=self.dataset_pool)
         zone_ids = zone_set.get_id_attribute()
+        
         # simulate households
-        for dataset_name in self.variables_to_scale.keys():
-            bmvar = get_variables_for_number_of_agents(dataset_name, bm.get_variable_names())[0] # this should be a list with one element ('number_of_households')
+        dataset_name = 'household'
+        bmvar = get_variables_for_number_of_agents(dataset_name, bm.get_variable_names())[0] # this should be a list with one element ('number_of_households')
+        bm.set_posterior(self.year, bmvar, zone_set.get_attribute(bmvar), zone_ids, transformation_pair = ("sqrt", "**2"))
+        n = bm_normal_posterior().run(bm, replicates=1)
+        simulated_number_of_agents = n.ravel()*n.ravel()
+        logger.log_status('Simulated number of %ss' % dataset_name)
+        logger.log_status(round_(simulated_number_of_agents))
+        scale_to_ct = False
+        if self.configuration['travel_model_configuration'].get('scale_to_control_totals', False):
+            control_totals = self.configuration['travel_model_configuration'].get('control_totals')
+            household_control_total = control_totals['households']
+            job_control_total = control_totals['jobs']
+            scale_to_ct = True
+            simulated_number_of_agents = simulated_number_of_agents/float(simulated_number_of_agents.sum()) * household_control_total
+        for var, ratios in self.variables_to_scale[dataset_name].iteritems():
+            self.simulated_values[var] = zeros(zone_set.size())
+            self.simulated_values[var][zone_set.get_id_index(bm.get_m_ids())] = (round_(simulated_number_of_agents*ratios)).astype(self.simulated_values[var].dtype)
+            logger.log_status(var)
+            logger.log_status(self.simulated_values[var])
+            logger.log_status('Total number of %s: %s' % (var, self.simulated_values[var].sum()))
+            
+        # simulate jobs
+        dataset_name = 'job'
+        logger.log_status('Generated values of bm variables for %ss:' % dataset_name)
+        bmvars = get_variables_for_number_of_agents(dataset_name, bm.get_variable_names())
+        self.total_number_of_jobs = zeros(zone_set.size(), dtype='int32')
+        for bmvar in bmvars:
             bm.set_posterior(self.year, bmvar, zone_set.get_attribute(bmvar), zone_ids, transformation_pair = ("sqrt", "**2"))
             n = bm_normal_posterior().run(bm, replicates=1)
             simulated_number_of_agents = n.ravel()*n.ravel()
-            logger.log_status('Simulated number of %ss' % dataset_name)
-            logger.log_status(round_(simulated_number_of_agents))
-            for var, ratios in self.variables_to_scale[dataset_name].iteritems():
-                self.simulated_values[var] = zeros(zone_set.size())
-                self.simulated_values[var][zone_set.get_id_index(bm.get_m_ids())] = (round_(simulated_number_of_agents*ratios)).astype(self.simulated_values[var].dtype)
-                logger.log_status(var)
-                logger.log_status(self.simulated_values[var])
-        # simulate jobs
-        for dataset_name in self.variables_for_direct_matching.keys():
-            logger.log_status('Current values of bm variables for %ss:' % dataset_name)
-            bmvars = get_variables_for_number_of_agents(dataset_name, bm.get_variable_names())
-            for bmvar in bmvars:
-                bm.set_posterior(self.year, bmvar, zone_set.get_attribute(bmvar), zone_ids, transformation_pair = ("sqrt", "**2"))
-                n = bm_normal_posterior().run(bm, replicates=1)
-                simulated_number_of_agents = n.ravel()*n.ravel()
-                logger.log_status(bmvar)
-                logger.log_status(zone_set.get_attribute(bmvar))
-                zone_set.modify_attribute(bmvar, round_(simulated_number_of_agents))
-            zone_set.compute_variables(self.variables_for_direct_matching[dataset_name], dataset_pool=self.dataset_pool)
-            logger.log_status('Simulated values of bm variables for %ss:' % dataset_name)
-            for var in self.variables_for_direct_matching[dataset_name]:
-                self.simulated_values[var] = zone_set.get_attribute(var)
-                logger.log_status(var)
-                logger.log_status(self.simulated_values[var])
+            if scale_to_ct:
+                for key, ct in job_control_total.iteritems():
+                    if bmvar.endswith(key):
+                        simulated_number_of_agents = simulated_number_of_agents/float(simulated_number_of_agents.sum()) * ct
+                        break
+            logger.log_status(bmvar)
+            logger.log_status(zone_set.get_attribute(bmvar))
+            logger.log_status('Total number of %s: %s' % (bmvar, simulated_number_of_agents.sum()))
+            zone_set.modify_attribute(bmvar, round_(simulated_number_of_agents))
+            self.total_number_of_jobs = self.total_number_of_jobs + simulated_number_of_agents
+        zone_set.compute_variables(self.variables_for_direct_matching[dataset_name], dataset_pool=self.dataset_pool)
+        #logger.log_status('Simulated values of bm variables for %ss:' % dataset_name)
+        for var in self.variables_for_direct_matching[dataset_name]:
+            self.simulated_values[var] = zone_set.get_attribute(var)
+            #logger.log_status(var)
+            #logger.log_status(self.simulated_values[var])
+         
+    def generate_workplaces(self, person_set):   
+        # assign workers to jobs separately for each income category
+        zone_set = self.dataset_pool.get_dataset("zone")
+        zone_ids = zone_set.get_id_attribute()
+        persons_job_zone_ids = person_set.get_attribute('job_zone_id')
+        persons_zone_ids = person_set.get_attribute('zone_id')
+        households = self.dataset_pool.get_dataset('household')
+        hh_categories = {
+                    1: "hhs_of_first_quarter",
+                    2: "hhs_of_second_quarter",
+                    3: "hhs_of_third_quarter",
+                    4: "hhs_of_fourth_quarter"
+            }
+        number_of_nhb_jobs = round_(self.total_number_of_jobs * self.variables_to_scale['job']['number_of_non_home_based_jobs'])
+        current_number_of_nhb_workers = households.compute_variables(['urbansim_parcel.household.number_of_non_home_based_workers'], dataset_pool=self.dataset_pool)
+        sim_number_of_nhb_workers = {}
+        resulting_workers = {
+                             'zone_id': array([], dtype='int32'),
+                             'job_zone_id': array([], dtype='int32'),
+                             'income_group_1': array([], dtype='int32'),
+                             'income_group_2': array([], dtype='int32'),
+                             'income_group_3': array([], dtype='int32'),
+                             'income_group_4': array([], dtype='int32')
+                             }
+        hhs_zone_ids = households.get_attribute('zone_id')
+        for category in range(1,5):
+            logger.log_status('Income category %s' % category)
+            is_hhs_category = households.get_attribute('is_income_group_%s' % category)
+            hhs_category_idx = where(is_hhs_category)[0]
+            person_is_in_category = logical_and(person_set.get_attribute("is_placed_non_home_based_worker_with_job"), 
+                                                   person_set.get_attribute("income_group_%s" % category))
+            sim_number_of_households = zone_set.get_attribute(hh_categories[category])
+            for izone in arange(zone_set.size()):
+                if sim_number_of_households[izone] <= 0:
+                    continue
+                logger.log_status('Zone %s' % zone_ids[izone])
+                # sample from the empirical distribution of the category and zone
+                hhs_of_this_category_and_zone_idx = where(logical_and(is_hhs_category, hhs_zone_ids == zone_ids[izone]))[0]
+                if (hhs_of_this_category_and_zone_idx.size <= 0) or (hhs_of_this_category_and_zone_idx.size < 10 and sim_number_of_households[izone] > 100):
+                    # if there is not enough observations, sample from the empirical distribution of the whole category
+                    logger.log_status(
+                        'Not enough observations to sample from. Sampled from distribution of all zones of this category. (%s observations, %s samples)' % (
+                                                                                hhs_of_this_category_and_zone_idx.size, sim_number_of_households[izone]))
+                    hhs_of_this_category_and_zone_idx = hhs_category_idx
+                draw = sample_replace(hhs_of_this_category_and_zone_idx, sim_number_of_households[izone])
+                sim_number_of_nhb_workers[category] = current_number_of_nhb_workers[draw].sum()
+                if sim_number_of_nhb_workers[category] <= 0:
+                    continue
+                persons_considered = logical_and(person_is_in_category, persons_zone_ids == zone_ids[izone])
+                job_distribution = array(ndimage.sum(persons_considered, labels=persons_job_zone_ids, index = zone_ids))
+                job_distribution = job_distribution / float(job_distribution.sum())
+                zone_idx = self.place_workers(job_distribution, number_of_nhb_jobs, sim_number_of_nhb_workers[category])
+                valid_zone_idx = zone_idx[zone_idx >=0]
+                resulting_workers['zone_id'] = concatenate((resulting_workers['zone_id'], 
+                                                              resize(array([zone_ids[izone]]), (valid_zone_idx.size,))))
+                resulting_workers['job_zone_id'] = concatenate((resulting_workers['job_zone_id'], zone_ids[valid_zone_idx]))
+                resulting_workers['income_group_%s' % category] = concatenate((resulting_workers['income_group_%s' % category], 
+                                                                               ones(valid_zone_idx.size, dtype='bool8')))
+                for g in range(1,5):
+                    if g <> category:
+                        resulting_workers['income_group_%s' % g] = concatenate((resulting_workers['income_group_%s' % g], 
+                                                                               zeros(valid_zone_idx.size, dtype='bool8')))
+                # update capacity
+                workers_zones_in_this_iter = array(ndimage.sum(ones(valid_zone_idx.size, dtype='bool8'), labels=zone_ids[valid_zone_idx], index=zone_ids))
+                number_of_nhb_jobs = number_of_nhb_jobs - workers_zones_in_this_iter
+                if number_of_nhb_jobs.sum() <=0:
+                    break
+                
+        resulting_workers["is_placed_non_home_based_worker_with_job"] = ones(resulting_workers['zone_id'].size, dtype='bool8')
+        # create new person set
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name='simulated_persons',
+                            table_data=resulting_workers)
+        new_person_set = Dataset(in_storage=storage, in_table_name='simulated_persons', id_name=[], dataset_name='simulated_person')
+        return new_person_set
+                
+    
+    def place_workers(self, probability, capacity, n):
+        resources = Resources({'capacity': capacity, "lottery_max_iterations": 10})
+        probs = resize(probability, (n, probability.size))
+        logger.log_status('Place %s workers into %s jobs.' % (n, (capacity*(probability > 0)).sum()))
+        return lottery_choices().run(probs, resources)
                 
 def get_variables_for_number_of_agents(agent_name, variables):
     return [var for var in variables if re.compile("number_of_%s" % agent_name).search(var)]
