@@ -25,7 +25,7 @@ class TravelModelInputFileWriter(object):
     """Write urbansim simulation information into a (file) format that the emme2 travel model understands. """
 
     def run(self, current_year_emme2_dir, current_year, dataset_pool, config=None):
-        """Writes to the an emme2 input file in the [current_year_emme2_dir]/tripgen/inputtg/TAZDATA.MA2.
+        """Writes to the an emme2 input file in the [current_year_emme2_dir]/tripgen/inputtg/tazdata.ma2.
         """
         
         missing_dataset = ''
