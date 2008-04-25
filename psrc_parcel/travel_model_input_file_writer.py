@@ -44,16 +44,23 @@ class TravelModelInputFileWriter(HHJobsTravelModelInputFileWriter):
         first_quarter, median_income, third_quarter = self._get_income_group_quartiles(dataset_pool)
         logger.log_status("calculating entries for emme2 *.mf9x input files")
 
-        variables_to_compute = ["income_group_1 = person.disaggregate(household.income < %s)" % first_quarter,
-                              "income_group_2 = person.disaggregate(numpy.logical_and(household.income >= %s, household.income < %s))" % (first_quarter, median_income),
-                              "income_group_3 = person.disaggregate(numpy.logical_and(household.income >= %s, household.income < %s))" % (median_income, third_quarter),
-                              "income_group_4 = person.disaggregate(household.income >= %s)" % third_quarter,
-                              "urbansim_parcel.person.zone_id",
-                              "urbansim_parcel.person.is_placed_non_home_based_worker_with_job",
-                              "job_zone_id = person.disaggregate(urbansim_parcel.job.zone_id)"
+        household_variables_to_compute = ["is_income_group_1 = household.income < %s" % first_quarter,
+                                "is_income_group_2 = numpy.logical_and(household.income >= %s, household.income < %s)" % (first_quarter, median_income),
+                                "is_income_group_3 = numpy.logical_and(household.income >= %s, household.income < %s)" % (median_income, third_quarter),
+                                "is_income_group_4 = household.income >= %s" % third_quarter]
+        
+        dataset_pool.get_dataset("household").compute_variables(household_variables_to_compute, dataset_pool=dataset_pool)
+        person_variables_to_compute = [
+                                "income_group_1 = person.disaggregate(household.is_income_group_1)",
+                                "income_group_2 = person.disaggregate(household.is_income_group_2)",
+                                "income_group_3 = person.disaggregate(household.is_income_group_3)",
+                                "income_group_4 = person.disaggregate(household.is_income_group_4)",
+                                "urbansim_parcel.person.zone_id",
+                                "urbansim_parcel.person.is_placed_non_home_based_worker_with_job",
+                                "job_zone_id = person.disaggregate(urbansim_parcel.job.zone_id)"
                                 ]
         
-        person_set.compute_variables(variables_to_compute, dataset_pool=dataset_pool)
+        person_set.compute_variables(person_variables_to_compute, dataset_pool=dataset_pool)
 
         return [tm_input_file_1] + self._write_workplaces_to_files(person_set, tm_input_files)
 
