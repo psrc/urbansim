@@ -21,31 +21,38 @@ class BaselineMultipleTravelModels2020(Baseline):
         config['number_of_runs'] = 2
         config['seed'] = 1
         from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
-        travel_model_configuration = create_travel_model_configuration('baseline_travel_model_psrc_fast_hana', 
-                                                                       emme2_batch_file='MODELUSim.BAT ..\\triptabs',
-                                                                       mode='full', years_to_run={2020: '2020_06'})
+        travel_model_configuration = create_travel_model_configuration('baseline_travel_model_psrc_2008', 
+                                                                       emme2_batch_file='MODEL1-0.BAT',
+                                                                       mode='full', years_to_run={2005: '2006_v1.0aTG',
+                                                                                                  2010: '2010_v1.0aTG', 
+                                                                                                  2015: '2010_v1.0aTG_2015', 
+                                                                                                  2020: '2020_v1.0aTG'})
         config['travel_model_configuration'] = travel_model_configuration
         
         config['travel_model_configuration']['travel_model_input_file_writer'] = 'inprocess.hana.uncertainty.travel_model_input_file_writer'
         config['travel_model_configuration']['locations_to_disaggregate'] = ['parcel', 'building']
-        
-        ##fast model doesn't have bank2 and bank3; disable macros using them
-        del config['travel_model_configuration']['export_macros']['tazvmt2.mac']
-        del config['travel_model_configuration']['export_macros']['tazvmt3.mac']
-
-        del config['travel_model_configuration']['matrix_variable_map']['bank2']
-        del config['travel_model_configuration']['matrix_variable_map']['bank3']
-        
+                
         config['travel_model_configuration']['export_macros']['get_link_attributes.mac'] = {'bank':'bank1', 'scenario':-1, 'path':'export_macros'}
         config['travel_model_configuration']['node_matrix_variable_map'] = {"bank1": {"attr_on_links.rpt": {"timau": "am_pk_travel_time", "len": "distance"},
                                                                                       "tveham.rpt": {"@tveh": "vehicle_volume"}
                                                                             }}
         
         config['travel_model_configuration']['bm_distribution_file'] = \
-                '/Users/hana/bm/psrc_parcel/simulation_results/bm_parameters'
+                '/Users/hana/bm/psrc_parcel/simulation_results/bm_parameters_2005'
                 
-        config['travel_model_configuration'][2020]['models'] = list(config['travel_model_configuration'][2020].get('models'))
-        config['travel_model_configuration'][2020]['models'].append('opus_emme2.models.restore_trip_tables')
+        config['travel_model_configuration']['scale_to_control_totals'] = True
+        config['travel_model_configuration']['control_totals'] = { # for 2020
+                                    'households': 1729671,
+                                    'jobs': {'manu':   186131, # sectors 3, 4, 5
+                                             'wtcu':   216184, # sectors 6, 8, 9, 10
+                                             'retail': 402241, # sectors 7, 14
+                                             'fires': 1046052, # sectors 11, 12, 13, 16, 17
+                                             'edu':    146626, # sectors 15, 19
+                                             'gov':    207079,  # sector 18
+                                             'constr': 189047,  # sector 2
+                                             'mining':   8882  # sector 1
+                                             }
+                                            }
         self.merge(config)
 
 if __name__ == "__main__":
