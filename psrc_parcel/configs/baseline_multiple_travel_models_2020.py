@@ -15,13 +15,16 @@
 from baseline import Baseline
 
 class BaselineMultipleTravelModels2020(Baseline):
+    
+    tm_scenario = 'baseline_travel_model_psrc_2008'
     multiple_runs=True
+    
     def __init__(self):
         config = Baseline()
         config['number_of_runs'] = 2
         config['seed'] = 1
         from psrc.configs.create_travel_model_configuration import create_travel_model_configuration
-        travel_model_configuration = create_travel_model_configuration('baseline_travel_model_psrc_2008', 
+        travel_model_configuration = create_travel_model_configuration(self.tm_scenario, 
                                                                        emme2_batch_file='MODEL1-0.BAT',
                                                                        mode='full', years_to_run={2005: '2006_v1.0aTG',
                                                                                                   2010: '2010_v1.0aTG', 
