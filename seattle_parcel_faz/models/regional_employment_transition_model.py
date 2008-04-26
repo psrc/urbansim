@@ -24,15 +24,16 @@ class RegionalEmploymentTransitionModel(EmploymentTransitionModel):
     """Creates and removes jobs from job_set. It runs the urbansim ETM with control totals for each region."""
 
     model_name = "Regional Employment Transition Model"
-
+    regional_id_name = "faz_id"
+    
     def __init__(self, location_id_name=None, variable_package=None, dataset_pool=None, debuglevel=0):
-        self.dataset_pool = self.create_dataset_pool(dataset_pool, ["washtenaw", "urbansim", "opus_core"])
+        self.dataset_pool = self.create_dataset_pool(dataset_pool, ["seattle_parcel_faz", "urbansim", "opus_core"])
         EmploymentTransitionModel.__init__(self, location_id_name, variable_package, dataset_pool, debuglevel)
 
     def run(self, year, job_set, control_totals, job_building_types, data_objects=None, resources=None):
         self._do_initialize_for_run(job_set, job_building_types, data_objects)
-        large_area_ids = control_totals.get_attribute("large_area_id")
-        jobs_large_area_ids = job_set.compute_variables("washtenaw.job.large_area_id")
+        large_area_ids = control_totals.get_attribute(self.regional_id_name)
+        jobs_large_area_ids = job_set.compute_variables("urbansim_parcel.job.%s" % self.regional_id_name)
         unique_large_areas = unique_values(large_area_ids)
         is_year = control_totals.get_attribute("year")==year
         all_jobs_index = arange(job_set.size())
@@ -46,26 +47,26 @@ class RegionalEmploymentTransitionModel(EmploymentTransitionModel):
             logger.log_status("ETM for area %s (currently %s jobs)" % (area, jobs_for_this_area.size()))
             last_remove_idx = self.remove_jobs.size
             self._do_run_for_this_year(jobs_for_this_area)
-            add_jobs_size = self.new_jobs[self.location_id_name].size-self.new_jobs["large_area_id"].size
+            add_jobs_size = self.new_jobs[self.location_id_name].size-self.new_jobs[self.regional_id_name].size
             remove_jobs_size = self.remove_jobs.size-last_remove_idx
             logger.log_status("add %s, remove %s, total %s" % (add_jobs_size, remove_jobs_size,
                                                                jobs_for_this_area.size()+add_jobs_size-remove_jobs_size))
-            self.new_jobs["large_area_id"] = concatenate((self.new_jobs["large_area_id"],
+            self.new_jobs[self.regional_id_name] = concatenate((self.new_jobs[self.regional_id_name],
                     array(add_jobs_size*[area], dtype="int32")))
             # transform indices of removing jobs into indices of the whole dataset
             self.remove_jobs[last_remove_idx:self.remove_jobs.size] = all_jobs_index[jobs_index[self.remove_jobs[last_remove_idx:self.remove_jobs.size]]]
         self._update_job_set(job_set)
-        idx_new_jobs = arange(job_set.size()-self.new_jobs["large_area_id"].size, job_set.size())
-        jobs_large_area_ids = job_set.compute_variables("washtenaw.job.large_area_id")
-        jobs_large_area_ids[idx_new_jobs] = self.new_jobs["large_area_id"]
-        job_set.delete_one_attribute("large_area_id")
-        job_set.add_attribute(jobs_large_area_ids, "large_area_id", metadata=AttributeType.PRIMARY)
+        idx_new_jobs = arange(job_set.size()-self.new_jobs[self.regional_id_name].size, job_set.size())
+        jobs_large_area_ids = job_set.compute_variables("urbansim_parcel.job.%s" % self.regional_id_name)
+        jobs_large_area_ids[idx_new_jobs] = self.new_jobs[self.regional_id_name]
+        job_set.delete_one_attribute(self.regional_id_name)
+        job_set.add_attribute(jobs_large_area_ids, self.regional_id_name, metadata=AttributeType.PRIMARY)
         # return an index of new jobs
-        return arange(job_set.size()-self.new_jobs["large_area_id"].size, job_set.size())  
+        return arange(job_set.size()-self.new_jobs[self.regional_id_name].size, job_set.size())  
         
     def _do_initialize_for_run(self, job_set, job_building_types, data_objects):
         EmploymentTransitionModel._do_initialize_for_run(self, job_set, job_building_types, data_objects)
-        self.new_jobs["large_area_id"] = array([], dtype="int32")
+        self.new_jobs[self.regional_id_name] = array([], dtype="int32")
         
 from opus_core.tests import opus_unittest
 from opus_core.tests.stochastic_test_case import StochasticTestCase
@@ -74,7 +75,7 @@ from numpy import array, logical_and, int32, int8, zeros
 from numpy import ma
 from urbansim.constants import Constants
 from urbansim.datasets.job_dataset import JobDataset
-from washtenaw.datasets.control_total_dataset import ControlTotalDataset
+from seattle_parcel_faz.datasets.control_total_dataset import ControlTotalDataset
 from urbansim.datasets.job_building_type_dataset import JobBuildingTypeDataset
 from opus_core.storage_factory import StorageFactory
 
@@ -107,7 +108,7 @@ class Tests(StochasticTestCase):
         self.jobs_data = {
              "job_id": arange(13000)+1,
              "grid_id": array(6000*[1] + 4000*[2] + 3000*[3]),
-             "large_area_id": array(6000*[1] + 7000*[2]),
+             "faz_id": array(6000*[1] + 7000*[2]),
              "sector_id": array(4000*[1] + 1000*[2] + 1000*[15] + 2000*[1] + 1000*[2] + 1000*[15] +
                             1000*[1] + 1000*[2] + 1000*[15], dtype=int32),
              "building_type": array(2000*[indc]+2000*[comc] + # sector 1, area 1
@@ -126,7 +127,7 @@ class Tests(StochasticTestCase):
             "year": array([2000,2000, 2000, 2000]),
             "total_home_based_employment": array([0,0, 0, 0]),
             "total_non_home_based_employment" : array([2250, 1000, 3000, 2000]),
-            "large_area_id": array([1,1,2,2])
+            "faz_id": array([1,1,2,2])
             }
 
     def test_same_distribution_after_job_subtraction(self):
@@ -148,7 +149,7 @@ class Tests(StochasticTestCase):
         model.run(year=2000, job_set=jobs_set, control_totals=ect_set, job_building_types=self.job_building_types)
         
         # check the totals in regions
-        areas = jobs_set.get_attribute("large_area_id")
+        areas = jobs_set.get_attribute("faz_id")
         results = array([0,0])
         for iarea in [0,1]:
             results[iarea] = where(areas == [1,2][iarea])[0].size
@@ -240,7 +241,7 @@ class Tests(StochasticTestCase):
         model.run(year=2000, job_set=jobs_set, control_totals=ect_set, job_building_types=self.job_building_types)
 
         #check that there are indeed 14750 total jobs after running the model
-        areas = jobs_set.get_attribute("large_area_id")
+        areas = jobs_set.get_attribute("faz_id")
         results = array([0,0])
         for iarea in [0,1]:
             results[iarea] = where(areas == [1,2][iarea])[0].size
@@ -258,7 +259,7 @@ class Tests(StochasticTestCase):
         res = zeros(2 * len(self.possible_sector_ids))
         i=0
         for area in [1, 2]:
-            tmp = job_set.get_attribute("large_area_id") == area
+            tmp = job_set.get_attribute("faz_id") == area
             for sector_id in self.possible_sector_ids:
                 res[i] = logical_and(job_set.get_attribute("sector_id") == sector_id, tmp).sum()
                 i+=1
