@@ -21,13 +21,13 @@ class RegionalHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
     """Run the urbansim HLCM separately for each large area."""
     
     model_name = "Regional Household Location Choice Model" 
-    large_area_id_name = "large_area_id"
+    large_area_id_name = "faz_id"
     
     def run(self, specification, coefficients, agent_set, agents_index=None, **kwargs):
         if agents_index is None:
             agents_index = arange(agent_set.size())
         large_areas = agent_set.get_attribute(self.large_area_id_name)
-        self.choice_set.compute_variables(["washtenaw.%s.%s" % (self.choice_set.get_dataset_name(), self.large_area_id_name)],
+        self.choice_set.compute_variables(["urbansim_parcel.%s.%s" % (self.choice_set.get_dataset_name(), self.large_area_id_name)],
                                                   dataset_pool=self.dataset_pool)
         valid_large_area = where(large_areas[agents_index] > 0)[0]
         if valid_large_area.size > 0:
@@ -80,13 +80,13 @@ class Test(StochasticTestCase):
         household_data = {
             'household_id': arange(nhhs)+1,
             'grid_id': hh_grid_ids,
-            'large_area_id': hh_lareas
+            'faz_id': hh_lareas
             }
 
         gridcell_data = {
             'grid_id': arange(ngcs)+1,
             'cost':array(ngcs*[100]),
-            'large_area_id': lareas            
+            'faz_id': lareas            
             }
 
         storage.write_table(table_name = 'households', table_data = household_data)
