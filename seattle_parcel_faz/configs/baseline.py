@@ -139,7 +139,10 @@ class Baseline(UrbansimParcelConfiguration):
         }
         config.replace(config_changes)
         
- 
+        config['models_configuration']["employment_transition_model"]["controller"]["import"] = \
+                {"seattle_parcel.models.regional_employment_transition_model" : "RegionalEmploymentTransitionModel"}
+        config['models_configuration']["employment_transition_model"]["controller"]["init"]["name"] = \
+                "RegionalEmploymentTransitionModel"
         config['models_configuration']["household_transition_model"]["controller"]["import"] = \
                 {"seattle_parcel.models.regional_household_transition_model" : "RegionalHouseholdTransitionModel"}
         config['models_configuration']["household_transition_model"]["controller"]["init"]["name"] = \
