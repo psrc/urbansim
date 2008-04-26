@@ -92,7 +92,7 @@ from numpy import ma
 from urbansim.datasets.household_dataset import HouseholdDataset
 from urbansim_parcel.datasets.person_dataset import PersonDataset
 from urbansim.datasets.household_characteristic_dataset import HouseholdCharacteristicDataset
-from seattle_parcel.datasets.control_total_dataset import ControlTotalDataset
+from seattle_parcel_faz.datasets.control_total_dataset import ControlTotalDataset
 class Tests(opus_unittest.OpusTestCase):
 
     def setUp(self):

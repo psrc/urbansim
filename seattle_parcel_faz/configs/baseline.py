@@ -148,7 +148,9 @@ class Baseline(UrbansimParcelConfiguration):
         config['models_configuration']["household_transition_model"]["controller"]["init"]["name"] = \
                 "RegionalHouseholdTransitionModel"
         config['models_configuration']["household_location_choice_model"]["controller"]["import"] = \
-                {"psrc_parcel.models.household_location_choice_model" : "HouseholdLocationChoiceModel"}
+                {"seattle_parcel_faz.models.regional_household_location_choice_model" : "RegionalHouseholdLocationChoiceModel"}
+        config['models_configuration']["household_location_choice_model"]["controller"]["init"]["name"] = \
+                "RegionalHouseholdLocationChoiceModel"
         config['models_configuration']["employment_location_choice_model"]['controller']["import"] = \
                 {"psrc_parcel.models.employment_location_choice_model" : "EmploymentLocationChoiceModel"}
         config['models_configuration']["home_based_employment_location_choice_model"]['controller']["import"] = \
