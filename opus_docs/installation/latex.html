@@ -41,28 +41,17 @@ files (although not yet consistently); see <a href="http://www.python.org/doc/cu
 <p>There are many applications and environments that support editing LaTeX
 files.&nbsp;&nbsp; </p>
 
-<p> On Windows, folk in our group at the UW tend to use the <a href="http://texlipse.sourceforge.net/">Texlipse</a>
+<p>SuSe comes with LaTeX, as do most other Linux distributions.</p>
+
+<p>On the Mac, use <a href="http://www.tug.org/mactex">MacTeX</a>.</p>
+
+<p> On Windows, you can use the <a href="http://texlipse.sourceforge.net/">Texlipse</a>
 Eclipse plug-in, that provides decent LaTeX support, or the <a href="http://www.miktex.org">Miktex</a>
 version of LaTeX.&nbsp; You might want to try the <a href="http://www.ctan.org/starter.html">proTeXt</a>
 installation that is based on the MiKTeX distribution, and includes some
 additional components including the <a href="http://www.toolscenter.org/">TeXnicCenter</a>
-LaTeX editor.&nbsp; SuSe comes with LaTeX, as do most other Linux distributions. </p>
+LaTeX editor.</p>
 
-<p>On the Mac, closet UNIX hackers will probably prefer to interact with LaTeX
-via the command line.&nbsp; If you’re comfortable with that, use the Fink
-distribution of LaTeX. To install LaTeX this way, after you’ve got Fink
-installed (Section 3.2.1), use the FinkCommander graphical interface to install
-the tetex-base package.&nbsp; You just need tetex-base, not the whole system.
-Even so, this will install an alarmingly large number of megabytes of stuff on
-your system - but it should all go smoothly.&nbsp; You can now interact with
-latex and pdflatex from the command line in the usual way.&nbsp; If the phrase
-“interact with latex and pdflatex from the command line in the usual way”
-sounds like a lot of new stuff to learn, as opposed to having the familiarity of
-an old shoe, you might want to check out one of the Mac ports of LaTeX that
-provides a more Mac-like graphical interface instead.&nbsp; See <a href="http://www.esm.psu.edu/mac-tex/">http://www.esm.psu.edu/mac-tex/</a>
-or <a href="http://www.macdevcenter.com/pub/a/mac/2004/02/03/latex.html">http://www.macdevcenter.com/pub/a/mac/2004/02/03/latex.html</a>
-for more information.&nbsp; Or use the <a href="http://texlipse.sourceforge.net/">Texlipse</a>
-Eclipse plug-in. </p>
 
 <h2>Running LaTeX</h2>
 <p>The easiest way to rebuild a local version of the pdf and html documentation
@@ -70,9 +59,9 @@ for the Manual is to use a Python script that is in the opus_docs Opus
 package:</p>
 <ol>
   <li>Get the opus_docs package from the <a href="subversion.html">CUSPA
-    subversion repository</a> and put it in your workspace (e.g., to C:\opusworkspace)</li>
+    subversion repository</a> and put it in your workspace (e.g., to C:\opus\src)</li>
   <li>Open a command window and navigate to the location of your opus_docs/docs/latex
-    directory (e.g. to C:\opusworkspace\opus_docs\docs\latex)</li>
+    directory (e.g. to C:\opus\src\opus_docs\docs\latex)</li>
   <li>Run the commands to build a local copy of the documentation:</li>
 </ol>
 <blockquote>
@@ -83,15 +72,15 @@ package:</p>
 <p>Alternatively, you can issue the individual commands:</p>
 <ol>
   <li>Get the opus_docs package from the <a href="subversion.html">CUSPA
-     subversion repository</a> and put it in your workspace (e.g., to C:\opusworkspace)</li>
+     subversion repository</a> and put it in your workspace (e.g., to C:\opus\src)</li>
   <li>Open a command window and navigate to the location of your opus_docs/docs/latex
-    directory (e.g. to C:\opusworkspace\opus_docs\docs\latex)</li>
-  <li>Run latex on the file ‘userguide.tex’ (the root LaTeX source file) to
+    directory (e.g. to C:\opus\src\opus_docs\docs\latex)</li>
+  <li>Run latex on the file <tt>userguide.tex</tt> (the root LaTeX source file) to
     produce the pdf file:</li>
 </ol>
 <blockquote>
   <pre><font face="Courier New" size="2">pdflatex userguide </font> </pre>
-  <p>If you get an error message that the file ‘userguide.ind’ wasn’t
+  <p>If you get an error message that the file <tt>userguide.ind</tt> wasn't
   found (this will happen the first time you do the above command), just hit
   return and continue, since the next step will create this index file.</p>
 </blockquote>
