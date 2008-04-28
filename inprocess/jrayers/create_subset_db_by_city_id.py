@@ -20,9 +20,9 @@ dbserver = DatabaseServer(dbconfig)
 # city_id to subset database on (70=Seattle)
 city_id = str(70)
 # flattened database to use as input data
-input_db = 'psrc_2005_parcel_baseyear_flattened_20080107'
+input_db = 'psrc_2005_parcel_baseyear_flattened_20080425'
 # output database to create subset data in (must exist)
-output_db = 'psrc_2005_parcel_baseyear_subset_seattle_zip_jobs'
+output_db = 'seattle_2000_parcel_baseyear_data_20080425'
 
 tables_to_copy = [
     'home_based_employment_location_choice_model_coefficients',
@@ -58,7 +58,7 @@ queries = [
     'CREATE INDEX parcels_out_parcel_id on %s.parcels (parcel_id);' % (output_db),
     'CREATE INDEX parcels_out_grid_id on %s.parcels (grid_id);' % (output_db),
     #'DROP INDEX gridcells_in_grid_id ON %s.gridcells;' % (input_db),
-    #'CREATE INDEX gridcells_in_grid_id ON %s.gridcells (grid_id);' % (input_db),
+    'CREATE INDEX gridcells_in_grid_id3 ON %s.gridcells (grid_id);' % (input_db),
     'DROP TABLE IF EXISTS %s.gridcells;' % (output_db),
     'CREATE TABLE %s.gridcells SELECT g.* FROM %s.gridcells g, %s.parcels p WHERE g.grid_id = p.grid_id GROUP BY g.grid_id' % (output_db, input_db, output_db),
     'DROP TABLE IF EXISTS %s.cities;' % (output_db),
@@ -80,11 +80,14 @@ queries = [
     'DROP TABLE IF EXISTS %s.buildings;' % (output_db),
     'CREATE TABLE %s.buildings SELECT b.* FROM %s.buildings b, %s.parcels p WHERE b.parcel_id = p.parcel_id;' % (output_db, input_db, output_db),
     'DROP TABLE IF EXISTS %s.households;' % (output_db),
-    #'CREATE INDEX households_in_building_id ON %s.households(building_id);' % (input_db),
-    'CREATE INDEX buildings_out_building_id ON %s.buildings(building_id);' % (output_db),
+    'CREATE INDEX households_in_building_id3 ON %s.households(building_id);' % (input_db),
+    'CREATE INDEX buildings_out_building_id2 ON %s.buildings(building_id);' % (output_db),
     'CREATE TABLE %s.households SELECT h.* FROM %s.households h, %s.buildings b WHERE h.building_id = b.building_id;' % (output_db, input_db, output_db),
+    'CREATE INDEX households_id3 ON %s.households(household_id);' % (output_db),
+    'CREATE INDEX households_id4 ON %s.persons(household_id);' % (input_db),    
+    'CREATE TABLE %s.persons SELECT p.* FROM %s.persons p, %s.households h WHERE p.household_id = h.household_id;' % (output_db, input_db, output_db),
     'DROP TABLE IF EXISTS %s.jobs;' % (output_db),
-    #'CREATE INDEX jobs_in_building_id ON %s.jobs(building_id);' % (input_db),
+    'CREATE INDEX jobs_in_building_id3 ON %s.jobs(building_id);' % (input_db),
     'CREATE TABLE %s.jobs SELECT j.* FROM %s.jobs j, %s.buildings b WHERE j.building_id = b.building_id;' % (output_db, input_db, output_db),
     'DROP TABLE IF EXISTS %s.annual_employment_control_totals;' % (output_db),
     'CREATE TABLE %s.annual_employment_control_totals SELECT * FROM %s.annual_employment_control_totals;' % (output_db, input_db),
