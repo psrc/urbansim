@@ -21,7 +21,7 @@ class AbstractEmme2TravelModel(Model):
     """
     def __init__(self, config):
         self.config = config
-        self.emme_cmd = config['travel_model_configuration'].get('emme_command', 'emme2')
+        self.emme_cmd = config['travel_model_configuration'].get('emme_command', 'emme -ng --set-iks 127.0.0.1')
         
     def get_emme2_dir(self, year, subdir=None):
         """Returns the full path to the given subdirectory of the emme/2 'database'.
