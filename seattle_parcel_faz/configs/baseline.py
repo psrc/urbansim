@@ -34,9 +34,11 @@ class Baseline(UrbansimParcelConfiguration):
             'cache_directory':None,
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
             cache_directory_root = r'c:/opus/data/seattle_parcel/runs',
+            #cache_directory_root = '/Users/hana/urbansim_cache/seattle',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     years_to_cache = [2000],
+                    #existing_cache_to_copy = '/Users/hana/urbansim_cache/seattle/seattle_parcel_2000_cache'
                     existing_cache_to_copy = r'c:/opus/data/seattle_parcel/base_year_data',
                     ),
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
@@ -97,10 +99,10 @@ class Baseline(UrbansimParcelConfiguration):
             'years':(2001, 2002),
             'models':[ # models are executed in the same order as in this list
                 #"process_pipeline_events",
-                #"real_estate_price_model",
-                #"expected_sale_price_model",
-                #development_proposal_choice_model",
-                #"building_construction_model",
+                "real_estate_price_model",
+                "expected_sale_price_model",
+                "development_proposal_choice_model",
+                "building_construction_model",
                 "household_transition_model",
                 "employment_transition_model",
                 "household_relocation_model",
@@ -109,13 +111,6 @@ class Baseline(UrbansimParcelConfiguration):
                 {"employment_location_choice_model":{'group_members': '_all_'}},
                 'distribute_unplaced_jobs_model'
                 ],
-            'models_in_year': {2000: [ # This is not run anymore, since all jobs are located and only a few households are not.
-                 "household_relocation_model_for_2000",
-                "household_location_choice_model_for_2000",
-                "employment_relocation_model_for_2000",
-                {"employment_location_choice_model":{'group_members': '_all_'}}
-                                       ]
-                                       },
                 'flush_dataset_to_cache_after_each_model':False,
                 'flush_variables':False,
                 'low_memory_run':False,
@@ -138,7 +133,10 @@ class Baseline(UrbansimParcelConfiguration):
                 }
         }
         config.replace(config_changes)
-        
+        config['models_configuration']["development_proposal_choice_model"]["controller"]["import"] = \
+                {"seattle_parcel_faz.models.regional_development_proposal_sampling_model" : "RegionalDevelopmentProposalSamplingModel"}
+        config['models_configuration']["development_proposal_choice_model"]["controller"]["init"]["name"] = \
+                "RegionalDevelopmentProposalSamplingModel"
         config['models_configuration']["employment_transition_model"]["controller"]["import"] = \
                 {"seattle_parcel_faz.models.regional_employment_transition_model" : "RegionalEmploymentTransitionModel"}
         config['models_configuration']["employment_transition_model"]["controller"]["init"]["name"] = \
