@@ -153,8 +153,12 @@ class Baseline(UrbansimParcelConfiguration):
                 "RegionalHouseholdLocationChoiceModel"
         config['models_configuration']["employment_location_choice_model"]['controller']["import"] = \
                 {"seattle_parcel_faz.models.regional_employment_location_choice_model" : "RegionalEmploymentLocationChoiceModel"}
+        config['models_configuration']["employment_location_choice_model"]["controller"]["init"]["name"] = \
+                "RegionalEmploymentLocationChoiceModel"
         config['models_configuration']["home_based_employment_location_choice_model"]['controller']["import"] = \
                 {"seattle_parcel_faz.models.regional_employment_location_choice_model" : "RegionalEmploymentLocationChoiceModel"}
+        config['models_configuration']["home_based_employment_location_choice_model"]["controller"]["init"]["name"] = \
+                "RegionalEmploymentLocationChoiceModel"
         config['models_configuration']["distribute_unplaced_jobs_model"]["controller"]["import"] = \
                 {"seattle_parcel_faz.models.regional_distribute_unplaced_jobs_model" : "RegionalDistributeUnplacedJobsModel"}
         config['models_configuration']["distribute_unplaced_jobs_model"]["controller"]["init"]["name"] = \
