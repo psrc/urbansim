@@ -111,11 +111,14 @@ class EmploymentTransitionModel(Model):
                     building_type_distribution = array(ndimage_sum(is_in_sector_hb,
                                                                     labels=building_type,
                                                                     index=self.available_building_types))
-                else:
+                elif 1 in job_set.get_attribute("is_home_based_job"): # take the builidng type distribution from the whole region
                     building_type_distribution = array(ndimage_sum(
                                                                 job_set.get_attribute("is_home_based_job"),
                                                                 labels=building_type,
                                                                 index=self.available_building_types))
+                else: # there are no home-based jobs in the region, take uniform distribution
+                    building_type_distribution = ones(self.available_building_types.size)
+                    building_type_distribution = building_type_distribution/building_type_distribution.sum()
                 sampled_building_types = probsample_replace(
                     self.available_building_types, diff_hb, building_type_distribution/
                     float(building_type_distribution.sum()))
