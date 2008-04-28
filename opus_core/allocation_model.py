@@ -26,7 +26,7 @@ class AllocationModel(Model):
 
     def run(self, dataset, outcome_attribute, weight_attribute, 
                  control_totals, current_year, control_total_attribute=None, 
-                 year_attribute='year', capacity_attribute=None, dataset_pool=None):
+                 year_attribute='year', capacity_attribute=None, add_quantity=False, dataset_pool=None):
         """'dataset' is a Dataset for which a quantity 'outcome_attribute' is created. The total amount of the quantity is 
         given by the attribute 'control_total_attribute' of the 'control_totals' Dataset. If it is not given, it is assumed 
         to have the same name as 'outcome_attribute'. The 'weight_attribute' of 'dataset' determines the allocation weights.
@@ -35,6 +35,8 @@ class AllocationModel(Model):
         for which year matches the 'current_year', the total amount is distributed among the corresponding members of 'dataset' according to weights.
         If a 'capacity_attribute' is given (attribute of 'dataset'), the algorithm removes any allocations that exceeds the capacity and 
         redistributes it among remaining members. The resulting values are appended to 'dataset' as 'outcome_attribute' (as primary attribute).
+        If add_quantity is True and the 'outcome_attribute' exists in dataset, the resulting values are added to the current values of 
+        'outcome_attribute'.
         """
         ct_attr = control_totals.get_known_attribute_names()
         if year_attribute not in ct_attr:
@@ -93,8 +95,12 @@ class AllocationModel(Model):
                     break
                 is_considered = logical_and(is_considered, outcome < C)
                 it += 1
-                
-        dataset.add_primary_attribute(name=outcome_attribute, data=outcome)
+        if add_quantity and (outcome_attribute in dataset.get_known_attribute_names()):
+            dataset.modify_attribute(name=outcome_attribute, data=outcome+dataset.get_attribute(outcome_attribute))
+            logger.log_status('New values added to the attribute %s of dataset %s.' % (outcome_attribute, dataset.get_dataset_name()))
+        else:
+            dataset.add_primary_attribute(name=outcome_attribute, data=outcome)
+            logger.log_status('New values stored into attribute %s of dataset %s.' % (outcome_attribute, dataset.get_dataset_name()))
         return outcome
     
 from opus_core.tests import opus_unittest
@@ -142,6 +148,23 @@ class AllocationModelTest(opus_unittest.OpusTestCase):
         self.assertEqual(result[self.jobs.get_attribute('zone_id')==1].sum() == 2000, True)
         self.assertEqual(result[self.jobs.get_attribute('zone_id')==2].sum() == 5500, True)
         self.assertEqual(result[self.jobs.get_attribute('zone_id')==3].sum() == 1000, True)
+        #check if resulting proportions correspond to weights
+        res = result[self.jobs.get_attribute('zone_id')==1]
+        self.assertEqual(ma.allclose(res/float(res.sum()), array([2, 1, 4])/7.0, rtol=0.01), True)
+        res = result[self.jobs.get_attribute('zone_id')==2]
+        self.assertEqual(ma.allclose(res/float(res.sum()), array([1, 5, 9, 8])/23.0, rtol=0.01), True)
+        res = result[self.jobs.get_attribute('zone_id')==3]
+        self.assertEqual(ma.allclose(res/float(res.sum()), array([3, 7, 2])/12.0, rtol=0.01), True)
+        
+        # add quantity to results from previous year
+        result_2005 = result.copy()
+        model.run(self.jobs, outcome_attribute='job_sqft', weight_attribute='allocation_weights',
+                  control_totals=self.ct, current_year=2006, add_quantity=True, dataset_pool=self.dataset_pool)
+        result = self.jobs.get_attribute('job_sqft') - result_2005
+        #check total sums
+        self.assertEqual(result[self.jobs.get_attribute('zone_id')==1].sum() == 3000, True)
+        self.assertEqual(result[self.jobs.get_attribute('zone_id')==2].sum() == 6000, True)
+        self.assertEqual(result[self.jobs.get_attribute('zone_id')==3].sum() == 2000, True)
         #check if resulting proportions correspond to weights
         res = result[self.jobs.get_attribute('zone_id')==1]
         self.assertEqual(ma.allclose(res/float(res.sum()), array([2, 1, 4])/7.0, rtol=0.01), True)
