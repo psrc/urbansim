@@ -102,12 +102,12 @@ class Baseline(UrbansimParcelConfiguration):
                 #development_proposal_choice_model",
                 #"building_construction_model",
                 "household_transition_model",
-                #"employment_transition_model",
+                "employment_transition_model",
                 "household_relocation_model",
-                #"household_location_choice_model",
-                #"employment_relocation_model",
-                #{"employment_location_choice_model":{'group_members': '_all_'}},
-                #'distribute_unplaced_jobs_model'
+                "household_location_choice_model",
+                "employment_relocation_model",
+                {"employment_location_choice_model":{'group_members': '_all_'}},
+                'distribute_unplaced_jobs_model'
                 ],
             'models_in_year': {2000: [ # This is not run anymore, since all jobs are located and only a few households are not.
                  "household_relocation_model_for_2000",
@@ -140,11 +140,11 @@ class Baseline(UrbansimParcelConfiguration):
         config.replace(config_changes)
         
         config['models_configuration']["employment_transition_model"]["controller"]["import"] = \
-                {"seattle_parcel.models.regional_employment_transition_model" : "RegionalEmploymentTransitionModel"}
+                {"seattle_parcel_faz.models.regional_employment_transition_model" : "RegionalEmploymentTransitionModel"}
         config['models_configuration']["employment_transition_model"]["controller"]["init"]["name"] = \
                 "RegionalEmploymentTransitionModel"
         config['models_configuration']["household_transition_model"]["controller"]["import"] = \
-                {"seattle_parcel.models.regional_household_transition_model" : "RegionalHouseholdTransitionModel"}
+                {"seattle_parcel_faz.models.regional_household_transition_model" : "RegionalHouseholdTransitionModel"}
         config['models_configuration']["household_transition_model"]["controller"]["init"]["name"] = \
                 "RegionalHouseholdTransitionModel"
         config['models_configuration']["household_location_choice_model"]["controller"]["import"] = \
@@ -152,29 +152,13 @@ class Baseline(UrbansimParcelConfiguration):
         config['models_configuration']["household_location_choice_model"]["controller"]["init"]["name"] = \
                 "RegionalHouseholdLocationChoiceModel"
         config['models_configuration']["employment_location_choice_model"]['controller']["import"] = \
-                {"psrc_parcel.models.employment_location_choice_model" : "EmploymentLocationChoiceModel"}
+                {"seattle_parcel_faz.models.regional_employment_location_choice_model" : "RegionalEmploymentLocationChoiceModel"}
         config['models_configuration']["home_based_employment_location_choice_model"]['controller']["import"] = \
-                {"psrc_parcel.models.employment_location_choice_model" : "EmploymentLocationChoiceModel"}
-        config['models_configuration']['household_relocation_model_for_2000'] = {}
-        config['models_configuration']['household_relocation_model_for_2000']['controller'] = \
-                    HouseholdRelocationModelConfigurationCreator(
-                               location_id_name = 'building_id',
-                               probabilities = None,
-                               rate_table=None,
-                               output_index = 'hrm_index').execute()
-        config['models_configuration']['household_location_choice_model_for_2000'] = Configuration(
-                                   config['models_configuration']['household_location_choice_model']
-                                                                                                   )
-        config['models_configuration']['household_location_choice_model_for_2000']['controller']['run']['arguments']['chunk_specification'] = "{'nchunks':1}"
-        config['models_configuration']['household_location_choice_model_for_2000']['controller']['run']['arguments']['maximum_runs'] = 1
-        config['models_configuration']['employment_relocation_model_for_2000'] = {}
-        config['models_configuration']['employment_relocation_model_for_2000']['controller'] = \
-                    EmploymentRelocationModelConfigurationCreator(
-                               location_id_name = 'building_id',
-                               probabilities = None,
-                               rate_table=None,
-                               output_index = 'erm_index').execute()
-
+                {"seattle_parcel_faz.models.regional_employment_location_choice_model" : "RegionalEmploymentLocationChoiceModel"}
+        config['models_configuration']["distribute_unplaced_jobs_model"]["controller"]["import"] = \
+                {"seattle_parcel_faz.models.regional_distribute_unplaced_jobs_model" : "RegionalDistributeUnplacedJobsModel"}
+        config['models_configuration']["distribute_unplaced_jobs_model"]["controller"]["init"]["name"] = \
+                "RegionalDistributeUnplacedJobsModel"
         if self.multiple_runs:
             from multiple_runs_modification import MultipleRunsModification
             MultipleRunsModification().modify_configuration(config)

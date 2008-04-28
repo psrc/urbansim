@@ -14,7 +14,7 @@
 
 
 from numpy import where
-from washtenaw.models.regional_scaling_jobs_model import RegionalScalingJobsModel
+from seattle_parcel_faz.models.regional_scaling_jobs_model import RegionalScalingJobsModel
 
 class RegionalDistributeUnplacedJobsModel(RegionalScalingJobsModel):
     """This model is used to place randomly (within sectors) any unplaced jobs.
