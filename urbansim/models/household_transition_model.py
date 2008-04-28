@@ -262,7 +262,8 @@ class HouseholdTransitionModel(Model):
         # cleanup in case there was a previous run
         for attr in self.arrays_from_categories.keys():
             del self.arrays_from_categories[attr]  
-            del self.arrays_from_categories_mapping[attr]
+            if attr in self.arrays_from_categories_mapping.keys():
+                del self.arrays_from_categories_mapping[attr]
             
         self.arrays_from_categories = {}
         self.arrays_from_categories_mapping = {}
@@ -273,11 +274,13 @@ class HouseholdTransitionModel(Model):
             idx = where(self.all_categories == attr)[0]
             maximal_of_min = mins[idx].max()
             this_min = mins[idx].min()
-            max_from_data = household_set.get_attribute(attr).max()
-            if max_from_data > maximal_of_min:
-                # -1 in maximum is replaced by maximum from the data
-                maxs[idx[where(maxs[idx] < 0)]] = max_from_data
-            else:
+            max_from_data = maximal_of_min
+            if household_set.size() > 0:
+                max_from_data = household_set.get_attribute(attr).max()
+                if max_from_data > maximal_of_min:
+                    # -1 in maximum is replaced by maximum from the data
+                    maxs[idx[where(maxs[idx] < 0)]] = max_from_data
+            if max_from_data <= maximal_of_min:
                 # there is no maximum in the data for the largest category,
                 # therefore determine the absolute maximum from the average bin range
                 if idx.size == 1:
