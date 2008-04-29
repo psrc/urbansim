@@ -90,9 +90,13 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         self.correct_infinite_values(dataset, self.outcome_attribute_name)
         return dataset            
             
-    def prepare_for_run(self, dataset_pool, parcel_filter_for_new_development=None, 
-                        parcel_filter_for_redevelopment=None, create_proposal_set=True,
-                        spec_replace_module_variable_pair=None, **kwargs):
+    def prepare_for_run(self, dataset_pool, 
+                        create_proposal_set=True,
+                        parcel_filter_for_new_development=None, 
+                        parcel_filter_for_redevelopment=None, 
+                        template_filter=None,
+                        spec_replace_module_variable_pair=None, 
+                        **kwargs):
         """create development project proposal dataset from parcels and development templates.
         spec_replace_module_variable_pair is a tuple with two elements: module name, variable within the module
         that contans a dictionary of model variables to be replaced in the specification.
@@ -109,10 +113,19 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
             
         parcels = dataset_pool.get_dataset('parcel')
         templates = dataset_pool.get_dataset('development_template')
-        
+
+        if template_filter is not None:
+            try:
+                index2 = where(templates.compute_variables(template_filter))[0]
+            except Exception, e:
+                logger.log_warning( "template_filter is set to %s, but there is an error when computing it: %s"
+                                   % (template_filter, e) )
+                index2 = None
+        else:
+            index2 = None
+            
         if parcel_filter_for_new_development is not None:
-            parcels.compute_variables(parcel_filter_for_new_development)
-            index1 = where(parcels.get_attribute(parcel_filter_for_new_development))[0]
+            index1 = where(parcels.compute_variables(parcel_filter_for_new_development))[0]
         else:
             index1 = None
             
@@ -121,6 +134,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
             proposal_set = create_from_parcel_and_development_template( parcels, templates, 
                                                               filter_attribute=self.filter,
                                                               parcel_index = index1,
+                                                              template_index = index2,
                                                               dataset_pool=dataset_pool,
                                                               resources = kwargs.get("resources", None) )
             proposal_set.add_attribute( zeros(proposal_set.size(), dtype=int16), "is_redevelopment", AttributeType.PRIMARY )
@@ -139,6 +153,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
                 redev_proposal_set = create_from_parcel_and_development_template(parcels, templates, 
                                                                   filter_attribute=self.filter,
                                                                   parcel_index = where(is_redevelopment)[0],
+                                                                  template_index = index2,
                                                                   dataset_pool=dataset_pool,
                                                                   resources = kwargs.get("resources", None))
                 

@@ -36,15 +36,12 @@ class Baseline(UrbansimParcelConfiguration):
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
                #cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',
                #cache_directory_root = r'/home/hana/urbansim_cache/psrc/parcel',
-               cache_directory_root = r'/urbansim_cache/psrc_parcel/',
+               cache_directory_root = r'/urbansim_cache/psrc_parcel/runs',
                #cache_directory_root = r'/workspace/urbansim_cache/psrc_parcel',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
-                    #existing_cache_to_copy = r'/Users/hana/urbansim_cache/psrc/cache_source_parcel',
-                    #existing_cache_to_copy = r'/home/hana/urbansim_cache/psrc/cache_source_parcel',
                     years_to_cache = [2000],
-                    existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/wcm_estimation',
-                    #existing_cache_to_copy = r'/workspace/urbansim_cache/psrc_parcel/estimation',
+                    existing_cache_to_copy = r'/urbansim_cache/psrc_parcel/runs/cache_source',
                     ),
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
@@ -57,7 +54,7 @@ class Baseline(UrbansimParcelConfiguration):
                     "jobs",
                     "households_for_estimation",
                     "jobs_for_estimation",
-                    "development_event_history",
+                    #"development_event_history",
                     "persons",
                     "persons_for_estimation",
                     "travel_data",
@@ -99,12 +96,14 @@ class Baseline(UrbansimParcelConfiguration):
                     "work_at_home_choice_model_specification",
                     "workplace_choice_model_for_resident_coefficients",
                     "workplace_choice_model_for_resident_specification",
+                    "development_project_proposals",
                     ],
                 tables_to_cache_nchunks={'parcels': 1},
                 unroll_gridcells = False
                 ),
             'input_configuration': DatabaseConfiguration(
-                database_name = 'psrc_2005_parcel_baseyear',
+                #database_name = 'psrc_2005_parcel_baseyear_change_20080422',
+                 database_name = 'psrc_2005_parcel_baseyear_change_lmwang',
                 #database_name = 'psrc_2005_parcel_baseyear_change_20070913',
                 ),
             'dataset_pool_configuration': DatasetPoolConfiguration(
@@ -114,7 +113,7 @@ class Baseline(UrbansimParcelConfiguration):
 #            'models_configuration':models_configuration,
 
             'base_year':2000,
-            'years':(2001, 2030),
+            'years':(2001, 2002),
             'models':[ # models are executed in the same order as in this list
                 #"process_pipeline_events",
                 "real_estate_price_model",

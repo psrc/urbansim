@@ -141,8 +141,19 @@ class DevelopmentProjectProposalSamplingModel(Model):
         is_proposal_eligible = logical_and(sum_is_accepted_type_over_proposals == number_of_components_in_proposals,
                                            sum_of_units_proposed > 0)
 
+        is_proposal_eligible = logical_and(is_proposal_eligible,
+                                           self.proposal_set.get_attribute("start_year")==current_year )
+        ## handle planned proposals: all proposals with status_id == is_planned 
+        ## and start_year == current_year are accepted
+        self.accepted_proposals += list(where(
+                                              logical_and(
+                                                  self.proposal_set.get_attribute("status_id") == self.proposal_set.id_planned, 
+                                                  self.proposal_set.get_attribute("start_year") == current_year ) 
+                                              )[0] 
+                                          )
+        
         # consider proposals (in this order: planned, proposed, tentative)
-        for status in [self.proposal_set.id_planned, self.proposal_set.id_proposed, self.proposal_set.id_tentative]:
+        for status in [self.proposal_set.id_proposed, self.proposal_set.id_tentative]:
             idx = where(logical_and(self.proposal_set.get_attribute("status_id") == status, is_proposal_eligible))[0]
             if idx.size <= 0:
                 continue

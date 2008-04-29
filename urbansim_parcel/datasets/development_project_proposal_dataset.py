@@ -40,20 +40,22 @@ class DevelopmentProjectProposalDataset(UrbansimDataset):
     id_not_available = 5
     id_refused = 6
     
-    def __init__(self, resources=None, dataset1=None, dataset2=None, index1=None, **kwargs):
+    def __init__(self, resources=None, dataset1=None, dataset2=None, index1=None, index2=None, **kwargs):
         """ This dataset is an interaction of two datasets (originally, parcel and development template).
             It's similar to InteractionSet, but flattend to 1d, thus regression model can use this dataset without changes
         """
         UrbansimDataset.__init__(self, resources=resources, **kwargs)
-        self._set_my_class_attributes(dataset1, dataset2, index1)
+        self._set_my_class_attributes(dataset1, dataset2, index1, index2)
 
-    def _set_my_class_attributes(self, dataset1=None, dataset2=None, index1=None):
+    def _set_my_class_attributes(self, dataset1=None, dataset2=None, index1=None, index2=None):
         if dataset1 is not None:
             self.dataset1 = dataset1
         if dataset2 is not None:
             self.dataset2 = dataset2
         if index1 is not None:
             self.index1 = index1
+        if index2 is not None:
+            self.index2 = index2
         
     def _compute_if_needed(self, name, dataset_pool, resources=None, quiet=False, version=None):
         """ Compute variable given by the argument 'name' only if this variable
@@ -110,6 +112,7 @@ class DevelopmentProjectProposalDataset(UrbansimDataset):
 def create_from_parcel_and_development_template(parcel_dataset,
                                                 development_template_dataset,
                                                 parcel_index=None,
+                                                template_index=None,
                                                 filter_attribute=None,
                                                 consider_constraints_as_rules=True,
                                                 template_opus_path="urbansim_parcel.development_template",
@@ -117,6 +120,8 @@ def create_from_parcel_and_development_template(parcel_dataset,
                                                 resources=None):
     """create development project proposals from parcel and development_template_dataset,
     parcel_index - 1D array, indices of parcel_dataset. Status of the proposals is set to 'tentative'.
+    template_index - index to templates that are available to create proposals;
+    filter_attribute - variable that is used to filter proposals;
     
     If a development constraint table exists, create proposal dataset include only proposals that are allowed by constraints,
     otherwise, create a proposal dataset with Cartesian product of parcels x templates 
@@ -152,6 +157,7 @@ def create_from_parcel_and_development_template(parcel_dataset,
                                                                           dataset1 = parcel_dataset,
                                                                           dataset2 = development_template_dataset,
                                                                           index1 = parcel_index,
+                                                                          index2 = template_index,
                                                                           in_storage=storage,
                                                                           in_table_name='development_project_proposals',
                                                                           )
@@ -177,6 +183,11 @@ def create_from_parcel_and_development_template(parcel_dataset,
     else:
         index1 = arange(parcel_dataset.size())
 
+    if template_index is not None:
+        index2 = template_index
+    else:
+        index2 = arange(development_template_dataset.size())
+
     has_constraint_dataset = True
     try:
         constraints = dataset_pool.get_dataset("development_constraint") 
@@ -192,14 +203,14 @@ def create_from_parcel_and_development_template(parcel_dataset,
                                                    index=index1, 
                                                    consider_constraints_as_rules=consider_constraints_as_rules)
         generic_land_use_type_ids = development_template_dataset.compute_variables("urbansim_parcel.development_template.generic_land_use_type_id",
-                                                       dataset_pool=dataset_pool)       
+                                                       dataset_pool=dataset_pool)
     parcel_ids = parcel_dataset.get_id_attribute()
     template_ids = development_template_dataset.get_id_attribute()
     
     proposal_parcel_ids = array([],dtype="int32")
     proposal_template_ids = array([],dtype="int32")
     logger.start_block("Combine parcels, templates and constraints")
-    for i_template in range(development_template_dataset.size()):
+    for i_template in index2:
         this_template_id = template_ids[i_template]
         fit_indicator = ones(index1.size, dtype="bool8")
         if has_constraint_dataset:
