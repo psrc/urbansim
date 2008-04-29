@@ -72,15 +72,18 @@ class Estimator(object):
         if self.save_estimation_results:
             self.save_results(out_storage=out_storage)
 
-    def reestimate(self, specification_module_name, out_storage=None, type=None, submodels=None):
+    def reestimate(self, specification_module_name=None, specification_dict=None, out_storage=None, type=None, submodels=None):
         """specification_module_name is name of a module that contains a dictionary called
-        'specification'. 'type' is the name of model member, such as 'commercial', 'residential'. The specification dictionary
+        'specification'. If it is not given, the argument specification_dict must be given which is a dictionary object.
+        'type' is the name of model member, such as 'commercial', 'residential'. The specification dictionary
         is expected to have an entry of this name. If 'submodels' is given (list or a number),
         the restimation is done only for those submodels.
         """
-        exec("import " + specification_module_name)
-        eval("reload (" + specification_module_name + ")")
-        exec("specification_dict =" + specification_module_name + ".specification")
+        if specification_module_name is not None:
+            exec("import " + specification_module_name)
+            eval("reload (" + specification_module_name + ")")
+            exec("specification_dict =" + specification_module_name + ".specification")
+            
         if type is not None:
             specification_dict = specification_dict[type]
         if submodels is not None: #remove all submodels but the given ones from specification
@@ -360,6 +363,14 @@ def update_controller_by_specification_from_module(run_configuration, model_name
     controller = run_configuration["models_configuration"][model_name]["controller"]
     controller["import"][specification_module] = "specification as spec"
     controller["prepare_for_estimate"]["arguments"]["specification_dict"] = "spec"
+    controller["prepare_for_estimate"]["arguments"]["specification_storage"] = "None"
+
+    run_configuration["models_configuration"][model_name]["controller"].merge(controller)
+    return run_configuration
+
+def update_controller_by_specification_from_dict(run_configuration, model_name, specification_dict):
+    controller = run_configuration["models_configuration"][model_name]["controller"]
+    controller["prepare_for_estimate"]["arguments"]["specification_dict"] = "%s" % specification_dict
     controller["prepare_for_estimate"]["arguments"]["specification_storage"] = "None"
 
     run_configuration["models_configuration"][model_name]["controller"].merge(controller)
