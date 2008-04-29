@@ -66,16 +66,26 @@ class IndicatorFrameworkInterface:
         return source_data
         
     def get_indicator_from_XML(self, indicator_name, dataset_name):
-        indicator_node = self.domDocument.elementsByTagName(indicator_name).item(0)
-        attribute = str(get_child_values(
-                           parent = indicator_node,
-                           child_names = ['expression'])['expression'])
-                
-        attribute = attribute.replace('DATASET', dataset_name)
-        indicator = Indicator(dataset_name = dataset_name,
-                              attribute = attribute)
-    
-        return indicator
+        indicator_element = None
+        new_indicator = None
+        elements = self.domDocument.elementsByTagName(indicator_name)
+        for x in xrange(0,elements.length(),1):
+            elementNode = elements.item(x)
+            element = elementNode.toElement()
+            if not element.isNull():
+                if element.hasAttribute('type') and \
+                       (element.attribute('type') == QString('indicator')):
+                    # We have our first indicator with the correct name
+                    indicator_element = element
+                    break
+        if indicator_element:
+            attribute = str(get_child_values(
+                parent = indicator_element,
+                child_names = ['expression'])['expression'])
+            attribute = attribute.replace('DATASET', dataset_name)
+            new_indicator = Indicator(dataset_name = dataset_name,
+                                  attribute = attribute)
+        return new_indicator
     
     def get_computed_indicator(self, indicator, source_data, dataset_name):
         #TODO: need mapping in XML from dataset to primary keys
