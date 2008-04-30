@@ -16,7 +16,7 @@ from opus_core.estimation_procedure import EstimationProcedure
 from numpy import array, zeros, float32, dot, transpose, concatenate
 from numpy import ones, sqrt, diagonal, log
 from opus_core.logger import logger
-from numpy.linalg import inv
+from numpy.linalg import inv, det
 from opus_core.misc import check_dimensions
 
 class estimate_linear_regression(EstimationProcedure):
@@ -57,6 +57,8 @@ class estimate_linear_regression(EstimationProcedure):
             logger.log_warning("Estimation led to singular matrix. No results.",
                                tags=tags, verbosity_level=vl)
             return {}
+        if det(Csquared) < 1e-20:
+            logger.log_warning("Estimation may led to singularities. Results may be not correct.")
         tmp = dot(Csquared, tX)
         estimates = dot(tmp,outcome)
         Residuals = outcome - dot(X, estimates)

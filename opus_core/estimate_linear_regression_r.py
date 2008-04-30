@@ -40,12 +40,10 @@ class estimate_linear_regression_r(EstimationProcedure):
         constant_position = resources.get("constant_position",  array([], dtype='int32')) #position for intercept
         if constant_position.size <= 0: #position for intercept
             constant_position=-1
-            nvalues = nvar
             # Used for printing results below
             start = 0
         else:
-            constant_position=constant_position[0]
-            nvalues = nvar+1        
+            constant_position=constant_position[0]     
             # Used for printing results below
             start = 1
 
@@ -88,6 +86,10 @@ class estimate_linear_regression_r(EstimationProcedure):
         # [ [estimate, standard error, t-value, p-value], ...]
         # To get an array of the estimates for all the variables, slice off the first column:
         estimates = r.summary(fit)['coefficients'][:,0]
+        if estimates.size < nvar+1:
+            logger.log_warning('There was an error in estimating the model. Possibly singularities found.')
+            return {"estimators":zeros(nvar+1), "standard_errors":zeros(nvar+1)}
+ 
         # To get an array of the standard errors for all of the variables, slice off the second column:
         standard_errors = r.summary(fit)['coefficients'][:,1]
         
