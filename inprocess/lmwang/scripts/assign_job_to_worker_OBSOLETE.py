@@ -36,79 +36,150 @@ class MysqlStorage:
                                                 storage_location = db)
         return storage
 
-if __name__ == '__main__':
-    input_database_name = 'psrc_2005_parcel_baseyear_data_prep_2006_survey'
-    output_database_name = input_database_name
-    instorage = MysqlStorage().get(input_database_name)
-    outstorage = MysqlStorage().get(output_database_name)
+def groupBy(table, groups, func, func_column='', where=''):
+    tmp_dict = {}
+    if (func_column) > 0:
+        values = []
+    for row in table.where(where):
+        key = tuple([row[field] for field in groups])
+        if len(func_column) > 0:
+            value = row[func_column]
+        else:
+            value = row[groups[0]]
+        if tmp_dict.has_key(key):
+            tmp_dict[key].append(value)
+        else:
+            tmp_dict[key] = [value]
 
-    cache_directory = "/urbansim_cache/psrc_parcel/wcm_estimation"
-    base_year = 2000
+    for key, values in tmp_dict.iteritems():
+        tmp_dict[key]=func(values)
+
+    return tmp_dict
+
+if __name__ == '__main__':
     #import wingdbstub
     from opus_core.simulation_state import SimulationState
     from opus_core.session_configuration import SessionConfiguration
     from opus_core.datasets.dataset import Dataset
     from opus_core.store.attribute_cache import AttributeCache
-    from tables import openFile
+    #from tables import openFile
     #from tables import *
     from opus_core.sampling_toolbox import sample_noreplace
     
-    SimulationState().set_cache_directory(cache_directory)
-    SimulationState().set_current_time(base_year)
-    attribute_cache = AttributeCache()
-    SessionConfiguration(new_instance=True,
-                         package_order=['psrc_parcel','urbansim_parcel','psrc', 'urbansim', 'opus_core'],
-                         in_storage=attribute_cache)
-    dataset_pool = SessionConfiguration().get_dataset_pool()
-    jobs = dataset_pool.get_dataset('job')
-    jobs.compute_variables("urbansim_parcel.job.zone_id")
+    load_data_to_pytables = True
     
-#    person_for_estimatoin = Dataset('persons_for_estimation')
-    persons_for_estimatoin = Dataset(in_storage = attribute_cache,
-                                    in_table_name="persons_for_estimation",
-                                    id_name="person_id", 
-                                    dataset_name="person")
+    if load_data_to_pytables:    
+        cache_directory = "/urbansim_cache/psrc_parcel/runs/cache_source"
+        base_year = 2000
 
-    # Open a file in "w"rite mode
-    h5file = openFile("/home/lmwang/playground/y2000.h5", mode = "w", title = "Test file")
-    # Create a new group under "/" (root)
-    y2000 = h5file.createGroup("/", 'y2000', 'Year 2000 data')
+        SimulationState().set_cache_directory(cache_directory)
+        SimulationState().set_current_time(base_year)
+        attribute_cache = AttributeCache()
+        SessionConfiguration(new_instance=True,
+                             package_order=['psrc_parcel','urbansim_parcel','psrc', 'urbansim', 'opus_core'],
+                             in_storage=attribute_cache)    
+        dataset_pool = SessionConfiguration().get_dataset_pool()
+        
+        jobs = dataset_pool.get_dataset('job')
+        jobs.compute_variables(["urbansim_parcel.job.parcel_id", "urbansim_parcel.job.zone_id"])
 
-    tjobs = jobs.createTable(h5file, y2000)
-    tpersons = persons_for_estimatoin.createTable(h5file, y2000, name="persons_for_estimation")
+        input_database_name = 'psrc_2005_parcel_baseyear_data_prep_2006_survey'
+        output_database_name = input_database_name
+        instorage = MysqlStorage().get(input_database_name)
+        #outstorage = MysqlStorage().get(output_database_name)
     
-    h5file.flush()
-    #import sys
-    #sys.exit(0)
+        workers = Dataset(in_storage = instorage,
+                          in_table_name="workers_surveyed",
+                          id_name="person_id", 
+                          dataset_name="person")
+    
+        # Open a file in "w"rite mode
+        h5file = openFile("/home/lmwang/playground/y2000.h5", mode = "w", title = "Test file")
+        # Create a new group under "/" (root)
+        y2000 = h5file.createGroup("/", 'y'+str(base_year), 'Year 2000 data')
+        
+        tjobs = jobs.createTable(h5file, y2000)
+        tworkers = workers.createTable(h5file, y2000, name="workers_surveyed")
+        #tpersons_sum = persons_for_estimatoin_summary.createTable(h5file, y2000, name="persons_for_estimation_summary")
+        
+        h5file.flush()
+    else:
+        h5file = openFile("/home/lmwang/playground/y2000.h5", mode = "a")
+        # Create a new group under "/" (root)
+        
+        tjobs = h5file.root.y2000.jobs
+        tworkers = h5file.root.y2000.workers_surveyed
+        
+    import sys
+    sys.exit(0)
     
     assigned_jobs = []
+    assigned_workers = []
+    
     #i = 1
-    for person in tpersons.where('is_worker>0'):
-        print person.nrow, person['workplace_zone_id'], person['worker_sector_id'], person['work_at_home'], '=',
-        matched_jobs = [job['job_id'] for job in tjobs.where('(zone_id == workplace_zone_id) & ' \
-                                         '(sector_id == worker_sector_id) & ' \
-                                         '(building_type == work_at_home)',
-                                         {'workplace_zone_id':person['workplace_zone_id'],
-                                          'worker_sector_id':person['worker_sector_id'],
-                                          'work_at_home':person['work_at_home']                                        
-                                         }
-                                     )]
-        print str(len(matched_jobs)),
-        if len(matched_jobs)>0:
-            while True:
-                tmp_job = sample_noreplace(array(matched_jobs), 1)
-                #tmp_job = matched_jobs[0]
-                if (array(assigned_jobs) == tmp_job).sum() == 0:
-                    break
-        
+    persons_summary = groupBy(tpersons, ['workplace_zone_id', 'worker_sector_id', 'work_at_home'], len, where='is_worker>0')
+    for attr, num in persons_summary.iteritems():
+        print attr[0], attr[1], attr[2], 
+        matched_workers = [person.nrow for person in tpersons.where('(workplace_zone_id == %s) & (worker_sector_id == %s) & (work_at_home == %s)' % attr,
+                                                                    )] 
+        matched_jobs = [job['job_id'] for job in tjobs.where('(zone_id == %s) & (sector_id == %s) & (building_type == %s)' % attr,
+                                                             )]
+        print '[%s : %s]' % ( len(matched_workers), len(matched_jobs) ),
+        if len(matched_jobs) >= num:
+            tmp_jobs = sample_noreplace(array(matched_jobs), num).tolist()
+            tmp_workers = matched_workers
+        elif len(matched_jobs) > 0:
+            tmp_jobs = matched_jobs
+            tmp_workers = sample_noreplace(array(matched_workers), len(matched_jobs)).tolist()
+        else:
+            print '.'
+            continue
+        print '(%s : %s)' % ( len(tmp_workers), len(tmp_jobs) ),
+        print '.'
+        assigned_jobs += tmp_jobs
+        assigned_workers += tmp_workers
+
+    for i in range(len(assigned_workers)):
+        tpersons.cols.job_id[assigned_workers[i]]  = assigned_jobs[i]
+    tpersons.flush()
+
+     ##remaining unassigned workers
+    for worker in tpersons.where('(is_worker > 0) & (job_id < 0)'):
+        print worker.nrow, worker['workplace_zone_id'], worker['work_at_home'],
+        matched_jobs = [job['job_id'] for job in tjobs.where( '(zone_id == %s) & (building_type == %s)' \
+                                                % (worker['workplace_zone_id'], worker['work_at_home']),
+                                             ) if (array(assigned_jobs)==job['job_id']).sum()== 0]
+        print '[%s : %s]' % ( 1, len(matched_jobs) ),
+        if len(matched_jobs) >= 1:
+            tmp_job = sample_noreplace(array(matched_jobs), 1)[0]
+            assigned_jobs.append(tmp_job)
             person['job_id'] = tmp_job
             person.update()
-            
-            assigned_jobs.append(tmp_job)
-        
-        print "."
-        #i += 1
-    
+            print '(%s : %s)' % ( 1, 1),
+            print "."
+    ## remaining still unassigned workers
+
+
+#    for person in tpersons.where('is_worker>0'):
+#        if person.nrow == 685:
+#            import pdb; pdb.set_trace()
+#        print person.nrow, person['workplace_zone_id'], person['worker_sector_id'], person['work_at_home'], '=',
+#        print str(len(matched_jobs)),
+#        if len(matched_jobs)>0:
+#            while :
+#                tmp_job = sample_noreplace(array(matched_jobs), 1)[0]
+#                #tmp_job = matched_jobs[0]
+#                if (array(assigned_jobs) == tmp_job).sum() == 0:
+#                    break
+#        
+#            person['job_id'] = tmp_job
+#            person.update()
+#            
+#            assigned_jobs.append(tmp_job)
+#        
+#        print "."
+#        #i += 1
+
     #is_worker = where(persons_for_estimatoin.get_attribute("is_worker")>0)[0]
     #workplace_zone_id = persons_for_estimatoin.get_attribute("workplace_zone_id")[is_worker]
     #worker_sector_id = persons_for_estimatoin.get_attribute("worker_sector_id")[is_worker]
