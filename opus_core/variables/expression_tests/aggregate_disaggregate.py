@@ -79,6 +79,102 @@ class Tests(opus_unittest.OpusTestCase):
         should_be = array([4.5, 9]) 
         self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate")
         
+    def test_aggregate_with_cast(self):
+        # test aggregate with a cast (this exercises the SUBPATTERN_NUMBER_OF_AGENTS_WITH_CAST tree pattern)
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name='zones',
+            table_data={
+                'zone_id':array([1,2]),
+                }
+            )
+        storage.write_table(table_name='gridcells',
+            table_data={
+                'my_variable':array([4,8,0.5,1]), 
+                'grid_id':array([1,2,3,4]),
+                'zone_id':array([1,2,1,2]),
+                }
+            )
+        zone_dataset = Dataset(in_storage=storage, in_table_name='zones', id_name="zone_id", dataset_name='zone')
+        gridcell_dataset = Dataset(in_storage=storage, in_table_name='gridcells', id_name="grid_id", dataset_name='gridcell')
+        dataset_pool = DatasetPool()
+        dataset_pool._add_dataset('gridcell', gridcell_dataset)
+        dataset_pool._add_dataset('zone', zone_dataset)
+        values = zone_dataset.compute_variables(['zone.aggregate(gridcell.my_variable).astype(float32)'], dataset_pool=dataset_pool)
+        should_be = array([4.5, 9.0]) 
+        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate")
+        
+    def test_aggregate_squared(self):
+        # more exercising the SUBPATTERN_NUMBER_OF_AGENTS_WITH_CAST tree pattern
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name='zones',
+            table_data={
+                'zone_id':array([1,2]),
+                }
+            )
+        storage.write_table(table_name='gridcells',
+            table_data={
+                'my_variable':array([4,8,0.5,1]), 
+                'grid_id':array([1,2,3,4]),
+                'zone_id':array([1,2,1,2]),
+                }
+            )
+        zone_dataset = Dataset(in_storage=storage, in_table_name='zones', id_name="zone_id", dataset_name='zone')
+        gridcell_dataset = Dataset(in_storage=storage, in_table_name='gridcells', id_name="grid_id", dataset_name='gridcell')
+        dataset_pool = DatasetPool()
+        dataset_pool._add_dataset('gridcell', gridcell_dataset)
+        dataset_pool._add_dataset('zone', zone_dataset)
+        values = zone_dataset.compute_variables(['zone.aggregate(gridcell.my_variable)**2'], dataset_pool=dataset_pool)
+        should_be = array([4.5*4.5, 9*9]) 
+        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate")
+        
+    def test_aggregate_with_cast_squared(self):
+        # more exercising the SUBPATTERN_NUMBER_OF_AGENTS_WITH_CAST tree pattern
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name='zones',
+            table_data={
+                'zone_id':array([1,2]),
+                }
+            )
+        storage.write_table(table_name='gridcells',
+            table_data={
+                'my_variable':array([4,8,0.5,1]), 
+                'grid_id':array([1,2,3,4]),
+                'zone_id':array([1,2,1,2]),
+                }
+            )
+        zone_dataset = Dataset(in_storage=storage, in_table_name='zones', id_name="zone_id", dataset_name='zone')
+        gridcell_dataset = Dataset(in_storage=storage, in_table_name='gridcells', id_name="grid_id", dataset_name='gridcell')
+        dataset_pool = DatasetPool()
+        dataset_pool._add_dataset('gridcell', gridcell_dataset)
+        dataset_pool._add_dataset('zone', zone_dataset)
+        values = zone_dataset.compute_variables(['zone.aggregate(gridcell.my_variable).astype(float32)**2'], dataset_pool=dataset_pool)
+        should_be = array([4.5*4.5, 9.0*9.0]) 
+        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate")
+        
+    def test_aggregate_squared_with_cast(self):
+        # more exercising the SUBPATTERN_NUMBER_OF_AGENTS_WITH_CAST tree pattern
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(table_name='zones',
+            table_data={
+                'zone_id':array([1,2]),
+                }
+            )
+        storage.write_table(table_name='gridcells',
+            table_data={
+                'my_variable':array([4,8,0.5,1]), 
+                'grid_id':array([1,2,3,4]),
+                'zone_id':array([1,2,1,2]),
+                }
+            )
+        zone_dataset = Dataset(in_storage=storage, in_table_name='zones', id_name="zone_id", dataset_name='zone')
+        gridcell_dataset = Dataset(in_storage=storage, in_table_name='gridcells', id_name="grid_id", dataset_name='gridcell')
+        dataset_pool = DatasetPool()
+        dataset_pool._add_dataset('gridcell', gridcell_dataset)
+        dataset_pool._add_dataset('zone', zone_dataset)
+        values = zone_dataset.compute_variables(['(zone.aggregate(gridcell.my_variable)**2).astype(float32)'], dataset_pool=dataset_pool)
+        should_be = array([4.5*4.5, 9.0*9.0]) 
+        self.assert_(ma.allclose(values, should_be, rtol=1e-6), "Error in aggregate")
+        
     def test_aggregate_fully_qualified_variable(self):
         storage = StorageFactory().get_storage('dict_storage')
         storage.write_table(table_name='zones',

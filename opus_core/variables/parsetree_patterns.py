@@ -288,7 +288,45 @@ SUBPATTERN_METHOD_CALL_WITH_ARGS =  \
      (symbol.trailer,
       (token.LPAR, '('),
       ['args'],
-      (token.RPAR, ')')))
+      (token.RPAR, ')')),
+     ['?', (token.DOUBLESTAR, '**')],
+     ['?', (symbol.factor, (symbol.power, (symbol.atom, (token.NUMBER, ['exponent']))))])
+
+SUBPATTERN_METHOD_CALL_WITH_ARGS_WITH_CAST =  \
+    (symbol.power,
+     (symbol.atom, (token.NAME, ['receiver'])),
+     (symbol.trailer,
+      (token.DOT, '.'),
+      (token.NAME, ['method'])),
+     (symbol.trailer,
+      (token.LPAR, '('),
+      ['args'],
+      (token.RPAR, ')')),
+     (symbol.trailer,
+      (token.DOT, '.'),
+      (token.NAME, 'astype')),
+     (symbol.trailer,
+      (token.LPAR, '('),
+       (symbol.arglist,
+        (symbol.argument,
+         (symbol.test,
+          _or_test_subtree(
+           (symbol.and_test,
+            (symbol.not_test,
+             (symbol.comparison,
+              (symbol.expr,
+               (symbol.xor_expr,
+                (symbol.and_expr,
+                 (symbol.shift_expr,
+                  (symbol.arith_expr,
+                   (symbol.term,
+                    (symbol.factor,
+                     (symbol.power,
+                      (symbol.atom,
+                       (token.NAME, ['type']))))))))))))))))),
+      (token.RPAR, ')')),
+     ['?', (token.DOUBLESTAR, '**')],
+     ['?', (symbol.factor, (symbol.power, (symbol.atom, (token.NUMBER, ['exponent']))))])
 
 SUBPATTERN_NAME = (token.NAME, ['name'])
 

@@ -232,6 +232,10 @@ class AutogenVariableFactory(object):
         if same:
             self._analyze_method_call(vars['receiver'], vars['method'], vars['args'])
             return
+        same, vars = match(SUBPATTERN_METHOD_CALL_WITH_ARGS_WITH_CAST, tree)
+        if same:
+            self._analyze_method_call(vars['receiver'], vars['method'], vars['args'])
+            return
         # Check for arguments to a method or function.  Since there may be a variable number
         # of arguments, just check whether the first thing in the tree is the symbol for an
         # argument list.  If so the rest of the tuple is the arguments.
