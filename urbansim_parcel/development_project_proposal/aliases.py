@@ -27,4 +27,6 @@ aliases = [
    "building_sqft = (development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.building_sqft)).astype(float32)",
    "number_of_components = (development_project_proposal.number_of_agents(development_project_proposal_component)).astype(int32)",
    "demolition_cost = development_project_proposal.disaggregate(urbansim_parcel.parcel.demolition_cost) * development_project_proposal.is_redevelopment",
+   "faz_id = development_project_proposal.disaggregate(zone.faz_id, intermediates=[zone])",
+   "zone_id = development_project_proposal.disaggregate(parcel.zone_id)",
     ]
