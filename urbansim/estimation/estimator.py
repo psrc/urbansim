@@ -204,16 +204,21 @@ class Estimator(object):
             predicted_id = predicted_geography_id[chosen_geography_id==observed_id]
             prediction_matrix[i] = ndimage.sum(ones(predicted_id.size), labels=predicted_id, index=unique_geography_id )
             if prediction_matrix[i].sum() > 0:
-                success_rate[i] = float(prediction_matrix[i, i]) / prediction_matrix[i].sum()
+                if prediction_matrix[j, :].sum() > 0:
+                    success_rate[i] = float(prediction_matrix[i, i]) / prediction_matrix[i].sum()
+                else:
+                    success_rate[i] = 0
             logger.log_status("%s\t\t%5.4f\t\t%s" % (observed_id, success_rate[i], 
                                               _convert_array_to_tab_delimited_string(prediction_matrix[i]) ) )
             i+=1
 
         success_rate2 = zeros( i, dtype="float32" )
         for j in range(i):
-            success_rate2[j]=float(prediction_matrix[:,j].sum()) / prediction_matrix[j, :].sum()
-        
-        logger.log_status("%s\t\t%s\t\t%s" % ('', '', 
+            if prediction_matrix[j, :].sum() > 0:
+                success_rate2[j]=float(prediction_matrix[:,j].sum()) / prediction_matrix[j, :].sum()
+            else:
+                success_rate2[j]=0
+        logger.log_status("%s\t\t%s\t\t%s" % (' ', ' ', 
                                                  _convert_array_to_tab_delimited_string( success_rate2 ) ))
         logger.disable_file_logging(filename=log_to_file)
         
