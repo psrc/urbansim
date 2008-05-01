@@ -29,7 +29,7 @@ class SpatialTableJoin:
         spatial_dataset = Dataset(in_storage=storage, in_table_name=spatial_table_name, dataset_name='spatial_dataset', id_name=[])
         spatial_dataset.join(dataset, name=attribute_names, join_attribute=join_attribute, metadata=AttributeType.PRIMARY)
         if new_table_name is None:
-            out_table_name = table_name
+            out_table_name = spatial_table_name
         else:
             out_table_name = new_table_name
             for postfix in files_to_copy_postfix:
