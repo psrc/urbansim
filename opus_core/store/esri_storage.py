@@ -175,10 +175,19 @@ else:
                 for column_name, column_value in table_data.iteritems():
                     # Check for string value, if yes, insert quotes
                     if column_value[i].dtype.kind == 'S':
-                        strng = '''"''' + column_value[i] + '''"'''
-                        exec_stmt = "row.%s = %s" % (column_names_mapping[column_name], strng)
+                        if "\'" in column_value[i]:
+                            column_value[i] = column_value[i].replace("'", "\'")
+                            strng = '''"''' + column_value[i] + '''"'''
+                            exec_stmt = """row.%s = %s""" % (column_names_mapping[column_name], strng)
+                        elif '\"' in column_value[i]:
+                            column_value[i] = column_value[i].replace('"', '\"')
+                            strng = """'""" + column_value[i] + """'"""
+                            exec_stmt = """row.%s = %s""" % (column_names_mapping[column_name], strng)
+                        else:
+                            strng = """'""" + column_value[i] + """'"""
+                            exec_stmt = """row.%s = %s""" % (column_names_mapping[column_name], strng)
                     else:
-                        exec_stmt = "row.%s = %s" % (column_names_mapping[column_name], column_value[i])
+                        exec_stmt = """row.%s = %s""" % (column_names_mapping[column_name], column_value[i])
                     # Execute the statement built above
                     exec exec_stmt
                 # Insert the row
@@ -291,6 +300,8 @@ else:
                     pass
                 elif '.' in field.Name:
                     pass
+                elif 'OBJECTID' in field.Name:
+                    pass
                 else:
                     column_names.append(str(field.Name))
                 field = fields.Next()
@@ -328,6 +339,8 @@ else:
                 elif str(field.Type) == 'Geometry':
                     pass
                 elif '.' in field.Name:
+                    pass
+                elif 'OBJECTID' in field.Name:
                     pass
                 else:
                     #esri_column_types.append(str(field.Type))
