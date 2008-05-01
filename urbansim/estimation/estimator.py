@@ -204,7 +204,7 @@ class Estimator(object):
             predicted_id = predicted_geography_id[chosen_geography_id==observed_id]
             prediction_matrix[i] = ndimage.sum(ones(predicted_id.size), labels=predicted_id, index=unique_geography_id )
             if prediction_matrix[i].sum() > 0:
-                if prediction_matrix[j, :].sum() > 0:
+                if prediction_matrix[i].sum() > 0:
                     success_rate[i] = float(prediction_matrix[i, i]) / prediction_matrix[i].sum()
                 else:
                     success_rate[i] = 0
