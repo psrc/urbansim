@@ -20,7 +20,7 @@ class employment_of_group_retail_accessible_from_work_to_home_drive_alone(abstra
     default_value = 0
     _return_type="int32"
     
-    agent_resource = "household.available_time"
+    agent_resource = "household.available_travel_time"
     agent_zone_id = 'household.worker1_workplace_zone_id'
     choice_zone_id = 'urbansim_parcel.building.zone_id'
     travel_data_attribute = 'travel_data.am_single_vehicle_to_work_travel_time'
@@ -48,7 +48,7 @@ class Tests(opus_unittest.OpusTestCase):
                  #'parcel_id':array([3, 1, 1, 2, 4]),
                  #'zone_id':array([3, 1, 1, 1, 2]),
                  'worker1_workplace_zone_id':array([1, 3, 3, 2, 3]),
-                 'available_time':array([6, 4.4, 4.3, 2, 17])
+                 'available_travel_time':array([6, 4.4, 4.3, 2, 17])
                  },
              "building":{
                  'building_id':array([1, 2, 3, 4]),
