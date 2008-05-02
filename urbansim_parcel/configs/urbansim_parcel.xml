@@ -69,16 +69,61 @@
           <output flags="hidden" type="string">(coefficients, dummy)</output>
         </estimate>
       </real_estate_price_model>
-      <employment_transition_model parser_action="execute" type="class">
-        <Class_name flags="hidden" type="string">EmploymentTransitionModelConfigurationCreator</Class_name>
-        <Class_path flags="hidden" type="string">urbansim.configurations.employment_transition_model_configuration_creator</Class_path>
-        <location_id_name type="string">building_id</location_id_name>
+      <employment_transition_model type="dictionary">
+        <import type="dictionary">
+          <urbansim.models.employment_transition_model type="string">EmploymentTransitionModel</urbansim.models.employment_transition_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">EmploymentTransitionModel</name>
+          <arguments type="dictionary">
+            <debuglevel type="string">debuglevel</debuglevel>
+            <location_id_name type="string">'building_id'</location_id_name>
+          </arguments>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name type="string">prepare_for_run</name>
+          <output type="string">control_totals</output>
+          <arguments type="dictionary">
+            <storage type="string">base_cache_storage</storage>
+          </arguments>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <control_totals type="string">control_totals</control_totals>
+            <job_building_types type="string">job_building_type</job_building_types>
+            <job_set type="string">job</job_set>
+            <year type="string">year</year>
+          </arguments>
+        </run>
       </employment_transition_model>
-      <employment_relocation_model parser_action="execute" type="class">
-        <Class_name flags="hidden" type="string">EmploymentRelocationModelConfigurationCreator</Class_name>
-        <Class_path flags="hidden" type="string">urbansim.configurations.employment_relocation_model_configuration_creator</Class_path>
-        <location_id_name type="string">building_id</location_id_name>
-        <output_index type="string">erm_index</output_index>
+      <employment_relocation_model type="dictionary">
+        <import type="dictionary">
+          <urbansim.models.employment_relocation_model_creator type="string">EmploymentRelocationModelCreator</urbansim.models.employment_relocation_model_creator>
+        </import>
+        <init type="dictionary">
+          <name type="string">EmploymentRelocationModelCreator().get_model</name>
+          <arguments type="dictionary">
+            <debuglevel type="string">debuglevel</debuglevel>
+            <location_id_name type="string">'building_id'</location_id_name>
+            <probabilities type="string">'urbansim.employment_relocation_probabilities'</probabilities>
+          </arguments>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name type="string">prepare_for_run</name>
+          <output type="string">erm_resources</output>
+          <arguments type="dictionary">
+            <rate_storage type="string">base_cache_storage</rate_storage>
+            <rate_table type="string">'annual_relocation_rates_for_jobs'</rate_table>
+            <what type="string">'jobs'</what>
+          </arguments>
+        </prepare_for_run>
+        <run type="dictionary">
+          <output type="string">erm_index</output>
+          <arguments type="dictionary">
+            <resources type="string">erm_resources</resources>
+            <agent_set type="string">job</agent_set>
+          </arguments>
+        </run>
       </employment_relocation_model>
       <employment_location_choice_model parser_action="execute" type="class">
         <Class_name flags="hidden" type="string">EmploymentLocationChoiceModelConfigurationCreator</Class_name>
