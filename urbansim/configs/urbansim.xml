@@ -19,9 +19,9 @@
             <submodel_string type="string" parser_action="empty_string_to_None"></submodel_string>
             <choice_attribute_name type="string">'choice_id'</choice_attribute_name>
             <interaction_pkg type="string">'opus_core'</interaction_pkg>
-            <run_config parser_action="empty_string_to_None"></run_config>
+            <run_config type="string" parser_action="empty_string_to_None"></run_config>
             <estimate_config parser_action="empty_string_to_None"></estimate_config>
-            <debuglevel>0<debuglevel>
+            <debuglevel>0</debuglevel>
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
         </init>
