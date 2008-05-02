@@ -124,6 +124,24 @@
           <output flags="hidden" type="string">specification</output>
         </prepare_for_estimate>
        </regression_model_template>
+      <allocation_model_template  type="dictionary">
+         <import type="dictionary">
+          <opus_core.allocation_model type="string">AllocationModel</opus_core.allocation_model>
+        </import>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <dataset type="string">fill in</dataset>
+            <outcome_attribute type="string">fill in (in quotes)</outcome_attribute>
+            <weight_attribute type="string">fill in (in quotes)</weight_attribute>
+            <control_totals>fill in</control_totals>
+       <current_year flags="hidden" type="string">year</current_year>
+            <control_total_attribute type="string">fill in (in quotes)</control_total_attribute>
+            <year_attribute type="string">'year'</year_attribute>
+            <capacity_attribute parser_action="empty_string_to_None" type="string" />
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+       </allocation_model_template>
    </model_system>
    <estimation type="dictionary">
    <model_template  type="dictionary">
