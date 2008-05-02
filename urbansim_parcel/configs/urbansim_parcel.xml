@@ -279,21 +279,47 @@
           </arguments>
         </run>
       </home_based_employment_location_choice_model>
-      <distribute_unplaced_jobs_model parser_action="execute" type="class">
-        <Class_name flags="hidden" type="string">DistributeUnplacedJobsModelConfigurationCreator</Class_name>
-        <Class_path flags="hidden" type="string">urbansim.configurations.distribute_unplaced_jobs_model_configuration_creator</Class_path>
-        <location_set type="string">building</location_set>
-        <filter type="string">urbansim_parcel.building.is_governmental</filter>
-        <agents_filter type="string">urbansim.job.is_in_employment_sector_group_scalable_sectors</agents_filter>
-        <module_name type="string">urbansim_parcel.models.distribute_unplaced_jobs_model</module_name>
+      <distribute_unplaced_jobs_model type="dictionary">
+        <import type="dictionary">
+          <urbansim_parcel.models.distribute_unplaced_jobs_model type="string">DistributeUnplacedJobsModel</urbansim_parcel.models.distribute_unplaced_jobs_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">DistributeUnplacedJobsModel</name>
+          <arguments type="dictionary">
+            <debuglevel type="string">debuglevel</debuglevel>
+            <filter type="string">'urbansim_parcel.building.is_governmental'</filter>
+            <dataset_pool type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </init>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <agent_set type="string">job</agent_set>
+            <data_objects type="string">datasets</data_objects>
+            <location_set type="string">building</location_set>
+            <agents_filter type="string">'urbansim.job.is_in_employment_sector_group_scalable_sectors'</agents_filter>
+          </arguments>
+        </run>
       </distribute_unplaced_jobs_model>
-      <governmental_employment_location_choice_model parser_action="execute" type="class">
-        <Class_name flags="hidden" type="string">GovernmentalEmploymentLocationChoiceModelConfigurationCreator</Class_name>
-        <Class_path flags="hidden" type="string">urbansim.configurations.governmental_employment_location_choice_model_configuration_creator</Class_path>
-        <input_index type="string">erm_index</input_index>
-        <location_set type="string">building</location_set>
-        <filter type="string">urbansim_parcel.building.is_governmental</filter>
-        <module_name type="string">urbansim_parcel.models.scaling_jobs_model</module_name>
+      <governmental_employment_location_choice_model type="dictionary">
+        <import type="dictionary">
+          <urbansim_parcel.models.scaling_jobs_model type="string">ScalingJobsModel</urbansim_parcel.models.scaling_jobs_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">ScalingJobsModel</name>
+          <arguments type="dictionary">
+            <debuglevel type="string">debuglevel</debuglevel>
+            <filter type="string">'urbansim_parcel.building.is_governmental'</filter>
+            <dataset_pool type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </init>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <agent_set type="string">job</agent_set>
+            <agents_index type="string">erm_index</agents_index>
+            <data_objects type="string">datasets</data_objects>
+            <location_set type="string">building</location_set>
+          </arguments>
+        </run>
       </governmental_employment_location_choice_model>
       <household_relocation_model parser_action="execute" type="class">
         <Class_name flags="hidden" type="string">HouseholdRelocationModelConfigurationCreator</Class_name>
