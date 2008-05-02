@@ -44,6 +44,8 @@ class abstract_time_space_prism_variable(Variable):
         interaction_dataset = self.get_dataset()
         zones = dataset_pool.get_dataset('zone')
         travel_data = dataset_pool.get_dataset('travel_data')
+        travel_data_attr_mat = travel_data.get_attribute_as_matrix(self.travel_data_attribute, 
+                                                                   fill=self.travel_data_attribute_default_value)
         
         agent_resource = interaction_dataset.get_dataset(1).get_attribute_by_index(self.agent_resource,
                                                                                     interaction_dataset.get_2d_index_of_dataset1())        
@@ -59,30 +61,11 @@ class abstract_time_space_prism_variable(Variable):
             to_zone = var1
             
         results = resize(array([self.default_value], dtype=self._return_type), from_zone.shape)
-        positions = ones(from_zone.shape, dtype="int32")
-        #create indices for 2d array of (origin, destination)
-        ij = map(lambda x, y: (x, y), where(positions)[0], where(positions)[1])
         zone_ids = zones.get_id_attribute()
-        
-        def __try_get_travel_data_attribute(travel_data, from_zone, to_zone, attribute, default_value=None):
-            if default_value is None:
-                default_value = self.travel_data_attribute_default_value
-            try:
-                result = travel_data.get_attribute_by_id(attribute, (from_zone, to_zone))
-            except:
-                logger.log_warning("zone pair (from_zone_id %s, to_zone_id %s) is not in travel_data; value set to default %s." % (from_zone, to_zone, default_value))
-                result = default_value
-            return result
-
-        for a in ij:
-            i, j = a
-            accessible_zones = []
-            for zone in zone_ids:                
-                t1 = __try_get_travel_data_attribute(travel_data, from_zone[i,j], zone, self.travel_data_attribute)
-                t2 = __try_get_travel_data_attribute(travel_data, zone, to_zone[i,j], self.travel_data_attribute)
-                if t1 + t2 <= agent_resource[i,j]:
-                    accessible_zones.append(zone)
-            if len(accessible_zones) > 0:
-                results[i,j] = zones.get_attribute_by_id(self.zone_attribute_to_access, accessible_zones).sum()
+        for zone in zone_ids:
+            tmp_zone = zone * ones(from_zone.shape, dtype="int32")
+            t1 = travel_data_attr_mat[from_zone, tmp_zone]
+            t2 = travel_data_attr_mat[tmp_zone, to_zone]
+            results[where( t1 + t2 <= agent_resource)] += zones.get_attribute_by_id(self.zone_attribute_to_access, zone)
                 
         return results
