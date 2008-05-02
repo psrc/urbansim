@@ -17,7 +17,7 @@
 import os
 from urbansim.model_coordinators.model_system import ModelSystem
 from opus_core.storage_factory import StorageFactory
-from opus_core.choice_model import prepare_specification_and_coefficients
+from opus_core.model import prepare_specification_and_coefficients
 from opus_core.configuration import Configuration
 
 class LatexTableCreator(object):

@@ -25,6 +25,8 @@ class EstimationOptionGroup:
                                action="store", help="Name of the model to be estimated")
         self.parser.add_option("-s", "--specification", dest="specification", default = None,
                                action="store", help="Specification module containing model specification in a dictionary format")
+        self.parser.add_option("-x", "--xml-specification", dest="xml_specification", default = None,
+                               action="store", help="Full path to an XML file containing the specification. One of the options -s and -x should be given, otherwise the specification is taken from cache.")
         self.parser.add_option("-c", "--configuration-path", dest="configuration_path", default=None, 
                                help="Opus path to Python module defining a configuration.")
         self.parser.add_option("--save-results", dest="save_results", default=False, action="store_true", 
@@ -42,9 +44,11 @@ if __name__ == '__main__':
         raise StandardError, "Model name (argument -m) must be given."
     if options.configuration_path is None:
         raise StandardError, "Configuration path (argument -c) must be given."
-    if options.specification is None:
-        logger.log_warning("No specification module given. Specification taken from the cache.")
+    if (options.specification is None) and (options.xml_specification is None):
+        logger.log_warning("No specification given (arguments -s or -x). Specification taken from the cache.")
+
     config = get_config_from_opus_path(options.configuration_path)
-    estimator = EstimationRunner(model=options.model_name, specification_module=options.specification, model_group=options.model_group,
-                           configuration=config, save_estimation_results=options.save_results)
+    estimator = EstimationRunner(model=options.model_name, specification_module=options.specification, xml_specification=options.xml_specification, 
+                                 model_group=options.model_group,
+                                 configuration=config, save_estimation_results=options.save_results)
     estimator.estimate()
