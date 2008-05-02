@@ -67,6 +67,63 @@
           <output flags="hidden" type="string">specification</output>
         </prepare_for_estimate>
        </choice_model_template>
+       <regression_model_template  type="dictionary">
+         <import type="dictionary">
+          <opus_core.regression_model type="string">RegressionModel</opus_core.regression_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">RegressionModel</name>
+          <arguments type="dictionary">
+            <regression_procedure>'opus_core.linear_regression'</regression_procedure>
+            <submodel_string type="string" parser_action="empty_string_to_None"></submodel_string>
+            <run_config type="string" parser_action="empty_string_to_None"></run_config>
+            <estimate_config parser_action="empty_string_to_None"></estimate_config>
+            <debuglevel>0</debuglevel>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </init>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <specification flags="hidden" type="string">specification</specification>
+            <coefficients flags="hidden" type="string">coefficients</coefficients>
+            <dataset type="string">fill in</dataset>
+            <index type="string" parser_action="empty_string_to_None"></index>
+            <chunk_specification type="string" parser_action="empty_string_to_None"></chunk_specification>
+            <data_objects flags="hidden" type="string">datasets</data_objects>
+          </arguments>
+        </run>
+        <prepare_for_run type="dictionary">
+          <name type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="string">'regression_model_template_specification'</specification_table>
+            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+            <coefficients_table type="string">'regression_model_template_coefficients'</coefficients_table>
+            <sample_coefficients type="boolean">False</sample_coefficients>
+            <cache_storage flags="hidden" type="string">base_cache_storage</cache_storage>
+            <multiplicator type = "integer">1</multiplicator>
+          </arguments>
+          <output flags="hidden" type="string">(specification, coefficients)</output>
+        </prepare_for_run>
+        <estimate type="dictionary">
+          <arguments type="dictionary">
+            <specification flags="hidden" type="string">specification</specification>
+            <dataset type="string">fill in</dataset>
+            <index flags="hidden" type="string" parser_action="empty_string_to_None"></index>
+            <procedure type="string">'opus_core.estimate_linear_regression'</procedure>
+            <data_objects flags="hidden" type="string">datasets</data_objects>
+          </arguments>
+          <output flags="hidden" type="string">(coefficients, dummy)</output>
+        </estimate>
+        <prepare_for_estimate type="dictionary">
+          <name type="string">prepare_for_estimate</name>
+          <arguments type="dictionary">
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="string">'regression_model_template_specification'</specification_table>
+          </arguments>
+          <output flags="hidden" type="string">specification</output>
+        </prepare_for_estimate>
+       </regression_model_template>
    </model_system>
    <estimation type="dictionary">
    <model_template  type="dictionary">
