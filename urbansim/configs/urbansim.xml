@@ -109,6 +109,7 @@
           <arguments type="dictionary">
             <specification flags="hidden" type="string">specification</specification>
             <dataset type="string">fill in</dataset>
+            <outcome_attribute type="string">fill in (in quotes)</outcome_attribute>
             <index flags="hidden" type="string" parser_action="empty_string_to_None"></index>
             <procedure type="string">'opus_core.estimate_linear_regression'</procedure>
             <data_objects flags="hidden" type="string">datasets</data_objects>
