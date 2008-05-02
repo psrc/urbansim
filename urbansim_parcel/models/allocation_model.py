@@ -19,9 +19,16 @@ from opus_core.datasets.dataset import Dataset
 from opus_core.logger import logger
 
 class AllocationModel(AM):
-    def prepare_for_run(self, dataset=None, control_totals=None, excel_path=None, excel_data_info={}, esri_storage_location=None,
-                        dataset_name=None, dataset_pool=None):
-        
+    def prepare_for_run(self, dataset=None, control_totals=None, weight_attribute=None, excel_path=None, excel_data_info={}, esri_storage_location=None,
+                        dataset_name=None, current_year=0, datasets_and_weights_in_years=None, dataset_pool=None):
+        """
+        If dataset is not given, it is loaded from the esri storage. In such a case, dataset_name should be the name of the shape file (without postfix).
+        If control_totals is not given, it is loaded from an excel table.
+        datasets_and_weights_in_years is a dictionary with years as keys and tuples of dataset_name and weight attribute as values.
+        If its given and it has a value for the current year, its value overwrites the arguments 'dataset_name' and 'weight_attribute'.
+        The method returns a tuple wit three elements: dataset (Dataset object), control_totals (Dataset object), weight_attribute (string)
+        Those are going to be used in the run method.
+        """
         if control_totals is None:
             logger.log_status("Getting data from Excel for AllocationModel")
             excel_doc = ExcelDocument()
@@ -37,6 +44,10 @@ class AllocationModel(AM):
 
             control_totals = Dataset(in_storage = dict_storage, in_table_name = 'control_totals', id_name='year')
 
+        if datasets_and_weights_in_years is not None and current_year in datasets_and_weights_in_years.keys():
+            dataset_name, weight_attribute = datasets_and_weights_in_years[current_year]
+            dataset = None
+            
         if dataset is None:
             logger.log_status("Getting data from esri_storage for AllocationModel")
             esri_storage = StorageFactory().get_storage('esri_storage', storage_location=esri_storage_location)
@@ -45,4 +56,4 @@ class AllocationModel(AM):
         
         dataset_pool.add_datasets_if_not_included({dataset_name:dataset, control_totals.get_dataset_name():control_totals})
         
-        return (dataset, control_totals)
+        return (dataset, control_totals, weight_attribute)

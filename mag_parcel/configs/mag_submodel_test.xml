@@ -16,19 +16,22 @@
           <arguments type="dictionary">
             <dataset parser_action="empty_string_to_None" type="string" />
             <control_totals parser_action="empty_string_to_None" type="string" />
+            <weight_attribute type="string">'rooms'</weight_attribute>
             <excel_path type="string">r'c:\tmp\TransientModel.xls'</excel_path>
             <excel_data_info type="string">{'year':'d22:d32', 'persons':'k22:k32'}</excel_data_info>
             <esri_storage_location type="string">r'c:\tmp\tmp.gdb'</esri_storage_location>
             <dataset_name type="string">'hotel'</dataset_name>
+            <current_year flags="hidden" type="string">year</current_year>
+            <datasets_and_weights_in_years type="dictionary" />
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
-          <output flags="hidden" type="string">(aux_dataset, aux_control_totals)</output>
+          <output flags="hidden" type="string">(aux_dataset, aux_control_totals, aux_weight_attribute)</output>
         </prepare_for_run>
         <run type="dictionary">
           <arguments type="dictionary">
             <dataset type="string">aux_dataset</dataset>
             <outcome_attribute type="string">'persons'</outcome_attribute>
-            <weight_attribute type="string">'rooms'</weight_attribute>
+            <weight_attribute type="string" flags="hidden">aux_weight_attribute</weight_attribute>
             <control_totals type="string">aux_control_totals</control_totals>
             <current_year flags="hidden" type="string">year</current_year>
             <control_total_attribute type="string">'persons'</control_total_attribute>
