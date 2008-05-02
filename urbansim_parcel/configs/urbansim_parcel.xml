@@ -321,13 +321,32 @@
           </arguments>
         </run>
       </governmental_employment_location_choice_model>
-      <household_relocation_model parser_action="execute" type="class">
-        <Class_name flags="hidden" type="string">HouseholdRelocationModelConfigurationCreator</Class_name>
-        <Class_path flags="hidden" type="string">urbansim.configurations.household_relocation_model_configuration_creator</Class_path>
-        <agent_set type="string">household</agent_set>
-        <location_id_name type="string">building_id</location_id_name>
-        <rate_table type="string">annual_relocation_rates_for_households</rate_table>
-        <probabilities type="string">urbansim.household_relocation_probabilities</probabilities>
+      <household_relocation_model type="dictionary">
+        <import type="dictionary">
+          <urbansim.models.household_relocation_model_creator type="string">HouseholdRelocationModelCreator</urbansim.models.household_relocation_model_creator>
+        </import>
+        <init type="dictionary">
+          <name type="string">HouseholdRelocationModelCreator().get_model</name>
+          <arguments type="dictionary">
+            <debuglevel type="string">debuglevel</debuglevel>
+            <location_id_name type="string">'building_id'</location_id_name>
+            <probabilities type="string">'urbansim.household_relocation_probabilities'</probabilities>
+          </arguments>
+        </init>
+        <prepare_for_run type="dictionary">
+          <arguments type="dictionary">
+            <rate_storage type="string">base_cache_storage</rate_storage>
+            <rate_table type="string">'annual_relocation_rates_for_households'</rate_table>
+            <what type="string">'households'</what>
+          </arguments>
+        </prepare_for_run>
+        <run type="dictionary">
+          <output type="string">hrm_index</output>
+          <arguments type="dictionary">
+            <agent_set type="string">household</agent_set>
+            <resources type="string">hrm_resources</resources>
+          </arguments>
+        </run>
       </household_relocation_model>
       <process_pipeline_events type="dictionary">
         <import type="dictionary">
