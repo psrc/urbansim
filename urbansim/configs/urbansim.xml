@@ -2,4 +2,85 @@
   <general>
     <description type="string">Base UrbanSim project</description>
   </general>
+  
+  <model_manager>
+   <model_system type="dictionary">
+       <choice_model_template  type="dictionary">
+         <import type="dictionary">
+          <opus_core.choice_model type="string">ChoiceModel</opus_core.choice_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">ChoiceModel</name>
+          <arguments type="dictionary">
+            <choice_set type="string">fill in</choice_set>
+            <utilities type="string">'opus_core.linear_utilities'</utilities>
+            <probabilities type="string">'opus_core.mnl_probabilities'</probabilities>
+            <choices type="string">'opus_core.random_choices'</choices>
+            <submodel_string type="string" parser_action="empty_string_to_None"></submodel_string>
+            <choice_attribute_name type="string">'choice_id'</choice_attribute_name>
+            <interaction_pkg type="string">'opus_core'</interaction_pkg>
+            <run_config parser_action="empty_string_to_None"></run_config>
+            <estimate_config parser_action="empty_string_to_None"></estimate_config>
+            <debuglevel>0<debuglevel>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </init>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <specification flags="hidden" type="string">specification</specification>
+            <coefficients flags="hidden" type="string">coefficients</coefficients>
+            <agent_set type="string">fill in</agent_set>
+            <agents_index type="string" parser_action="empty_string_to_None"></agents_index>
+            <chunk_specification type="string" parser_action="empty_string_to_None"></chunk_specification>
+            <data_objects flags="hidden" type="string">datasets</data_objects>
+          </arguments>
+        </run>
+        <prepare_for_run type="dictionary">
+          <name type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="string">'choice_model_template_specification'</specification_table>
+            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+            <coefficients_table type="string">'choice_model_template_coefficients'</coefficients_table>
+            <sample_coefficients type="boolean">False</sample_coefficients>
+            <cache_storage flags="hidden" type="string">base_cache_storage</cache_storage>
+            <multiplicator type = "integer">1</multiplicator>
+          </arguments>
+          <output flags="hidden" type="string">(specification, coefficients)</output>
+        </prepare_for_run>
+        <estimate type="dictionary">
+          <arguments type="dictionary">
+            <specification flags="hidden" type="string">specification</specification>
+            <agent_set type="string">fill in</agent_set>
+            <agents_index flags="hidden" type="string" parser_action="empty_string_to_None"></agents_index>
+            <procedure type="string">'opus_core.bhhh_mnl_estimation'</procedure>
+            <data_objects flags="hidden" type="string">datasets</data_objects>
+          </arguments>
+          <output flags="hidden" type="string">(coefficients, dummy)</output>
+        </estimate>
+        <prepare_for_estimate type="dictionary">
+          <name type="string">prepare_for_estimate</name>
+          <arguments type="dictionary">
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="string">'choice_model_template_specification'</specification_table>
+          </arguments>
+          <output flags="hidden" type="string">specification</output>
+        </prepare_for_estimate>
+       </choice_model_template>
+   </model_system>
+   <estimation type="dictionary">
+   <model_template  type="dictionary">
+   <all_variables type="dictionary">
+     <var1 type="variable_definition">var1 = package.dataset.some_variable_or_expression</var1>
+   </all_variables>
+   <submodel type="submodel">
+      <description type="string">No submodel</description>
+      <submodel_id type="integer">-2</submodel_id>
+      <variables type="selectable_list">
+         <var1 choices="Use|Skip" type="variable">Skip</var1>
+      </variables>
+   </submodel>
+   </model_template>
+   </estimation>
+  </model_manager>
 </opus_project>
