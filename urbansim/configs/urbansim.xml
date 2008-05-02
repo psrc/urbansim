@@ -20,8 +20,8 @@
             <choice_attribute_name type="string">'choice_id'</choice_attribute_name>
             <interaction_pkg type="string">'opus_core'</interaction_pkg>
             <run_config type="string" parser_action="empty_string_to_None"></run_config>
-            <estimate_config parser_action="empty_string_to_None"></estimate_config>
-            <debuglevel>0</debuglevel>
+            <estimate_config type="string" parser_action="empty_string_to_None"></estimate_config>
+            <debuglevel type="integer">0</debuglevel>
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
         </init>
@@ -74,11 +74,11 @@
         <init type="dictionary">
           <name type="string">RegressionModel</name>
           <arguments type="dictionary">
-            <regression_procedure>'opus_core.linear_regression'</regression_procedure>
+            <regression_procedure type="string">'opus_core.linear_regression'</regression_procedure>
             <submodel_string type="string" parser_action="empty_string_to_None"></submodel_string>
             <run_config type="string" parser_action="empty_string_to_None"></run_config>
-            <estimate_config parser_action="empty_string_to_None"></estimate_config>
-            <debuglevel>0</debuglevel>
+            <estimate_config type="string" parser_action="empty_string_to_None"></estimate_config>
+            <debuglevel type="integer">0</debuglevel>
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
         </init>
@@ -133,7 +133,7 @@
             <dataset type="string">fill in</dataset>
             <outcome_attribute type="string">fill in (in quotes)</outcome_attribute>
             <weight_attribute type="string">fill in (in quotes)</weight_attribute>
-            <control_totals>fill in</control_totals>
+            <control_totals type="string">fill in</control_totals>
        <current_year flags="hidden" type="string">year</current_year>
             <control_total_attribute type="string">fill in (in quotes)</control_total_attribute>
             <year_attribute type="string">'year'</year_attribute>
