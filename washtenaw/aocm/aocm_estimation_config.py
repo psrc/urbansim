@@ -23,7 +23,7 @@ my_controller_configuration = {
  'auto_ownership_choice_model': {
     "import": {"opus_core.choice_model":"ChoiceModel",
                "washtenaw.aocm.aocm_specification":"specification as spec_dict",
-               "urbansim.estimation.estimator_new":"get_specification_for_estimation",
+               "opus_core.model":"get_specification_for_estimation",
                },
     "init": { 
         "name": "ChoiceModel",
