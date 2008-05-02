@@ -24,7 +24,7 @@ class AutoOwnershipChoiceModel(ChoiceModel):
                              specification_dict = None, 
                              specification_storage=None, 
                              specification_table=None):
-        from urbansim.estimation.estimator import get_specification_for_estimation
+        from opus_core.model import get_specification_for_estimation
         return get_specification_for_estimation(specification_dict, 
                                                 specification_storage, 
                                                 specification_table)

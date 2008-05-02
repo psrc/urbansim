@@ -66,7 +66,7 @@ class RegressionModelMember(RegressionModel):
 
     def prepare_for_estimate(self, add_member_prefix=True, specification_dict=None, specification_storage=None,
                              specification_table=None, **kwargs):
-        from urbansim.estimation.estimator import get_specification_for_estimation
+        from opus_core.model import get_specification_for_estimation
         if add_member_prefix:
             specification_table = self.group_member.add_member_prefix_to_table_names([specification_table])
         return get_specification_for_estimation(specification_dict, specification_storage,

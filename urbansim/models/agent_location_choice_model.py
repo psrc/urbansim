@@ -208,7 +208,7 @@ class AgentLocationChoiceModel(LocationChoiceModel):
         In such a case, the annual supply is estimated without unplacing agents. 'grouping_location_set', 'movers_variable' and
         'movers_index' must be given, if 'compute_lambda' is True.
         """
-        from urbansim.estimation.estimator import get_specification_for_estimation
+        from opus_core.model import get_specification_for_estimation
         from urbansim.functions import compute_supply_and_add_to_location_set
         specification = get_specification_for_estimation(specification_dict,
                                                           specification_storage,

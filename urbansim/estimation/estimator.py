@@ -355,15 +355,6 @@ class Estimator(object):
         self.simulation_state.remove_singleton(delete_cache=remove_cache)
         SessionConfiguration().remove_singleton()
 
-
-def get_specification_for_estimation(specification_dict=None, specification_storage=None,
-                                        specification_table = None):
-    if specification_dict is not None:
-        return EquationSpecification(specification_dict=specification_dict)
-    from opus_core.choice_model import prepare_specification_and_coefficients
-    (specification, dummy) = prepare_specification_and_coefficients(specification_storage, specification_table)
-    return specification
-
 def update_controller_by_specification_from_module(run_configuration, model_name, specification_module):
     controller = run_configuration["models_configuration"][model_name]["controller"]
     controller["import"][specification_module] = "specification as spec"

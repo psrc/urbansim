@@ -214,7 +214,7 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
                               events_for_estimation_table=None, urbansim_constant=None, base_year=0,
                               categories=None):
 
-        from urbansim.estimation.estimator import get_specification_for_estimation
+        from opus_core.model import get_specification_for_estimation
         specification = get_specification_for_estimation(specification_dict,
                                                           specification_storage,
                                                           specification_table)

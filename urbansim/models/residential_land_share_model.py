@@ -65,7 +65,7 @@ class ResidentialLandShareModel(RegressionModel):
     def prepare_for_estimate(self, specification_dict = None, specification_storage=None,
                               specification_table=None, dataset=None,
                               filter_variable="urbansim.gridcell.fraction_residential_land"):
-        from urbansim.estimation.estimator import get_specification_for_estimation
+        from opus_core.model import get_specification_for_estimation
         specification = get_specification_for_estimation(specification_dict,
                                                           specification_storage,
                                                           specification_table)

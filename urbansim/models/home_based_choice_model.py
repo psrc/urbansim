@@ -14,7 +14,8 @@
 
 from opus_core.datasets.dataset import Dataset
 from opus_core.resources import Resources
-from opus_core.choice_model import ChoiceModel, prepare_specification_and_coefficients
+from opus_core.choice_model import ChoiceModel
+from opus_core.model import prepare_specification_and_coefficients
 from numpy import arange, where
 from opus_core.variables.variable_name import VariableName
 
@@ -33,7 +34,7 @@ class HomeBasedChoiceModel(ChoiceModel):
                              agents_for_estimation_table=None, 
                              join_datasets=False,
                              filter=None):
-        from urbansim.estimation.estimator import get_specification_for_estimation
+        from opus_core.model import get_specification_for_estimation
         specification = get_specification_for_estimation(specification_dict, 
                                                          specification_storage, 
                                                          specification_table)

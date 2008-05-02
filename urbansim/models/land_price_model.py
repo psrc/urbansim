@@ -116,7 +116,7 @@ class LandPriceModel(RegressionModel):
                               specification_table=None, dataset=None,
                               filter_variable="urbansim.gridcell.total_land_value",
                               threshold=0):
-        from urbansim.estimation.estimator import get_specification_for_estimation
+        from opus_core.model import get_specification_for_estimation
         specification = get_specification_for_estimation(specification_dict,
                                                           specification_storage,
                                                           specification_table)
