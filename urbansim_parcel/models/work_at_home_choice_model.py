@@ -14,8 +14,9 @@
 
 from opus_core.datasets.dataset import Dataset
 from opus_core.resources import Resources
-from opus_core.choice_model import ChoiceModel, prepare_specification_and_coefficients
-from urbansim.estimation.estimator import get_specification_for_estimation
+from opus_core.choice_model import ChoiceModel
+from opus_core.model import prepare_specification_and_coefficients
+from opus_core.model import get_specification_for_estimation
 from numpy import array, arange, where, ones, concatenate
 from opus_core.variables.variable_name import VariableName
 from opus_core.sampling_toolbox import sample_noreplace

@@ -93,7 +93,7 @@ class BuildingLocationChoiceModel(UrbansimBuildingLocationChoiceModel):
         if add_member_prefix:
             specification_table = self.group_member.add_member_prefix_to_table_names([specification_table])
 
-        from urbansim.estimation.estimator import get_specification_for_estimation
+        from opus_core.model import get_specification_for_estimation
         #from urbansim.functions import compute_supply_and_add_to_location_set
         specification = get_specification_for_estimation(specification_dict,
                                                          specification_storage,

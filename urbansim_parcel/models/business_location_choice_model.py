@@ -103,7 +103,7 @@ class BusinessLocationChoiceModel(LocationChoiceModel):
                               index_to_unplace=None, portion_to_unplace=1.0,
                               filter=None,
                               data_objects={}):
-        from urbansim.estimation.estimator import get_specification_for_estimation
+        from opus_core.model import get_specification_for_estimation
         specification = get_specification_for_estimation(specification_dict,
                                                           specification_storage,
                                                           specification_table)
