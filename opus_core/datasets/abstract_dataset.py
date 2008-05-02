@@ -37,7 +37,6 @@ from opus_core.resources import Resources
 from opus_core.storage_factory import StorageFactory
 from opus_core.specified_coefficients import update_constants
 from opus_core.misc import unique_values, unique
-from opus_core.datasets.dataset_pool import DatasetPool
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.variables.attribute_type import AttributeType
 from opus_core.simulation_state import SimulationState
@@ -1833,6 +1832,7 @@ class AbstractDataset(object):
     def _prepare_dataset_pool_for_variable(self, dataset_pool=None, resources=None):
         """ The method puts everything from resources that is of type Dataset into dataset_pool, everything else
         from resources stays there."""
+        from opus_core.datasets.dataset_pool import DatasetPool
         if dataset_pool is None:
             try:
                 dataset_pool = SessionConfiguration().get_dataset_pool()

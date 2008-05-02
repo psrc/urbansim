@@ -16,10 +16,8 @@ import os
 
 from opus_core.logger import logger
 from opus_core.singleton import Singleton
-from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.general_resources import GeneralResources
 from opus_core.opus_package_info import package as corepackage
-from opus_core.datasets.dataset_pool import DatasetPool
 
 
 class SessionConfiguration(Singleton, GeneralResources):

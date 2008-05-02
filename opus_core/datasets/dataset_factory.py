@@ -45,8 +45,18 @@ class DatasetFactory(object):
             except ImportError:
                 continue
         else:
-            raise Exception("Dataset '%s' not found in any of the "
+            from opus_core.datasets.dataset import Dataset
+            logger.log_warning("Dataset '%s' not found in any of the "
                     "packages: '%s'." % (dataset_name, "', '".join(package_order)))
+            args = kwargs.get('arguments', {})
+            storage=args.get('in_storage', None)
+            try:
+                dataset = Dataset(in_storage=storage, dataset_name=dataset_name, in_table_name=dataset_name, id_name="%s_id" % dataset_name)
+                logger.log_status('Generic Dataset created.')
+            except:
+                logger.log_warning("Could not create a generic Dataset '%s'." % dataset_name)
+                raise
+            
         return dataset
     
     def class_name_for_dataset(self, dataset_name):
@@ -112,7 +122,10 @@ class DatasetFactory(object):
         return datasets
 
 
+from numpy import array
 from opus_core.tests import opus_unittest
+from opus_core.storage_factory import StorageFactory
+
 class DatasetFactoryTests(opus_unittest.OpusTestCase):
     def test_translations(self):
         factory = DatasetFactory()
@@ -131,6 +144,15 @@ class DatasetFactoryTests(opus_unittest.OpusTestCase):
         self.assertEqual(idname, "id")
         self.assertEqual(ds.size(), 1)
         
+    def test_create_generic_dataset(self):
+        storage = StorageFactory().get_storage('dict_storage')
+        data = {'attr1': array([1,3,4]), 'table_id': array([1,2,3])}
+        storage.write_table(table_name = 'table', table_data = data)
+        factory = DatasetFactory()
+        ds = factory.search_for_dataset('table', ['opus_core'], arguments={'in_storage': storage})
+        self.assertEqual(ds.get_id_name()[0], 'table_id')
+        self.assertEqual(ds.get_dataset_name(), 'table')
+        self.assertEqual(ds.size(), 3)
         
 if __name__ == '__main__':
     opus_unittest.main()
