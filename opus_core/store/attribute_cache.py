@@ -116,6 +116,7 @@ class AttributeCache(Storage):
     def _get_column_names_and_years(self, table_name, lowercase=True):
         column_names = []
         result = []
+        found=False
         for year in self._get_sorted_list_of_years():
             try:
                 storage = flt_storage(os.path.join(self.get_storage_location(), '%s' % year))
@@ -123,8 +124,11 @@ class AttributeCache(Storage):
                 columns = [column for column in columns if (not column in column_names)]
                 column_names.extend(columns)
                 result.extend([(column_name, year) for column_name in columns])
+                found=True
             except:
                 pass
+        if not found:
+            raise StandardError,"Table %s not found" % table_name
         return result
         
     
