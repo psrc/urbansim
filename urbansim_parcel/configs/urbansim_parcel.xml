@@ -202,21 +202,82 @@
           </arguments>
         </run>
       </employment_location_choice_model>
-      <home_based_employment_location_choice_model parser_action="execute" type="class">
-        <Class_name flags="hidden" type="string">EmploymentLocationChoiceModelConfigurationCreator</Class_name>
-        <Class_path flags="hidden" type="string">urbansim.configurations.employment_location_choice_model_configuration_creator</Class_path>
-        <location_set type="string">building</location_set>
-        <input_index type="string">erm_index</input_index>
-        <estimation_weight_string type="string">vacant_home_based_job_space</estimation_weight_string>
-        <agents_for_estimation_table parser_action="empty_string_to_None" type="string" />
-        <estimation_size_agents type="float">0.4</estimation_size_agents>
-        <number_of_units_string parser_action="empty_string_to_None" type="string" />
-        <filter type="string">numpy.logical_and(building.residential_units, building.sqft_per_unit)</filter>
-        <filter_for_estimation type="string">numpy.logical_and(job.building_id&gt;0, job.disaggregate(building.sqft_per_unit &gt; 0))</filter_for_estimation>
-        <portion_to_unplace type="integer">0</portion_to_unplace>
-        <capacity_string type="string">vacant_home_based_job_space</capacity_string>
-        <variable_package type="string">urbansim_parcel</variable_package>
-        <lottery_max_iterations type="integer">7</lottery_max_iterations>
+      <home_based_employment_location_choice_model type="dictionary">
+        <estimate type="dictionary">
+          <arguments type="dictionary">
+            <agent_set type="string">job</agent_set>
+            <agents_index type="string">index</agents_index>
+            <data_objects type="string">datasets</data_objects>
+            <debuglevel type="string">debuglevel</debuglevel>
+            <specification type="string">specification</specification>            
+          </arguments>
+          <output type="string">(coefficients, _)</output>
+        </estimate>
+        <group_by_attribute type="tuple">
+          <grouping_table type="string">job_building_type</grouping_table>
+          <grouping_column type="string">name</grouping_column>
+        </group_by_attribute>
+        <import type="dictionary">
+          <urbansim.models.employment_location_choice_model type="string">EmploymentLocationChoiceModel</urbansim.models.employment_location_choice_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">EmploymentLocationChoiceModel</name>
+          <arguments type="dictionary">
+            <sampler type="string">'opus_core.samplers.weighted_sampler'</sampler>
+            <choices type="string">'urbansim.lottery_choices'</choices>
+            <estimation type="string">'opus_core.bhhh_mnl_estimation'</estimation>
+            <dataset_pool type="string">dataset_pool</dataset_pool>
+            <location_set type="string">building</location_set>
+            <sample_size_locations type="integer">30</sample_size_locations>
+            <capacity_string type="string">'vacant_home_based_job_space'</capacity_string>
+            <estimation_weight_string type="string">'vacant_home_based_job_space'</estimation_weight_string>
+            <filter type="string">'building.non_residential_sqft'</filter>
+            <estimation_size_agents type="float">0.4</estimation_size_agents>
+            <compute_capacity_flag type="boolean">True</compute_capacity_flag>
+            <number_of_units_string parser_action="empty_string_to_None" type="string" />
+            <run_config type="dictionary">
+              <agent_units_string parser_action="empty_string_to_None" type="string"></agent_units_string>
+              <lottery_max_iterations type="integer">7</lottery_max_iterations>
+            </run_config>
+            <variable_package type="string">'urbansim_parcel'</variable_package>            
+          </arguments>
+        </init>
+        <prepare_for_estimate type="dictionary">
+          <name type="string">prepare_for_estimate</name>
+          <output type="string">(specification, index)</output>
+          <arguments type="dictionary">
+            <agent_set type="string">job</agent_set>
+            <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
+            <agents_for_estimation_table parser_action="empty_string_to_None" type="string" />
+            <data_objects type="string">datasets</data_objects>
+            <portion_to_unplace type="float">0</portion_to_unplace>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="string">'employment_location_choice_model_specification'</specification_table>
+            <filter type="string">numpy.logical_and(building.residential_units, building.sqft_per_unit)</filter>
+          </arguments>
+        </prepare_for_estimate>
+        <prepare_for_run type="dictionary">
+          <name type="string">prepare_for_run</name>
+          <output type="string">(specification, coefficients)</output>
+          <arguments type="dictionary">
+            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+            <coefficients_table type="string">'employment_location_choice_model_coefficients'</coefficients_table>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="string">'employment_location_choice_model_specification'</specification_table>            
+          </arguments>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <agent_set type="string">job</agent_set>
+            <agents_index type="string">erm_index</agents_index>
+            <chunk_specification type="string">{'records_per_chunk':50000}</chunk_specification>
+            <coefficients type="string">coefficients</coefficients>
+            <data_objects type="string">datasets</data_objects>
+            <debuglevel type="string">debuglevel</debuglevel>
+            <specification type="string">specification</specification>
+            <maximum_runs type="integer">3</maximum_runs>
+          </arguments>
+        </run>
       </home_based_employment_location_choice_model>
       <distribute_unplaced_jobs_model parser_action="execute" type="class">
         <Class_name flags="hidden" type="string">DistributeUnplacedJobsModelConfigurationCreator</Class_name>

@@ -87,7 +87,7 @@ class BuildingConstructionModel(Model):
 
         # from the velocity function determine the amount to be built for each component
         if velocity_function_set is not None:
-            development_amount = proposal_component_set.compute_variables(["cummulative_amount_of_development"], 
+            development_amount = proposal_component_set.compute_variables(["urbansim_parcel.development_project_proposal_component.cummulative_amount_of_development"], 
                                                                       dataset_pool=dataset_pool)
         else: # if there is no velocity function, all components have velocity of 100%
             development_amount = resize(array([100], dtype="int32"), proposal_component_set.size())
