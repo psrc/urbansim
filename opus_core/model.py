@@ -188,6 +188,39 @@ class Model(ModelComponent):
     def _get_status_piece_description(self):
         return ""
     
+def get_specification_for_estimation(specification_dict=None, specification_storage=None,
+                                        specification_table = None):
+    from opus_core.equation_specification import EquationSpecification
+    if specification_dict is not None:
+        return EquationSpecification(specification_dict=specification_dict)
+    (specification, dummy) = prepare_specification_and_coefficients(specification_storage, specification_table)
+    return specification
+
+def prepare_specification_and_coefficients(specification_storage=None, specification_table=None, coefficients_storage=None,
+                         coefficients_table=None, sample_coefficients=False, cache_storage=None, multiplicator=1):
+    """ Load specification and coefficients from given tables in given storages.
+    If 'sample_coefficients' is True, coefficients are sampled from normal distribution,
+    where the standard deviation is multiplied by the given 'multiplicator'. In this case,
+    the new coefficients are flushed into cache.
+    """
+    from opus_core.equation_specification import EquationSpecification
+    from opus_core.coefficients import Coefficients
+    specification = None
+    if specification_storage is not None and specification_table is not None:
+        specification = EquationSpecification(in_storage=specification_storage)
+        specification.load(in_table_name=specification_table)
+    coefficients = None
+    if (coefficients_storage is not None) and (coefficients_table is not None):
+        coefficients = Coefficients(in_storage=coefficients_storage)
+        coefficients.load(in_table_name=coefficients_table)
+        if sample_coefficients:
+            coefficients = coefficients.sample_values_from_normal_distribution(
+                                                        multiplicator=multiplicator)
+
+            coefficients.flush_coefficients(coefficients_table, cache_storage)
+
+    return (specification, coefficients)
+    
 from opus_core.tests import opus_unittest
 import re
 

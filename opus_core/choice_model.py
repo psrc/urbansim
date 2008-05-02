@@ -27,6 +27,7 @@ from opus_core.misc import DebugPrinter
 from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.chunk_model import ChunkModel
 from opus_core.class_factory import ClassFactory
+from opus_core.model import get_specification_for_estimation, prepare_specification_and_coefficients
 from opus_core.logger import logger
 from numpy import where, zeros, array, arange, ones, take, ndarray, resize, concatenate
 from numpy import int32, compress, float64
@@ -489,6 +490,9 @@ class ChoiceModel(ChunkModel):
 
     def prepare_for_run(self, *args, **kwargs):
         return prepare_specification_and_coefficients(*args, **kwargs)
+    
+    def prepare_for_estimate(self, *args, **kwargs):
+        return get_specification_for_estimation(*args, **kwargs)
 
     def get_data(self, coefficient, submodel=-2):
         return ChunkModel.get_data(self, coefficient, submodel, is3d=True)
@@ -527,29 +531,6 @@ class ChoiceModel(ChunkModel):
         return "%s %s" % (ChunkModel._get_status_piece_description(self), self.get_status_for_gui().get_current_piece_description())
 
        
-def prepare_specification_and_coefficients(specification_storage=None, specification_table=None, coefficients_storage=None,
-                         coefficients_table=None, sample_coefficients=False, cache_storage=None, multiplicator=1):
-    """ Load specification and coefficients from given tables in given storages.
-    If 'sample_coefficients' is True, coefficients are sampled from normal distribution,
-    where the standard deviation is multiplied by the given 'multiplicator'. In this case,
-    the new coefficients are flushed into cache.
-    """
-    specification = None
-    if specification_storage is not None and specification_table is not None:
-        specification = EquationSpecification(in_storage=specification_storage)
-        specification.load(in_table_name=specification_table)
-    coefficients = None
-    if (coefficients_storage is not None) and (coefficients_table is not None):
-        coefficients = Coefficients(in_storage=coefficients_storage)
-        coefficients.load(in_table_name=coefficients_table)
-        if sample_coefficients:
-            coefficients = coefficients.sample_values_from_normal_distribution(
-                                                        multiplicator=multiplicator)
-
-            coefficients.flush_coefficients(coefficients_table, cache_storage)
-
-    return (specification, coefficients)
-
 class ModelInteraction:
     """ This class handles all the work that involves the interaction dataset of the Choice model. It supports
     hierarchical models, i.e. when there are more choice sets."""

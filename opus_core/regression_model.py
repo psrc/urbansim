@@ -23,6 +23,7 @@ from opus_core.variables.variable_name import VariableName
 from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.datasets.dataset import Dataset
 from opus_core.storage_factory import StorageFactory
+from opus_core.model import prepare_specification_and_coefficients, get_specification_for_estimation
 from opus_core.logger import logger
 from numpy import arange, zeros, float32, ndarray, array, where, inf, concatenate
 from time import time
@@ -273,9 +274,11 @@ class RegressionModel(ChunkModel):
         return (coefficients, estimated_coef)
 
     def prepare_for_run(self, *args, **kwargs):
-        from opus_core.choice_model import prepare_specification_and_coefficients
         return prepare_specification_and_coefficients(*args, **kwargs)
 
+    def prepare_for_estimate(self, *args, **kwargs):
+        return get_specification_for_estimation(*args, **kwargs)
+    
     def get_data_as_dataset(self, submodel=-2):
         """Like get_all_data, but the retuning value is a Dataset containing attributes that
         correspond to the data columns. Their names are coefficient names."""
