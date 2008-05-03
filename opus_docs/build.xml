@@ -2,15 +2,18 @@
 
 	<property name="webdir" value="/projects/urbansim5/www.urbansim.org/" />
 	<property name="pythonpathdir" value="${basedir}/.." />
+	<property environment="env" />
 
 	<target name="build-latex-docs">
 		<exec executable="python" failonerror="true">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
 			<arg line="manual/build_docs.py" />
 		</exec>
 	</target>
 
 	<target name="build-tutorials">
 		<exec executable="python" failonerror="true">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
 			<arg line="tutorials/build_docs.py" />
 		</exec>
 	</target>
