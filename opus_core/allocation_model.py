@@ -116,26 +116,20 @@ class AllocationModelTest(opus_unittest.OpusTestCase):
             }
         job_data = {
             'job_id': arange(10)+1,
-            'building_id':        array([170, 145, 10, 180, 179, 50, 23, 77, 800, 2]),
-                        # zones          2,    3,   2,   1,  1,   1,  3,  2,  2,  3
+             'zone_id': array([          2,    3,   2,   1,  1,   1,  3,  2,  2,  3]),
             'allocation_weights': array([1,    3,   5,   2,  1,   4,  7,  9,  8,  2]),
             'job_sqft_capacity':  array([3000,2800,1000,550,600,1000,2000,500,100,1000])
         }
-        building_data = {
-            'building_id': array([170, 145, 10, 180, 179, 50, 23, 77, 800, 2]),
-            'zone_id':     array([2,    3,  2,   1,   1,   1,  3,  2,  2,  3])
-            }
         control_total_data = {
             'year': array([2005,2005,2005,2006, 2006, 2006]),
             'zone_id':  array([1,      2,    3,    1,   2,    3]),
             'job_sqft': array([2000, 5500, 1000, 3000, 6000, 2000]),           
                           }
         storage = StorageFactory().get_storage('dict_storage')
-        storage.write_table(table_name = 'zones', table_data = zone_data)
-        storage.write_table(table_name = 'buildings', table_data = building_data)
-        storage.write_table(table_name = 'jobs', table_data = job_data)
+        storage.write_table(table_name = 'zone', table_data = zone_data)
+        storage.write_table(table_name = 'job', table_data = job_data)
         storage.write_table(table_name = 'control_totals', table_data = control_total_data)
-        self.dataset_pool = DatasetPool(storage = storage, package_order = ['urbansim_parcel', 'urbansim'])
+        self.dataset_pool = DatasetPool(storage = storage, package_order = ['opus_core'])
         self.ct = Dataset(in_storage=storage, in_table_name='control_totals', id_name=['year', 'zone_id'], dataset_name='control_total')
         self.jobs = self.dataset_pool.get_dataset('job')
         
