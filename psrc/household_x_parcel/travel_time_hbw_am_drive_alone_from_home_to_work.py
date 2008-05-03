@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from psrc.variables.abstract_travel_time_variable import abstract_travel_time_variable
+from psrc.abstract_variables.abstract_travel_time_variable import abstract_travel_time_variable
 
 class travel_time_hbw_am_drive_alone_from_home_to_work(abstract_travel_time_variable):
     """travel_time_hbw_am_drive_alone_from_home_to_work"""

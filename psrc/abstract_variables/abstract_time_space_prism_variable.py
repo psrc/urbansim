@@ -54,12 +54,12 @@ class abstract_time_space_prism_variable(Variable):
         var2 = interaction_dataset.get_2d_dataset_attribute(self.choice_zone_id)
         
         if self.direction_from_agent_to_choice:
-            from_zone = var1
-            to_zone = var2
+            from_zone = var1.astype("int32")
+            to_zone = var2.astype("int32")
         else:
-            from_zone = var2
-            to_zone = var1
-            
+            from_zone = var2.astype("int32")
+            to_zone = var1.astype("int32")
+    
         results = resize(array([self.default_value], dtype=self._return_type), from_zone.shape)
         zone_ids = zones.get_id_attribute()
         for zone in zone_ids:
@@ -67,5 +67,10 @@ class abstract_time_space_prism_variable(Variable):
             t1 = travel_data_attr_mat[from_zone, tmp_zone]
             t2 = travel_data_attr_mat[tmp_zone, to_zone]
             results[where( t1 + t2 <= agent_resource)] += zones.get_attribute_by_id(self.zone_attribute_to_access, zone)
-                
+        
+        missing_pairs_index = travel_data.get_od_pair_index_not_in_dataset(from_zone, to_zone)
+        if missing_pairs_index[0].size > 0:
+            results[missing_pairs_index] = self.default_value
+            logger.log_warning("zone pairs at index %s are not in travel data; value set to %s." % ( str(missing_pairs_index), self.default_value) )
+
         return results
