@@ -2,10 +2,10 @@
   <general>
     <description type="string">Base UrbanSim project</description>
   </general>
-  
+
   <model_manager>
    <model_system type="dictionary">
-       <choice_model_template  type="dictionary">
+       <choice_model_template  type="dictionary" copyable='True'>
          <import type="dictionary">
           <opus_core.choice_model type="string">ChoiceModel</opus_core.choice_model>
         </import>
@@ -67,7 +67,7 @@
           <output flags="hidden" type="string">specification</output>
         </prepare_for_estimate>
        </choice_model_template>
-       <regression_model_template  type="dictionary">
+       <regression_model_template  type="dictionary" copyable='True'>
          <import type="dictionary">
           <opus_core.regression_model type="string">RegressionModel</opus_core.regression_model>
         </import>
@@ -125,7 +125,7 @@
           <output flags="hidden" type="string">specification</output>
         </prepare_for_estimate>
        </regression_model_template>
-      <allocation_model_template  type="dictionary">
+      <allocation_model_template  type="dictionary" copyable='True'>
          <import type="dictionary">
           <opus_core.allocation_model type="string">AllocationModel</opus_core.allocation_model>
         </import>
@@ -145,15 +145,15 @@
        </allocation_model_template>
    </model_system>
    <estimation type="dictionary">
-   <model_template  type="dictionary">
+   <model_template  type="dictionary" copyable='True'>
    <all_variables type="dictionary">
-     <var1 type="variable_definition">var1 = package.dataset.some_variable_or_expression</var1>
+     <var1 type="variable_definition" copyable='True'>var1 = package.dataset.some_variable_or_expression</var1>
    </all_variables>
-   <submodel type="submodel">
+   <submodel type="submodel" copyable='True'>
       <description type="string">No submodel</description>
       <submodel_id type="integer">-2</submodel_id>
       <variables type="selectable_list">
-         <var1 choices="Use|Skip" type="variable">Skip</var1>
+         <var1 choices="Use|Skip" type="variable" copyable='True'>Skip</var1>
       </variables>
    </submodel>
    </model_template>
