@@ -60,7 +60,8 @@ class ModelSystem(object):
         logger.set_verbosity_level(logger_settings.get("verbosity_level", 3))
         self.simulation_state = SimulationState()
         self.simulation_state.set_low_memory_run(resources.get("low_memory_mode", False))
-
+        self.run_year_namespace = {}
+        
         if resources['cache_directory'] is not None:
             self.simulation_state.set_cache_directory(resources['cache_directory'])
 
