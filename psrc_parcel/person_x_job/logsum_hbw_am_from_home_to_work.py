@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from psrc.variables.abstract_travel_time_variable import abstract_travel_time_variable
+from psrc.abstract_variables.abstract_travel_time_variable import abstract_travel_time_variable
 from opus_core.misc import unique_values
 from numpy import where, repeat, ones, float32, resize, array
 from numpy import ma

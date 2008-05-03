@@ -11,7 +11,7 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 #
-from psrc.variables.abstract_travel_time_variable import abstract_travel_time_variable
+from psrc.abstract_variables.abstract_travel_time_variable import abstract_travel_time_variable
 
 class travel_cost_from_home_to_work(abstract_travel_time_variable):
     """single vehicle travel cost from the centroid of home zone to that of work zone"""

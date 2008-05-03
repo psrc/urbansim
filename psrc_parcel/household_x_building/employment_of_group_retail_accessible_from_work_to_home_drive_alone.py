@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from psrc.variables.abstract_time_space_prism_variable import abstract_time_space_prism_variable
+from psrc.abstract_variables.abstract_time_space_prism_variable import abstract_time_space_prism_variable
 
 class employment_of_group_retail_accessible_from_work_to_home_drive_alone(abstract_time_space_prism_variable):
     """"""
@@ -44,11 +44,9 @@ class Tests(opus_unittest.OpusTestCase):
                 #'member_id':   array([1, 2, 1, 1, 2, 3]),
                 #}, 
              "household":{
-                 'household_id':array([1,2,3,4,5]),
-                 #'parcel_id':array([3, 1, 1, 2, 4]),
-                 #'zone_id':array([3, 1, 1, 1, 2]),
-                 'worker1_workplace_zone_id':array([1, 3, 3, 2, 3]),
-                 'available_travel_time':array([6, 4.4, 4.3, 2, 17])
+                 'household_id':array([1,2,3,4,5,6]),
+                 'worker1_workplace_zone_id':array([1, 3, 3, 2, 3, -1]),
+                 'available_travel_time':array([6, 4.4, 4.3, 2, 17, 0])
                  },
              "building":{
                  'building_id':array([1, 2, 3, 4]),
@@ -76,6 +74,7 @@ class Tests(opus_unittest.OpusTestCase):
                            [103, 103,   0,   7],
                            [  0,   0,   0,   7],
                            [110, 110, 110, 110], 
+                           [  0,   0,   0,   0], 
                            ])
         tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 

@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from psrc.variables.abstract_travel_time_variable import abstract_travel_time_variable
+from psrc.abstract_variables.abstract_travel_time_variable import abstract_travel_time_variable
 
 class am_total_transit_time_walk_from_home_to_work(abstract_travel_time_variable):
     """am_total_transit_time_walk_from_home_to_work"""

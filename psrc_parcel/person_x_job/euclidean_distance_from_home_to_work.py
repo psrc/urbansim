@@ -13,7 +13,6 @@
 #
 
 from opus_core.variables.variable import Variable
-#from psrc.variables.abstract_travel_time_variable import abstract_travel_time_variable
 from opus_core.misc import unique_values
 from numpy import sqrt, arange, array, logical_or
 from numpy import ma
