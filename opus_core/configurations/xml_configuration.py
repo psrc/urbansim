@@ -491,6 +491,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         # 'years' is overridden in the child
         self.assertEqual(config['years'], (1980, 1981))
+        # 'squidcount' is new in the child
+        self.assertEqual(config['squidcount'], 12)
         # 'models' is inherited
         self.assert_('models' in config)
         self.assert_('random_nonexistant_key' not in config)
