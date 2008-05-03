@@ -21,32 +21,47 @@ from urbansim.estimation.estimator import update_controller_by_specification_fro
 
 class EstimationRunner(Estimator):
      
-    def __init__(self, model, specification_module=None, xml_specification=None, model_group=None,
+    def __init__(self, model, specification_module=None, xml_configuration=None, model_group=None,
                   configuration={}, save_estimation_results=False):
         """
         If 'specification_module' is given, it contains the specification defined as a dictionary in a module.
-        Alternatively, the specification can be passed in an xml format in the 'xml_specification' argument (It is a full path to the xml file). 
+        Alternatively, the specification can be passed in an xml format in the 'xml_configuration' argument (It is a full path to the xml file). 
         If both of those arguments are None, the specification is taken from the cache.
-        'configuration' is an Opus configuration. It can contain an entry 'config_changes_for_estimation' which is a dictionary
+        'configuration' is an Opus configuration. 
+        It can contain an entry 'config_changes_for_estimation' which is a dictionary
         where keys are model names and values are controller changes for that model.
+        If 'configuration' is None, it is taken from 'xml_configuration'.
         If save_estimation_results is True, the estimation results are saved in the oputput configuration 
         (if given in 'configuration') and in the cache.
         """
         self.specification_module = specification_module
-        self.xml_specification = xml_specification
+        self.xml_configuration = xml_configuration
         self.model_group = model_group
         self.estimated_model = model
         
-        config = Configuration(configuration)
+        xml_config = None
+        if self.xml_configuration is not None:
+            xml_config = XMLConfiguration(self.xml_configuration)
+            
+        if configuration is None:
+            if xml_config is None:
+                raise StandardError, "Either dictionary based or XML based configuration must be given."
+            estimation_section = xml_config.get_section('model_manager/estimation')
+            config = estimation_section['estimation_config']
+            xml_config._merge_controllers(config)
+        else:
+            config = Configuration(configuration)
         config_changes = config.get('config_changes_for_estimation', {})
         
         specification_dict=None
-        if xml_specification is not None:
-            specification_dict = XMLConfiguration(xml_specification).get_estimation_specification(model)
+        if xml_config is not None:
+            specification_dict = xml_config.get_estimation_specification(model)
             
         if model_group is None:
             if model in config_changes.keys():
                 config.merge(config_changes[model])
+            else:
+                config['models'] = [{model: ["estimate"]}]
             if specification_module is not None:
                 config = update_controller_by_specification_from_module(
                                 config, model, specification_module)
@@ -57,7 +72,9 @@ class EstimationRunner(Estimator):
                 if model_group in config_changes[model]:
                     config.merge(config_changes[model][model_group])
                 else:
-                    config.merge(config_changes[model])       
+                    config.merge(config_changes[model])
+            else:
+                config['models'] = [{model: {"group_members": [{model_group: ["estimate"]}]}}]
             if (specification_module is not None) or (specification_dict is not None):
                 if '%s_%s' % (model_group, model) in config["models_configuration"].keys():
                     model_name_in_configuration = '%s_%s' % (model_group, model)
@@ -78,8 +95,8 @@ class EstimationRunner(Estimator):
         If it is None, all submodels are re-estimated.
         """
         specification_dict=None
-        if self.xml_specification is not None:
-            specification_dict = XMLConfiguration(self.xml_specification).get_estimation_specification(self.estimated_model)
+        if self.xml_configuration is not None:
+            specification_dict = XMLConfiguration(self.xml_configuration).get_estimation_specification(self.estimated_model)
         Estimator.reestimate(self, self.specification_module, specification_dict=specification_dict, type=self.model_group, submodels=submodels)
         
     def plot_utility(self, submodel=-2):
