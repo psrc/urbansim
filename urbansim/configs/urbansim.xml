@@ -145,6 +145,10 @@
        </allocation_model_template>
    </model_system>
    <estimation type="dictionary">
+   <models_to_estimate type="selectable_list">
+        <choice_model_template choices="Estimate|Skip" type="model" copyable='True'>Skip</choice_model_template>
+        <regression_model_template choices="Estimate|Skip" type="model" copyable='True'>Skip</regression_model_template>
+      </models_to_estimate>
    <model_template  type="dictionary" copyable='True'>
    <all_variables type="dictionary">
      <var1 type="variable_definition" copyable='True'>var1 = package.dataset.some_variable_or_expression</var1>
@@ -157,6 +161,31 @@
       </variables>
    </submodel>
    </model_template>
+   <estimation_config type="dictionary">
+        <cache_directory parser_action="prefix_with_opus_data_path" type="directory" >fill in (relative to OPUS_DATA_PATH)</cache_directory>
+        <output_configuration type="class" >
+          <Class_name flags="hidden" type="string" >DatabaseConfiguration</Class_name>
+          <Class_path flags="hidden" type="string" >opus_core.database_management.database_configuration</Class_path>
+          <database_connection type="db_connection_hook" >urbansim_db1</database_connection>
+          <database_name type="string" ></database_name>
+        </output_configuration>
+        <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+         <my_dataset type="dataset" choices="Load|Skip" copyable='True'>Skip</my_dataset>
+         </datasets_to_preload>
+        <dataset_pool_configuration type="class" >
+          <Class_name flags="hidden" type="string" >DatasetPoolConfiguration</Class_name>
+          <Class_path flags="hidden" type="string" >opus_core.configurations.dataset_pool_configuration</Class_path>
+          <package_order type="list" >['urbansim', 'opus_core']</package_order>
+          <package_order_exceptions type="dictionary" />
+        </dataset_pool_configuration>
+        <datasets_to_cache_after_each_model type="list" >[]</datasets_to_cache_after_each_model>
+        <low_memory_mode type="boolean" >False</low_memory_mode>
+        <base_year type="integer" >0</base_year>
+        <years type="tuple" >
+          <startyear type="integer" >0</startyear>
+          <endyear type="integer" >0</endyear>
+        </years>
+      </estimation_config>
    </estimation>
   </model_manager>
 </opus_project>
