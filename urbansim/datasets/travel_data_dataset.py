@@ -43,8 +43,34 @@ class TravelDataDataset(UrbansimDataset):
         results = fill * ones((rows.max()+1, cols.max()+1), dtype=name_attribute.dtype)
         results.put(indices=rows * results.shape[1] + cols, values = name_attribute)
         
-        return results        
+        return results
+    
+    def get_od_pair_index_not_in_dataset(self, O, D):
+        """Return indices to O (D) from whose elements an od pair is not included in the travel data
+        see unittest for an example
+        """
+        from numpy import unique1d, setdiff1d, zeros_like, logical_and, logical_or, where
+        
+        assert O.shape == D.shape
+        
+        id_attributes = self.get_id_attribute()
+        max_id = max(O.max(), D.max(), id_attributes.max())
+        digits = len(str(max_id)) + 1
+        multiplier = 10 ** digits
 
+        ODpair = O * multiplier + D
+        idpair = id_attributes[:, 0] * multiplier + id_attributes[:, 1]
+        missing_pairs = setdiff1d( unique1d(ODpair), unique1d(idpair) )
+
+        results = zeros_like(D)
+        for pair in missing_pairs:
+            results += logical_and( O == pair // multiplier, D == pair % multiplier)
+        
+        results += logical_or(O < id_attributes[:, 0].min(), O > id_attributes[:, 0].max())
+        results += logical_or(D < id_attributes[:, 1].min(), D > id_attributes[:, 1].max())
+        
+        return where(results)
+        
 
 from opus_core.tests import opus_unittest
 from numpy import array, ma, allclose
@@ -101,6 +127,23 @@ class Test(opus_unittest.OpusTestCase):
                            [0,    0,    0,  0,  0,    0], 
                            [0,-21.0,    0,  0,  0,-24.0]])
         self.assertEqual(result.shape, should_be.shape, msg = "Shape of returned matrix should be %s but is %s" % ( str(should_be.shape), str(result.shape) ) )
+        self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))
+        
+    def test_get_od_pair_index_not_in_dataset_1d(self):
+        O = array([-1, 1, 1, 7, 5, 5, 5, 3,  2])
+        D = array([ 5, 2, 3, 2, 5, 2, 1, 1, -1])
+        #index    [ 0, 1, 2, 3, 4, 5, 6, 7,  8]
+        result = self.travel_data.get_od_pair_index_not_in_dataset(O, D)
+        should_be = array([0, 2, 3, 5, 7, 8])
+        self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))                    
+
+    def test_get_od_pair_index_not_in_dataset_2d(self):
+        O = array([[-1, 1, 1,], [7, 5, 5,], [5, 3,  2]])
+        D = array([[ 5, 2, 3,], [2, 5, 2,], [1, 1, -1]])
+        #index    [  0, 0, 0,    1, 1, 1,    2, 2,  2]
+        #index    [  0, 1, 2,    0, 1, 2,    0, 1,  2]
+        result = self.travel_data.get_od_pair_index_not_in_dataset(O, D)
+        should_be = (array([0, 0, 1, 1, 2, 2]), array([0, 2, 0, 2, 1, 2]))
         self.assert_(allclose( result, should_be),  msg="returned results should be %s but is %s" % (should_be, result))                    
 
 if __name__=="__main__":
