@@ -38,7 +38,7 @@ specification = {
         #"person.disaggregate(household.children > 0)":("beta1_haschild", 0),
         #"income=person.disaggregate(household.income)":("beta1_income", 0),
         "kemp30m=person.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone, intermediates=[household])/1000":(0, "beta2_kemp30m"),
-        #"hlogsum=person.disaggregate(urbansim_parcel.household.trip_weighted_average_logsum_hbw_am_from_residence)":(0, "beta2_hlogsum"),        
+        #"hlogsum=person.disaggregate(psrc_parcel.household.trip_weighted_average_logsum_hbw_am_from_residence)":(0, "beta2_hlogsum"),        
         #"plogsum1=person.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_1, intermediates=[household])":(0, "beta2_logsum1"),        
         #"plogsum2=person.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_2, intermediates=[household])":(0, "beta2_logsum2"),        
         #"plogsum3=person.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_3, intermediates=[household])":(0, "beta2_logsum3"),        
