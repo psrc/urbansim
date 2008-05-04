@@ -14,7 +14,6 @@
 
 
 from opus_core.configuration import Configuration
-from opus_core.configurations.xml_configuration import XMLConfiguration
 from urbansim.estimation.estimator import Estimator
 from urbansim.estimation.estimator import plot_utility_diagnose
 from urbansim.estimation.estimator import update_controller_by_specification_from_module, update_controller_by_specification_from_dict
@@ -25,7 +24,8 @@ class EstimationRunner(Estimator):
                   configuration={}, save_estimation_results=False):
         """
         If 'specification_module' is given, it contains the specification defined as a dictionary in a module.
-        Alternatively, the specification can be passed in an xml format in the 'xml_configuration' argument (It is a full path to the xml file). 
+        Alternatively, the specification can be passed in an xml format in the 'xml_configuration' argument 
+        (which should be an instance of XMLConfiguration).
         If both of those arguments are None, the specification is taken from the cache.
         'configuration' is an Opus configuration. 
         It can contain an entry 'config_changes_for_estimation' which is a dictionary
@@ -38,24 +38,20 @@ class EstimationRunner(Estimator):
         self.xml_configuration = xml_configuration
         self.model_group = model_group
         self.estimated_model = model
-        
-        xml_config = None
-        if self.xml_configuration is not None:
-            xml_config = XMLConfiguration(self.xml_configuration)
-            
+                    
         if configuration is None:
-            if xml_config is None:
+            if self.xml_configuration is None:
                 raise StandardError, "Either dictionary based or XML based configuration must be given."
-            estimation_section = xml_config.get_section('model_manager/estimation')
+            estimation_section = self.xml_configuration.get_section('model_manager/estimation')
             config = estimation_section['estimation_config']
-            xml_config._merge_controllers(config)
+            self.xml_configuration._merge_controllers(config)
         else:
             config = Configuration(configuration)
         config_changes = config.get('config_changes_for_estimation', {})
         
         specification_dict=None
-        if xml_config is not None:
-            specification_dict = xml_config.get_estimation_specification(model)
+        if self.xml_configuration is not None:
+            specification_dict = self.xml_configuration.get_estimation_specification(model)
             
         if model_group is None:
             if model in config_changes.keys():
@@ -96,7 +92,7 @@ class EstimationRunner(Estimator):
         """
         specification_dict=None
         if self.xml_configuration is not None:
-            specification_dict = XMLConfiguration(self.xml_configuration).get_estimation_specification(self.estimated_model)
+            specification_dict = self.self.xml_configuration.get_estimation_specification(self.estimated_model)
         Estimator.reestimate(self, self.specification_module, specification_dict=specification_dict, type=self.model_group, submodels=submodels)
         
     def plot_utility(self, submodel=-2):

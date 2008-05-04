@@ -12,9 +12,10 @@
 # other acknowledgments.
 # 
 
-from optparse import OptionParser, OptionGroup
+from optparse import OptionParser
 from opus_core.misc import get_config_from_opus_path
 from opus_core.logger import logger
+from opus_core.configurations.xml_configuration import XMLConfiguration
 from urbansim.estimation.estimation_runner import EstimationRunner
 
 class EstimationOptionGroup:
@@ -46,12 +47,15 @@ if __name__ == '__main__':
         raise StandardError, "Configuration path (argument -c) or XML configuration (argument -x) must be given."
     if (options.specification is None) and (options.xml_configuration is None):
         logger.log_warning("No specification given (arguments -s or -x). Specification taken from the cache.")
-
+    if options.xml_configuration is not None:
+        xconfig = XMLConfiguration(options.xml_configuration)
+    else:
+        xconfig = None
     if options.configuration_path is None:
         config = None
     else:
         config = get_config_from_opus_path(options.configuration_path)
-    estimator = EstimationRunner(model=options.model_name, specification_module=options.specification, xml_configuration=options.xml_configuration, 
+    estimator = EstimationRunner(model=options.model_name, specification_module=options.specification, xml_configuration=xconfig, 
                                  model_group=options.model_group,
                                  configuration=config,
                                  save_estimation_results=options.save_results)

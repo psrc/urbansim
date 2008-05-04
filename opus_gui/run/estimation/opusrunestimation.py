@@ -16,18 +16,14 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import os, sys, time
-
-
 try:
-    import os
     from opus_core.configurations.xml_configuration import XMLConfiguration
-    # from psrc_parcel.estimation.run_estimation import EstimationRunner
-    from gui_estimation_runner import EstimationRunner
+    from urbansim.estimation.estimation_runner import EstimationRunner
     WithOpus = True
 except ImportError:
     WithOpus = False
     print "Unable to import opus core libs"
-
+    
 class RunEstimationThread(QThread):
     def __init__(self, parentThread,parent,xml_file):
         QThread.__init__(self, parentThread)
@@ -112,17 +108,14 @@ class OpusEstimation(object):
 
     def run(self):
         if WithOpus:
-            # Run the Eugene model using the XML version of the Eugene configuration.
-            # This code adapted from opus_core/tools/start_run.py
+            # Start the estimation. This code adapted from urbansim/tools/start_estimation.py
             # statusdir is a temporary directory into which to write a status file
             # regarding the progress of the simulation - the progress bar reads this file
             statusfile = None
-            statusdir = None
             succeeded = False
             try:
                 fileNameInfo = QFileInfo(self.xml_path)
                 filename = fileNameInfo.absoluteFilePath().trimmed()
-                print filename
                 xml_config = XMLConfiguration(str(filename))
                 estimation_section = xml_config.get_section('model_manager/estimation')
                 estimation_config = estimation_section['estimation_config']
@@ -136,15 +129,9 @@ class OpusEstimation(object):
                         time.sleep(10)
                     if self.cancelled:
                         break
-                    model_config = estimation_config['model_parameters'][model_name]
-                    model = (model_config['abbreviation'], model_config['full_name'])
-                    if 'location' in model_config:
-                        model = model , (model_config['location'], model_config['add_member_prefix'])
-                    specification = xml_config.get_estimation_specification(model_config['full_name'])
-                    self.er = EstimationRunner()
+                    self.er = EstimationRunner(model=model_name, xml_configuration=xml_config, configuration=None)
                     self.running = True
-                    self.er.run_estimation(estimation_config, model,
-                                      specification, save_estimation_results=False, diagnose=False)
+                    self.er.estimate()
                     self.running = False
                 succeeded = True
             except:
