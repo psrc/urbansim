@@ -1,8 +1,9 @@
 <project name="opus_docs" basedir=".">
-
+<echo>starting opus_docs build</echo>
 	<property name="webdir" value="/projects/urbansim5/www.urbansim.org/" />
 	<property name="pythonpathdir" value="${basedir}/.." />
 	<property environment="env" />
+<echo>starting build-latex-docs </echo>
 
 	<target name="build-latex-docs">
 		<exec executable="python" failonerror="true">
@@ -10,6 +11,7 @@
 			<arg line="manual/build_docs.py" />
 		</exec>
 	</target>
+<echo>starting build-tutorials</echo>
 
 	<target name="build-tutorials">
 		<exec executable="python" failonerror="true">
@@ -17,6 +19,7 @@
 			<arg line="tutorials/build_docs.py" />
 		</exec>
 	</target>
+<echo>starting copy-to-webserver</echo>
 
 	<target name="copy-to-webserver">
 		<move file="${basedir}/manual/opus-userguide.pdf" tofile="${webdir}/docs/opus-userguide.pdf" />
