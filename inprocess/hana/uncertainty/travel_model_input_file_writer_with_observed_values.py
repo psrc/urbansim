@@ -43,6 +43,10 @@ class TravelModelInputFileWriterWithObservedValues(BMTravelModelInputFileWriter)
         self.observed_zones_with_jobs =  DatasetFactory().search_for_dataset('zone', ['urbansim'], 
                                 arguments={'in_storage':storage, 'in_table_name': self.file_with_observed_jobs})
         self.observed_zones_with_jobs.load_dataset()
+        self.total_number_of_jobs = zeros(self.observed_zones_with_jobs.size(), dtype='int32')
+        for attr in self.observed_zones_with_jobs.get_known_attribute_names():
+            if attr not in self.observed_zones_with_jobs.get_id_name():
+                self.total_number_of_jobs = self.total_number_of_jobs + self.observed_zones_with_jobs.get_attribute(attr)
 
     def generate_travel_model_input(self, zone_set):
         self._determine_current_share(zone_set)
@@ -65,24 +69,24 @@ class TravelModelInputFileWriterWithObservedValues(BMTravelModelInputFileWriter)
     def _set_travel_model_input(self, zone_set):
         zone_ids = zone_set.get_id_attribute()
         # set household input
-        for dataset_name in self.variables_to_scale.keys():
-            number_of_agents = zone_set.get_attribute("number_of_%ss" % dataset_name)
-            logger.log_status('Observed number of %ss' % dataset_name)
-            logger.log_status(round_(number_of_agents))
-            for var, ratios in self.variables_to_scale[dataset_name].iteritems():
-                self.simulated_values[var] = zeros(zone_set.size())
-                self.simulated_values[var] = (round_(number_of_agents*ratios)).astype(self.simulated_values[var].dtype)
-                logger.log_status(var)
-                logger.log_status(self.simulated_values[var])
-                
+        dataset_name = 'household'
+        number_of_agents = zone_set.get_attribute("number_of_%ss" % dataset_name)
+        logger.log_status('Observed number of %ss' % dataset_name)
+        logger.log_status(round_(number_of_agents))
+        for var, ratios in self.variables_to_scale[dataset_name].iteritems():
+            self.simulated_values[var] = zeros(zone_set.size())
+            self.simulated_values[var] = (round_(number_of_agents*ratios)).astype(self.simulated_values[var].dtype)
+            logger.log_status(var)
+            logger.log_status(self.simulated_values[var])
+
         # set job input
-        for dataset_name in self.variables_for_direct_matching.keys():
-            zone_set.compute_variables(self.variables_for_direct_matching[dataset_name], dataset_pool=self.dataset_pool)
-            logger.log_status('Observed values for %ss:' % dataset_name)
-            for var in self.variables_for_direct_matching[dataset_name]:
-                self.simulated_values[var] = zone_set.get_attribute(var)
-                logger.log_status(var)
-                logger.log_status(self.simulated_values[var])
+        dataset_name = 'job'
+        zone_set.compute_variables(self.variables_for_direct_matching[dataset_name], dataset_pool=self.dataset_pool)
+        logger.log_status('Observed values for %ss:' % dataset_name)
+        for var in self.variables_for_direct_matching[dataset_name]:
+            self.simulated_values[var] = zone_set.get_attribute(var)
+            logger.log_status(var)
+            logger.log_status(self.simulated_values[var])
                 
 
             
