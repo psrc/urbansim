@@ -13,7 +13,6 @@
 #
 
 aliases = [
-           "number_of_young_households=gridcell.aggregate(urbansim.household.is_young)",
-           "number_of_home_owners=gridcell.aggregate(urbansim.household.is_home_owner)",           
-           "number_of_home_renters=gridcell.aggregate(urbansim.household.is_home_renter)",
+           "is_home_owner = numpy.logical_or(household.tenure==1, household.tenure==2)",
+           "is_home_renter = household.tenure==3"
            ]
