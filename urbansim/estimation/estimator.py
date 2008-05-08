@@ -98,11 +98,17 @@ class Estimator(object):
                     submodels_to_be_deleted.remove("_definition_")
             for sm in submodels_to_be_deleted:
                 del specification_dict[sm]
-        specification = EquationSpecification(specification_dict=specification_dict)
+        self.specification = EquationSpecification(specification_dict=specification_dict)
         new_namespace = self.model_system.run_year_namespace
-        new_namespace["specification"] = specification
-        self.model_system.do_process(new_namespace)
-        self.extract_coefficients_and_specification()
+        keys_coeff_spec = self.get_keys_for_coefficients_and_specification()
+        new_namespace[keys_coeff_spec["specification"]] = self.specification
+        self.coefficients, coeff_dict_dummy = self.model_system.do_process(new_namespace)
+        ## update run_year_namespce since it's not been updated by do_process
+        self.model_system.run_year_namespace = new_namespace
+        self.model_system.run_year_namespace[keys_coeff_spec["coefficients"]] = self.coefficients
+        
+        ## this gets coeff and spec from run_year_namespce and is only updated in _run_year method
+        #self.extract_coefficients_and_specification()  
         if self.save_estimation_results:
             self.save_results(out_storage=out_storage)
 
@@ -130,7 +136,7 @@ class Estimator(object):
             run_year_namespace = copy.copy(self.model_system.run_year_namespace)
         except:
             logger.log_error("The estimate() method must be run first")
-            return
+            return False
         
         try:
             agents = self.get_agent_set()
@@ -285,6 +291,21 @@ class Estimator(object):
                 self.coefficients = self.model_system.run_year_namespace[key]                
             if isinstance(self.model_system.run_year_namespace[key], EquationSpecification):
                 self.specification = self.model_system.run_year_namespace[key]
+
+    def get_keys_for_coefficients_and_specification(self):
+        result = {}
+        for key in self.model_system.run_year_namespace.keys():
+            if isinstance(self.model_system.run_year_namespace[key], Coefficients):
+                result['coefficients'] = key
+            if isinstance(self.model_system.run_year_namespace[key], EquationSpecification):
+                result['specification'] = key
+        if not result.has_key('coefficients'):
+            logger.log_warning("No Coefficients object is found in the name space of model_system ")
+        if not result.has_key('specification'):
+            logger.log_warning("No EquationSpecification object is found in the name space of model_system ")
+        
+        return result
+            
        #for key in self.model_system.vardict.keys():
 #            if key.rfind("coefficients") >=0:
 #                if isinstance(self.model_system.vardict[key], tuple):
