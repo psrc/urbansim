@@ -154,7 +154,10 @@ class Estimator(object):
             #self.model_system.run(tmp_config, write_datasets_to_cache_at_end_of_year=False)
             new_choices = agents.get_attribute(choice_id_name).copy()
             agents.modify_attribute(name=choice_id_name, data=current_choices)
-            agents.add_primary_attribute(name=predicted_choice_id_name, data=new_choices)
+            if predicted_choice_id_name not in agents.get_known_attribute_names():
+                agents.add_primary_attribute(name=predicted_choice_id_name, data=new_choices)
+            else:
+                agents.modify_attribute(name=predicted_choice_id_name, data=new_choices)
             logger.log_status("Predictions saved into attribute " + predicted_choice_id_name)
             return True
         except Exception, e:
@@ -167,14 +170,15 @@ class Estimator(object):
                                         choice_geography_id="fazdistrict_id=building.disaggregate(faz.fazdistrict_id, intermediates=[zone, parcel])",
                                         predicted_choice_id_prefix="predicted_", 
                                         predicted_choice_id_name=None,
-                                        log_to_file=None):
+                                        log_to_file=None,
+                                        force_predict=True):
         agents = self.get_agent_set()
         choices = self.get_choice_set()
         choice_id_name = choices.get_id_name()[0]
         if predicted_choice_id_name is None or len(predicted_choice_id_name) == 0:
             predicted_choice_id_name = predicted_choice_id_prefix + choice_id_name
             
-        if not predicted_choice_id_name in agents.get_known_attribute_names():
+        if force_predict or (predicted_choice_id_name not in agents.get_known_attribute_names()):
             if not self.predict(predicted_choice_id_prefix=predicted_choice_id_prefix, 
                                 predicted_choice_id_name=predicted_choice_id_name):
                 return
