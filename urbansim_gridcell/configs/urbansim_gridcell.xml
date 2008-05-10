@@ -187,9 +187,9 @@
           <Class_name flags="hidden" type="string">HouseholdRelocationModelConfigurationCreator</Class_name>
           <Class_path flags="hidden" type="string">urbansim.configurations.household_relocation_model_configuration_creator</Class_path>
           <agent_set type="string">household</agent_set>
-          <rate_table parser_action="empty_string_to_None" type="string">annual_relocation_rates_for_households</rate_table>
+          <rate_table parser_action="blank_to_None" type="string">annual_relocation_rates_for_households</rate_table>
           <location_id_name type="string">grid_id</location_id_name>
-          <probabilities parser_action="empty_string_to_None" type="string">urbansim.household_relocation_probabilities</probabilities>
+          <probabilities parser_action="blank_to_None" type="string">urbansim.household_relocation_probabilities</probabilities>
           <what type="string">households</what>
           <output_index type="string">hrm_index</output_index>
         </controller>
@@ -199,16 +199,16 @@
           <Class_name flags="hidden" type="string">HouseholdLocationChoiceModelConfigurationCreator</Class_name>
           <Class_path flags="hidden" type="string">urbansim.configurations.household_location_choice_model_configuration_creator</Class_path>
           <agent_set type="string">household</agent_set>
-          <sampler parser_action="empty_string_to_None" type="string">opus_core.samplers.weighted_sampler</sampler>
+          <sampler parser_action="blank_to_None" type="string">opus_core.samplers.weighted_sampler</sampler>
           <choices type="string">urbansim.lottery_choices</choices>
           <location_set type="string">gridcell</location_set>
-          <capacity_string parser_action="empty_string_to_None" type="string">vacant_residential_units</capacity_string>
+          <capacity_string parser_action="blank_to_None" type="string">vacant_residential_units</capacity_string>
           <sample_size_locations type="integer">30</sample_size_locations>
           <portion_to_unplace type="float">0.08333333333</portion_to_unplace>
           <nchunks type="integer">12</nchunks>
           <agents_for_estimation_table_name type="string">households_for_estimation</agents_for_estimation_table_name>
-          <number_of_units_string parser_action="empty_string_to_None" type="string">residential_units</number_of_units_string>
-          <number_of_agents_string parser_action="empty_string_to_None" type="string">number_of_households</number_of_agents_string>
+          <number_of_units_string parser_action="blank_to_None" type="string">residential_units</number_of_units_string>
+          <number_of_agents_string parser_action="blank_to_None" type="string">number_of_households</number_of_agents_string>
           <lottery_max_iterations type="integer">3</lottery_max_iterations>
           <maximum_runs type="integer">3</maximum_runs>
           <coefficients_table type="string">household_location_choice_model_coefficients</coefficients_table>
@@ -222,9 +222,9 @@
           <Class_path flags="hidden" type="string">urbansim.configurations.employment_relocation_model_configuration_creator</Class_path>
           <agent_set type="string">job</agent_set>
           <what type="string">jobs</what>
-          <rate_table parser_action="empty_string_to_None" type="string">annual_relocation_rates_for_jobs</rate_table>
+          <rate_table parser_action="blank_to_None" type="string">annual_relocation_rates_for_jobs</rate_table>
           <location_id_name type="string">grid_id</location_id_name>
-          <probabilities parser_action="empty_string_to_None" type="string">urbansim.employment_relocation_probabilities</probabilities>
+          <probabilities parser_action="blank_to_None" type="string">urbansim.employment_relocation_probabilities</probabilities>
           <output_index type="string">erm_index</output_index>
         </controller>
       </employment_relocation_model>
@@ -234,21 +234,21 @@
           <Class_path flags="hidden" type="string">urbansim.configurations.employment_location_choice_model_configuration_creator</Class_path>
           <agent_set type="string">job</agent_set>
           <sample_size_locations type="integer">30</sample_size_locations>
-          <sampler parser_action="empty_string_to_None" type="string">opus_core.samplers.weighted_sampler</sampler>
+          <sampler parser_action="blank_to_None" type="string">opus_core.samplers.weighted_sampler</sampler>
           <choices type="string">urbansim.lottery_choices</choices>
           <location_set type="string">gridcell</location_set>
           <portion_to_unplace type="float">0.08333333333</portion_to_unplace>
           <records_per_chunk type="integer">50000</records_per_chunk>
           <attribute_to_group_by type="string">job_building_type.name</attribute_to_group_by>
-          <agents_for_estimation_table parser_action="empty_string_to_None" type="string">jobs_for_estimation</agents_for_estimation_table>
-          <filter_for_estimation parser_action="empty_string_to_None" type="string" />
-          <filter parser_action="empty_string_to_None" type="string" />
-          <capacity_string parser_action="empty_string_to_None" type="string">vacant_SSS_job_space</capacity_string>
+          <agents_for_estimation_table parser_action="blank_to_None" type="string">jobs_for_estimation</agents_for_estimation_table>
+          <filter_for_estimation parser_action="blank_to_None" type="string" />
+          <filter parser_action="blank_to_None" type="string" />
+          <capacity_string parser_action="blank_to_None" type="string">vacant_SSS_job_space</capacity_string>
           <compute_capacity_flag type="boolean" choices="True|False">True</compute_capacity_flag>
-          <estimation_weight_string parser_action="empty_string_to_None" type="string">total_number_of_possible_SSS_jobs</estimation_weight_string>
+          <estimation_weight_string parser_action="blank_to_None" type="string">total_number_of_possible_SSS_jobs</estimation_weight_string>
           <estimation_size_agents type="float">1.0</estimation_size_agents>
-          <agent_units_string parser_action="empty_string_to_None" type="string" />
-          <number_of_units_string parser_action="empty_string_to_None" type="string">total_number_of_possible_SSS_jobs</number_of_units_string>
+          <agent_units_string parser_action="blank_to_None" type="string" />
+          <number_of_units_string parser_action="blank_to_None" type="string">total_number_of_possible_SSS_jobs</number_of_units_string>
           <lottery_max_iterations type="integer">3</lottery_max_iterations>
           <variable_package type="string">urbansim</variable_package>
           <maximum_runs type="integer">3</maximum_runs>
@@ -283,7 +283,7 @@
           <Class_path flags="hidden" type="string">urbansim.configurations.governmental_employment_location_choice_model_configuration_creator</Class_path>
           <agent_set type="string">job</agent_set>
           <location_set type="string">gridcell</location_set>
-          <filter parser_action="empty_string_to_None" type="string" />
+          <filter parser_action="blank_to_None" type="string" />
           <input_index type="string">erm_index</input_index>
         </controller>
       </governmental_employment_location_choice_model>

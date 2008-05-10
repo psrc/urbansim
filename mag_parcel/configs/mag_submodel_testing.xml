@@ -14,12 +14,12 @@
         <prepare_for_run type="dictionary">
           <name type="string">prepare_for_run</name>
           <arguments type="dictionary">
-            <dataset parser_action="empty_string_to_None" type="string" />
-            <control_totals parser_action="empty_string_to_None" type="string" />
-            <excel_path type="string">r'C:\opus\data\mag_parcel\mag_submodels\TransientModel.xls'</excel_path>
+            <dataset parser_action="blank_to_None" type="string" />
+            <control_totals parser_action="blank_to_None" type="string" />
+            <excel_path type="quoted_string">C:\opus\data\mag_parcel\mag_submodels\TransientModel.xls</excel_path>
             <excel_data_info type="string">{'year':'d22:d32', 'persons':'k22:k32'}</excel_data_info>
-            <esri_storage_location type="string">r'C:\opus\data\mag_parcel\mag_submodel_data.gdb'</esri_storage_location>
-            <dataset_name type="string">'transient'</dataset_name>
+            <esri_storage_location type="quoted_string">C:\opus\data\mag_parcel\mag_submodel_data.gdb</esri_storage_location>
+            <dataset_name type="quoted_string">transient</dataset_name>
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
           <output flags="hidden" type="string">(aux_dataset, aux_control_totals)</output>
@@ -27,13 +27,13 @@
         <run type="dictionary">
           <arguments type="dictionary">
             <dataset type="string">aux_dataset</dataset>
-            <outcome_attribute type="string">'persons'</outcome_attribute>
-            <weight_attribute type="string">'rooms'</weight_attribute>
+            <outcome_attribute type="quoted_string">persons</outcome_attribute>
+            <weight_attribute type="quoted_string">rooms</weight_attribute>
             <control_totals type="string">aux_control_totals</control_totals>
             <current_year flags="hidden" type="string">year</current_year>
-            <control_total_attribute type="string">'persons'</control_total_attribute>
-            <year_attribute type="string">'year'</year_attribute>
-            <capacity_attribute parser_action="empty_string_to_None" type="string" />
+            <control_total_attribute type="quoted_string">persons</control_total_attribute>
+            <year_attribute type="quoted_string">year</year_attribute>
+            <capacity_attribute parser_action="blank_to_None" type="string" />
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
         </run>
@@ -48,12 +48,12 @@
         <prepare_for_run type="dictionary">
           <name type="string">prepare_for_run</name>
           <arguments type="dictionary">
-            <dataset parser_action="empty_string_to_None" type="string" />
-            <control_totals parser_action="empty_string_to_None" type="string" />
-            <excel_path type="string">r'c:\tmp\TransientModel.xls'</excel_path>
+            <dataset parser_action="blank_to_None" type="string" />
+            <control_totals parser_action="blank_to_None" type="string" />
+            <excel_path type="quoted_string">c:\tmp\TransientModel.xls</excel_path>
             <excel_data_info type="string">{'year':'d22:d32', 'persons':'k22:k32'}</excel_data_info>
-            <esri_storage_location type="string">r'c:\tmp\tmp.gdb'</esri_storage_location>
-            <dataset_name type="string">'hotel'</dataset_name>
+            <esri_storage_location type="quoted_string">c:\tmp\tmp.gdb</esri_storage_location>
+            <dataset_name type="quoted_string">hotel</dataset_name>
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
           <output flags="hidden" type="string">(aux_dataset, aux_control_totals)</output>
@@ -61,13 +61,13 @@
         <run type="dictionary">
           <arguments type="dictionary">
             <dataset type="string">aux_dataset</dataset>
-            <outcome_attribute type="string">'persons'</outcome_attribute>
-            <weight_attribute type="string">'rooms'</weight_attribute>
+            <outcome_attribute type="quoted_string">persons</outcome_attribute>
+            <weight_attribute type="quoted_string">rooms</weight_attribute>
             <control_totals type="string">aux_control_totals</control_totals>
             <current_year flags="hidden" type="string">year</current_year>
-            <control_total_attribute type="string">'persons'</control_total_attribute>
-            <year_attribute type="string">'year'</year_attribute>
-            <capacity_attribute parser_action="empty_string_to_None" type="string" />
+            <control_total_attribute type="quoted_string">persons</control_total_attribute>
+            <year_attribute type="quoted_string">year</year_attribute>
+            <capacity_attribute parser_action="blank_to_None" type="string" />
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
         </run>

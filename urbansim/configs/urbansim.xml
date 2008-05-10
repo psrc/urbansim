@@ -13,14 +13,14 @@
           <name type="string">ChoiceModel</name>
           <arguments type="dictionary">
             <choice_set type="string">fill in</choice_set>
-            <utilities type="string">'opus_core.linear_utilities'</utilities>
-            <probabilities type="string">'opus_core.mnl_probabilities'</probabilities>
-            <choices type="string">'opus_core.random_choices'</choices>
-            <submodel_string type="string" parser_action="empty_string_to_None"></submodel_string>
-            <choice_attribute_name type="string">'choice_id'</choice_attribute_name>
-            <interaction_pkg type="string">'opus_core'</interaction_pkg>
-            <run_config type="string" parser_action="empty_string_to_None"></run_config>
-            <estimate_config type="string" parser_action="empty_string_to_None"></estimate_config>
+            <utilities type="quoted_string">opus_core.linear_utilities</utilities>
+            <probabilities type="quoted_string">opus_core.mnl_probabilities</probabilities>
+            <choices type="quoted_string">opus_core.random_choices</choices>
+            <submodel_string type="string" parser_action="blank_to_None"></submodel_string>
+            <choice_attribute_name type="quoted_string">choice_id</choice_attribute_name>
+            <interaction_pkg type="quoted_string">opus_core</interaction_pkg>
+            <run_config type="string" parser_action="blank_to_None"></run_config>
+            <estimate_config type="string" parser_action="blank_to_None"></estimate_config>
             <debuglevel type="integer">0</debuglevel>
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
@@ -30,8 +30,8 @@
             <specification flags="hidden" type="string">specification</specification>
             <coefficients flags="hidden" type="string">coefficients</coefficients>
             <agent_set type="string">fill in</agent_set>
-            <agents_index type="string" parser_action="empty_string_to_None"></agents_index>
-            <chunk_specification type="string" parser_action="empty_string_to_None"></chunk_specification>
+            <agents_index type="string" parser_action="blank_to_None"></agents_index>
+            <chunk_specification type="string" parser_action="blank_to_None"></chunk_specification>
             <data_objects flags="hidden" type="string">datasets</data_objects>
           </arguments>
         </run>
@@ -39,9 +39,9 @@
           <name type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <specification_storage type="string">base_cache_storage</specification_storage>
-            <specification_table type="string">'choice_model_template_specification'</specification_table>
+            <specification_table type="quoted_string">choice_model_template_specification</specification_table>
             <coefficients_storage type="string">base_cache_storage</coefficients_storage>
-            <coefficients_table type="string">'choice_model_template_coefficients'</coefficients_table>
+            <coefficients_table type="quoted_string">choice_model_template_coefficients</coefficients_table>
             <sample_coefficients type="boolean">False</sample_coefficients>
             <cache_storage flags="hidden" type="string">base_cache_storage</cache_storage>
             <multiplicator type = "integer">1</multiplicator>
@@ -52,8 +52,8 @@
           <arguments type="dictionary">
             <specification flags="hidden" type="string">specification</specification>
             <agent_set type="string">fill in</agent_set>
-            <agents_index flags="hidden" type="string" parser_action="empty_string_to_None"></agents_index>
-            <procedure type="string">'opus_core.bhhh_mnl_estimation'</procedure>
+            <agents_index flags="hidden" type="string" parser_action="blank_to_None"></agents_index>
+            <procedure type="quoted_string">opus_core.bhhh_mnl_estimation</procedure>
             <data_objects flags="hidden" type="string">datasets</data_objects>
           </arguments>
           <output flags="hidden" type="string">(coefficients, dummy)</output>
@@ -62,7 +62,7 @@
           <name type="string">prepare_for_estimate</name>
           <arguments type="dictionary">
             <specification_storage type="string">base_cache_storage</specification_storage>
-            <specification_table type="string">'choice_model_template_specification'</specification_table>
+            <specification_table type="quoted_string">choice_model_template_specification</specification_table>
           </arguments>
           <output flags="hidden" type="string">specification</output>
         </prepare_for_estimate>
@@ -74,10 +74,10 @@
         <init type="dictionary">
           <name type="string">RegressionModel</name>
           <arguments type="dictionary">
-            <regression_procedure type="string">'opus_core.linear_regression'</regression_procedure>
-            <submodel_string type="string" parser_action="empty_string_to_None"></submodel_string>
-            <run_config type="string" parser_action="empty_string_to_None"></run_config>
-            <estimate_config type="string" parser_action="empty_string_to_None"></estimate_config>
+            <regression_procedure type="quoted_string">opus_core.linear_regression</regression_procedure>
+            <submodel_string type="string" parser_action="blank_to_None"></submodel_string>
+            <run_config type="string" parser_action="blank_to_None"></run_config>
+            <estimate_config type="string" parser_action="blank_to_None"></estimate_config>
             <debuglevel type="integer">0</debuglevel>
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
@@ -87,8 +87,8 @@
             <specification flags="hidden" type="string">specification</specification>
             <coefficients flags="hidden" type="string">coefficients</coefficients>
             <dataset type="string">fill in</dataset>
-            <index type="string" parser_action="empty_string_to_None"></index>
-            <chunk_specification type="string" parser_action="empty_string_to_None"></chunk_specification>
+            <index type="string" parser_action="blank_to_None"></index>
+            <chunk_specification type="string" parser_action="blank_to_None"></chunk_specification>
             <data_objects flags="hidden" type="string">datasets</data_objects>
           </arguments>
         </run>
@@ -96,9 +96,9 @@
           <name type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <specification_storage type="string">base_cache_storage</specification_storage>
-            <specification_table type="string">'regression_model_template_specification'</specification_table>
+            <specification_table type="quoted_string">regression_model_template_specification</specification_table>
             <coefficients_storage type="string">base_cache_storage</coefficients_storage>
-            <coefficients_table type="string">'regression_model_template_coefficients'</coefficients_table>
+            <coefficients_table type="quoted_string">regression_model_template_coefficients</coefficients_table>
             <sample_coefficients type="boolean">False</sample_coefficients>
             <cache_storage flags="hidden" type="string">base_cache_storage</cache_storage>
             <multiplicator type = "integer">1</multiplicator>
@@ -110,8 +110,8 @@
             <specification flags="hidden" type="string">specification</specification>
             <dataset type="string">fill in</dataset>
             <outcome_attribute type="string">fill in (in quotes)</outcome_attribute>
-            <index flags="hidden" type="string" parser_action="empty_string_to_None"></index>
-            <procedure type="string">'opus_core.estimate_linear_regression'</procedure>
+            <index flags="hidden" type="string" parser_action="blank_to_None"></index>
+            <procedure type="quoted_string">opus_core.estimate_linear_regression</procedure>
             <data_objects flags="hidden" type="string">datasets</data_objects>
           </arguments>
           <output flags="hidden" type="string">(coefficients, dummy)</output>
@@ -120,7 +120,7 @@
           <name type="string">prepare_for_estimate</name>
           <arguments type="dictionary">
             <specification_storage type="string">base_cache_storage</specification_storage>
-            <specification_table type="string">'regression_model_template_specification'</specification_table>
+            <specification_table type="quoted_string">regression_model_template_specification</specification_table>
           </arguments>
           <output flags="hidden" type="string">specification</output>
         </prepare_for_estimate>
@@ -137,8 +137,8 @@
             <control_totals type="string">fill in</control_totals>
        <current_year flags="hidden" type="string">year</current_year>
             <control_total_attribute type="string">fill in (in quotes)</control_total_attribute>
-            <year_attribute type="string">'year'</year_attribute>
-            <capacity_attribute parser_action="empty_string_to_None" type="string" />
+            <year_attribute type="quoted_string">year</year_attribute>
+            <capacity_attribute parser_action="blank_to_None" type="string" />
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
         </run>
