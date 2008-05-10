@@ -3,7 +3,7 @@
     <description type="string">Default UrbanSim parcel project</description>
     <parent type="file">urbansim/configs/urbansim.xml</parent>
     <available_datasets type="list">['parcel','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
-    <dataset_pool_configuration type="class" flags="hidden">
+    <dataset_pool_configuration flags="hidden" type="class">
       <Class_name type="string">DatasetPoolConfiguration</Class_name>
       <Class_path type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
       <package_order type="list">['urbansim_parcel','urbansim', 'opus_core']</package_order>
@@ -132,7 +132,7 @@
             <agents_index type="string">index</agents_index>
             <data_objects type="string">datasets</data_objects>
             <debuglevel type="string">debuglevel</debuglevel>
-            <specification type="string">specification</specification>            
+            <specification type="string">specification</specification>
           </arguments>
           <output type="string">(coefficients, _)</output>
         </estimate>
@@ -159,10 +159,10 @@
             <compute_capacity_flag type="boolean">True</compute_capacity_flag>
             <number_of_units_string type="quoted_string">total_SSS_job_space</number_of_units_string>
             <run_config type="dictionary">
-              <agent_units_string parser_action="blank_to_None" type="string"></agent_units_string>
+              <agent_units_string parser_action="blank_to_None" type="string" />
               <lottery_max_iterations type="integer">10</lottery_max_iterations>
             </run_config>
-            <variable_package type="quoted_string">urbansim_parcel</variable_package>            
+            <variable_package type="quoted_string">urbansim_parcel</variable_package>
           </arguments>
         </init>
         <prepare_for_estimate type="dictionary">
@@ -186,7 +186,7 @@
             <coefficients_storage type="string">base_cache_storage</coefficients_storage>
             <coefficients_table type="quoted_string">employment_location_choice_model_coefficients</coefficients_table>
             <specification_storage type="string">base_cache_storage</specification_storage>
-            <specification_table type="quoted_string">employment_location_choice_model_specification</specification_table>            
+            <specification_table type="quoted_string">employment_location_choice_model_specification</specification_table>
           </arguments>
         </prepare_for_run>
         <run type="dictionary">
@@ -209,7 +209,7 @@
             <agents_index type="string">index</agents_index>
             <data_objects type="string">datasets</data_objects>
             <debuglevel type="string">debuglevel</debuglevel>
-            <specification type="string">specification</specification>            
+            <specification type="string">specification</specification>
           </arguments>
           <output type="string">(coefficients, _)</output>
         </estimate>
@@ -236,10 +236,10 @@
             <compute_capacity_flag type="boolean">True</compute_capacity_flag>
             <number_of_units_string parser_action="blank_to_None" type="string" />
             <run_config type="dictionary">
-              <agent_units_string parser_action="blank_to_None" type="string"></agent_units_string>
+              <agent_units_string parser_action="blank_to_None" type="string" />
               <lottery_max_iterations type="integer">7</lottery_max_iterations>
             </run_config>
-            <variable_package type="quoted_string">urbansim_parcel</variable_package>            
+            <variable_package type="quoted_string">urbansim_parcel</variable_package>
           </arguments>
         </init>
         <prepare_for_estimate type="dictionary">
@@ -263,7 +263,7 @@
             <coefficients_storage type="string">base_cache_storage</coefficients_storage>
             <coefficients_table type="quoted_string">employment_location_choice_model_coefficients</coefficients_table>
             <specification_storage type="string">base_cache_storage</specification_storage>
-            <specification_table type="quoted_string">employment_location_choice_model_specification</specification_table>            
+            <specification_table type="quoted_string">employment_location_choice_model_specification</specification_table>
           </arguments>
         </prepare_for_run>
         <run type="dictionary">
@@ -461,12 +461,19 @@
         <variable_package flags="hidden" type="string">urbansim_parcel</variable_package>
       </household_location_choice_model>
     </model_system>
+    <estimation type="dictionary">
+      <estimation_config type="dictionary">
+        <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+          <parcel choices="Load|Skip" copyable="True" type="dataset">Load</parcel>
+        </datasets_to_preload>
+        </estimation_config>
+    </estimation>
   </model_manager>
   <scenario_manager>
-    <urbansim_parcel_baseline type="scenario" >
-      <parent_old_format type="dictionary" >
-        <Class_name type="string" >UrbansimParcelConfiguration</Class_name>
-        <Class_path type="string" >urbansim_parcel.configs.controller_config</Class_path>
+    <urbansim_parcel_baseline type="scenario">
+      <parent_old_format type="dictionary">
+        <Class_name type="string">UrbansimParcelConfiguration</Class_name>
+        <Class_path type="string">urbansim_parcel.configs.controller_config</Class_path>
       </parent_old_format>
     </urbansim_parcel_baseline>
   </scenario_manager>
