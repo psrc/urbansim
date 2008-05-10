@@ -251,6 +251,8 @@ class XMLConfiguration(object):
             return self._convert_string_to_data(node, float)
         elif type_name=='string' or type_name=='password' or type_name=='variable_definition' or type_name=='path':
             return self._convert_string_to_data(node, str)
+        elif type_name=='quoted_string':
+            return "'%s'" % node.text
         elif type_name=='scenario_name':
             return node.text
         elif type_name=='unicode':
@@ -311,7 +313,7 @@ class XMLConfiguration(object):
     
     def _convert_string_to_data(self, node, func):
         if node.text is None:
-            if node.get('parser_action', '')=='empty_string_to_None':
+            if node.get('parser_action', '')=='blank_to_None':
                 return None
             elif func==str:
                 return ''
@@ -415,6 +417,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         self.assertEqual(config, 
                          {'description': 'a test configuration',
+                          'quotedthing': r"'test\test'",
                           'empty1': '',
                           'empty2': None,
                           'emptypassword': None,
