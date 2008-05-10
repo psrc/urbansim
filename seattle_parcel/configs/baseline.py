@@ -28,12 +28,13 @@ class Baseline(UrbansimParcelConfiguration):
     multiple_runs = False
 
     def __init__(self):
+        opus_home = os.environ['OPUS_HOME']
         config = UrbansimParcelConfiguration()
         config_changes = {
             'description':'Seattle parcel baseline',
-            'cache_directory':None,
+            'cache_directory':  os.path.join(opus_home, 'data/seattle_parcel/base_year_data'),
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-            cache_directory_root = r'/Users/borning/opus_home/data/seattle_parcel/runs',
+            cache_directory_root = os.path.join(opus_home, 'data/seattle_parcel/runs'),
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     years_to_cache = [2000],
