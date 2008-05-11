@@ -109,7 +109,7 @@
           <arguments type="dictionary">
             <specification flags="hidden" type="string">specification</specification>
             <dataset type="string">fill in</dataset>
-            <outcome_attribute type="string">fill in (in quotes)</outcome_attribute>
+            <outcome_attribute type="quoted_string">fill in</outcome_attribute>
             <index flags="hidden" type="string" parser_action="blank_to_None"></index>
             <procedure type="quoted_string">opus_core.estimate_linear_regression</procedure>
             <data_objects flags="hidden" type="string">datasets</data_objects>
@@ -132,11 +132,11 @@
         <run type="dictionary">
           <arguments type="dictionary">
             <dataset type="string">fill in</dataset>
-            <outcome_attribute type="string">fill in (in quotes)</outcome_attribute>
-            <weight_attribute type="string">fill in (in quotes)</weight_attribute>
+            <outcome_attribute type="quoted_string">fill in</outcome_attribute>
+            <weight_attribute type="quoted_string">fill in</weight_attribute>
             <control_totals type="string">fill in</control_totals>
        <current_year flags="hidden" type="string">year</current_year>
-            <control_total_attribute type="string">fill in (in quotes)</control_total_attribute>
+            <control_total_attribute type="quoted_string">fill in</control_total_attribute>
             <year_attribute type="quoted_string">year</year_attribute>
             <capacity_attribute parser_action="blank_to_None" type="string" />
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
