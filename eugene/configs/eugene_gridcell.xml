@@ -299,14 +299,6 @@
           <expression type="string">urbansim.DATASET.population_density</expression>
         </population_density>
       </model.gridcell>
-      <eugene.frank.indicators type="indicator_library">
-        <global_population_density type="indicator">
-          <package type="string">urbansim</package>
-          <valid_datasets type="string">alldata</valid_datasets>
-          <documentation_link type="string" />
-          <expression type="string">alldata.aggregate_all(urbansim.gridcell.population_density, function=sum)</expression>
-        </global_population_density>
-      </eugene.frank.indicators>
       <my_indicators append_to="True" type="indicator_library">
         <residential_units type="indicator">
           <package type="string">urbansim</package>
@@ -316,6 +308,7 @@
         </residential_units>
       </my_indicators>
     </Indicator_libraries>
+    <Indicator_groups setexpanded="True" type="group"/>
     <Simulation_runs setexpanded="True" type="all_source_data" />
     <Results setexpanded="True" type="selectable_list" />
   </results_manager>

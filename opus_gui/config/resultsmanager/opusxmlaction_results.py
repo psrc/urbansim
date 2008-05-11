@@ -41,6 +41,12 @@ class OpusXMLAction_Results(object):
                                           self.xmlTreeObject.parent)
         QObject.connect(self.actAddNewIndicator, SIGNAL("triggered()"), self.addNewIndicator)
 
+        #create new result template...
+        self.actAddNewIndicatorGroup = QAction(self.acceptIcon, 
+                                          "Add new indicator group...",
+                                          self.xmlTreeObject.parent)
+        QObject.connect(self.actAddNewIndicatorGroup, SIGNAL("triggered()"), self.addNewIndicatorGroup)          
+
         #generate results will enter a dialogue to pair indicators with 
         #result templates and datasets and then run them to produce results
         self.actGenerateResults = QAction(self.acceptIcon, 
@@ -145,6 +151,28 @@ class OpusXMLAction_Results(object):
         self.currentIndex.model().markAsDirty()
         model.emit(SIGNAL("layoutChanged()"))
 
+
+    def addNewIndicatorGroup(self):
+        print "addNewIndicatorGroup pressed with column = %s and item = %s" % \
+              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+              
+        model = self.currentIndex.model()
+        document = model.domDocument
+        name = 'untitled indicator group'
+
+        newNode = model.create_node(document = document, 
+                                    name = name, 
+                                    type = 'indicator_group', 
+                                    value = '')
+
+        model.insertRow(0,
+                self.currentIndex,
+                newNode)
+
+        self.currentIndex.model().markAsDirty()
+        model.emit(SIGNAL("layoutChanged()"))
+
+            
     def generateResults(self):
         print "generateResults pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
@@ -262,6 +290,8 @@ class OpusXMLAction_Results(object):
                     self.menu.addAction(self.actAddNewIndicator)
                 elif domElement.attribute(QString("type")) == QString("source_data"):
                     self.menu.addAction(self.actGenerateResults)
+                elif domElement.tagName() == QString("Indicator_groups"):
+                    self.menu.addAction(self.actAddNewIndicatorGroup)
                 elif domElement.attribute(QString("type")) == QString("indicator"):
                     self.menu.addAction(self.actViewDocumentation)
                     self.menu.addAction(self.actGenerateResults)

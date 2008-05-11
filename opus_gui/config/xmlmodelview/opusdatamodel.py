@@ -132,6 +132,7 @@ class OpusDataModel(QAbstractItemModel):
                    "script_config":self.pythonTypeIcon,
                    "script_batch":self.pythonBatchIcon,
                    "indicator_library":self.folderIcon,
+                   "indicator_group":self.folderIcon,
                    "group":self.folderIcon,
                    "indicator":self.tableIcon,
                    "all_source_data":self.folderIcon,
