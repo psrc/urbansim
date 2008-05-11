@@ -41,12 +41,6 @@ class OpusXMLAction_Results(object):
                                           self.xmlTreeObject.parent)
         QObject.connect(self.actAddNewIndicator, SIGNAL("triggered()"), self.addNewIndicator)
 
-        #create new result template...
-        self.actAddNewResultTemplate = QAction(self.acceptIcon, 
-                                          "Add new data source...",
-                                          self.xmlTreeObject.parent)
-        QObject.connect(self.actAddNewResultTemplate, SIGNAL("triggered()"), self.addNewResultTemplate)          
-
         #generate results will enter a dialogue to pair indicators with 
         #result templates and datasets and then run them to produce results
         self.actGenerateResults = QAction(self.acceptIcon, 
@@ -150,11 +144,6 @@ class OpusXMLAction_Results(object):
 
         self.currentIndex.model().markAsDirty()
         model.emit(SIGNAL("layoutChanged()"))
-
-
-    def addNewResultTemplate(self):
-        print "addNewResultTemplate pressed with column = %s and item = %s" % \
-              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
 
     def generateResults(self):
         print "generateResults pressed with column = %s and item = %s" % \
@@ -273,8 +262,6 @@ class OpusXMLAction_Results(object):
                     self.menu.addAction(self.actAddNewIndicator)
                 elif domElement.attribute(QString("type")) == QString("source_data"):
                     self.menu.addAction(self.actGenerateResults)
-                elif domElement.attribute(QString("type")) == QString("all_source_data"):
-                    self.menu.addAction(self.actAddNewResultTemplate)
                 elif domElement.attribute(QString("type")) == QString("indicator"):
                     self.menu.addAction(self.actViewDocumentation)
                     self.menu.addAction(self.actGenerateResults)
