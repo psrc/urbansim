@@ -16,6 +16,7 @@ from PyQt4.QtCore import QObject, SIGNAL, QModelIndex, QString
 
 from opus_gui.results.forms.advanced_visualization_form import AdvancedVisualizationForm
 from opus_gui.results.forms.generate_results_form import GenerateResultsForm
+from opus_gui.results.forms.indicator_group_run_form import IndicatorGroupRunForm
 from opus_gui.results.forms.view_documentation_form import ViewDocumentationForm
 from opus_gui.results.forms.view_image_form import ViewImageForm
 from opus_gui.results.forms.view_table_form import ViewTableForm
@@ -174,6 +175,13 @@ class ResultManagerBase(AbstractManagerBase):
         self.guiElements.insert(0, new_form)
         self.updateGuiElements()
 
+    def addRunIndicatorGroupForm(self, selected_item, simulation_run):
+        new_form = IndicatorGroupRunForm(parent = self.parent,
+                                         result_manager = self,
+                                         selected_item = selected_item,
+                                         simulation_run = simulation_run)
+        self.guiElements.insert(0, new_form)
+        self.updateGuiElements()
     
     def _get_indicator_info_from_node(self, node):
         info = get_child_values(parent = node,
