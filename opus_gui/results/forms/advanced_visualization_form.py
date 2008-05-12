@@ -293,7 +293,7 @@ class AdvancedVisualizationForm(QWidget):
         indicator_type = {
             'Map (per indicator per year)':'matplotlib_map',
             'Chart (per indicator, spans years)':'matplotlib_chart',
-            'Chart (per indicator, spans years)':'table_per_attribute',
+            'Table (per indicator, spans years)':'table_per_attribute',
             'Table (per year, spans indicators)':'table_per_year',
             'ESRI table (for loading in ArcGIS)':'table_esri'
         }[indicator_type]
