@@ -14,5 +14,6 @@
 
 aliases = [
            "is_home_owner = numpy.logical_or(household.tenure==1, household.tenure==2)",
-           "is_home_renter = household.tenure==3"
+           "is_home_renter = household.tenure==3",
+           "has_children = household.children > 0",
            ]
