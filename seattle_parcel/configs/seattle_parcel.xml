@@ -681,6 +681,7 @@
       </indicators_from_bob>
       <my_indicators append_to="True" type="indicator_library" />
     </Indicator_libraries>
+    <Indicator_groups setexpanded="True" type="group" />
     <Simulation_runs setexpanded="True" type="all_source_data">
     </Simulation_runs>
     <Results setexpanded="True" type="selectable_list" />
