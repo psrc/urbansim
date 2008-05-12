@@ -20,6 +20,7 @@ from PyQt4.QtXml import *
 
 from opus_gui.config.managerbase.cloneinherited import CloneInheritedGui
 from opus_gui.config.managerbase.clonenode import CloneNodeGui
+from opus_gui.results.xml_helper_methods import elementsByAttributeValue, get_child_values
 
 class OpusXMLAction_Results(object):
     def __init__(self, parent):
@@ -84,8 +85,8 @@ class OpusXMLAction_Results(object):
         QObject.connect(self.actViewResultAsAdvanced, SIGNAL("triggered()"), self.viewResultsAdvanced) 
 
 
-        self.actViewDocumentation = QAction(self.applicationIcon, "View documentation", self.xmlTreeObject.parent)
-        QObject.connect(self.actViewDocumentation, SIGNAL("triggered()"), self.viewDocumentation)
+#        self.actViewDocumentation = QAction(self.applicationIcon, "View documentation", self.xmlTreeObject.parent)
+#        QObject.connect(self.actViewDocumentation, SIGNAL("triggered()"), self.viewDocumentation)
 
         self.actRemoveNode = QAction(self.removeIcon,
                                      "Remove Node",
@@ -158,13 +159,12 @@ class OpusXMLAction_Results(object):
               
         model = self.currentIndex.model()
         document = model.domDocument
-        name = 'untitled indicator group'
+        name = 'INDICATOR_GROUP_NAME'
 
         newNode = model.create_node(document = document, 
                                     name = name, 
                                     type = 'indicator_group', 
                                     value = '')
-
         model.insertRow(0,
                 self.currentIndex,
                 newNode)
@@ -172,7 +172,109 @@ class OpusXMLAction_Results(object):
         self.currentIndex.model().markAsDirty()
         model.emit(SIGNAL("layoutChanged()"))
 
+        
+    def beforeAddIndicatorToGroupShown(self):
+        print "AddIndicatorToGroup about to be shown"
+        
+        domDocument = self.xmlTreeObject.parent.toolboxStuff.doc
+        node_list = elementsByAttributeValue(domDocument = domDocument, 
+                                              attribute = 'type', 
+                                              value = 'indicator')
+        
+        self.indicator_group_menu.clear()
+        for element, node in node_list:
+            indicator = QString(element.nodeName())
+            act_indicator = QAction(self.acceptIcon, 
+                                    element.nodeName(),
+                                    self.indicator_group_menu)
+            callback = lambda indicator=indicator: self.addIndicatorToGroup(indicator)
+            QObject.connect(act_indicator, SIGNAL("triggered()"), callback) 
+            self.indicator_group_menu.addAction(act_indicator)
             
+    def addIndicatorToGroup(self, indicator):
+        print "adding indicator to group..."
+        print "addIndicatorToGroup pressed with column = %s and item = %s" % \
+              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+        model = self.currentIndex.model()
+        document = model.domDocument
+
+        newNode = model.create_node(document = document, 
+                                    name = indicator, 
+                                    type = 'indicator_group_member', 
+                                    value = '')
+        model.insertRow(0,
+                self.currentIndex,
+                newNode)
+
+        general_node = document.elementsByTagName(QString('general')).item(0)
+        available_datasets = get_child_values(parent = general_node, 
+                                 child_names = ['available_datasets'])
+        
+        datasets = '|'.join(str(available_datasets['available_datasets'])[1:-1].split("','"))
+
+        visualizations = [
+            'Map (per indicator per year)',
+            'Chart (per indicator, spans years)',
+            'Table (per indicator, spans years)',
+            'Table (per year, spans indicators)']
+        visualizations = '|'.join(visualizations)
+            
+        visualization_node = model.create_node(document = document, 
+                                    name = 'visualization_type', 
+                                    type = 'string', 
+                                    value = '',
+                                    choices = visualizations) 
+               
+        dataset_node = model.create_node(document = document, 
+                                    name = 'dataset_name', 
+                                    type = 'string', 
+                                    value = '',
+                                    choices = datasets)
+
+        parent = self.currentIndex.parent()        
+        child_index = model.findElementIndexByName(indicator, parent)[0]
+        if child_index.isValid():
+            for node in [dataset_node, visualization_node]:
+                model.insertRow(0,
+                                child_index,
+                                node)
+        else:
+            print "No valid node was found..."
+            
+        self.currentIndex.model().markAsDirty()        
+        model.emit(SIGNAL("layoutChanged()"))
+
+    def beforeRunIndicatorGroupShown(self):
+        print "AddIndicatorToGroup about to be shown"
+        
+        domDocument = self.xmlTreeObject.parent.toolboxStuff.doc
+        node_list = elementsByAttributeValue(domDocument = domDocument, 
+                                              attribute = 'type', 
+                                              value = 'source_data')
+        
+        self.run_indicator_group_menu.clear()
+        for element, node in node_list:
+            simulation_run = QString(element.nodeName())
+            act_simulation_run = QAction(self.acceptIcon, 
+                                    element.nodeName(),
+                                    self.run_indicator_group_menu)
+            callback = lambda simulation_run=simulation_run: self.indicatorGroupRun(simulation_run)
+            QObject.connect(act_simulation_run, SIGNAL("triggered()"), callback) 
+            self.run_indicator_group_menu.addAction(act_simulation_run)
+                
+    def indicatorGroupRun(self, simulation_run):
+        print "indicatorGroupRun pressed with column = %s and item = %s" % \
+              (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+        if not self.xmlTreeObject.model.dirty:
+            self.xmlTreeObject.parent.resultManagerStuff.addRunIndicatorGroupForm(
+                selected_item = self.currentIndex.internalPointer().node().toElement().tagName(),
+                simulation_run = simulation_run)
+        else:
+            # Prompt the user to save...
+            QMessageBox.warning(self.xmlTreeObject.parent,
+                                "Warning",
+                                "Please save changes to project before generating results")
+                      
     def generateResults(self):
         print "generateResults pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
@@ -293,7 +395,7 @@ class OpusXMLAction_Results(object):
                 elif domElement.tagName() == QString("Indicator_groups"):
                     self.menu.addAction(self.actAddNewIndicatorGroup)
                 elif domElement.attribute(QString("type")) == QString("indicator"):
-                    self.menu.addAction(self.actViewDocumentation)
+#                    self.menu.addAction(self.actViewDocumentation)
                     self.menu.addAction(self.actGenerateResults)
                 elif domElement.attribute(QString("type")) == QString("indicator_result"):
                     visualization_menu = QMenu(self.xmlTreeObject.parent)
@@ -305,7 +407,11 @@ class OpusXMLAction_Results(object):
                     visualization_menu.addAction(self.actViewResultAsMatplotlibChart)
                     visualization_menu.addAction(self.actViewResultAsAdvanced)
                     self.menu.addMenu(visualization_menu)
-
+                    
+                elif domElement.attribute(QString("type")) == QString("indicator_group"):
+                    self._build_indicator_group_menu()
+                    
+                    
                 if self.menu:
                     # Last minute chance to add items that all menues should have
                     if domElement.hasAttribute(QString("inherited")):
@@ -329,4 +435,16 @@ class OpusXMLAction_Results(object):
                     self.menu.exec_(QCursor.pos())
         return
 
+    def _build_indicator_group_menu(self):
+        #needs to be called when indicator_group right clicked on...
+        self.indicator_group_menu = QMenu(self.xmlTreeObject.parent)
+        self.indicator_group_menu.setTitle(QString("Add indicator to group..."))
+        QObject.connect(self.indicator_group_menu, SIGNAL('aboutToShow()'), self.beforeAddIndicatorToGroupShown)
+        self.menu.addMenu(self.indicator_group_menu)
 
+        
+        self.run_indicator_group_menu = QMenu(self.xmlTreeObject.parent)
+        self.run_indicator_group_menu.setTitle(QString('Run indicator group on...'))
+        QObject.connect(self.run_indicator_group_menu, SIGNAL('aboutToShow()'), self.beforeRunIndicatorGroupShown)
+        
+        self.menu.addMenu(self.run_indicator_group_menu)
