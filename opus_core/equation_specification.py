@@ -418,7 +418,7 @@ def get_variables_coefficients_equations_for_submodel(submodel_spec, sub_model, 
     if isinstance(submodel_spec, tuple) or isinstance(submodel_spec, list):
         for var_coef in submodel_spec:
             if isinstance(var_coef, str):
-                #var_coef is actually just variables long names or alias
+                #var_coef is just variables long names or alias
                 if ("variables" in definition.keys()) and (var_coef in definition["alias"]):
                     i = definition["alias"].index(var_coef)
                     variables.append(definition["variables"][i])
@@ -457,18 +457,30 @@ def get_variables_coefficients_equations_for_submodel(submodel_spec, sub_model, 
             equation_ids = None
         for var, coef in submodel_spec.items():
             if not equation_ids:
-                variables.append(var)
-                coefficients.append(coef)
+                if ("variables" in definition.keys()) and (var in definition["alias"]):
+                    i = definition["alias"].index(var)
+                    variables.append(definition["variables"][i])
+                    coefficients.append(definition["coefficients"][i])
+                    fixed_values.append(definition["fixed_values"][i])
+                else:
+                    variables.append(var)
+                    coefficients.append(coef)
+                    fixed_values.append(0)
                 submodels.append(sub_model)
-                fixed_values.append(0)
             elif type(coef) is list or type(coef) is tuple:
                 for i in range(len(coef)):
                     if coef[i] != 0:
-                        variables.append(var)
+                        if ("variables" in definition.keys()) and (var in definition["alias"]):
+                            j = definition["alias"].index(var)
+                            variables.append(definition["variables"][j])
+                            fixed_values.append(definition["fixed_values"][j])
+                        else:
+                            variables.append(var)
+                            fixed_values.append(0)
                         coefficients.append(coef[i])
                         equations.append(equation_ids[i])
                         submodels.append(sub_model)
-                        fixed_values.append(0)
+                        
             else:
                 logger.log_error("Wrong specification format for submodel %s variable %s; \nwith equation_ids provided, coefficients must be a list or tuple of the same length of equation_ids" % sub_model, var)
 
@@ -521,7 +533,7 @@ class Tests(opus_unittest.OpusTestCase):
         new_variables = {'z': 'xxx.my_new_variable', 'q': 'xxx.variable_not_to_be_replaced', 'y': 'y.replaces_y'}
         specification.replace_variables(new_variables)
         result = specification.get_long_variable_names()
-        self.assert_(ma.allequal(result, array([variables[0], 'xxx.my_new_variable', 'y.replaces_y'])),
+        self.assert_(alltrue(result == array([variables[0], 'xxx.my_new_variable', 'y.replaces_y'])),
                      "Error in replace_varibles")
         
     def test_load_specification(self):
@@ -542,9 +554,9 @@ class Tests(opus_unittest.OpusTestCase):
         coefs = result.get_coefficient_names()
         subm = result.get_submodels()
         fixedval = result.get_fixed_values()
-        self.assert_(ma.allequal(coefs, array(["BPOP", "BINC", "BART", "BHWY", "BAGE"])),
+        self.assert_(alltrue(coefs == array(["BPOP", "BINC", "BART", "BHWY", "BAGE"])),
                      msg = "Error in test_load_specification (coefficients)")
-        self.assert_(ma.allequal(vars,
+        self.assert_(alltrue(vars ==
                                  array(["population", "average_income", "is_near_arterial", "is_near_highway", "lage"])),
                      msg = "Error in test_load_specification (variables)")
         self.assert_(ma.allequal(subm, array([1, 1, 2, 2, 3])),
@@ -581,9 +593,9 @@ class Tests(opus_unittest.OpusTestCase):
         coefs = result.get_coefficient_names()
         subm = result.get_submodels()
         fixedval = result.get_fixed_values()
-        self.assert_(ma.allequal(coefs, array(["BPOP", "BINC", "BAGE", "BART", "C", "BHWY"])),
+        self.assert_(alltrue(coefs == array(["BPOP", "BINC", "BAGE", "BART", "C", "BHWY"])),
                      msg = "Error in test_load_specification_with_definition (coefficients)")
-        self.assert_(ma.allequal(vars,
+        self.assert_(alltrue(vars ==
                                  array(["population", "average_income", "lage", "is_near_arterial", "constant", 
                                         "is_near_highway"])),
                      msg = "Error in test_load_specification_with_definition (variables)")
@@ -613,16 +625,49 @@ class Tests(opus_unittest.OpusTestCase):
         vars = result.get_variable_names()
         coefs = result.get_coefficient_names()
         subm = result.get_submodels()
-        self.assert_(ma.allequal(coefs, array(["population", "average_income", "lage", "is_near_arterial", "BHWY"])),
-                     msg = "Error in test_load_specification_with_definition (coefficients)")
-        self.assert_(ma.allequal(vars,
+        self.assert_(alltrue(coefs == array(["population", "average_income", "lage", "is_near_arterial", "BHWY"])),
+                     msg = "Error in test_load_specification_with_definition_with_implicit_coefficients (coefficients)")
+        self.assert_(alltrue(vars ==
                                  array(["population", "average_income", "lage", "is_near_arterial", "is_near_highway"])),
-                     msg = "Error in test_load_specification_with_definition (variables)")
+                     msg = "Error in test_load_specification_with_definition_with_implicit_coefficients (variables)")
         self.assert_(ma.allequal(subm, array([1, 1, 1, 2, 2])),
-                     msg = "Error in test_load_specification_with_definition (submodels)")
+                     msg = "Error in test_load_specification_with_definition_with_implicit_coefficients (submodels)")
         # test data type
         self.assert_(subm.dtype.name == "int16",
                      msg = "Error in data type of submodels.")
+        
+    def test_load_specification_with_definition_with_equations(self):
+        specification = {
+             "_definition_": [
+                 "pop = urbansim.gridcell.population",
+                 "inc = urbansim.gridcell.average_income",
+                 "art = urbansim.gridcell.is_near_arterial",
+                 ],
+              -2: {
+                "equation_ids": (1,2),
+                 "pop": ("bpop",0), 
+                 "inc": (0, "binc"), 
+                 "art": ("bart", 0), 
+                 "constant": ("asc", 0)
+                             }
+              }
+        result = load_specification_from_dictionary(specification)
+        vars = result.get_variable_names()
+        coefs = result.get_coefficient_names()
+        eqs = result.get_equations()
+        lvars = result.get_long_variable_names()
+        self.assert_(alltrue(coefs == array(["asc", "bart", "bpop", "binc"])),
+                     msg = "Error in test_load_specification_with_definition_with_equations (coefficients)")
+        self.assert_(alltrue(vars == array(["constant",  "art", "pop", "inc"])),
+                     msg = "Error in test_load_specification_with_definition_with_equations (variables)")
+        self.assert_(ma.allequal(eqs, array([1,1,1,2])),
+                     msg = "Error in test_load_specification_with_definition_with_equations (equations)")
+        self.assert_(alltrue(lvars == array(["constant",  
+                                             "art = urbansim.gridcell.is_near_arterial", 
+                                            "pop = urbansim.gridcell.population", 
+                                            "inc = urbansim.gridcell.average_income"])),
+                     msg = "Error in test_load_specification_with_definition_with_equations (long names of variables)")
+
 
 if __name__=='__main__':
     opus_unittest.main()
