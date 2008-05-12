@@ -159,7 +159,7 @@ class OpusXMLAction_Results(object):
               
         model = self.currentIndex.model()
         document = model.domDocument
-        name = 'INDICATOR_GROUP_NAME'
+        name = 'untitled_indicator_group'
 
         newNode = model.create_node(document = document, 
                                     name = name, 
@@ -210,7 +210,7 @@ class OpusXMLAction_Results(object):
         available_datasets = get_child_values(parent = general_node, 
                                  child_names = ['available_datasets'])
         
-        datasets = '|'.join(str(available_datasets['available_datasets'])[1:-1].split("','"))
+        datasets = '|'.join(str(available_datasets['available_datasets'])[1:-1].replace("'",'').split(","))
 
         visualizations = [
             'Map (per indicator per year)',

@@ -138,11 +138,10 @@
     <documentation type="documentation_path">documentation/installation/index.html</documentation>
   </data_manager>
   <model_manager>
-    <test_model_config type="string">
-    </test_model_config>
+    <test_model_config type="string" />
   </model_manager>
   <scenario_manager>
-    <Eugene_baseline executable="True" setexpanded="True" type="scenario" copyable="True">
+    <Eugene_baseline copyable="True" executable="True" setexpanded="True" type="scenario">
       <parent type="scenario_name">default_scenario</parent>
       <base_year type="integer">1980</base_year>
       <years_to_run config_name="years" type="tuple">
@@ -308,8 +307,22 @@
         </residential_units>
       </my_indicators>
     </Indicator_libraries>
-    <Indicator_groups setexpanded="True" type="group"/>
-    <Simulation_runs setexpanded="True" type="all_source_data" />
-    <Results setexpanded="True" type="selectable_list" />
+    <Indicator_groups setexpanded="True" type="group">
+      <an_indicator_group type="indicator_group">
+        <industrial_sqft type="indicator_group_member"><visualization_type choices="Map (per indicator per year)|Chart (per indicator, spans years)|Table (per indicator, spans years)|Table (per year, spans indicators)" type="string">Table (per year, spans indicators)</visualization_type>
+          <dataset_name choices="gridcell|zone|faz|large_area|city|county|alldata" type="string">gridcell</dataset_name>
+        </industrial_sqft>
+        <number_of_jobs type="indicator_group_member">
+          <visualization_type choices="Map (per indicator per year)|Chart (per indicator, spans years)|Table (per indicator, spans years)|Table (per year, spans indicators)" type="string">Table (per year, spans indicators)</visualization_type>
+          <dataset_name choices="&apos;gridcell|zone|faz|large_area|city|county|alldata&apos;" type="string">zone</dataset_name>
+        </number_of_jobs>
+      </an_indicator_group>
+    </Indicator_groups>
+    <Simulation_runs setexpanded="True" type="all_source_data">
+
+    </Simulation_runs>
+    <Results setexpanded="True" type="selectable_list">
+
+    </Results>
   </results_manager>
 </opus_project>

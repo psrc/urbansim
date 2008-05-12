@@ -254,16 +254,16 @@ class ResultManagerBase(AbstractManagerBase):
         self.visualization_thread = None
         self.visualizer = None
 
-    def addViewImageIndicator(self, visualization):
+    def addViewImageIndicator(self, visualization, indicator_type = None):
         new_form = ViewImageForm(parent = self.parent,
                                  visualization = visualization)
         self.guiElements.insert(0, new_form)
         self.updateGuiElements()
 
-    def addViewTableIndicator(self, visualization):
+    def addViewTableIndicator(self, visualization, indicator_type):
         new_form = ViewTableForm(parent = self.parent,
                                  visualization = visualization)
-        if self.indicator_type != 'arcgis_map':
+        if indicator_type != 'arcgis_map':
             self.guiElements.insert(0, new_form)
             self.updateGuiElements()
         else:

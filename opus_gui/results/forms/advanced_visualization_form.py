@@ -279,7 +279,7 @@ class AdvancedVisualizationForm(QWidget):
                 
     def on_pbn_go_released(self):
         # Fire up a new thread and run the model
-        print 'Generate results button pressed'
+        print 'Go button pressed'
 
         # References to the GUI elements for status for this run...
         #self.statusLabel = self.runStatusLabel

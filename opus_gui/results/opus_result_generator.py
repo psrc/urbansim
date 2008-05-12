@@ -73,7 +73,82 @@ class OpusGuiThread(QThread):
         self.emit(SIGNAL("runError(PyQt_PyObject)"),errorMessage)
 
 
+class OpusIndicatorGroupProcessor(object):
+    def __init__(self, 
+                 xml_path, 
+                 domDocument,
+                 model,
+                 kwargs = None):
+          
+        self.generator = OpusResultGenerator(
+           xml_path = xml_path,
+           domDocument = domDocument,
+           model = model                                            
+        )
+          
+        self.visualizer = OpusResultVisualizer(
+           xml_path = xml_path,
+           domDocument = domDocument,
+           indicator_type = None,
+           indicators = None,
+           kwargs = kwargs                     
+        )
+        self.finishedCallback = None
+        self.errorCallback = None
+            
+    def set_data(self,                  
+                 indicator_defs, 
+                 source_data_name,
+                 years):
+        
+        self.indicator_defs = indicator_defs
+        self.years = years
+        self.source_data_name = source_data_name        
+        
+    def run(self):
+        succeeded = False
+        
+        try:
+            self.visualizations = []
+            for (visualization_type, dataset_name), indicators in self.indicator_defs.items():
+                indicator_results = []
+                for indicator_name in indicators:
+                    try:
+                        self.generator.set_data(self.source_data_name, 
+                                                indicator_name, 
+                                                dataset_name, 
+                                                self.years)
+                        self.generator.run()
+                        indicator = {'indicator_name':indicator_name,#self.generator.last_added_indicator_result_name,
+                                     'dataset_name':dataset_name,
+                                     'source_data_name':self.source_data_name,
+                                     'years':self.years}
+                        indicator_results.append(indicator)
+                        
+                    except:
+                        print 'could not generate indicator %s'%indicator_name
+                self.visualizer.indicator_type = visualization_type
+                self.visualizer.indicators = indicator_results
+                try:
+                    import pydevd;pydevd.settrace()
+                except:
+                    pass
+                self.visualizer.run()
+                self.visualizations.append((visualization_type, self.visualizer.get_visualizations()))
+            
+            succeeded = True
+        except:
+            succeeded = False
+            errorInfo = formatExceptionInfo()
+            errorString = "Unexpected Error From Model :: " + str(errorInfo)
+            print errorInfo
+            self.errorCallback(errorString)
 
+        self.finishedCallback(succeeded)
+    
+    def get_visualizations(self): 
+        return self.visualizations
+    
 class OpusResultVisualizer(object):
     def __init__(self, 
                  xml_path, 
@@ -100,24 +175,23 @@ class OpusResultVisualizer(object):
             succeeded = False
             try:
                 # find the directory containing the eugene xml configurations
-                fileNameInfo = QFileInfo(self.xml_path)
-                fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
-                self._visualize(configuration_path = fileNameAbsolute)
+                self._visualize()
                 succeeded = True
             except:
                 succeeded = False
                 errorInfo = formatExceptionInfo()
                 errorString = "Unexpected Error From Model :: " + str(errorInfo)
                 print errorInfo
-                self.errorCallback(errorString)
-
-            self.finishedCallback(succeeded)
+                if self.errorCallback is not None:
+                    self.errorCallback(errorString)
+            if self.finishedCallback is not None:
+                self.finishedCallback(succeeded)
         else:
             pass
     
 
         
-    def _visualize(self, configuration_path):
+    def _visualize(self):
         indicators_to_visualize = {}
         interface = IndicatorFrameworkInterface(domDocument = self.domDocument)
         
@@ -206,7 +280,7 @@ class OpusResultVisualizer(object):
 
 class OpusResultGenerator(object):
     
-    def __init__(self, xml_path, domDocument):
+    def __init__(self, xml_path, domDocument, model):
         self.xml_path = xml_path
         self.finishedCallback = None
         self.errorCallback = None
@@ -214,6 +288,7 @@ class OpusResultGenerator(object):
         self.cache_directory = None
         self.firstRead = True
         self.domDocument = domDocument
+        self.model = model
     
     def set_data(self,
                  source_data_name,
@@ -230,16 +305,12 @@ class OpusResultGenerator(object):
         if WithOpus:
             succeeded = False
             try:
-                # find the directory containing the eugene xml configurations
-                fileNameInfo = QFileInfo(self.xml_path)
-                fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
-                configuration_path = fileNameAbsolute
                 try:
                     import pydevd;pydevd.settrace()
                 except:
                     pass
                 
-                self._generate_results(configuration_path = configuration_path)
+                self._generate_results()
                 succeeded = True
             except Exception, e:
                 succeeded = False
@@ -254,13 +325,14 @@ class OpusResultGenerator(object):
                     error_message                                   
                 )
                 print errorString
-                self.errorCallback(errorString)
-
-            self.finishedCallback(succeeded)
+                if self.errorCallback is not None:
+                    self.errorCallback(errorString)
+            if self.finishedCallback is not None:
+                self.finishedCallback(succeeded)
         else:
             pass
 
-    def _generate_results(self, configuration_path):
+    def _generate_results(self):
 #        try:
 #            import pydevd;pydevd.settrace()
 #        except:
@@ -280,6 +352,58 @@ class OpusResultGenerator(object):
 
         computed_indicator = maker.create(indicator = indicator, 
                                           source_data = source_data)
+        self.update_results_xml()
+
+    def update_results_xml(self):
+        print "update results"
+        model = self.model
+        document = self.domDocument
+        
+        name = '%s.%s.%s'%(self.indicator_name, 
+            self.dataset_name, 
+            self.source_data_name)
+        
+        self.last_added_indicator_result_name = name
+        
+        newNode = model.create_node(document = document, 
+                                    name = name, 
+                                    type = 'indicator_result', 
+                                    value = '')
+        source_data_node = model.create_node(document = document, 
+                                    name = 'source_data', 
+                                    type = 'string', 
+                                    value = self.source_data_name)
+        indicator_node = model.create_node(document = document, 
+                                    name = 'indicator_name', 
+                                    type = 'string', 
+                                    value = self.indicator_name)        
+        dataset_node = model.create_node(document = document, 
+                                    name = 'dataset_name', 
+                                    type = 'string', 
+                                    value = self.dataset_name)
+        year_node = model.create_node(document = document, 
+                                    name = 'available_years', 
+                                    type = 'string', 
+                                    value = ', '.join([repr(year) for year in self.years]))                
+        parent = model.index(0,0,QModelIndex()).parent()
+        index = model.findElementIndexByName("Results", parent)[0]
+        if index.isValid():
+            model.insertRow(0,
+                            index,
+                            newNode)
+        else:
+            print "No valid node was found..."
+        
+        child_index = model.findElementIndexByName(name, parent)[0]
+        if child_index.isValid():
+            for node in [dataset_node, indicator_node, source_data_node, year_node]:
+                model.insertRow(0,
+                                child_index,
+                                node)
+        else:
+            print "No valid node was found..."
+        
+        model.emit(SIGNAL("layoutChanged()"))
                 
     def _get_current_log(self, key):
         newKey = key

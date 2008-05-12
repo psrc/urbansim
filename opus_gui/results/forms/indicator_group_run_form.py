@@ -19,11 +19,11 @@ from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
 
 from opus_gui.results.xml_helper_methods import elementsByAttributeValue, get_child_values
 
-from opus_gui.results.opus_result_generator import OpusGuiThread, OpusResultGenerator
+from opus_gui.results.opus_result_generator import OpusGuiThread, OpusResultGenerator, OpusIndicatorGroupProcessor
 from opus_gui.config.xmlmodelview.opusdataitem import OpusDataItem
 
-class GenerateResultsForm(QWidget):
-    def __init__(self, parent, result_manager, selected_item = None):
+class IndicatorGroupRunForm(QWidget):
+    def __init__(self, parent, result_manager, selected_item = None, simulation_run = None):
         QWidget.__init__(self, parent)
         #parent is an OpusGui
         self.parent = parent
@@ -35,16 +35,16 @@ class GenerateResultsForm(QWidget):
         self.domDocument = self.toolboxStuff.doc
         
         self.available_years_for_simulation_runs = {}
-        
-        self.result_generator = OpusResultGenerator(
+
+        self.result_generator = OpusIndicatorGroupProcessor(
                                     xml_path = self.toolboxStuff.xml_file,
-                                    domDocument = self.domDocument, 
+                                    domDocument = self.domDocument,
                                     model = self.toolboxStuff.resultsManagerTree.model)
             
         self.result_generator.guiElement = self
         
         self.tabIcon = QIcon(":/Images/Images/cog.png")
-        self.tabLabel = "Generate results"
+        self.tabLabel = "Run indicator group"
 
         self.widgetLayout = QVBoxLayout(self)
         self.widgetLayout.setAlignment(Qt.AlignTop)
@@ -55,7 +55,7 @@ class GenerateResultsForm(QWidget):
         self.dataGroupBox = QGroupBox(self)
         self.widgetLayout.addWidget(self.dataGroupBox)
         
-        self._setup_definition_widget(selected_item)
+        self._setup_definition_widget(selected_item, simulation_run)
 
         self._setup_buttons()
         self._setup_tabs()
@@ -63,13 +63,13 @@ class GenerateResultsForm(QWidget):
         
     def _setup_buttons(self):
         # Add Generate button...
-        self.pbn_generate_results = QPushButton(self.indicatorsGroupBox)
-        self.pbn_generate_results.setObjectName("pbn_generate_results")
-        self.pbn_generate_results.setText(QString("Generate results..."))
+        self.pbn_run_indicator_group = QPushButton(self.indicatorsGroupBox)
+        self.pbn_run_indicator_group.setObjectName("pbn_run_indicator_group")
+        self.pbn_run_indicator_group.setText(QString("Run indicator group..."))
         
-        QObject.connect(self.pbn_generate_results, SIGNAL("released()"),
-                        self.on_pbn_generate_results_released)        
-        self.widgetLayout.addWidget(self.pbn_generate_results)
+        QObject.connect(self.pbn_run_indicator_group, SIGNAL("released()"),
+                        self.on_pbn_run_indicator_group_released)        
+        self.widgetLayout.addWidget(self.pbn_run_indicator_group)
         
     def _setup_tabs(self):
         # Add a tab widget and layer in a tree view and log panel
@@ -85,7 +85,7 @@ class GenerateResultsForm(QWidget):
         self.widgetLayout.addWidget(self.tabWidget)
         
 #
-    def _setup_definition_widget(self, selected_item):
+    def _setup_definition_widget(self, selected_item, simulation_run):
         
         #### setup indicators group box ####
         
@@ -94,19 +94,11 @@ class GenerateResultsForm(QWidget):
 
         self.lbl_indicator_name = QLabel(self.indicatorsGroupBox)
         self.lbl_indicator_name.setObjectName("lbl_indicator_name")
-        self.lbl_indicator_name.setText(QString("Indicator"))
+        self.lbl_indicator_name.setText(QString("Indicator group"))
         self.gridlayout.addWidget(self.lbl_indicator_name,0,0,1,1)
 
-        self._setup_co_indicator_name(selected_item)
-        self.gridlayout.addWidget(self.co_indicator_name,0,1,1,1)
-
-        self.lbl_dataset_name = QLabel(self.indicatorsGroupBox)
-        self.lbl_dataset_name.setObjectName("lbl_dataset_name")
-        self.lbl_dataset_name.setText(QString("Dataset"))
-        self.gridlayout.addWidget(self.lbl_dataset_name,1,0,1,1)
-
-        self._setup_co_dataset_name()
-        self.gridlayout.addWidget(self.co_dataset_name,1,1,1,1)
+        self._setup_co_indicator_group_name(selected_item)
+        self.gridlayout.addWidget(self.co_indicator_group_name,0,1,1,1)
 
         ##### setup data group box ####
         self.gridlayout2 = QGridLayout(self.dataGroupBox)
@@ -135,7 +127,7 @@ class GenerateResultsForm(QWidget):
         
         self._setup_co__years()
 
-        self._setup_co_source_data(selected_item)
+        self._setup_co_source_data(simulation_run)
         self.gridlayout2.addWidget(self.co_source_data,0,3,1,4) 
         
         self.gridlayout2.addWidget(self.lbl_yr1,1,0,1,1)
@@ -149,45 +141,26 @@ class GenerateResultsForm(QWidget):
         QObject.connect(self.co_source_data, SIGNAL("currentIndexChanged(int)"),
                 self.on_co_source_data_value_changed)
 
-    def _setup_co_indicator_name(self, selected_item):
+    def _setup_co_indicator_group_name(self, selected_item):
         
-        self.co_indicator_name = QComboBox(self.indicatorsGroupBox)
-        self.co_indicator_name.setObjectName("co_indicator_name")
-        
-        self.co_indicator_name.addItem(QString("[select]"))
-        
+        self.co_indicator_group_name = QComboBox(self.indicatorsGroupBox)
+        self.co_indicator_group_name.setObjectName("co_indicator_group_name")
+                
         node_list = elementsByAttributeValue(domDocument = self.domDocument, 
                                               attribute = 'type', 
-                                              value = 'indicator')
-            
+                                              value = 'indicator_group')
+
         for element, node in node_list:
-            self.co_indicator_name.addItem(QString(element.nodeName()))
+            self.co_indicator_group_name.addItem(QString(element.nodeName()))
             
-        idx = self.co_indicator_name.findText(selected_item)
+        idx = self.co_indicator_group_name.findText(selected_item)
         if idx != -1:
-            self.co_indicator_name.setCurrentIndex(idx)
-        
-        
-    def _setup_co_dataset_name(self):
-
-        self.co_dataset_name = QComboBox(self.indicatorsGroupBox)
-        self.co_dataset_name.setObjectName("co_dataset_name")
-
-        general_node = self.domDocument.elementsByTagName(QString('general')).item(0)
-        available_datasets = get_child_values(parent = general_node, 
-                                 child_names = ['available_datasets'])
-        
-        available_datasets = str(available_datasets['available_datasets'])[1:-1].split(',')
-        
-        for dataset in available_datasets:
-            self.co_dataset_name.addItem(QString(dataset[1:-1]))
+            self.co_indicator_group_name.setCurrentIndex(idx)
             
     def _setup_co_source_data(self, selected_item):
         self.co_source_data = QComboBox(self.indicatorsGroupBox)
         self.co_source_data.setObjectName("co_source_data")
-        
-        self.co_source_data.addItem(QString("[select]"))
-        
+                
         node_list = elementsByAttributeValue(domDocument = self.domDocument, 
                                               attribute = 'type', 
                                               value = 'source_data')
@@ -206,7 +179,7 @@ class GenerateResultsForm(QWidget):
             self.on_co_source_data_value_changed(idx)
             
             
-    def _setup_co__years(self):
+    def _setup_co__years(self):     
         self.co_start_year = QComboBox(self.dataGroupBox)
         self.co_start_year.setObjectName("co_start_year")
         
@@ -237,8 +210,32 @@ class GenerateResultsForm(QWidget):
             for i in range(1, end - start + 2):
                 yr = QString(repr(i))
                 self.co_every_year.addItem(yr)
-                
-    def on_pbn_generate_results_released(self):
+
+    def _get_indicators_for_group(self, parent):
+        viz_map = {
+            'Map (per indicator per year)':'matplotlib_map',
+            'Chart (per indicator, spans years)':'matplotlib_chart',
+            'Table (per indicator, spans years)':'table_per_attribute',
+            'Table (per year, spans indicators)':'table_per_year',
+            'ESRI table (for loading in ArcGIS)':'table_esri'
+        }
+        
+        indicators = {}
+        node = parent.firstChild()
+        while not node.isNull():
+            indicator_name = str(node.nodeName())
+            vals = get_child_values(node, ['visualization_type','dataset_name'])
+            visualization_type = viz_map[str(vals['visualization_type'])]
+            dataset_name = str(vals['dataset_name'])
+
+            if (visualization_type, dataset_name) not in indicators:
+                indicators[(visualization_type, dataset_name)] = [indicator_name]
+            else:
+                indicators[(visualization_type, dataset_name)].append(indicator_name)
+            node = node.nextSibling()
+        return indicators
+
+    def on_pbn_run_indicator_group_released(self):
         # Fire up a new thread and run the model
         print "Generate results button pressed"
 
@@ -246,20 +243,14 @@ class GenerateResultsForm(QWidget):
         #self.statusLabel = self.runStatusLabel
         #self.statusLabel.setText(QString("Model initializing..."))
 
-        self.pbn_generate_results.setEnabled(False)
-
         source_text = QString(self.co_source_data.currentText())
-        if str(source_text) == '[select]':
-            raise 'need to select a data source!!'
+        indicator_group = QString(self.co_indicator_group_name.currentText())
+        indicator_group_node = self.domDocument.elementsByTagName(indicator_group).item(0)
         
-        indicator_text = QString(self.co_indicator_name.currentText())
-        if str(indicator_text) == '[select]':
-            raise 'need to select an indicator!!'
-        
-        dataset_name = str(self.co_dataset_name.currentText())
-        if dataset_name == '[select]':
-            raise 'need to select a dataset!!'
-        
+        indicators_to_run = self._get_indicators_for_group(parent = indicator_group_node)
+                
+        self.pbn_run_indicator_group.setEnabled(False)
+
         start_year = int(self.co_start_year.currentText())
         end_year = int(self.co_end_year.currentText())
         increment = int(self.co_every_year.currentText())
@@ -267,18 +258,11 @@ class GenerateResultsForm(QWidget):
         years = range(start_year, end_year + 1, increment)
         
         self.result_generator.set_data(
-                                   source_data_name = source_text,
-                                   indicator_name = indicator_text,
-                                   dataset_name = dataset_name,
-                                   years = years)
-        
-#        self.last_computed_result = {
-#            'source_data_name': source_text,
-#            'indicator_name': indicator_text,
-#            'dataset_name': dataset_name,
-#            'years': years                           
-#        }
-        
+            indicator_defs = indicators_to_run, 
+            source_data_name = source_text,
+            years = years)
+                    
+            
         self.runThread = OpusGuiThread(
                               parentThread = self.parent,
                               parent = self,
@@ -291,77 +275,30 @@ class GenerateResultsForm(QWidget):
                         self.runErrorFromThread)
         
 
-        # Use this timer to call a function in the thread to check status if the thread is unable
-        # to produce its own signal above
-        self.timer = QTimer()
-        QObject.connect(self.timer, SIGNAL("timeout()"),
-                        self.runUpdateLog)
-        self.timer.start(1000)
-        
         self.runThread.start()
-
-    def runUpdateLog(self):
-        self.logFileKey = self.result_generator._get_current_log(self.logFileKey)
 
     # Called when the model is finished... 
     def runFinishedFromThread(self,success):
         print "Results generated met with success = ", success
+            
+        all_visualizations = self.result_generator.get_visualizations()
+        print all_visualizations
+        for indicator_type, visualizations in all_visualizations:
+            if indicator_type == 'matplotlib_map' or \
+               indicator_type == 'matplotlib_chart':
+                form_generator = self.result_manager.addViewImageIndicator
+            elif indicator_type == 'table_per_year' or \
+                 indicator_type == 'table_per_attribute':
+                form_generator = self.result_manager.addViewTableIndicator            
         
-        #self.update_results_xml()
-        
+            if form_generator is not None:    
+                for visualization in visualizations:
+                    form_generator(visualization = visualization, indicator_type = indicator_type)    
+            
         # Get the final logfile update after model finishes...
-        self.logFileKey = self.result_generator._get_current_log(self.logFileKey)
-        self.pbn_generate_results.setEnabled(True)
+#        self.logFileKey = self.result_generator._get_current_log(self.logFileKey)
+        self.pbn_run_indicator_group.setEnabled(True)
     
-#    def update_results_xml(self):
-#        print "update results"
-#        xml_tree = self.toolboxStuff.resultsManagerTree
-#        model = xml_tree.model
-#        document = self.domDocument
-#
-#        name = '%s.%s.%s'%(self.last_computed_result['indicator_name'], 
-#            self.last_computed_result['dataset_name'], 
-#            self.last_computed_result['source_data_name'])
-#        
-#        newNode = model.create_node(document = document, 
-#                                    name = name, 
-#                                    type = 'indicator_result', 
-#                                    value = '')
-#        source_data_node = model.create_node(document = document, 
-#                                    name = 'source_data', 
-#                                    type = 'string', 
-#                                    value = self.last_computed_result['source_data_name'])
-#        indicator_node = model.create_node(document = document, 
-#                                    name = 'indicator_name', 
-#                                    type = 'string', 
-#                                    value = self.last_computed_result['indicator_name'])        
-#        dataset_node = model.create_node(document = document, 
-#                                    name = 'dataset_name', 
-#                                    type = 'string', 
-#                                    value = self.last_computed_result['dataset_name'])
-#        year_node = model.create_node(document = document, 
-#                                    name = 'available_years', 
-#                                    type = 'string', 
-#                                    value = ', '.join([repr(year) for year in self.last_computed_result['years']]))                
-#        parent = model.index(0,0,QModelIndex()).parent()
-#        index = model.findElementIndexByName("Results", parent)[0]
-#        if index.isValid():
-#            model.insertRow(0,
-#                            index,
-#                            newNode)
-#        else:
-#            print "No valid node was found..."
-#        
-#        child_index = model.findElementIndexByName(name, parent)[0]
-#        if child_index.isValid():
-#            for node in [dataset_node, indicator_node, source_data_node, year_node]:
-#                model.insertRow(0,
-#                                child_index,
-#                                node)
-#        else:
-#            print "No valid node was found..."
-#        
-#        model.emit(SIGNAL("layoutChanged()"))
 
     def runErrorFromThread(self,errorMessage):
         QMessageBox.warning(self.parent,"Warning",errorMessage)
