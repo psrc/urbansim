@@ -416,77 +416,108 @@ def get_variables_coefficients_equations_for_submodel(submodel_spec, sub_model, 
     submodels = []
     fixed_values = []
     if isinstance(submodel_spec, tuple) or isinstance(submodel_spec, list):
-        for var_coef in submodel_spec:
-            if isinstance(var_coef, str):
-                #var_coef is just variables long names or alias
-                if ("variables" in definition.keys()) and (var_coef in definition["alias"]):
-                    i = definition["alias"].index(var_coef)
-                    variables.append(definition["variables"][i])
-                    coefficients.append(definition["coefficients"][i])
-                    fixed_values.append(definition["fixed_values"][i])
-                else:
-                    variables.append(var_coef)
-                    coefficients.append(VariableName(var_coef).get_alias())
-                    fixed_values.append(0)
-            elif isinstance(var_coef, tuple) or isinstance(var_coef, list):
-                if len(var_coef) == 1: # coefficient name is created from variable alias
-                    variables.append(var_coef[0])
-                    coefficients.append(VariableName(var_coef[0]).get_alias())
-                    fixed_values.append(0)
-                elif len(var_coef) > 1: # coefficient names explicitely given
-                    variables.append(var_coef[0])
-                    coefficients.append(var_coef[1])
-                    if len(var_coef) > 2: # third item is the coefficient fixed value 
-                        fixed_values.append(var_coef[2])
-                    else:
-                        fixed_values.append(0)
-                else:
-                    logger.log_error("Wrong specification format for submodel %s variable %s" % sub_model, submodel_spec)
-            elif isinstance(var_coef, dict):
-                variables.append(var_coef.keys()[0])
-                coefficients.append(var_coef.values()[0])
-                fixed_values.append(0)
-            else:
-                logger.log_error("Wrong specification format for submodel %s variable %s" % sub_model, submodel_spec)
-            submodels.append(sub_model)
+        variable, coefficient, fixed_value, error = get_variables_coefficients_equations_for_submodel_part(
+                                                                         submodel_spec, definition)
+        if error:
+            logger.log_error("Error in specification of submodel %s." % sub_model)
+        variables += variable
+        coefficients += coefficient
+        fixed_values += fixed_value
+        submodels += len(variable)*[sub_model]
     elif isinstance(submodel_spec, dict):
-        if submodel_spec.has_key("equation_ids"):
-            equation_ids = submodel_spec["equation_ids"]
-            del submodel_spec["equation_ids"]
+        speckeys = submodel_spec.keys()
+        if sum(map(lambda(x): isinstance(x, int), speckeys)) == len(speckeys): # keys are the equations
+            for eq, spec in submodel_spec.iteritems():
+                variable, coefficient, fixed_value, error = get_variables_coefficients_equations_for_submodel_part(
+                                                                         spec, definition)
+                if error:
+                    logger.log_error("Error in specification of submodel %s equation %s" % (sub_model, eq))
+                variables += variable
+                coefficients += coefficient
+                fixed_values += fixed_value
+                submodels += len(variable)*[sub_model]
+                equations += len(variable)*[eq]
         else:
-            equation_ids = None
-        for var, coef in submodel_spec.items():
-            if not equation_ids:
-                if ("variables" in definition.keys()) and (var in definition["alias"]):
-                    i = definition["alias"].index(var)
-                    variables.append(definition["variables"][i])
-                    coefficients.append(definition["coefficients"][i])
-                    fixed_values.append(definition["fixed_values"][i])
-                else:
-                    variables.append(var)
-                    coefficients.append(coef)
-                    fixed_values.append(0)
-                submodels.append(sub_model)
-            elif type(coef) is list or type(coef) is tuple:
-                for i in range(len(coef)):
-                    if coef[i] != 0:
-                        if ("variables" in definition.keys()) and (var in definition["alias"]):
-                            j = definition["alias"].index(var)
-                            variables.append(definition["variables"][j])
-                            fixed_values.append(definition["fixed_values"][j])
-                        else:
-                            variables.append(var)
-                            fixed_values.append(0)
-                        coefficients.append(coef[i])
-                        equations.append(equation_ids[i])
-                        submodels.append(sub_model)
-                        
+            if submodel_spec.has_key("equation_ids"):
+                equation_ids = submodel_spec["equation_ids"]
+                del submodel_spec["equation_ids"]
             else:
-                logger.log_error("Wrong specification format for submodel %s variable %s; \nwith equation_ids provided, coefficients must be a list or tuple of the same length of equation_ids" % sub_model, var)
+                equation_ids = None
+            
+            for var, coef in submodel_spec.items():
+                if not equation_ids:
+                    if ("variables" in definition.keys()) and (var in definition["alias"]):
+                        i = definition["alias"].index(var)
+                        variables.append(definition["variables"][i])
+                        coefficients.append(definition["coefficients"][i])
+                        fixed_values.append(definition["fixed_values"][i])
+                    else:
+                        variables.append(var)
+                        coefficients.append(coef)
+                        fixed_values.append(0)
+                    submodels.append(sub_model)
+                elif type(coef) is list or type(coef) is tuple:
+                    for i in range(len(coef)):
+                        if coef[i] != 0:
+                            if ("variables" in definition.keys()) and (var in definition["alias"]):
+                                j = definition["alias"].index(var)
+                                variables.append(definition["variables"][j])
+                                fixed_values.append(definition["fixed_values"][j])
+                            else:
+                                variables.append(var)
+                                fixed_values.append(0)
+                            coefficients.append(coef[i])
+                            equations.append(equation_ids[i])
+                            submodels.append(sub_model)
+                            
+                else:
+                    logger.log_error("Wrong specification format for submodel %s variable %s; \nwith equation_ids provided, coefficients must be a list or tuple of the same length of equation_ids" % sub_model, var)
 
     return (variables, coefficients, equations, submodels, fixed_values)
 
-
+def get_variables_coefficients_equations_for_submodel_part(submodel_spec, definition={}):
+    variables = []
+    coefficients = []
+    equations = []
+    submodels = []
+    fixed_values = []
+    error = False
+    for var_coef in submodel_spec:
+        if isinstance(var_coef, str):
+            #var_coef is just variables long names or alias
+            if ("variables" in definition.keys()) and (var_coef in definition["alias"]):
+                i = definition["alias"].index(var_coef)
+                variables.append(definition["variables"][i])
+                coefficients.append(definition["coefficients"][i])
+                fixed_values.append(definition["fixed_values"][i])
+            else:
+                variables.append(var_coef)
+                coefficients.append(VariableName(var_coef).get_alias())
+                fixed_values.append(0)
+        elif isinstance(var_coef, tuple) or isinstance(var_coef, list):
+            if len(var_coef) == 1: # coefficient name is created from variable alias
+                variables.append(var_coef[0])
+                coefficients.append(VariableName(var_coef[0]).get_alias())
+                fixed_values.append(0)
+            elif len(var_coef) > 1: # coefficient names explicitely given
+                variables.append(var_coef[0])
+                coefficients.append(var_coef[1])
+                if len(var_coef) > 2: # third item is the coefficient fixed value 
+                    fixed_values.append(var_coef[2])
+                else:
+                    fixed_values.append(0)
+            else:
+                logger.log_error("Wrong specification format for variable %s" % submodel_spec)
+                error = True
+        elif isinstance(var_coef, dict):
+            variables.append(var_coef.keys()[0])
+            coefficients.append(var_coef.values()[0])
+            fixed_values.append(0)
+        else:
+            logger.log_error("Wrong specification format for variable %s" % submodel_spec)
+            error = True
+        
+    return (variables, coefficients, fixed_values, error)
 
 from numpy import alltrue, ma
 from opus_core.tests import opus_unittest
@@ -666,6 +697,39 @@ class Tests(opus_unittest.OpusTestCase):
                                              "art = urbansim.gridcell.is_near_arterial", 
                                             "pop = urbansim.gridcell.population", 
                                             "inc = urbansim.gridcell.average_income"])),
+                     msg = "Error in test_load_specification_with_definition_with_equations (long names of variables)")
+        
+    def test_load_specification_with_definition_with_equations_v2(self):
+        specification = {
+             "_definition_": [
+                 ("pop = urbansim.gridcell.population", "bpop"),
+                 "inc = urbansim.gridcell.average_income",
+                 "art = urbansim.gridcell.is_near_arterial",
+                 ],
+              -2: {
+                   1: [
+                     "pop", 
+                     "inc", 
+                     "constant" ],
+                    2: [ "art"]
+                             }
+              }
+        result = load_specification_from_dictionary(specification)
+        vars = result.get_variable_names()
+        coefs = result.get_coefficient_names()
+        eqs = result.get_equations()
+        lvars = result.get_long_variable_names()
+        self.assert_(alltrue(coefs == array(["bpop", "inc", "constant", "art",])),
+                     msg = "Error in test_load_specification_with_definition_with_equations_v2 (coefficients)")
+        self.assert_(alltrue(vars == array(["pop", "inc", "constant",  "art"])),
+                     msg = "Error in test_load_specification_with_definition_with_equations (variables)")
+        self.assert_(ma.allequal(eqs, array([1,1,1,2])),
+                     msg = "Error in test_load_specification_with_definition_with_equations (equations)")
+        self.assert_(alltrue(lvars == array(["pop = urbansim.gridcell.population", 
+                                             "inc = urbansim.gridcell.average_income",
+                                             "constant",  
+                                             "art = urbansim.gridcell.is_near_arterial", 
+                                            ])),
                      msg = "Error in test_load_specification_with_definition_with_equations (long names of variables)")
 
 
