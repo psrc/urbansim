@@ -358,6 +358,8 @@ class Estimator(object):
         ds = self.get_data_as_dataset(submodel)
         attrs = [attr for attr in ds.get_known_attribute_names() if attr not in ds.get_id_name()]
         ds.correlation_image(attrs)
+        #for information on matplot styles: http://matplotlib.sourceforge.net/tutorial.html
+        #particularly useful information on this webpage on "Interactive navigation" using "toolbar2"
         
     def plot_choice_set(self):
         choice_set = self.get_choice_set()
