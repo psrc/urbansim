@@ -110,7 +110,14 @@ class XMLConfiguration(object):
         for submodel_name in model.keys():
             if submodel_name!='all_variables':
                 submodel = model[submodel_name]
-                result[submodel['submodel_id']] = submodel['variables']
+                if 'variables' in submodel.keys():
+                    result[submodel['submodel_id']] = submodel['variables']
+                else: # specification has equations
+                    result[submodel['submodel_id']] = {}
+                    for equation_name in submodel.keys():
+                        if equation_name!='description' and equation_name!='submodel_id':
+                            equation_spec = submodel[equation_name]
+                            result[submodel['submodel_id']][equation_spec['equation_id']] = equation_spec['variables']
         return result
     
     def save(self):
@@ -626,6 +633,13 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config = XMLConfiguration(f).get_estimation_specification('real_estate_price_model')
         should_be = {'_definition_': ['ln_cost=ln(psrc.parcel.cost)', 'unit_price=urbansim_parcel.parcel.unit_price'],
           24: ['ln_cost']}
+        self.assertEqual(config, should_be)
+        
+    def test_get_estimation_specification_with_equation(self):
+        f = os.path.join(self.test_configs, 'estimate_choice_model.xml')
+        config = XMLConfiguration(f).get_estimation_specification('choice_model_with_equations_template')
+        should_be = {'_definition_': ['var1 = package.dataset.some_variable_or_expression'],
+          -2: {1: ['constant'], 2: ['var1']}}
         self.assertEqual(config, should_be)
         
     def test_get_estimation_specification_of_child(self):
