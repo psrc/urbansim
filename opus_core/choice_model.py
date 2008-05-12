@@ -28,6 +28,7 @@ from opus_core.sampling_toolbox import sample_noreplace
 from opus_core.chunk_model import ChunkModel
 from opus_core.class_factory import ClassFactory
 from opus_core.model import get_specification_for_estimation, prepare_specification_and_coefficients
+from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
 from numpy import where, zeros, array, arange, ones, take, ndarray, resize, concatenate
 from numpy import int32, compress, float64
@@ -75,10 +76,17 @@ class ChoiceModel(ChunkModel):
         """
         self.debug = DebugPrinter(debuglevel)
 
+        self.compute_choice_attribute = False
+        self.choice_attribute_name = choice_attribute_name
+        if (self.choice_attribute_name is not None):
+            self.choice_attribute_name = VariableName(self.choice_attribute_name)
+            if self.choice_attribute_name.get_package_name() is not None:
+                self.compute_choice_attribute = True
+                
         if not isinstance(choice_set, Dataset):
             storage = StorageFactory().get_storage('dict_storage')
             storage_table_name = 'choice_set'
-            table_data = {choice_attribute_name:array(choice_set)}
+            table_data = {self.choice_attribute_name.get_alias():array(choice_set)}
             storage.write_table(
                 table_name=storage_table_name,
                 table_data=table_data
@@ -87,7 +95,7 @@ class ChoiceModel(ChunkModel):
             choice_set = Dataset(
                 in_storage = storage,
                 in_table_name = storage_table_name,
-                id_name = choice_attribute_name,
+                id_name = self.choice_attribute_name.get_alias(),
                 dataset_name = 'choice',
                 )
 
@@ -131,6 +139,9 @@ class ChoiceModel(ChunkModel):
         if agents_index==None:
             agents_index=arange(agent_set.size())
 
+        if self.compute_choice_attribute:
+            agent_set.compute_variables([self.choice_attribute_name], dataset_pool=self.dataset_pool)
+            
         if self.run_config.get("demand_string", None):
             self.choice_set.add_primary_attribute(name=self.run_config.get("demand_string"),
                                           data=zeros(self.choice_set.size(), dtype="float32"))
@@ -268,6 +279,9 @@ class ChoiceModel(ChunkModel):
         if not isinstance(agents_index,ndarray):
             agents_index=array(agents_index)
 
+        if self.compute_choice_attribute:
+            agent_set.compute_variables([self.choice_attribute_name], dataset_pool=self.dataset_pool)
+            
         self.model_interaction.set_agent_set(agent_set)
 
         estimation_set = DatasetSubset(agent_set, agents_index)
