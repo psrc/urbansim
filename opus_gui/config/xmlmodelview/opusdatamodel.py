@@ -446,11 +446,14 @@ class OpusDataModel(QAbstractItemModel):
     #            if self.rowCount(child)>0:
     #                self.stripAttribute(attribute,child,recursive)
 
-    def create_node(self, document, name, type, value):
+    def create_node(self, document, name, type, value, choices = None):
         newNode = document.createElement(QString(name))
         newNode.setAttribute(QString("type"),QString(type))
         newText = document.createTextNode(QString(value))
         newNode.appendChild(newText)
+        
+        if choices is not None:
+            newNode.setAttribute(QString('choices'), QString(choices))
         return newNode
 
     def stripAttributeDown(self,attribute,parent):
