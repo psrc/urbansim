@@ -161,6 +161,27 @@
       </variables>
    </submodel>
    </model_template>
+   <choice_model_with_equations_template  type="dictionary" copyable='True'>
+   <all_variables type="dictionary">
+     <var1 type="variable_definition" copyable='True'>var1 = package.dataset.some_variable_or_expression</var1>
+   </all_variables>
+   <submodel type="submodel" copyable='True'>
+      <description type="string">No submodel</description>
+      <submodel_id type="integer">-2</submodel_id>
+      <choice_1 type="choice" copyable='True'>
+        <equation_id type="integer">1</equation_id>
+        <variables type="selectable_list">
+             <constant choices="Use|Skip" type="variable" copyable='True'>Use</constant>
+        </variables>
+        </choice_1>
+        <choice_2 type="choice" copyable='True'>
+          <equation_id type="integer">2</equation_id>
+          <variables type="selectable_list">
+             <var1 choices="Use|Skip" type="variable" copyable='True'>Skip</var1>
+           </variables>
+        </choice_2>
+   </submodel>
+   </choice_model_with_equations_template>
    <estimation_config type="dictionary">
         <cache_directory parser_action="prefix_with_opus_data_path" type="directory" >fill in (relative to OPUS_DATA_PATH)</cache_directory>
         <output_configuration type="class" >
