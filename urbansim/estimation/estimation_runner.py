@@ -86,12 +86,17 @@ class EstimationRunner(Estimator):
             
         Estimator.__init__(self, config, save_estimation_results=save_estimation_results)
 
-    def reestimate(self, submodels=None):
+    def reestimate(self, submodels=None, reload_xml_file=True):
         """Launch a re-estimation without recomputing all variables. 'submodels' is a list or single number of submodels to re-estimate.
-        If it is None, all submodels are re-estimated.
+        If it is None, all submodels are re-estimated.  If self.xml_configuration is not None and reload_xml_file is True, re-read
+        the contents of the xml configuration file in case it has changed.  This will usually be what you want to do when 
+        using reestimate from the command line -- but not from the GUI (since with the GUI, the XMLConfiguration might have been 
+        edited but not yet saved back to the file).
         """
         specification_dict=None
         if self.xml_configuration is not None:
+            if reload_xml_file:
+                self.xml_configuration.initialize_from_xml_file()
             specification_dict = self.xml_configuration.get_estimation_specification(self.estimated_model)
         Estimator.reestimate(self, self.specification_module, specification_dict=specification_dict, type=self.model_group, submodels=submodels)
         

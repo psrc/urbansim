@@ -28,16 +28,16 @@ class XMLConfiguration(object):
         Look first in the default directory if present; otherwise in the directory in which
         the Opus code is stored.  If is_parent is true, mark all of the nodes as inherited
         (either from this configuration or a grandparent)."""
-        self._filepath = None
+        self.full_filename = None
         if default_directory is not None:
             f = os.path.join(default_directory, filename)
             if os.path.exists(f):
-                self._filepath = f
-        if self._filepath is None:
+                self.full_filename = f
+        if self.full_filename is None:
             opus_core_dir = __import__('opus_core').__path__[0]
             workspace_dir = os.path.split(opus_core_dir)[0]
-            self._filepath = os.path.join(workspace_dir, filename)
-        # if self._filepath doesn't exist, ElementTree will raise an IOError
+            self.full_filename = os.path.join(workspace_dir, filename)
+        # if self.full_filename doesn't exist, ElementTree will raise an IOError
         # self.tree is the xml tree (without any inherited nodes); 
         # self.full_tree is the xml tree with all the inherited nodes as well
         # parent_map is a dictionary that can be used to work back up the XML tree
@@ -45,14 +45,20 @@ class XMLConfiguration(object):
         self.tree = None
         self.full_tree = None
         self.parent_map = None
-        self.name = os.path.basename(self._filepath).split('.')[0]
+        self.name = os.path.basename(self.full_filename).split('.')[0]
         self.pp = pprint.PrettyPrinter(indent=4)
-        self._initialize(ElementTree(file=self._filepath), is_parent)
+        self.initialize_from_xml_file(is_parent)
+        
+    def initialize_from_xml_file(self, is_parent=False):
+        """initialize (or re-initialize) the contents of this configuration from the xml file.
+        If is_parent is true, mark all of the nodes as inherited
+        (either from this configuration or a grandparent)."""
+        self._initialize(ElementTree(file=self.full_filename), is_parent)
         
     def update(self, newconfig_str):
         """Update the contents of this configuration from the string newconfig_str 
         (a string representing an xml configuration).  Ignore any inherited nodes in newconfig_str."""
-        # Note that this doesn't change the name of this configuration, or the _filepath
+        # Note that this doesn't change the name of this configuration, or the full_filename
         str_io = StringIO.StringIO(newconfig_str)
         etree = ElementTree(file=str_io)
         self._remove_inherited_nodes(etree.getroot())
@@ -109,7 +115,7 @@ class XMLConfiguration(object):
     
     def save(self):
         """save this configuration in a file with the same name as the original"""
-        self.save_as(self._filepath)
+        self.save_as(self.full_filename)
         
     def save_as(self, name):
         """save this configuration under a new name"""
@@ -133,7 +139,7 @@ class XMLConfiguration(object):
         if full_root.tag!='opus_project':
             raise ValueError, "malformed xml - expected to find a root element named 'opus_project'"
         parent_nodes = full_root.findall('general/parent')
-        default_dir = os.path.split(self._filepath)[0]
+        default_dir = os.path.split(self.full_filename)[0]
         for p in parent_nodes:
             x = XMLConfiguration(p.text, default_directory=default_dir, is_parent=True)
             self._merge_parent_elements(x.full_tree.getroot(), '')
@@ -644,8 +650,9 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         str_io.close()
         est_file.close()
         
-    def test_update_1(self):
-        # try update with a completely different project - make sure stuff gets replaced
+    def test_update_and_initialize(self):
+        # Try update with a completely different project - make sure stuff gets replaced.
+        # Then reinitialize from the file and check that it reverts.
         f = os.path.join(self.test_configs, 'estimation_grandchild.xml')
         config = XMLConfiguration(f)
         update_str = """<?xml version='1.0' encoding='UTF-8'?>
@@ -657,11 +664,21 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
               </scenario_manager>
             </opus_project>"""
         config.update(update_str)
-        run_config = config.get_run_configuration('test_scenario')
-        self.assertEqual(run_config, {'i': 42})
+        section1 = config.get_section('scenario_manager/test_scenario')
+        self.assertEqual(section1, {'i': 42})
+        # no model_manager section in the updated configuration
+        section2 = config.get_section('model_manager/estimation')
+        self.assertEqual(section2, None)
+        # now re-initialize from the original xml file, which has a model manager section and no scenario manager section
+        config.initialize_from_xml_file()
+        section3 = config.get_section('scenario_manager/test_scenario')
+        self.assertEqual(section3, None)
+        # no model_manager section in the updated configuration
+        section4 = config.get_section('model_manager/estimation')
+        self.assertEqual(section4['real_estate_price_model']['all_variables']['ln_cost'], 'ln_cost=ln(psrc.parcel.cost+100)')
 
-    def test_update_2(self):
-        # make sure nodes marked as inherited are filtered out when doing the update
+    def test_update_and_save(self):
+        # make sure nodes marked as inherited are filtered out when doing an update and a save
         f = os.path.join(self.test_configs, 'estimation_grandchild.xml')
         config = XMLConfiguration(f)
         update_str = """<opus_project>
