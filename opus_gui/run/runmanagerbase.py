@@ -395,11 +395,11 @@ class ModelGuiElement(QWidget):
         #                                                                         vals['end_year'])
 
         # end source combobox
-        self.result_generator = OpusResultGenerator(
-                                        xml_path = self.toolboxStuff.xml_file,
-                                        domDocument = self.domDocument)  
+        #self.result_generator = OpusResultGenerator(
+        #                                xml_path = self.toolboxStuff.xml_file,
+        #                                domDocument = self.domDocument)  
 
-        self.result_generator.guiElement = self
+        #self.result_generator.guiElement = self
 
 
 
