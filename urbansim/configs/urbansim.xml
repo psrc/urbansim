@@ -168,13 +168,13 @@
    <submodel type="submodel" copyable='True'>
       <description type="string">No submodel</description>
       <submodel_id type="integer">-2</submodel_id>
-      <choice_1 type="choice" copyable='True'>
+      <choice_1 type="dictionary" copyable='True'>
         <equation_id type="integer">1</equation_id>
         <variables type="selectable_list">
              <constant choices="Use|Skip" type="variable" copyable='True'>Use</constant>
         </variables>
         </choice_1>
-        <choice_2 type="choice" copyable='True'>
+        <choice_2 type="dictionary" copyable='True'>
           <equation_id type="integer">2</equation_id>
           <variables type="selectable_list">
              <var1 choices="Use|Skip" type="variable" copyable='True'>Skip</var1>
