@@ -80,7 +80,7 @@ class ChoiceModel(ChunkModel):
         self.choice_attribute_name = choice_attribute_name
         if (self.choice_attribute_name is not None):
             self.choice_attribute_name = VariableName(self.choice_attribute_name)
-            if self.choice_attribute_name.get_package_name() is not None:
+            if self.choice_attribute_name.get_dataset_name() is not None:
                 self.compute_choice_attribute = True
                 
         if not isinstance(choice_set, Dataset):
