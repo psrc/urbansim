@@ -14,7 +14,7 @@
 
 
 from opus_core.model import Model
-from opus_core.datasets.dataset import DatasetSubset
+from opus_core.datasets.dataset import Dataset, DatasetSubset
 from opus_core.logger import logger
 from numpy import where, ones, zeros, logical_and, clip, round_
 
@@ -30,7 +30,7 @@ class AllocationModel(Model):
         """'dataset' is a Dataset for which a quantity 'outcome_attribute' is created. The total amount of the quantity is 
         given by the attribute 'control_total_attribute' of the 'control_totals' Dataset. If it is not given, it is assumed 
         to have the same name as 'outcome_attribute'. The 'weight_attribute' of 'dataset' determines the allocation weights.
-        The 'control_totals' Dataset contains an attribute 'year' (or alternatively, anattribute given by the 'year_attribute' argument)
+        The 'control_totals' Dataset contains an attribute 'year' (or alternatively, an attribute given by the 'year_attribute' argument)
         and optionally other attributes that must be known to the 'dataset' (such as a geography). For each row of the control_totals dataset
         for which year matches the 'current_year', the total amount is distributed among the corresponding members of 'dataset' according to weights.
         If a 'capacity_attribute' is given (attribute of 'dataset'), the algorithm removes any allocations that exceeds the capacity and 
@@ -55,7 +55,10 @@ class AllocationModel(Model):
         if capacity_attribute is not None:
             attrs_to_compute.append(capacity_attribute)
         for attr in attrs_to_compute:
-            dataset.compute_one_variable_with_unknown_package(attr, dataset_pool=dataset_pool)
+            try:
+                dataset.compute_variables(attr, dataset_pool=dataset_pool)
+            except:
+                dataset.compute_one_variable_with_unknown_package(attr, dataset_pool=dataset_pool)
         
         # create subset of control totals for the current year
         year_index = where(control_totals.get_attribute(year_attribute) == current_year)[0]
@@ -102,6 +105,10 @@ class AllocationModel(Model):
             dataset.add_primary_attribute(name=outcome_attribute, data=outcome)
             logger.log_status('New values stored into attribute %s of dataset %s.' % (outcome_attribute, dataset.get_dataset_name()))
         return outcome
+    
+    def prepare_for_run(self, storage, table_name, id_name, dataset_name='control_totals'):
+        control_totals = Dataset(in_storage=storage, in_table_name=table_name, id_name=id_name, dataset_name=dataset_name)
+        return control_totals
     
 from opus_core.tests import opus_unittest
 from opus_core.storage_factory import StorageFactory
