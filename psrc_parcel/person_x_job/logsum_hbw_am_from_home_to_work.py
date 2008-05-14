@@ -12,13 +12,13 @@
 # other acknowledgments.
 #
 
-from psrc.abstract_variables.abstract_travel_time_variable import abstract_travel_time_variable
+from psrc.abstract_variables.abstract_logsum_variable import abstract_logsum_variable
 from opus_core.misc import unique_values
 from numpy import where, repeat, ones, float32, resize, array
 from numpy import ma
 from opus_core.logger import logger
 
-class logsum_hbw_am_from_home_to_work(abstract_travel_time_variable):
+class logsum_hbw_am_from_home_to_work(abstract_logsum_variable):
     """logsum_hbw_am_from_home_to_work
        logsum breaks by income:
            Less than $25K;
@@ -26,49 +26,16 @@ class logsum_hbw_am_from_home_to_work(abstract_travel_time_variable):
            $45 to $75K;
            More than $75K.
     """
-    default_value = -1
+    
+    default_value = -9
     agent_zone_id = "zone_id = person.disaggregate(urbansim_parcel.household.zone_id)"
+    agent_category_attribute = "logsum_income_break =( person.disaggregate(psrc.household.logsum_income_break)).astype(int32)"
     location_zone_id = "urbansim_parcel.job.zone_id"
+    travel_data_attributes = {1: "travel_data.logsum_hbw_am_income_1", 
+                              2: "travel_data.logsum_hbw_am_income_2", 
+                              3: "travel_data.logsum_hbw_am_income_3", 
+                              4: "travel_data.logsum_hbw_am_income_4" }
     direction_from_home = True
-    
-    def dependencies(self):
-        return [ self.agent_zone_id, self.location_zone_id,
-                 "income_breaks = 1 * (household.income < 25000) +" + \
-                                " 2 * numpy.logical_and(household.income >= 25000, household.income < 45000) +" + \
-                                " 3 * numpy.logical_and(household.income >= 45000, household.income < 75000) +" + \
-                                " 4 * (household.income >= 75000)",
-                 "income_breaks = ( person.disaggregate(household.income_breaks) ).astype(int32)"]
-
-    def compute(self, dataset_pool):
-        interaction_dataset = self.get_dataset()
-        income_breaks = interaction_dataset.get_dataset(1).get_attribute_by_index("income_breaks",
-                                                                               interaction_dataset.get_2d_index_of_dataset1())
-        unique_income_breaks = unique_values(income_breaks.ravel())
-        self.add_dependencies(["travel_data.logsum_hbw_am_income_" + str(i) for i in unique_income_breaks])
-        
-        travel_data = dataset_pool.get_dataset('travel_data')
-        var1 = interaction_dataset.get_dataset(1).get_attribute_by_index(self.agent_zone_id,
-                                                                         interaction_dataset.get_2d_index_of_dataset1())
-        var2 = interaction_dataset.get_2d_dataset_attribute(self.location_zone_id)
-        if self.direction_from_home:
-            home_zone = var1
-            work_zone = var2
-        else:
-            home_zone = var2
-            work_zone = var1
-        times = resize(array([self.default_value], dtype=float32), home_zone.shape)
-        positions = ones(home_zone.shape, dtype="int32")
-        #create indices for 2d array of (origin, destination)
-        ij = map(lambda x, y: (x, y), where(positions)[0], where(positions)[1])
-        for a in ij:
-            i, j = a
-            try:
-                times[i,j] = travel_data.get_attribute_by_id("logsum_hbw_am_income_" + str(income_breaks[i, j]) , (home_zone[i,j], work_zone[i,j]))
-            except:
-                logger.log_warning("zone pairs (%s, %s) is not in zoneset; value set to %s." % (home_zone[i,j], work_zone[i,j], self.default_value))
-
-        return times
-    
 
 from opus_core.tests import opus_unittest
 from opus_core.tests.utils.variable_tester import VariableTester
