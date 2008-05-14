@@ -129,19 +129,32 @@
          <import type="dictionary">
           <opus_core.allocation_model type="string">AllocationModel</opus_core.allocation_model>
         </import>
+        <init type="dictionary">
+          <name type="string">AllocationModel</name>
+        </init>
         <run type="dictionary">
           <arguments type="dictionary">
             <dataset type="string">fill in</dataset>
             <outcome_attribute type="quoted_string">fill in</outcome_attribute>
             <weight_attribute type="quoted_string">fill in</weight_attribute>
-            <control_totals type="string">fill in</control_totals>
-       <current_year flags="hidden" type="string">year</current_year>
+            <control_totals flag="hidden" type="string">cts</control_totals>
+            <current_year flags="hidden" type="string">year</current_year>
             <control_total_attribute type="quoted_string">fill in</control_total_attribute>
             <year_attribute type="quoted_string">year</year_attribute>
-            <capacity_attribute parser_action="blank_to_None" type="string" />
+            <capacity_attribute parser_action="blank_to_None" type="quoted_string" />
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
         </run>
+        <prepare_for_run type="dictionary">
+          <name type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <storage type="string">base_cache_storage</storage>
+            <table_name type="quoted_string">fill in</table_name>
+            <id_name type="list">['year']</id_name>
+            <dataset_name type="quoted_string">control_totals</dataset_name>
+          </arguments>
+          <output flags="hidden" type="string">cts</output>
+        </prepare_for_run>
        </allocation_model_template>
    </model_system>
    <estimation type="dictionary">
