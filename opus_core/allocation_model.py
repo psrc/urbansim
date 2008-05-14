@@ -72,7 +72,7 @@ class AllocationModel(Model):
             if dataset.get_attribute(capacity_attribute).sum() < control_totals_for_this_year.get_attribute(control_total_attribute).sum():
                 logger.log_warning("Capacity (%s) is smaller than the amount to allocate (%s)." % (dataset.get_attribute(capacity_attribute).sum(), 
                                                                                                   control_totals_for_this_year.get_attribute(control_total_attribute).sum()))
-            C = dataset.get_attribute(capacity_attribute)
+            C = dataset.get_attribute(capacity_attribute).astype('int32')
             
         all_weights = dataset.get_attribute(weight_attribute)
         outcome = zeros(dataset.size(), dtype='int32')
