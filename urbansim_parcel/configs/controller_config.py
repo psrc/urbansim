@@ -475,7 +475,42 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
 #                 "output": "jcm_index"
 #                 }
 #             },
-        }
+
+         'water_demand_model': {
+            "import": {"psrc_parcel.models.water_demand_model":"WaterDemandModel"},
+            "init": {
+                "name": "WaterDemandModel",
+                "arguments": {"submodel_string": "'land_use_type_id'",
+                              "outcome_attribute": "'ln_month_combination_2'",
+                              "filter_attribute": None,
+                              "dataset_pool": "dataset_pool",
+                              },
+                },
+            "prepare_for_run": {
+                "name": "prepare_for_run",
+                "arguments": {"specification_storage": "base_cache_storage",
+                              "specification_table": "'water_demand_model_specification_for_month_combination_2'",
+                               "coefficients_storage": "base_cache_storage",
+                               "coefficients_table": "'water_demand_model_coefficients_for_month_combination_2'"},
+                "output": "(specification, coefficients)"
+                },
+            "run": {
+                "arguments": {
+                              "specification": "specification",
+                              "coefficients":"coefficients",
+                              "dataset": "parcel",
+                              "data_objects": "datasets",
+                }
+                },
+            },
+         }
+        
+        for month in range(2, 13, 2):
+            month_string = "month_combination_" + str(month)
+            my_controller_configuration['water_demand_model_for_' + month_string] = copy.deepcopy(my_controller_configuration['water_demand_model'])
+            my_controller_configuration['water_demand_model_for_' + month_string]['init']['arguments']['outcome_attribute'] = "'%s'" % month_string
+            my_controller_configuration['water_demand_model_for_' + month_string]['prepare_for_run']['arguments']['specification_table'] = "'water_demand_model_specification_for_%s'" % month_string
+            my_controller_configuration['water_demand_model_for_' + month_string]['prepare_for_run']['arguments']['coefficients_table'] = "'water_demand_model_coefficients_for_%s'" % month_string
         
         my_controller_configuration["workplace_choice_model_for_immigrant"] = copy.deepcopy(my_controller_configuration["workplace_choice_model_for_resident"])
         my_controller_configuration["workplace_choice_model_for_immigrant"]["init"]["arguments"]["model_name"] = "'Non-home-based Workplace Choice Model for immigrants'"
