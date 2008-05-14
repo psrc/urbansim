@@ -137,7 +137,7 @@
             <dataset type="string">fill in</dataset>
             <outcome_attribute type="quoted_string">fill in</outcome_attribute>
             <weight_attribute type="quoted_string">fill in</weight_attribute>
-            <control_totals flag="hidden" type="string">cts</control_totals>
+            <control_totals flags="hidden" type="string">cts</control_totals>
             <current_year flags="hidden" type="string">year</current_year>
             <control_total_attribute type="quoted_string">fill in</control_total_attribute>
             <year_attribute type="quoted_string">year</year_attribute>
