@@ -248,7 +248,8 @@ class ResultManagerBase(AbstractManagerBase):
         
         if form_generator is not None:    
             for visualization in visualizations:
-                form_generator(visualization = visualization)
+                form_generator(visualization = visualization,
+                               indicator_type = self.indicator_type)
         
         self.visualization_thread.wait()
         self.visualization_thread = None
