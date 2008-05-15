@@ -67,7 +67,7 @@ class ToolboxBase(object):
                               "Should we save or discard those changes before opening?")
 
         for manager in [self.resultsManagerTree, self.modelManagerTree, self.runManagerTree, self.dataManagerTree]:
-            if manager and manager.model.dirty:
+            if manager and manager.model.isDirty():
                 saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
                                                       save_string,
                                                       QMessageBox.Discard,QMessageBox.Save)
@@ -78,17 +78,17 @@ class ToolboxBase(object):
         else:
             #if we have an existing tree we need to remove the dirty bit since we are discarding
             if self.runManagerTree:
-                self.runManagerTree.model.dirty = False
+                self.runManagerTree.model.markAsClean()
             if self.dataManagerTree:
-                self.dataManagerTree.model.dirty = False
+                self.dataManagerTree.model.markAsClean()
             if self.dataManagerFileTree:
-                self.dataManagerFileTree.model.dirty = False
+                self.dataManagerFileTree.model.markAsClean()
             if self.modelManagerTree:
-                self.modelManagerTree.model.dirty = False
+                self.modelManagerTree.model.markAsClean()
             if self.resultsManagerTree:
-                self.resultsManagerTree.model.dirty = False
+                self.resultsManagerTree.model.markAsClean()
             if self.generalManagerTree:
-                self.generalManagerTree.model.dirty = False
+                self.generalManagerTree.model.markAsClean()
 
         # Try to remove all the old trees...
         generalManagerRemoveSuccess = True
