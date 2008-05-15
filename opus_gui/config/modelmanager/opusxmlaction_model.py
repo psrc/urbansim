@@ -67,7 +67,7 @@ class OpusXMLAction_Model(object):
     def runEstimationAction(self):
         # First confirm that the project file needs to be saved
         # before running the estimation...
-        if not self.xmlTreeObject.model.dirty:
+        if not self.xmlTreeObject.model.isDirty():
             newEstimation = OpusEstimation(self.xmlTreeObject,
                                            self.xmlTreeObject.parentTool.xml_file)
             self.xmlTreeObject.parent.runManagerStuff.addNewEstimationRun(newEstimation)

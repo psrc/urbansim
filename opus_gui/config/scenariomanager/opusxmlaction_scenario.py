@@ -95,7 +95,7 @@ class OpusXMLAction_Scenario(object):
 
     def runModel(self):
         # If the XML is not dirty we can go ahead and run... else prompt for saving
-        if not self.xmlTreeObject.model.dirty:
+        if not self.xmlTreeObject.model.isDirty():
             modelToRun = self.currentIndex.internalPointer().node().nodeName()
             # Add the model to the run Q
             newModel = OpusModel(self.xmlTreeObject,
@@ -203,7 +203,7 @@ class OpusXMLAction_Scenario(object):
         window.show()
 
     def removeTree(self):
-        if not self.xmlTreeObject.model.dirty:
+        if not self.xmlTreeObject.model.isDirty():
             self.xmlTreeObject.groupBox.hide()
             self.xmlTreeObject.parentWidget.removeWidget(self.xmlTreeObject.groupBox)
             return True

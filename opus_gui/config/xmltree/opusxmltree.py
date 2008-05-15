@@ -56,7 +56,7 @@ class OpusXMLTree(object):
         self.xmlAction = OpusXMLAction(self)
 
     def removeTree(self):
-        if not self.model.dirty:
+        if not self.model.isDirty():
             self.groupBox.hide()
             self.parentWidget.removeWidget(self.groupBox)
             return True
