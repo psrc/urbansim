@@ -269,13 +269,13 @@ class OpusDataModel(QAbstractItemModel):
 
     def markAsDirty(self):
         if self.dirty == False:
-            wintitle = self.parentObj.windowTitle().replace(" - ", " - *")
+            wintitle = self.parentObj.windowTitle().replace(" - ", " -*")
             self.parentObj.setWindowTitle(wintitle)
         self.dirty = True
 
     def markAsClean(self):
         if self.dirty == True:
-            wintitle = self.parentObj.windowTitle().replace("*", "")
+            wintitle = self.parentObj.windowTitle().replace("*", " ")
             self.parentObj.setWindowTitle(wintitle)
         self.dirty = False
         
