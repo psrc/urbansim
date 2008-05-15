@@ -140,7 +140,6 @@ class OpusXMLAction_Data(object):
         self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
                                             self.currentIndex,
                                             newNode)
-        self.currentIndex.model().markAsDirty()
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def newConfig(self):
@@ -153,13 +152,11 @@ class OpusXMLAction_Data(object):
     def moveNodeUp(self):
         #print "Move Up Pressed"
         self.currentIndex.model().moveUp(self.currentIndex)
-        self.currentIndex.model().markAsDirty()
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def moveNodeDown(self):
         #print "Move Down Pressed"
         self.currentIndex.model().moveDown(self.currentIndex)
-        self.currentIndex.model().markAsDirty()
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def openDocumentation(self):
@@ -270,7 +267,6 @@ class OpusXMLAction_Data(object):
         #print "Remove Node Pressed"
         self.currentIndex.model().removeRow(self.currentIndex.internalPointer().row(),
                                             self.currentIndex.model().parent(self.currentIndex))
-        self.currentIndex.model().markAsDirty()
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def makeEditableAction(self):
@@ -279,7 +275,6 @@ class OpusXMLAction_Data(object):
         self.currentIndex.model().stripAttributeDown('inherited',thisNode)
         # Now up the tree, only hitting parent nodes and not sibblings
         self.currentIndex.model().stripAttributeUp('inherited',thisNode)
-        self.currentIndex.model().markAsDirty()
         # Finally we refresh the tree to indicate that there has been a change
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
