@@ -259,7 +259,7 @@ class OpusXMLAction_Results(object):
     def indicatorGroupRun(self, simulation_run):
         print "indicatorGroupRun pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
-        if not self.xmlTreeObject.model.dirty:
+        if not self.xmlTreeObject.model.isDirty():
             self.xmlTreeObject.parent.resultManagerStuff.addRunIndicatorGroupForm(
                 selected_item = self.currentIndex.internalPointer().node().toElement().tagName(),
                 simulation_run = simulation_run)
@@ -272,7 +272,7 @@ class OpusXMLAction_Results(object):
     def generateResults(self):
         print "generateResults pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
-        if not self.xmlTreeObject.model.dirty:
+        if not self.xmlTreeObject.model.isDirty():
             self.xmlTreeObject.parent.resultManagerStuff.addGenerateIndicatorForm(
                 selected_item = self.currentIndex.internalPointer().node().toElement().tagName())
         else:
@@ -316,7 +316,7 @@ class OpusXMLAction_Results(object):
     def viewResultsAdvanced(self):
         print "viewResultsAdvanced pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())                  
-        if not self.xmlTreeObject.model.dirty:
+        if not self.xmlTreeObject.model.isDirty():
             self.xmlTreeObject.parent.resultManagerStuff.addAdvancedVisualizationForm()
         else:
             # Prompt the user to save...
