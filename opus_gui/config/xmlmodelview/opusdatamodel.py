@@ -288,29 +288,20 @@ class OpusDataModel(QAbstractItemModel):
                 domElement = domNode.toElement()
                 if not domElement.isNull():
                     domElement.setTagName(value.toString())
-                    if self.dirty == False:
-                        wintitle = self.parentObj.windowTitle().replace(" - ", " - *")
-                        self.parentObj.setWindowTitle(wintitle)
-                    self.dirty = True
+                    self.markAsDirty()
         elif index.column() == 1:
             if domNode.hasChildNodes():
                 children = domNode.childNodes()
                 for x in xrange(0,children.count(),1):
                     if children.item(x).isText():
                         children.item(x).setNodeValue(QString(value.toString()))
-                        if self.dirty == False:
-                            wintitle = self.parentObj.windowTitle().replace(" - ", " - *")
-                            self.parentObj.setWindowTitle(wintitle)                         
-                        self.dirty = True
+                        self.markAsDirty()
             else:
                 #print "New text node to be added"
                 # We need to add a text node since it was blank
                 newText = self.domDocument.createTextNode(QString(value.toString()))
                 domNode.appendChild(newText)
-                if self.dirty == False:
-                    wintitle = self.parentObj.windowTitle().replace(" - ", " - *")
-                    self.parentObj.setWindowTitle(wintitle)
-                self.dirty = True
+                self.markAsDirty()
         return True
 
     def insertRow(self,row,parent,node):
@@ -333,6 +324,7 @@ class OpusDataModel(QAbstractItemModel):
         parentItem.childItems.insert(row,item)
         self.endInsertRows()
         #print "debug"
+        self.markAsDirty()
         return returnval
 
     def removeRow(self,row,parent):
@@ -346,6 +338,7 @@ class OpusDataModel(QAbstractItemModel):
         parentItem.domNode.removeChild(parentItem.child(row).domNode)
         parentItem.childItems.pop(row)
         self.endRemoveRows()
+        self.markAsDirty()
         return returnval
 
     def moveUp(self,item,howmany=1):
@@ -358,6 +351,7 @@ class OpusDataModel(QAbstractItemModel):
                 currentParent = item.parent()
                 self.removeRow(currentRow,currentParent)
                 self.insertRow(currentRow-howmany,currentParent,clone)
+                self.markAsDirty()
 
     def moveDown(self,item,howmany=1):
         if item.isValid():
@@ -373,6 +367,7 @@ class OpusDataModel(QAbstractItemModel):
                 currentParent = item.parent()
                 self.removeRow(currentRow,currentParent)
                 self.insertRow(currentRow+howmany,currentParent,clone)
+                self.markAsDirty()
 
     def findElementIndexByName(self,name,parent,multiple=False):
         finds = []
@@ -450,10 +445,10 @@ class OpusDataModel(QAbstractItemModel):
         newNode = document.createElement(QString(name))
         newNode.setAttribute(QString("type"),QString(type))
         newText = document.createTextNode(QString(value))
-        newNode.appendChild(newText)
-        
+        newNode.appendChild(newText)        
         if choices is not None:
             newNode.setAttribute(QString('choices'), QString(choices))
+        self.markAsDirty()
         return newNode
 
     def stripAttributeDown(self,attribute,parent):
@@ -462,6 +457,7 @@ class OpusDataModel(QAbstractItemModel):
             if parentElement.hasAttribute(QString(attribute)):
                 # remove the attribute
                 parentElement.removeAttribute(QString(attribute))
+                self.markAsDirty()
             rows = parent.childNodes().count()
             for x in xrange(0,rows,1):
                 child = parent.childNodes().item(x)
@@ -471,6 +467,7 @@ class OpusDataModel(QAbstractItemModel):
                     if childElement.hasAttribute(QString(attribute)):
                         # remove the attribute
                         childElement.removeAttribute(QString(attribute))
+                        self.markAsDirty()
                     # If this child has other children then we recurse
                     childRows = child.childNodes().count()
                     if childRows>0:
@@ -483,6 +480,7 @@ class OpusDataModel(QAbstractItemModel):
             if parentElement.hasAttribute(QString(attribute)):
                 # remove the attribute
                 parentElement.removeAttribute(QString(attribute))
+                self.markAsDirty()
             grandParent = parent.parentNode()
             if not grandParent.isNull():
                 self.stripAttributeUp(attribute,grandParent)
