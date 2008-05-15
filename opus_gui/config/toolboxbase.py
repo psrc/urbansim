@@ -144,8 +144,6 @@ class ToolboxBase(object):
                 self.opusDataPath = self.opusXMLTree.get_opus_data_path()
                 self.generalManagerTree = OpusXMLTree(self,"general",
                                                       self.parent.generalmanager_page.layout())
-                self.resultsManagerTree = OpusXMLTree(self,"results_manager",
-                                                      self.parent.resultsmanager_page.layout())
                 self.modelManagerTree = OpusXMLTree(self,"model_manager",
                                                     self.parent.modelmanager_page.layout())
                 self.runManagerTree = OpusXMLTree(self,"scenario_manager",
@@ -156,6 +154,8 @@ class ToolboxBase(object):
                                                         self.parent.datamanager_dirview.layout())
                 self.dataManagerDBSTree = OpusXMLTree(self, "data_manager_dbstree",
                                                       self.parent.datamanager_dbsconnections.layout())
+                self.resultsManagerTree = OpusXMLTree(self,"results_manager",
+                                                      self.parent.resultsmanager_page.layout())
             else:
                 print "Error reading the %s configuration file" % (xml_file)
         else:

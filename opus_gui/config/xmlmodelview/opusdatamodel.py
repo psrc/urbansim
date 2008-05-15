@@ -323,7 +323,6 @@ class OpusDataModel(QAbstractItemModel):
         #print "len=%d row=%d" % (len(parentItem.childItems),row)
         parentItem.childItems.insert(row,item)
         self.endInsertRows()
-        #print "debug"
         self.markAsDirty()
         return returnval
 
@@ -448,7 +447,6 @@ class OpusDataModel(QAbstractItemModel):
         newNode.appendChild(newText)        
         if choices is not None:
             newNode.setAttribute(QString('choices'), QString(choices))
-        self.markAsDirty()
         return newNode
 
     def stripAttributeDown(self,attribute,parent):
