@@ -86,10 +86,7 @@ class CloneInheritedGui(QDialog, Ui_CloneInheritedGui):
             self.model.insertRow(self.model.rowCount(parent),
                                  parent,
                                  self.clone)
-            if self.model.dirty == False:
-                wintitle = self.model.parentObj.windowTitle().replace(" - ", " - *")
-                self.model.parentObj.setWindowTitle(wintitle)
-            self.model.dirty = True
+            self.model.markAsDirty()
             self.model.emit(SIGNAL("layoutChanged()"))
         # Since we are referencing the main model we want to now make it
         # editable again...

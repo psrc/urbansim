@@ -44,7 +44,6 @@ class CloneNodeGui(QDialog, Ui_CloneNodeGui):
             self.model.insertRow(self.model.rowCount(self.parentnode),
                                  self.parentnode,
                                  self.clone)
-            self.model.markAsDirty()
             self.model.emit(SIGNAL("layoutChanged()"))
         else:
             # TODO: Send up an error
