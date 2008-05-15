@@ -1091,6 +1091,10 @@ class AbstractDataset(object):
         values = ma.filled(self.get_attribute(name), filled_value)
         plot_histogram(values, main=main, xlabel=name, bins=bins)
 
+    def compute_and_plot_histogram(self, name, dataset_pool=None, **kwargs):
+        self.compute_variables(name, dataset_pool=dataset_pool)
+        self.plot_histogram(name, **kwargs)
+        
     def plot_scatter(self, name_x, name_y, main="", npoints=None, **kwargs):
         """Create a scatter plot of the attributes given by 'name_x' (x-axis) and 'name_y' (y-axis) and display its correlation coefficient.
         'npoints' controls the number of points in the plot. If it is None, all points are plotted, otherwise they are selected randomly.
