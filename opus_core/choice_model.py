@@ -645,8 +645,8 @@ class ModelInteraction:
             return self.submodel_coefficients[submodel][0]
         return self.submodel_coefficients[submodel]
         
-    def remove_rows_from_data(self, where_not_remove, submodel):
-        self.data[submodel] = compress(where_not_remove, self.data[submodel], axis=0)
+    def remove_rows_from_data(self, where_not_remove, submodel, idx):
+        self.data[submodel][idx] = compress(where_not_remove, self.data[submodel][idx], axis=0)
         
     def get_data(self, submodel):
         if self.number_of_choice_sets == 1:
@@ -702,7 +702,7 @@ class ModelInteraction:
             where_not_remove = where(sumchoice == 0, False, True)
             if False in where_not_remove:
                 is_submodel_selected_choice[i] = compress(where_not_remove, is_submodel_selected_choice[i], axis=0)
-                self.remove_rows_from_data(where_not_remove, submodel)
+                self.remove_rows_from_data(where_not_remove, submodel, i)
 
         if self.number_of_choice_sets == 1:
             return is_submodel_selected_choice[0]
@@ -719,8 +719,8 @@ class ModelInteraction:
         
     def is_there_data(self, submodel):
         for i in range(self.number_of_choice_sets):
-           if (self.data[submodel][i].shape[0] <= 0) or (self.data[submodel][i].size <= 0):
-               return False
+            if (self.data[submodel][i].shape[0] <= 0) or (self.data[submodel][i].size <= 0):
+                return False
         return True
     
 if __name__=="__main__":
