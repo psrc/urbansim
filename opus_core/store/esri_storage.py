@@ -390,8 +390,14 @@ else:
                 if self._validate_table(fc):
                     table_names.append(str(fc))
                 fc = fcs.Next()
+            
+            # Loop through table names and strip out any SDE specific naming
+            table_names_stripped = []
+            for i in table_names:
+                x = i.split('.')
+                table_names_stripped.append(x[-1])
 
-            return table_names
+            return table_names_stripped
 
         def table_exists(self, table_name):
             # Reset the workspace
