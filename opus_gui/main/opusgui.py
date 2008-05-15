@@ -220,6 +220,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.toolboxStuff.dataManagerDBSTree.model.markAsClean()
             self.toolboxStuff.modelManagerTree.model.markAsClean()
             self.toolboxStuff.resultsManagerTree.model.markAsClean()
+            self.toolboxStuff.generalManagerTree.model.markAsClean()
         except:
             print "Unexpected error:", sys.exc_info()[0]
 
@@ -247,6 +248,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.toolboxStuff.dataManagerDBSTree.model.markAsClean()
             self.toolboxStuff.modelManagerTree.model.markAsClean()
             self.toolboxStuff.resultsManagerTree.model.markAsClean()
+            self.toolboxStuff.generalManagerTree.model.markAsClean()
         except:
             print "Unexpected error:", sys.exc_info()[0]
 
@@ -272,6 +274,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             saveBeforeOpen = QMessageBox.question(self,"Warning",
                                             "Current project contains changes... \nShould we save or discard those changes?",
                                             QMessageBox.Discard,QMessageBox.Save)
+        elif self.toolboxStuff.dataManagerDBSTree and self.toolboxStuff.dataManagerDBSTree.model.isDirty():
+            saveBeforeOpen = QMessageBox.question(self,"Warning",
+                                            "Current project contains changes... \nShould we save or discard those changes?",
+                                            QMessageBox.Discard,QMessageBox.Save)
+        elif self.toolboxStuff.generalManagerTree and self.toolboxStuff.generalManagerTree.model.isDirty():
+            saveBeforeOpen = QMessageBox.question(self,"Warning",
+                                            "Current project contains changes... \nShould we save or discard those changes?",
+                                            QMessageBox.Discard,QMessageBox.Save)
 
         if saveBeforeOpen == QMessageBox.Save:
             self.saveConfig()
@@ -281,10 +291,14 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                 self.toolboxStuff.runManagerTree.model.markAsClean()
             if self.toolboxStuff.dataManagerTree:
                 self.toolboxStuff.dataManagerTree.model.markAsClean()
+            if self.toolboxStuff.dataManagerDBSTree:
+                self.toolboxStuff.dataManagerDBSTree.model.markAsClean()
             if self.toolboxStuff.modelManagerTree:
                 self.toolboxStuff.modelManagerTree.model.markAsClean()
             if self.toolboxStuff.resultsManagerTree:
                 self.toolboxStuff.resultsManagerTree.model.markAsClean()
+            if self.toolboxStuff.generalManagerTree:
+                self.toolboxStuff.generalManagerTree.model.markAsClean()
 
     def closeConfig(self):
         """
