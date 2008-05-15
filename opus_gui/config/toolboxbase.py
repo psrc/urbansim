@@ -81,8 +81,6 @@ class ToolboxBase(object):
                 self.runManagerTree.model.markAsClean()
             if self.dataManagerTree:
                 self.dataManagerTree.model.markAsClean()
-            if self.dataManagerFileTree:
-                self.dataManagerFileTree.model.markAsClean()
             if self.modelManagerTree:
                 self.modelManagerTree.model.markAsClean()
             if self.resultsManagerTree:
