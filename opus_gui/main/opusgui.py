@@ -215,16 +215,11 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             indentSize = 2
             opusXMLTree.update(str(domDocument.toString(indentSize)))
             opusXMLTree.save()
-            self.toolboxStuff.runManagerTree.model.dirty = False
-            self.setWindowTitle(self.windowTitle().replace("*", ""))
-            self.toolboxStuff.dataManagerTree.model.dirty = False
-            self.setWindowTitle(self.windowTitle().replace("*", ""))
-            self.toolboxStuff.dataManagerDBSTree.model.dirty = False
-            self.setWindowTitle(self.windowTitle().replace("*", ""))
-            self.toolboxStuff.modelManagerTree.model.dirty = False
-            self.setWindowTitle(self.windowTitle().replace("*", ""))
-            self.toolboxStuff.resultsManagerTree.model.dirty = False
-            self.setWindowTitle(self.windowTitle().replace("*", ""))
+            self.toolboxStuff.runManagerTree.model.markAsClean()
+            self.toolboxStuff.dataManagerTree.model.markAsClean()
+            self.toolboxStuff.dataManagerDBSTree.model.markAsClean()
+            self.toolboxStuff.modelManagerTree.model.markAsClean()
+            self.toolboxStuff.resultsManagerTree.model.markAsClean()
         except:
             print "Unexpected error:", sys.exc_info()[0]
 
@@ -247,16 +242,11 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             indentSize = 2
             opusXMLTree.update(str(domDocument.toString(indentSize)))
             opusXMLTree.save_as(str(fileName))
-            self.toolboxStuff.runManagerTree.model.dirty = False
-            self.setWindowTitle(self.windowTitle().replace("*", ""))
-            self.toolboxStuff.dataManagerTree.model.dirty = False
-            self.setWindowTitle(self.windowTitle().replace("*", ""))
-            self.toolboxStuff.dataManagerDBSTree.model.dirty = False
-            self.setWindowTitle(self.windowTitle().replace("*", ""))
-            self.toolboxStuff.modelManagerTree.model.dirty = False
-            self.setWindowTitle(self.windowTitle().replace("*", ""))
-            self.toolboxStuff.resultsManagerTree.model.dirty = False
-            self.setWindowTitle(self.windowTitle().replace("*", ""))
+            self.toolboxStuff.runManagerTree.model.markAsClean()
+            self.toolboxStuff.dataManagerTree.model.markAsClean()
+            self.toolboxStuff.dataManagerDBSTree.model.markAsClean()
+            self.toolboxStuff.modelManagerTree.model.markAsClean()
+            self.toolboxStuff.resultsManagerTree.model.markAsClean()
         except:
             print "Unexpected error:", sys.exc_info()[0]
 
@@ -266,19 +256,19 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         and prompts user to save or discard changes.
         """
         saveBeforeOpen = QMessageBox.Discard
-        if self.toolboxStuff.resultsManagerTree and self.toolboxStuff.resultsManagerTree.model.dirty:
+        if self.toolboxStuff.resultsManagerTree and self.toolboxStuff.resultsManagerTree.model.isDirty():
             saveBeforeOpen = QMessageBox.question(self,"Warning",
                                             "Current project contains changes... \nShould we save or discard those changes?",
                                             QMessageBox.Discard,QMessageBox.Save)
-        elif self.toolboxStuff.modelManagerTree and self.toolboxStuff.modelManagerTree.model.dirty:
+        elif self.toolboxStuff.modelManagerTree and self.toolboxStuff.modelManagerTree.model.isDirty():
             saveBeforeOpen = QMessageBox.question(self,"Warning",
                                             "Current project contains changes... \nShould we save or discard those changes?",
                                             QMessageBox.Discard,QMessageBox.Save)
-        elif self.toolboxStuff.runManagerTree and self.toolboxStuff.runManagerTree.model.dirty:
+        elif self.toolboxStuff.runManagerTree and self.toolboxStuff.runManagerTree.model.isDirty():
             saveBeforeOpen = QMessageBox.question(self,"Warning",
                                             "Current project contains changes... \nShould we save or discard those changes?",
                                             QMessageBox.Discard,QMessageBox.Save)
-        elif self.toolboxStuff.dataManagerTree and self.toolboxStuff.dataManagerTree.model.dirty:
+        elif self.toolboxStuff.dataManagerTree and self.toolboxStuff.dataManagerTree.model.isDirty():
             saveBeforeOpen = QMessageBox.question(self,"Warning",
                                             "Current project contains changes... \nShould we save or discard those changes?",
                                             QMessageBox.Discard,QMessageBox.Save)
@@ -288,13 +278,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         else:
             #if we have an existing tree we need to remove the dirty bit since we are discarding
             if self.toolboxStuff.runManagerTree:
-                self.toolboxStuff.runManagerTree.model.dirty = False
+                self.toolboxStuff.runManagerTree.model.markAsClean()
             if self.toolboxStuff.dataManagerTree:
-                self.toolboxStuff.dataManagerTree.model.dirty = False
+                self.toolboxStuff.dataManagerTree.model.markAsClean()
             if self.toolboxStuff.modelManagerTree:
-                self.toolboxStuff.modelManagerTree.model.dirty = False
+                self.toolboxStuff.modelManagerTree.model.markAsClean()
             if self.toolboxStuff.resultsManagerTree:
-                self.toolboxStuff.resultsManagerTree.model.dirty = False
+                self.toolboxStuff.resultsManagerTree.model.markAsClean()
 
     def closeConfig(self):
         """
