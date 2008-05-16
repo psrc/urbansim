@@ -153,9 +153,9 @@
           <name type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <storage type="string">base_cache_storage</storage>
-            <table_name type="quoted_string">fill in</table_name>
-            <id_name type="list">['year']</id_name>
-            <dataset_name type="quoted_string">control_totals</dataset_name>
+            <control_totals_table_name type="quoted_string">fill in</control_totals_table_name>
+            <control_totals_id_name type="list">['year']</control_totals_id_name>
+            <control_totals_dataset_name type="quoted_string">control_totals</control_totals_dataset_name>
           </arguments>
           <output flags="hidden" type="string">cts</output>
         </prepare_for_run>
