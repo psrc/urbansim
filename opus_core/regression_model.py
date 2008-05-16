@@ -273,11 +273,23 @@ class RegressionModel(ChunkModel):
             
         return (coefficients, estimated_coef)
 
-    def prepare_for_run(self, *args, **kwargs):
-        return prepare_specification_and_coefficients(*args, **kwargs)
+    def prepare_for_run(self, dataset=None, dataset_filter=None, filter_threshold=0, **kwargs):
+        spec, coef = prepare_specification_and_coefficients(**kwargs)
+        if (dataset is not None) and (dataset_filter is not None):
+            filter_values = dataset_set.compute_variables([dataset_filter], dataset_pool=self.dataset_pool)
+            index = where(filter_values > filter_threshold)[0]
+        else:
+            index = None
+        return (spec, coef, index)
 
-    def prepare_for_estimate(self, *args, **kwargs):
-        return get_specification_for_estimation(*args, **kwargs)
+    def prepare_for_estimate(self, dataset=None, dataset_filter=None, filter_threshold=0, **kwargs):
+        spec = get_specification_for_estimation(**kwargs)
+        if (dataset is not None) and (dataset_filter is not None):
+            filter_values = dataset_set.compute_variables([dataset_filter], dataset_pool=self.dataset_pool)
+            index = where(filter_values > filter_threshold)[0]
+        else:
+            index = None
+        return (spec, index)
     
     def get_data_as_dataset(self, submodel=-2):
         """Like get_all_data, but the retuning value is a Dataset containing attributes that

@@ -502,12 +502,24 @@ class ChoiceModel(ChunkModel):
             values = self.result_choices[index]
         plot_histogram(values, main, xlabel="choices", bins=bins)
 
-    def prepare_for_run(self, *args, **kwargs):
-        return prepare_specification_and_coefficients(*args, **kwargs)
+    def prepare_for_run(self, agent_set=None, agent_filter=None, filter_threshold=0, **kwargs):
+        spec, coef = prepare_specification_and_coefficients(**kwargs)
+        if (agent_set is not None) and (agent_filter is not None):
+            filter_values = agent_set.compute_variables([agent_filter], dataset_pool=self.dataset_pool)
+            index = where(filter_values > filter_threshold)[0]
+        else:
+            index = None
+        return (spec, coef, index)
     
-    def prepare_for_estimate(self, *args, **kwargs):
-        return get_specification_for_estimation(*args, **kwargs)
-
+    def prepare_for_estimate(self, agent_set=None, agent_filter=None, filter_threshold=0, **kwargs):
+        spec = get_specification_for_estimation(**kwargs)
+        if (agent_set is not None) and (agent_filter is not None):
+            filter_values = agent_set.compute_variables([agent_filter], dataset_pool=self.dataset_pool)
+            index = where(filter_values > filter_threshold)[0]
+        else:
+            index = None
+        return (spec, index)
+    
     def get_data(self, coefficient, submodel=-2):
         return ChunkModel.get_data(self, coefficient, submodel, is3d=True)
 
