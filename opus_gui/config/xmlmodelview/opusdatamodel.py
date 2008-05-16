@@ -169,6 +169,12 @@ class OpusDataModel(QAbstractItemModel):
                     return QVariant(self.iconFromType(domElement.attribute(QString("type"))))
                 elif role == Qt.DisplayRole:
                     return QVariant(domElement.tagName())
+                elif role == Qt.BackgroundRole:
+                    if domElement.hasAttribute(QString("temporary")) and \
+                           domElement.attribute(QString("temporary")) == QString("True"):
+                        return QVariant(QColor(Qt.cyan))
+                    else:
+                        return QVariant(QColor(Qt.white))
                 else:
                     return QVariant()
             #elif index.column() == 1:
@@ -282,6 +288,16 @@ class OpusDataModel(QAbstractItemModel):
     def isDirty(self):
         return self.dirty
     
+    def isTemporary(self,node):
+        nodeElement = node.toElement()
+        if not nodeElement.isNull():
+            if nodeElement.hasAttribute(QString("temporary")):
+                if nodeElement.attribute(QString("temporary")) == QString("True"):
+                    return True
+                else:
+                    return False
+        return False
+        
     def setData(self,index,value,role):
         if not index.isValid():
             return False
@@ -296,20 +312,23 @@ class OpusDataModel(QAbstractItemModel):
                 domElement = domNode.toElement()
                 if not domElement.isNull():
                     domElement.setTagName(value.toString())
-                    self.markAsDirty()
+                    if not self.isTemporary(domElement):
+                        self.markAsDirty()
         elif index.column() == 1:
             if domNode.hasChildNodes():
                 children = domNode.childNodes()
                 for x in xrange(0,children.count(),1):
                     if children.item(x).isText():
                         children.item(x).setNodeValue(QString(value.toString()))
-                        self.markAsDirty()
+                        if not self.isTemporary(children.item(x)):
+                            self.markAsDirty()
             else:
                 #print "New text node to be added"
                 # We need to add a text node since it was blank
                 newText = self.domDocument.createTextNode(QString(value.toString()))
                 domNode.appendChild(newText)
-                self.markAsDirty()
+                if not self.isTemporary(newText):
+                    self.markAsDirty()
         return True
 
     def insertRow(self,row,parent,node):
@@ -331,7 +350,8 @@ class OpusDataModel(QAbstractItemModel):
         #print "len=%d row=%d" % (len(parentItem.childItems),row)
         parentItem.childItems.insert(row,item)
         self.endInsertRows()
-        self.markAsDirty()
+        if not self.isTemporary(node):
+            self.markAsDirty()
         return returnval
 
     def removeRow(self,row,parent):
@@ -345,7 +365,8 @@ class OpusDataModel(QAbstractItemModel):
         parentItem.domNode.removeChild(parentItem.child(row).domNode)
         parentItem.childItems.pop(row)
         self.endRemoveRows()
-        self.markAsDirty()
+        if not self.isTemporary(parentItem.child(row).domNode):
+            self.markAsDirty()
         return returnval
 
     def moveUp(self,item,howmany=1):
@@ -374,7 +395,8 @@ class OpusDataModel(QAbstractItemModel):
                 currentParent = item.parent()
                 self.removeRow(currentRow,currentParent)
                 self.insertRow(currentRow+howmany,currentParent,clone)
-                self.markAsDirty()
+                if not self.isTemporary(item.internalPointer().domNode):
+                    self.markAsDirty()
 
     def findElementIndexByName(self,name,parent,multiple=False):
         finds = []
@@ -448,13 +470,15 @@ class OpusDataModel(QAbstractItemModel):
     #            if self.rowCount(child)>0:
     #                self.stripAttribute(attribute,child,recursive)
 
-    def create_node(self, document, name, type, value, choices = None):
+    def create_node(self, document, name, type, value, choices = None, temporary = False):
         newNode = document.createElement(QString(name))
         newNode.setAttribute(QString("type"),QString(type))
         newText = document.createTextNode(QString(value))
         newNode.appendChild(newText)        
         if choices is not None:
             newNode.setAttribute(QString('choices'), QString(choices))
+        if temporary is True:
+            newNode.setAttribute(QString("temporary"),QString("True"))
         return newNode
 
     def stripAttributeDown(self,attribute,parent):
@@ -463,7 +487,8 @@ class OpusDataModel(QAbstractItemModel):
             if parentElement.hasAttribute(QString(attribute)):
                 # remove the attribute
                 parentElement.removeAttribute(QString(attribute))
-                self.markAsDirty()
+                if not self.isTemporary(parentElement):
+                    self.markAsDirty()
             rows = parent.childNodes().count()
             for x in xrange(0,rows,1):
                 child = parent.childNodes().item(x)
@@ -473,7 +498,8 @@ class OpusDataModel(QAbstractItemModel):
                     if childElement.hasAttribute(QString(attribute)):
                         # remove the attribute
                         childElement.removeAttribute(QString(attribute))
-                        self.markAsDirty()
+                        if not self.isTemporary(childElement):
+                            self.markAsDirty()
                     # If this child has other children then we recurse
                     childRows = child.childNodes().count()
                     if childRows>0:
@@ -486,7 +512,8 @@ class OpusDataModel(QAbstractItemModel):
             if parentElement.hasAttribute(QString(attribute)):
                 # remove the attribute
                 parentElement.removeAttribute(QString(attribute))
-                self.markAsDirty()
+                if not self.isTemporary(parentElement):
+                    self.markAsDirty()
             grandParent = parent.parentNode()
             if not grandParent.isNull():
                 self.stripAttributeUp(attribute,grandParent)

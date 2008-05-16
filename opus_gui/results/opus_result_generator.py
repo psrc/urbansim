@@ -368,23 +368,28 @@ class OpusResultGenerator(object):
         newNode = model.create_node(document = document, 
                                     name = name, 
                                     type = 'indicator_result', 
-                                    value = '')
+                                    value = '',
+                                    temporary = True)
         source_data_node = model.create_node(document = document, 
                                     name = 'source_data', 
                                     type = 'string', 
-                                    value = self.source_data_name)
+                                    value = self.source_data_name,
+                                    temporary = True)
         indicator_node = model.create_node(document = document, 
                                     name = 'indicator_name', 
                                     type = 'string', 
-                                    value = self.indicator_name)        
+                                    value = self.indicator_name,
+                                    temporary = True)        
         dataset_node = model.create_node(document = document, 
                                     name = 'dataset_name', 
                                     type = 'string', 
-                                    value = self.dataset_name)
+                                    value = self.dataset_name,
+                                    temporary = True)
         year_node = model.create_node(document = document, 
                                     name = 'available_years', 
                                     type = 'string', 
-                                    value = ', '.join([repr(year) for year in self.years]))                
+                                    value = ', '.join([repr(year) for year in self.years]),
+                                    temporary = True)
         parent = model.index(0,0,QModelIndex()).parent()
         index = model.findElementIndexByName("Results", parent)[0]
         if index.isValid():

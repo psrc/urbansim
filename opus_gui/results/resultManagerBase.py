@@ -116,32 +116,38 @@ class ResultManagerBase(AbstractManagerBase):
         newNode = model.create_node(document = document, 
                                     name = name, 
                                     type = 'source_data', 
-                                    value = '')
+                                    value = '',
+                                    temporary = True)
 
         scenario_name_node = model.create_node(document = document, 
                                     name = 'scenario_name', 
                                     type = 'string', 
-                                    value = scenario_name)
+                                    value = scenario_name,
+                                    temporary = True)
 
         run_name_node = model.create_node(document = document, 
                                     name = 'run_name', 
                                     type = 'string', 
-                                    value = run_name)
+                                    value = run_name,
+                                    temporary = True)
 
         cache_directory_node = model.create_node(document = document, 
                                     name = 'cache_directory', 
                                     type = 'string', 
-                                    value = cache_directory)
+                                    value = cache_directory,
+                                    temporary = True)
 
         start_year_node = model.create_node(document = document, 
                                     name = 'start_year', 
                                     type = 'integer', 
-                                    value = str(start_year))
+                                    value = str(start_year),
+                                    temporary = True)
 
         end_year_node = model.create_node(document = document, 
                                     name = 'end_year', 
                                     type = 'integer', 
-                                    value = str(end_year))    
+                                    value = str(end_year),
+                                    temporary = True)
 
         index = model.findElementIndexByName("Simulation_runs", parent)[0]
         if index.isValid():
