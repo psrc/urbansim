@@ -90,12 +90,11 @@ class RealEstatePriceModel(RegressionModelWithAdditionInitialResiduals):
                               specification_table=None, dataset=None,
                               filter_variable="unit_price",
                               threshold=0):
-        from opus_core.model import get_specification_for_estimation
-        specification = get_specification_for_estimation(specification_dict,
-                                                          specification_storage,
-                                                          specification_table)
-        index = None
-        if dataset is not None and filter_variable is not None:
-            dataset.compute_variables(filter_variable)
-            index = where(dataset.get_attribute(filter_variable) >= threshold)[0]
-        return (specification, index)
+        return RegressionModelWithAdditionInitialResiduals.prepare_for_estimate(dataset=dataset, dataset_filter=filter_variable,
+                                                                                filter_threshold=threshold, specification_dict=specification_dict, 
+                                                                                specification_storage=specification_storage,
+                                                                                specification_table=specification_table)
+
+    def prepare_for_run(self, *args, **kwargs):
+        spec, coef, dummy = RegressionModelWithAdditionInitialResiduals.prepare_for_run(self, *args, **kwargs)
+        return (spec, coef)

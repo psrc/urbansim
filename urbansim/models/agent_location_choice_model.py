@@ -194,6 +194,10 @@ class AgentLocationChoiceModel(LocationChoiceModel):
         #agent_set.set_values_of_one_attribute(id_name,resize(array([-1.0]), agents_index.size), agents_index)
         return result
 
+    def prepare_for_run(self, *args, **kwargs):
+        spec, coef, dummy = LocationChoiceModel.prepare_for_run(self, *args, **kwargs)
+        return (spec, coef)
+    
     def prepare_for_estimate(self, specification_dict = None, specification_storage=None,
                               specification_table=None, agent_set=None, 
                               agents_for_estimation_storage=None,

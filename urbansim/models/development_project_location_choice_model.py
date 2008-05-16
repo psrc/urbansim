@@ -229,3 +229,7 @@ class DevelopmentProjectLocationChoiceModel(LocationChoiceModel):
                                                event_set, self.project_type,
                                                self.units, categories)
         return (specification, projects)
+    
+    def prepare_for_run(self, *args, **kwargs):
+        spec, coef, dummy = LocationChoiceModel.prepare_for_run(self, *args, **kwargs)
+        return (spec, coef)

@@ -61,13 +61,13 @@ class RegressionModelMember(RegressionModel):
             specification_table, coefficients_table = \
                 self.group_member.add_member_prefix_to_table_names([specification_table, coefficients_table])
 
-        return RegressionModel.prepare_for_run(self, specification_storage, specification_table, coefficients_storage,
-                         coefficients_table, **kwargs)
+        return RegressionModel.prepare_for_run(self, specification_storage=specification_storage, specification_table=specification_table, 
+                                               coefficients_storage=coefficients_storage, coefficients_table=coefficients_table, **kwargs)
 
     def prepare_for_estimate(self, add_member_prefix=True, specification_dict=None, specification_storage=None,
                              specification_table=None, **kwargs):
-        from opus_core.model import get_specification_for_estimation
         if add_member_prefix:
             specification_table = self.group_member.add_member_prefix_to_table_names([specification_table])
-        return get_specification_for_estimation(specification_dict, specification_storage,
-                                                          specification_table)
+        return RegressionModel.prepare_for_estimate(specification_dict=specification_dict, specification_storage=specification_storage,
+                                                          specification_table=specification_table, **kwargs)
+    

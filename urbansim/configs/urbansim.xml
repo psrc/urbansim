@@ -30,7 +30,7 @@
             <specification flags="hidden" type="string">specification</specification>
             <coefficients flags="hidden" type="string">coefficients</coefficients>
             <agent_set type="string">fill in</agent_set>
-            <agents_index type="string" parser_action="blank_to_None"></agents_index>
+            <agents_index type="string" flags="hidden">cm_index</agents_index>
             <chunk_specification type="string" parser_action="blank_to_None"></chunk_specification>
             <data_objects flags="hidden" type="string">datasets</data_objects>
           </arguments>
@@ -38,6 +38,8 @@
         <prepare_for_run type="dictionary">
           <name type="string">prepare_for_run</name>
           <arguments type="dictionary">
+            <agent_set type="string" parser_action="blank_to_None"></agent_set>
+            <agent_filter type="quoted_string" parser_action="blank_to_None"></agent_filter>
             <specification_storage type="string">base_cache_storage</specification_storage>
             <specification_table type="quoted_string">choice_model_template_specification</specification_table>
             <coefficients_storage type="string">base_cache_storage</coefficients_storage>
@@ -46,13 +48,13 @@
             <cache_storage flags="hidden" type="string">base_cache_storage</cache_storage>
             <multiplicator type = "integer">1</multiplicator>
           </arguments>
-          <output flags="hidden" type="string">(specification, coefficients)</output>
+          <output flags="hidden" type="string">(specification, coefficients, cm_index)</output>
         </prepare_for_run>
         <estimate type="dictionary">
           <arguments type="dictionary">
             <specification flags="hidden" type="string">specification</specification>
             <agent_set type="string">fill in</agent_set>
-            <agents_index flags="hidden" type="string" parser_action="blank_to_None"></agents_index>
+            <agents_index type="string" flags="hidden">cm_index</agents_index>
             <procedure type="quoted_string">opus_core.bhhh_mnl_estimation</procedure>
             <data_objects flags="hidden" type="string">datasets</data_objects>
           </arguments>
@@ -61,10 +63,12 @@
         <prepare_for_estimate type="dictionary">
           <name type="string">prepare_for_estimate</name>
           <arguments type="dictionary">
+            <agent_set type="string" parser_action="blank_to_None"></agent_set>
+            <agent_filter type="quoted_string" parser_action="blank_to_None"></agent_filter>
             <specification_storage type="string">base_cache_storage</specification_storage>
             <specification_table type="quoted_string">choice_model_template_specification</specification_table>
           </arguments>
-          <output flags="hidden" type="string">specification</output>
+          <output flags="hidden" type="string">(specification, cm_index)</output>
         </prepare_for_estimate>
        </choice_model_template>
        <regression_model_template  type="dictionary" copyable='True'>

@@ -126,6 +126,9 @@ class LandPriceModel(RegressionModel):
             index = where(dataset.get_attribute(filter_variable) >= threshold)[0]
         return (specification, index)
 
+    def prepare_for_run(self, *args, **kwargs):
+        spec, coef, dummy = RegressionModel.prepare_for_run(self, *args, **kwargs)
+        return (spec, coef)
 
 from opus_core.tests import opus_unittest
 from numpy import array, ma, float32
