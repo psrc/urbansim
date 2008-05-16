@@ -52,7 +52,7 @@
             <specification_table type="quoted_string">real_estate_price_model_specification</specification_table>
             <filter_variable type="quoted_string">numpy.logical_and(urbansim_parcel.parcel.unit_price&gt;20.0855, urbansim_parcel.parcel.unit_price&lt;1096.63, urbansim_parcel.parcel.existing_units&gt;100)</filter_variable>
             <dataset type="string">parcel</dataset>
-            <threshold type="integer">1</threshold>
+            <threshold type="integer">0</threshold>
           </arguments>
           <output flags="hidden" type="string">(specification, index)</output>
         </prepare_for_estimate>

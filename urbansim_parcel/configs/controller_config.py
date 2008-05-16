@@ -96,7 +96,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                               "specification_table": "'real_estate_price_model_specification'",
                               "filter_variable":"'numpy.logical_and(urbansim_parcel.parcel.unit_price>%s,urbansim_parcel.parcel.unit_price<%s, urbansim_parcel.parcel.existing_units>100)'" % (UNIT_PRICE_RANGE[0], UNIT_PRICE_RANGE[1]),
                               "dataset": "parcel",
-                              "threshold": 1},
+                              "threshold": 0},
                 "output": "(specification, index)"
                 },
             "estimate": {
