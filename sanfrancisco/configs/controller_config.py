@@ -64,7 +64,7 @@ my_controller_configuration = {
                       "specification_table": "'real_estate_price_model_specification'",
                       "filter_variable":"'building.unit_price'",
                       "dataset": "building",
-                      "threshold": 1},
+                      "threshold": 0},
         "output": "(specification, index)"
         },
     "estimate": {
