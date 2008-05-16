@@ -106,8 +106,9 @@ class AllocationModel(Model):
             logger.log_status('New values stored into attribute %s of dataset %s.' % (outcome_attribute, dataset.get_dataset_name()))
         return outcome
     
-    def prepare_for_run(self, storage, table_name, id_name, dataset_name='control_totals'):
-        control_totals = Dataset(in_storage=storage, in_table_name=table_name, id_name=id_name, dataset_name=dataset_name)
+    def prepare_for_run(self, storage, control_totals_table_name, control_totals_id_name, control_totals_dataset_name='control_totals'):
+        control_totals = Dataset(in_storage=storage, in_table_name=control_totals_table_name, id_name=control_totals_id_name, 
+                                 dataset_name=control_totals_dataset_name)
         return control_totals
     
 from opus_core.tests import opus_unittest
