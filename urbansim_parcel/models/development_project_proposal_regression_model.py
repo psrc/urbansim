@@ -101,7 +101,7 @@ class DevelopmentProjectProposalRegressionModel(RegressionModel):
         spec_replace_module_variable_pair is a tuple with two elements: module name, variable within the module
         that contans a dictionary of model variables to be replaced in the specification.
         """
-        specification, coefficients = RegressionModel.prepare_for_run(self, **kwargs)
+        specification, coefficients, dummy = RegressionModel.prepare_for_run(self, **kwargs)
         try:
             existing_proposal_set = dataset_pool.get_dataset('development_project_proposal')
             #load proposals whose status_id are not of id_tentative or id_not_available
