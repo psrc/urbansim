@@ -90,7 +90,7 @@ class RealEstatePriceModel(RegressionModelWithAdditionInitialResiduals):
                               specification_table=None, dataset=None,
                               filter_variable="unit_price",
                               threshold=0):
-        return RegressionModelWithAdditionInitialResiduals.prepare_for_estimate(dataset=dataset, dataset_filter=filter_variable,
+        return RegressionModelWithAdditionInitialResiduals.prepare_for_estimate(self, dataset=dataset, dataset_filter=filter_variable,
                                                                                 filter_threshold=threshold, specification_dict=specification_dict, 
                                                                                 specification_storage=specification_storage,
                                                                                 specification_table=specification_table)
