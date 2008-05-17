@@ -57,11 +57,12 @@ class XMLConfiguration(object):
         
     def update(self, newconfig_str):
         """Update the contents of this configuration from the string newconfig_str 
-        (a string representing an xml configuration).  Ignore any inherited nodes in newconfig_str."""
+        (a string representing an xml configuration).  Ignore any temporary or 
+        inherited nodes in newconfig_str."""
         # Note that this doesn't change the name of this configuration, or the full_filename
         str_io = StringIO.StringIO(newconfig_str)
         etree = ElementTree(file=str_io)
-        self._remove_inherited_nodes(etree.getroot())
+        self._remove_temporary_and_inherited_nodes(etree.getroot())
         self._initialize(etree, False)
         
     def get_section(self, name):
@@ -201,14 +202,14 @@ class XMLConfiguration(object):
                 self._merge_parent_elements(child, extended_path)
             prev_child = child
             
-    def _remove_inherited_nodes(self, etree):
-        # remove any nodes with the 'inherited' attribute from etree
+    def _remove_temporary_and_inherited_nodes(self, etree):
+        # remove from etree any nodes with the 'temporary' or 'inherited' attribute
         i = 0
         while i<len(etree):
-            if etree[i].get('inherited') is not None:
+            if etree[i].get('temporary')=='True' or etree[i].get('inherited') is not None:
                 del etree[i]
             else:
-                self._remove_inherited_nodes(etree[i])
+                self._remove_temporary_and_inherited_nodes(etree[i])
                 i = i+1
     
     def _merge_controllers(self, config):
@@ -692,7 +693,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(section4['real_estate_price_model']['all_variables']['ln_cost'], 'ln_cost=ln(psrc.parcel.cost+100)')
 
     def test_update_and_save(self):
-        # make sure nodes marked as inherited are filtered out when doing an update and a save
+        # make sure nodes marked as temporary or inherited are filtered out when doing an update and a save
         f = os.path.join(self.test_configs, 'estimation_grandchild.xml')
         config = XMLConfiguration(f)
         update_str = """<opus_project>
@@ -702,6 +703,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
             </general>
             <data_manager inherited="someplace">
             </data_manager>
+            <results_manager temporary="True">
+            </results_manager>
             <model_manager>
               <estimation type="dictionary" >
                 <real_estate_price_model type="dictionary" >
