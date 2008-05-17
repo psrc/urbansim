@@ -545,6 +545,7 @@
         <endyear type="integer">2002</endyear>
       </years_to_run>
       <models_to_run config_name="models" type="selectable_list">
+        <model_template choices="Run|Skip" type="model" copyable="True">Skip</model_template>
         <real_estate_price_model choices="Run|Skip" type="model">Run</real_estate_price_model>
         <expected_sale_price_model choices="Run|Skip" type="model">Run</expected_sale_price_model>
         <development_proposal_choice_model choices="Run|Skip" type="model">Run</development_proposal_choice_model>
