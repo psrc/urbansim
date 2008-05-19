@@ -208,7 +208,7 @@
             <agents_for_estimation_table type="quoted_string">fill in</agents_for_estimation_table>
             <data_objects type="string" flags="hidden">datasets</data_objects>
             <index_to_unplace type="string" flags="hidden" parser_action="blank_to_None"></index_to_unplace>
-            <join_datasets type="boolean">True</join_datasets>
+            <join_datasets type="boolean" choices="True|False">True</join_datasets>
             <portion_to_unplace type="string" flags="hidden">1.0</portion_to_unplace>
             <filter type="quoted_string" parser_action="blank_to_None"></filter>
             <location_id_variable type="quoted_string" parser_action="blank_to_None"></location_id_variable>

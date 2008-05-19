@@ -35,6 +35,10 @@ class AgentLocationChoiceModel(LocationChoiceModel):
                         variable_package = "urbansim"):
         self.model_name = model_name
         self.model_short_name = short_name
+        if (run_config is not None) and not isinstance(run_config, Resources):
+            run_config = Resources(run_config)
+        if (estimate_config is not None) and not isinstance(estimate_config, Resources):
+            estimate_config = Resources(estimate_config)
         self.add_prefix_to_variable_names(["capacity_string", "number_of_agents_string", "number_of_units_string"],
                                            location_set, variable_package, run_config)
         self.add_prefix_to_variable_names("weights_for_estimation_string",
@@ -246,7 +250,7 @@ class AgentLocationChoiceModel(LocationChoiceModel):
             estimation_set = Dataset(in_storage = agents_for_estimation_storage,
                                       in_table_name=agents_for_estimation_table,
                                       id_name=agent_set.get_id_name(), dataset_name=agent_set.get_dataset_name())
-            if location_id_variable:
+            if location_id_variable is not None:
                 estimation_set.compute_variables(location_id_variable, resources=Resources(data_objects))
                 # needs to be a primary attribute because of the join method below
                 estimation_set.add_primary_attribute(estimation_set.get_attribute(location_id_variable), VariableName(location_id_variable).get_alias())
