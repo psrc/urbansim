@@ -160,11 +160,100 @@
           <output flags="hidden" type="string">cts</output>
         </prepare_for_run>
        </allocation_model_template>
+       <agent_location_choice_model_template type="dictionary" copyable="True">
+        <import type="dictionary">
+          <urbansim.models.agent_location_choice_model type="string">AgentLocationChoiceModel</urbansim.models.agent_location_choice_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">AgentLocationChoiceModel</name>
+          <arguments type="dictionary">
+            <location_set type="string">fill in</location_set>
+            <sampler type="quoted_string">opus_core.samplers.weighted_sampler</sampler>
+            <utilities type="quoted_string">opus_core.linear_utilities</utilities>
+            <probabilities type="quoted_string">opus_core.mnl_probabilities</probabilities>
+            <choices type="quoted_string">urbansim.lottery_choices</choices>
+            <filter type="quoted_string" parser_action="blank_to_None"></filter>
+            <submodel_string type="quoted_string" parser_action="blank_to_None"></submodel_string>
+            <location_id_string type="quoted_string" parser_action="blank_to_None"></location_id_string>
+            <dataset_pool type="string" flags="hidden">dataset_pool</dataset_pool>
+            <model_name type="quoted_string">AgentLocationChoiceModel</model_name>
+            <short_name type="quoted_string">ALCM</short_name>
+            <variable_package type="quoted_string">urbansim</variable_package>  
+            <debuglevel type="string" flags="hidden">debuglevel</debuglevel>
+            <run_config type="dictionary">
+              <sample_size_locations type="integer">30</sample_size_locations>
+              <sample_proportion_locations type="integer" parser_action="blank_to_None"></sample_proportion_locations>
+              <compute_capacity_flag type="boolean">True</compute_capacity_flag>
+              <capacity_string type="quoted_string" parser_action="blank_to_None"></capacity_string>
+              <number_of_units_string type="quoted_string" parser_action="blank_to_None"></number_of_units_string>
+              <number_of_agents_string type="quoted_string" parser_action="blank_to_None"></number_of_agents_string>
+              <lottery_max_iterations type="integer">3</lottery_max_iterations>
+            </run_config>
+            <estimate_config type="dictionary">
+              <weights_for_estimation_string type="quoted_string" parser_action="blank_to_None"></weights_for_estimation_string>
+                 <sample_size_locations type="integer">30</sample_size_locations>
+              <sample_proportion_locations type="integer" parser_action="blank_to_None"></sample_proportion_locations>
+                <estimation_size_agents type="float">1.0</estimation_size_agents>
+            </estimate_config>
+         </arguments>
+        </init>
+        <prepare_for_estimate type="dictionary">
+          <name type="string">prepare_for_estimate</name>
+          <output type="string" flags="hidden">(alcm_specification, alcm_index)</output>
+          <arguments type="dictionary">
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">agent_location_choice_model_specification</specification_table>
+            <agent_set type="string">fill in</agent_set>
+            <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
+            <agents_for_estimation_table type="quoted_string">fill in</agents_for_estimation_table>
+            <data_objects type="string" flags="hidden">datasets</data_objects>
+            <index_to_unplace type="string" flags="hidden" parser_action="blank_to_None"></index_to_unplace>
+            <join_datasets type="boolean">True</join_datasets>
+            <portion_to_unplace type="string" flags="hidden">1.0</portion_to_unplace>
+            <filter type="quoted_string" parser_action="blank_to_None"></filter>
+            <location_id_variable type="quoted_string" parser_action="blank_to_None"></location_id_variable>
+          </arguments>
+        </prepare_for_estimate>
+         <estimate type="dictionary">
+          <output type="string" flags="hidden">(alcm_coefficients, dummy)</output>
+          <arguments type="dictionary">
+            <agent_set type="string">fill in</agent_set>
+            <agents_index type="string" flags="hidden">alcm_index</agents_index>
+            <procedure type="quoted_string">opus_core.bhhh_mnl_estimation</procedure>
+            <data_objects type="string" flags="hidden">datasets</data_objects>
+            <debuglevel type="string" flags="hidden">debuglevel</debuglevel>
+            <specification type="string" flags="hidden">alcm_specification</specification>
+          </arguments>
+        </estimate>
+        <prepare_for_run type="dictionary">
+          <name type="string">prepare_for_run</name>
+          <output type="string">(alcm_specification, alcm_coefficients)</output>
+          <arguments type="dictionary">
+            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+            <coefficients_table type="quoted_string">agent_location_choice_model_coefficients</coefficients_table>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">agent_location_choice_model_specification</specification_table>
+          </arguments>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <agent_set type="string">fill in</agent_set>
+            <agents_index type="string" flags="hidden" parser_action="blank_to_None"></agents_index>
+            <chunk_specification type="string">{'records_per_chunk':50000}</chunk_specification>
+            <coefficients type="string" flags="hidden">alcm_coefficients</coefficients>
+            <data_objects type="string" flags="hidden">datasets</data_objects>
+            <debuglevel type="string" flags="hidden">debuglevel</debuglevel>
+            <specification type="string" flags="hidden">alcm_specification</specification>
+            <maximum_runs type="integer">10</maximum_runs>
+          </arguments>
+        </run>
+      </agent_location_choice_model_template>
    </model_system>
    <estimation type="dictionary">
    <models_to_estimate type="selectable_list">
         <choice_model_template choices="Estimate|Skip" type="model" copyable='True'>Skip</choice_model_template>
         <regression_model_template choices="Estimate|Skip" type="model" copyable='True'>Skip</regression_model_template>
+        <agent_location_choice_model_template choices="Estimate|Skip" type="model" copyable='True'>Skip</agent_location_choice_model_template>
       </models_to_estimate>
    <model_template  type="dictionary" copyable='True'>
    <all_variables type="dictionary">
