@@ -266,7 +266,8 @@ class XMLConfiguration(object):
         elif type_name=='string' or type_name=='password' or type_name=='variable_definition' or type_name=='path':
             return self._convert_string_to_data(node, str)
         elif type_name=='quoted_string':
-            return "'%s'" % node.text
+            if node.text is not None:
+                return "'%s'" % node.text
         elif type_name=='scenario_name':
             return node.text
         elif type_name=='unicode':
