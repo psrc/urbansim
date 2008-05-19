@@ -125,6 +125,64 @@
     </script_batch>
   </data_manager>
   <model_manager>
+     <model_system type="dictionary">
+      <development_proposal_choice_model type="dictionary">
+        <import type="dictionary">
+          <seattle_parcel_faz.models.regional_development_proposal_sampling_model type="string">RegionalDevelopmentProposalSamplingModel</seattle_parcel_faz.models.regional_development_proposal_sampling_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">RegionalDevelopmentProposalSamplingModel</name>
+        </init>
+      </development_proposal_choice_model>
+      <employment_transition_model type="dictionary">
+        <import type="dictionary">
+          <seattle_parcel_faz.models.regional_employment_transition_model type="string">RegionalEmploymentTransitionModel</seattle_parcel_faz.models.regional_employment_transition_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">RegionalEmploymentTransitionModel</name>
+        </init>
+      </employment_transition_model>
+      <household_transition_model type="dictionary">
+        <import type="dictionary">
+          <seattle_parcel_faz.models.regional_household_transition_model type="string">RegionalHouseholdTransitionModel</seattle_parcel_faz.models.regional_household_transition_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">RegionalHouseholdTransitionModel</name>
+        </init>
+      </household_transition_model>
+      <household_location_choice_model type="dictionary">
+        <import type="dictionary">
+          <seattle_parcel_faz.models.regional_household_location_choice_model type="string">RegionalHouseholdLocationChoiceModel</seattle_parcel_faz.models.regional_household_location_choice_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">RegionalHouseholdLocationChoiceModel</name>
+        </init>
+      </household_location_choice_model>
+      <employment_location_choice_model type="dictionary">
+        <import type="dictionary">
+          <seattle_parcel_faz.models.regional_employment_location_choice_model type="string">RegionalEmploymentLocationChoiceModel</seattle_parcel_faz.models.regional_employment_location_choice_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">RegionalEmploymentLocationChoiceModel</name>
+        </init>
+      </employment_location_choice_model>
+      <home_based_employment_location_choice_model type="dictionary">
+        <import type="dictionary">
+          <seattle_parcel_faz.models.regional_employment_location_choice_model type="string">RegionalEmploymentLocationChoiceModel</seattle_parcel_faz.models.regional_employment_location_choice_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">RegionalEmploymentLocationChoiceModel</name>
+        </init>
+      </home_based_employment_location_choice_model>
+      <distribute_unplaced_jobs_model type="dictionary">
+        <import type="dictionary">
+          <seattle_parcel_faz.models.regional_distribute_unplaced_jobs_model type="string">RegionalDistributeUnplacedJobsModel</seattle_parcel_faz.models.regional_distribute_unplaced_jobs_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">RegionalDistributeUnplacedJobsModel</name>
+        </init>
+      </distribute_unplaced_jobs_model>
+    </model_system>
     <estimation type="dictionary">
       <models_to_estimate type="selectable_list">
         <real_estate_price_model choices="Estimate|Skip" type="model">Estimate</real_estate_price_model>
@@ -537,7 +595,7 @@
     </estimation>
   </model_manager>
   <scenario_manager>
-    <Seattle_baseline executable="True" type="scenario">
+    <Seattle_faz_baseline executable="True" type="scenario">
       <parent type="scenario_name">urbansim_parcel_baseline</parent>
       <base_year type="integer">2000</base_year>
       <years_to_run config_name="years" type="tuple">
@@ -564,16 +622,16 @@
         <database_connection type="db_connection_hook">urbansim_db1</database_connection>
         <database_name type="string">seattle_2000_parcel_baseyear_data</database_name>
       </baseyear_database_configuration>
-      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/base_year_data</cache_directory>
+      <cache_directory parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel_faz/base_year_data</cache_directory>
       <creating_baseyear_cache_configuration type="class">
         <Class_name flags="hidden" type="string">CreatingBaseyearCacheConfiguration</Class_name>
         <Class_path flags="hidden" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
-        <cache_directory_root parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/runs</cache_directory_root>
+        <cache_directory_root parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel_faz/runs</cache_directory_root>
         <cache_from_mysql choices="True|False" type="boolean">False</cache_from_mysql>
         <baseyear_cache type="class">
           <Class_name flags="hidden" type="string">BaseyearCacheConfiguration</Class_name>
           <Class_path flags="hidden" type="string">opus_core.configurations.baseyear_cache_configuration</Class_path>
-          <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/base_year_data</existing_cache_to_copy>
+          <existing_cache_to_copy parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel_faz/base_year_data</existing_cache_to_copy>
         </baseyear_cache>
         <cache_scenario_database type="string">urbansim.model_coordinators.cache_scenario_database</cache_scenario_database>
         <tables_to_cache type="selectable_list">
@@ -637,29 +695,29 @@
                                                       'development_project_proposal', 'travel_data']</datasets_to_cache_after_each_model>
       <unroll_gridcells type="boolean">False</unroll_gridcells>
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-         <zone type="dataset" choices="Load|Skip">Load</zone>
-         <household type="dataset" choices="Load|Skip">Load</household>
-         <building type="dataset" choices="Load|Skip">Load</building>
-         <parcel type="dataset" choices="Load|Skip">Load
+        <zone choices="Load|Skip" type="dataset">Load</zone>
+        <household choices="Load|Skip" type="dataset">Load</household>
+        <building choices="Load|Skip" type="dataset">Load</building>
+        <parcel choices="Load|Skip" type="dataset">Load
            <package_name type="string">urbansim_parcel</package_name>
-         </parcel>
-         <person type="dataset" choices="Load|Skip">Load
+        </parcel>
+        <person choices="Load|Skip" type="dataset">Load
            <package_name type="string">urbansim_parcel</package_name>
-         </person>
-         <development_template type="dataset" choices="Load|Skip">Load
+        </person>
+        <development_template choices="Load|Skip" type="dataset">Load
            <package_name type="string">urbansim_parcel</package_name>
-         </development_template>
-         <development_template_component type="dataset" choices="Load|Skip">Load
+        </development_template>
+        <development_template_component choices="Load|Skip" type="dataset">Load
            <package_name type="string">urbansim_parcel</package_name>
-         </development_template_component>
-         <job type="dataset" choices="Load|Skip">Load</job>
-         <building_type type="dataset" choices="Load|Skip">Load
+        </development_template_component>
+        <job choices="Load|Skip" type="dataset">Load</job>
+        <building_type choices="Load|Skip" type="dataset">Load
            <package_name type="string">urbansim_parcel</package_name>
-         </building_type>
-         <travel_data type="dataset" choices="Load|Skip">Load</travel_data>
-         <job_building_type type="dataset" choices="Load|Skip">Load</job_building_type>
-       </datasets_to_preload>
-    </Seattle_baseline>
+        </building_type>
+        <travel_data choices="Load|Skip" type="dataset">Load</travel_data>
+        <job_building_type choices="Load|Skip" type="dataset">Load</job_building_type>
+      </datasets_to_preload>
+    </Seattle_faz_baseline>
   </scenario_manager>
   <results_manager>
     <Indicator_libraries setexpanded="True" type="group">
@@ -682,6 +740,36 @@
       <my_indicators append_to="True" type="indicator_library" />
     </Indicator_libraries>
     <Simulation_runs setexpanded="True" type="all_source_data">
+      <seattle_parcel_faz.run_6373.2008_04_30_09_17 type="source_data"><run_name type="string">run_6373.2008_04_30_09_17</run_name>
+        <scenario_name type="string">seattle_parcel_faz</scenario_name>
+        <cache_directory type="string">C:\opus\data\seattle_parcel_faz\runs\run_6373.2008_04_30_09_17</cache_directory>
+        <start_year type="integer">2000</start_year>
+        <end_year type="integer">2001</end_year>
+      </seattle_parcel_faz.run_6373.2008_04_30_09_17>
+      <seattle_parcel_faz.run_6372.2008_04_30_09_10 type="source_data"><run_name type="string">run_6372.2008_04_30_09_10</run_name>
+        <scenario_name type="string">seattle_parcel_faz</scenario_name>
+        <cache_directory type="string">C:\opus\data\seattle_parcel_faz\runs\run_6372.2008_04_30_09_10</cache_directory>
+        <start_year type="integer">2000</start_year>
+        <end_year type="integer">2001</end_year>
+      </seattle_parcel_faz.run_6372.2008_04_30_09_10>
+      <seattle_parcel_faz.run_6357.2008_04_28_11_51 type="source_data"><run_name type="string">run_6357.2008_04_28_11_51</run_name>
+        <scenario_name type="string">seattle_parcel_faz</scenario_name>
+        <cache_directory type="string">C:\opus\data\seattle_parcel_faz\runs\run_6357.2008_04_28_11_51</cache_directory>
+        <start_year type="integer">2000</start_year>
+        <end_year type="integer">2002</end_year>
+      </seattle_parcel_faz.run_6357.2008_04_28_11_51>
+      <seattle_parcel.run_4836.2008_01_15_16_02 type="source_data"><run_name type="string">run_4836.2008_01_15_16_02</run_name>
+        <scenario_name type="string">seattle_parcel</scenario_name>
+        <cache_directory type="string">C:\opus\data\seattle_parcel\runs\run_4836.2008_01_15_16_02</cache_directory>
+        <start_year type="integer">2000</start_year>
+        <end_year type="integer">2030</end_year>
+      </seattle_parcel.run_4836.2008_01_15_16_02>
+      <mag_parcel.run_6350.2008_04_28_09_30 type="source_data"><run_name type="string">run_6350.2008_04_28_09_30</run_name>
+        <scenario_name type="string">mag_parcel</scenario_name>
+        <cache_directory type="string">C:\opus\data\mag_parcel\runs\run_6350.2008_04_28_09_30</cache_directory>
+        <start_year type="integer">2000</start_year>
+        <end_year type="integer">2005</end_year>
+      </mag_parcel.run_6350.2008_04_28_09_30>
     </Simulation_runs>
     <Results setexpanded="True" type="selectable_list" />
   </results_manager>

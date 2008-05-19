@@ -23,6 +23,7 @@ except ImportError:
     
 try:
     from sqlalchemy.databases.mysql import MSBigInteger, MSString, MSChar
+    from sqlalchemy.databases.mssql import MSString as MicrosoftString
 except:
     pass
     
@@ -188,6 +189,18 @@ class sql_storage(Storage):
         db = self._get_db()
         tables = [table.name for table in db.metadata.table_iterator()]
         self._dispose_db(db)
+        
+        # MSSQL hacking by Jesse
+        # The three items in mssql_system_tables are tables (and views) created in
+        # every MSSQL database.  A user should never need to cache or otherwise
+        # work with these tables in OPUS (as far as I know), so I am filtering them 
+        # out here.
+        if self.database_server_config.protocol == 'mssql':
+            mssql_system_tables = [u'sysconstraints', u'dtproperties', u'syssegments']
+            for i in mssql_system_tables:
+                if i in tables:
+                    tables.remove(i)
+        
         return tables
     
     def _get_sql_alchemy_type_from_numpy_dtype(self, column_dtype):
@@ -221,7 +234,10 @@ class sql_storage(Storage):
             return dtype('S')
         
         if isinstance(column_type, Boolean):
-            return dtype('b')        
+            return dtype('b')
+        
+        if isinstance(column_type, MicrosoftString):
+            return dtype('S')
         
         raise ValueError('Unrecognized column type: %s' % column_type)
         

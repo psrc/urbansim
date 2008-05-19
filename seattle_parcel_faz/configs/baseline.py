@@ -33,13 +33,13 @@ class Baseline(UrbansimParcelConfiguration):
             'description':'Seattle parcel baseline',
             'cache_directory':None,
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-            cache_directory_root = r'c:/opus/data/seattle_parcel/runs',
+            cache_directory_root = r'c:/opus/data/seattle_parcel_faz/runs',
             #cache_directory_root = '/Users/hana/urbansim_cache/seattle',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     years_to_cache = [2000],
                     #existing_cache_to_copy = '/Users/hana/urbansim_cache/seattle/seattle_parcel_2000_cache'
-                    existing_cache_to_copy = r'c:/opus/data/seattle_parcel/base_year_data',
+                    existing_cache_to_copy = r'c:/opus/data/seattle_parcel_faz/base_year_data',
                     ),
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
