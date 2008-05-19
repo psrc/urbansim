@@ -20,7 +20,9 @@
             <choice_attribute_name type="quoted_string">choice_id</choice_attribute_name>
             <interaction_pkg type="quoted_string">opus_core</interaction_pkg>
             <run_config type="string" parser_action="blank_to_None"></run_config>
-            <estimate_config type="string" parser_action="blank_to_None"></estimate_config>
+            <estimate_config type="dictionary">
+              <estimation_size_agents type="float">1.0</estimation_size_agents>
+            </estimate_config>
             <debuglevel type="integer">0</debuglevel>
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
