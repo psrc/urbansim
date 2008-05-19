@@ -410,7 +410,7 @@
           <arguments type="dictionary">
             <proposal_set type="string">development_project_proposal</proposal_set>
             <weight_string type="quoted_string">exp_ROI = exp(urbansim_parcel.development_project_proposal.expected_rate_of_return_on_investment)</weight_string>
-            <filter_attribute type="string">None</filter_attribute>
+            <filter_attribute parser_action="blank_to_None" type="string" />
           </arguments>
         </init>
         <run type="dictionary">
@@ -436,29 +436,80 @@
           </arguments>
         </run>
       </building_construction_model>
-      <household_location_choice_model parser_action="execute" type="class">
-        <Class_name flags="hidden" type="string">HouseholdLocationChoiceModelConfigurationCreator</Class_name>
-        <Class_path flags="hidden" type="string">urbansim.configurations.household_location_choice_model_configuration_creator</Class_path>
-        <location_set type="string">building</location_set>
-        <agent_set type="string">household</agent_set>
-        <capacity_string type="string">vacant_residential_units</capacity_string>
-        <records_per_chunk type="integer">50000</records_per_chunk>
-        <sample_size_locations type="integer">30</sample_size_locations>
-        <sampler type="string">opus_core.samplers.weighted_sampler</sampler>
-        <lottery_max_iterations type="integer">7</lottery_max_iterations>
-        <location_id_name type="string">building_id</location_id_name>
-        <location_filter type="string">numpy.logical_and(urbansim_parcel.building.is_residential, numpy.logical_and(numpy.logical_and(building.residential_units, building.sqft_per_unit), urbansim_parcel.building.unit_price &gt; 0))</location_filter>
-        <estimation_weight_string type="string">urbansim_parcel.building.vacant_residential_units</estimation_weight_string>
-        <estimation_size_agents parser_action="blank_to_None" type="float" />
-        <agents_for_estimation_table_name type="string">households_for_estimation</agents_for_estimation_table_name>
-        <location_filter_for_estimation type="string">numpy.logical_and(household.building_id&gt;0, household.disaggregate(building.sqft_per_unit&gt;0))</location_filter_for_estimation>
-        <estimation_procedure type="string">opus_core.bhhh_wesml_mnl_estimation</estimation_procedure>
-        <join_agents_for_estimation_with_all_agents type="boolean">True</join_agents_for_estimation_with_all_agents>
-        <unplace_agents_for_estimation type="boolean">False</unplace_agents_for_estimation>
-        <estimate_config type="dictionary">
-          <wesml_sampling_correction_variable type="quoted_string">psrc_parcel.building.wesml_sampling_correction_variable</wesml_sampling_correction_variable>
-        </estimate_config>
-        <variable_package flags="hidden" type="string">urbansim_parcel</variable_package>
+      <household_location_choice_model type="dictionary">
+        <estimate type="dictionary">
+          <output type="string">(%s, _)</output>
+          <arguments type="dictionary">
+            <agent_set type="string">household</agent_set>
+            <agents_index type="string">_index</agents_index>
+            <data_objects type="string">datasets</data_objects>
+            <debuglevel type="string">debuglevel</debuglevel>
+            <specification type="string">_specification</specification>
+          </arguments>
+        </estimate>
+        <import type="dictionary">
+          <urbansim.models.household_location_choice_model type="string">HouseholdLocationChoiceModel</urbansim.models.household_location_choice_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">HouseholdLocationChoiceModel</name>
+          <arguments type="dictionary">
+            <sampler type="quoted_string">opus_core.samplers.weighted_sampler</sampler>
+            <choices type="quoted_string">urbansim.lottery_choices</choices>
+            <estimation type="quoted_string">opus_core.bhhh_wesml_mnl_estimation</estimation>
+            <dataset_pool type="string">dataset_pool</dataset_pool>
+            <location_set type="string">building</location_set>
+            <sample_size_locations type="integer">30</sample_size_locations>
+            <capacity_string type="quoted_string">vacant_residential_units</capacity_string>
+            <estimation_weight_string type="quoted_string">residential_units</estimation_weight_string>
+            <number_of_units_string type="quoted_string">residential_units</number_of_units_string>
+            <number_of_agents_string type="quoted_string">number_of_households</number_of_agents_string>
+            <location_id_string type="quoted_string">building_id</location_id_string>
+            <submodel_string type="quoted_string">urbansim.household.income_category</submodel_string>
+            <estimation_size_agents type="float">0.5</estimation_size_agents>
+            <filter type="quoted_string">numpy.logical_and(urbansim_parcel.building.is_residential, numpy.logical_and(numpy.logical_and(building.residential_units, building.sqft_per_unit), urbansim_parcel.building.unit_price &gt; 0))</filter>
+            <run_config type="string">Resources({'lottery_max_iterations': 7, 'aaaa': 'bbbb',})</run_config>
+            <estimate_config type="string">Resources({'wesml_sampling_correction_variable':'psrc_parcel.building.wesml_sampling_correction_variable'})</estimate_config>           
+            <variable_package type="quoted_string">urbansim_parcel</variable_package>  
+          </arguments>
+        </init>
+        <prepare_for_estimate type="dictionary">
+          <name type="string">prepare_for_estimate</name>
+          <output type="string">(_specification, _index)</output>
+          <arguments type="dictionary">
+            <agent_set type="string">household</agent_set>
+            <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
+            <agents_for_estimation_table type="quoted_string">households_for_estimation</agents_for_estimation_table>
+            <data_objects type="string">datasets</data_objects>
+            <index_to_unplace type="string">hrm_index</index_to_unplace>
+            <join_datasets type="boolean">True</join_datasets>
+            <portion_to_unplace type="string">portion_to_unplace</portion_to_unplace>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">household_location_choice_model_specification</specification_table>
+            <filter type="quoted_string">numpy.logical_and(household.building_id&gt;0, household.disaggregate(building.sqft_per_unit&gt;0))</filter>
+          </arguments>
+        </prepare_for_estimate>
+        <prepare_for_run type="dictionary">
+          <name type="string">prepare_for_run</name>
+          <output type="string">(_specification, _coefficients)</output>
+          <arguments type="dictionary">
+            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+            <coefficients_table type="quoted_string">household_location_choice_model_coefficients</coefficients_table>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">household_location_choice_model_specification</specification_table>
+          </arguments>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <agent_set type="string">household</agent_set>
+            <agents_index type="string" flags="hidden">hrm_index</agents_index>
+            <chunk_specification type="string">{'records_per_chunk':50000}</chunk_specification>
+            <coefficients type="string" flags="hidden">_coefficients</coefficients>
+            <data_objects type="string" flags="hidden">datasets</data_objects>
+            <debuglevel type="string" flags="hidden">debuglevel</debuglevel>
+            <specification type="string" flags="hidden">_specification</specification>
+            <maximum_runs type="integer">10</maximum_runs>
+          </arguments>
+        </run>
       </household_location_choice_model>
     </model_system>
     <estimation type="dictionary">
