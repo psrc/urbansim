@@ -87,7 +87,9 @@ class WaterDemandModel(RegressionModel):
         if outcome_attribute_name in dataset.get_known_attribute_names():
             dataset.set_values_of_one_attribute(outcome_attribute_name, water_demand, index)
         else:
-            dataset.add_primary_attribute(outcome_attribute_name, water_demand, index)
+            results = zeros(dataset.size(), dtype=water_demand.dtype)
+            results[index] = water_demand
+            dataset.add_primary_attribute(results, outcome_attribute_name)
 
         return water_demand
 
