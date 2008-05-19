@@ -191,7 +191,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                         }
                     },
                     
-                "process_pipeline_events":{
+        "process_pipeline_events":{
                      "import": {"urbansim_parcel.models.process_pipeline_events":
                                                          "ProcessPipelineEvents"},
                      "init": {
@@ -203,7 +203,21 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                         "output": "scheduled_development_events"
                         }
                  },
-                 
+
+        "tour_schedule_model":{
+                     "import": {"urbansim_parcel.models.tour_schedule_model":
+                                                         "TourScheduleModel"},
+                     "init": {
+                         "name": "TourScheduleModel"},
+                     "run": {
+                        "arguments": {'person_set': 'person',
+                                      'tour_set': 'tour',
+                                      'tour_filter': "'tour.w2h_act == 1'"
+                                      },
+                        "output": "sampled_tour"
+                        }
+                 },
+                
         'household_transition_model': {
             'import': {
                 'urbansim_parcel.models.household_transition_model': 'HouseholdTransitionModel'
