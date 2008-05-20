@@ -118,7 +118,7 @@
             <specification flags="hidden" type="string">specification</specification>
             <dataset type="string">fill in</dataset>
             <outcome_attribute type="quoted_string">fill in</outcome_attribute>
-            <index flags="hidden" type="string" parser_action="blank_to_None" flags="hidden">rm_index</index>
+            <index flags="hidden" type="string" parser_action="blank_to_None">rm_index</index>
             <procedure type="quoted_string">opus_core.estimate_linear_regression</procedure>
             <data_objects flags="hidden" type="string">datasets</data_objects>
           </arguments>
