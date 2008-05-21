@@ -5,6 +5,22 @@
 
   <model_manager>
    <model_system type="dictionary">
+        <simple_model_template  type="dictionary" copyable='True'>
+         <import type="dictionary">
+          <opus_core.simple_model type="string">SimpleModel</opus_core.simple_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">SimpleModel</name>
+          </init>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <dataset type="string">fill in</dataset>
+            <expression type="quoted_string">fill in</expression>
+            <outcome_attribute type="quoted_string" parser_action="blank_to_None"></outcome_attribute>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+       </simple_model_template>  
        <choice_model_template  type="dictionary" copyable='True'>
          <import type="dictionary">
           <opus_core.choice_model type="string">ChoiceModel</opus_core.choice_model>
