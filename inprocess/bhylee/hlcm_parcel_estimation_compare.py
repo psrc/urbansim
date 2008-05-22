@@ -46,6 +46,7 @@ class HlcmParcelEstimationUrbansim(HLCMEstimationConfig): # comment this line ou
         self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]["location_set"] = "building"
         #self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]["location_id_string"] = "'household.parcel_id'"
         self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]['submodel_string'] = "'psrc.household.number_of_nonhome_based_workers'"
+#        self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]['filter'] = None
         
         self["models_configuration"]["household_location_choice_model"]["controller"]["prepare_for_estimate"]["arguments"]["join_datasets"] = 'True'
         self["models_configuration"]["household_location_choice_model"]["controller"]["prepare_for_estimate"]["arguments"]["index_to_unplace"] = 'None'
@@ -83,6 +84,7 @@ class HlcmParcelEstimationPsrcParcel(BaselineEstimation): # comment this line ou
         self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]["location_set"] = "building"
         #self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]["location_id_string"] = "'household.parcel_id'"
         self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]['submodel_string'] = "'psrc.household.number_of_nonhome_based_workers'"
+#        self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]['filter'] = None
         
         self["models_configuration"]["household_location_choice_model"]["controller"]["prepare_for_estimate"]["arguments"]["join_datasets"] = 'True'
         self["models_configuration"]["household_location_choice_model"]["controller"]["prepare_for_estimate"]["arguments"]["index_to_unplace"] = 'None'
