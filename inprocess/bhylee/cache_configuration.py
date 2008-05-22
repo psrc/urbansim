@@ -41,12 +41,14 @@ class CacheConfiguration(Configuration):
             'jobs',
             'travel_data',
             'persons', #need to cache
+            'persons_for_estimation',
             'zones',
             'cities',
             'buildings',
             'building_types',
             'urbansim_constants',
             'job_building_types',
+            'tours',
             #'land_price_model_coefficients',
             #'land_price_model_specification',]
          ]
