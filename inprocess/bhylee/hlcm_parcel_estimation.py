@@ -41,7 +41,10 @@ class HlcmParcelEstimation(BaselineEstimation): # comment out for urbansim.confi
 #        self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]['sample_size_locations'] = 30
         self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]['sampler']="'opus_core.samplers.weighted_sampler'"#"'opus_core.samplers.stratified_sampler'"   #
         self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]["estimate_config"] = estimate_config
-        self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]["estimation_weight_string"] = "'has_eg_1_units=building.residential_units>=1'"
+        self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]["estimation_weight_string"] = "'has_eg_1_units=building.residential_units>=1'" 
+        self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]["capacity_string"] = "'has_eg_1_units=building.residential_units>=1'"
+        self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]["number_of_agents_string"] = "'(building.building_id < 0).astype(int32)'"
+        
 #        self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]["estimation_weight_string"] = "'urbansim_parcel.building.vacant_residential_units'"
 #        self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]["estimation_weight_string"] = "'psrc_parcel.building.residential_units'"
                            #{"weights_for_estimation_string":"psrc.parcel.residential_units_when_has_eg_1_surveyed_households_and_is_in_county_033"}
@@ -54,10 +57,12 @@ class HlcmParcelEstimation(BaselineEstimation): # comment out for urbansim.confi
         self["models_configuration"]["household_location_choice_model"]["controller"]["prepare_for_estimate"]["arguments"]["join_datasets"] = 'True'
         self["models_configuration"]["household_location_choice_model"]["controller"]["prepare_for_estimate"]["arguments"]["index_to_unplace"] = 'None'
         self["models_configuration"]["household_location_choice_model"]["controller"]["prepare_for_estimate"]["arguments"]["filter"] = "'household.move == 1'"#None #"'psrc.household.customized_filter'"
-        self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]['filter'] = None
-        
+        self["models_configuration"]["household_location_choice_model"]["controller"]["init"]["arguments"]['filter'] = "'urbansim_parcel.building.is_residential'"
+#        self["datasets_to_preload"].merge({"tour":{}, "person":{}})
+#        self["datasets_to_cache_after_each_model"] += ["person"]
         self["models"] = [
 #            {"household_relocation_model": ["run"]},
+#            {"tour_schedule_model": ["run"]},
             {"household_location_choice_model": ["estimate"]}
         ]
 
@@ -76,8 +81,8 @@ if __name__ == '__main__':
     er = Estimator(run_configuration, save_estimation_results=False)
     
     er.estimate()
-    er.create_prediction_success_table()
-    er.create_prediction_success_table(choice_geography_id="area_type_id=building.disaggregate(zone.area_type_id, intermediates=[parcel])" )
-    er.create_prediction_success_table(choice_geography_id="building_type_id=building.building_type_id" )
+#    er.create_prediction_success_table()
+#    er.create_prediction_success_table(choice_geography_id="area_type_id=building.disaggregate(zone.area_type_id, intermediates=[parcel])" )
+#    er.create_prediction_success_table(choice_geography_id="building_type_id=building.building_type_id" )
 #    er.create_prediction_success_table(choice_geography_id="large_area_id=building.disaggregate(faz.large_area_id, intermediates=[zone, parcel])" )
 #    er.reestimate("hlcm_parcel_specification")
