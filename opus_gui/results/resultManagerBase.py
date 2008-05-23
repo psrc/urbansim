@@ -20,7 +20,9 @@ from opus_gui.results.forms.indicator_group_run_form import IndicatorGroupRunFor
 from opus_gui.results.forms.view_documentation_form import ViewDocumentationForm
 from opus_gui.results.forms.view_image_form import ViewImageForm
 from opus_gui.results.forms.view_table_form import ViewTableForm
-from opus_gui.results.opus_result_generator import OpusGuiThread, OpusResultVisualizer
+from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
+from opus_gui.results.gui_result_interface.opus_result_generator import OpusResultGenerator
+from opus_gui.results.gui_result_interface.opus_result_visualizer import OpusResultVisualizer
 from opus_gui.results.xml_helper_methods import get_child_values, elementsByAttributeValue
 
 

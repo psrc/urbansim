@@ -29,8 +29,9 @@ from opus_gui.results.forms.view_table_form import ViewTableForm
 import os, sys, time, tempfile, shutil, string
 
 from opus_gui.results.xml_helper_methods import elementsByAttributeValue
-from opus_gui.results.opus_result_generator import OpusGuiThread, OpusResultGenerator, OpusResultVisualizer  
-
+from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
+from opus_gui.results.gui_result_interface.opus_result_generator import OpusResultGenerator
+from opus_gui.results.gui_result_interface.opus_result_visualizer import OpusResultVisualizer
 # Main Run manager class
 class RunManagerBase(object):
     def __init__(self, parent):

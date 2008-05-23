@@ -20,7 +20,9 @@ from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
 
 from opus_gui.results.xml_helper_methods import elementsByAttributeValue, get_child_values
 
-from opus_gui.results.opus_result_generator import OpusGuiThread, OpusResultGenerator
+from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
+from opus_gui.results.gui_result_interface.opus_result_generator import OpusResultGenerator
+from opus_gui.results.gui_result_interface.opus_result_visualizer import OpusResultVisualizer
 from opus_gui.config.xmlmodelview.opusdataitem import OpusDataItem
 import os
 
@@ -38,7 +40,8 @@ class AdvancedVisualizationForm(QWidget):
         
         self.result_generator = OpusResultGenerator(
                                     xml_path = self.toolboxStuff.xml_file,
-                                    domDocument = self.domDocument)
+                                    domDocument = self.domDocument,
+                                    model = self.toolboxStuff.resultsManagerTree.model)
             
         self.result_generator.guiElement = self
         

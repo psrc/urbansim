@@ -19,7 +19,11 @@ from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
 
 from opus_gui.results.xml_helper_methods import elementsByAttributeValue, get_child_values
 
-from opus_gui.results.opus_result_generator import OpusGuiThread, OpusResultGenerator, OpusIndicatorGroupProcessor
+from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
+from opus_gui.results.gui_result_interface.opus_result_generator import OpusResultGenerator
+from opus_gui.results.gui_result_interface.opus_result_visualizer import OpusResultVisualizer
+from opus_gui.results.gui_result_interface.opus_indicator_group_processor import OpusIndicatorGroupProcessor
+
 from opus_gui.config.xmlmodelview.opusdataitem import OpusDataItem
 
 class IndicatorGroupRunForm(QWidget):
@@ -282,7 +286,6 @@ class IndicatorGroupRunForm(QWidget):
         print "Results generated met with success = ", success
             
         all_visualizations = self.result_generator.get_visualizations()
-        print all_visualizations
         for indicator_type, visualizations in all_visualizations:
             if indicator_type == 'matplotlib_map' or \
                indicator_type == 'matplotlib_chart':
