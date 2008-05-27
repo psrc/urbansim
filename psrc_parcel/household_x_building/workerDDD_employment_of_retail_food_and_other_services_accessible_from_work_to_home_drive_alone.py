@@ -26,7 +26,7 @@ class workerDDD_employment_of_retail_food_and_other_services_accessible_from_wor
         self.choice_zone_id = 'urbansim_parcel.building.zone_id'
         self.travel_data_attribute = 'travel_data.am_single_vehicle_to_work_travel_time'
         self.travel_data_attribute_default_value = 999
-        self.zone_attribute_to_access = "urbansim_parcel.zone.number_of_jobs_of_sector_7 + urbansim_parcel.zone.number_of_jobs_of_sector_14 + urbansim_parcel.zone.number_of_jobs_of_sector_17"
+        self.zone_attribute_to_access = "zone_attribute=urbansim_parcel.zone.number_of_jobs_of_sector_7 + urbansim_parcel.zone.number_of_jobs_of_sector_14 + urbansim_parcel.zone.number_of_jobs_of_sector_17"
         self.direction_from_agent_to_choice = True
         
         abstract_time_space_prism_variable.__init__(self)
@@ -70,7 +70,7 @@ class Tests(opus_unittest.OpusTestCase):
                  },
              "zone":{
                  'zone_id':array([1, 2, 3]),
-                 'number_of_jobs_of_sector_group_retail':array([7, 0, 103]),
+                 'zone_attribute':array([7, 0, 103]),
                  },
              "travel_data":{
                 'from_zone_id':array([3,3,1,1,1,2,2,3,2]),
@@ -80,14 +80,14 @@ class Tests(opus_unittest.OpusTestCase):
 
          })
         
-        should_be = array([[110, 110,   110,   110], 
+        should_be = array([[0, 0,   0,   0], 
                            [0, 0, 0,   0],
                            [110, 110, 110, 110], 
                            [0, 0,   0,   0],
                            [  0,   0,   0,   0],
                            [  0,   0,   0,   0], 
                            ])
-        instance_name = 'psrc_parcel.household_x_building.worker1_employment_of_group_retail_accessible_from_work_to_home_drive_alone'
+        instance_name = 'psrc_parcel.household_x_building.worker1_employment_of_retail_food_and_other_services_accessible_from_work_to_home_drive_alone'
         tester.test_is_equal_for_family_variable(self, should_be, instance_name)
 #        tester.test_is_close_for_variable_defined_by_this_module(self, should_be)
 
