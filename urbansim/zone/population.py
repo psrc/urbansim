@@ -12,7 +12,6 @@
 # other acknowledgments.
 # 
 
-from opus_core.variables.variable import Variable
 from urbansim.gridcell.population import population as gc_population
 from urbansim.functions import attribute_label
 

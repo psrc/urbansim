@@ -19,7 +19,7 @@ from numpy import float32
 
 class average_income(Variable):
     """Average income, as computed by dividing the sum of all household's incomes in the given cell by
-    the total number of housholds in the cell"""
+    the total number of households in the cell"""
 
     _return_type="float32"
     sum_income = "sum_income"
