@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<opus_project>
+  <general>
+    <mydict type="dictionary">
+      <a type="string">atest</a>
+      <b type="string">btest</b>
+      <c type="string">ctest</c>
+      <d type="string">dtest</d>
+    </mydict>
+  </general>
+</opus_project>

@@ -58,11 +58,17 @@ class XMLConfiguration(object):
     def update(self, newconfig_str):
         """Update the contents of this configuration from the string newconfig_str 
         (a string representing an xml configuration).  Ignore any temporary or 
-        inherited nodes in newconfig_str."""
+        inherited nodes in newconfig_str (this gets freshly initialized)."""
         # Note that this doesn't change the name of this configuration, or the full_filename
         str_io = StringIO.StringIO(newconfig_str)
         etree = ElementTree(file=str_io)
-        self._remove_temporary_and_inherited_nodes(etree.getroot())
+        # remove any old followers nodes
+        for n in self.full_tree.getiterator():
+            if n.get('followers') is not None:
+                # TODO: find standard Element interface for removing an attribute
+                del n.attrib['followers']
+        self._set_followers(etree.getroot(), self._get_parent_trees(), '')
+        self._clean_tree(etree.getroot())
         self._initialize(etree, False)
         
     def get_section(self, name):
@@ -146,11 +152,8 @@ class XMLConfiguration(object):
         full_root = self.full_tree.getroot()
         if full_root.tag!='opus_project':
             raise ValueError, "malformed xml - expected to find a root element named 'opus_project'"
-        parent_nodes = full_root.findall('general/parent')
-        default_dir = os.path.split(self.full_filename)[0]
-        for p in parent_nodes:
-            x = XMLConfiguration(p.text, default_directory=default_dir, is_parent=True)
-            self._merge_parent_elements(x.full_tree.getroot(), '')
+        for p in self._get_parent_trees():
+            self._merge_parent_elements(p, '')
         if is_parent:
             for n in full_root.getiterator():
                 if n.get('inherited') is None:
@@ -166,11 +169,20 @@ class XMLConfiguration(object):
         else:
             return self.full_tree.getroot().find(path)
         
+    def _get_parent_trees(self):
+        default_dir = os.path.split(self.full_filename)[0]
+        parent_nodes = self.full_tree.getroot().findall('general/parent')
+        parent_trees = []
+        for p in parent_nodes:
+            x = XMLConfiguration(p.text, default_directory=default_dir, is_parent=True)
+            parent_trees.append(x.full_tree.getroot())
+        return parent_trees
+    
     def _merge_parent_elements(self, parent_node, path):
-        # parent_node is a node someplace in a parent tree, and path is a path
-        # from the root to that node.  Merge in parent_node into this configuration's
-        # tree.  We are allowed to reuse bits of the xml from parent_node (the xml
-        # for it is created on demand, so we don't need to make a copy).
+        # parent_node is a node someplace in a parent tree, and path is a path from the root
+        # to that node.  Merge in parent_node into this configuration's tree.  We are allowed 
+        # to reuse bits of the xml from parent_node.  (The xml for it is created by this class 
+        # from its file during initialization, so we don't need to make a copy).
         # Precondition: path gives a unique element in this configuration's xml tree.
         prev_child = None
         for child in parent_node.getchildren():
@@ -179,38 +191,71 @@ class XMLConfiguration(object):
             else:
                 extended_path = path + '/' + child.tag
             if self._find(extended_path) is None:
-                # c doesn't exist in this tree, so we can just add it and
-                # all its children.  We want to insert it at a sensible place in the
-                # tree.  In the parent child is right after prev_child, and so in
-                # the new tree we put child right after the local version of prev-child.
-                if prev_child is None:
-                    self._find(path).insert(0,child)
-                else:
-                    i = 1
-                    if path=='':
-                        children = self.full_tree.getroot().getchildren()
-                    else:
-                        children = self._find(path).getchildren()
-                    for c in children:
-                        if c.tag==prev_child.tag:
-                            break  
-                        i = i+1
-                    self._find(path).insert(i,child)
+                # 'child' doesn't exist in this tree, so we can just add it and all its children.
+                # We want to insert it at a sensible place in the tree.  If there are any nodes
+                # already in the tree with a 'followers' attribute that includes the name of the
+                # new node being inserted, we need to put the new node after those nodes.
+                # Also, in the parent, 'child' is right after 'prev_child', and so in the new tree we put 
+                # 'child' right after the local version of 'prev_child', unless one of the tags in a 
+                # 'followers' attribute says it has to go later.  If 'prev_child' is not None, we know that 
+                # this tree will have a node with the same tag as 'prev_child' node, because
+                # either it was already in this tree, or we just merged it in from the parent.
+                # (One thing that may be odd about this is if there are several nodes with the
+                # same tag as prev_child -- in this case we'll use the last one.)
+                where = 0
+                i = 0
+                for c in self._find(path).getchildren():
+                    f = c.get('followers')
+                    if (f is not None and child.tag in f.split(',')) or (prev_child is not None and c.tag==prev_child.tag):
+                        where = i+1
+                    i = i+1
+                self._find(path).insert(where,child)
             else:
-                # c does exist in this tree.  Keep going further with
+                # 'child' does exist in this tree.  Keep going further with
                 # its children, in case some of them don't exist in this tree
                 self._merge_parent_elements(child, extended_path)
             prev_child = child
             
-    def _remove_temporary_and_inherited_nodes(self, etree):
-        # remove from etree any nodes with the 'temporary' or 'inherited' attribute
+    def _clean_tree(self, etree):
+        # Remove from etree any nodes with the 'temporary' or 'inherited' attribute.
+        # Use a counter rather than to handle the problem of deleting a node while iterating
         i = 0
         while i<len(etree):
-            if etree[i].get('temporary')=='True' or etree[i].get('inherited') is not None:
+            e = etree[i]
+            if e.get('temporary')=='True' or e.get('inherited') is not None:
                 del etree[i]
             else:
-                self._remove_temporary_and_inherited_nodes(etree[i])
+                self._clean_tree(e)
                 i = i+1
+    
+    def _set_followers(self, tree, parent_trees, path):
+        # Recursively traverse tree, setting the 'followers' attribute on any node
+        # that needs it.  A node n should have a 'followers' attribute if it is new in
+        # 'tree' and doesn't occur in any parent.  If so, 'followers' should be a
+        # comma-separated list of names of inherited nodes that follow n.  (This is used
+        # when merging in inherited nodes to put them in the right place.)
+        children = tree.getchildren()
+        i = 0
+        while i<len(children):
+            n = children[i]
+            if n.get('inherited') is None:
+                is_new = True
+                if path=='':
+                    extended_path = n.tag
+                else:
+                    extended_path = path + '/' + n.tag
+                # check if n occurs in any parent
+                for p in parent_trees:
+                    if p.find(extended_path):
+                        is_new = False
+                        break
+                if is_new:
+                    followers = map(lambda x: x.tag, filter(lambda y: y.get('inherited') is not None, children[i+1:]))
+                    if len(followers)>0:
+                        s = ','.join(followers)
+                        n.set('followers', s)
+                self._set_followers(n, parent_trees, extended_path)
+            i = i+1
     
     def _merge_controllers(self, config):
         # merge in the controllers in the model_manager/model_system portion of the project (if any) into config
@@ -319,7 +364,6 @@ class XMLConfiguration(object):
         else:
             # use the fully-qualified class name rather than a 'from pkg import classname' 
             # to avoid cluttering up the local name space
-            # TODO: can this be replaced with __import__(path)
             exec('import %s' % path)
             cls = eval('%s.%s' % (path, class_name))
         inst = cls.__new__(cls)
@@ -723,12 +767,73 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config.save_as(str_io)
         # compare the strings removing white space
         squished_result = str_io.getvalue().replace(' ', '').replace('\n', '')
-        # rather than typing it in here, just read the value from the file
-        est_file = open(f)
-        should_be = est_file.read().replace(' ', '').replace('\n', '')
-        self.assertEqual(squished_result, should_be)
+        should_be = """
+          <opus_project>
+            <general>
+              <parent type="file">estimation_child.xml</parent>
+              <parent type="file">estimation_child2.xml</parent>
+            </general>
+            <model_manager>
+              <estimation type="dictionary">
+                <real_estate_price_model type="dictionary">
+                  <all_variables type="dictionary">
+                    <ln_cost followers="tax" type="variable_definition">ln_cost=ln(psrc.parcel.cost+100)</ln_cost>
+                    </all_variables>
+                 </real_estate_price_model>
+               </estimation>
+            </model_manager>
+           <scenario_manager />
+          </opus_project>"""
+        squished_should_be = should_be.replace(' ', '').replace('\n', '')
+        self.assertEqual(squished_result, squished_should_be)
         str_io.close()
-        est_file.close()
+
+    def test_followers(self):
+        # Read in an xml configuration that includes a 'followers' attribute.
+        # Make sure that the resulting configuration has the nodes in the correct order
+        # Then write it out, and make sure the followers attribute is still correct.
+        f = os.path.join(self.test_configs, 'followers_test_child.xml')
+        config = XMLConfiguration(f)
+        mydict = config.full_tree.find('general/mydict')
+        child_names = map(lambda n: n.tag, mydict.getchildren())
+        self.assertEqual(child_names, ['a', 'b', 'x', 'c', 'd'])
+        # Now update the configuration with a new xml tree, in which x is after c and 
+        # there is also a new node e
+        update_str = """
+          <opus_project>
+            <general>
+              <parent type="file">followers_test_parent.xml</parent>
+              <mydict type="dictionary">
+                <a type="string" inherited="followers_test_parent">atest</a>
+                <b type="string" inherited="followers_test_parent">btest</b>
+                <c type="string" inherited="followers_test_parent">ctest</c>
+                <x type="string" followers="c,d">xtest</x>
+                <d type="string" inherited="followers_test_parent">dtest</d>
+                <e type="string">etest</e>
+               </mydict>
+            </general>
+          </opus_project>"""
+        config.update(update_str)
+        # make sure the 'followers' attribute is updated correctly
+        self.assertEqual(config.full_tree.find('general/mydict/x').get('followers'), 'd')
+        # now write it out to a StringIO file-like object, and make sure it has
+        # the correct contents
+        str_io = StringIO.StringIO()
+        config.save_as(str_io)
+        squished_result = str_io.getvalue().replace(' ', '').replace('\n', '')
+        should_be = """
+          <opus_project>
+            <general>
+              <parent type="file">followers_test_parent.xml</parent>
+              <mydict type="dictionary">
+                <x followers="d" type="string">xtest</x>
+                <e type="string">etest</e>
+               </mydict>
+            </general>
+          </opus_project>"""
+        squished_should_be = should_be.replace(' ', '').replace('\n', '')
+        self.assertEqual(squished_result, squished_should_be)
+        str_io.close()
 
     def test_error_handling(self):
         # there isn't an xml configuration named badname.xml
