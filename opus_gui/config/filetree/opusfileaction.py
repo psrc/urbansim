@@ -18,7 +18,11 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from opus_gui.run.script.opusrunscript import *
 from opus_core.storage_factory import StorageFactory
-from opus_core.datasets.dataset import Dataset
+
+#Jesse changes:
+#from opus_core.datasets.dataset import Dataset
+from opus_core.datasets.gui_dataset import GuiDataset
+
 import sys
 
 
@@ -92,7 +96,11 @@ class OpusFileAction(object):
         storage = StorageFactory().get_storage('flt_storage',
                                                storage_location=parent_name_full)
         columns = storage.get_column_names(dataset_name)
-        data = Dataset(in_storage=storage,
+        
+        #Jesse changes
+        #data = Dataset(in_storage=storage,
+        #               in_table_name=dataset_name,id_name=columns[0])
+        data = GuiDataset(in_storage=storage,
                        in_table_name=dataset_name,id_name=columns[0])
         
         # Need to add a new tab to the main tabs for display of the data
@@ -103,11 +111,20 @@ class OpusFileAction(object):
         summaryGroupBox.setTitle(QString("Summary"))
         summaryGroupBoxLayout = QVBoxLayout(summaryGroupBox)
         # Add in the summary here
-        textBrowser = CatchOutput(container)
-        textBrowser.start()
-        data.summary()
-        textBrowser.stop()
+        
+        #Jesse changes
+        #textBrowser = CatchOutput(container)
+        #textBrowser.start()
+        #data.summary()
+        #textBrowser.stop()
+        #summaryGroupBoxLayout.addWidget(textBrowser)
+        data_summary = data.summary()
+        strng = QString(data_summary.getvalue())
+        textBrowser = QTextBrowser()
+        textBrowser.insertPlainText(strng)
         summaryGroupBoxLayout.addWidget(textBrowser)
+        
+        
         widgetLayout.addWidget(summaryGroupBox)
 
         tableGroupBox = QGroupBox(container)
