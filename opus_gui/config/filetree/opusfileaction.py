@@ -36,6 +36,11 @@ class OpusFileAction(object):
         QObject.connect(self.actRefresh, SIGNAL("triggered()"),
                         self.refreshAction)
 
+        self.actViewDataset = QAction(self.applicationIcon, "View Dataset",
+                                      self.xmlFileObject.mainwindow)
+        QObject.connect(self.actViewDataset, SIGNAL("triggered()"),
+                        self.viewDatasetAction)
+        
         self.actOpenTextFile = QAction(self.applicationIcon, "Open Text File",
                                        self.xmlFileObject.mainwindow)
         QObject.connect(self.actOpenTextFile, SIGNAL("triggered()"),
@@ -44,6 +49,9 @@ class OpusFileAction(object):
         QObject.connect(self.xmlFileObject.treeview,
                         SIGNAL("customContextMenuRequested(const QPoint &)"),
                         self.processCustomMenu)
+
+    def viewDatasetAction(self):
+        print "viewDatasetAction"
 
     def refreshAction(self):
         #print "refreshAction"
@@ -219,6 +227,9 @@ class OpusFileAction(object):
             else:
                 # Do stuff for directories
                 choices = self.fillInAvailableScripts()
+                if self.classification == "dataset":
+                    # We need to provide the option to open the dataset
+                    self.menu.addAction(self.actViewDataset)
                 if len(choices) > 0:
                     self.dynactions = []
                     for i,choice in enumerate(choices):
