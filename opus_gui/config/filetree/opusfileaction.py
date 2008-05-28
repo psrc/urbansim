@@ -17,6 +17,8 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from opus_gui.run.script.opusrunscript import *
+from opus_core.storage_factory import StorageFactory
+from opus_core.datasets.dataset import Dataset
 
 
 class OpusFileAction(object):
@@ -52,6 +54,18 @@ class OpusFileAction(object):
 
     def viewDatasetAction(self):
         print "viewDatasetAction"
+        model = self.xmlFileObject.model
+        dataset_name = str(model.fileName(self.currentIndex))
+        dataset_name_full = str(model.filePath(self.currentIndex))
+        parentIndex = model.parent(self.currentIndex)
+        parent_name = str(model.fileName(parentIndex))
+        parent_name_full = str(model.filePath(parentIndex))
+        storage = StorageFactory().get_storage('flt_storage',
+                                               storage_location=parent_name_full)
+        columns = storage.get_column_names(dataset_name)
+        data = Dataset(in_storage=storage,
+                       in_table_name=dataset_name,id_name=columns[0])
+        data.summary()
 
     def refreshAction(self):
         #print "refreshAction"
