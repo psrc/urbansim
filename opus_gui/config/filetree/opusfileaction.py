@@ -67,6 +67,19 @@ class OpusFileAction(object):
                        in_table_name=dataset_name,id_name=columns[0])
         data.summary()
 
+        # Need to add a new tab to the main tabs for display of the data
+        tabs = self.xmlFileObject.mainwindow.tabWidget
+        container = QWidget()
+        widgetLayout = QVBoxLayout(container)
+        tableWidget = QTableWidget(container)
+        tableWidget.setObjectName("tableWidget")
+        widgetLayout.addWidget(tableWidget)
+        tabIcon = QIcon(":/Images/Images/cog.png")
+        tabLabel = QString(dataset_name)
+        tabs.insertTab(0,container,tabIcon,tabLabel)
+        tabs.setCurrentIndex(0)
+
+
     def refreshAction(self):
         #print "refreshAction"
         self.xmlFileObject.model.refresh(self.xmlFileObject.treeview.rootIndex())
