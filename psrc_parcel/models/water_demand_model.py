@@ -13,7 +13,7 @@
 #
 
 import re
-from numpy import array, exp
+from numpy import array, exp, arange, zeros
 from opus_core.resources import Resources
 from opus_core.regression_model import RegressionModel
 from opus_core.variables.variable_name import VariableName
@@ -32,7 +32,8 @@ class WaterDemandModel(RegressionModel):
                  submodel_string="land_use_type_id",
                  run_config=None,
                  estimate_config=None,
-                 debuglevel=0):
+                 debuglevel=0,
+                 dataset_pool=None):
         self.outcome_attribute = outcome_attribute
         if (self.outcome_attribute is not None) and not isinstance(self.outcome_attribute, VariableName):
             self.outcome_attribute = VariableName(self.outcome_attribute)
@@ -43,13 +44,15 @@ class WaterDemandModel(RegressionModel):
                                  submodel_string=submodel_string,
                                  run_config=run_config,
                                  estimate_config=estimate_config,
-                                 debuglevel=debuglevel)
+                                 debuglevel=debuglevel,
+                                 dataset_pool=dataset_pool)
 
     def run(self, specification, coefficients, dataset, 
             index=None, chunk_specification=None,
             data_objects=None, run_config=None, debuglevel=0):
         """ For info on the arguments see RegressionModel.
         """
+        outcome_attribute_short = self.outcome_attribute.get_alias()
         if data_objects is not None:
             self.dataset_pool.add_datasets_if_not_included(data_objects)
         if self.filter_attribute <> None:
@@ -58,15 +61,15 @@ class WaterDemandModel(RegressionModel):
                                                dataset_pool=self.dataset_pool, resources=res)
         
         current_year = SimulationState().get_current_time()
-        current_month = int( re.search('\d$', self.outcome_attribute).group() )
-        # date in YYYY_MM format, matching to the id_name field of weather dataset
-        date = "%d_%02d" % (current_year, current_month)
+        current_month = int( re.search('\d$', outcome_attribute_short).group() )
+        # date in YYYYMM format, matching to the id_name field of weather dataset
+        date = int( "%d%02d" % (current_year, current_month) )
         date = array([date] * dataset.size())
         
         if "date" in dataset.get_known_attribute_names():
             dataset.set_values_of_one_attribute("date", date)
         else:
-            dataset.add_primary_attribute("date", date)
+            dataset.add_primary_attribute(date, "date")
 
         water_demand = RegressionModel.run(self, specification, coefficients, dataset, 
                                            index, chunk_specification,
@@ -77,12 +80,12 @@ class WaterDemandModel(RegressionModel):
         if index == None:
             index = arange(dataset.size())
             
-        if re.search("^ln_", self.outcome_attribute.get_alias()): 
+        if re.search("^ln_", outcome_attribute_short): 
             # if the outcome attr. name starts with 'ln_' the results will be exponentiated.
-            outcome_attribute_name = self.outcome_attribute.get_alias()[3:len(self.outcome_attribute.get_alias())]
+            outcome_attribute_name = outcome_attribute_short[3:len(outcome_attribute_short)]
             outcome = exp(outcome)
         else:
-            outcome_attribute_name = self.outcome_attribute.get_alias()
+            outcome_attribute_name = outcome_attribute_short
 
         if outcome_attribute_name in dataset.get_known_attribute_names():
             dataset.set_values_of_one_attribute(outcome_attribute_name, water_demand, index)
