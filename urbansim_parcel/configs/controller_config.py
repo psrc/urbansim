@@ -296,6 +296,60 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                 "output":"(development_project_proposal, demolished_buildings)"
                     },
           },
+         
+         'development_project_proposal_choice_model': {
+            "import": {"urbansim_parcel.models.development_project_proposal_choice_model":
+                       "DevelopmentProjectProposalChoiceModel"},
+            "init": {
+                "name": "DevelopmentProjectProposalChoiceModel",
+                "arguments": {"proposal_set": "development_project_proposal",
+                              #weight_string omitted to use defalut value "exp_ROI = exp(urbansim_parcel.development_project_proposal.expected_rate_of_return_on_investment)",
+                              "filter": "'development_project_proposal.status_id==4'"  # id_tentative
+                              },
+                },            
+            "prepare_for_run":{                
+                "name": "prepare_for_run",
+                'arguments': {
+                    'coefficients_storage': 'base_cache_storage',
+                    'coefficients_table': "'development_project_proposal_choice_model_coefficients'",
+                    'specification_storage': 'base_cache_storage',
+                    'specification_table':"'development_project_proposal_choice_model_specification'",
+                    },
+                'output': '(specification, coefficients)'
+                },
+            "run": {
+                "arguments": {
+                    'n':500,  # sample 500 proposal at a time, evaluate them one by one
+                    "specification": "specification",
+                    "coefficients":"coefficients",
+                    #"agent_set": 'development_project_proposal',
+
+                              },
+                "output":"(development_project_proposal, demolished_buildings)"
+                    },
+            "prepare_for_estimate": {
+                 "name": "prepare_for_estimate",                                      
+                 "arguments": {
+                     "agent_set":"development_project_proposal",
+                     "agents_for_estimation_storage": "base_cache_storage",
+                     "agents_for_estimation_table": "'development_project_proposals_for_estimation'",
+                     "filter_for_estimation_set":None,
+                     "data_objects": "datasets"
+                     },
+                 "output": "(specification, index)"
+                 },
+            'estimate': {
+                'arguments': {
+                    'agent_set': 'development_project_proposal',
+                    'agents_index':'index',
+                    'data_objects': 'datasets',
+                    'debuglevel': 0,
+                    'procedure': "'opus_core.bhhh_mnl_estimation'",
+                    'specification': 'specification'
+                    },
+                'output': '(coefficients, _)'
+                 },
+            },
                                        
          'building_construction_model': {
              "import": {"urbansim_parcel.models.building_construction_model":
@@ -506,7 +560,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                               "specification_table": "'water_demand_model_specification_for_month_combination_2'",
                                "coefficients_storage": "base_cache_storage",
                                "coefficients_table": "'water_demand_model_coefficients_for_month_combination_2'"},
-                "output": "(specification, coefficients)"
+                "output": "(specification, coefficients, _)"
                 },
             "run": {
                 "arguments": {
