@@ -71,9 +71,20 @@ class OpusFileAction(object):
         tabs = self.xmlFileObject.mainwindow.tabWidget
         container = QWidget()
         widgetLayout = QVBoxLayout(container)
+        summaryGroupBox = QGroupBox(container)
+        summaryGroupBox.setTitle(QString("Summary"))
+        summaryGroupBoxLayout = QVBoxLayout(summaryGroupBox)
+        # Add in the summary here
+        widgetLayout.addWidget(summaryGroupBox)
+
+        tableGroupBox = QGroupBox(container)
+        tableGroupBox.setTitle(QString("Table View"))
+        tableGroupBoxLayout = QVBoxLayout(tableGroupBox)
         tableWidget = QTableWidget(container)
         tableWidget.setObjectName("tableWidget")
-        widgetLayout.addWidget(tableWidget)
+        tableGroupBoxLayout.addWidget(tableWidget)
+        widgetLayout.addWidget(tableGroupBox)
+
         tabIcon = QIcon(":/Images/Images/cog.png")
         tabLabel = QString(dataset_name)
         tabs.insertTab(0,container,tabIcon,tabLabel)
