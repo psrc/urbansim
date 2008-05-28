@@ -19,7 +19,36 @@ from PyQt4.QtGui import *
 from opus_gui.run.script.opusrunscript import *
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import Dataset
+import sys
 
+
+class CatchOutput(QTextBrowser):
+    class Output:
+        def __init__( self, writefunc ):
+            self.writefunc = writefunc
+        def write( self, line ):
+            if line != "\n":
+                map( self.writefunc, line.split("\n") )
+        def flush( self ):
+            pass
+                
+    def __init__( self,parent ):
+        QTextBrowser.__init__( self, parent )
+        self.output = CatchOutput.Output(self.writeResult)
+        self.stdout = sys.stdout
+        self.stderr = sys.stderr
+    def writeResult( self, result ):
+        if result == "":
+            return
+        self.append( result )
+    def start(self):
+        #print "Getting Start"
+        #sys.stdout, sys.stderr = self.output, self.output
+        sys.stdout = self.output
+    def stop(self):
+        #print "Getting Stop"
+        #sys.stdout, sys.stderr = self.stdout, self.stderr
+        sys.stdout = self.stdout
 
 class OpusFileAction(object):
     def __init__(self, parent):
@@ -65,8 +94,7 @@ class OpusFileAction(object):
         columns = storage.get_column_names(dataset_name)
         data = Dataset(in_storage=storage,
                        in_table_name=dataset_name,id_name=columns[0])
-        data.summary()
-
+        
         # Need to add a new tab to the main tabs for display of the data
         tabs = self.xmlFileObject.mainwindow.tabWidget
         container = QWidget()
@@ -75,6 +103,11 @@ class OpusFileAction(object):
         summaryGroupBox.setTitle(QString("Summary"))
         summaryGroupBoxLayout = QVBoxLayout(summaryGroupBox)
         # Add in the summary here
+        textBrowser = CatchOutput(container)
+        textBrowser.start()
+        data.summary()
+        textBrowser.stop()
+        summaryGroupBoxLayout.addWidget(textBrowser)
         widgetLayout.addWidget(summaryGroupBox)
 
         tableGroupBox = QGroupBox(container)
