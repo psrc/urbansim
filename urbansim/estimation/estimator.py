@@ -14,7 +14,7 @@
 
 import copy
 from scipy import ndimage
-from numpy import absolute, array, where, take, zeros, ones
+from numpy import absolute, array, where, take, zeros, ones, unique, concatenate
 from opus_core.logger import logger
 from opus_core.resources import Resources
 from opus_core.coefficients import Coefficients
@@ -50,7 +50,8 @@ class Estimator(object):
         self.save_estimation_results = save_estimation_results
         self.debuglevel = self.config.get("debuglevel", 4)
         self.model_system = ModelSystem()
-
+        self.agents_index_for_prediction = None
+        
         models = self.config.get('models',[])
 
         self.model_name = None
@@ -116,10 +117,12 @@ class Estimator(object):
         """ Run prediction. Currently makes sense only for choice models."""
         # Create temporary configuration where all words 'estimate' are replaced by 'run'
         tmp_config = Resources(self.config)
-
-        self.agents_index_for_prediction = self.get_agent_set_index().copy()
+        
+        if self.agents_index_for_prediction is None:
+            self.agents_index_for_prediction = self.get_agent_set_index().copy()
+            
         tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['agents_index'] = "index"
-        tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['chunk_specification'] = "{'nchunks':1}"
+        tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['chunk_specification'] = "{'nchunks':4}"
 
         ### save specification and coefficients to cache (no matter the save_estimation_results flag)
         ### so that the prepare_for_run method could load specification and coefficients from there
@@ -167,7 +170,7 @@ class Estimator(object):
         return False
 
     def create_prediction_success_table(self, 
-                                        choice_geography_id="fazdistrict_id=building.disaggregate(faz.fazdistrict_id, intermediates=[zone, parcel])",
+                                        geography_id_expression="fazdistrict_id=building.disaggregate(faz.fazdistrict_id, intermediates=[zone, parcel])",
                                         predicted_choice_id_prefix="predicted_", 
                                         predicted_choice_id_name=None,
                                         log_to_file=None,
@@ -186,17 +189,39 @@ class Estimator(object):
         if log_to_file is not None and len(log_to_file) > 0:
             logger.enable_file_logging(log_to_file)
             
-        geography_id = choices.compute_variables(choice_geography_id)
-        agents_index = self.agents_index_for_prediction
-        chosen_choice_id = agents.get_attribute_by_index(choices.get_id_name()[0], agents_index)
-        predicted_choice_id = agents.get_attribute_by_index(predicted_choice_id_name, agents_index)
-        chosen_choice_index = choices.get_id_index(chosen_choice_id)
-        predicted_choice_index = choices.get_id_index(predicted_choice_id)
-        
-        chosen_geography_id = geography_id[chosen_choice_index]
-        predicted_geography_id = geography_id[predicted_choice_index]
-
-        unique_geography_id = unique_values(geography_id)
+        if self.agents_index_for_prediction is not None:
+            agents_index = self.agents_index_for_prediction
+        else:
+            agents_index = self.get_agent_set_index()
+            
+        geography_expression_dataset_name = VariableName(geography_id_expression).get_dataset_name()
+        if geography_expression_dataset_name == choices.dataset_name:
+            geography_id = choices.compute_variables(geography_id_expression)
+            
+            chosen_choice_id = agents.get_attribute_by_index(choices.get_id_name()[0], agents_index)
+            predicted_choice_id = agents.get_attribute_by_index(predicted_choice_id_name, agents_index)
+            chosen_choice_index = choices.get_id_index(chosen_choice_id)
+            predicted_choice_index = choices.get_id_index(predicted_choice_id)
+            
+            chosen_geography_id = geography_id[chosen_choice_index]
+            predicted_geography_id = geography_id[predicted_choice_index]
+    
+            unique_geography_id = unique(geography_id)
+        elif geography_expression_dataset_name == agents.dataset_name:
+            chosen_geography_id = agents.compute_variables(geography_id_expression)[agents_index]
+            
+            chosen_choice_id = agents.get_attribute(choice_id_name).copy()
+            predicted_choice_id = agents.get_attribute(predicted_choice_id_name)
+            agents.modify_attribute(name=choice_id_name, data=predicted_choice_id)
+            predicted_geography_id = agents.compute_variables(geography_id_expression)[agents_index]
+            
+            agents.modify_attribute(name=choice_id_name, data=chosen_choice_id)
+    
+            unique_geography_id = unique( concatenate((chosen_geography_id, predicted_geography_id)) )
+        else:
+            logger.log_error("geography expression %s is specified for an unknown dataset" % geography_id_expression)
+            return False
+            
         # observed on row, predicted on column
         prediction_matrix = zeros( (unique_geography_id.size, unique_geography_id.size), dtype="int32" )
 
@@ -231,7 +256,7 @@ class Estimator(object):
         logger.log_status("%s\t\t%s\t\t%s" % (' ', ' ', 
                                                  _convert_array_to_tab_delimited_string( success_rate2 ) ))
         logger.disable_file_logging(filename=log_to_file)
-        
+
     def save_results(self, out_storage=None, model_name=None):
         if self.specification is None or self.coefficients is None:
             raise ValueError, "model specification or coefficient is None"
