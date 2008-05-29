@@ -32,7 +32,8 @@ models = {
           'elcm-home_based': ['employment_location_choice_model', 'psrc_parcel.estimation.elcm_specification', 'home_based'],
           'repm': ['real_estate_price_model', 'psrc_parcel.estimation.repm_specification', None],
           'wcm' : ['workplace_choice_model_for_resident', 'wcm_specification', None],
-          'wahcm': ['work_at_home_choice_model', 'wahcm_specification', None]
+          'wahcm': ['work_at_home_choice_model', 'wahcm_specification', None],
+          'dppcm': ['development_project_proposal_choice_model', 'dppcm_specification', None]
           }
 
 if __name__ == '__main__':
@@ -42,8 +43,9 @@ if __name__ == '__main__':
     #model = 'elcm-non-home-based'
     #model = 'elcm-home_based'
     #model = 'repm'
-    model = 'wcm'
-    #model = 'hbjcm'
+    #model = 'wcm'
+    #model = 'wahcm'
+    model = 'dppcm'
 
     config = Baseline()
     if 'models_in_year' in config.keys():
@@ -51,6 +53,10 @@ if __name__ == '__main__':
     config.merge(my_configuration)
     config['config_changes_for_estimation'] = ConfigChangesForEstimation()
     er = EstimationRunner(models[model][0], specification_module=models[model][1], model_group=models[model][2],
-                           configuration=config, save_estimation_results=True)
+                           configuration=config, save_estimation_results=False)
     er.estimate()
-    
+    #er.predict()
+    er.create_prediction_success_table(geography_id_expression='choice.is_chosen')
+    #er.predict()
+    er.create_prediction_success_table(geography_id_expression='development_project_proposal.disaggregate(development_template.land_use_type_id) * (development_project_proposal.is_chosen==1).astype(int32)')
+    er.create_prediction_success_table(geography_id_expression='choice.is_chosen')    
