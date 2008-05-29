@@ -13,13 +13,13 @@
 #
 
 from opus_core.allocation_model import AllocationModel as AM
-from inprocess.jrayers.excel_document import ExcelDocument
+from opus_core.store.excel_document import ExcelDocument
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import Dataset
 from opus_core.logger import logger
 
 class AllocationModel(AM):
-    def prepare_for_run(self, dataset=None, control_totals=None, weight_attribute=None, excel_path=None, excel_data_info={}, esri_storage_location=None,
+    def prepare_for_run(self, dataset=None, control_totals=None, weight_attribute=None, excel_path=None, excel_sheet_number=1, excel_data_info={}, esri_storage_location=None,
                         dataset_name=None, current_year=0, datasets_and_weights_in_years=None, dataset_pool=None):
         """
         If dataset is not given, it is loaded from the esri storage. In such a case, dataset_name should be the name of the shape file (without postfix).
@@ -33,6 +33,7 @@ class AllocationModel(AM):
             logger.log_status("Getting data from Excel for AllocationModel")
             excel_doc = ExcelDocument()
             excel_doc.open(excel_path)
+            excel_doc.set_sheet(excel_sheet_number)
 
             control_total_data = excel_doc.get_dict_table_from_column_names_and_ranges(excel_data_info)
             excel_doc.close()

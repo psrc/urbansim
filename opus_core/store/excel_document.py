@@ -13,6 +13,7 @@
 #
 
 # TODO:expand this class into a full excel storage object
+# This is not a full storage object, it only reads data from excel
 
 from opus_core.logger import logger
 from numpy import empty, append, ma, array
