@@ -56,7 +56,4 @@ if __name__ == '__main__':
                            configuration=config, save_estimation_results=False)
     er.estimate()
     #er.predict()
-    er.create_prediction_success_table(geography_id_expression='choice.is_chosen')
-    #er.predict()
-    er.create_prediction_success_table(geography_id_expression='development_project_proposal.disaggregate(development_template.land_use_type_id) * (development_project_proposal.is_chosen==1).astype(int32)')
-    er.create_prediction_success_table(geography_id_expression='choice.is_chosen')    
+    #er.create_prediction_success_table(geography_id_expression='choice.is_chosen')
