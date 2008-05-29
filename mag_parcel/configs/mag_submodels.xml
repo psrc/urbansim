@@ -1,6 +1,6 @@
 <opus_project>
   <general>
-    <parent followers="available_datasets,dataset_pool_configuration" type="file">seattle_parcel/configs/seattle_parcel.xml</parent>
+    <parent followers="available_datasets,dataset_pool_configuration" type="file">mag_parcel/configs/mag_parcel.xml</parent>
     </general>
   <model_manager>
     <model_system type="dictionary">
@@ -346,44 +346,6 @@
           </arguments>
         </run>
       </seasonal_model_other>
-      <mag_allocation_model_template copyable="True" type="dictionary">
-        <import type="dictionary">
-          <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
-        </import>
-        <init type="dictionary">
-          <name type="string">AllocationModel</name>
-        </init>
-        <prepare_for_run type="dictionary">
-          <name type="string">prepare_for_run</name>
-          <arguments type="dictionary">
-            <dataset parser_action="blank_to_None" type="string">use None if using excel</dataset>
-            <control_totals parser_action="blank_to_None" type="string">use None if using excel</control_totals>
-            <weight_attribute type="quoted_string">&lt;fill in weight attribute&gt;</weight_attribute>
-            <excel_path type="quoted_string">&lt;fill in path to excel spreadsheet&gt;</excel_path>
-            <excel_sheet_number type="integer">1</excel_sheet_number>
-            <excel_data_info type="string">{'&lt;fill in name of year_attribute&gt;':',&lt;fill in year excel range like a10:a20&gt;', '&lt;fill in name of control_total_attribute&gt;':'&lt;fill in year excel range like a10:a20&gt;'}</excel_data_info>
-            <esri_storage_location type="quoted_string">&lt;fill in path to folder containing esri data like C:\opus\data\mag_parcel\mag_submodel_data.gdb&gt;</esri_storage_location>
-            <dataset_name type="quoted_string">&lt;fill in name of esri shapefile or feature class&gt;</dataset_name>
-            <current_year flags="hidden" type="string">year</current_year>
-            <datasets_and_weights_in_years type="dictionary">None</datasets_and_weights_in_years>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
-          </arguments>
-          <output flags="hidden" type="string">(aux_dataset, aux_control_totals, aux_weight_attribute)</output>
-        </prepare_for_run>
-        <run type="dictionary">
-          <arguments type="dictionary">
-            <dataset flags="hidden" type="string">aux_dataset</dataset>
-            <outcome_attribute type="quoted_string">&lt;fill in name of the thing that is being allocated e.g. persons or households&gt;</outcome_attribute>
-            <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
-            <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
-            <current_year flags="hidden" type="string">year</current_year>
-            <control_total_attribute type="quoted_string">&lt;fill in name of control_total_attribute, must match second part of the excel_data_info above&gt;</control_total_attribute>
-            <year_attribute type="quoted_string">&lt;fill in name of year_attribute, must match the first part of the excel_data_info above&gt;</year_attribute>
-            <capacity_attribute parser_action="blank_to_None" type="string">&lt;fill in the name of the attribute that specifies a capacity&gt;</capacity_attribute>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
-          </arguments>
-        </run>
-      </mag_allocation_model_template>
     </model_system>
     </model_manager>
   <scenario_manager>
