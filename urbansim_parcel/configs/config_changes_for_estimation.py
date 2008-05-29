@@ -44,7 +44,7 @@ class ConfigChangesForEstimation(USConfigChangesForEstimation):
                                        "datasets_to_preload": {
                                                 'gridcell':{},
                                                 'job':{},
-                                                'job_building_type':{}                                   
+                                                'job_building_type':{}
                                                 },
                                      },
                         }
@@ -61,4 +61,9 @@ class ConfigChangesForEstimation(USConfigChangesForEstimation):
                                 {"work_at_home_choice_model": ["estimate"]}
                                                     ]
                                                 }
+        self["development_project_proposal_choice_model"] = {'models': [
+            {"expected_sale_price_model":["run"]},
+                                {"development_project_proposal_choice_model": ["estimate"]}
+                            ]
+                            }
                                      
