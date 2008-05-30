@@ -24,7 +24,7 @@ from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.gui_dataset import GuiDataset
 
 import sys
-
+import operator
 
 class CatchOutput(QTextBrowser):
     class Output:
@@ -54,6 +54,47 @@ class CatchOutput(QTextBrowser):
         #sys.stdout, sys.stderr = self.stdout, self.stderr
         sys.stdout = self.stdout
 
+class OpusTableModel(QAbstractTableModel): 
+    def __init__(self, datain, headerdata, parent=None, *args): 
+        QAbstractTableModel.__init__(self, parent, *args) 
+        self.arraydata = datain
+        self.headerdata = headerdata
+ 
+    def rowCount(self, parent): 
+        return len(self.arraydata) 
+        #return len(self.arraydata[0]) 
+ 
+    def columnCount(self, parent): 
+        return len(self.arraydata[0]) 
+        #return len(self.arraydata) 
+ 
+    def data(self, index, role): 
+        if not index.isValid(): 
+            return QVariant() 
+        elif role != Qt.DisplayRole: 
+            return QVariant() 
+        return QVariant(self.arraydata[index.row()][index.column()])
+        #return QVariant(self.arraydata[index.column()][index.row()])
+
+    def headerData(self, col, orientation, role):
+        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+            return QVariant(self.headerdata[col])
+        return QVariant()
+
+    def sort(self, Ncol, order):
+        """Sort table by given column number.
+        """
+        self.emit(SIGNAL("layoutAboutToBeChanged()"))
+        #self.arraydata = sorted(self.arraydata, key=operator.itemgetter(Ncol))        
+        orderList = range(len(self.headerdata))
+        orderList.remove(Ncol)
+        orderList.insert(0,Ncol)
+        #print orderList
+        self.arraydata.sort(key=operator.itemgetter(Ncol))        
+        if order == Qt.DescendingOrder:
+            self.arraydata.reverse()
+        self.emit(SIGNAL("layoutChanged()"))
+        
 class OpusFileAction(object):
     def __init__(self, parent):
         self.parent = parent
@@ -130,9 +171,33 @@ class OpusFileAction(object):
         tableGroupBox = QGroupBox(container)
         tableGroupBox.setTitle(QString("Table View"))
         tableGroupBoxLayout = QVBoxLayout(tableGroupBox)
-        tableWidget = QTableWidget(container)
-        tableWidget.setObjectName("tableWidget")
-        tableGroupBoxLayout.addWidget(tableWidget)
+        tv = QTableView()
+        #header = ['date', 'time']
+        header = columns
+        tabledata_tmp = []
+        for column in columns:
+            tabledata_tmp.append(data.get_attribute(column))
+        tabledata = []
+        #print len(tabledata_tmp[0])
+        #print len(tabledata_tmp)
+        for ii in range(len(tabledata_tmp[0])):
+            tabledata.append([])
+            for i in range(len(tabledata_tmp)):
+                #print "ii = %d, i = %d" % (ii,i)
+                tabledata[ii].append(tabledata_tmp[i][ii])
+            
+        #print tabledata
+        #tabledata = [[1,2],
+        #             [3,4]]
+        tm = OpusTableModel(tabledata, header, container) 
+        tv.setModel(tm)
+        tv.setSortingEnabled(True)
+        tableGroupBoxLayout.addWidget(tv)
+
+        #tableWidget = QTableWidget(container)
+        #tableWidget.setObjectName("tableWidget")
+        #tableGroupBoxLayout.addWidget(tableWidget)
+
         widgetLayout.addWidget(tableGroupBox)
 
         tabIcon = QIcon(":/Images/Images/cog.png")
