@@ -122,7 +122,7 @@ class Estimator(object):
             self.agents_index_for_prediction = self.get_agent_set_index().copy()
             
         tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['agents_index'] = "index"
-        tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['chunk_specification'] = "{'nchunks':4}"
+        tmp_config['models_configuration'][self.model_name]['controller']['run']['arguments']['chunk_specification'] = "{'nchunks':1}"
 
         ### save specification and coefficients to cache (no matter the save_estimation_results flag)
         ### so that the prepare_for_run method could load specification and coefficients from there
