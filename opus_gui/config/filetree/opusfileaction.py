@@ -81,16 +81,28 @@ class OpusTableModel(QAbstractTableModel):
             return QVariant(self.headerdata[col])
         return QVariant()
 
-    def sort(self, Ncol, order):
+    # Not currently used
+    def sortorder(self,arraydata):
+        orderList = range(len(self.headerdata))
+        orderList.remove(self.ncol)
+        orderList.insert(0,self.ncol)
+        returnsortorder = tuple(orderList)
+        #print returnsortorder
+        return returnsortorder
+        
+    def sort(self, ncol, order):
         """Sort table by given column number.
         """
+        self.ncol = ncol
         self.emit(SIGNAL("layoutAboutToBeChanged()"))
-        #self.arraydata = sorted(self.arraydata, key=operator.itemgetter(Ncol))        
+        # Create a list to order the sort by
         orderList = range(len(self.headerdata))
-        orderList.remove(Ncol)
-        orderList.insert(0,Ncol)
-        #print orderList
-        self.arraydata.sort(key=operator.itemgetter(Ncol))        
+        orderList.remove(self.ncol)
+        orderList.insert(0,self.ncol)
+        # Reverse loop through and order based on columns
+        for col in reversed(orderList):
+            self.arraydata = sorted(self.arraydata, key=operator.itemgetter(col))
+        # Flip if accending vs decending...
         if order == Qt.DescendingOrder:
             self.arraydata.reverse()
         self.emit(SIGNAL("layoutChanged()"))
@@ -127,7 +139,7 @@ class OpusFileAction(object):
                         self.processCustomMenu)
 
     def viewDatasetAction(self):
-        print "viewDatasetAction"
+        #print "viewDatasetAction"
         model = self.xmlFileObject.model
         dataset_name = str(model.fileName(self.currentIndex))
         dataset_name_full = str(model.filePath(self.currentIndex))
@@ -138,9 +150,6 @@ class OpusFileAction(object):
                                                storage_location=parent_name_full)
         columns = storage.get_column_names(dataset_name)
         
-        #Jesse changes
-        #data = Dataset(in_storage=storage,
-        #               in_table_name=dataset_name,id_name=columns[0])
         data = GuiDataset(in_storage=storage,
                        in_table_name=dataset_name,id_name=columns[0])
         
@@ -153,50 +162,39 @@ class OpusFileAction(object):
         summaryGroupBoxLayout = QVBoxLayout(summaryGroupBox)
         # Add in the summary here
         
-        #Jesse changes
+        # This is code to be used if we need to catch stdout from the summary method
         #textBrowser = CatchOutput(container)
         #textBrowser.start()
         #data.summary()
         #textBrowser.stop()
         #summaryGroupBoxLayout.addWidget(textBrowser)
+        
+        # Grab the summary data
         data_summary = data.summary()
         strng = QString(data_summary.getvalue())
         textBrowser = QTextBrowser()
         textBrowser.insertPlainText(strng)
         summaryGroupBoxLayout.addWidget(textBrowser)
         
-        
         widgetLayout.addWidget(summaryGroupBox)
-
+        
         tableGroupBox = QGroupBox(container)
         tableGroupBox.setTitle(QString("Table View"))
         tableGroupBoxLayout = QVBoxLayout(tableGroupBox)
         tv = QTableView()
-        #header = ['date', 'time']
         header = columns
         tabledata_tmp = []
         for column in columns:
             tabledata_tmp.append(data.get_attribute(column))
-        tabledata = []
-        #print len(tabledata_tmp[0])
-        #print len(tabledata_tmp)
-        for ii in range(len(tabledata_tmp[0])):
-            tabledata.append([])
-            for i in range(len(tabledata_tmp)):
-                #print "ii = %d, i = %d" % (ii,i)
-                tabledata[ii].append(tabledata_tmp[i][ii])
-            
+
+        # Transpose the lists
+        tabledata = map(None,*tabledata_tmp)
+
         #print tabledata
-        #tabledata = [[1,2],
-        #             [3,4]]
         tm = OpusTableModel(tabledata, header, container) 
         tv.setModel(tm)
         tv.setSortingEnabled(True)
         tableGroupBoxLayout.addWidget(tv)
-
-        #tableWidget = QTableWidget(container)
-        #tableWidget.setObjectName("tableWidget")
-        #tableGroupBoxLayout.addWidget(tableWidget)
 
         widgetLayout.addWidget(tableGroupBox)
 
