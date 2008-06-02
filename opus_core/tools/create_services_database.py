@@ -36,6 +36,9 @@ if __name__ == "__main__":
         sys.exit(1)
     
     db_server = option_group.get_database_server(options)
+    if db_server is None:
+        print "unable to find the database server"
+        sys.exit(1)
     if not db_server.has_database(options.database_name):
         db_server.create_database(options.database_name)
         
