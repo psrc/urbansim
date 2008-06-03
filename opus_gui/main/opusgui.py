@@ -80,7 +80,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.allVariablesWidgetLayout = QVBoxLayout(self.allVariablesWidget)
         self.allVariablesWidgetLayout.setAlignment(Qt.AlignTop)
         self.allVariablesGroupBox = QGroupBox(self)
-        self.allVariablesGroupBoxLayout = QVBoxLayout(self.allVariablesGroupBox)
+        self.allVariablesGroupBoxLayout = QGridLayout(self.allVariablesGroupBox)
         #Add a default table
         tv = QTableView()
         header = ["Name","Vlaue"]
@@ -88,6 +88,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         tm = OpusAllVariablesTableModel(tabledata, header, self.allVariablesWidget) 
         tv.setModel(tm)
         tv.setSortingEnabled(True)
+        tv.horizontalHeader().setStretchLastSection(True)
+        tv.setWordWrap(True)
         self.allVariablesGroupBoxLayout.addWidget(tv)
         self.allVariablesWidgetLayout.addWidget(self.allVariablesGroupBox)
         self.allVariablesWidget.hide()
