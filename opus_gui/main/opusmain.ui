@@ -66,6 +66,14 @@
         <number>0</number>
        </property>
        <widget class="QWidget" name="generalmanager_page" >
+        <property name="geometry" >
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>331</width>
+          <height>497</height>
+         </rect>
+        </property>
         <attribute name="label" >
          <string>General Settings</string>
         </attribute>
@@ -79,8 +87,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>313</width>
-          <height>479</height>
+          <width>96</width>
+          <height>34</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -137,8 +145,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>295</width>
-              <height>389</height>
+              <width>96</width>
+              <height>38</height>
              </rect>
             </property>
             <attribute name="label" >
@@ -169,8 +177,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>313</width>
-          <height>479</height>
+          <width>96</width>
+          <height>38</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -205,8 +213,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>331</width>
-          <height>527</height>
+          <width>96</width>
+          <height>38</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -423,7 +431,14 @@
     <addaction name="actionLog_View" />
     <addaction name="actionEditor_View" />
    </widget>
+   <widget class="QMenu" name="menuModel_System" >
+    <property name="title" >
+     <string>Model System</string>
+    </property>
+    <addaction name="actionEdit_all_variables" />
+   </widget>
    <addaction name="menuProject" />
+   <addaction name="menuModel_System" />
    <addaction name="menuUtilities" />
    <addaction name="menuHelp" />
   </widget>
@@ -610,6 +625,11 @@
    </property>
    <property name="text" >
     <string>Close Project</string>
+   </property>
+  </action>
+  <action name="actionEdit_all_variables" >
+   <property name="text" >
+    <string>Edit all_variables</string>
    </property>
   </action>
  </widget>

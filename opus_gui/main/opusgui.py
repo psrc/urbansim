@@ -72,6 +72,10 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # About
         QObject.connect(self.actionAbout, SIGNAL("triggered()"), self.openAbout)
 
+        # Model System menus
+        QObject.connect(self.actionEdit_all_variables, SIGNAL("triggered()"), self.editAllVariables)
+        
+        
         # QGIS References are removed for the time being...
         #Add map tab
         #QObject.connect(self.actionMap_View, SIGNAL("triggered()"), self.openMapTab)
@@ -132,6 +136,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         settings = QSettings()
         self.restoreGeometry(settings.value("Geometry").toByteArray())
         
+    def editAllVariables(self):
+        print "Edit all_variables pressed..."
+
     def closeCurrentTab(self):
         widget = self.tabWidget.currentWidget()
         self.tabWidget.removeTab(self.tabWidget.currentIndex())
