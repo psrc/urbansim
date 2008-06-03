@@ -84,7 +84,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         #Add a default table
         tv = QTableView()
         header = ["Name","Vlaue"]
-        tabledata = [("","")]
+        tabledata = [("test_var","This is a really long test line just to show what happens when the line wraps around inside of the table view and we have to have a multi line display...")]
         tm = OpusAllVariablesTableModel(tabledata, header, self.allVariablesWidget) 
         tv.setModel(tm)
         tv.setSortingEnabled(True)
