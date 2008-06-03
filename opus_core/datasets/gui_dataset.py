@@ -21,7 +21,13 @@ class GuiDataset(Dataset):
     """
     This class is specifically for methods called on dataset by the opus_gui
     """
-    
+    def __init__(self, resources=None, in_storage=None, id_name=None, dataset_name=None,
+                 out_storage=None, in_table_name=None, out_table_name=None, debug=None):
+        Dataset.__init__(self, resources=resources, in_storage=in_storage,
+                         id_name=id_name, dataset_name=dataset_name,
+                         out_storage=out_storage, in_table_name=in_table_name,
+                         out_table_name=out_table_name, debug=debug)
+            
     def summary(self, names=[], resources=None):
         """Print a summary of the attributes given in the list 'names'.
         If names is an empty list, display summary for all primary attributes
