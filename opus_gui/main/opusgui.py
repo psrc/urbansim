@@ -27,6 +27,8 @@ from opus_gui.run.runmanagerbase import *
 from opus_gui.results.resultManagerBase import *
 from opus_gui.results.xml_helper_methods import get_child_values
 
+from opus_gui.config.xmlmodelview.opusallvariablestablemodel import OpusAllVariablesTableModel
+
 # General system includes
 import sys,time,tempfile
 
@@ -78,7 +80,15 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.allVariablesWidgetLayout = QVBoxLayout(self.allVariablesWidget)
         self.allVariablesWidgetLayout.setAlignment(Qt.AlignTop)
         self.allVariablesGroupBox = QGroupBox(self)
-        #self.allVariablesGroupBox.setTitle(QString("all_variables_groupBox"))
+        self.allVariablesGroupBoxLayout = QVBoxLayout(self.allVariablesGroupBox)
+        #Add a default table
+        tv = QTableView()
+        header = ["Name","Vlaue"]
+        tabledata = [("","")]
+        tm = OpusAllVariablesTableModel(tabledata, header, self.allVariablesWidget) 
+        tv.setModel(tm)
+        tv.setSortingEnabled(True)
+        self.allVariablesGroupBoxLayout.addWidget(tv)
         self.allVariablesWidgetLayout.addWidget(self.allVariablesGroupBox)
         self.allVariablesWidget.hide()
         
