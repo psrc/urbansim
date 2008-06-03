@@ -74,7 +74,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         # Model System menus
         QObject.connect(self.actionEdit_all_variables, SIGNAL("triggered()"), self.editAllVariables)
-        
+        self.allVariablesWidget = QWidget(self)
+        self.allVariablesWidgetLayout = QVBoxLayout(self.allVariablesWidget)
+        self.allVariablesWidgetLayout.setAlignment(Qt.AlignTop)
+        self.allVariablesGroupBox = QGroupBox(self)
+        #self.allVariablesGroupBox.setTitle(QString("all_variables_groupBox"))
+        self.allVariablesWidgetLayout.addWidget(self.allVariablesGroupBox)
+        self.allVariablesWidget.hide()
         
         # QGIS References are removed for the time being...
         #Add map tab
@@ -137,19 +143,12 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.restoreGeometry(settings.value("Geometry").toByteArray())
         
     def editAllVariables(self):
-        print "Edit all_variables pressed..."
-
-        self.allVariablesWidget = QWidget(self)
-        self.allVariablesWidgetLayout = QVBoxLayout(self.allVariablesWidget)
-        self.allVariablesWidgetLayout.setAlignment(Qt.AlignTop)
-        self.allVariablesGroupBox = QGroupBox(self)
-        #self.allVariablesGroupBox.setTitle(QString("all_variables_groupBox"))
-        self.allVariablesWidgetLayout.addWidget(self.allVariablesGroupBox)
-        tabIcon = QIcon(":/Images/Images/cog.png")
-        tabLabel = QString("all_variables")
-        self.tabWidget.insertTab(0,self.allVariablesWidget,tabIcon,tabLabel)
-        self.tabWidget.setCurrentIndex(0)
-
+        #print "Edit all_variables pressed..."
+        if self.tabWidget.indexOf(self.allVariablesWidget) == -1:
+            tabIcon = QIcon(":/Images/Images/cog.png")
+            tabLabel = QString("all_variables")
+            self.tabWidget.insertTab(0,self.allVariablesWidget,tabIcon,tabLabel)
+            self.tabWidget.setCurrentIndex(0)
 
     def closeCurrentTab(self):
         widget = self.tabWidget.currentWidget()
