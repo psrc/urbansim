@@ -54,7 +54,7 @@ class CatchOutput(QTextBrowser):
         #sys.stdout, sys.stderr = self.stdout, self.stderr
         sys.stdout = self.stdout
 
-class OpusTableModel(QAbstractTableModel): 
+class OpusDatasetTableModel(QAbstractTableModel): 
     def __init__(self, datain, headerdata, parent=None, *args): 
         QAbstractTableModel.__init__(self, parent, *args) 
         self.arraydata = datain
@@ -191,7 +191,7 @@ class OpusFileAction(object):
         tabledata = map(None,*tabledata_tmp)
 
         #print tabledata
-        tm = OpusTableModel(tabledata, header, container) 
+        tm = OpusDatasetTableModel(tabledata, header, container) 
         tv.setModel(tm)
         tv.setSortingEnabled(True)
         tableGroupBoxLayout.addWidget(tv)
