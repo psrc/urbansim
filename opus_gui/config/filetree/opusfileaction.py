@@ -18,95 +18,11 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from opus_gui.run.script.opusrunscript import *
 from opus_core.storage_factory import StorageFactory
-
-#Jesse changes:
-#from opus_core.datasets.dataset import Dataset
 from opus_core.datasets.gui_dataset import GuiDataset
-
+from opus_gui.config.datamodelview.opusdatasettablemodel import OpusDatasetTableModel
 import sys
-import operator
 
-class CatchOutput(QTextBrowser):
-    class Output:
-        def __init__( self, writefunc ):
-            self.writefunc = writefunc
-        def write( self, line ):
-            if line != "\n":
-                map( self.writefunc, line.split("\n") )
-        def flush( self ):
-            pass
-                
-    def __init__( self,parent ):
-        QTextBrowser.__init__( self, parent )
-        self.output = CatchOutput.Output(self.writeResult)
-        self.stdout = sys.stdout
-        self.stderr = sys.stderr
-    def writeResult( self, result ):
-        if result == "":
-            return
-        self.append( result )
-    def start(self):
-        #print "Getting Start"
-        #sys.stdout, sys.stderr = self.output, self.output
-        sys.stdout = self.output
-    def stop(self):
-        #print "Getting Stop"
-        #sys.stdout, sys.stderr = self.stdout, self.stderr
-        sys.stdout = self.stdout
 
-class OpusDatasetTableModel(QAbstractTableModel): 
-    def __init__(self, datain, headerdata, parent=None, *args): 
-        QAbstractTableModel.__init__(self, parent, *args) 
-        self.arraydata = datain
-        self.headerdata = headerdata
- 
-    def rowCount(self, parent): 
-        return len(self.arraydata) 
-        #return len(self.arraydata[0]) 
- 
-    def columnCount(self, parent): 
-        return len(self.arraydata[0]) 
-        #return len(self.arraydata) 
- 
-    def data(self, index, role): 
-        if not index.isValid(): 
-            return QVariant() 
-        elif role != Qt.DisplayRole: 
-            return QVariant() 
-        return QVariant(self.arraydata[index.row()][index.column()])
-        #return QVariant(self.arraydata[index.column()][index.row()])
-
-    def headerData(self, col, orientation, role):
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            return QVariant(self.headerdata[col])
-        return QVariant()
-
-    # Not currently used
-    def sortorder(self,arraydata):
-        orderList = range(len(self.headerdata))
-        orderList.remove(self.ncol)
-        orderList.insert(0,self.ncol)
-        returnsortorder = tuple(orderList)
-        #print returnsortorder
-        return returnsortorder
-        
-    def sort(self, ncol, order):
-        """Sort table by given column number.
-        """
-        self.ncol = ncol
-        self.emit(SIGNAL("layoutAboutToBeChanged()"))
-        # Create a list to order the sort by
-        orderList = range(len(self.headerdata))
-        orderList.remove(self.ncol)
-        orderList.insert(0,self.ncol)
-        # Reverse loop through and order based on columns
-        for col in reversed(orderList):
-            self.arraydata = sorted(self.arraydata, key=operator.itemgetter(col))
-        # Flip if accending vs decending...
-        if order == Qt.DescendingOrder:
-            self.arraydata.reverse()
-        self.emit(SIGNAL("layoutChanged()"))
-        
 class OpusFileAction(object):
     def __init__(self, parent):
         self.parent = parent

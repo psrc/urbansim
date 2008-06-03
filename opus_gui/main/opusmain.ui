@@ -629,7 +629,7 @@
   </action>
   <action name="actionEdit_all_variables" >
    <property name="text" >
-    <string>Edit all_variables</string>
+    <string>View/Edit all_variables</string>
    </property>
   </action>
  </widget>

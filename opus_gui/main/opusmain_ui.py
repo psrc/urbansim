@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusmain.ui'
 #
-# Created: Mon Jun  2 22:07:42 2008
+# Created: Mon Jun  2 22:17:59 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -356,6 +356,6 @@ class Ui_MainWindow(object):
         self.actionEditor_View.setText(QtGui.QApplication.translate("MainWindow", "Editor View", None, QtGui.QApplication.UnicodeUTF8))
         self.actionMap_View.setText(QtGui.QApplication.translate("MainWindow", "Map View", None, QtGui.QApplication.UnicodeUTF8))
         self.actionClose_Project.setText(QtGui.QApplication.translate("MainWindow", "Close Project", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionEdit_all_variables.setText(QtGui.QApplication.translate("MainWindow", "Edit all_variables", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionEdit_all_variables.setText(QtGui.QApplication.translate("MainWindow", "View/Edit all_variables", None, QtGui.QApplication.UnicodeUTF8))
 
 import opusmain_rc
