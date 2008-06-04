@@ -25,26 +25,26 @@ except ImportError:
     print "Unable to import opus core libs"
     
 class RunEstimationThread(QThread):
-    def __init__(self, parentThread,parent,xml_file):
-        QThread.__init__(self, parentThread)
-        self.parent = parent
+    def __init__(self, mainwindow, estimationguielement, xml_file):
+        QThread.__init__(self, mainwindow)
+        self.estimationguielement = estimationguielement
         self.xml_file = xml_file
 
     def run(self):
-        self.parent.progressBar.setRange(0,100)
-        self.parent.estimation.progressCallback = self.progressCallback
-        self.parent.estimation.finishedCallback = self.finishedCallback
-        self.parent.estimation.errorCallback = self.errorCallback
-        self.parent.estimation.run()
+        self.estimationguielement.progressBar.setRange(0,100)
+        self.estimationguielement.estimation.progressCallback = self.progressCallback
+        self.estimationguielement.estimation.finishedCallback = self.finishedCallback
+        self.estimationguielement.estimation.errorCallback = self.errorCallback
+        self.estimationguielement.estimation.run()
 
     def pause(self):
-        self.parent.estimation.pause()
+        self.estimationguielement.estimation.pause()
 
     def resume(self):
-        self.parent.estimation.resume()
+        self.estimationguielement.estimation.resume()
 
     def cancel(self):
-        self.parent.estimation.cancel()
+        self.estimationguielement.estimation.cancel()
 
     def progressCallback(self,percent):
         print "Ping From Estimation"
@@ -62,8 +62,8 @@ class RunEstimationThread(QThread):
 
 
 class OpusEstimation(object):
-    def __init__(self,parent,xml_path):
-        self.parent = parent
+    def __init__(self,xmltreeobject,xml_path):
+        self.xmltreeobject = xmltreeobject
         self.xml_path = xml_path
         self.er = None
         self.progressCallback = None

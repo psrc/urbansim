@@ -34,10 +34,10 @@ from opus_gui.results.gui_result_interface.opus_result_generator import OpusResu
 from opus_gui.results.gui_result_interface.opus_result_visualizer import OpusResultVisualizer
 # Main Run manager class
 class RunManagerBase(object):
-    def __init__(self, parent):
-        self.parent = parent
-        self.tabWidget = parent.tabWidget
-        self.gui = parent
+    def __init__(self, mainwindow):
+        self.mainwindow = mainwindow
+        self.tabWidget = mainwindow.tabWidget
+        self.gui = mainwindow
         # Build a list of the current models... starting empty
         self.modelList = []
         self.modelElements = []
@@ -45,7 +45,7 @@ class RunManagerBase(object):
         self.estimationElements = []
 
     def addModelElement(self,model):
-        self.modelElements.insert(0,ModelGuiElement(self.parent,self,model))
+        self.modelElements.insert(0,ModelGuiElement(self.mainwindow,self,model))
 
     def removeModelElement(self,modelElement):
         #self.groupBoxLayout.removeWidget(modelElement)
@@ -63,7 +63,7 @@ class RunManagerBase(object):
                 modelElement.inGui = True
 
     def addEstimationElement(self,estimation):
-        self.estimationElements.insert(0,EstimationGuiElement(self.parent,self,estimation))
+        self.estimationElements.insert(0,EstimationGuiElement(self.mainwindow,self,estimation))
 
     def removeEstimationElement(self,estimationElement):
         self.tabWidget.removeTab(self.tabWidget.indexOf(estimationElement))
@@ -104,10 +104,10 @@ class RunManagerBase(object):
 # and the model thread.  If the start button is pressed then the GUI will create
 # a thread to execute the given model.
 class ModelGuiElement(QWidget):
-    def __init__(self, parent, runManager, model):
-        QWidget.__init__(self, parent)
-        self.parent = parent
-        self.mainwindow = parent
+    def __init__(self, mainwindow, runManager, model):
+        QWidget.__init__(self, mainwindow)
+        self.mainwindow = mainwindow
+        self.mainwindow = mainwindow
         self.runManager = runManager
         self.model = model
         self.model.guiElement = self
@@ -163,7 +163,6 @@ class ModelGuiElement(QWidget):
         self.pbnStartModel.setText(QString("Start Model..."))
         QObject.connect(self.pbnStartModel, SIGNAL("released()"),
                         self.on_pbnStartModel_released)        
-        #self.startVBoxLayout.addWidget(self.pbnStartModel,0,0,1,1)
         self.startVBoxLayout.addWidget(self.pbnStartModel)
         self.pbnRemoveModel = QPushButton(self.startWidget)
         self.pbnRemoveModel.setObjectName("pbnRemoveModel")
@@ -335,9 +334,9 @@ class ModelGuiElement(QWidget):
         if self.configFile.open(QIODevice.ReadOnly):
             self.doc = QDomDocument()
             self.doc.setContent(self.configFile)
-            self.dataModel = OpusDataModel(self, self.doc, self.parent, self.configFile,
+            self.dataModel = OpusDataModel(self, self.doc, self.mainwindow, self.configFile,
                                            "scenario_manager", False)
-            self.view = OpusDataView(self.parent)
+            self.view = OpusDataView(self.mainwindow)
             self.delegate = OpusDataDelegate(self.view)
             self.view.setItemDelegate(self.delegate)
             self.view.setModel(self.dataModel)
@@ -359,51 +358,8 @@ class ModelGuiElement(QWidget):
 
         # start indicator tab 
 
-        self.toolboxStuff = self.parent.toolboxStuff
+        self.toolboxStuff = self.mainwindow.toolboxStuff
         self.domDocument = self.toolboxStuff.doc
-
-
-        # initialize indicator selection combobox
-        #
-        #    self.co_indicator_name = QComboBox()
-        #    self.co_indicator_name.setObjectName("co_indicator_name")
-        #    self.co_indicator_name.addItem(QString("[select]"))
-        #        
-        #    node_list = elementsByAttributeValue(domDocument = self.domDocument, 
-        #                                              attribute = 'type', 
-        #                                              value = 'indicator')
-        #            
-        #    for element, node in node_list:
-        #        self.co_indicator_name.addItem(QString(element.nodeName()))
-        #
-        # end indicator combo box
-        #
-        # initialize source combobox
-        #
-        #    self.co_source_data = QComboBox()
-        #    self.co_source_data.setObjectName("co_source_data")
-        #    self.co_source_data.addItem(QString("[select]"))
-        #        
-        #    node_list = elementsByAttributeValue(domDocument = self.domDocument, 
-        #                                              attribute = 'type', 
-        #                                              value = 'source_data')
-        #        
-        #    for element, node in node_list:
-        #        self.co_source_data.addItem(QString(element.nodeName()))
-        #        vals = get_child_values(parent = node, 
-        #                                    child_names = ['start_year', 'end_year'])
-        #            
-        #        self.available_years_for_simulation_runs[element.nodeName()] = (vals['start_year'],
-        #                                                                         vals['end_year'])
-
-        # end source combobox
-        #self.result_generator = OpusResultGenerator(
-        #                                xml_path = self.toolboxStuff.xml_file,
-        #                                domDocument = self.domDocument)  
-
-        #self.result_generator.guiElement = self
-
-
 
         self.indicatorWidget = QWidget() 
         #    self.indicatorVBoxLayout = QVBoxLayout(self.indicatorWidget)  
@@ -451,27 +407,13 @@ class ModelGuiElement(QWidget):
             self.diagnostic_dataset_name.addItem(QString(dataset))
 
 
-        #    self.indicatorText = QTextEdit(self.groupBox)
-        #    self.indicatorText.setReadOnly(True)
-        #    self.indicatorText.setLineWidth(0)
-        #    self.indicatorText.insertPlainText("<No year selected>")
         self.indicatorResultsTab = QTabWidget()
 
         QObject.connect(self.indicatorComboBox,SIGNAL("activated(QString)"),self.on_indicatorBox)
 
-        #    self.testvariant = QVariant(1)
-        #    self.indicatorText.insertPlainText(self.testvariant.toString())
-
-        #    self.indicatorVBoxLayout.addWidget(self.indicatorComboBox)
-        #    self.indicatorVBoxLayout.addWidget(self.indicatorText)
         self.indicatorGridBoxLayout.addWidget(self.indicatorComboBox,0,0)
         self.indicatorGridBoxLayout.addWidget(self.diagnostic_indicator_name,0,1)
         self.indicatorGridBoxLayout.addWidget(self.diagnostic_dataset_name,0,2)
-        # new combo boxes
-        #    self.indicatorGridBoxLayout.addWidget(self.co_indicator_name,1,0)
-        #    self.indicatorGridBoxLayout.addWidget(self.co_source_data,2,0)
-
-        #    self.indicatorGridBoxLayout.addWidget(self.indicatorText,1,0,3,3)
         self.indicatorGridBoxLayout.addWidget(self.indicatorResultsTab,1,0,3,3)
 
         # end indicator tab
@@ -480,13 +422,6 @@ class ModelGuiElement(QWidget):
         self.yearString = ""
         self.modelString = ""
     def on_indicatorBox(self,val):
-        #    self.indicatorText.clear()
-        #    self.indicatorText.insertPlainText("Year: ")
-        #    self.indicatorText.insertPlainText(val)
-        #    source_text = QString(self.co_source_data.currentText())
-        #    if str(source_text) == '[select]':
-        #        raise 'need to select a data source!!'
-        #       
         indicator_name = QString(self.diagnostic_indicator_name.currentText())
         if str(indicator_name) == '[select indicator]':
             raise 'need to select an indicator!!'
@@ -503,15 +438,15 @@ class ModelGuiElement(QWidget):
 
 
         self.resultThread = OpusGuiThread(
-                                          parentThread = self.parent,
+                                          parentThread = self.mainwindow,
                                           parent = self,
                                           thread_object = self.result_generator)
 
         self.resultThread.start()
 
-        self.domDocument = self.parent.toolboxStuff.doc
+        self.domDocument = self.mainwindow.toolboxStuff.doc
         self.visualizer = OpusResultVisualizer(
-                                               xml_path = self.parent.toolboxStuff.xml_file,
+                                               xml_path = self.mainwindow.toolboxStuff.xml_file,
                                                domDocument = self.domDocument,
                                                indicator_type = 'table_per_year',
                                                source_data_name = 'Eugene_baseline.run1900',
@@ -521,7 +456,7 @@ class ModelGuiElement(QWidget):
 
 
         self.visualization_thread = OpusGuiThread(
-                                                  parentThread = self.parent,
+                                                  parentThread = self.mainwindow,
                                                   parent = self,
                                                   thread_object = self.visualizer)
         self.visualization_thread.start()
@@ -532,7 +467,7 @@ class ModelGuiElement(QWidget):
     def visualizationsCreated(self):
         self.visualizations = self.visualizer.get_visualizations()
         for visualization in self.visualizations:
-            guiElement = ViewTableForm(parent = self.parent,
+            guiElement = ViewTableForm(parent = self.mainwindow,
                                        visualization = visualization)
             self.indicatorResultsTab.insertTab(0,guiElement,guiElement.tabIcon,guiElement.tabLabel)
 
@@ -579,7 +514,7 @@ class ModelGuiElement(QWidget):
             self.progressBarYear.setRange(0,0)
             self.progressBarModel.setRange(0,0)
             self.simprogressGroupBox.setTitle(QString("Model initializing..."))
-            self.runThread = RunModelThread(self.parent,self,self.xml_path)
+            self.runThread = RunModelThread(self.mainwindow,self,self.xml_path)
             # Use this signal from the thread if it is capable of producing its own status signal
             QObject.connect(self.runThread, SIGNAL("runFinished(PyQt_PyObject)"),
                             self.runFinishedFromThread)
@@ -637,9 +572,6 @@ class ModelGuiElement(QWidget):
     # defined in runFinishedFromThread (because status.txt doesn't refresh at
     # end of the simulation.
     def runStatusFromThread(self):
-#    status = self.runThread.parent.model._compute_progress(self.runThread.parent.model.statusfile)
-#    self.progressBar.setValue(status["percentage"])
-#    newString = QString(status["message"])
         totalProgress = 0
         yearProgress = 0
         modelProgress = 0
@@ -670,10 +602,8 @@ class ModelGuiElement(QWidget):
                 current_year = float(lines[0])
                 total_models = float(lines[1])
                 current_model = float(lines[2])
-#            current_model_names = lines[3].strip().split('(from')
                 current_model_names = lines[3]
                 current_model_display_name = current_model_names#current_model_names[0]
-#            current_model_detailed_name = current_model_names[1].split(')')[0]
                 total_pieces = float(lines[4])
                 current_piece = float(lines[5])
                 current_piece_name = lines[6].strip()
@@ -725,12 +655,13 @@ class ModelGuiElement(QWidget):
         self.running = False
         self.paused = False
         self.pbnStartModel.setText(QString("Start Model..."))
-        QMessageBox.warning(self.parent,"Warning",errorMessage)
+        QMessageBox.warning(self.mainwindow,"Warning",errorMessage)
 
 class EstimationGuiElement(QWidget):
-    def __init__(self, parent, runManager, estimation):
-        QWidget.__init__(self, parent)
-        self.parent = parent
+    def __init__(self, mainwindow, runManager, estimation):
+        QWidget.__init__(self, mainwindow)
+        self.mainwindow = mainwindow
+        self.mainwindow = mainwindow
         self.runManager = runManager
         self.estimation = estimation
         self.estimation.guiElement = self
@@ -814,9 +745,9 @@ class EstimationGuiElement(QWidget):
         if self.configFile.open(QIODevice.ReadOnly):
             self.doc = QDomDocument()
             self.doc.setContent(self.configFile)
-            self.dataModel = OpusDataModel(self, self.doc, self.parent, self.configFile,
+            self.dataModel = OpusDataModel(self, self.doc, self.mainwindow, self.configFile,
                                            "model_manager", False)
-            self.view = OpusDataView(self.parent)
+            self.view = OpusDataView(self.mainwindow)
             self.delegate = OpusDataDelegate(self.view)
             self.view.setItemDelegate(self.delegate)
             self.view.setModel(self.dataModel)
@@ -867,7 +798,7 @@ class EstimationGuiElement(QWidget):
             self.pbnStartModel.setText(QString("Pause Estimation..."))
             self.progressBar.setValue(0)
             self.statusLabel.setText(QString("Estimation initializing..."))
-            self.runThread = RunEstimationThread(self.parent,self,self.xml_path)
+            self.runThread = RunEstimationThread(self.mainwindow,self,self.xml_path)
             # Use this signal from the thread if it is capable of producing its own status signal
             QObject.connect(self.runThread, SIGNAL("estimationFinished(PyQt_PyObject)"),
                             self.runFinishedFromThread)
@@ -898,22 +829,22 @@ class EstimationGuiElement(QWidget):
         self.statusLabel.setText(QString("Estimation finished with status = %s" % (success)))
         self.timer.stop()
         # Get the final logfile update after model finishes...
-        self.logFileKey = self.runThread.parent.estimation._get_current_log(self.logFileKey)
+        self.logFileKey = self.runThread.estimationguielement.estimation._get_current_log(self.logFileKey)
         self.running = False
         self.paused = False
         self.pbnStartModel.setText(QString("Start Estimation..."))
 
     def runStatusFromThread(self):
-        status = self.runThread.parent.estimation._compute_progress()
+        status = self.runThread.estimationguielement.estimation._compute_progress()
         self.progressBar.setValue(status["percentage"])
         newString = QString(status["message"])
         newString.leftJustified(60)
         self.statusLabel.setText(newString)
-        self.logFileKey = self.runThread.parent.estimation._get_current_log(self.logFileKey)
+        self.logFileKey = self.runThread.estimationguielement.estimation._get_current_log(self.logFileKey)
 
     def runErrorFromThread(self,errorMessage):
         self.running = False
         self.paused = False
         self.pbnStartModel.setText(QString("Start Estimation..."))
-        QMessageBox.warning(self.parent,"Warning",errorMessage)
+        QMessageBox.warning(self.mainwindow,"Warning",errorMessage)
 
