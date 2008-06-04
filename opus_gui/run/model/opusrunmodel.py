@@ -29,28 +29,25 @@ except ImportError:
     print "Unable to import opus core libs"
 
 class RunModelThread(QThread):
-    def __init__(self, parentThread,parent,xml_file):
-        QThread.__init__(self, parentThread)
-        self.parent = parent
+    def __init__(self, mainwindow, modelguielement, xml_file):
+        QThread.__init__(self, mainwindow)
+        self.modelguielement = modelguielement
         self.xml_file = xml_file
 
     def run(self):
-        #self.parent.progressBar.setRange(0,100)
-        #self.model = OpusModel(self,self.xml_file)
-        #self.model.run()
-        self.parent.model.progressCallback = self.progressCallback
-        self.parent.model.finishedCallback = self.finishedCallback
-        self.parent.model.errorCallback = self.errorCallback
-        self.parent.model.run()
+        self.modelguielement.model.progressCallback = self.progressCallback
+        self.modelguielement.model.finishedCallback = self.finishedCallback
+        self.modelguielement.model.errorCallback = self.errorCallback
+        self.modelguielement.model.run()
 
     def pause(self):
-        self.parent.model.pause()
+        self.modelguielement.model.pause()
 
     def resume(self):
-        self.parent.model.resume()
+        self.modelguielement.model.resume()
 
     def cancel(self):
-        self.parent.model.cancel()
+        self.modelguielement.model.cancel()
 
     def progressCallback(self,percent):
         print "Ping From Model"
@@ -67,16 +64,16 @@ class RunModelThread(QThread):
     def add_run_to_run_manager_xml(self):
         '''add this completed run to the run manager section of the results manager'''
         
-        toolboxStuff = self.parent.parent.toolboxStuff
+        toolboxStuff = self.modelguielement.mainwindow.toolboxStuff
         document = toolboxStuff.doc
-        xml_tree = toolboxStuff.resultsManagerTree        
+        xml_tree = toolboxStuff.resultsManagerTree
         model = xml_tree.model
-        result_manager_base = toolboxStuff.parent.resultManagerStuff
+        result_manager_base = toolboxStuff.mainwindow.resultManagerStuff
         
-        cache_directory = self.parent.model.config['cache_directory']
-        scenario_name = str(self.parent.model.modeltorun)
+        cache_directory = self.modelguielement.model.config['cache_directory']
+        scenario_name = str(self.modelguielement.model.modeltorun)
         run_name = os.path.basename(cache_directory)
-        (start_year, end_year) = self.parent.model.config['years']        
+        (start_year, end_year) = self.modelguielement.model.config['years']        
 
         result_manager_base.add_run_to_run_manager_xml(model, document,
                                          cache_directory,
@@ -90,8 +87,8 @@ class RunModelThread(QThread):
 
 
 class OpusModel(object):
-    def __init__(self,parent,xml_path,modeltorun):
-        self.parent = parent
+    def __init__(self,xmltreeobject,xml_path,modeltorun):
+        self.xmltreeobject = xmltreeobject
         self.xml_path = xml_path
         self.modeltorun = modeltorun
         self.run_manager = None

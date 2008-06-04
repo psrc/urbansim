@@ -107,6 +107,7 @@ class ModelGuiElement(QWidget):
     def __init__(self, parent, runManager, model):
         QWidget.__init__(self, parent)
         self.parent = parent
+        self.mainwindow = parent
         self.runManager = runManager
         self.model = model
         self.model.guiElement = self
@@ -618,7 +619,7 @@ class ModelGuiElement(QWidget):
 
         self.timer.stop()
         # Get the final logfile update after model finishes...
-        self.logFileKey = self.runThread.parent.model._get_current_log(self.logFileKey)
+        self.logFileKey = self.runThread.modelguielement.model._get_current_log(self.logFileKey)
         self.running = False
         self.paused = False
         self.pbnStartModel.setText(QString("Start Model..."))
@@ -644,7 +645,7 @@ class ModelGuiElement(QWidget):
         modelProgress = 0
         boxTitle = "Model initializing..." # TODO:  this is for the old prog bar
 
-        if self.runThread.parent.model.statusfile is None:
+        if self.runThread.modelguielement.model.statusfile is None:
             boxTitle = "Model initializing..."
         else:
             # Compute percent progress for the progress bar.
@@ -658,7 +659,7 @@ class ModelGuiElement(QWidget):
             #   total number of pieces of current model (could be 1)
             #   number of current piece
             #   description of current piece (empty string if no description)
-            statusfile = self.runThread.parent.model.statusfile
+            statusfile = self.runThread.modelguielement.model.statusfile
             try:
 
                 f = open(statusfile)
@@ -718,7 +719,7 @@ class ModelGuiElement(QWidget):
         self.progressBarModel.setValue(modelProgress)
 
 
-        self.logFileKey = self.runThread.parent.model._get_current_log(self.logFileKey)
+        self.logFileKey = self.runThread.modelguielement.model._get_current_log(self.logFileKey)
 
     def runErrorFromThread(self,errorMessage):
         self.running = False
