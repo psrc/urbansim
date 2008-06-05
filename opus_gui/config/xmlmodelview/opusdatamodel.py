@@ -298,6 +298,38 @@ class OpusDataModel(QAbstractItemModel):
                     return False
         return False
         
+    def checkIfInheritedAndAddBackToTree(self,nodePath,parentIndex):
+        #print "Checking if inherited: %s" % (nodePath) 
+        opusXMLTree = self.parentTree.toolboxbase.opusXMLTree
+        indentSize = 2
+        opusXMLTree.update(str(self.domDocument.toString(indentSize)))
+        found = opusXMLTree.find(str(nodePath))
+        if found:
+            # Insert the inherited node
+            doc = QDomDocument()
+            doc.setContent(QString(found))
+            node = doc.firstChild()
+            if (node.isElement()) and \
+               (node.toElement().hasAttribute(QString("inherited"))):
+                self.insertRow(self.rowCount(parentIndex),parentIndex,node,False)
+
+    def domNodePath(self,parent):
+        prepend = ''
+        parentElement = parent.toElement()
+        if not parentElement.isNull():
+            grandParent = parent.parentNode()
+            if (not grandParent.isNull()) and \
+               (grandParent.isElement()) and \
+               (grandParent.toElement().tagName() != QString("opus_project")):
+                prepend = self.domNodePath(grandParent)
+            else:
+                return parentElement.tagName()
+            if prepend:
+                return prepend + '/' + parentElement.tagName()
+            else:
+                return parentElement.tagName()
+        return ''
+
     def setData(self,index,value,role):
         if not index.isValid():
             return False
@@ -311,9 +343,13 @@ class OpusDataModel(QAbstractItemModel):
             if domNode.isElement():
                 domElement = domNode.toElement()
                 if not domElement.isNull():
+                    domNodePath = self.domNodePath(domNode)
                     domElement.setTagName(value.toString())
                     if not self.isTemporary(domElement):
                         self.markAsDirty()
+                        # Now check if it was inherited and the original should
+                        # be added back in
+                        self.checkIfInheritedAndAddBackToTree(domNodePath, index.parent())
         elif index.column() == 1:
             if domNode.hasChildNodes():
                 children = domNode.childNodes()
@@ -337,7 +373,7 @@ class OpusDataModel(QAbstractItemModel):
         # Now up the tree, only hitting parent nodes and not sibblings
         self.stripAttributeUp('inherited',node)
 
-    def insertRow(self,row,parent,node):
+    def insertRow(self,row,parent,node,editable=True):
         returnval = QAbstractItemModel.insertRow(self,row,parent)
         self.beginInsertRows(parent,row,row)
         # Add the element
@@ -356,7 +392,8 @@ class OpusDataModel(QAbstractItemModel):
         #print "len=%d row=%d" % (len(parentItem.childItems),row)
         parentItem.childItems.insert(row,item)
         self.endInsertRows()
-        self.makeEditable(node)
+        if editable:
+            self.makeEditable(node)
         if not self.isTemporary(node):
             self.markAsDirty()
         return returnval
@@ -369,11 +406,16 @@ class OpusDataModel(QAbstractItemModel):
             parentItem = self._rootItem
         else:
             parentItem = parent.internalPointer()
-        parentItem.domNode.removeChild(parentItem.child(row).domNode)
+        nodeToRemove = parentItem.child(row).domNode
+        domNodePath = self.domNodePath(nodeToRemove)
+        parentItem.domNode.removeChild(nodeToRemove)
         parentItem.childItems.pop(row)
-        self.endRemoveRows()
-        if not self.isTemporary(parentItem.child(row).domNode):
+        if not self.isTemporary(nodeToRemove):
             self.markAsDirty()
+            # Now check if it was inherited and the original should
+            # be added back in
+            self.checkIfInheritedAndAddBackToTree(domNodePath, parent)
+        self.endRemoveRows()
         return returnval
 
     def moveUp(self,item,howmany=1):
