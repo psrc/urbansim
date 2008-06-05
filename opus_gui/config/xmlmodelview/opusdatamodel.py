@@ -24,6 +24,7 @@ class OpusDataModel(QAbstractItemModel):
     def __init__(self, parentTree, document, parent, configFile, xmlType, editable):
         QAbstractItemModel.__init__(self, parent)
         self.parentTree = parentTree
+        self.mainwindow = parentTree.mainwindow
         self.editable = editable
         self.configFile = configFile
         self.parentObj = parent
@@ -330,6 +331,10 @@ class OpusDataModel(QAbstractItemModel):
                 return parentElement.tagName()
         return ''
 
+    def validateTagName(self,tag):
+        regex = QRegExp("[a-zA-Z_:][-a-zA-Z0-9._:]*")
+        return regex.exactMatch(tag)
+
     def setData(self,index,value,role):
         if not index.isValid():
             return False
@@ -340,7 +345,7 @@ class OpusDataModel(QAbstractItemModel):
         item = index.internalPointer()
         domNode = item.node()
         if index.column() == 0:
-            if domNode.isElement():
+            if domNode.isElement() and self.validateTagName(value.toString()):
                 domElement = domNode.toElement()
                 if not domElement.isNull():
                     # Check if the value has changed... only update if there is a change
@@ -354,6 +359,8 @@ class OpusDataModel(QAbstractItemModel):
                             # Now check if it was inherited and the original should
                             # be added back in
                             self.checkIfInheritedAndAddBackToTree(domNodePath, index.parent())
+            else:
+                QMessageBox.warning(self.mainwindow,"Warning","Invalid Tag Name for XML Node... Please try again")
         elif index.column() == 1:
             if domNode.hasChildNodes():
                 children = domNode.childNodes()
