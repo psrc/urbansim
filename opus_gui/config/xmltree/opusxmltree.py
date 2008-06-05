@@ -23,21 +23,21 @@ from opus_gui.config.xmlmodelview.opusdatadelegate import OpusDataDelegate
 from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
 
 class OpusXMLTree(object):
-    def __init__(self, parent,xmlType,parentWidget):
-        self.mainwindow = parent.mainwindow
-        self.addTree(parent,xmlType,parentWidget)
-
-    def addTree(self, parent,xmlType,parentWidget):
-        #parent is a toolboxBase object
-        self.parent = parent.parent
-        self.parentTool = parent
+    def __init__(self, toolboxbase, xmlType, parentWidget):
+        # This parent reference is to be removed...
+        self.parent = toolboxbase.mainwindow
+        self.toolboxbase = toolboxbase
+        self.mainwindow = toolboxbase.mainwindow
         self.xmlType = xmlType
         self.parentWidget = parentWidget
-        self.groupBox = QGroupBox(self.parent)
+        self.addTree()
+
+    def addTree(self):
+        self.groupBox = QGroupBox(self.mainwindow)
         self.groupBoxLayout = QVBoxLayout(self.groupBox)
-        self.model = OpusDataModel(self,self.parentTool.doc, self.parent,
-                                   self.parentTool.configFile, self.xmlType, True)
-        self.view = OpusDataView(self.parent)
+        self.model = OpusDataModel(self,self.toolboxbase.doc, self.mainwindow,
+                                   self.toolboxbase.configFile, self.xmlType, True)
+        self.view = OpusDataView(self.mainwindow)
         self.delegate = OpusDataDelegate(self.view)
         self.view.setItemDelegate(self.delegate)
         self.view.setModel(self.model)

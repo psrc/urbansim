@@ -48,7 +48,7 @@ class OpusFileTree(object):
         self.treeview.hideColumn(2)
         self.treeview.hideColumn(3)
         self.groupBoxLayout.addWidget(self.treeview)
-        #self.groupBox.setTitle(QFileInfo(self.parentTool.xml_file).filePath())
+        #self.groupBox.setTitle(QFileInfo(self.toolboxbase.xml_file).filePath())
         self.containerWidget.addWidget(self.groupBox)
 
         # Hook up to the mousePressEvent and pressed

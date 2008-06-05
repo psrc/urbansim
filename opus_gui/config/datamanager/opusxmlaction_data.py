@@ -168,7 +168,7 @@ class OpusXMLAction_Data(object):
                 if children.item(x).isText():
                     filePath = children.item(x).nodeValue()
         fileInfo = QFileInfo(filePath)
-        baseInfo = QFileInfo(self.xmlTreeObject.parentTool.xml_file)
+        baseInfo = QFileInfo(self.xmlTreeObject.toolboxbase.xml_file)
         baseDir = baseInfo.absolutePath()
         newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
         fileName = newFile.absoluteFilePath().trimmed()

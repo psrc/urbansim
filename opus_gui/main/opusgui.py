@@ -213,7 +213,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         if config:
             self.toolboxStuff.openXMLTree(config)
             # Add the project file's path to the title bar
-            self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.parentTool.xml_file).filePath())
+            self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.toolboxbase.xml_file).filePath())
         else:
             import os
             start_dir = ''
@@ -235,7 +235,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             # Open the file and add to the Run tab...
             self.toolboxStuff.openXMLTree(fileName)
             # Add the project file's path to the title bar
-            self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.parentTool.xml_file).filePath())
+            self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.toolboxbase.xml_file).filePath())
             self.resultManagerStuff.scan_for_runs()
 
     def saveConfig(self):
