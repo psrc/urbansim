@@ -24,10 +24,9 @@ from opus_gui.config.datamanager.opusxmlaction_data import OpusXMLAction_Data
 from opus_gui.config.datamanager.opusxmlaction_datadb import OpusXMLAction_DataDB
 
 class OpusXMLAction(object):
-    def __init__(self, parent):
-        self.parent = parent
-        self.mainwindow = parent.mainwindow
-        self.xmlTreeObject = parent
+    def __init__(self, xmlTreeObject):
+        self.xmlTreeObject = xmlTreeObject
+        self.mainwindow = xmlTreeObject.mainwindow
 
         self.actionObject = self.getXMLActionObjectByType(self.xmlTreeObject.xmlType)
         QObject.connect(self.xmlTreeObject.view,
