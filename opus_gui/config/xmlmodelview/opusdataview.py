@@ -17,9 +17,9 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 class OpusDataView(QTreeView):
-    def __init__(self, parent):
-        QTreeView.__init__(self, parent)
-        self.parent = parent
+    def __init__(self, mainwindow):
+        QTreeView.__init__(self, mainwindow)
+        self.mainwindow = mainwindow
 
     def openDefaultItems(self):
         # Loop through all the data model items displayed and expand
@@ -27,10 +27,10 @@ class OpusDataView(QTreeView):
         model = self.model()
         self.loopItems(model,model.index(0,0,QModelIndex()).parent())
 
-    def loopItems(self,model,parent):
-        rows = model.rowCount(parent)
+    def loopItems(self,model,parentIndex):
+        rows = model.rowCount(parentIndex)
         for x in xrange(0,rows,1):
-            child = model.index(x,0,parent)
+            child = model.index(x,0,parentIndex)
             childElement = child.internalPointer().domNode.toElement()
             if not childElement.isNull():
                 # If this child needs to be expanded we do it
