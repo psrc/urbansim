@@ -18,10 +18,10 @@ from PyQt4.QtXml import *
 
 
 class OpusDataItem:
-    def __init__(self,domDocument, node, row, parent):
+    def __init__(self,domDocument, node, row, parentOpusDataItem):
         self.domDocument = domDocument
         self.domNode = node
-        self.parentItem = parent
+        self.parentOpusDataItem = parentOpusDataItem
         self.childItems = []
 
     def initAsRootItem(self):
@@ -41,7 +41,7 @@ class OpusDataItem:
         return self.domNode
 
     def parent(self):
-        return self.parentItem
+        return self.parentOpusDataItem
 
     def child(self,i):
         #print "DataItem.child ", i
@@ -65,8 +65,7 @@ class OpusDataItem:
         return None
 
     def row(self):
-        #return self.rowNumber
-        return self.parentItem.childItems.index(self)
+        return self.parentOpusDataItem.childItems.index(self)
 
     def numChildren(self):
         return len(self.childItems)
