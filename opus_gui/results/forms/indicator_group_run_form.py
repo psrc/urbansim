@@ -27,12 +27,12 @@ from opus_gui.results.gui_result_interface.opus_indicator_group_processor import
 from opus_gui.config.xmlmodelview.opusdataitem import OpusDataItem
 
 class IndicatorGroupRunForm(QWidget):
-    def __init__(self, parent, result_manager, selected_item = None, simulation_run = None):
-        QWidget.__init__(self, parent)
-        #parent is an OpusGui
-        self.parent = parent
+    def __init__(self, mainwindow, result_manager, selected_item = None, simulation_run = None):
+        QWidget.__init__(self, mainwindow)
+        #mainwindow is an OpusGui
+        self.mainwindow = mainwindow
         self.result_manager = result_manager
-        self.toolboxStuff = self.result_manager.parent.toolboxStuff
+        self.toolboxStuff = self.result_manager.mainwindow.toolboxStuff
 
         self.inGui = False
         self.logFileKey = 0
@@ -215,7 +215,7 @@ class IndicatorGroupRunForm(QWidget):
                 yr = QString(repr(i))
                 self.co_every_year.addItem(yr)
 
-    def _get_indicators_for_group(self, parent):
+    def _get_indicators_for_group(self, parentNode):
         viz_map = {
             'Map (per indicator per year)':'matplotlib_map',
             'Chart (per indicator, spans years)':'matplotlib_chart',
@@ -225,7 +225,7 @@ class IndicatorGroupRunForm(QWidget):
         }
         
         indicators = {}
-        node = parent.firstChild()
+        node = parentNode.firstChild()
         while not node.isNull():
             indicator_name = str(node.nodeName())
             vals = get_child_values(node, ['visualization_type','dataset_name'])
@@ -251,7 +251,7 @@ class IndicatorGroupRunForm(QWidget):
         indicator_group = QString(self.co_indicator_group_name.currentText())
         indicator_group_node = self.domDocument.elementsByTagName(indicator_group).item(0)
         
-        indicators_to_run = self._get_indicators_for_group(parent = indicator_group_node)
+        indicators_to_run = self._get_indicators_for_group(parentNode = indicator_group_node)
                 
         self.pbn_run_indicator_group.setEnabled(False)
 
@@ -268,8 +268,8 @@ class IndicatorGroupRunForm(QWidget):
                     
             
         self.runThread = OpusGuiThread(
-                              parentThread = self.parent,
-                              parent = self,
+                              parentThread = self.mainwindow,
+                              parentGuiElement = self,
                               thread_object = self.result_generator)
         
         # Use this signal from the thread if it is capable of producing its own status signal
@@ -304,4 +304,4 @@ class IndicatorGroupRunForm(QWidget):
     
 
     def runErrorFromThread(self,errorMessage):
-        QMessageBox.warning(self.parent,"Warning",errorMessage)
+        QMessageBox.warning(self.mainwindow,"Warning",errorMessage)

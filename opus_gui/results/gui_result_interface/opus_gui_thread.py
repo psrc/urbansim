@@ -34,10 +34,10 @@ except ImportError:
 
 class OpusGuiThread(QThread):
 
-    def __init__(self, parentThread, parent, thread_object):
+    def __init__(self, parentThread, parentGuiElement, thread_object):
         #parent is a GenerateResultsForm
         QThread.__init__(self, parentThread)
-        self.parent = parent
+        self.parentGuiElement = parentGuiElement
         self.thread_object = thread_object
         
     def run(self, 

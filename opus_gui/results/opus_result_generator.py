@@ -34,10 +34,10 @@ except ImportError:
 
 class OpusGuiThread(QThread):
 
-    def __init__(self, parentThread, parent, thread_object):
-        #parent is a GenerateResultsForm
+    def __init__(self, parentThread, parentGuiElement, thread_object):
+        #parentGuiElement is a GenerateResultsForm
         QThread.__init__(self, parentThread)
-        self.parent = parent
+        self.parentGuiElement = parentGuiElement
         self.thread_object = thread_object
         
     def run(self, 
@@ -390,8 +390,8 @@ class OpusResultGenerator(object):
                                     type = 'string', 
                                     value = ', '.join([repr(year) for year in self.years]),
                                     temporary = True)
-        parent = model.index(0,0,QModelIndex()).parent()
-        index = model.findElementIndexByName("Results", parent)[0]
+        parentIndex = model.index(0,0,QModelIndex()).parent()
+        index = model.findElementIndexByName("Results", parentIndex)[0]
         if index.isValid():
             model.insertRow(0,
                             index,
@@ -399,7 +399,7 @@ class OpusResultGenerator(object):
         else:
             print "No valid node was found..."
         
-        child_index = model.findElementIndexByName(name, parent)[0]
+        child_index = model.findElementIndexByName(name, parentIndex)[0]
         if child_index.isValid():
             for node in [dataset_node, indicator_node, source_data_node, year_node]:
                 model.insertRow(0,

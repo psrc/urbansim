@@ -20,8 +20,9 @@ from opus_core.storage_factory import StorageFactory
 from opus_gui.results.xml_helper_methods import elementsByAttributeValue, get_child_values
 
 class ViewTableForm(QWidget):
-    def __init__(self, parent, visualization):
-        QWidget.__init__(self, parent)
+    def __init__(self, mainwindow, visualization):
+        QWidget.__init__(self, mainwindow)
+        self.mainwindow = mainwindow
         self.inGui = False
 
         self.widgetLayout = QVBoxLayout(self)

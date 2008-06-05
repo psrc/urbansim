@@ -91,7 +91,7 @@ class OpusXMLAction_DataDB(object):
         print "cloneDBConnection pressed"
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
         parentIndex = self.currentIndex.model().parent(self.currentIndex)
-        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(parent),
+        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(parentIndex),
                                             parentIndex,
                                             clone)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))

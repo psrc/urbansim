@@ -16,8 +16,9 @@ from PyQt4.QtGui import QWidget, QGroupBox, QVBoxLayout, QIcon
 from opus_gui.results.xml_helper_methods import elementsByAttributeValue, get_child_values
 
 class ViewDocumentationForm(QWidget):
-    def __init__(self, parent, indicator_node):
-        QWidget.__init__(self, parent)
+    def __init__(self, mainwindow, indicator_node):
+        QWidget.__init__(self, mainwindow)
+        self.mainwindow = mainwindow
         self.inGui = False
         
         self.widgetLayout = QVBoxLayout(self)

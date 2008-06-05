@@ -20,8 +20,9 @@ from opus_gui.results.xml_helper_methods import elementsByAttributeValue, get_ch
 
 
 class ViewImageForm(QWidget):
-    def __init__(self, parent, visualization):
-        QWidget.__init__(self, parent)
+    def __init__(self, mainwindow, visualization):
+        QWidget.__init__(self, mainwindow)
+        self.mainwindow = mainwindow
         self.inGui = False
         self.visualization = visualization
         

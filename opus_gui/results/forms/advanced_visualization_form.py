@@ -27,12 +27,12 @@ from opus_gui.config.xmlmodelview.opusdataitem import OpusDataItem
 import os
 
 class AdvancedVisualizationForm(QWidget):
-    def __init__(self, parent, result_manager):
-        QWidget.__init__(self, parent)
-        #parent is an OpusGui
-        self.parent = parent
+    def __init__(self, mainwindow, result_manager):
+        QWidget.__init__(self, mainwindow)
+        #mainwindow is an OpusGui
+        self.mainwindow = mainwindow
         self.result_manager = result_manager
-        self.toolboxStuff = self.result_manager.parent.toolboxStuff
+        self.toolboxStuff = self.result_manager.mainwindow.toolboxStuff
 
         self.inGui = False
         self.logFileKey = 0
@@ -317,4 +317,4 @@ class AdvancedVisualizationForm(QWidget):
 
 
     def runErrorFromThread(self,errorMessage):
-        QMessageBox.warning(self.parent,'Warning',errorMessage)
+        QMessageBox.warning(self.mainwindow,'Warning',errorMessage)

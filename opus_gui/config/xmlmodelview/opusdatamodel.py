@@ -21,13 +21,13 @@ from opus_gui.config.xmlmodelview.opusdataitem import OpusDataItem
 
 
 class OpusDataModel(QAbstractItemModel):
-    def __init__(self, parentTree, document, parent, configFile, xmlType, editable):
-        QAbstractItemModel.__init__(self, parent)
+    def __init__(self, parentTree, document, mainwindow, configFile, xmlType, editable):
+        QAbstractItemModel.__init__(self, mainwindow)
         self.parentTree = parentTree
         self.mainwindow = parentTree.mainwindow
         self.editable = editable
         self.configFile = configFile
-        self.parentObj = parent
+        self.parentObj = mainwindow
         self.domDocument = document
         self.xmlType = xmlType
         # Dirty flag for keeping track of edits...

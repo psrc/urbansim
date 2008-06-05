@@ -31,11 +31,11 @@ import os, sys, tempfile, shutil
 
 
 class AbstractManagerBase(object):
-    #parent is an OpusGui object
-    def __init__(self, parent):
-        self.parent = parent
-        self.tabWidget = parent.tabWidget
-        self.gui = parent
+    #mainwindow is an OpusGui object
+    def __init__(self, mainwindow):
+        self.mainwindow = mainwindow
+        self.tabWidget = mainwindow.tabWidget
+        self.gui = mainwindow
         self.guiElements = []
         
     def removeTab(self,guiElement):
@@ -56,9 +56,9 @@ class AbstractManagerBase(object):
 # Main Run manager class
 class ResultManagerBase(AbstractManagerBase):  
     
-    def __init__(self, parent):
-        AbstractManagerBase.__init__(self, parent) 
-        self.toolboxStuff = self.parent.toolboxStuff       
+    def __init__(self, mainwindow):
+        AbstractManagerBase.__init__(self, mainwindow) 
+        self.toolboxStuff = self.mainwindow.toolboxStuff       
         
     def scan_for_runs(self):
         '''scans all the runs directories in the opus_data folder for existing
@@ -70,7 +70,7 @@ class ResultManagerBase(AbstractManagerBase):
         model = xml_tree.model
         
         #get existing cache directories, use as primary key to check for duplicates
-        parent = model.index(0, 0, QModelIndex()).parent()        
+        parentIndex = model.index(0, 0, QModelIndex()).parent()        
         node_list = elementsByAttributeValue(domDocument = document, 
                                               attribute = 'type', 
                                               value = 'source_data')
@@ -111,7 +111,7 @@ class ResultManagerBase(AbstractManagerBase):
                                     scenario_name, run_name, 
                                     start_year, end_year):
 
-        parent = model.index(0, 0, QModelIndex()).parent()
+        parentIndex = model.index(0, 0, QModelIndex()).parent()
 
         name = '%s.%s'%(scenario_name, run_name)
 
@@ -151,13 +151,13 @@ class ResultManagerBase(AbstractManagerBase):
                                     value = str(end_year),
                                     temporary = True)
 
-        index = model.findElementIndexByName("Simulation_runs", parent)[0]
+        index = model.findElementIndexByName("Simulation_runs", parentIndex)[0]
         if index.isValid():
             model.insertRow(0, index, newNode)
         else:
             print "No valid node was found..."
 
-        child_index = model.findElementIndexByName(name, parent)[0]
+        child_index = model.findElementIndexByName(name, parentIndex)[0]
         if child_index.isValid():
             for node in [end_year_node, start_year_node, 
                          cache_directory_node, scenario_name_node, run_name_node]:
@@ -168,15 +168,15 @@ class ResultManagerBase(AbstractManagerBase):
         model.emit(SIGNAL("layoutChanged()"))    
         
     def addAdvancedVisualizationForm(self):
-        new_form = AdvancedVisualizationForm(parent = self.parent,
-                                       result_manager = self)
+        new_form = AdvancedVisualizationForm(mainwindow = self.mainwindow,
+                                             result_manager = self)
         
         self.guiElements.insert(0, new_form)
         self.updateGuiElements() 
         
     def addGenerateIndicatorForm(self, selected_item):
 
-        new_form = GenerateResultsForm(parent = self.parent,
+        new_form = GenerateResultsForm(mainwindow = self.mainwindow,
                                        result_manager = self,
                                        selected_item = selected_item)
         
@@ -184,7 +184,7 @@ class ResultManagerBase(AbstractManagerBase):
         self.updateGuiElements()
 
     def addRunIndicatorGroupForm(self, selected_item, simulation_run):
-        new_form = IndicatorGroupRunForm(parent = self.parent,
+        new_form = IndicatorGroupRunForm(mainwindow = self.mainwindow,
                                          result_manager = self,
                                          selected_item = selected_item,
                                          simulation_run = simulation_run)
@@ -224,19 +224,18 @@ class ResultManagerBase(AbstractManagerBase):
         
     def _addIndicatorForm(self, indicator_type, indicator_info, kwargs):
         
-        domDocument = self.parent.toolboxStuff.doc
+        domDocument = self.mainwindow.toolboxStuff.doc
         self.indicator_type = indicator_type
         self.visualizer = OpusResultVisualizer(
-                                xml_path = self.parent.toolboxStuff.xml_file,
+                                xml_path = self.mainwindow.toolboxStuff.xml_file,
                                 domDocument = domDocument,
                                 indicator_type = indicator_type,
                                 indicators = indicator_info,
                                 kwargs = kwargs)
         
-        self.visualization_thread = OpusGuiThread(
-                                  parentThread = self.parent,
-                                  parent = self,
-                                  thread_object = self.visualizer)
+        self.visualization_thread = OpusGuiThread(parentThread = self.mainwindow,
+                                                  parentGuiElement = self,
+                                                  thread_object = self.visualizer)
         self.visualization_thread.start()
 
         # Use this signal from the thread if it is capable of producing its own status signal
@@ -264,13 +263,13 @@ class ResultManagerBase(AbstractManagerBase):
         self.visualizer = None
 
     def addViewImageIndicator(self, visualization, indicator_type = None):
-        new_form = ViewImageForm(parent = self.parent,
+        new_form = ViewImageForm(mainwindow = self.mainwindow,
                                  visualization = visualization)
         self.guiElements.insert(0, new_form)
         self.updateGuiElements()
 
     def addViewTableIndicator(self, visualization, indicator_type):
-        new_form = ViewTableForm(parent = self.parent,
+        new_form = ViewTableForm(mainwindow = self.mainwindow,
                                  visualization = visualization)
         if indicator_type != 'arcgis_map':
             self.guiElements.insert(0, new_form)
@@ -279,7 +278,7 @@ class ResultManagerBase(AbstractManagerBase):
             del new_form
             
     def addViewDocumentationForm(self, indicator_node):
-        new_form = ViewDocumentationForm(parent = self.parent,
+        new_form = ViewDocumentationForm(mainwindow = self.mainwindow,
                                          indicator_node = indicator_node)
         self.guiElements.insert(0, new_form)
         self.updateGuiElements()

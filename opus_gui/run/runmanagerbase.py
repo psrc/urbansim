@@ -430,23 +430,20 @@ class ModelGuiElement(QWidget):
         if dataset_name == '[select dataset]':
             raise 'need to select a dataset!!' 
 
-        self.result_generator.set_data(
-                                       source_data_name = 'Eugene_baseline.run1900',
+        self.result_generator.set_data(source_data_name = 'Eugene_baseline.run1900',
                                        indicator_name = indicator_name,
                                        dataset_name = dataset_name, 
                                        years = [int(val), int(val)])
 
 
-        self.resultThread = OpusGuiThread(
-                                          parentThread = self.mainwindow,
-                                          parent = self,
+        self.resultThread = OpusGuiThread(parentThread = self.mainwindow,
+                                          parentGuiElement = self,
                                           thread_object = self.result_generator)
 
         self.resultThread.start()
 
         self.domDocument = self.mainwindow.toolboxStuff.doc
-        self.visualizer = OpusResultVisualizer(
-                                               xml_path = self.mainwindow.toolboxStuff.xml_file,
+        self.visualizer = OpusResultVisualizer(xml_path = self.mainwindow.toolboxStuff.xml_file,
                                                domDocument = self.domDocument,
                                                indicator_type = 'table_per_year',
                                                source_data_name = 'Eugene_baseline.run1900',
@@ -455,9 +452,8 @@ class ModelGuiElement(QWidget):
                                                years = [int(val), int(val)])
 
 
-        self.visualization_thread = OpusGuiThread(
-                                                  parentThread = self.mainwindow,
-                                                  parent = self,
+        self.visualization_thread = OpusGuiThread(parentThread = self.mainwindow,
+                                                  parentGuiElement = self,
                                                   thread_object = self.visualizer)
         self.visualization_thread.start()
 

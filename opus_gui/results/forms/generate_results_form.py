@@ -25,12 +25,12 @@ from opus_gui.results.gui_result_interface.opus_result_visualizer import OpusRes
 from opus_gui.config.xmlmodelview.opusdataitem import OpusDataItem
 
 class GenerateResultsForm(QWidget):
-    def __init__(self, parent, result_manager, selected_item = None):
-        QWidget.__init__(self, parent)
-        #parent is an OpusGui
-        self.parent = parent
+    def __init__(self, mainwindow, result_manager, selected_item = None):
+        QWidget.__init__(self, mainwindow)
+        #mainwindow is an OpusGui
+        self.mainwindow = mainwindow
         self.result_manager = result_manager
-        self.toolboxStuff = self.result_manager.parent.toolboxStuff
+        self.toolboxStuff = self.result_manager.mainwindow.toolboxStuff
 
         self.inGui = False
         self.logFileKey = 0
@@ -282,8 +282,8 @@ class GenerateResultsForm(QWidget):
 #        }
         
         self.runThread = OpusGuiThread(
-                              parentThread = self.parent,
-                              parent = self,
+                              parentThread = self.mainwindow,
+                              parentGuiElement = self,
                               thread_object = self.result_generator)
         
         # Use this signal from the thread if it is capable of producing its own status signal
@@ -345,8 +345,8 @@ class GenerateResultsForm(QWidget):
 #                                    name = 'available_years', 
 #                                    type = 'string', 
 #                                    value = ', '.join([repr(year) for year in self.last_computed_result['years']]))                
-#        parent = model.index(0,0,QModelIndex()).parent()
-#        index = model.findElementIndexByName("Results", parent)[0]
+#        parentIndex = model.index(0,0,QModelIndex()).parent()
+#        index = model.findElementIndexByName("Results", parentIndex)[0]
 #        if index.isValid():
 #            model.insertRow(0,
 #                            index,
@@ -354,7 +354,7 @@ class GenerateResultsForm(QWidget):
 #        else:
 #            print "No valid node was found..."
 #        
-#        child_index = model.findElementIndexByName(name, parent)[0]
+#        child_index = model.findElementIndexByName(name, parentIndex)[0]
 #        if child_index.isValid():
 #            for node in [dataset_node, indicator_node, source_data_node, year_node]:
 #                model.insertRow(0,
@@ -366,4 +366,4 @@ class GenerateResultsForm(QWidget):
 #        model.emit(SIGNAL("layoutChanged()"))
 
     def runErrorFromThread(self,errorMessage):
-        QMessageBox.warning(self.parent,"Warning",errorMessage)
+        QMessageBox.warning(self.mainwindow,"Warning",errorMessage)
