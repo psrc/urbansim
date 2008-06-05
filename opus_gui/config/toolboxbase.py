@@ -128,6 +128,9 @@ class ToolboxBase(object):
             [tempFile,tempFilePath] = tempfile.mkstemp()
             [tempFile2,tempFilePath2] = tempfile.mkstemp()
             #print tempFile,tempFilePath
+            # full_tree is the "whole" tree, inherited nodes and all
+            # tree is just the actual file the GUI was asked to open
+            # TODO: doc2 may not be used
             self.opusXMLTree.full_tree.write(tempFilePath)
             self.opusXMLTree.tree.write(tempFilePath2)
             self.configFileTemp = QFile(tempFilePath)
