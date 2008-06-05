@@ -14,7 +14,7 @@
 
 import copy, os, pprint
 from numpy import array
-from xml.etree.cElementTree import ElementTree
+from xml.etree.cElementTree import ElementTree, tostring
 from opus_core.configuration import Configuration
 
 class XMLConfiguration(object):
@@ -75,7 +75,7 @@ class XMLConfiguration(object):
         """Extract the section named 'name' from this xml project, convert it to a dictionary,
         and return the dictionary.  Return None if there isn't such a section.  If there are 
         multiple sections with the given name, return the first one."""
-        x = self._find(name)
+        x = self._find_node(name)
         if x is None:
             return None
         else:
@@ -136,6 +136,10 @@ class XMLConfiguration(object):
         # TODO: change name???
         self.tree.write(name)
         
+    def find(self, path):
+        n = self._find_node(path)
+        return tostring(n)
+        
     def get_opus_data_path(self):
         """return the path to the opus_data directory.  This is found in the environment variable
         OPUS_DATA_PATH, or if that environment variable doesn't exist, as the contents of the 
@@ -161,7 +165,7 @@ class XMLConfiguration(object):
         # Parent map... can be used for working back up the XML tree
         self.parent_map = dict((c, p) for p in self.full_tree.getiterator() for c in p)        
 
-    def _find(self, path):
+    def _find_node(self, path):
         # find path in my xml tree
         # this is like the 'find' provided by ElementTree, except that it also works with an empty path
         if path=='':
@@ -190,7 +194,7 @@ class XMLConfiguration(object):
                 extended_path = child.tag
             else:
                 extended_path = path + '/' + child.tag
-            if self._find(extended_path) is None:
+            if self._find_node(extended_path) is None:
                 # 'child' doesn't exist in this tree, so we can just add it and all its children.
                 # We want to insert it at a sensible place in the tree.  If there are any nodes
                 # already in the tree with a 'followers' attribute that includes the name of the
@@ -204,12 +208,12 @@ class XMLConfiguration(object):
                 # same tag as prev_child -- in this case we'll use the last one.)
                 where = 0
                 i = 0
-                for c in self._find(path).getchildren():
+                for c in self._find_node(path).getchildren():
                     f = c.get('followers')
                     if (f is not None and child.tag in f.split(',')) or (prev_child is not None and c.tag==prev_child.tag):
                         where = i+1
                     i = i+1
-                self._find(path).insert(where,child)
+                self._find_node(path).insert(where,child)
             else:
                 # 'child' does exist in this tree.  Keep going further with
                 # its children, in case some of them don't exist in this tree
@@ -286,7 +290,7 @@ class XMLConfiguration(object):
             for child in node:
                 self._add_to_dict(child, result_dict)
         elif action=='include':
-            included = self._find(node.text)
+            included = self._find_node(node.text)
             for child in included:
                 self._add_to_dict(child, result_dict)
         elif action=='only_for_includes':
@@ -663,6 +667,15 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # the unit_price variable is inherited from estimate
         unit_price_node = all_variables_node.find('unit_price')
         self.assertEqual(unit_price_node.get('inherited'), 'estimate')
+        
+    def test_find(self):
+        # test the 'find' method on inherited and non-inherited nodes
+        f = os.path.join(self.test_configs, 'estimation_child.xml')
+        config = XMLConfiguration(f)
+        ln_cost_str = config.find('model_manager/estimation/real_estate_price_model/all_variables/ln_cost')
+        self.assertEqual(ln_cost_str.strip(), '<ln_cost type="variable_definition">ln_cost=ln(psrc.parcel.cost+10)</ln_cost>')
+        unit_price_str = config.find('model_manager/estimation/real_estate_price_model/all_variables/unit_price')
+        self.assertEqual(unit_price_str.strip(), '<unit_price inherited="estimate" type="variable_definition">unit_price=urbansim_parcel.parcel.unit_price</unit_price>')
         
     def test_get_controller(self):
         # test getting a run specification that includes a controller in the xml
