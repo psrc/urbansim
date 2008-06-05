@@ -35,21 +35,21 @@ class OpusXMLAction_General(object):
 
         self.actRemoveNode = QAction(self.removeIcon,
                                      "Remove Node",
-                                     self.xmlTreeObject.parent)
+                                     self.xmlTreeObject.mainwindow)
         QObject.connect(self.actRemoveNode,
                         SIGNAL("triggered()"),
                         self.removeNode)
 
         self.actMakeEditable = QAction(self.applicationIcon,
                                        "Make Editable",
-                                       self.xmlTreeObject.parent)
+                                       self.xmlTreeObject.mainwindow)
         QObject.connect(self.actMakeEditable,
                         SIGNAL("triggered()"),
                         self.makeEditableAction)
 
         self.actCloneNode = QAction(self.calendarIcon,
                                     "Copy Node",
-                                    self.xmlTreeObject.parent)
+                                    self.xmlTreeObject.mainwindow)
         QObject.connect(self.actCloneNode,
                         SIGNAL("triggered()"),
                         self.cloneNode)
@@ -99,7 +99,7 @@ class OpusXMLAction_General(object):
                 if domElement.isNull():
                     return
 
-                self.menu = QMenu(self.xmlTreeObject.parent)
+                self.menu = QMenu(self.xmlTreeObject.mainwindow)
 
                 #if domElement.tagName() == QString("placeholder"):
                 #    self.menu.addAction(self.placeholderAction)

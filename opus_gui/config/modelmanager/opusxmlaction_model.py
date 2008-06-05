@@ -38,28 +38,28 @@ class OpusXMLAction_Model(object):
 
         self.actRunEstimation = QAction(self.applicationIcon,
                                         "Run Estimation",
-                                        self.xmlTreeObject.parent)
+                                        self.xmlTreeObject.mainwindow)
         QObject.connect(self.actRunEstimation,
                         SIGNAL("triggered()"),
                         self.runEstimationAction)
 
         self.actRemoveNode = QAction(self.removeIcon,
                                      "Remove Node",
-                                     self.xmlTreeObject.parent)
+                                     self.xmlTreeObject.mainwindow)
         QObject.connect(self.actRemoveNode,
                         SIGNAL("triggered()"),
                         self.removeNode)
 
         self.actMakeEditable = QAction(self.applicationIcon,
                                        "Make Editable",
-                                       self.xmlTreeObject.parent)
+                                       self.xmlTreeObject.mainwindow)
         QObject.connect(self.actMakeEditable,
                         SIGNAL("triggered()"),
                         self.makeEditableAction)
 
         self.actCloneNode = QAction(self.calendarIcon,
                                     "Copy Node",
-                                    self.xmlTreeObject.parent)
+                                    self.xmlTreeObject.mainwindow)
         QObject.connect(self.actCloneNode,
                         SIGNAL("triggered()"),
                         self.cloneNode)
@@ -70,10 +70,10 @@ class OpusXMLAction_Model(object):
         if not self.xmlTreeObject.model.isDirty():
             newEstimation = OpusEstimation(self.xmlTreeObject,
                                            self.xmlTreeObject.toolboxbase.xml_file)
-            self.xmlTreeObject.parent.runManagerStuff.addNewEstimationRun(newEstimation)
+            self.xmlTreeObject.mainwindow.runManagerStuff.addNewEstimationRun(newEstimation)
         else:
             # Prompt the user to save...
-            QMessageBox.warning(self.xmlTreeObject.parent,
+            QMessageBox.warning(self.xmlTreeObject.mainwindow,
                                 "Warning",
                                 "Save changes to project before running estimation")
 
@@ -131,7 +131,7 @@ class OpusXMLAction_Model(object):
                 if domElement.isNull():
                     return
 
-                self.menu = QMenu(self.xmlTreeObject.parent)
+                self.menu = QMenu(self.xmlTreeObject.mainwindow)
                 if domElement.tagName() == QString("models_to_estimate"):
                     self.menu.addAction(self.actRunEstimation)
 

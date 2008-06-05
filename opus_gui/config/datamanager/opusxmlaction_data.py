@@ -40,70 +40,70 @@ class OpusXMLAction_Data(object):
 
         self.actExecScriptFile = QAction(self.calendarIcon,
                                          "Exec Script (TESTING)",
-                                         self.xmlTreeObject.parent)
+                                         self.xmlTreeObject.mainwindow)
         QObject.connect(self.actExecScriptFile,
                         SIGNAL("triggered()"),
                         self.execScriptFile)
 
         self.actExecScriptConfig = QAction(self.calendarIcon,
                                            "Execute Script",
-                                           self.xmlTreeObject.parent)
+                                           self.xmlTreeObject.mainwindow)
         QObject.connect(self.actExecScriptConfig,
                         SIGNAL("triggered()"),
                         self.execScriptConfig)
 
         self.actAddScriptFile = QAction(self.calendarIcon,
                                         "Add Script",
-                                        self.xmlTreeObject.parent)
+                                        self.xmlTreeObject.mainwindow)
         QObject.connect(self.actAddScriptFile,
                         SIGNAL("triggered()"),
                         self.addScriptFile)
 
         self.actNewConfig = QAction(self.calendarIcon,
                                      "Create New Config (TESTING)",
-                                     self.xmlTreeObject.parent)
+                                     self.xmlTreeObject.mainwindow)
         QObject.connect(self.actNewConfig,
                         SIGNAL("triggered()"),
                         self.newConfig)
 
         self.actCloneBatch = QAction(self.calendarIcon,
                                      "Clone Batch",
-                                     self.xmlTreeObject.parent)
+                                     self.xmlTreeObject.mainwindow)
         QObject.connect(self.actCloneBatch,
                         SIGNAL("triggered()"),
                         self.cloneNode)
 
         self.actCloneScript = QAction(self.calendarIcon,
                                       "Clone Script",
-                                      self.xmlTreeObject.parent)
+                                      self.xmlTreeObject.mainwindow)
         QObject.connect(self.actCloneScript,
                         SIGNAL("triggered()"),
                         self.cloneNode)
 
         self.actOpenDocumentation = QAction(self.calendarIcon,
                                             "Open Documentation",
-                                            self.xmlTreeObject.parent)
+                                            self.xmlTreeObject.mainwindow)
         QObject.connect(self.actOpenDocumentation,
                         SIGNAL("triggered()"),
                         self.openDocumentation)
 
         self.actRemoveNode = QAction(self.removeIcon,
                                      "Remove Node",
-                                     self.xmlTreeObject.parent)
+                                     self.xmlTreeObject.mainwindow)
         QObject.connect(self.actRemoveNode,
                         SIGNAL("triggered()"),
                         self.removeNode)
 
         self.actMoveNodeUp = QAction(self.calendarIcon,
                                      "Move Up",
-                                     self.xmlTreeObject.parent)
+                                     self.xmlTreeObject.mainwindow)
         QObject.connect(self.actMoveNodeUp,
                         SIGNAL("triggered()"),
                         self.moveNodeUp)
 
         self.actMoveNodeDown = QAction(self.calendarIcon,
                                        "Move Down",
-                                       self.xmlTreeObject.parent)
+                                       self.xmlTreeObject.mainwindow)
         QObject.connect(self.actMoveNodeDown,
                         SIGNAL("triggered()"),
                         self.moveNodeDown)
@@ -111,21 +111,21 @@ class OpusXMLAction_Data(object):
         #jesse testing
         self.actExecBatch = QAction(self.applicationIcon,
                                       "Execute batch (TESTING)",
-                                      self.xmlTreeObject.parent)
+                                      self.xmlTreeObject.mainwindow)
         QObject.connect(self.actExecBatch,
                         SIGNAL("triggered()"),
                         self.execBatch)
 
         self.actMakeEditable = QAction(self.applicationIcon,
                                        "Make Editable",
-                                       self.xmlTreeObject.parent)
+                                       self.xmlTreeObject.mainwindow)
         QObject.connect(self.actMakeEditable,
                         SIGNAL("triggered()"),
                         self.makeEditableAction)
 
         self.actCloneNode = QAction(self.calendarIcon,
                                     "Copy Node",
-                                    self.xmlTreeObject.parent)
+                                    self.xmlTreeObject.mainwindow)
         QObject.connect(self.actCloneNode,
                         SIGNAL("triggered()"),
                         self.cloneNode)
@@ -172,7 +172,7 @@ class OpusXMLAction_Data(object):
         baseDir = baseInfo.absolutePath()
         newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
         fileName = newFile.absoluteFilePath().trimmed()
-        x = util.documentationbase.DocumentationTab(self.xmlTreeObject.parent,
+        x = util.documentationbase.DocumentationTab(self.xmlTreeObject.mainwindow,
                                                     QString(fileName))
 
 
@@ -200,8 +200,8 @@ class OpusXMLAction_Data(object):
                     filePath = children.item(x).nodeValue()
         importPath = QString(scriptPath).append(QString(".")).append(QString(filePath))
         print "New import ", importPath
-        x = OpusScript(self.xmlTreeObject.parent,importPath,{'param1':'val1','param2':'val2'})
-        y = RunScriptThread(self.xmlTreeObject.parent,x)
+        x = OpusScript(self.xmlTreeObject.mainwindow,importPath,{'param1':'val1','param2':'val2'})
+        y = RunScriptThread(self.xmlTreeObject.mainwindow,x)
         y.run()
 
     def execScriptConfig(self):
@@ -246,8 +246,8 @@ class OpusXMLAction_Data(object):
                         thisElementText = children.item(x).nodeValue()
             params[thisElement.toElement().tagName()] = thisElementText
 
-        x = OpusScript(self.xmlTreeObject.parent,importPath,params)
-        y = RunScriptThread(self.xmlTreeObject.parent,x)
+        x = OpusScript(self.xmlTreeObject.mainwindow,importPath,params)
+        y = RunScriptThread(self.xmlTreeObject.mainwindow,x)
         y.run()
 
     # jesse testing
@@ -309,7 +309,7 @@ class OpusXMLAction_Data(object):
                 if domElement.isNull():
                     return
 
-                self.menu = QMenu(self.xmlTreeObject.parent)
+                self.menu = QMenu(self.xmlTreeObject.mainwindow)
                 if domElement.attribute(QString("type")) == QString("script_file"):
                     self.menu.addAction(self.actExecScriptFile)
                     self.menu.addSeparator()

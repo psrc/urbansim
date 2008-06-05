@@ -24,8 +24,6 @@ from opus_gui.config.xmltree.opusxmlaction import OpusXMLAction
 
 class OpusXMLTree(object):
     def __init__(self, toolboxbase, xmlType, parentWidget):
-        # This parent reference is to be removed...
-        self.parent = toolboxbase.mainwindow
         self.toolboxbase = toolboxbase
         self.mainwindow = toolboxbase.mainwindow
         self.xmlType = xmlType

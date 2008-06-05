@@ -39,72 +39,72 @@ class OpusXMLAction_Results(object):
         #create new indicator action (only for my_indicators)
         self.actAddNewIndicator = QAction(self.acceptIcon, 
                                           "Add new indicator",
-                                          self.xmlTreeObject.parent)
+                                          self.xmlTreeObject.mainwindow)
         QObject.connect(self.actAddNewIndicator, SIGNAL("triggered()"), self.addNewIndicator)
 
         #create new result template...
         self.actAddNewIndicatorGroup = QAction(self.acceptIcon, 
                                           "Add new indicator group...",
-                                          self.xmlTreeObject.parent)
+                                          self.xmlTreeObject.mainwindow)
         QObject.connect(self.actAddNewIndicatorGroup, SIGNAL("triggered()"), self.addNewIndicatorGroup)          
 
         #generate results will enter a dialogue to pair indicators with 
         #result templates and datasets and then run them to produce results
         self.actGenerateResults = QAction(self.acceptIcon, 
                                           "Generate results with...",
-                                          self.xmlTreeObject.parent)
+                                          self.xmlTreeObject.mainwindow)
         QObject.connect(self.actGenerateResults, SIGNAL("triggered()"), self.generateResults)
 
         #examine results via some visualization...
         self.actViewResultAsMatplotlibMap = QAction(self.acceptIcon, 
                                           "Map (Matplotlib)",
-                                          self.xmlTreeObject.parent)
+                                          self.xmlTreeObject.mainwindow)
         QObject.connect(self.actViewResultAsMatplotlibMap, SIGNAL("triggered()"), self.viewResultsMatplotlibMap)                
         #self.actViewResultAsArcgisMap = QAction(self.acceptIcon, 
         #                                  "Map (ArcGis)",
-        #                                  self.xmlTreeObject.parent)
+        #                                  self.xmlTreeObject.mainwindow)
         #QObject.connect(self.actViewResultAsArcgisMap, SIGNAL("triggered()"), self.viewResultsArcGisMap)                
 
         self.actViewResultAsMatplotlibChart = QAction(self.acceptIcon, 
                                           "Chart (Matplotlib)",
-                                          self.xmlTreeObject.parent)
+                                          self.xmlTreeObject.mainwindow)
         QObject.connect(self.actViewResultAsMatplotlibChart, SIGNAL("triggered()"), self.viewResultsMatplotlibChart) 
 #        self.actViewResultAsTablePerYear = QAction(self.acceptIcon, 
 #                                          "Table (one per year over selected indicators)",
-#                                          self.xmlTreeObject.parent)
+#                                          self.xmlTreeObject.mainwindow)
         #QObject.connect(self.actViewResultAsTablePerYear, SIGNAL("triggered()"), self.viewResultsTablePerYear) 
         self.actViewResultAsTablePerAttribute = QAction(self.acceptIcon, 
                                           "Table",
-                                          self.xmlTreeObject.parent)
+                                          self.xmlTreeObject.mainwindow)
         QObject.connect(self.actViewResultAsTablePerAttribute, SIGNAL("triggered()"), self.viewResultsTablePerAttribute) 
 
         #launch advanced view results window...
         self.actViewResultAsAdvanced = QAction(self.acceptIcon, 
                                           "Advanced visualization...",
-                                          self.xmlTreeObject.parent)
+                                          self.xmlTreeObject.mainwindow)
         QObject.connect(self.actViewResultAsAdvanced, SIGNAL("triggered()"), self.viewResultsAdvanced) 
 
 
-#        self.actViewDocumentation = QAction(self.applicationIcon, "View documentation", self.xmlTreeObject.parent)
+#        self.actViewDocumentation = QAction(self.applicationIcon, "View documentation", self.xmlTreeObject.mainwindow)
 #        QObject.connect(self.actViewDocumentation, SIGNAL("triggered()"), self.viewDocumentation)
 
         self.actRemoveNode = QAction(self.removeIcon,
                                      "Remove Node",
-                                     self.xmlTreeObject.parent)
+                                     self.xmlTreeObject.mainwindow)
         QObject.connect(self.actRemoveNode,
                         SIGNAL("triggered()"),
                         self.removeNode)
 
         self.actMakeEditable = QAction(self.applicationIcon,
                                        "Make Editable",
-                                       self.xmlTreeObject.parent)
+                                       self.xmlTreeObject.mainwindow)
         QObject.connect(self.actMakeEditable,
                         SIGNAL("triggered()"),
                         self.makeEditableAction)
 
         self.actCloneNode = QAction(self.calendarIcon,
                                     "Copy Node",
-                                    self.xmlTreeObject.parent)
+                                    self.xmlTreeObject.mainwindow)
         QObject.connect(self.actCloneNode,
                         SIGNAL("triggered()"),
                         self.cloneNode)
@@ -172,7 +172,7 @@ class OpusXMLAction_Results(object):
     def beforeAddIndicatorToGroupShown(self):
         print "AddIndicatorToGroup about to be shown"
         
-        domDocument = self.xmlTreeObject.parent.toolboxStuff.doc
+        domDocument = self.xmlTreeObject.mainwindow.toolboxStuff.doc
         node_list = elementsByAttributeValue(domDocument = domDocument, 
                                               attribute = 'type', 
                                               value = 'indicator')
@@ -241,7 +241,7 @@ class OpusXMLAction_Results(object):
     def beforeRunIndicatorGroupShown(self):
         print "AddIndicatorToGroup about to be shown"
         
-        domDocument = self.xmlTreeObject.parent.toolboxStuff.doc
+        domDocument = self.xmlTreeObject.mainwindow.toolboxStuff.doc
         node_list = elementsByAttributeValue(domDocument = domDocument, 
                                               attribute = 'type', 
                                               value = 'source_data')
@@ -260,12 +260,12 @@ class OpusXMLAction_Results(object):
         print "indicatorGroupRun pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
         if not self.xmlTreeObject.model.isDirty():
-            self.xmlTreeObject.parent.resultManagerStuff.addRunIndicatorGroupForm(
+            self.xmlTreeObject.mainwindow.resultManagerStuff.addRunIndicatorGroupForm(
                 selected_item = self.currentIndex.internalPointer().node().toElement().tagName(),
                 simulation_run = simulation_run)
         else:
             # Prompt the user to save...
-            QMessageBox.warning(self.xmlTreeObject.parent,
+            QMessageBox.warning(self.xmlTreeObject.mainwindow,
                                 "Warning",
                                 "Please save changes to project before generating results")
                       
@@ -273,40 +273,40 @@ class OpusXMLAction_Results(object):
         print "generateResults pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
         if not self.xmlTreeObject.model.isDirty():
-            self.xmlTreeObject.parent.resultManagerStuff.addGenerateIndicatorForm(
+            self.xmlTreeObject.mainwindow.resultManagerStuff.addGenerateIndicatorForm(
                 selected_item = self.currentIndex.internalPointer().node().toElement().tagName())
         else:
             # Prompt the user to save...
-            QMessageBox.warning(self.xmlTreeObject.parent,
+            QMessageBox.warning(self.xmlTreeObject.mainwindow,
                                 "Warning",
                                 "Please save changes to project before generating results")
 
     def viewResultsMatplotlibMap(self):
         clicked_node = self.currentIndex.internalPointer().node().toElement()          
-        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorFormFromNode(
+        self.xmlTreeObject.mainwindow.resultManagerStuff.addIndicatorFormFromNode(
                                                           indicator_type = 'matplotlib_map',
                                                           clicked_node = clicked_node)
 
     def viewResultsArcGisMap(self):
         clicked_node = self.currentIndex.internalPointer().node().toElement()          
-        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorFormFromNode(
+        self.xmlTreeObject.mainwindow.resultManagerStuff.addIndicatorFormFromNode(
                                                           indicator_type = 'arcgis_map',
                                                           clicked_node = clicked_node)           
     def viewResultsMatplotlibChart(self):
         clicked_node = self.currentIndex.internalPointer().node().toElement()           
-        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorFormFromNode(
+        self.xmlTreeObject.mainwindow.resultManagerStuff.addIndicatorFormFromNode(
                                                           indicator_type = 'matplotlib_chart',
                                                           clicked_node = clicked_node)
 
     def viewResultsTablePerAttribute(self):
         clicked_node = self.currentIndex.internalPointer().node().toElement()           
-        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorFormFromNode(
+        self.xmlTreeObject.mainwindow.resultManagerStuff.addIndicatorFormFromNode(
                                                           indicator_type = 'table_per_attribute',
                                                           clicked_node = clicked_node)
 
     def viewResultsTablePerYear(self):
         clicked_node = self.currentIndex.internalPointer().node().toElement()           
-        self.xmlTreeObject.parent.resultManagerStuff.addIndicatorFormFromNode(
+        self.xmlTreeObject.mainwindow.resultManagerStuff.addIndicatorFormFromNode(
                                                           indicator_type = 'table_per_year',
                                                           clicked_node = clicked_node)
 
@@ -317,10 +317,10 @@ class OpusXMLAction_Results(object):
         print "viewResultsAdvanced pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())                  
         if not self.xmlTreeObject.model.isDirty():
-            self.xmlTreeObject.parent.resultManagerStuff.addAdvancedVisualizationForm()
+            self.xmlTreeObject.mainwindow.resultManagerStuff.addAdvancedVisualizationForm()
         else:
             # Prompt the user to save...
-            QMessageBox.warning(self.xmlTreeObject.parent,
+            QMessageBox.warning(self.xmlTreeObject.mainwindow,
                                 "Warning",
                                 "Please save changes to project before generating results")
 
@@ -378,7 +378,7 @@ class OpusXMLAction_Results(object):
                 if domElement.isNull():
                     return
                 
-                self.menu = QMenu(self.xmlTreeObject.parent)
+                self.menu = QMenu(self.xmlTreeObject.mainwindow)
                 if domElement.attribute(QString("type")) == QString("indicator_library") and \
                        domElement.attribute(QString("append_to")) == QString("True"):
                     self.menu.addAction(self.actAddNewIndicator)
@@ -390,7 +390,7 @@ class OpusXMLAction_Results(object):
 #                    self.menu.addAction(self.actViewDocumentation)
                     self.menu.addAction(self.actGenerateResults)
                 elif domElement.attribute(QString("type")) == QString("indicator_result"):
-                    visualization_menu = QMenu(self.xmlTreeObject.parent)
+                    visualization_menu = QMenu(self.xmlTreeObject.mainwindow)
                     visualization_menu.setTitle(QString("View result as..."))
                     #visualization_menu.addAction(self.actViewResultAsTablePerYear)
                     visualization_menu.addAction(self.actViewResultAsTablePerAttribute)                    
@@ -429,13 +429,13 @@ class OpusXMLAction_Results(object):
 
     def _build_indicator_group_menu(self):
         #needs to be called when indicator_group right clicked on...
-        self.indicator_group_menu = QMenu(self.xmlTreeObject.parent)
+        self.indicator_group_menu = QMenu(self.xmlTreeObject.mainwindow)
         self.indicator_group_menu.setTitle(QString("Add indicator to group..."))
         QObject.connect(self.indicator_group_menu, SIGNAL('aboutToShow()'), self.beforeAddIndicatorToGroupShown)
         self.menu.addMenu(self.indicator_group_menu)
 
         
-        self.run_indicator_group_menu = QMenu(self.xmlTreeObject.parent)
+        self.run_indicator_group_menu = QMenu(self.xmlTreeObject.mainwindow)
         self.run_indicator_group_menu.setTitle(QString('Run indicator group on...'))
         QObject.connect(self.run_indicator_group_menu, SIGNAL('aboutToShow()'), self.beforeRunIndicatorGroupShown)
         

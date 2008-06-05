@@ -38,56 +38,56 @@ class OpusXMLAction_Scenario(object):
 
         self.actRunModel = QAction(self.acceptIcon,
                                    "Run This Scenario",
-                                   self.xmlTreeObject.parent)
+                                   self.xmlTreeObject.mainwindow)
         QObject.connect(self.actRunModel,
                         SIGNAL("triggered()"),
                         self.runModel)
 
         self.actRemoveTree = QAction(self.removeIcon,
                                      "Remove this tree from the GUI",
-                                     self.xmlTreeObject.parent)
+                                     self.xmlTreeObject.mainwindow)
         QObject.connect(self.actRemoveTree,
                         SIGNAL("triggered()"),
                         self.removeTree)
 
         self.actOpenXMLFile = QAction(self.calendarIcon,
                                       "Open XML File",
-                                      self.xmlTreeObject.parent)
+                                      self.xmlTreeObject.mainwindow)
         QObject.connect(self.actOpenXMLFile,
                         SIGNAL("triggered()"),
                         self.openXMLFile)
 
         self.actEditXMLFileGlobal = QAction(self.calendarIcon,
                                             "Edit XML File Global",
-                                            self.xmlTreeObject.parent)
+                                            self.xmlTreeObject.mainwindow)
         QObject.connect(self.actEditXMLFileGlobal,
                         SIGNAL("triggered()"),
                         self.editXMLFileGlobal)
 
         self.actEditXMLFileLocal = QAction(self.calendarIcon,
                                            "Edit XML File Local",
-                                           self.xmlTreeObject.parent)
+                                           self.xmlTreeObject.mainwindow)
         QObject.connect(self.actEditXMLFileLocal,
                         SIGNAL("triggered()"),
                         self.editXMLFileLocal)
 
         self.actMakeEditable = QAction(self.applicationIcon,
                                     "Make Editable",
-                                    self.xmlTreeObject.parent)
+                                    self.xmlTreeObject.mainwindow)
         QObject.connect(self.actMakeEditable,
                         SIGNAL("triggered()"),
                         self.makeEditableAction)
 
         self.actRemoveNode = QAction(self.removeIcon,
                                      "Remove Node",
-                                     self.xmlTreeObject.parent)
+                                     self.xmlTreeObject.mainwindow)
         QObject.connect(self.actRemoveNode,
                         SIGNAL("triggered()"),
                         self.removeNode)
 
         self.actCloneNode = QAction(self.calendarIcon,
                                     "Copy Node",
-                                    self.xmlTreeObject.parent)
+                                    self.xmlTreeObject.mainwindow)
         QObject.connect(self.actCloneNode,
                         SIGNAL("triggered()"),
                         self.cloneNode)
@@ -101,10 +101,10 @@ class OpusXMLAction_Scenario(object):
             newModel = OpusModel(self.xmlTreeObject,
                                  self.xmlTreeObject.toolboxbase.xml_file,
                                  modelToRun)
-            self.xmlTreeObject.parent.runManagerStuff.addNewModelRun(newModel)
+            self.xmlTreeObject.mainwindow.runManagerStuff.addNewModelRun(newModel)
         else:
             # Prompt the user to save...
-            QMessageBox.warning(self.xmlTreeObject.parent,
+            QMessageBox.warning(self.xmlTreeObject.mainwindow,
                                 "Warning",
                                 "Please save changes to project before running model")
 
@@ -136,12 +136,12 @@ class OpusXMLAction_Scenario(object):
         newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
 
         # To test QScintilla
-        if self.xmlTreeObject.parent.editorStuff:
+        if self.xmlTreeObject.mainwindow.editorStuff:
             #print "Loading into qscintilla..."
             # Now an individual tab
             import opus_gui.util.editorbase
             fileName = newFile.absoluteFilePath()
-            x = util.editorbase.EditorTab(self.xmlTreeObject.parent, QString(fileName))
+            x = util.editorbase.EditorTab(self.xmlTreeObject.mainwindow, QString(fileName))
 
     def editXMLFileGlobal(self):
         filePath = ""
@@ -156,19 +156,19 @@ class OpusXMLAction_Scenario(object):
         newFile = QFileInfo(QString(baseDir).append("/").append(QString(fileInfo.filePath())))
 
         # To test QScintilla
-        if self.xmlTreeObject.parent.editorStuff:
+        if self.xmlTreeObject.mainwindow.editorStuff:
             #print "Loading into qscintilla..."
             # Start with the base tab
             fileName = newFile.absoluteFilePath()
-            self.xmlTreeObject.parent.editorStuff.clear()
+            self.xmlTreeObject.mainwindow.editorStuff.clear()
             try:
                 f = open(fileName,'r')
             except:
                 return
             for l in f.readlines():
-                self.xmlTreeObject.parent.editorStuff.append(l)
+                self.xmlTreeObject.mainwindow.editorStuff.append(l)
             f.close()
-            self.xmlTreeObject.parent.editorStatusLabel.setText(QString(fileName))
+            self.xmlTreeObject.mainwindow.editorStatusLabel.setText(QString(fileName))
 
     def removeNode(self):
         #print "Remove Node Pressed"
@@ -205,7 +205,7 @@ class OpusXMLAction_Scenario(object):
     def removeTree(self):
         if not self.xmlTreeObject.model.isDirty():
             self.xmlTreeObject.groupBox.hide()
-            self.xmlTreeObject.parentWidget.removeWidget(self.xmlTreeObject.groupBox)
+            self.xmlTreeObject.mainwindowWidget.removeWidget(self.xmlTreeObject.groupBox)
             return True
         else:
             return False
@@ -231,7 +231,7 @@ class OpusXMLAction_Scenario(object):
                 if domElement.isNull():
                     return
 
-                self.menu = QMenu(self.xmlTreeObject.parent)
+                self.menu = QMenu(self.xmlTreeObject.mainwindow)
                 if domElement.attribute(QString("executable")) == QString("True"):
                     self.menu.addAction(self.actRunModel)
                 elif domElement.attribute(QString("type")) == QString("file"):

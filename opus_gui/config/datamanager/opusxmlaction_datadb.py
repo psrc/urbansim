@@ -41,42 +41,42 @@ class OpusXMLAction_DataDB(object):
 
         self.actCloneDBConnection = QAction(self.calendarIcon,
                                         "Clone DB Connection",
-                                        self.xmlTreeObject.parent)
+                                        self.xmlTreeObject.mainwindow)
         QObject.connect(self.actCloneDBConnection,
                         SIGNAL("triggered()"),
                         self.cloneDBConnection)
 
         self.actNewDBConnection = QAction(self.calendarIcon,
                                           "New DB Connection",
-                                          self.xmlTreeObject.parent)
+                                          self.xmlTreeObject.mainwindow)
         QObject.connect(self.actNewDBConnection,
                         SIGNAL("triggered()"),
                         self.newDBConnection)
 
         self.actTestDBConnection = QAction(self.calendarIcon,
                                            "Test DB Connection",
-                                           self.xmlTreeObject.parent)
+                                           self.xmlTreeObject.mainwindow)
         QObject.connect(self.actTestDBConnection,
                         SIGNAL("triggered()"),
                         self.testDBConnection)
 
         self.actRemoveNode = QAction(self.removeIcon,
                                      "Remove Node",
-                                     self.xmlTreeObject.parent)
+                                     self.xmlTreeObject.mainwindow)
         QObject.connect(self.actRemoveNode,
                         SIGNAL("triggered()"),
                         self.removeNode)
 
         self.actMakeEditable = QAction(self.applicationIcon,
                                        "Make Editable",
-                                       self.xmlTreeObject.parent)
+                                       self.xmlTreeObject.mainwindow)
         QObject.connect(self.actMakeEditable,
                         SIGNAL("triggered()"),
                         self.makeEditableAction)
 
         self.actCloneNode = QAction(self.calendarIcon,
                                     "Copy Node",
-                                    self.xmlTreeObject.parent)
+                                    self.xmlTreeObject.mainwindow)
         QObject.connect(self.actCloneNode,
                         SIGNAL("triggered()"),
                         self.cloneNode)
@@ -154,7 +154,7 @@ class OpusXMLAction_DataDB(object):
                 if domElement.isNull():
                     return
 
-                self.menu = QMenu(self.xmlTreeObject.parent)
+                self.menu = QMenu(self.xmlTreeObject.mainwindow)
                 if domElement.attribute(QString("type")) == QString("database_library"):
                     self.menu.addAction(self.actNewDBConnection)
                 elif domElement.attribute(QString("type")) == QString("db_connection"):
