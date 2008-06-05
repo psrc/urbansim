@@ -24,9 +24,8 @@ import sys
 
 
 class OpusFileAction(object):
-    def __init__(self, parent):
-        self.parent = parent
-        self.xmlFileObject = parent
+    def __init__(self, xmlFileObject):
+        self.xmlFileObject = xmlFileObject
 
         self.currentColumn = None
         self.currentIndex = None

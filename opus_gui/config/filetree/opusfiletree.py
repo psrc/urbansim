@@ -20,14 +20,13 @@ from PyQt4.QtGui import *
 from opus_gui.config.filetree.opusfileaction import OpusFileAction
 
 class OpusFileTree(object):
-    def __init__(self, parent, opusDataPath, parentWidget):
-        self.addTree(parent,opusDataPath,parentWidget)
+    def __init__(self, toolboxbase, opusDataPath, parentWidget):
+        self.addTree(toolboxbase,opusDataPath,parentWidget)
 
 
-    def addTree(self, parent,opusDataPath,parentWidget):
-        #parent is a toolboxBase object
-        self.mainwindow = parent.parent
-        self.toolboxBase = parent
+    def addTree(self, toolboxbase,opusDataPath,parentWidget):
+        self.mainwindow = toolboxbase.mainwindow
+        self.toolboxBase = toolboxbase
         self.containerWidget = parentWidget
         self.opusDataPath = opusDataPath
 
