@@ -22,11 +22,11 @@ from opus_gui.config.datamanager.newdbconnection_ui import Ui_NewDbConnectionGui
 import random
 
 class NewDbConnectionGui(QDialog, Ui_NewDbConnectionGui):
-    def __init__(self, parent, fl):
-        QDialog.__init__(self, parent.mainwindow, fl)
+    def __init__(self, opusXMLAction_xxx, fl):
+        QDialog.__init__(self, opusXMLAction_xxx.mainwindow, fl)
         self.setupUi(self)
-        self.parent = parent
-        self.model = parent.currentIndex.model()
+        self.opusXMLAction_xxx = opusXMLAction_xxx
+        self.model = opusXMLAction_xxx.currentIndex.model()
         self.vars = {}
         # To test... add some dummy vars
         self.vboxlayout = QVBoxLayout(self.variableBox)
@@ -55,7 +55,7 @@ class NewDbConnectionGui(QDialog, Ui_NewDbConnectionGui):
         # print "create pressed - Need to add the config to the XML here..."
         databasename = self.test_line[0].text()
         # First is the connection node with the connection name
-        newNode = self.parent.currentIndex.model().domDocument.createElement(databasename)
+        newNode = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(databasename)
         newNode.setAttribute(QString("type"),QString("db_connection"))
         # for key,val in self.vars.iteritems():
         for x in xrange(1,len(self.test_text)):
@@ -65,15 +65,15 @@ class NewDbConnectionGui(QDialog, Ui_NewDbConnectionGui):
             typeVal = self.test_text_type[x].text().remove(QRegExp("[\(\)]"))
             # print "Key: %s , Val: %s" % (key,val)
             # Next we add each of the child nodes with the user defined values
-            newChild = self.parent.currentIndex.model().domDocument.createElement(key)
+            newChild = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(key)
             newChild.setAttribute(QString("type"),typeVal)
-            newText = self.parent.currentIndex.model().domDocument.createTextNode(val)
+            newText = self.opusXMLAction_xxx.currentIndex.model().domDocument.createTextNode(val)
             newChild.appendChild(newText)
             newNode.appendChild(newChild)
-        self.parent.currentIndex.model().insertRow(self.parent.currentIndex.model().rowCount(self.parent.currentIndex),
-                                                   self.parent.currentIndex,
+        self.opusXMLAction_xxx.currentIndex.model().insertRow(self.opusXMLAction_xxx.currentIndex.model().rowCount(self.opusXMLAction_xxx.currentIndex),
+                                                   self.opusXMLAction_xxx.currentIndex,
                                                    newNode)
-        self.parent.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+        self.opusXMLAction_xxx.currentIndex.model().emit(SIGNAL("layoutChanged()"))
         self.close()
 
     def on_cancelConfig_released(self):

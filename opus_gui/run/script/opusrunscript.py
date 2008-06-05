@@ -18,9 +18,9 @@ from PyQt4.QtGui import *
 import os, shutil, sys, tempfile, time
 
 class RunScriptThread(QThread):
-    def __init__(self, parent,opusScript):
-        QThread.__init__(self, parent)
-        self.parent = parent
+    def __init__(self, mainwindow,opusScript):
+        QThread.__init__(self, mainwindow)
+        self.mainwindow = mainwindow
         self.opusScript = opusScript
 
     def run(self):
@@ -48,8 +48,8 @@ class RunScriptThread(QThread):
 
 
 class OpusScript(object):
-    def __init__(self,parent,scriptInclude,scriptVars=[]):
-        self.parent = parent
+    def __init__(self,mainwindow,scriptInclude,scriptVars=[]):
+        self.mainwindow = mainwindow
         self.scriptInclude = scriptInclude
         self.scriptVars = scriptVars
         self.startingCallback = None

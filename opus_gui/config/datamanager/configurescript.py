@@ -22,10 +22,10 @@ from opus_gui.config.datamanager.configurescript_ui import Ui_ConfigureScriptGui
 import random
 
 class ConfigureScriptGui(QDialog, Ui_ConfigureScriptGui):
-    def __init__(self, parent, fl):
-        QDialog.__init__(self, parent.mainwindow, fl)
+    def __init__(self, opusXMLAction_xxx, fl):
+        QDialog.__init__(self, opusXMLAction_xxx.mainwindow, fl)
         self.setupUi(self)
-        self.parent = parent
+        self.opusXMLAction_xxx = opusXMLAction_xxx
         self.vars = {}
         # To test... add some dummy vars
         self.vboxlayout = QVBoxLayout(self.variableBox)
