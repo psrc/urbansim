@@ -25,10 +25,10 @@ from opus_gui.config.managerbase.cloneinherited_ui import Ui_CloneInheritedGui
 import random
 
 class CloneInheritedGui(QDialog, Ui_CloneInheritedGui):
-    def __init__(self, parent, fl, model, clone):
-        QDialog.__init__(self, parent.mainwindow, fl)
+    def __init__(self, opusXMLAction_xxx, fl, model, clone):
+        QDialog.__init__(self, opusXMLAction_xxx.mainwindow, fl)
         self.setupUi(self)
-        self.parent = parent
+        self.opusXMLAction_xxx = opusXMLAction_xxx
         self.model = model
         self.clone = self.stripAttribute("inherited",clone)
         # Since we are referencing the main model we want to now make it
@@ -48,13 +48,13 @@ class CloneInheritedGui(QDialog, Ui_CloneInheritedGui):
         self.view.setMinimumHeight(200)
         self.vboxlayout.addWidget(self.view)
 
-    def stripAttribute(self,attribute,parent,recursive=True):
-        if parent.toElement().hasAttribute(QString(attribute)):
+    def stripAttribute(self,attribute,parentNode,recursive=True):
+        if parentNode.toElement().hasAttribute(QString(attribute)):
             # remove the attribute
-            parent.toElement().removeAttribute(QString(attribute))
-        rows = parent.childNodes().count()
+            parentNode.toElement().removeAttribute(QString(attribute))
+        rows = parentNode.childNodes().count()
         for x in xrange(0,rows,1):
-            child = parent.childNodes().item(x)
+            child = parentNode.childNodes().item(x)
             childElement = child.toElement()
             if not childElement.isNull():
                 # Check if this is the one we want...
@@ -67,7 +67,7 @@ class CloneInheritedGui(QDialog, Ui_CloneInheritedGui):
                 childRows = child.childNodes().count()
                 if childRows>0:
                     self.stripAttribute(attribute,child,recursive)
-        return parent
+        return parentNode
 
     def on_createXML_released(self):
         # Clone the node and drop it in...
@@ -82,9 +82,9 @@ class CloneInheritedGui(QDialog, Ui_CloneInheritedGui):
                 return
             print domElement.tagName()
             # Here we can drop the clone into the model at the right spot
-            parent = self.view.currentIndex()
-            self.model.insertRow(self.model.rowCount(parent),
-                                 parent,
+            parentIndex = self.view.currentIndex()
+            self.model.insertRow(self.model.rowCount(parentIndex),
+                                 parentIndex,
                                  self.clone)
             self.model.markAsDirty()
             self.model.emit(SIGNAL("layoutChanged()"))

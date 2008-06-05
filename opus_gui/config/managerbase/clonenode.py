@@ -25,14 +25,13 @@ from opus_gui.config.managerbase.clonenode_ui import Ui_CloneNodeGui
 import random
 
 class CloneNodeGui(QDialog, Ui_CloneNodeGui):
-    def __init__(self, parent, fl, clone, parentnode, model):
-        QDialog.__init__(self, parent.mainwindow, fl)
+    def __init__(self, opusXMLAction_xxx, fl, clone, parentNode, model):
+        QDialog.__init__(self, opusXMLAction_xxx.mainwindow, fl)
         self.setupUi(self)
-        self.parent = parent
+        self.opusXMLAction_xxx = opusXMLAction_xxx
         self.clone = clone
-        self.parentnode = parentnode
+        self.parentNode = parentNode
         self.model = model
-        self.clone = clone
 
     def on_createXML_released(self):
         newNameWithSpace = self.newName.text()
@@ -41,8 +40,8 @@ class CloneNodeGui(QDialog, Ui_CloneNodeGui):
         if not nodeElement.isNull():
             nodeElement.setTagName(newName)
             # Swap in the new name and drop in the node...
-            self.model.insertRow(self.model.rowCount(self.parentnode),
-                                 self.parentnode,
+            self.model.insertRow(self.model.rowCount(self.parentNode),
+                                 self.parentNode,
                                  self.clone)
             self.model.emit(SIGNAL("layoutChanged()"))
         else:
