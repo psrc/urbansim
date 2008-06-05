@@ -26,13 +26,12 @@ import os,tempfile
 
 # Main class for the toolbox
 class ToolboxBase(object):
-    def __init__(self, parent):
-        self.parent = parent
-        self.mainwindow = parent
+    def __init__(self, mainwindow):
+        self.mainwindow = mainwindow
 
         # References to some parent main window elements
-        self.tabWidget = self.parent.tabWidget
-        self.toolBox = self.parent.toolBox
+        self.tabWidget = self.mainwindow.tabWidget
+        self.toolBox = self.mainwindow.toolBox
 
         # Storage for the master copy of the project XML
         self.xml_file = None
@@ -68,13 +67,13 @@ class ToolboxBase(object):
 
         for manager in [self.resultsManagerTree, self.modelManagerTree, self.runManagerTree, self.dataManagerTree]:
             if manager and manager.model.isDirty():
-                saveBeforeOpen = QMessageBox.question(self.parent,"Warning",
+                saveBeforeOpen = QMessageBox.question(self.mainwindow,"Warning",
                                                       save_string,
                                                       QMessageBox.Discard,QMessageBox.Save)
                 break
 
         if saveBeforeOpen == QMessageBox.Save:
-            self.parent.saveConfig()
+            self.mainwindow.saveConfig()
         else:
             #if we have an existing tree we need to remove the dirty bit since we are discarding
             if self.runManagerTree:
@@ -144,19 +143,19 @@ class ToolboxBase(object):
                 self.doc2.setContent(self.configFileTemp2)
                 self.opusDataPath = self.opusXMLTree.get_opus_data_path()
                 self.generalManagerTree = OpusXMLTree(self,"general",
-                                                      self.parent.generalmanager_page.layout())
+                                                      self.mainwindow.generalmanager_page.layout())
                 self.modelManagerTree = OpusXMLTree(self,"model_manager",
-                                                    self.parent.modelmanager_page.layout())
+                                                    self.mainwindow.modelmanager_page.layout())
                 self.runManagerTree = OpusXMLTree(self,"scenario_manager",
-                                                  self.parent.runmanager_page.layout())
+                                                  self.mainwindow.runmanager_page.layout())
                 self.dataManagerTree = OpusXMLTree(self,"data_manager",
-                                                   self.parent.datamanager_xmlconfig.layout())
+                                                   self.mainwindow.datamanager_xmlconfig.layout())
                 self.dataManagerFileTree = OpusFileTree(self,self.opusDataPath,
-                                                        self.parent.datamanager_dirview.layout())
+                                                        self.mainwindow.datamanager_dirview.layout())
                 self.dataManagerDBSTree = OpusXMLTree(self, "data_manager_dbstree",
-                                                      self.parent.datamanager_dbsconnections.layout())
+                                                      self.mainwindow.datamanager_dbsconnections.layout())
                 self.resultsManagerTree = OpusXMLTree(self,"results_manager",
-                                                      self.parent.resultsmanager_page.layout())
+                                                      self.mainwindow.resultsmanager_page.layout())
             else:
                 print "Error reading the %s configuration file" % (xml_file)
         else:
