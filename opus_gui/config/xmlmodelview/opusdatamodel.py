@@ -411,7 +411,7 @@ class OpusDataModel(QAbstractItemModel):
             self.markAsDirty()
         return returnval
 
-    def removeRow(self,row,parent):
+    def removeRow(self,row,parent,checkInherited=True):
         returnval = QAbstractItemModel.removeRow(self,row,parent)
         self.beginRemoveRows(parent,row,row)
         # Remove the element
@@ -427,7 +427,8 @@ class OpusDataModel(QAbstractItemModel):
             self.markAsDirty()
             # Now check if it was inherited and the original should
             # be added back in
-            self.checkIfInheritedAndAddBackToTree(domNodePath, parent)
+            if checkInherited:
+                self.checkIfInheritedAndAddBackToTree(domNodePath, parent)
         self.endRemoveRows()
         return returnval
 
@@ -439,7 +440,7 @@ class OpusDataModel(QAbstractItemModel):
                     howmany = currentRow
                 clone = item.internalPointer().domNode.cloneNode()
                 currentParent = item.parent()
-                self.removeRow(currentRow,currentParent)
+                self.removeRow(currentRow,currentParent,False)
                 self.insertRow(currentRow-howmany,currentParent,clone)
                 self.markAsDirty()
 
@@ -455,7 +456,7 @@ class OpusDataModel(QAbstractItemModel):
                     howmany = (parentItem.numChildren()-1) - currentRow
                 clone = item.internalPointer().domNode.cloneNode()
                 currentParent = item.parent()
-                self.removeRow(currentRow,currentParent)
+                self.removeRow(currentRow,currentParent,False)
                 self.insertRow(currentRow+howmany,currentParent,clone)
                 if not self.isTemporary(item.internalPointer().domNode):
                     self.markAsDirty()
