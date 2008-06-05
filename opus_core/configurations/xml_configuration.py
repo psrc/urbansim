@@ -137,8 +137,12 @@ class XMLConfiguration(object):
         self.tree.write(name)
         
     def find(self, path):
+        """return the string encoding of the node referenced by 'path', or None if there is no such node"""
         n = self._find_node(path)
-        return tostring(n)
+        if n is None:
+            return n
+        else:
+            return tostring(n)
         
     def get_opus_data_path(self):
         """return the path to the opus_data directory.  This is found in the environment variable
@@ -676,6 +680,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(ln_cost_str.strip(), '<ln_cost type="variable_definition">ln_cost=ln(psrc.parcel.cost+10)</ln_cost>')
         unit_price_str = config.find('model_manager/estimation/real_estate_price_model/all_variables/unit_price')
         self.assertEqual(unit_price_str.strip(), '<unit_price inherited="estimate" type="variable_definition">unit_price=urbansim_parcel.parcel.unit_price</unit_price>')
+        squid_str = config.find('model_manager/estimation/squid')
+        self.assertEqual(squid_str, None)
         
     def test_get_controller(self):
         # test getting a run specification that includes a controller in the xml
