@@ -21,8 +21,8 @@ import sys
 import operator
 
 class OpusDatasetTableModel(QAbstractTableModel): 
-    def __init__(self, datain, headerdata, parent=None, *args): 
-        QAbstractTableModel.__init__(self, parent, *args) 
+    def __init__(self, datain, headerdata, parentWidget=None, *args): 
+        QAbstractTableModel.__init__(self, parentWidget, *args) 
         self.arraydata = datain
         self.headerdata = headerdata
  
@@ -80,8 +80,8 @@ class CatchOutput(QTextBrowser):
         def flush( self ):
             pass
                 
-    def __init__( self,parent ):
-        QTextBrowser.__init__( self, parent )
+    def __init__( self,parentWidget ):
+        QTextBrowser.__init__( self, parentWidget )
         self.output = CatchOutput.Output(self.writeResult)
         self.stdout = sys.stdout
         self.stderr = sys.stderr

@@ -21,8 +21,8 @@ import sys
 import operator
 
 class OpusAllVariablesTableModel(QAbstractTableModel): 
-    def __init__(self, datain, headerdata, parent=None, *args): 
-        QAbstractTableModel.__init__(self, parent, *args) 
+    def __init__(self, datain, headerdata, parentWidget=None, *args): 
+        QAbstractTableModel.__init__(self, parentWidget, *args) 
         self.arraydata = datain
         self.headerdata = headerdata
  
