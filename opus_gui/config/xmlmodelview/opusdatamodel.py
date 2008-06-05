@@ -343,28 +343,34 @@ class OpusDataModel(QAbstractItemModel):
             if domNode.isElement():
                 domElement = domNode.toElement()
                 if not domElement.isNull():
-                    domNodePath = self.domNodePath(domNode)
-                    domElement.setTagName(value.toString())
-                    if not self.isTemporary(domElement):
-                        self.markAsDirty()
-                        # Now check if it was inherited and the original should
-                        # be added back in
-                        self.checkIfInheritedAndAddBackToTree(domNodePath, index.parent())
+                    # Check if the value has changed... only update if there is a change
+                    # print "Original - " + domElement.tagName()
+                    # print "New - " + value.toString()
+                    if domElement.tagName() != value.toString():
+                        domNodePath = self.domNodePath(domNode)
+                        domElement.setTagName(value.toString())
+                        if not self.isTemporary(domElement):
+                            self.markAsDirty()
+                            # Now check if it was inherited and the original should
+                            # be added back in
+                            self.checkIfInheritedAndAddBackToTree(domNodePath, index.parent())
         elif index.column() == 1:
             if domNode.hasChildNodes():
                 children = domNode.childNodes()
                 for x in xrange(0,children.count(),1):
                     if children.item(x).isText():
-                        children.item(x).setNodeValue(QString(value.toString()))
-                        if not self.isTemporary(children.item(x)):
-                            self.markAsDirty()
+                        if children.item(x).nodeValue() != value.toString():
+                            children.item(x).setNodeValue(QString(value.toString()))
+                            if not self.isTemporary(children.item(x)):
+                                self.markAsDirty()
             else:
                 #print "New text node to be added"
                 # We need to add a text node since it was blank
-                newText = self.domDocument.createTextNode(QString(value.toString()))
-                domNode.appendChild(newText)
-                if not self.isTemporary(newText):
-                    self.markAsDirty()
+                if value.toString() != QString(""):
+                    newText = self.domDocument.createTextNode(QString(value.toString()))
+                    domNode.appendChild(newText)
+                    if not self.isTemporary(newText):
+                        self.markAsDirty()
         return True
 
     def makeEditable(self,node):
