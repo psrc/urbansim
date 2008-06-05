@@ -23,10 +23,10 @@ from opus_gui.config.managerbase.clonenode import CloneNodeGui
 from opus_gui.results.xml_helper_methods import elementsByAttributeValue, get_child_values
 
 class OpusXMLAction_Results(object):
-    def __init__(self, parent):
-        self.parent = parent
-        self.mainwindow = parent.mainwindow
-        self.xmlTreeObject = parent.xmlTreeObject
+    def __init__(self, opusXMLAction):
+        self.opusXMLAction = opusXMLAction
+        self.mainwindow = opusXMLAction.mainwindow
+        self.xmlTreeObject = opusXMLAction.xmlTreeObject
 
         self.currentColumn = None
         self.currentIndex = None
@@ -138,9 +138,9 @@ class OpusXMLAction_Results(object):
                 self.currentIndex,
                 newNode)
 
-        parent = model.index(0,0,QModelIndex()).parent()
+        parentIndex = model.index(0,0,QModelIndex()).parent()
 
-        child_index = model.findElementIndexByName(name, parent)[0]
+        child_index = model.findElementIndexByName(name, parentIndex)[0]
         if child_index.isValid():
             for node in [expression_node, package_node]:
                 model.insertRow(0,
@@ -227,8 +227,8 @@ class OpusXMLAction_Results(object):
                                     value = '',
                                     choices = datasets)
 
-        parent = self.currentIndex.parent()        
-        child_index = model.findElementIndexByName(indicator, parent)[0]
+        parentIndex = self.currentIndex.parent()        
+        child_index = model.findElementIndexByName(indicator, parentIndex)[0]
         if child_index.isValid():
             for node in [dataset_node, visualization_node]:
                 model.insertRow(0,
@@ -333,10 +333,10 @@ class OpusXMLAction_Results(object):
     def cloneNode(self):
         #print "cloneNode Pressed"
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
-        parent = self.currentIndex.model().parent(self.currentIndex)
+        parentIndex = self.currentIndex.model().parent(self.currentIndex)
         model = self.currentIndex.model()
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        window = CloneNodeGui(self,flags,clone,parent,model)
+        window = CloneNodeGui(self,flags,clone,parentIndex,model)
         window.show()
 
     def makeEditableAction(self):

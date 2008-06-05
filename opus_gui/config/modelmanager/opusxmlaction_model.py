@@ -24,10 +24,10 @@ from opus_gui.config.managerbase.clonenode import CloneNodeGui
 
 
 class OpusXMLAction_Model(object):
-    def __init__(self, parent):
-        self.parent = parent
-        self.mainwindow = parent.mainwindow
-        self.xmlTreeObject = parent.xmlTreeObject
+    def __init__(self, opusXMLAction):
+        self.opusXMLAction = opusXMLAction
+        self.mainwindow = opusXMLAction.mainwindow
+        self.xmlTreeObject = opusXMLAction.xmlTreeObject
 
         self.currentColumn = None
         self.currentIndex = None
@@ -86,10 +86,10 @@ class OpusXMLAction_Model(object):
     def cloneNode(self):
         #print "cloneNode Pressed"
         clone = self.currentIndex.internalPointer().domNode.cloneNode()
-        parent = self.currentIndex.model().parent(self.currentIndex)
+        parentIndex = self.currentIndex.model().parent(self.currentIndex)
         model = self.currentIndex.model()
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        window = CloneNodeGui(self,flags,clone,parent,model)
+        window = CloneNodeGui(self,flags,clone,parentIndex,model)
         window.show()
 
     def makeEditableAction(self):
