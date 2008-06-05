@@ -25,35 +25,35 @@ import sys,string
 
 # Main map class for all map related tools...
 class MapBase(object):
-    def __init__(self, parent):
-        self.parent = parent
+    def __init__(self, mainwindow):
+        self.mainwindow = mainwindow
 
         # create map canvas
-        self.canvas = QgsMapCanvas(self.parent.widgetMap)
+        self.canvas = QgsMapCanvas(self.mainwindow.widgetMap)
         self.canvas.setCanvasColor(Qt.yellow)
         self.canvas.enableAntiAliasing(True)
         self.canvas.useQImageToRender(False)
         self.canvas.show()
-        self.canvas.parentWin = parent
+        self.canvas.parentWin = mainwindow
         debugString = QString("Finished Loading Canvas...")
-        self.parent.statusbar.showMessage(debugString)
+        self.mainwindow.statusbar.showMessage(debugString)
 
         # lay our widgets out in the main window
-        self.layout = QVBoxLayout(self.parent.widgetMap)
+        self.layout = QVBoxLayout(self.mainwindow.widgetMap)
         self.layout.addWidget(self.canvas)
 
         # Link in the map tools
-        QObject.connect(self.parent.mpActionZoomIn, SIGNAL("triggered()"), self.zoomIn)
-        QObject.connect(self.parent.mpActionZoomOut, SIGNAL("triggered()"), self.zoomOut)
-        QObject.connect(self.parent.mpActionPan, SIGNAL("triggered()"), self.pan)
+        QObject.connect(self.mainwindow.mpActionZoomIn, SIGNAL("triggered()"), self.zoomIn)
+        QObject.connect(self.mainwindow.mpActionZoomOut, SIGNAL("triggered()"), self.zoomOut)
+        QObject.connect(self.mainwindow.mpActionPan, SIGNAL("triggered()"), self.pan)
 
         # Map tools
         self.toolPan = QgsMapToolPan(self.canvas)
-        self.toolPan.setAction(self.parent.mpActionPan)
+        self.toolPan.setAction(self.mainwindow.mpActionPan)
         self.toolZoomIn = QgsMapToolZoom(self.canvas, False)
-        self.toolZoomIn.setAction(self.parent.mpActionZoomIn)
+        self.toolZoomIn.setAction(self.mainwindow.mpActionZoomIn)
         self.toolZoomOut = QgsMapToolZoom(self.canvas, True)
-        self.toolZoomOut.setAction(self.parent.mpActionZoomOut)
+        self.toolZoomOut.setAction(self.mainwindow.mpActionZoomOut)
 
         ##### Lets test out a simple map
         self.layers = []
@@ -67,7 +67,7 @@ class MapBase(object):
         if not layer.isValid():
             # Deal with the error
             debugString = QString("Error Loading Layer...")
-            self.parent.statusbar.showMessage(debugString)
+            self.mainwindow.statusbar.showMessage(debugString)
             return
         QgsMapLayerRegistry.instance().addMapLayer(layer)
 

@@ -21,10 +21,10 @@ from PyQt4.QtGui import *
 from opusabout_ui import Ui_UrbansimAbout
 
 class UrbansimAboutGui(QDialog, Ui_UrbansimAbout):
-    def __init__(self, parent, fl):
-        QDialog.__init__(self, parent, fl)
+    def __init__(self, mainwindow, fl):
+        QDialog.__init__(self, mainwindow, fl)
         self.setupUi(self)
-        self.parent = parent
+        self.mainwindow = mainwindow
 
     def on_webPushButton_released(self):
         #print "webPushButton pressed"
