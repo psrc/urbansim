@@ -20,11 +20,11 @@ from opus_gui.util.pythongui import OpusPythonShell
 
 # Main console class for the python console
 class ConsoleBase(object):
-    def __init__(self, parent):
-        self.parent = parent
+    def __init__(self, mainwindow):
+        self.mainwindow = mainwindow
 
-        self.pythonGui = OpusPythonShell(self.parent.pythonWidget,self.parent.pythonLineEdit,self.parent.__dict__)
-        self.pythonLayout = QGridLayout(self.parent.pythonWidget)
+        self.pythonGui = OpusPythonShell(self.mainwindow.pythonWidget,self.mainwindow.pythonLineEdit,self.mainwindow.__dict__)
+        self.pythonLayout = QGridLayout(self.mainwindow.pythonWidget)
         self.pythonLayout.setMargin(9)
         self.pythonLayout.setSpacing(6)
         self.pythonLayout.setObjectName("pythonLayout")

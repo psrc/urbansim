@@ -22,23 +22,23 @@ import sys,string
 
 # Main 
 class DocumentationBase(QTextBrowser):
-    def __init__(self, parent,src):
-        QTextBrowser.__init__(self, parent)
-        self.parent = parent
+    def __init__(self, mainwindow, src):
+        QTextBrowser.__init__(self, mainwindow)
+        self.mainwindow = mainwindow
         self.src = src
         self.setOpenExternalLinks(True)
         self.setSource(QUrl(self.src))
 
 
 class DocumentationTab(QWidget):
-    def __init__(self, parent, filePath):
-        QWidget.__init__(self, parent)
-        self.parent = parent
+    def __init__(self, mainwindow, filePath):
+        QWidget.__init__(self, mainwindow)
+        self.mainwindow = mainwindow
 
         self.tabIcon = QIcon(":/Images/Images/chart_organisation.png")
         self.tabLabel = "Documentation Tab"
 
-        self.tab = QWidget(parent)
+        self.tab = QWidget(self.mainwindow)
 
         self.widgetLayout = QVBoxLayout(self.tab)
         self.widgetLayout.setAlignment(Qt.AlignTop)
@@ -55,15 +55,15 @@ class DocumentationTab(QWidget):
                         self.released)
         self.widgetLayout.addWidget(self.pbnRemoveDoc)
 
-        self.docStuff = DocumentationBase(self.parent,filePath)
+        self.docStuff = DocumentationBase(self.mainwindow,filePath)
         self.widgetLayout.addWidget(self.docStuff)
         self.docStatusLabel.setText(QString(filePath))
 
-        self.parent.tabWidget.insertTab(0,self.tab,self.tabIcon,self.tabLabel)
-        self.parent.tabWidget.setCurrentIndex(0)
+        self.mainwindow.tabWidget.insertTab(0,self.tab,self.tabIcon,self.tabLabel)
+        self.mainwindow.tabWidget.setCurrentIndex(0)
 
     def released(self):
         print "Remove Documentation Pressed..."
-        self.parent.tabWidget.removeTab(self.parent.tabWidget.indexOf(self.tab))
+        self.mainwindow.tabWidget.removeTab(self.mainwindow.tabWidget.indexOf(self.tab))
         self.tab.hide()
 

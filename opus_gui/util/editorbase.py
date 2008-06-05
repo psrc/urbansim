@@ -23,18 +23,18 @@ import sys,string
 
 # Main 
 class EditorBase(QsciScintilla):
-    def __init__(self, parent):
-        QsciScintilla.__init__(self, parent)
-        self.parent = parent
+    def __init__(self, mainwindow):
+        QsciScintilla.__init__(self, mainwindow)
+        self.mainwindow = mainwindow
 
 class EditorTab(object):
-    def __init__(self, parent, filePath):
-        self.parent = parent
+    def __init__(self, mainwindow, filePath):
+        self.mainwindow = mainwindow
 
         self.tabIcon = QIcon(":/Images/Images/cog.png")
         self.tabLabel = "Editor Dyn Tab"
 
-        self.tab = QWidget(parent)
+        self.tab = QWidget(self.mainwindow)
 
         self.widgetLayout = QVBoxLayout(self.tab)
         self.widgetLayout.setAlignment(Qt.AlignTop)
@@ -43,7 +43,7 @@ class EditorTab(object):
         self.editorStatusLabel.setObjectName("editorStatusLabel")
         self.editorStatusLabel.setText(QString("No files currently loaded..."))
         self.widgetLayout.addWidget(self.editorStatusLabel)
-        self.editorStuff = EditorBase(self.parent)
+        self.editorStuff = EditorBase(self.mainwindow)
         self.widgetLayout.addWidget(self.editorStuff)
         try:
             f = open(filePath,'r')
@@ -54,6 +54,6 @@ class EditorTab(object):
         f.close()
         self.editorStatusLabel.setText(QString(filePath))
 
-        self.parent.tabWidget.insertTab(0,self.tab,self.tabIcon,self.tabLabel)
-        self.parent.tabWidget.setCurrentIndex(0)
+        self.mainwindow.tabWidget.insertTab(0,self.tab,self.tabIcon,self.tabLabel)
+        self.mainwindow.tabWidget.setCurrentIndex(0)
 
