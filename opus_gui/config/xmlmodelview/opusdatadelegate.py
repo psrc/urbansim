@@ -18,28 +18,28 @@ from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
 class OpusDataDelegate(QItemDelegate):
-    def __init__(self, parent):
-        QItemDelegate.__init__(self, parent)
-        self.parent = parent
+    def __init__(self, parentView):
+        QItemDelegate.__init__(self, parentView)
+        self.parentView = parentView
         self.signalMapper = QSignalMapper(self)
 
-    def createEditor(self, parent, option, index):
+    def createEditor(self, parentView, option, index):
         if not index.isValid():
-            return QItemDelegate.createEditor(self, parent, option, index)
+            return QItemDelegate.createEditor(self, parentView, option, index)
         # Get the item associated with the index
         item = index.internalPointer()
         domNode = item.node()
         if domNode.isNull():
-            return QItemDelegate.createEditor(self, parent, option, index)
+            return QItemDelegate.createEditor(self, parentView, option, index)
         # Handle ElementNodes
         if domNode.isElement():
             domElement = domNode.toElement()
             if domElement.isNull():
-                return QItemDelegate.createEditor(self, parent, option, index)
+                return QItemDelegate.createEditor(self, parentView, option, index)
             # So we have a valid element and our column is 1 we need to make a editor
             if index.column() == 1:
                 if domElement.hasAttribute(QString("choices")):
-                    editor = QComboBox(parent)
+                    editor = QComboBox(parentView)
                     choices = domElement.attribute(QString("choices"))
                     currentIndex = 0
                     for i,choice in enumerate(choices.split("|")):
@@ -50,10 +50,10 @@ class OpusDataDelegate(QItemDelegate):
                     QObject.connect(editor, SIGNAL("activated(int)"), self.comboBoxFinished)
                     return editor
                 elif domElement.attribute(QString("type")) == QString("db_connection_hook"):
-                    editor = QComboBox(parent)
+                    editor = QComboBox(parentView)
                     # Now find the options from the database section of the XML
-                    dbxml = self.parent.parent.toolboxStuff.dataManagerDBSTree.model.index(0,0,QModelIndex()).parent()
-                    dbindexlist = self.parent.parent.toolboxStuff.dataManagerDBSTree.model.findElementIndexByType("db_connection",dbxml,True)
+                    dbxml = self.parentView.mainwindow.toolboxStuff.dataManagerDBSTree.model.index(0,0,QModelIndex()).parent()
+                    dbindexlist = self.parentView.mainwindow.toolboxStuff.dataManagerDBSTree.model.findElementIndexByType("db_connection",dbxml,True)
                     choices = []
                     for dbindex in dbindexlist:
                         if dbindex.isValid():
@@ -68,17 +68,17 @@ class OpusDataDelegate(QItemDelegate):
                     QObject.connect(editor, SIGNAL("activated(int)"), self.comboBoxFinished)
                     return editor                    
                 else:
-                    editor = QItemDelegate.createEditor(self, parent, option, index)
+                    editor = QItemDelegate.createEditor(self, parentView, option, index)
                     if type(editor) == QLineEdit:
                         editor.setText(index.model().data(index,Qt.DisplayRole).toString())
                     return editor
             elif index.column() == 0:
-                editor = QItemDelegate.createEditor(self, parent, option, index)
+                editor = QItemDelegate.createEditor(self, parentView, option, index)
                 if type(editor) == QLineEdit:
                     editor.setText(index.model().data(index,Qt.DisplayRole).toString())
                 return editor
             else:
-                return QItemDelegate.createEditor(self, parent, option, index)
+                return QItemDelegate.createEditor(self, parentView, option, index)
 
     def setEditorData(self,editor,index):
         pass
