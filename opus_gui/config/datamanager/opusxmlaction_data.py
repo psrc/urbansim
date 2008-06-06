@@ -322,6 +322,11 @@ class OpusXMLAction_Data(object):
                     self.menu.addAction(self.actAddScriptFile)
                 elif domElement.attribute(QString("type")) == QString("script_config"):
                     self.menu.addAction(self.actExecScriptConfig)
+                    self.menu.addSeparator()
+                    self.menu.addAction(self.actMoveNodeUp)
+                    self.menu.addAction(self.actMoveNodeDown)
+                    self.menu.addSeparator()
+                    self.menu.addAction(self.actRemoveNode)
                 elif domElement.attribute(QString("type")) == QString("script_batch"):
                     #jesse testing
                     self.menu.addAction(self.actExecBatch)
