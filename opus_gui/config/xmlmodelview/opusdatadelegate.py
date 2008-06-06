@@ -22,7 +22,7 @@ class OpusDataDelegate(QItemDelegate):
         QItemDelegate.__init__(self, parentView)
         self.parentView = parentView
         self.signalMapper = QSignalMapper(self)
-
+        
     def createEditor(self, parentView, option, index):
         if not index.isValid():
             return QItemDelegate.createEditor(self, parentView, option, index)
@@ -47,7 +47,7 @@ class OpusDataDelegate(QItemDelegate):
                         if index.model().data(index,Qt.DisplayRole).toString() == choice:
                             currentIndex = i
                     editor.setCurrentIndex(currentIndex)
-                    QObject.connect(editor, SIGNAL("activated(int)"), self.comboBoxFinished)
+                    #QObject.connect(editor, SIGNAL("activated(int)"), self.comboBoxFinished)
                     return editor
                 elif domElement.attribute(QString("type")) == QString("db_connection_hook"):
                     editor = QComboBox(parentView)
@@ -65,8 +65,27 @@ class OpusDataDelegate(QItemDelegate):
                         if index.model().data(index,Qt.DisplayRole).toString() == choice:
                             currentIndex = i
                     editor.setCurrentIndex(currentIndex)
-                    QObject.connect(editor, SIGNAL("activated(int)"), self.comboBoxFinished)
                     return editor                    
+                elif domElement.attribute(QString("type")) == QString("file_path") or \
+                         domElement.attribute(QString("type")) == QString("dir_path"):
+                    # We have a file path we need to fill in...
+                    editor_file = QFileDialog()
+                    filter_str = QString("*.*")
+                    editor_file.setFilter(filter_str)
+                    editor_file.setAcceptMode(QFileDialog.AcceptOpen)
+                    if domElement.attribute(QString("type")) == QString("file_path"):
+                        fd = editor_file.getOpenFileName(self.parentView.mainwindow,QString("Please select a file..."))
+                    elif domElement.attribute(QString("type")) == QString("dir_path"):
+                        fd = editor_file.getExistingDirectory(self.parentView.mainwindow,QString("Please select a directory..."))                        
+                    # Check for cancel
+                    if len(fd) == 0:
+                        fileName = index.model().data(index,Qt.DisplayRole).toString()
+                    else:
+                        fileName = QString(fd)
+                    editor = QItemDelegate.createEditor(self, parentView, option, index)
+                    if type(editor) == QLineEdit:
+                        editor.setText(fileName)
+                    return editor
                 else:
                     editor = QItemDelegate.createEditor(self, parentView, option, index)
                     if type(editor) == QLineEdit:
@@ -83,7 +102,6 @@ class OpusDataDelegate(QItemDelegate):
     def setEditorData(self,editor,index):
         pass
 
-
     def setModelData(self,editor,model,index):
         #print "setModelData"
         if type(editor) == QComboBox:
@@ -91,10 +109,9 @@ class OpusDataDelegate(QItemDelegate):
         else:
             QItemDelegate.setModelData(self,editor,model,index)
 
-
     def updateEditorGeometry(self, editor, option, index):
-        editor.setGeometry(option.rect)
-
-    def comboBoxFinished(self,x):
-        #print "comboBoxFinished ", self.sender()
-        self.emit(SIGNAL("commitData(QWidget*)"),self.sender())
+        if type(editor) == QComboBox:
+            editor.setGeometry(option.rect)
+        else:
+            QItemDelegate.updateEditorGeometry(self,editor,option,index)
+        
