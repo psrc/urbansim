@@ -74,9 +74,11 @@ class OpusDataDelegate(QItemDelegate):
                     editor_file.setFilter(filter_str)
                     editor_file.setAcceptMode(QFileDialog.AcceptOpen)
                     if domElement.attribute(QString("type")) == QString("file_path"):
-                        fd = editor_file.getOpenFileName(self.parentView.mainwindow,QString("Please select a file..."))
+                        fd = editor_file.getOpenFileName(self.parentView.mainwindow,QString("Please select a file..."),
+                                                         index.model().data(index,Qt.DisplayRole).toString())
                     elif domElement.attribute(QString("type")) == QString("dir_path"):
-                        fd = editor_file.getExistingDirectory(self.parentView.mainwindow,QString("Please select a directory..."))                        
+                        fd = editor_file.getExistingDirectory(self.parentView.mainwindow,QString("Please select a directory..."),
+                                                              index.model().data(index,Qt.DisplayRole).toString())                        
                     # Check for cancel
                     if len(fd) == 0:
                         fileName = index.model().data(index,Qt.DisplayRole).toString()
