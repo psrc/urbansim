@@ -60,7 +60,7 @@ class OpusXMLAction_Data(object):
                         self.addScriptFile)
 
         self.actNewConfig = QAction(self.calendarIcon,
-                                     "Create New Config (TESTING)",
+                                     "Create New Config",
                                      self.xmlTreeObject.mainwindow)
         QObject.connect(self.actNewConfig,
                         SIGNAL("triggered()"),
