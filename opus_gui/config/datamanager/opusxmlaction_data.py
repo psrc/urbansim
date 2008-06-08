@@ -143,7 +143,7 @@ class OpusXMLAction_Data(object):
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def newConfig(self):
-        print "newConfig Pressed"
+        #print "newConfig Pressed"
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         window = ConfigureScriptGui(self,flags)
         window.show()

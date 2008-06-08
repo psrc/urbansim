@@ -36,6 +36,7 @@ class ConfigureScriptGui(QDialog, Ui_ConfigureScriptGui):
         self.test_widget = []
         self.hboxlayout = []
         self.test_text = []
+        self.test_text_type = []
         self.test_line = []
         # First find the available database connection templates to fill in types
         templates_root = self.model.xmlRoot.toElement().elementsByTagName(QString("script_library")).item(0)
@@ -48,128 +49,143 @@ class ConfigureScriptGui(QDialog, Ui_ConfigureScriptGui):
         # Now we hook up to the user selecting the type desired
         QObject.connect(self.comboBox, SIGNAL("currentIndexChanged(int)"),
                         self.scriptTypeSelected)
-        
-        #self.numberofvars = random.randint(2, 10)
-        #for x in xrange(0,self.numberofvars):
-        #    print "Looping::%d" % (x)
-        #    self.test_widget.insert(x,QWidget(self.variableBox))
-        #    self.test_widget[x].setObjectName(QString("test_widget").append(str(x)))
-        #    self.hboxlayout.insert(x,QHBoxLayout(self.test_widget[x]))
-        #    self.hboxlayout[x].setMargin(4)
-        #    self.hboxlayout[x].setSpacing(4)
-        #    self.hboxlayout[x].setObjectName(QString("hboxlayout").append(str(x)))
-        #    self.test_text.insert(x,QLabel(self.test_widget[x]))
-        #    self.test_text[x].setObjectName(QString("test1_text").append(str(x)))
-        #    self.test_text[x].setText(QString("test").append(str(x)))
-        #    self.hboxlayout[x].addWidget(self.test_text[x])
-        #    self.test_line.insert(x,QLineEdit(self.test_widget[x]))
-        #    self.test_line[x].setEnabled(True)
-        #    self.test_line[x].setMinimumSize(QSize(200,0))
-        #    self.test_line[x].setObjectName(QString("test_line").append(str(x)))
-        #    self.hboxlayout[x].addWidget(self.test_line[x])
-        #    self.vboxlayout.addWidget(self.test_widget[x])
+        self.scripttypearray = []
+        self.typeSelection = None
 
     def on_createConfig_released(self):
-        print "create pressed"
-        #for x in xrange(0,self.numberofvars):
-        #    self.vars[self.test_text[x].text()] = self.test_line[x].text()
-        #for key,val in self.vars.iteritems():
-        #    print "Key: %s , Val: %s" % (key,val)
+        #print "create pressed"
+
+        # Need to create something that looks like this:
+        #<opus_database_to_sql_config type="script_config">
+        #  <script_hook type="script_library_ref">opus_database_to_sql_tool</script_hook>
+        #  <sql_db_name type="string">mytestdb</sql_db_name>
+        #  <opus_data_directory type="string" />
+        #  <opus_data_year type="string">ALL</opus_data_year>
+        #  <opus_table_name type="string">ALL</opus_table_name>
+        #</opus_database_to_sql_config>
+        
+        scriptname = self.test_line[0].text()
+        # First is the connection node with the connection name
+        newNode = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(scriptname)
+        newNode.setAttribute(QString("type"),QString("script_config"))
+        # Add the script hook back in
+        newChild = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(QString("script_hook"))
+        newChild.setAttribute(QString("type"),QString("script_library_ref"))
+        newText = self.opusXMLAction_xxx.currentIndex.model().domDocument.createTextNode(self.typeSelection)
+        newChild.appendChild(newText)
+        newNode.appendChild(newChild)
+        # for key,val in self.vars.iteritems():
+        for x in xrange(1,len(self.test_text)):
+            #self.vars[self.test_text[x].text()] = self.test_line[x].text()
+            key = self.test_text[x].text()
+            val = self.test_line[x].text()
+            typeVal = self.test_text_type[x].text().remove(QRegExp("[\(\)]"))
+            # print "Key: %s , Val: %s" % (key,val)
+            # Next we add each of the child nodes with the user defined values
+            newChild = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(key)
+            newChild.setAttribute(QString("type"),typeVal)
+            newText = self.opusXMLAction_xxx.currentIndex.model().domDocument.createTextNode(val)
+            newChild.appendChild(newText)
+            newNode.appendChild(newChild)
+        self.opusXMLAction_xxx.currentIndex.model().insertRow(self.opusXMLAction_xxx.currentIndex.model().rowCount(self.opusXMLAction_xxx.currentIndex),
+                                                   self.opusXMLAction_xxx.currentIndex,
+                                                   newNode)
+        self.opusXMLAction_xxx.currentIndex.model().emit(SIGNAL("layoutChanged()"))
         self.close()
-        #databasename = self.test_line[0].text()
-        ## First is the connection node with the connection name
-        #newNode = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(databasename)
-        #newNode.setAttribute(QString("type"),QString("db_connection"))
-        ## for key,val in self.vars.iteritems():
-        #for x in xrange(1,len(self.test_text)):
-        #    #self.vars[self.test_text[x].text()] = self.test_line[x].text()
-        #    key = self.test_text[x].text()
-        #    val = self.test_line[x].text()
-        #    typeVal = self.test_text_type[x].text().remove(QRegExp("[\(\)]"))
-        #    # print "Key: %s , Val: %s" % (key,val)
-        #    # Next we add each of the child nodes with the user defined values
-        #    newChild = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(key)
-        #    newChild.setAttribute(QString("type"),typeVal)
-        #    newText = self.opusXMLAction_xxx.currentIndex.model().domDocument.createTextNode(val)
-        #    newChild.appendChild(newText)
-        #    newNode.appendChild(newChild)
-        #self.opusXMLAction_xxx.currentIndex.model().insertRow(self.opusXMLAction_xxx.currentIndex.model().rowCount(self.opusXMLAction_xxx.currentIndex),
-        #                                           self.opusXMLAction_xxx.currentIndex,
-        #                                           newNode)
-        #self.opusXMLAction_xxx.currentIndex.model().emit(SIGNAL("layoutChanged()"))
-        #self.close()
 
     def on_cancelConfig_released(self):
-        print "cancel pressed"
+        #print "cancel pressed"
         self.close()
 
     def scriptTypeSelected(self,index):
-        print "Got a new selection"
-        #for testw in self.test_widget:
-        #    self.vboxlayout.removeWidget(testw)
-        #    testw.hide()
-        #del self.dbtypearray[:]
-        #del self.test_widget[:]
-        #del self.test_text[:]
-        #del self.test_line[:]
-        ## The database connection will always have a tagname
-        #self.dbtypearray.append([QString("Database Connection Name"),QString("db_connection"),QString("")])
-        ## Now look up the selected connection type and present to the user...
-        #templates_root = self.model.xmlRoot.toElement().elementsByTagName(QString("database_templates")).item(0)
-        #if templates_root and templates_root.hasChildNodes():
-        #    children = templates_root.childNodes()
-        #    for x in xrange(0,children.count(),1):
-        #        if children.item(x).toElement().tagName() == self.comboBox.itemText(index):
-        #            if children.item(x).hasChildNodes():
-        #                children2 = children.item(x).childNodes()
-        #                for y in xrange(0,children2.count(),1):
-        #                    # We have a parameter... need to get tag name and text node value
-        #                    tagName = children2.item(y).toElement().tagName()
-        #                    typeName = QString('')
-        #                    typeName = children2.item(y).toElement().attribute(QString("type"))
-        #                    nodeVal = QString('')
-        #                    if children2.item(y).hasChildNodes():
-        #                        children3 = children2.item(y).childNodes()
-        #                        for z in xrange(0,children3.count(),1):
-        #                            if children3.item(z).isText():
-        #                                nodeVal = children3.item(z).nodeValue()
-        #                    self.dbtypearray.append([tagName,typeName,nodeVal])
-        #for i,param in enumerate(self.dbtypearray):
-        #    # print "Key: %s , Val: %s" % (param[0],param[1])
-        #    if (i==0):
-        #        widgetTemp = QFrame(self.variableBox)
-        #        widgetTemp.setFrameStyle(QFrame.Panel | QFrame.Raised)
-        #        widgetTemp.setLineWidth(2)
-        #    else:
-        #        widgetTemp = QWidget(self.variableBox)
-        #    widgetTemp.setObjectName(QString("test_widget").append(QString(i)))
-        #    self.test_widget.append(widgetTemp)
-        #    hlayout = QHBoxLayout(widgetTemp)
-        #    self.hboxlayout.append(hlayout)
-        #    hlayout.setMargin(4)
-        #    hlayout.setSpacing(4)
-        #    hlayout.setObjectName(QString("hboxlayout").append(QString(i)))
-        #    test_text = QLabel(widgetTemp)
-        #    self.test_text.append(test_text)
-        #    test_text.setObjectName(QString("test_text").append(QString(i)))
-        #    paramName = param[0].trimmed()
-        #    if param[2].trimmed() == QString("Required"):
-        #        palette = test_text.palette()
-        #        palette.setColor(QPalette.WindowText,Qt.red)
-        #        test_text.setPalette(palette)
-        #    test_text.setText(paramName)
-        #    test_text_type = QLabel(widgetTemp)
-        #    self.test_text_type.append(test_text_type)
-        #    test_text_type.setObjectName(QString("test_text_type").append(QString(i)))
-        #    paramName = param[1].trimmed()
-        #    test_text_type.setText(QString("(").append(paramName).append(QString(")")))
-        #    hlayout.addWidget(test_text)
-        #    hlayout.addWidget(test_text_type)
-        #    test_line = QLineEdit(widgetTemp)
-        #    self.test_line.append(test_line)
-        #    test_line.setEnabled(True)
-        #    test_line.setMinimumSize(QSize(200,0))
-        #    test_line.setObjectName(QString("test_line").append(QString(i)))
-        #    test_line.setText(QString(""))
-        #    hlayout.addWidget(test_line)
-        #    self.vboxlayout.addWidget(widgetTemp)
+        #print "Got a new selection"
+        #print self.comboBox.itemText(index)
+
+        self.typeSelection = self.comboBox.itemText(index)
+        for testw in self.test_widget:
+            self.vboxlayout.removeWidget(testw)
+            testw.hide()
+        del self.scripttypearray[:]
+        del self.test_widget[:]
+        del self.test_text[:]
+        del self.test_line[:]
+
+        # The script_config will always have script_config name
+        self.scripttypearray.append([QString("Script Config Name"),QString("script_config"),QString("")])
+
+        # Now look up the selected connection type and present to the user...
+        # First we start at the script_library
+        templates_root = self.model.xmlRoot.toElement().elementsByTagName(QString("script_library")).item(0)
+        if templates_root and templates_root.hasChildNodes():
+            library = templates_root.childNodes()
+            for x in xrange(0,library.count(),1):
+                if library.item(x).isElement():
+                    library_child = library.item(x).toElement()
+                    foundOurScript = False
+                    if library_child.hasAttribute(QString("type")) and \
+                           (library_child.attribute(QString("type")) == QString("script_file")):
+                        if library_child.tagName() == self.comboBox.itemText(index):
+                            foundOurScript = True
+                    if foundOurScript:
+                        script_file = library_child.childNodes()
+                        for xx in xrange(0,script_file.count(),1):
+                            if script_file.item(xx).isElement():
+                                script_file_child = script_file.item(xx).toElement()
+                                # Find the name element and compare
+                                if script_file_child.hasAttribute(QString("type")) and \
+                                       (script_file_child.attribute(QString("type")) == QString("param_template")):
+                                    if script_file_child.hasChildNodes():
+                                        params = script_file_child.childNodes()
+                                        # Here we loop through the params
+                                        for xxx in xrange(0,params.count(),1):
+                                            if params.item(xxx).isElement():
+                                                param = params.item(xxx).toElement()
+                                                tagName = param.tagName()
+                                                typeName = QString('')
+                                                typeName = param.attribute(QString("type"))
+                                                nodeVal = QString('')
+                                                if param.hasChildNodes():
+                                                    textSearch = param.childNodes()
+                                                    for xxxx in xrange(0,textSearch.count(),1):
+                                                        if textSearch.item(xxxx).isText():
+                                                            nodeVal = textSearch.item(xxxx).nodeValue()
+                                                            self.scripttypearray.append([tagName,typeName,nodeVal])
+        for i,param in enumerate(self.scripttypearray):
+            # print "Key: %s , Val: %s" % (param[0],param[1])
+            if (i==0):
+                widgetTemp = QFrame(self.variableBox)
+                widgetTemp.setFrameStyle(QFrame.Panel | QFrame.Raised)
+                widgetTemp.setLineWidth(2)
+            else:
+                widgetTemp = QWidget(self.variableBox)
+            widgetTemp.setObjectName(QString("test_widget").append(QString(i)))
+            self.test_widget.append(widgetTemp)
+            hlayout = QHBoxLayout(widgetTemp)
+            self.hboxlayout.append(hlayout)
+            hlayout.setMargin(4)
+            hlayout.setSpacing(4)
+            hlayout.setObjectName(QString("hboxlayout").append(QString(i)))
+            test_text = QLabel(widgetTemp)
+            self.test_text.append(test_text)
+            test_text.setObjectName(QString("test_text").append(QString(i)))
+            paramName = param[0].trimmed()
+            if param[2].trimmed() == QString("Required"):
+                palette = test_text.palette()
+                palette.setColor(QPalette.WindowText,Qt.red)
+                test_text.setPalette(palette)
+            test_text.setText(paramName)
+            test_text_type = QLabel(widgetTemp)
+            self.test_text_type.append(test_text_type)
+            test_text_type.setObjectName(QString("test_text_type").append(QString(i)))
+            paramName = param[1].trimmed()
+            test_text_type.setText(QString("(").append(paramName).append(QString(")")))
+            hlayout.addWidget(test_text)
+            hlayout.addWidget(test_text_type)
+            test_line = QLineEdit(widgetTemp)
+            self.test_line.append(test_line)
+            test_line.setEnabled(True)
+            test_line.setMinimumSize(QSize(200,0))
+            test_line.setObjectName(QString("test_line").append(QString(i)))
+            test_line.setText(QString(""))
+            hlayout.addWidget(test_line)
+            self.vboxlayout.addWidget(widgetTemp)
