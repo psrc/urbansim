@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'configurescript.ui'
 #
-# Created: Mon Jan 21 21:29:03 2008
+# Created: Sun Jun  8 11:01:38 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -16,6 +16,10 @@ class Ui_ConfigureScriptGui(object):
 
         self.vboxlayout = QtGui.QVBoxLayout(ConfigureScriptGui)
         self.vboxlayout.setObjectName("vboxlayout")
+
+        self.comboBox = QtGui.QComboBox(ConfigureScriptGui)
+        self.comboBox.setObjectName("comboBox")
+        self.vboxlayout.addWidget(self.comboBox)
 
         self.variableBox = QtGui.QGroupBox(ConfigureScriptGui)
         self.variableBox.setObjectName("variableBox")
@@ -45,6 +49,7 @@ class Ui_ConfigureScriptGui(object):
 
     def retranslateUi(self, ConfigureScriptGui):
         ConfigureScriptGui.setWindowTitle(QtGui.QApplication.translate("ConfigureScriptGui", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBox.addItem(QtGui.QApplication.translate("ConfigureScriptGui", "Select Script", None, QtGui.QApplication.UnicodeUTF8))
         self.variableBox.setTitle(QtGui.QApplication.translate("ConfigureScriptGui", "Script Variables", None, QtGui.QApplication.UnicodeUTF8))
         self.createConfig.setText(QtGui.QApplication.translate("ConfigureScriptGui", "Create Config", None, QtGui.QApplication.UnicodeUTF8))
         self.cancelConfig.setText(QtGui.QApplication.translate("ConfigureScriptGui", "Cancel", None, QtGui.QApplication.UnicodeUTF8))

@@ -214,19 +214,27 @@ class OpusXMLAction_Data(object):
                     script_name = children.item(x).nodeValue()
         # This will be in the script_library
         script_path = library.toElement().elementsByTagName("script_path").item(0)
-        script = library.toElement().elementsByTagName(script_name).item(0)
-
+        script_file = library.toElement().elementsByTagName(script_name).item(0)
+        
         # First find the script path text...
         if script_path.hasChildNodes():
             children = script_path.childNodes()
             for x in xrange(0,children.count(),1):
                 if children.item(x).isText():
                     scriptPath = children.item(x).nodeValue()
-        if script.hasChildNodes():
-            children = script.childNodes()
+        # Next if the script_file has a script_name we grab it
+        if script_file.hasChildNodes():
+            children = script_file.childNodes()
             for x in xrange(0,children.count(),1):
-                if children.item(x).isText():
-                    filePath = children.item(x).nodeValue()
+                if children.item(x).isElement():
+                    thisElement = children.item(x).toElement()
+                    if thisElement.hasAttribute(QString("type")) and \
+                           (thisElement.attribute(QString("type")) == QString("script_name")):
+                        if thisElement.hasChildNodes():
+                            children2 = thisElement.childNodes()
+                            for x2 in xrange(0,children2.count(),1):
+                                if children2.item(x2).isText():
+                                    filePath = children2.item(x2).nodeValue()
         importPath = QString(scriptPath).append(QString(".")).append(QString(filePath))
         print "New import ", importPath
 
