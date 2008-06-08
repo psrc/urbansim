@@ -35,17 +35,70 @@
     </database_library>
   </data_manager_dbstree>
   <data_manager>
-    <script_library type="script_library">
+    <script_library setexpanded="True" type="script_library">
       <script_path type="script_path">projects.scripts</script_path>
-      <opus_database_to_sql_tool type="script_file">opus_database_to_sql</opus_database_to_sql_tool>
-      <opus_database_to_esri_tool type="script_file">opus_database_to_esri</opus_database_to_esri_tool>
-      <esri_buffer_tool type="script_file">esri_buffer</esri_buffer_tool>
-      <esri_data_to_opus type="script_file">esri_data_to_opus</esri_data_to_opus>
-      <sql_data_to_opus type="script_file">sql_data_to_opus</sql_data_to_opus>
-      <opus_data_to_sql type="script_file">opus_data_to_sql</opus_data_to_sql>
-      <opus_data_to_esri type="script_file">opus_data_to_esri</opus_data_to_esri>
-      <create_businesses_from_cbp_data_file type="script_file">create_businesses_from_cbp_data_file</create_businesses_from_cbp_data_file>
-      <create_households_from_sf3_data type="script_file">create_households_from_sf3_data</create_households_from_sf3_data>
+      <opus_database_to_sql_tool type="script_file">
+	<name type="script_name">opus_database_to_sql</name>
+	<params type="param_template">
+          <sql_db_name choices="Required|Optional" type="string">Required</sql_db_name>
+          <opus_data_directory choices="Required|Optional" type="string">Required</opus_data_directory>
+          <opus_data_year choices="Required|Optional" type="string">Required</opus_data_year>
+          <opus_table_name choices="Required|Optional" type="string">Required</opus_table_name>
+	</params>
+      </opus_database_to_sql_tool>
+      <opus_database_to_esri_tool type="script_file">
+	<name type="script_name">opus_database_to_esri</name>
+	<params type="param_template">
+          <esri_data_path choices="Required|Optional" type="string">Required</esri_data_path>
+          <opus_data_directory choices="Required|Optional" type="string">Required</opus_data_directory>
+          <opus_data_year choices="Required|Optional" type="string">Required</opus_data_year>
+          <opus_table_name choices="Required|Optional" type="string">Required</opus_table_name>
+	</params>
+      </opus_database_to_esri_tool>
+      <opus_dataset_to_sql_tool type="script_file">
+	<name type="script_name">opus_dataset_to_sql</name>
+	<params type="param_template">
+          <sql_db_name choices="Required|Optional" type="string">Required</sql_db_name>
+          <opus_data_directory choices="Required|Optional" type="string">Required</opus_data_directory>
+          <opus_data_year choices="Required|Optional" type="string">Required</opus_data_year>
+          <opus_table_name choices="Required|Optional" type="string">Required</opus_table_name>
+	</params>
+      </opus_dataset_to_sql_tool>
+      <opus_dataset_to_esri_tool type="script_file">
+	<name type="script_name">opus_dataset_to_esri</name>
+	<params type="param_template">
+          <esri_data_path choices="Required|Optional" type="string">Required</esri_data_path>
+          <opus_data_directory choices="Required|Optional" type="string">Required</opus_data_directory>
+          <opus_data_year choices="Required|Optional" type="string">Required</opus_data_year>
+          <opus_table_name choices="Required|Optional" type="string">Required</opus_table_name>
+	</params>
+      </opus_dataset_to_esri_tool>
+      <opus_array_to_sql_tool type="script_file">
+	<name type="script_name">opus_array_to_sql</name>
+	<params type="param_template">
+          <sql_db_name choices="Required|Optional" type="string">Required</sql_db_name>
+          <opus_data_directory choices="Required|Optional" type="string">Required</opus_data_directory>
+          <opus_data_year choices="Required|Optional" type="string">Required</opus_data_year>
+          <opus_table_name choices="Required|Optional" type="string">Required</opus_table_name>
+	</params>
+      </opus_array_to_sql_tool>
+      <opus_array_to_esri_tool type="script_file">
+	<name type="script_name">opus_array_to_esri</name>
+	<params type="param_template">
+          <esri_data_path choices="Required|Optional" type="string">Required</esri_data_path>
+          <opus_data_directory choices="Required|Optional" type="string">Required</opus_data_directory>
+          <opus_data_year choices="Required|Optional" type="string">Required</opus_data_year>
+          <opus_table_name choices="Required|Optional" type="string">Required</opus_table_name>
+	</params>
+      </opus_array_to_esri_tool>
+      <esri_buffer_tool type="script_file">
+	<name type="script_name">esri_buffer</name>
+	<params type="param_template">
+          <input_shapefile choices="Required|Optional" type="string">Required</input_shapefile>
+          <output_shapefile choices="Required|Optional" type="string">Required</output_shapefile>
+          <buffer_size choices="Required|Optional" type="string">Required</buffer_size>
+	</params>
+      </esri_buffer_tool>
     </script_library>
     <opus_database_to_sql setexpanded="False" type="script_batch">
       <classification type="classification">database</classification>
