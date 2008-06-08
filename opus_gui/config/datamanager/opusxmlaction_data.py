@@ -110,7 +110,7 @@ class OpusXMLAction_Data(object):
 
         #jesse testing
         self.actExecBatch = QAction(self.applicationIcon,
-                                      "Execute batch (TESTING)",
+                                      "Execute batch",
                                       self.xmlTreeObject.mainwindow)
         QObject.connect(self.actExecBatch,
                         SIGNAL("triggered()"),
@@ -204,9 +204,7 @@ class OpusXMLAction_Data(object):
         y = RunScriptThread(self.xmlTreeObject.mainwindow,x)
         y.run()
 
-    def execScriptConfig(self):
-        # First find the script that this config refers to...
-        configNode = self.currentIndex.internalPointer().node().toElement()
+    def execScriptConfigGen(self,configNode,library):
         script_hook = configNode.elementsByTagName(QString("script_hook")).item(0)
         script_name = QString("")
         if script_hook.hasChildNodes():
@@ -215,7 +213,6 @@ class OpusXMLAction_Data(object):
                 if children.item(x).isText():
                     script_name = children.item(x).nodeValue()
         # This will be in the script_library
-        library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("script_library")).item(0)
         script_path = library.toElement().elementsByTagName("script_path").item(0)
         script = library.toElement().elementsByTagName(script_name).item(0)
 
@@ -250,9 +247,24 @@ class OpusXMLAction_Data(object):
         y = RunScriptThread(self.xmlTreeObject.mainwindow,x)
         y.run()
 
-    # jesse testing
+    def execScriptConfig(self):
+        # First find the script that this config refers to...
+        configNode = self.currentIndex.internalPointer().node().toElement()
+        library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("script_library")).item(0)
+        self.execScriptConfigGen(configNode,library)
+        
     def execBatch(self):
-        print "Execute batch (TESTING) pressed..."
+        #print "Execute batch pressed..."
+        batchNode = self.currentIndex.internalPointer().node().toElement()
+        library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("script_library")).item(0)
+        childNodes = batchNode.childNodes()
+        for x in xrange(0,childNodes.count(),1):
+            thisNode = childNodes.item(x)
+            if thisNode.isElement():
+                thisElement = thisNode.toElement()
+                if thisElement.hasAttribute(QString("type")) and \
+                       (thisElement.attribute(QString("type")) == QString("script_config")):
+                    self.execScriptConfigGen(thisElement,library)
 
     def cloneNode(self):
         #print "cloneNode Pressed"
