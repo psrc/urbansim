@@ -24,6 +24,7 @@ from opus_core.indicator_framework.image_types.dataset_table import DatasetTable
 from opus_core.indicator_framework.image_types.matplotlib_lorenzcurve import LorenzCurve
 from opus_core.database_management.database_configuration import DatabaseConfiguration
 
+import os
 
 '''-------------------------
    ------  SourceData ------
@@ -166,12 +167,16 @@ ArcGeotiffMap
 
 #An example script:
 
+project_name = 'eugene_gridcell'
+run_name1 = 'run_6473.2008_05_11_22_27'
+run_name2 = 'run_6478.2008_05_12_19_04'
+
 source_data = SourceData(
-   cache_directory = r'D:\urbansim_cache\run_1090.2006_11_14_12_12',
-   comparison_cache_directory = r'D:\urbansim_cache\run_1091.2006_11_14_12_12',
-   years = [2000, 2010],
+   cache_directory = os.path.join(os.environ['OPUS_DATA_PATH'],project_name,'runs',run_name1),    # r'D:\urbansim_cache\run_1090.2006_11_14_12_12',
+#   comparison_cache_directory = os.path.join(os.environ['OPUS_DATA_PATH'],project_name,'runs',run_name2),
+   years = [1980, 1981],
    dataset_pool_configuration = DatasetPoolConfiguration(
-         package_order=['urbansim','opus_core'],
+         package_order=['eugene','urbansim','opus_core'],
          package_order_exceptions={},
          ),                  
 )
@@ -181,76 +186,76 @@ indicators = [
        source_data = source_data,
        dataset_name = 'zone',
        attribute = 'urbansim.zone.population',
-       years = [2010], 
+       years = [1980], 
        ),  
    
-   Chart(
-       source_data = source_data,
-       dataset_name = 'gridcell',
-       attribute = 'urbansim.gridcell.population',
-       ),  
-   
-   Table(
-       source_data = source_data,
-       dataset_name = 'zone',
-       attribute = 'urbansim.zone.industrial_sqft',
-       output_type = 'tab'
-       ),  
+#   Chart(
+#       source_data = source_data,
+#       dataset_name = 'gridcell',
+#       attribute = 'urbansim.gridcell.population',
+#       ),  
+#   
+#   Table(
+#       source_data = source_data,
+#       dataset_name = 'zone',
+#       attribute = 'urbansim.zone.industrial_sqft',
+#       output_type = 'tab'
+#       ),  
 
-   Table(
-       source_data = source_data,
-       dataset_name = 'zone',
-       attribute = 'urbansim.zone.industrial_sqft',
-       output_type = 'dbf',
-       years = [2000, 2002]
-       ), 
+#   Table(
+#       source_data = source_data,
+#       dataset_name = 'zone',
+#       attribute = 'urbansim.zone.industrial_sqft',
+#       output_type = 'dbf',
+#       years = [1980, 1981]
+#       ), 
               
-   GeotiffMap(
-       source_data = source_data,
-       dataset_name = 'gridcell',
-       package = 'psrc', 
-       attribute = 'urbansim.gridcell.number_of_jobs', 
-       name = 'jobs', 
-    ),
+#   GeotiffMap(
+#       source_data = source_data,
+#       dataset_name = 'gridcell',
+#       package = 'psrc', 
+#       attribute = 'urbansim.gridcell.number_of_jobs', 
+#       name = 'jobs', 
+#    ),
     
-   DatasetTable(
-       source_data = source_data,
-       dataset_name = 'zone',
-       name = 'pop_and_ind_sqft',
-       attributes = [ 
-         'urbansim.zone.population',
-         'urbansim.zone.industrial_sqft',                     
-       ],
-       exclude_condition = 'urbansim.zone.population<100' #this accepts any opus expression
-   ),
+#   DatasetTable(
+#       source_data = source_data,
+#       dataset_name = 'zone',
+#       name = 'pop_and_ind_sqft',
+#       attributes = [ 
+#         'urbansim.zone.population',
+#         'urbansim.zone.industrial_sqft',                     
+#       ],
+#       exclude_condition = 'urbansim.zone.population<100' #this accepts any opus expression
+#   ),
 
    #Expression example
-   Table(
-       source_data = source_data,
-       dataset_name = 'large_area',
-       name = 'de_population_change',
-       attribute = 'psrc.large_area.de_population_DDDD - psrc.large_area.de_population_2000',
-   ),
+#   Table(
+#       source_data = source_data,
+#       dataset_name = 'large_area',
+#       name = 'de_population_change',
+#       attribute = 'psrc.large_area.de_population_DDDD - psrc.large_area.de_population_2000',
+#   ),
          
    #example of using an operation ("change since baseyear"). Other available operations
    #are "percent_change" and "size" (of the dataset)         
-   Table(
-       source_data = source_data,
-       attribute = 'urbansim.faz.population',
-       dataset_name = 'faz',
-       name = 'population_change(DDDD-00)',
-       operation = 'change',
-       years = [2030]
-   ),   
+#   Table(
+#       source_data = source_data,
+#       attribute = 'urbansim.faz.population',
+#       dataset_name = 'faz',
+#       name = 'population_change(DDDD-00)',
+#       operation = 'change',
+#       years = [1980]
+#   ),   
 
    #example using regional-level aggregators
-   Table(
-       attribute = 'alldata.aggregate_all(urbansim.zone.number_of_home_based_jobs)',
-       dataset_name = 'alldata',
-       source_data = source_data,
-       name =  'number_of_home_based_jobs',
-       years = [2000, 2010]
-   ),
+#   Table(
+#       attribute = 'alldata.aggregate_all(urbansim.zone.number_of_home_based_jobs)',
+#       dataset_name = 'alldata',
+#       source_data = source_data,
+#       name =  'number_of_home_based_jobs',
+#       years = [1980, 1981]
+#   ),
    ]
 
 
