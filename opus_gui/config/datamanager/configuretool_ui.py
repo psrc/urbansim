@@ -2,30 +2,30 @@
 
 # Form implementation generated from reading ui file 'configuretool.ui'
 #
-# Created: Wed Jun 11 13:13:13 2008
+# Created: Wed Jun 11 13:20:05 2008
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
 
-class Ui_ConfigureScriptGui(object):
-    def setupUi(self, ConfigureScriptGui):
-        ConfigureScriptGui.setObjectName("ConfigureScriptGui")
-        ConfigureScriptGui.resize(QtCore.QSize(QtCore.QRect(0,0,412,312).size()).expandedTo(ConfigureScriptGui.minimumSizeHint()))
+class Ui_ConfigureToolGui(object):
+    def setupUi(self, ConfigureToolGui):
+        ConfigureToolGui.setObjectName("ConfigureToolGui")
+        ConfigureToolGui.resize(QtCore.QSize(QtCore.QRect(0,0,412,312).size()).expandedTo(ConfigureToolGui.minimumSizeHint()))
 
-        self.vboxlayout = QtGui.QVBoxLayout(ConfigureScriptGui)
+        self.vboxlayout = QtGui.QVBoxLayout(ConfigureToolGui)
         self.vboxlayout.setObjectName("vboxlayout")
 
-        self.comboBox = QtGui.QComboBox(ConfigureScriptGui)
+        self.comboBox = QtGui.QComboBox(ConfigureToolGui)
         self.comboBox.setObjectName("comboBox")
         self.vboxlayout.addWidget(self.comboBox)
 
-        self.variableBox = QtGui.QGroupBox(ConfigureScriptGui)
+        self.variableBox = QtGui.QGroupBox(ConfigureToolGui)
         self.variableBox.setObjectName("variableBox")
         self.vboxlayout.addWidget(self.variableBox)
 
-        self.widget = QtGui.QWidget(ConfigureScriptGui)
+        self.widget = QtGui.QWidget(ConfigureToolGui)
         self.widget.setMaximumSize(QtCore.QSize(16777215,45))
         self.widget.setObjectName("widget")
 
@@ -44,13 +44,13 @@ class Ui_ConfigureScriptGui(object):
         self.gridlayout.addWidget(self.cancelConfig,0,2,1,1)
         self.vboxlayout.addWidget(self.widget)
 
-        self.retranslateUi(ConfigureScriptGui)
-        QtCore.QMetaObject.connectSlotsByName(ConfigureScriptGui)
+        self.retranslateUi(ConfigureToolGui)
+        QtCore.QMetaObject.connectSlotsByName(ConfigureToolGui)
 
-    def retranslateUi(self, ConfigureScriptGui):
-        ConfigureScriptGui.setWindowTitle(QtGui.QApplication.translate("ConfigureScriptGui", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.addItem(QtGui.QApplication.translate("ConfigureScriptGui", "Select Script", None, QtGui.QApplication.UnicodeUTF8))
-        self.variableBox.setTitle(QtGui.QApplication.translate("ConfigureScriptGui", "Script Variables", None, QtGui.QApplication.UnicodeUTF8))
-        self.createConfig.setText(QtGui.QApplication.translate("ConfigureScriptGui", "Create Config", None, QtGui.QApplication.UnicodeUTF8))
-        self.cancelConfig.setText(QtGui.QApplication.translate("ConfigureScriptGui", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+    def retranslateUi(self, ConfigureToolGui):
+        ConfigureToolGui.setWindowTitle(QtGui.QApplication.translate("ConfigureToolGui", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBox.addItem(QtGui.QApplication.translate("ConfigureToolGui", "Select Tool", None, QtGui.QApplication.UnicodeUTF8))
+        self.variableBox.setTitle(QtGui.QApplication.translate("ConfigureToolGui", "Tool Variables", None, QtGui.QApplication.UnicodeUTF8))
+        self.createConfig.setText(QtGui.QApplication.translate("ConfigureToolGui", "Create Config", None, QtGui.QApplication.UnicodeUTF8))
+        self.cancelConfig.setText(QtGui.QApplication.translate("ConfigureToolGui", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 

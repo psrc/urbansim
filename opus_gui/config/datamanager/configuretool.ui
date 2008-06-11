@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>ConfigureScriptGui</class>
- <widget class="QDialog" name="ConfigureScriptGui" >
+ <class>ConfigureToolGui</class>
+ <widget class="QDialog" name="ConfigureToolGui" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
     <widget class="QComboBox" name="comboBox" >
      <item>
       <property name="text" >
-       <string>Select Script</string>
+       <string>Select Tool</string>
       </property>
      </item>
     </widget>
@@ -25,7 +25,7 @@
    <item>
     <widget class="QGroupBox" name="variableBox" >
      <property name="title" >
-      <string>Script Variables</string>
+      <string>Tool Variables</string>
      </property>
     </widget>
    </item>
