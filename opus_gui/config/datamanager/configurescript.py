@@ -39,7 +39,7 @@ class ConfigureScriptGui(QDialog, Ui_ConfigureScriptGui):
         self.test_text_type = []
         self.test_line = []
         # First find the available database connection templates to fill in types
-        templates_root = self.model.xmlRoot.toElement().elementsByTagName(QString("script_library")).item(0)
+        templates_root = self.model.xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
         if templates_root.hasChildNodes():
             children = templates_root.childNodes()
             for x in xrange(0,children.count(),1):
@@ -57,7 +57,7 @@ class ConfigureScriptGui(QDialog, Ui_ConfigureScriptGui):
 
         # Need to create something that looks like this:
         #<opus_database_to_sql_config type="script_config">
-        #  <script_hook type="script_library_ref">opus_database_to_sql_tool</script_hook>
+        #  <script_hook type="tool_library_ref">opus_database_to_sql_tool</script_hook>
         #  <sql_db_name type="string">mytestdb</sql_db_name>
         #  <opus_data_directory type="string" />
         #  <opus_data_year type="string">ALL</opus_data_year>
@@ -70,7 +70,7 @@ class ConfigureScriptGui(QDialog, Ui_ConfigureScriptGui):
         newNode.setAttribute(QString("type"),QString("script_config"))
         # Add the script hook back in
         newChild = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(QString("script_hook"))
-        newChild.setAttribute(QString("type"),QString("script_library_ref"))
+        newChild.setAttribute(QString("type"),QString("tool_library_ref"))
         newText = self.opusXMLAction_xxx.currentIndex.model().domDocument.createTextNode(self.typeSelection)
         newChild.appendChild(newText)
         newNode.appendChild(newChild)
@@ -114,8 +114,8 @@ class ConfigureScriptGui(QDialog, Ui_ConfigureScriptGui):
         self.scripttypearray.append([QString("Script Config Name"),QString("script_config"),QString("")])
 
         # Now look up the selected connection type and present to the user...
-        # First we start at the script_library
-        templates_root = self.model.xmlRoot.toElement().elementsByTagName(QString("script_library")).item(0)
+        # First we start at the Tool_Library
+        templates_root = self.model.xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
         if templates_root and templates_root.hasChildNodes():
             library = templates_root.childNodes()
             for x in xrange(0,library.count(),1):

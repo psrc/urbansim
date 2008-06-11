@@ -1,8 +1,12 @@
 <RCC>
     <qresource prefix="/Images" >
-        <file>Images/arrow_refresh.png</file>
         <file>Images/accept.png</file>
+        <file>Images/add.png</file>
+        <file>Images/application_double.png</file>
         <file>Images/application_side_tree.png</file>
+        <file>Images/arrow_down.png</file>
+        <file>Images/arrow_refresh.png</file>
+        <file>Images/arrow_up.png</file>
         <file>Images/bullet_black.png</file>
         <file>Images/calendar_view_day.png</file>
         <file>Images/car.png</file>

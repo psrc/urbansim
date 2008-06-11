@@ -2,7 +2,158 @@
   <general>
     <description type="string">Base UrbanSim project</description>
   </general>
-
+  <data_manager_dbstree>
+    <database_templates setexpanded="True" type="db_templates">
+      <ms_sql_server_template setexpanded="False" type="db_template">
+        <host_name choices="Required|Optional" type="string"> Required </host_name>
+        <protocol choices="Required|Optional" type="string"> Required </protocol>
+        <user_name choices="Required|Optional" type="string"> Required </user_name>
+        <password choices="Required|Optional" type="password"> Required </password>
+        <use_environment_variables choices="Required|Optional" type="boolean"> Required
+    </use_environment_variables>
+      </ms_sql_server_template>
+      <esri_personal_geodb_template setexpanded="False" type="db_template">
+        <database_path choices="Required|Optional" type="string"> Required </database_path>
+        <some_other_param choices="Required|Optional" type="string"> Optional </some_other_param>
+      </esri_personal_geodb_template>
+    </database_templates>
+    <database_library setexpanded="True" type="database_library">
+      <urbansim_db1_example setexpanded="True" type="db_connection">
+        <host_name type="string" />
+        <protocol type="string" />
+        <user_name type="string" />
+        <password type="password" />
+        <use_environment_variables choices="True|False" type="boolean">True</use_environment_variables>
+      </urbansim_db1_example>
+    </database_library>
+  </data_manager_dbstree>
+  <data_manager>
+    <Tool_Library setexpanded="True" type="tool_library">
+      <tool_path flags="hidden" type="tool_path">tools</tool_path>
+      <opus_database_to_sql_tool type="script_file">
+	<name type="tool_name">opus_database_to_sql</name>
+	<params type="param_template">
+          <sql_db_name choices="Required|Optional" type="string">Required</sql_db_name>
+          <opus_data_directory choices="Required|Optional" type="string">Required</opus_data_directory>
+          <opus_data_year choices="Required|Optional" type="string">Required</opus_data_year>
+          <opus_table_name choices="Required|Optional" type="string">Required</opus_table_name>
+	</params>
+      </opus_database_to_sql_tool>
+      <opus_database_to_esri_tool type="script_file">
+	<name type="tool_name">opus_database_to_esri</name>
+	<params type="param_template">
+          <esri_data_path choices="Required|Optional" type="string">Required</esri_data_path>
+          <opus_data_directory choices="Required|Optional" type="string">Required</opus_data_directory>
+          <opus_data_year choices="Required|Optional" type="string">Required</opus_data_year>
+          <opus_table_name choices="Required|Optional" type="string">Required</opus_table_name>
+	</params>
+      </opus_database_to_esri_tool>
+      <opus_dataset_to_sql_tool type="script_file">
+	<name type="tool_name">opus_dataset_to_sql</name>
+	<params type="param_template">
+          <sql_db_name choices="Required|Optional" type="string">Required</sql_db_name>
+          <opus_data_directory choices="Required|Optional" type="string">Required</opus_data_directory>
+          <opus_data_year choices="Required|Optional" type="string">Required</opus_data_year>
+          <opus_table_name choices="Required|Optional" type="string">Required</opus_table_name>
+	</params>
+      </opus_dataset_to_sql_tool>
+      <opus_dataset_to_esri_tool type="script_file">
+	<name type="tool_name">opus_dataset_to_esri</name>
+	<params type="param_template">
+          <esri_data_path choices="Required|Optional" type="string">Required</esri_data_path>
+          <opus_data_directory choices="Required|Optional" type="string">Required</opus_data_directory>
+          <opus_data_year choices="Required|Optional" type="string">Required</opus_data_year>
+          <opus_table_name choices="Required|Optional" type="string">Required</opus_table_name>
+	</params>
+      </opus_dataset_to_esri_tool>
+      <esri_buffer_tool type="script_file">
+	<name type="tool_name">esri_buffer</name>
+	<params type="param_template">
+          <input_shapefile choices="Required|Optional" type="string">Required</input_shapefile>
+          <output_shapefile choices="Required|Optional" type="string">Required</output_shapefile>
+          <buffer_size choices="Required|Optional" type="string">Required</buffer_size>
+	</params>
+      </esri_buffer_tool>
+    </Tool_Library>
+	<Tool_Sets>
+    <opus_database_to_sql setexpanded="False" type="script_batch">
+      <classification flags="hidden" type="classification">database</classification>
+      <opus_database_to_sql_config type="script_config">
+        <script_hook flags="hidden" type="tool_library_ref">opus_database_to_sql_tool</script_hook>
+        <sql_db_name type="string">mytestdb</sql_db_name>
+        <opus_data_directory type="string" />
+        <opus_data_year type="string">ALL</opus_data_year>
+        <opus_table_name type="string">ALL</opus_table_name>
+      </opus_database_to_sql_config>
+    </opus_database_to_sql>
+    <opus_database_to_esri setexpanded="False" type="script_batch">
+      <classification flags="hidden" type="classification">database</classification>
+      <opus_database_to_esri_config type="script_config">
+        <script_hook flags="hidden" type="tool_library_ref">opus_database_to_esri_tool</script_hook>
+        <esri_data_path type="string">c:\opus\data\seattle_parcel\output_geodb.gdb</esri_data_path>
+        <opus_data_directory type="string" />
+        <opus_data_year type="string">ALL</opus_data_year>
+        <opus_table_name type="string">ALL</opus_table_name>
+      </opus_database_to_esri_config>
+    </opus_database_to_esri>
+    <opus_dataset_to_sql setexpanded="False" type="script_batch">
+      <classification flags="hidden" type="classification">dataset</classification>
+      <opus_dataset_to_sql_config type="script_config">
+        <script_hook flags="hidden" type="tool_library_ref">opus_database_to_sql_tool</script_hook>
+        <sql_db_name type="string">mytestdb</sql_db_name>
+        <opus_data_directory type="string" />
+        <opus_data_year type="string">ALL</opus_data_year>
+        <opus_table_name type="string">ALL</opus_table_name>
+      </opus_dataset_to_sql_config>
+    </opus_dataset_to_sql>
+    <opus_dataset_to_esri setexpanded="False" type="script_batch">
+      <classification flags="hidden" type="classification">dataset</classification>
+      <opus_dataset_to_esri_config type="script_config">
+        <script_hook flags="hidden" type="tool_library_ref">opus_database_to_esri_tool</script_hook>
+        <esri_data_path type="string">c:\opus\data\seattle_parcel\output_geodb.gdb</esri_data_path>
+        <opus_data_directory type="string" />
+        <opus_data_year type="string">ALL</opus_data_year>
+        <opus_table_name type="string">ALL</opus_table_name>
+      </opus_dataset_to_esri_config>
+    </opus_dataset_to_esri>
+    <script_batch type="script_batch">
+      <esri_buffer_tool type="script_config">
+        <script_hook flags="hidden" type="tool_library_ref">esri_buffer_tool</script_hook>
+        <input_shapefile type="string">c:\opus\data\seattle_parcel\seattle_parcel.gdb\feature_classes\fazes_fc</input_shapefile>
+        <output_shapefile type="string">c:\opus\data\seattle_parcel\output_geodb.gdb\fazes_fc_500</output_shapefile>
+        <buffer_size type="integer">500</buffer_size>
+      </esri_buffer_tool>
+      <esri_data_to_opus type="script_config">
+        <script_hook flags="hidden" type="tool_library_ref">esri_data_to_opus</script_hook>
+        <esri_data_path type="string">c:\opus\data\geodatabases\seattle_parcel.gdb</esri_data_path>
+        <esri_table_name type="string">zones</esri_table_name>
+        <opus_data_directory type="string">c:\opus\data\testing</opus_data_directory>
+        <opus_data_year type="string">1951</opus_data_year>
+      </esri_data_to_opus>
+      <sql_data_to_opus type="script_config">
+        <script_hook flags="hidden" type="tool_library_ref">sql_data_to_opus</script_hook>
+        <sql_db_name type="string">some_sql_database_name</sql_db_name>
+        <table_name type="string">ALL</table_name>
+        <opus_data_directory type="string">C:\opus\data\seattle_parcel</opus_data_directory>
+        <opus_data_year type="string">2000</opus_data_year>
+      </sql_data_to_opus>
+      <opus_data_to_sql type="script_config">
+        <script_hook flags="hidden" type="tool_library_ref">opus_data_to_sql</script_hook>
+        <sql_db_name type="string">some_sql_database_name</sql_db_name>
+        <table_name type="string">ALL</table_name>
+        <opus_data_directory type="string">C:\opus\data\seattle_parcel</opus_data_directory>
+        <opus_data_year type="string">2000</opus_data_year>
+      </opus_data_to_sql>
+      <opus_data_to_esri type="script_config">
+        <script_hook flags="hidden" type="tool_library_ref">opus_data_to_esri</script_hook>
+        <esri_data_path type="string">c:\opus\data\geodatabases\output_geodb.gdb</esri_data_path>
+        <opus_table_name type="string">zones</opus_table_name>
+        <opus_data_directory type="string">C:\opus\data\seattle_parcel</opus_data_directory>
+        <opus_data_year type="string">2000</opus_data_year>
+      </opus_data_to_esri>
+    </script_batch>
+	</Tool_Sets>
+  </data_manager>
   <model_manager>
    <model_system type="dictionary">
         <simple_model_template  type="dictionary" copyable='True'>

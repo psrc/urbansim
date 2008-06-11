@@ -37,44 +37,49 @@ class OpusXMLAction_Data(object):
         self.removeIcon = QIcon(":/Images/Images/delete.png")
         self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
+        self.addIcon = QIcon(":/Images/Images/add.png")
+        self.arrowUpIcon = QIcon(":/Images/Images/arrow_up.png")
+        self.arrowDownIcon = QIcon(":/Images/Images/arrow_down.png")
+        self.executeIcon = QIcon(":/Images/Images/table_go.png")
+        self.cloneIcon = QIcon(":/Images/Images/application_double.png")
+        
+#        self.actExecScriptFile = QAction(self.calendarIcon,
+#                                         "Exec Script (TESTING)",
+#                                         self.xmlTreeObject.mainwindow)
+#        QObject.connect(self.actExecScriptFile,
+#                        SIGNAL("triggered()"),
+#                        self.execScriptFile)
 
-        self.actExecScriptFile = QAction(self.calendarIcon,
-                                         "Exec Script (TESTING)",
-                                         self.xmlTreeObject.mainwindow)
-        QObject.connect(self.actExecScriptFile,
-                        SIGNAL("triggered()"),
-                        self.execScriptFile)
-
-        self.actExecScriptConfig = QAction(self.calendarIcon,
-                                           "Execute Script",
+        self.actExecScriptConfig = QAction(self.executeIcon,
+                                           "Execute Tool",
                                            self.xmlTreeObject.mainwindow)
         QObject.connect(self.actExecScriptConfig,
                         SIGNAL("triggered()"),
                         self.execScriptConfig)
 
-        self.actAddScriptFile = QAction(self.calendarIcon,
-                                        "Add Script",
+        self.actAddScriptFile = QAction(self.addIcon,
+                                        "Add Tool",
                                         self.xmlTreeObject.mainwindow)
         QObject.connect(self.actAddScriptFile,
                         SIGNAL("triggered()"),
                         self.addScriptFile)
 
-        self.actNewConfig = QAction(self.calendarIcon,
-                                     "Create New Config",
+        self.actNewConfig = QAction(self.addIcon,
+                                     "Add Tool",
                                      self.xmlTreeObject.mainwindow)
         QObject.connect(self.actNewConfig,
                         SIGNAL("triggered()"),
                         self.newConfig)
 
-        self.actCloneBatch = QAction(self.calendarIcon,
-                                     "Clone Batch",
+        self.actCloneBatch = QAction(self.cloneIcon,
+                                     "Clone Tool Set",
                                      self.xmlTreeObject.mainwindow)
         QObject.connect(self.actCloneBatch,
                         SIGNAL("triggered()"),
                         self.cloneNode)
 
-        self.actCloneScript = QAction(self.calendarIcon,
-                                      "Clone Script",
+        self.actCloneScript = QAction(self.cloneIcon,
+                                      "Clone Tool",
                                       self.xmlTreeObject.mainwindow)
         QObject.connect(self.actCloneScript,
                         SIGNAL("triggered()"),
@@ -94,14 +99,14 @@ class OpusXMLAction_Data(object):
                         SIGNAL("triggered()"),
                         self.removeNode)
 
-        self.actMoveNodeUp = QAction(self.calendarIcon,
+        self.actMoveNodeUp = QAction(self.arrowUpIcon,
                                      "Move Up",
                                      self.xmlTreeObject.mainwindow)
         QObject.connect(self.actMoveNodeUp,
                         SIGNAL("triggered()"),
                         self.moveNodeUp)
 
-        self.actMoveNodeDown = QAction(self.calendarIcon,
+        self.actMoveNodeDown = QAction(self.arrowDownIcon,
                                        "Move Down",
                                        self.xmlTreeObject.mainwindow)
         QObject.connect(self.actMoveNodeDown,
@@ -109,8 +114,8 @@ class OpusXMLAction_Data(object):
                         self.moveNodeDown)
 
         #jesse testing
-        self.actExecBatch = QAction(self.applicationIcon,
-                                      "Execute batch",
+        self.actExecBatch = QAction(self.executeIcon,
+                                      "Execute Tool Set",
                                       self.xmlTreeObject.mainwindow)
         QObject.connect(self.actExecBatch,
                         SIGNAL("triggered()"),
@@ -186,7 +191,7 @@ class OpusXMLAction_Data(object):
                 if children.item(x).isElement():
                     domElement = children.item(x).toElement()
                     if not domElement.isNull():
-                        if domElement.tagName() == QString("script_path"):
+                        if domElement.tagName() == QString("tool_path"):
                             if domElement.hasChildNodes():
                                 children2 = domElement.childNodes()
                                 for x2 in xrange(0,children2.count(),1):
@@ -206,30 +211,30 @@ class OpusXMLAction_Data(object):
 
     def execScriptConfigGen(self,configNode,library):
         script_hook = configNode.elementsByTagName(QString("script_hook")).item(0)
-        script_name = QString("")
+        tool_name = QString("")
         if script_hook.hasChildNodes():
             children = script_hook.childNodes()
             for x in xrange(0,children.count(),1):
                 if children.item(x).isText():
-                    script_name = children.item(x).nodeValue()
-        # This will be in the script_library
-        script_path = library.toElement().elementsByTagName("script_path").item(0)
-        script_file = library.toElement().elementsByTagName(script_name).item(0)
+                    tool_name = children.item(x).nodeValue()
+        # This will be in the Tool_Library
+        tool_path = library.toElement().elementsByTagName("tool_path").item(0)
+        script_file = library.toElement().elementsByTagName(tool_name).item(0)
         
         # First find the script path text...
-        if script_path.hasChildNodes():
-            children = script_path.childNodes()
+        if tool_path.hasChildNodes():
+            children = tool_path.childNodes()
             for x in xrange(0,children.count(),1):
                 if children.item(x).isText():
                     scriptPath = children.item(x).nodeValue()
-        # Next if the script_file has a script_name we grab it
+        # Next if the script_file has a tool_name we grab it
         if script_file.hasChildNodes():
             children = script_file.childNodes()
             for x in xrange(0,children.count(),1):
                 if children.item(x).isElement():
                     thisElement = children.item(x).toElement()
                     if thisElement.hasAttribute(QString("type")) and \
-                           (thisElement.attribute(QString("type")) == QString("script_name")):
+                           (thisElement.attribute(QString("type")) == QString("tool_name")):
                         if thisElement.hasChildNodes():
                             children2 = thisElement.childNodes()
                             for x2 in xrange(0,children2.count(),1):
@@ -258,13 +263,13 @@ class OpusXMLAction_Data(object):
     def execScriptConfig(self):
         # First find the script that this config refers to...
         configNode = self.currentIndex.internalPointer().node().toElement()
-        library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("script_library")).item(0)
+        library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
         self.execScriptConfigGen(configNode,library)
         
     def execBatch(self):
         #print "Execute batch pressed..."
         batchNode = self.currentIndex.internalPointer().node().toElement()
-        library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("script_library")).item(0)
+        library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
         childNodes = batchNode.childNodes()
         for x in xrange(0,childNodes.count(),1):
             thisNode = childNodes.item(x)
@@ -331,14 +336,14 @@ class OpusXMLAction_Data(object):
 
                 self.menu = QMenu(self.xmlTreeObject.mainwindow)
                 if domElement.attribute(QString("type")) == QString("script_file"):
-                    self.menu.addAction(self.actExecScriptFile)
+#                    self.menu.addAction(self.actExecScriptFile)
                     self.menu.addSeparator()
-                    self.menu.addAction(self.actNewConfig)
+                    #self.menu.addAction(self.actNewConfig)
                     self.menu.addAction(self.actCloneScript)
                     self.menu.addSeparator()
                     self.menu.addAction(self.actMoveNodeUp)
                     self.menu.addAction(self.actMoveNodeDown)
-                elif domElement.attribute(QString("type")) == QString("script_library"):
+                elif domElement.attribute(QString("type")) == QString("Tool_Library"):
                     self.menu.addAction(self.actAddScriptFile)
                 elif domElement.attribute(QString("type")) == QString("script_config"):
                     self.menu.addAction(self.actExecScriptConfig)

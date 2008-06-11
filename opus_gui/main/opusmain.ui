@@ -63,15 +63,15 @@
         </size>
        </property>
        <property name="currentIndex" >
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="generalmanager_page" >
         <property name="geometry" >
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>331</width>
-          <height>497</height>
+          <width>98</width>
+          <height>38</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -87,8 +87,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>96</width>
-          <height>34</height>
+          <width>426</width>
+          <height>491</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -131,7 +131,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>96</width>
+              <width>98</width>
               <height>38</height>
              </rect>
             </property>
@@ -145,12 +145,12 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>96</width>
-              <height>38</height>
+              <width>408</width>
+              <height>389</height>
              </rect>
             </property>
             <attribute name="label" >
-             <string>Opus Scripts</string>
+             <string>Tools</string>
             </attribute>
             <layout class="QGridLayout" />
            </widget>
@@ -159,7 +159,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>96</width>
+              <width>98</width>
               <height>38</height>
              </rect>
             </property>
@@ -177,7 +177,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>96</width>
+          <width>98</width>
           <height>38</height>
          </rect>
         </property>
@@ -213,7 +213,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>96</width>
+          <width>98</width>
           <height>38</height>
          </rect>
         </property>
@@ -249,7 +249,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>96</width>
+          <width>98</width>
           <height>38</height>
          </rect>
         </property>
@@ -400,7 +400,7 @@
      <x>0</x>
      <y>0</y>
      <width>974</width>
-     <height>24</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject" >

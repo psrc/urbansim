@@ -91,6 +91,9 @@ class OpusDataModel(QAbstractItemModel):
         self.tableLightningIcon = QIcon(":/Images/Images/table_lightning.png")
         self.tableMultipleIcon = QIcon(":/Images/Images/table_multiple.png")
         self.tableIcon = QIcon(":/Images/Images/table.png")
+        self.addIcon = QIcon(":/Images/Images/add.png")
+        self.arrowUpIcon = QIcon(":/Images/Images/arrow_up.png")
+        self.arrowDownIcon = QIcon(":/Images/Images/arrow_down.png")
 
         self.bookmarkIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_FileIcon))
         self.folderIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_DirClosedIcon),
@@ -129,7 +132,7 @@ class OpusDataModel(QAbstractItemModel):
                    "cacheConfig":self.databaseLinkIcon,
                    "boolean":self.pythonTypeIcon,
                    "script_file":self.pythonTypeIcon,
-                   "script_library":self.folderIcon,
+                   "tool_library":self.bulletIcon,
                    "script_config":self.pythonTypeIcon,
                    "script_batch":self.pythonBatchIcon,
                    "indicator_library":self.folderIcon,

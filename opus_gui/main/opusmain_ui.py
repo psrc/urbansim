@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'opusmain.ui'
 #
-# Created: Mon Jun  2 22:17:59 2008
-#      by: PyQt4 UI code generator 4.3.3
+# Created: Mon Jun 09 13:34:41 2008
+#      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -43,7 +43,7 @@ class Ui_MainWindow(object):
         self.toolBox.setObjectName("toolBox")
 
         self.generalmanager_page = QtGui.QWidget()
-        self.generalmanager_page.setGeometry(QtCore.QRect(0,0,331,497))
+        self.generalmanager_page.setGeometry(QtCore.QRect(0,0,98,38))
         self.generalmanager_page.setObjectName("generalmanager_page")
 
         self.gridlayout1 = QtGui.QGridLayout(self.generalmanager_page)
@@ -51,7 +51,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.generalmanager_page,QtGui.QIcon(":/Images/Images/application_side_tree.png"),"")
 
         self.datamanager_page = QtGui.QWidget()
-        self.datamanager_page.setGeometry(QtCore.QRect(0,0,96,34))
+        self.datamanager_page.setGeometry(QtCore.QRect(0,0,426,491))
         self.datamanager_page.setObjectName("datamanager_page")
 
         self.gridlayout2 = QtGui.QGridLayout(self.datamanager_page)
@@ -67,7 +67,7 @@ class Ui_MainWindow(object):
         self.dataManager_toolBox.setObjectName("dataManager_toolBox")
 
         self.datamanager_dbsconnections = QtGui.QWidget()
-        self.datamanager_dbsconnections.setGeometry(QtCore.QRect(0,0,96,38))
+        self.datamanager_dbsconnections.setGeometry(QtCore.QRect(0,0,98,38))
         self.datamanager_dbsconnections.setObjectName("datamanager_dbsconnections")
 
         self.gridlayout3 = QtGui.QGridLayout(self.datamanager_dbsconnections)
@@ -75,7 +75,7 @@ class Ui_MainWindow(object):
         self.dataManager_toolBox.addItem(self.datamanager_dbsconnections,"")
 
         self.datamanager_xmlconfig = QtGui.QWidget()
-        self.datamanager_xmlconfig.setGeometry(QtCore.QRect(0,0,96,38))
+        self.datamanager_xmlconfig.setGeometry(QtCore.QRect(0,0,408,389))
         self.datamanager_xmlconfig.setObjectName("datamanager_xmlconfig")
 
         self.gridlayout4 = QtGui.QGridLayout(self.datamanager_xmlconfig)
@@ -83,7 +83,7 @@ class Ui_MainWindow(object):
         self.dataManager_toolBox.addItem(self.datamanager_xmlconfig,"")
 
         self.datamanager_dirview = QtGui.QWidget()
-        self.datamanager_dirview.setGeometry(QtCore.QRect(0,0,96,38))
+        self.datamanager_dirview.setGeometry(QtCore.QRect(0,0,98,38))
         self.datamanager_dirview.setObjectName("datamanager_dirview")
 
         self.gridlayout5 = QtGui.QGridLayout(self.datamanager_dirview)
@@ -93,7 +93,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.datamanager_page,QtGui.QIcon(":/Images/Images/database_table.png"),"")
 
         self.modelmanager_page = QtGui.QWidget()
-        self.modelmanager_page.setGeometry(QtCore.QRect(0,0,96,38))
+        self.modelmanager_page.setGeometry(QtCore.QRect(0,0,98,38))
         self.modelmanager_page.setObjectName("modelmanager_page")
 
         self.gridlayout6 = QtGui.QGridLayout(self.modelmanager_page)
@@ -103,7 +103,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.modelmanager_page,QtGui.QIcon(":/Images/Images/chart_organisation.png"),"")
 
         self.runmanager_page = QtGui.QWidget()
-        self.runmanager_page.setGeometry(QtCore.QRect(0,0,96,38))
+        self.runmanager_page.setGeometry(QtCore.QRect(0,0,98,38))
         self.runmanager_page.setObjectName("runmanager_page")
 
         self.gridlayout7 = QtGui.QGridLayout(self.runmanager_page)
@@ -113,7 +113,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.runmanager_page,QtGui.QIcon(":/Images/Images/cog.png"),"")
 
         self.resultsmanager_page = QtGui.QWidget()
-        self.resultsmanager_page.setGeometry(QtCore.QRect(0,0,96,38))
+        self.resultsmanager_page.setGeometry(QtCore.QRect(0,0,98,38))
         self.resultsmanager_page.setObjectName("resultsmanager_page")
 
         self.gridlayout8 = QtGui.QGridLayout(self.resultsmanager_page)
@@ -177,7 +177,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0,0,974,24))
+        self.menubar.setGeometry(QtCore.QRect(0,0,974,21))
         self.menubar.setObjectName("menubar")
 
         self.menuProject = QtGui.QMenu(self.menubar)
@@ -311,7 +311,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.toolBox.setCurrentIndex(0)
+        self.toolBox.setCurrentIndex(1)
         self.dataManager_toolBox.setCurrentIndex(1)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -319,7 +319,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         self.toolBox.setItemText(self.toolBox.indexOf(self.generalmanager_page), QtGui.QApplication.translate("MainWindow", "General Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.dataManager_toolBox.setItemText(self.dataManager_toolBox.indexOf(self.datamanager_dbsconnections), QtGui.QApplication.translate("MainWindow", "Database Server Connections", None, QtGui.QApplication.UnicodeUTF8))
-        self.dataManager_toolBox.setItemText(self.dataManager_toolBox.indexOf(self.datamanager_xmlconfig), QtGui.QApplication.translate("MainWindow", "Opus Scripts", None, QtGui.QApplication.UnicodeUTF8))
+        self.dataManager_toolBox.setItemText(self.dataManager_toolBox.indexOf(self.datamanager_xmlconfig), QtGui.QApplication.translate("MainWindow", "Tools", None, QtGui.QApplication.UnicodeUTF8))
         self.dataManager_toolBox.setItemText(self.dataManager_toolBox.indexOf(self.datamanager_dirview), QtGui.QApplication.translate("MainWindow", "Opus Data", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBox.setItemText(self.toolBox.indexOf(self.datamanager_page), QtGui.QApplication.translate("MainWindow", "Data Manager", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBox.setItemText(self.toolBox.indexOf(self.modelmanager_page), QtGui.QApplication.translate("MainWindow", "Model Manager", None, QtGui.QApplication.UnicodeUTF8))

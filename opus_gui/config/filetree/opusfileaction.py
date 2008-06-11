@@ -216,31 +216,31 @@ class OpusFileAction(object):
                         # Now find the script that this config refers to...
                         configNode = configindex.internalPointer().node().toElement()
                         script_hook = configNode.elementsByTagName(QString("script_hook")).item(0)
-                        script_name = QString("")
+                        tool_name = QString("")
                         if script_hook.hasChildNodes():
                             children = script_hook.childNodes()
                             for x in xrange(0,children.count(),1):
                                 if children.item(x).isText():
-                                    script_name = children.item(x).nodeValue()
-                        # This will be in the script_library
-                        library = configindex.model().xmlRoot.toElement().elementsByTagName(QString("script_library")).item(0)
-                        script_path = library.toElement().elementsByTagName("script_path").item(0)
-                        script_file = library.toElement().elementsByTagName(script_name).item(0)
+                                    tool_name = children.item(x).nodeValue()
+                        # This will be in the Tool Library
+                        library = configindex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
+                        tool_path = library.toElement().elementsByTagName("tool_path").item(0)
+                        script_file = library.toElement().elementsByTagName(tool_name).item(0)
                         
                         # First find the script path text...
-                        if script_path.hasChildNodes():
-                            children = script_path.childNodes()
+                        if tool_path.hasChildNodes():
+                            children = tool_path.childNodes()
                             for x in xrange(0,children.count(),1):
                                 if children.item(x).isText():
                                     scriptPath = children.item(x).nodeValue()
-                        # Next if the script_file has a script_name we grab it
+                        # Next if the script_file has a tool_name we grab it
                         if script_file.hasChildNodes():
                             children = script_file.childNodes()
                             for x in xrange(0,children.count(),1):
                                 if children.item(x).isElement():
                                     thisElement = children.item(x).toElement()
                                     if thisElement.hasAttribute(QString("type")) and \
-                                           (thisElement.attribute(QString("type")) == QString("script_name")):
+                                           (thisElement.attribute(QString("type")) == QString("tool_name")):
                                         if thisElement.hasChildNodes():
                                             children2 = thisElement.childNodes()
                                             for x2 in xrange(0,children2.count(),1):
