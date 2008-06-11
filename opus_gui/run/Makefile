@@ -18,11 +18,11 @@ RM = rm -f
 all:
 	$(MAKE) -C estimation
 	$(MAKE) -C model
-	$(MAKE) -C script
+	$(MAKE) -C tool
 
 clean:
 	$(RM) *.pyc
 	$(RM) *~
 	$(MAKE) -C estimation clean
 	$(MAKE) -C model clean
-	$(MAKE) -C script clean
+	$(MAKE) -C tool clean
