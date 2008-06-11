@@ -53,12 +53,12 @@ class OpusXMLAction_DataDB(object):
                         SIGNAL("triggered()"),
                         self.newDBConnection)
 
-        self.actTestDBConnection = QAction(self.calendarIcon,
-                                           "Test DB Connection",
-                                           self.xmlTreeObject.mainwindow)
-        QObject.connect(self.actTestDBConnection,
-                        SIGNAL("triggered()"),
-                        self.testDBConnection)
+#        self.actTestDBConnection = QAction(self.calendarIcon,
+#                                           "Test DB Connection",
+#                                           self.xmlTreeObject.mainwindow)
+#        QObject.connect(self.actTestDBConnection,
+#                        SIGNAL("triggered()"),
+#                        self.testDBConnection)
 
         self.actRemoveNode = QAction(self.removeIcon,
                                      "Remove Node",
@@ -96,8 +96,8 @@ class OpusXMLAction_DataDB(object):
                                             clone)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
-    def testDBConnection(self):
-        print "testDBConnection pressed - Not yet implemented"
+#    def testDBConnection(self):
+#        print "testDBConnection pressed - Not yet implemented"
 
     def removeNode(self):
         #print "Remove Node Pressed"
@@ -159,7 +159,7 @@ class OpusXMLAction_DataDB(object):
                     self.menu.addAction(self.actNewDBConnection)
                 elif domElement.attribute(QString("type")) == QString("db_connection"):
                     self.menu.addAction(self.actCloneDBConnection)
-                    self.menu.addAction(self.actTestDBConnection)
+#                    self.menu.addAction(self.actTestDBConnection)
 
                 if self.menu:
                     # Last minute chance to add items that all menues should have
