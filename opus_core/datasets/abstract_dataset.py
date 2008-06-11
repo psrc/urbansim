@@ -1201,8 +1201,13 @@ class AbstractDataset(object):
             If coordinate_system is None, dataset must have self._coordinate_system defined. It is a tuple of 2 attribute names 
             that define the x and y axis, respectively.
         """
+        import matplotlib
+        matplotlib.use('Qt4Agg') 
+        
         from matplotlib.pylab import jet,imshow,colorbar,show,axis,savefig,close,figure,title,normalize
         from matplotlib.pylab import rot90
+        
+        
         if name not in self.get_known_attribute_names():
             self.compute_variables([name])
         tdata = self.get_2d_attribute(name, coordinate_system=coordinate_system)

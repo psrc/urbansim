@@ -63,8 +63,6 @@ class MatplotlibMap(Visualization):
         from matplotlib.pylab import jet,imshow,colorbar,show,axis,savefig,close,figure,title,normalize
         from matplotlib.pylab import rot90
         
-        
-        
         attribute_data = attribute_data[filter]
         coord_2d_data = dataset.get_2d_attribute(attribute_data = attribute_data)
         data_mask = coord_2d_data.mask
@@ -156,8 +154,10 @@ class MatplotlibMap(Visualization):
                 SimulationState().set_cache_directory(source_data.cache_directory)
                 SimulationState().set_current_time(year)
                 dataset = SessionConfiguration().get_dataset_from_pool(dataset_name)
-                
-                dataset.compute_variables(names = dataset.get_coordinate_system())
+                dataset.load_dataset()
+
+                if dataset.get_coordinate_system() is not None:
+                    dataset.compute_variables(names = dataset.get_coordinate_system())
                 
                 for indicator_name, computed_name in attributes:
                     indicator = computed_indicators[indicator_name]
@@ -178,14 +178,26 @@ class MatplotlibMap(Visualization):
                     
                     file_path = os.path.join(self.storage_location,
                                          table_name+ '.' + self.get_file_extension())
-
-                    self.plot_map(dataset = dataset, 
-                                  attribute_data = table_data[computed_name], 
-                                  min_value = min_value, 
-                                  max_value = max_value, 
-                                  file = file_path, 
-                                  my_title = indicator_name, 
-                                  filter = where(table_data[computed_name] != -1))
+                    
+                    dataset.add_attribute(name = computed_name, 
+                                          data = table_data[computed_name])
+                    dataset.plot_map(
+                         name = computed_name,
+                         min_value = min_value, 
+                         max_value = max_value, 
+                         file = file_path, 
+                         my_title = indicator_name, 
+                         #filter = where(table_data[computed_name] != -1)
+                         #filter = 'urbansim.gridcell.is_fully_in_water'                                 
+                    )
+                    
+#                    self.plot_map(dataset = dataset, 
+#                                  attribute_data = table_data[computed_name], 
+#                                  min_value = min_value, 
+#                                  max_value = max_value, 
+#                                  file = file_path, 
+#                                  my_title = indicator_name, 
+#                                  filter = where(table_data[computed_name] != -1))
 
                     metadata = ([indicator_name], table_name, [year])
                     viz_metadata.append(metadata)
