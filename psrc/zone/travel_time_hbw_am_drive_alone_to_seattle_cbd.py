@@ -30,7 +30,7 @@ class travel_time_hbw_am_drive_alone_to_seattle_cbd(Variable):
         zones = self.get_dataset()
         is_in_cbd = zones.get_attribute('seattle_cbd')
         zones_in_cbd = zones.get_id_attribute()[where(is_in_cbd)]
-        min_values = array(zones.size()*[2^30], dtype=self._return_type)
+        min_values = array(zones.size()*[2**30], dtype=self._return_type)
         for zone_id in zones_in_cbd:
             variable_name = my_attribute_label("travel_time_hbw_am_drive_alone_to_%s" % zone_id)
             self.add_and_solve_dependencies([variable_name], dataset_pool=dataset_pool)
