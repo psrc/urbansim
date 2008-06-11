@@ -936,8 +936,9 @@ class AbstractDataset(object):
         """
         return self.attribute_sum(name)/self.size()
 
-    def summary(self, names=[], resources=None):
-        """Print a summary of the attributes given in the list 'names'.
+    def summary(self, names=[], resources=None, output=logger):
+        """Print a summary of the attributes given in the list 'names' to 'output'.
+        'output' should be a file or file-like object; the default is the logger.
         If names is an empty list, display summary for all primary attributes
         plus all computed attributes.
         """
@@ -948,8 +949,8 @@ class AbstractDataset(object):
                     names.append(name)
             self.load_dataset_if_not_loaded(attributes=names)
 
-        logger.log_status("%25s\t%8s\t%8s\t%9s\t%7s\t%7s" %("Attribute name", "mean", "sd", "sum", "min", "max"))
-        logger.log_status("%94s" % (94*("-")))
+        output.write("%25s\t%8s\t%8s\t%9s\t%7s\t%7s\n" %("Attribute name", "mean", "sd", "sum", "min", "max"))
+        output.write("%94s\n" % (94*("-")))
         if (not isinstance(names, list)) and (not isinstance(names, tuple)):
             names = [names]
         for item in names:
@@ -964,12 +965,12 @@ class AbstractDataset(object):
                 if self.get_data_type(item).char <> 'S':
                     s = self.attribute_sum(short_name)
                     values = self.get_attribute(short_name)
-                    logger.log_status("%25s\t%8s\t%8s\t%9g\t%7g\t%7g" %(short_name, round(values.mean(),2), round(ndimage.standard_deviation(values),2),
+                    output.write("%25s\t%8s\t%8s\t%9g\t%7g\t%7g\n" %(short_name, round(values.mean(),2), round(ndimage.standard_deviation(values),2),
                                                                         s, values.min(), values.max()))
-        logger.log_status("\nSize:", self.size(), " records")
-        logger.log_status("identifiers: ")
+        output.write("\nSize: %d records\n" % self.size())
+        output.write("identifiers:\n")
         for idname in self.get_id_name():
-            logger.log_status("\t", idname, " in range ", self.get_attribute(idname).min(), "-", self.get_attribute(idname).max())
+            output.write("\t%s in range %d-%d\n" % (idname, self.get_attribute(idname).min(), self.get_attribute(idname).max()))
     
     def aggregate_all(self, function='sum', attribute_name=None):
         """Aggregate atttribute (given by 'attribute_name') by applying the given function. 'attribute_name' must be given."""
@@ -2275,7 +2276,7 @@ class DatasetTests(opus_unittest.OpusTestCase):
         self.assertEqual(1, values.ndim)
 
     def test_aggregate_over_ids(self):
-        from numpy import ones_like, allclose
+        from numpy import allclose
 
         gridcell_grid_id = array([1,2,3])
         household_grid_id = array([1,2,2,2,3,3])

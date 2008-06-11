@@ -17,19 +17,43 @@ from opus_core.class_factory import ClassFactory
 
 class DatasetFactory(object):
     """Conventions for dataset, module, class, and table names of datasets:
-        - an dataset name is all lower case with '_', such as 'my_grizzly_bear'
+        - a dataset name is all lower case with '_', such as 'my_grizzly_bear'
         - the corresponding dataset is implemented in a module 'my_grizzly_bears.py'
         - the input data for this dataset is in table 'my_grizzly_bears'
-        - the dataset is called 'MyGrizzlyBearSet'
+        - the dataset class is called 'MyGrizzlyBearDataset'
+    Any exceptions to this convention should be listed in the 'exceptions' list to allow
+    dataset names, tables, modules, and classes to be determined.
     """
+    
+    # The exceptions list is a list of tuples
+    #      (dataset_name, table_name, module_name, dataset_class_name)
+    # module_name and dataset_class_name may be None; if so the generic Dataset class should be used.
+    exceptions = [
+       # doesn't work ... ('base_year', 'base_year', 'urbansim_constant_dataset', 'UrbansimConstantDataset'), 
+        ('city', 'cities', 'city_dataset', 'CityDataset'), 
+        ('building_sqft_per_job', 'building_sqft_per_job', 'building_sqft_per_job_dataset', 'BuildingSqftPerJobDataset'), 
+        ('county', 'counties', 'county_dataset', 'CountyDataset'),
+        ('demolition_cost_per_sqft', 'demolition_cost_per_sqft', 'demolition_cost_per_sqft_dataset', 'DemolitionCostPerSqftDataset'),
+        ('development_event_history', 'development_event_history', 'development_event_history_dataset', 'DevelopmentEventHistoryDataset'),
+        ('faz', 'fazes', 'faz_dataset', 'FazDataset'),
+        ('household', 'households_for_estimation', 'household_dataset', 'HouseholdDataset'), 
+        ('household_characteristic', 'household_characteristics_for_ht', 'household_characteristic_dataset', 'HouseholdCharacteristicDataset'), 
+        ('job', 'jobs_for_estimation', 'job_dataset', 'JobDataset'), 
+        ('race', 'race_names', 'race_dataset', 'RaceDataset'), 
+        ('target_vacancy', 'target_vacancies', 'target_vacancy_dataset', 'TargetVacancyDataset'), 
+        ('travel_data', 'travel_data', 'travel_data_dataset', 'TravelDataDataset'), 
+        ]
+
     def get_dataset(self, dataset_name, subdir="datasets", package="opus_core", 
                     arguments={}, debug=0):
-        """If the above conventions are fulfilled, this method returns a Dataset object, such
-           as MyGrizzlyBearSet for the given package and subdirectory.
-           'arguments' is a dictionary with keyword arguments passed to the dataset constructor.
+        """If the conventions in the class comment are followed or if the dataset name is
+        appropriately listed in 'exceptions', this method returns a Dataset object,
+        such as MyGrizzlyBearSet for the given package and subdirectory.
+        'arguments' is a dictionary with keyword arguments passed to the dataset constructor.
         """
-        module_name = self._module_name_for_dataset(dataset_name)
-        class_name = self.class_name_for_dataset(dataset_name)
+        (table_name, module_name, class_name) =  self._table_module_class_names_for_dataset(dataset_name)
+        if module_name is None or class_name is None:
+            return None
         if subdir:
             module_full_name = package + "." + subdir + "." + module_name
         else:
@@ -41,47 +65,34 @@ class DatasetFactory(object):
         for package_name in package_order:
             try:
                 dataset = self.get_dataset(dataset_name, package=package_name, **kwargs)
-                break
+                if dataset is not None:
+                    break
             except ImportError:
                 continue
         else:
             from opus_core.datasets.dataset import Dataset
-            logger.log_warning("Dataset '%s' not found in any of the "
-                    "packages: '%s'." % (dataset_name, "', '".join(package_order)))
             args = kwargs.get('arguments', {})
             storage=args.get('in_storage', None)
             try:
                 dataset = Dataset(in_storage=storage, dataset_name=dataset_name, in_table_name=dataset_name, id_name="%s_id" % dataset_name)
-                logger.log_status('Generic Dataset created.')
             except:
                 logger.log_warning("Could not create a generic Dataset '%s'." % dataset_name)
                 raise
-            
         return dataset
     
-    def class_name_for_dataset(self, dataset_name):
+    def dataset_name_for_table(self, table_name):
         """
-        Return the class name for this dataset, e.g. 'DevelopmentEventDataset' for 
-        dataset 'development_event'.
+        Return the dataset name for this table, e.g. 'gridcell' for table 'gridcells'.
+        If the table name is in 'exceptions', return the appropriate dataset name; otherwise
+        just remove the final 's' from the table_name.  Note that just removing the final 's'
+        won't work for words like 'cities', so these need to be in 'exceptions'.
         """
-        split_names = dataset_name.split('_')
-        class_name = "".join(map(lambda name: name.capitalize(), split_names)) + "Dataset"
-        return class_name
-    
-    def _module_name_for_dataset(self, dataset_name):
-        """
-        Return the module name for this dataset, e.g. 'gridcell_dataset' for dataset 'gridcell'.
-        In Opus, the convention is that the class name is same as the module name.
-        """
-        return '%s_dataset' % dataset_name
-       
-    #TODO: the method below is incorrect 
-    def table_name_for_dataset(self, dataset_name):
-        """
-        Return the table name for this dataset, e.g. 'gridcells' for dataset 'gridcell'.
-        In Opus, the convention is that the table name is same as the module name.
-        """
-        return self._module_name_for_dataset(dataset_name)
+        for t in DatasetFactory.exceptions:
+            if t[1]==table_name:
+                return t[0]
+        if not table_name.endswith('s'):
+            raise ValueError, "table name %s doesn't end with 's' and not listed in 'exceptions' -- couldn't determine dataset name" % table_name
+        return table_name[:-1]
      
     def compose_interaction_dataset_name(self, dataset1_name, dataset2_name):
         module1 = self._module_name_for_dataset(dataset1_name)
@@ -120,6 +131,21 @@ class DatasetFactory(object):
             argstmp.clear()
             
         return datasets
+    
+    def _table_module_class_names_for_dataset(self, dataset_name):
+        """
+        Return a tuple consisting of the table name, the module name, and the class name for this dataset, e.g.
+        ('development_events', 'development_event_dataset', 'DevelopmentEventDataset') for dataset 'development_event'.
+        """
+        # first check the exceptions
+        for t in DatasetFactory.exceptions:
+            if t[0]==dataset_name:
+                return t[1:]
+        table_name = dataset_name + 's'
+        module_name = dataset_name + '_dataset'
+        split_names = dataset_name.split('_')
+        class_name = "".join(map(lambda name: name.capitalize(), split_names)) + "Dataset"
+        return (table_name, module_name, class_name)
 
 
 from numpy import array
@@ -129,13 +155,10 @@ from opus_core.storage_factory import StorageFactory
 class DatasetFactoryTests(opus_unittest.OpusTestCase):
     def test_translations(self):
         factory = DatasetFactory()
-        self.assertEqual(factory._module_name_for_dataset('foo'), 'foo_dataset')
-        self.assertEqual(factory._module_name_for_dataset('foo_bar'), 'foo_bar_dataset')
-        self.assertEqual(factory.class_name_for_dataset('development_event'), 'DevelopmentEventDataset')
-        self.assertEqual(factory.class_name_for_dataset('my_city'), 'MyCityDataset')
-        self.assertEqual(factory.class_name_for_dataset('taz'), 'TazDataset')
-        self.assertEqual(factory.class_name_for_dataset('some_moss'), 'SomeMossDataset')
-        self.assertEqual(factory.class_name_for_dataset('my_data'), 'MyDataDataset')
+        self.assertEqual(factory._table_module_class_names_for_dataset('gridcell'), ('gridcells','gridcell_dataset', 'GridcellDataset'))
+        self.assertEqual(factory._table_module_class_names_for_dataset('development_event'), ('development_events','development_event_dataset', 'DevelopmentEventDataset'))
+        self.assertEqual(factory.dataset_name_for_table('gridcells'), 'gridcell')
+        self.assertEqual(factory.dataset_name_for_table('cities'), 'city')
                          
     def test_get_dataset(self):
         factory = DatasetFactory()
