@@ -95,11 +95,11 @@ class DatasetFactory(object):
         return table_name[:-1]
      
     def compose_interaction_dataset_name(self, dataset1_name, dataset2_name):
-        module1 = self._module_name_for_dataset(dataset1_name)
-        dataset1_class_name = self.class_name_for_dataset(dataset1_name)
-        module2 = self._module_name_for_dataset(dataset2_name)
-        dataset2_class_name = self.class_name_for_dataset(dataset2_name)
-        return (module1 + '_x_' + module2, dataset1_class_name[:-3] + dataset2_class_name)
+        """Return a tuple with the module name and dataset name for an interaction dataset, given the dataset names
+        for the two components"""
+        (table1_name, module1_name, class1_name) =  self._table_module_class_names_for_dataset(dataset1_name)
+        (table2_name, module2_name, class2_name) =  self._table_module_class_names_for_dataset(dataset2_name)
+        return (module1_name + '_x_' + module2_name, class1_name[:-3] + class2_name)
         
     def create_datasets_from_flt(self, datasets_to_create, package_name, additional_arguments={}):
         """
@@ -159,6 +159,8 @@ class DatasetFactoryTests(opus_unittest.OpusTestCase):
         self.assertEqual(factory._table_module_class_names_for_dataset('development_event'), ('development_events','development_event_dataset', 'DevelopmentEventDataset'))
         self.assertEqual(factory.dataset_name_for_table('gridcells'), 'gridcell')
         self.assertEqual(factory.dataset_name_for_table('cities'), 'city')
+        self.assertEqual(factory.compose_interaction_dataset_name('gridcell', 'household'), ('gridcell_dataset_x_household_dataset', 'GridcellDataHouseholdDataset'))
+        self.assertEqual(factory.compose_interaction_dataset_name('squid_a', 'clam_b'), ('squid_a_dataset_x_clam_b_dataset', 'SquidADataClamBDataset'))
                          
     def test_get_dataset(self):
         factory = DatasetFactory()
