@@ -18,8 +18,10 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from opus_gui.run.script.opusrunscript import *
 from opus_core.storage_factory import StorageFactory
-from opus_core.datasets.gui_dataset import GuiDataset
+from opus_core.datasets.dataset import Dataset
+from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_gui.config.datamodelview.opusdatasettablemodel import OpusDatasetTableModel
+from StringIO import StringIO
 import sys
 
 
@@ -56,18 +58,22 @@ class OpusFileAction(object):
     def viewDatasetAction(self):
         #print "viewDatasetAction"
         model = self.xmlFileObject.model
-        dataset_name = str(model.fileName(self.currentIndex))
-        dataset_name_full = str(model.filePath(self.currentIndex))
+        table_name = str(model.fileName(self.currentIndex))
+        table_name_full = str(model.filePath(self.currentIndex))
         parentIndex = model.parent(self.currentIndex)
         parent_name = str(model.fileName(parentIndex))
         parent_name_full = str(model.filePath(parentIndex))
-        storage = StorageFactory().get_storage('flt_storage',
-                                               storage_location=parent_name_full)
-        columns = storage.get_column_names(dataset_name)
-        
-        data = GuiDataset(in_storage=storage,
-                       in_table_name=dataset_name,id_name=columns[0])
-        
+        storage = StorageFactory().get_storage('flt_storage', storage_location=parent_name_full)
+        columns = storage.get_column_names(table_name)
+        dataset_name = DatasetFactory().dataset_name_for_table(table_name)
+        # Aaron - please check this way of getting the XMLConfiguration -- is this the best way?
+        general = self.xmlFileObject.mainwindow.toolboxStuff.opusXMLTree.get_section('general')
+        # problem: this gets the package order for the current project, but the viewer shows all the data
+        package_order = general['dataset_pool_configuration'].package_order
+        # PREVIOUS HACK: 
+        # package_order = ['seattle_parcel','urbansim_parcel', 'eugene', 'urbansim', 'opus_core']
+        data = DatasetFactory().search_for_dataset(dataset_name, package_order, 
+            arguments={'in_storage': storage, 'in_table_name': table_name})
         # Need to add a new tab to the main tabs for display of the data
         tabs = self.xmlFileObject.mainwindow.tabWidget
         container = QWidget()
@@ -75,18 +81,11 @@ class OpusFileAction(object):
         summaryGroupBox = QGroupBox(container)
         summaryGroupBox.setTitle(QString("Summary"))
         summaryGroupBoxLayout = QVBoxLayout(summaryGroupBox)
-        # Add in the summary here
-        
-        # This is code to be used if we need to catch stdout from the summary method
-        #textBrowser = CatchOutput(container)
-        #textBrowser.start()
-        #data.summary()
-        #textBrowser.stop()
-        #summaryGroupBoxLayout.addWidget(textBrowser)
-        
         # Grab the summary data
-        data_summary = data.summary()
-        strng = QString(data_summary.getvalue())
+        buffer = StringIO()
+        data.summary(output=buffer)
+        strng = QString(buffer.getvalue())
+        buffer.close()
         textBrowser = QTextBrowser()
         textBrowser.insertPlainText(strng)
         summaryGroupBoxLayout.addWidget(textBrowser)
@@ -114,7 +113,7 @@ class OpusFileAction(object):
         widgetLayout.addWidget(tableGroupBox)
 
         tabIcon = QIcon(":/Images/Images/cog.png")
-        tabLabel = QString(dataset_name)
+        tabLabel = QString(table_name)
         tabs.insertTab(0,container,tabIcon,tabLabel)
         tabs.setCurrentIndex(0)
 
