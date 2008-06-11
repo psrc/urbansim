@@ -18,9 +18,9 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtXml import *
 
-from opus_gui.run.script.opusrunscript import *
+from opus_gui.run.tool.opusruntool import *
 import opus_gui.util.documentationbase
-from opus_gui.config.datamanager.configurescript import ConfigureScriptGui
+from opus_gui.config.datamanager.configuretool import ConfigureToolGui
 from opus_gui.config.datamanager.newdbconnection import NewDbConnectionGui
 from opus_gui.config.managerbase.cloneinherited import CloneInheritedGui
 from opus_gui.config.managerbase.clonenode import CloneNodeGui

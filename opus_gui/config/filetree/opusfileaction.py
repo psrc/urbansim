@@ -16,7 +16,7 @@
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from opus_gui.run.script.opusrunscript import *
+from opus_gui.run.tool.opusruntool import *
 from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import Dataset
 from opus_core.datasets.dataset_factory import DatasetFactory
@@ -139,8 +139,8 @@ class OpusFileAction(object):
             self.xmlFileObject.mainwindow.editorStatusLabel.setText(QString(filename))
             self.xmlFileObject.mainwindow.openEditorTab()
 
-    def fillInAvailableScripts(self):
-        #print "Checking for scripts"
+    def fillInAvailableTools(self):
+        #print "Checking for tools"
         choices = []
         classification = ""
         if self.xmlFileObject.model.isDir(self.currentIndex):
@@ -170,7 +170,7 @@ class OpusFileAction(object):
                 classification = "array"
         tree = self.xmlFileObject.mainwindow.toolboxStuff.dataManagerTree
         dbxml = tree.model.index(0,0,QModelIndex()).parent()
-        dbindexlist = tree.model.findElementIndexByType("script_batch",dbxml,True)
+        dbindexlist = tree.model.findElementIndexByType("tool_set",dbxml,True)
         for dbindex in dbindexlist:
             if dbindex.isValid():
                 classificationindex = tree.model.findElementIndexByType("classification",dbindex)
@@ -199,43 +199,43 @@ class OpusFileAction(object):
             filename = self.xmlFileObject.model.fileName(self.currentIndex)
             filepath = self.xmlFileObject.model.filePath(self.currentIndex)
             parentfilepath = self.xmlFileObject.model.filePath(self.currentIndex.parent())
-            # Add in the code to take action... like run a script...
+            # Add in the code to take action... like run a tool...
             # First find the batch to loop over the configs to execute
             tree = self.xmlFileObject.mainwindow.toolboxStuff.dataManagerTree
-            scriptxml = tree.model.index(0,0,QModelIndex()).parent()
-            scriptindexlist = tree.model.findElementIndexByName(actiontext,scriptxml,False)
-            scriptindex = scriptindexlist[0]
-            if scriptindex.isValid():
-                # print scriptindex.internalPointer().node().toElement().tagName()
-                # We have the script_batch... time to loop over the children and get the configs
-                configindexlist = tree.model.findElementIndexByType("script_config",scriptindex,True)
+            toolxml = tree.model.index(0,0,QModelIndex()).parent()
+            toolindexlist = tree.model.findElementIndexByName(actiontext,toolxml,False)
+            toolindex = toolindexlist[0]
+            if toolindex.isValid():
+                # print toolindex.internalPointer().node().toElement().tagName()
+                # We have the tool_set... time to loop over the children and get the configs
+                configindexlist = tree.model.findElementIndexByType("tool_config",toolindex,True)
                 # print len(configindexlist)
                 for configindex in configindexlist:
                     if configindex.isValid():
-                        # Now for each config index we need to run the scripts
-                        # Now find the script that this config refers to...
+                        # Now for each config index we need to run the tools
+                        # Now find the tool that this config refers to...
                         configNode = configindex.internalPointer().node().toElement()
-                        script_hook = configNode.elementsByTagName(QString("script_hook")).item(0)
+                        tool_hook = configNode.elementsByTagName(QString("tool_hook")).item(0)
                         tool_name = QString("")
-                        if script_hook.hasChildNodes():
-                            children = script_hook.childNodes()
+                        if tool_hook.hasChildNodes():
+                            children = tool_hook.childNodes()
                             for x in xrange(0,children.count(),1):
                                 if children.item(x).isText():
                                     tool_name = children.item(x).nodeValue()
                         # This will be in the Tool Library
                         library = configindex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
                         tool_path = library.toElement().elementsByTagName("tool_path").item(0)
-                        script_file = library.toElement().elementsByTagName(tool_name).item(0)
+                        tool_file = library.toElement().elementsByTagName(tool_name).item(0)
                         
-                        # First find the script path text...
+                        # First find the tool path text...
                         if tool_path.hasChildNodes():
                             children = tool_path.childNodes()
                             for x in xrange(0,children.count(),1):
                                 if children.item(x).isText():
-                                    scriptPath = children.item(x).nodeValue()
-                        # Next if the script_file has a tool_name we grab it
-                        if script_file.hasChildNodes():
-                            children = script_file.childNodes()
+                                    toolPath = children.item(x).nodeValue()
+                        # Next if the tool_file has a tool_name we grab it
+                        if tool_file.hasChildNodes():
+                            children = tool_file.childNodes()
                             for x in xrange(0,children.count(),1):
                                 if children.item(x).isElement():
                                     thisElement = children.item(x).toElement()
@@ -246,7 +246,7 @@ class OpusFileAction(object):
                                             for x2 in xrange(0,children2.count(),1):
                                                 if children2.item(x2).isText():
                                                     filePath = children2.item(x2).nodeValue()
-                        importPath = QString(scriptPath).append(QString(".")).append(QString(filePath))
+                        importPath = QString(toolPath).append(QString(".")).append(QString(filePath))
                         print "New import ", importPath
 
                         # Now loop and build up the parameters...
@@ -281,10 +281,10 @@ class OpusFileAction(object):
                                     thisElementText = self.xmlFileObject.model.fileName(self.currentIndex)
                                 elif self.classification == "array":
                                     thisElementText = self.xmlFileObject.model.fileName(self.currentIndex.parent())
-                            if thisElement.toElement().tagName() != QString("script_hook"):
+                            if thisElement.toElement().tagName() != QString("tool_hook"):
                                 params[thisElement.toElement().tagName()] = thisElementText
-                        x = OpusScript(self.xmlFileObject.mainwindow,importPath,params)
-                        y = RunScriptThread(self.xmlFileObject.mainwindow,x)
+                        x = OpusTool(self.xmlFileObject.mainwindow,importPath,params)
+                        y = RunToolThread(self.xmlFileObject.mainwindow,x)
                         y.run()
         return
 
@@ -299,7 +299,7 @@ class OpusFileAction(object):
                 self.menu.addAction(self.actOpenTextFile)
             else:
                 # Do stuff for directories
-                choices = self.fillInAvailableScripts()
+                choices = self.fillInAvailableTools()
                 if self.classification == "dataset":
                     # We need to provide the option to open the dataset
                     self.menu.addAction(self.actViewDataset)

@@ -17,11 +17,11 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from opus_gui.config.datamanager.configurescript_ui import Ui_ConfigureScriptGui
+from opus_gui.config.datamanager.configuretool_ui import Ui_ConfigureToolGui
 
 import random
 
-class ConfigureScriptGui(QDialog, Ui_ConfigureScriptGui):
+class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
     def __init__(self, opusXMLAction_xxx, fl):
         QDialog.__init__(self, opusXMLAction_xxx.mainwindow, fl)
         self.setupUi(self)
@@ -43,33 +43,33 @@ class ConfigureScriptGui(QDialog, Ui_ConfigureScriptGui):
         if templates_root.hasChildNodes():
             children = templates_root.childNodes()
             for x in xrange(0,children.count(),1):
-                if children.item(x).toElement().attribute(QString("type")) == QString("script_file"):
+                if children.item(x).toElement().attribute(QString("type")) == QString("tool_file"):
                     # We have a template... add it to the list
                     self.comboBox.addItem(children.item(x).toElement().tagName())
         # Now we hook up to the user selecting the type desired
         QObject.connect(self.comboBox, SIGNAL("currentIndexChanged(int)"),
-                        self.scriptTypeSelected)
-        self.scripttypearray = []
+                        self.toolTypeSelected)
+        self.tooltypearray = []
         self.typeSelection = None
 
     def on_createConfig_released(self):
         #print "create pressed"
 
         # Need to create something that looks like this:
-        #<opus_database_to_sql_config type="script_config">
-        #  <script_hook type="tool_library_ref">opus_database_to_sql_tool</script_hook>
+        #<opus_database_to_sql_config type="tool_config">
+        #  <tool_hook type="tool_library_ref">opus_database_to_sql_tool</tool_hook>
         #  <sql_db_name type="string">mytestdb</sql_db_name>
         #  <opus_data_directory type="string" />
         #  <opus_data_year type="string">ALL</opus_data_year>
         #  <opus_table_name type="string">ALL</opus_table_name>
         #</opus_database_to_sql_config>
         
-        scriptname = self.test_line[0].text()
+        toolname = self.test_line[0].text()
         # First is the connection node with the connection name
-        newNode = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(scriptname)
-        newNode.setAttribute(QString("type"),QString("script_config"))
-        # Add the script hook back in
-        newChild = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(QString("script_hook"))
+        newNode = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(toolname)
+        newNode.setAttribute(QString("type"),QString("tool_config"))
+        # Add the tool hook back in
+        newChild = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(QString("tool_hook"))
         newChild.setAttribute(QString("type"),QString("tool_library_ref"))
         newText = self.opusXMLAction_xxx.currentIndex.model().domDocument.createTextNode(self.typeSelection)
         newChild.appendChild(newText)
@@ -97,7 +97,7 @@ class ConfigureScriptGui(QDialog, Ui_ConfigureScriptGui):
         #print "cancel pressed"
         self.close()
 
-    def scriptTypeSelected(self,index):
+    def toolTypeSelected(self,index):
         #print "Got a new selection"
         #print self.comboBox.itemText(index)
 
@@ -105,13 +105,13 @@ class ConfigureScriptGui(QDialog, Ui_ConfigureScriptGui):
         for testw in self.test_widget:
             self.vboxlayout.removeWidget(testw)
             testw.hide()
-        del self.scripttypearray[:]
+        del self.tooltypearray[:]
         del self.test_widget[:]
         del self.test_text[:]
         del self.test_line[:]
 
-        # The script_config will always have script_config name
-        self.scripttypearray.append([QString("Script Config Name"),QString("script_config"),QString("")])
+        # The tool_config will always have tool_config name
+        self.tooltypearray.append([QString("Tool Config Name"),QString("tool_config"),QString("")])
 
         # Now look up the selected connection type and present to the user...
         # First we start at the Tool_Library
@@ -121,21 +121,21 @@ class ConfigureScriptGui(QDialog, Ui_ConfigureScriptGui):
             for x in xrange(0,library.count(),1):
                 if library.item(x).isElement():
                     library_child = library.item(x).toElement()
-                    foundOurScript = False
+                    foundOurTool = False
                     if library_child.hasAttribute(QString("type")) and \
-                           (library_child.attribute(QString("type")) == QString("script_file")):
+                           (library_child.attribute(QString("type")) == QString("tool_file")):
                         if library_child.tagName() == self.comboBox.itemText(index):
-                            foundOurScript = True
-                    if foundOurScript:
-                        script_file = library_child.childNodes()
-                        for xx in xrange(0,script_file.count(),1):
-                            if script_file.item(xx).isElement():
-                                script_file_child = script_file.item(xx).toElement()
+                            foundOurTool = True
+                    if foundOurTool:
+                        tool_file = library_child.childNodes()
+                        for xx in xrange(0,tool_file.count(),1):
+                            if tool_file.item(xx).isElement():
+                                tool_file_child = tool_file.item(xx).toElement()
                                 # Find the name element and compare
-                                if script_file_child.hasAttribute(QString("type")) and \
-                                       (script_file_child.attribute(QString("type")) == QString("param_template")):
-                                    if script_file_child.hasChildNodes():
-                                        params = script_file_child.childNodes()
+                                if tool_file_child.hasAttribute(QString("type")) and \
+                                       (tool_file_child.attribute(QString("type")) == QString("param_template")):
+                                    if tool_file_child.hasChildNodes():
+                                        params = tool_file_child.childNodes()
                                         # Here we loop through the params
                                         for xxx in xrange(0,params.count(),1):
                                             if params.item(xxx).isElement():
@@ -149,8 +149,8 @@ class ConfigureScriptGui(QDialog, Ui_ConfigureScriptGui):
                                                     for xxxx in xrange(0,textSearch.count(),1):
                                                         if textSearch.item(xxxx).isText():
                                                             nodeVal = textSearch.item(xxxx).nodeValue()
-                                                            self.scripttypearray.append([tagName,typeName,nodeVal])
-        for i,param in enumerate(self.scripttypearray):
+                                                            self.tooltypearray.append([tagName,typeName,nodeVal])
+        for i,param in enumerate(self.tooltypearray):
             # print "Key: %s , Val: %s" % (param[0],param[1])
             if (i==0):
                 widgetTemp = QFrame(self.variableBox)
