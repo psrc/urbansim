@@ -17,6 +17,7 @@ from opus_core.simulation_state import SimulationState
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.resources import Resources
 from opus_core.session_configuration import SessionConfiguration
+from opus_core.logger import logger
 
 from urbansim.constants import Constants
 from urbansim.data.test_cache_configuration import TestCacheConfiguration
@@ -25,6 +26,13 @@ class UrbansimConstantDataset(Constants):
 
     def __init__(self, **kwargs):
         Constants.__init__(self, **kwargs)
+        
+    def get_attribute(self, x):
+        # look up the attribute and return it in a list of length 1
+        return [self[x]]
+
+    def summary(self, output=logger):
+        output.write("UrbanSim constant dataset")
 
 
 import os
