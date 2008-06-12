@@ -525,7 +525,7 @@
   </action>
   <action name="actionSave_Project_2" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/script_save.png</iconset>
+    <iconset resource="opusmain.qrc" >:/Images/Images/disk.png</iconset>
    </property>
    <property name="text" >
     <string>Save Project</string>

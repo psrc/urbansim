@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusmain.ui'
 #
-# Created: Wed Jun 11 13:11:09 2008
+# Created: Thu Jun 12 13:34:19 2008
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -238,7 +238,7 @@ class Ui_MainWindow(object):
         self.actionExit.setObjectName("actionExit")
 
         self.actionSave_Project_2 = QtGui.QAction(MainWindow)
-        self.actionSave_Project_2.setIcon(QtGui.QIcon(":/Images/Images/script_save.png"))
+        self.actionSave_Project_2.setIcon(QtGui.QIcon(":/Images/Images/disk.png"))
         self.actionSave_Project_2.setObjectName("actionSave_Project_2")
 
         self.actionSave_Project_As_2 = QtGui.QAction(MainWindow)

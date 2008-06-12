@@ -3,6 +3,7 @@
         <file>Images/accept.png</file>
         <file>Images/add.png</file>
         <file>Images/application_double.png</file>
+        <file>Images/application_edit.png</file>
         <file>Images/application_side_tree.png</file>
         <file>Images/arrow_down.png</file>
         <file>Images/arrow_refresh.png</file>
@@ -19,10 +20,12 @@
         <file>Images/database_link.png</file>
         <file>Images/database_table.png</file>
         <file>Images/delete.png</file>
+        <file>Images/disk.png</file>
         <file>Images/exclamation.png</file>
         <file>Images/field.png</file>
         <file>Images/folder.png</file>
         <file>Images/folder_database.png</file>
+        <file>Images/folder_wrench.png</file>
         <file>Images/help.png</file>
         <file>Images/layers.png</file>
         <file>Images/lock.png</file>
@@ -43,5 +46,7 @@
         <file>Images/table_go.png</file>
         <file>Images/table_lightning.png</file>
         <file>Images/table_multiple.png</file>
+        <file>Images/wrench.png</file>
+        <file>Images/wrench_orange.png</file>
     </qresource>
 </RCC>
