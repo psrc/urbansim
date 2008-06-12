@@ -81,6 +81,21 @@ class DatasetFactory(object):
                                         arguments=arguments, debug=debug)
  
     def search_for_dataset(self, dataset_name, package_order, **kwargs):
+        """Search for a dataset with the name 'dataset_name' in the packages given in 'package_order'.  
+        Use the default id_name for the dataset, which will be the dataset name followed by '_id' 
+        """
+        return self._search_for_dataset_helper(dataset_name, package_order, False, **kwargs)
+    
+    def search_for_dataset_with_hidden_id(self, dataset_name, package_order, **kwargs):
+        """Search for a dataset with the name 'dataset_name' in the packages given in 'package_order'.  
+        Use a hidden id_name for the dataset.
+        """
+        return self._search_for_dataset_helper(dataset_name, package_order, True, **kwargs)
+    
+    def _search_for_dataset_helper(self, dataset_name, package_order, use_hidden_id, **kwargs):
+        # this part of the search_for_dataset code is factored into a helper method, rather than passing in
+        # use_hidden_id as a keyword parameter with a default value of False, so that we don't pass this
+        # keyword parameter along to the get_dataset method
         for package_name in package_order:
             try:
                 dataset = self.get_dataset(dataset_name, package=package_name, **kwargs)
@@ -94,7 +109,10 @@ class DatasetFactory(object):
             storage=args.get('in_storage', None)
             try:
                 (table_name, module_name, class_name) =  self._table_module_class_names_for_dataset(dataset_name)
-                dataset = Dataset(in_storage=storage, dataset_name=dataset_name, in_table_name=table_name, id_name=[])
+                if use_hidden_id:
+                    dataset = Dataset(in_storage=storage, dataset_name=dataset_name, in_table_name=table_name, id_name=[])
+                else:
+                    dataset = Dataset(in_storage=storage, dataset_name=dataset_name, in_table_name=table_name, id_name="%s_id" % dataset_name)
             except:
                 logger.log_warning("Could not create a generic Dataset '%s'." % dataset_name)
                 raise
@@ -191,13 +209,23 @@ class DatasetFactoryTests(opus_unittest.OpusTestCase):
         
     def test_create_generic_dataset(self):
         storage = StorageFactory().get_storage('dict_storage')
-        data = {'attr1': array([1,3,4]), 'table_id': array([1,2,3])}
-        storage.write_table(table_name = 'table', table_data = data)
+        data = {'attr1': array([1,3,4]), 'frog_id': array([1,2,3])}
+        storage.write_table(table_name = 'frogs', table_data = data)
         factory = DatasetFactory()
-        ds = factory.search_for_dataset('table', ['opus_core'], arguments={'in_storage': storage})
-        self.assertEqual(ds.get_id_name()[0], 'table_id')
-        self.assertEqual(ds.get_dataset_name(), 'table')
+        ds = factory.search_for_dataset('frog', ['opus_core'], arguments={'in_storage': storage})
+        self.assertEqual(ds.get_id_name()[0], 'frog_id')
+        self.assertEqual(ds.get_dataset_name(), 'frog')
         self.assertEqual(ds.size(), 3)
         
+    def test_create_generic_dataset_with_hidden_id(self):
+        storage = StorageFactory().get_storage('dict_storage')
+        data = {'attr1': array([1,3,4])}
+        storage.write_table(table_name = 'frogs', table_data = data)
+        factory = DatasetFactory()
+        ds = factory.search_for_dataset_with_hidden_id('frog', ['opus_core'], arguments={'in_storage': storage})
+        self.assertEqual(ds.get_id_name()[0], '_hidden_id_')
+        self.assertEqual(ds.get_dataset_name(), 'frog')
+        self.assertEqual(ds.size(), 3)
+
 if __name__ == '__main__':
     opus_unittest.main()

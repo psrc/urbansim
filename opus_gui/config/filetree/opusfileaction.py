@@ -72,7 +72,7 @@ class OpusFileAction(object):
         package_order = general['dataset_pool_configuration'].package_order
         # PREVIOUS HACK: 
         # package_order = ['seattle_parcel','urbansim_parcel', 'eugene', 'urbansim', 'opus_core']
-        data = DatasetFactory().search_for_dataset(dataset_name, package_order, 
+        data = DatasetFactory().search_for_dataset_with_hidden_id(dataset_name, package_order, 
             arguments={'in_storage': storage, 'in_table_name': table_name})
         # Need to add a new tab to the main tabs for display of the data
         tabs = self.xmlFileObject.mainwindow.tabWidget

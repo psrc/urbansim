@@ -24,6 +24,4 @@ class HouseholdControlTotalDataset(ControlTotalDataset):
     dataset_name = "household_control_total"
     
     def __init__(self, *args, **kwargs):
-<<<<<<< .mine
-        ControlTotalDataset.__init__(self, what='household', *args, **kwargs)=======
-        ControlTotalDataset(self, what='household', *args, **kwargs)        >>>>>>> .r3495
+        ControlTotalDataset.__init__(self, what='household', *args, **kwargs)
