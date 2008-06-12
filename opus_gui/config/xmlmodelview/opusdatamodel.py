@@ -94,6 +94,10 @@ class OpusDataModel(QAbstractItemModel):
         self.addIcon = QIcon(":/Images/Images/add.png")
         self.arrowUpIcon = QIcon(":/Images/Images/arrow_up.png")
         self.arrowDownIcon = QIcon(":/Images/Images/arrow_down.png")
+        self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
+        self.toolSetIcon = QIcon(":/Images/Images/folder_wrench.png")
+        self.toolConfigIcon = QIcon(":/Images/Images/wrench.png")
+        self.toolFileIcon = QIcon(":/Images/Images/wrench_orange.png")
 
         self.bookmarkIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_FileIcon))
         self.folderIcon.addPixmap(self.app.style().standardPixmap(QStyle.SP_DirClosedIcon),
@@ -131,10 +135,10 @@ class OpusDataModel(QAbstractItemModel):
                    "checkbox":self.bulletIcon,
                    "cacheConfig":self.databaseLinkIcon,
                    "boolean":self.pythonTypeIcon,
-                   "tool_file":self.pythonTypeIcon,
+                   "tool_file":self.toolFileIcon,
                    "tool_library":self.bulletIcon,
-                   "tool_config":self.pythonTypeIcon,
-                   "tool_set":self.pythonBatchIcon,
+                   "tool_config":self.toolConfigIcon,
+                   "tool_set":self.toolSetIcon,
                    "indicator_library":self.folderIcon,
                    "indicator_group":self.folderIcon,
                    "group":self.folderIcon,
@@ -144,6 +148,7 @@ class OpusDataModel(QAbstractItemModel):
                    "selectable_list":self.folderIcon,
                    "indicator_result":self.mapGoIcon,
                    "tool_sets":self.bulletIcon,
+                   "scenario":self.bulletIcon,
                    "":self.bulletIcon}
         if attType != QString("defValue") and typeMap.has_key(str(attType)):
             return typeMap[str(attType)]

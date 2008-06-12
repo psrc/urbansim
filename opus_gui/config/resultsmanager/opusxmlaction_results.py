@@ -35,6 +35,8 @@ class OpusXMLAction_Results(object):
         self.removeIcon = QIcon(":/Images/Images/delete.png")
         self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
+        self.cloneIcon = QIcon(":/Images/Images/application_double.png")
+        self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
 
         #create new indicator action (only for my_indicators)
         self.actAddNewIndicator = QAction(self.acceptIcon, 
@@ -95,14 +97,14 @@ class OpusXMLAction_Results(object):
                         SIGNAL("triggered()"),
                         self.removeNode)
 
-        self.actMakeEditable = QAction(self.applicationIcon,
+        self.actMakeEditable = QAction(self.makeEditableIcon,
                                        "Make Editable",
                                        self.xmlTreeObject.mainwindow)
         QObject.connect(self.actMakeEditable,
                         SIGNAL("triggered()"),
                         self.makeEditableAction)
 
-        self.actCloneNode = QAction(self.calendarIcon,
+        self.actCloneNode = QAction(self.cloneIcon,
                                     "Copy Node",
                                     self.xmlTreeObject.mainwindow)
         QObject.connect(self.actCloneNode,

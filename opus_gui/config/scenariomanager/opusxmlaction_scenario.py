@@ -35,6 +35,8 @@ class OpusXMLAction_Scenario(object):
         self.removeIcon = QIcon(":/Images/Images/delete.png")
         self.calendarIcon = QIcon(":/Images/Images/calendar_view_day.png")
         self.applicationIcon = QIcon(":/Images/Images/application_side_tree.png")
+        self.cloneIcon = QIcon(":/Images/Images/application_double.png")
+        self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
 
         self.actRunModel = QAction(self.acceptIcon,
                                    "Run This Scenario",
@@ -71,7 +73,7 @@ class OpusXMLAction_Scenario(object):
                         SIGNAL("triggered()"),
                         self.editXMLFileLocal)
 
-        self.actMakeEditable = QAction(self.applicationIcon,
+        self.actMakeEditable = QAction(self.makeEditableIcon,
                                     "Make Editable",
                                     self.xmlTreeObject.mainwindow)
         QObject.connect(self.actMakeEditable,
@@ -85,7 +87,7 @@ class OpusXMLAction_Scenario(object):
                         SIGNAL("triggered()"),
                         self.removeNode)
 
-        self.actCloneNode = QAction(self.calendarIcon,
+        self.actCloneNode = QAction(self.cloneIcon,
                                     "Copy Node",
                                     self.xmlTreeObject.mainwindow)
         QObject.connect(self.actCloneNode,
