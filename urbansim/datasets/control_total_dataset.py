@@ -59,21 +59,15 @@ class ControlTotalDataset(Dataset):
         
         table_name = resources["in_table_name"]
         if resources['id_name'] is None or len(resources['id_name'])== 0:
+            #if both self.id_name_default and id_name argument in __init__ is unspecified, 
+            #ControlTotalDataset would use all attributes not beginning with "total"
+            #as id_name
             id_names = []
             column_names = resources["in_storage"].get_column_names(table_name)
             for column_name in column_names:
                 if not re.search('^total', column_name):
                     id_names.append(column_name)
             resources.merge({"id_name":resources["id_name"] + id_names})
-            
-        #if (id_name == None) and (what == "household"): # determine id_name depending on the columns in the table
-            #id_names = resources["in_storage"].get_column_names(table_name)
-            #for name in self.id_name_default[what]:
-                #if name in id_names:
-                    #id_names.remove(name)
-            #if "total_number_of_households" in id_names:
-                #id_names.remove("total_number_of_households")
-            #resources.merge({"id_name":resources["id_name"] + id_names})
 
         Dataset.__init__(self, resources = resources)
 
