@@ -14,6 +14,16 @@
 
 from urbansim.datasets.control_total_dataset import ControlTotalDataset as UrbansimControlTotalDataset
 
+id_name_defaults = {"household":["year", "large_area_id"],
+                   "employment":["year", "sector_id", "large_area_id"]}
+
 class ControlTotalDataset(UrbansimControlTotalDataset):
-    id_name_default = {"household":["year", "large_area_id"],
-                        "employment":["year", "sector_id", "large_area_id"]}
+    def __init__(self, what="", **kwargs):
+        if what=="household":
+            self.id_name_default = id_name_defaults[what]
+        elif what=="employment":
+            self.id_name_default = id_name_defaults[what]
+        else:
+            raise RuntimeError("Unknown control total dataset type", what)
+        
+        UrbansimControlTotalDataset.__init__(self, what=what, **kwargs)
