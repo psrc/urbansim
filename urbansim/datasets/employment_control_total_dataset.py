@@ -24,5 +24,8 @@ class EmploymentControlTotalDataset(ControlTotalDataset):
     dataset_name = "employment_control_total"
     
     def __init__(self, *args, **kwargs):
+<<<<<<< .mine
+        ControlTotalDataset.__init__(self, what='employment', *args, **kwargs)
+=======
         ControlTotalDataset(self, what='employment', *args, **kwargs)
-        
+        >>>>>>> .r3495
