@@ -65,15 +65,20 @@ class OpusFileAction(object):
         parent_name_full = str(model.filePath(parentIndex))
         storage = StorageFactory().get_storage('flt_storage', storage_location=parent_name_full)
         columns = storage.get_column_names(table_name)
-        dataset_name = DatasetFactory().dataset_name_for_table(table_name)
+        # temporarily use the table name for the dataset name
+        # dataset_name = DatasetFactory().dataset_name_for_table(table_name)
         # Aaron - please check this way of getting the XMLConfiguration -- is this the best way?
         general = self.xmlFileObject.mainwindow.toolboxStuff.opusXMLTree.get_section('general')
         # problem: this gets the package order for the current project, but the viewer shows all the data
         package_order = general['dataset_pool_configuration'].package_order
         # PREVIOUS HACK: 
         # package_order = ['seattle_parcel','urbansim_parcel', 'eugene', 'urbansim', 'opus_core']
-        data = DatasetFactory().search_for_dataset_with_hidden_id(dataset_name, package_order, 
-            arguments={'in_storage': storage, 'in_table_name': table_name})
+        # temporary code: just use a generic dataset for now
+        data = Dataset(in_storage=storage, dataset_name=table_name, in_table_name=table_name, id_name=[])
+        # code to get a more specialized dataset if possible (doesn't work with table names not ending in 's'
+        # unless they are in the exceptions list in DatasetFactory)
+        # data = DatasetFactory().search_for_dataset_with_hidden_id(dataset_name, package_order, 
+        #    arguments={'in_storage': storage, 'in_table_name': table_name})
         # Need to add a new tab to the main tabs for display of the data
         tabs = self.xmlFileObject.mainwindow.tabWidget
         container = QWidget()
