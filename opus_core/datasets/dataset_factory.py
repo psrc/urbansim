@@ -29,33 +29,25 @@ class DatasetFactory(object):
     #      (dataset_name, table_name, module_name, dataset_class_name)
     # module_name and dataset_class_name may be None; if so the generic Dataset class should be used.
     exceptions = [
-       # doesn't work ... ('base_year', 'base_year', 'urbansim_constant_dataset', 'UrbansimConstantDataset'), 
         ('city', 'cities', 'city_dataset', 'CityDataset'), 
         ('building_sqft_per_job', 'building_sqft_per_job', 'building_sqft_per_job_dataset', 'BuildingSqftPerJobDataset'), 
         ('county', 'counties', 'county_dataset', 'CountyDataset'),
         ('demolition_cost_per_sqft', 'demolition_cost_per_sqft', 'demolition_cost_per_sqft_dataset', 'DemolitionCostPerSqftDataset'),
         ('development_event_history', 'development_event_history', 'development_event_history_dataset', 'DevelopmentEventHistoryDataset'),
+        ('development_group', 'development_type_groups', 'development_group_dataset', 'DevelopmentGroupDataset'),
+        ('employment_control_total', 'annual_employment_control_totals', 'employment_control_total_dataset', 'EmploymentControlTotalDataset'),
+        ('employment_adhoc_sector_group', 'employment_adhoc_sector_groups', 'employment_sector_group_dataset', 'EmploymentSectorGroupDataset'),
         ('faz', 'fazes', 'faz_dataset', 'FazDataset'),
         ('household', 'households_for_estimation', 'household_dataset', 'HouseholdDataset'), 
         ('household_characteristic', 'household_characteristics_for_ht', 'household_characteristic_dataset', 'HouseholdCharacteristicDataset'), 
+        ('household_control_total', 'annual_household_control_totals', 'household_control_total_dataset', 'HouseholdControlTotalDataset'),
+        ('household_relocation_rate', 'annual_relocation_rates_for_households', 'household_relocation_rate_dataset', 'HouseholdRelocationRateDataset'),
         ('job', 'jobs_for_estimation', 'job_dataset', 'JobDataset'), 
+        ('job_relocation_rate', 'annual_relocation_rates_for_jobs', 'job_relocation_rate_dataset', 'JobRelocationRateDataset'),
         ('race', 'race_names', 'race_dataset', 'RaceDataset'), 
         ('target_vacancy', 'target_vacancies', 'target_vacancy_dataset', 'TargetVacancyDataset'), 
         ('travel_data', 'travel_data', 'travel_data_dataset', 'TravelDataDataset'), 
-        ## newly added
-        ('employment_control_total', 'annual_employment_control_totals', 'employment_control_total_dataset', 'EmploymentControlTotalDataset'),
-        ('household_control_total', 'annual_household_control_totals', 'household_control_total_dataset', 'HouseholdControlTotalDataset'),
-        ('household_relocation_rate', 'annual_relocation_rates_for_households', 'household_relocation_rate_dataset', 'HouseholdRelocationRateDataset'),
-        ('job_relocation_rate', 'annual_relocation_rates_for_jobs', 'job_relocation_rate_dataset', 'JobRelocationRateDataset'),
-        ('development_group', 'development_type_groups', 'development_group_dataset', 'DevelopmentGroupDataset'),
-        ('employment_adhoc_sector_group', 'employment_adhoc_sector_groups', 'employment_adhoc_sector_group_dataset', 'EmploymentSectorGroupDataset'),
-        ('plan_type_group', 'plan_type_groups', 'plan_type_group_dataset', 'PlanTypeDataset'),
-        ## need to add new dataset class for them, maybe generic Dataset class will work?
-        ('development_type_group_definition', 'development_type_group_definitions', 'development_type_group_definition_dataset', 'DevelopmentTypeGroupDefinitionDataset'),        
-        ('employment_adhoc_sector_group_definition', 'employment_adhoc_sector_group_definitions', 'employment_adhoc_sector_group_definition_dataset', 'EmploymentSectorGroupDefinitionDataset'),        
-        ('plan_type_group_definition', 'plan_type_group_definitions', 'plan_type_group_definition_dataset', 'PlanTypeGroupDefinitionDataset'), 
-        ('land_price_model_coefficients', 'land_price_model_coefficients', 'coefficient_dataset', 'CoefficientDataset'),
-        ('land_price_model_specification', 'land_price_model_specification', 'specification_dataset', 'SpecificationDataset'),
+        ('plan_type_group', 'plan_type_groups', 'plan_type_group_dataset', 'PlanTypeGroupDataset'),
         ]
 
     def get_dataset(self, dataset_name, subdir="datasets", package="opus_core", 
@@ -88,7 +80,8 @@ class DatasetFactory(object):
             args = kwargs.get('arguments', {})
             storage=args.get('in_storage', None)
             try:
-                dataset = Dataset(in_storage=storage, dataset_name=dataset_name, in_table_name=dataset_name, id_name="%s_id" % dataset_name)
+                (table_name, module_name, class_name) =  self._table_module_class_names_for_dataset(dataset_name)
+                dataset = Dataset(in_storage=storage, dataset_name=dataset_name, in_table_name=table_name, id_name=[])
             except:
                 logger.log_warning("Could not create a generic Dataset '%s'." % dataset_name)
                 raise
