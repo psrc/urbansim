@@ -114,6 +114,8 @@ class Baseline(AbstractUrbansimConfiguration):
                     'employment_sectors',
                     #'land_use_events',
                     'plan_types',
+                    'plan_type_groups',
+                    'plan_type_group_definitions',                    
                     'race_names',
                     'target_vacancies',
                     'jobs_for_estimation',
