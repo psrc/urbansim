@@ -38,6 +38,7 @@
           <opus_data_directory choices="Required|Optional" type="string">Required</opus_data_directory> 
           <opus_data_year choices="Required|Optional" type="string">Required</opus_data_year>          
         </params>
+      </sql_data_to_opus_tool>
       <opus_database_to_sql_tool type="tool_file">
 	    <name type="tool_name">opus_database_to_sql</name>
 	    <params type="param_template">
