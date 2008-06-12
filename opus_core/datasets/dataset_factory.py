@@ -42,6 +42,20 @@ class DatasetFactory(object):
         ('race', 'race_names', 'race_dataset', 'RaceDataset'), 
         ('target_vacancy', 'target_vacancies', 'target_vacancy_dataset', 'TargetVacancyDataset'), 
         ('travel_data', 'travel_data', 'travel_data_dataset', 'TravelDataDataset'), 
+        ## newly added
+        ('employment_control_total', 'annual_employment_control_totals', 'employment_control_total_dataset', 'EmploymentControlTotalDataset'),
+        ('household_control_total', 'annual_household_control_totals', 'household_control_total_dataset', 'HouseholdControlTotalDataset'),
+        ('household_relocation_rate', 'annual_relocation_rates_for_households', 'household_relocation_rate_dataset', 'HouseholdRelocationRateDataset'),
+        ('job_relocation_rate', 'annual_relocation_rates_for_jobs', 'job_relocation_rate_dataset', 'JobRelocationRateDataset'),
+        ('development_group', 'development_type_groups', 'development_group_dataset', 'DevelopmentGroupDataset'),
+        ('employment_adhoc_sector_group', 'employment_adhoc_sector_groups', 'employment_adhoc_sector_group_dataset', 'EmploymentSectorGroupDataset'),
+        ('plan_type_group', 'plan_type_groups', 'plan_type_group_dataset', 'PlanTypeDataset'),
+        ## need to add new dataset class for them, maybe generic Dataset class will work?
+        ('development_type_group_definition', 'development_type_group_definitions', 'development_type_group_definition_dataset', 'DevelopmentTypeGroupDefinitionDataset'),        
+        ('employment_adhoc_sector_group_definition', 'employment_adhoc_sector_group_definitions', 'employment_adhoc_sector_group_definition_dataset', 'EmploymentSectorGroupDefinitionDataset'),        
+        ('plan_type_group_definition', 'plan_type_group_definitions', 'plan_type_group_definition_dataset', 'PlanTypeGroupDefinitionDataset'), 
+        ('land_price_model_coefficients', 'land_price_model_coefficients', 'coefficient_dataset', 'CoefficientDataset'),
+        ('land_price_model_specification', 'land_price_model_specification', 'specification_dataset', 'SpecificationDataset'),
         ]
 
     def get_dataset(self, dataset_name, subdir="datasets", package="opus_core", 
