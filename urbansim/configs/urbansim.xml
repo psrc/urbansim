@@ -30,14 +30,22 @@
   <data_manager>
     <Tool_Library setexpanded="True" type="tool_library">
       <tool_path flags="hidden" type="tool_path">tools</tool_path>
+      <sql_data_to_opus_tool type="tool_file"> 
+        <name type="tool_name">sql_data_to_opus</name>
+        <params type="param_template">
+          <sql_db_name choices="Required|Optional" type="string">Required</sql_db_name> 
+          <table_name choices="Required|Optional" type="string">Required</table_name> 
+          <opus_data_directory choices="Required|Optional" type="string">Required</opus_data_directory> 
+          <opus_data_year choices="Required|Optional" type="string">Required</opus_data_year>          
+        </params>
       <opus_database_to_sql_tool type="tool_file">
-	<name type="tool_name">opus_database_to_sql</name>
-	<params type="param_template">
+	    <name type="tool_name">opus_database_to_sql</name>
+	    <params type="param_template">
           <sql_db_name choices="Required|Optional" type="string">Required</sql_db_name>
           <opus_data_directory choices="Required|Optional" type="string">Required</opus_data_directory>
           <opus_data_year choices="Required|Optional" type="string">Required</opus_data_year>
           <opus_table_name choices="Required|Optional" type="string">Required</opus_table_name>
-	</params>
+	    </params>
       </opus_database_to_sql_tool>
       <opus_database_to_esri_tool type="tool_file">
 	<name type="tool_name">opus_database_to_esri</name>
