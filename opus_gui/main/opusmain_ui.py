@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusmain.ui'
 #
-# Created: Thu Jun 12 13:34:19 2008
+# Created: Thu Jun 12 13:39:50 2008
 #      by: PyQt4 UI code generator 4.3.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -67,50 +67,50 @@ class Ui_MainWindow(object):
         self.dataManager_toolBox.setObjectName("dataManager_toolBox")
 
         self.datamanager_dbsconnections = QtGui.QWidget()
-        self.datamanager_dbsconnections.setGeometry(QtCore.QRect(0,0,98,38))
+        self.datamanager_dbsconnections.setGeometry(QtCore.QRect(0,0,408,387))
         self.datamanager_dbsconnections.setObjectName("datamanager_dbsconnections")
 
         self.gridlayout3 = QtGui.QGridLayout(self.datamanager_dbsconnections)
         self.gridlayout3.setObjectName("gridlayout3")
-        self.dataManager_toolBox.addItem(self.datamanager_dbsconnections,"")
+        self.dataManager_toolBox.addItem(self.datamanager_dbsconnections,QtGui.QIcon(":/Images/Images/database_link.png"),"")
 
         self.datamanager_xmlconfig = QtGui.QWidget()
-        self.datamanager_xmlconfig.setGeometry(QtCore.QRect(0,0,408,389))
+        self.datamanager_xmlconfig.setGeometry(QtCore.QRect(0,0,408,385))
         self.datamanager_xmlconfig.setObjectName("datamanager_xmlconfig")
 
         self.gridlayout4 = QtGui.QGridLayout(self.datamanager_xmlconfig)
         self.gridlayout4.setObjectName("gridlayout4")
-        self.dataManager_toolBox.addItem(self.datamanager_xmlconfig,"")
+        self.dataManager_toolBox.addItem(self.datamanager_xmlconfig,QtGui.QIcon(":/Images/Images/folder_wrench.png"),"")
 
         self.datamanager_dirview = QtGui.QWidget()
-        self.datamanager_dirview.setGeometry(QtCore.QRect(0,0,98,38))
+        self.datamanager_dirview.setGeometry(QtCore.QRect(0,0,408,383))
         self.datamanager_dirview.setObjectName("datamanager_dirview")
 
         self.gridlayout5 = QtGui.QGridLayout(self.datamanager_dirview)
         self.gridlayout5.setObjectName("gridlayout5")
-        self.dataManager_toolBox.addItem(self.datamanager_dirview,"")
+        self.dataManager_toolBox.addItem(self.datamanager_dirview,QtGui.QIcon(":/Images/Images/table.png"),"")
         self.gridlayout2.addWidget(self.dataManager_toolBox,0,0,1,1)
         self.toolBox.addItem(self.datamanager_page,QtGui.QIcon(":/Images/Images/database_table.png"),"")
 
         self.modelmanager_page = QtGui.QWidget()
-        self.modelmanager_page.setGeometry(QtCore.QRect(0,0,98,38))
+        self.modelmanager_page.setGeometry(QtCore.QRect(0,0,426,491))
         self.modelmanager_page.setObjectName("modelmanager_page")
 
         self.gridlayout6 = QtGui.QGridLayout(self.modelmanager_page)
         self.gridlayout6.setMargin(9)
         self.gridlayout6.setSpacing(6)
         self.gridlayout6.setObjectName("gridlayout6")
-        self.toolBox.addItem(self.modelmanager_page,QtGui.QIcon(":/Images/Images/chart_organisation.png"),"")
+        self.toolBox.addItem(self.modelmanager_page,QtGui.QIcon(":/Images/Images/cog.png"),"")
 
         self.runmanager_page = QtGui.QWidget()
-        self.runmanager_page.setGeometry(QtCore.QRect(0,0,98,38))
+        self.runmanager_page.setGeometry(QtCore.QRect(0,0,426,491))
         self.runmanager_page.setObjectName("runmanager_page")
 
         self.gridlayout7 = QtGui.QGridLayout(self.runmanager_page)
         self.gridlayout7.setMargin(9)
         self.gridlayout7.setSpacing(6)
         self.gridlayout7.setObjectName("gridlayout7")
-        self.toolBox.addItem(self.runmanager_page,QtGui.QIcon(":/Images/Images/cog.png"),"")
+        self.toolBox.addItem(self.runmanager_page,QtGui.QIcon(":/Images/Images/chart_organisation.png"),"")
 
         self.resultsmanager_page = QtGui.QWidget()
         self.resultsmanager_page.setGeometry(QtCore.QRect(0,0,98,38))
@@ -311,8 +311,8 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.toolBox.setCurrentIndex(1)
-        self.dataManager_toolBox.setCurrentIndex(1)
+        self.toolBox.setCurrentIndex(3)
+        self.dataManager_toolBox.setCurrentIndex(2)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 

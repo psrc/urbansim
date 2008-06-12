@@ -63,7 +63,7 @@
         </size>
        </property>
        <property name="currentIndex" >
-        <number>1</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="generalmanager_page" >
         <property name="geometry" >
@@ -124,19 +124,22 @@
             </font>
            </property>
            <property name="currentIndex" >
-            <number>1</number>
+            <number>2</number>
            </property>
            <widget class="QWidget" name="datamanager_dbsconnections" >
             <property name="geometry" >
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>98</width>
-              <height>38</height>
+              <width>408</width>
+              <height>387</height>
              </rect>
             </property>
             <attribute name="label" >
              <string>Database Server Connections</string>
+            </attribute>
+            <attribute name="icon" >
+             <iconset resource="opusmain.qrc" >:/Images/Images/database_link.png</iconset>
             </attribute>
             <layout class="QGridLayout" />
            </widget>
@@ -146,11 +149,14 @@
               <x>0</x>
               <y>0</y>
               <width>408</width>
-              <height>389</height>
+              <height>385</height>
              </rect>
             </property>
             <attribute name="label" >
              <string>Tools</string>
+            </attribute>
+            <attribute name="icon" >
+             <iconset resource="opusmain.qrc" >:/Images/Images/folder_wrench.png</iconset>
             </attribute>
             <layout class="QGridLayout" />
            </widget>
@@ -159,12 +165,15 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>98</width>
-              <height>38</height>
+              <width>408</width>
+              <height>383</height>
              </rect>
             </property>
             <attribute name="label" >
              <string>Opus Data</string>
+            </attribute>
+            <attribute name="icon" >
+             <iconset resource="opusmain.qrc" >:/Images/Images/table.png</iconset>
             </attribute>
             <layout class="QGridLayout" />
            </widget>
@@ -177,15 +186,15 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>38</height>
+          <width>426</width>
+          <height>491</height>
          </rect>
         </property>
         <attribute name="label" >
          <string>Model Manager</string>
         </attribute>
         <attribute name="icon" >
-         <iconset resource="opusmain.qrc" >:/Images/Images/chart_organisation.png</iconset>
+         <iconset resource="opusmain.qrc" >:/Images/Images/cog.png</iconset>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -213,15 +222,15 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>38</height>
+          <width>426</width>
+          <height>491</height>
          </rect>
         </property>
         <attribute name="label" >
          <string>Scenario Manager</string>
         </attribute>
         <attribute name="icon" >
-         <iconset resource="opusmain.qrc" >:/Images/Images/cog.png</iconset>
+         <iconset resource="opusmain.qrc" >:/Images/Images/chart_organisation.png</iconset>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >

@@ -123,12 +123,12 @@
   </data_manager>
   <model_manager>
    <model_system type="dictionary">
-        <simple_model_template  type="dictionary" copyable='True'>
-         <import type="dictionary">
+        <simple_model_template  type="dictionary" copyable="True">
+         <import flags="hidden" type="dictionary">
           <opus_core.simple_model type="string">SimpleModel</opus_core.simple_model>
         </import>
         <init type="dictionary">
-          <name type="string">SimpleModel</name>
+          <name flags="hidden" type="string">SimpleModel</name>
           </init>
         <run type="dictionary">
           <arguments type="dictionary">
@@ -139,12 +139,12 @@
           </arguments>
         </run>
        </simple_model_template>  
-       <choice_model_template  type="dictionary" copyable='True'>
-         <import type="dictionary">
+       <choice_model_template  type="dictionary" copyable="True">
+         <import flags="hidden" type="dictionary">
           <opus_core.choice_model type="string">ChoiceModel</opus_core.choice_model>
         </import>
         <init type="dictionary">
-          <name type="string">ChoiceModel</name>
+          <name flags="hidden" type="string">ChoiceModel</name>
           <arguments type="dictionary">
             <choice_set type="string">fill in</choice_set>
             <utilities type="quoted_string">opus_core.linear_utilities</utilities>
@@ -157,7 +157,7 @@
             <estimate_config type="dictionary">
               <estimation_size_agents type="float">1.0</estimation_size_agents>
             </estimate_config>
-            <debuglevel type="integer">0</debuglevel>
+            <debuglevel flags="hidden" type="integer">0</debuglevel>
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
         </init>
@@ -172,7 +172,7 @@
           </arguments>
         </run>
         <prepare_for_run type="dictionary">
-          <name type="string">prepare_for_run</name>
+          <name flags="hidden" type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <agent_set type="string" parser_action="blank_to_None"></agent_set>
             <agent_filter type="quoted_string" parser_action="blank_to_None"></agent_filter>
@@ -197,7 +197,7 @@
           <output flags="hidden" type="string">(coefficients, dummy)</output>
         </estimate>
         <prepare_for_estimate type="dictionary">
-          <name type="string">prepare_for_estimate</name>
+          <name flags="hidden" type="string">prepare_for_estimate</name>
           <arguments type="dictionary">
             <agent_set type="string" parser_action="blank_to_None"></agent_set>
             <agent_filter type="quoted_string" parser_action="blank_to_None"></agent_filter>
@@ -207,18 +207,18 @@
           <output flags="hidden" type="string">(specification, cm_index)</output>
         </prepare_for_estimate>
        </choice_model_template>
-       <regression_model_template  type="dictionary" copyable='True'>
-         <import type="dictionary">
+       <regression_model_template  type="dictionary" copyable="True">
+         <import flags="hidden" type="dictionary">
           <opus_core.regression_model type="string">RegressionModel</opus_core.regression_model>
         </import>
         <init type="dictionary">
-          <name type="string">RegressionModel</name>
+          <name flags="hidden" type="string">RegressionModel</name>
           <arguments type="dictionary">
             <regression_procedure type="quoted_string">opus_core.linear_regression</regression_procedure>
             <submodel_string type="string" parser_action="blank_to_None"></submodel_string>
             <run_config type="string" parser_action="blank_to_None"></run_config>
             <estimate_config type="string" parser_action="blank_to_None"></estimate_config>
-            <debuglevel type="integer">0</debuglevel>
+            <debuglevel flags="hidden" type="integer">0</debuglevel>
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
         </init>
@@ -233,7 +233,7 @@
           </arguments>
         </run>
         <prepare_for_run type="dictionary">
-          <name type="string">prepare_for_run</name>
+          <name flags="hidden" type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <dataset type="string" parser_action="blank_to_None"></dataset>
             <dataset_filter type="quoted_string" parser_action="blank_to_None"></dataset_filter>
@@ -251,7 +251,7 @@
           <arguments type="dictionary">
             <specification flags="hidden" type="string">specification</specification>
             <dataset type="string">fill in</dataset>
-            <outcome_attribute type="quoted_string">fill in</outcome_attribute>
+            <dependent_variable config_name="outcome_attribute" type="quoted_string">fill in</dependent_variable>
             <index flags="hidden" type="string" parser_action="blank_to_None">rm_index</index>
             <procedure type="quoted_string">opus_core.estimate_linear_regression</procedure>
             <data_objects flags="hidden" type="string">datasets</data_objects>
@@ -259,7 +259,7 @@
           <output flags="hidden" type="string">(coefficients, dummy)</output>
         </estimate>
         <prepare_for_estimate type="dictionary">
-          <name type="string">prepare_for_estimate</name>
+          <name flags="hidden" type="string">prepare_for_estimate</name>
           <arguments type="dictionary">
             <dataset type="string" parser_action="blank_to_None"></dataset>
             <dataset_filter type="quoted_string" parser_action="blank_to_None"></dataset_filter>
@@ -269,12 +269,12 @@
           <output flags="hidden" type="string">(specification, rm_index)</output>
         </prepare_for_estimate>
        </regression_model_template>
-      <allocation_model_template  type="dictionary" copyable='True'>
-         <import type="dictionary">
+      <allocation_model_template  type="dictionary" copyable="True">
+         <import flags="hidden" type="dictionary">
           <opus_core.allocation_model type="string">AllocationModel</opus_core.allocation_model>
         </import>
         <init type="dictionary">
-          <name type="string">AllocationModel</name>
+          <name flags="hidden" type="string">AllocationModel</name>
         </init>
         <run type="dictionary">
           <arguments type="dictionary">
@@ -290,7 +290,7 @@
           </arguments>
         </run>
         <prepare_for_run type="dictionary">
-          <name type="string">prepare_for_run</name>
+          <name flags="hidden" type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <storage type="string">base_cache_storage</storage>
             <control_totals_table_name type="quoted_string">fill in</control_totals_table_name>
@@ -301,11 +301,11 @@
         </prepare_for_run>
        </allocation_model_template>
        <agent_location_choice_model_template type="dictionary" copyable="True">
-        <import type="dictionary">
+        <import flags="hidden" type="dictionary">
           <urbansim.models.agent_location_choice_model type="string">AgentLocationChoiceModel</urbansim.models.agent_location_choice_model>
         </import>
         <init type="dictionary">
-          <name type="string">AgentLocationChoiceModel</name>
+          <name flags="hidden" type="string">AgentLocationChoiceModel</name>
           <arguments type="dictionary">
             <location_set type="string">fill in</location_set>
             <sampler type="quoted_string">opus_core.samplers.weighted_sampler</sampler>
@@ -319,7 +319,7 @@
             <model_name type="quoted_string">AgentLocationChoiceModel</model_name>
             <short_name type="quoted_string">ALCM</short_name>
             <variable_package type="quoted_string">urbansim</variable_package>  
-            <debuglevel type="string" flags="hidden">debuglevel</debuglevel>
+            <debuglevel flags="hidden" type="string">debuglevel</debuglevel>
             <run_config type="dictionary">
               <sample_size_locations type="integer">30</sample_size_locations>
               <sample_proportion_locations type="integer" parser_action="blank_to_None"></sample_proportion_locations>
@@ -338,7 +338,7 @@
          </arguments>
         </init>
         <prepare_for_estimate type="dictionary">
-          <name type="string">prepare_for_estimate</name>
+          <name flags="hidden" type="string">prepare_for_estimate</name>
           <output type="string" flags="hidden">(alcm_specification, alcm_index)</output>
           <arguments type="dictionary">
             <specification_storage type="string">base_cache_storage</specification_storage>
@@ -366,8 +366,8 @@
           </arguments>
         </estimate>
         <prepare_for_run type="dictionary">
-          <name type="string">prepare_for_run</name>
-          <output type="string">(alcm_specification, alcm_coefficients)</output>
+          <name flags="hidden" type="string">prepare_for_run</name>
+          <output type="string" flags="hidden">(alcm_specification, alcm_coefficients)</output>
           <arguments type="dictionary">
             <coefficients_storage type="string">base_cache_storage</coefficients_storage>
             <coefficients_table type="quoted_string">agent_location_choice_model_coefficients</coefficients_table>
@@ -391,39 +391,39 @@
    </model_system>
    <estimation type="dictionary">
    <models_to_estimate type="selectable_list">
-        <choice_model_template choices="Estimate|Skip" type="model" copyable='True'>Skip</choice_model_template>
-        <regression_model_template choices="Estimate|Skip" type="model" copyable='True'>Skip</regression_model_template>
-        <agent_location_choice_model_template choices="Estimate|Skip" type="model" copyable='True'>Skip</agent_location_choice_model_template>
+        <choice_model_template choices="Estimate|Skip" type="model" copyable="True">Skip</choice_model_template>
+        <regression_model_template choices="Estimate|Skip" type="model" copyable="True">Skip</regression_model_template>
+        <agent_location_choice_model_template choices="Estimate|Skip" type="model" copyable="True">Skip</agent_location_choice_model_template>
       </models_to_estimate>
-   <model_template  type="dictionary" copyable='True'>
+   <model_template  type="dictionary" copyable="True">
    <all_variables type="dictionary">
-     <var1 type="variable_definition" copyable='True'>var1 = package.dataset.some_variable_or_expression</var1>
+     <var1 type="variable_definition" copyable="True">var1 = package.dataset.some_variable_or_expression</var1>
    </all_variables>
-   <submodel type="submodel" copyable='True'>
+   <submodel type="submodel" copyable="True">
       <description type="string">No submodel</description>
       <submodel_id type="integer">-2</submodel_id>
       <variables type="selectable_list">
-         <var1 choices="Use|Skip" type="variable" copyable='True'>Skip</var1>
+         <var1 choices="Use|Skip" type="variable" copyable="True">Skip</var1>
       </variables>
    </submodel>
    </model_template>
-   <choice_model_with_equations_template  type="dictionary" copyable='True'>
+   <choice_model_with_equations_template  type="dictionary" copyable="True">
    <all_variables type="dictionary">
-     <var1 type="variable_definition" copyable='True'>var1 = package.dataset.some_variable_or_expression</var1>
+     <var1 type="variable_definition" copyable="True">var1 = package.dataset.some_variable_or_expression</var1>
    </all_variables>
-   <submodel type="submodel" copyable='True'>
+   <submodel type="submodel" copyable="True">
       <description type="string">No submodel</description>
       <submodel_id type="integer">-2</submodel_id>
-      <choice_1 type="dictionary" copyable='True'>
+      <choice_1 type="dictionary" copyable="True">
         <equation_id type="integer">1</equation_id>
         <variables type="selectable_list">
-             <constant choices="Use|Skip" type="variable" copyable='True'>Use</constant>
+             <constant choices="Use|Skip" type="variable" copyable="True">Use</constant>
         </variables>
         </choice_1>
-        <choice_2 type="dictionary" copyable='True'>
+        <choice_2 type="dictionary" copyable="True">
           <equation_id type="integer">2</equation_id>
           <variables type="selectable_list">
-             <var1 choices="Use|Skip" type="variable" copyable='True'>Skip</var1>
+             <var1 choices="Use|Skip" type="variable" copyable="True">Skip</var1>
            </variables>
         </choice_2>
    </submodel>
@@ -437,7 +437,7 @@
           <database_name type="string" ></database_name>
         </output_configuration>
         <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
-         <my_dataset type="dataset" choices="Load|Skip" copyable='True'>Skip</my_dataset>
+         <my_dataset type="dataset" choices="Load|Skip" copyable="True">Skip</my_dataset>
          </datasets_to_preload>
         <dataset_pool_configuration type="class" >
           <Class_name flags="hidden" type="string" >DatasetPoolConfiguration</Class_name>

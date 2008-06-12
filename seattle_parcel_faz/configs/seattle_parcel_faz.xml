@@ -589,7 +589,7 @@
         <tables_to_cache_nchunks type="dictionary">
           <parcels type="integer">1</parcels>
         </tables_to_cache_nchunks>
-        <unroll_gridcells type="boolean">False</unroll_gridcells>
+        <unroll_gridcells flags="hidden" type="boolean">False</unroll_gridcells>
       </creating_baseyear_cache_configuration>
       <dataset_pool_configuration type="class">
         <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
@@ -603,7 +603,7 @@
       <datasets_to_cache_after_each_model type="list">['parcel', 'building', 'household', 'job',
                                                       'development_project_proposal_component',
                                                       'development_project_proposal', 'travel_data']</datasets_to_cache_after_each_model>
-      <unroll_gridcells type="boolean">False</unroll_gridcells>
+      <unroll_gridcells flags="hidden" type="boolean">False</unroll_gridcells>
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
         <zone choices="Load|Skip" type="dataset">Load</zone>
         <household choices="Load|Skip" type="dataset">Load</household>
