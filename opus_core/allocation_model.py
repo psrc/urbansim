@@ -134,8 +134,8 @@ class AllocationModelTest(opus_unittest.OpusTestCase):
             'job_sqft': array([2000, 5500, 1000, 3000, 6000, 2000]),           
                           }
         storage = StorageFactory().get_storage('dict_storage')
-        storage.write_table(table_name = 'zone', table_data = zone_data)
-        storage.write_table(table_name = 'job', table_data = job_data)
+        storage.write_table(table_name = 'zones', table_data = zone_data)
+        storage.write_table(table_name = 'jobs', table_data = job_data)
         storage.write_table(table_name = 'control_totals', table_data = control_total_data)
         self.dataset_pool = DatasetPool(storage = storage, package_order = ['opus_core'])
         self.ct = Dataset(in_storage=storage, in_table_name='control_totals', id_name=['year', 'zone_id'], dataset_name='control_total')
