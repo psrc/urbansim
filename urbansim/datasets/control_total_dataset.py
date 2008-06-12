@@ -12,6 +12,7 @@
 # other acknowledgments.
 #
 
+import re
 from numpy import sqrt, apply_along_axis, log, exp, maximum
 from numpy.random import normal
 
@@ -21,43 +22,58 @@ from opus_core.resource_factory import ResourceFactory
 from opus_core.variables.attribute_type import AttributeType
 
 class ControlTotalDataset(Dataset):
-    id_name_default = {"household":["year"],
-                        "employment":["year", "sector_id"]}
+    in_table_name_default = ""
+    out_table_name_default = ""
+    id_name_default = []
+    dataset_name = "control_total"
 
     def __init__(self, resources=None, what="household", in_storage=None,
-            in_table_name=None, out_storage=None,
-            out_table_name=None, id_name=None, nchunks=None, debuglevel=0):
+                 in_table_name=None, out_storage=None, out_table_name=None, 
+                 id_name=None, nchunks=None, debuglevel=0):
+        ## TODO remove "what" arguement
+        
         debug = DebugPrinter(debuglevel)
         debug.print_debug("Creating ControlTotalDataset object for "+what+".",2)
-
-        in_table_name_default = "annual_" + what + "_control_totals"
+        
+        if not self.in_table_name_default:
+            self.in_table_name_default = "annual_" + what + "_control_totals"
+        if not self.out_table_name_default:         
+            self.out_table_name_default = "annual_" + what + "_control_totals"
+            
         attributes_default = AttributeType.PRIMARY
-        out_table_name_default = in_table_name_default
-        dataset_name = "control_total"
+        #dataset_name = "control_total"
         nchunks_default = 1
 
         resources = ResourceFactory().get_resources_for_dataset(
-            dataset_name,
+            self.dataset_name,
             resources=resources,
             in_storage=in_storage,
             out_storage=out_storage,
-            in_table_name_pair=(in_table_name,in_table_name_default),
+            in_table_name_pair=(in_table_name,self.in_table_name_default),
             attributes_pair=(None, attributes_default),
-            out_table_name_pair=(out_table_name, out_table_name_default),
-            id_name_pair=(id_name,self.id_name_default[what]),
+            out_table_name_pair=(out_table_name, self.out_table_name_default),
+            id_name_pair=(id_name,self.id_name_default),
             nchunks_pair=(nchunks,nchunks_default),
             debug_pair=(debug,None)
             )
+        
         table_name = resources["in_table_name"]
-        self.what = what
-        if (id_name == None) and (what == "household"): # determine id_name depending on the columns in the table
-            id_names = resources["in_storage"].get_column_names(table_name)
-            for name in self.id_name_default[what]:
-                if name in id_names:
-                    id_names.remove(name)
-            if "total_number_of_households" in id_names:
-                id_names.remove("total_number_of_households")
+        if resources['id_name'] is None or len(resources['id_name'])== 0:
+            id_names = []
+            column_names = resources["in_storage"].get_column_names(table_name)
+            for column_name in column_names:
+                if not re.search('^total', column_name):
+                    id_names.append(column_name)
             resources.merge({"id_name":resources["id_name"] + id_names})
+            
+        #if (id_name == None) and (what == "household"): # determine id_name depending on the columns in the table
+            #id_names = resources["in_storage"].get_column_names(table_name)
+            #for name in self.id_name_default[what]:
+                #if name in id_names:
+                    #id_names.remove(name)
+            #if "total_number_of_households" in id_names:
+                #id_names.remove("total_number_of_households")
+            #resources.merge({"id_name":resources["id_name"] + id_names})
 
         Dataset.__init__(self, resources = resources)
 
