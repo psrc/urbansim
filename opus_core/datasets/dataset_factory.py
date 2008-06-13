@@ -103,14 +103,23 @@ class DatasetFactory(object):
                 continue
         else:
             from opus_core.datasets.dataset import Dataset
-            args = kwargs.get('arguments', {})
-            storage=args.get('in_storage', None)
+            from opus_core.resources import Resources
+            
+            resources = Resources( kwargs.get('arguments', {}) )
+            (table_name, module_name, class_name) =  self._table_module_class_names_for_dataset(dataset_name)
+            if use_hidden_id:
+                id_name_default = []
+            else:
+                id_name_default = "%s_id" % dataset_name
+                
+            ## set table_name and id_name_default as default values in resources (arguments)
+            resources.merge_with_defaults({'dataset_name':dataset_name,
+                                           'in_table_name': table_name,
+                                           'out_table_name': table_name,
+                                           'id_name': id_name_default
+                                       })
             try:
-                (table_name, module_name, class_name) =  self._table_module_class_names_for_dataset(dataset_name)
-                if use_hidden_id:
-                    dataset = Dataset(in_storage=storage, dataset_name=dataset_name, in_table_name=table_name, id_name=[])
-                else:
-                    dataset = Dataset(in_storage=storage, dataset_name=dataset_name, in_table_name=table_name, id_name="%s_id" % dataset_name)
+                dataset = Dataset(resources=resources)
             except:
                 logger.log_warning("Could not create a generic Dataset '%s'." % dataset_name)
                 raise
