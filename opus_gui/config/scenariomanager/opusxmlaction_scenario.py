@@ -45,13 +45,6 @@ class OpusXMLAction_Scenario(object):
                         SIGNAL("triggered()"),
                         self.runModel)
 
-        self.actRemoveTree = QAction(self.removeIcon,
-                                     "Remove this tree from the GUI",
-                                     self.xmlTreeObject.mainwindow)
-        QObject.connect(self.actRemoveTree,
-                        SIGNAL("triggered()"),
-                        self.removeTree)
-
         self.actOpenXMLFile = QAction(self.calendarIcon,
                                       "Open XML File",
                                       self.xmlTreeObject.mainwindow)
@@ -189,29 +182,9 @@ class OpusXMLAction_Scenario(object):
 
     def makeEditableAction(self):
         thisNode = self.currentIndex.internalPointer().node()
-        # Strip the inherited attribute down the tree
-        self.currentIndex.model().stripAttributeDown('inherited',thisNode)
-        # Now up the tree, only hitting parent nodes and not sibblings
-        self.currentIndex.model().stripAttributeUp('inherited',thisNode)
+        self.currentIndex.model().makeEditable(thisNode)
         # Finally we refresh the tree to indicate that there has been a change
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
-
-    #################### Old methods not currently used ###################
-    def cloneNodeAction(self):
-        print "Clone Node pressed..."
-        clone = self.currentIndex.internalPointer().domNode.cloneNode()
-        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        window = CloneInheritedGui(self,flags,self.xmlTreeObject.model,clone)
-        window.show()
-
-    def removeTree(self):
-        if not self.xmlTreeObject.model.isDirty():
-            self.xmlTreeObject.groupBox.hide()
-            self.xmlTreeObject.mainwindowWidget.removeWidget(self.xmlTreeObject.groupBox)
-            return True
-        else:
-            return False
-    ##################################################3####################
 
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \

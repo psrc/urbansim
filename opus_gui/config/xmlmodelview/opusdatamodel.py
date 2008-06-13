@@ -392,8 +392,11 @@ class OpusDataModel(QAbstractItemModel):
     def makeEditable(self,node):
         # Strip the inherited attribute down the tree
         self.stripAttributeDown('inherited',node)
-        # Now up the tree, only hitting parent nodes and not sibblings
-        self.stripAttributeUp('inherited',node)
+        # if we are not a temporary node then we need to also strip up
+        # the tree... temp nodes can be made editable without affecting parents
+        if not self.isTemporary(node):
+            # Now up the tree, only hitting parent nodes and not sibblings
+            self.stripAttributeUp('inherited',node)
 
     def insertRow(self,row,parent,node,editable=True):
         returnval = QAbstractItemModel.insertRow(self,row,parent)

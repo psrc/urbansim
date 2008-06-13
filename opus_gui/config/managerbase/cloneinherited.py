@@ -30,7 +30,6 @@ class CloneInheritedGui(QDialog, Ui_CloneInheritedGui):
         self.setupUi(self)
         self.opusXMLAction_xxx = opusXMLAction_xxx
         self.model = model
-        self.clone = self.stripAttribute("inherited",clone)
         # Since we are referencing the main model we want to now make it
         # read-only while traversing it...
         self.model.editable = False;
@@ -47,27 +46,6 @@ class CloneInheritedGui(QDialog, Ui_CloneInheritedGui):
         self.view.setColumnWidth(1,50)
         self.view.setMinimumHeight(200)
         self.vboxlayout.addWidget(self.view)
-
-    def stripAttribute(self,attribute,parentNode,recursive=True):
-        if parentNode.toElement().hasAttribute(QString(attribute)):
-            # remove the attribute
-            parentNode.toElement().removeAttribute(QString(attribute))
-        rows = parentNode.childNodes().count()
-        for x in xrange(0,rows,1):
-            child = parentNode.childNodes().item(x)
-            childElement = child.toElement()
-            if not childElement.isNull():
-                # Check if this is the one we want...
-                if childElement.hasAttribute(QString(attribute)):
-                    # remove the attribute
-                    childElement.removeAttribute(QString(attribute))
-                    if recursive == False:
-                        return
-                # If this child has other children then we recurse
-                childRows = child.childNodes().count()
-                if childRows>0:
-                    self.stripAttribute(attribute,child,recursive)
-        return parentNode
 
     def on_createXML_released(self):
         # Clone the node and drop it in...
@@ -86,7 +64,6 @@ class CloneInheritedGui(QDialog, Ui_CloneInheritedGui):
             self.model.insertRow(self.model.rowCount(parentIndex),
                                  parentIndex,
                                  self.clone)
-            self.model.markAsDirty()
             self.model.emit(SIGNAL("layoutChanged()"))
         # Since we are referencing the main model we want to now make it
         # editable again...

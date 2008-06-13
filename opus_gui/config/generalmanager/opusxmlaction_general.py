@@ -73,10 +73,7 @@ class OpusXMLAction_General(object):
 
     def makeEditableAction(self):
         thisNode = self.currentIndex.internalPointer().node()
-        # Strip the inherited attribute down the tree
-        self.currentIndex.model().stripAttributeDown('inherited',thisNode)
-        # Now up the tree, only hitting parent nodes and not sibblings
-        self.currentIndex.model().stripAttributeUp('inherited',thisNode)
+        self.currentIndex.model().makeEditable(thisNode)
         # Finally we refresh the tree to indicate that there has been a change
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
