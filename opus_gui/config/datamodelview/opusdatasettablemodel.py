@@ -36,9 +36,22 @@ class OpusDatasetTableModel(QAbstractTableModel):
     def data(self, index, role): 
         if not index.isValid(): 
             return QVariant() 
-        elif role != Qt.DisplayRole: 
+        if role == Qt.DisplayRole: 
+            myVal = self.arraydata[index.row()][index.column()]
+            if myVal.dtype.name == 'int' or \
+                   myVal.dtype.name == 'int32' or \
+                   myVal.dtype.name == 'int64':
+                return QVariant(int(self.arraydata[index.row()][index.column()]))
+            elif myVal.dtype.name == 'float' or \
+                     myVal.dtype.name == 'float32' or \
+                     myVal.dtype.name == 'float64':
+                return QVariant(float(self.arraydata[index.row()][index.column()]))
+            else:
+                return QVariant(str(self.arraydata[index.row()][index.column()]))
+        elif role == Qt.TextAlignmentRole:
+            return QVariant(Qt.AlignRight)
+        else:
             return QVariant() 
-        return QVariant(self.arraydata[index.row()][index.column()])
 
     def headerData(self, col, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
