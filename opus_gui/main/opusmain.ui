@@ -62,16 +62,21 @@
          <height>0</height>
         </size>
        </property>
+       <property name="font" >
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="currentIndex" >
-        <number>3</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="generalmanager_page" >
         <property name="geometry" >
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
-          <height>38</height>
+          <width>386</width>
+          <height>477</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -87,8 +92,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>426</width>
-          <height>491</height>
+          <width>386</width>
+          <height>477</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -120,19 +125,19 @@
           <widget class="QToolBox" name="dataManager_toolBox" >
            <property name="font" >
             <font>
-             <pointsize>8</pointsize>
+             <pointsize>11</pointsize>
             </font>
            </property>
            <property name="currentIndex" >
-            <number>2</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="datamanager_dbsconnections" >
             <property name="geometry" >
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>408</width>
-              <height>387</height>
+              <width>368</width>
+              <height>357</height>
              </rect>
             </property>
             <attribute name="label" >
@@ -148,8 +153,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>408</width>
-              <height>385</height>
+              <width>96</width>
+              <height>44</height>
              </rect>
             </property>
             <attribute name="label" >
@@ -165,8 +170,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>408</width>
-              <height>383</height>
+              <width>368</width>
+              <height>357</height>
              </rect>
             </property>
             <attribute name="label" >
@@ -186,8 +191,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>426</width>
-          <height>491</height>
+          <width>96</width>
+          <height>38</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -222,8 +227,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>426</width>
-          <height>491</height>
+          <width>96</width>
+          <height>38</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -258,7 +263,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>98</width>
+          <width>96</width>
           <height>38</height>
          </rect>
         </property>
@@ -409,7 +414,7 @@
      <x>0</x>
      <y>0</y>
      <width>974</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject" >
