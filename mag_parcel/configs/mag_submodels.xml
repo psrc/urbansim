@@ -397,8 +397,4 @@
       <models_to_run_in_years config_name="models_in_year" type="python_code">{2005:['transient_model_hotels','airport_model_williams','airport_model_skyharbor','college_model_cc','college_model_asu','college_model_pvt','seasonal_model_mh_rv','transient_model_other','seasonal_model_other']}</models_to_run_in_years>
     </All_submodels>
   </scenario_manager>
-  <results_manager>
-    <Simulation_runs followers="Results" setexpanded="True" type="all_source_data">
-      </Simulation_runs>
-    </results_manager>
 </opus_project>
