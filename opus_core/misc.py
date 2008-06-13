@@ -1066,8 +1066,7 @@ class MiscellaneousTests(opus_unittest.OpusTestCase):
         self.assertEqual(unique_values(b), [0.01, 0.08, 0.1, 0.2, 0.5])
         self.assertEqual(unique_values(b, sort_values=False), [0.01, 0.1, 0.2, 0.5, 0.08])
         
-    def skip_test_get_dataset_from_flt_storage(self):
-        # temporarily disabled until we figure out the key naming problem ...
+    def test_get_dataset_from_flt_storage(self):
         import opus_core
         
         attribute = 'little_endian'
