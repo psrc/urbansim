@@ -28,7 +28,6 @@ class OpusDatasetTableModel(QAbstractTableModel):
  
     def rowCount(self, parent): 
         return len(self.arraydata) 
-        #return len(self.arraydata[0]) 
  
     def columnCount(self, parent): 
         return len(self.arraydata[0]) 
@@ -41,13 +40,13 @@ class OpusDatasetTableModel(QAbstractTableModel):
             if myVal.dtype.name == 'int' or \
                    myVal.dtype.name == 'int32' or \
                    myVal.dtype.name == 'int64':
-                return QVariant(int(self.arraydata[index.row()][index.column()]))
+                return QVariant(int(myVal))
             elif myVal.dtype.name == 'float' or \
                      myVal.dtype.name == 'float32' or \
                      myVal.dtype.name == 'float64':
-                return QVariant(float(self.arraydata[index.row()][index.column()]))
+                return QVariant(float(myVal))
             else:
-                return QVariant(str(self.arraydata[index.row()][index.column()]))
+                return QVariant(str(myVal))
         elif role == Qt.TextAlignmentRole:
             return QVariant(Qt.AlignRight)
         else:
