@@ -64,7 +64,7 @@
        </property>
        <property name="font" >
         <font>
-         <pointsize>11</pointsize>
+         <pointsize>10</pointsize>
         </font>
        </property>
        <property name="currentIndex" >
@@ -125,7 +125,7 @@
           <widget class="QToolBox" name="dataManager_toolBox" >
            <property name="font" >
             <font>
-             <pointsize>11</pointsize>
+             <pointsize>8</pointsize>
             </font>
            </property>
            <property name="currentIndex" >

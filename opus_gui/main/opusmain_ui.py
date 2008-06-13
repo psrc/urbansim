@@ -15,7 +15,7 @@ class Ui_MainWindow(object):
         MainWindow.resize(QtCore.QSize(QtCore.QRect(0,0,974,707).size()).expandedTo(MainWindow.minimumSizeHint()))
 
         font = QtGui.QFont()
-        font.setPointSize(11)
+        font.setPointSize(10)
         MainWindow.setFont(font)
         MainWindow.setWindowIcon(QtGui.QIcon(":/Images/Images/cog.png"))
 
@@ -62,7 +62,7 @@ class Ui_MainWindow(object):
         self.dataManager_toolBox = QtGui.QToolBox(self.datamanager_page)
 
         font = QtGui.QFont()
-        font.setPointSize(11)
+        font.setPointSize(8)
         self.dataManager_toolBox.setFont(font)
         self.dataManager_toolBox.setObjectName("dataManager_toolBox")
 
