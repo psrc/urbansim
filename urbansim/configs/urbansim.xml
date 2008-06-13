@@ -35,7 +35,7 @@
         <params type="param_template">
           <sql_db_name choices="Required|Optional" type="string">Required</sql_db_name> 
           <table_name choices="Required|Optional" type="string">Required</table_name> 
-          <opus_data_directory choices="Required|Optional" type="string">Required</opus_data_directory> 
+          <opus_data_directory choices="Required|Optional" type="dir_path">Required</opus_data_directory> 
           <opus_data_year choices="Required|Optional" type="string">Required</opus_data_year>          
         </params>
       </sql_data_to_opus_tool>
@@ -43,7 +43,7 @@
 	    <name type="tool_name">opus_database_to_sql</name>
 	    <params type="param_template">
           <sql_db_name choices="Required|Optional" type="string">Required</sql_db_name>
-          <opus_data_directory choices="Required|Optional" type="string">Required</opus_data_directory>
+          <opus_data_directory choices="Required|Optional" type="dir_path">Required</opus_data_directory>
           <opus_data_year choices="Required|Optional" type="string">Required</opus_data_year>
           <opus_table_name choices="Required|Optional" type="string">Required</opus_table_name>
 	    </params>
@@ -52,7 +52,7 @@
 	<name type="tool_name">opus_database_to_esri</name>
 	<params type="param_template">
           <esri_data_path choices="Required|Optional" type="string">Required</esri_data_path>
-          <opus_data_directory choices="Required|Optional" type="string">Required</opus_data_directory>
+          <opus_data_directory choices="Required|Optional" type="dir_path">Required</opus_data_directory>
           <opus_data_year choices="Required|Optional" type="string">Required</opus_data_year>
           <opus_table_name choices="Required|Optional" type="string">Required</opus_table_name>
 	</params>
@@ -61,7 +61,7 @@
 	<name type="tool_name">opus_dataset_to_sql</name>
 	<params type="param_template">
           <sql_db_name choices="Required|Optional" type="string">Required</sql_db_name>
-          <opus_data_directory choices="Required|Optional" type="string">Required</opus_data_directory>
+          <opus_data_directory choices="Required|Optional" type="dir_path">Required</opus_data_directory>
           <opus_data_year choices="Required|Optional" type="string">Required</opus_data_year>
           <opus_table_name choices="Required|Optional" type="string">Required</opus_table_name>
 	</params>
@@ -69,8 +69,8 @@
       <opus_dataset_to_esri_tool type="tool_file">
 	<name type="tool_name">opus_dataset_to_esri</name>
 	<params type="param_template">
-          <esri_data_path choices="Required|Optional" type="string">Required</esri_data_path>
-          <opus_data_directory choices="Required|Optional" type="string">Required</opus_data_directory>
+          <esri_data_path choices="Required|Optional" type="dir_path">Required</esri_data_path>
+          <opus_data_directory choices="Required|Optional" type="dir_path">Required</opus_data_directory>
           <opus_data_year choices="Required|Optional" type="string">Required</opus_data_year>
           <opus_table_name choices="Required|Optional" type="string">Required</opus_table_name>
 	</params>
@@ -92,7 +92,7 @@
       <opus_database_to_sql_config type="tool_config">
         <tool_hook flags="hidden" type="tool_library_ref">opus_database_to_sql_tool</tool_hook>
         <sql_db_name type="string">mytestdb</sql_db_name>
-        <opus_data_directory type="string" />
+        <opus_data_directory type="dir_path" />
         <opus_data_year type="string">ALL</opus_data_year>
         <opus_table_name type="string">ALL</opus_table_name>
       </opus_database_to_sql_config>
@@ -102,7 +102,7 @@
       <opus_database_to_esri_config type="tool_config">
         <tool_hook flags="hidden" type="tool_library_ref">opus_database_to_esri_tool</tool_hook>
         <esri_data_path type="string">c:\opus\data\seattle_parcel\output_geodb.gdb</esri_data_path>
-        <opus_data_directory type="string" />
+        <opus_data_directory type="dir_path" />
         <opus_data_year type="string">ALL</opus_data_year>
         <opus_table_name type="string">ALL</opus_table_name>
       </opus_database_to_esri_config>
@@ -112,7 +112,7 @@
       <opus_dataset_to_sql_config type="tool_config">
         <tool_hook flags="hidden" type="tool_library_ref">opus_database_to_sql_tool</tool_hook>
         <sql_db_name type="string">mytestdb</sql_db_name>
-        <opus_data_directory type="string" />
+        <opus_data_directory type="dir_path" />
         <opus_data_year type="string">ALL</opus_data_year>
         <opus_table_name type="string">ALL</opus_table_name>
       </opus_dataset_to_sql_config>
@@ -121,8 +121,8 @@
       <classification flags="hidden" type="classification">dataset</classification>
       <opus_dataset_to_esri_config type="tool_config">
         <tool_hook flags="hidden" type="tool_library_ref">opus_database_to_esri_tool</tool_hook>
-        <esri_data_path type="string">c:\opus\data\seattle_parcel\output_geodb.gdb</esri_data_path>
-        <opus_data_directory type="string" />
+        <esri_data_path type="dir_path">c:\opus\data\seattle_parcel\output_geodb.gdb</esri_data_path>
+        <opus_data_directory type="dir_path" />
         <opus_data_year type="string">ALL</opus_data_year>
         <opus_table_name type="string">ALL</opus_table_name>
       </opus_dataset_to_esri_config>
