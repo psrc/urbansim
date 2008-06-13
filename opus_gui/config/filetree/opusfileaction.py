@@ -173,25 +173,40 @@ class OpusFileAction(object):
             if parentparentisdir and regex.exactMatch(parentparentname):
                 # We have a file with a parentparent which is a database classification
                 classification = "array"
+        #print "Classification = " + classification
         tree = self.xmlFileObject.mainwindow.toolboxStuff.dataManagerTree
         dbxml = tree.model.index(0,0,QModelIndex()).parent()
-        dbindexlist = tree.model.findElementIndexByType("tool_set",dbxml,True)
-        for dbindex in dbindexlist:
-            if dbindex.isValid():
-                classificationindex = tree.model.findElementIndexByType("classification",dbindex)
-                classificationindexElement = None
-                classificationtext = ""
-                if classificationindex[0].isValid():
-                    classificationindexElement = classificationindex[0].internalPointer()
-                    if classificationindexElement.node().hasChildNodes():
-                        children = classificationindexElement.node().childNodes()
-                        for x in xrange(0,children.count(),1):
-                            if children.item(x).isText():
-                                classificationtext = children.item(x).nodeValue()
-                dbindexElement = dbindex.internalPointer()
-                tagName = dbindexElement.domNode.toElement().tagName()
-                if classificationtext != "" and classificationtext == classification:
-                    choices.append(tagName)
+        # First loop through all tool_sets
+        setsindexlist = tree.model.findElementIndexByType("tool_sets",dbxml,True)
+        for setsindex in setsindexlist:
+            if setsindex.isValid():
+                #print "Found valid tool_sets"
+                # Now loop through all tool_set and find the ones with a matching classification
+                tsindexlist = tree.model.findElementIndexByType("tool_set",setsindex,True)
+                for tsindex in tsindexlist:
+                    if tsindex.isValid():
+                        #print "Found valid tool_set"
+                        classificationtext = ""
+                        tsitem = tsindex.internalPointer()
+                        # We use the dom tree to find the classification because it is a hidden node
+                        # in the XML tree and will not show up via a search on the model indexes (i.e. it
+                        # is not actually in the model/view since it is hidden.
+                        if tsitem.node().hasChildNodes():
+                            tschildren = tsitem.node().childNodes()
+                            for x in xrange(0,tschildren.count(),1):
+                                if tschildren.item(x).isElement():
+                                    tselement = tschildren.item(x).toElement()
+                                    if tselement.hasAttribute(QString("type")) and \
+                                           (tselement.attribute(QString("type")) == QString("classification")):
+                                        if tselement.hasChildNodes():
+                                            classchildren = tselement.childNodes()
+                                            for x in xrange(0,classchildren.count(),1):
+                                                if classchildren.item(x).isText():
+                                                    #print "Found some text in the classification element"
+                                                    classificationtext = classchildren.item(x).nodeValue()
+                        tagName = tsitem.domNode.toElement().tagName()
+                        if classificationtext != "" and classificationtext == classification:
+                            choices.append(tagName)
         self.classification = classification
         return choices
 
