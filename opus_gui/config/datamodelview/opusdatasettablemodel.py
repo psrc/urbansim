@@ -26,17 +26,34 @@ class OpusDatasetTableModel(QAbstractTableModel):
         self.arraydata = datain
         self.headerdata = headerdata
  
-    def rowCount(self, parent): 
-        return len(self.arraydata) 
+    def rowCount(self, parent):
+        if not self.arraydata:
+            return 0
+        if isinstance(self.arraydata,list):
+            return len(self.arraydata)
+        else:
+            return 1
  
     def columnCount(self, parent): 
-        return len(self.arraydata[0]) 
+        if not self.arraydata:
+            return 0
+        myList = self.arraydata[0]
+        if isinstance(myList,tuple):
+            return len(myList)
+        else:
+            return 1
  
     def data(self, index, role): 
         if not index.isValid(): 
             return QVariant() 
         if role == Qt.DisplayRole: 
-            myVal = self.arraydata[index.row()][index.column()]
+            if isinstance(self.arraydata,list):
+                if isinstance(self.arraydata[index.row()],tuple):
+                    myVal = self.arraydata[index.row()][index.column()]
+                else:
+                    myVal = self.arraydata[index.row()]
+            else:
+                myVal = self.arraydata
             if myVal.dtype.name == 'int' or \
                    myVal.dtype.name == 'int32' or \
                    myVal.dtype.name == 'int64':
@@ -76,10 +93,14 @@ class OpusDatasetTableModel(QAbstractTableModel):
         orderList.insert(0,self.ncol)
         # Reverse loop through and order based on columns
         for col in reversed(orderList):
-            self.arraydata = sorted(self.arraydata, key=operator.itemgetter(col))
+            if len(self.headerdata) > 1 and isinstance(self.arraydata,list):
+                self.arraydata = sorted(self.arraydata, key=operator.itemgetter(col))
+            else:
+                self.arraydata = sorted(self.arraydata)
         # Flip if accending vs decending...
         if order == Qt.DescendingOrder:
-            self.arraydata.reverse()
+            if isinstance(self.arraydata,list):
+                self.arraydata.reverse()
         self.emit(SIGNAL("layoutChanged()"))
         
 class CatchOutput(QTextBrowser):

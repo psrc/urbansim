@@ -109,11 +109,13 @@ class OpusFileAction(object):
         # Transpose the lists
         tabledata = map(None,*tabledata_tmp)
 
-        #print tabledata
-        tm = OpusDatasetTableModel(tabledata, header, container) 
-        tv.setModel(tm)
-        tv.setSortingEnabled(True)
-        tableGroupBoxLayout.addWidget(tv)
+        # If the table data is not empty then we display it
+        if tabledata:
+            #print tabledata
+            tm = OpusDatasetTableModel(tabledata, header, container) 
+            tv.setModel(tm)
+            tv.setSortingEnabled(True)
+            tableGroupBoxLayout.addWidget(tv)
 
         widgetLayout.addWidget(tableGroupBox)
 
