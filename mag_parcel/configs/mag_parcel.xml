@@ -1,7 +1,7 @@
 <opus_project>
   <general>
     <description type="string">MAG Parcel Project</description>
-    <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
+    <parent type="file">seattle_parcel/configs/seattle_parcel.xml</parent>
     </general>
   <model_manager>
     <model_system type="dictionary">
@@ -43,6 +43,348 @@
           </arguments>
         </run>
       </mag_allocation_model_template>
+      <transient_model_hotels copyable="True" type="dictionary">
+        <import type="dictionary">
+          <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">AllocationModel</name>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <dataset parser_action="blank_to_None" type="string">None</dataset>
+            <control_totals parser_action="blank_to_None" type="string">None</control_totals>
+            <weight_attribute type="quoted_string">rooms</weight_attribute>
+            <excel_path type="quoted_string">C:\opus\data\mag_parcel\mag_submodels\TransientModel.xls</excel_path>
+            <excel_sheet_number type="integer">1</excel_sheet_number>
+            <excel_data_info type="string">{'year':'d22:d32', 'persons':'k22:k32'}</excel_data_info>
+            <esri_storage_location type="quoted_string">C:\opus\data\mag_parcel\mag_submodel_data.gdb</esri_storage_location>
+            <dataset_name type="quoted_string">transient</dataset_name>
+            <current_year flags="hidden" type="string">year</current_year>
+            <datasets_and_weights_in_years type="dictionary">None</datasets_and_weights_in_years>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+          <output flags="hidden" type="string">(aux_dataset, aux_control_totals, aux_weight_attribute)</output>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <dataset flags="hidden" type="string">aux_dataset</dataset>
+            <outcome_attribute type="quoted_string">persons</outcome_attribute>
+            <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
+            <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
+            <current_year flags="hidden" type="string">year</current_year>
+            <control_total_attribute type="quoted_string">persons</control_total_attribute>
+            <year_attribute type="quoted_string">year</year_attribute>
+            <capacity_attribute parser_action="blank_to_None" type="string">None</capacity_attribute>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+      </transient_model_hotels>
+      <airport_model_williams copyable="True" type="dictionary">
+        <import type="dictionary">
+          <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">AllocationModel</name>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <dataset parser_action="blank_to_None" type="string">None</dataset>
+            <control_totals parser_action="blank_to_None" type="string">None</control_totals>
+            <weight_attribute type="quoted_string">id</weight_attribute>
+            <excel_path type="quoted_string">C:\opus\data\mag_parcel\mag_submodels\AirportModel.xls</excel_path>
+            <excel_sheet_number type="integer">1</excel_sheet_number>
+            <excel_data_info type="string">{'year':'d13:d19', 'originations':'f13:f19'}</excel_data_info>
+            <esri_storage_location type="quoted_string">C:\opus\data\mag_parcel\mag_submodel_data.gdb</esri_storage_location>
+            <dataset_name type="quoted_string">williamsgateway</dataset_name>
+            <current_year flags="hidden" type="string">year</current_year>
+            <datasets_and_weights_in_years type="dictionary">None</datasets_and_weights_in_years>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+          <output flags="hidden" type="string">(aux_dataset, aux_control_totals, aux_weight_attribute)</output>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <dataset flags="hidden" type="string">aux_dataset</dataset>
+            <outcome_attribute type="quoted_string">originations</outcome_attribute>
+            <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
+            <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
+            <current_year flags="hidden" type="string">year</current_year>
+            <control_total_attribute type="quoted_string">originations</control_total_attribute>
+            <year_attribute type="quoted_string">year</year_attribute>
+            <capacity_attribute parser_action="blank_to_None" type="string">None</capacity_attribute>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+      </airport_model_williams>
+      <airport_model_skyharbor copyable="True" type="dictionary">
+        <import type="dictionary">
+          <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">AllocationModel</name>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <dataset parser_action="blank_to_None" type="string">None</dataset>
+            <control_totals parser_action="blank_to_None" type="string">None</control_totals>
+            <weight_attribute type="quoted_string">id</weight_attribute>
+            <excel_path type="quoted_string">C:\opus\data\mag_parcel\mag_submodels\AirportModel.xls</excel_path>
+            <excel_sheet_number type="integer">1</excel_sheet_number>
+            <excel_data_info type="string">{'year':'d13:d19', 'originations':'e13:e19'}</excel_data_info>
+            <esri_storage_location type="quoted_string">C:\opus\data\mag_parcel\mag_submodel_data.gdb</esri_storage_location>
+            <dataset_name type="quoted_string">skyharbor</dataset_name>
+            <current_year flags="hidden" type="string">year</current_year>
+            <datasets_and_weights_in_years type="dictionary">None</datasets_and_weights_in_years>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+          <output flags="hidden" type="string">(aux_dataset, aux_control_totals, aux_weight_attribute)</output>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <dataset flags="hidden" type="string">aux_dataset</dataset>
+            <outcome_attribute type="quoted_string">originations</outcome_attribute>
+            <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
+            <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
+            <current_year flags="hidden" type="string">year</current_year>
+            <control_total_attribute type="quoted_string">originations</control_total_attribute>
+            <year_attribute type="quoted_string">year</year_attribute>
+            <capacity_attribute parser_action="blank_to_None" type="string">None</capacity_attribute>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+      </airport_model_skyharbor>
+      <college_model_cc copyable="True" type="dictionary">
+        <import type="dictionary">
+          <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">AllocationModel</name>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <dataset parser_action="blank_to_None" type="string">None</dataset>
+            <control_totals parser_action="blank_to_None" type="string">None</control_totals>
+            <weight_attribute type="quoted_string">enroll06</weight_attribute>
+            <excel_path type="quoted_string">C:\opus\data\mag_parcel\mag_submodels\CollegeModel.xls</excel_path>
+            <excel_sheet_number type="integer">1</excel_sheet_number>
+            <excel_data_info type="string">{'year':'e13:e24', 'students':'f13:f24'}</excel_data_info>
+            <esri_storage_location type="quoted_string">C:\opus\data\mag_parcel\mag_submodel_data.gdb</esri_storage_location>
+            <dataset_name type="quoted_string">posths_cc</dataset_name>
+            <current_year flags="hidden" type="string">year</current_year>
+            <datasets_and_weights_in_years type="dictionary">None</datasets_and_weights_in_years>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+          <output flags="hidden" type="string">(aux_dataset, aux_control_totals, aux_weight_attribute)</output>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <dataset flags="hidden" type="string">aux_dataset</dataset>
+            <outcome_attribute type="quoted_string">students</outcome_attribute>
+            <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
+            <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
+            <current_year flags="hidden" type="string">year</current_year>
+            <control_total_attribute type="quoted_string">students</control_total_attribute>
+            <year_attribute type="quoted_string">year</year_attribute>
+            <capacity_attribute parser_action="blank_to_None" type="string">None</capacity_attribute>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+      </college_model_cc>
+      <college_model_asu copyable="True" type="dictionary">
+        <import type="dictionary">
+          <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">AllocationModel</name>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <dataset parser_action="blank_to_None" type="string">None</dataset>
+            <control_totals parser_action="blank_to_None" type="string">None</control_totals>
+            <weight_attribute type="quoted_string">enroll06</weight_attribute>
+            <excel_path type="quoted_string">C:\opus\data\mag_parcel\mag_submodels\CollegeModel.xls</excel_path>
+            <excel_sheet_number type="integer">1</excel_sheet_number>
+            <excel_data_info type="string">{'year':'e13:e24', 'students':'g13:g24'}</excel_data_info>
+            <esri_storage_location type="quoted_string">C:\opus\data\mag_parcel\mag_submodel_data.gdb</esri_storage_location>
+            <dataset_name type="quoted_string">posths_asu</dataset_name>
+            <current_year flags="hidden" type="string">year</current_year>
+            <datasets_and_weights_in_years type="dictionary">None</datasets_and_weights_in_years>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+          <output flags="hidden" type="string">(aux_dataset, aux_control_totals, aux_weight_attribute)</output>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <dataset flags="hidden" type="string">aux_dataset</dataset>
+            <outcome_attribute type="quoted_string">students</outcome_attribute>
+            <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
+            <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
+            <current_year flags="hidden" type="string">year</current_year>
+            <control_total_attribute type="quoted_string">students</control_total_attribute>
+            <year_attribute type="quoted_string">year</year_attribute>
+            <capacity_attribute parser_action="blank_to_None" type="string">None</capacity_attribute>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+      </college_model_asu>
+      <college_model_pvt copyable="True" type="dictionary">
+        <import type="dictionary">
+          <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">AllocationModel</name>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <dataset parser_action="blank_to_None" type="string">None</dataset>
+            <control_totals parser_action="blank_to_None" type="string">None</control_totals>
+            <weight_attribute type="quoted_string">enroll06</weight_attribute>
+            <excel_path type="quoted_string">C:\opus\data\mag_parcel\mag_submodels\CollegeModel.xls</excel_path>
+            <excel_sheet_number type="integer">1</excel_sheet_number>
+            <excel_data_info type="string">{'year':'e13:e24', 'students':'h13:h24'}</excel_data_info>
+            <esri_storage_location type="quoted_string">C:\opus\data\mag_parcel\mag_submodel_data.gdb</esri_storage_location>
+            <dataset_name type="quoted_string">posths_pvt</dataset_name>
+            <current_year flags="hidden" type="string">year</current_year>
+            <datasets_and_weights_in_years type="dictionary">None</datasets_and_weights_in_years>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+          <output flags="hidden" type="string">(aux_dataset, aux_control_totals, aux_weight_attribute)</output>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <dataset flags="hidden" type="string">aux_dataset</dataset>
+            <outcome_attribute type="quoted_string">students</outcome_attribute>
+            <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
+            <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
+            <current_year flags="hidden" type="string">year</current_year>
+            <control_total_attribute type="quoted_string">students</control_total_attribute>
+            <year_attribute type="quoted_string">year</year_attribute>
+            <capacity_attribute parser_action="blank_to_None" type="string">None</capacity_attribute>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+      </college_model_pvt>
+      <seasonal_model_mh_rv copyable="True" type="dictionary">
+        <import type="dictionary">
+          <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">AllocationModel</name>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <dataset parser_action="blank_to_None" type="string">None</dataset>
+            <control_totals parser_action="blank_to_None" type="string">None</control_totals>
+            <weight_attribute type="quoted_string">ttlspaces</weight_attribute>
+            <excel_path type="quoted_string">C:\opus\data\mag_parcel\mag_submodels\SeasonalModel.xls</excel_path>
+            <excel_sheet_number type="integer">1</excel_sheet_number>
+            <excel_data_info type="string">{'year':'d23:d33', 'persons':'j23:j33'}</excel_data_info>
+            <esri_storage_location type="quoted_string">C:\opus\data\mag_parcel\mag_submodel_data.gdb</esri_storage_location>
+            <dataset_name type="quoted_string">mh_rv</dataset_name>
+            <current_year flags="hidden" type="string">year</current_year>
+            <datasets_and_weights_in_years type="dictionary">None</datasets_and_weights_in_years>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+          <output flags="hidden" type="string">(aux_dataset, aux_control_totals, aux_weight_attribute)</output>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <dataset flags="hidden" type="string">aux_dataset</dataset>
+            <outcome_attribute type="quoted_string">persons</outcome_attribute>
+            <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
+            <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
+            <current_year flags="hidden" type="string">year</current_year>
+            <control_total_attribute type="quoted_string">persons</control_total_attribute>
+            <year_attribute type="quoted_string">year</year_attribute>
+            <capacity_attribute parser_action="blank_to_None" type="string">None</capacity_attribute>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+      </seasonal_model_mh_rv>
+      <transient_model_other copyable="True" type="dictionary">
+        <import type="dictionary">
+          <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">AllocationModel</name>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <dataset parser_action="blank_to_None" type="string">None</dataset>
+            <control_totals parser_action="blank_to_None" type="string">None</control_totals>
+            <weight_attribute type="quoted_string">total_rsf</weight_attribute>
+            <excel_path type="quoted_string">C:\opus\data\mag_parcel\mag_submodels\TransientModel.xls</excel_path>
+            <excel_sheet_number type="integer">1</excel_sheet_number>
+            <excel_data_info type="string">{'year':'d22:d32', 'persons':'l22:l32'}</excel_data_info>
+            <esri_storage_location type="quoted_string">C:\opus\data\mag_parcel\mag_submodel_data.gdb</esri_storage_location>
+            <dataset_name type="quoted_string">tazi03</dataset_name>
+            <current_year flags="hidden" type="string">year</current_year>
+            <datasets_and_weights_in_years type="dictionary">None</datasets_and_weights_in_years>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+          <output flags="hidden" type="string">(aux_dataset, aux_control_totals, aux_weight_attribute)</output>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <dataset flags="hidden" type="string">aux_dataset</dataset>
+            <outcome_attribute type="quoted_string">persons</outcome_attribute>
+            <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
+            <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
+            <current_year flags="hidden" type="string">year</current_year>
+            <control_total_attribute type="quoted_string">persons</control_total_attribute>
+            <year_attribute type="quoted_string">year</year_attribute>
+            <capacity_attribute parser_action="blank_to_None" type="string">None</capacity_attribute>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+      </transient_model_other>
+      <seasonal_model_other copyable="True" type="dictionary">
+        <import type="dictionary">
+          <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">AllocationModel</name>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <dataset parser_action="blank_to_None" type="string">None</dataset>
+            <control_totals parser_action="blank_to_None" type="string">None</control_totals>
+            <weight_attribute type="quoted_string">total_rsf</weight_attribute>
+            <excel_path type="quoted_string">C:\opus\data\mag_parcel\mag_submodels\SeasonalModel.xls</excel_path>
+            <excel_sheet_number type="integer">1</excel_sheet_number>
+            <excel_data_info type="string">{'year':'d23:d33', 'persons':'i23:i33'}</excel_data_info>
+            <esri_storage_location type="quoted_string">C:\opus\data\mag_parcel\mag_submodel_data.gdb</esri_storage_location>
+            <dataset_name type="quoted_string">tazi03</dataset_name>
+            <current_year flags="hidden" type="string">year</current_year>
+            <datasets_and_weights_in_years type="dictionary">None</datasets_and_weights_in_years>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+          <output flags="hidden" type="string">(aux_dataset, aux_control_totals, aux_weight_attribute)</output>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <dataset flags="hidden" type="string">aux_dataset</dataset>
+            <outcome_attribute type="quoted_string">persons</outcome_attribute>
+            <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
+            <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
+            <current_year flags="hidden" type="string">year</current_year>
+            <control_total_attribute type="quoted_string">persons</control_total_attribute>
+            <year_attribute type="quoted_string">year</year_attribute>
+            <capacity_attribute parser_action="blank_to_None" type="string">None</capacity_attribute>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+      </seasonal_model_other>
     </model_system>
     </model_manager>
 	</opus_project>
