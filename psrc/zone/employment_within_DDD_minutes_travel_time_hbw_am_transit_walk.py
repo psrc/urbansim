@@ -12,40 +12,17 @@
 # other acknowledgments.
 #
 
-from opus_core.logger import logger
-from opus_core.variables.variable import Variable
-from urbansim.functions import attribute_label
-from numpy import array
-from scipy.ndimage import sum as ndimage_sum
+from psrc.abstract_variables.abstract_access_within_threshold_variable import abstract_access_within_threshold_variable
 
-class employment_within_DDD_minutes_travel_time_hbw_am_transit_walk(Variable):
-    """total number of jobs for zones within DDD minutes travel time,
-    The travel time used is for the home-based-work am trips by auto with
-    drive-alone.
+class employment_within_DDD_minutes_travel_time_hbw_am_transit_walk(abstract_access_within_threshold_variable):
+    """total number of jobs for zones within DDD minutes travel time
     """
     def __init__(self, number):
-        self.tnumber = number
-        Variable.__init__(self)
-
-    def dependencies(self):
-        return ["psrc.travel_data.am_total_transit_time_walk",
-                "urbansim.zone.number_of_jobs"]
-
-    def compute(self, dataset_pool):
-        zone_ids = self.get_dataset().get_id_attribute()
-        travel_data = dataset_pool.get_dataset('travel_data')
-        within_indicator = (travel_data.get_attribute('am_total_transit_time_walk') <= self.tnumber)
-
-        to_zone_id = travel_data.get_attribute("to_zone_id")
-        zone_index = self.get_dataset().get_id_index(to_zone_id)
-        num_jobs = self.get_dataset().get_attribute('number_of_jobs')[zone_index]
-
-        from_zone_id = travel_data.get_attribute("from_zone_id")
-        results = array(ndimage_sum((within_indicator * num_jobs).astype("int32"),
-                                    labels = from_zone_id, index=zone_ids))
-
-        return results
-
+        self.threshold = number
+        self.travel_data_attribute  = "travel_data.am_total_transit_time_walk"
+        self.zone_attribute_to_access = "urbansim.zone.number_of_jobs"
+        
+        abstract_access_within_threshold_variable.__init__(self)
 
 from numpy import array
 from numpy import ma
