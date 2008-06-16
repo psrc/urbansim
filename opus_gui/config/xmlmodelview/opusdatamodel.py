@@ -148,7 +148,9 @@ class OpusDataModel(QAbstractItemModel):
                    "selectable_list":self.folderIcon,
                    "indicator_result":self.mapGoIcon,
                    "tool_sets":self.bulletIcon,
-                   "scenario":self.bulletIcon,
+                   "scenario":self.chartOrgIcon,
+                   "model_template_library":self.bulletIcon,
+                   "model_systems":self.bulletIcon,
                    "":self.bulletIcon}
         if attType != QString("defValue") and typeMap.has_key(str(attType)):
             return typeMap[str(attType)]
