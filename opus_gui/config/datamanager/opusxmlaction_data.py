@@ -65,19 +65,33 @@ class OpusXMLAction_Data(object):
                         SIGNAL("triggered()"),
                         self.addToolFile)
 
-        self.actAddRequiredParam = QAction(self.addIcon,
-                                           "Add Required Parameter",
-                                           self.xmlTreeObject.mainwindow)
-        QObject.connect(self.actAddRequiredParam,
+        self.actAddRequiredStringParam = QAction(self.addIcon,
+                                                 "Add Required String Parameter",
+                                                 self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actAddRequiredStringParam,
                         SIGNAL("triggered()"),
-                        self.addRequiredParam)
+                        self.addRequiredStringParam)
 
-        self.actAddOptionalParam = QAction(self.addIcon,
-                                           "Add Optional Param",
-                                           self.xmlTreeObject.mainwindow)
-        QObject.connect(self.actAddOptionalParam,
+        self.actAddRequiredDirParam = QAction(self.addIcon,
+                                              "Add Required Directory Parameter",
+                                              self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actAddRequiredDirParam,
                         SIGNAL("triggered()"),
-                        self.addOptionalParam)
+                        self.addRequiredDirParam)
+        
+        self.actAddOptionalStringParam = QAction(self.addIcon,
+                                                 "Add Optional String Parameter",
+                                                 self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actAddOptionalStringParam,
+                        SIGNAL("triggered()"),
+                        self.addOptionalStringParam)
+
+        self.actAddOptionalDirParam = QAction(self.addIcon,
+                                              "Add Optional Directory Parameter",
+                                              self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actAddOptionalDirParam,
+                        SIGNAL("triggered()"),
+                        self.addOptionalDirParam)
 
         self.actNewConfig = QAction(self.addIcon,
                                      "Add Tool to Tool Set",
@@ -159,7 +173,7 @@ class OpusXMLAction_Data(object):
         # Now add the name field
         newName = self.currentIndex.model().domDocument.createElement(QString("name"))
         newName.setAttribute(QString("type"),QString("tool_name"))
-        newNameText = self.currentIndex.model().domDocument.createTextNode(QString("Tool_File_Name_Rename_Me"))
+        newNameText = self.currentIndex.model().domDocument.createTextNode(QString("File_Name_Rename_Me"))
         newName.appendChild(newNameText)
         # Next the empty params section
         newParams = self.currentIndex.model().domDocument.createElement(QString("params"))
@@ -171,11 +185,42 @@ class OpusXMLAction_Data(object):
                                             newNode)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
-    def addRequiredParam(self):
-        print "addRequiredParam Pressed"
 
-    def addOptionalParam(self):
-        print "addOptionalParam Pressed"
+    def newToolParam(self,toolType,choices):
+        newNode = self.currentIndex.model().domDocument.createElement(QString("Rename_Me"))
+        newNode.setAttribute(QString("type"),toolType)
+        newNode.setAttribute(QString("choices"),QString("Required|Optional"))
+        newText = self.currentIndex.model().domDocument.createTextNode(choices)
+        newNode.appendChild(newText)
+        return newNode
+
+    def addRequiredStringParam(self):
+        newNode = self.newToolParam(QString("string"), QString("Required"))
+        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
+                                            self.currentIndex,
+                                            newNode)
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
+    def addRequiredDirParam(self):
+        newNode = self.newToolParam(QString("dir_path"), QString("Required"))
+        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
+                                            self.currentIndex,
+                                            newNode)
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
+    def addOptionalStringParam(self):
+        newNode = self.newToolParam(QString("string"), QString("Optional"))
+        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
+                                            self.currentIndex,
+                                            newNode)
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
+    def addOptionalDirParam(self):
+        newNode = self.newToolParam(QString("dir_path"), QString("Optional"))
+        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
+                                            self.currentIndex,
+                                            newNode)
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def newConfig(self):
         #print "newConfig Pressed"
@@ -364,8 +409,10 @@ class OpusXMLAction_Data(object):
                 elif domElement.attribute(QString("type")) == QString("tool_library"):
                     self.menu.addAction(self.actAddToolFile)
                 elif domElement.attribute(QString("type")) == QString("param_template"):
-                    self.menu.addAction(self.actAddRequiredParam)
-                    self.menu.addAction(self.actAddOptionalParam)
+                    self.menu.addAction(self.actAddRequiredStringParam)
+                    self.menu.addAction(self.actAddRequiredDirParam)
+                    self.menu.addAction(self.actAddOptionalStringParam)
+                    self.menu.addAction(self.actAddOptionalDirParam)
                 elif domElement.attribute(QString("type")) == QString("tool_config"):
                     self.menu.addAction(self.actExecToolConfig)
                     self.menu.addSeparator()
@@ -406,7 +453,8 @@ class OpusXMLAction_Data(object):
                                parentElement.hasAttribute(QString("type")) and \
                                ((parentElement.attribute(QString("type")) == QString("dictionary")) or \
                                 (parentElement.attribute(QString("type")) == QString("selectable_list")) or \
-                                (parentElement.attribute(QString("type")) == QString("list"))):
+                                (parentElement.attribute(QString("type")) == QString("list")) or \
+                                (parentElement.attribute(QString("type")) == QString("param_template"))):
                             self.menu.addSeparator()
                             self.menu.addAction(self.actRemoveNode)
                 # Check if the menu has any elements before exec is called
