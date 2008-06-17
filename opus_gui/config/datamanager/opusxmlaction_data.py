@@ -65,19 +65,19 @@ class OpusXMLAction_Data(object):
                         SIGNAL("triggered()"),
                         self.addToolFile)
 
-        self.actAddRequiredParameter = QAction(self.addIcon,
-                                               "Add Required Parameter",
-                                               self.xmlTreeObject.mainwindow)
-        QObject.connect(self.actAddRequiredParameter,
+        self.actAddRequiredParam = QAction(self.addIcon,
+                                           "Add Required Parameter",
+                                           self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actAddRequiredParam,
                         SIGNAL("triggered()"),
-                        self.addRequiredParameter)
+                        self.addRequiredParam)
 
-        self.actAddOptionalParameter = QAction(self.addIcon,
-                                               "Add Optional Parameter",
-                                               self.xmlTreeObject.mainwindow)
-        QObject.connect(self.actAddOptionalParameter,
+        self.actAddOptionalParam = QAction(self.addIcon,
+                                           "Add Optional Param",
+                                           self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actAddOptionalParam,
                         SIGNAL("triggered()"),
-                        self.addOptionalParameter)
+                        self.addOptionalParam)
 
         self.actNewConfig = QAction(self.addIcon,
                                      "Add Tool to Tool Set",
