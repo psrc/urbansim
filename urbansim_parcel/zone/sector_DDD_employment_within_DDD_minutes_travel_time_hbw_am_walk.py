@@ -14,10 +14,8 @@
 
 from psrc.abstract_variables.abstract_access_within_threshold_variable import abstract_access_within_threshold_variable
 
-class sector_DDD_employment_within_DDD_minutes_travel_time_hbw_am_drive_alone(abstract_access_within_threshold_variable):
+class sector_DDD_employment_within_DDD_minutes_travel_time_hbw_am_walk(abstract_access_within_threshold_variable):
     """total number of jobs for zones within DDD minutes travel time,
-    The travel time used is for the home-based-work am trips by auto with
-    drive-alone.
     """
     def __init__(self, sector, threshold):
         self.threshold = threshold
