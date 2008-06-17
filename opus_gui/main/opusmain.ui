@@ -68,15 +68,15 @@
         </font>
        </property>
        <property name="currentIndex" >
-        <number>1</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="generalmanager_page" >
         <property name="geometry" >
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>386</width>
-          <height>477</height>
+          <width>96</width>
+          <height>38</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -92,8 +92,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>386</width>
-          <height>477</height>
+          <width>340</width>
+          <height>497</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -136,8 +136,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>368</width>
-              <height>357</height>
+              <width>322</width>
+              <height>389</height>
              </rect>
             </property>
             <attribute name="label" >
@@ -154,7 +154,7 @@
               <x>0</x>
               <y>0</y>
               <width>96</width>
-              <height>44</height>
+              <height>38</height>
              </rect>
             </property>
             <attribute name="label" >
@@ -170,8 +170,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>368</width>
-              <height>357</height>
+              <width>96</width>
+              <height>38</height>
              </rect>
             </property>
             <attribute name="label" >
@@ -227,8 +227,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>96</width>
-          <height>38</height>
+          <width>340</width>
+          <height>497</height>
          </rect>
         </property>
         <attribute name="label" >
@@ -297,7 +297,7 @@
       </widget>
       <widget class="QTabWidget" name="tabWidget" >
        <property name="currentIndex" >
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="tab_editorView" >
         <attribute name="title" >
@@ -402,6 +402,11 @@
         <attribute name="icon" >
          <iconset resource="opusmain.qrc" >:/Images/Images/table.png</iconset>
         </attribute>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="QTextBrowser" name="logViewTextBrowser" />
+         </item>
+        </layout>
        </widget>
       </widget>
      </widget>
@@ -414,7 +419,7 @@
      <x>0</x>
      <y>0</y>
      <width>974</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject" >

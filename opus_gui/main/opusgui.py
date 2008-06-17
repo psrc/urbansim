@@ -36,11 +36,24 @@ import sys,time,tempfile
 # Main window used for houseing the canvas, toolbars, and dialogs
 class OpusGui(QMainWindow, Ui_MainWindow):
 
+    # This is the output override for the app to catch stdout and stderr and
+    # placing it in the log tab
+    class Output:
+        def __init__( self, writefunc ):
+            self.writefunc = writefunc
+        def write( self, line ):
+            if line != "\n":
+                self.writefunc(line)
+
     def __init__(self):
         QMainWindow.__init__(self)
 
         # required by Qt4 to initialize the UI
         self.setupUi(self)
+
+        # This is the output for stdout
+        self.output = OpusGui.Output(self.writeOutput)
+        #sys.stdout, sys.stderr = self.output, self.output
 
         self.toolboxStuff = ToolboxBase(self)
 
@@ -154,6 +167,11 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         settings = QSettings()
         self.restoreGeometry(settings.value("Geometry").toByteArray())
         
+    def writeOutput(self,result):
+        if result == "":
+            return
+        self.logViewTextBrowser.append(result)
+
     def editAllVariables(self):
         #print "Edit all_variables pressed..."
         if self.tabWidget.indexOf(self.allVariablesWidget) == -1:
