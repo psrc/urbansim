@@ -139,10 +139,19 @@ class OpusXMLAction_Data(object):
 
     def addToolFile(self):
         #print "Add Tool Pressed"
-        newNode = self.currentIndex.model().domDocument.createElement(QString("<add valid tool name here, e.g. processing_tool>"))
+        # First add the dummy tool shell
+        newNode = self.currentIndex.model().domDocument.createElement(QString("Tool_Name_Rename_Me"))
         newNode.setAttribute(QString("type"),QString("tool_file"))
-        newText = self.currentIndex.model().domDocument.createTextNode(QString("<add python module name here, without .py>"))
-        newNode.appendChild(newText)
+        # Now add the name field
+        newName = self.currentIndex.model().domDocument.createElement(QString("name"))
+        newName.setAttribute(QString("type"),QString("tool_name"))
+        newNameText = self.currentIndex.model().domDocument.createTextNode(QString("Tool_File_Name_Rename_Me"))
+        newName.appendChild(newNameText)
+        # Next the empty params section
+        newParams = self.currentIndex.model().domDocument.createElement(QString("params"))
+        newParams.setAttribute(QString("type"),QString("param_template"))
+        newNode.appendChild(newName)
+        newNode.appendChild(newParams)
         self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
                                             self.currentIndex,
                                             newNode)
