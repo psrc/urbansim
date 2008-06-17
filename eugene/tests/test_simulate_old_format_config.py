@@ -12,6 +12,9 @@
 # other acknowledgments.
 #
 
+# Test that the Eugene simulation runs without crashing for 2 years (using the old format dictionary based configurations)
+# This version also reads the input data from the MySQL database, rather than a cache
+
 import os
 from opus_core.tests import opus_unittest
 import tempfile
@@ -19,7 +22,6 @@ import tempfile
 from shutil import rmtree
 
 from opus_core.logger import logger
-from opus_core.simulation_state import SimulationState
 from eugene.configs.baseline import Baseline
 
 from urbansim.simulation.run_simulation_from_mysql import RunSimulationFromMysql
@@ -34,24 +36,15 @@ class SimulationTest(opus_unittest.OpusTestCase):
         run_configuration['creating_baseyear_cache_configuration'].cache_directory_root = self.temp_dir
         run_configuration['cache_directory'] = os.path.join(self.temp_dir, 'eugene')
         self.simulation.prepare_for_simulation(run_configuration)
-        self.completed_without_error = False
-
     def tearDown(self):
-        if self.completed_without_error:    
-            self.simulation.cleanup(remove_cache=True, remove_output_database=True)
-            rmtree(self.temp_dir)
-        else:
-            logger.log_warning('Problem during simulation. Not removing baseyear cache directory: %s' % SimulationState().get_cache_directory())
-            if 'output_configuration' in self.simulation.config:
-                logger.log_warning('Problem during simulation. Not removing database: %s' % self.simulation.config['output_configuration'].database_name)
-            logger.log_warning('Problem during simulation. Not removing temporary directory: %s' % self.temp_dir)
-   
+        self.simulation.cleanup(remove_cache=True, remove_output_database=True)
+        rmtree(self.temp_dir)
+           
     def test_simulation(self):
-        """Checks that the simulation proceeds without caching.
+        """Checks that the simulation proceeds without crashing.
         """
         self.simulation.run_simulation()
         logger.disable_file_logging()
-        self.completed_without_error = True
        
 if __name__ == "__main__":
     opus_unittest.main()
