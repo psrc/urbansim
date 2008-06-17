@@ -93,6 +93,13 @@ class OpusXMLAction_Data(object):
                         SIGNAL("triggered()"),
                         self.addOptionalDirParam)
 
+        self.actAddNewToolSet = QAction(self.addIcon,
+                                        "Add New Tool Set",
+                                        self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actAddNewToolSet,
+                        SIGNAL("triggered()"),
+                        self.addNewToolSet)
+
         self.actNewConfig = QAction(self.addIcon,
                                      "Add Tool to Tool Set",
                                      self.xmlTreeObject.mainwindow)
@@ -217,6 +224,15 @@ class OpusXMLAction_Data(object):
 
     def addOptionalDirParam(self):
         newNode = self.newToolParam(QString("dir_path"), QString("Optional"))
+        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
+                                            self.currentIndex,
+                                            newNode)
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
+    def addNewToolSet(self):
+        # First add the dummy toolset shell
+        newNode = self.currentIndex.model().domDocument.createElement(QString("Rename_Me"))
+        newNode.setAttribute(QString("type"),QString("tool_set"))
         self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
                                             self.currentIndex,
                                             newNode)
@@ -420,6 +436,8 @@ class OpusXMLAction_Data(object):
                     self.menu.addAction(self.actMoveNodeDown)
                     self.menu.addSeparator()
                     self.menu.addAction(self.actRemoveNode)
+                elif domElement.attribute(QString("type")) == QString("tool_sets"):
+                    self.menu.addAction(self.actAddNewToolSet)
                 elif domElement.attribute(QString("type")) == QString("tool_set"):
                     self.menu.addAction(self.actExecBatch)
                     self.menu.addSeparator()
