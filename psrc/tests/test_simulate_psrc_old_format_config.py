@@ -42,26 +42,17 @@ if does_database_server_exist_for_this_hostname(
             self.run_configuration['creating_baseyear_cache_configuration'].cache_directory_root = self.temp_dir
             self.run_configuration['seed'] = 1,#(1,1)  # always start with same random seed
             self.simulation.prepare_for_simulation(self.run_configuration)
-            self.completed_without_error = False
             
         def tearDown(self):
-            if self.completed_without_error:
-                self.simulation.cleanup(remove_cache=True, remove_output_database=True)
-                rmtree(self.temp_dir)
-            else:
-                logger.log_warning('Problem during simulation. Not removing baseyear cache directory: %s' % SimulationState().get_cache_directory())
-                if 'output_configuration' in self.simulation.config:
-                    logger.log_warning('Problem during simulation. Not removing database: %s' % self.simulation.config['output_configuration'].database_name)
-                logger.log_warning('Problem during simulation. Not removing temporary directory: %s' % self.temp_dir)
-    
+            self.simulation.cleanup(remove_cache=True, remove_output_database=True)
+            rmtree(self.temp_dir)
             
         def test_psrc_opus_simulation(self):
-            """Checks that the simulation proceeds without caching.
+            """Checks that the simulation proceeds without crashing.
             """
             self.simulation.run_simulation()
             self._check_simulation_produces_changes()
             logger.disable_file_logging()
-            self.completed_without_error = True
             
         def _get_data(self, year, dataset_name, attribute_name):
             current_year = SimulationState().get_current_time()
