@@ -65,6 +65,20 @@ class OpusXMLAction_Data(object):
                         SIGNAL("triggered()"),
                         self.addToolFile)
 
+        self.actAddRequiredParameter = QAction(self.addIcon,
+                                               "Add Required Parameter",
+                                               self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actAddRequiredParameter,
+                        SIGNAL("triggered()"),
+                        self.addRequiredParameter)
+
+        self.actAddOptionalParameter = QAction(self.addIcon,
+                                               "Add Optional Parameter",
+                                               self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actAddOptionalParameter,
+                        SIGNAL("triggered()"),
+                        self.addOptionalParameter)
+
         self.actNewConfig = QAction(self.addIcon,
                                      "Add Tool to Tool Set",
                                      self.xmlTreeObject.mainwindow)
@@ -156,6 +170,12 @@ class OpusXMLAction_Data(object):
                                             self.currentIndex,
                                             newNode)
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
+
+    def addRequiredParam(self):
+        print "addRequiredParam Pressed"
+
+    def addOptionalParam(self):
+        print "addOptionalParam Pressed"
 
     def newConfig(self):
         #print "newConfig Pressed"
@@ -343,6 +363,9 @@ class OpusXMLAction_Data(object):
                     self.menu.addAction(self.actRemoveNode)
                 elif domElement.attribute(QString("type")) == QString("tool_library"):
                     self.menu.addAction(self.actAddToolFile)
+                elif domElement.attribute(QString("type")) == QString("param_template"):
+                    self.menu.addAction(self.actAddRequiredParam)
+                    self.menu.addAction(self.actAddOptionalParam)
                 elif domElement.attribute(QString("type")) == QString("tool_config"):
                     self.menu.addAction(self.actExecToolConfig)
                     self.menu.addSeparator()
