@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'opusmain.ui'
 #
-# Created: Mon Jun 16 23:41:13 2008
+# Created: Tue Jun 17 00:25:06 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -47,7 +47,7 @@ class Ui_MainWindow(object):
         self.toolBox.setObjectName("toolBox")
 
         self.generalmanager_page = QtGui.QWidget()
-        self.generalmanager_page.setGeometry(QtCore.QRect(0,0,96,38))
+        self.generalmanager_page.setGeometry(QtCore.QRect(0,0,268,497))
         self.generalmanager_page.setObjectName("generalmanager_page")
 
         self.gridlayout1 = QtGui.QGridLayout(self.generalmanager_page)
@@ -55,7 +55,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.generalmanager_page,QtGui.QIcon(":/Images/Images/application_side_tree.png"),"")
 
         self.datamanager_page = QtGui.QWidget()
-        self.datamanager_page.setGeometry(QtCore.QRect(0,0,340,497))
+        self.datamanager_page.setGeometry(QtCore.QRect(0,0,268,497))
         self.datamanager_page.setObjectName("datamanager_page")
 
         self.gridlayout2 = QtGui.QGridLayout(self.datamanager_page)
@@ -71,7 +71,7 @@ class Ui_MainWindow(object):
         self.dataManager_toolBox.setObjectName("dataManager_toolBox")
 
         self.datamanager_dbsconnections = QtGui.QWidget()
-        self.datamanager_dbsconnections.setGeometry(QtCore.QRect(0,0,322,389))
+        self.datamanager_dbsconnections.setGeometry(QtCore.QRect(0,0,250,389))
         self.datamanager_dbsconnections.setObjectName("datamanager_dbsconnections")
 
         self.gridlayout3 = QtGui.QGridLayout(self.datamanager_dbsconnections)
@@ -97,7 +97,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.datamanager_page,QtGui.QIcon(":/Images/Images/database_table.png"),"")
 
         self.modelmanager_page = QtGui.QWidget()
-        self.modelmanager_page.setGeometry(QtCore.QRect(0,0,96,38))
+        self.modelmanager_page.setGeometry(QtCore.QRect(0,0,268,497))
         self.modelmanager_page.setObjectName("modelmanager_page")
 
         self.gridlayout6 = QtGui.QGridLayout(self.modelmanager_page)
@@ -107,7 +107,7 @@ class Ui_MainWindow(object):
         self.toolBox.addItem(self.modelmanager_page,QtGui.QIcon(":/Images/Images/cog.png"),"")
 
         self.runmanager_page = QtGui.QWidget()
-        self.runmanager_page.setGeometry(QtCore.QRect(0,0,96,38))
+        self.runmanager_page.setGeometry(QtCore.QRect(0,0,268,497))
         self.runmanager_page.setObjectName("runmanager_page")
 
         self.gridlayout7 = QtGui.QGridLayout(self.runmanager_page)
@@ -322,7 +322,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.toolBox.setCurrentIndex(1)
+        self.toolBox.setCurrentIndex(3)
         self.dataManager_toolBox.setCurrentIndex(0)
         self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
