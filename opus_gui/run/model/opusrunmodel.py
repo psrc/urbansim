@@ -66,14 +66,13 @@ class RunModelThread(QThread):
         '''add this completed run to the run manager section of the results manager'''
         
         toolboxStuff = self.modelguielement.mainwindow.toolboxStuff
-        document = toolboxStuff.doc
         
         cache_directory = self.modelguielement.model.config['cache_directory']
         scenario_name = str(self.modelguielement.model.modeltorun)
         run_name = os.path.basename(cache_directory)
         (start_year, end_year) = self.modelguielement.model.config['years']        
 
-        xml_helper = ResultsManagerXMLHelper(toolboxStuff = self.toolboxStuff)
+        xml_helper = ResultsManagerXMLHelper(toolboxStuff = toolboxStuff)
         xml_helper.add_run_to_run_manager_xml(
                                          cache_directory,
                                          scenario_name,
