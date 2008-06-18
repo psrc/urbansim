@@ -12,17 +12,13 @@
 # other acknowledgments.
 #
 
-# Test that the Seattle parcel estimates correctly for the real estate price model, and that the
-# simulation runs without crashing for 2 years using an xml configuration
+# Superclass for running estimation and simulation on Seattle parcel using an xml configuration
 
 import os
 from opus_core.tests import opus_unittest
 import tempfile
 from shutil import rmtree
-from opus_core.tools.start_run import StartRunOptionGroup
-from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.configurations.xml_configuration import XMLConfiguration
-from urbansim.estimation.estimation_runner import EstimationRunner
 
 # This is a template for an xml configuration for running the test -- it runs for 2 years (sometimes
 # the default is 1 year), and there is a bit in it where we will substitute the 
@@ -45,7 +41,7 @@ config_template = """<opus_project>
 """
 
 
-class EstimationAndSimulationTest(opus_unittest.OpusTestCase):
+class TestXMLConfigSetup(opus_unittest.OpusTestCase):
     
     def setUp(self):
         # By putting the creation and removal of the temp_dir in the setUp and tearDown methods, we ensure that it 
@@ -56,29 +52,8 @@ class EstimationAndSimulationTest(opus_unittest.OpusTestCase):
     def tearDown(self):
         rmtree(self.temp_dir)
         
-    def test_estimation(self):
-        xml_config = self._get_xml_config()
-        estimation_section = xml_config.get_section('model_manager/estimation')
-        estimation_config = estimation_section['estimation_config']
-        for model_name in estimation_config['models_to_estimate']:
-            er = EstimationRunner(model=model_name, xml_configuration=xml_config, configuration=None)
-            er.estimate()
-           
-    def test_simulation(self):
-        # check that the simulation proceeds without crashing
-        xml_config = self._get_xml_config()
-        option_group = StartRunOptionGroup()
-        parser = option_group.parser
-        # simulate 0 command line arguments by passing in []
-        (options, _) = parser.parse_args([])
-        run_manager = option_group.get_run_manager(options)
-        run_section = xml_config.get_run_configuration('Seattle_baseline')
-        insert_auto_generated_cache_directory_if_needed(run_section)
-        run_manager.setup_new_run(run_name = run_section['cache_directory'])
-        run_manager.run_run(run_section)
-       
-    def _get_xml_config(self):
-        # Return the xml configuration to run these unit tests.
+    def get_xml_config(self):
+        # Return the xml configuration to run the estimation and simulation unit tests.
         # We don't want to do this in the setup method, since if XMLConfiguration gets an exception we still want to
         # delete the temp directory on teardown.
         # generate an xml configuration to run the test (we want to write the results into the temp directory).
@@ -87,6 +62,5 @@ class EstimationAndSimulationTest(opus_unittest.OpusTestCase):
         f.write(config_template % self.temp_dir)
         f.close()
         return XMLConfiguration(config_path)
-        
-if __name__ == "__main__":
-    opus_unittest.main()
+
+# no if __name__=main section, since we won't run this script as such; it's just for use as a superclass
