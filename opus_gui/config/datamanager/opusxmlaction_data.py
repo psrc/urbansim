@@ -23,6 +23,9 @@ import opus_gui.util.documentationbase
 from opus_gui.config.datamanager.configuretool import ConfigureToolGui
 from opus_gui.config.managerbase.cloneinherited import CloneInheritedGui
 from opus_gui.config.managerbase.clonenode import CloneNodeGui
+from opus_core.configurations.xml_configuration import XMLConfiguration
+
+import os,tempfile
 
 class OpusXMLAction_Data(object):
     def __init__(self, opusXMLAction):
@@ -406,10 +409,67 @@ class OpusXMLAction_Data(object):
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def exportXMLToFile(self):
-        print "exportXMLToFile"
+        #print "exportXMLToFile"
+        # First we grab a copy of the XML
+        clone = self.currentIndex.internalPointer().domNode.cloneNode()
+        # Ask the user where they want to save the file to
+        start_dir = ''
+        opus_home = os.environ.get('OPUS_HOME')
+        if opus_home:
+            start_dir_test = os.path.join(opus_home, 'project_configs')
+            if start_dir_test:
+                start_dir = start_dir_test
+        configDialog = QFileDialog()
+        filter_str = QString("*.xml")
+        fd = configDialog.getSaveFileName(self.mainwindow,QString("Save As..."),
+                                          QString(start_dir), filter_str)
+        # Check for cancel
+        if len(fd) == 0:
+            return
+        fileName = QString(fd)
+        fileNameInfo = QFileInfo(QString(fd))
+        fileName = fileNameInfo.fileName().trimmed()
+        fileNamePath = fileNameInfo.absolutePath().trimmed()
+
+        # Now create a dummyfile to make XMLConfiguration happy to start...
+        [tempFile,tempFilePath] = tempfile.mkstemp()
+        tempFileNameInfo = QFileInfo(QString(tempFilePath))
+        tempFileName = tempFileNameInfo.fileName().trimmed()
+        tempFileNamePath = tempFileNameInfo.absolutePath().trimmed()
+        # We have to write out some dummy data for XMLConfig to be happy
+        tempFile = QFile(tempFilePath)
+        if tempFile:
+            tempFile.open(QIODevice.ReadWrite)
+            tempFile.write("<opus_project></opus_project>")
+            tempFile.close()
+
+        # Then create an XMLConfiguration based on that file
+        newXMLTree = XMLConfiguration(str(tempFileName),str(tempFileNamePath))
+
+        # Create a dom document to use as a temp space for the clone before writing out
+        newDomDoc = QDomDocument()
+        # Once again, we have to have opus_project for XMLConfig to be happy
+        rootElement = newDomDoc.createElement("opus_project")
+        newDomDoc.appendChild(rootElement)
+        newElement = newDomDoc.importNode(clone,True)
+        rootElement.appendChild(newElement)
+        # Finally, write out the clone to the file via XMLConfiguration
+        indentSize = 2
+        newXMLTree.update(str(newDomDoc.toString(indentSize)))
+        saveName = os.path.join(str(fileNamePath),str(fileName))
+        newXMLTree.save_as(saveName)
+
 
     def importXMLFromFile(self):
         print "importXMLFromFile"
+        # First, prompt the user for the filename to read in
+
+        # Pass that in to create a new XMLConfiguration
+
+        # Get the tree from XMLConfiguration
+
+        # Insert it into the parent node from where the user clicked
+        parentIndex = self.currentIndex.model().parent(self.currentIndex)
 
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
