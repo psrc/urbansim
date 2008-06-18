@@ -461,15 +461,58 @@ class OpusXMLAction_Data(object):
 
 
     def importXMLFromFile(self):
-        print "importXMLFromFile"
+        # print "importXMLFromFile"
         # First, prompt the user for the filename to read in
+        start_dir = ''
+        opus_home = os.environ.get('OPUS_HOME')
+        if opus_home:
+            start_dir_test = os.path.join(opus_home, 'project_configs')
+            if start_dir_test:
+                start_dir = start_dir_test
+        configDialog = QFileDialog()
+        filter_str = QString("*.xml")
+        fd = configDialog.getOpenFileName(self.mainwindow,QString("Please select an xml file to import..."),
+                                          QString(start_dir), filter_str)
+        # Check for cancel
+        if len(fd) == 0:
+            return
+        fileName = QString(fd)
+        fileNameInfo = QFileInfo(QString(fd))
+        fileNameInfoBaseName = fileNameInfo.completeBaseName()
+        fileNameInfoName = fileNameInfo.fileName().trimmed()
+        fileNameInfoPath = fileNameInfo.absolutePath().trimmed()
 
         # Pass that in to create a new XMLConfiguration
-
+        newXMLTree = XMLConfiguration(str(fileNameInfoName),str(fileNameInfoPath))
+        
         # Get the tree from XMLConfiguration
+        [tempFile,tempFilePath] = tempfile.mkstemp()
+        newXMLTree.full_tree.write(tempFilePath)
+        configFileTemp = QFile(tempFilePath)
+        configFileTemp.open(QIODevice.ReadWrite)
+        newDoc = QDomDocument()
+        newDoc.setContent(configFileTemp)
+
+        # Now get the first node under opus_project
+        xmlRoot = newDoc.elementsByTagName(QString("opus_project")).item(0)
+        if xmlRoot.isNull():
+            #Need to add an error here
+            print "null xmlRoot"
+            return
+        newNodeToCopy = xmlRoot.firstChild()
+        if newNodeToCopy.isNull():
+            #Need to add an error here
+            print "null newNodeToCopy"
+            return
+
+        # Need to get a copy of the node from one doc to the next
+        newNode = self.currentIndex.model().domDocument.importNode(newNodeToCopy,True)
 
         # Insert it into the parent node from where the user clicked
-        parentIndex = self.currentIndex.model().parent(self.currentIndex)
+        self.currentIndex.model().insertRow(self.currentIndex.model().rowCount(self.currentIndex),
+                                            self.currentIndex,
+                                            newNode)
+        self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
