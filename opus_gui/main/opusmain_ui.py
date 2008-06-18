@@ -42,7 +42,7 @@ class Ui_MainWindow(object):
         self.toolBox.setBaseSize(QtCore.QSize(0,0))
 
         font = QtGui.QFont()
-        font.setPointSize(14)
+        font.setPointSize(12)
         self.toolBox.setFont(font)
         self.toolBox.setObjectName("toolBox")
 
@@ -64,7 +64,7 @@ class Ui_MainWindow(object):
         self.dataManager_toolBox = QtGui.QTabWidget(self.datamanager_page)
 
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(11)
         self.dataManager_toolBox.setFont(font)
         self.dataManager_toolBox.setObjectName("dataManager_toolBox")
 
@@ -125,7 +125,7 @@ class Ui_MainWindow(object):
         self.tabWidget = QtGui.QTabWidget(self.splitter)
 
         font = QtGui.QFont()
-        font.setPointSize(14)
+        font.setPointSize(12)
         self.tabWidget.setFont(font)
         self.tabWidget.setObjectName("tabWidget")
 
