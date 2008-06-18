@@ -207,67 +207,48 @@ class ResultsManagerXMLHelper:
     #####################################################
     ##############    XML ADDITIONS    ##############
     #####################################################
+                            
     def add_run_to_run_manager_xml(self, cache_directory, 
                                     scenario_name, run_name, 
                                     start_year, end_year):
         
-        document = self.toolboxStuff.doc
-        model = self.toolboxStuff.resultsManagerTree.model
-
         name = '%s.%s'%(scenario_name, run_name)
-
-        newNode = model.create_node(document = document, 
-                                    name = name, 
-                                    type = 'source_data', 
-                                    value = '',
-                                    temporary = True)
-
-        scenario_name_node = model.create_node(document = document, 
-                                    name = 'scenario_name', 
-                                    type = 'string', 
-                                    value = scenario_name,
-                                    temporary = True)
-
-        run_name_node = model.create_node(document = document, 
-                                    name = 'run_name', 
-                                    type = 'string', 
-                                    value = run_name,
-                                    temporary = True)
-
-        cache_directory_node = model.create_node(document = document, 
-                                    name = 'cache_directory', 
-                                    type = 'string', 
-                                    value = cache_directory,
-                                    temporary = True)
-
-        start_year_node = model.create_node(document = document, 
-                                    name = 'start_year', 
-                                    type = 'integer', 
-                                    value = str(start_year),
-                                    temporary = True)
-
-        end_year_node = model.create_node(document = document, 
-                                    name = 'end_year', 
-                                    type = 'integer', 
-                                    value = str(end_year),
-                                    temporary = True)
         
-        parentIndex = model.index(0, 0, QModelIndex()).parent()
-        index = model.findElementIndexByName("Simulation_runs", parentIndex)[0]
-        if index.isValid():
-            model.insertRow(0, index, newNode)
-        else:
-            print "No valid node was found..."
-
-        child_index = model.findElementIndexByName(name, parentIndex)[0]
-        if child_index.isValid():
-            for node in [end_year_node, start_year_node, 
-                         cache_directory_node, scenario_name_node, run_name_node]:
-                model.insertRow(0, child_index, node)
-        else:
-            print "No valid node was found..."
-
-        model.emit(SIGNAL("layoutChanged()"))  
+        head_node_args = {'type':'source_data',
+                          'value':''}
+        
+        scenario_def = {
+            'name':'scenario_name',
+            'type':'string',
+            'value':scenario_name,
+        }
+        run_def = {
+            'name':'run_name',
+            'type':'string',
+            'value':run_name,
+        }
+        cache_dir_def = {
+            'name':'cache_directory',
+            'type':'string',
+            'value':cache_directory,
+        }
+        start_year_def = {
+            'name':'start_year',
+            'type':'integer',
+            'value':str(start_year),
+        }
+        end_year_def = {
+            'name':'end_year',
+            'type':'integer',
+            'value':str(end_year),
+        }        
+        child_defs = [scenario_def, run_def, cache_dir_def, start_year_def, end_year_def]
+        
+        self._add_new_xml_tree(head_node_name = name, 
+                               head_node_args = head_node_args, 
+                               child_node_definitions = child_defs, 
+                               parent_name = 'Simulation_runs',
+                               temporary = True)
 
     def add_result_to_xml(self, 
                           result_name,
@@ -275,127 +256,77 @@ class ResultsManagerXMLHelper:
                           indicator_name,
                           dataset_name,
                           years):
-        document = self.toolboxStuff.doc
-        model = self.toolboxStuff.resultsManagerTree.model
-                
-        newNode = model.create_node(document = document, 
-                                    name = result_name, 
-                                    type = 'indicator_result', 
-                                    value = '',
-                                    temporary = True)
-        source_data_node = model.create_node(document = document, 
-                                    name = 'source_data', 
-                                    type = 'string', 
-                                    value = source_data_name,
-                                    temporary = True)
-        indicator_node = model.create_node(document = document, 
-                                    name = 'indicator_name', 
-                                    type = 'string', 
-                                    value = indicator_name,
-                                    temporary = True)        
-        dataset_node = model.create_node(document = document, 
-                                    name = 'dataset_name', 
-                                    type = 'string', 
-                                    value = dataset_name,
-                                    temporary = True)
-        year_node = model.create_node(document = document, 
-                                    name = 'available_years', 
-                                    type = 'string', 
-                                    value = ', '.join([repr(year) for year in years]),
-                                    temporary = True)
-                      
-        parentIndex = model.index(0,0,QModelIndex()).parent()
-        index = model.findElementIndexByName("Results", parentIndex)[0]
-        if index.isValid():
-            model.insertRow(0,
-                            index,
-                            newNode)
-        else:
-            print "No valid node was found..."
         
-        child_index = model.findElementIndexByName(result_name, parentIndex)[0]
-        if child_index.isValid():
-            for node in [dataset_node, indicator_node, source_data_node, year_node]:
-                model.insertRow(0,
-                                child_index,
-                                node)
-        else:
-            print "No valid node was found..."
+        head_node_args = {'type':'indicator_result',
+                          'value':''}
         
-        model.emit(SIGNAL("layoutChanged()"))
+        source_data_def = {
+            'name':'source_data',
+            'type':'string',
+            'value':source_data_name
+        }
+        indicator_def = {
+            'name':'indicator_name',
+            'type':'string',
+            'value':indicator_name
+        }
+        dataset_def = {
+            'name':'dataset_name',
+            'type':'string',
+            'value':dataset_name
+        }
+        year_def = {
+            'name':'available_years',
+            'type':'string',
+            'value':', '.join([repr(year) for year in years])
+        }
+        
+        child_defs = [source_data_def, indicator_def, dataset_def, year_def]
+        
+        self._add_new_xml_tree(head_node_name = result_name, 
+                               head_node_args = head_node_args, 
+                               child_node_definitions = child_defs, 
+                               parent_name = 'Results',
+                               temporary = True)
 
     def addNewIndicator(self, 
                         indicator_name,
                         package_name,
                         expression):
 
-        model = self.toolboxStuff.resultsManagerTree.model
-        document = self.toolboxStuff.doc
-
-        newNode = model.create_node(document = document, 
-                                    name = indicator_name, 
-                                    type = 'indicator', 
-                                    value = '')
-
-        package_node = model.create_node(document = document, 
-                                    name = 'package', 
-                                    type = 'string', 
-                                    value = package_name)
-
-        expression_node = model.create_node(document = document, 
-                                    name = 'expression', 
-                                    type = 'string', 
-                                    value = expression)
-
-        parentIndex = model.index(0,0,QModelIndex()).parent()
-        current_index = model.findElementIndexByName('my_indicators', parentIndex)[0]
-        model.insertRow(0,
-                current_index,
-                newNode)
-
-        child_index = model.findElementIndexByName(indicator_name, current_index)[0]
-        if child_index.isValid():
-            for node in [expression_node, package_node]:
-                model.insertRow(0,
-                                child_index,
-                                node)
-        else:
-            print "No valid node was found..."
-        model.emit(SIGNAL("layoutChanged()"))
-  
+        head_node_args = {'type':'indicator',
+                          'value':''}
+        
+        package_def = {
+            'name':'package',
+            'type':'string',
+            'value':package_name
+        }
+        expression_def = {
+            'name':'expression',
+            'type':'string',
+            'value':expression
+        }
+        child_defs = [package_def, expression_def]
+        
+        self._add_new_xml_tree(head_node_name = indicator_name, 
+                               head_node_args = head_node_args, 
+                               child_node_definitions = child_defs, 
+                               parent_name = 'my_indicators')
+          
     def addNewIndicatorGroup(self, group_name):
-              
-        model = self.toolboxStuff.resultsManagerTree.model
-        document = self.toolboxStuff.doc
-
-        newNode = model.create_node(document = document, 
-                                    name = group_name, 
-                                    type = 'indicator_group', 
-                                    value = '')
-
-        parentIndex = model.index(0,0,QModelIndex()).parent()
-        current_index = model.findElementIndexByName('Indicator_groups', parentIndex)[0]
-
-        model.insertRow(0,
-                current_index,
-                newNode)
-        model.emit(SIGNAL("layoutChanged()"))
+        head_node_args = {'type':'indicator_group',
+                          'value':''}
+                
+        self._add_new_xml_tree(head_node_name = group_name, 
+                               head_node_args = head_node_args, 
+                               parent_name = 'Indicator_groups')
 
     def addIndicatorToGroup(self, group_name, indicator_name):
-        model = self.toolboxStuff.resultsManagerTree.model
-        document = self.toolboxStuff.doc
 
-        newNode = model.create_node(document = document, 
-                                    name = indicator_name, 
-                                    type = 'indicator_group_member', 
-                                    value = '')
+        head_node_args = {'type':'indicator_group_member',
+                          'value':''}
         
-        parentIndex = model.index(0,0,QModelIndex()).parent()
-        current_index = model.findElementIndexByName(group_name, parentIndex)[0]
-        model.insertRow(0,
-                current_index,
-                newNode)
-
         available_datasets = self.get_available_datasets()        
         datasets = '|'.join(available_datasets)
 
@@ -405,27 +336,63 @@ class ResultsManagerXMLHelper:
             'Table (per indicator, spans years)',
             'Table (per year, spans indicators)']
         visualizations = '|'.join(visualizations)
-            
-        visualization_node = model.create_node(document = document, 
-                                    name = 'visualization_type', 
-                                    type = 'string', 
-                                    value = '',
-                                    choices = visualizations) 
-               
-        dataset_node = model.create_node(document = document, 
-                                    name = 'dataset_name', 
-                                    type = 'string', 
-                                    value = '',
-                                    choices = datasets)
+        
+        datasets_def = {
+            'name':'dataset_name',
+            'type':'string',
+            'value':'',
+            'choices':datasets
+        }
+        visualization_def = {
+            'name':'visualization_type',
+            'type':'string',
+            'value':'',
+            'choices':visualizations
+        }
+        child_defs = [datasets_def, visualization_def]
+        
+        self._add_new_xml_tree(head_node_name = indicator_name, 
+                               head_node_args = head_node_args, 
+                               child_node_definitions = child_defs, 
+                               parent_name = group_name)
+                
+    def _add_new_xml_tree(self, 
+                          head_node_name,
+                          head_node_args, 
+                          parent_name,
+                          child_node_definitions = [],
+                          temporary = False):
+        
+        model = self.toolboxStuff.resultsManagerTree.model
+        document = self.toolboxStuff.doc
+        
+        
+        head_node = model.create_node(document = document, 
+                                    name = head_node_name,
+                                    temporary = temporary, 
+                                    **head_node_args)
 
-#        parentIndex = self.currentIndex.parent()        
-#        child_index = model.findElementIndexByName(indicator, parentIndex)[0]
-        child_index = model.findElementIndexByName(indicator_name, current_index)[0]
-        if child_index.isValid():
-            for node in [dataset_node, visualization_node]:
-                model.insertRow(0,
-                                child_index,
-                                node)
-        else:
-            print "No valid node was found..."
+            
+        parentIndex = model.index(0,0,QModelIndex()).parent()
+        current_index = model.findElementIndexByName(parent_name, parentIndex)[0]
+        model.insertRow(0,
+                current_index,
+                head_node)
+
+        if child_node_definitions != []:
+            child_nodes = []
+            for args in child_node_definitions:
+                child_node = model.create_node(document = document,
+                                               temporary = temporary,
+                                               **args)
+                child_nodes.append(child_node)
+                
+            child_index = model.findElementIndexByName(head_node_name, current_index)[0]
+            if child_index.isValid():
+                for node in sorted(child_nodes, reverse=True):
+                    model.insertRow(0,
+                                    child_index,
+                                    node)
+            else:
+                print "No valid node was found..."
         model.emit(SIGNAL("layoutChanged()"))
