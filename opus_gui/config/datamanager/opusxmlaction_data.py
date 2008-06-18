@@ -171,6 +171,20 @@ class OpusXMLAction_Data(object):
                         SIGNAL("triggered()"),
                         self.cloneNode)
 
+        self.actExportXMLToFile = QAction(self.cloneIcon,
+                                          "Export XML Node To File",
+                                          self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actExportXMLToFile,
+                        SIGNAL("triggered()"),
+                        self.exportXMLToFile)
+
+        self.actImportXMLFromFile = QAction(self.cloneIcon,
+                                            "Import XML Node From File",
+                                            self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actImportXMLFromFile,
+                        SIGNAL("triggered()"),
+                        self.importXMLFromFile)
+
 
     def addToolFile(self):
         #print "Add Tool Pressed"
@@ -391,6 +405,12 @@ class OpusXMLAction_Data(object):
         # Finally we refresh the tree to indicate that there has been a change
         self.currentIndex.model().emit(SIGNAL("layoutChanged()"))
 
+    def exportXMLToFile(self):
+        print "exportXMLToFile"
+
+    def importXMLFromFile(self):
+        print "importXMLFromFile"
+
     def processCustomMenu(self, position):
         if self.xmlTreeObject.view.indexAt(position).isValid() and \
                self.xmlTreeObject.view.indexAt(position).column() == 0:
@@ -475,6 +495,11 @@ class OpusXMLAction_Data(object):
                                 (parentElement.attribute(QString("type")) == QString("param_template"))):
                             self.menu.addSeparator()
                             self.menu.addAction(self.actRemoveNode)
+                    # Now add the export and import methods
+                    self.menu.addSeparator()
+                    self.menu.addAction(self.actExportXMLToFile)
+                    self.menu.addAction(self.actImportXMLFromFile)
+                    
                 # Check if the menu has any elements before exec is called
                 if not self.menu.isEmpty():
                     self.menu.exec_(QCursor.pos())
