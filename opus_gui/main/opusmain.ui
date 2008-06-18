@@ -55,7 +55,7 @@
        </property>
        <property name="font" >
         <font>
-         <pointsize>14</pointsize>
+         <pointsize>12</pointsize>
         </font>
        </property>
        <property name="currentIndex" >
@@ -92,7 +92,7 @@
           <widget class="QTabWidget" name="dataManager_toolBox" >
            <property name="font" >
             <font>
-             <pointsize>12</pointsize>
+             <pointsize>11</pointsize>
             </font>
            </property>
            <property name="currentIndex" >
@@ -190,7 +190,7 @@
       <widget class="QTabWidget" name="tabWidget" >
        <property name="font" >
         <font>
-         <pointsize>14</pointsize>
+         <pointsize>12</pointsize>
         </font>
        </property>
        <property name="currentIndex" >
