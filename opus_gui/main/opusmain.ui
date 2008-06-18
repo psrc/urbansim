@@ -19,34 +19,25 @@
    <string/>
   </property>
   <property name="windowIcon" >
-   <iconset resource="opusmain.qrc" >:/Images/Images/cog.png</iconset>
+   <iconset resource="opusmain.qrc" >
+    <normaloff>:/Images/Images/cog.png</normaloff>:/Images/Images/cog.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>22</y>
+     <width>974</width>
+     <height>665</height>
+    </rect>
+   </property>
    <layout class="QGridLayout" >
-    <property name="leftMargin" >
-     <number>9</number>
-    </property>
-    <property name="topMargin" >
-     <number>9</number>
-    </property>
-    <property name="rightMargin" >
-     <number>9</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>9</number>
-    </property>
-    <property name="horizontalSpacing" >
-     <number>6</number>
-    </property>
-    <property name="verticalSpacing" >
-     <number>6</number>
-    </property>
     <item row="0" column="0" >
      <widget class="QSplitter" name="splitter" >
       <property name="orientation" >
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QToolBox" name="toolBox" >
+      <widget class="QTabWidget" name="toolBox" >
        <property name="enabled" >
         <bool>true</bool>
        </property>
@@ -64,68 +55,44 @@
        </property>
        <property name="font" >
         <font>
-         <pointsize>10</pointsize>
+         <pointsize>14</pointsize>
         </font>
        </property>
        <property name="currentIndex" >
-        <number>3</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="generalmanager_page" >
         <property name="geometry" >
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>268</width>
-          <height>497</height>
+          <width>512</width>
+          <height>612</height>
          </rect>
         </property>
-        <attribute name="label" >
-         <string>General Settings</string>
+        <attribute name="title" >
+         <string>General</string>
         </attribute>
-        <attribute name="icon" >
-         <iconset resource="opusmain.qrc" >:/Images/Images/application_side_tree.png</iconset>
-        </attribute>
-        <layout class="QGridLayout" />
+        <layout class="QGridLayout" name="_2" />
        </widget>
        <widget class="QWidget" name="datamanager_page" >
         <property name="geometry" >
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>268</width>
-          <height>497</height>
+          <width>512</width>
+          <height>612</height>
          </rect>
         </property>
-        <attribute name="label" >
-         <string>Data Manager</string>
-        </attribute>
-        <attribute name="icon" >
-         <iconset resource="opusmain.qrc" >:/Images/Images/database_table.png</iconset>
+        <attribute name="title" >
+         <string>Data</string>
         </attribute>
         <layout class="QGridLayout" >
-         <property name="leftMargin" >
-          <number>9</number>
-         </property>
-         <property name="topMargin" >
-          <number>9</number>
-         </property>
-         <property name="rightMargin" >
-          <number>9</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>9</number>
-         </property>
-         <property name="horizontalSpacing" >
-          <number>6</number>
-         </property>
-         <property name="verticalSpacing" >
-          <number>6</number>
-         </property>
          <item row="0" column="0" >
-          <widget class="QToolBox" name="dataManager_toolBox" >
+          <widget class="QTabWidget" name="dataManager_toolBox" >
            <property name="font" >
             <font>
-             <pointsize>8</pointsize>
+             <pointsize>12</pointsize>
             </font>
            </property>
            <property name="currentIndex" >
@@ -136,15 +103,12 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>250</width>
-              <height>389</height>
+              <width>482</width>
+              <height>565</height>
              </rect>
             </property>
-            <attribute name="label" >
+            <attribute name="title" >
              <string>Database Server Connections</string>
-            </attribute>
-            <attribute name="icon" >
-             <iconset resource="opusmain.qrc" >:/Images/Images/database_link.png</iconset>
             </attribute>
             <layout class="QGridLayout" />
            </widget>
@@ -153,15 +117,12 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>96</width>
-              <height>38</height>
+              <width>482</width>
+              <height>565</height>
              </rect>
             </property>
-            <attribute name="label" >
+            <attribute name="title" >
              <string>Tools</string>
-            </attribute>
-            <attribute name="icon" >
-             <iconset resource="opusmain.qrc" >:/Images/Images/folder_wrench.png</iconset>
             </attribute>
             <layout class="QGridLayout" />
            </widget>
@@ -170,15 +131,12 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>96</width>
-              <height>38</height>
+              <width>482</width>
+              <height>565</height>
              </rect>
             </property>
-            <attribute name="label" >
+            <attribute name="title" >
              <string>Opus Data</string>
-            </attribute>
-            <attribute name="icon" >
-             <iconset resource="opusmain.qrc" >:/Images/Images/table.png</iconset>
             </attribute>
             <layout class="QGridLayout" />
            </widget>
@@ -191,168 +149,88 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>268</width>
-          <height>497</height>
+          <width>512</width>
+          <height>612</height>
          </rect>
         </property>
-        <attribute name="label" >
-         <string>Model Manager</string>
+        <attribute name="title" >
+         <string>Model</string>
         </attribute>
-        <attribute name="icon" >
-         <iconset resource="opusmain.qrc" >:/Images/Images/cog.png</iconset>
-        </attribute>
-        <layout class="QGridLayout" >
-         <property name="leftMargin" >
-          <number>9</number>
-         </property>
-         <property name="topMargin" >
-          <number>9</number>
-         </property>
-         <property name="rightMargin" >
-          <number>9</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>9</number>
-         </property>
-         <property name="horizontalSpacing" >
-          <number>6</number>
-         </property>
-         <property name="verticalSpacing" >
-          <number>6</number>
-         </property>
-        </layout>
+        <layout class="QGridLayout" />
        </widget>
        <widget class="QWidget" name="runmanager_page" >
         <property name="geometry" >
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>268</width>
-          <height>497</height>
+          <width>512</width>
+          <height>612</height>
          </rect>
         </property>
-        <attribute name="label" >
-         <string>Scenario Manager</string>
+        <attribute name="title" >
+         <string>Scenarios</string>
         </attribute>
-        <attribute name="icon" >
-         <iconset resource="opusmain.qrc" >:/Images/Images/chart_organisation.png</iconset>
-        </attribute>
-        <layout class="QGridLayout" >
-         <property name="leftMargin" >
-          <number>9</number>
-         </property>
-         <property name="topMargin" >
-          <number>9</number>
-         </property>
-         <property name="rightMargin" >
-          <number>9</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>9</number>
-         </property>
-         <property name="horizontalSpacing" >
-          <number>6</number>
-         </property>
-         <property name="verticalSpacing" >
-          <number>6</number>
-         </property>
-        </layout>
+        <layout class="QGridLayout" />
        </widget>
        <widget class="QWidget" name="resultsmanager_page" >
         <property name="geometry" >
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>96</width>
-          <height>38</height>
+          <width>512</width>
+          <height>612</height>
          </rect>
         </property>
-        <attribute name="label" >
-         <string>Results Manager</string>
+        <attribute name="title" >
+         <string>Results</string>
         </attribute>
-        <attribute name="icon" >
-         <iconset resource="opusmain.qrc" >:/Images/Images/map_go.png</iconset>
-        </attribute>
-        <layout class="QGridLayout" >
-         <property name="leftMargin" >
-          <number>9</number>
-         </property>
-         <property name="topMargin" >
-          <number>9</number>
-         </property>
-         <property name="rightMargin" >
-          <number>9</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>9</number>
-         </property>
-         <property name="horizontalSpacing" >
-          <number>6</number>
-         </property>
-         <property name="verticalSpacing" >
-          <number>6</number>
-         </property>
-        </layout>
+        <layout class="QGridLayout" />
        </widget>
       </widget>
       <widget class="QTabWidget" name="tabWidget" >
+       <property name="font" >
+        <font>
+         <pointsize>14</pointsize>
+        </font>
+       </property>
        <property name="currentIndex" >
-        <number>2</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab_editorView" >
+        <property name="geometry" >
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>419</width>
+          <height>612</height>
+         </rect>
+        </property>
         <attribute name="title" >
          <string>Editor</string>
         </attribute>
         <attribute name="icon" >
-         <iconset resource="opusmain.qrc" >:/Images/Images/table_lightning.png</iconset>
+         <iconset resource="opusmain.qrc" >
+          <normaloff>:/Images/Images/table_lightning.png</normaloff>:/Images/Images/table_lightning.png</iconset>
         </attribute>
-        <layout class="QGridLayout" >
-         <property name="leftMargin" >
-          <number>9</number>
-         </property>
-         <property name="topMargin" >
-          <number>9</number>
-         </property>
-         <property name="rightMargin" >
-          <number>9</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>9</number>
-         </property>
-         <property name="horizontalSpacing" >
-          <number>6</number>
-         </property>
-         <property name="verticalSpacing" >
-          <number>6</number>
-         </property>
-        </layout>
+        <layout class="QGridLayout" />
        </widget>
        <widget class="QWidget" name="tab_pythonView" >
+        <property name="geometry" >
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>419</width>
+          <height>611</height>
+         </rect>
+        </property>
         <attribute name="title" >
          <string>Python Console</string>
         </attribute>
         <attribute name="icon" >
-         <iconset resource="opusmain.qrc" >:/Images/Images/python_type.png</iconset>
+         <iconset resource="opusmain.qrc" >
+          <normaloff>:/Images/Images/python_type.png</normaloff>:/Images/Images/python_type.png</iconset>
         </attribute>
         <layout class="QGridLayout" >
-         <property name="leftMargin" >
-          <number>9</number>
-         </property>
-         <property name="topMargin" >
-          <number>9</number>
-         </property>
-         <property name="rightMargin" >
-          <number>9</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>9</number>
-         </property>
-         <property name="horizontalSpacing" >
-          <number>6</number>
-         </property>
-         <property name="verticalSpacing" >
-          <number>6</number>
-         </property>
          <item row="1" column="0" >
           <widget class="QWidget" native="1" name="pythonLineWidget" >
            <property name="sizePolicy" >
@@ -362,21 +240,6 @@
             </sizepolicy>
            </property>
            <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>6</number>
-            </property>
-            <property name="leftMargin" >
-             <number>9</number>
-            </property>
-            <property name="topMargin" >
-             <number>9</number>
-            </property>
-            <property name="rightMargin" >
-             <number>9</number>
-            </property>
-            <property name="bottomMargin" >
-             <number>9</number>
-            </property>
             <item>
              <widget class="QLabel" name="pythonLabel" >
               <property name="text" >
@@ -396,11 +259,20 @@
         </layout>
        </widget>
        <widget class="QWidget" name="tab_logView" >
+        <property name="geometry" >
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>419</width>
+          <height>612</height>
+         </rect>
+        </property>
         <attribute name="title" >
          <string>Log View</string>
         </attribute>
         <attribute name="icon" >
-         <iconset resource="opusmain.qrc" >:/Images/Images/table.png</iconset>
+         <iconset resource="opusmain.qrc" >
+          <normaloff>:/Images/Images/table.png</normaloff>:/Images/Images/table.png</iconset>
         </attribute>
         <layout class="QGridLayout" >
          <item row="0" column="0" >
@@ -419,7 +291,7 @@
      <x>0</x>
      <y>0</y>
      <width>974</width>
-     <height>24</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject" >
@@ -461,10 +333,20 @@
    <addaction name="menuUtilities" />
    <addaction name="menuHelp" />
   </widget>
-  <widget class="QStatusBar" name="statusbar" />
+  <widget class="QStatusBar" name="statusbar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>687</y>
+     <width>974</width>
+     <height>20</height>
+    </rect>
+   </property>
+  </widget>
   <action name="mpActionZoomOut" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/mActionZoomOut.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/mActionZoomOut.png</normaloff>:/Images/Images/mActionZoomOut.png</iconset>
    </property>
    <property name="text" >
     <string>Zoom Out</string>
@@ -472,7 +354,8 @@
   </action>
   <action name="mpActionPan" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/mActionPan.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/mActionPan.png</normaloff>:/Images/Images/mActionPan.png</iconset>
    </property>
    <property name="text" >
     <string>Pan</string>
@@ -480,7 +363,8 @@
   </action>
   <action name="mpActionAddRasterLayer" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/mActionAddRasterLayer.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/mActionAddRasterLayer.png</normaloff>:/Images/Images/mActionAddRasterLayer.png</iconset>
    </property>
    <property name="text" >
     <string>Add Raster Layer</string>
@@ -488,7 +372,8 @@
   </action>
   <action name="mpActionZoomIn" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/mActionZoomIn.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/mActionZoomIn.png</normaloff>:/Images/Images/mActionZoomIn.png</iconset>
    </property>
    <property name="text" >
     <string>Zoom In</string>
@@ -496,7 +381,8 @@
   </action>
   <action name="mpActionAddVectorLayer" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/mActionAddLayer.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/mActionAddLayer.png</normaloff>:/Images/Images/mActionAddLayer.png</iconset>
    </property>
    <property name="text" >
     <string>Add Vector Layer</string>
@@ -504,7 +390,8 @@
   </action>
   <action name="actionOpen_Project" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/folder.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/folder.png</normaloff>:/Images/Images/folder.png</iconset>
    </property>
    <property name="text" >
     <string>Open Project</string>
@@ -512,7 +399,8 @@
   </action>
   <action name="actionSave_Project" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/script_save.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/script_save.png</normaloff>:/Images/Images/script_save.png</iconset>
    </property>
    <property name="text" >
     <string>Save Project</string>
@@ -520,7 +408,8 @@
   </action>
   <action name="actionSave_Project_As" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/script_save.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/script_save.png</normaloff>:/Images/Images/script_save.png</iconset>
    </property>
    <property name="text" >
     <string>Save Project As...</string>
@@ -528,7 +417,8 @@
   </action>
   <action name="actionOpen_Project_2" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/folder.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/folder.png</normaloff>:/Images/Images/folder.png</iconset>
    </property>
    <property name="text" >
     <string>Open Project</string>
@@ -536,7 +426,8 @@
   </action>
   <action name="actionExit" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/cross.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/cross.png</normaloff>:/Images/Images/cross.png</iconset>
    </property>
    <property name="text" >
     <string>Exit</string>
@@ -544,7 +435,8 @@
   </action>
   <action name="actionSave_Project_2" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/disk.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/disk.png</normaloff>:/Images/Images/disk.png</iconset>
    </property>
    <property name="text" >
     <string>Save Project</string>
@@ -552,7 +444,8 @@
   </action>
   <action name="actionSave_Project_As_2" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/script_save.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/script_save.png</normaloff>:/Images/Images/script_save.png</iconset>
    </property>
    <property name="text" >
     <string>Save Project As...</string>
@@ -560,7 +453,8 @@
   </action>
   <action name="actionRun_Manager" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/cog.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/cog.png</normaloff>:/Images/Images/cog.png</iconset>
    </property>
    <property name="text" >
     <string>Run Manager</string>
@@ -568,7 +462,8 @@
   </action>
   <action name="actionAbout" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/help.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/help.png</normaloff>:/Images/Images/help.png</iconset>
    </property>
    <property name="text" >
     <string>About</string>
@@ -576,7 +471,8 @@
   </action>
   <action name="tabActionEditor" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/table.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/table.png</normaloff>:/Images/Images/table.png</iconset>
    </property>
    <property name="text" >
     <string>Editor</string>
@@ -584,7 +480,8 @@
   </action>
   <action name="tabActionMapView" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/map.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/map.png</normaloff>:/Images/Images/map.png</iconset>
    </property>
    <property name="text" >
     <string>Map View</string>
@@ -592,7 +489,8 @@
   </action>
   <action name="tabActionPythonConsole" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/python_type.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/python_type.png</normaloff>:/Images/Images/python_type.png</iconset>
    </property>
    <property name="text" >
     <string>Python Console</string>
@@ -600,7 +498,8 @@
   </action>
   <action name="tabActionLogView" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/folder.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/folder.png</normaloff>:/Images/Images/folder.png</iconset>
    </property>
    <property name="text" >
     <string>Log View</string>
@@ -608,7 +507,8 @@
   </action>
   <action name="actionPython_View" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/python_type.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/python_type.png</normaloff>:/Images/Images/python_type.png</iconset>
    </property>
    <property name="text" >
     <string>Python Console</string>
@@ -616,7 +516,8 @@
   </action>
   <action name="actionLog_View" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/table.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/table.png</normaloff>:/Images/Images/table.png</iconset>
    </property>
    <property name="text" >
     <string>Log View</string>
@@ -624,7 +525,8 @@
   </action>
   <action name="actionEditor_View" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/table_lightning.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/table_lightning.png</normaloff>:/Images/Images/table_lightning.png</iconset>
    </property>
    <property name="text" >
     <string>Editor View</string>
@@ -632,7 +534,8 @@
   </action>
   <action name="actionMap_View" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/map.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/map.png</normaloff>:/Images/Images/map.png</iconset>
    </property>
    <property name="text" >
     <string>Map View</string>
@@ -640,7 +543,8 @@
   </action>
   <action name="actionClose_Project" >
    <property name="icon" >
-    <iconset resource="opusmain.qrc" >:/Images/Images/folder.png</iconset>
+    <iconset resource="opusmain.qrc" >
+     <normaloff>:/Images/Images/folder.png</normaloff>:/Images/Images/folder.png</iconset>
    </property>
    <property name="text" >
     <string>Close Project</string>
