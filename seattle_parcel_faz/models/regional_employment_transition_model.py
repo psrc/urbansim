@@ -130,7 +130,7 @@ class Tests(StochasticTestCase):
             "faz_id": array([1,1,2,2])
             }
 
-    def test_same_distribution_after_job_subtraction(self):
+    def skip_test_same_distribution_after_job_subtraction(self):
         """Removes 1,750 sector_1 jobs, without specifying the distribution across gridcells (so it is assumed equal)
         Test that the distribution (in %) of sector 1 jobs across gridcells before and after the subtraction are
         relatively equal.
@@ -209,7 +209,7 @@ class Tests(StochasticTestCase):
         expected_results = array([3500.0/7000.0*5250.0, 900, 3500.0/7000.0*5250.0, 1800, 0, 300])
         self.run_stochastic_test(__file__, run_model2, expected_results, 20)
 
-    def test_same_distribution_after_job_addition(self):
+    def skip_test_same_distribution_after_job_addition(self):
         """Add 1,750 new jobs of sector 1 without specifying a distribution across gridcells (so it is assumed equal)
         Test that the total number of jobs in each sector after the addition matches the totals specified
         in annual_employment_control_totals.
