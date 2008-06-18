@@ -154,7 +154,7 @@
          </rect>
         </property>
         <attribute name="title" >
-         <string>Model</string>
+         <string>Models</string>
         </attribute>
         <layout class="QGridLayout" />
        </widget>
