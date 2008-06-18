@@ -1,4 +1,4 @@
-<project default="unit-tests">
+<project name="urbansim_gridcell" default="unit-tests">
 
 	<property name="pythonpathdir" value="${basedir}/.." />
 

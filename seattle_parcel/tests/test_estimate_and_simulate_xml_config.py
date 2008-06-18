@@ -48,38 +48,45 @@ config_template = """<opus_project>
 class EstimationAndSimulationTest(opus_unittest.OpusTestCase):
     
     def setUp(self):
-        # By putting the creation and removal of the temp_dir in the setUp and tearDown methods, we ensure that it gets removed even if
-        # the test_simulation method itself gets an exception.
+        # By putting the creation and removal of the temp_dir in the setUp and tearDown methods, we ensure that it 
+        # gets removed even if test_estimation, test_simulation, or the helper method _get_xml_config gets an exception.
         # Note that mkdtemp returns an absolute directory path.
         self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
-        # generate an xml configuration to run the test (we want to write the results into the temp directory).
-        config_path = os.path.join(self.temp_dir, 'testconfig.xml')
-        f = open(config_path, 'w')
-        f.write(config_template % self.temp_dir)
-        f.close()
-        self.xml_config = XMLConfiguration(config_path)
         
     def tearDown(self):
         rmtree(self.temp_dir)
         
     def test_estimation(self):
-        estimation_section = self.xml_config.get_section('model_manager/estimation')
+        xml_config = self._get_xml_config()
+        estimation_section = xml_config.get_section('model_manager/estimation')
         estimation_config = estimation_section['estimation_config']
         for model_name in estimation_config['models_to_estimate']:
-            er = EstimationRunner(model=model_name, xml_configuration=self.xml_config, configuration=None)
+            er = EstimationRunner(model=model_name, xml_configuration=xml_config, configuration=None)
             er.estimate()
            
     def test_simulation(self):
         # check that the simulation proceeds without crashing
+        xml_config = self._get_xml_config()
         option_group = StartRunOptionGroup()
         parser = option_group.parser
         # simulate 0 command line arguments by passing in []
         (options, _) = parser.parse_args([])
         run_manager = option_group.get_run_manager(options)
-        run_section = self.xml_config.get_run_configuration('Seattle_baseline')
+        run_section = xml_config.get_run_configuration('Seattle_baseline')
         insert_auto_generated_cache_directory_if_needed(run_section)
         run_manager.setup_new_run(run_name = run_section['cache_directory'])
         run_manager.run_run(run_section)
        
+    def _get_xml_config(self):
+        # Return the xml configuration to run these unit tests.
+        # We don't want to do this in the setup method, since if XMLConfiguration gets an exception we still want to
+        # delete the temp directory on teardown.
+        # generate an xml configuration to run the test (we want to write the results into the temp directory).
+        config_path = os.path.join(self.temp_dir, 'testconfig.xml')
+        f = open(config_path, 'w')
+        f.write(config_template % self.temp_dir)
+        f.close()
+        return XMLConfiguration(config_path)
+        
 if __name__ == "__main__":
     opus_unittest.main()
