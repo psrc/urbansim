@@ -21,7 +21,17 @@ from urbansim_parcel.models.scaling_jobs_model import ScalingJobsModel
 class RegionalScalingJobsModel(ScalingJobsModel):
     """Run the urbansim ScalingJobsModel separately for each faz."""
     model_name = "Regional Scaling Jobs Model" 
-    regional_id_name = "faz_id"
+#    regional_id_name = "faz_id"
+
+    def __init__(self, group_member=None, agents_grouping_attribute = 'job.building_type', filter = None, debuglevel=0,
+                 dataset_pool=None, regional_id_name="faz_id"):
+        self.regional_id_name = regional_id_name
+        self.group_member = group_member
+        if self.group_member:
+            self.group_member.set_agents_grouping_attribute(agents_grouping_attribute)
+        self.filter = filter
+        self.dataset_pool = self.create_dataset_pool(dataset_pool, ["urbansim", "opus_core"])
+        self.debug = DebugPrinter(debuglevel)
     
     def run(self, location_set, agent_set, agents_index=None, data_objects=None, **kwargs):
         if agents_index is None:
