@@ -64,9 +64,8 @@ class SimulationTest(opus_unittest.OpusTestCase):
         option_group = StartRunOptionGroup()
         parser = option_group.parser
         # simulate 0 command line arguments by passing in []
-        (options, args) = parser.parse_args([])
+        (options, _) = parser.parse_args([])
         run_manager = option_group.get_run_manager(options)
-        # find the directory containing the eugene xml configurations
         config = XMLConfiguration(config_path).get_run_configuration('Eugene_baseline')
         insert_auto_generated_cache_directory_if_needed(config)
         run_manager.setup_new_run(run_name = config['cache_directory'])
