@@ -14,23 +14,9 @@
 # PyQt4 includes for python bindings to QT
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+
 import os, sys
 
-try:
-    WithOpus = True
-    #from opus_gui.configurations.xml_configuration import XMLConfiguration
-    from opus_core.configurations.xml_configuration import XMLConfiguration
-    from opus_gui.results.indicator_framework.representations.computed_indicator import ComputedIndicator
-    from opus_gui.results.indicator_framework.maker.maker import Maker
-    from opus_gui.results.indicator_framework.visualizer.visualization_factory import VisualizationFactory
-    from opus_gui.results.indicator_framework_interface import IndicatorFrameworkInterface
-    from opus_gui.results.xml_helper_methods import get_child_values
-    from opus_gui.results.indicator_framework.visualizer.visualizers.table import Table
-    from opus_core.storage_factory import StorageFactory
-
-except ImportError:
-    WithOpus = False
-    print "Unable to import opus core libs"
 
 class OpusGuiThread(QThread):
 

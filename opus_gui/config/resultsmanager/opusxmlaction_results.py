@@ -21,12 +21,16 @@ from PyQt4.QtXml import *
 from opus_gui.config.managerbase.cloneinherited import CloneInheritedGui
 from opus_gui.config.managerbase.clonenode import CloneNodeGui
 from opus_gui.results.xml_helper_methods import elementsByAttributeValue, get_child_values
+from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
+
 
 class OpusXMLAction_Results(object):
     def __init__(self, opusXMLAction):
         self.opusXMLAction = opusXMLAction
         self.mainwindow = opusXMLAction.mainwindow
         self.xmlTreeObject = opusXMLAction.xmlTreeObject
+        self.toolboxStuff = self.xmlTreeObject.mainwindow.toolboxStuff
+        self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = self.toolboxStuff)
 
         self.currentColumn = None
         self.currentIndex = None
@@ -116,74 +120,32 @@ class OpusXMLAction_Results(object):
         print "addNewIndicator pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
 
-        model = self.currentIndex.model()
-        document = model.domDocument
-        name = 'untitled indicator'
-        default_value = '?'
-
-        newNode = model.create_node(document = document, 
-                                    name = name, 
-                                    type = 'indicator', 
-                                    value = '')
-
-        package_node = model.create_node(document = document, 
-                                    name = 'package', 
-                                    type = 'string', 
-                                    value = default_value)
-
-        expression_node = model.create_node(document = document, 
-                                    name = 'expression', 
-                                    type = 'string', 
-                                    value = default_value)
-
-        model.insertRow(0,
-                self.currentIndex,
-                newNode)
-
-        parentIndex = model.index(0,0,QModelIndex()).parent()
-
-        child_index = model.findElementIndexByName(name, parentIndex)[0]
-        if child_index.isValid():
-            for node in [expression_node, package_node]:
-                model.insertRow(0,
-                                child_index,
-                                node)
-        else:
-            print "No valid node was found..."
-        model.emit(SIGNAL("layoutChanged()"))
-
+        self.xml_helper.addNewIndicator(indicator_name = 'untitled indicator', 
+                                        package_name = '?', 
+                                        expression = '?')
 
     def addNewIndicatorGroup(self):
         print "addNewIndicatorGroup pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
               
-        model = self.currentIndex.model()
-        document = model.domDocument
-        name = 'untitled_indicator_group'
-
-        newNode = model.create_node(document = document, 
-                                    name = name, 
-                                    type = 'indicator_group', 
-                                    value = '')
-        model.insertRow(0,
-                self.currentIndex,
-                newNode)
-        model.emit(SIGNAL("layoutChanged()"))
-
+        self.xml_helper.addNewIndicatorGroup(group_name = 'untitled indicator group')
         
     def beforeAddIndicatorToGroupShown(self):
         print "AddIndicatorToGroup about to be shown"
+
+        #group_name = self.currentIndex.internalPointer().node().toElement().tagName()
+        #existing_indicators = self.xml_helper.get_indicators_in_indicator_group(group_name)
         
-        domDocument = self.xmlTreeObject.mainwindow.toolboxStuff.doc
-        node_list = elementsByAttributeValue(domDocument = domDocument, 
-                                              attribute = 'type', 
-                                              value = 'indicator')
+        available_indicators = self.xml_helper.get_available_indicator_names()
         
         self.indicator_group_menu.clear()
-        for element, node in node_list:
-            indicator = QString(element.nodeName())
+        for indicator_info in available_indicators:
+            indicator_name = indicator_info['name']
+#            if indicator_name in existing_indicators:
+#                continue
+            indicator = QString(indicator_name)
             act_indicator = QAction(self.acceptIcon, 
-                                    element.nodeName(),
+                                    indicator_name,
                                     self.indicator_group_menu)
             callback = lambda indicator=indicator: self.addIndicatorToGroup(indicator)
             QObject.connect(act_indicator, SIGNAL("triggered()"), callback) 
@@ -193,53 +155,10 @@ class OpusXMLAction_Results(object):
         print "adding indicator to group..."
         print "addIndicatorToGroup pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
-        model = self.currentIndex.model()
-        document = model.domDocument
-
-        newNode = model.create_node(document = document, 
-                                    name = indicator, 
-                                    type = 'indicator_group_member', 
-                                    value = '')
-        model.insertRow(0,
-                self.currentIndex,
-                newNode)
-
-        general_node = document.elementsByTagName(QString('general')).item(0)
-        available_datasets = get_child_values(parent = general_node, 
-                                 child_names = ['available_datasets'])
+        group_name = self.currentIndex.internalPointer().node().toElement().tagName()
+        self.xml_helper.addIndicatorToGroup(group_name = group_name, 
+                                            indicator_name = indicator)
         
-        datasets = '|'.join(str(available_datasets['available_datasets'])[1:-1].replace("'",'').split(","))
-
-        visualizations = [
-            'Map (per indicator per year)',
-            'Chart (per indicator, spans years)',
-            'Table (per indicator, spans years)',
-            'Table (per year, spans indicators)']
-        visualizations = '|'.join(visualizations)
-            
-        visualization_node = model.create_node(document = document, 
-                                    name = 'visualization_type', 
-                                    type = 'string', 
-                                    value = '',
-                                    choices = visualizations) 
-               
-        dataset_node = model.create_node(document = document, 
-                                    name = 'dataset_name', 
-                                    type = 'string', 
-                                    value = '',
-                                    choices = datasets)
-
-        parentIndex = self.currentIndex.parent()        
-        child_index = model.findElementIndexByName(indicator, parentIndex)[0]
-        if child_index.isValid():
-            for node in [dataset_node, visualization_node]:
-                model.insertRow(0,
-                                child_index,
-                                node)
-        else:
-            print "No valid node was found..."
-        model.emit(SIGNAL("layoutChanged()"))
-
     def beforeRunIndicatorGroupShown(self):
         print "AddIndicatorToGroup about to be shown"
         
@@ -283,34 +202,27 @@ class OpusXMLAction_Results(object):
                                 "Warning",
                                 "Please save changes to project before generating results")
 
+    def _viewIndicatorVisualization(self, indicator_type):
+        indicator_name = self.currentIndex.internalPointer().node().toElement().tagName()        
+        self.xmlTreeObject.mainwindow.resultManagerStuff.addIndicatorForm(
+                                                          indicator_type = indicator_type,
+                                                          indicator_names = [indicator_name])
+
+
     def viewResultsMatplotlibMap(self):
-        clicked_node = self.currentIndex.internalPointer().node().toElement()          
-        self.xmlTreeObject.mainwindow.resultManagerStuff.addIndicatorFormFromNode(
-                                                          indicator_type = 'matplotlib_map',
-                                                          clicked_node = clicked_node)
+        self._viewIndicatorVisualization(indicator_type = 'matplotlib_map')
 
     def viewResultsArcGisMap(self):
-        clicked_node = self.currentIndex.internalPointer().node().toElement()          
-        self.xmlTreeObject.mainwindow.resultManagerStuff.addIndicatorFormFromNode(
-                                                          indicator_type = 'arcgis_map',
-                                                          clicked_node = clicked_node)           
+        self._viewIndicatorVisualization(indicator_type = 'arcgis_map')
+         
     def viewResultsMatplotlibChart(self):
-        clicked_node = self.currentIndex.internalPointer().node().toElement()           
-        self.xmlTreeObject.mainwindow.resultManagerStuff.addIndicatorFormFromNode(
-                                                          indicator_type = 'matplotlib_chart',
-                                                          clicked_node = clicked_node)
+        self._viewIndicatorVisualization(indicator_type = 'matplotlib_chart')
 
     def viewResultsTablePerAttribute(self):
-        clicked_node = self.currentIndex.internalPointer().node().toElement()           
-        self.xmlTreeObject.mainwindow.resultManagerStuff.addIndicatorFormFromNode(
-                                                          indicator_type = 'table_per_attribute',
-                                                          clicked_node = clicked_node)
+        self._viewIndicatorVisualization(indicator_type = 'table_per_attribute')
 
     def viewResultsTablePerYear(self):
-        clicked_node = self.currentIndex.internalPointer().node().toElement()           
-        self.xmlTreeObject.mainwindow.resultManagerStuff.addIndicatorFormFromNode(
-                                                          indicator_type = 'table_per_year',
-                                                          clicked_node = clicked_node)
+        self._viewIndicatorVisualization(indicator_type = 'table_per_year')
 
     def viewDocumentation(self):
         pass

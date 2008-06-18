@@ -23,6 +23,7 @@ try:
     from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed, SimulationRunError
     #from opus_gui.configurations.xml_configuration import XMLConfiguration
     from opus_core.configurations.xml_configuration import XMLConfiguration
+    from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
     WithOpus = True
 except ImportError:
     WithOpus = False
@@ -66,16 +67,14 @@ class RunModelThread(QThread):
         
         toolboxStuff = self.modelguielement.mainwindow.toolboxStuff
         document = toolboxStuff.doc
-        xml_tree = toolboxStuff.resultsManagerTree
-        model = xml_tree.model
-        result_manager_base = toolboxStuff.mainwindow.resultManagerStuff
         
         cache_directory = self.modelguielement.model.config['cache_directory']
         scenario_name = str(self.modelguielement.model.modeltorun)
         run_name = os.path.basename(cache_directory)
         (start_year, end_year) = self.modelguielement.model.config['years']        
 
-        result_manager_base.add_run_to_run_manager_xml(model, document,
+        xml_helper = ResultsManagerXMLHelper(toolboxStuff = self.toolboxStuff)
+        xml_helper.add_run_to_run_manager_xml(
                                          cache_directory,
                                          scenario_name,
                                          run_name,

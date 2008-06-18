@@ -17,12 +17,10 @@ from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
                         QTextEdit, QTabWidget, QWidget, QPushButton, \
                         QGroupBox, QVBoxLayout, QIcon, QLabel
 
-from opus_gui.results.xml_helper_methods import elementsByAttributeValue, get_child_values
+from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
 
 from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
 from opus_gui.results.gui_result_interface.opus_result_generator import OpusResultGenerator
-from opus_gui.results.gui_result_interface.opus_result_visualizer import OpusResultVisualizer
-from opus_gui.config.xmlmodelview.opusdataitem import OpusDataItem
 
 class GenerateResultsForm(QWidget):
     def __init__(self, mainwindow, result_manager, selected_item = None):
@@ -34,14 +32,13 @@ class GenerateResultsForm(QWidget):
 
         self.inGui = False
         self.logFileKey = 0
-        self.domDocument = self.toolboxStuff.doc
+
+        self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = self.toolboxStuff)
         
         self.available_years_for_simulation_runs = {}
         
         self.result_generator = OpusResultGenerator(
-                                    xml_path = self.toolboxStuff.xml_file,
-                                    domDocument = self.domDocument, 
-                                    model = self.toolboxStuff.resultsManagerTree.model)
+                                    toolboxStuff = self.toolboxStuff)
             
         self.result_generator.guiElement = self
         
@@ -158,12 +155,10 @@ class GenerateResultsForm(QWidget):
         
         self.co_indicator_name.addItem(QString("[select]"))
         
-        node_list = elementsByAttributeValue(domDocument = self.domDocument, 
-                                              attribute = 'type', 
-                                              value = 'indicator')
+        indicators = self.xml_helper.get_available_indicator_names()
             
-        for element, node in node_list:
-            self.co_indicator_name.addItem(QString(element.nodeName()))
+        for indicator in indicators:
+            self.co_indicator_name.addItem(QString(indicator['name']))
             
         idx = self.co_indicator_name.findText(selected_item)
         if idx != -1:
@@ -175,14 +170,9 @@ class GenerateResultsForm(QWidget):
         self.co_dataset_name = QComboBox(self.indicatorsGroupBox)
         self.co_dataset_name.setObjectName("co_dataset_name")
 
-        general_node = self.domDocument.elementsByTagName(QString('general')).item(0)
-        available_datasets = get_child_values(parent = general_node, 
-                                 child_names = ['available_datasets'])
-        
-        available_datasets = str(available_datasets['available_datasets'])[1:-1].split(',')
-        
+        available_datasets = self.xml_helper.get_available_datasets()
         for dataset in available_datasets:
-            self.co_dataset_name.addItem(QString(dataset[1:-1]))
+            self.co_dataset_name.addItem(QString(dataset))
             
     def _setup_co_source_data(self, selected_item):
         self.co_source_data = QComboBox(self.indicatorsGroupBox)
@@ -190,17 +180,15 @@ class GenerateResultsForm(QWidget):
         
         self.co_source_data.addItem(QString("[select]"))
         
-        node_list = elementsByAttributeValue(domDocument = self.domDocument, 
-                                              attribute = 'type', 
-                                              value = 'source_data')
+        runs = self.xml_helper.get_available_run_info(
+                   attributes = ['start_year', 'end_year'])
         
-        for element, node in node_list:
-            self.co_source_data.addItem(QString(element.nodeName()))
-            vals = get_child_values(parent = node, 
-                                    child_names = ['start_year', 'end_year'])
+        for run in runs:
+            run_name = run['name']
+            years = (run['start_year'], run['end_year'])
+            self.co_source_data.addItem(QString(run_name))
             
-            self.available_years_for_simulation_runs[element.nodeName()] = (vals['start_year'],
-                                                                         vals['end_year'])
+            self.available_years_for_simulation_runs[run_name] = years
 
         idx = self.co_source_data.findText(selected_item)
         if idx != -1:
@@ -224,7 +212,6 @@ class GenerateResultsForm(QWidget):
         self.result_manager.updateGuiElements()
         
     def on_co_source_data_value_changed(self, ind):
-        print 'source_data value changed!'
         txt = self.co_source_data.currentText()
         if txt in self.available_years_for_simulation_runs:
             self.co_start_year.clear()
@@ -241,12 +228,6 @@ class GenerateResultsForm(QWidget):
                 self.co_every_year.addItem(yr)
                 
     def on_pbn_generate_results_released(self):
-        # Fire up a new thread and run the model
-        print "Generate results button pressed"
-
-        # References to the GUI elements for status for this run...
-        #self.statusLabel = self.runStatusLabel
-        #self.statusLabel.setText(QString("Model initializing..."))
 
         self.pbn_generate_results.setEnabled(False)
 

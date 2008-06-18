@@ -11,40 +11,30 @@
 # other acknowledgments.
 # 
 
-# PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
 import os, sys
 
 try:
     WithOpus = True
-    #from opus_gui.configurations.xml_configuration import XMLConfiguration
-    from opus_core.configurations.xml_configuration import XMLConfiguration
-    from opus_gui.results.indicator_framework.representations.computed_indicator import ComputedIndicator
     from opus_gui.results.indicator_framework.maker.maker import Maker
-    from opus_gui.results.indicator_framework.visualizer.visualization_factory import VisualizationFactory
-    from opus_gui.results.indicator_framework_interface import IndicatorFrameworkInterface
-    from opus_gui.results.xml_helper_methods import get_child_values
-    from opus_gui.results.indicator_framework.visualizer.visualizers.table import Table
-    from opus_core.storage_factory import StorageFactory
+    from opus_gui.results.gui_result_interface.indicator_framework_interface import IndicatorFrameworkInterface
     from opus_gui.results.gui_result_interface.opus_gui_thread import formatExceptionInfo
-
+    from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
 except ImportError:
     WithOpus = False
-    print "Unable to import opus core libs"
+    print "Unable to import opus core libs for opus result generator"
 
 
 class OpusResultGenerator(object):
     
-    def __init__(self, xml_path, domDocument, model):
-        self.xml_path = xml_path
+    def __init__(self, toolboxStuff):
         self.finishedCallback = None
         self.errorCallback = None
         self.guiElement = None
         self.cache_directory = None
         self.firstRead = True
-        self.domDocument = domDocument
-        self.model = model
+        self.toolboxStuff = toolboxStuff
+        self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = toolboxStuff)
+        self.interface = IndicatorFrameworkInterface(toolboxStuff = toolboxStuff)
     
     def set_data(self,
                  source_data_name,
@@ -94,78 +84,28 @@ class OpusResultGenerator(object):
 #        except:
 #            pass
         
-        interface = IndicatorFrameworkInterface(domDocument = self.domDocument)
-        
-        source_data = interface.get_source_data_from_XML(
+        source_data = self.interface.get_source_data(
                                      source_data_name = self.source_data_name, 
                                      years = self.years)
-        indicator = interface.get_indicator_from_XML(
+        indicator = self.interface.get_indicator(
                                      indicator_name = self.indicator_name,
                                      dataset_name = self.dataset_name)
         
         maker = Maker()
-        self.cache_directory = interface._get_cache_directory(self.source_data_name)
+        self.cache_directory = source_data.cache_directory
 
         computed_indicator = maker.create(indicator = indicator, 
                                           source_data = source_data)
-        self.update_results_xml()
-
-    def update_results_xml(self):
-        print "update results"
-        model = self.model
-        document = self.domDocument
-        
         name = '%s.%s.%s'%(self.indicator_name, 
             self.dataset_name, 
             self.source_data_name)
-        
+        self.xml_helper.add_result_to_xml(result_name = name,
+                                          source_data_name = self.source_data_name, 
+                                          indicator_name = self.indicator_name, 
+                                          dataset_name = self.dataset_name, 
+                                          years = self.years)
+
         self.last_added_indicator_result_name = name
-        
-        newNode = model.create_node(document = document, 
-                                    name = name, 
-                                    type = 'indicator_result', 
-                                    value = '',
-                                    temporary = True)
-        source_data_node = model.create_node(document = document, 
-                                    name = 'source_data', 
-                                    type = 'string', 
-                                    value = self.source_data_name,
-                                    temporary = True)
-        indicator_node = model.create_node(document = document, 
-                                    name = 'indicator_name', 
-                                    type = 'string', 
-                                    value = self.indicator_name,
-                                    temporary = True)        
-        dataset_node = model.create_node(document = document, 
-                                    name = 'dataset_name', 
-                                    type = 'string', 
-                                    value = self.dataset_name,
-                                    temporary = True)
-        year_node = model.create_node(document = document, 
-                                    name = 'available_years', 
-                                    type = 'string', 
-                                    value = ', '.join([repr(year) for year in self.years]),
-                                    temporary = True)
-                      
-        parentIndex = model.index(0,0,QModelIndex()).parent()
-        index = model.findElementIndexByName("Results", parentIndex)[0]
-        if index.isValid():
-            model.insertRow(0,
-                            index,
-                            newNode)
-        else:
-            print "No valid node was found..."
-        
-        child_index = model.findElementIndexByName(name, parentIndex)[0]
-        if child_index.isValid():
-            for node in [dataset_node, indicator_node, source_data_node, year_node]:
-                model.insertRow(0,
-                                child_index,
-                                node)
-        else:
-            print "No valid node was found..."
-        
-        model.emit(SIGNAL("layoutChanged()"))
                 
     def _get_current_log(self, key):
         newKey = key

@@ -30,7 +30,6 @@ import os, sys, time, tempfile, shutil, string
 
 from opus_gui.results.xml_helper_methods import elementsByAttributeValue
 from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
-from opus_gui.results.gui_result_interface.opus_result_generator import OpusResultGenerator
 from opus_gui.results.gui_result_interface.opus_result_visualizer import OpusResultVisualizer
 # Main Run manager class
 class RunManagerBase(object):
@@ -359,7 +358,7 @@ class ModelGuiElement(QWidget):
         # start indicator tab 
 
         self.toolboxStuff = self.mainwindow.toolboxStuff
-        self.domDocument = self.toolboxStuff.doc
+        domDocument = self.toolboxStuff.doc
 
         self.indicatorWidget = QWidget() 
         #    self.indicatorVBoxLayout = QVBoxLayout(self.indicatorWidget)  
@@ -384,7 +383,7 @@ class ModelGuiElement(QWidget):
         self.diagnostic_indicator_name.setObjectName("diagnostic_indicator_name")
         self.diagnostic_indicator_name.addItem(QString("[select indicator]"))
 
-        node_list = elementsByAttributeValue(domDocument = self.domDocument, 
+        node_list = elementsByAttributeValue(domDocument = domDocument, 
                                              attribute = 'type', 
                                              value = 'indicator')
 
@@ -421,6 +420,8 @@ class ModelGuiElement(QWidget):
         # For use when printing the year and model
         self.yearString = ""
         self.modelString = ""
+        
+        
     def on_indicatorBox(self,val):
         indicator_name = QString(self.diagnostic_indicator_name.currentText())
         if str(indicator_name) == '[select indicator]':
@@ -442,14 +443,13 @@ class ModelGuiElement(QWidget):
 
         self.resultThread.start()
 
-        self.domDocument = self.mainwindow.toolboxStuff.doc
-        self.visualizer = OpusResultVisualizer(xml_path = self.mainwindow.toolboxStuff.xml_file,
-                                               domDocument = self.domDocument,
-                                               indicator_type = 'table_per_year',
-                                               source_data_name = 'Eugene_baseline.run1900',
-                                               indicator_name = indicator_name,
-                                               dataset_name = dataset_name,
-                                               years = [int(val), int(val)])
+        self.visualizer = OpusResultVisualizer(
+                               toolboxStuff = self.mainwindow.toolboxStuff,
+                               indicator_type = 'table_per_year',
+                               source_data_name = 'Eugene_baseline.run1900',
+                               indicator_name = indicator_name,
+                               dataset_name = dataset_name,
+                               years = [int(val), int(val)])
 
 
         self.visualization_thread = OpusGuiThread(parentThread = self.mainwindow,
@@ -556,7 +556,7 @@ class ModelGuiElement(QWidget):
         self.pbnStartModel.setText(QString("Start Model..."))
 
         #get the last year to show up in the diagnostics tab.
-        self.yearItems[len(self.yearItems) - 1][1] = True;
+        self.yearItems[-1][1] = True
         QComboBox.addItem(self.indicatorComboBox, 
                           QString(str(self.yearItems[len(self.yearItems) - 1][0])),
                           QVariant(self.yearItems[len(self.yearItems) - 1][0]))
@@ -596,6 +596,7 @@ class ModelGuiElement(QWidget):
 
                 # use float for all numbers to help with percent computation
                 current_year = float(lines[0])
+                print current_year
                 total_models = float(lines[1])
                 current_model = float(lines[2])
                 current_model_names = lines[3]
@@ -622,11 +623,13 @@ class ModelGuiElement(QWidget):
                 self.summaryCurrentPieceValue.setText(QString(currentPieceString))
 
                 boxTitle = current_model_display_name
-
+                
+                #detect if a year has been completed
                 for item in self.yearItems:
                     if (int(item[0]) < int(current_year) and not item[1]) :
                         QComboBox.addItem(self.indicatorComboBox, QString(str(item[0])), QVariant(item[0]))
-                        item[1] = True;
+                        item[1] = True 
+                        #hook into indicator group computation here
 
                 if (self.progressBarTotal.maximum() == 0):
                     self.progressBarTotal.setRange(0,100)

@@ -18,12 +18,9 @@ from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
                         QGroupBox, QVBoxLayout, QIcon, QLabel, \
                         QFileDialog, QLineEdit, QListWidget
 
-from opus_gui.results.xml_helper_methods import elementsByAttributeValue, get_child_values
+from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
 
-from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
 from opus_gui.results.gui_result_interface.opus_result_generator import OpusResultGenerator
-from opus_gui.results.gui_result_interface.opus_result_visualizer import OpusResultVisualizer
-from opus_gui.config.xmlmodelview.opusdataitem import OpusDataItem
 import os
 
 class AdvancedVisualizationForm(QWidget):
@@ -36,12 +33,10 @@ class AdvancedVisualizationForm(QWidget):
 
         self.inGui = False
         self.logFileKey = 0
-        self.domDocument = self.toolboxStuff.doc
         
+        self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = self.toolboxStuff)
         self.result_generator = OpusResultGenerator(
-                                    xml_path = self.toolboxStuff.xml_file,
-                                    domDocument = self.domDocument,
-                                    model = self.toolboxStuff.resultsManagerTree.model)
+                                    toolboxStuff = self.toolboxStuff)
             
         self.result_generator.guiElement = self
         
@@ -133,8 +128,6 @@ class AdvancedVisualizationForm(QWidget):
         self.gridlayout.addWidget(self.pbn_remove, 1, 14, 1, 1)
 
 
-
-
         #### setup data group box ####
 
         self.gridlayout2 = QGridLayout(self.dataGroupBox)
@@ -174,12 +167,10 @@ class AdvancedVisualizationForm(QWidget):
         self.co_results.setObjectName('co_results')
         self.co_results.addItem(QString('[select]'))
         
-        node_list = elementsByAttributeValue(domDocument = self.domDocument, 
-                                              attribute = 'type', 
-                                              value = 'indicator_result')
+        results = self.xml_helper.get_available_results()
             
-        for element, node in node_list:
-            self.co_results.addItem(QString(element.nodeName()))
+        for result in results:
+            self.co_results.addItem(QString(result['name']))
 
     def _setup_co_result_style(self):
         available_styles = [
@@ -291,6 +282,10 @@ class AdvancedVisualizationForm(QWidget):
         indicator_names = []
         for i in range(self.lw_indicators.count()):
             indicator_names.append(str(self.lw_indicators.item(i).text()))
+                
+        if indicator_names == []:
+            print 'no indicators selected'
+            return
                 
         indicator_type = str(self.co_result_type.currentText())
         indicator_type = {

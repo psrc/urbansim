@@ -19,34 +19,28 @@ import os, sys
 try:
     WithOpus = True
     #from opus_gui.configurations.xml_configuration import XMLConfiguration
-    from opus_core.configurations.xml_configuration import XMLConfiguration
-    from opus_gui.results.indicator_framework.representations.computed_indicator import ComputedIndicator
-    from opus_gui.results.indicator_framework.maker.maker import Maker
     from opus_gui.results.indicator_framework.visualizer.visualization_factory import VisualizationFactory
-    from opus_gui.results.indicator_framework_interface import IndicatorFrameworkInterface
-    from opus_gui.results.xml_helper_methods import get_child_values
+    from opus_gui.results.gui_result_interface.indicator_framework_interface import IndicatorFrameworkInterface
     from opus_gui.results.indicator_framework.visualizer.visualizers.table import Table
     from opus_core.storage_factory import StorageFactory
     from opus_gui.results.gui_result_interface.opus_gui_thread import formatExceptionInfo
 
 except ImportError:
     WithOpus = False
-    print "Unable to import opus core libs"
+    print "Unable to import opus core libs for opus result visualizer"
     
 class OpusResultVisualizer(object):
     def __init__(self, 
-                 xml_path, 
-                 domDocument, 
+                 toolboxStuff, 
                  indicator_type,
                  indicators, 
                  kwargs = None):
-        self.xml_path = xml_path
         self.finishedCallback = None
         self.errorCallback = None
         self.guiElement = None
         self.config = None
         self.firstRead = True
-        self.domDocument = domDocument  
+        self.toolboxStuff = toolboxStuff
         self.indicator_type = indicator_type
         self.indicators = indicators
         self.visualizations = []
@@ -77,7 +71,7 @@ class OpusResultVisualizer(object):
         
     def _visualize(self):
         indicators_to_visualize = {}
-        interface = IndicatorFrameworkInterface(domDocument = self.domDocument)
+        interface = IndicatorFrameworkInterface(toolboxStuff = self.toolboxStuff)
         
         #get common years
         years = set([])
@@ -90,15 +84,15 @@ class OpusResultVisualizer(object):
             source_data_name = indicator['source_data_name']
             dataset_name = indicator['dataset_name']
             
-            if source_data_name not in source_data_objs:                
-                source_data = interface.get_source_data_from_XML(
+            if source_data_name not in source_data_objs:    
+                source_data = interface.get_source_data(
                                              source_data_name = source_data_name, 
                                              years = list(years))
                 source_data_objs[source_data_name] = source_data
             else:
                 source_data = source_data_objs[source_data_name]
     
-            indicator = interface.get_indicator_from_XML(
+            indicator = interface.get_indicator(
                                          indicator_name = indicator_name,
                                          dataset_name = dataset_name)
             
@@ -107,7 +101,7 @@ class OpusResultVisualizer(object):
                                                                   dataset_name = dataset_name)
             #####################
             #hack to get plausible primary keys...
-            cache_directory = interface._get_cache_directory(source_data_name)
+            cache_directory = source_data.cache_directory
             _storage_location = os.path.join(cache_directory,
                                              'indicators',
                                              '_stored_data',

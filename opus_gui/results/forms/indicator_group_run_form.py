@@ -17,14 +17,10 @@ from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
                         QTextEdit, QTabWidget, QWidget, QPushButton, \
                         QGroupBox, QVBoxLayout, QIcon, QLabel
 
-from opus_gui.results.xml_helper_methods import elementsByAttributeValue, get_child_values
+from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
 
 from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
-from opus_gui.results.gui_result_interface.opus_result_generator import OpusResultGenerator
-from opus_gui.results.gui_result_interface.opus_result_visualizer import OpusResultVisualizer
 from opus_gui.results.gui_result_interface.opus_indicator_group_processor import OpusIndicatorGroupProcessor
-
-from opus_gui.config.xmlmodelview.opusdataitem import OpusDataItem
 
 class IndicatorGroupRunForm(QWidget):
     def __init__(self, mainwindow, result_manager, selected_item = None, simulation_run = None):
@@ -34,16 +30,16 @@ class IndicatorGroupRunForm(QWidget):
         self.result_manager = result_manager
         self.toolboxStuff = self.result_manager.mainwindow.toolboxStuff
 
+        
         self.inGui = False
         self.logFileKey = 0
-        self.domDocument = self.toolboxStuff.doc
+
+        self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = self.toolboxStuff)
         
         self.available_years_for_simulation_runs = {}
 
         self.result_generator = OpusIndicatorGroupProcessor(
-                                    xml_path = self.toolboxStuff.xml_file,
-                                    domDocument = self.domDocument,
-                                    model = self.toolboxStuff.resultsManagerTree.model)
+                                    toolboxStuff = self.toolboxStuff)
             
         self.result_generator.guiElement = self
         
@@ -150,12 +146,11 @@ class IndicatorGroupRunForm(QWidget):
         self.co_indicator_group_name = QComboBox(self.indicatorsGroupBox)
         self.co_indicator_group_name.setObjectName("co_indicator_group_name")
                 
-        node_list = elementsByAttributeValue(domDocument = self.domDocument, 
-                                              attribute = 'type', 
-                                              value = 'indicator_group')
-
-        for element, node in node_list:
-            self.co_indicator_group_name.addItem(QString(element.nodeName()))
+        groups = self.xml_helper.get_available_indicator_group_names()
+        
+        for group in groups:
+            group_name = group['name']
+            self.co_indicator_group_name.addItem(QString(group_name))
             
         idx = self.co_indicator_group_name.findText(selected_item)
         if idx != -1:
@@ -165,17 +160,15 @@ class IndicatorGroupRunForm(QWidget):
         self.co_source_data = QComboBox(self.indicatorsGroupBox)
         self.co_source_data.setObjectName("co_source_data")
                 
-        node_list = elementsByAttributeValue(domDocument = self.domDocument, 
-                                              attribute = 'type', 
-                                              value = 'source_data')
+        runs = self.xml_helper.get_available_run_info(
+                   attributes = ['start_year', 'end_year'])
         
-        for element, node in node_list:
-            self.co_source_data.addItem(QString(element.nodeName()))
-            vals = get_child_values(parent = node, 
-                                    child_names = ['start_year', 'end_year'])
+        for run in runs:
+            run_name = run['name']
+            years = (run['start_year'], run['end_year'])
+            self.co_source_data.addItem(QString(run_name))
             
-            self.available_years_for_simulation_runs[element.nodeName()] = (vals['start_year'],
-                                                                         vals['end_year'])
+            self.available_years_for_simulation_runs[run_name] = years
 
         idx = self.co_source_data.findText(selected_item)
         if idx != -1:
@@ -199,7 +192,6 @@ class IndicatorGroupRunForm(QWidget):
         self.result_manager.updateGuiElements()
         
     def on_co_source_data_value_changed(self, ind):
-        print 'source_data value changed!'
         txt = self.co_source_data.currentText()
         if txt in self.available_years_for_simulation_runs:
             self.co_start_year.clear()
@@ -215,58 +207,27 @@ class IndicatorGroupRunForm(QWidget):
                 yr = QString(repr(i))
                 self.co_every_year.addItem(yr)
 
-    def _get_indicators_for_group(self, parentNode):
-        viz_map = {
-            'Map (per indicator per year)':'matplotlib_map',
-            'Chart (per indicator, spans years)':'matplotlib_chart',
-            'Table (per indicator, spans years)':'table_per_attribute',
-            'Table (per year, spans indicators)':'table_per_year',
-            'ESRI table (for loading in ArcGIS)':'table_esri'
-        }
-        
-        indicators = {}
-        node = parentNode.firstChild()
-        while not node.isNull():
-            indicator_name = str(node.nodeName())
-            vals = get_child_values(node, ['visualization_type','dataset_name'])
-            visualization_type = viz_map[str(vals['visualization_type'])]
-            dataset_name = str(vals['dataset_name'])
-
-            if (visualization_type, dataset_name) not in indicators:
-                indicators[(visualization_type, dataset_name)] = [indicator_name]
-            else:
-                indicators[(visualization_type, dataset_name)].append(indicator_name)
-            node = node.nextSibling()
-        return indicators
-
     def on_pbn_run_indicator_group_released(self):
-        # Fire up a new thread and run the model
-        print "Generate results button pressed"
 
-        # References to the GUI elements for status for this run...
-        #self.statusLabel = self.runStatusLabel
-        #self.statusLabel.setText(QString("Model initializing..."))
-
-        source_text = QString(self.co_source_data.currentText())
-        indicator_group = QString(self.co_indicator_group_name.currentText())
-        indicator_group_node = self.domDocument.elementsByTagName(indicator_group).item(0)
-        
-        indicators_to_run = self._get_indicators_for_group(parentNode = indicator_group_node)
-                
         self.pbn_run_indicator_group.setEnabled(False)
 
+        source_text = QString(self.co_source_data.currentText())
         start_year = int(self.co_start_year.currentText())
         end_year = int(self.co_end_year.currentText())
         increment = int(self.co_every_year.currentText())
         
         years = range(start_year, end_year + 1, increment)
+
+        group_name = QString(self.co_indicator_group_name.currentText())
+        
+        indicators_to_run = self.xml_helper.get_indicators_in_indicator_group(
+                                group_name = group_name)
         
         self.result_generator.set_data(
             indicator_defs = indicators_to_run, 
             source_data_name = source_text,
             years = years)
-                    
-            
+                        
         self.runThread = OpusGuiThread(
                               parentThread = self.mainwindow,
                               parentGuiElement = self,

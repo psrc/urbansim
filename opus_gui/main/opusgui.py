@@ -254,7 +254,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.toolboxStuff.openXMLTree(fileName)
             # Add the project file's path to the title bar
             self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.toolboxbase.xml_file).filePath())
-            self.resultManagerStuff.scan_for_runs()
+            self.resultManagerStuff.scanForRuns()
 
     def saveConfig(self):
         try:
