@@ -48,6 +48,14 @@ class OpusXMLAction_Results(object):
                                           self.xmlTreeObject.mainwindow)
         QObject.connect(self.actAddNewIndicator, SIGNAL("triggered()"), self.addNewIndicator)
 
+        #edit indicator action
+        self.actEditIndicator = QAction(self.acceptIcon,
+                                          "Edit indicator",
+                                          self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actEditIndicator,
+                        SIGNAL("triggered()"),
+                        self.editIndicator)
+        
         #create new result template...
         self.actAddNewIndicatorGroup = QAction(self.acceptIcon, 
                                           "Add new indicator group...",
@@ -119,11 +127,34 @@ class OpusXMLAction_Results(object):
     def addNewIndicator(self):
         print "addNewIndicator pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
+        
+#        self.xml_helper.addNewIndicator(indicator_name = 'untitled indicator', 
+#                                        package_name = '?', 
+#                                        expression = '?')
+#        
+#        parentIndex = self.xmlTreeObject.model.index(0,0,QModelIndex()).parent()
+#        indicators_index = self.xmlTreeObject.model.findElementIndexByName('my_indicators', parentIndex)[0]
+#        index = self.xmlTreeObject.model.findElementIndexByName('untitled indicator', indicators_index)[0]
+        self.editIndicator(already_exists = False)
 
-        self.xml_helper.addNewIndicator(indicator_name = 'untitled indicator', 
-                                        package_name = '?', 
-                                        expression = '?')
+    def editIndicator(self, already_exists = True):
 
+        if self.xmlTreeObject.model.isDirty():
+            # Prompt the user to save...
+            QMessageBox.warning(self.xmlTreeObject.mainwindow,
+                                "Warning",
+                                "Please save changes to project before generating results")               
+            return 
+
+        if already_exists:
+            currentIndex = self.currentIndex
+        else:
+            currentIndex = None
+                        
+        self.xmlTreeObject.mainwindow.resultManagerStuff.editIndicator(
+            selected_index = currentIndex)
+        
+        
     def addNewIndicatorGroup(self):
         print "addNewIndicatorGroup pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
@@ -289,6 +320,7 @@ class OpusXMLAction_Results(object):
                     self.menu.addAction(self.actAddNewIndicatorGroup)
                 elif domElement.attribute(QString("type")) == QString("indicator"):
 #                    self.menu.addAction(self.actViewDocumentation)
+                    self.menu.addAction(self.actEditIndicator)
                     self.menu.addAction(self.actGenerateResults)
                 elif domElement.attribute(QString("type")) == QString("indicator_result"):
                     visualization_menu = QMenu(self.xmlTreeObject.mainwindow)

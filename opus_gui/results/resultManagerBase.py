@@ -11,7 +11,7 @@
 # other acknowledgments.
 # 
 
-from PyQt4.QtCore import QObject, SIGNAL, QModelIndex, QString
+from PyQt4.QtCore import QObject, SIGNAL, QModelIndex, QString, Qt
 
 
 from opus_gui.results.forms.advanced_visualization_form import AdvancedVisualizationForm
@@ -23,7 +23,7 @@ from opus_gui.results.forms.view_table_form import ViewTableForm
 from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
 from opus_gui.results.gui_result_interface.opus_result_visualizer import OpusResultVisualizer
 from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
-
+from opus_gui.results.forms.edit_indicator_dialog import EditIndicatorDialog
 
 # General system includes
 import os
@@ -102,6 +102,12 @@ class ResultManagerBase(AbstractManagerBase):
         
         self.guiElements.insert(0, new_form)
         self.updateGuiElements() 
+        
+    def editIndicator(self, selected_index):
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        window = EditIndicatorDialog(self, selected_index, flags)
+        window.show()
+        
         
     def addGenerateIndicatorForm(self, selected_item):
 
