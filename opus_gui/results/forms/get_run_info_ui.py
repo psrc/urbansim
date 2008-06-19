@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'get_run_info.ui'
 #
-# Created: Thu Jun 19 16:23:17 2008
+# Created: Thu Jun 19 16:26:29 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -59,7 +59,7 @@ class Ui_dlgGetRunInfo(object):
         self.label.setText(QtGui.QApplication.translate("dlgGetRunInfo", "Run name:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("dlgGetRunInfo", "Years run:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("dlgGetRunInfo", "Cache directory:", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_4.setText(QtGui.QApplication.translate("dlgGetRunInfo", "Scenario", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_4.setText(QtGui.QApplication.translate("dlgGetRunInfo", "Scenario:", None, QtGui.QApplication.UnicodeUTF8))
         self.lblScenario_name.setText(QtGui.QApplication.translate("dlgGetRunInfo", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
         self.lblRun_name.setText(QtGui.QApplication.translate("dlgGetRunInfo", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
         self.lblYears_run.setText(QtGui.QApplication.translate("dlgGetRunInfo", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
