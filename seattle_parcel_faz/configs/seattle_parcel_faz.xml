@@ -94,7 +94,7 @@
         <init type="dictionary">
           <name type="string">RegionalDistributeUnplacedJobsModel</name>
           <arguments type="dictionary">
-            <regional_id_name type="quoted_string">BLAHID</regional_id_name>
+            <regional_id_name type="quoted_string">faz_id</regional_id_name>
           </arguments>
         </init>
       </distribute_unplaced_jobs_model>

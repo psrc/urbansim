@@ -16,6 +16,8 @@ from numpy import arange, zeros, logical_and, where
 from opus_core.logger import logger
 from opus_core.misc import unique_values
 from urbansim.models.household_location_choice_model import HouseholdLocationChoiceModel
+from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
+from urbansim.models.agent_location_choice_model import AgentLocationChoiceModel
 
 class RegionalHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
     """Run the urbansim HLCM separately for each large area."""

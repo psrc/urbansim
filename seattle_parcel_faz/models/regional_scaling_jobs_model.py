@@ -12,9 +12,14 @@
 # other acknowledgments.
 #
 
-from numpy import arange, zeros, logical_and, where
+from numpy import arange, zeros, logical_and, where, array, ones, ma, resize
+from scipy.ndimage import sum as ndimage_sum
 from opus_core.logger import logger
-from opus_core.misc import unique_values
+from opus_core.resources import Resources
+from opus_core.misc import DebugPrinter, sample, unique_values
+from opus_core.sampling_toolbox import probsample_replace
+from opus_core.datasets.dataset import DatasetSubset
+from opus_core.model import Model
 from urbansim_parcel.models.scaling_jobs_model import ScalingJobsModel
 
 
