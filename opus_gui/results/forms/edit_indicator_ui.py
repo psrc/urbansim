@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'edit_indicator.ui'
 #
-# Created: Thu Jun 19 15:12:40 2008
+# Created: Thu Jun 19 16:33:00 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -50,8 +50,8 @@ class Ui_dlgEditIndicator(object):
         QtCore.QMetaObject.connectSlotsByName(dlgEditIndicator)
 
     def retranslateUi(self, dlgEditIndicator):
-        dlgEditIndicator.setWindowTitle(QtGui.QApplication.translate("dlgEditIndicator", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        dlgEditIndicator.setWindowTitle(QtGui.QApplication.translate("dlgEditIndicator", "Indicator definition editor", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("dlgEditIndicator", "Name:", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("dlgEditIndicator", "Package:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("dlgEditIndicator", "Package (optional):", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("dlgEditIndicator", "Expression:", None, QtGui.QApplication.UnicodeUTF8))
 

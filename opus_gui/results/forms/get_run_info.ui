@@ -5,53 +5,36 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>652</width>
-    <height>206</height>
+    <width>629</width>
+    <height>262</height>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Dialog</string>
+   <string>Details for simulation run</string>
   </property>
-  <widget class="QWidget" name="layoutWidget" >
+  <widget class="QPushButton" name="btnDone" >
+   <property name="geometry" >
+    <rect>
+     <x>530</x>
+     <y>220</y>
+     <width>71</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Ok</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="" >
    <property name="geometry" >
     <rect>
      <x>10</x>
-     <y>5</y>
+     <y>25</y>
      <width>591</width>
-     <height>172</height>
+     <height>191</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout" >
-    <property name="topMargin" >
-     <number>20</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>20</number>
-    </property>
-    <property name="verticalSpacing" >
-     <number>20</number>
-    </property>
-    <item row="1" column="0" >
-     <widget class="QLabel" name="label" >
-      <property name="text" >
-       <string>Run name:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0" >
-     <widget class="QLabel" name="label_2" >
-      <property name="text" >
-       <string>Years run:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0" >
-     <widget class="QLabel" name="label_3" >
-      <property name="text" >
-       <string>Cache directory:</string>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="0" >
      <widget class="QLabel" name="label_4" >
       <property name="text" >
@@ -59,7 +42,7 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="2" >
+    <item row="0" column="1" >
      <widget class="QLabel" name="lblScenario_name" >
       <property name="text" >
        <string>TextLabel</string>
@@ -69,7 +52,14 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="2" >
+    <item row="1" column="0" >
+     <widget class="QLabel" name="label" >
+      <property name="text" >
+       <string>Run name:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1" >
      <widget class="QLabel" name="lblRun_name" >
       <property name="text" >
        <string>TextLabel</string>
@@ -79,14 +69,28 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="2" >
+    <item row="2" column="0" >
+     <widget class="QLabel" name="label_2" >
+      <property name="text" >
+       <string>Years run:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1" >
      <widget class="QLabel" name="lblYears_run" >
       <property name="text" >
        <string>TextLabel</string>
       </property>
      </widget>
     </item>
-    <item row="4" column="2" >
+    <item row="3" column="0" >
+     <widget class="QLabel" name="label_3" >
+      <property name="text" >
+       <string>Cache directory:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0" colspan="2" >
      <widget class="QLabel" name="lblCache_directory" >
       <property name="text" >
        <string>TextLabel</string>
@@ -97,19 +101,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QPushButton" name="btnDone" >
-   <property name="geometry" >
-    <rect>
-     <x>530</x>
-     <y>170</y>
-     <width>71</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Ok</string>
-   </property>
   </widget>
  </widget>
  <resources/>
