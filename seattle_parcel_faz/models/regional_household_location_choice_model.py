@@ -115,7 +115,7 @@ from opus_core.tests.stochastic_test_case import StochasticTestCase
 from opus_core.storage_factory import StorageFactory
 
 class Test(StochasticTestCase):
-    def test_place_agents_to_correct_areas(self):
+    def skip_test_place_agents_to_correct_areas(self):
         """10 gridcells - 5 in area 1, 5 in area 2, with equal cost, no capacity restrictions
         100 households - 70 live in area 1, 30 live in area 2.
         We set the coefficient value for cost -0.001. 
