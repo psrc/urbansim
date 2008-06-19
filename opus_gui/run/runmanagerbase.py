@@ -596,7 +596,6 @@ class ModelGuiElement(QWidget):
 
                 # use float for all numbers to help with percent computation
                 current_year = float(lines[0])
-                print current_year
                 total_models = float(lines[1])
                 current_model = float(lines[2])
                 current_model_names = lines[3]
