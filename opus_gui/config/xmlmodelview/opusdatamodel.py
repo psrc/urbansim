@@ -547,7 +547,7 @@ class OpusDataModel(QAbstractItemModel):
     #            if self.rowCount(child)>0:
     #                self.stripAttribute(attribute,child,recursive)
 
-    def create_node(self, document, name, type, value, choices = None, temporary = False):
+    def create_node(self, document, name, type, value, choices = None, temporary = False, flags = None):
         newNode = document.createElement(QString(name))
         newNode.setAttribute(QString("type"),QString(type))
         newText = document.createTextNode(QString(value))
@@ -556,6 +556,8 @@ class OpusDataModel(QAbstractItemModel):
             newNode.setAttribute(QString('choices'), QString(choices))
         if temporary is True:
             newNode.setAttribute(QString("temporary"),QString("True"))
+        if flags is not None:
+            newNode.setAttribute(QString('flags'), QString(flags))
         return newNode
 
     def stripAttributeDown(self,attribute,parent):
