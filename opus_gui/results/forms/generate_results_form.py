@@ -296,55 +296,5 @@ class GenerateResultsForm(QWidget):
         self.logFileKey = self.result_generator._get_current_log(self.logFileKey)
         self.pbn_generate_results.setEnabled(True)
     
-#    def update_results_xml(self):
-#        print "update results"
-#        xml_tree = self.toolboxStuff.resultsManagerTree
-#        model = xml_tree.model
-#        document = self.domDocument
-#
-#        name = '%s.%s.%s'%(self.last_computed_result['indicator_name'], 
-#            self.last_computed_result['dataset_name'], 
-#            self.last_computed_result['source_data_name'])
-#        
-#        newNode = model.create_node(document = document, 
-#                                    name = name, 
-#                                    type = 'indicator_result', 
-#                                    value = '')
-#        source_data_node = model.create_node(document = document, 
-#                                    name = 'source_data', 
-#                                    type = 'string', 
-#                                    value = self.last_computed_result['source_data_name'])
-#        indicator_node = model.create_node(document = document, 
-#                                    name = 'indicator_name', 
-#                                    type = 'string', 
-#                                    value = self.last_computed_result['indicator_name'])        
-#        dataset_node = model.create_node(document = document, 
-#                                    name = 'dataset_name', 
-#                                    type = 'string', 
-#                                    value = self.last_computed_result['dataset_name'])
-#        year_node = model.create_node(document = document, 
-#                                    name = 'available_years', 
-#                                    type = 'string', 
-#                                    value = ', '.join([repr(year) for year in self.last_computed_result['years']]))                
-#        parentIndex = model.index(0,0,QModelIndex()).parent()
-#        index = model.findElementIndexByName("Results", parentIndex)[0]
-#        if index.isValid():
-#            model.insertRow(0,
-#                            index,
-#                            newNode)
-#        else:
-#            print "No valid node was found..."
-#        
-#        child_index = model.findElementIndexByName(name, parentIndex)[0]
-#        if child_index.isValid():
-#            for node in [dataset_node, indicator_node, source_data_node, year_node]:
-#                model.insertRow(0,
-#                                child_index,
-#                                node)
-#        else:
-#            print "No valid node was found..."
-#        
-#        model.emit(SIGNAL("layoutChanged()"))
-
     def runErrorFromThread(self,errorMessage):
         QMessageBox.warning(self.mainwindow,"Warning",errorMessage)
