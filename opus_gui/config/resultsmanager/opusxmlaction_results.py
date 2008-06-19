@@ -20,8 +20,9 @@ from PyQt4.QtXml import *
 
 from opus_gui.config.managerbase.cloneinherited import CloneInheritedGui
 from opus_gui.config.managerbase.clonenode import CloneNodeGui
-from opus_gui.results.xml_helper_methods import elementsByAttributeValue, get_child_values
+from opus_gui.results.xml_helper_methods import elementsByAttributeValue
 from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
+from opus_gui.results.forms.get_run_info import GetRunInfo
 
 
 class OpusXMLAction_Results(object):
@@ -97,6 +98,11 @@ class OpusXMLAction_Results(object):
                                           "Advanced visualization...",
                                           self.xmlTreeObject.mainwindow)
         QObject.connect(self.actViewResultAsAdvanced, SIGNAL("triggered()"), self.viewResultsAdvanced) 
+
+        self.actGetInfoSimulationRuns = QAction(self.acceptIcon, 
+                                          "Show details",
+                                          self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actGetInfoSimulationRuns, SIGNAL("triggered()"), self.getInfoSimulationRuns) 
 
 
 #        self.actViewDocumentation = QAction(self.applicationIcon, "View documentation", self.xmlTreeObject.mainwindow)
@@ -233,6 +239,10 @@ class OpusXMLAction_Results(object):
                                 "Warning",
                                 "Please save changes to project before generating results")
 
+    def getInfoSimulationRuns(self):
+        window = GetRunInfo(self,self.currentIndex)
+        window.show()
+        
     def _viewIndicatorVisualization(self, indicator_type):
         indicator_name = self.currentIndex.internalPointer().node().toElement().tagName()        
         self.xmlTreeObject.mainwindow.resultManagerStuff.addIndicatorForm(
@@ -316,6 +326,7 @@ class OpusXMLAction_Results(object):
                     self.menu.addAction(self.actAddNewIndicator)
                 elif domElement.attribute(QString("type")) == QString("source_data"):
                     self.menu.addAction(self.actGenerateResults)
+                    self.menu.addAction(self.actGetInfoSimulationRuns)
                 elif domElement.tagName() == QString("Indicator_groups"):
                     self.menu.addAction(self.actAddNewIndicatorGroup)
                 elif domElement.attribute(QString("type")) == QString("indicator"):

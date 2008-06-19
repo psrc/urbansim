@@ -22,7 +22,9 @@ from opus_gui.results.forms.edit_indicator_ui import Ui_dlgEditIndicator
 from opus_gui.results.xml_helper_methods import get_child_values, ResultsManagerXMLHelper
 
 class EditIndicatorDialog(QDialog, Ui_dlgEditIndicator):
-    def __init__(self, resultManagerBase, selected_index, flags):
+    def __init__(self, resultManagerBase, selected_index):
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+
         QDialog.__init__(self, resultManagerBase.mainwindow, flags)
         self.setupUi(self)
         self.resultManagerBase = resultManagerBase

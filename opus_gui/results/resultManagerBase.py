@@ -104,8 +104,7 @@ class ResultManagerBase(AbstractManagerBase):
         self.updateGuiElements() 
         
     def editIndicator(self, selected_index):
-        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        window = EditIndicatorDialog(self, selected_index, flags)
+        window = EditIndicatorDialog(self, selected_index)
         window.show()
         
         
