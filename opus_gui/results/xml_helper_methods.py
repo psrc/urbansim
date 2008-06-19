@@ -248,7 +248,8 @@ class ResultsManagerXMLHelper:
                                head_node_args = head_node_args, 
                                child_node_definitions = child_defs, 
                                parent_name = 'Simulation_runs',
-                               temporary = True)
+                               temporary = True,
+                               children_hidden = True)
 
     def add_result_to_xml(self, 
                           result_name,
@@ -287,7 +288,8 @@ class ResultsManagerXMLHelper:
                                head_node_args = head_node_args, 
                                child_node_definitions = child_defs, 
                                parent_name = 'Results',
-                               temporary = True)
+                               temporary = True,
+                               children_hidden = True)
 
     def addNewIndicator(self, 
                         indicator_name,
@@ -300,7 +302,7 @@ class ResultsManagerXMLHelper:
         package_def = {
             'name':'package',
             'type':'string',
-            'value':package_name
+            'value':package_name,
         }
         expression_def = {
             'name':'expression',
@@ -312,7 +314,8 @@ class ResultsManagerXMLHelper:
         self._add_new_xml_tree(head_node_name = indicator_name, 
                                head_node_args = head_node_args, 
                                child_node_definitions = child_defs, 
-                               parent_name = 'my_indicators')
+                               parent_name = 'my_indicators',
+                               children_hidden = True)
           
     def addNewIndicatorGroup(self, group_name):
         head_node_args = {'type':'indicator_group',
@@ -361,7 +364,8 @@ class ResultsManagerXMLHelper:
                           head_node_args, 
                           parent_name,
                           child_node_definitions = [],
-                          temporary = False):
+                          temporary = False,
+                          children_hidden = False):
         
         model = self.toolboxStuff.resultsManagerTree.model
         document = self.toolboxStuff.doc
@@ -382,6 +386,11 @@ class ResultsManagerXMLHelper:
         if child_node_definitions != []:
             child_nodes = []
             for args in child_node_definitions:
+                if children_hidden:
+                    if 'flags' in args: 
+                        args['flags'] += '|hidden'
+                    else:
+                        args['flags'] = 'hidden'
                 child_node = model.create_node(document = document,
                                                temporary = temporary,
                                                **args)
