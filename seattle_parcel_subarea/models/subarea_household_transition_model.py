@@ -18,14 +18,17 @@ from opus_core.variables.attribute_type import AttributeType
 from opus_core.logger import logger
 from urbansim_parcel.models.household_transition_model import HouseholdTransitionModel
 from copy import copy
+from urbansim.models.household_transition_model import HouseholdTransitionModel as USHouseholdTransitionModel
 
-class RegionalHouseholdTransitionModel(HouseholdTransitionModel):
-    """Creates and removes households from household_set. It runs the urbansim HTM with control totals for each region."""
+class SubAreaHouseholdTransitionModel(HouseholdTransitionModel):
+    """Creates and removes households from household_set. It runs the urbansim HTM with control totals for each subarea."""
 
-    model_name = "Regional Household Transition Model"
+    model_name = "SubArea Household Transition Model"
     
-    regional_id_name = "faz_id"
 
+    def __init__(self, location_id_name="building_id", subarea_id_name="faz_id", **kwargs):
+        USHouseholdTransitionModel.__init__(self, location_id_name=location_id_name, **kwargs)
+        self.subarea_id_name = subarea_id_name
 
     def run(self, year, household_set, person_set, control_totals, characteristics, resources=None):
         self.person_set = person_set
@@ -38,9 +41,9 @@ class RegionalHouseholdTransitionModel(HouseholdTransitionModel):
         self.marginal_characteristic_names = copy(control_totals.get_id_name())
         index_year = self.marginal_characteristic_names.index("year")
         self.marginal_characteristic_names.remove("year")
-        self.marginal_characteristic_names.remove(self.regional_id_name)
-        region_ids = control_totals.get_attribute(self.regional_id_name)
-        households_region_ids = household_set.compute_variables("urbansim_parcel.household.%s" % self.regional_id_name)
+        self.marginal_characteristic_names.remove(self.subarea_id_name)
+        region_ids = control_totals.get_attribute(self.subarea_id_name)
+        households_region_ids = household_set.compute_variables("urbansim_parcel.household.%s" % self.subarea_id_name)
         unique_regions = unique_values(region_ids)
         is_year = control_totals.get_attribute("year")==year
         all_households_index = arange(household_set.size())
@@ -55,31 +58,31 @@ class RegionalHouseholdTransitionModel(HouseholdTransitionModel):
             last_remove_idx = self.remove_households.size
             last_new_hhs_idx = self.mapping_existing_hhs_to_new_hhs.size
             self._do_run_for_this_year(households_for_this_area)
-            add_hhs_size = self.new_households[self.location_id_name].size-self.new_households[self.regional_id_name].size+self.mapping_existing_hhs_to_new_hhs.size-last_new_hhs_idx
+            add_hhs_size = self.new_households[self.location_id_name].size-self.new_households[self.subarea_id_name].size+self.mapping_existing_hhs_to_new_hhs.size-last_new_hhs_idx
             remove_hhs_size = self.remove_households.size-last_remove_idx
             logger.log_status("add %s, remove %s, total %s" % (add_hhs_size, remove_hhs_size,
                                                                households_for_this_area.size()+add_hhs_size-remove_hhs_size
                                                                ))
-            self.new_households[self.regional_id_name] = concatenate((self.new_households[self.regional_id_name],
-                                            array((self.new_households[self.location_id_name].size-self.new_households[self.regional_id_name].size)*[area], dtype="int32")))
+            self.new_households[self.subarea_id_name] = concatenate((self.new_households[self.subarea_id_name],
+                                            array((self.new_households[self.location_id_name].size-self.new_households[self.subarea_id_name].size)*[area], dtype="int32")))
             # transform indices of removing households into indices of the whole dataset
             self.remove_households[last_remove_idx:self.remove_households.size] = all_households_index[households_index[self.remove_households[last_remove_idx:self.remove_households.size]]]
             # do the same for households to be duplicated
             self.mapping_existing_hhs_to_new_hhs[last_new_hhs_idx:self.mapping_existing_hhs_to_new_hhs.size] = all_households_index[households_index[self.mapping_existing_hhs_to_new_hhs[last_new_hhs_idx:self.mapping_existing_hhs_to_new_hhs.size]]]
             
         self._update_household_set(household_set)
-        idx_new_households = arange(household_set.size()-self.new_households[self.regional_id_name].size, household_set.size())
-        #household_region_ids = household_set.compute_variables("urbansim_parcel.household.%s" % self.regional_id_name)
-        #household_region_ids[idx_new_households] = self.new_households[self.regional_id_name]
-        region_ids = household_set.get_attribute(self.regional_id_name).copy()
-        household_set.delete_one_attribute(self.regional_id_name)
-        household_set.add_attribute(region_ids, self.regional_id_name, metadata=AttributeType.PRIMARY)
+        idx_new_households = arange(household_set.size()-self.new_households[self.subarea_id_name].size, household_set.size())
+        #household_region_ids = household_set.compute_variables("urbansim_parcel.household.%s" % self.subarea_id_name)
+        #household_region_ids[idx_new_households] = self.new_households[self.subarea_id_name]
+        region_ids = household_set.get_attribute(self.subarea_id_name).copy()
+        household_set.delete_one_attribute(self.subarea_id_name)
+        household_set.add_attribute(region_ids, self.subarea_id_name, metadata=AttributeType.PRIMARY)
         # return an index of new households
         return idx_new_households
 
     def _do_initialize_for_run(self, household_set):
         HouseholdTransitionModel._do_initialize_for_run(self, household_set)
-        self.new_households[self.regional_id_name] = array([], dtype="int32")
+        self.new_households[self.subarea_id_name] = array([], dtype="int32")
 
 
 
@@ -92,7 +95,7 @@ from numpy import ma
 from urbansim.datasets.household_dataset import HouseholdDataset
 from urbansim_parcel.datasets.person_dataset import PersonDataset
 from urbansim.datasets.household_characteristic_dataset import HouseholdCharacteristicDataset
-from seattle_parcel_faz.datasets.control_total_dataset import ControlTotalDataset
+from seattle_parcel_subarea.datasets.control_total_dataset import ControlTotalDataset
 class Tests(opus_unittest.OpusTestCase):
 
     def setUp(self):
@@ -163,7 +166,7 @@ class Tests(opus_unittest.OpusTestCase):
         storage.write_table(table_name = 'hc_set', table_data = self.household_characteristics_for_ht_data)
         hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
 
-        model = RegionalHouseholdTransitionModel()
+        model = SubAreaHouseholdTransitionModel()
         model.run(year=2000, person_set=prs_set, household_set=hh_set, control_totals=hct_set, characteristics=hc_set)
 
         #check that there are 20000 (area 1) and 30000 (area 2) total households after running the model
@@ -222,7 +225,7 @@ class Tests(opus_unittest.OpusTestCase):
         hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
         storage.write_table(table_name='prs_set', table_data=self.person_data)
         prs_set = PersonDataset(in_storage=storage, in_table_name='prs_set')
-        model = RegionalHouseholdTransitionModel()
+        model = SubAreaHouseholdTransitionModel()
         model.run(year=2000, person_set=prs_set, household_set=hh_set, control_totals=hct_set, characteristics=hc_set)
 
         #check that there are indeed 8000 (area 1) and 12000 (area 2) total households after running the model
@@ -276,7 +279,7 @@ class Tests(opus_unittest.OpusTestCase):
         storage.write_table(table_name = 'hc_set', table_data = self.household_characteristics_for_ht_data)
         hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
 
-        model = RegionalHouseholdTransitionModel()
+        model = SubAreaHouseholdTransitionModel()
         model.run(year=2000, person_set=prs_set, household_set=hh_set, control_totals=hct_set, characteristics=hc_set)
 
         #check that there are indeed 40000 total households after running the model

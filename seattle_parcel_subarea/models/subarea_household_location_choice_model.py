@@ -19,11 +19,10 @@ from urbansim.models.household_location_choice_model import HouseholdLocationCho
 from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
 from urbansim.models.agent_location_choice_model import AgentLocationChoiceModel
 
-class RegionalHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
-    """Run the urbansim HLCM separately for each large area."""
+class SubAreaHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
+    """Run the urbansim HLCM separately for each subarea."""
     
-    model_name = "Regional Household Location Choice Model" 
-#    regional_id_name = "faz_id"
+    model_name = "SubArea Household Location Choice Model" 
 
     def __init__(self, location_set,
             sampler = "opus_core.samplers.weighted_sampler", 
@@ -44,8 +43,8 @@ class RegionalHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
             demand_string = None, # if not None, the aggregate demand for locations will be stored in this attribute
             run_config = None, estimate_config=None, debuglevel=0, dataset_pool=None,
             variable_package="urbansim",
-            regional_id_name="faz_id"):
-        self.regional_id_name = regional_id_name
+            subarea_id_name="faz_id"):
+        self.subarea_id_name = subarea_id_name
         run_config = merge_resources_if_not_None(run_config, [ 
                     ("sample_proportion_locations", sample_proportion_locations), 
                     ("sample_size_locations", sample_size_locations), 
@@ -80,8 +79,8 @@ class RegionalHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
     def run(self, specification, coefficients, agent_set, agents_index=None, **kwargs):
         if agents_index is None:
             agents_index = arange(agent_set.size())
-        regions = agent_set.get_attribute(self.regional_id_name)
-        self.choice_set.compute_variables(["urbansim_parcel.%s.%s" % (self.choice_set.get_dataset_name(), self.regional_id_name)],
+        regions = agent_set.get_attribute(self.subarea_id_name)
+        self.choice_set.compute_variables(["urbansim_parcel.%s.%s" % (self.choice_set.get_dataset_name(), self.subarea_id_name)],
                                                   dataset_pool=self.dataset_pool)
         valid_region = where(regions[agents_index] > 0)[0]
         if valid_region.size > 0:
@@ -90,7 +89,7 @@ class RegionalHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
             cond_array[agents_index[valid_region]] = True
             for area in unique_regions:
                 new_index = where(logical_and(cond_array, regions == area))[0]
-                self.filter = "%s.%s == %s" % (self.choice_set.get_dataset_name(), self.regional_id_name, area)
+                self.filter = "%s.%s == %s" % (self.choice_set.get_dataset_name(), self.subarea_id_name, area)
                 logger.log_status("HLCM for area %s" % area)
                 HouseholdLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                                  agents_index=new_index, **kwargs)
@@ -102,8 +101,8 @@ class RegionalHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
                                                  agents_index=agents_index[no_region], **kwargs)
             where_valid_choice = where(choices > 0)[0]
             choices_index = self.choice_set.get_id_index(choices[where_valid_choice])
-            chosen_regions = self.choice_set.get_attribute_by_index(self.regional_id_name, choices_index)
-            agent_set.modify_attribute(name=self.regional_id_name, data=chosen_regions, 
+            chosen_regions = self.choice_set.get_attribute_by_index(self.subarea_id_name, choices_index)
+            agent_set.modify_attribute(name=self.subarea_id_name, data=chosen_regions, 
                                        index=no_region[where_valid_choice])
 
 from opus_core.tests import opus_unittest
@@ -156,7 +155,7 @@ class Test(StochasticTestCase):
         # check the individual gridcells
         def run_model():
             households = HouseholdDataset(in_storage=storage, in_table_name='households')
-            hlcm = RegionalHouseholdLocationChoiceModel(location_set=gridcells, compute_capacity_flag=False,
+            hlcm = SubAreaHouseholdLocationChoiceModel(location_set=gridcells, compute_capacity_flag=False,
                     choices = "opus_core.random_choices_from_index", sample_size_locations = 4)
             hlcm.run(specification, coefficients, agent_set=households, debuglevel=1)
 
@@ -174,7 +173,7 @@ class Test(StochasticTestCase):
         self.run_stochastic_test(__file__, run_model, expected_results, 10)
 
         # check the exact sum 
-        hlcm = RegionalHouseholdLocationChoiceModel(location_set=gridcells, compute_capacity_flag=False,
+        hlcm = SubAreaHouseholdLocationChoiceModel(location_set=gridcells, compute_capacity_flag=False,
                     choices = "opus_core.random_choices_from_index", sample_size_locations = 4)
         hlcm.run(specification, coefficients, agent_set=households, debuglevel=1)
         gridcells.compute_variables(["urbansim.gridcell.number_of_households"],

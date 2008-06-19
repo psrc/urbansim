@@ -18,7 +18,7 @@ class TestPackageSyntax(opus_unittest.OpusTestCase):
     def test_no_opus_syntax_violations(self):
         from opus_core.tests.find_opus_syntax_violations import OpusSyntaxChecker
         OpusSyntaxChecker().check_syntax_for_opus_package(
-            'seattle_parcel_faz', 
+            'seattle_parcel_subarea', 
             file_names_that_do_not_need_gpl = 
                 ['wingdbstub.py', 'ez_setup.py', 'path.py'])
         

@@ -23,14 +23,13 @@ from opus_core.model import Model
 from urbansim_parcel.models.scaling_jobs_model import ScalingJobsModel
 
 
-class RegionalScalingJobsModel(ScalingJobsModel):
-    """Run the urbansim ScalingJobsModel separately for each faz."""
-    model_name = "Regional Scaling Jobs Model" 
-#    regional_id_name = "faz_id"
+class SubAreaScalingJobsModel(ScalingJobsModel):
+    """Run the urbansim ScalingJobsModel separately for each subarea."""
+    model_name = "SubArea Scaling Jobs Model" 
 
     def __init__(self, group_member=None, agents_grouping_attribute = 'job.building_type', filter = None, debuglevel=0,
-                 dataset_pool=None, regional_id_name="faz_id"):
-        self.regional_id_name = regional_id_name
+                 dataset_pool=None, subarea_id_name="faz_id"):
+        self.subarea_id_name = subarea_id_name
         self.group_member = group_member
         if self.group_member:
             self.group_member.set_agents_grouping_attribute(agents_grouping_attribute)
@@ -41,8 +40,8 @@ class RegionalScalingJobsModel(ScalingJobsModel):
     def run(self, location_set, agent_set, agents_index=None, data_objects=None, **kwargs):
         if agents_index is None:
             agents_index = arange(agent_set.size())
-        regions = agent_set.get_attribute(self.regional_id_name)
-        location_region = location_set.compute_variables(["urbansim_parcel.%s.%s" % (location_set.get_dataset_name(), self.regional_id_name)],
+        regions = agent_set.get_attribute(self.subarea_id_name)
+        location_region = location_set.compute_variables(["urbansim_parcel.%s.%s" % (location_set.get_dataset_name(), self.subarea_id_name)],
                                                   dataset_pool=self.dataset_pool)
         valid_region = where(regions[agents_index] > 0)[0]
         if valid_region.size > 0:
@@ -51,7 +50,7 @@ class RegionalScalingJobsModel(ScalingJobsModel):
             cond_array[agents_index[valid_region]] = True
             for area in unique_regions:
                 new_index = where(logical_and(cond_array, regions == area))[0]
-                self.filter = "%s.%s == %s" % (location_set.get_dataset_name(), self.regional_id_name, area)
+                self.filter = "%s.%s == %s" % (location_set.get_dataset_name(), self.subarea_id_name, area)
                 logger.log_status("SJM for area %s" % area)
                 ScalingJobsModel.run(self, location_set, agent_set, agents_index=new_index, **kwargs)
 
@@ -62,6 +61,6 @@ class RegionalScalingJobsModel(ScalingJobsModel):
             choices = ScalingJobsModel.run(self, location_set, agent_set, agents_index=agents_index[no_region], **kwargs)
             where_valid_choice = where(choices > 0)[0]
             choices_index = location_set.get_id_index(choices[where_valid_choice])
-            chosen_regions = location_set.get_attribute_by_index(self.regional_id_name, choices_index)
-            agent_set.modify_attribute(name=self.regional_id_name, data=chosen_regions, 
+            chosen_regions = location_set.get_attribute_by_index(self.subarea_id_name, choices_index)
+            agent_set.modify_attribute(name=self.subarea_id_name, data=chosen_regions, 
                                        index=no_region[where_valid_choice])

@@ -18,9 +18,7 @@ from opus_core.misc import unique_values
 from opus_core.datasets.dataset import DatasetSubset
 from urbansim_parcel.models.development_project_proposal_sampling_model import DevelopmentProjectProposalSamplingModel
 
-class RegionalDevelopmentProposalSamplingModel(DevelopmentProjectProposalSamplingModel):
-
-#    regional_id_name = "faz_id"
+class SubAreaDevelopmentProposalSamplingModel(DevelopmentProjectProposalSamplingModel):
 
     def __init__(self, proposal_set,
                  sampler="opus_core.samplers.weighted_sampler",
@@ -28,9 +26,9 @@ class RegionalDevelopmentProposalSamplingModel(DevelopmentProjectProposalSamplin
                  filter_attribute=None,
                  run_config=None, estimate_config=None,
                  debuglevel=0, dataset_pool=None
-                 , regional_id_name="faz_id"):
+                 , subarea_id_name="faz_id"):
 
-        self.regional_id_name = regional_id_name
+        self.subarea_id_name = subarea_id_name
         self.dataset_pool = self.create_dataset_pool(dataset_pool, pool_packages=['urbansim_parcel', 'urbansim', 'opus_core'])
         self.dataset_pool.add_datasets_if_not_included({proposal_set.get_dataset_name(): proposal_set})
         self.proposal_set = proposal_set
@@ -50,7 +48,7 @@ class RegionalDevelopmentProposalSamplingModel(DevelopmentProjectProposalSamplin
 
      
     def run(self, **kwargs):
-        """Runs the parent model for each faz separately.
+        """Runs the parent model for each subarea separately.
         """
         buildings = self.dataset_pool.get_dataset("building")
         buildings.compute_variables([
@@ -58,17 +56,17 @@ class RegionalDevelopmentProposalSamplingModel(DevelopmentProjectProposalSamplin
                                 "units_for_jobs = urbansim_parcel.building.total_non_home_based_job_space",
                                 "occupied_residential_units = urbansim_parcel.building.number_of_households",
                                 "urbansim_parcel.building.existing_units",
-                                "urbansim_parcel.building.%s" % self.regional_id_name,
+                                "urbansim_parcel.building.%s" % self.subarea_id_name,
                                     ], dataset_pool=self.dataset_pool)
         # keep copy of the weights
         original_weight = self.weight.copy()
         self.all_demolished_buildings = array([], dtype='int32')
         
-        regions = self.proposal_set.compute_variables(["urbansim_parcel.%s.%s" % (self.proposal_set.get_dataset_name(), self.regional_id_name)],
+        regions = self.proposal_set.compute_variables(["urbansim_parcel.%s.%s" % (self.proposal_set.get_dataset_name(), self.subarea_id_name)],
                                                   dataset_pool=self.dataset_pool)
         unique_regions = unique_values(regions)
         original_status = self.proposal_set.get_attribute("status_id").copy()
-        bldgs_regions = buildings.get_attribute(self.regional_id_name)
+        bldgs_regions = buildings.get_attribute(self.subarea_id_name)
         for area_index in range(unique_regions.size):
             self.area_id = unique_regions[area_index]            
             status = self.proposal_set.get_attribute("status_id")

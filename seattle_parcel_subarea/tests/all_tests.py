@@ -11,10 +11,7 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 # 
-from opus_core.tests import opus_unittest
-from opus_core.tests.check_for_mysql_password import TestForMySQLPassword_abstract
-class TestForMySQLPassword(TestForMySQLPassword_abstract):
-    modul = "seattle_parcel_faz"
-            
-if __name__ == "__main__":
-    opus_unittest.main()
+
+from opus_core.tests.utils.package_tester import PackageTester
+
+PackageTester().run_all_tests_for_package('seattle_parcel_subarea')

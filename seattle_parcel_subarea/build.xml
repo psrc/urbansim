@@ -1,6 +1,6 @@
-<project name="seattle_parcel_faz" default="unit-tests">
+<project name="seattle_parcel_subarea" default="unit-tests">
 
-	<property name="webdir" value="/projects/urbansim5/www.urbansim.org/opus/seattle_parcel_faz" />
+	<property name="webdir" value="/projects/urbansim5/www.urbansim.org/opus/seattle_parcel_subarea" />
 	<property name="pythonpathdir" value="${basedir}/.." />
 	<import file="${pythonpathdir}/opus_core/common.xml" />
 

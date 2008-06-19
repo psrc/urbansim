@@ -33,13 +33,13 @@ class Baseline(UrbansimParcelConfiguration):
             'description':'Seattle parcel baseline',
             'cache_directory':None,
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
-            cache_directory_root = r'c:/opus/data/seattle_parcel_faz/runs',
+            cache_directory_root = r'c:/opus/data/seattle_parcel_subarea/runs',
             #cache_directory_root = '/Users/hana/urbansim_cache/seattle',
                 cache_from_mysql = False,
                 baseyear_cache = BaseyearCacheConfiguration(
                     years_to_cache = [2000],
                     #existing_cache_to_copy = '/Users/hana/urbansim_cache/seattle/seattle_parcel_2000_cache'
-                    existing_cache_to_copy = r'c:/opus/data/seattle_parcel_faz/base_year_data',
+                    existing_cache_to_copy = r'c:/opus/data/seattle_parcel_subarea/base_year_data',
                     ),
                 cache_scenario_database = 'urbansim.model_coordinators.cache_scenario_database',
                 tables_to_cache = [
@@ -134,33 +134,33 @@ class Baseline(UrbansimParcelConfiguration):
         }
         config.replace(config_changes)
         config['models_configuration']["development_proposal_choice_model"]["controller"]["import"] = \
-                {"seattle_parcel_faz.models.regional_development_proposal_sampling_model" : "RegionalDevelopmentProposalSamplingModel"}
+                {"seattle_parcel_subarea.models.subarea_development_proposal_sampling_model" : "SubAreaDevelopmentProposalSamplingModel"}
         config['models_configuration']["development_proposal_choice_model"]["controller"]["init"]["name"] = \
-                "RegionalDevelopmentProposalSamplingModel"
+                "SubAreaDevelopmentProposalSamplingModel"
         config['models_configuration']["employment_transition_model"]["controller"]["import"] = \
-                {"seattle_parcel_faz.models.regional_employment_transition_model" : "RegionalEmploymentTransitionModel"}
+                {"seattle_parcel_subarea.models.subarea_employment_transition_model" : "SubAreaEmploymentTransitionModel"}
         config['models_configuration']["employment_transition_model"]["controller"]["init"]["name"] = \
-                "RegionalEmploymentTransitionModel"
+                "SubAreaEmploymentTransitionModel"
         config['models_configuration']["household_transition_model"]["controller"]["import"] = \
-                {"seattle_parcel_faz.models.regional_household_transition_model" : "RegionalHouseholdTransitionModel"}
+                {"seattle_parcel_subarea.models.subarea_household_transition_model" : "SubAreaHouseholdTransitionModel"}
         config['models_configuration']["household_transition_model"]["controller"]["init"]["name"] = \
-                "RegionalHouseholdTransitionModel"
+                "SubAreaHouseholdTransitionModel"
         config['models_configuration']["household_location_choice_model"]["controller"]["import"] = \
-                {"seattle_parcel_faz.models.regional_household_location_choice_model" : "RegionalHouseholdLocationChoiceModel"}
+                {"seattle_parcel_subarea.models.subarea_household_location_choice_model" : "SubAreaHouseholdLocationChoiceModel"}
         config['models_configuration']["household_location_choice_model"]["controller"]["init"]["name"] = \
-                "RegionalHouseholdLocationChoiceModel"
+                "SubAreaHouseholdLocationChoiceModel"
         config['models_configuration']["employment_location_choice_model"]['controller']["import"] = \
-                {"seattle_parcel_faz.models.regional_employment_location_choice_model" : "RegionalEmploymentLocationChoiceModel"}
+                {"seattle_parcel_subarea.models.subarea_employment_location_choice_model" : "SubAreaEmploymentLocationChoiceModel"}
         config['models_configuration']["employment_location_choice_model"]["controller"]["init"]["name"] = \
-                "RegionalEmploymentLocationChoiceModel"
+                "SubAreaEmploymentLocationChoiceModel"
         config['models_configuration']["home_based_employment_location_choice_model"]['controller']["import"] = \
-                {"seattle_parcel_faz.models.regional_employment_location_choice_model" : "RegionalEmploymentLocationChoiceModel"}
+                {"seattle_parcel_subarea.models.subarea_employment_location_choice_model" : "SubAreaEmploymentLocationChoiceModel"}
         config['models_configuration']["home_based_employment_location_choice_model"]["controller"]["init"]["name"] = \
-                "RegionalEmploymentLocationChoiceModel"
+                "SubAreaEmploymentLocationChoiceModel"
         config['models_configuration']["distribute_unplaced_jobs_model"]["controller"]["import"] = \
-                {"seattle_parcel_faz.models.regional_distribute_unplaced_jobs_model" : "RegionalDistributeUnplacedJobsModel"}
+                {"seattle_parcel_subarea.models.subarea_distribute_unplaced_jobs_model" : "SubAreaDistributeUnplacedJobsModel"}
         config['models_configuration']["distribute_unplaced_jobs_model"]["controller"]["init"]["name"] = \
-                "RegionalDistributeUnplacedJobsModel"
+                "SubAreaDistributeUnplacedJobsModel"
         if self.multiple_runs:
             from multiple_runs_modification import MultipleRunsModification
             MultipleRunsModification().modify_configuration(config)
