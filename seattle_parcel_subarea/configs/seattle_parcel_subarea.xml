@@ -38,10 +38,10 @@
      <model_system type="dictionary">
       <development_proposal_choice_model type="dictionary">
         <import type="dictionary">
-          <seattle_parcel_subarea.models.subarea_development_proposal_sampling_model type="string">SubAreaDevelopmentProposalSamplingModel</seattle_parcel_subarea.models.subarea_development_proposal_sampling_model>
+          <seattle_parcel_subarea.models.subarea_development_proposal_sampling_model type="string">SubareaDevelopmentProposalSamplingModel</seattle_parcel_subarea.models.subarea_development_proposal_sampling_model>
         </import>
         <init type="dictionary">
-          <name type="string">SubAreaDevelopmentProposalSamplingModel</name>
+          <name type="string">SubareaDevelopmentProposalSamplingModel</name>
           <arguments type="dictionary">
             <subarea_id_name type="quoted_string">faz_id</subarea_id_name>
           </arguments>
@@ -49,53 +49,53 @@
       </development_proposal_choice_model>
       <employment_transition_model type="dictionary">
         <import type="dictionary">
-          <seattle_parcel_subarea.models.subarea_employment_transition_model type="string">SubAreaEmploymentTransitionModel</seattle_parcel_subarea.models.subarea_employment_transition_model>
+          <seattle_parcel_subarea.models.subarea_employment_transition_model type="string">SubareaEmploymentTransitionModel</seattle_parcel_subarea.models.subarea_employment_transition_model>
         </import>
         <init type="dictionary">
-          <name type="string">SubAreaEmploymentTransitionModel</name>
+          <name type="string">SubareaEmploymentTransitionModel</name>
           <subarea_id_name type="quoted_string">faz_id</subarea_id_name>
         </init>
       </employment_transition_model>
       <household_transition_model type="dictionary">
         <import type="dictionary">
-          <seattle_parcel_subarea.models.subarea_household_transition_model type="string">SubAreaHouseholdTransitionModel</seattle_parcel_subarea.models.subarea_household_transition_model>
+          <seattle_parcel_subarea.models.subarea_household_transition_model type="string">SubareaHouseholdTransitionModel</seattle_parcel_subarea.models.subarea_household_transition_model>
         </import>
         <init type="dictionary">
-          <name type="string">SubAreaHouseholdTransitionModel</name>
+          <name type="string">SubareaHouseholdTransitionModel</name>
           <subarea_id_name type="quoted_string">faz_id</subarea_id_name>
         </init>
       </household_transition_model>
       <household_location_choice_model type="dictionary">
         <import type="dictionary">
-          <seattle_parcel_subarea.models.subarea_household_location_choice_model type="string">SubAreaHouseholdLocationChoiceModel</seattle_parcel_subarea.models.subarea_household_location_choice_model>
+          <seattle_parcel_subarea.models.subarea_household_location_choice_model type="string">SubareaHouseholdLocationChoiceModel</seattle_parcel_subarea.models.subarea_household_location_choice_model>
         </import>
         <init type="dictionary">
-          <name type="string">SubAreaHouseholdLocationChoiceModel</name>
+          <name type="string">SubareaHouseholdLocationChoiceModel</name>
         </init>
       </household_location_choice_model>
       <employment_location_choice_model type="dictionary">
         <import type="dictionary">
-          <seattle_parcel_subarea.models.subarea_employment_location_choice_model type="string">SubAreaEmploymentLocationChoiceModel</seattle_parcel_subarea.models.subarea_employment_location_choice_model>
+          <seattle_parcel_subarea.models.subarea_employment_location_choice_model type="string">SubareaEmploymentLocationChoiceModel</seattle_parcel_subarea.models.subarea_employment_location_choice_model>
         </import>
         <init type="dictionary">
-          <name type="string">SubAreaEmploymentLocationChoiceModel</name>
+          <name type="string">SubareaEmploymentLocationChoiceModel</name>
           <subarea_id_name type="quoted_string">faz_id</subarea_id_name>
         </init>
       </employment_location_choice_model>
       <home_based_employment_location_choice_model type="dictionary">
         <import type="dictionary">
-          <seattle_parcel_subarea.models.subarea_employment_location_choice_model type="string">SubAreaEmploymentLocationChoiceModel</seattle_parcel_subarea.models.subarea_employment_location_choice_model>
+          <seattle_parcel_subarea.models.subarea_employment_location_choice_model type="string">SubareaEmploymentLocationChoiceModel</seattle_parcel_subarea.models.subarea_employment_location_choice_model>
         </import>
         <init type="dictionary">
-          <name type="string">SubAreaEmploymentLocationChoiceModel</name>
+          <name type="string">SubareaEmploymentLocationChoiceModel</name>
         </init>
       </home_based_employment_location_choice_model>
       <distribute_unplaced_jobs_model type="dictionary">
         <import type="dictionary">
-          <seattle_parcel_subarea.models.subarea_distribute_unplaced_jobs_model type="string">SubAreaDistributeUnplacedJobsModel</seattle_parcel_subarea.models.subarea_distribute_unplaced_jobs_model>
+          <seattle_parcel_subarea.models.subarea_distribute_unplaced_jobs_model type="string">SubareaDistributeUnplacedJobsModel</seattle_parcel_subarea.models.subarea_distribute_unplaced_jobs_model>
         </import>
         <init type="dictionary">
-          <name type="string">SubAreaDistributeUnplacedJobsModel</name>
+          <name type="string">SubareaDistributeUnplacedJobsModel</name>
           <arguments type="dictionary">
             <subarea_id_name type="quoted_string">faz_id</subarea_id_name>
           </arguments>

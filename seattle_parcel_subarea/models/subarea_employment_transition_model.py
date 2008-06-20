@@ -12,55 +12,37 @@
 # other acknowledgments.
 #
 
-from opus_core.misc import DebugPrinter, unique_values
+from opus_core.misc import unique_values
 from numpy import arange, array, where, logical_and, concatenate
 from numpy import zeros, ones, compress, resize
 from numpy import logical_not, int8, int32
-from opus_core.storage_factory import StorageFactory
 from opus_core.datasets.dataset import DatasetSubset
 from opus_core.logger import logger
 from opus_core.variables.attribute_type import AttributeType
 from urbansim.models.employment_transition_model import EmploymentTransitionModel
-from opus_core.resources import Resources
-from opus_core.model import Model
-from scipy.ndimage import sum as ndimage_sum
-from opus_core.sampling_toolbox import sample_noreplace, probsample_replace
 
-
-
-class SubAreaEmploymentTransitionModel(EmploymentTransitionModel):
+class SubareaEmploymentTransitionModel(EmploymentTransitionModel):
     """Creates and removes jobs from job_set. It runs the urbansim ETM with control totals for each region."""
 
-    model_name = "SubArea Employment Transition Model"
+    model_name = "Subarea Employment Transition Model"
     
-#    def __init__(self, location_id_name=None, variable_package=None, dataset_pool=None, debuglevel=0):
-#        self.dataset_pool = self.create_dataset_pool(dataset_pool, ["seattle_parcel_subarea", "urbansim", "opus_core"])
-#        EmploymentTransitionModel.__init__(self, location_id_name, variable_package, dataset_pool, debuglevel)
-
-    def __init__(self, location_id_name=None, variable_package=None, dataset_pool=None, debuglevel=0, subarea_id_name="faz_id"):
+    def __init__(self, subarea_id_name, **kwargs):
+        super(SubareaEmploymentTransitionModel, self).__init__(**kwargs)
         self.subarea_id_name = subarea_id_name
-        self.debug = DebugPrinter(debuglevel)
-        self.location_id_name = self.location_id_name_default
-        self.variable_package = self.variable_package_default
-        if location_id_name is not None:
-            self.location_id_name = location_id_name
-        if variable_package is not None:
-            self.variable_package = variable_package
-        self.dataset_pool = self.create_dataset_pool(dataset_pool, ["seattle_parcel_subarea", "urbansim", "opus_core"])
 
     def run(self, year, job_set, control_totals, job_building_types, data_objects=None, resources=None):
         self._do_initialize_for_run(job_set, job_building_types, data_objects)
-        large_area_ids = control_totals.get_attribute(self.subarea_id_name)
-        jobs_large_area_ids = job_set.compute_variables("urbansim_parcel.job.%s" % self.subarea_id_name)
-        unique_large_areas = unique_values(large_area_ids)
+        subarea_ids = control_totals.get_attribute(self.subarea_id_name)
+        jobs_subarea_ids = job_set.compute_variables("urbansim_parcel.job.%s" % self.subarea_id_name)
+        unique_subareas = unique_values(subarea_ids)
         is_year = control_totals.get_attribute("year")==year
         all_jobs_index = arange(job_set.size())
         sectors = unique_values(control_totals.get_attribute("sector_id")[is_year])
         self._compute_sector_variables(sectors, job_set)
-        for area in unique_large_areas:
-            idx = where(logical_and(is_year, large_area_ids == area))[0]
+        for area in unique_subareas:
+            idx = where(logical_and(is_year, subarea_ids == area))[0]
             self.control_totals_for_this_year = DatasetSubset(control_totals, idx)
-            jobs_index = where(jobs_large_area_ids == area)[0]
+            jobs_index = where(jobs_subarea_ids == area)[0]
             jobs_for_this_area = DatasetSubset(job_set, jobs_index)
             logger.log_status("ETM for area %s (currently %s jobs)" % (area, jobs_for_this_area.size()))
             last_remove_idx = self.remove_jobs.size
@@ -75,10 +57,10 @@ class SubAreaEmploymentTransitionModel(EmploymentTransitionModel):
             self.remove_jobs[last_remove_idx:self.remove_jobs.size] = all_jobs_index[jobs_index[self.remove_jobs[last_remove_idx:self.remove_jobs.size]]]
         self._update_job_set(job_set)
         idx_new_jobs = arange(job_set.size()-self.new_jobs[self.subarea_id_name].size, job_set.size())
-        jobs_large_area_ids = job_set.compute_variables("urbansim_parcel.job.%s" % self.subarea_id_name)
-        jobs_large_area_ids[idx_new_jobs] = self.new_jobs[self.subarea_id_name]
+        jobs_subarea_ids = job_set.compute_variables("urbansim_parcel.job.%s" % self.subarea_id_name)
+        jobs_subarea_ids[idx_new_jobs] = self.new_jobs[self.subarea_id_name]
         job_set.delete_one_attribute(self.subarea_id_name)
-        job_set.add_attribute(jobs_large_area_ids, self.subarea_id_name, metadata=AttributeType.PRIMARY)
+        job_set.add_attribute(jobs_subarea_ids, self.subarea_id_name, metadata=AttributeType.PRIMARY)
         # return an index of new jobs
         return arange(job_set.size()-self.new_jobs[self.subarea_id_name].size, job_set.size())  
         
@@ -91,9 +73,8 @@ from opus_core.tests.stochastic_test_case import StochasticTestCase
 from opus_core.resources import Resources
 from numpy import array, logical_and, int32, int8, zeros
 from numpy import ma
-from urbansim.constants import Constants
 from urbansim.datasets.job_dataset import JobDataset
-from seattle_parcel_subarea.datasets.control_total_dataset import ControlTotalDataset
+from urbansim.datasets.control_total_dataset import ControlTotalDataset
 from urbansim.datasets.job_building_type_dataset import JobBuildingTypeDataset
 from opus_core.storage_factory import StorageFactory
 
@@ -148,7 +129,7 @@ class Tests(StochasticTestCase):
             "faz_id": array([1,1,2,2])
             }
 
-    def skip_test_same_distribution_after_job_subtraction(self):
+    def test_same_distribution_after_job_subtraction(self):
         """Removes 1,750 sector_1 jobs, without specifying the distribution across gridcells (so it is assumed equal)
         Test that the distribution (in %) of sector 1 jobs across gridcells before and after the subtraction are
         relatively equal.
@@ -163,7 +144,7 @@ class Tests(StochasticTestCase):
         storage.write_table(table_name = ect_set_table_name, table_data = self.annual_employment_control_totals_data)
         ect_set = ControlTotalDataset(in_storage=storage, in_table_name=ect_set_table_name, what="employment")
 
-        model = SubAreaEmploymentTransitionModel()
+        model = SubareaEmploymentTransitionModel("faz_id")
         model.run(year=2000, job_set=jobs_set, control_totals=ect_set, job_building_types=self.job_building_types)
         
         # check the totals in regions
@@ -185,7 +166,7 @@ class Tests(StochasticTestCase):
 
             jobs_set = JobDataset(in_storage=storage, in_table_name=jobs_set_table_name)
 
-            model = SubAreaEmploymentTransitionModel()
+            model = SubareaEmploymentTransitionModel("faz_id")
             model.run(year=2000, job_set=jobs_set, control_totals=ect_set, job_building_types=self.job_building_types)
             # check that the distribution of jobs is the same before and after subtracting jobs
             results = self.get_count_all_sectors_and_areas(jobs_set)
@@ -206,7 +187,7 @@ class Tests(StochasticTestCase):
 
             jobs_set = JobDataset(in_storage=storage, in_table_name=jobs_set_table_name)
 
-            model = SubAreaEmploymentTransitionModel()
+            model = SubareaEmploymentTransitionModel("faz_id")
             model.run(year=2000, job_set=jobs_set, control_totals=ect_set, job_building_types=self.job_building_types)
             # check that the distribution of building type is the same before and after subtracting jobs
             jobs_set.compute_variables(["urbansim.job.is_in_employment_sector_1_industrial",
@@ -227,7 +208,7 @@ class Tests(StochasticTestCase):
         expected_results = array([3500.0/7000.0*5250.0, 900, 3500.0/7000.0*5250.0, 1800, 0, 300])
         self.run_stochastic_test(__file__, run_model2, expected_results, 20)
 
-    def skip_test_same_distribution_after_job_addition(self):
+    def test_same_distribution_after_job_addition(self):
         """Add 1,750 new jobs of sector 1 without specifying a distribution across gridcells (so it is assumed equal)
         Test that the total number of jobs in each sector after the addition matches the totals specified
         in annual_employment_control_totals.
@@ -255,7 +236,7 @@ class Tests(StochasticTestCase):
         ect_set = ControlTotalDataset(in_storage=storage, in_table_name=ect_set_table_name, what="employment")
 
         # run model
-        model = SubAreaEmploymentTransitionModel()
+        model = SubareaEmploymentTransitionModel("faz_id")
         model.run(year=2000, job_set=jobs_set, control_totals=ect_set, job_building_types=self.job_building_types)
 
         #check that there are indeed 14750 total jobs after running the model

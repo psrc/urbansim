@@ -16,65 +16,15 @@ from numpy import arange, zeros, logical_and, where
 from opus_core.logger import logger
 from opus_core.misc import unique_values
 from urbansim.models.household_location_choice_model import HouseholdLocationChoiceModel
-from opus_core.resources import merge_resources_if_not_None, merge_resources_with_defaults
-from urbansim.models.agent_location_choice_model import AgentLocationChoiceModel
 
-class SubAreaHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
+class SubareaHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
     """Run the urbansim HLCM separately for each subarea."""
     
-    model_name = "SubArea Household Location Choice Model" 
+    model_name = "Subarea Household Location Choice Model" 
 
-    def __init__(self, location_set,
-            sampler = "opus_core.samplers.weighted_sampler", 
-            utilities = "opus_core.linear_utilities", 
-            choices = "opus_core.random_choices", 
-            probabilities = "opus_core.mnl_probabilities",
-            estimation = "opus_core.bhhh_mnl_estimation",
-            capacity_string = "vacant_residential_units",
-            estimation_weight_string = "residential_units", 
-            number_of_agents_string = "number_of_households",
-            number_of_units_string = "residential_units",            
-            sample_proportion_locations = None, 
-            sample_size_locations = 30, 
-            estimation_size_agents = 1.0, 
-            compute_capacity_flag = True, 
-            filter=None,
-            submodel_string = None, location_id_string = None,
-            demand_string = None, # if not None, the aggregate demand for locations will be stored in this attribute
-            run_config = None, estimate_config=None, debuglevel=0, dataset_pool=None,
-            variable_package="urbansim",
-            subarea_id_name="faz_id"):
+    def __init__(self, location_set, subarea_id_name, **kwargs):
+        super(SubareaHouseholdLocationChoiceModel, self).__init__(location_set, **kwargs)
         self.subarea_id_name = subarea_id_name
-        run_config = merge_resources_if_not_None(run_config, [ 
-                    ("sample_proportion_locations", sample_proportion_locations), 
-                    ("sample_size_locations", sample_size_locations), 
-                    ("compute_capacity_flag", compute_capacity_flag),
-                    ("capacity_string", capacity_string),
-                    ("number_of_agents_string", number_of_agents_string),
-                    ("number_of_units_string", number_of_units_string),
-                    ("demand_string", demand_string)                                                          
-                                          ])
-        estimate_config = merge_resources_if_not_None(estimate_config, [ 
-                    ("estimation", estimation), 
-                    ("sample_proportion_locations", sample_proportion_locations), 
-                    ("sample_size_locations", sample_size_locations), 
-                    ("estimation_size_agents", estimation_size_agents),
-                    ("weights_for_estimation_string", estimation_weight_string)])         
-    
-        AgentLocationChoiceModel.__init__(self, location_set,
-                                        model_name=self.model_name, 
-                                        short_name=self.model_short_name, 
-                                        sampler=sampler, 
-                                        utilities=utilities, 
-                                        probabilities=probabilities, 
-                                        choices=choices, 
-                                        filter=filter, 
-                                        submodel_string=submodel_string,  
-                                        location_id_string=location_id_string,
-                                        run_config=run_config, 
-                                        estimate_config=estimate_config, 
-                                        debuglevel=debuglevel, dataset_pool=dataset_pool,
-                                        variable_package=variable_package)
     
     def run(self, specification, coefficients, agent_set, agents_index=None, **kwargs):
         if agents_index is None:
@@ -106,7 +56,7 @@ class SubAreaHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
                                        index=no_region[where_valid_choice])
 
 from opus_core.tests import opus_unittest
-from numpy import array, ma, arange, where, zeros, concatenate
+from numpy import array, ma, concatenate
 from opus_core.resources import Resources
 from urbansim.datasets.gridcell_dataset import GridcellDataset
 from urbansim.datasets.household_dataset import HouseholdDataset
@@ -116,7 +66,7 @@ from opus_core.tests.stochastic_test_case import StochasticTestCase
 from opus_core.storage_factory import StorageFactory
 
 class Test(StochasticTestCase):
-    def skip_test_place_agents_to_correct_areas(self):
+    def test_place_agents_to_correct_areas(self):
         """10 gridcells - 5 in area 1, 5 in area 2, with equal cost, no capacity restrictions
         100 households - 70 live in area 1, 30 live in area 2.
         We set the coefficient value for cost -0.001. 
@@ -155,8 +105,8 @@ class Test(StochasticTestCase):
         # check the individual gridcells
         def run_model():
             households = HouseholdDataset(in_storage=storage, in_table_name='households')
-            hlcm = SubAreaHouseholdLocationChoiceModel(location_set=gridcells, compute_capacity_flag=False,
-                    choices = "opus_core.random_choices_from_index", sample_size_locations = 4)
+            hlcm = SubareaHouseholdLocationChoiceModel(location_set=gridcells, compute_capacity_flag=False,
+                    choices = "opus_core.random_choices_from_index", sample_size_locations = 4, subarea_id_name="faz_id")
             hlcm.run(specification, coefficients, agent_set=households, debuglevel=1)
 
             # get results
@@ -173,8 +123,8 @@ class Test(StochasticTestCase):
         self.run_stochastic_test(__file__, run_model, expected_results, 10)
 
         # check the exact sum 
-        hlcm = SubAreaHouseholdLocationChoiceModel(location_set=gridcells, compute_capacity_flag=False,
-                    choices = "opus_core.random_choices_from_index", sample_size_locations = 4)
+        hlcm = SubareaHouseholdLocationChoiceModel(location_set=gridcells, compute_capacity_flag=False,
+                    choices = "opus_core.random_choices_from_index", sample_size_locations = 4, subarea_id_name="faz_id")
         hlcm.run(specification, coefficients, agent_set=households, debuglevel=1)
         gridcells.compute_variables(["urbansim.gridcell.number_of_households"],
                 resources=Resources({"household":households}))

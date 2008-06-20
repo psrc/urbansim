@@ -18,16 +18,15 @@ from opus_core.variables.attribute_type import AttributeType
 from opus_core.logger import logger
 from urbansim_parcel.models.household_transition_model import HouseholdTransitionModel
 from copy import copy
-from urbansim.models.household_transition_model import HouseholdTransitionModel as USHouseholdTransitionModel
 
-class SubAreaHouseholdTransitionModel(HouseholdTransitionModel):
+class SubareaHouseholdTransitionModel(HouseholdTransitionModel):
     """Creates and removes households from household_set. It runs the urbansim HTM with control totals for each subarea."""
 
-    model_name = "SubArea Household Transition Model"
+    model_name = "Subarea Household Transition Model"
     
 
-    def __init__(self, location_id_name="building_id", subarea_id_name="faz_id", **kwargs):
-        USHouseholdTransitionModel.__init__(self, location_id_name=location_id_name, **kwargs)
+    def __init__(self, subarea_id_name, **kwargs):
+        super(SubareaHouseholdTransitionModel, self).__init__(**kwargs)
         self.subarea_id_name = subarea_id_name
 
     def run(self, year, household_set, person_set, control_totals, characteristics, resources=None):
@@ -88,33 +87,32 @@ class SubAreaHouseholdTransitionModel(HouseholdTransitionModel):
 
 
 from opus_core.tests import opus_unittest
-from opus_core.resources import Resources
 from opus_core.storage_factory import StorageFactory
 from numpy import array, logical_and, int32, int8, zeros
 from numpy import ma
 from urbansim.datasets.household_dataset import HouseholdDataset
 from urbansim_parcel.datasets.person_dataset import PersonDataset
 from urbansim.datasets.household_characteristic_dataset import HouseholdCharacteristicDataset
-from seattle_parcel_subarea.datasets.control_total_dataset import ControlTotalDataset
+from urbansim.datasets.control_total_dataset import ControlTotalDataset
 class Tests(opus_unittest.OpusTestCase):
 
     def setUp(self):
-        #1) 3000 households in large_area=1 with age_of_head < 50, income < 40,000, persons < 3.
-        #2) 3000 households in large_area=2 with age_of_head < 50, income < 40,000, persons < 3.
-        #3) 1000 households in large_area=1 with age_of_head < 50, income < 40,000, persons >= 3.
-        #4) 1000 households in large_area=2 with age_of_head < 50, income < 40,000, persons >= 3.
-        #5) 1500 households in large_area=1 with age_of_head < 50, income >= 40,000, persons < 3.
-        #6) 1500 households in large_area=2 with age_of_head < 50, income >= 40,000, persons < 3.
-        #7) 2000 households in large_area=1 with age_of_head < 50, income >= 40,000, persons >= 3.
-        #8) 2000 households in large_area=2 with age_of_head < 50, income >= 40,000, persons >= 3.
-        #9) 1000 households in large_area=1 with age_of_head >= 50, income < 40,000, persons < 3.
-        #10) 1000 households in large_area=2 with age_of_head >= 50, income < 40,000, persons < 3.
-        #11) 2500 households in large_area=1 with age_of_head >= 50, income < 40,000, persons >= 3.
-        #12) 2500 households in large_area=2 with age_of_head >= 50, income < 40,000, persons >= 3.
-        #13) 1500 households in large_area=1 with age_of_head >= 50, income >= 40,000, persons < 3.
-        #14) 1500 households in large_area=2 with age_of_head >= 50, income >= 40,000, persons < 3.
-        #15) 4000 households in large_area=1 with age_of_head >= 50, income >= 40,000, persons >= 3.
-        #16) 4000 households in large_area=2 with age_of_head >= 50, income >= 40,000, persons >= 3.
+        #1) 3000 households in subarea=1 with age_of_head < 50, income < 40,000, persons < 3.
+        #2) 3000 households in subarea=2 with age_of_head < 50, income < 40,000, persons < 3.
+        #3) 1000 households in subarea=1 with age_of_head < 50, income < 40,000, persons >= 3.
+        #4) 1000 households in subarea=2 with age_of_head < 50, income < 40,000, persons >= 3.
+        #5) 1500 households in subarea=1 with age_of_head < 50, income >= 40,000, persons < 3.
+        #6) 1500 households in subarea=2 with age_of_head < 50, income >= 40,000, persons < 3.
+        #7) 2000 households in subarea=1 with age_of_head < 50, income >= 40,000, persons >= 3.
+        #8) 2000 households in subarea=2 with age_of_head < 50, income >= 40,000, persons >= 3.
+        #9) 1000 households in subarea=1 with age_of_head >= 50, income < 40,000, persons < 3.
+        #10) 1000 households in subarea=2 with age_of_head >= 50, income < 40,000, persons < 3.
+        #11) 2500 households in subarea=1 with age_of_head >= 50, income < 40,000, persons >= 3.
+        #12) 2500 households in subarea=2 with age_of_head >= 50, income < 40,000, persons >= 3.
+        #13) 1500 households in subarea=1 with age_of_head >= 50, income >= 40,000, persons < 3.
+        #14) 1500 households in subarea=2 with age_of_head >= 50, income >= 40,000, persons < 3.
+        #15) 4000 households in subarea=1 with age_of_head >= 50, income >= 40,000, persons >= 3.
+        #16) 4000 households in subarea=2 with age_of_head >= 50, income >= 40,000, persons >= 3.
 
         self.households_data = {
             "household_id":arange(33000)+1,
@@ -141,7 +139,7 @@ class Tests(opus_unittest.OpusTestCase):
             "job_id": array([30, 50]),
                            }
 
-    def skip_test_same_distribution_after_household_addition(self):
+    def test_same_distribution_after_household_addition(self):
         """Using the control_totals and no marginal characteristics,
         add households and ensure that the distribution within each group stays the same
         """
@@ -166,7 +164,7 @@ class Tests(opus_unittest.OpusTestCase):
         storage.write_table(table_name = 'hc_set', table_data = self.household_characteristics_for_ht_data)
         hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
 
-        model = SubAreaHouseholdTransitionModel()
+        model = SubareaHouseholdTransitionModel(subarea_id_name="faz_id")
         model.run(year=2000, person_set=prs_set, household_set=hh_set, control_totals=hct_set, characteristics=hc_set)
 
         #check that there are 20000 (area 1) and 30000 (area 2) total households after running the model
@@ -203,7 +201,7 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(hh_set.get_attribute("persons").dtype, int8,
                          "Error in data type of the new household set. Should be: int8, is: %s" % str(hh_set.get_attribute("persons").dtype))
 
-    def skip_test_same_distribution_after_household_subtraction(self):
+    def test_same_distribution_after_household_subtraction(self):
         """Using the control_totals and no marginal characteristics,
         subtract households and ensure that the distribution within each group stays the same
         """
@@ -225,7 +223,7 @@ class Tests(opus_unittest.OpusTestCase):
         hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
         storage.write_table(table_name='prs_set', table_data=self.person_data)
         prs_set = PersonDataset(in_storage=storage, in_table_name='prs_set')
-        model = SubAreaHouseholdTransitionModel()
+        model = SubareaHouseholdTransitionModel(subarea_id_name="faz_id")
         model.run(year=2000, person_set=prs_set, household_set=hh_set, control_totals=hct_set, characteristics=hc_set)
 
         #check that there are indeed 8000 (area 1) and 12000 (area 2) total households after running the model
@@ -248,7 +246,7 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertEqual(ma.allclose(results, should_be, rtol=0.1),
                          True, "Error, should_be: %s,\n but result: %s" % (should_be, results))
 
-    def skip_test_controlling_with_one_marginal_characteristic(self):
+    def test_controlling_with_one_marginal_characteristic(self):
         """Using the age_of_head as a marginal characteristic, which would partition the 8 groups into two larger groups
         (those with age_of_head < 40 and >= 40), ensure that the control totals are met and that the distribution within
         each large group is the same before and after running the model
@@ -279,7 +277,7 @@ class Tests(opus_unittest.OpusTestCase):
         storage.write_table(table_name = 'hc_set', table_data = self.household_characteristics_for_ht_data)
         hc_set = HouseholdCharacteristicDataset(in_storage=storage, in_table_name='hc_set')
 
-        model = SubAreaHouseholdTransitionModel()
+        model = SubareaHouseholdTransitionModel(subarea_id_name="faz_id")
         model.run(year=2000, person_set=prs_set, household_set=hh_set, control_totals=hct_set, characteristics=hc_set)
 
         #check that there are indeed 40000 total households after running the model

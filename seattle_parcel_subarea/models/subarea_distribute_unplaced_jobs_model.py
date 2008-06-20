@@ -14,12 +14,12 @@
 
 
 from numpy import where
-from seattle_parcel_subarea.models.subarea_scaling_jobs_model import SubAreaScalingJobsModel
+from seattle_parcel_subarea.models.subarea_scaling_jobs_model import SubareaScalingJobsModel
 
-class SubAreaDistributeUnplacedJobsModel(SubAreaScalingJobsModel):
+class SubareaDistributeUnplacedJobsModel(SubareaScalingJobsModel):
     """This model is used to place randomly (within sectors) any unplaced jobs.
     """
-    model_name = "SubArea Distribute Unplaced Jobs Model"
+    model_name = "Subarea Distribute Unplaced Jobs Model"
      
     def run(self, location_set, agent_set, **kwargs):
         """
@@ -28,5 +28,5 @@ class SubAreaDistributeUnplacedJobsModel(SubAreaScalingJobsModel):
         """
         agents_index = where(agent_set.get_attribute(location_set.get_id_name()[0]) <= 0)[0]
         
-        return SubAreaScalingJobsModel.run(self, location_set, agent_set, agents_index, **kwargs)
+        return SubareaScalingJobsModel.run(self, location_set, agent_set, agents_index, **kwargs)
 

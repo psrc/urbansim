@@ -18,34 +18,11 @@ from opus_core.misc import unique_values
 from opus_core.datasets.dataset import DatasetSubset
 from urbansim_parcel.models.development_project_proposal_sampling_model import DevelopmentProjectProposalSamplingModel
 
-class SubAreaDevelopmentProposalSamplingModel(DevelopmentProjectProposalSamplingModel):
+class SubareaDevelopmentProposalSamplingModel(DevelopmentProjectProposalSamplingModel):
 
-    def __init__(self, proposal_set,
-                 sampler="opus_core.samplers.weighted_sampler",
-                 weight_string = "exp_roi = exp(urbansim_parcel.development_project_proposal.expected_rate_of_return_on_investment)",
-                 filter_attribute=None,
-                 run_config=None, estimate_config=None,
-                 debuglevel=0, dataset_pool=None
-                 , subarea_id_name="faz_id"):
-
+    def __init__(self, proposal_set, subarea_id_name, **kwargs):
+        super(SubareaDevelopmentProposalSamplingModel, self).__init__(proposal_set, **kwargs)
         self.subarea_id_name = subarea_id_name
-        self.dataset_pool = self.create_dataset_pool(dataset_pool, pool_packages=['urbansim_parcel', 'urbansim', 'opus_core'])
-        self.dataset_pool.add_datasets_if_not_included({proposal_set.get_dataset_name(): proposal_set})
-        self.proposal_set = proposal_set
-        if not self.dataset_pool.has_dataset("development_project_proposal_component"):
-            self.proposal_component_set = create_from_proposals_and_template_components(proposal_set, 
-                                                       self.dataset_pool.get_dataset('development_template_component'))
-            self.dataset_pool.replace_dataset(self.proposal_component_set.get_dataset_name(), self.proposal_component_set)
-        else:
-            self.proposal_component_set = self.dataset_pool.get_dataset("development_project_proposal_component")
-
-        if weight_string is not None:
-            if weight_string not in proposal_set.get_known_attribute_names():
-                proposal_set.compute_variables(weight_string, dataset_pool=self.dataset_pool)
-            self.weight = self.proposal_set.get_attribute(weight_string)
-        else:
-            self.weight = ones(self.proposal_set.size(), dtype="float64")  #equal weight
-
      
     def run(self, **kwargs):
         """Runs the parent model for each subarea separately.
@@ -100,4 +77,3 @@ class SubAreaDevelopmentProposalSamplingModel(DevelopmentProjectProposalSampling
         self.proposal_set.set_values_of_one_attribute("status_id", original_status[idx], idx)
         self.dataset_pool.replace_dataset('building', buildings)
         return (self.proposal_set, self.all_demolished_buildings)
-
