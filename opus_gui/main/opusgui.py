@@ -170,6 +170,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.editorSaveAsFileButton = QPushButton(self.editorButtonWidget)
             self.editorSaveAsFileButton.setObjectName("editorSaveAsFileButton")
             self.editorSaveAsFileButton.setText(QString("Save File As"))
+            # Gray out for now until implemented
+            self.editorSaveAsFileButton.setDisabled(True)
             QObject.connect(self.editorSaveAsFileButton, SIGNAL("released()"),
                             self.editorSaveAsFileButton_released)        
             self.editorButtonWidgetLayout.addWidget(self.editorSaveAsFileButton)
@@ -422,6 +424,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         fileName = QString(fd)
         fileNameInfo = QFileInfo(QString(fd))
         fileNameBaseName = fileNameInfo.completeBaseName()
+        self.editorCurrentFileName = fileName
 
         # Clear out the old file
         self.editorStuff.clear()
@@ -433,15 +436,24 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         f.close()
         self.editorStatusLabel.setText(QString("- ").append(QString(fileName)))
         self.editorDirty = False
+        self.editorSaveFileButton.setDisabled(True)
 
     def editorSaveFileButton_released(self):
         #print "Save"
         if self.editorDirty == True:
             # Save the file TODO...
-            # Mark as clean
-            wintitle = self.editorStatusLabel.text().replace("* ", "- ")
-            self.editorStatusLabel.setText(wintitle)
-        self.editorDirty = False
+            if self.editorCurrentFileName:
+                try:
+                    f = open(self.editorCurrentFileName,'w')
+                except:
+                    return
+                f.write(self.editorStuff.text())
+                f.close()
+                # Mark as clean
+                wintitle = self.editorStatusLabel.text().replace("* ", "- ")
+                self.editorStatusLabel.setText(wintitle)
+                self.editorDirty = False
+                self.editorSaveFileButton.setDisabled(True)
 
     def editorSaveAsFileButton_released(self):
         #print "Save As"
@@ -458,5 +470,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             wintitle = self.editorStatusLabel.text().replace("- ", "* ")
             self.editorStatusLabel.setText(wintitle)
         self.editorDirty = True
+        self.editorSaveFileButton.setEnabled(True)
 
         
