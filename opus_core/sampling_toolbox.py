@@ -36,6 +36,12 @@ def sample_replace(source_array, size, return_indices=False):
 def sample_noreplace(source_array, size, return_indices=False):
     """equal probability sampling; without replacement case.
     Using numpy functions, efficient for large array"""
+    if not isinstance(source_array, ndarray):
+        try:
+            source_array = asarray(source_array)
+        except:
+            raise TypeError, "source_array must be of type ndarray"
+    
     n = source_array.size
     if n == 0:
         return source_array
@@ -45,6 +51,11 @@ def sample_noreplace(source_array, size, return_indices=False):
 def probsample_replace(source_array, size, prob_array, return_indices=False):
     """Unequal probability sampling; with replacement case.
     Using numpy searchsorted function, suitable for large array"""
+    if not isinstance(source_array, ndarray):
+        try:
+            source_array = asarray(source_array)
+        except:
+            raise TypeError, "source_array must be of type ndarray"
 
     if prob_array is None:
         return sample_replace(source_array,size, return_indices=return_indices)
