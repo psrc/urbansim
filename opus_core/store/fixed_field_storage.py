@@ -16,7 +16,7 @@ import os
 import re
 import xml.etree.cElementTree as ET
 
-from numpy import array, dtype
+from numpy import array, dtype, empty
 
 from opus_core.opus_error import OpusError
 from opus_core.store.storage import Storage
@@ -158,35 +158,44 @@ class fixed_field_storage(Storage):
         # Initialize intermediate storage for table data
         table_data_lists = {}
         for field_et in format_et:
+            if lowercase:
+                field_et.set('name', field_et.get('name').lower())
             if column_names == Storage.ALL_COLUMNS or field_et.get('name') in column_names:
                 table_data_lists[field_et.get('name')] = []
         
-        # Parse the data file
+        # Split the data file into fields, and get the field types
+        field_types = {}
         for line in data_file:
             location = len(self._data_prefix)
             for field_et in format_et:
                 next_location = location + self._get_field_size(field_et)
                 field_text = line[location:next_location]
                 location = next_location
-                if column_names == Storage.ALL_COLUMNS or field_et.get('name') in column_names:
-                    type_char = self._format_re.match(field_et.get('format')).group('type')
-                    if   type_char in ['d','i','u']:
-                        table_data_lists[field_et.get('name')].append(int(field_text))
-                    elif type_char == 'o':
-                        table_data_lists[field_et.get('name')].append(int(field_text), 8)
-                    elif type_char in ['x','X']:
-                        table_data_lists[field_et.get('name')].append(int(field_text), 16)
-                    elif type_char in ['e','E','f','F','g','G']:
-                        table_data_lists[field_et.get('name')].append(float(field_text))
-                    else:
-                        if strip:
-                            field_text = field_text.strip()
-                        table_data_lists[field_et.get('name')].append(field_text)
-        
-        # Load data into arrays
+                name = field_et.get('name')
+                if column_names == Storage.ALL_COLUMNS or name in column_names:
+                    table_data_lists[name].append(field_text)
+                    field_types[name] = self._format_re.match(field_et.get('format')).group('type')
+
+        # Convert the textual data into its proper type and load into numpy arrays
         table_data = {}
-        for name, data in table_data_lists.iteritems():
-            table_data[name] = array(data)
+        for name in table_data_lists.keys():
+            rows = len(table_data_lists[name])
+            type_char = field_types[name]
+            if   type_char in ['d','i','u']:
+                table_data[name] = empty(rows, dtype=int)
+                for x in range(rows): table_data[name][x] = int(table_data_lists[name][x])
+            elif type_char in ['o']:
+                table_data[name] = empty(rows, dtype=int)
+                for x in range(rows): table_data[name][x] = int(table_data_lists[name][x], 8)
+            elif type_char in ['x','X']:
+                table_data[name] = empty(rows, dtype=int)
+                for x in range(rows): table_data[name][x] = int(table_data_lists[name][x], 16)
+            elif type_char in ['e','E','f','F','g','G']:
+                table_data[name] = empty(rows, dtype=float)
+                for x in range(rows): table_data[name][x] = float(table_data_lists[name][x])
+            elif strip:
+                table_data[name] = empty(rows, dtype='S'+str(len(table_data_lists[name][0])))
+                for x in range(rows): table_data[name][x] = table_data_lists[name][x].strip()
         
         return table_data
 
