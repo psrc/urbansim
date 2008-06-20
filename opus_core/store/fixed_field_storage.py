@@ -92,23 +92,24 @@ class fixed_field_storage(Storage):
                    ):
 
         if not format:
-            raise ValueError('No format supplied, and no default implemented yet.')
+            raise ValueError('No format supplied.')
         
+        # Append columns to the existing stored table if requested
         if mode == Storage.APPEND:
-            # Should this re-load the file and append at the data level,
-            # or can we just append at the text level by writing to the
-            # end of the file?
-            raise NotImplementedError()
+            old_data = self.load_table(table_name = table_name)
+            old_data.update(table_data)
+            table_data = old_data
 
         column_size, column_names = self._get_column_size_and_names(table_data)
         format_et = self._parse_format_to_et(format)
         python_format, target_size = self._convert_et_format_to_python_format_and_get_target_size(format_et)
 
-        # Normalize format XML string
+        # Normalize the format XML string
         format = ET.tostring(format_et).replace('\n','').replace('\r','')
 
         output = open(self._get_file_path_for_table(table_name), 'wb')
 
+        # Write out the format XML, either to the data header, or to a separate file
         if self._format_location == self.Location.HEADER:
             output.write(self._format_prefix
                          + format.replace(self._line_terminator,'')
@@ -118,6 +119,7 @@ class fixed_field_storage(Storage):
             format_output.write(format)
             format_output.close()
 
+        # Write out the data
         for row_index in range(column_size):
             row = {}
             for column_name, column_values in table_data.iteritems():
@@ -129,6 +131,7 @@ class fixed_field_storage(Storage):
                          + formatted_row
                          + self._line_terminator)
 
+        # Done with the file
         output.close()
 
 
@@ -140,20 +143,8 @@ class fixed_field_storage(Storage):
                    strip = True
                   ):
 
-        data_file = open(self._get_file_path_for_table(table_name))
-        
-        # Look for a format spec
-        if not format:
-            try:
-                format_file = open(self._get_format_file_path_for_table(table_name))
-                format = format_file.read()
-                format_file.close()
-            except IOError:
-                data_file.read(len(self._format_prefix))
-                format = data_file.readline().strip()
-        
-        # Parse out the field formats
-        format_et = self._parse_format_to_et(format)
+        # Get the data file and the format element tree
+        data_file, format_et = self._get_file_and_format_et_for_table(table_name, format)
 
         # Initialize intermediate storage for table data
         table_data_lists = {}
@@ -197,15 +188,29 @@ class fixed_field_storage(Storage):
                 table_data[name] = empty(rows, dtype='S'+str(len(table_data_lists[name][0])))
                 for x in range(rows): table_data[name][x] = table_data_lists[name][x].strip()
         
+        # Done
         return table_data
 
 
     def get_column_names(self,
                          table_name,
-                         lowercase = True
+                         lowercase = True,
+                         format = None
                         ):
-
-        raise NotImplementedError()
+        
+        # Get the format element tree
+        data_file, format_et = self._get_file_and_format_et_for_table(table_name, format)
+        
+        # Get the column names from the format element tree
+        column_names = []
+        for field_et in format_et:
+            if lowercase:
+                column_names.append(field_et.get('name').lower())
+            else:
+                column_name.append(field_et.get('name'))
+        
+        # Done
+        return column_names
 
 
     #
@@ -229,6 +234,23 @@ class fixed_field_storage(Storage):
             if field_et.tag == self._field_element:
                 ET.SubElement(result, self._field_element, name=field_et.get('name'), format=field_et.get('format'))
         return result
+
+    def _get_file_and_format_et_for_table(self, table_name, format = None):
+        # Load data file
+        data_file = open(self._get_file_path_for_table(table_name))
+        # Look for a format spec
+        if not format:
+            try:
+                format_file = open(self._get_format_file_path_for_table(table_name))
+                format = format_file.read()
+                format_file.close()
+            except IOError:
+                data_file.read(len(self._format_prefix))
+                format = data_file.readline().strip()
+        # Parse out the field formats
+        format_et = self._parse_format_to_et(format)
+        # Done
+        return data_file, format_et
 
     def _get_field_size(self, field_et):
         return int(self._format_re.match(field_et.get('format')).group('size'))
@@ -263,21 +285,21 @@ class TestFixedFieldStorageBase(object):
         <fixed_field>
             <field name="strs" format="5s" />
             <field name="flts" format="6.2f" />
-            <field name="ints" format=" 04i"/>
+            <field name="ints" format=" 05i"/>
         </fixed_field>
         '''
     data_in = {
-        'ints': array([1,2,-3]),
+        'ints': array([1,2202,-303]),
         'strs': array(['one', 'two', 'three']),
         'flts': array([1.11,22.2,3.3333]),
         'misc': array([10,20,30])
         }
     data_out = {
-        'ints': array([1,2,-3]),
+        'ints': array([1,2202,-303]),
         'strs': array(['one', 'two', 'three']),
         'flts': array([1.11,22.2,3.33])
         }
-    data_text = '  one  1.11 001\n  two 22.20 002\nthree  3.33-003\n'
+    data_text = '  one  1.11 0001\n  two 22.20 2202\nthree  3.33-0303\n'
 
     def setUp(self):
         self.temp_dir = mkdtemp(prefix='opus_core_test_fixed_field_storage')
@@ -286,9 +308,24 @@ class TestFixedFieldStorageBase(object):
         if os.path.exists(self.temp_dir):
             rmtree(self.temp_dir)
 
+    def fixed_field_read_setup(self):
+        pass
+        
     def fixed_field_read(self):
         actual = self.storage.load_table(table_name = 'foo')
         self.assertDictsEqual(actual, self.data_out)
+
+    def fixed_field_get_column_names(self):
+        actual = self.storage.get_column_names(table_name = 'foo')
+        self.assertEqual(actual, ['strs','flts','ints'])
+
+    def test_fixed_field_read(self):
+        self.fixed_field_read_setup()
+        self.fixed_field_read()
+
+    def test_fixed_field_get_column_names(self):
+        self.fixed_field_read_setup()
+        self.fixed_field_get_column_names()
 
 
 class TestFixedFieldStorageWithFormatFile(TestStorageInterface,TestFixedFieldStorageBase):
@@ -315,15 +352,14 @@ class TestFixedFieldStorageWithFormatFile(TestStorageInterface,TestFixedFieldSto
         file = open(self.temp_dir+'/foo.fmt', 'r')
         file.close()
         
-    def test_fixed_field_read(self):
+    def fixed_field_read_setup(self):
         format_file = open(self.temp_dir+'/foo.fmt', 'wb')
         format_file.write(self.format)
         format_file.close()
         data_file = open(self.temp_dir+'/foo.dat', 'wb')
         data_file.write(self.data_text)
         data_file.close()
-        self.fixed_field_read()
-
+    
 
 class TestFixedFieldStorageWithFormatHeader(TestStorageInterface,TestFixedFieldStorageBase):
 
@@ -348,12 +384,11 @@ class TestFixedFieldStorageWithFormatHeader(TestStorageInterface,TestFixedFieldS
         self.assertEqual(file.read(), self.data_text)
         file.close()
 
-    def test_fixed_field_read(self):
+    def fixed_field_read_setup(self):
         data_file = open(self.temp_dir+'/foo.dat', 'wb')
         data_file.write('# ' + self.format.replace('\n','') + '\n')
         data_file.write(self.data_text)
         data_file.close()
-        self.fixed_field_read()
 
 
 if __name__ == '__main__':
