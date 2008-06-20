@@ -26,6 +26,52 @@ class EditorBase(QsciScintilla):
     def __init__(self, mainwindow):
         QsciScintilla.__init__(self, mainwindow)
         self.mainwindow = mainwindow
+        ## define the font to use
+        font = QFont()
+        font.setFamily("Consolas")
+        font.setFixedPitch(True)
+        font.setPointSize(10)
+        # the font metrics here will help
+        # building the margin width later
+        fm = QFontMetrics(font)
+        
+        ## set the default font of the editor
+        ## and take the same font for line numbers
+        self.setFont(font)
+        self.setMarginsFont(font)
+        
+        ## Line numbers
+        # conventionnaly, margin 0 is for line numbers
+        self.setMarginWidth(0, fm.width( "00000" ) + 5)
+        self.setMarginLineNumbers(0, True)
+        
+        ## Edge Mode shows a red vetical bar at 80 chars
+        self.setEdgeMode(QsciScintilla.EdgeLine)
+        self.setEdgeColumn(80)
+        self.setEdgeColor(QColor("#FF0000"))
+        
+        ## Folding visual : we will use boxes
+        self.setFolding(QsciScintilla.BoxedTreeFoldStyle)
+        
+        ## Braces matching
+        self.setBraceMatching(QsciScintilla.SloppyBraceMatch)
+        
+        ## Editing line color
+        self.setCaretLineVisible(True)
+        self.setCaretLineBackgroundColor(QColor("#CDA869"))
+        
+        ## Margins colors
+        # line numbers margin
+        self.setMarginsBackgroundColor(QColor("#333333"))
+        self.setMarginsForegroundColor(QColor("#CCCCCC"))
+        
+        # folding margin colors (foreground,background)
+        self.setFoldMarginColors(QColor("#99CC66"),QColor("#333300"))
+        
+        ## Choose a lexer
+        lexer = QsciLexerPython()
+        lexer.setDefaultFont(font)
+        self.setLexer(lexer)
 
 class EditorTab(object):
     def __init__(self, mainwindow, filePath):

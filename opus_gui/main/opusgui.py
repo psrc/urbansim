@@ -30,7 +30,7 @@ from opus_gui.results.xml_helper_methods import get_child_values
 from opus_gui.config.xmlmodelview.opusallvariablestablemodel import OpusAllVariablesTableModel
 
 # General system includes
-import sys,time,tempfile
+import sys,time,tempfile,os
 
 
 # Main window used for houseing the canvas, toolbars, and dialogs
@@ -141,10 +141,43 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.editorStatusLabel = QLabel(self)
             self.editorStatusLabel.setAlignment(Qt.AlignCenter)
             self.editorStatusLabel.setObjectName("editorStatusLabel")
-            self.editorStatusLabel.setText(QString("No files currently loaded..."))
+            self.editorStatusLabel.setText(QString(" - No files currently loaded..."))
             self.tab_editorView.layout().addWidget(self.editorStatusLabel)
             self.editorStuff = opus_gui.util.editorbase.EditorBase(self)
             self.tab_editorView.layout().addWidget(self.editorStuff)
+            # Some buttons to control open,save,saveas,close
+            # First the container and layout
+            self.editorButtonWidget = QWidget(self)
+            self.editorButtonWidgetLayout = QHBoxLayout(self.editorButtonWidget)
+            # Make it center justified
+
+            # Now we add the buttons
+            # Open File
+            self.editorOpenFileButton = QPushButton(self.editorButtonWidget)
+            self.editorOpenFileButton.setObjectName("editorOpenFileButton")
+            self.editorOpenFileButton.setText(QString("Open File"))
+            QObject.connect(self.editorOpenFileButton, SIGNAL("released()"),
+                            self.editorOpenFileButton_released)        
+            self.editorButtonWidgetLayout.addWidget(self.editorOpenFileButton)
+            # Save File
+            self.editorSaveFileButton = QPushButton(self.editorButtonWidget)
+            self.editorSaveFileButton.setObjectName("editorSaveFileButton")
+            self.editorSaveFileButton.setText(QString("Save File"))
+            QObject.connect(self.editorSaveFileButton, SIGNAL("released()"),
+                            self.editorSaveFileButton_released)        
+            self.editorButtonWidgetLayout.addWidget(self.editorSaveFileButton)
+            # Save As File
+            self.editorSaveAsFileButton = QPushButton(self.editorButtonWidget)
+            self.editorSaveAsFileButton.setObjectName("editorSaveAsFileButton")
+            self.editorSaveAsFileButton.setText(QString("Save File As"))
+            QObject.connect(self.editorSaveAsFileButton, SIGNAL("released()"),
+                            self.editorSaveAsFileButton_released)        
+            self.editorButtonWidgetLayout.addWidget(self.editorSaveAsFileButton)
+            self.tab_editorView.layout().addWidget(self.editorButtonWidget)
+            QObject.connect(self.editorStuff, SIGNAL("textChanged()"),
+                            self.editorStuffTextChanged)        
+            self.editorDirty = False
+
         except ImportError:
             self.editorStuff = None
 
@@ -233,7 +266,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             # Add the project file's path to the title bar
             self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.toolboxbase.xml_file).filePath())
         else:
-            import os
             start_dir = ''
             opus_home = os.environ.get('OPUS_HOME')
             if opus_home:
@@ -370,4 +402,61 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         settings = QSettings()
         settings.setValue("Geometry", QVariant(self.saveGeometry()))
 
+    def editorOpenFileButton_released(self):
+        #print "Open"
+        # First find the file to open
+        start_dir = ''
+        opus_home = os.environ.get('OPUS_HOME')
+        if opus_home:
+            start_dir = opus_home
+            start_dir_test = os.path.join(opus_home, 'project_configs')
+            if start_dir_test:
+                start_dir = start_dir_test
+        configDialog = QFileDialog()
+        filter_str = QString("*.py")
+        fd = configDialog.getOpenFileName(self,QString("Please select a file..."),
+                                          QString(start_dir), filter_str)
+        # Check for cancel
+        if len(fd) == 0:
+            return
+        fileName = QString(fd)
+        fileNameInfo = QFileInfo(QString(fd))
+        fileNameBaseName = fileNameInfo.completeBaseName()
 
+        # Clear out the old file
+        self.editorStuff.clear()
+        try:
+            f = open(fileName,'r')
+        except:
+            return
+        self.editorStuff.setText(f.read())
+        f.close()
+        self.editorStatusLabel.setText(QString("- ").append(QString(fileName)))
+        self.editorDirty = False
+
+    def editorSaveFileButton_released(self):
+        #print "Save"
+        if self.editorDirty == True:
+            # Save the file TODO...
+            # Mark as clean
+            wintitle = self.editorStatusLabel.text().replace("* ", "- ")
+            self.editorStatusLabel.setText(wintitle)
+        self.editorDirty = False
+
+    def editorSaveAsFileButton_released(self):
+        #print "Save As"
+        if self.editorDirty == True:
+            # Save the file TODO...
+            # Mark as clean
+            wintitle = self.editorStatusLabel.text().replace("* ", "- ")
+            self.editorStatusLabel.setText(wintitle)
+        self.editorDirty = False
+
+    def editorStuffTextChanged(self):
+        #print "text changed = " + str(self.editorDirty)
+        if self.editorDirty == False:
+            wintitle = self.editorStatusLabel.text().replace("- ", "* ")
+            self.editorStatusLabel.setText(wintitle)
+        self.editorDirty = True
+
+        
