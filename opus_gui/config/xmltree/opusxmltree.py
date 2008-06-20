@@ -31,8 +31,6 @@ class OpusXMLTree(object):
         self.addTree()
 
     def addTree(self):
-        #       self.groupBox = QGroupBox(self.mainwindow)
-        #       self.groupBoxLayout = QVBoxLayout(self.groupBox)
         self.model = OpusDataModel(self,self.toolboxbase.doc, self.mainwindow,
                                    self.toolboxbase.configFile, self.xmlType, True)
         self.view = OpusDataView(self.mainwindow)
@@ -46,9 +44,6 @@ class OpusXMLTree(object):
         self.view.setColumnWidth(1,50)
         self.view.setMinimumHeight(200)
 
-        #      self.groupBoxLayout.addWidget(self.view)
-
-#        self.parentWidget.addWidget(self.groupBox)
         self.parentWidget.addWidget(self.view)
         # Hook up to the mousePressEvent and pressed
         self.view.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -56,8 +51,7 @@ class OpusXMLTree(object):
 
     def removeTree(self):
         if not self.model.isDirty():
-#            self.groupBox.hide()
-#            self.parentWidget.removeWidget(self.groupBox)
+            self.view.hide()
             self.parentWidget.removeWidget(self.view)
             return True
         else:
