@@ -84,7 +84,7 @@ from numpy import array, logical_and, int32, int8, zeros
 from numpy import ma
 from urbansim.datasets.household_dataset import HouseholdDataset
 from urbansim.datasets.household_characteristic_dataset import HouseholdCharacteristicDataset
-from washtenaw.datasets.control_total_dataset import ControlTotalDataset
+from urbansim.datasets.control_total_dataset import ControlTotalDataset
 class Tests(opus_unittest.OpusTestCase):
 
     def setUp(self):

@@ -74,7 +74,7 @@ from numpy import array, logical_and, int32, int8, zeros
 from numpy import ma
 from urbansim.constants import Constants
 from urbansim.datasets.job_dataset import JobDataset
-from washtenaw.datasets.control_total_dataset import ControlTotalDataset
+from urbansim.datasets.control_total_dataset import ControlTotalDataset
 from urbansim.datasets.job_building_type_dataset import JobBuildingTypeDataset
 from opus_core.storage_factory import StorageFactory
 
