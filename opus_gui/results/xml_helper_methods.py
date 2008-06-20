@@ -212,6 +212,8 @@ class ResultsManagerXMLHelper:
                                     scenario_name, run_name, 
                                     start_year, end_year):
                 
+        name = '%s.%s'%(scenario_name, run_name)
+
         head_node_args = {'type':'source_data',
                           'value':''}
         
@@ -242,7 +244,7 @@ class ResultsManagerXMLHelper:
         }        
         child_defs = [scenario_def, run_def, cache_dir_def, start_year_def, end_year_def]
         
-        self._add_new_xml_tree(head_node_name = run_name, 
+        self._add_new_xml_tree(head_node_name = name, 
                                head_node_args = head_node_args, 
                                child_node_definitions = child_defs, 
                                parent_name = 'Simulation_runs',
