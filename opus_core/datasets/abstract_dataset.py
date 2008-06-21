@@ -795,8 +795,8 @@ class AbstractDataset(object):
                 tmpdata = data[name[iattr]]
             self.add_attribute(data=tmpdata, name=new_name[iattr], metadata=metadata)
 
-    def get_join_data(self, dataset, name, join_attribute=None, return_value_if_not_found=-1.0,
-                      filled_value=0.0):
+    def get_join_data(self, dataset, name, join_attribute=None, return_value_if_not_found=None,
+                      filled_value=None ):
         """Does a join on a attribute of two datasets (self and 'dataset').
         'join_attribute' specifies the join attribute of self. If this is None it is
         assumed to be identical to dataset._id_names which is the join attribute of 'dataset'.
@@ -806,7 +806,20 @@ class AbstractDataset(object):
         For values of 'join_attribute' not found in dataset constant given by
         'return_value_if_not_found' are used. 'filled_value' specifies a constant to be used
         for masked values of the dataset attribute 'name'.
+        
+        if return_value_if_not_found and filled_value is None, a default value according to the 
+        dtype.kind ('biufcSUV') of the named attributed is applied:
+           boolean (b): False; string (S): ''; Unicode (U): ''; integer (i): -1;
+           unsigned (u): 0; float (f): -1.0; and undefined for complex (c) and Void (V)
         """
+        
+        default_return_values_by_type = default_filled_values_by_type = {'S':'',
+                                                                         'U':'',
+                                                                         'b':False,
+                                                                         'i':-1,
+                                                                         'u':0,
+                                                                         'f':-1.0}
+        
         id_name = dataset.get_id_name()[0]
         if join_attribute == None:
             join_attribute = id_name
@@ -822,13 +835,15 @@ class AbstractDataset(object):
             if idx_found.sum() == idx_found.size: # no missing value
                 values = attr_values
             else:
-                if attr_values.dtype.kind == 'S':
-                    if not isinstance(return_value_if_not_found, str):
-                        return_value_if_not_found = ""
-                    values = array(self.size()*[return_value_if_not_found]).astype(attr_values.dtype)
-                    values[idx_found] = attr_values
+                k = attr_values.dtype.kind
+                if return_value_if_not_found is None and default_return_values_by_type.has_key(k):
+                    values = array([ default_return_values_by_type[k] ], dtype=attr_values.dtype).repeat(self.size())
                 else:
-                    values = resize(array([return_value_if_not_found], dtype=attr_values.dtype), self.size())
+                    values = array([return_value_if_not_found], dtype=attr_values.dtype).repeat(self.size())
+                
+                if filled_value is None and default_filled_values_by_type.has_key(k):
+                    values[idx_found] = ma.filled(attr_values, default_filled_values_by_type[k])
+                else:
                     values[idx_found] = ma.filled(attr_values, filled_value)
             if lname > 1:
                 if iattr == 0:
@@ -911,7 +926,8 @@ class AbstractDataset(object):
             values = f(*[filled_what], **{'labels': ids_local, 'index': myids})
             result = array(values)
         except Exception, e:
-            raise StandardError, "Unknown function " + function + " or error occured during evaluation.\n%s" % e
+            logger.log_error( "Unknown function or error occured evaluating " + function + ".\n" )
+            raise e
         return result
 
     def sum_over_ids(self, ids, what):
@@ -2247,7 +2263,26 @@ class AbstractDataset(object):
 
     def _raise_error(self, error, msg):
         raise error("In dataset '%s': %s'" % (self.get_dataset_name(), msg))
-
+    
+    def createTable(self, fileh, where, name=None, description=None, *args, **kwargs):
+        """
+        return a table (from pyTables) created from attributes of Dataset class.
+        See createTable() method of tables.File class for more information on the parameters. 
+        """
+        
+        from numpy import rec 
+        if name is None:
+            name = self._get_in_table_name_for_cache()
+        self.load_dataset(attributes="*")
+        attr_values = []
+        attr_names = []
+        for attr_name in self.get_known_attribute_names():
+            attr_values.append(self.get_attribute(attr_name))
+            attr_names.append(attr_name.encode("ascii"))
+            #print attr_name, self.get_attribute(attr_name).dtype
+        #print attr_names
+        recarray = rec.fromarrays(attr_values, names=attr_names)
+        return fileh.createTable(where, name, recarray, *args, **kwargs)
 
 from opus_core.tests import opus_unittest
 
