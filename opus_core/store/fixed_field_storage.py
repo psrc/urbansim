@@ -27,7 +27,14 @@ class fixed_field_storage(Storage):
     A storage object that saves table and value data into a directory, 
     giving each table its own file in the directory. Fields are written
     with fixed width and no delimiters. Format info optionally is
-    written in a commented header.
+    written in a commented header.  Format info is supplied as an XML string:
+        <fixed_field>
+            <field name="column_name_1" format="5.2f" />
+            <field name="column_name_2" format="10s" />
+            ...
+        </fixed_field>
+    The 'format' attribute is a printf-style format string:
+        http://docs.python.org/lib/typesseq-strings.html
     """
 
     #
@@ -51,7 +58,7 @@ class fixed_field_storage(Storage):
 
     def __init__(self, 
                  storage_location, 
-                 file_extension,
+                 file_extension = 'dat',
                  format_location = Location.HEADER,
                  format_file_extension = 'fmt',
                  format_prefix = '# ',
@@ -212,6 +219,14 @@ class fixed_field_storage(Storage):
         # Done
         return column_names
 
+
+    #
+    # fixed_field_storage interface
+    #
+
+    def get_file_extension(self):
+        return self._file_extension
+        
 
     #
     # Private utility methods

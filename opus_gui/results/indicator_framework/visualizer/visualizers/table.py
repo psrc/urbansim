@@ -33,17 +33,23 @@ class Table(Visualization):
                  name = None,
                  output_type = None,
                  storage_location = None,
-                 output_style = ALL):
+                 output_style = ALL,
+                 fixed_field_format = None  # Only used with the 'fixed_field' output type
+                ):
 
         if output_type == 'sql' and not isinstance(storage_location, DatabaseConfiguration):
             raise Exception("If Table output_type is 'sql', a Database object must be passed as storage_location.")
-        elif output_type in ['dbf', 'csv', 'tab', 'esri'] and \
+        elif output_type in ['dbf', 'csv', 'tab', 'esri', 'fixed_field'] and \
                storage_location is not None and \
                not isinstance(storage_location,str):
             raise Exception("If Table output_type is %s, storage_location must be a path to the output directory"%output_type)
-        elif output_type not in ['dbf', 'csv', 'tab', 'sql', 'esri']:
+        elif output_type not in ['dbf', 'csv', 'tab', 'sql', 'esri', 'fixed_field']:
             print output_type
-            raise Exception("Table output_type must be either dbf, csv, tab, sql, or esri")
+            raise Exception("Table output_type must be either dbf, csv, tab, sql, esri, fixed_field")
+
+        if output_type == "fixed_field" and not fixed_field_format:
+            raise ValueError("If Table output_type is 'fixed_field', an XML format string must be passed as fixed_field_format.")
+        self.fixed_field_format = fixed_field_format
 
         if output_style not in [Table.ALL,
                                 Table.PER_YEAR,
@@ -74,6 +80,8 @@ class Table(Visualization):
     def get_file_extension(self):
         if self.output_type == 'sql':
             return None
+        elif self.output_type == 'fixed_field':
+            return self.output_storage.get_file_extension()
         else:
             return self.output_type
 
@@ -233,6 +241,8 @@ class Table(Visualization):
         if self.output_type in ['csv','tab']:
             kwargs['fixed_column_order'] = column_names
             #kwargs['append_type_info'] = False
+        elif self.output_type in ['fixed_field']:
+            kwargs['format'] = self.fixed_field_format
 
         self.output_storage.write_table(
             table_name = table_name,
@@ -453,7 +463,7 @@ class Tests(AbstractIndicatorTest):
                 self.assertEqual(list(v), list(output[k]))
 
     def test__output_types(self):
-        output_types = ['csv','tab']
+        output_types = ['csv','tab','fixed_field']
         try:
             import dbfpy
         except ImportError:
@@ -494,6 +504,8 @@ class Tests(AbstractIndicatorTest):
             kwargs = {}
             if output_type == 'sql':
                 kwargs['storage_location'] = database_config
+            elif output_type == 'fixed_field':
+                kwargs['fixed_field_format'] = '<fixed_field><field name="attribute_1980" format="10f" /></fixed_field>'
 
             table = Table(
                         indicator_directory = self.source_data.get_indicator_directory(),
@@ -503,7 +515,7 @@ class Tests(AbstractIndicatorTest):
             viz_result = table.visualize(
                         indicators_to_visualize = ['attr1'],
                         computed_indicators = computed_indicators)[0]
-            if output_type in ['csv','dbf','tab']:
+            if output_type in ['csv','dbf','tab','fixed_field']:
                 self.assertTrue(os.path.exists(
                    os.path.join(viz_result.storage_location,
                    viz_result.table_name + '.' + viz_result.file_extension)))
