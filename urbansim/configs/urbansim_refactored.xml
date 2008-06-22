@@ -127,7 +127,6 @@
         <opus_table_name type="string">ALL</opus_table_name>
       </opus_dataset_to_esri_config>
     </opus_dataset_to_esri>
-
 	</Tool_Sets>
   </data_manager>
   <model_manager>
