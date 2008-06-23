@@ -1,14 +1,14 @@
 <opus_project>
   <general>
     <parent type="file">estimate.xml</parent>
+   <all_variables type="dictionary">
+     <ln_cost type="variable_definition" >ln_cost=ln(psrc.parcel.cost+10)</ln_cost>
+     <tax type="variable_definition" >tax=urbansim_parcel.parcel.tax</tax>
+   </all_variables>
   </general>
   <model_manager>
     <estimation type="dictionary" >
       <real_estate_price_model type="dictionary" >
-        <all_variables type="dictionary" >
-          <ln_cost type="variable_definition" >ln_cost=ln(psrc.parcel.cost+10)</ln_cost>
-          <tax type="variable_definition" >tax=urbansim_parcel.parcel.tax</tax>
-        </all_variables>
         <single_family_residential type="submodel" >
           <submodel_id type="integer" >240</submodel_id>
         </single_family_residential>

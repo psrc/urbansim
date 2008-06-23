@@ -110,21 +110,20 @@ class XMLConfiguration(object):
         estimation_section = self.get_section('model_manager/estimation')
         model = estimation_section[model_name]
         result = {}
-        # sort the list of values to make it easier to test the results
-        vals = model['all_variables'].values()
+        # sort the list of variables to make it easier to test the results
+        vals = self.get_section('general/all_variables').values()
         vals.sort()
         result['_definition_'] = vals
         for submodel_name in model.keys():
-            if submodel_name!='all_variables':
-                submodel = model[submodel_name]
-                if 'variables' in submodel.keys():
-                    result[submodel['submodel_id']] = submodel['variables']
-                else: # specification has equations
-                    result[submodel['submodel_id']] = {}
-                    for equation_name in submodel.keys():
-                        if equation_name!='description' and equation_name!='submodel_id':
-                            equation_spec = submodel[equation_name]
-                            result[submodel['submodel_id']][equation_spec['equation_id']] = equation_spec['variables']
+            submodel = model[submodel_name]
+            if 'variables' in submodel.keys():
+                result[submodel['submodel_id']] = submodel['variables']
+            else: # specification has equations
+                result[submodel['submodel_id']] = {}
+                for equation_name in submodel.keys():
+                    if equation_name!='description' and equation_name!='submodel_id':
+                        equation_spec = submodel[equation_name]
+                        result[submodel['submodel_id']][equation_spec['equation_id']] = equation_spec['variables']
         return result
     
     def save(self):
@@ -408,8 +407,7 @@ class XMLConfiguration(object):
         
     def _convert_variable_list_to_data(self, node):
         # node should be a text node with a comma-separated list of variable names
-        # we also strip off any white space from each name
-        return map(lambda v: v.strip(), node.text.split(','))
+        return node.text.split(',')
         
     def _convert_tuple_to_data(self, node):
         r = map(lambda n: self._convert_node_to_data(n), node)
@@ -631,8 +629,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config = XMLConfiguration(f).get_section('model_manager/estimation')
         should_be = {
           'real_estate_price_model': {
-            'all_variables': {'ln_cost': 'ln_cost=ln(psrc.parcel.cost)', 'unit_price': 'unit_price=urbansim_parcel.parcel.unit_price'},
-            'single_family_residential': {'submodel_id': 24, 'variables': ['ln_cost']}},
+            'single_family_residential': {'submodel_id': 24, 'variables': ['ln_cost', 'unit_price']}},
           'models_to_estimate': ['real_estate_price_model']}
         self.assertEqual(config, should_be)
         
@@ -641,17 +638,14 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config = XMLConfiguration(f).get_section('model_manager/estimation')
         should_be = {
           'real_estate_price_model': {
-            'all_variables': {'ln_cost': 'ln_cost=ln(psrc.parcel.cost+10)',
-                              'tax': 'tax=urbansim_parcel.parcel.tax',
-                              'unit_price': 'unit_price=urbansim_parcel.parcel.unit_price'},
-            'single_family_residential': {'submodel_id': 240, 'variables': ['ln_cost']}},
+            'single_family_residential': {'submodel_id': 240, 'variables': ['ln_cost', 'unit_price']}},
           'models_to_estimate': ['real_estate_price_model', 'household_location_choice_model']}
         self.assertEqual(config, should_be)
         
     def test_inherited_attributes(self):
         # make sure that inherited attributes are tagged as 'inherited'
         f = os.path.join(self.test_configs, 'estimation_child.xml')
-        all_variables_node = XMLConfiguration(f).full_tree.find('model_manager/estimation/real_estate_price_model/all_variables')
+        all_variables_node = XMLConfiguration(f).full_tree.find('general/all_variables')
         # the ln_cost variable is redefined in estimation_child, so it shouldn't have the 'inherited' attribute
         ln_cost_node = all_variables_node.find('ln_cost')
         self.assertEqual(ln_cost_node.get('inherited'), None)
@@ -665,7 +659,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_grandchild_inherited_attributes(self):
         # test two levels of inheritance, with multiple inheritance as well
         f = os.path.join(self.test_configs, 'estimation_grandchild.xml')
-        all_variables_node = XMLConfiguration(f).full_tree.find('model_manager/estimation/real_estate_price_model/all_variables')
+        all_variables_node = XMLConfiguration(f).full_tree.find('general/all_variables')
         # the ln_cost variable is redefined in estimation_grandchild, so it shouldn't have the 'inherited' attribute
         ln_cost_node = all_variables_node.find('ln_cost')
         self.assertEqual(ln_cost_node.get('inherited'), None)
@@ -684,9 +678,9 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # test the 'find' method on inherited and non-inherited nodes
         f = os.path.join(self.test_configs, 'estimation_child.xml')
         config = XMLConfiguration(f)
-        ln_cost_str = config.find('model_manager/estimation/real_estate_price_model/all_variables/ln_cost')
+        ln_cost_str = config.find('general/all_variables/ln_cost')
         self.assertEqual(ln_cost_str.strip(), '<ln_cost type="variable_definition">ln_cost=ln(psrc.parcel.cost+10)</ln_cost>')
-        unit_price_str = config.find('model_manager/estimation/real_estate_price_model/all_variables/unit_price')
+        unit_price_str = config.find('general/all_variables/unit_price')
         self.assertEqual(unit_price_str.strip(), '<unit_price inherited="estimate" type="variable_definition">unit_price=urbansim_parcel.parcel.unit_price</unit_price>')
         squid_str = config.find('model_manager/estimation/squid')
         self.assertEqual(squid_str, None)
@@ -705,7 +699,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'estimate.xml')
         config = XMLConfiguration(f).get_estimation_specification('real_estate_price_model')
         should_be = {'_definition_': ['ln_cost=ln(psrc.parcel.cost)', 'unit_price=urbansim_parcel.parcel.unit_price'],
-          24: ['ln_cost']}
+          24: ['ln_cost', 'unit_price']}
         self.assertEqual(config, should_be)
         
     def test_get_estimation_specification_with_equation(self):
@@ -719,7 +713,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'estimation_child.xml')
         config = XMLConfiguration(f).get_estimation_specification('real_estate_price_model')
         should_be = {'_definition_': ['ln_cost=ln(psrc.parcel.cost+10)', 'tax=urbansim_parcel.parcel.tax', 'unit_price=urbansim_parcel.parcel.unit_price'],
-          240: ['ln_cost']}
+          240: ['ln_cost', 'unit_price']}
         self.assertEqual(config, should_be)
         
     def test_save_as(self):
@@ -762,7 +756,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(section3, None)
         # no model_manager section in the updated configuration
         section4 = config.get_section('model_manager/estimation')
-        self.assertEqual(section4['real_estate_price_model']['all_variables']['ln_cost'], 'ln_cost=ln(psrc.parcel.cost+100)')
+        self.assertEqual(section4['real_estate_price_model']['single_family_residential']['variables'], ['ln_cost', 'unit_price'])
 
     def test_update_and_save(self):
         # make sure nodes marked as temporary or inherited are filtered out when doing an update and a save
@@ -772,6 +766,10 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
             <general>
               <parent type="file">estimation_child.xml</parent>
               <parent type="file">estimation_child2.xml</parent>
+              <all_variables type="dictionary" >
+                <ln_cost type="variable_definition" >ln_cost=ln(psrc.parcel.cost+100)</ln_cost>
+                <tax type="variable_definition" inherited="estimation_child">tax=urbansim_parcel.parcel.tax</tax>
+              </all_variables>
             </general>
             <data_manager inherited="someplace">
             </data_manager>
@@ -780,11 +778,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
             <model_manager>
               <estimation type="dictionary" >
                 <real_estate_price_model type="dictionary" >
-                  <all_variables type="dictionary" >
-                    <ln_cost type="variable_definition" >ln_cost=ln(psrc.parcel.cost+100)</ln_cost>
-                    <tax type="variable_definition" inherited="estimation_child">tax=urbansim_parcel.parcel.tax</tax>
-                  </all_variables>
-                 </real_estate_price_model>
+                </real_estate_price_model>
                </estimation>
             </model_manager>
            <scenario_manager/>
@@ -799,14 +793,14 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
             <general>
               <parent type="file">estimation_child.xml</parent>
               <parent type="file">estimation_child2.xml</parent>
+              <all_variables type="dictionary">
+                <ln_cost followers="tax" type="variable_definition">ln_cost=ln(psrc.parcel.cost+100)</ln_cost>
+               </all_variables>
             </general>
             <model_manager>
               <estimation type="dictionary">
                 <real_estate_price_model type="dictionary">
-                  <all_variables type="dictionary">
-                    <ln_cost followers="tax" type="variable_definition">ln_cost=ln(psrc.parcel.cost+100)</ln_cost>
-                    </all_variables>
-                 </real_estate_price_model>
+                </real_estate_price_model>
                </estimation>
             </model_manager>
            <scenario_manager />

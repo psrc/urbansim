@@ -2,13 +2,13 @@
   <general>
     <parent type="file">estimation_child.xml</parent>
     <parent type="file">estimation_child2.xml</parent>
+    <all_variables type="dictionary" >
+      <ln_cost type="variable_definition" >ln_cost=ln(psrc.parcel.cost+100)</ln_cost>
+    </all_variables>
   </general>
   <model_manager>
     <estimation type="dictionary" >
       <real_estate_price_model type="dictionary" >
-        <all_variables type="dictionary" >
-          <ln_cost type="variable_definition" >ln_cost=ln(psrc.parcel.cost+100)</ln_cost>
-        </all_variables>
       </real_estate_price_model>
     </estimation>
   </model_manager>

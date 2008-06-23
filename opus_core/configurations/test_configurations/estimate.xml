@@ -1,4 +1,10 @@
 <opus_project>
+  <general>
+   <all_variables type="dictionary">
+     <ln_cost type="variable_definition" >ln_cost=ln(psrc.parcel.cost)</ln_cost>
+     <unit_price type="variable_definition" >unit_price=urbansim_parcel.parcel.unit_price</unit_price>
+   </all_variables>
+  </general>
   <model_manager>
     <model_system type="dictionary" >
       <real_estate_price_model type="dictionary" >
@@ -13,15 +19,9 @@
     </model_system>
     <estimation type="dictionary" >
       <real_estate_price_model type="dictionary" >
-        <all_variables type="dictionary" >
-          <ln_cost type="variable_definition" >ln_cost=ln(psrc.parcel.cost)</ln_cost>
-          <unit_price type="variable_definition" >unit_price=urbansim_parcel.parcel.unit_price</unit_price>
-        </all_variables>
         <single_family_residential type="submodel" >
           <submodel_id type="integer" >24</submodel_id>
-          <variables type="selectable_list" >
-            <ln_cost type="variable" choices="Use|Skip" >Use</ln_cost>
-          </variables>
+          <variables type="variable_list">ln_cost,unit_price</variables>
         </single_family_residential>
       </real_estate_price_model>
       <models_to_estimate type="selectable_list" >

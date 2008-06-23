@@ -1,14 +1,14 @@
 <opus_project>
   <general>
     <parent type="file">estimate.xml</parent>
+    <all_variables type="dictionary" >
+      <tax type="variable_definition" >tax=urbansim_parcel.parcel.tax+300</tax>
+      <extratax type="variable_definition" >extratax=urbansim_parcel.parcel.extratax</extratax>
+    </all_variables>
   </general>
   <model_manager>
     <estimation type="dictionary" >
       <real_estate_price_model type="dictionary" >
-        <all_variables type="dictionary" >
-          <tax type="variable_definition" >tax=urbansim_parcel.parcel.tax+300</tax>
-          <extratax type="variable_definition" >extratax=urbansim_parcel.parcel.extratax</extratax>
-        </all_variables>
       </real_estate_price_model>
     </estimation>
   </model_manager>

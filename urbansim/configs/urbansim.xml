@@ -217,7 +217,7 @@
        <specification parser_action="category">
             <submodel_name type="submodel">
             <submodel_id type="integer">1</submodel_id>
-            <variables type="variable_list">[constant]</variables>
+            <variables type="variable_list">constant</variables>
           </submodel_name>
        </specification>
        </regression_model_template>
@@ -479,36 +479,24 @@
         <agent_location_choice_model_template choices="Estimate|Skip" type="model" copyable="True">Skip</agent_location_choice_model_template>
       </models_to_estimate>
    <model_template  type="dictionary" copyable="True">
-   <all_variables type="dictionary">
-     <var1 type="variable_definition" copyable="True">var1 = package.dataset.some_variable_or_expression</var1>
-   </all_variables>
    <submodel type="submodel" copyable="True">
       <description type="string">No submodel</description>
       <submodel_id type="integer">-2</submodel_id>
-      <variables type="selectable_list">
-         <var1 choices="Use|Skip" type="variable" copyable="True">Skip</var1>
-      </variables>
+      <variables type="variable_list">var1</variables>
    </submodel>
    </model_template>
    <choice_model_with_equations_template  type="dictionary" copyable="True">
-   <all_variables type="dictionary">
-     <var1 type="variable_definition" copyable="True">var1 = package.dataset.some_variable_or_expression</var1>
-   </all_variables>
    <submodel type="submodel" copyable="True">
       <description type="string">No submodel</description>
       <submodel_id type="integer">-2</submodel_id>
       <choice_1 type="dictionary" copyable="True">
         <equation_id type="integer">1</equation_id>
-        <variables type="selectable_list">
-             <constant choices="Use|Skip" type="variable" copyable="True">Use</constant>
-        </variables>
-        </choice_1>
-        <choice_2 type="dictionary" copyable="True">
-          <equation_id type="integer">2</equation_id>
-          <variables type="selectable_list">
-             <var1 choices="Use|Skip" type="variable" copyable="True">Skip</var1>
-           </variables>
-        </choice_2>
+        <variables type="variable_list">constant</variables>
+      </choice_1>
+      <choice_2 type="dictionary" copyable="True">
+        <equation_id type="integer">2</equation_id>
+        <variables type="variable_list">var1</variables>
+      </choice_2>
    </submodel>
    </choice_model_with_equations_template>
    <estimation_config type="dictionary">
