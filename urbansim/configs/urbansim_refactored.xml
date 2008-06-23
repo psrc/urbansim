@@ -132,6 +132,78 @@
   <model_manager>
    <model_system type="dictionary">
       <templates parser_action="category">
+      <regression_refactored_model_template parser_action="category" copyable="True">
+       <initialization parser_action="category">
+       <regression_model type="dictionary" copyable="True">
+         <import flags="hidden" type="dictionary">
+          <opus_core.regression_model type="string">RegressionModel</opus_core.regression_model>
+        </import>
+        <init type="dictionary">
+          <name flags="hidden" type="string">RegressionModel</name>
+          <arguments type="dictionary">
+            <regression_procedure type="quoted_string">opus_core.linear_regression</regression_procedure>
+            <submodel_string type="string" parser_action="blank_to_None"></submodel_string>
+            <run_config type="string" parser_action="blank_to_None"></run_config>
+            <estimate_config type="string" parser_action="blank_to_None"></estimate_config>
+            <debuglevel flags="hidden" type="integer">0</debuglevel>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </init>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <specification flags="hidden" type="string">specification</specification>
+            <coefficients flags="hidden" type="string">coefficients</coefficients>
+            <dataset type="string">fill in</dataset>
+            <index type="string" parser_action="blank_to_None" flags="hidden">rm_index</index>
+            <chunk_specification type="string" parser_action="blank_to_None"></chunk_specification>
+            <data_objects flags="hidden" type="string">datasets</data_objects>
+          </arguments>
+        </run>
+        <prepare_for_run type="dictionary">
+          <name flags="hidden" type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <dataset type="string" parser_action="blank_to_None"></dataset>
+            <dataset_filter type="quoted_string" parser_action="blank_to_None"></dataset_filter>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">regression_model_template_specification</specification_table>
+            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+            <coefficients_table type="quoted_string">regression_model_template_coefficients</coefficients_table>
+            <sample_coefficients type="boolean">False</sample_coefficients>
+            <cache_storage flags="hidden" type="string">base_cache_storage</cache_storage>
+            <multiplicator type = "integer">1</multiplicator>
+          </arguments>
+          <output flags="hidden" type="string">(specification, coefficients, rm_index)</output>
+        </prepare_for_run>
+        <estimate type="dictionary">
+          <arguments type="dictionary">
+            <specification flags="hidden" type="string">specification</specification>
+            <dataset type="string">fill in</dataset>
+            <dependent_variable config_name="outcome_attribute" type="quoted_string">fill in</dependent_variable>
+            <index flags="hidden" type="string" parser_action="blank_to_None">rm_index</index>
+            <procedure type="quoted_string">opus_core.estimate_linear_regression</procedure>
+            <data_objects flags="hidden" type="string">datasets</data_objects>
+          </arguments>
+          <output flags="hidden" type="string">(coefficients, dummy)</output>
+        </estimate>
+        <prepare_for_estimate type="dictionary">
+          <name flags="hidden" type="string">prepare_for_estimate</name>
+          <arguments type="dictionary">
+            <dataset type="string" parser_action="blank_to_None"></dataset>
+            <dataset_filter type="quoted_string" parser_action="blank_to_None"></dataset_filter>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">regression_model_template_specification</specification_table>
+          </arguments>
+          <output flags="hidden" type="string">(specification, rm_index)</output>
+        </prepare_for_estimate>
+       </regression_model>
+       </initialization>
+       <specification parser_action="category">
+            <submodel_name type="submodel">
+            <submodel_id type="integer">1</submodel_id>
+            <variables type="variable_list">constant, hwy600</variables>
+          </submodel_name>
+       </specification>
+       </regression_refactored_model_template>
         <simple_model_template  type="dictionary" copyable="True">
          <import flags="hidden" type="dictionary">
           <opus_core.simple_model type="string">SimpleModel</opus_core.simple_model>
