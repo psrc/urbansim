@@ -9,8 +9,8 @@
       <package_order type="list">['seattle_parcel','urbansim_parcel','urbansim']</package_order>
       <package_order_exceptions type="dictionary" />
     </dataset_pool_configuration>
+    </advanced>
     <available_datasets type="list">['parcel','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets> 
-  </advanced>
   </general>
   <data_manager_dbstree>
     <database_templates setexpanded="True" type="db_templates">
@@ -317,7 +317,7 @@
       </indicators_from_bob>
       <my_indicators append_to="True" type="indicator_library" />
     </Indicator_libraries>
-    <Indicator_groups setexpanded="True" type="group" />
+    <Indicator_batches setexpanded="True" type="group" />
     <Simulation_runs setexpanded="True" type="all_source_data">
     </Simulation_runs>
   </results_manager>
