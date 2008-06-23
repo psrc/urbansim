@@ -53,7 +53,9 @@
         </import>
         <init type="dictionary">
           <name type="string">SubareaEmploymentTransitionModel</name>
-          <subarea_id_name type="quoted_string">faz_id</subarea_id_name>
+          <arguments type="dictionary">
+            <subarea_id_name type="quoted_string">faz_id</subarea_id_name>
+          </arguments>
         </init>
       </employment_transition_model>
       <household_transition_model type="dictionary">
@@ -62,7 +64,9 @@
         </import>
         <init type="dictionary">
           <name type="string">SubareaHouseholdTransitionModel</name>
-          <subarea_id_name type="quoted_string">faz_id</subarea_id_name>
+          <arguments type="dictionary">
+            <subarea_id_name type="quoted_string">faz_id</subarea_id_name>
+          </arguments>
         </init>
       </household_transition_model>
       <household_location_choice_model type="dictionary">
@@ -71,7 +75,9 @@
         </import>
         <init type="dictionary">
           <name type="string">SubareaHouseholdLocationChoiceModel</name>
-          <subarea_id_name type="quoted_string">faz_id</subarea_id_name>
+          <arguments type="dictionary">
+            <subarea_id_name type="quoted_string">faz_id</subarea_id_name>
+          </arguments>
         </init>
       </household_location_choice_model>
       <employment_location_choice_model type="dictionary">
@@ -80,7 +86,9 @@
         </import>
         <init type="dictionary">
           <name type="string">SubareaEmploymentLocationChoiceModel</name>
-          <subarea_id_name type="quoted_string">faz_id</subarea_id_name>
+          <arguments type="dictionary">
+            <subarea_id_name type="quoted_string">faz_id</subarea_id_name>
+          </arguments>
         </init>
       </employment_location_choice_model>
       <home_based_employment_location_choice_model type="dictionary">
