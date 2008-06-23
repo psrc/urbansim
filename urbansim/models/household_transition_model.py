@@ -53,7 +53,7 @@ class HouseholdTransitionModel(Model):
         
     def _update_household_set(self, household_set):
         index_of_duplicated_hhs = household_set.duplicate_rows(self.mapping_existing_hhs_to_new_hhs)
-        household_set.modify_attribute(name=self.location_id_name, data=zeros((index_of_duplicated_hhs.size,), 
+        household_set.modify_attribute(name=self.location_id_name, data=-1 * ones((index_of_duplicated_hhs.size,), 
                                                                               dtype=household_set.get_data_type(self.location_id_name)),
                                                                           index=index_of_duplicated_hhs)
         household_set.remove_elements(self.remove_households)
@@ -225,7 +225,7 @@ class HouseholdTransitionModel(Model):
         """This code is only used if there are no households in one category."""
         # assign location id (unplaced) and household_id
         self.new_households[self.location_id_name] = concatenate((self.new_households[self.location_id_name],
-                              zeros((n,), dtype=self.new_households[self.location_id_name].dtype.type)))
+                              -1 * ones((n,), dtype=self.new_households[self.location_id_name].dtype.type)))
         # assign marginal characteristics
         for attr in self.marginal_characteristic_names:
             value = eval("group_element."+attr)

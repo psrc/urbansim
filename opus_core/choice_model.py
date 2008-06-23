@@ -186,7 +186,7 @@ class ChoiceModel(ChunkModel):
         # simulate
         choice_indices = self.simulate_chunk()
         choice_set_ids = self.choice_set.get_id_attribute()
-        choices = where(choice_indices < 0, 0, choice_set_ids[choice_indices])
+        choices = where(choice_indices < 0, -1, choice_set_ids[choice_indices])
         del self.run_config["index"]
         return choices
 
