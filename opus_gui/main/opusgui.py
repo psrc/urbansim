@@ -299,7 +299,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             opusXMLTree.save()
             self.toolboxStuff.runManagerTree.model.markAsClean()
             self.toolboxStuff.dataManagerTree.model.markAsClean()
-            self.toolboxStuff.dataManagerDBSTree.model.markAsClean()
+            if self.toolboxStuff.dataManagerDBSTree is not None:
+                self.toolboxStuff.dataManagerDBSTree.model.markAsClean()
             self.toolboxStuff.modelManagerTree.model.markAsClean()
             self.toolboxStuff.resultsManagerTree.model.markAsClean()
             self.toolboxStuff.generalManagerTree.model.markAsClean()
