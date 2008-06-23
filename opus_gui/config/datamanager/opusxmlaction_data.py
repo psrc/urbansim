@@ -21,6 +21,7 @@ from PyQt4.QtXml import *
 from opus_gui.run.tool.opusruntool import *
 import opus_gui.util.documentationbase
 from opus_gui.config.datamanager.configuretool import ConfigureToolGui
+from opus_gui.config.datamanager.executetool import ExecuteToolGui
 from opus_gui.config.managerbase.cloneinherited import CloneInheritedGui
 from opus_gui.config.managerbase.clonenode import CloneNodeGui
 from opus_core.configurations.xml_configuration import XMLConfiguration
@@ -47,12 +48,12 @@ class OpusXMLAction_Data(object):
         self.cloneIcon = QIcon(":/Images/Images/application_double.png")
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
         
-#        self.actExecToolFile = QAction(self.calendarIcon,
-#                                         "Exec Tool (TESTING)",
-#                                         self.xmlTreeObject.mainwindow)
-#        QObject.connect(self.actExecToolFile,
-#                        SIGNAL("triggered()"),
-#                        self.execToolFile)
+        self.actExecToolFile = QAction(self.calendarIcon,
+                                       "Exec Tool (TESTING)",
+                                       self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actExecToolFile,
+                        SIGNAL("triggered()"),
+                        self.execToolFile)
 
         self.actExecToolConfig = QAction(self.executeIcon,
                                            "Execute Tool",
@@ -291,33 +292,14 @@ class OpusXMLAction_Data(object):
 
     def execToolFile(self):
         #print "Exec Tool Pressed"
-        # First find the tool path...
-        toolPath = ""
-        if self.currentIndex.internalPointer().parent().node().hasChildNodes():
-            children = self.currentIndex.internalPointer().parent().node().childNodes()
-            for x in xrange(0,children.count(),1):
-                if children.item(x).isElement():
-                    domElement = children.item(x).toElement()
-                    if not domElement.isNull():
-                        if domElement.tagName() == QString("tool_path"):
-                            if domElement.hasChildNodes():
-                                children2 = domElement.childNodes()
-                                for x2 in xrange(0,children2.count(),1):
-                                    if children2.item(x2).isText():
-                                        toolPath = children2.item(x2).nodeValue()
-        filePath = ""
-        if self.currentIndex.internalPointer().node().hasChildNodes():
-            children = self.currentIndex.internalPointer().node().childNodes()
-            for x in xrange(0,children.count(),1):
-                if children.item(x).isText():
-                    filePath = children.item(x).nodeValue()
-        importPath = QString(toolPath).append(QString(".")).append(QString(filePath))
-        print "New import ", importPath
-        x = OpusTool(self.xmlTreeObject.mainwindow,importPath,{'param1':'val1','param2':'val2'})
-        y = RunToolThread(self.xmlTreeObject.mainwindow,x)
-        y.run()
+        # Open up a GUI element and populate with variable's
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        window = ExecuteToolGui(self,flags)
+        window.show()
+        
 
-    def execToolConfigGen(self,configNode,library):
+    def execToolConfigGen(self,configNode):
+        library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
         tool_hook = configNode.elementsByTagName(QString("tool_hook")).item(0)
         tool_name = QString("")
         if tool_hook.hasChildNodes():
@@ -371,13 +353,13 @@ class OpusXMLAction_Data(object):
     def execToolConfig(self):
         # First find the tool that this config refers to...
         configNode = self.currentIndex.internalPointer().node().toElement()
-        library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
-        self.execToolConfigGen(configNode,library)
+        #library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
+        self.execToolConfigGen(configNode)
         
     def execBatch(self):
         #print "Execute batch pressed..."
         batchNode = self.currentIndex.internalPointer().node().toElement()
-        library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
+        #library = self.currentIndex.model().xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
         childNodes = batchNode.childNodes()
         for x in xrange(0,childNodes.count(),1):
             thisNode = childNodes.item(x)
@@ -385,7 +367,7 @@ class OpusXMLAction_Data(object):
                 thisElement = thisNode.toElement()
                 if thisElement.hasAttribute(QString("type")) and \
                        (thisElement.attribute(QString("type")) == QString("tool_config")):
-                    self.execToolConfigGen(thisElement,library)
+                    self.execToolConfigGen(thisElement)
 
     def cloneNode(self):
         #print "cloneNode Pressed"
@@ -536,7 +518,7 @@ class OpusXMLAction_Data(object):
 
                 self.menu = QMenu(self.xmlTreeObject.mainwindow)
                 if domElement.attribute(QString("type")) == QString("tool_file"):
-#                    self.menu.addAction(self.actExecToolFile)
+                    self.menu.addAction(self.actExecToolFile)
                     self.menu.addSeparator()
                     #self.menu.addAction(self.actNewConfig)
                     self.menu.addAction(self.actCloneTool)
