@@ -2,14 +2,14 @@
   <general>
     <description type="string">Sample Seattle project</description>
     <parent type="file">urbansim_parcel/configs/urbansim_parcel.xml</parent>
-    <advanced parser_action="category">
+    <advanced parser_action='category'>
     <dataset_pool_configuration type="class">
       <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
       <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
       <package_order type="list">['seattle_parcel','urbansim_parcel','urbansim']</package_order>
       <package_order_exceptions type="dictionary" />
     </dataset_pool_configuration>
-    </advanced>
+  </advanced>
   </general>
   <data_manager_dbstree>
     <database_templates setexpanded="True" type="db_templates">
