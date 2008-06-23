@@ -17,6 +17,7 @@
         <endyear type="integer">1981</endyear>
       </years>
       <list_test type="list">[10, 20, 30]</list_test>
+      <vars type="variable_list">population,employment ,  density</vars>
       <dicttest type="dictionary">
         <str1 type="string">squid</str1>
         <str2 type="string">clam</str2>

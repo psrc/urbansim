@@ -327,6 +327,8 @@ class XMLConfiguration(object):
             return self._convert_string_to_data(node, unicode)
         elif type_name=='selectable_list':
             return self._convert_list_to_data(node)
+        elif type_name=='variable_list':
+            return self._convert_variable_list_to_data(node)
         elif type_name=='tuple':
             return self._convert_tuple_to_data(node)
         elif type_name=='list':
@@ -403,6 +405,11 @@ class XMLConfiguration(object):
             return result_dict
         else:
             return result_list
+        
+    def _convert_variable_list_to_data(self, node):
+        # node should be a text node with a comma-separated list of variable names
+        # we also strip off any white space from each name
+        return map(lambda v: v.strip(), node.text.split(','))
         
     def _convert_tuple_to_data(self, node):
         r = map(lambda n: self._convert_node_to_data(n), node)
@@ -495,6 +502,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
                           'emptyfloat': None,
                           'years': (1980, 1981),
                           'list_test': [10, 20, 30],
+                          'vars': ['population', 'employment', 'density'],
                           'dicttest': {'str1': 'squid', 'str2': 'clam'},
                           'models': ['model1', 
                                      {'model2': {'group_members': 'all'}}, 
