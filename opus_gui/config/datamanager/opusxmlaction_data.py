@@ -49,7 +49,7 @@ class OpusXMLAction_Data(object):
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
         
         self.actExecToolFile = QAction(self.calendarIcon,
-                                       "Exec Tool (TESTING)",
+                                       "Execute Tool",
                                        self.xmlTreeObject.mainwindow)
         QObject.connect(self.actExecToolFile,
                         SIGNAL("triggered()"),
