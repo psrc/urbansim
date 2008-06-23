@@ -71,6 +71,7 @@
         </import>
         <init type="dictionary">
           <name type="string">SubareaHouseholdLocationChoiceModel</name>
+          <subarea_id_name type="quoted_string">faz_id</subarea_id_name>
         </init>
       </household_location_choice_model>
       <employment_location_choice_model type="dictionary">

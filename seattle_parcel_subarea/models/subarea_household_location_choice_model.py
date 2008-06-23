@@ -33,6 +33,7 @@ class SubareaHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
         self.choice_set.compute_variables(["urbansim_parcel.%s.%s" % (self.choice_set.get_dataset_name(), self.subarea_id_name)],
                                                   dataset_pool=self.dataset_pool)
         valid_region = where(regions[agents_index] > 0)[0]
+# this loop handles subarea_id_name households        
         if valid_region.size > 0:
             unique_regions = unique_values(regions[agents_index][valid_region])
             cond_array = zeros(agent_set.size(), dtype="bool8")
@@ -44,6 +45,10 @@ class SubareaHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
                 HouseholdLocationChoiceModel.run(self, specification, coefficients, agent_set, 
                                                  agents_index=new_index, **kwargs)
         no_region = where(regions[agents_index] <= 0)[0]
+
+#potential to add another loop here to handle a secondary higher geography
+        
+# this loop handles households w/out a subarea
         if no_region.size > 0: # run the HLCM for housseholds that don't have assigned region
             self.filter = None
             logger.log_status("HLCM for households with no area assigned")
