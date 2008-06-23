@@ -202,6 +202,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         settings = QSettings()
         self.restoreGeometry(settings.value("Geometry").toByteArray())
         
+        self.setFocus()
+
     def writeOutput(self,result):
         if result == "":
             return
