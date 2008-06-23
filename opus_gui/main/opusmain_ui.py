@@ -68,13 +68,13 @@ class Ui_MainWindow(object):
         self.dataManager_toolBox.setFont(font)
         self.dataManager_toolBox.setObjectName("dataManager_toolBox")
 
-        self.datamanager_dbsconnections = QtGui.QWidget()
-        self.datamanager_dbsconnections.setGeometry(QtCore.QRect(0,0,250,389))
-        self.datamanager_dbsconnections.setObjectName("datamanager_dbsconnections")
-
-        self.gridlayout3 = QtGui.QGridLayout(self.datamanager_dbsconnections)
-        self.gridlayout3.setObjectName("gridlayout3")
-        self.dataManager_toolBox.addTab(self.datamanager_dbsconnections,"")
+#        self.datamanager_dbsconnections = QtGui.QWidget()
+#        self.datamanager_dbsconnections.setGeometry(QtCore.QRect(0,0,250,389))
+#        self.datamanager_dbsconnections.setObjectName("datamanager_dbsconnections")
+#
+#        self.gridlayout3 = QtGui.QGridLayout(self.datamanager_dbsconnections)
+#        self.gridlayout3.setObjectName("gridlayout3")
+#        self.dataManager_toolBox.addTab(self.datamanager_dbsconnections,"")
 
         self.datamanager_xmlconfig = QtGui.QWidget()
         self.datamanager_xmlconfig.setGeometry(QtCore.QRect(0,0,96,38))
@@ -329,7 +329,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         self.toolBox.setTabText(self.toolBox.indexOf(self.generalmanager_page), QtGui.QApplication.translate("MainWindow", "General", None, QtGui.QApplication.UnicodeUTF8))
-        self.dataManager_toolBox.setTabText(self.dataManager_toolBox.indexOf(self.datamanager_dbsconnections), QtGui.QApplication.translate("MainWindow", "Database Server Connections", None, QtGui.QApplication.UnicodeUTF8))
+#        self.dataManager_toolBox.setTabText(self.dataManager_toolBox.indexOf(self.datamanager_dbsconnections), QtGui.QApplication.translate("MainWindow", "Database Server Connections", None, QtGui.QApplication.UnicodeUTF8))
         self.dataManager_toolBox.setTabText(self.dataManager_toolBox.indexOf(self.datamanager_xmlconfig), QtGui.QApplication.translate("MainWindow", "Tools", None, QtGui.QApplication.UnicodeUTF8))
         self.dataManager_toolBox.setTabText(self.dataManager_toolBox.indexOf(self.datamanager_dirview), QtGui.QApplication.translate("MainWindow", "Opus Data", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBox.setTabText(self.toolBox.indexOf(self.datamanager_page), QtGui.QApplication.translate("MainWindow", "Data", None, QtGui.QApplication.UnicodeUTF8))
