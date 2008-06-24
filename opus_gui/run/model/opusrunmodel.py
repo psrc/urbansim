@@ -24,16 +24,21 @@ try:
     #from opus_gui.configurations.xml_configuration import XMLConfiguration
     from opus_core.configurations.xml_configuration import XMLConfiguration
     from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
+    from opus_gui.results.gui_result_interface.batch_processor import BatchProcessor
+
     WithOpus = True
 except ImportError:
     WithOpus = False
     print "Unable to import opus core libs"
 
 class RunModelThread(QThread):
-    def __init__(self, mainwindow, modelguielement, xml_file):
+    def __init__(self, mainwindow, modelguielement, xml_file, batch_name = None):
         QThread.__init__(self, mainwindow)
         self.modelguielement = modelguielement
         self.xml_file = xml_file
+        self.batch_name = batch_name
+        self.toolboxStuff = self.modelguielement.mainwindow.toolboxStuff
+        self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = self.toolboxStuff)
 
     def run(self):
         self.modelguielement.model.progressCallback = self.progressCallback
@@ -58,28 +63,54 @@ class RunModelThread(QThread):
         if success:
             print "Success returned from Model"
             self.add_run_to_run_manager_xml()
+            if self.batch_name is not None:
+                self.runIndicatorBatch()
         else:
             print "Error returned from Model"
         self.emit(SIGNAL("runFinished(PyQt_PyObject)"),success)
 
     def add_run_to_run_manager_xml(self):
         '''add this completed run to the run manager section of the results manager'''
-        
-        toolboxStuff = self.modelguielement.mainwindow.toolboxStuff
-        
+
         cache_directory = self.modelguielement.model.config['cache_directory']
         scenario_name = str(self.modelguielement.model.modeltorun)
-        run_name = os.path.basename(cache_directory)
-        (start_year, end_year) = self.modelguielement.model.config['years']        
+        run_name = self.get_run_name()
+        (start_year, end_year) = self.get_years()        
 
-        xml_helper = ResultsManagerXMLHelper(toolboxStuff = toolboxStuff)
-        xml_helper.add_run_to_run_manager_xml(
+        self.xml_helper.add_run_to_run_manager_xml(
                                          cache_directory,
                                          scenario_name,
                                          run_name,
                                          start_year, end_year)
+        
+    def get_run_name(self):
+        cache_directory = self.modelguielement.model.config['cache_directory']
+        run_name = os.path.basename(cache_directory)
 
-
+        return 'Run_%s'%run_name
+    
+    def get_years(self):
+        return self.modelguielement.model.config['years']
+    
+    def runIndicatorBatch(self):
+        visualizations = self.xml_helper.get_batch_configuration(
+                            batch_name =  self.batch_name) 
+        start, end = self.get_years()
+        
+        self.batch_processor = BatchProcessor(toolboxStuff = self.toolboxStuff)           
+        self.batch_processor.errorCallback = self.errorCallback
+        self.batch_processor.finishedCallback = self.indicatorBatchFinishedCallback
+        
+        self.batch_processor.set_data(
+            visualizations = visualizations, 
+            source_data_name = self.get_run_name(),
+            years = range(start, end + 1))
+        
+        self.batch_processor.run()
+                
+    def indicatorBatchFinishedCallback(self, success):
+        return 
+    
     def errorCallback(self,errorMessage):
         self.emit(SIGNAL("runError(PyQt_PyObject)"),errorMessage)
 
