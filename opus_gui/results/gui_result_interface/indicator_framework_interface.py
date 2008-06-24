@@ -40,13 +40,14 @@ class IndicatorFrameworkInterface:
 
         return dataset_pool_configuration
                 
-    def get_source_data(self, source_data_name, years):    
+    def get_source_data(self, source_data_name, years, cache_directory = None):    
         dataset_pool_configuration = self._get_dataset_pool_configuration()
-        _, cache_directory = self.xml_helper.get_element_attributes(
-                                node_name = source_data_name, 
-                                node_type = 'source_data',
-                                child_attributes = ['cache_directory'])
-        cache_directory = str(cache_directory['cache_directory'])
+        if cache_directory is None:
+            _, cache_directory = self.xml_helper.get_element_attributes(
+                                    node_name = source_data_name, 
+                                    node_type = 'source_data',
+                                    child_attributes = ['cache_directory'])
+            cache_directory = str(cache_directory['cache_directory'])
                                   
         source_data = SourceData(
                  dataset_pool_configuration = dataset_pool_configuration,

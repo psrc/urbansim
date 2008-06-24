@@ -48,12 +48,12 @@ class OpusResultVisualizer(object):
         if kwargs == None: kwargs = {}
         self.kwargs = kwargs
         
-    def run(self):
+    def run(self, args, cache_directory = None):
         if WithOpus:
             succeeded = False
             try:
                 # find the directory containing the eugene xml configurations
-                self._visualize()
+                self._visualize(args, cache_directory = cache_directory)
                 succeeded = True
             except:
                 succeeded = False
@@ -69,7 +69,8 @@ class OpusResultVisualizer(object):
     
 
         
-    def _visualize(self):
+    def _visualize(self, args, cache_directory = None):
+        self.visualizations = {}
         indicators_to_visualize = {}
         interface = IndicatorFrameworkInterface(toolboxStuff = self.toolboxStuff)
         
@@ -87,7 +88,8 @@ class OpusResultVisualizer(object):
             if source_data_name not in source_data_objs:    
                 source_data = interface.get_source_data(
                                              source_data_name = source_data_name, 
-                                             years = list(years))
+                                             years = list(years),
+                                             cache_directory = cache_directory)
                 source_data_objs[source_data_name] = source_data
             else:
                 source_data = source_data_objs[source_data_name]
@@ -122,25 +124,26 @@ class OpusResultVisualizer(object):
         
             indicators_to_visualize[name] = computed_indicator
             
-        args = {}
+        viz_args = {}
         if self.indicator_type == 'matplotlib_map':
             viz_type = self.indicator_type
         elif self.indicator_type == 'matplotlib_chart':
             viz_type = self.indicator_type
         elif self.indicator_type == 'table_esri':
             viz_type = 'table'
-            args['output_type'] = Table.PER_ATTRIBUTE
-            args['output_type'] = 'esri'
+            viz_args['output_style'] = Table.PER_ATTRIBUTE
+            viz_args['output_type'] = 'esri'
         elif self.indicator_type == 'table_per_year':
             viz_type = 'table'
-            args['output_style'] = Table.PER_YEAR
-            args['output_type'] = 'csv'
+            viz_args['output_style'] = Table.PER_YEAR
+            viz_args['output_type'] = 'csv'
         elif self.indicator_type == 'table_per_attribute':
             viz_type = 'table'
-            args['output_style'] = Table.PER_ATTRIBUTE          
-            args['output_type'] = 'csv'
+            viz_args['output_style'] = Table.PER_ATTRIBUTE          
+            viz_args['output_type'] = 'csv'
             
-        args.update(self.kwargs)
+        viz_args.update(self.kwargs)
+        viz_args.update(args)
         
         try:
             import pydevd;pydevd.settrace()
@@ -151,7 +154,7 @@ class OpusResultVisualizer(object):
         self.visualizations = viz_factory.visualize(
                                   indicators_to_visualize = indicators_to_visualize.keys(), 
                                   computed_indicators = indicators_to_visualize, 
-                                  visualization_type = viz_type, **args)
+                                  visualization_type = viz_type, **viz_args)
     
     def get_visualizations(self):
         return self.visualizations

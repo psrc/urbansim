@@ -29,7 +29,8 @@ class OpusGuiThread(QThread):
     def run(self, 
             progressCallback = None,
             finishedCallback = None,
-            errorCallback = None):
+            errorCallback = None,
+            args = {}):
     
         
         if progressCallback is None:
@@ -42,7 +43,7 @@ class OpusGuiThread(QThread):
         self.thread_object.progressCallback = progressCallback
         self.thread_object.finishedCallback = finishedCallback
         self.thread_object.errorCallback = errorCallback
-        self.thread_object.run()
+        self.thread_object.run(args)
         
     def progressCallback(self,percent):
         print "Ping From Model"

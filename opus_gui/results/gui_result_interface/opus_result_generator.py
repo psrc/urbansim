@@ -40,21 +40,23 @@ class OpusResultGenerator(object):
                  source_data_name,
                  indicator_name,
                  dataset_name,
-                 years):
+                 years,
+                 cache_directory = None):
         self.source_data_name = source_data_name
         self.indicator_name = indicator_name
         self.dataset_name = dataset_name
         self.years = years
+        self.cache_directory = cache_directory
         
-    def run(self):
+    def run(self, args = {}):
         
         if WithOpus:
             succeeded = False
             try:
-                try:
-                    import pydevd;pydevd.settrace()
-                except:
-                    pass
+#                try:
+#                    import pydevd;pydevd.settrace()
+#                except:
+#                    pass
                 
                 self._generate_results()
                 succeeded = True
@@ -84,26 +86,40 @@ class OpusResultGenerator(object):
 #        except:
 #            pass
         
-        source_data = self.interface.get_source_data(
-                                     source_data_name = self.source_data_name, 
-                                     years = self.years)
+        if self.cache_directory is not None:            
+            source_data = self.interface.get_source_data(
+                                         source_data_name = None,
+                                         cache_directory = self.cache_directory, 
+                                         years = self.years)
+        else:
+            source_data = self.interface.get_source_data(
+                                         source_data_name = self.source_data_name, 
+                                         years = self.years)
+
+            self.cache_directory = source_data.cache_directory
+
         indicator = self.interface.get_indicator(
-                                     indicator_name = self.indicator_name,
-                                     dataset_name = self.dataset_name)
+                                 indicator_name = self.indicator_name,
+                                 dataset_name = self.dataset_name)
         
         maker = Maker()
-        self.cache_directory = source_data.cache_directory
 
         computed_indicator = maker.create(indicator = indicator, 
                                           source_data = source_data)
         name = '%s.%s.%s'%(self.indicator_name, 
             self.dataset_name, 
             self.source_data_name)
-        self.xml_helper.add_result_to_xml(result_name = name,
-                                          source_data_name = self.source_data_name, 
-                                          indicator_name = self.indicator_name, 
-                                          dataset_name = self.dataset_name, 
-                                          years = self.years)
+#        try:
+#            import pydevd;pydevd.settrace()
+#        except:
+#            pass
+#        
+        if self.source_data_name is not None:
+            self.xml_helper.add_result_to_xml(result_name = name,
+                                              source_data_name = self.source_data_name, 
+                                              indicator_name = self.indicator_name, 
+                                              dataset_name = self.dataset_name, 
+                                              years = self.years)
 
         self.last_added_indicator_result_name = name
                 
