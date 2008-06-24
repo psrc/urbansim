@@ -35,9 +35,9 @@ class ConfigureNewDatasetTableDialog(AbstractConfigureDatasetTableDialog):
             'Tab delimited':'tab',
             'Comma separated':'csv',
             'Esri':'esri',
-            'Fixed format':'fixed_field' 
+            'Fixed field':'fixed_field' 
         }
-        indicators = self._get_indicators()
+        indicators = self._get_column_values(column = 0)
         dataset_name = str(self.cboDataset.currentText())
         output_type = translation[str(self.cboOutputType.currentText())]
         
@@ -47,6 +47,12 @@ class ConfigureNewDatasetTableDialog(AbstractConfigureDatasetTableDialog):
             {'value':output_type,
              'name':'output_type'},
         ]
+        
+        if output_type == 'fixed_field':
+            fixed_field_params = self._get_column_values(column = 1)
+            viz_params.append({'value':fixed_field_params,
+                               'name':'fixed_field_specification'})
+            
         viz_name = str(self.leVizName.text()).replace('DATASET',dataset_name).replace(' ','_')
         self.xml_helper.addNewVisualizationToBatch(
                             viz_name = viz_name,

@@ -78,52 +78,6 @@
    <property name="title" >
     <string>Indicators to visualize</string>
    </property>
-   <widget class="QListWidget" name="lstAvailableIndicators" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>60</y>
-      <width>221</width>
-      <height>251</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="lstIndicatorsToVisualize" >
-    <property name="geometry" >
-     <rect>
-      <x>340</x>
-      <y>60</y>
-      <width>221</width>
-      <height>251</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2" >
-    <property name="geometry" >
-     <rect>
-      <x>60</x>
-      <y>30</y>
-      <width>131</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>Available indicators</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3" >
-    <property name="geometry" >
-     <rect>
-      <x>410</x>
-      <y>30</y>
-      <width>81</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>To visualize</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pbnAddIndicator" >
     <property name="geometry" >
      <rect>
@@ -159,6 +113,44 @@
     <property name="text" >
      <string>-</string>
     </property>
+   </widget>
+   <widget class="QTableWidget" name="twIndicatorsToVisualize" >
+    <property name="geometry" >
+     <rect>
+      <x>320</x>
+      <y>30</y>
+      <width>241</width>
+      <height>301</height>
+     </rect>
+    </property>
+    <property name="wordWrap" >
+     <bool>true</bool>
+    </property>
+    <column>
+     <property name="text" >
+      <string>To visualize</string>
+     </property>
+    </column>
+    <column>
+     <property name="text" >
+      <string>Format</string>
+     </property>
+    </column>
+   </widget>
+   <widget class="QTableWidget" name="twAvailableIndicators" >
+    <property name="geometry" >
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>241</width>
+      <height>301</height>
+     </rect>
+    </property>
+    <column>
+     <property name="text" >
+      <string>Available indicators</string>
+     </property>
+    </column>
    </widget>
   </widget>
   <widget class="QGroupBox" name="gbOutputOptions" >
@@ -214,7 +206,7 @@
     <rect>
      <x>170</x>
      <y>20</y>
-     <width>201</width>
+     <width>421</width>
      <height>22</height>
     </rect>
    </property>

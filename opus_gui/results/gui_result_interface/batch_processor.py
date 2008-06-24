@@ -59,10 +59,14 @@ class BatchProcessor(object):
 
         return indicators
         
-    def _get_viz_args(self, visualization_type, params):
+    def _get_viz_args(self, visualization_type, params, indicators):
         args = {}
-        if visualization_type in ['table_per_year']:
-            args['output_type'] = str(params['output_type'])
+        if visualization_type in ['table_per_year', 'table_per_attribute']:
+            output_type = str(params['output_type'])
+            args['output_type'] = output_type
+            if output_type == 'fixed_field':
+                args['fixed_field_format'] = dict(zip(indicators,params['fixed_field_specification']))                
+                
         return args
             
     def run(self, args = {}):
@@ -97,7 +101,7 @@ class BatchProcessor(object):
                 self.visualizer.indicator_type = visualization_type
                 self.visualizer.indicators = indicator_results
                 
-                viz_args = self._get_viz_args(visualization_type, params)
+                viz_args = self._get_viz_args(visualization_type, params, indicators)
                 self.visualizer.run(args = viz_args, cache_directory = self.cache_directory)
                 self.visualizations.append((visualization_type, self.visualizer.get_visualizations()))
             

@@ -29,25 +29,37 @@ class ConfigureExistingDatasetTableDialog(AbstractConfigureDatasetTableDialog):
         base_node = selected_index.internalPointer().node()
         cur_vals = get_child_values(
                         parent = base_node,
-                        child_names = ['dataset_name','indicators', 'output_type'])
+                        all = True)
+#                        child_names = ['dataset_name','indicators', 'output_type'])
         
         self.leVizName.setText(base_node.nodeName())
         
         prev_dataset = cur_vals['dataset_name']
-        list_str = str(cur_vals['indicators'])[1:-1]
-        prev_indicators = [i.strip()[1:-1] for i in list_str.split(',')]
+        prev_indicators = self._process_xml_stored_list_of_strings(value = cur_vals['indicators'])
         prev_output_type = cur_vals['output_type']
 
+        fixed_field_specification = None
+        if 'fixed_field_specification' in cur_vals:
+            fixed_field_specification = cur_vals['fixed_field_specification']
 
         self._setup_co_dataset_name(value = prev_dataset)
         self._setup_indicators(existing_indicators = prev_indicators)
         self._setup_co_output_type(value = str(prev_output_type))
-                               
+        
+        if fixed_field_specification is not None:
+            specs = self._process_xml_stored_list_of_strings(value = fixed_field_specification)
+            self._set_column(column = 1, values = specs)
+            
+    def _process_xml_stored_list_of_strings(self, value):
+        list_str = str(value)[1:-1]
+        lst = [i.strip()[1:-1] for i in list_str.split(',')]   
+        return lst     
+        
     def on_buttonBox_accepted(self):
         dataset_name = self.cboDataset.currentText()        
         viz_name = str(self.leVizName.text()).replace('DATASET',dataset_name).replace(' ','_')
         output_type = self.cboOutputType.currentText()
-        indicators = self._get_indicators()
+        indicators = self._get_column_values(column = 0)
         
         viz_name = QVariant(viz_name)
         output_type = QVariant(output_type)

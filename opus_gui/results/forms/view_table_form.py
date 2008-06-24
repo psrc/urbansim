@@ -32,6 +32,7 @@ class ViewTableForm(QWidget):
         self.widgetLayout.addWidget(self.tableWidget)
         
         self.tabIcon = QIcon(":/Images/Images/map.png")
+        
         self.tabLabel = visualization.table_name
 
         self.load_table(visualization = visualization)
