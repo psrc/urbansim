@@ -47,9 +47,9 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
 
         available_output_types = {
             'Tab delimited':'tab',
-            'Comma separated':'csv',
-            'Esri':'esri',
-            'Fixed format':'fixed_field' 
+#            'Comma separated':'csv',
+#            'Esri':'esri',
+#            'Fixed format':'fixed_field' 
         }
         
         for otype in sorted(available_output_types.keys()):
