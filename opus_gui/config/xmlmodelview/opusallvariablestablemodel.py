@@ -30,8 +30,11 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         return len(self.arraydata) 
  
     def columnCount(self, parent): 
-        return len(self.arraydata[0]) 
- 
+        if self.rowCount(parent):
+            return len(self.arraydata[0]) 
+        else:
+            return 0
+        
     def data(self, index, role): 
         if not index.isValid(): 
             return QVariant() 
