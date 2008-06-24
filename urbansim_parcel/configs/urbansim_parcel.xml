@@ -33,7 +33,6 @@
           <is_pre_1940 type="variable_definition" dataset="parcel" use="model variable" source="expression">is_pre_1940 = parcel.aggregate(building.year_built * numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, 1),function=mean) &lt; 1940</is_pre_1940>
         </expression_library>
     <advanced parser_action='category'>
-    <available_datasets type="list">['parcel','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
     <dataset_pool_configuration flags="hidden" type="class">
       <Class_name type="string">DatasetPoolConfiguration</Class_name>
       <Class_path type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
@@ -41,6 +40,7 @@
       <package_order_exceptions type="dictionary" />
     </dataset_pool_configuration>
     </advanced>
+    <available_datasets type="list">['parcel','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
   </general>
   <model_manager>
     <model_system type="dictionary">
