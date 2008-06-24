@@ -58,11 +58,15 @@ class OpusXMLAction_Results(object):
                         self.editIndicator)
         
         #create new result template...
-        self.actAddNewIndicatorGroup = QAction(self.acceptIcon, 
-                                          "Add new indicator group...",
+        self.actAddNewIndicatorBatch = QAction(self.acceptIcon, 
+                                          "Add new indicator batch...",
                                           self.xmlTreeObject.mainwindow)
-        QObject.connect(self.actAddNewIndicatorGroup, SIGNAL("triggered()"), self.addNewIndicatorGroup)          
+        QObject.connect(self.actAddNewIndicatorBatch, SIGNAL("triggered()"), self.addNewIndicatorBatch)          
 
+        self.actConfigureExistingBatchIndicatorVisualization = QAction(self.acceptIcon,
+                                                                       "Configure visualization",
+                                                                       self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actConfigureExistingBatchIndicatorVisualization, SIGNAL("triggered()"), self.configureExistingBatchIndicatorVisualization)
         #generate results will enter a dialogue to pair indicators with 
         #result templates and datasets and then run them to produce results
         self.actGenerateResults = QAction(self.acceptIcon, 
@@ -134,13 +138,6 @@ class OpusXMLAction_Results(object):
         print "addNewIndicator pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
         
-#        self.xml_helper.addNewIndicator(indicator_name = 'untitled indicator', 
-#                                        package_name = '?', 
-#                                        expression = '?')
-#        
-#        parentIndex = self.xmlTreeObject.model.index(0,0,QModelIndex()).parent()
-#        indicators_index = self.xmlTreeObject.model.findElementIndexByName('my_indicators', parentIndex)[0]
-#        index = self.xmlTreeObject.model.findElementIndexByName('untitled indicator', indicators_index)[0]
         self.editIndicator(already_exists = False)
 
     def editIndicator(self, already_exists = True):
@@ -161,21 +158,21 @@ class OpusXMLAction_Results(object):
             selected_index = currentIndex)
         
         
-    def addNewIndicatorGroup(self):
-        print "addNewIndicatorGroup pressed with column = %s and item = %s" % \
+    def addNewIndicatorBatch(self):
+        print "addNewIndicatorBatch pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
               
-        self.xml_helper.addNewIndicatorGroup(group_name = 'untitled indicator group')
+        self.xml_helper.addNewIndicatorBatch(batch_name = 'untitled indicator batch')
         
-    def beforeAddIndicatorToGroupShown(self):
-        print "AddIndicatorToGroup about to be shown"
+    def beforeAddIndicatorToBatchShown(self):
+        print "AddIndicatorToBatch about to be shown"
 
-        #group_name = self.currentIndex.internalPointer().node().toElement().tagName()
-        #existing_indicators = self.xml_helper.get_indicators_in_indicator_group(group_name)
+        #batch_name = self.currentIndex.internalPointer().node().toElement().tagName()
+        #existing_indicators = self.xml_helper.get_indicators_in_indicator_batch(batch_name)
         
         available_indicators = self.xml_helper.get_available_indicator_names()
         
-        self.indicator_group_menu.clear()
+        self.indicator_batch_menu.clear()
         for indicator_info in available_indicators:
             indicator_name = indicator_info['name']
 #            if indicator_name in existing_indicators:
@@ -183,43 +180,67 @@ class OpusXMLAction_Results(object):
             indicator = QString(indicator_name)
             act_indicator = QAction(self.acceptIcon, 
                                     indicator_name,
-                                    self.indicator_group_menu)
-            callback = lambda indicator=indicator: self.addIndicatorToGroup(indicator)
+                                    self.indicator_batch_menu)
+            callback = lambda indicator=indicator: self.addIndicatorToBatch(indicator)
             QObject.connect(act_indicator, SIGNAL("triggered()"), callback) 
-            self.indicator_group_menu.addAction(act_indicator)
+            self.indicator_batch_menu.addAction(act_indicator)
             
-    def addIndicatorToGroup(self, indicator):
-        print "adding indicator to group..."
-        print "addIndicatorToGroup pressed with column = %s and item = %s" % \
+    def addIndicatorToBatch(self, indicator):
+        print "adding indicator to batch..."
+        print "addIndicatorToBatch pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
-        group_name = self.currentIndex.internalPointer().node().toElement().tagName()
-        self.xml_helper.addIndicatorToGroup(group_name = group_name, 
+        batch_name = self.currentIndex.internalPointer().node().toElement().tagName()
+        self.xml_helper.addIndicatorToBatch(batch_name = batch_name, 
                                             indicator_name = indicator)
         
-    def beforeRunIndicatorGroupShown(self):
-        print "AddIndicatorToGroup about to be shown"
+    def configureNewBatchIndicatorVisualization(self, viz):
+        if self.xmlTreeObject.model.isDirty():
+            # Prompt the user to save...
+            QMessageBox.warning(self.xmlTreeObject.mainwindow,
+                                "Warning",
+                                "Please save changes to project")               
+            return 
+
+        batch_name = self.currentIndex.internalPointer().node().toElement().tagName()
+        self.xmlTreeObject.mainwindow.resultManagerStuff.configureNewIndicatorBatchVisualization(
+            visualization_type = viz,
+            batch_name = batch_name)
+
+    def configureExistingBatchIndicatorVisualization(self):
+        if self.xmlTreeObject.model.isDirty():
+            # Prompt the user to save...
+            QMessageBox.warning(self.xmlTreeObject.mainwindow,
+                                "Warning",
+                                "Please save changes to project")               
+            return 
+
+        self.xmlTreeObject.mainwindow.resultManagerStuff.configureExistingIndicatorBatchVisualization(
+            selected_index = self.currentIndex)      
+          
+    def beforeRunIndicatorBatchShown(self):
+        print "AddIndicatorToBatch about to be shown"
         
         domDocument = self.xmlTreeObject.mainwindow.toolboxStuff.doc
         node_list = elementsByAttributeValue(domDocument = domDocument, 
                                               attribute = 'type', 
                                               value = 'source_data')
         
-        self.run_indicator_group_menu.clear()
+        self.run_indicator_batch_menu.clear()
         for element, node in node_list:
             simulation_run = QString(element.nodeName())
             act_simulation_run = QAction(self.acceptIcon, 
                                     element.nodeName(),
-                                    self.run_indicator_group_menu)
-            callback = lambda simulation_run=simulation_run: self.indicatorGroupRun(simulation_run)
+                                    self.run_indicator_batch_menu)
+            callback = lambda simulation_run=simulation_run: self.indicatorBatchRun(simulation_run)
             QObject.connect(act_simulation_run, SIGNAL("triggered()"), callback) 
-            self.run_indicator_group_menu.addAction(act_simulation_run)
+            self.run_indicator_batch_menu.addAction(act_simulation_run)
                 
-    def indicatorGroupRun(self, simulation_run):
-        print "indicatorGroupRun pressed with column = %s and item = %s" % \
+    def indicatorBatchRun(self, simulation_run):
+        print "indicatorBatchRun pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
         if not self.xmlTreeObject.model.isDirty():
-            self.xmlTreeObject.mainwindow.resultManagerStuff.addRunIndicatorGroupForm(
-                selected_item = self.currentIndex.internalPointer().node().toElement().tagName(),
+            self.xmlTreeObject.mainwindow.resultManagerStuff.addRunIndicatorBatchForm(
+                batch_name = self.currentIndex.internalPointer().node().toElement().tagName(),
                 simulation_run = simulation_run)
         else:
             # Prompt the user to save...
@@ -319,21 +340,22 @@ class OpusXMLAction_Results(object):
                 domElement = domNode.toElement()
                 if domElement.isNull():
                     return
+                selected_type = domElement.attribute(QString("type"))
                 
                 self.menu = QMenu(self.xmlTreeObject.mainwindow)
-                if domElement.attribute(QString("type")) == QString("indicator_library") and \
+                if selected_type == QString("indicator_library") and \
                        domElement.attribute(QString("append_to")) == QString("True"):
                     self.menu.addAction(self.actAddNewIndicator)
-                elif domElement.attribute(QString("type")) == QString("source_data"):
+                elif selected_type == QString("source_data"):
                     self.menu.addAction(self.actGenerateResults)
                     self.menu.addAction(self.actGetInfoSimulationRuns)
-                elif domElement.tagName() == QString("Indicator_groups"):
-                    self.menu.addAction(self.actAddNewIndicatorGroup)
-                elif domElement.attribute(QString("type")) == QString("indicator"):
+                elif domElement.tagName() == QString("Indicator_batches"):
+                    self.menu.addAction(self.actAddNewIndicatorBatch)
+                elif selected_type == QString("indicator"):
 #                    self.menu.addAction(self.actViewDocumentation)
                     self.menu.addAction(self.actEditIndicator)
                     self.menu.addAction(self.actGenerateResults)
-                elif domElement.attribute(QString("type")) == QString("indicator_result"):
+                elif selected_type == QString("indicator_result"):
                     visualization_menu = QMenu(self.xmlTreeObject.mainwindow)
                     visualization_menu.setTitle(QString("View result as..."))
                     #visualization_menu.addAction(self.actViewResultAsTablePerYear)
@@ -344,9 +366,11 @@ class OpusXMLAction_Results(object):
                     visualization_menu.addAction(self.actViewResultAsAdvanced)
                     self.menu.addMenu(visualization_menu)
                     
-                elif domElement.attribute(QString("type")) == QString("indicator_group"):
-                    self._build_indicator_group_menu()
-                    
+                elif selected_type == QString("indicator_batch"):
+                    self._build_indicator_batch_menu()
+                
+                elif selected_type == QString('batch_visualization'):
+                    self.menu.addAction(self.actConfigureExistingBatchIndicatorVisualization)
                     
                 if self.menu:
                     # Last minute chance to add items that all menues should have
@@ -371,16 +395,27 @@ class OpusXMLAction_Results(object):
                     self.menu.exec_(QCursor.pos())
         return
 
-    def _build_indicator_group_menu(self):
-        #needs to be called when indicator_group right clicked on...
-        self.indicator_group_menu = QMenu(self.xmlTreeObject.mainwindow)
-        self.indicator_group_menu.setTitle(QString("Add indicator to group..."))
-        QObject.connect(self.indicator_group_menu, SIGNAL('aboutToShow()'), self.beforeAddIndicatorToGroupShown)
-        self.menu.addMenu(self.indicator_group_menu)
+    def _build_indicator_batch_menu(self):
+        #needs to be called when indicator_batch right clicked on...
+        self.indicator_batch_menu = QMenu(self.xmlTreeObject.mainwindow)
+        self.indicator_batch_menu.setTitle(QString("Add new indicator visualization..."))
+
+        available_visualizations = self.xml_helper.get_visualization_options()
+        
+        for viz in available_visualizations.keys():
+            viz = QString(viz)
+            act_viz = QAction(self.acceptIcon, 
+                                    viz,
+                                    self.indicator_batch_menu)
+            callback = lambda viz=viz: self.configureNewBatchIndicatorVisualization(viz)
+            QObject.connect(act_viz, SIGNAL("triggered()"), callback) 
+            self.indicator_batch_menu.addAction(act_viz)
+    
+        self.menu.addMenu(self.indicator_batch_menu)
 
         
-        self.run_indicator_group_menu = QMenu(self.xmlTreeObject.mainwindow)
-        self.run_indicator_group_menu.setTitle(QString('Run indicator group on...'))
-        QObject.connect(self.run_indicator_group_menu, SIGNAL('aboutToShow()'), self.beforeRunIndicatorGroupShown)
+        self.run_indicator_batch_menu = QMenu(self.xmlTreeObject.mainwindow)
+        self.run_indicator_batch_menu.setTitle(QString('Run indicator batch on...'))
+        QObject.connect(self.run_indicator_batch_menu, SIGNAL('aboutToShow()'), self.beforeRunIndicatorBatchShown)
         
-        self.menu.addMenu(self.run_indicator_group_menu)
+        self.menu.addMenu(self.run_indicator_batch_menu)
