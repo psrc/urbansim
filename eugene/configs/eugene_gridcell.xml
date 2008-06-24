@@ -173,55 +173,34 @@
       <model.gridcell type="indicator_library">
         <population type="indicator">
           <package type="string">urbansim</package>
-          <valid_datasets type="string">GEOGRAPHY</valid_datasets>
-          <documentation_link type="string" />
           <expression type="string">urbansim.DATASET.population</expression>
         </population>
         <number_of_jobs type="indicator">
           <package type="string">urbansim</package>
-          <valid_datasets type="string">GEOGRAPHY</valid_datasets>
-          <documentation_link type="string" />
           <expression type="string">urbansim.DATASET.number_of_jobs</expression>
         </number_of_jobs>
         <industrial_sqft type="indicator">
           <package type="string">urbansim</package>
-          <valid_datasets type="string">GEOGRAPHY</valid_datasets>
-          <documentation_link type="string" />
           <expression type="string">urbansim.DATASET.industrial_sqft</expression>
         </industrial_sqft>
         <total_land_value type="indicator">
           <package type="string">urbansim</package>
-          <valid_datasets type="string">GEOGRAPHY</valid_datasets>
-          <documentation_link type="string" />
           <expression type="string">urbansim.DATASET.total_land_value</expression>
         </total_land_value>
         <population_density type="indicator">
           <package type="string">urbansim</package>
-          <valid_datasets type="string">gridcell</valid_datasets>
-          <documentation_link type="string" />
           <expression type="string">urbansim.DATASET.population_density</expression>
         </population_density>
       </model.gridcell>
       <my_indicators append_to="True" type="indicator_library">
         <residential_units type="indicator">
           <package type="string">urbansim</package>
-          <valid_datasets type="string">alldata</valid_datasets>
-          <documentation_link type="string" />
           <expression type="string">alldata.aggregate_all(urbansim.gridcell.residential_units, function=sum)</expression>
         </residential_units>
       </my_indicators>
     </Indicator_libraries>
-    <Indicator_groups setexpanded="True" type="group">
-      <an_indicator_group type="indicator_group">
-        <industrial_sqft type="indicator_group_member"><visualization_type choices="Map (per indicator per year)|Chart (per indicator, spans years)|Table (per indicator, spans years)|Table (per year, spans indicators)" type="string">Table (per year, spans indicators)</visualization_type>
-          <dataset_name choices="gridcell|zone|faz|large_area|city|county|alldata" type="string">gridcell</dataset_name>
-        </industrial_sqft>
-        <number_of_jobs type="indicator_group_member">
-          <visualization_type choices="Map (per indicator per year)|Chart (per indicator, spans years)|Table (per indicator, spans years)|Table (per year, spans indicators)" type="string">Table (per year, spans indicators)</visualization_type>
-          <dataset_name choices="&apos;gridcell|zone|faz|large_area|city|county|alldata&apos;" type="string">zone</dataset_name>
-        </number_of_jobs>
-      </an_indicator_group>
-    </Indicator_groups>
+    <Indicator_batches setexpanded="True" type="group">
+    </Indicator_batches>
     <Simulation_runs setexpanded="True" type="all_source_data">
 
     </Simulation_runs>

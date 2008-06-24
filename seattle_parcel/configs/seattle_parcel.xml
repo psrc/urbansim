@@ -300,22 +300,13 @@
   <results_manager>
     <Indicator_libraries setexpanded="True" type="group">
       <standard_indicators type="indicator_library">
-        <population type="indicator">
-          <package type="string">urbansim</package>
-          <valid_datasets type="string">GEOGRAPHY</valid_datasets>
-          <documentation_link type="string" />
-          <expression type="string">urbansim.DATASET.population</expression>
-        </population>
       </standard_indicators>
-      <indicators_from_bob type="indicator_library">
+      <my_indicators append_to="True" type="indicator_library">
         <global_population_density type="indicator">
           <package type="string">urbansim</package>
-          <valid_datasets type="string">alldata</valid_datasets>
-          <documentation_link type="string" />
           <expression type="string">alldata.aggregate_all(urbansim.gridcell.population_density, function=sum)</expression>
-        </global_population_density>
-      </indicators_from_bob>
-      <my_indicators append_to="True" type="indicator_library" />
+        </global_population_density>      
+      </my_indicators>
     </Indicator_libraries>
     <Indicator_batches setexpanded="True" type="group" />
     <Simulation_runs setexpanded="True" type="all_source_data">

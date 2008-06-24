@@ -451,14 +451,12 @@
       <standard_indicators type="indicator_library">
         <population type="indicator">
           <package type="string">urbansim</package>
-          <valid_datasets type="string">GEOGRAPHY</valid_datasets>
-          <documentation_link type="string" />
           <expression type="string">urbansim.DATASET.population</expression>
         </population>
       </standard_indicators>
       <my_indicators append_to="True" type="indicator_library" />
     </Indicator_libraries>
-    <Indicator_groups setexpanded="True" type="group" />
+    <Indicator_batches setexpanded="True" type="group" />
     <Simulation_runs followers="Results" setexpanded="True" type="all_source_data">
     </Simulation_runs>
     <Results setexpanded="True" type="selectable_list">
