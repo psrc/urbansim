@@ -16,7 +16,7 @@ from PyQt4.QtCore import QObject, SIGNAL, QModelIndex, QString, Qt
 
 from opus_gui.results.forms.advanced_visualization_form import AdvancedVisualizationForm
 from opus_gui.results.forms.generate_results_form import GenerateResultsForm
-from opus_gui.results.forms.indicator_group_run_form import IndicatorGroupRunForm
+from opus_gui.results.forms.indicator_batch_run_form import IndicatorBatchRunForm
 from opus_gui.results.forms.view_documentation_form import ViewDocumentationForm
 from opus_gui.results.forms.view_image_form import ViewImageForm
 from opus_gui.results.forms.view_table_form import ViewTableForm
@@ -24,6 +24,8 @@ from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
 from opus_gui.results.gui_result_interface.opus_result_visualizer import OpusResultVisualizer
 from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
 from opus_gui.results.forms.edit_indicator_dialog import EditIndicatorDialog
+from opus_gui.results.forms.visualization.dataset_table.configure_new_dataset_table_dialog import ConfigureNewDatasetTableDialog
+from opus_gui.results.forms.visualization.dataset_table.configure_existing_dataset_table_dialog import ConfigureExistingDatasetTableDialog
 
 # General system includes
 import os
@@ -89,6 +91,7 @@ class ResultManagerBase(AbstractManagerBase):
                                 years.append(int(dir))
                         start_year = min(years)
                         end_year = max(years)
+                        run_name = 'Run_%s'%run_name
                         self.xml_helper.add_run_to_run_manager_xml(
                                                          cache_directory,
                                                          scenario_name,
@@ -107,7 +110,22 @@ class ResultManagerBase(AbstractManagerBase):
         window = EditIndicatorDialog(self, selected_index)
         window.show()
         
+    def configureExistingIndicatorBatchVisualization(self, selected_index):
+        viz_name = selected_index.internalPointer().node().toElement().tagName()
+        _, params = self.xml_helper.get_element_attributes(node_name = viz_name,
+                                               child_attributes = ['visualization_type'])
+        visualization_type = params['visualization_type']
+
+        if visualization_type == 'table_per_year':
+            window = ConfigureExistingDatasetTableDialog(self, selected_index)
+            window.show()
+                    
+    def configureNewIndicatorBatchVisualization(self, visualization_type, batch_name):
+        if visualization_type == 'Table (per year, spans indicators)':
+            window = ConfigureNewDatasetTableDialog(self, batch_name)
+            window.show()
         
+            
     def addGenerateIndicatorForm(self, selected_item):
 
         new_form = GenerateResultsForm(mainwindow = self.mainwindow,
@@ -117,13 +135,12 @@ class ResultManagerBase(AbstractManagerBase):
         self.guiElements.insert(0, new_form)
         self.updateGuiElements()
 
-    def addRunIndicatorGroupForm(self, selected_item, simulation_run):
-        new_form = IndicatorGroupRunForm(mainwindow = self.mainwindow,
+    def addRunIndicatorBatchForm(self, batch_name, simulation_run):
+        new_form = IndicatorBatchRunForm(mainwindow = self.mainwindow,
                                          result_manager = self,
-                                         selected_item = selected_item,
+                                         batch_name = batch_name,
                                          simulation_run = simulation_run)
-        self.guiElements.insert(0, new_form)
-        self.updateGuiElements()
+        new_form.show()
         
     def addIndicatorForm(self, indicator_type, indicator_names, kwargs = None):
         #build visualizations
