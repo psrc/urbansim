@@ -796,7 +796,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
               <parent type="file">estimation_child.xml</parent>
               <parent type="file">estimation_child2.xml</parent>
               <expression_library type="dictionary">
-                <ln_cost followers="tax" type="variable_definition">ln_cost=ln(psrc.parcel.cost+100)</ln_cost>
+                <ln_cost type="variable_definition">ln_cost=ln(psrc.parcel.cost+100)</ln_cost>
                </expression_library>
             </general>
             <model_manager>
