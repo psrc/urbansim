@@ -401,11 +401,6 @@
     </templates>
    </model_system>
    <estimation type="dictionary">
-   <models_to_estimate type="selectable_list">
-        <choice_model_template choices="Estimate|Skip" type="model" copyable="True">Skip</choice_model_template>
-        <regression_model_template choices="Estimate|Skip" type="model" copyable="True">Skip</regression_model_template>
-        <agent_location_choice_model_template choices="Estimate|Skip" type="model" copyable="True">Skip</agent_location_choice_model_template>
-      </models_to_estimate>
    <model_template  type="dictionary" copyable="True">
    <submodel type="submodel" copyable="True">
       <description type="string">No submodel</description>

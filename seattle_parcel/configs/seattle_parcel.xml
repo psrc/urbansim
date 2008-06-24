@@ -39,7 +39,7 @@
   </data_manager_dbstree>
   <model_manager>
     <estimation type="dictionary">
-      <models_to_estimate type="selectable_list">
+      <models_to_estimate followers="model_template,choice_model_with_equations_template" type="selectable_list" setexpanded="True" >
         <real_estate_price_model choices="Estimate|Skip" type="model">Estimate</real_estate_price_model>
         <household_location_choice_model choices="Estimate|Skip" type="model">Skip</household_location_choice_model>
         <employment_location_choice_model_home_based choices="Estimate|Skip" type="model">Skip</employment_location_choice_model_home_based>
