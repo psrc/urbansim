@@ -80,6 +80,83 @@
           </arguments>
         </init>
       </household_location_choice_model>
+      <large_area_household_location_choice_model copyable="True" type="dictionary">
+        <estimate type="dictionary">
+          <output flags="hidden" type="string">(%s, _)</output>
+          <arguments type="dictionary">
+            <agent_set type="string">household</agent_set>
+            <agents_index flags="hidden" type="string">_index</agents_index>
+            <data_objects type="string">datasets</data_objects>
+            <debuglevel flags="hidden" type="string">debuglevel</debuglevel>
+            <specification flags="hidden" type="string">_specification</specification>
+          </arguments>
+        </estimate>
+        <import flags="hidden" type="dictionary">
+          <seattle_parcel_subarea.models.subarea_household_location_choice_model type="string">SubareaHouseholdLocationChoiceModel</seattle_parcel_subarea.models.subarea_household_location_choice_model>
+        </import>
+        <init type="dictionary">
+          <name flags="hidden" type="string">SubareaHouseholdLocationChoiceModel</name>
+          <arguments type="dictionary">
+            <sampler type="quoted_string">opus_core.samplers.weighted_sampler</sampler>
+            <choices type="quoted_string">urbansim.lottery_choices</choices>
+            <estimation type="quoted_string">opus_core.bhhh_wesml_mnl_estimation</estimation>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+            <location_set type="string">building</location_set>
+            <sample_size_locations type="integer">30</sample_size_locations>
+            <capacity_string type="quoted_string">vacant_residential_units</capacity_string>
+            <estimation_weight_string type="quoted_string">residential_units</estimation_weight_string>
+            <number_of_units_string type="quoted_string">residential_units</number_of_units_string>
+            <number_of_agents_string type="quoted_string">number_of_households</number_of_agents_string>
+            <submodel_string type="quoted_string">urbansim.household.income_category</submodel_string>
+            <estimation_size_agents type="float">0.5</estimation_size_agents>
+            <filter type="quoted_string">numpy.logical_and(urbansim_parcel.building.is_residential, numpy.logical_and(numpy.logical_and(building.residential_units, building.sqft_per_unit), urbansim_parcel.building.unit_price &gt; 0))</filter>
+            <run_config type="string">Resources({'lottery_max_iterations': 7, 'aaaa': 'bbbb',})</run_config>
+            <estimate_config type="string">Resources({'wesml_sampling_correction_variable':'psrc_parcel.building.wesml_sampling_correction_variable'})</estimate_config>           
+            <variable_package type="quoted_string">urbansim_parcel</variable_package>
+            <subarea_id_name type="quoted_string">large_area_id</subarea_id_name>
+            <location_id_string type="quoted_string">large_area_id = household.disaggregate(faz.large_area_id)</location_id_string>  
+          </arguments>
+        </init>
+        <prepare_for_estimate type="dictionary">
+          <name flags="hidden" type="string">prepare_for_estimate</name>
+          <output flags="hidden" type="string">(_specification, _index)</output>
+          <arguments type="dictionary">
+            <agent_set type="string">household</agent_set>
+            <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
+            <agents_for_estimation_table type="quoted_string">households_for_estimation</agents_for_estimation_table>
+            <data_objects type="string">datasets</data_objects>
+            <index_to_unplace flags="hidden" type="string">hrm_index</index_to_unplace>
+            <join_datasets type="boolean">True</join_datasets>
+            <portion_to_unplace type="string">portion_to_unplace</portion_to_unplace>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">household_location_choice_model_specification</specification_table>
+            <filter type="quoted_string">numpy.logical_and(household.building_id&gt;0, household.disaggregate(building.sqft_per_unit&gt;0))</filter>
+          </arguments>
+        </prepare_for_estimate>
+        <prepare_for_run type="dictionary">
+          <name flags="hidden" type="string">prepare_for_run</name>
+          <output flags="hidden" type="string">(_specification, _coefficients)</output>
+          <arguments type="dictionary">
+            <coefficients_storage type="string">base_cache_storage</coefficients_storage>
+            <coefficients_table type="quoted_string">household_location_choice_model_coefficients</coefficients_table>
+            <specification_storage type="string">base_cache_storage</specification_storage>
+            <specification_table type="quoted_string">household_location_choice_model_specification</specification_table>
+          </arguments>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <agent_set type="string">household</agent_set>
+            <agents_index flags="hidden" type="string">None</agents_index>
+            <chunk_specification type="string">{'records_per_chunk':50000}</chunk_specification>
+            <coefficients type="string" flags="hidden">_coefficients</coefficients>
+            <data_objects type="string" flags="hidden">datasets</data_objects>
+            <debuglevel type="string" flags="hidden">debuglevel</debuglevel>
+            <specification type="string" flags="hidden">_specification</specification>
+            <maximum_runs type="integer">10</maximum_runs>
+            <agents_filter type="quoted_string">household.building_id&lt;=0</agents_filter>
+          </arguments>
+        </run>
+      </large_area_household_location_choice_model>
       <employment_location_choice_model type="dictionary">
         <import type="dictionary">
           <seattle_parcel_subarea.models.subarea_employment_location_choice_model type="string">SubareaEmploymentLocationChoiceModel</seattle_parcel_subarea.models.subarea_employment_location_choice_model>
@@ -259,6 +336,7 @@
         <employment_transition_model choices="Run|Skip" type="model">Run</employment_transition_model>
         <household_relocation_model choices="Run|Skip" type="model">Run</household_relocation_model>
         <household_location_choice_model choices="Run|Skip" type="model">Run</household_location_choice_model>
+        <large_area_household_location_choice_model choices="Run|Skip" type="model">Run</large_area_household_location_choice_model>
         <employment_relocation_model choices="Run|Skip" type="model">Run</employment_relocation_model>
         <employment_location_choice_model choices="Run|Skip" type="model">Run<group_members type="string">non_home_based</group_members>
         </employment_location_choice_model>

@@ -15,6 +15,7 @@
 from opus_core.allocation_model import AllocationModel as AM
 from opus_core.store.excel_document import ExcelDocument
 from opus_core.storage_factory import StorageFactory
+from opus_core.datasets.dataset_factory import DatasetFactory
 from opus_core.datasets.dataset import Dataset
 from opus_core.logger import logger
 
@@ -53,8 +54,8 @@ class AllocationModel(AM):
             logger.log_status("Getting data from esri_storage for AllocationModel")
             esri_storage = StorageFactory().get_storage('esri_storage', storage_location=esri_storage_location)
                         
-            dataset = Dataset(in_storage=esri_storage, in_table_name=dataset_name, id_name=dataset_name+'_id', dataset_name=dataset_name)
-        
+           #Was: dataset = Dataset(in_storage=esri_storage, in_table_name=dataset_name, id_name=dataset_name+'_id', dataset_name=dataset_name)
+            dataset = DatasetFactory().search_for_dataset(dataset_name, dataset_pool.get_package_order(), arguments={'in_storage': esri_storage, 'id_name':dataset_name+'_id'} )
         dataset_pool.add_datasets_if_not_included({dataset_name:dataset, control_totals.get_dataset_name():control_totals})
         
         return (dataset, control_totals, weight_attribute)

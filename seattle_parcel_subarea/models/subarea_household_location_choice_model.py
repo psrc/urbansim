@@ -26,10 +26,17 @@ class SubareaHouseholdLocationChoiceModel(HouseholdLocationChoiceModel):
         super(SubareaHouseholdLocationChoiceModel, self).__init__(location_set, **kwargs)
         self.subarea_id_name = subarea_id_name
     
-    def run(self, specification, coefficients, agent_set, agents_index=None, **kwargs):
+    def run(self, specification, coefficients, agent_set, agents_index=None, agents_filter=None, **kwargs):
         if agents_index is None:
-            agents_index = arange(agent_set.size())
+            if agents_filter is None:
+                agents_index = arange(agent_set.size())
+            else:
+                agents_index = where(agent_set.compute_variables(agents_filter))[0]
+
+        if self.location_id_string is not None:
+            agent_set.compute_variables(self.location_id_string, dataset_pool=self.dataset_pool)
         regions = agent_set.get_attribute(self.subarea_id_name)
+        
         self.choice_set.compute_variables(["urbansim_parcel.%s.%s" % (self.choice_set.get_dataset_name(), self.subarea_id_name)],
                                                   dataset_pool=self.dataset_pool)
         valid_region = where(regions[agents_index] > 0)[0]

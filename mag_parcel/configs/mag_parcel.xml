@@ -1,7 +1,8 @@
 <opus_project>
   <general>
-    <description type="string">MAG Parcel Project</description>
-    <parent type="file">seattle_parcel/configs/seattle_parcel.xml</parent>
+    <description followers="all_variables,advanced,available_datasets" type="string">MAG Parcel Project</description>
+    <parent followers="all_variables,advanced,available_datasets" type="file">seattle_parcel/configs/seattle_parcel.xml</parent>
+    <available_datasets type="list">['parcel','zone','faz','large_area','city','county','mh_rv','transient','taz03','group_quarter','posths_asu','posths_cc','posths_pvt','skyharbor','williamsgateway','alldata']</available_datasets> 
     </general>
   <model_manager>
     <model_system type="dictionary">
@@ -387,4 +388,4 @@
       </seasonal_model_other>
     </model_system>
     </model_manager>
-	</opus_project>
+  </opus_project>

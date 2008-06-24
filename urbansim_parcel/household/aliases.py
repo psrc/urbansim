@@ -23,6 +23,10 @@ aliases = [
    "persons_with_age_le_18 = household.aggregate(person.age<=18)",
 
    "faz_id = household.disaggregate(zone.faz_id, intermediates=[parcel, building])",
+#   "large_area_id = household.disaggregate(faz.large_area_id, intermediates=[zone, parcel, building])",
+   "large_area_id = household.disaggregate(parcel.large_area_id, intermediates=[building])",   
+   "county_id = household.disaggregate(parcel.county_id, intermediates=[building])",   
+   
    "dummy_id = urbansim_parcel.household.faz_id * 100 + household.persons",
    'number_of_non_home_based_workers = household.aggregate(urbansim_parcel.person.is_non_home_based_worker)',
    'number_of_non_home_based_workers_with_job = household.aggregate(urbansim_parcel.person.is_non_home_based_worker_with_job)',
