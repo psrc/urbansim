@@ -56,7 +56,7 @@ class RefinementModel(Model):
             refinement_dataset = dataset_pool.get_dataset('refinement')
         
         if current_year is None:
-            current_year = SimulationState().set_current_time()
+            current_year = SimulationState().get_current_time()
         
         refinements_this_year = copy.deepcopy(refinement_dataset)
         refinements_this_year.subset_by_index(where(refinement_dataset.get_attribute('year')==current_year)[0])
@@ -266,7 +266,7 @@ class RefinementModel(Model):
         from opus_core.datasets.dataset_factory import DatasetFactory
         from opus_core.session_configuration import SessionConfiguration
         df = DatasetFactory()
-        if not rate_dataset_name:
+        if not refinement_dataset_name:
             refinement_dataset_name = df.dataset_name_for_table(refinement_table_name)
         
         refinement = df.search_for_dataset(refinement_dataset_name,
