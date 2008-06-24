@@ -414,10 +414,16 @@ class OpusDataModel(QAbstractItemModel):
             parentItem.domNode.insertAfter(node, parentItem.lastChild().domNode)
         else:
             parentItem.domNode.insertBefore(node, parentItem.child(row).domNode)
-        item = OpusDataItem(self.domDocument,node,row,parentItem)
-        item.initAsRootItem()
-        #print "len=%d row=%d" % (len(parentItem.childItems),row)
-        parentItem.childItems.insert(row,item)
+
+        nodeElement = node.toElement()
+        if not nodeElement.isNull():
+            # Check if it is hidden... and if so we skip it in the visible tree
+            if not nodeElement.hasAttribute(QString("flags")) or \
+                   nodeElement.attribute(QString("flags")) != QString("hidden"):
+                item = OpusDataItem(self.domDocument,node,row,parentItem)
+                item.initAsRootItem()
+                #print "len=%d row=%d" % (len(parentItem.childItems),row)
+                parentItem.childItems.insert(row,item)
         self.endInsertRows()
         if editable:
             self.makeEditable(node)

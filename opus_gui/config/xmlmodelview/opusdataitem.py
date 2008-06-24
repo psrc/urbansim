@@ -52,7 +52,7 @@ class OpusDataItem:
         for x in xrange(0,self.domNode.childNodes().count(),1):
             current = self.domNode.childNodes().item(x)
             if (current.attributes().namedItem(QString("flags")).isNull() or \
-                current.attributes().namedItem(QString("flags")).nodeValue() != QString("OpusHidden")) and \
+                current.attributes().namedItem(QString("flags")).nodeValue() != QString("hidden")) and \
                 (current.nodeType() == QDomNode.ElementNode):
                 # We found one
                 foundSoFar = foundSoFar + 1
