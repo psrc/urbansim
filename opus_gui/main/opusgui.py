@@ -89,6 +89,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         # Model System menus
         QObject.connect(self.actionEdit_all_variables, SIGNAL("triggered()"), self.editAllVariables)
+        self.actionEdit_all_variables.setEnabled(False)
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         self.all_variables = AllVariablesGui(self,flags)
 
@@ -271,6 +272,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             # Add the project file's path to the title bar
             self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.toolboxbase.xml_file).filePath())
             self.resultManagerStuff.scanForRuns()
+        self.actionEdit_all_variables.setEnabled(True)
 
     def saveConfig(self):
         try:
@@ -380,6 +382,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self._saveOrDiscardChanges()
         self.toolboxStuff.closeXMLTree()
         self.setWindowTitle(self.application_title)
+        self.actionEdit_all_variables.setEnabled(False)
 
     def closeEvent(self, event):
         # Check to see if there are changes to the current project, if a project is open
