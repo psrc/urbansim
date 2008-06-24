@@ -24,6 +24,7 @@ from opus_gui.config.xmlmodelview.opusdatamodel import OpusDataModel
 from opus_gui.config.xmlmodelview.opusdatadelegate import OpusDataDelegate
 from opus_gui.results.forms.view_image_form import ViewImageForm
 from opus_gui.results.forms.view_table_form import ViewTableForm
+from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
 
 # General system includes
 import os, sys, time, tempfile, shutil, string
@@ -117,6 +118,8 @@ class ModelGuiElement(QWidget):
         self.timer = None
         self.runThread = None
         
+        self.xml_helper = ResultsManagerXMLHelper(mainwindow.toolboxStuff)
+        
         # Grab the path to the base XML used to run this model
         self.xml_path = model.xml_path
 
@@ -163,6 +166,7 @@ class ModelGuiElement(QWidget):
         QObject.connect(self.pbnStartModel, SIGNAL("released()"),
                         self.on_pbnStartModel_released)        
         self.startVBoxLayout.addWidget(self.pbnStartModel)
+        
         self.pbnRemoveModel = QPushButton(self.startWidget)
         self.pbnRemoveModel.setObjectName("pbnRemoveModel")
         self.pbnRemoveModel.setText(QString("Remove From Queue"))
@@ -170,6 +174,8 @@ class ModelGuiElement(QWidget):
                         self.on_pbnRemoveModel_released)        
         self.startVBoxLayout.addWidget(self.pbnRemoveModel)
         self.vboxlayout2.addWidget(self.startWidget)
+
+        self.setup_indicator_batch_combobox()
 
         # Add a tab widget and layer in a tree view and log panel
         self.tabWidget = QTabWidget(self.groupBox)
@@ -355,117 +361,133 @@ class ModelGuiElement(QWidget):
         # Finally add the tab to the model page
         self.vboxlayout.addWidget(self.tabWidget)
 
+        self.setupDiagnosticIndicatorTab()
+        
+    def setupDiagnosticIndicatorTab(self):
         # start indicator tab 
 
         self.toolboxStuff = self.mainwindow.toolboxStuff
         domDocument = self.toolboxStuff.doc
 
-        self.indicatorWidget = QWidget() 
-        #    self.indicatorVBoxLayout = QVBoxLayout(self.indicatorWidget)  
+        self.indicatorWidget = QWidget(self.mainwindow) 
         self.indicatorGridBoxLayout = QGridLayout(self.indicatorWidget)
-        #    self.indicatorWidget.addLayout(self.indicatorVBoxLayout)
 
-        self.indicatorComboBox = QComboBox()
-        #self.tabWidget.addTab(self.indicatorWidget,"Diagnostics")
+        self.diagnostic_indicator_type = QComboBox(self.mainwindow)
+        self.diagnostic_indicator_type.addItem(QString('map'))
+        self.diagnostic_indicator_type.addItem(QString('table'))
+        
+        self.diagnostic_go_button = QPushButton(self.mainwindow)
+        self.diagnostic_go_button.setText(QString('Diagnose...'))
+
+        
+        self.diagnostic_year = QComboBox(self.mainwindow)
+        self.tabWidget.addTab(self.indicatorWidget,"Diagnostics")
 
         config = XMLConfiguration(str(self.xml_path)).get_run_configuration(str(self.model.modeltorun))
-        #    QComboBox.addItem(self.indicatorComboBox, QString("<Select Year>"), QVariant())
+        #    QComboBox.addItem(self.diagnostic_year, QString("<Select Year>"), QVariant())
         years = range(config["years"][0],config["years"][1]+1)
         self.yearItems = []
         for year in years:
-            #        self.string = QString(year)
-            #        QComboBox.addItem(self.indicatorComboBox, QString(str(year)), QVariant(year))
-            self.yearItems.append([year, False]); 
             #the second value in the list determines if it is already added to the drop down
+            self.yearItems.append([year, False]); 
 
         #combo box for selecting indicators for diagnostic
-        self.diagnostic_indicator_name = QComboBox()
-        self.diagnostic_indicator_name.setObjectName("diagnostic_indicator_name")
-        self.diagnostic_indicator_name.addItem(QString("[select indicator]"))
+        self.diagnostic_indicator_name = QComboBox(self.mainwindow)
+        self.diagnostic_indicator_name.addItem(QString("(select indicator)"))
 
-        node_list = elementsByAttributeValue(domDocument = domDocument, 
-                                             attribute = 'type', 
-                                             value = 'indicator')
+        indicators = self.xml_helper.get_available_indicator_names()
 
-        for element, node in node_list:
-            self.diagnostic_indicator_name.addItem(QString(element.nodeName()))
+        for indicator in indicators:
+            self.diagnostic_indicator_name.addItem(indicator['name'])
 
-        #combo box for selecting the dataset
-        available_datasets = [
-                '[select dataset]', 
-                'gridcell', 
-                'zone', 
-                #'taz',
-                #'county',
-                #'alldata'
-            ]
-        self.diagnostic_dataset_name = QComboBox()
-        self.diagnostic_dataset_name.setObjectName("diagnostic_dataset_name")
-
-        for dataset in available_datasets:
+        datasets = self.xml_helper.get_available_datasets()
+        self.diagnostic_dataset_name = QComboBox(self.mainwindow)
+        for dataset in datasets:
             self.diagnostic_dataset_name.addItem(QString(dataset))
 
+        self.indicatorResultsTab = QTabWidget(self.mainwindow)
 
-        self.indicatorResultsTab = QTabWidget()
+        QObject.connect(self.diagnostic_go_button,SIGNAL("released()"),self.on_indicatorBox)
 
-        QObject.connect(self.indicatorComboBox,SIGNAL("activated(QString)"),self.on_indicatorBox)
-
-        self.indicatorGridBoxLayout.addWidget(self.indicatorComboBox,0,0)
-        self.indicatorGridBoxLayout.addWidget(self.diagnostic_indicator_name,0,1)
-        self.indicatorGridBoxLayout.addWidget(self.diagnostic_dataset_name,0,2)
-        self.indicatorGridBoxLayout.addWidget(self.indicatorResultsTab,1,0,3,3)
-
-        # end indicator tab
-
-        # For use when printing the year and model
-        self.yearString = ""
-        self.modelString = ""
+        self.indicatorGridBoxLayout.addWidget(self.diagnostic_go_button, 0, 0)
+        self.indicatorGridBoxLayout.addWidget(self.diagnostic_indicator_type, 0, 1)
+        self.indicatorGridBoxLayout.addWidget(self.diagnostic_year,0,2)
+        self.indicatorGridBoxLayout.addWidget(self.diagnostic_indicator_name,0,3)
+        self.indicatorGridBoxLayout.addWidget(self.diagnostic_dataset_name,0,4)
+        self.indicatorGridBoxLayout.addWidget(self.indicatorResultsTab,1,0,5,5)
         
+    def setup_indicator_batch_combobox(self):
+        self.lblBatch = QLabel(self.startWidget)
+        self.lblBatch.setText(QString('Indicator batch (optional):'))
         
-    def on_indicatorBox(self,val):
-        indicator_name = QString(self.diagnostic_indicator_name.currentText())
-        if str(indicator_name) == '[select indicator]':
+        self.cboOptionalIndicatorBatch = QComboBox(self.startWidget)
+
+        
+        self.startVBoxLayout.addWidget(self.cboOptionalIndicatorBatch)
+        
+        self.startVBoxLayout.addWidget(self.lblBatch)
+        self.startVBoxLayout.addWidget(self.cboOptionalIndicatorBatch)
+        
+        self.cboOptionalIndicatorBatch.addItem(QString('(None)'))
+        batches = self.xml_helper.get_available_batches()
+        for batch in batches:
+            self.cboOptionalIndicatorBatch.addItem(QString(batch['name']))
+        
+    def on_indicatorBox(self):
+        indicator_name = str(self.diagnostic_indicator_name.currentText())
+        if indicator_name == '(select indicator)':
             raise 'need to select an indicator!!'
 
-        dataset_name = str(self.diagnostic_dataset_name.currentText())
-        if dataset_name == '[select dataset]':
-            raise 'need to select a dataset!!' 
+        dataset_name = self.diagnostic_dataset_name.currentText()
+        year = int(str(self.diagnostic_year.currentText()))
+        cache_directory = self.model.config['cache_directory']
+        indicator_type = str(self.diagnostic_indicator_type.currentText())
+        
+        if indicator_type == 'table':
+            indicator_type = 'table_per_attribute'
+        else:
+            indicator_type = 'matplotlib_map'
 
-        self.result_generator.set_data(source_data_name = 'Eugene_baseline.run1900',
-                                       indicator_name = indicator_name,
-                                       dataset_name = dataset_name, 
-                                       years = [int(val), int(val)])
+        visualizations = [
+            (indicator_type, str(dataset_name), {'indicator':indicator_name})
+        ]
 
+        self.batch_processor = BatchProcessor(
+                                    toolboxStuff = self.toolboxStuff)
+            
+        self.batch_processor.guiElement = self
+             
+        self.batch_processor.set_data(
+            visualizations = visualizations, 
+            source_data_name = None,
+            years = [year, year],
+            cache_directory = cache_directory)
 
-        self.resultThread = OpusGuiThread(parentThread = self.mainwindow,
-                                          parentGuiElement = self,
-                                          thread_object = self.result_generator)
-
-        self.resultThread.start()
-
-        self.visualizer = OpusResultVisualizer(
-                               toolboxStuff = self.mainwindow.toolboxStuff,
-                               indicator_type = 'table_per_year',
-                               source_data_name = 'Eugene_baseline.run1900',
-                               indicator_name = indicator_name,
-                               dataset_name = dataset_name,
-                               years = [int(val), int(val)])
-
-
-        self.visualization_thread = OpusGuiThread(parentThread = self.mainwindow,
-                                                  parentGuiElement = self,
-                                                  thread_object = self.visualizer)
-        self.visualization_thread.start()
-
-        QObject.connect(self.visualization_thread, SIGNAL("runFinished(PyQt_PyObject)"),
-                            self.visualizationsCreated)
+        self.diagnosticThread = OpusGuiThread(
+                              parentThread = self.mainwindow,
+                              parentGuiElement = self,
+                              thread_object = self.batch_processor)
+        
+        # Use this signal from the thread if it is capable of producing its own status signal
+        QObject.connect(self.diagnosticThread, SIGNAL("runFinished(PyQt_PyObject)"),
+                        self.visualizationsCreated)
+        QObject.connect(self.diagnosticThread, SIGNAL("runError(PyQt_PyObject)"),
+                        self.runErrorFromThread)
+        
+        self.diagnosticThread.start()
 
     def visualizationsCreated(self):
-        self.visualizations = self.visualizer.get_visualizations()
-        for visualization in self.visualizations:
-            guiElement = ViewTableForm(parent = self.mainwindow,
-                                       visualization = visualization)
-            self.indicatorResultsTab.insertTab(0,guiElement,guiElement.tabIcon,guiElement.tabLabel)
+        all_visualizations = self.batch_processor.get_visualizations()
+        for indicator_type, visualizations in all_visualizations:            
+            for visualization in visualizations:
+                if indicator_type == 'matplotlib_map':
+                    form = ViewImageForm(mainwindow = self.mainwindow,
+                                         visualization = visualization)
+                else:        
+                    form = ViewTableForm(mainwindow = self.mainwindow,
+                         visualization = visualization)
+                self.indicatorResultsTab.insertTab(0,form,form.tabIcon,form.tabLabel)
+
 
     def on_pbnRemoveModel_released(self):
         #    if(self.running == True):
@@ -510,7 +532,14 @@ class ModelGuiElement(QWidget):
             self.progressBarYear.setRange(0,0)
             self.progressBarModel.setRange(0,0)
             self.simprogressGroupBox.setTitle(QString("Model initializing..."))
-            self.runThread = RunModelThread(self.mainwindow,self,self.xml_path)
+            
+            batch_name = str(self.cboOptionalIndicatorBatch.currentText())
+            if batch_name == '(None)':
+                batch_name = None
+                
+            self.runThread = RunModelThread(self.mainwindow,self,self.xml_path,batch_name)
+
+            
             # Use this signal from the thread if it is capable of producing its own status signal
             QObject.connect(self.runThread, SIGNAL("runFinished(PyQt_PyObject)"),
                             self.runFinishedFromThread)
@@ -527,6 +556,7 @@ class ModelGuiElement(QWidget):
             self.runThread.start()
         else:
             print "Unexpected state in the model run..."
+
 
     # This is not used currently since the model can not return status... instead we use a timer to
     # check the status from a log file.
@@ -551,16 +581,31 @@ class ModelGuiElement(QWidget):
         self.timer.stop()
         # Get the final logfile update after model finishes...
         self.logFileKey = self.runThread.modelguielement.model._get_current_log(self.logFileKey)
+        
         self.running = False
         self.paused = False
         self.pbnStartModel.setText(QString("Start Model..."))
 
         #get the last year to show up in the diagnostics tab.
         self.yearItems[-1][1] = True
-        QComboBox.addItem(self.indicatorComboBox, 
-                          QString(str(self.yearItems[len(self.yearItems) - 1][0])),
-                          QVariant(self.yearItems[len(self.yearItems) - 1][0]))
+        self.diagnostic_year.addItem(QString(str(self.yearItems[-1][0])))
 
+        if self.runThread.batch_name is not None:
+            all_visualizations = self.runThread.batch_processor.get_visualizations()
+            for indicator_type, visualizations in all_visualizations:
+                if indicator_type == 'matplotlib_map' or \
+                   indicator_type == 'matplotlib_chart':
+                    form_generator = self.mainwindow.resultManagerStuff.addViewImageIndicator
+                elif indicator_type == 'table_per_year' or \
+                     indicator_type == 'table_per_attribute':
+                    form_generator = self.mainwindow.resultManagerStuff.addViewTableIndicator            
+            
+                if form_generator is not None:    
+                    for visualization in visualizations:
+                        form_generator(visualization = visualization, indicator_type = indicator_type)    
+
+
+        
     # GUI elements that show progress go here.  Note that they have to be set
     # up first in the constructor of this class, then optionally initialized in
     # on_pbnStartModel_released(), then calculated and updated here, and finally
@@ -626,7 +671,7 @@ class ModelGuiElement(QWidget):
                 #detect if a year has been completed
                 for item in self.yearItems:
                     if (int(item[0]) < int(current_year) and not item[1]) :
-                        QComboBox.addItem(self.indicatorComboBox, QString(str(item[0])), QVariant(item[0]))
+                        self.diagnostic_year.addItem(QString(str(item[0])))
                         item[1] = True 
                         #hook into indicator group computation here
 
@@ -654,6 +699,7 @@ class ModelGuiElement(QWidget):
         self.paused = False
         self.pbnStartModel.setText(QString("Start Model..."))
         QMessageBox.warning(self.mainwindow,"Warning",errorMessage)
+
 
 class EstimationGuiElement(QWidget):
     def __init__(self, mainwindow, runManager, estimation):
@@ -828,6 +874,8 @@ class EstimationGuiElement(QWidget):
         self.timer.stop()
         # Get the final logfile update after model finishes...
         self.logFileKey = self.runThread.estimationguielement.estimation._get_current_log(self.logFileKey)
+        
+        
         self.running = False
         self.paused = False
         self.pbnStartModel.setText(QString("Start Estimation..."))
