@@ -39,8 +39,9 @@ class fixed_field_storage(Storage):
         http://docs.python.org/lib/typesseq-strings.html
 
     When invoking fixed field storage creation from Python, the format
-    info may also be supplied as a dictionary, mapping column names to
-    format strings.
+    info may also be supplied as a list of tuples, of the form:
+    
+        [["name1", "5.2f"], ["name2", "10s"], ... ]
     """
 
     #
@@ -246,13 +247,13 @@ class fixed_field_storage(Storage):
         filename_with_extention = '%s.%s' % (table_name, self._format_file_extension)
         return os.path.join(self._output_directory, filename_with_extention)
 
-    def _parse_format_to_et(self, format_xml_or_dict):
+    def _parse_format_to_et(self, format_xml_or_list):
         result = ET.Element(self._root_element)
-        if isinstance(format_xml_or_dict, dict):
-            for name, format in format_xml_or_dict.iteritems():
-                ET.SubElement(result, self._field_element, name=name, format=format)
+        if isinstance(format_xml_or_list, list):
+            for item in format_xml_or_list:
+                ET.SubElement(result, self._field_element, name=item[0], format=item[1])
         else:
-            format_et = ET.fromstring(format_xml_or_dict)
+            format_et = ET.fromstring(format_xml_or_list)
             if format_et.tag != self._root_element:
                 raise ValueError('Format root element is not "'+self._root_element+'".')
             for field_et in format_et:
@@ -313,7 +314,7 @@ class TestFixedFieldStorageBase(object):
             <field name="ints" format=" 05i"/>
         </fixed_field>
         '''
-    format_dict = {'strs':'5s', 'flts':'6.2f', 'ints':' 05i'}
+    format_list = [['strs','5s'], ['flts','6.2f'], ['ints',' 05i']]
     data_in = {
         'ints': array([1,2202,-303]),
         'strs': array(['one', 'two', 'three']),
@@ -370,7 +371,7 @@ class TestFixedFieldStorageWithFormatFile(TestStorageInterface,TestFixedFieldSto
         self.storage.write_table(
             table_name = 'foo',
             table_data = self.data_in,
-            format = self.format_dict)
+            format = self.format_list)
         file = open(self.temp_dir+'/foo.dat', 'r')
         self.assertEqual(file.read(), self.data_text)
         file.close()
@@ -403,7 +404,7 @@ class TestFixedFieldStorageWithFormatHeader(TestStorageInterface,TestFixedFieldS
         self.storage.write_table(
             table_name = 'foo',
             table_data = self.data_out,
-            format = self.format_dict)
+            format = self.format_list)
         file = open(self.temp_dir+'/foo.dat', 'r')
         self.assertEqual(file.read(2), '# ')
         file.readline()
