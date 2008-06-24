@@ -42,6 +42,18 @@
     </advanced>
     <available_datasets type="list">['parcel','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
   </general>
+  <data_manager>
+    <Tool_Library setexpanded="True" type="tool_library">
+      <make_buildout_indicators type="tool_file">
+        <name type="tool_name">make_buildout_indicators</name>
+        <params type="param_template">
+          <output_type choices="Required|Optional" type="string">Required</output_type>
+          <storage_location choices="Required|Optional" type="dir_path">Required</storage_location>
+          <cache_directory choices="Required|Optional" type="dir_path">Required</cache_directory>
+        </params>
+      </make_buildout_indicators>
+    </Tool_Library>
+  </data_manager>
   <model_manager>
     <model_system type="dictionary">
       <real_estate_price_model copyable="True" type="dictionary">
