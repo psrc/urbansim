@@ -63,7 +63,7 @@ class StochasticTestCase(opus_unittest.OpusTestCase):
             else:
                 raise TypeError, "Unknown type of stochastic test."
             if passed:
-                break
+                return
         # failed too many times -- show the last message
         self.fail(msg)
 
