@@ -39,7 +39,7 @@ class ViewTableForm(QWidget):
     def load_table(self, visualization):
                 
         storage = StorageFactory().get_storage(
-                       type = 'csv_storage',
+                       type = '%s_storage'%visualization.file_extension,
                        storage_location = visualization.storage_location)
         table_data = storage.load_table(
                                 table_name = visualization.table_name)
