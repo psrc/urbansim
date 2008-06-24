@@ -127,12 +127,10 @@
         <opus_table_name type="string">ALL</opus_table_name>
       </opus_dataset_to_esri_config>
     </opus_dataset_to_esri>
-
 	</Tool_Sets>
-  </data_manager>
+</data_manager>
   <model_manager>
    <model_system type="dictionary">
-      <templates parser_action="category">
         <simple_model_template  type="dictionary" copyable="True">
          <import flags="hidden" type="dictionary">
           <opus_core.simple_model type="string">SimpleModel</opus_core.simple_model>
@@ -398,7 +396,6 @@
           </arguments>
         </run>
       </agent_location_choice_model_template>
-    </templates>
    </model_system>
    <estimation type="dictionary">
    <model_template  type="dictionary" copyable="True">
