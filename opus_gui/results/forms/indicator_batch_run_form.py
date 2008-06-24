@@ -11,20 +11,19 @@
 # other acknowledgments.
 # 
 
-from PyQt4.QtCore import QString, QObject, SIGNAL, \
-                         Qt, QTimer, QModelIndex
+from PyQt4.QtCore import QString, QObject, SIGNAL, Qt
 from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
-                        QTextEdit, QTabWidget, QWidget, QPushButton, \
+                        QTextEdit, QTabWidget, QDialog, QPushButton, \
                         QGroupBox, QVBoxLayout, QIcon, QLabel
 
 from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
 
 from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
-from opus_gui.results.gui_result_interface.opus_indicator_group_processor import OpusIndicatorGroupProcessor
+from opus_gui.results.gui_result_interface.batch_processor import BatchProcessor
 
-class IndicatorGroupRunForm(QWidget):
-    def __init__(self, mainwindow, result_manager, selected_item = None, simulation_run = None):
-        QWidget.__init__(self, mainwindow)
+class IndicatorBatchRunForm(QDialog):
+    def __init__(self, mainwindow, result_manager, batch_name = None, simulation_run = None):
+        QDialog.__init__(self, mainwindow)
         #mainwindow is an OpusGui
         self.mainwindow = mainwindow
         self.result_manager = result_manager
@@ -38,24 +37,23 @@ class IndicatorGroupRunForm(QWidget):
         
         self.available_years_for_simulation_runs = {}
 
-        self.result_generator = OpusIndicatorGroupProcessor(
+        self.batch_processor = BatchProcessor(
                                     toolboxStuff = self.toolboxStuff)
             
-        self.result_generator.guiElement = self
+        self.batch_processor.guiElement = self
         
-        self.tabIcon = QIcon(":/Images/Images/cog.png")
-        self.tabLabel = "Run indicator group"
-
+        self.setWindowTitle('Run indicator batch')
         self.widgetLayout = QVBoxLayout(self)
         self.widgetLayout.setAlignment(Qt.AlignTop)
-
-        self.indicatorsGroupBox = QGroupBox(self)
-        self.widgetLayout.addWidget(self.indicatorsGroupBox)
         
         self.dataGroupBox = QGroupBox(self)
         self.widgetLayout.addWidget(self.dataGroupBox)
         
-        self._setup_definition_widget(selected_item, simulation_run)
+        self.simulation_run = simulation_run
+        self.batch_name = batch_name
+
+        self._setup_definition_widget()
+
 
         self._setup_buttons()
         self._setup_tabs()
@@ -63,7 +61,7 @@ class IndicatorGroupRunForm(QWidget):
         
     def _setup_buttons(self):
         # Add Generate button...
-        self.pbn_run_indicator_group = QPushButton(self.indicatorsGroupBox)
+        self.pbn_run_indicator_group = QPushButton(self)
         self.pbn_run_indicator_group.setObjectName("pbn_run_indicator_group")
         self.pbn_run_indicator_group.setText(QString("Run indicator group..."))
         
@@ -73,10 +71,10 @@ class IndicatorGroupRunForm(QWidget):
         
     def _setup_tabs(self):
         # Add a tab widget and layer in a tree view and log panel
-        self.tabWidget = QTabWidget(self.indicatorsGroupBox)
+        self.tabWidget = QTabWidget(self)
     
         # Log panel
-        self.logText = QTextEdit(self.indicatorsGroupBox)
+        self.logText = QTextEdit(self)
         self.logText.setReadOnly(True)
         self.logText.setLineWidth(0)
         self.tabWidget.addTab(self.logText,"Log")
@@ -85,97 +83,38 @@ class IndicatorGroupRunForm(QWidget):
         self.widgetLayout.addWidget(self.tabWidget)
         
 #
-    def _setup_definition_widget(self, selected_item, simulation_run):
-        
-        #### setup indicators group box ####
-        
-        self.gridlayout = QGridLayout(self.indicatorsGroupBox)
-        self.gridlayout.setObjectName("gridlayout")
-
-        self.lbl_indicator_name = QLabel(self.indicatorsGroupBox)
-        self.lbl_indicator_name.setObjectName("lbl_indicator_name")
-        self.lbl_indicator_name.setText(QString("Indicator group"))
-        self.gridlayout.addWidget(self.lbl_indicator_name,0,0,1,1)
-
-        self._setup_co_indicator_group_name(selected_item)
-        self.gridlayout.addWidget(self.co_indicator_group_name,0,1,1,1)
-
+    def _setup_definition_widget(self):
+                
         ##### setup data group box ####
         self.gridlayout2 = QGridLayout(self.dataGroupBox)
         self.gridlayout2.setObjectName("gridlayout2")
                 
-        self.lbl_source_data = QLabel(self.indicatorsGroupBox)
-        self.lbl_source_data.setObjectName("lbl_source_data")
-        self.lbl_source_data.setText(QString("Simulation data"))
-        self.gridlayout2.addWidget(self.lbl_source_data,0,0,1,3)
-                
-        self.lbl_yr1 = QLabel(self.indicatorsGroupBox)
+        self.lbl_yr1 = QLabel(self)
         self.lbl_yr1.setObjectName("lbl_yr1")
         self.lbl_yr1.setText(QString("From"))
                 
-        self.lbl_yr2 = QLabel(self.indicatorsGroupBox)
+        self.lbl_yr2 = QLabel(self)
         self.lbl_yr2.setObjectName("lbl_yr2")
         self.lbl_yr2.setText(QString("<center>to</center>"))
 
-        self.lbl_yr3 = QLabel(self.indicatorsGroupBox)
+        self.lbl_yr3 = QLabel(self)
         self.lbl_yr3.setObjectName("lbl_yr3")
         self.lbl_yr3.setText(QString("<center>every</center>"))
 
-        self.lbl_yr4 = QLabel(self.indicatorsGroupBox)
+        self.lbl_yr4 = QLabel(self)
         self.lbl_yr4.setObjectName("lbl_yr4")
         self.lbl_yr4.setText(QString("<center>years</center>"))
         
         self._setup_co__years()
-
-        self._setup_co_source_data(simulation_run)
-        self.gridlayout2.addWidget(self.co_source_data,0,3,1,4) 
         
-        self.gridlayout2.addWidget(self.lbl_yr1,1,0,1,1)
-        self.gridlayout2.addWidget(self.co_start_year,1,1,1,1)
-        self.gridlayout2.addWidget(self.lbl_yr2,1,2,1,1)
-        self.gridlayout2.addWidget(self.co_end_year,1,3,1,1)
-        self.gridlayout2.addWidget(self.lbl_yr3,1,4,1,1)
-        self.gridlayout2.addWidget(self.co_every_year,1,5,1,1)
-        self.gridlayout2.addWidget(self.lbl_yr4,1,6,1,1)
+        self.gridlayout2.addWidget(self.lbl_yr1,0,0,1,1)
+        self.gridlayout2.addWidget(self.co_start_year,0,1,1,1)
+        self.gridlayout2.addWidget(self.lbl_yr2,0,2,1,1)
+        self.gridlayout2.addWidget(self.co_end_year,0,3,1,1)
+        self.gridlayout2.addWidget(self.lbl_yr3,0,4,1,1)
+        self.gridlayout2.addWidget(self.co_every_year,0,5,1,1)
+        self.gridlayout2.addWidget(self.lbl_yr4,0,6,1,1)
         
-        QObject.connect(self.co_source_data, SIGNAL("currentIndexChanged(int)"),
-                self.on_co_source_data_value_changed)
-
-    def _setup_co_indicator_group_name(self, selected_item):
-        
-        self.co_indicator_group_name = QComboBox(self.indicatorsGroupBox)
-        self.co_indicator_group_name.setObjectName("co_indicator_group_name")
-                
-        groups = self.xml_helper.get_available_indicator_group_names()
-        
-        for group in groups:
-            group_name = group['name']
-            self.co_indicator_group_name.addItem(QString(group_name))
-            
-        idx = self.co_indicator_group_name.findText(selected_item)
-        if idx != -1:
-            self.co_indicator_group_name.setCurrentIndex(idx)
-            
-    def _setup_co_source_data(self, selected_item):
-        self.co_source_data = QComboBox(self.indicatorsGroupBox)
-        self.co_source_data.setObjectName("co_source_data")
-                
-        runs = self.xml_helper.get_available_run_info(
-                   attributes = ['start_year', 'end_year'])
-        
-        for run in runs:
-            run_name = run['name']
-            years = (run['start_year'], run['end_year'])
-            self.co_source_data.addItem(QString(run_name))
-            
-            self.available_years_for_simulation_runs[run_name] = years
-
-        idx = self.co_source_data.findText(selected_item)
-        if idx != -1:
-            self.co_source_data.setCurrentIndex(idx)
-            self.on_co_source_data_value_changed(idx)
-            
-            
     def _setup_co__years(self):     
         self.co_start_year = QComboBox(self.dataGroupBox)
         self.co_start_year.setObjectName("co_start_year")
@@ -186,52 +125,49 @@ class IndicatorGroupRunForm(QWidget):
         self.co_every_year = QComboBox(self.dataGroupBox)
         self.co_every_year.setObjectName("co_every_year")
 
-                    
+        runs = self.xml_helper.get_available_run_info(
+                   attributes = ['start_year', 'end_year'])
+        
+        for run in runs:
+            if run['name'] == self.simulation_run:
+                (start, end) = (run['start_year'], run['end_year'])
+                break
+
+        (start, end) = (int(start), int(end))
+        for i in range(start, end + 1):
+            yr = QString(repr(i))
+            self.co_start_year.addItem(yr)
+            self.co_end_year.addItem(yr)
+        for i in range(1, end - start + 2):
+            yr = QString(repr(i))
+            self.co_every_year.addItem(yr)
+                
     def on_pbnRemoveModel_released(self):
         self.result_manager.removeTab(self)
         self.result_manager.updateGuiElements()
-        
-    def on_co_source_data_value_changed(self, ind):
-        txt = self.co_source_data.currentText()
-        if txt in self.available_years_for_simulation_runs:
-            self.co_start_year.clear()
-            self.co_end_year.clear()
-            self.co_every_year.clear()
-            (start, end) = self.available_years_for_simulation_runs[txt]
-            (start, end) = (int(start), int(end))
-            for i in range(start, end + 1):
-                yr = QString(repr(i))
-                self.co_start_year.addItem(yr)
-                self.co_end_year.addItem(yr)
-            for i in range(1, end - start + 2):
-                yr = QString(repr(i))
-                self.co_every_year.addItem(yr)
 
     def on_pbn_run_indicator_group_released(self):
 
         self.pbn_run_indicator_group.setEnabled(False)
-
-        source_text = QString(self.co_source_data.currentText())
+        
         start_year = int(self.co_start_year.currentText())
         end_year = int(self.co_end_year.currentText())
         increment = int(self.co_every_year.currentText())
         
         years = range(start_year, end_year + 1, increment)
-
-        group_name = QString(self.co_indicator_group_name.currentText())
         
-        indicators_to_run = self.xml_helper.get_indicators_in_indicator_group(
-                                group_name = group_name)
+        visualizations = self.xml_helper.get_batch_configuration(
+                                batch_name = self.batch_name)
         
-        self.result_generator.set_data(
-            indicator_defs = indicators_to_run, 
-            source_data_name = source_text,
+        self.batch_processor.set_data(
+            visualizations = visualizations, 
+            source_data_name = self.simulation_run,
             years = years)
                         
         self.runThread = OpusGuiThread(
                               parentThread = self.mainwindow,
                               parentGuiElement = self,
-                              thread_object = self.result_generator)
+                              thread_object = self.batch_processor)
         
         # Use this signal from the thread if it is capable of producing its own status signal
         QObject.connect(self.runThread, SIGNAL("runFinished(PyQt_PyObject)"),
@@ -239,14 +175,13 @@ class IndicatorGroupRunForm(QWidget):
         QObject.connect(self.runThread, SIGNAL("runError(PyQt_PyObject)"),
                         self.runErrorFromThread)
         
-
         self.runThread.start()
 
     # Called when the model is finished... 
     def runFinishedFromThread(self,success):
         print "Results generated met with success = ", success
             
-        all_visualizations = self.result_generator.get_visualizations()
+        all_visualizations = self.batch_processor.get_visualizations()
         for indicator_type, visualizations in all_visualizations:
             if indicator_type == 'matplotlib_map' or \
                indicator_type == 'matplotlib_chart':
@@ -260,8 +195,9 @@ class IndicatorGroupRunForm(QWidget):
                     form_generator(visualization = visualization, indicator_type = indicator_type)    
             
         # Get the final logfile update after model finishes...
-#        self.logFileKey = self.result_generator._get_current_log(self.logFileKey)
+#        self.logFileKey = self.batch_processor._get_current_log(self.logFileKey)
         self.pbn_run_indicator_group.setEnabled(True)
+        self.close()
     
 
     def runErrorFromThread(self,errorMessage):
