@@ -26,15 +26,21 @@ class fixed_field_storage(Storage):
     """
     A storage object that saves table and value data into a directory, 
     giving each table its own file in the directory. Fields are written
-    with fixed width and no delimiters. Format info optionally is
-    written in a commented header.  Format info is supplied as an XML string:
+    with fixed width and no delimiters. The format info optionally is
+    written in a commented header or a separate file.  Format info is XML:
+
         <fixed_field>
             <field name="column_name_1" format="5.2f" />
             <field name="column_name_2" format="10s" />
             ...
         </fixed_field>
+
     The 'format' attribute is a printf-style format string:
         http://docs.python.org/lib/typesseq-strings.html
+
+    When invoking fixed field storage creation from Python, the format
+    info may also be supplied as a dictionary, mapping column names to
+    format strings.
     """
 
     #
@@ -240,14 +246,18 @@ class fixed_field_storage(Storage):
         filename_with_extention = '%s.%s' % (table_name, self._format_file_extension)
         return os.path.join(self._output_directory, filename_with_extention)
 
-    def _parse_format_to_et(self, format_xml):
+    def _parse_format_to_et(self, format_xml_or_dict):
         result = ET.Element(self._root_element)
-        format_et = ET.fromstring(format_xml)
-        if format_et.tag != self._root_element:
-            raise ValueError('Format root element is not "'+self._root_element+'".')
-        for field_et in format_et:
-            if field_et.tag == self._field_element:
-                ET.SubElement(result, self._field_element, name=field_et.get('name'), format=field_et.get('format'))
+        if isinstance(format_xml_or_dict, dict):
+            for name, format in format_xml_or_dict.iteritems():
+                ET.SubElement(result, self._field_element, name=name, format=format)
+        else:
+            format_et = ET.fromstring(format_xml_or_dict)
+            if format_et.tag != self._root_element:
+                raise ValueError('Format root element is not "'+self._root_element+'".')
+            for field_et in format_et:
+                if field_et.tag == self._field_element:
+                    ET.SubElement(result, self._field_element, name=field_et.get('name'), format=field_et.get('format'))
         return result
 
     def _get_file_and_format_et_for_table(self, table_name, format = None):
@@ -296,13 +306,14 @@ from tempfile import mkdtemp
 
 class TestFixedFieldStorageBase(object):
 
-    format = '''
+    format_xml = '''
         <fixed_field>
             <field name="strs" format="5s" />
             <field name="flts" format="6.2f" />
             <field name="ints" format=" 05i"/>
         </fixed_field>
         '''
+    format_dict = {'strs':'5s', 'flts':'6.2f', 'ints':' 05i'}
     data_in = {
         'ints': array([1,2202,-303]),
         'strs': array(['one', 'two', 'three']),
@@ -359,7 +370,7 @@ class TestFixedFieldStorageWithFormatFile(TestStorageInterface,TestFixedFieldSto
         self.storage.write_table(
             table_name = 'foo',
             table_data = self.data_in,
-            format = self.format)
+            format = self.format_dict)
         file = open(self.temp_dir+'/foo.dat', 'r')
         self.assertEqual(file.read(), self.data_text)
         file.close()
@@ -369,7 +380,7 @@ class TestFixedFieldStorageWithFormatFile(TestStorageInterface,TestFixedFieldSto
         
     def fixed_field_read_setup(self):
         format_file = open(self.temp_dir+'/foo.fmt', 'wb')
-        format_file.write(self.format)
+        format_file.write(self.format_xml)
         format_file.close()
         data_file = open(self.temp_dir+'/foo.dat', 'wb')
         data_file.write(self.data_text)
@@ -392,7 +403,7 @@ class TestFixedFieldStorageWithFormatHeader(TestStorageInterface,TestFixedFieldS
         self.storage.write_table(
             table_name = 'foo',
             table_data = self.data_out,
-            format = self.format)
+            format = self.format_dict)
         file = open(self.temp_dir+'/foo.dat', 'r')
         self.assertEqual(file.read(2), '# ')
         file.readline()
@@ -401,7 +412,7 @@ class TestFixedFieldStorageWithFormatHeader(TestStorageInterface,TestFixedFieldS
 
     def fixed_field_read_setup(self):
         data_file = open(self.temp_dir+'/foo.dat', 'wb')
-        data_file.write('# ' + self.format.replace('\n','') + '\n')
+        data_file.write('# ' + self.format_xml.replace('\n','') + '\n')
         data_file.write(self.data_text)
         data_file.close()
 
