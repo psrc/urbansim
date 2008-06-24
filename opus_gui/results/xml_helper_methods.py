@@ -52,11 +52,11 @@ def _elementsByAttributeValue(first_child,
                    matches = matches)
         node = node.nextSibling()
             
-def get_child_values(parent, child_names):
+def get_child_values(parent, child_names = [], all = False):
     child_vals = {}
     node = parent.firstChild()
     while not node.isNull():
-        if node.nodeName() in child_names:
+        if all or node.nodeName() in child_names:
             if node.isElement():
                 domElement = node.toElement()
                 child_vals[str(node.nodeName())] = domElement.text()
@@ -79,13 +79,18 @@ class ResultsManagerXMLHelper:
         available_datasets = available_datasets['available_datasets']
         available_datasets = str(available_datasets)[1:-1].replace("'",'').split(',')
         return available_datasets
-        
+    
+    def get_available_batches(self, attributes = []):
+        return self._get_node_group(node_value = 'indicator_batch', 
+                                    node_attribute = 'type', 
+                                    child_attributes = attributes)  
+                
     def get_available_indicator_names(self, attributes = []):
         return self._get_node_group(node_value = 'indicator', 
                                     node_attribute = 'type', 
                                     child_attributes = attributes)        
     
-    def get_available_indicator_group_names(self, attributes = []):
+    def get_available_indicator_batch_names(self, attributes = []):
         return self._get_node_group(node_value = 'indicator_group', 
                                     node_attribute = 'type', 
                                     child_attributes = attributes)        
@@ -125,34 +130,37 @@ class ResultsManagerXMLHelper:
 
         return group
     
-    def get_indicators_in_indicator_group(self, group_name):
+    def get_visualization_options(self):
         viz_map = {
             'Map (per indicator per year)':'matplotlib_map',
             'Chart (per indicator, spans years)':'matplotlib_chart',
             'Table (per indicator, spans years)':'table_per_attribute',
             'Table (per year, spans indicators)':'table_per_year',
-            'ESRI table (for loading in ArcGIS)':'table_esri'
+#            'ESRI table (for loading in ArcGIS)':'table_esri'
         }
+        return viz_map
         
-        indicator_group_node, _ = self.get_element_attributes(node_name = group_name, 
-                                                           node_type = 'indicator_group')
-        indicators = {}
-        node = indicator_group_node.firstChild()
+    def get_batch_configuration(self, batch_name):
+        visualizations = []
+        
+        batch_node, _ = self.get_element_attributes(node_name = batch_name, 
+                                                    node_type = 'indicator_batch')
+        
+        node = batch_node.firstChild()
         while not node.isNull():
-            indicator_name = str(node.nodeName())
-            vals = get_child_values(
-                        parent = node, 
-                        child_names = ['visualization_type','dataset_name'])
-            visualization_type = viz_map[str(vals['visualization_type'])]
-            dataset_name = str(vals['dataset_name'])
+            element = node.toElement()
+            vals = get_child_values(parent = element,
+                                    all = True)
 
-            if (visualization_type, dataset_name) not in indicators:
-                indicators[(visualization_type, dataset_name)] = [indicator_name]
-            else:
-                indicators[(visualization_type, dataset_name)].append(indicator_name)
+            visualization_type = str(vals['visualization_type'])
+            dataset_name = str(vals['dataset_name'])
+            visualizations.append((visualization_type, dataset_name, vals))
+            
             node = node.nextSibling()
             
-        return indicators
+        return visualizations 
+
+
 
     def get_indicator_result_info(self, indicator_name):
         _, info = self.get_element_attributes(
@@ -170,7 +178,7 @@ class ResultsManagerXMLHelper:
         indicator['years'] = [int(y) for y in str(info['available_years']).split(', ')]        
         return indicator
     
-    def get_element_attributes(self, node_name, child_attributes = [], node_type = None):
+    def get_element_attributes(self, node_name, child_attributes = [], all = False, node_type = None):
         if not isinstance(node_name, QString):
             node_name = QString(node_name)
         if node_type is not None and not isinstance(node_type, QString):
@@ -242,9 +250,7 @@ class ResultsManagerXMLHelper:
         }        
         child_defs = [scenario_def, run_def, cache_dir_def, start_year_def, end_year_def]
         
-        name = 'Run_%s'%run_name
-
-        self._add_new_xml_tree(head_node_name = name, 
+        self._add_new_xml_tree(head_node_name = run_name, 
                                head_node_args = head_node_args, 
                                child_node_definitions = child_defs, 
                                parent_name = 'Simulation_runs',
@@ -281,7 +287,7 @@ class ResultsManagerXMLHelper:
             'type':'string',
             'value':', '.join([repr(year) for year in years])
         }
-        
+                
         child_defs = [source_data_def, indicator_def, dataset_def, year_def]
         
         self._add_new_xml_tree(head_node_name = result_name, 
@@ -317,27 +323,51 @@ class ResultsManagerXMLHelper:
                                parent_name = 'my_indicators',
                                children_hidden = True)
           
-    def addNewIndicatorGroup(self, group_name):
-        head_node_args = {'type':'indicator_group',
+    def addNewIndicatorBatch(self, batch_name):
+        head_node_args = {'type':'indicator_batch',
                           'value':''}
                 
-        self._add_new_xml_tree(head_node_name = group_name, 
+        self._add_new_xml_tree(head_node_name = batch_name, 
                                head_node_args = head_node_args, 
-                               parent_name = 'Indicator_groups')
+                               parent_name = 'Indicator_batches')
 
-    def addIndicatorToGroup(self, group_name, indicator_name):
+    def addNewVisualizationToBatch(self, viz_name, batch_name, viz_type, dataset_name, viz_params):
+        head_node_args = {'type':'batch_visualization',
+                          'value':''}
 
-        head_node_args = {'type':'indicator_group_member',
+        viz_params.append({'value':self.get_visualization_options()[viz_type],
+                           'name':'visualization_type'})
+        viz_params.append({'value':dataset_name,
+                           'name':'dataset_name'})
+            
+        for param in viz_params:
+            value = param['value']
+            if isinstance(value,str):
+                param['type'] = 'string'
+                param['value'] = value
+            elif isinstance(value,list):
+                param['type'] = 'list'
+            elif isinstance(value,int):
+                param['type'] = 'integer'
+        
+        self._add_new_xml_tree(head_node_name = QString(viz_name), 
+                               head_node_args = head_node_args, 
+                               parent_name = batch_name, 
+                               child_node_definitions = viz_params, 
+                               temporary = False, 
+                               children_hidden = True)
+        
+        
+    def addIndicatorToBatch(self, batch_name, indicator_name):
+
+        head_node_args = {'type':'indicator_batch_member',
                           'value':''}
         
         available_datasets = self.get_available_datasets()        
         datasets = '|'.join(available_datasets)
 
-        visualizations = [
-            'Map (per indicator per year)',
-            'Chart (per indicator, spans years)',
-            'Table (per indicator, spans years)',
-            'Table (per year, spans indicators)']
+        visualizations = self.get_visualization_options().keys()
+
         visualizations = '|'.join(visualizations)
         
         datasets_def = {
@@ -357,7 +387,7 @@ class ResultsManagerXMLHelper:
         self._add_new_xml_tree(head_node_name = indicator_name, 
                                head_node_args = head_node_args, 
                                child_node_definitions = child_defs, 
-                               parent_name = group_name)
+                               parent_name = batch_name)
                 
     def _add_new_xml_tree(self, 
                           head_node_name,
