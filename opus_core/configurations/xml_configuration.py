@@ -65,7 +65,7 @@ class XMLConfiguration(object):
         # remove any old followers nodes
         for n in self.full_tree.getiterator():
             if n.get('followers') is not None:
-                # TODO: find standard Element interface for removing an attribute
+                # unfortunately it doesn't look like ElementTree has a method for removing an attribute ....
                 del n.attrib['followers']
         self._set_followers(etree.getroot(), self._get_parent_trees(), '')
         self._clean_tree(etree.getroot())
@@ -171,6 +171,8 @@ class XMLConfiguration(object):
     def _find_node(self, path):
         # find path in my xml tree
         # this is like the 'find' provided by ElementTree, except that it also works with an empty path
+        # Caution: in ElementTree an element without any elements tests as False -- so if you are using 
+        # the result of _find_node in an 'if' statement, check that the result is not None explicitly.
         if path=='':
             return self.full_tree.getroot()
         else:
@@ -253,7 +255,7 @@ class XMLConfiguration(object):
                     extended_path = path + '/' + n.tag
                 # check if n occurs in any parent
                 for p in parent_trees:
-                    if p.find(extended_path):
+                    if p.find(extended_path) is not None:
                         is_new = False
                         break
                 if is_new:

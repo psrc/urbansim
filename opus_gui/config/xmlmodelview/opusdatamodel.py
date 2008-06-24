@@ -316,7 +316,7 @@ class OpusDataModel(QAbstractItemModel):
         indentSize = 2
         opusXMLTree.update(str(self.domDocument.toString(indentSize)))
         found = opusXMLTree.find(str(nodePath))
-        if found:
+        if found is not None:
             # Insert the inherited node
             doc = QDomDocument()
             doc.setContent(QString(found))
