@@ -25,5 +25,10 @@ aliases = [
    "faz_id = household.disaggregate(zone.faz_id, intermediates=[parcel, building])",
    "dummy_id = urbansim_parcel.household.faz_id * 100 + household.persons",
    'number_of_non_home_based_workers = household.aggregate(urbansim_parcel.person.is_non_home_based_worker)',
-   'number_of_non_home_based_workers_with_job = household.aggregate(urbansim_parcel.person.is_non_home_based_worker_with_job)'
+   'number_of_non_home_based_workers_with_job = household.aggregate(urbansim_parcel.person.is_non_home_based_worker_with_job)',
+   'residence_zone_id = household.disaggregate(parcel.zone_id,intermediates=[building])',
+   'residence_area_type_id = household.disaggregate(zone.area_type_id,intermediates=[parcel, building])',
+   'residence_district_id = household.disaggregate(zone.district_id,intermediates=[parcel, building])',
+   'residence_faz_id = household.disaggregate(zone.faz_id,intermediates=[parcel, building])',
+   'residence_large_area_id = household.disaggregate(faz.large_area_id,intermediates=[zone, parcel, building])',
            ]
