@@ -162,7 +162,7 @@ class OpusXMLAction_Results(object):
         print "addNewIndicatorBatch pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
               
-        self.xml_helper.addNewIndicatorBatch(batch_name = 'untitled indicator batch')
+        self.xml_helper.addNewIndicatorBatch(batch_name = 'untitled_indicator_batch')
         
     def beforeAddIndicatorToBatchShown(self):
         print "AddIndicatorToBatch about to be shown"
