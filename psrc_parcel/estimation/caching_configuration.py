@@ -80,6 +80,8 @@ class CachingConfiguration(Configuration):
                     "workplace_choice_model_for_resident_specification",
                     "development_project_proposals",
                    'development_project_proposals_for_estimation',
+                   'tours',
+                   'households_2001',
             ]
 
         return {
@@ -102,12 +104,12 @@ class CachingConfiguration(Configuration):
             ),
         'input_configuration': DatabaseConfiguration(
             #database_name = 'psrc_2005_parcel_baseyear_change_20070608',
-            database_name = 'psrc_2005_parcel_baseyear_change_lmwang',
+            database_name = 'psrc_2005_parcel_baseyear_change_20080622_2006',
             ),
         'dataset_pool_configuration': DatasetPoolConfiguration(
             package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'],
             package_order_exceptions={},
             ),
-        'base_year': 2000,
+        'base_year': 2006,
         }
 
