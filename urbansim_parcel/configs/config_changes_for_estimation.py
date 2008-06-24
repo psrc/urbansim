@@ -19,10 +19,13 @@ class ConfigChangesForEstimation(USConfigChangesForEstimation):
     def __init__(self):
         USConfigChangesForEstimation.__init__(self)
         self['household_location_choice_model'] = {'models': [
-                                   {"real_estate_price_model": ["run"]},                          
+                                   #{"real_estate_price_model": ["run"]},                          
                                    #{"household_relocation_model": ["run"]},
-                                   {"household_location_choice_model": ["estimate"]}
-                                   ]}
+                                   #{"tour_schedule_model": ["run"]},
+                                   {"household_location_choice_model": ["estimate"]},
+                                   ],
+                                   'years':(2006, 2006),
+                               }
         self['employment_location_choice_model'] = {
                         'non_home_based': {'models': [
                                             {"real_estate_price_model_for_all_parcels": ["run"]},
@@ -62,7 +65,7 @@ class ConfigChangesForEstimation(USConfigChangesForEstimation):
                                                     ]
                                                 }
         self["development_project_proposal_choice_model"] = {'models': [
-            {"expected_sale_price_model":["run"]},
+            #{"expected_sale_price_model":["run"]},
                                 {"development_project_proposal_choice_model": ["estimate"]}
                             ]
                             }
