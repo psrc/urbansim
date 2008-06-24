@@ -27,7 +27,7 @@ from opus_gui.run.runmanagerbase import *
 from opus_gui.results.resultManagerBase import *
 from opus_gui.results.xml_helper_methods import get_child_values
 
-from opus_gui.config.xmlmodelview.opusallvariablestablemodel import OpusAllVariablesTableModel
+from opus_gui.config.generalmanager.all_variables import AllVariablesGui
 
 # General system includes
 import sys,time,tempfile,os
@@ -89,24 +89,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         # Model System menus
         QObject.connect(self.actionEdit_all_variables, SIGNAL("triggered()"), self.editAllVariables)
-        self.allVariablesWidget = QWidget(self)
-        self.allVariablesWidgetLayout = QVBoxLayout(self.allVariablesWidget)
-        self.allVariablesWidgetLayout.setAlignment(Qt.AlignTop)
-        self.allVariablesGroupBox = QGroupBox(self)
-        self.allVariablesGroupBoxLayout = QGridLayout(self.allVariablesGroupBox)
-        #Add a default table
-        tv = QTableView()
-        header = ["Name","Value"]
-        tabledata = [("test_var","This is a really long test line just to show what happens when the line wraps around inside of the table view and we have to have a multi line display...")]
-        tm = OpusAllVariablesTableModel(tabledata, header, self.allVariablesWidget) 
-        tv.setModel(tm)
-        tv.setSortingEnabled(True)
-        tv.horizontalHeader().setStretchLastSection(True)
-        tv.setWordWrap(True)
-        self.allVariablesGroupBoxLayout.addWidget(tv)
-        self.allVariablesWidgetLayout.addWidget(self.allVariablesGroupBox)
-        self.allVariablesWidget.hide()
-        
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        self.all_variables = AllVariablesGui(self,flags)
+
         # QGIS References are removed for the time being...
         #Add map tab
         #QObject.connect(self.actionMap_View, SIGNAL("triggered()"), self.openMapTab)
@@ -210,13 +195,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.logViewTextBrowser.append(result)
 
     def editAllVariables(self):
-        #print "Edit all_variables pressed..."
-        if self.tabWidget.indexOf(self.allVariablesWidget) == -1:
-            tabIcon = QIcon(":/Images/Images/cog.png")
-            tabLabel = QString("all_variables")
-            self.tabWidget.insertTab(0,self.allVariablesWidget,tabIcon,tabLabel)
-            self.tabWidget.setCurrentIndex(0)
-
+        self.all_variables.show()
+        
     def closeCurrentTab(self):
         widget = self.tabWidget.currentWidget()
         self.tabWidget.removeTab(self.tabWidget.currentIndex())
