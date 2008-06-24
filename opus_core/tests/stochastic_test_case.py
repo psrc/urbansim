@@ -34,31 +34,38 @@ class StochasticTestCase(opus_unittest.OpusTestCase):
     """
     def run_stochastic_test(self, file_path, function, expected_results,
                             number_of_iterations, significance_level=0.01, type="poisson", transformation=None,
-                            log_results=True, expected_to_fail=False):
+                            log_results=True, expected_to_fail=False, number_of_tries=5):
         """
-        Run the given function for the specified number_of_iterations.
+        For each test, run the given function for the specified number_of_iterations.
         Uses different test statistics to determine whether the produced results are
         within the specified significance_level of the expected_results.
         If log_results is True, and if the operating system environment variable
         MYSQLSTOCHASTICTESTLOGGER is set, log the results to the stochastic_test_case
         table in the MySQL database on the host MYSQLSTOCHASTICTESTLOGGER.  Nothing
         is logged if log_results is False or if the environment variable isn't set.
+        Finally, since the stochastic test will fail every once in a while, run the whole
+        test up to number_of_tries times, until either it succeeds or it fails too many times.
         """
         self.file_path = file_path
         self.type = type
         self.log_results = log_results
         self.expected_to_fail = expected_to_fail
-        if type == "normal":
-            self._run_stochastic_test_normal(function, expected_results,
-                        number_of_iterations, significance_level, transformation)
-        elif type == "poisson":
-            self._run_stochastic_test_poisson(function, expected_results,
-                        number_of_iterations, significance_level, transformation)
-        elif type == "pearson":
-            self._run_stochastic_test_pearson(function, expected_results,
-                        number_of_iterations, significance_level, transformation)
-        else:
-            raise TypeError, "Unknown type of stochastic test."
+        for i in range(number_of_tries):
+            if type == "normal":
+                (passed, msg) = self._run_stochastic_test_normal(function, expected_results,
+                            number_of_iterations, significance_level, transformation)
+            elif type == "poisson":
+                (passed, msg) = self._run_stochastic_test_poisson(function, expected_results,
+                            number_of_iterations, significance_level, transformation)
+            elif type == "pearson":
+                (passed, msg) = self._run_stochastic_test_pearson(function, expected_results,
+                            number_of_iterations, significance_level, transformation)
+            else:
+                raise TypeError, "Unknown type of stochastic test."
+            if passed:
+                break
+        # failed too many times -- show the last message
+        self.fail(msg)
 
 
     def _log_results(self, prob, number_of_iterations, significance_level, transformation, K, LRTS=-9999):
@@ -136,8 +143,7 @@ class StochasticTestCase(opus_unittest.OpusTestCase):
                             number_of_iterations, significance_level, transformation)
         logger.log_status("Stochastic Test Normal: LRTS=" + str(LRTS) + ", df=", str(K), " p=" + str(prob))
         self._log_results(prob, number_of_iterations, significance_level, transformation, K, LRTS)
-        self.assert_(prob >= significance_level,
-                     msg="prob=%f < significance level of %f" % (prob, significance_level))
+        return (prob >= significance_level, "prob=%f < significance level of %f" % (prob, significance_level))
 
     def compute_stochastic_test_normal(self, function, expected_results,
                             number_of_iterations, significance_level=0.01, transformation="sqrt"):
@@ -183,8 +189,7 @@ class StochasticTestCase(opus_unittest.OpusTestCase):
         #print LRTS, prob
         logger.log_status("Stochastic Test Poisson: LRTS=" + str(LRTS) + ", df=", str(K), ", p=" + str(prob))
         self._log_results(prob, number_of_iterations, significance_level, transformation, K, LRTS)
-        self.assert_(prob >= significance_level,
-                     msg="prob=%f < significance level of %f" % (prob, significance_level))
+        return (prob >= significance_level, "prob=%f < significance level of %f" % (prob, significance_level))
 
     def _run_stochastic_test_pearson(self, function, expected_results,
                             number_of_iterations, significance_level=0.01, transformation=None):
@@ -201,28 +206,30 @@ class StochasticTestCase(opus_unittest.OpusTestCase):
         logger.log_status("Stochastic Test: Pearson Chi^2=" + str(pearson) + ", df=",
                            str(K*number_of_iterations),", p=" + str(prob))
         self._log_results(prob, number_of_iterations, significance_level, transformation, K)
-        self.assert_(prob >= significance_level,
-                     msg="prob=%f < significance level of %f" % (prob, significance_level))
+        return (prob >= significance_level, "prob=%f < significance level of %f" % (prob, significance_level))
 
-    def chi_square_test_with_known_mean(self, function, mean, variance, number_of_iterations, significance_level=0.01):
-        """ Two-sided Chi^2 test for sigma = sigma_0 vs. sigma != sigma_0, if means are known.
+    def chi_square_test_with_known_mean(self, function, mean, variance, number_of_iterations, significance_level=0.01, number_of_tries=5):
+        """For each test, run a two-sided Chi^2 test for sigma = sigma_0 vs. sigma != sigma_0, if means are known.
         'mean' and 'variance' are arrays whose length must correspond to the array that the given function produces.
+        Since the stochastic test will fail every once in a while, run the whole
+        test up to number_of_tries times, until either it succeeds or it fails too many times.
         """
-        K = mean.size
-        x = zeros((number_of_iterations, K), dtype=float32)
-        for i in range(number_of_iterations):
-            x[i,:]= function()
-        stat = (((x - mean)**2.0)/variance).sum()
-        prob = chisqprob(stat, K*number_of_iterations)
-        logger.log_status("Stochastic Test: Chi^2 test statistic = " + str(stat) + ", df=",
-                           str(K*number_of_iterations),", p=" + str(prob))
-        self.assert_((prob >= significance_level/2.0) and (prob <= (1-significance_level/2.0)),
-                     msg="prob=%f is not in [%f,%f]" % (prob, significance_level/2.0, 1-significance_level/2.0))
+        for i in range(number_of_tries):
+            K = mean.size
+            x = zeros((number_of_iterations, K), dtype=float32)
+            for i in range(number_of_iterations):
+                x[i,:]= function()
+            stat = (((x - mean)**2.0)/variance).sum()
+            prob = chisqprob(stat, K*number_of_iterations)
+            logger.log_status("Stochastic Test: Chi^2 test statistic = " + str(stat) + ", df=",
+                               str(K*number_of_iterations),", p=" + str(prob))
+            if (prob >= significance_level/2.0) and (prob <= (1-significance_level/2.0)):
+                # test succeeded -- jump out of the method
+                return
+        # test failed more than number_of_tries times
+        self.fail(msg="prob=%f is not in [%f,%f]" % (prob, significance_level/2.0, 1-significance_level/2.0))
         
-        
-        
-from opus_core.tests import opus_unittest
-
+ 
 class TestStochasticTestCase(opus_unittest.OpusTestCase):
     def setUp(self):
         pass
