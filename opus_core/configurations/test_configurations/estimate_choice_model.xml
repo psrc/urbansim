@@ -1,8 +1,8 @@
 <opus_project>
   <general>
-   <all_variables type="dictionary">
+   <expression_library type="dictionary">
      <var1 type="variable_definition" copyable='True'>var1 = package.dataset.some_variable_or_expression</var1>
-   </all_variables>
+   </expression_library>
   </general>
   <model_manager>
     <estimation>

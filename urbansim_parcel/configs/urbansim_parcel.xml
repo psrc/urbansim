@@ -2,7 +2,7 @@
   <general>
     <description type="string">Refactored Default UrbanSim parcel project</description>
     <parent type="file">urbansim/configs/urbansim.xml</parent>
-        <all_variables type="dictionary">
+        <expression_library type="dictionary">
           <hwy200 type="variable_definition" dataset="parcel" use="model variable" source="expression">hwy200 = psrc.parcel.distance_to_highway_in_gridcell&lt;200</hwy200>
           <hwy600 type="variable_definition" dataset="parcel" use="model variable" source="expression">hwy600 = psrc.parcel.distance_to_highway_in_gridcell&lt;600</hwy600>
           <hwy1000 type="variable_definition" dataset="parcel" use="model variable" source="expression">hwy1000 = psrc.parcel.distance_to_highway_in_gridcell&lt;1000</hwy1000>
@@ -31,7 +31,7 @@
           <inugb type="variable_definition" dataset="parcel" use="model variable" source="expression">inugb = parcel.is_inside_urban_growth_boundary==True</inugb>
           <hbwavgtmda type="variable_definition">hbwavgtmda = parcel.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_drive_alone)</hbwavgtmda>
           <is_pre_1940 type="variable_definition" dataset="parcel" use="model variable" source="expression">is_pre_1940 = parcel.aggregate(building.year_built * numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, 1),function=mean) &lt; 1940</is_pre_1940>
-        </all_variables>
+        </expression_library>
     <advanced parser_action='category'>
     <available_datasets type="list">['parcel','zone','faz','large_area','gridcell','city','county','alldata']</available_datasets>
     <dataset_pool_configuration flags="hidden" type="class">

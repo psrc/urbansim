@@ -1,9 +1,9 @@
 <opus_project>
   <general>
-   <all_variables type="dictionary">
+   <expression_library type="dictionary">
      <ln_cost type="variable_definition" >ln_cost=ln(psrc.parcel.cost)</ln_cost>
      <unit_price type="variable_definition" >unit_price=urbansim_parcel.parcel.unit_price</unit_price>
-   </all_variables>
+   </expression_library>
   </general>
   <model_manager>
     <model_system type="dictionary" >

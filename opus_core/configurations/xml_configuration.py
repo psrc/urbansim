@@ -111,7 +111,7 @@ class XMLConfiguration(object):
         model = estimation_section[model_name]
         result = {}
         # sort the list of variables to make it easier to test the results
-        vals = self.get_section('general/all_variables').values()
+        vals = self.get_section('general/expression_library').values()
         vals.sort()
         result['_definition_'] = vals
         for submodel_name in model.keys():
@@ -645,42 +645,42 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_inherited_attributes(self):
         # make sure that inherited attributes are tagged as 'inherited'
         f = os.path.join(self.test_configs, 'estimation_child.xml')
-        all_variables_node = XMLConfiguration(f).full_tree.find('general/all_variables')
+        expression_library_node = XMLConfiguration(f).full_tree.find('general/expression_library')
         # the ln_cost variable is redefined in estimation_child, so it shouldn't have the 'inherited' attribute
-        ln_cost_node = all_variables_node.find('ln_cost')
+        ln_cost_node = expression_library_node.find('ln_cost')
         self.assertEqual(ln_cost_node.get('inherited'), None)
         # the tax variable is new, so also shouldn't have the 'inherited' attribute
-        tax_node = all_variables_node.find('tax')
+        tax_node = expression_library_node.find('tax')
         self.assertEqual(tax_node.get('inherited'), None)
         # the unit_price variable is inherited and not overridden, so it should have 'inherited' set to the name of the parent
-        unit_price_node = all_variables_node.find('unit_price')
+        unit_price_node = expression_library_node.find('unit_price')
         self.assertEqual(unit_price_node.get('inherited'), 'estimate')
         
     def test_grandchild_inherited_attributes(self):
         # test two levels of inheritance, with multiple inheritance as well
         f = os.path.join(self.test_configs, 'estimation_grandchild.xml')
-        all_variables_node = XMLConfiguration(f).full_tree.find('general/all_variables')
+        expression_library_node = XMLConfiguration(f).full_tree.find('general/expression_library')
         # the ln_cost variable is redefined in estimation_grandchild, so it shouldn't have the 'inherited' attribute
-        ln_cost_node = all_variables_node.find('ln_cost')
+        ln_cost_node = expression_library_node.find('ln_cost')
         self.assertEqual(ln_cost_node.get('inherited'), None)
         # the tax variable is inherited from estimation_child (there is also a definition in estimation_child2 but that 
         # shouldn't be used)
-        tax_node = all_variables_node.find('tax')
+        tax_node = expression_library_node.find('tax')
         self.assertEqual(tax_node.get('inherited'), 'estimation_child')
         # the extratax variable is inherited from estimation_child2
-        extratax_node = all_variables_node.find('extratax')
+        extratax_node = expression_library_node.find('extratax')
         self.assertEqual(extratax_node.get('inherited'), 'estimation_child2')
         # the unit_price variable is inherited from estimate
-        unit_price_node = all_variables_node.find('unit_price')
+        unit_price_node = expression_library_node.find('unit_price')
         self.assertEqual(unit_price_node.get('inherited'), 'estimate')
         
     def test_find(self):
         # test the 'find' method on inherited and non-inherited nodes
         f = os.path.join(self.test_configs, 'estimation_child.xml')
         config = XMLConfiguration(f)
-        ln_cost_str = config.find('general/all_variables/ln_cost')
+        ln_cost_str = config.find('general/expression_library/ln_cost')
         self.assertEqual(ln_cost_str.strip(), '<ln_cost type="variable_definition">ln_cost=ln(psrc.parcel.cost+10)</ln_cost>')
-        unit_price_str = config.find('general/all_variables/unit_price')
+        unit_price_str = config.find('general/expression_library/unit_price')
         self.assertEqual(unit_price_str.strip(), '<unit_price inherited="estimate" type="variable_definition">unit_price=urbansim_parcel.parcel.unit_price</unit_price>')
         squid_str = config.find('model_manager/estimation/squid')
         self.assertEqual(squid_str, None)
@@ -766,10 +766,10 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
             <general>
               <parent type="file">estimation_child.xml</parent>
               <parent type="file">estimation_child2.xml</parent>
-              <all_variables type="dictionary" >
+              <expression_library type="dictionary" >
                 <ln_cost type="variable_definition" >ln_cost=ln(psrc.parcel.cost+100)</ln_cost>
                 <tax type="variable_definition" inherited="estimation_child">tax=urbansim_parcel.parcel.tax</tax>
-              </all_variables>
+              </expression_library>
             </general>
             <data_manager inherited="someplace">
             </data_manager>
@@ -793,9 +793,9 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
             <general>
               <parent type="file">estimation_child.xml</parent>
               <parent type="file">estimation_child2.xml</parent>
-              <all_variables type="dictionary">
+              <expression_library type="dictionary">
                 <ln_cost followers="tax" type="variable_definition">ln_cost=ln(psrc.parcel.cost+100)</ln_cost>
-               </all_variables>
+               </expression_library>
             </general>
             <model_manager>
               <estimation type="dictionary">
