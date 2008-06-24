@@ -35,21 +35,11 @@ class AllVariablesGui(QDialog, Ui_AllVariablesGui):
         self.saveChanges.setEnabled(False)
 
         header = ["Name","Dataset","Use","Source","Definition"]
-        #tabledata = [("test_var",
-        #              "Foo",
-        #              "Bar",
-        #              "Weeee",
-        #              "This is a really long test line just to show what happens when the line wraps around inside of the table view TEST TEST TEST TEST"),
-        #             ("test_var2",
-        #              "Foo2",
-        #              "Bar2",
-        #              "Weeee2",
-        #              "This is a really long test line just to show what happens when the line wraps around inside of the table view TEST TEST TEST TEST2")]
         tabledata = []
         # Grab the general section...
         tree = self.mainwindow.toolboxStuff.generalManagerTree
         dbxml = tree.model.index(0,0,QModelIndex()).parent()
-        all_variables_list = tree.model.findElementIndexByName("all_variables",dbxml,True)
+        all_variables_list = tree.model.findElementIndexByName("expression_library",dbxml,True)
         for all_variables in all_variables_list:
             # Should just be one all_variables section
             if all_variables.isValid():
