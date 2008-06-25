@@ -46,27 +46,32 @@ class EditIndicatorDialog(QDialog, Ui_dlgEditIndicator):
         expression = self.txtExpression.text()
         
         if self.selected_index is not None:
-            indicator_name = QVariant(indicator_name)
-            package_name = QVariant(package_name)
-            expression = QVariant(expression)
+#            indicator_name = QVariant(indicator_name)
+#            package_name = QVariant(package_name)
+#            expression = QVariant(expression)
             
-            self.model.setData(self.selected_index,indicator_name,Qt.EditRole)
+            self.model.setData(self.selected_index,QVariant(indicator_name),Qt.EditRole)
             
             vals = {
                     'package': package_name,
                     'expression': expression
             }
             base_node = self.selected_index.internalPointer().node()
-    
-            node = base_node.firstChild()        
-            row = 0
+            node = base_node.firstChild()
+            
+            dirty = False
             while not node.isNull():
                 name = str(node.nodeName())
                 if name in vals:
-                    index = self.model.index(row, 1, self.selected_index)
-                    self.model.setData(index, vals[name],Qt.EditRole)
+                    if node.nodeValue() != vals[name]:
+                        node.setNodeValue(vals[name])
+                        print 'element.text: %s; node.nodeValue: %s'%(node.toElement().text(), node.nodeValue())
+                        dirty = True
                 node = node.nextSibling()
-                row += 1
+                
+            if dirty:    
+                self.model.markAsDirty()
+
         else:
             xml_helper = ResultsManagerXMLHelper(self.resultManagerBase.toolboxStuff)
             xml_helper.addNewIndicator(indicator_name = indicator_name, 
