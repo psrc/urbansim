@@ -383,11 +383,15 @@ class OpusXMLAction_Results(object):
                                domElement.attribute(QString("copyable")) == QString("True"):
                             self.menu.addSeparator()
                             self.menu.addAction(self.actCloneNode)
+#                        if parentElement and (not parentElement.isNull()) and \
+#                               parentElement.hasAttribute(QString("type")) and \
+#                               ((parentElement.attribute(QString("type")) == QString("dictionary")) or \
+#                                (parentElement.attribute(QString("type")) == QString("selectable_list")) or \
+#                                (parentElement.attribute(QString("type")) == QString("list"))):
+                        types_with_remove = ["dictionary", "selectable_list", "list", "source_data", "batch_visualization", "indicator_batch", "indicator", "indicator_result"]
                         if parentElement and (not parentElement.isNull()) and \
                                parentElement.hasAttribute(QString("type")) and \
-                               ((parentElement.attribute(QString("type")) == QString("dictionary")) or \
-                                (parentElement.attribute(QString("type")) == QString("selectable_list")) or \
-                                (parentElement.attribute(QString("type")) == QString("list"))):
+                               (str(parentElement.attribute(QString("type"))) in types_with_remove):
                             self.menu.addSeparator()
                             self.menu.addAction(self.actRemoveNode)
                 # Check if the menu has any elements before exec is called
