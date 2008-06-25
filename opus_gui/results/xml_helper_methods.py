@@ -57,6 +57,7 @@ def get_child_values(parent, child_names = [], all = False):
     node = parent.firstChild()
     while not node.isNull():
         if all or node.nodeName() in child_names:
+            
             if node.isElement():
                 domElement = node.toElement()
                 child_vals[str(node.nodeName())] = domElement.text()
@@ -209,7 +210,8 @@ class ResultsManagerXMLHelper:
             raise 'Could not find element %s of type %s'%(str(node_name), str(node_type))
 
         child_attributes = get_child_values(parent = matching_element, 
-                                 child_names = child_attributes)
+                                 child_names = child_attributes,
+                                 all = all)
 
         return matching_element, child_attributes        
         
