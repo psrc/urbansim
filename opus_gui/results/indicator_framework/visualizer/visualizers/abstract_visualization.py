@@ -41,6 +41,7 @@ class Visualization(object):
                            years):
         #print indicators_to_visualize
         try:
+            additional_metadata = self.get_additional_metadata()
             viz = VisualizationRepresentation(
                      indicators = [computed_indicators[ind] 
                                    for ind in indicators_to_visualize],
@@ -49,11 +50,12 @@ class Visualization(object):
                      years = years,
                      table_name = table_name,
                      storage_location = self.storage_location,
-                     file_extension = self.get_file_extension()
+                     file_extension = self.get_file_extension(),
+                     **additional_metadata
                     )
         except:
-            #print indicators_to_visualize
-            pass
+            raise
+        
         return viz
         
     def _get_year_string(self, years):
@@ -249,10 +251,10 @@ class Visualization(object):
         '''returns additional attributes
         
            Child method should override this method if there are any 
-           additional attributes that it has. Return a list of
-           (attr_name,value) tuples.
+           additional attributes that it has. Return a dictionary of
+           (attr_name,value) pairs.
         '''
-        return []
+        return {}
 
 from opus_core.tests import opus_unittest
 from opus_gui.results.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest

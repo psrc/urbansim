@@ -48,7 +48,7 @@ class LorenzCurve(Visualization):
         return 'lorenzcurve'
 
     def get_additional_metadata(self):
-        return  []
+        return  {}
     
     def _create_indicator(self, year):
         """Create a Lorenz Curve for the given indicator,

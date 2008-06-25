@@ -61,7 +61,7 @@ class GeotiffMap(Visualization):
         return 'geotiff'
     
     def get_additional_metadata(self):
-        return  [('prototype_dataset',self.prototype_dataset)]
+        return  {'prototype_dataset':self.prototype_dataset}
     
     def _create_indicator(self, year):
         """Create a geotiff image for the given indicator"""            

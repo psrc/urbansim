@@ -45,7 +45,7 @@ class MatplotlibMap(Visualization):
         return 'map'
     
     def get_additional_metadata(self):
-        return  [('scale',self.scale)]
+        return  {'scale':self.scale}
     
     def plot_map(self, dataset, attribute_data, min_value=None, max_value=None, file=None,
                  my_title="", filter=None, background=None):
