@@ -35,7 +35,8 @@ class OpusResultGenerator(object):
         self.toolboxStuff = toolboxStuff
         self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = toolboxStuff)
         self.interface = IndicatorFrameworkInterface(toolboxStuff = toolboxStuff)
-    
+        self.computed_indicators = []
+        
     def set_data(self,
                  source_data_name,
                  indicator_name,
@@ -85,6 +86,7 @@ class OpusResultGenerator(object):
 #            import pydevd;pydevd.settrace()
 #        except:
 #            pass
+        self.computed_indicators = []
         
         if self.cache_directory is not None:            
             source_data = self.interface.get_source_data(
@@ -106,6 +108,7 @@ class OpusResultGenerator(object):
 
         computed_indicator = maker.create(indicator = indicator, 
                                           source_data = source_data)
+        self.computed_indicators.append(computed_indicator)
         name = '%s.%s.%s'%(self.indicator_name, 
             self.dataset_name, 
             self.source_data_name)
@@ -122,6 +125,9 @@ class OpusResultGenerator(object):
                                               years = self.years)
 
         self.last_added_indicator_result_name = name
+        
+    def get_computed_indicators(self):
+        return self.computed_indicators
                 
     def _get_current_log(self, key):
         newKey = key
