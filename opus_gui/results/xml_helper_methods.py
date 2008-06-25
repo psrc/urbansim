@@ -219,7 +219,8 @@ class ResultsManagerXMLHelper:
                             
     def add_run_to_run_manager_xml(self, cache_directory, 
                                     scenario_name, run_name, 
-                                    start_year, end_year):
+                                    start_year, end_year,
+                                    temporary = False):
                 
         head_node_args = {'type':'source_data',
                           'value':''}
@@ -255,7 +256,7 @@ class ResultsManagerXMLHelper:
                                head_node_args = head_node_args, 
                                child_node_definitions = child_defs, 
                                parent_name = 'Simulation_runs',
-                               temporary = True,
+                               temporary = temporary,
                                children_hidden = True)
 
     def add_result_to_xml(self, 

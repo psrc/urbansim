@@ -96,7 +96,8 @@ class ResultManagerBase(AbstractManagerBase):
                                                          cache_directory,
                                                          scenario_name,
                                                          run_name,
-                                                         start_year, end_year)
+                                                         start_year, end_year,
+                                                         temporary = True)
                     except: pass
 
     def addAdvancedVisualizationForm(self):
