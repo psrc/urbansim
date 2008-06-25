@@ -369,20 +369,19 @@ class ResultsManagerXMLHelper:
         model = self.toolboxStuff.resultsManagerTree.model
         document = self.toolboxStuff.doc
         
-        
+        # The new head node to add children to and then insert
         head_node = model.create_node(document = document, 
                                     name = head_node_name,
                                     temporary = temporary, 
                                     **head_node_args)
 
-            
+        # Find the parent node index to append to
         parentIndex = model.index(0,0,QModelIndex()).parent()
         current_index = model.findElementIndexByName(parent_name, parentIndex)[0]
-        model.insertRow(0,
-                current_index,
-                head_node)
 
+        # Loop through all the child definitions and create nodes if they are needed
         if child_node_definitions != []:
+            # This list is to hold all of the child dom nodes created
             child_nodes = []
             for args in child_node_definitions:
                 if children_hidden:
@@ -394,13 +393,14 @@ class ResultsManagerXMLHelper:
                                                temporary = temporary,
                                                **args)
                 child_nodes.append(child_node)
-                
-            child_index = model.findElementIndexByName(head_node_name, current_index)[0]
-            if child_index.isValid():
-                for node in sorted(child_nodes, reverse=True):
-                    model.insertRow(0,
-                                    child_index,
-                                    node)
-            else:
-                print "No valid node was found..."
+            # Now loop through the nodes we created to append them to the head_node
+            for node in sorted(child_nodes, reverse=True):
+                head_node.appendChild(node)
+
+        # Now insert the head_node
+        model.insertRow(0,
+                        current_index,
+                        head_node)
+
+
         model.emit(SIGNAL("layoutChanged()"))
