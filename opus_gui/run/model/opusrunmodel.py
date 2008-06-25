@@ -32,8 +32,9 @@ except ImportError:
     print "Unable to import opus core libs"
 
 class RunModelThread(QThread):
-    def __init__(self, mainwindow, modelguielement, xml_file, batch_name = None):
+    def __init__(self, mainwindow, modelguielement, xml_file, batch_name = None, run_name = None):
         QThread.__init__(self, mainwindow)
+        self.run_name = run_name
         self.modelguielement = modelguielement
         self.xml_file = xml_file
         self.batch_name = batch_name
@@ -84,10 +85,11 @@ class RunModelThread(QThread):
                                          start_year, end_year)
         
     def get_run_name(self):
-        cache_directory = self.modelguielement.model.config['cache_directory']
-        run_name = os.path.basename(cache_directory)
-
-        return 'Run_%s'%run_name
+        if self.run_name is None:
+            cache_directory = self.modelguielement.model.config['cache_directory']
+            self.run_name = 'Run_%s'%os.path.basename(cache_directory)
+            
+        return self.run_name
     
     def get_years(self):
         return self.modelguielement.model.config['years']

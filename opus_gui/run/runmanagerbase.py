@@ -175,6 +175,7 @@ class ModelGuiElement(QWidget):
         self.startVBoxLayout.addWidget(self.pbnRemoveModel)
         self.vboxlayout2.addWidget(self.startWidget)
 
+        self.setup_run_name_line_edit()
         self.setup_indicator_batch_combobox()
 
         # Add a tab widget and layer in a tree view and log panel
@@ -419,11 +420,8 @@ class ModelGuiElement(QWidget):
     def setup_indicator_batch_combobox(self):
         self.lblBatch = QLabel(self.startWidget)
         self.lblBatch.setText(QString('Indicator batch (optional):'))
-        
+        self.lblBatch.setToolTip(QString('If an indicator batch (defined in the Results Manager) \nis selected, it will be executed over every \nyear of the simulation being configured. \nIt will executed after the simulation is completed.'))
         self.cboOptionalIndicatorBatch = QComboBox(self.startWidget)
-
-        
-        self.startVBoxLayout.addWidget(self.cboOptionalIndicatorBatch)
         
         self.startVBoxLayout.addWidget(self.lblBatch)
         self.startVBoxLayout.addWidget(self.cboOptionalIndicatorBatch)
@@ -433,6 +431,18 @@ class ModelGuiElement(QWidget):
         for batch in batches:
             self.cboOptionalIndicatorBatch.addItem(QString(batch['name']))
         
+    def setup_run_name_line_edit(self):
+        self.lblRun = QLabel(self.startWidget)
+        self.lblRun.setText(QString('Run name (optional):'))
+        self.lblRun.setToolTip(QString('This scenario run will appear \nin the Results Manager under the name \nspecified here. If not specified, \nthe name will default to a combination \nof run id and date of run.'))
+        
+        self.leRunName = QLineEdit(self.startWidget)
+                
+        self.startVBoxLayout.addWidget(self.lblRun)
+        self.startVBoxLayout.addWidget(self.leRunName)
+        
+        self.leRunName.setText(QString(''))
+            
     def on_indicatorBox(self):
         indicator_name = str(self.diagnostic_indicator_name.currentText())
         if indicator_name == '(select indicator)':
@@ -537,7 +547,18 @@ class ModelGuiElement(QWidget):
             if batch_name == '(None)':
                 batch_name = None
                 
-            self.runThread = RunModelThread(self.mainwindow,self,self.xml_path,batch_name)
+            run_name = str(self.leRunName.text())
+            if run_name == '':
+                run_name = None
+                
+            #TODO: need to check for whether there already exists a run by this name
+            
+            
+            self.runThread = RunModelThread(self.mainwindow,
+                                            self,
+                                            self.xml_path,
+                                            batch_name,
+                                            run_name)
 
             
             # Use this signal from the thread if it is capable of producing its own status signal
