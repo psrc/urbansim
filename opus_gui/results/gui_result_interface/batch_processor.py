@@ -75,6 +75,8 @@ class BatchProcessor(object):
                 from opus_core.database_management.database_configuration import DatabaseConfiguration
                 args['storage_location'] = DatabaseConfiguration(database_name = str(params['database_name']),
                                                                  test = True)
+            elif output_type == 'esri':
+                args['storage_location'] = str(params['storage_location'])
                 
         return args
             

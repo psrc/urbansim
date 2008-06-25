@@ -34,7 +34,7 @@ class ConfigureNewDatasetTableDialog(AbstractConfigureDatasetTableDialog):
         translation = {
             'Tab delimited':'tab',
             'Comma separated':'csv',
-            'Esri':'esri',
+            'ESRI table':'esri',
             'Fixed field':'fixed_field',
             'Database':'sql'
         }
@@ -55,9 +55,12 @@ class ConfigureNewDatasetTableDialog(AbstractConfigureDatasetTableDialog):
                                'name':'fixed_field_specification'})
             viz_params.append({'value':str(self.leOption1.text()),
                                'name':'id_format'})
-        if output_type == 'sql':
+        elif output_type == 'sql':
             viz_params.append({'value':str(self.leOption1.text()),
                                'name':'database_name'})
+        elif output_type == 'esri':
+            viz_params.append({'value':str(self.leOption1.text()),
+                               'name':'storage_location'})
             
             
         viz_name = str(self.leVizName.text()).replace('DATASET',dataset_name).replace(' ','_')

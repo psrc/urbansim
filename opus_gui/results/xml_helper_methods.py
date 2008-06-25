@@ -357,38 +357,6 @@ class ResultsManagerXMLHelper:
                                child_node_definitions = viz_params, 
                                temporary = False, 
                                children_hidden = True)
-        
-        
-    def addIndicatorToBatch(self, batch_name, indicator_name):
-
-        head_node_args = {'type':'indicator_batch_member',
-                          'value':''}
-        
-        available_datasets = self.get_available_datasets()        
-        datasets = '|'.join(available_datasets)
-
-        visualizations = self.get_visualization_options().keys()
-
-        visualizations = '|'.join(visualizations)
-        
-        datasets_def = {
-            'name':'dataset_name',
-            'type':'string',
-            'value':'',
-            'choices':datasets
-        }
-        visualization_def = {
-            'name':'visualization_type',
-            'type':'string',
-            'value':'',
-            'choices':visualizations
-        }
-        child_defs = [datasets_def, visualization_def]
-        
-        self._add_new_xml_tree(head_node_name = indicator_name, 
-                               head_node_args = head_node_args, 
-                               child_node_definitions = child_defs, 
-                               parent_name = batch_name)
                 
     def _add_new_xml_tree(self, 
                           head_node_name,

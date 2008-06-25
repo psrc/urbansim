@@ -14,8 +14,8 @@
 
 
 # PyQt4 includes for python bindings to QT
-from PyQt4.QtCore import QString, Qt
-from PyQt4.QtGui import QDialog, QTableWidgetItem, QHeaderView
+from PyQt4.QtCore import QString, Qt, QFileInfo
+from PyQt4.QtGui import QDialog, QTableWidgetItem, QHeaderView, QFileDialog
 
 
 from opus_gui.results.forms.visualization.dataset_table.configure_dataset_table_ui import Ui_dlgDatasetTableDialog
@@ -38,9 +38,11 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         
         self.twAvailableIndicators.horizontalHeader().setResizeMode(QHeaderView.Stretch)
         self.twIndicatorsToVisualize.horizontalHeader().setResizeMode(QHeaderView.Stretch)
-
+        
         self.lblOption1.hide()
         self.leOption1.hide()
+        self.pbn_set_storage_location.hide()
+        self.setToolTip(QString('In this visualization, a table of values \nwill be output for every simulation year. \nThe table consists of the ID columns \nof the specified dataset and \nthe values for each of the indicators \nspecified in this form.'))
                     
     def _setup_indicators(self, existing_indicators = []):
         indicators = self.xml_helper.get_available_indicator_names()
@@ -73,7 +75,7 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         available_output_types = {
             'Tab delimited':'tab',
 #            'Comma separated':'csv',
-#            'Esri':'esri',
+            'ESRI table':'esri',
             'Database':'sql',
             'Fixed field':'fixed_field' 
         }
@@ -85,7 +87,7 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
             self.cboOutputType.addItem(QString(otype))
             
         for k,v in available_output_types.items():
-            if v == value:
+            if k == value:
                 idx = self.cboOutputType.findText(value)
                 if idx != -1:
                     self.cboOutputType.setCurrentIndex(idx)        
@@ -117,7 +119,7 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         
         output_type = str(param)
 
-        if output_type in ['Fixed field', 'Database']:
+        if output_type in ['Fixed field', 'Database', 'ESRI table']:
             self.lblOption1.show()
             self.leOption1.show()
         else:
@@ -129,13 +131,20 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         else:
             self.twIndicatorsToVisualize.horizontalHeader().hideSection(1)
             
+        if output_type == 'ESRI table':
+            self.pbn_set_storage_location.show()
+        else:
+            self.pbn_set_storage_location.hide()
+
         if output_type == 'Fixed field':
             self.lblOption1.setText(QString('ID format:'))
             self.lblOption1.setToolTip(QString('The fixed format of all id \ncolumns of the indicator result'))
         elif output_type == 'Database':
             self.lblOption1.setText(QString('Database\nname:'))
-            self.lblOption1.setToolTip(QString('The name of the database to \noutput the indicator result.\n The database will be created if \nit does not already exist. If a table with the same name \nas this indicator already exists in the database,\nit will be overwritten.'))
-            
+            self.lblOption1.setToolTip(QString('The name of the SQL database to \noutput the indicator result.\n The database will be created if \nit does not already exist. If a table with the same name \nas this indicator already exists in the database,\nit will be overwritten.'))
+        elif output_type == 'ESRI table':
+            self.lblOption1.setText(QString('Database\npath'))
+            self.lblOption1.setToolTip(QString('The location on disk of \na geodatabase file which \ncan then be loaded into ArcMap'))    
         
     def on_buttonBox_accepted(self):
         self.close()
@@ -143,6 +152,21 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
     def on_buttonBox_rejected(self):
         self.close()
         
+
+    def on_pbn_set_storage_location_released(self):
+        from opus_core.misc import directory_path_from_opus_path
+        start_dir = directory_path_from_opus_path('opus_gui.projects')
+        
+        configDialog = QFileDialog()
+        filter_str = QString("*.gdb")
+        fd = configDialog.getExistingDirectory(self,
+                    QString("Please select an ESRI geodatabase (*.gdb)..."), #, *.sde, *.mdb)..."),
+                    QString(start_dir), QFileDialog.ShowDirsOnly)
+        if len(fd) != 0:
+            fileName = QString(fd)
+            fileNameInfo = QFileInfo(QString(fd))
+            fileNameBaseName = fileNameInfo.completeBaseName()
+            self.leOption1.setText(fileName)
 
     def on_pbnAddIndicator_released(self):
         current_row = self.twAvailableIndicators.currentRow()

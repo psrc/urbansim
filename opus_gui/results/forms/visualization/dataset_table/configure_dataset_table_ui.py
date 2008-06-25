@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'configure_dataset_table_ui.ui'
 #
-# Created: Wed Jun 25 00:13:37 2008
+# Created: Wed Jun 25 01:19:21 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -65,10 +65,10 @@ class Ui_dlgDatasetTableDialog(object):
         item = QtGui.QTableWidgetItem()
         self.twAvailableIndicators.setHorizontalHeaderItem(0, item)
         self.gbOutputOptions = QtGui.QGroupBox(dlgDatasetTableDialog)
-        self.gbOutputOptions.setGeometry(QtCore.QRect(310, 60, 281, 151))
+        self.gbOutputOptions.setGeometry(QtCore.QRect(310, 60, 291, 151))
         self.gbOutputOptions.setObjectName("gbOutputOptions")
         self.gridLayoutWidget_2 = QtGui.QWidget(self.gbOutputOptions)
-        self.gridLayoutWidget_2.setGeometry(QtCore.QRect(10, 30, 261, 41))
+        self.gridLayoutWidget_2.setGeometry(QtCore.QRect(10, 30, 191, 41))
         self.gridLayoutWidget_2.setObjectName("gridLayoutWidget_2")
         self.gridLayout_2 = QtGui.QGridLayout(self.gridLayoutWidget_2)
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -82,8 +82,11 @@ class Ui_dlgDatasetTableDialog(object):
         self.lblOption1.setGeometry(QtCore.QRect(10, 80, 71, 41))
         self.lblOption1.setObjectName("lblOption1")
         self.leOption1 = QtGui.QLineEdit(self.gbOutputOptions)
-        self.leOption1.setGeometry(QtCore.QRect(90, 90, 181, 22))
+        self.leOption1.setGeometry(QtCore.QRect(90, 90, 161, 22))
         self.leOption1.setObjectName("leOption1")
+        self.pbn_set_storage_location = QtGui.QPushButton(self.gbOutputOptions)
+        self.pbn_set_storage_location.setGeometry(QtCore.QRect(260, 90, 21, 21))
+        self.pbn_set_storage_location.setObjectName("pbn_set_storage_location")
         self.label_5 = QtGui.QLabel(dlgDatasetTableDialog)
         self.label_5.setGeometry(QtCore.QRect(30, 20, 131, 18))
         self.label_5.setObjectName("label_5")
@@ -98,7 +101,6 @@ class Ui_dlgDatasetTableDialog(object):
 
     def retranslateUi(self, dlgDatasetTableDialog):
         dlgDatasetTableDialog.setWindowTitle(QtGui.QApplication.translate("dlgDatasetTableDialog", "Indicator-spanning table visualization configuration", None, QtGui.QApplication.UnicodeUTF8))
-        dlgDatasetTableDialog.setToolTip(QtGui.QApplication.translate("dlgDatasetTableDialog", "In this visualization, a table of values \\nwill be output for every simulation year. \\nThe table consists of the ID columns \\nof the specified dataset and \\nthe values for each of the indicators \\nspecified in this form.", None, QtGui.QApplication.UnicodeUTF8))
         self.gbBasicOptions.setTitle(QtGui.QApplication.translate("dlgDatasetTableDialog", "Basic options", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "Dataset:", None, QtGui.QApplication.UnicodeUTF8))
         self.gbIndicators.setTitle(QtGui.QApplication.translate("dlgDatasetTableDialog", "Indicators to visualize", None, QtGui.QApplication.UnicodeUTF8))
@@ -110,5 +112,6 @@ class Ui_dlgDatasetTableDialog(object):
         self.gbOutputOptions.setTitle(QtGui.QApplication.translate("dlgDatasetTableDialog", "Output options", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "Type:", None, QtGui.QApplication.UnicodeUTF8))
         self.lblOption1.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
+        self.pbn_set_storage_location.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "Visualization name:", None, QtGui.QApplication.UnicodeUTF8))
 
