@@ -154,6 +154,7 @@ class ResultsManagerXMLHelper:
             
             visualization_type = str(vals['visualization_type'])
             dataset_name = str(vals['dataset_name'])
+            vals['name'] = str(node.nodeName())
             visualizations.append((visualization_type, dataset_name, vals))
             
             node = node.nextSibling()

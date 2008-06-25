@@ -74,7 +74,7 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
             'Tab delimited':'tab',
 #            'Comma separated':'csv',
 #            'Esri':'esri',
-#            'Database',
+            'Database':'sql',
             'Fixed field':'fixed_field' 
         }
         
@@ -114,17 +114,28 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         if isinstance(param, int):
             return #qt sends two signals for the same event; only process one
         
+        
         output_type = str(param)
-        if output_type == 'Fixed field':
-            self.twIndicatorsToVisualize.horizontalHeader().showSection(1)
-            self.lblOption1.setText(QString('ID format:'))
+
+        if output_type in ['Fixed field', 'Database']:
             self.lblOption1.show()
             self.leOption1.show()
         else:
-            self.twIndicatorsToVisualize.horizontalHeader().hideSection(1)
             self.lblOption1.hide()
-            self.leOption1.hide()
-
+            self.leOption1.hide()            
+            
+        if output_type == 'Fixed field':
+            self.twIndicatorsToVisualize.horizontalHeader().showSection(1)            
+        else:
+            self.twIndicatorsToVisualize.horizontalHeader().hideSection(1)
+            
+        if output_type == 'Fixed field':
+            self.lblOption1.setText(QString('ID format:'))
+            self.lblOption1.setToolTip(QString('The fixed format of all id \ncolumns of the indicator result'))
+        elif output_type == 'Database':
+            self.lblOption1.setText(QString('Database name'))
+            self.lblOption1.setToolTip(QString('The name of the database to \noutput the indicator result.\n The database will be created if \nit does not already exist. If a table with the same name \nas this indicator already exists in the database,\nit will be overwritten.'))
+            
         
     def on_buttonBox_accepted(self):
         self.close()
