@@ -593,11 +593,12 @@ class ModelGuiElement(QWidget):
         if self.runThread.batch_name is not None:
             all_visualizations = self.runThread.batch_processor.get_visualizations()
             for indicator_type, visualizations in all_visualizations:
+                form_generator = None
                 if indicator_type == 'matplotlib_map' or \
                    indicator_type == 'matplotlib_chart':
                     form_generator = self.mainwindow.resultManagerStuff.addViewImageIndicator
                 elif indicator_type == 'table_per_year' or \
-                     indicator_type == 'table_per_attribute':
+                     indicator_type == 'table_per_attribute':    
                     form_generator = self.mainwindow.resultManagerStuff.addViewTableIndicator            
             
                 if form_generator is not None:    
