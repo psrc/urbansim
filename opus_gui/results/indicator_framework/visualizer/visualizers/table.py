@@ -260,10 +260,14 @@ class Table(Visualization):
             kwargs['fixed_column_order'] = column_names
             #kwargs['append_type_info'] = False
         elif self.output_type in ['fixed_field']:
-            kwargs['format'] = self.build_format_string(computed_indicators = computed_indicators, 
+            if isinstance(self.fixed_field_format, str):
+                format = self.fixed_field_format
+            else:
+                format = self.build_format_string(computed_indicators = computed_indicators, 
                                      column_names = column_names,
                                      years = years,
                                      primary_keys = primary_keys)
+            kwargs['format'] = format
             
         self.output_storage.write_table(
             table_name = table_name,
@@ -292,7 +296,6 @@ class Table(Visualization):
                     if col_name in column_names:
                         format_list.append((col_name,format))
       
-        print format_list
         return format_list            
 
     
@@ -409,7 +412,8 @@ class Tests(AbstractIndicatorTest):
             dataset_name = 'test',
             attributes = [('attr1','attr1'),('attr2','attr2')],
             primary_keys = ['id','id2'],
-            years = [2000,2002])
+            years = [2000,2002],
+            computed_indicators = [])
 
         storage = StorageFactory().get_storage(
             type = 'csv_storage',
@@ -486,7 +490,8 @@ class Tests(AbstractIndicatorTest):
             dataset_name = 'test',
             attributes = [('attr1','attr1'),('attr2','attr2')],
             primary_keys = ['id','id2'],
-            years = [2000,2002])
+            years = [2000,2002],
+            computed_indicators = [])
 
         storage = StorageFactory().get_storage(
             type = 'csv_storage',
