@@ -151,7 +151,7 @@ class ResultsManagerXMLHelper:
             element = node.toElement()
             vals = get_child_values(parent = element,
                                     all = True)
-
+            
             visualization_type = str(vals['visualization_type'])
             dataset_name = str(vals['dataset_name'])
             visualizations.append((visualization_type, dataset_name, vals))

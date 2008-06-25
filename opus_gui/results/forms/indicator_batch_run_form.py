@@ -56,7 +56,7 @@ class IndicatorBatchRunForm(QDialog):
 
 
         self._setup_buttons()
-        self._setup_tabs()
+        #self._setup_tabs()
         
         
     def _setup_buttons(self):

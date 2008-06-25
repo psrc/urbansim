@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'configure_dataset_table_ui.ui'
 #
-# Created: Tue Jun 24 11:53:03 2008
+# Created: Tue Jun 24 17:23:19 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,9 +12,9 @@ from PyQt4 import QtCore, QtGui
 class Ui_dlgDatasetTableDialog(object):
     def setupUi(self, dlgDatasetTableDialog):
         dlgDatasetTableDialog.setObjectName("dlgDatasetTableDialog")
-        dlgDatasetTableDialog.resize(621, 571)
+        dlgDatasetTableDialog.resize(615, 609)
         self.buttonBox = QtGui.QDialogButtonBox(dlgDatasetTableDialog)
-        self.buttonBox.setGeometry(QtCore.QRect(250, 520, 341, 32))
+        self.buttonBox.setGeometry(QtCore.QRect(250, 570, 341, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
@@ -33,22 +33,22 @@ class Ui_dlgDatasetTableDialog(object):
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
         self.gbIndicators = QtGui.QGroupBox(dlgDatasetTableDialog)
-        self.gbIndicators.setGeometry(QtCore.QRect(20, 160, 571, 351))
+        self.gbIndicators.setGeometry(QtCore.QRect(20, 210, 571, 351))
         self.gbIndicators.setObjectName("gbIndicators")
         self.pbnAddIndicator = QtGui.QPushButton(self.gbIndicators)
-        self.pbnAddIndicator.setGeometry(QtCore.QRect(260, 120, 51, 32))
+        self.pbnAddIndicator.setGeometry(QtCore.QRect(260, 170, 51, 32))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.pbnAddIndicator.setFont(font)
         self.pbnAddIndicator.setObjectName("pbnAddIndicator")
         self.pbnRemoveIndicator = QtGui.QPushButton(self.gbIndicators)
-        self.pbnRemoveIndicator.setGeometry(QtCore.QRect(260, 160, 51, 32))
+        self.pbnRemoveIndicator.setGeometry(QtCore.QRect(260, 210, 51, 32))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.pbnRemoveIndicator.setFont(font)
         self.pbnRemoveIndicator.setObjectName("pbnRemoveIndicator")
         self.twIndicatorsToVisualize = QtGui.QTableWidget(self.gbIndicators)
-        self.twIndicatorsToVisualize.setGeometry(QtCore.QRect(320, 30, 241, 301))
+        self.twIndicatorsToVisualize.setGeometry(QtCore.QRect(320, 40, 241, 341))
         self.twIndicatorsToVisualize.setWordWrap(True)
         self.twIndicatorsToVisualize.setObjectName("twIndicatorsToVisualize")
         self.twIndicatorsToVisualize.setColumnCount(2)
@@ -58,14 +58,14 @@ class Ui_dlgDatasetTableDialog(object):
         item = QtGui.QTableWidgetItem()
         self.twIndicatorsToVisualize.setHorizontalHeaderItem(1, item)
         self.twAvailableIndicators = QtGui.QTableWidget(self.gbIndicators)
-        self.twAvailableIndicators.setGeometry(QtCore.QRect(10, 30, 241, 301))
+        self.twAvailableIndicators.setGeometry(QtCore.QRect(10, 40, 241, 341))
         self.twAvailableIndicators.setObjectName("twAvailableIndicators")
         self.twAvailableIndicators.setColumnCount(1)
         self.twAvailableIndicators.setRowCount(0)
         item = QtGui.QTableWidgetItem()
         self.twAvailableIndicators.setHorizontalHeaderItem(0, item)
         self.gbOutputOptions = QtGui.QGroupBox(dlgDatasetTableDialog)
-        self.gbOutputOptions.setGeometry(QtCore.QRect(310, 60, 281, 91))
+        self.gbOutputOptions.setGeometry(QtCore.QRect(310, 60, 281, 151))
         self.gbOutputOptions.setObjectName("gbOutputOptions")
         self.gridLayoutWidget_2 = QtGui.QWidget(self.gbOutputOptions)
         self.gridLayoutWidget_2.setGeometry(QtCore.QRect(10, 30, 261, 41))
@@ -78,6 +78,12 @@ class Ui_dlgDatasetTableDialog(object):
         self.label_4 = QtGui.QLabel(self.gridLayoutWidget_2)
         self.label_4.setObjectName("label_4")
         self.gridLayout_2.addWidget(self.label_4, 0, 0, 1, 1)
+        self.lblOption1 = QtGui.QLabel(self.gbOutputOptions)
+        self.lblOption1.setGeometry(QtCore.QRect(10, 80, 71, 18))
+        self.lblOption1.setObjectName("lblOption1")
+        self.leOption1 = QtGui.QLineEdit(self.gbOutputOptions)
+        self.leOption1.setGeometry(QtCore.QRect(90, 80, 181, 22))
+        self.leOption1.setObjectName("leOption1")
         self.label_5 = QtGui.QLabel(dlgDatasetTableDialog)
         self.label_5.setGeometry(QtCore.QRect(30, 20, 131, 18))
         self.label_5.setObjectName("label_5")
@@ -103,5 +109,6 @@ class Ui_dlgDatasetTableDialog(object):
         self.twAvailableIndicators.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "Available indicators", None, QtGui.QApplication.UnicodeUTF8))
         self.gbOutputOptions.setTitle(QtGui.QApplication.translate("dlgDatasetTableDialog", "Output options", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "Type:", None, QtGui.QApplication.UnicodeUTF8))
+        self.lblOption1.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "Visualization name:", None, QtGui.QApplication.UnicodeUTF8))
 

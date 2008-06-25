@@ -38,7 +38,10 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         
         self.twAvailableIndicators.horizontalHeader().setResizeMode(QHeaderView.Stretch)
         self.twIndicatorsToVisualize.horizontalHeader().setResizeMode(QHeaderView.Stretch)
-        
+
+        self.lblOption1.hide()
+        self.leOption1.hide()
+                    
     def _setup_indicators(self, existing_indicators = []):
         indicators = self.xml_helper.get_available_indicator_names()
 
@@ -66,7 +69,6 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
             row += 1      
                         
     def _setup_co_output_type(self, value = None):
-
 
         available_output_types = {
             'Tab delimited':'tab',
@@ -102,11 +104,11 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
     
     def _get_column_values(self, column = 0):
         #column 0 will get you the indicators
-        indicators = []
+        col_vals = []
         for row in range(self.twIndicatorsToVisualize.rowCount()):
             item = self.twIndicatorsToVisualize.item(row,column)
-            indicators.append(str(item.text()))
-        return indicators
+            col_vals.append(str(item.text()))
+        return col_vals
         
     def on_cboOutputType_currentIndexChanged(self, param):
         if isinstance(param, int):
@@ -115,8 +117,13 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
         output_type = str(param)
         if output_type == 'Fixed field':
             self.twIndicatorsToVisualize.horizontalHeader().showSection(1)
+            self.lblOption1.setText(QString('ID format:'))
+            self.lblOption1.show()
+            self.leOption1.show()
         else:
             self.twIndicatorsToVisualize.horizontalHeader().hideSection(1)
+            self.lblOption1.hide()
+            self.leOption1.hide()
 
         
     def on_buttonBox_accepted(self):

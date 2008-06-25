@@ -38,9 +38,9 @@ class ViewTableForm(QWidget):
         self.load_table(visualization = visualization)
     
     def load_table(self, visualization):
-                
+            
         storage = StorageFactory().get_storage(
-                       type = '%s_storage'%visualization.file_extension,
+                       type = '%s_storage'%visualization.output_type,
                        storage_location = visualization.storage_location)
         table_data = storage.load_table(
                                 table_name = visualization.table_name)
@@ -49,9 +49,7 @@ class ViewTableForm(QWidget):
             primary_keys = visualization.indicators[0].primary_keys
         except:
             primary_keys = []
-            
-        print primary_keys
-            
+                        
         keys = primary_keys + [key for key in table_data.keys() 
                                    if key not in primary_keys]
         num_rows = len(table_data[keys[0]])
@@ -77,5 +75,5 @@ class ViewTableForm(QWidget):
                 item.setText(QString(repr(table_data[key][i])))
                 self.tableWidget.setItem(i,j,item)
                 j += 1
-                
+        
         self.tableWidget.resizeColumnsToContents()

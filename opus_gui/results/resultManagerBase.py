@@ -193,7 +193,7 @@ class ResultManagerBase(AbstractManagerBase):
     def addViewTableIndicator(self, visualization, indicator_type):
         new_form = ViewTableForm(mainwindow = self.mainwindow,
                                  visualization = visualization)
-        if indicator_type != 'arcgis_map':
+        if indicator_type != 'arcgis_map' and visualization.output_type in ['fixed_field','tab','csv']:
             self.guiElements.insert(0, new_form)
             self.updateGuiElements()
         else:

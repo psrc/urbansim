@@ -49,6 +49,7 @@ class Table(Visualization):
 
         if output_type == "fixed_field" and not fixed_field_format:
             raise ValueError("If Table output_type is 'fixed_field', an XML format string must be passed as fixed_field_format.")
+        
         self.fixed_field_format = fixed_field_format
 
         if output_style not in [Table.ALL,
@@ -86,8 +87,11 @@ class Table(Visualization):
             return self.output_type
 
     def get_additional_metadata(self):
-        return  [('output_type',self.output_type),
-                 ('output_style', self.output_style)]
+        metadata =  {'output_type':self.output_type,
+                     'output_style': self.output_style}
+        if self.output_type == 'fixed_field':
+            metadata['fixed_field_format'] = self.fixed_field_format
+        return metadata
 
     def get_visualization_type(self):
         return 'table-%i'%self.output_style
@@ -133,7 +137,8 @@ class Table(Visualization):
                 dataset_name = dataset_name,
                 attributes = attributes,
                 primary_keys = primary_keys,
-                years = source_data.years)
+                years = source_data.years,
+                computed_indicators = computed_indicators)
 
             for indicator_names, table_name, years in viz_metadata:
                 visualization_representations.append(
@@ -142,6 +147,7 @@ class Table(Visualization):
                         indicators_to_visualize = indicator_names,
                         table_name = table_name,
                         years = years))
+                
 
         return visualization_representations
 
@@ -149,7 +155,7 @@ class Table(Visualization):
                         dataset_name,
                         attributes,
                         primary_keys,
-                        years):
+                        years, computed_indicators):
 
         per_year_data = self._get_PER_YEAR_form(
             dataset_name = dataset_name,
@@ -168,7 +174,10 @@ class Table(Visualization):
                 table_name = table_name,
                 table_data = data_subset,
                 column_names = primary_keys + sorted([col for col in data_subset.keys()
-                                                      if col not in primary_keys]))
+                                                      if col not in primary_keys]),
+                computed_indicators = computed_indicators,
+                years = [year],
+                primary_keys = primary_keys)
 
             viz_metadata.append(([name for name, computed_name in attributes],
                                  table_name,
@@ -180,7 +189,7 @@ class Table(Visualization):
                             dataset_name,
                             attributes,
                             primary_keys,
-                            years):
+                            years, computed_indicators):
 
         per_attribute_data = self._get_PER_ATTRIBUTE_form(
             dataset_name = dataset_name,
@@ -199,7 +208,10 @@ class Table(Visualization):
                 table_name = table_name,
                 table_data = data_subset,
                 column_names = primary_keys + sorted([col for col in data_subset.keys()
-                                                     if col not in primary_keys])
+                                                     if col not in primary_keys]),
+                computed_indicators = computed_indicators,
+                years = years,
+                primary_keys = primary_keys
             )
 
             viz_metadata.append(([name], table_name, years))
@@ -210,7 +222,7 @@ class Table(Visualization):
                    dataset_name,
                    attributes,
                    primary_keys,
-                   years):
+                   years, computed_indicators):
 
         new_data = self._get_ALL_form(
             dataset_name = dataset_name,
@@ -228,7 +240,10 @@ class Table(Visualization):
             table_name = table_name,
             table_data = new_data,
             column_names = primary_keys + [col for col in new_data.keys()
-                                               if col not in primary_keys]
+                                               if col not in primary_keys],
+            computed_indicators = computed_indicators,
+            years = years,
+            primary_keys = primary_keys
         )
         return [([name for name, computed_name in attributes], table_name, years)]
 
@@ -236,20 +251,51 @@ class Table(Visualization):
     def _write_to_storage(self,
                           table_name,
                           table_data,
-                          column_names):
+                          column_names, 
+                          computed_indicators,
+                          primary_keys,
+                          years):
         kwargs = {}
         if self.output_type in ['csv','tab']:
             kwargs['fixed_column_order'] = column_names
             #kwargs['append_type_info'] = False
         elif self.output_type in ['fixed_field']:
-            kwargs['format'] = self.fixed_field_format
-
+            kwargs['format'] = self.build_format_string(computed_indicators = computed_indicators, 
+                                     column_names = column_names,
+                                     years = years,
+                                     primary_keys = primary_keys)
+            
         self.output_storage.write_table(
             table_name = table_name,
             table_data = table_data,
+        #    column_names = column_names,
             **kwargs)
+    
+    def build_format_string(self, computed_indicators, column_names, years, primary_keys):
+        format_list = []
+        name_mapping = {}
+        for name, computed_indicator in computed_indicators.items():
+            for year in years:
+                col_name = computed_indicator.get_computed_dataset_column_name(year = year)
+                i_name = computed_indicator.indicator.name
+                if i_name not in name_mapping:
+                    name_mapping[i_name] = [col_name]
+                else:
+                    name_mapping[i_name].append(col_name)
+       
+        for (name, format) in self.fixed_field_format:
+            if name == 'id':
+                for key in primary_keys:
+                    format_list.append((key,format))
+            else:
+                for col_name in name_mapping[name]:
+                    if col_name in column_names:
+                        format_list.append((col_name,format))
+      
+        print format_list
+        return format_list            
 
-
+    
 from opus_core.tests import opus_unittest
 from opus_gui.results.indicator_framework.test_classes.abstract_indicator_test import AbstractIndicatorTest
 from opus_gui.results.indicator_framework.maker.maker import Maker

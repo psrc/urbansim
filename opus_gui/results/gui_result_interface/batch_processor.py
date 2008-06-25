@@ -61,11 +61,15 @@ class BatchProcessor(object):
         
     def _get_viz_args(self, visualization_type, params, indicators):
         args = {}
+            
         if visualization_type in ['table_per_year', 'table_per_attribute']:
             output_type = str(params['output_type'])
             args['output_type'] = output_type
             if output_type == 'fixed_field':
-                args['fixed_field_format'] = dict(zip(indicators,params['fixed_field_specification']))                
+                list_str = str(params['fixed_field_specification'])[1:-1]
+                spec = [i.strip()[1:-1] for i in list_str.split(',')]
+                args['fixed_field_format'] = zip(indicators,spec)
+                args['fixed_field_format'].insert(0,('id',str(params['id_format'])))   
                 
         return args
             

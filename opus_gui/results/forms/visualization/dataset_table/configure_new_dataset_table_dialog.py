@@ -52,6 +52,9 @@ class ConfigureNewDatasetTableDialog(AbstractConfigureDatasetTableDialog):
             fixed_field_params = self._get_column_values(column = 1)
             viz_params.append({'value':fixed_field_params,
                                'name':'fixed_field_specification'})
+            viz_params.append({'value':str(self.leOption1.text()),
+                               'name':'id_format'})
+
             
         viz_name = str(self.leVizName.text()).replace('DATASET',dataset_name).replace(' ','_')
         self.xml_helper.addNewVisualizationToBatch(
