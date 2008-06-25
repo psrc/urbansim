@@ -74,31 +74,37 @@ class ResultManagerBase(AbstractManagerBase):
             existing_cache_directories[str(run['cache_directory'])] = 1
 
         if 'OPUS_DATA_PATH' in os.environ:
-            path = os.path.join(os.environ.get('OPUS_DATA_PATH'))
-            for scenario_name in os.listdir(path):
-                if not os.path.isdir(os.path.join(path,scenario_name)): continue
-                runs_path = os.path.join(path, scenario_name, 'runs')
-                if not os.path.exists(runs_path): continue
-                
-                for run_name in os.listdir(runs_path):
-                    try:
-                        cache_directory = os.path.join(runs_path,run_name)
-                        years = []
-                        if not os.path.isdir(cache_directory) or \
-                            cache_directory in existing_cache_directories: continue
-                        for dir in os.listdir(cache_directory):
-                            if len(dir) == 4 and dir.isdigit():
-                                years.append(int(dir))
-                        start_year = min(years)
-                        end_year = max(years)
-                        run_name = 'Run_%s'%run_name
-                        self.xml_helper.add_run_to_run_manager_xml(
-                                                         cache_directory,
-                                                         scenario_name,
-                                                         run_name,
-                                                         start_year, end_year,
-                                                         temporary = True)
-                    except: pass
+            
+            _, vals = self.xml_helper.get_element_attributes(node_name = 'creating_baseyear_cache_configuration', 
+                                                   child_attributes = ['scenario_runs_directory'], 
+                                                   node_type = 'class')
+            if 'scenario_runs_directory' not in vals: return
+            
+            cache_root = str(vals['scenario_runs_directory'])
+            
+            scenario_name = os.path.basename(cache_root)
+            path = os.path.join(os.environ.get('OPUS_DATA_PATH'), cache_root)
+            if not os.path.exists(path): return
+            
+            for run_name in os.listdir(path):
+                try:
+                    cache_directory = os.path.join(path,run_name)
+                    years = []
+                    if not os.path.isdir(cache_directory) or \
+                        cache_directory in existing_cache_directories: continue
+                    for dir in os.listdir(cache_directory):
+                        if len(dir) == 4 and dir.isdigit():
+                            years.append(int(dir))
+                    start_year = min(years)
+                    end_year = max(years)
+                    run_name = 'Run_%s'%run_name
+                    self.xml_helper.add_run_to_run_manager_xml(
+                                                     cache_directory,
+                                                     scenario_name,
+                                                     run_name,
+                                                     start_year, end_year,
+                                                     temporary = True)
+                except: pass
 
     def addAdvancedVisualizationForm(self):
         new_form = AdvancedVisualizationForm(mainwindow = self.mainwindow,
