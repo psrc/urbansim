@@ -21,9 +21,10 @@ from PyQt4.QtXml import *
 from opus_gui.config.managerbase.cloneinherited import CloneInheritedGui
 from opus_gui.config.managerbase.clonenode import CloneNodeGui
 from opus_gui.results.xml_helper_methods import elementsByAttributeValue
-from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
+from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper,get_child_values
 from opus_gui.results.forms.get_run_info import GetRunInfo
 
+import os
 
 class OpusXMLAction_Results(object):
     def __init__(self, opusXMLAction):
@@ -56,12 +57,20 @@ class OpusXMLAction_Results(object):
         QObject.connect(self.actEditIndicator,
                         SIGNAL("triggered()"),
                         self.editIndicator)
+
         
         #create new result template...
         self.actAddNewIndicatorBatch = QAction(self.acceptIcon, 
                                           "Add new indicator batch...",
                                           self.xmlTreeObject.mainwindow)
         QObject.connect(self.actAddNewIndicatorBatch, SIGNAL("triggered()"), self.addNewIndicatorBatch)          
+
+        #delete run from disk
+        self.actDeleteRun = QAction(self.acceptIcon, 
+                                          "Remove run and delete from harddrive...",
+                                          self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actDeleteRun, SIGNAL("triggered()"), self.deleteRun)          
+
 
         self.actConfigureExistingBatchIndicatorVisualization = QAction(self.acceptIcon,
                                                                        "Configure visualization",
@@ -205,7 +214,33 @@ class OpusXMLAction_Results(object):
         self.xmlTreeObject.mainwindow.resultManagerStuff.configureNewIndicatorBatchVisualization(
             visualization_type = viz,
             batch_name = batch_name)
+        
+    def deleteRun(self):
+        if self.xmlTreeObject.model.isDirty():
+            # Prompt the user to save...
+            QMessageBox.warning(self.xmlTreeObject.mainwindow,
+                                "Warning",
+                                "Please save changes to project")               
+            return 
+        
+        node = self.currentIndex.internalPointer().node()
+        vals = get_child_values(parent = node, child_names = ['cache_directory'])
+        cache_directory = str(vals['cache_directory'])
 
+        if os.environ['OPUS_DATA_PATH'] not in cache_directory:
+            print 'Not deleting the directory because the cache directory might be corrupted'
+            return
+        
+        if os.path.exists(cache_directory):
+            print 'Deleting ', cache_directory
+            for root, dirs, files in os.walk(cache_directory, topdown=False):
+                for name in files:
+                    os.remove(os.path.join(root, name))
+                for name in dirs:
+                    os.rmdir(os.path.join(root, name))
+        
+        self.removeNode()
+        
     def configureExistingBatchIndicatorVisualization(self):
         if self.xmlTreeObject.model.isDirty():
             # Prompt the user to save...
@@ -349,6 +384,7 @@ class OpusXMLAction_Results(object):
                 elif selected_type == QString("source_data"):
                     self.menu.addAction(self.actGenerateResults)
                     self.menu.addAction(self.actGetInfoSimulationRuns)
+                    self.menu.addAction(self.actDeleteRun)
                 elif domElement.tagName() == QString("Indicator_batches"):
                     self.menu.addAction(self.actAddNewIndicatorBatch)
                 elif selected_type == QString("indicator"):
