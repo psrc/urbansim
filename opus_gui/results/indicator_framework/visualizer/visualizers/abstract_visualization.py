@@ -23,16 +23,21 @@ class Visualization(object):
                  dataset_name,
                  years,
                  attribute_names = None):
-        years = self._get_year_string(years = years)
         
-        components = [dataset_name,
-                      self.get_visualization_type(),
-                      years]
-        if attribute_names is not None:
-            names = '-'.join(sorted(attribute_names))
-            components.append(names)
-        name = '_'.join(components)
-                    
+        if self.name is None:
+            
+            years = self._get_year_string(years = years)
+            
+            components = [dataset_name,
+                          self.get_visualization_type(),
+                          years]
+            if attribute_names is not None:
+                names = '-'.join(sorted(attribute_names))
+                components.append(names)
+            name = '_'.join(components)
+        else:
+            name = self.name
+            
         return name
     
     def _get_visualization_metadata(self, computed_indicators,
