@@ -66,6 +66,8 @@ class Table(Visualization):
             storage_location = indicator_directory
         elif output_type == 'sql':
             server = DatabaseServer(database_server_configuration = storage_location)
+            if not server.has_database(database_name = storage_location.database_name):
+                server.create_database(database_name = storage_location.database_name)
             storage_location = server.get_database(
                                    database_name = storage_location.database_name)
         self.storage_location = storage_location
