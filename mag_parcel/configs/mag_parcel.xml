@@ -388,4 +388,11 @@
       </seasonal_model_other>
     </model_system>
     </model_manager>
+    <scenario_manager>
+      <Seattle_baseline executable="True" copyable="True" type="scenario">
+      <creating_baseyear_cache_configuration type="class">
+        <scenario_runs_directory config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">mag_parcel/runs</scenario_runs_directory>
+      </creating_baseyear_cache_configuration>
+      </Seattle_baseline>
+    </scenario_manager>          
   </opus_project>

@@ -83,6 +83,7 @@
       <creating_baseyear_cache_configuration type="class">
         <Class_name flags="hidden" type="string">CreatingBaseyearCacheConfiguration</Class_name>
         <Class_path flags="hidden" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
+        <scenario_runs_directory config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">eugene_gridcell/runs</scenario_runs_directory>
         <cache_directory_root parser_action="prefix_with_opus_data_path" type="directory">eugene_gridcell/runs</cache_directory_root>
         <cache_from_mysql choices="True|False" type="boolean">False</cache_from_mysql>
         <baseyear_cache type="class">
