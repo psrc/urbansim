@@ -575,12 +575,12 @@ class OpusXMLAction_Data(object):
                                domElement.attribute(QString("copyable")) == QString("True"):
                             self.menu.addSeparator()
                             self.menu.addAction(self.actCloneNode)
-                        if parentElement and (not parentElement.isNull()) and \
-                               parentElement.hasAttribute(QString("type")) and \
-                               ((parentElement.attribute(QString("type")) == QString("dictionary")) or \
-                                (parentElement.attribute(QString("type")) == QString("selectable_list")) or \
-                                (parentElement.attribute(QString("type")) == QString("list")) or \
-                                (parentElement.attribute(QString("type")) == QString("param_template"))):
+                        if domElement and (not domElement.isNull()) and \
+                               domElement.hasAttribute(QString("type")) and \
+                               ((domElement.attribute(QString("type")) == QString("dictionary")) or \
+                                (domElement.attribute(QString("type")) == QString("selectable_list")) or \
+                                (domElement.attribute(QString("type")) == QString("list")) or \
+                                (domElement.attribute(QString("type")) == QString("param_template"))):
                             self.menu.addSeparator()
                             self.menu.addAction(self.actRemoveNode)
                     # Now add the export and import methods
