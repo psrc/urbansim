@@ -25,6 +25,7 @@ from opus_gui.config.xmlmodelview.opusdatadelegate import OpusDataDelegate
 from opus_gui.results.forms.view_image_form import ViewImageForm
 from opus_gui.results.forms.view_table_form import ViewTableForm
 from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
+from opus_gui.run.overwrite_run_dialog import Ui_dlgOverwriteRun
 
 # General system includes
 import os, sys, time, tempfile, shutil, string
@@ -515,6 +516,27 @@ class ModelGuiElement(QWidget):
         self.runManager.updateModelElements()
 
     def on_pbnStartModel_released(self):
+        proceed = True
+
+        run_name = str(self.leRunName.text())
+        if run_name == '':
+            run_name = None
+        else:
+            duplicate = False
+            for run in self.xml_helper.get_available_run_info():
+                existing_run_name = run['name']
+                if run_name == existing_run_name:
+                    duplicate = True
+                    break
+            if duplicate:
+                dlg_dup = OverwriteRunDialog(self)
+            
+                if dlg_dup.exec_() == QDialog.Rejected:
+                    proceed = False
+                
+        if not proceed: return
+        
+        
         if self.running == True and self.paused == False:
             # Take care of pausing a run
             self.paused = True
@@ -549,14 +571,7 @@ class ModelGuiElement(QWidget):
             
             batch_name = str(self.cboOptionalIndicatorBatch.currentText())
             if batch_name == '(None)':
-                batch_name = None
-                
-            run_name = str(self.leRunName.text())
-            if run_name == '':
-                run_name = None
-                
-            #TODO: need to check for whether there already exists a run by this name
-            
+                batch_name = None            
             
             self.runThread = RunModelThread(self.mainwindow,
                                             self,
@@ -920,3 +935,10 @@ class EstimationGuiElement(QWidget):
         self.pbnStartModel.setText(QString("Start Estimation..."))
         QMessageBox.warning(self.mainwindow,"Warning",errorMessage)
 
+class OverwriteRunDialog(QDialog,Ui_dlgOverwriteRun):
+    def __init__(self, parent):
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+
+        QDialog.__init__(self, parent.mainwindow, flags)
+        self.setupUi(self)
+        
