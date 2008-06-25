@@ -22,8 +22,8 @@ class Visualization(object):
                  years,
                  table_name,
                  storage_location, #either a file path or a DatabaseConfiguration
-                 file_extension
-                 ):
+                 file_extension,
+                 **kwargs):
         self.indicators = indicators
         self.visualization_type = visualization_type
         self.storage_location = storage_location
@@ -31,6 +31,8 @@ class Visualization(object):
         self.years = years
         self.table_name = table_name
         self.file_extension = file_extension
+        for k,v in kwargs.items():
+            self.__setattr__(k,v)
     
     def get_file_path(self):
         try:
