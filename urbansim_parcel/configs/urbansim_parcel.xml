@@ -56,6 +56,32 @@
   </data_manager>
   <model_manager>
     <model_system type="dictionary">
+      <refinement_model copyable="True" type="dictionary">
+        <import flags="hidden" type="dictionary">
+          <urbansim_parcel.models.refinement_model type="string">RefinementModel</urbansim_parcel.models.refinement_model>
+        </import>
+        <init type="dictionary">
+          <name type="string">RefinementModel</name>
+          <arguments type="dictionary">
+          </arguments>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name flags="hidden" type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <refinement_dataset_name type="quoted_string">refinement</refinement_dataset_name>
+            <refinement_storage type="string">base_cache_storage</refinement_storage>
+            <refinement_table_name type="quoted_string">refinements</refinement_table_name>
+          </arguments>
+          <output flags="hidden" type="string">refinement</output>
+        </prepare_for_run>
+        <run type="dictionary">
+          <name flags="hidden" type="string">run</name>
+          <arguments type="dictionary">
+            <refinement_dataset type="string">refinement</refinement_dataset>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+      </refinement_model>
       <real_estate_price_model copyable="True" type="dictionary">
         <import flags="hidden" type="dictionary">
           <urbansim.models.real_estate_price_model type="string">RealEstatePriceModel</urbansim.models.real_estate_price_model>
