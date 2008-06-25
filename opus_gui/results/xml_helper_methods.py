@@ -295,7 +295,6 @@ class ResultsManagerXMLHelper:
                                head_node_args = head_node_args, 
                                child_node_definitions = child_defs, 
                                parent_name = 'Results',
-                               temporary = True,
                                children_hidden = True)
 
     def addNewIndicator(self, 
@@ -401,6 +400,5 @@ class ResultsManagerXMLHelper:
         model.insertRow(0,
                         current_index,
                         head_node)
-
 
         model.emit(SIGNAL("layoutChanged()"))
