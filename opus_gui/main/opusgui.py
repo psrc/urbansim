@@ -77,6 +77,12 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
         self.splitter.setSizes([400,500])
 
+        self.actionOpen_Project_2.setShortcut(QString('Ctrl+O'))
+        self.actionSave_Project_2.setShortcut(QString('Ctrl+S'))
+        self.actionSave_Project_As_2.setShortcut(QString('Ctrl+Shift+S'))
+        self.actionClose_Project.setShortcut(QString('Ctrl+C'))
+        self.actionEdit_all_variables.setShortcut(QString('Ctrl+V'))
+        
         # Play with the project and config load/save
         QObject.connect(self.actionOpen_Project_2, SIGNAL("triggered()"), self.openConfig)
         QObject.connect(self.actionSave_Project_2, SIGNAL("triggered()"), self.saveConfig)
