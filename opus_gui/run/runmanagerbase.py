@@ -119,6 +119,7 @@ class ModelGuiElement(QWidget):
         self.runThread = None
         
         self.xml_helper = ResultsManagerXMLHelper(mainwindow.toolboxStuff)
+        self.toolboxStuff = self.mainwindow.toolboxStuff
         
         # Grab the path to the base XML used to run this model
         self.xml_path = model.xml_path
@@ -149,7 +150,7 @@ class ModelGuiElement(QWidget):
         self.modelControlWidget = QWidget(self.groupBox)
         self.vboxlayout.addWidget(self.modelControlWidget)
 
-        self.vboxlayout2 = QVBoxLayout(self.modelControlWidget)
+        self.vboxlayout2 = QGridLayout(self.modelControlWidget)
         self.vboxlayout2.setObjectName("vboxlayout2")
 
         ### Code for the buttons that start the simulation and remove from queue
@@ -173,10 +174,16 @@ class ModelGuiElement(QWidget):
         QObject.connect(self.pbnRemoveModel, SIGNAL("released()"),
                         self.on_pbnRemoveModel_released)        
         self.startVBoxLayout.addWidget(self.pbnRemoveModel)
-        self.vboxlayout2.addWidget(self.startWidget)
+        self.vboxlayout2.addWidget(self.startWidget, 0, 0)
 
+        self.optionalFieldsWidget = QWidget(self.groupBox)
+        self.optionalFieldsGroupBox = QGroupBox(self.optionalFieldsWidget)
+        self.optionalFieldsGroupBox.setTitle(QString('Optional fields'))
+        self.optionalFieldsLayout = QGridLayout(self.optionalFieldsGroupBox)
         self.setup_run_name_line_edit()
         self.setup_indicator_batch_combobox()
+        
+        self.vboxlayout2.addWidget(self.optionalFieldsWidget, 0, 1)
 
         # Add a tab widget and layer in a tree view and log panel
         self.tabWidget = QTabWidget(self.groupBox)
@@ -367,9 +374,6 @@ class ModelGuiElement(QWidget):
     def setupDiagnosticIndicatorTab(self):
         # start indicator tab 
 
-        self.toolboxStuff = self.mainwindow.toolboxStuff
-        domDocument = self.toolboxStuff.doc
-
         self.indicatorWidget = QWidget(self.mainwindow) 
         self.indicatorGridBoxLayout = QGridLayout(self.indicatorWidget)
 
@@ -418,13 +422,13 @@ class ModelGuiElement(QWidget):
         self.indicatorGridBoxLayout.addWidget(self.indicatorResultsTab,1,0,5,5)
         
     def setup_indicator_batch_combobox(self):
-        self.lblBatch = QLabel(self.startWidget)
+        self.lblBatch = QLabel(self.optionalFieldsWidget)
         self.lblBatch.setText(QString('Indicator batch (optional):'))
         self.lblBatch.setToolTip(QString('If an indicator batch (defined in the Results Manager) \nis selected, it will be executed over every \nyear of the simulation being configured. \nIt will executed after the simulation is completed.'))
-        self.cboOptionalIndicatorBatch = QComboBox(self.startWidget)
+        self.cboOptionalIndicatorBatch = QComboBox(self.optionalFieldsWidget)
         
-        self.startVBoxLayout.addWidget(self.lblBatch)
-        self.startVBoxLayout.addWidget(self.cboOptionalIndicatorBatch)
+        self.optionalFieldsLayout.addWidget(self.lblBatch, 1, 0)
+        self.optionalFieldsLayout.addWidget(self.cboOptionalIndicatorBatch, 1, 1)
         
         self.cboOptionalIndicatorBatch.addItem(QString('(None)'))
         batches = self.xml_helper.get_available_batches()
@@ -432,14 +436,14 @@ class ModelGuiElement(QWidget):
             self.cboOptionalIndicatorBatch.addItem(QString(batch['name']))
         
     def setup_run_name_line_edit(self):
-        self.lblRun = QLabel(self.startWidget)
+        self.lblRun = QLabel(self.optionalFieldsWidget)
         self.lblRun.setText(QString('Run name (optional):'))
         self.lblRun.setToolTip(QString('This scenario run will appear \nin the Results Manager under the name \nspecified here. If not specified, \nthe name will default to a combination \nof run id and date of run.'))
         
-        self.leRunName = QLineEdit(self.startWidget)
+        self.leRunName = QLineEdit(self.optionalFieldsWidget)
                 
-        self.startVBoxLayout.addWidget(self.lblRun)
-        self.startVBoxLayout.addWidget(self.leRunName)
+        self.optionalFieldsLayout.addWidget(self.lblRun, 0, 0)
+        self.optionalFieldsLayout.addWidget(self.leRunName, 0, 1)
         
         self.leRunName.setText(QString(''))
             
