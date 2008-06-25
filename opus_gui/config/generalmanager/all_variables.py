@@ -18,6 +18,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from opus_gui.config.xmlmodelview.opusallvariablestablemodel import OpusAllVariablesTableModel
+from opus_gui.config.xmlmodelview.opusallvariablesdelegate import OpusAllVariablesDelegate
 from opus_gui.config.generalmanager.all_variables_ui import Ui_AllVariablesGui
 
 import random
@@ -27,8 +28,14 @@ class AllVariablesGui(QDialog, Ui_AllVariablesGui):
         QDialog.__init__(self, mainwindow, fl)
         self.setupUi(self)
         self.mainwindow = mainwindow
+        
+        # Is the tableview dirty?
+        self.dirty = False
+        
         #Add a default table
         tv = QTableView()
+        delegate = OpusAllVariablesDelegate(tv)
+        tv.setItemDelegate(delegate)
         tv.setSortingEnabled(True)
 
         # For now, disable the save button until we implement the write in the model...
@@ -65,8 +72,8 @@ class AllVariablesGui(QDialog, Ui_AllVariablesGui):
                                       tselement.attribute(QString("source")),
                                       tselement_text]
                             tstuple = tuple(tslist)
-                            tabledata.append(tstuple)
-        tm = OpusAllVariablesTableModel(tabledata, header, self) 
+                            tabledata.append(tslist)
+        tm = OpusAllVariablesTableModel(tabledata, header, self)
         tv.setModel(tm)
         tv.horizontalHeader().setStretchLastSection(True)
         tv.setTextElideMode(Qt.ElideNone)
@@ -74,7 +81,11 @@ class AllVariablesGui(QDialog, Ui_AllVariablesGui):
         
     def on_saveChanges_released(self):
         print "save pressed"
-
+        if self.dirty:
+            print "Need to save"
+            # Loop through the list of tuples and re-build the XML to replace the all_variables
+        else:
+            print "Dont need to save"
         self.close()
 
     def on_cancelWindow_released(self):

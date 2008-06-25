@@ -25,7 +25,13 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         QAbstractTableModel.__init__(self, parentWidget, *args) 
         self.arraydata = datain
         self.headerdata = headerdata
+        self.parentWidget = parentWidget
  
+    def flags(self, index):
+        if not index.isValid():
+            return Qt.ItemIsEnabled
+        return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable                
+
     def rowCount(self, parent): 
         return len(self.arraydata) 
  
@@ -64,3 +70,17 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
             self.arraydata.reverse()
         self.emit(SIGNAL("layoutChanged()"))
         
+    def setData(self,index,value,role):
+        # print "Set Data Pressed with %s" % (value.toString())
+        if not index.isValid():
+            return False
+        if role != Qt.EditRole:
+            return False
+        self.arraydata[index.row()][index.column()] = value.toString()
+        self.emit(SIGNAL('dataChanged(const QModelIndex &, '
+                         'const QModelIndex &)'), index, index)
+        if self.parentWidget:
+            self.parentWidget.dirty = True
+        if self.parentWidget and self.parentWidget.saveChanges:
+            self.parentWidget.saveChanges.setEnabled(True)  
+        return True
