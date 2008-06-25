@@ -36,7 +36,7 @@ class ComputedIndicator:
         
         self.dataset_name = dataset_name
         self.primary_keys = primary_keys
-        
+    
     def get_attribute_alias(self, year = None):
         return self.indicator.get_attribute_alias(year)
     
@@ -63,9 +63,15 @@ class ComputedIndicator:
     def get_file_path(self, years = None):
         file_name = self.get_file_name(years)
         return os.path.join(self.storage_location, file_name)
-
-    def get_computed_dataset_column_name(self):
-        return self.computed_dataset_column_name
+    
+    def get_computed_dataset_column_name(self, year = None):
+        name = self.computed_dataset_column_name
+        if year is not None:
+            if name.find('DDDD') == -1:
+                name = '%s_%i'%(name, year)
+            else:
+                name = name.replace('DDDD', repr(year))
+        return name
     
     def export(self):
         data_manager = IndicatorDataManager()
