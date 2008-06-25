@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'configure_dataset_table_ui.ui'
 #
-# Created: Tue Jun 24 17:23:19 2008
+# Created: Wed Jun 25 00:13:37 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -79,10 +79,10 @@ class Ui_dlgDatasetTableDialog(object):
         self.label_4.setObjectName("label_4")
         self.gridLayout_2.addWidget(self.label_4, 0, 0, 1, 1)
         self.lblOption1 = QtGui.QLabel(self.gbOutputOptions)
-        self.lblOption1.setGeometry(QtCore.QRect(10, 80, 71, 18))
+        self.lblOption1.setGeometry(QtCore.QRect(10, 80, 71, 41))
         self.lblOption1.setObjectName("lblOption1")
         self.leOption1 = QtGui.QLineEdit(self.gbOutputOptions)
-        self.leOption1.setGeometry(QtCore.QRect(90, 80, 181, 22))
+        self.leOption1.setGeometry(QtCore.QRect(90, 90, 181, 22))
         self.leOption1.setObjectName("leOption1")
         self.label_5 = QtGui.QLabel(dlgDatasetTableDialog)
         self.label_5.setGeometry(QtCore.QRect(30, 20, 131, 18))
@@ -98,7 +98,7 @@ class Ui_dlgDatasetTableDialog(object):
 
     def retranslateUi(self, dlgDatasetTableDialog):
         dlgDatasetTableDialog.setWindowTitle(QtGui.QApplication.translate("dlgDatasetTableDialog", "Indicator-spanning table visualization configuration", None, QtGui.QApplication.UnicodeUTF8))
-        dlgDatasetTableDialog.setToolTip(QtGui.QApplication.translate("dlgDatasetTableDialog", "In this visualization, a table of values will be output for every simulation year. The table consists of the ID columns of the specified dataset and the values for each of the indicators specified in this form.", None, QtGui.QApplication.UnicodeUTF8))
+        dlgDatasetTableDialog.setToolTip(QtGui.QApplication.translate("dlgDatasetTableDialog", "In this visualization, a table of values \\nwill be output for every simulation year. \\nThe table consists of the ID columns \\nof the specified dataset and \\nthe values for each of the indicators \\nspecified in this form.", None, QtGui.QApplication.UnicodeUTF8))
         self.gbBasicOptions.setTitle(QtGui.QApplication.translate("dlgDatasetTableDialog", "Basic options", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("dlgDatasetTableDialog", "Dataset:", None, QtGui.QApplication.UnicodeUTF8))
         self.gbIndicators.setTitle(QtGui.QApplication.translate("dlgDatasetTableDialog", "Indicators to visualize", None, QtGui.QApplication.UnicodeUTF8))

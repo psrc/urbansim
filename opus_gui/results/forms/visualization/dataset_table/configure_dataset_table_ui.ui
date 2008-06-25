@@ -13,7 +13,7 @@
    <string>Indicator-spanning table visualization configuration</string>
   </property>
   <property name="toolTip" >
-   <string>In this visualization, a table of values will be output for every simulation year. The table consists of the ID columns of the specified dataset and the values for each of the indicators specified in this form.</string>
+   <string>In this visualization, a table of values \nwill be output for every simulation year. \nThe table consists of the ID columns \nof the specified dataset and \nthe values for each of the indicators \nspecified in this form.</string>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox" >
    <property name="geometry" >
@@ -193,7 +193,7 @@
       <x>10</x>
       <y>80</y>
       <width>71</width>
-      <height>18</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="text" >
@@ -204,7 +204,7 @@
     <property name="geometry" >
      <rect>
       <x>90</x>
-      <y>80</y>
+      <y>90</y>
       <width>181</width>
       <height>22</height>
      </rect>
