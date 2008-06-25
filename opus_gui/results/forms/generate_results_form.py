@@ -15,14 +15,14 @@ from PyQt4.QtCore import QString, QObject, SIGNAL, \
                          Qt, QTimer, QModelIndex
 from PyQt4.QtGui import QMessageBox, QComboBox, QGridLayout, \
                         QTextEdit, QTabWidget, QWidget, QPushButton, \
-                        QGroupBox, QVBoxLayout, QIcon, QLabel
+                        QGroupBox, QVBoxLayout, QIcon, QLabel, QDialog
 
 from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
 
 from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
 from opus_gui.results.gui_result_interface.opus_result_generator import OpusResultGenerator
 
-class GenerateResultsForm(QWidget):
+class GenerateResultsForm(QDialog):
     def __init__(self, mainwindow, result_manager, selected_item = None):
         QWidget.__init__(self, mainwindow)
         #mainwindow is an OpusGui
@@ -295,6 +295,7 @@ class GenerateResultsForm(QWidget):
         # Get the final logfile update after model finishes...
         self.logFileKey = self.result_generator._get_current_log(self.logFileKey)
         self.pbn_generate_results.setEnabled(True)
+        self.close()
     
     def runErrorFromThread(self,errorMessage):
         QMessageBox.warning(self.mainwindow,"Warning",errorMessage)

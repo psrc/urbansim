@@ -133,8 +133,7 @@ class ResultManagerBase(AbstractManagerBase):
                                        result_manager = self,
                                        selected_item = selected_item)
         
-        self.guiElements.insert(0, new_form)
-        self.updateGuiElements()
+        new_form.show()
 
     def addRunIndicatorBatchForm(self, batch_name, simulation_run):
         new_form = IndicatorBatchRunForm(mainwindow = self.mainwindow,
