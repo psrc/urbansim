@@ -44,6 +44,8 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         self.typeSelection = self.currentElement.tagName()
         self.tooltypearray = []
         self.toolTypeSelected()
+        #Jesse test:
+        self.tool_title = self.opusXMLAction_xxx.currentIndex.model().domDocument.createTextNode(self.typeSelection).data()
 
         #templates_root = self.model.xmlRoot.toElement().elementsByTagName(QString("Tool_Library")).item(0)
         #if templates_root.hasChildNodes():
@@ -81,12 +83,12 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
         newChild.appendChild(newText)
         newNode.appendChild(newChild)
         # for key,val in self.vars.iteritems():
-        for x in xrange(1,len(self.test_text)):
+        for x in xrange(0,len(self.test_text)):
             #self.vars[self.test_text[x].text()] = self.test_line[x].text()
             key = self.test_text[x].text()
             val = self.test_line[x].text()
             typeVal = self.test_text_type[x].text().remove(QRegExp("[\(\)]"))
-            # print "Key: %s , Val: %s" % (key,val)
+            #print "Key: %s , Val: %s" % (key,val)
             # Next we add each of the child nodes with the user defined values
             newChild = self.opusXMLAction_xxx.currentIndex.model().domDocument.createElement(key)
             newChild.setAttribute(QString("type"),typeVal)

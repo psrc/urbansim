@@ -49,7 +49,7 @@ class OpusXMLAction_Data(object):
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
         
         self.actExecToolFile = QAction(self.executeIcon,
-                                       "Execute Tool",
+                                       "Execute Tool...",
                                        self.xmlTreeObject.mainwindow)
         QObject.connect(self.actExecToolFile,
                         SIGNAL("triggered()"),
@@ -295,6 +295,9 @@ class OpusXMLAction_Data(object):
         # Open up a GUI element and populate with variable's
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         window = ExecuteToolGui(self,flags)
+        tool_title = window.tool_title.replace('_', ' ')
+        tool_title2 = str(tool_title).title()
+        window.setWindowTitle(tool_title2)
         window.show()
         
 
