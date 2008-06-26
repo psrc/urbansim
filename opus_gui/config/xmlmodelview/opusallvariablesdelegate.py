@@ -26,12 +26,19 @@ class OpusAllVariablesDelegate(QItemDelegate):
     def createEditor(self, parentView, option, index):
         if not index.isValid():
             return QItemDelegate.createEditor(self, parentView, option, index)
-        editor = QItemDelegate.createEditor(self, parentView, option, index)
-        if type(editor) == QLineEdit:
-            editor.setText(index.model().data(index,Qt.DisplayRole).toString())
-            return editor
+        if index.column() == 100:
+            print "Trying to create QCheckbox"
+            editor = QCheckBox(parentView)
+            checkBool = index.model().data(index,Qt.DisplayRole).toBool()
+            if checkBool:
+                editor.setCheckState(Qt.Checked)
+            else:
+                editor.setCheckState(Qt.Unchecked)
         else:
-            return QItemDelegate.createEditor(self, parentView, option, index)
+            editor = QItemDelegate.createEditor(self, parentView, option, index)
+            if type(editor) == QLineEdit:
+                editor.setText(index.model().data(index,Qt.DisplayRole).toString())
+        return editor
 
     def setEditorData(self,editor,index):
         pass

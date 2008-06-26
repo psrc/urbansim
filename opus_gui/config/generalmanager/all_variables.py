@@ -70,7 +70,8 @@ class AllVariablesGui(QDialog, Ui_AllVariablesGui):
                                       tselement.attribute(QString("dataset")),
                                       tselement.attribute(QString("use")),
                                       tselement.attribute(QString("source")),
-                                      tselement_text]
+                                      tselement_text,
+                                      0]
                             tstuple = tuple(tslist)
                             tabledata.append(tslist)
         tm = OpusAllVariablesTableModel(tabledata, header, self)

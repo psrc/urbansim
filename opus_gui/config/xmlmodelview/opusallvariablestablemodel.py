@@ -30,23 +30,33 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
     def flags(self, index):
         if not index.isValid():
             return Qt.ItemIsEnabled
-        return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable                
+        if index.column() == 0:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable # | Qt.ItemIsEditable           
+        else:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable                
 
     def rowCount(self, parent): 
         return len(self.arraydata) 
  
     def columnCount(self, parent): 
         if self.rowCount(parent):
-            return len(self.arraydata[0]) 
+            # We store the state of the row as a hidden last element, so subtract 1
+            return len(self.arraydata[0]) - 1
         else:
             return 0
         
     def data(self, index, role): 
         if not index.isValid(): 
             return QVariant() 
-        elif role != Qt.DisplayRole: 
-            return QVariant() 
-        return QVariant(self.arraydata[index.row()][index.column()])
+        if role == Qt.DisplayRole:
+            return QVariant(self.arraydata[index.row()][index.column()])
+        if role == Qt.CheckStateRole:
+            if index.column() == 0:
+                if self.arraydata[index.row()][5]:
+                    return QVariant(Qt.Checked)
+                else:
+                    return QVariant(Qt.Unchecked)
+        return QVariant()
 
     def headerData(self, col, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
@@ -70,17 +80,35 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
             self.arraydata.reverse()
         self.emit(SIGNAL("layoutChanged()"))
         
+
+    def checkStateOfCheckBoxes(self,newItemAdded):
+        if newItemAdded:
+            # If we have a check then we enable delete
+            self.parentWidget.deleteRow.setEnabled(True)
+        # Else now we loop through the items and see if that was the last one removed
+        foundOne = False
+        for testCase in self.arraydata:
+            if testCase[5]:
+                foundOne = True
+        if not foundOne:
+            self.parentWidget.deleteRow.setEnabled(False)        
+        
     def setData(self,index,value,role):
         # print "Set Data Pressed with %s" % (value.toString())
         if not index.isValid():
             return False
-        if role != Qt.EditRole:
-            return False
-        self.arraydata[index.row()][index.column()] = value.toString()
-        self.emit(SIGNAL('dataChanged(const QModelIndex &, '
-                         'const QModelIndex &)'), index, index)
-        if self.parentWidget:
-            self.parentWidget.dirty = True
-        if self.parentWidget and self.parentWidget.saveChanges:
-            self.parentWidget.saveChanges.setEnabled(True)  
-        return True
+        if role == Qt.EditRole:
+            self.arraydata[index.row()][index.column()] = value.toString()
+            self.emit(SIGNAL('dataChanged(const QModelIndex &, '
+                             'const QModelIndex &)'), index, index)
+            if self.parentWidget:
+                self.parentWidget.dirty = True
+            if self.parentWidget and self.parentWidget.saveChanges:
+                self.parentWidget.saveChanges.setEnabled(True)  
+            return True
+        if role == Qt.CheckStateRole:
+            if index.column() == 0:
+                state = value.toInt()[0]
+                self.arraydata[index.row()][5] = state
+                self.checkStateOfCheckBoxes(state)
+        return False
