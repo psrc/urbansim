@@ -28,6 +28,7 @@ class AllVariablesGui(QDialog, Ui_AllVariablesGui):
         QDialog.__init__(self, mainwindow, fl)
         self.setupUi(self)
         self.mainwindow = mainwindow
+        self.all_variables_index = None
         
         # Is the tableview dirty?
         self.dirty = False
@@ -41,17 +42,23 @@ class AllVariablesGui(QDialog, Ui_AllVariablesGui):
         # For now, disable the save button until we implement the write in the model...
         self.saveChanges.setEnabled(False)
 
+        # So we have a data structure to define the headers for the table...
+        # The first element is empty string because it is over the check box
         header = ["","Name","Dataset","Use","Source","Definition"]
         tabledata = []
+        self.tabledata = tabledata
         # Grab the general section...
         tree = self.mainwindow.toolboxStuff.generalManagerTree
+        self.tree = tree
         dbxml = tree.model.index(0,0,QModelIndex()).parent()
         all_variables_list = tree.model.findElementIndexByName("expression_library",dbxml,True)
         for all_variables in all_variables_list:
             # Should just be one all_variables section
             if all_variables.isValid():
+                self.all_variables_index = all_variables
                 # Now we have to loop through all the variables and create the data grid for the display
                 tsindexlist = tree.model.findElementIndexByType("variable_definition",all_variables,True)
+                self.tsindexlist = tsindexlist
                 for tsindex in tsindexlist:
                     if tsindex.isValid():
                         # Now we have a valid variable, we fill in the set for display
@@ -70,9 +77,9 @@ class AllVariablesGui(QDialog, Ui_AllVariablesGui):
                                       tselement.attribute(QString("dataset")),
                                       tselement.attribute(QString("use")),
                                       tselement.attribute(QString("source")),
-                                      tselement_text,
-                                      0]
-                            tstuple = tuple(tslist)
+                                      tselement_text]
+                            # Add on two slots for keeping track of checked and dirty
+                            tslist.extend([0,0])
                             tabledata.append(tslist)
         tm = OpusAllVariablesTableModel(tabledata, header, self)
         self.tm = tm
@@ -84,11 +91,98 @@ class AllVariablesGui(QDialog, Ui_AllVariablesGui):
         tv.setTextElideMode(Qt.ElideNone)
         self.gridlayout.addWidget(tv)
         
+
+    def findOriginalNode(self,list):
+        for tsindex in self.tsindexlist:
+            if tsindex.isValid():
+                # Now we have a valid variable, we check if it is the one we want
+                tsitem = tsindex.internalPointer()
+                tsnode = tsitem.node()
+                if tsnode.isElement():
+                    tselement = tsnode.toElement()
+                    if tselement.tagName() == list[1]:
+                        return tsnode
+        return None
+        
+
+    def updateNodeFromList(self,node,list):
+        if not node.isNull():
+            # We only want to check out this node if it is of type "element"
+            if node.isElement():
+                domElement = node.toElement()
+                if not domElement.isNull():
+                    # First set the tagName
+                    domElement.setTagName(QString(list[1]))
+                    # Now the attributes
+                    domElement.setAttribute(QString("dataset"),QString(list[2]))
+                    domElement.setAttribute(QString("use"),QString(list[3]))
+                    domElement.setAttribute(QString("source"),QString(list[4]))
+                    # Finally the description text
+                    # We need to grab the text node from the element
+                    if domElement.hasChildNodes():
+                        children = domElement.childNodes()
+                        for x in xrange(0,children.count(),1):
+                            if children.item(x).isText():
+                                textNode = children.item(x).toText()
+                                # Finally set the text node value
+                                textNode.setData(list[5])
+
     def on_saveChanges_released(self):
         print "save pressed"
         if self.dirty:
-            print "Need to save"
-            # Loop through the list of tuples and re-build the XML to replace the all_variables
+            print "Need to save and patch the original XML"
+            #### General scheme ####
+            ## Loop through the new list and see:
+            ## 1) are there any nodes that where in the original and have modified
+            ##    attributes... update the attributes
+            ## 2) are there any nodes that where not in the original... if so these
+            ##    must be new nodes and need to be added
+            ##
+            ## Now we loop through the original list
+            ## 1) see if there are any nodes that are now missing in the
+            ##    new list... these have either had their tagname modified or
+            ##    are removed.  In either case, remove the old node
+            ##    and check if an inherited parent needs to be placed back in.
+            
+            # Loop through the list of lists and find the node in the XML and update it
+            for i,testCase in enumerate(self.tabledata):
+                # Find the XML node that has the tag name in column 1
+                nameToSearchFor = testCase[1]
+                foundInOriginal = False
+                for tsindex in self.tsindexlist:
+                    if tsindex.isValid():
+                        # Now we have a valid variable, we fill in the set for display
+                        tsitem = tsindex.internalPointer()
+                        tsnode = tsitem.node()
+                        if tsnode.isElement():
+                            tselement = tsnode.toElement()
+                            if tselement.tagName() == nameToSearchFor:
+                                # We have a match...
+                                foundInOriginal = True
+                if foundInOriginal:
+                    # print "We have a match %s" % (nameToSearchFor)
+                    # If the data is dirty we need to update the node
+                    if testCase[-1]:
+                        nodeToUpdate = self.findOriginalNode(testCase)
+                        self.updateNodeFromList(nodeToUpdate,testCase)
+                        self.tree.model.makeEditable(nodeToUpdate)
+                else:
+                    print "We dont have a match %s" % (nameToSearchFor)
+                    # Here we must have a new node (or renamed node) so
+                    # we go ahead and add a new node to the XML
+                    newElement = self.tree.model.domDocument.createElement(QString(testCase[1]))
+                    newElement.setAttribute(QString("type"),QString("variable_definition"))                    
+                    newElementText = self.tree.model.domDocument.createTextNode(QString(""))
+                    newElement.appendChild(newElementText)
+                    self.updateNodeFromList(newElement,testCase)
+                    self.tree.model.insertRow(self.tree.model.rowCount(self.all_variables_index),
+                                              self.all_variables_index,
+                                              newElement)
+                    self.tree.model.emit(SIGNAL("layoutChanged()"))
+            # Now we look for any original nodes that are not in the new list...
+            # These have either been renamed or deleted, so we have to look to see if
+            # the original was inherited and add the inherited back in if needed
+            
         else:
             print "Dont need to save"
         self.close()
@@ -105,5 +199,5 @@ class AllVariablesGui(QDialog, Ui_AllVariablesGui):
         print "new pressed"
         self.tm.insertRow(0,["",
                              "New_Node","Dataset","Use","Source","Description",
-                             0])
+                             0,0])
 

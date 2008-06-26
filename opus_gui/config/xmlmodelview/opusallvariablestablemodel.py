@@ -40,8 +40,9 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
  
     def columnCount(self, parent): 
         if self.rowCount(parent):
-            # We store the state of the row as a hidden last element, so subtract 1
-            return len(self.arraydata[0]) - 1
+            # We store the state of the row (checked and hidden) as
+            # hidden last elements, so subtract 2
+            return len(self.arraydata[0]) - 2
         else:
             return 0
         
@@ -52,7 +53,7 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
             return QVariant(self.arraydata[index.row()][index.column()])
         if role == Qt.CheckStateRole:
             if index.column() == 0:
-                if self.arraydata[index.row()][-1]:
+                if self.arraydata[index.row()][-2]:
                     return QVariant(Qt.Checked)
                 else:
                     return QVariant(Qt.Unchecked)
@@ -89,7 +90,7 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         # Else now we loop through the items and see if that was the last one removed
         foundOne = False
         for testCase in self.arraydata:
-            if testCase[-1]:
+            if testCase[-2]:
                 foundOne = True
         if not foundOne:
             self.parentWidget.deleteRow.setEnabled(False)        
@@ -99,18 +100,22 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         if not index.isValid():
             return False
         if role == Qt.EditRole:
-            self.arraydata[index.row()][index.column()] = value.toString()
-            self.emit(SIGNAL('dataChanged(const QModelIndex &, '
-                             'const QModelIndex &)'), index, index)
-            if self.parentWidget:
-                self.parentWidget.dirty = True
-            if self.parentWidget and self.parentWidget.saveChanges:
-                self.parentWidget.saveChanges.setEnabled(True)  
-            return True
+            if self.arraydata[index.row()][index.column()] != value.toString():
+                # Only update if we change something
+                self.arraydata[index.row()][index.column()] = value.toString()
+                self.emit(SIGNAL('dataChanged(const QModelIndex &, '
+                                 'const QModelIndex &)'), index, index)
+                # Mark that the data for this row is dirty
+                self.arraydata[index.row()][-1] = 1
+                if self.parentWidget:
+                    self.parentWidget.dirty = True
+                if self.parentWidget and self.parentWidget.saveChanges:
+                    self.parentWidget.saveChanges.setEnabled(True)  
+                return True
         if role == Qt.CheckStateRole:
             if index.column() == 0:
                 state = value.toInt()[0]
-                self.arraydata[index.row()][-1] = state
+                self.arraydata[index.row()][-2] = state
                 self.checkStateOfCheckBoxes(state)
         return False
 
@@ -142,7 +147,7 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
 
     def deleteAllChecked(self):
         for i,testCase in enumerate(self.arraydata):
-            if testCase[-1]:
+            if testCase[-2]:
                 self.removeRow(i)
         self.checkStateOfCheckBoxes(False)
                 
