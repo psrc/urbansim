@@ -1,19 +1,25 @@
-<project basedir=".">
-	<property environment="env"/>
-	<property name="fireman_user" value="${env.USER}" />
-	<property name="major" value="4" />
-	<property name="minor" value="1" />
-	<property name="python_build_number_file" value="${basedir}/__init__.py" />
+<project>
 
-    <target name="update-python-build-number" if="fireman.build" description="Update build number">
-        <echo message="Update build number"/>
-		<chmod perm="u+w">
-		  <fileset file="${python_build_number_file}" />
-		</chmod>
-        <exec executable="python">
-            <env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
-            <arg line="${pythonpathdir}/opus_core/update_build_number.py ${python_build_number_file} ${BUILDNUMBER}"/>
-        </exec>
-		<cvs command="commit -m '(${fireman_user}) Updated build number.' ${python_build_number_file}" />
-    </target>
+	<property name="pythonpathdir" value="${basedir}/.." />
+	<property name="webdir" value="/projects/urbansim5/www.urbansim.org/" />
+	<property environment="env" />
+
+    <!-- Default target defintions -->
+
+	<target name="unit-tests">
+		<exec executable="python" failonerror="True">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
+			<arg line="${basedir}/tests/all_tests.py" />
+		</exec>
+	</target>
+
+	<target name="unit-tests-with-xml-output">
+		<exec executable="python" failonerror="True">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
+			<arg line="${basedir}/tests/all_tests.py -x" />
+		</exec>
+	</target>
+
+	<target name="cruisecontrol" depends="unit-tests-with-xml-output" />
+
 </project>

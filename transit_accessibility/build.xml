@@ -1,34 +1,5 @@
-<project default="unit-tests">
+<project name="transit_accessibility" default="unit-tests">
 
-	<property name="project_name" value="transit_accessibility" />
-	<property name="webdir" value="/projects/urbansim5/www.urbansim.org/opus/${project_name}" />
-	<property name="pythonpathdir" value="${basedir}/.." />
-	<import file="${pythonpathdir}/opus_core/common.xml"/>
+	<import file="${basedir}/../opus_core/common.xml" />
 
-	<target name="unit-tests">
-		<echo message="Running UnitTests." />
-		<property environment="env" />
-		<exec executable="python">
-			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
-			<arg line="tests/all_tests.py" />
-		</exec>
-	</target>
-
-	<target name="release" description="Release module to the incremental website">
-		<delete includeemptydirs="true">
-			<fileset dir="${webdir}" includes="**/*" />
-		</delete>
-		<copy todir="${webdir}">
-			<fileset dir="${basedir}">
-				<exclude name="**/*.pyc" />
-			</fileset>
-		</copy>
-	</target>
-
-	<target name="cruisecontrol">
-		<exec executable="python" failonerror="True">
-			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
-			<arg line="tests/all_tests.py -x" />
-		</exec>
-	</target>
 </project>

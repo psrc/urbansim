@@ -1,15 +1,15 @@
-<project name="opus_docs" basedir=".">
+<project name="opus_docs">
+
     <echo>entering opus_docs build</echo>
-	<property name="webdir" value="/projects/urbansim5/www.urbansim.org/" />
-	<property name="pythonpathdir" value="${basedir}/.." />
-	<property environment="env" />
+
+	<import file="${basedir}/../opus_core/common.xml" />
 
     <echo>defining build-latex-docs </echo>
 	<target name="build-latex-docs">
         <echo>starting build-latex-docs </echo>
 		<exec executable="python" failonerror="true">
 			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
-			<arg line="manual/build_docs.py" />
+			<arg line="${basedir}/manual/build_docs.py" />
 		</exec>
 	</target>
 
@@ -18,7 +18,7 @@
 	    <echo>starting build-tutorials</echo>
 		<exec executable="python" failonerror="true">
 			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
-			<arg line="tutorials/build_docs.py" />
+			<arg line="${basedir}/tutorials/build_docs.py" />
 		</exec>
 	</target>
 	
@@ -38,6 +38,7 @@
 	</target>
 
 	<target name="cruisecontrol" depends="build-latex-docs, build-tutorials, copy-to-webserver" />
+
     <echo>leaving opus_docs build</echo>
 
 </project>
