@@ -81,6 +81,9 @@ class AllVariablesGui(QDialog, Ui_AllVariablesGui):
                             # Add on two slots for keeping track of checked and dirty
                             tslist.extend([0,0])
                             tabledata.append(tslist)
+        self.originalList = list(tabledata)
+        for i,origListItem in enumerate(tabledata):
+            self.originalList[i] = list(origListItem)
         tm = OpusAllVariablesTableModel(tabledata, header, self)
         self.tm = tm
         self.tv = tv
@@ -167,7 +170,7 @@ class AllVariablesGui(QDialog, Ui_AllVariablesGui):
                         self.updateNodeFromList(nodeToUpdate,testCase)
                         self.tree.model.makeEditable(nodeToUpdate)
                 else:
-                    print "We dont have a match %s" % (nameToSearchFor)
+                    # print "We dont have a match %s" % (nameToSearchFor)
                     # Here we must have a new node (or renamed node) so
                     # we go ahead and add a new node to the XML
                     newElement = self.tree.model.domDocument.createElement(QString(testCase[1]))
@@ -182,21 +185,34 @@ class AllVariablesGui(QDialog, Ui_AllVariablesGui):
             # Now we look for any original nodes that are not in the new list...
             # These have either been renamed or deleted, so we have to look to see if
             # the original was inherited and add the inherited back in if needed
-            
+            for i,origTestCase in enumerate(self.originalList):
+                # print "Testing if original is in the new list..."
+                # Test to see if anything in the original is not in the new list
+                weFoundIt = False
+                for ii,newTestCase in enumerate(self.tabledata):
+                    if origTestCase[1] == newTestCase[1]:
+                        weFoundIt = True
+                        break
+                if not weFoundIt:
+                    # print "We have a missing node...%s" % (origTestCase[1])
+                    testCaseIndex = self.tree.model.findElementIndexByName(origTestCase[1],self.all_variables_index,False)
+                    self.tree.model.removeRow(testCaseIndex[0].internalPointer().row(),
+                                              self.tree.model.parent(testCaseIndex[0]))
+                    self.tree.model.emit(SIGNAL("layoutChanged()"))
         else:
             print "Dont need to save"
         self.close()
 
     def on_cancelWindow_released(self):
-        print "cancel pressed"
+        #print "cancel pressed"
         self.close()
 
     def on_deleteRow_released(self):
-        print "delete pressed"
+        #print "delete pressed"
         self.tm.deleteAllChecked()
 
     def on_addNew_released(self):
-        print "new pressed"
+        #print "new pressed"
         self.tm.insertRow(0,["",
                              "New_Node","Dataset","Use","Source","Description",
                              0,0])
