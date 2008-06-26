@@ -16,6 +16,7 @@ RM = rm -f
 #RM = del
 
 all: 
+	$(MAKE) -C generalmanager
 	$(MAKE) -C datamanager
 	$(MAKE) -C filetree
 	$(MAKE) -C modelmanager
@@ -27,6 +28,7 @@ all:
 clean:
 	$(RM) *.pyc
 	$(RM) *~
+	$(MAKE) -C generalmanager clean
 	$(MAKE) -C datamanager clean
 	$(MAKE) -C filetree clean
 	$(MAKE) -C modelmanager clean
