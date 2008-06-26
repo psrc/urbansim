@@ -41,7 +41,7 @@ class AllVariablesGui(QDialog, Ui_AllVariablesGui):
         # For now, disable the save button until we implement the write in the model...
         self.saveChanges.setEnabled(False)
 
-        header = ["Name","Dataset","Use","Source","Definition"]
+        header = ["","Name","Dataset","Use","Source","Definition"]
         tabledata = []
         # Grab the general section...
         tree = self.mainwindow.toolboxStuff.generalManagerTree
@@ -66,7 +66,7 @@ class AllVariablesGui(QDialog, Ui_AllVariablesGui):
                                     if classchildren.item(x).isText():
                                         #print "Found some text in the classification element"
                                         tselement_text = classchildren.item(x).nodeValue()
-                            tslist = [tselement.tagName(),
+                            tslist = ["",tselement.tagName(),
                                       tselement.attribute(QString("dataset")),
                                       tselement.attribute(QString("use")),
                                       tselement.attribute(QString("source")),
@@ -75,7 +75,11 @@ class AllVariablesGui(QDialog, Ui_AllVariablesGui):
                             tstuple = tuple(tslist)
                             tabledata.append(tslist)
         tm = OpusAllVariablesTableModel(tabledata, header, self)
+        self.tm = tm
+        self.tv = tv
         tv.setModel(tm)
+        tv.setColumnWidth(0,25)
+        #tv.selectColumn(1)
         tv.horizontalHeader().setStretchLastSection(True)
         tv.setTextElideMode(Qt.ElideNone)
         self.gridlayout.addWidget(tv)
@@ -92,4 +96,8 @@ class AllVariablesGui(QDialog, Ui_AllVariablesGui):
     def on_cancelWindow_released(self):
         print "cancel pressed"
         self.close()
+
+    def on_deleteRow_released(self):
+        print "delete pressed"
+        self.tm.deleteAllChecked()
 

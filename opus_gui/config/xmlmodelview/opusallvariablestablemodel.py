@@ -52,7 +52,7 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
             return QVariant(self.arraydata[index.row()][index.column()])
         if role == Qt.CheckStateRole:
             if index.column() == 0:
-                if self.arraydata[index.row()][5]:
+                if self.arraydata[index.row()][-1]:
                     return QVariant(Qt.Checked)
                 else:
                     return QVariant(Qt.Unchecked)
@@ -67,18 +67,19 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         """Sort table by given column number.
         """
         self.ncol = ncol
-        self.emit(SIGNAL("layoutAboutToBeChanged()"))
-        # Create a list to order the sort by
-        orderList = range(len(self.headerdata))
-        orderList.remove(self.ncol)
-        orderList.insert(0,self.ncol)
-        # Reverse loop through and order based on columns
-        for col in reversed(orderList):
-            self.arraydata = sorted(self.arraydata, key=operator.itemgetter(col))
-        # Flip if accending vs decending...
-        if order == Qt.DescendingOrder:
-            self.arraydata.reverse()
-        self.emit(SIGNAL("layoutChanged()"))
+        if self.ncol != 0:
+            self.emit(SIGNAL("layoutAboutToBeChanged()"))
+            # Create a list to order the sort by
+            orderList = range(len(self.headerdata))
+            orderList.remove(self.ncol)
+            orderList.insert(0,self.ncol)
+            # Reverse loop through and order based on columns
+            for col in reversed(orderList):
+                self.arraydata = sorted(self.arraydata, key=operator.itemgetter(col))
+            # Flip if accending vs decending...
+            if order == Qt.DescendingOrder:
+                self.arraydata.reverse()
+            self.emit(SIGNAL("layoutChanged()"))
         
 
     def checkStateOfCheckBoxes(self,newItemAdded):
@@ -88,7 +89,7 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         # Else now we loop through the items and see if that was the last one removed
         foundOne = False
         for testCase in self.arraydata:
-            if testCase[5]:
+            if testCase[-1]:
                 foundOne = True
         if not foundOne:
             self.parentWidget.deleteRow.setEnabled(False)        
@@ -109,6 +110,27 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         if role == Qt.CheckStateRole:
             if index.column() == 0:
                 state = value.toInt()[0]
-                self.arraydata[index.row()][5] = state
+                self.arraydata[index.row()][-1] = state
                 self.checkStateOfCheckBoxes(state)
         return False
+
+    def removeRow(self,row,parent = QModelIndex()):
+        returnval = QAbstractTableModel.removeRow(self,row,parent)
+        self.beginRemoveRows(parent,row,row)
+        # Remove the element
+        if parent == QModelIndex():
+            self.arraydata.pop(row)
+        self.endRemoveRows()
+        if self.parentWidget:
+            self.parentWidget.dirty = True
+        if self.parentWidget and self.parentWidget.saveChanges:
+            self.parentWidget.saveChanges.setEnabled(True)  
+        return returnval
+
+    def deleteAllChecked(self):
+        for i,testCase in enumerate(self.arraydata):
+            if testCase[-1]:
+                self.removeRow(i)
+        self.checkStateOfCheckBoxes(False)
+                
+        
