@@ -101,3 +101,9 @@ class AllVariablesGui(QDialog, Ui_AllVariablesGui):
         print "delete pressed"
         self.tm.deleteAllChecked()
 
+    def on_addNew_released(self):
+        print "new pressed"
+        self.tm.insertRow(0,["",
+                             "New_Node","Dataset","Use","Source","Description",
+                             0])
+

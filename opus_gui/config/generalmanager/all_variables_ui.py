@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'all_variables.ui'
 #
-# Created: Wed Jun 25 22:52:20 2008
+# Created: Thu Jun 26 01:11:55 2008
 #      by: PyQt4 UI code generator 4.3.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -35,7 +35,7 @@ class Ui_AllVariablesGui(object):
         self.hboxlayout.addItem(spacerItem)
 
         self.addNew = QtGui.QPushButton(self.widget)
-        self.addNew.setEnabled(False)
+        self.addNew.setEnabled(True)
         self.addNew.setObjectName("addNew")
         self.hboxlayout.addWidget(self.addNew)
 

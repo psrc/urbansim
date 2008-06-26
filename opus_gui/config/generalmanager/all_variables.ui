@@ -47,7 +47,7 @@
       <item>
        <widget class="QPushButton" name="addNew" >
         <property name="enabled" >
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="text" >
          <string>Add New Row</string>

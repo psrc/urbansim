@@ -114,6 +114,19 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
                 self.checkStateOfCheckBoxes(state)
         return False
 
+    def insertRow(self, row, listToInsert, parent = QModelIndex()):
+        returnval = QAbstractTableModel.insertRow(self,row,parent)
+        self.beginInsertRows(parent,row,row)
+        # Add the element
+        if parent == QModelIndex():
+            self.arraydata.insert(row,listToInsert)
+        self.endInsertRows()
+        if self.parentWidget:
+            self.parentWidget.dirty = True
+        if self.parentWidget and self.parentWidget.saveChanges:
+            self.parentWidget.saveChanges.setEnabled(True)
+        return returnval
+
     def removeRow(self,row,parent = QModelIndex()):
         returnval = QAbstractTableModel.removeRow(self,row,parent)
         self.beginRemoveRows(parent,row,row)
