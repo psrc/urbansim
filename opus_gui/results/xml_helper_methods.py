@@ -211,6 +211,12 @@ class ResultsManagerXMLHelper:
 
         return matching_element, child_attributes        
         
+        
+    #####################################################
+    ##############    XML REMOVAL    ####################
+    #####################################################
+    
+    #####################################################
     #####################################################
     ##############    XML ADDITIONS    ##############
     #####################################################
@@ -420,7 +426,7 @@ class ResultsManagerXMLHelper:
         # Grab the base node... this is a QDomNode
         base_node = index.internalPointer().node()
 
-        if not base_node.isNull():
+        if not base_node.isNull() and new_base_node_name is not None:
             # We only want to check out this node if it is of type "element"
             if base_node.isElement():
                 domElement = base_node.toElement()
