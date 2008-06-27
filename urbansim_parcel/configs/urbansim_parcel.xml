@@ -552,7 +552,7 @@
             <data_objects type="string">datasets</data_objects>
             <index_to_unplace flags="hidden" type="string">hrm_index</index_to_unplace>
             <join_datasets type="boolean">True</join_datasets>
-            <portion_to_unplace type="string">portion_to_unplace</portion_to_unplace>
+            <portion_to_unplace type="string">.1</portion_to_unplace>
             <specification_storage type="string">base_cache_storage</specification_storage>
             <specification_table type="quoted_string">household_location_choice_model_specification</specification_table>
             <filter type="quoted_string">numpy.logical_and(household.building_id&gt;0, household.disaggregate(building.sqft_per_unit&gt;0))</filter>
