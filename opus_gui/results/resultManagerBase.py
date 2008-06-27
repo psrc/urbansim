@@ -120,7 +120,8 @@ class ResultManagerBase(AbstractManagerBase):
     def configureExistingIndicatorBatchVisualization(self, selected_index):
         viz_name = selected_index.internalPointer().node().toElement().tagName()
         _, params = self.xml_helper.get_element_attributes(node_name = viz_name,
-                                               child_attributes = ['visualization_type'])
+                                               child_attributes = ['visualization_type'],
+                                               node_type = 'batch_visualization')
         visualization_type = params['visualization_type']
 
         if visualization_type == 'table_per_year':
