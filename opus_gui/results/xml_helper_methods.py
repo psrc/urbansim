@@ -68,6 +68,7 @@ class ResultsManagerXMLHelper:
     
     def __init__(self, toolboxStuff):
         self.toolboxStuff = toolboxStuff
+
         
     #####################################################
     #########    XML GET CONVENIENCE METHODS     ########
@@ -89,12 +90,7 @@ class ResultsManagerXMLHelper:
     def get_available_indicator_names(self, attributes = []):
         return self._get_node_group(node_value = 'indicator', 
                                     node_attribute = 'type', 
-                                    child_attributes = attributes)        
-    
-    def get_available_indicator_batch_names(self, attributes = []):
-        return self._get_node_group(node_value = 'indicator_group', 
-                                    node_attribute = 'type', 
-                                    child_attributes = attributes)        
+                                    child_attributes = attributes)         
     
     def get_available_run_info(self, attributes = []):
         return self._get_node_group(node_value = 'source_data', 
@@ -334,18 +330,16 @@ class ResultsManagerXMLHelper:
                                head_node_args = head_node_args, 
                                parent_name = 'Indicator_batches')
 
-    def addNewVisualizationToBatch(self, viz_name, batch_name, viz_type, dataset_name, viz_params):
+    def addNewVisualizationToBatch(self, viz_name, batch_name, viz_type, viz_params):
         head_node_args = {'type':'batch_visualization',
                           'value':''}
 
         viz_params.append({'value':self.get_visualization_options()[viz_type],
                            'name':'visualization_type'})
-        viz_params.append({'value':dataset_name,
-                           'name':'dataset_name'})
             
         for param in viz_params:
             value = param['value']
-            if isinstance(value,str):
+            if isinstance(value,str) or isinstance(value,QString):
                 param['type'] = 'string'
                 param['value'] = value
             elif isinstance(value,list):
@@ -359,6 +353,29 @@ class ResultsManagerXMLHelper:
                                child_node_definitions = viz_params, 
                                temporary = False, 
                                children_hidden = True)
+                
+    def _insert_children(self, head_node, child_node_definitions, children_hidden = True, temporary = False):
+        # Loop through all the child definitions and create nodes if they are needed
+        if child_node_definitions == []: return
+
+        # This list is to hold all of the child dom nodes created
+        model = self.toolboxStuff.resultsManagerTree.model
+
+        child_nodes = []
+        for args in child_node_definitions:
+            if children_hidden:
+                if 'flags' in args: 
+                    args['flags'] += '|hidden'
+                else:
+                    args['flags'] = 'hidden'
+            child_node = model.create_node(document = self.toolboxStuff.doc,
+                                           temporary = temporary,
+                                           **args)
+            child_nodes.append(child_node)
+        # Now loop through the nodes we created to append them to the head_node
+        for node in sorted(child_nodes, reverse=True):
+            head_node.appendChild(node)
+                
                 
     def _add_new_xml_tree(self, 
                           head_node_name,
@@ -377,27 +394,14 @@ class ResultsManagerXMLHelper:
                                     temporary = temporary, 
                                     **head_node_args)
 
+        self._insert_children(head_node=head_node, 
+                              child_node_definitions=child_node_definitions, 
+                              children_hidden=children_hidden, 
+                              temporary=temporary)
+
         # Find the parent node index to append to
         parentIndex = model.index(0,0,QModelIndex()).parent()
         current_index = model.findElementIndexByName(parent_name, parentIndex)[0]
-
-        # Loop through all the child definitions and create nodes if they are needed
-        if child_node_definitions != []:
-            # This list is to hold all of the child dom nodes created
-            child_nodes = []
-            for args in child_node_definitions:
-                if children_hidden:
-                    if 'flags' in args: 
-                        args['flags'] += '|hidden'
-                    else:
-                        args['flags'] = 'hidden'
-                child_node = model.create_node(document = document,
-                                               temporary = temporary,
-                                               **args)
-                child_nodes.append(child_node)
-            # Now loop through the nodes we created to append them to the head_node
-            for node in sorted(child_nodes, reverse=True):
-                head_node.appendChild(node)
 
         # Now insert the head_node
         model.insertRow(0,
@@ -405,3 +409,98 @@ class ResultsManagerXMLHelper:
                         head_node)
 
         model.emit(SIGNAL("layoutChanged()"))
+        
+    def update_dom_node(self, index, new_base_node_name = None, children_to_update = None, children_hidden = True, temporary = False):
+        if index is None: return 
+        
+        model = self.toolboxStuff.resultsManagerTree.model
+        # Keep track of any edits so we can mark the GUI as edited and force a save
+        # as well as make the node editable if it is not already...
+        dirty = False
+        # Grab the base node... this is a QDomNode
+        base_node = index.internalPointer().node()
+
+        if not base_node.isNull():
+            # We only want to check out this node if it is of type "element"
+            if base_node.isElement():
+                domElement = base_node.toElement()
+                if not domElement.isNull():
+                    # Now we check to see if the tagname is the one we are looking for
+                    name = str(domElement.tagName())
+                    # and more importantly if it has changed... we only update on a changed value
+                    if name != new_base_node_name:
+                        # This path is to allow us to verify if the node being modified
+                        # is inherited and needs to be added back in
+                        domNodePath = model.domNodePath(base_node)
+                        # Actually update the tagname
+                        domElement.setTagName(QString(new_base_node_name))
+                        # Now search and check if inherited and needs to be added back in to tree
+                        model.checkIfInheritedAndAddBackToTree(domNodePath, index.parent())
+                        # We have made updates so we need to do the "dirty stuff" later
+                        dirty = True
+
+        # Lets avoid calling setData directly... Will create a new method that will do the above
+        #self.model.setData(self.selected_index,QVariant(indicator_name),Qt.EditRole)
+        
+        # Get the first child node (also a QDomNode) for traversal
+        node = base_node.firstChild()
+        
+        # Only march on if we have non-null nodes
+        while not node.isNull():
+            # We only want to check out this node if it is of type "element"
+            if node.isElement():
+                domElement = node.toElement()
+                if not domElement.isNull():
+                    # Now we check to see if the tagname is the one we are looking for
+                    name = str(domElement.tagName())
+                    if name in children_to_update:
+                        # We have a match se we need to grab the text node for the element
+                        elementText = str(domElement.text())
+                        # If the text node value has changed we need to update
+                        if elementText != children_to_update[name]:
+                            # We need to grab the text node from the element
+                            if domElement.hasChildNodes():
+                                children = domElement.childNodes()
+                                for x in xrange(0,children.count(),1):
+                                    if children.item(x).isText():
+                                        textNode = children.item(x).toText()
+                                        # Finally set the text node value
+                                        textNode.setData(children_to_update[name])
+
+                                        # We have made this element dirty so we need to mark it all dirty
+                                        dirty = True
+                        del children_to_update[name]
+            # Continue to loop through children
+            node = node.nextSibling()
+        
+        #add children which did not already exist
+        self._insert_children(head_node=base_node, 
+                              child_node_definitions=self._convert_to_node_dictionary(child_dictionary = children_to_update), 
+                              children_hidden = children_hidden, 
+                              temporary=temporary)
+                    
+        # TODO: Should gather all of this into a method in the model to allow for bulk update
+        if dirty:    
+            # If we have changed something we need to make sure the node we are editing is marked
+            # as editable since there was no check that the node was editable before allowing
+            # the right click edit option.
+            model.makeEditable(base_node)
+            # Flag the model as dirty to prompt for save
+            model.markAsDirty()
+        
+    def _convert_to_node_dictionary(self, child_dictionary):
+        type_map = {
+            str:'string',
+            list:'list',
+            int:'integer',
+            QString:'string'
+        }
+        node_vals = []
+        for k,v in child_dictionary.items():
+            node_vals.append({'name':k, 'value':v, 'type':type_map[type(v)]})
+            
+        return node_vals
+        
+        
+        
+        
