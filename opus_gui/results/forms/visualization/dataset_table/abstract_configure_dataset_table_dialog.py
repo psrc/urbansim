@@ -87,8 +87,8 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
             self.cboOutputType.addItem(QString(otype))
             
         for k,v in available_output_types.items():
-            if k == value:
-                idx = self.cboOutputType.findText(value)
+            if v == value:
+                idx = self.cboOutputType.findText(k)
                 if idx != -1:
                     self.cboOutputType.setCurrentIndex(idx)        
                 break
@@ -103,7 +103,41 @@ class AbstractConfigureDatasetTableDialog(QDialog, Ui_dlgDatasetTableDialog):
             if idx != -1:
                 self.cboDataset.setCurrentIndex(idx)
                            
-    
+    def _get_viz_spec(self, convert_to_node_dictionary = True):
+        translation = {
+            'Tab delimited':'tab',
+            'Comma separated':'csv',
+            'ESRI table':'esri',
+            'Fixed field':'fixed_field',
+            'Database':'sql'
+        }
+        dataset_name = self.cboDataset.currentText()
+        output_type = QString(translation[str(self.cboOutputType.currentText())])
+        indicators = QString(str(self._get_column_values(column = 0)))
+                        
+        vals = {
+                'indicators': indicators,
+                'output_type': output_type,
+                'dataset_name': dataset_name
+        }
+        
+        if output_type == 'fixed_field':
+            fixed_field_params = QString(str(self._get_column_values(column = 1)))
+            vals['fixed_field_specification'] = fixed_field_params
+            vals['id_format'] = self.leOption1.text()
+        elif output_type == 'sql':
+            vals['database_name'] = self.leOption1.text()
+        elif output_type == 'esri':
+            vals['storage_location'] = self.leOption1.text()
+        
+        if convert_to_node_dictionary:
+            node_vals = []
+            for k,v in vals.items():
+                node_vals.append({'name':k, 'value':v})
+            vals = node_vals
+        return vals
+        
+        
     def _get_column_values(self, column = 0):
         #column 0 will get you the indicators
         col_vals = []

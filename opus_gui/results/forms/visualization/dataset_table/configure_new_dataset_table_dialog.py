@@ -31,44 +31,13 @@ class ConfigureNewDatasetTableDialog(AbstractConfigureDatasetTableDialog):
         self.batch_name = batch_name
                                
     def on_buttonBox_accepted(self):
-        translation = {
-            'Tab delimited':'tab',
-            'Comma separated':'csv',
-            'ESRI table':'esri',
-            'Fixed field':'fixed_field',
-            'Database':'sql'
-        }
-        indicators = self._get_column_values(column = 0)
-        dataset_name = str(self.cboDataset.currentText())
-        output_type = translation[str(self.cboOutputType.currentText())]
-        
-        viz_params = [
-            {'value':indicators,
-             'name':'indicators'},
-            {'value':output_type,
-             'name':'output_type'},
-        ]
-        
-        if output_type == 'fixed_field':
-            fixed_field_params = self._get_column_values(column = 1)
-            viz_params.append({'value':fixed_field_params,
-                               'name':'fixed_field_specification'})
-            viz_params.append({'value':str(self.leOption1.text()),
-                               'name':'id_format'})
-        elif output_type == 'sql':
-            viz_params.append({'value':str(self.leOption1.text()),
-                               'name':'database_name'})
-        elif output_type == 'esri':
-            viz_params.append({'value':str(self.leOption1.text()),
-                               'name':'storage_location'})
-            
-            
-        viz_name = str(self.leVizName.text()).replace('DATASET',dataset_name).replace(' ','_')
+        viz_params = self._get_viz_spec()
+        viz_name = str(self.leVizName.text()).replace(' ','_')
+
         self.xml_helper.addNewVisualizationToBatch(
                             viz_name = viz_name,
                             batch_name = self.batch_name,
                             viz_type = self.viz_type,
-                            dataset_name = dataset_name,
                             viz_params = viz_params)
         
         self.close()
