@@ -59,6 +59,7 @@ class DatasetFactory(object):
         ('scenario_information', 'scenario_information', None, None),
         ('target_vacancy', 'target_vacancies', 'target_vacancy_dataset', 'TargetVacancyDataset'), 
         ('travel_data', 'travel_data', 'travel_data_dataset', 'TravelDataDataset'), 
+        ('alldata', 'alldata', 'alldata_dataset', 'AlldataDataset')
         ]
 
     def get_dataset(self, dataset_name, subdir="datasets", package="opus_core", 
