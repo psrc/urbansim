@@ -37,6 +37,7 @@ def opusRun(progressCB,logCB,params):
     cache_directory = params_dict['cache_directory']
     output_type = params_dict['output_type']
     storage_location = params_dict['storage_location']
+    year = params_dict['year']
     
     if output_type == '':
         output_type = 'tab'
@@ -54,7 +55,7 @@ def opusRun(progressCB,logCB,params):
     source_data = SourceData(
         cache_directory = cache_directory,
         run_description = run_description,
-        years = [2001], 
+        years = [int(year)],
         dataset_pool_configuration = DatasetPoolConfiguration(
             package_order=['psrc_parcel','urbansim_parcel','psrc', 'urbansim','opus_core'],
             package_order_exceptions={},

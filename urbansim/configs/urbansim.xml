@@ -122,8 +122,8 @@
           <tool_hook flags="hidden" type="tool_library_ref" >opus_database_to_esri_tool</tool_hook>
           <esri_data_path type="dir_path" >c:\opus\data\seattle_parcel\output_geodb.gdb</esri_data_path>
           <opus_data_directory type="dir_path" />
-          <opus_data_year type="string" >ALL</opus_data_year>
-          <opus_table_name type="string" >ALL</opus_table_name>
+          <opus_data_year type="integer" ></opus_data_year>
+          <opus_table_name type="integer" ></opus_table_name>
         </opus_dataset_to_esri_config>
       </opus_dataset_to_esri>
     </Tool_Sets>
