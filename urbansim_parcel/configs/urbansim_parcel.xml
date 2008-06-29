@@ -50,6 +50,7 @@
           <output_type choices="Required|Optional" type="string">Required</output_type>
           <storage_location choices="Required|Optional" type="dir_path">Required</storage_location>
           <cache_directory choices="Required|Optional" type="dir_path">Required</cache_directory>
+          <year choices="Required|Optional" type="string">Required</year>
         </params>
       </make_buildout_indicators>
     </Tool_Library>
