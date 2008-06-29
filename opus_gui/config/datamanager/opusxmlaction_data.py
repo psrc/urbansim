@@ -523,13 +523,10 @@ class OpusXMLAction_Data(object):
                 if domElement.attribute(QString("type")) == QString("tool_file"):
                     self.menu.addAction(self.actExecToolFile)
                     self.menu.addSeparator()
-                    #self.menu.addAction(self.actNewConfig)
                     self.menu.addAction(self.actCloneTool)
                     self.menu.addSeparator()
                     self.menu.addAction(self.actMoveNodeUp)
                     self.menu.addAction(self.actMoveNodeDown)
-                    self.menu.addSeparator()
-                    self.menu.addAction(self.actRemoveNode)
                 elif domElement.attribute(QString("type")) == QString("tool_library"):
                     self.menu.addAction(self.actAddToolFile)
                 elif domElement.attribute(QString("type")) == QString("param_template"):
@@ -542,8 +539,6 @@ class OpusXMLAction_Data(object):
                     self.menu.addSeparator()
                     self.menu.addAction(self.actMoveNodeUp)
                     self.menu.addAction(self.actMoveNodeDown)
-                    self.menu.addSeparator()
-                    self.menu.addAction(self.actRemoveNode)
                 elif domElement.attribute(QString("type")) == QString("tool_sets"):
                     self.menu.addAction(self.actAddNewToolSet)
                 elif domElement.attribute(QString("type")) == QString("tool_set"):
@@ -554,8 +549,6 @@ class OpusXMLAction_Data(object):
                     self.menu.addSeparator()
                     self.menu.addAction(self.actMoveNodeUp)
                     self.menu.addAction(self.actMoveNodeDown)
-                    self.menu.addSeparator()
-                    self.menu.addAction(self.actRemoveNode)
                 elif domElement.attribute(QString("type")) == QString("documentation_path"):
                     self.menu.addAction(self.actOpenDocumentation)
                     self.menu.addSeparator()
@@ -580,6 +573,9 @@ class OpusXMLAction_Data(object):
                                ((domElement.attribute(QString("type")) == QString("dictionary")) or \
                                 (domElement.attribute(QString("type")) == QString("selectable_list")) or \
                                 (domElement.attribute(QString("type")) == QString("list")) or \
+                                (domElement.attribute(QString("type")) == QString("tool_file")) or \
+                                (domElement.attribute(QString("type")) == QString("tool_config")) or \
+                                (domElement.attribute(QString("type")) == QString("tool_set")) or \
                                 (domElement.attribute(QString("type")) == QString("param_template"))):
                             self.menu.addSeparator()
                             self.menu.addAction(self.actRemoveNode)
