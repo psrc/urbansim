@@ -78,8 +78,8 @@
       <esri_buffer_tool type="tool_file" >
         <name type="tool_name" >esri_buffer</name>
         <params type="param_template" >
-          <input_shapefile type="string" choices="Required|Optional" >Required</input_shapefile>
-          <output_shapefile type="string" choices="Required|Optional" >Required</output_shapefile>
+          <input_shapefile type="dir_path" choices="Required|Optional" >Required</input_shapefile>
+          <output_shapefile type="dir_path" choices="Required|Optional" >Required</output_shapefile>
           <buffer_size type="string" choices="Required|Optional" >Required</buffer_size>
         </params>
       </esri_buffer_tool>
