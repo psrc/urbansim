@@ -1,5 +1,3 @@
-% $Id: using-urbansim.tex,v 1.96 2007/06/01 23:49:22 borning Exp $
-
 % Copyright (c) 2005-2007 Center for Urban Simulation and Policy Analysis,
 % University of Washington.  Permission is granted to copy, distribute and/or
 % modify this document under the terms of the GNU Free Documentation License,
@@ -85,29 +83,40 @@ myservices
 All scripts described below print a help message when called with the
 \verb|-h| or \verb|--help| option.
 
-\subsubsection{Start a simulation}
+\subsubsection{Start a simulation using a Python Dictionary Configuration}
 \index{start a simulation}
-The configuration for a simulation is specified by a configuration object. At
-the moment, a configuration is specified as a Python \pythonindex dictionary whose data is
-used to configure different parts of the simulation, such as the years in
-which to run UrbanSim, what UrbanSim models \modelsindex to run each year, what types of
-development projects exist, how to configure each type of development project,
+
+The configuration for a simulation is specified by a configuration object.
+Previously, a configuration was specified as a Python dictionary, and we
+describe the older option in this section.  We are transitioning toward
+specifying configurations using an xml project file for use with the Opus
+GUI--- see Section \ref{sec:start-simulation-xml} for information on
+starting a simulation using an xml configuration but still from the command
+line.  In both cases, the configuration is used to specify different parts
+of the simulation, such as the years in which to run UrbanSim, what
+UrbanSim models \modelsindex to run each year, what types of development
+projects exist, how to configure each type of development project,
 etc. See, for instance, the run configuration in
-\verb|psrc.configs.subset_configuration.py|.
+\verb|seattle_parcel/configs/baseline.py| (Python dictionary version) or
+\verb|seattle_parcel/configs/seattle_parcel.xml| (xml version).
 
-The start_run tool requires that the referenced configuration Python module
-either (a) defines a class (e.g. SubsetConfiguration) in a file whose name is
+To use the dictionary version of a configuration, the start_run tool
+requires that the referenced configuration Python module either (a) defines
+a class (e.g. SubsetConfiguration) in a file whose name is
 subset_configuration.py, or (b) defines a run_configuration object that is
-the configuration object.  In the first case, the class name is the CamelCase
-version of the lowercase_with_underscores file name.  \emph{(The preferred
-method is to define a class.)} 
+the configuration object.  In the first case, the class name is the
+CamelCase version of the lowercase_with_underscores file name.  \emph{(The
+  preferred method is to define a class.)}
 
-To start a simulation, use the script \verb|start_run| with the desired
-configuration:
-\pythonindex
+To start a simulation using a dictionary-based configuration, use the
+script \verb|start_run| with the desired configuration.  First change to 
+the directory \verb|opus_core/tools| and execute:
 \begin{verbatim}
 python start_run.py -c psrc.configs.subset_configuration
 \end{verbatim}
+
+Note that the configuration here is specified as it would be in a Python
+``import'' statement.
 
 If the \verb|services| database was created using the \verb|--hostname| and/or
 \verb|--database| option, you will need to include these options in
@@ -135,6 +144,25 @@ the option \verb|--years-to-cache| one can control specific years to be
 copied. The option takes as argument any python \pythonindex expression that returns a list
 of years. These two options overwrite entries in the configuration that control
 this behaviour.
+
+\subsubsection{Start a simulation using an XML Configuration}
+\label{sec:start-simulation-xml}
+
+To start a simulation using an xml configuration from the command line, use
+the script \verb|start_run| with the desired configuration.  Change to the
+directory that holds the Opus source code and execute:
+\begin{verbatim}
+python opus_core/tools/start_run.py -x seattle_parcel/configs/seattle_parcel.xml 
+       -s Seattle_baseline
+\end{verbatim}
+(typed all on one line).
+
+Notice that the \verb|-x| option takes a path to the file with the xml
+configuration.  Since xml configurations can hold multiple scenarios, the
+scenario name must also be specified using the \verb|-s| option.
+
+This same xml configuration can also be used with the Opus GUI ---
+documentation on the GUI is forthcoming.
 
 \subsubsection{Restart a simulation}
 \index{restart a simulation}
@@ -869,8 +897,3 @@ end, e.g. \verb|gridcells_lag|, and that contains a \verb|year| column indicatin
 the year for each row.  The first step of a simulation run copies this lag
 data into the baseyear cache, \baseyearcacheindex so that it can be accessed by lag variables. \variablesindex
 
-
-%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: "userguide"
-%%% End:
