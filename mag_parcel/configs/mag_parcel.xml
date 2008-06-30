@@ -2,22 +2,22 @@
   <general>
     <description followers="all_variables,advanced,available_datasets" type="string">MAG Parcel Project</description>
     <parent followers="all_variables,advanced,available_datasets" type="file">seattle_parcel/configs/seattle_parcel.xml</parent>
-    <available_datasets type="list">['parcel','zone','faz','large_area','city','county','mh_rv','transient','taz03','group_quarter','posths_asu','posths_cc','posths_pvt','skyharbor','williamsgateway','alldata']</available_datasets> 
-    </general>
+    <available_datasets type="list">['parcel','zone','faz','large_area','city','county','mh_rv','transient','tazi03','group_quarter','posths_asu','posths_cc','posths_pvt','skyharbor','williamsgateway','alldata']</available_datasets>
+  </general>
   <model_manager>
     <model_system type="dictionary">
       <mag_allocation_model_template copyable="True" type="dictionary">
-        <import type="dictionary">
+        <import flags="hidden" type="dictionary">
           <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
         </import>
-        <init type="dictionary">
+        <init flags="hidden" type="dictionary">
           <name type="string">AllocationModel</name>
         </init>
         <prepare_for_run type="dictionary">
-          <name type="string">prepare_for_run</name>
+          <name flags="hidden" type="string">prepare_for_run</name>
           <arguments type="dictionary">
-            <dataset parser_action="blank_to_None" type="string">use None if using excel</dataset>
-            <control_totals parser_action="blank_to_None" type="string">use None if using excel</control_totals>
+            <dataset parser_action="blank_to_None" type="string">leave blank if using excel</dataset>
+            <control_totals parser_action="blank_to_None" type="string">leave blank if using excel</control_totals>
             <weight_attribute type="quoted_string">&lt;fill in weight attribute&gt;</weight_attribute>
             <excel_path type="quoted_string">&lt;fill in path to excel spreadsheet&gt;</excel_path>
             <excel_sheet_number type="integer">1</excel_sheet_number>
@@ -44,53 +44,15 @@
           </arguments>
         </run>
       </mag_allocation_model_template>
-      <transient_model_hotels copyable="True" type="dictionary">
-        <import type="dictionary">
+      <airport_model_originations_williams copyable="True" type="dictionary">
+        <import flags="hidden" type="dictionary">
           <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
         </import>
-        <init type="dictionary">
+        <init flags="hidden" type="dictionary">
           <name type="string">AllocationModel</name>
         </init>
         <prepare_for_run type="dictionary">
-          <name type="string">prepare_for_run</name>
-          <arguments type="dictionary">
-            <dataset parser_action="blank_to_None" type="string">None</dataset>
-            <control_totals parser_action="blank_to_None" type="string">None</control_totals>
-            <weight_attribute type="quoted_string">rooms</weight_attribute>
-            <excel_path type="quoted_string">C:\opus\data\mag_parcel\mag_submodels\TransientModel.xls</excel_path>
-            <excel_sheet_number type="integer">1</excel_sheet_number>
-            <excel_data_info type="string">{'year':'d22:d32', 'persons':'k22:k32'}</excel_data_info>
-            <esri_storage_location type="quoted_string">C:\opus\data\mag_parcel\mag_submodel_data.gdb</esri_storage_location>
-            <dataset_name type="quoted_string">transient</dataset_name>
-            <current_year flags="hidden" type="string">year</current_year>
-            <datasets_and_weights_in_years type="dictionary">None</datasets_and_weights_in_years>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
-          </arguments>
-          <output flags="hidden" type="string">(aux_dataset, aux_control_totals, aux_weight_attribute)</output>
-        </prepare_for_run>
-        <run type="dictionary">
-          <arguments type="dictionary">
-            <dataset flags="hidden" type="string">aux_dataset</dataset>
-            <outcome_attribute type="quoted_string">persons</outcome_attribute>
-            <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
-            <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
-            <current_year flags="hidden" type="string">year</current_year>
-            <control_total_attribute type="quoted_string">persons</control_total_attribute>
-            <year_attribute type="quoted_string">year</year_attribute>
-            <capacity_attribute parser_action="blank_to_None" type="string">None</capacity_attribute>
-            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
-          </arguments>
-        </run>
-      </transient_model_hotels>
-      <airport_model_williams copyable="True" type="dictionary">
-        <import type="dictionary">
-          <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
-        </import>
-        <init type="dictionary">
-          <name type="string">AllocationModel</name>
-        </init>
-        <prepare_for_run type="dictionary">
-          <name type="string">prepare_for_run</name>
+          <name flags="hidden" type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <dataset parser_action="blank_to_None" type="string">None</dataset>
             <control_totals parser_action="blank_to_None" type="string">None</control_totals>
@@ -119,16 +81,16 @@
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
         </run>
-      </airport_model_williams>
-      <airport_model_skyharbor copyable="True" type="dictionary">
-        <import type="dictionary">
+      </airport_model_originations_williams>
+      <airport_model_originations_skyharbor copyable="True" type="dictionary">
+        <import flags="hidden" type="dictionary">
           <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
         </import>
-        <init type="dictionary">
+        <init flags="hidden" type="dictionary">
           <name type="string">AllocationModel</name>
         </init>
         <prepare_for_run type="dictionary">
-          <name type="string">prepare_for_run</name>
+          <name flags="hidden" type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <dataset parser_action="blank_to_None" type="string">None</dataset>
             <control_totals parser_action="blank_to_None" type="string">None</control_totals>
@@ -157,16 +119,16 @@
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
         </run>
-      </airport_model_skyharbor>
-      <college_model_cc copyable="True" type="dictionary">
-        <import type="dictionary">
+      </airport_model_originations_skyharbor>
+      <college_model_students_cc copyable="True" type="dictionary">
+        <import flags="hidden" type="dictionary">
           <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
         </import>
-        <init type="dictionary">
+        <init flags="hidden" type="dictionary">
           <name type="string">AllocationModel</name>
         </init>
         <prepare_for_run type="dictionary">
-          <name type="string">prepare_for_run</name>
+          <name flags="hidden" type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <dataset parser_action="blank_to_None" type="string">None</dataset>
             <control_totals parser_action="blank_to_None" type="string">None</control_totals>
@@ -195,16 +157,16 @@
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
         </run>
-      </college_model_cc>
-      <college_model_asu copyable="True" type="dictionary">
-        <import type="dictionary">
+      </college_model_students_cc>
+      <college_model_students_asu copyable="True" type="dictionary">
+        <import flags="hidden" type="dictionary">
           <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
         </import>
-        <init type="dictionary">
+        <init flags="hidden" type="dictionary">
           <name type="string">AllocationModel</name>
         </init>
         <prepare_for_run type="dictionary">
-          <name type="string">prepare_for_run</name>
+          <name flags="hidden" type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <dataset parser_action="blank_to_None" type="string">None</dataset>
             <control_totals parser_action="blank_to_None" type="string">None</control_totals>
@@ -233,16 +195,16 @@
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
         </run>
-      </college_model_asu>
-      <college_model_pvt copyable="True" type="dictionary">
-        <import type="dictionary">
+      </college_model_students_asu>
+      <college_model_students_pvt copyable="True" type="dictionary">
+        <import flags="hidden" type="dictionary">
           <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
         </import>
-        <init type="dictionary">
+        <init flags="hidden" type="dictionary">
           <name type="string">AllocationModel</name>
         </init>
         <prepare_for_run type="dictionary">
-          <name type="string">prepare_for_run</name>
+          <name flags="hidden" type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <dataset parser_action="blank_to_None" type="string">None</dataset>
             <control_totals parser_action="blank_to_None" type="string">None</control_totals>
@@ -271,16 +233,54 @@
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
         </run>
-      </college_model_pvt>
-      <seasonal_model_mh_rv copyable="True" type="dictionary">
-        <import type="dictionary">
+      </college_model_students_pvt>
+      <transient_model_population_hotels copyable="True" type="dictionary">
+        <import flags="hidden" type="dictionary">
           <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
         </import>
-        <init type="dictionary">
+        <init flags="hidden" type="dictionary">
           <name type="string">AllocationModel</name>
         </init>
         <prepare_for_run type="dictionary">
-          <name type="string">prepare_for_run</name>
+          <name flags="hidden" type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <dataset parser_action="blank_to_None" type="string">None</dataset>
+            <control_totals parser_action="blank_to_None" type="string">None</control_totals>
+            <weight_attribute type="quoted_string">rooms</weight_attribute>
+            <excel_path type="quoted_string">C:\opus\data\mag_parcel\mag_submodels\TransientModel.xls</excel_path>
+            <excel_sheet_number type="integer">1</excel_sheet_number>
+            <excel_data_info type="string">{'year':'d22:d32', 'persons':'k22:k32'}</excel_data_info>
+            <esri_storage_location type="quoted_string">C:\opus\data\mag_parcel\mag_submodel_data.gdb</esri_storage_location>
+            <dataset_name type="quoted_string">transient</dataset_name>
+            <current_year flags="hidden" type="string">year</current_year>
+            <datasets_and_weights_in_years type="dictionary">None</datasets_and_weights_in_years>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+          <output flags="hidden" type="string">(aux_dataset, aux_control_totals, aux_weight_attribute)</output>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <dataset flags="hidden" type="string">aux_dataset</dataset>
+            <outcome_attribute type="quoted_string">transient_population</outcome_attribute>
+            <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
+            <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
+            <current_year flags="hidden" type="string">year</current_year>
+            <control_total_attribute type="quoted_string">persons</control_total_attribute>
+            <year_attribute type="quoted_string">year</year_attribute>
+            <capacity_attribute parser_action="blank_to_None" type="string">None</capacity_attribute>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+      </transient_model_population_hotels>
+      <seasonal_model_population_mh_rv copyable="True" type="dictionary">
+        <import flags="hidden" type="dictionary">
+          <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
+        </import>
+        <init flags="hidden" type="dictionary">
+          <name type="string">AllocationModel</name>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name flags="hidden" type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <dataset parser_action="blank_to_None" type="string">None</dataset>
             <control_totals parser_action="blank_to_None" type="string">None</control_totals>
@@ -299,7 +299,7 @@
         <run type="dictionary">
           <arguments type="dictionary">
             <dataset flags="hidden" type="string">aux_dataset</dataset>
-            <outcome_attribute type="quoted_string">persons</outcome_attribute>
+            <outcome_attribute type="quoted_string">seasonal_population</outcome_attribute>
             <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
             <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
             <current_year flags="hidden" type="string">year</current_year>
@@ -309,16 +309,16 @@
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
         </run>
-      </seasonal_model_mh_rv>
-      <transient_model_other copyable="True" type="dictionary">
-        <import type="dictionary">
+      </seasonal_model_population_mh_rv>
+      <transient_model_population_other copyable="True" type="dictionary">
+        <import flags="hidden" type="dictionary">
           <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
         </import>
-        <init type="dictionary">
+        <init flags="hidden" type="dictionary">
           <name type="string">AllocationModel</name>
         </init>
         <prepare_for_run type="dictionary">
-          <name type="string">prepare_for_run</name>
+          <name flags="hidden" type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <dataset parser_action="blank_to_None" type="string">None</dataset>
             <control_totals parser_action="blank_to_None" type="string">None</control_totals>
@@ -337,7 +337,7 @@
         <run type="dictionary">
           <arguments type="dictionary">
             <dataset flags="hidden" type="string">aux_dataset</dataset>
-            <outcome_attribute type="quoted_string">persons</outcome_attribute>
+            <outcome_attribute type="quoted_string">transient_population</outcome_attribute>
             <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
             <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
             <current_year flags="hidden" type="string">year</current_year>
@@ -347,16 +347,16 @@
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
         </run>
-      </transient_model_other>
-      <seasonal_model_other copyable="True" type="dictionary">
-        <import type="dictionary">
+      </transient_model_population_other>
+      <seasonal_model_population_other copyable="True" type="dictionary">
+        <import flags="hidden" type="dictionary">
           <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
         </import>
-        <init type="dictionary">
+        <init flags="hidden" type="dictionary">
           <name type="string">AllocationModel</name>
         </init>
         <prepare_for_run type="dictionary">
-          <name type="string">prepare_for_run</name>
+          <name flags="hidden" type="string">prepare_for_run</name>
           <arguments type="dictionary">
             <dataset parser_action="blank_to_None" type="string">None</dataset>
             <control_totals parser_action="blank_to_None" type="string">None</control_totals>
@@ -375,7 +375,7 @@
         <run type="dictionary">
           <arguments type="dictionary">
             <dataset flags="hidden" type="string">aux_dataset</dataset>
-            <outcome_attribute type="quoted_string">persons</outcome_attribute>
+            <outcome_attribute type="quoted_string">seasonal_population</outcome_attribute>
             <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
             <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
             <current_year flags="hidden" type="string">year</current_year>
@@ -385,14 +385,259 @@
             <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
           </arguments>
         </run>
-      </seasonal_model_other>
+      </seasonal_model_population_other>
+      <transient_model_households_hotels copyable="True" type="dictionary">
+        <import flags="hidden" type="dictionary">
+          <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
+        </import>
+        <init flags="hidden" type="dictionary">
+          <name type="string">AllocationModel</name>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name flags="hidden" type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <dataset parser_action="blank_to_None" type="string">None</dataset>
+            <control_totals parser_action="blank_to_None" type="string">None</control_totals>
+            <weight_attribute type="quoted_string">rooms</weight_attribute>
+            <excel_path type="quoted_string">C:\opus\data\mag_parcel\mag_submodels\TransientModel.xls</excel_path>
+            <excel_sheet_number type="integer">1</excel_sheet_number>
+            <excel_data_info type="string">{'year':'d22:d32', 'persons':'k37:k47'}</excel_data_info>
+            <esri_storage_location type="quoted_string">C:\opus\data\mag_parcel\mag_submodel_data.gdb</esri_storage_location>
+            <dataset_name type="quoted_string">transient</dataset_name>
+            <current_year flags="hidden" type="string">year</current_year>
+            <datasets_and_weights_in_years type="dictionary">None</datasets_and_weights_in_years>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+          <output flags="hidden" type="string">(aux_dataset, aux_control_totals, aux_weight_attribute)</output>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <dataset flags="hidden" type="string">aux_dataset</dataset>
+            <outcome_attribute type="quoted_string">transient_households</outcome_attribute>
+            <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
+            <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
+            <current_year flags="hidden" type="string">year</current_year>
+            <control_total_attribute type="quoted_string">persons</control_total_attribute>
+            <year_attribute type="quoted_string">year</year_attribute>
+            <capacity_attribute parser_action="blank_to_None" type="string">None</capacity_attribute>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+      </transient_model_households_hotels>
+      <seasonal_model_households_mh_rv copyable="True" type="dictionary">
+        <import flags="hidden" type="dictionary">
+          <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
+        </import>
+        <init flags="hidden" type="dictionary">
+          <name type="string">AllocationModel</name>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name flags="hidden" type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <dataset parser_action="blank_to_None" type="string">None</dataset>
+            <control_totals parser_action="blank_to_None" type="string">None</control_totals>
+            <weight_attribute type="quoted_string">ttlspaces</weight_attribute>
+            <excel_path type="quoted_string">C:\opus\data\mag_parcel\mag_submodels\SeasonalModel.xls</excel_path>
+            <excel_sheet_number type="integer">1</excel_sheet_number>
+            <excel_data_info type="string">{'year':'d23:d33', 'persons':'g23:g33'}</excel_data_info>
+            <esri_storage_location type="quoted_string">C:\opus\data\mag_parcel\mag_submodel_data.gdb</esri_storage_location>
+            <dataset_name type="quoted_string">mh_rv</dataset_name>
+            <current_year flags="hidden" type="string">year</current_year>
+            <datasets_and_weights_in_years type="dictionary">None</datasets_and_weights_in_years>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+          <output flags="hidden" type="string">(aux_dataset, aux_control_totals, aux_weight_attribute)</output>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <dataset flags="hidden" type="string">aux_dataset</dataset>
+            <outcome_attribute type="quoted_string">seasonal_households</outcome_attribute>
+            <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
+            <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
+            <current_year flags="hidden" type="string">year</current_year>
+            <control_total_attribute type="quoted_string">persons</control_total_attribute>
+            <year_attribute type="quoted_string">year</year_attribute>
+            <capacity_attribute parser_action="blank_to_None" type="string">None</capacity_attribute>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+      </seasonal_model_households_mh_rv>
+      <transient_model_households_other copyable="True" type="dictionary">
+        <import flags="hidden" type="dictionary">
+          <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
+        </import>
+        <init flags="hidden" type="dictionary">
+          <name type="string">AllocationModel</name>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name flags="hidden" type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <dataset parser_action="blank_to_None" type="string">None</dataset>
+            <control_totals parser_action="blank_to_None" type="string">None</control_totals>
+            <weight_attribute type="quoted_string">total_rsf</weight_attribute>
+            <excel_path type="quoted_string">C:\opus\data\mag_parcel\mag_submodels\TransientModel.xls</excel_path>
+            <excel_sheet_number type="integer">1</excel_sheet_number>
+            <excel_data_info type="string">{'year':'d22:d32', 'persons':'l37:l47'}</excel_data_info>
+            <esri_storage_location type="quoted_string">C:\opus\data\mag_parcel\mag_submodel_data.gdb</esri_storage_location>
+            <dataset_name type="quoted_string">tazi03</dataset_name>
+            <current_year flags="hidden" type="string">year</current_year>
+            <datasets_and_weights_in_years type="dictionary">None</datasets_and_weights_in_years>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+          <output flags="hidden" type="string">(aux_dataset, aux_control_totals, aux_weight_attribute)</output>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <dataset flags="hidden" type="string">aux_dataset</dataset>
+            <outcome_attribute type="quoted_string">transient_households</outcome_attribute>
+            <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
+            <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
+            <current_year flags="hidden" type="string">year</current_year>
+            <control_total_attribute type="quoted_string">persons</control_total_attribute>
+            <year_attribute type="quoted_string">year</year_attribute>
+            <capacity_attribute parser_action="blank_to_None" type="string">None</capacity_attribute>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+      </transient_model_households_other>
+      <seasonal_model_households_other copyable="True" type="dictionary">
+        <import flags="hidden" type="dictionary">
+          <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
+        </import>
+        <init flags="hidden" type="dictionary">
+          <name type="string">AllocationModel</name>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name flags="hidden" type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <dataset parser_action="blank_to_None" type="string">None</dataset>
+            <control_totals parser_action="blank_to_None" type="string">None</control_totals>
+            <weight_attribute type="quoted_string">total_rsf</weight_attribute>
+            <excel_path type="quoted_string">C:\opus\data\mag_parcel\mag_submodels\SeasonalModel.xls</excel_path>
+            <excel_sheet_number type="integer">1</excel_sheet_number>
+            <excel_data_info type="string">{'year':'d23:d33', 'persons':'f23:f33'}</excel_data_info>
+            <esri_storage_location type="quoted_string">C:\opus\data\mag_parcel\mag_submodel_data.gdb</esri_storage_location>
+            <dataset_name type="quoted_string">tazi03</dataset_name>
+            <current_year flags="hidden" type="string">year</current_year>
+            <datasets_and_weights_in_years type="dictionary">None</datasets_and_weights_in_years>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+          <output flags="hidden" type="string">(aux_dataset, aux_control_totals, aux_weight_attribute)</output>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <dataset flags="hidden" type="string">aux_dataset</dataset>
+            <outcome_attribute type="quoted_string">seasonal_households</outcome_attribute>
+            <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
+            <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
+            <current_year flags="hidden" type="string">year</current_year>
+            <control_total_attribute type="quoted_string">persons</control_total_attribute>
+            <year_attribute type="quoted_string">year</year_attribute>
+            <capacity_attribute parser_action="blank_to_None" type="string">None</capacity_attribute>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+      </seasonal_model_households_other>
+      <group_quarters_model copyable="True" type="dictionary">
+        <import flags="hidden" type="dictionary">
+          <urbansim_parcel.models.allocation_model type="string">AllocationModel</urbansim_parcel.models.allocation_model>
+        </import>
+        <init flags="hidden" type="dictionary">
+          <name type="string">AllocationModel</name>
+        </init>
+        <prepare_for_run type="dictionary">
+          <name flags="hidden" type="string">prepare_for_run</name>
+          <arguments type="dictionary">
+            <dataset parser_action="blank_to_None" type="string">None</dataset>
+            <control_totals parser_action="blank_to_None" type="string">None</control_totals>
+            <weight_attribute type="quoted_string">weight</weight_attribute>
+            <excel_path type="quoted_string">C:\opus\data\mag_parcel\mag_submodels\GroupQuartersModel.xls</excel_path>
+            <excel_sheet_number type="integer">6</excel_sheet_number>
+            <excel_data_info type="string">{'year':'a1:a11', 'null':'b1:b11'}</excel_data_info>
+            <esri_storage_location type="quoted_string">C:\opus\data\mag_parcel\mag_submodel_data.gdb</esri_storage_location>
+            <dataset_name type="quoted_string">group_quarter</dataset_name>
+            <current_year flags="hidden" type="string">year</current_year>
+            <datasets_and_weights_in_years type="dictionary">None</datasets_and_weights_in_years>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+          <output flags="hidden" type="string">(aux_dataset, aux_control_totals, aux_weight_attribute)</output>
+        </prepare_for_run>
+        <run type="dictionary">
+          <arguments type="dictionary">
+            <dataset flags="hidden" type="string">aux_dataset</dataset>
+            <outcome_attribute type="quoted_string">null</outcome_attribute>
+            <weight_attribute flags="hidden" type="string">aux_weight_attribute</weight_attribute>
+            <control_totals flags="hidden" type="string">aux_control_totals</control_totals>
+            <current_year flags="hidden" type="string">year</current_year>
+            <control_total_attribute type="quoted_string">null</control_total_attribute>
+            <year_attribute type="quoted_string">year</year_attribute>
+            <capacity_attribute parser_action="blank_to_None" type="string">None</capacity_attribute>
+            <dataset_pool flags="hidden" type="string">dataset_pool</dataset_pool>
+          </arguments>
+        </run>
+      </group_quarters_model>
     </model_system>
     </model_manager>
-    <scenario_manager>
-      <Seattle_baseline executable="True" copyable="True" type="scenario">
+  <scenario_manager>
+    <Seattle_baseline copyable="True" executable="True" type="scenario">
       <creating_baseyear_cache_configuration type="class">
         <scenario_runs_directory config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">mag_parcel/runs</scenario_runs_directory>
-      </creating_baseyear_cache_configuration>
+        </creating_baseyear_cache_configuration>
       </Seattle_baseline>
-    </scenario_manager>          
-  </opus_project>
+  </scenario_manager>
+  <results_manager>
+    <Indicator_libraries setexpanded="True" type="group">
+      <my_indicators append_to="True" type="indicator_library">
+        <PostHS_PVT followers="global_population_density" type="indicator">
+          <package flags="hidden" type="string" />
+          <expression flags="hidden" type="string">posths_pvt.students</expression>
+        </PostHS_PVT>
+        <PostHS_CC followers="global_population_density" type="indicator">
+          <expression flags="hidden" type="string">posths_cc.students</expression>
+          <package flags="hidden" type="string" />
+        </PostHS_CC>
+        <PostHS_ASU followers="global_population_density" type="indicator">
+          <expression flags="hidden" type="string">posths_asu.students</expression>
+          <package flags="hidden" type="string" />
+        </PostHS_ASU>
+        <SkyHarborOriginations followers="global_population_density" type="indicator">
+          <package flags="hidden" type="string" />
+          <expression flags="hidden" type="string">skyharbor.originations</expression>
+        </SkyHarborOriginations>
+        <WilliamsGatewayOriginations followers="global_population_density" type="indicator">
+          <package flags="hidden" type="string" />
+          <expression flags="hidden" type="string">williamsgateway.originations</expression>
+        </WilliamsGatewayOriginations>
+        <SeasonalPopulationResUnits followers="global_population_density" type="indicator">
+          <expression flags="hidden" type="string">tazi03.seasonal_population</expression>
+          <package flags="hidden" type="string" />
+        </SeasonalPopulationResUnits>
+        <SeasonalPopulationMH_RV followers="global_population_density" type="indicator">
+          <package flags="hidden" type="string" />
+          <expression flags="hidden" type="string">mh_rv.seasonal_population</expression>
+        </SeasonalPopulationMH_RV>
+        <TransientPopulationResUnits followers="global_population_density" type="indicator">
+          <expression flags="hidden" type="string">tazi03.transient_population</expression>
+          <package flags="hidden" type="string" />
+        </TransientPopulationResUnits>
+        <TransientPopulationHotels followers="global_population_density" type="indicator">
+          <package flags="hidden" type="string" />
+          <expression flags="hidden" type="string">transient.transient_population</expression>
+        </TransientPopulationHotels>
+        <MPA2003ID followers="global_population_density" type="indicator">
+          <expression flags="hidden" type="string">tazi03.mpa</expression>
+          <package flags="hidden" type="string" />
+        </MPA2003ID>
+        <RAZ2003ID followers="global_population_density" type="indicator">
+          <package flags="hidden" type="string" />
+          <expression flags="hidden" type="string">tazi03.raz</expression>
+        </RAZ2003ID>
+        <TAZ2003ID followers="global_population_density" type="indicator">
+          <package flags="hidden" type="string" />
+          <expression flags="hidden" type="string">tazi03.tazi03_id</expression>
+        </TAZ2003ID>
+        </my_indicators>
+    </Indicator_libraries>
+    <Results setexpanded="True" type="selectable_list" />
+  </results_manager>
+</opus_project>
