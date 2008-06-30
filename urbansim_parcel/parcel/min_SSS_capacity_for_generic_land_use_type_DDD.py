@@ -63,6 +63,11 @@ class Tests(opus_unittest.OpusTestCase):
                 "parcel_id":        array([1,   2,    3]),
                 "is_constrained":   array([1,   0,    1]),
             },
+            'generic_land_use_type':
+            {
+                "generic_land_use_type_id":        array([1,   2]),
+                "generic_land_use_type_name":      array(['',  '']),
+            },
             }
         )
         
