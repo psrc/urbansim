@@ -104,6 +104,7 @@ class AllocationModel(Model):
         else:
             dataset.add_primary_attribute(name=outcome_attribute, data=outcome)
             logger.log_status('New values stored into attribute %s of dataset %s.' % (outcome_attribute, dataset.get_dataset_name()))
+        dataset.flush_attribute(outcome_attribute)
         return outcome
     
     def prepare_for_run(self, storage, control_totals_table_name, control_totals_id_name, control_totals_dataset_name='control_totals'):

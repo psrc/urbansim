@@ -31,7 +31,7 @@ class max_SSS_capacity_for_generic_land_use_type_DDD(Variable):
     def compute(self,  dataset_pool):
         parcels = dataset_pool.get_dataset("parcel")
         constraints = dataset_pool.get_dataset("development_constraint") 
-        parcels.get_development_constraints(constraints, dataset_pool)
+        parcels.get_development_constraints(constraints, dataset_pool, consider_constraints_as_rules=True)
         
         constraint = parcels.development_constraints[self.generic_land_use_type][self.constraint_type][:, 1]  #max constraint
         

@@ -64,7 +64,7 @@ def opusRun(progressCB,logCB,params):
     
     attrs_by_glu = []  
     # this loop create indicators for each generic_land_type from 1 to 8
-    for glu_id in range(1, 9):
+    for glu_id in range(3, 9):
         attrs_by_glu += [
             ## existing
             "existing_job_spaces_glu%s = zone.aggregate(parcel.aggregate(building.non_residential_sqft)) / zone.disaggregate(building_sqft_per_job_by_zone_generic_land_use_type_id.building_sqft_per_job_glu%s)" % (glu_id, glu_id),
@@ -83,6 +83,28 @@ def opusRun(progressCB,logCB,params):
             "va_buildout_glu%s = zone.aggregate( urbansim_parcel.parcel.max_units_per_acre_capacity_for_generic_land_use_type_%s * ( parcel.parcel_sqft / 43560.0 ) * ( parcel.number_of_agents(development_project_proposal) == 0) * numpy.logical_or( parcel.disaggregate(land_use_type.land_use_name)=='vacant',  parcel.disaggregate(land_use_type.land_use_name)=='agriculture') )" % (glu_id, glu_id), 
             "va_buildout_job_spaces_glu%s = zone.aggregate( urbansim_parcel.parcel.max_far_capacity_for_generic_land_use_type_%s * parcel.parcel_sqft * ( parcel.number_of_agents(development_project_proposal) == 0) * numpy.logical_or( parcel.disaggregate(land_use_type.land_use_name)=='vacant',  parcel.disaggregate(land_use_type.land_use_name)=='agriculture') )  / zone.disaggregate(building_sqft_per_job_by_zone_generic_land_use_type_id.building_sqft_per_job_glu%s)" % (glu_id, glu_id, glu_id),        
         ]
+
+    for glu_id in range(1, 3):
+        attrs_by_glu += [
+            ## existing
+            "existing_job_spaces_glu%s = zone.aggregate(parcel.aggregate(building.non_residential_sqft)) / zone.disaggregate(building_sqft_per_job_by_zone_generic_land_use_type_id.building_sqft_per_job_glu%s)" % (glu_id, glu_id),
+            
+            ## existing units/job spaces excluding redevelopable parcels
+            "existing_job_spaces_unredev_glu%s=zone.aggregate(parcel.aggregate(building.non_residential_sqft) * numpy.logical_not(urbansim_parcel.parcel.is_redevelopable).astype(int32) ) / zone.disaggregate(building_sqft_per_job_by_zone_generic_land_use_type_id.building_sqft_per_job_glu%s)" % (glu_id, glu_id),
+            
+            ## redevelopment
+            "redev_buildout_units_glu%s=zone.aggregate(urbansim_parcel.parcel.max_units_per_acre_capacity_for_generic_land_use_type_%s * parcel.parcel_sqft * (urbansim_parcel.parcel.is_redevelopable).astype(int32) )" % (glu_id, glu_id),
+#            "redev_buildout_job_spaces_glu%s=zone.aggregate(urbansim_parcel.parcel.max_far_capacity_for_generic_land_use_type_%s * parcel.parcel_sqft * (urbansim_parcel.parcel.is_redevelopable).astype(int32) ) / zone.disaggregate(building_sqft_per_job_by_zone_generic_land_use_type_id.building_sqft_per_job_glu%s)" % (glu_id, glu_id, glu_id),
+    
+            ## active(status_id==1)/planned(status_id==3)/proposed(status_id==2)
+            "proposed_job_spaces_glu%s = zone.aggregate(development_project_proposal.aggregate(urbansim_parcel.development_project_proposal_component.units_proposed * (numpy.logical_not(urbansim_parcel.development_project_proposal_component.is_residential)).astype(int32)) * (urbansim_parcel.development_project_proposal.status_id==2).astype(int32), intermediates=[parcel] ) / zone.disaggregate(building_sqft_per_job_by_zone_generic_land_use_type_id.building_sqft_per_job_glu%s)" % (glu_id, glu_id), 
+    
+            ## vacant/agriculture buildout
+            "va_buildout_glu%s = zone.aggregate( urbansim_parcel.parcel.max_units_per_acre_capacity_for_generic_land_use_type_%s * ( parcel.parcel_sqft / 43560.0 ) * ( parcel.number_of_agents(development_project_proposal) == 0) * numpy.logical_or( parcel.disaggregate(land_use_type.land_use_name)=='vacant',  parcel.disaggregate(land_use_type.land_use_name)=='agriculture') )" % (glu_id, glu_id), 
+#            "va_buildout_job_spaces_glu%s = zone.aggregate( urbansim_parcel.parcel.max_far_capacity_for_generic_land_use_type_%s * parcel.parcel_sqft * ( parcel.number_of_agents(development_project_proposal) == 0) * numpy.logical_or( parcel.disaggregate(land_use_type.land_use_name)=='vacant',  parcel.disaggregate(land_use_type.land_use_name)=='agriculture') )  / zone.disaggregate(building_sqft_per_job_by_zone_generic_land_use_type_id.building_sqft_per_job_glu%s)" % (glu_id, glu_id, glu_id),        
+        ]
+    
+    
     
     indicators=[
        DatasetTable(
