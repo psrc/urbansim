@@ -198,6 +198,8 @@ class _OpusXMLTestResult(TestResult):
         self.showAll = verbosity > 1
         self.dots = verbosity == 1
         self.descriptions = descriptions
+        self._testsuites = {}
+        self._testsuite_xml = None
         self._testcase_xml = None
 
     def getDescription(self, test):
@@ -210,14 +212,20 @@ class _OpusXMLTestResult(TestResult):
         TestResult.startTest(self, test)
         methodName = get_test_method_name(test)
         methodClass = _strclass(test.__class__)
+        if methodClass not in self._testsuites:
+            self._testsuite = self.xml.createElement('testsuite')
+            self._testsuite.setAttribute('name', '%s' % methodClass)
+            self._testsuites[methodClass] = self._testsuite
+            self.xml.documentElement.appendChild(self._testsuite)
+        else:
+            self._testsuite = self._testsuites[methodClass]
         self._testcase_xml = self.xml.createElement('testcase')
-        self._testcase_xml.setAttribute('classname', '%s' % methodClass)
         self._testcase_xml.setAttribute('name', '%s' % methodName)
         self._startTime = time.time()
     
     def stopTest(self, test):
         self._testcase_xml.setAttribute('time', '%.3f' % (time.time() - self._startTime))
-        self.xml.documentElement.appendChild(self._testcase_xml)
+        self._testsuite.appendChild(self._testcase_xml)
 
     def addSuccess(self, test):
         pass
@@ -265,7 +273,7 @@ class OpusXMLTestRunner:
         sys.stdout = StringIO()
         sys.stderr = StringIO()
         "Run the given test case or test suite."
-        result_xml = getDOMImplementation().createDocument(None, 'testsuite', None)
+        result_xml = getDOMImplementation().createDocument(None, 'testsuites', None)
         result = _OpusXMLTestResult(result_xml, self.descriptions, self.verbosity)
         startTime = time.time()
         test(result)
