@@ -43,7 +43,7 @@ class HouseholdLocationChoiceModelConfigurationCreator(object):
                 maximum_runs = 3, # maximum number of iterations of the outer loop that compares values of 'number_of_units_string' with values of 'number_of_agents_string'
                 estimation_procedure = 'opus_core.bhhh_mnl_estimation',
                 estimation_size_agents = None, # Portion of households for estimation to be used for estimation (should be > 0 and <= 1)
-                location_filter_for_estimation = None, # filter variable for locations to be chosen into the set of alternatives in the estimation procedure
+                agent_filter_for_estimation = None, # filter variable for agents to be used for estimation
                 variable_package = 'urbansim', # in what package are the variables above defined 
                 run_config = {}, # additional arguments passed to simulation modules
                 estimate_config = {}, # additional arguments passed to estimation modules
@@ -75,7 +75,7 @@ class HouseholdLocationChoiceModelConfigurationCreator(object):
         self.variable_package = variable_package
         self.input_index = input_index
         self.location_filter = location_filter
-        self.location_filter_for_estimation = location_filter_for_estimation
+        self.agent_filter_for_estimation = agent_filter_for_estimation
         self.join_agents_for_estimation_with_all_agents = join_agents_for_estimation_with_all_agents
         if unplace_agents_for_estimation:
             self.index_to_unplace = self.input_index
@@ -148,7 +148,7 @@ class HouseholdLocationChoiceModelConfigurationCreator(object):
                     'portion_to_unplace': self.portion_to_unplace,
                     'specification_storage': 'base_cache_storage',
                     'specification_table': "'%s'" % self.specification_table,
-                    'filter': get_string_or_None(self.location_filter_for_estimation)
+                    'filter': get_string_or_None(self.agent_filter_for_estimation)
                     },
                 'name': 'prepare_for_estimate',
                 'output': '(%s, %s)' % (_specification, _index)
