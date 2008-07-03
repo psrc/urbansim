@@ -34,19 +34,19 @@ from urbansim.variable_test_toolbox import VariableTestToolbox
 from numpy import array
 from numpy import ma
 class Tests(opus_unittest.OpusTestCase):
-    variable_name = "urbansim.household_x_zone.income_times_housing_cost"
+    variable_name = "urbansim.household_x_zone.household_size_times_population_per_acre"
     def test_my_inputs(self):
-        housing_cost = array([333.0, 500.55, 1000.26, 459])
-        income = array([1, 20, 500])
+        population_per_acre = array([100, 200, 400, 200])
+        persons = array([1, 4, 2])
 
         values = VariableTestToolbox().compute_variable(self.variable_name, 
             {"zone":{ 
-                "average_housing_cost":housing_cost}, 
+                "population_per_acre":population_per_acre}, 
             "household":{ 
-                "income":income}}, 
+                "persons":persons}}, 
             dataset = "household_x_zone")
-        should_be = array([[333.0, 500.55, 1000.26, 459.0], [6660.0, 10011., 20005.2, 9180], 
-                            [166500.,  250275.,  500130.,  229500.]])
+        should_be = array([[100, 200, 400, 200], [400, 800, 1600, 800], 
+                            [200, 400, 800, 400]])
         self.assertEqual(ma.allclose(values, should_be, rtol=1e-3),
                          True, msg = "Error in " + self.variable_name)
 
