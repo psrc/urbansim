@@ -509,7 +509,7 @@
       </building_construction_model>
       <household_location_choice_model copyable="True" type="dictionary">
         <estimate type="dictionary">
-          <output flags="hidden" type="string">(%s, _)</output>
+          <output flags="hidden" type="string">(coefficients, _)</output>
           <arguments type="dictionary">
             <agent_set type="string">household</agent_set>
             <agents_index flags="hidden" type="string">_index</agents_index>
@@ -551,7 +551,7 @@
             <agents_for_estimation_storage type="string">base_cache_storage</agents_for_estimation_storage>
             <agents_for_estimation_table type="quoted_string">households_for_estimation</agents_for_estimation_table>
             <data_objects type="string">datasets</data_objects>
-            <index_to_unplace flags="hidden" type="string">hrm_index</index_to_unplace>
+            <index_to_unplace type="string">hrm_index</index_to_unplace>
             <join_datasets type="boolean">True</join_datasets>
             <portion_to_unplace type="string">.1</portion_to_unplace>
             <specification_storage type="string">base_cache_storage</specification_storage>
