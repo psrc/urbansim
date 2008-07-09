@@ -14,7 +14,7 @@
 
 from opus_core.tests import opus_unittest
 
-class TestPackageSyntax(opus_unittest.OpusTestCase):
+class TestPackageSyntax(opus_unittest.OpusIntegrationTestCase):
     def test_no_opus_syntax_violations(self):
         from opus_core.tests.find_opus_syntax_violations import OpusSyntaxChecker
         OpusSyntaxChecker().check_syntax_for_opus_package(

@@ -23,7 +23,7 @@ from opus_core.singleton import Singleton
 
 OriginalTestCase = TestCase
 
-class OpusTestCase(OriginalTestCase):
+class OpusAbstractTestCase(OriginalTestCase):
     """Extends TestCase to remove all singletons before and after each test."""
     
     def __new__(cls, *args, **kwargs):
@@ -131,6 +131,14 @@ class OpusTestCase(OriginalTestCase):
             return "Values are different:\n%s\n    and\n%s" % (
                         first,
                         second)
-                        
+
+
+class OpusTestCase(OpusAbstractTestCase):
+    pass
     
 TestCase = OpusTestCase
+
+
+class OpusIntegrationTestCase(OpusAbstractTestCase):
+    pass
+

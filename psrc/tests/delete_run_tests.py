@@ -30,7 +30,7 @@ if does_database_server_exist_for_this_hostname(
         module_name = __name__, 
         hostname = SubsetConfiguration()['input_configuration'].host_name):
 
-    class DeleteRunsTests(opus_unittest.OpusTestCase):
+    class DeleteRunsTests(opus_unittest.OpusIntegrationTestCase):
         ### TODO: These tests can be moved into opus_core once 
         ###       _do_run_simple_test_run has been re-written without psrc 
         ###       dependencies.

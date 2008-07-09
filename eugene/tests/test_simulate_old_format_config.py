@@ -27,7 +27,7 @@ from eugene.configs.baseline import Baseline
 from urbansim.simulation.run_simulation_from_mysql import RunSimulationFromMysql
 
 
-class SimulationTest(opus_unittest.OpusTestCase):
+class SimulationTest(opus_unittest.OpusIntegrationTestCase):
     
     def setUp(self):
         self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')

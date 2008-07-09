@@ -18,7 +18,16 @@ from opus_core.tests import opus_unittest
 from opus_core.logger import logger
 
 class TestScanner(object):
+
     def find_opus_test_cases_for_package(self, package):
+        return self._find_opus_test_cases_for_package(package, opus_unittest.OpusTestCase)
+
+
+    def find_opus_integration_test_cases_for_package(self, package):
+        return self._find_opus_test_cases_for_package(package, opus_unittest.OpusIntegrationTestCase)
+
+
+    def _find_opus_test_cases_for_package(self, package, test_case_class):
         root = OpusPackage().get_path_for_package(package)
         
         modules_with_test_cases = []
@@ -67,7 +76,7 @@ class TestScanner(object):
                         try:
                             is_subclass = issubclass(
                                 member_dict[key], 
-                                opus_unittest.OpusTestCase)
+                                test_case_class)
                         except: pass
                         else:
                             if is_subclass:

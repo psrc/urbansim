@@ -43,7 +43,7 @@ config_template = """<opus_project>
 """
 
 
-class SimulationTest(opus_unittest.OpusTestCase):
+class SimulationTest(opus_unittest.OpusIntegrationTestCase):
     
     def setUp(self):
         # By putting the creation and removal of the temp_dir in the setUp and tearDown methods, we ensure that it gets removed even if

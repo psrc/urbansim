@@ -29,7 +29,7 @@ if does_database_server_exist_for_this_hostname(
         module_name = __name__, 
         hostname = SubsetConfiguration()['input_configuration'].host_name):
     
-    class Test(opus_unittest.OpusTestCase):   
+    class Test(opus_unittest.OpusIntegrationTestCase):   
         def setUp(self):
             self.config = SubsetConfiguration()
             self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')

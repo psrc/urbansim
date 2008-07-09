@@ -32,7 +32,7 @@ from opus_core.configurations.dataset_pool_configuration import DatasetPoolConfi
 from opus_core.indicator_framework.core.indicator_factory import IndicatorFactory
 
 
-class TestIndicators(opus_unittest.OpusTestCase):
+class TestIndicators(opus_unittest.OpusIntegrationTestCase):
     
     def setUp(self):
         self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp_test_indicators')

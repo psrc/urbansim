@@ -27,7 +27,7 @@ from psrc.travel_model_input_file_writer import TravelModelInputFileWriter
 from opus_core.misc import does_test_database_server_exist
 if does_test_database_server_exist(module_name=__name__):
 
-    class TestTravelModelInputFileWriter(opus_unittest.OpusTestCase):
+    class TestTravelModelInputFileWriter(opus_unittest.OpusIntegrationTestCase):
         def setUp(self):
             self.database_name = 'test_travel_model_input_file_writer'
             

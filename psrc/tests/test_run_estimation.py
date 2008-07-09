@@ -31,7 +31,7 @@ from psrc.configs.baseline import Baseline
 from psrc.tests.test_run_estimation_in_new_process import __file__ as test_run_estimation_in_new_process_script_path
 
 
-class TestRunEstimation(opus_unittest.TestCase):
+class TestRunEstimation(opus_unittest.OpusIntegrationTestCase):
     def setUp(self):
         self.estimation_runner = EstimationRunner()
         

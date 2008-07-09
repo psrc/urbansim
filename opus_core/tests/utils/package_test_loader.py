@@ -16,6 +16,14 @@ from opus_core.tests.utils.test_scanner import TestScanner
 
 class PackageTestLoader(object):
     def load_tests_from_package(self, package, parent=__import__('__main__')):
+        self._load_tests_from_package(package, parent, TestScanner().find_opus_test_cases_for_package)
+
+
+    def load_integration_tests_from_package(self, package, parent=__import__('__main__')):
+        self._load_tests_from_package(package, parent, TestScanner().find_opus_integration_test_cases_for_package)
+
+
+    def _load_tests_from_package(self, package, parent, scanner):
         """
         Load test cases from the package with the given name (e.g. 'opus_core') 
         into the parent object. Use __import__('__main__') as the parent if you 
@@ -23,7 +31,7 @@ class PackageTestLoader(object):
         opus_unittest.main(module=parent).
         """
         
-        test_cases = TestScanner().find_opus_test_cases_for_package(package)
+        test_cases = scanner(package)
         
         test_case_objects = []
         uid = 1

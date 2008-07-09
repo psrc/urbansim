@@ -83,7 +83,7 @@ if does_database_server_exist_for_this_hostname(
         module_name = __name__, 
         hostname = SubsetConfiguration()['input_configuration'].host_name):
     
-    class RunManagerTests(opus_unittest.OpusTestCase):
+    class RunManagerTests(opus_unittest.OpusIntegrationTestCase):
         ### TODO: These unit tests can be moved back to core once 
         ###       _do_run_simple_test_run() is no longer dependent on psrc.
     

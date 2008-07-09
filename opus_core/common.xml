@@ -20,6 +20,20 @@
 		</exec>
 	</target>
 
+	<target name="integration-tests">
+		<exec executable="python" failonerror="True">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
+			<arg line="${basedir}/tests/all_tests.py -i" />
+		</exec>
+	</target>
+
+	<target name="integration-tests-with-xml-output">
+		<exec executable="python" failonerror="True">
+			<env key="PYTHONPATH" path="${pythonpathdir}:${env.PYTHONPATH}" />
+			<arg line="${basedir}/tests/all_tests.py -i -x" />
+		</exec>
+	</target>
+
 	<target name="cruisecontrol" depends="unit-tests-with-xml-output" />
 
 </project>

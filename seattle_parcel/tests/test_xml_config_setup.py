@@ -41,7 +41,7 @@ config_template = """<opus_project>
 """
 
 
-class TestXMLConfigSetup(opus_unittest.OpusTestCase):
+class TestXMLConfigSetup(opus_unittest.OpusIntegrationTestCase):
     
     def setUp(self):
         # By putting the creation and removal of the temp_dir in the setUp and tearDown methods, we ensure that it 

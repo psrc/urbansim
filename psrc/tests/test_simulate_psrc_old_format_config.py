@@ -33,7 +33,7 @@ if does_database_server_exist_for_this_hostname(
         module_name = __name__, 
         hostname = SubsetConfiguration()['input_configuration'].host_name):
 
-    class PSRCSimulationTest(opus_unittest.OpusTestCase):
+    class PSRCSimulationTest(opus_unittest.OpusIntegrationTestCase):
         
         def setUp(self):
             self.simulation = RunSimulationFromMysql()
