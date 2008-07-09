@@ -36,14 +36,14 @@ class OpusXMLAction_General(object):
         self.makeEditableIcon = QIcon(":/Images/Images/application_edit.png")
 
         self.actRemoveNode = QAction(self.removeIcon,
-                                     "Remove Node",
+                                     "Remove node from current project",
                                      self.xmlTreeObject.mainwindow)
         QObject.connect(self.actRemoveNode,
                         SIGNAL("triggered()"),
                         self.removeNode)
 
         self.actMakeEditable = QAction(self.makeEditableIcon,
-                                       "Make Editable",
+                                       "Add to current project",
                                        self.xmlTreeObject.mainwindow)
         QObject.connect(self.actMakeEditable,
                         SIGNAL("triggered()"),

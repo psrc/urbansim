@@ -67,14 +67,14 @@ class OpusXMLAction_Scenario(object):
                         self.editXMLFileLocal)
 
         self.actMakeEditable = QAction(self.makeEditableIcon,
-                                    "Make Editable",
+                                    "Add to current project",
                                     self.xmlTreeObject.mainwindow)
         QObject.connect(self.actMakeEditable,
                         SIGNAL("triggered()"),
                         self.makeEditableAction)
 
         self.actRemoveNode = QAction(self.removeIcon,
-                                     "Remove Node",
+                                     "Remove node from current project",
                                      self.xmlTreeObject.mainwindow)
         QObject.connect(self.actRemoveNode,
                         SIGNAL("triggered()"),

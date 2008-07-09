@@ -133,7 +133,7 @@ class OpusXMLAction_Data(object):
                         self.openDocumentation)
 
         self.actRemoveNode = QAction(self.removeIcon,
-                                     "Remove Node",
+                                     "Remove node from current project",
                                      self.xmlTreeObject.mainwindow)
         QObject.connect(self.actRemoveNode,
                         SIGNAL("triggered()"),
@@ -162,7 +162,7 @@ class OpusXMLAction_Data(object):
                         self.execBatch)
 
         self.actMakeEditable = QAction(self.makeEditableIcon,
-                                       "Make Editable",
+                                       "Add to current project",
                                        self.xmlTreeObject.mainwindow)
         QObject.connect(self.actMakeEditable,
                         SIGNAL("triggered()"),
