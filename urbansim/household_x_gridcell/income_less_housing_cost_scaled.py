@@ -40,7 +40,7 @@ from numpy import array
 from numpy import ma
 
 class Tests(opus_unittest.OpusTestCase):
-    variable_name = "urbansim.household_x_gridcell.income_less_housing_cost"
+    variable_name = "urbansim.household_x_gridcell.income_less_housing_cost_scaled"
         
     def test_my_inputs(self):
         storage = StorageFactory().get_storage('dict_storage')        
@@ -49,14 +49,14 @@ class Tests(opus_unittest.OpusTestCase):
             table_name='gridcells',
             table_data={
                 'grid_id': array([1,2,3]),
-                'housing_cost': array([1000, 10000, 100000]),
+                'housing_cost': array([10000, 20000, 100000]),
             }
         )
         storage.write_table(
             table_name='households',
             table_data={
                 'household_id': array([1, 2, 3]),
-                'income': array([1, 20, 500]),
+                'income': array([10000, 20000, 500000]),
             }
         )
         
@@ -68,9 +68,9 @@ class Tests(opus_unittest.OpusTestCase):
                                                dataset_pool=dataset_pool)
         values = household_x_gridcell.get_attribute(self.variable_name)
         
-        should_be = array([[-999, -9999, -99999], 
-                           [-980, -9980, -99980 ], 
-                           [-500, -9500, -99500]])
+        should_be = array([[0, -1, -9], 
+                           [1, 0, -8], 
+                           [49, 48, 40]])
         
         self.assert_(ma.allclose(values, should_be, rtol=1e-7), 
                      msg="Error in " + self.variable_name)

@@ -46,7 +46,7 @@ from numpy import array
 from numpy import ma
 
 class Tests(opus_unittest.OpusTestCase):
-    variable_name = "urbansim.household_x_gridcell.cost_to_income_ratio"
+    variable_name = "urbansim.household_x_gridcell.housing_affordability"
         
     def test_my_inputs(self):
         storage = StorageFactory().get_storage('dict_storage')        
@@ -55,14 +55,14 @@ class Tests(opus_unittest.OpusTestCase):
             table_name='gridcells',
             table_data={
                 'grid_id': array([1,2,3]),
-                'total_annual_rent': array([1000, 10000, 100000]),
+                'housing_cost': array([42, 84, 2]),
             }
         )
         storage.write_table(
             table_name='households',
             table_data={
                 'household_id': array([1, 2, 3]),
-                'income': array([1, 20, 500]),
+                'income': array([42, 77, 99]),
             }
         )
         
@@ -74,9 +74,9 @@ class Tests(opus_unittest.OpusTestCase):
                                                dataset_pool=dataset_pool)
         values = household_x_gridcell.get_attribute(self.variable_name)
         
-        should_be = array([[1000, 10000, 100000], 
-                           [50, 500, 5000 ], 
-                           [2, 20, 200]])
+        should_be = array([[ 0, -42, ln(41)],
+                           [ ln(36), -7, ln(76)],
+                           [ ln(58), ln(16), ln(98)]])
         
         self.assert_(ma.allclose(values, should_be, rtol=1e-7), 
                      msg="Error in " + self.variable_name)

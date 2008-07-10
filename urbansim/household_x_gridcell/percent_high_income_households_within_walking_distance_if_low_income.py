@@ -39,7 +39,7 @@ from numpy import array
 from numpy import ma
 
 class Tests(opus_unittest.OpusTestCase):
-    variable_name = "urbansim.household_x_gridcell.percent_high_income_households_within_walking_distance_if_high_income"
+    variable_name = "urbansim.household_x_gridcell.percent_high_income_households_within_walking_distance_if_low_income"
     
     def test_my_inputs(self):
         storage = StorageFactory().get_storage('dict_storage')        
@@ -55,7 +55,7 @@ class Tests(opus_unittest.OpusTestCase):
             table_name='households',
             table_data={
                 'household_id': array([1, 2, 3, 4]),
-                'is_high_income': array([1, 0, 1, 0]),
+                'is_low_income': array([1, 0, 1, 0]),
             }
         )
         storage.write_table(
