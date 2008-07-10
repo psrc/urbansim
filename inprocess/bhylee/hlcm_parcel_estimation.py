@@ -25,7 +25,7 @@ class HlcmParcelEstimation(BaselineEstimation): # comment out for urbansim.confi
 #        
         self.replace(my_configuration)
         estimate_config = {}
-#        estimate_config["export_estimation_data"]=False
+#        estimate_config["export_estimation_data"]=True
 #        estimate_config["estimation_data_file_name"]="/tmp/HLCM_building_estimate_data"
 #        estimate_config["use_biogeme_data_format"]=True
 #        estimate_config["weights_for_estimation_string"]=  "has_eg_1_units=building.residential_units>=1" #"psrc.parcel.residential_units_when_has_eg_1_surveyed_households_and_is_in_county_033"
