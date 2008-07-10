@@ -67,7 +67,8 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
             "init": {
                 "name": "RealEstatePriceModel",
                 "arguments": {"submodel_string": "'land_use_type_id'",
-                              "outcome_attribute": "'ln_unit_price=ln(urbansim_parcel.parcel.unit_price)'",
+                              #"outcome_attribute": "'ln_unit_price=ln(urbansim_parcel.parcel.unit_price)'",
+                              "outcome_attribute": "'ln_price_per_unit=ln(urbansim_parcel.parcel.price_per_residential_unit)'",
                               "filter_attribute": "'numpy.logical_or(urbansim_parcel.parcel.building_sqft, urbansim_parcel.parcel.is_land_use_type_vacant)'",
                               "dataset_pool": "dataset_pool",
                               "estimate_config": "{'save_predicted_values_and_errors':True}"
@@ -102,12 +103,13 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
             "estimate": {
                 "arguments": {
                               "specification": "specification",
-                              "outcome_attribute": "'ln_unit_price=ln(urbansim_parcel.parcel.unit_price)'",
+                              #"outcome_attribute": "'ln_unit_price=ln(urbansim_parcel.parcel.unit_price)'",
+                              "outcome_attribute": "'ln_price_per_unit=ln(urbansim_parcel.parcel.price_per_residential_unit)'",                              
                               "dataset": "parcel",
                               "index": "index",
                               "data_objects": "datasets",
                               "debuglevel": 'debuglevel',
-                              #'procedure': "'opus_core.bma_for_linear_regression_r'",
+                    #'procedure': "'opus_core.bma_for_linear_regression_r'",
                               },
                 "output": "(coefficients, dummy)"
                 }
@@ -274,7 +276,9 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                               "specification": "specification",
                               "coefficients":"coefficients",
                               "dataset": 'development_project_proposal',  
-                              "data_objects": "datasets" },
+                              "data_objects": "datasets",
+                              'chunk_specification': "{'nchunks':4}",
+                              },
                 "output":"development_project_proposal"  #get the development project proposal back
                     },
           },
@@ -595,8 +599,9 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         hlcm_controller = self["models_configuration"]["household_location_choice_model"]["controller"]
         hlcm_controller["init"]["arguments"]["location_set"] = "building"
         hlcm_controller["init"]["arguments"]["location_id_string"] = "'building_id'"
-        hlcm_controller["init"]["arguments"]["estimation_weight_string"] = "'urbansim_parcel.building.vacant_residential_units'"
-        hlcm_controller["init"]["arguments"]["capacity_string"] = "'vacant_residential_units'"
+        #hlcm_controller["init"]["arguments"]["estimation_weight_string"] = "'urbansim_parcel.building.vacant_residential_units'"
+        hlcm_controller["init"]["arguments"]["estimation_weight_string"] = "'has_eg_1_units=building.residential_units>=1'"
+        hlcm_controller["init"]["arguments"]["capacity_string"] = "'has_eg_1_units=building.residential_units>=1'"
         hlcm_controller["init"]["arguments"]['sample_size_locations']=30
         hlcm_controller["init"]["arguments"]['sampler']="'opus_core.samplers.weighted_sampler'"
         #hlcm_controller["init"]["arguments"]["submodel_string"] = "'urbansim.household.income_category'"
@@ -605,17 +610,19 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         hlcm_controller["init"]["arguments"]["variable_package"] = "'urbansim_parcel'"
         hlcm_controller["init"]["arguments"]["run_config"] = "{'lottery_max_iterations': 7}"
         hlcm_controller["init"]["arguments"]["filter"] = "'numpy.logical_and(urbansim_parcel.building.is_residential, numpy.logical_and(numpy.logical_and(building.residential_units, building.sqft_per_unit), urbansim_parcel.building.unit_price > 0))'" 
+        #hlcm_controller["init"]["arguments"]["filter"] = "'urbansim_parcel.building.is_residential'" 
 #        hlcm_controller["init"]["arguments"]["filter"] = "'numpy.logical_and(numpy.logical_and(building.residential_units, building.sqft_per_unit), numpy.logical_and(urbansim_parcel.building.unit_price > %s, urbansim_parcel.building.unit_price< %s))'" % (UNIT_PRICE_RANGE[0], UNIT_PRICE_RANGE[1])
         #hlcm_controller["init"]["arguments"]["filter"] = "'numpy.logical_and(building.residential_units, building.sqft_per_unit)'"
         hlcm_controller["init"]["arguments"]["estimate_config"] = "{'wesml_sampling_correction_variable':'psrc_parcel.building.wesml_sampling_correction_variable'}"
         hlcm_controller["prepare_for_estimate"]["arguments"]["agents_for_estimation_table"] = "'households_for_estimation'"
         hlcm_controller["prepare_for_estimate"]["arguments"]["filter"] = "'numpy.logical_and(household.building_id>0, household.disaggregate(building.sqft_per_unit>0)) * household.move'" # filtering out agents for estimation with valid location
+        #hlcm_controller["prepare_for_estimate"]["arguments"]["filter"] = "'household.move==1'" # filtering out agents for estimation with valid location
         hlcm_controller["run"]["arguments"]["chunk_specification"] ="{'records_per_chunk':50000}"
         hlcm_controller["prepare_for_estimate"]["arguments"]["join_datasets"] = True
         hlcm_controller["prepare_for_estimate"]["arguments"]["index_to_unplace"] = None
         # settng estimation procedure
-        hlcm_controller["estimate"]["arguments"]["procedure"] = "'bhhh_wesml_mnl_estimation'"
-        #hlcm_controller["estimate"]["arguments"]["procedure"] = "'bhhh_mnl_estimation'"
+        #hlcm_controller["estimate"]["arguments"]["procedure"] = "'bhhh_wesml_mnl_estimation'"
+        hlcm_controller["estimate"]["arguments"]["procedure"] = "'bhhh_mnl_estimation'"
         
         models_configuration['household_location_choice_model']["controller"].replace(hlcm_controller)
                 
