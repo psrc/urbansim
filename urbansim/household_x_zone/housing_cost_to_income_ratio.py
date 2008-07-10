@@ -34,7 +34,7 @@ from urbansim.variable_test_toolbox import VariableTestToolbox
 from numpy import array
 from numpy import ma
 class Tests(opus_unittest.OpusTestCase):
-    variable_name = "urbansim.household_x_zone.income_times_housing_cost"
+    variable_name = "urbansim.household_x_zone.housing_cost_to_income_ratio"
     def test_my_inputs(self):
         housing_cost = array([333.0, 500.55, 1000.26, 459])
         income = array([1, 20, 500])
@@ -45,8 +45,8 @@ class Tests(opus_unittest.OpusTestCase):
             "household":{ 
                 "income":income}}, 
             dataset = "household_x_zone")
-        should_be = array([[333.0, 500.55, 1000.26, 459.0], [6660.0, 10011., 20005.2, 9180], 
-                            [166500.,  250275.,  500130.,  229500.]])
+        should_be = array([[333.0, 500.55, 1000.26, 459.0], [16.65, 25.0275, 50.013, 22.95], 
+                            [.666,  1.0011,  2.00052, .918]])
         self.assertEqual(ma.allclose(values, should_be, rtol=1e-3), 
                          True, msg = "Error in " + self.variable_name)
 
