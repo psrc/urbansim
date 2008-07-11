@@ -67,8 +67,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
             "init": {
                 "name": "RealEstatePriceModel",
                 "arguments": {"submodel_string": "'land_use_type_id'",
-                              #"outcome_attribute": "'ln_unit_price=ln(urbansim_parcel.parcel.unit_price)'",
-                              "outcome_attribute": "'ln_price_per_unit=ln(urbansim_parcel.parcel.price_per_residential_unit)'",
+                              "outcome_attribute": "'ln_unit_price=ln(urbansim_parcel.parcel.unit_price)'",
                               "filter_attribute": "'numpy.logical_or(urbansim_parcel.parcel.building_sqft, urbansim_parcel.parcel.is_land_use_type_vacant)'",
                               "dataset_pool": "dataset_pool",
                               "estimate_config": "{'save_predicted_values_and_errors':True}"
@@ -103,13 +102,12 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
             "estimate": {
                 "arguments": {
                               "specification": "specification",
-                              #"outcome_attribute": "'ln_unit_price=ln(urbansim_parcel.parcel.unit_price)'",
-                              "outcome_attribute": "'ln_price_per_unit=ln(urbansim_parcel.parcel.price_per_residential_unit)'",                              
+                              "outcome_attribute": "'ln_unit_price=ln(urbansim_parcel.parcel.unit_price)'",
                               "dataset": "parcel",
                               "index": "index",
                               "data_objects": "datasets",
                               "debuglevel": 'debuglevel',
-                    #'procedure': "'opus_core.bma_for_linear_regression_r'",
+                              #'procedure': "'opus_core.bma_for_linear_regression_r'",
                               },
                 "output": "(coefficients, dummy)"
                 }
@@ -276,9 +274,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
                               "specification": "specification",
                               "coefficients":"coefficients",
                               "dataset": 'development_project_proposal',  
-                              "data_objects": "datasets",
-                              'chunk_specification': "{'nchunks':4}",
-                              },
+                              "data_objects": "datasets" },
                 "output":"development_project_proposal"  #get the development project proposal back
                     },
           },
