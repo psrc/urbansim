@@ -1,6 +1,6 @@
 <gui_configuration>
 	<startup_options>
-		<splash_logo>az-smart.bmp</splash_logo>
+		<splash_logo>opus-logo.bmp</splash_logo>
 	</startup_options>
 	<application_options>
 	    <application_title>OPUS</application_title>
