@@ -61,7 +61,7 @@ all_variables = [
     "plan_18=urbansim_parcel.parcel.plan_18",
     "plan_19=urbansim_parcel.parcel.plan_19",
     "plan_20=urbansim_parcel.parcel.plan_20",
-    "is_pre_1940 = parcel.aggregate(building.year_built * numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, 1),function=mean) < 1940",
+    "is_pre_1940 = parcel.aggregate( numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, building.year_built),function=mean) < 1940",
 
                  ]
 variables_for_development_project_proposal = {
