@@ -590,6 +590,9 @@
     <estimation type="dictionary">
       <estimation_config type="dictionary">
         <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">
+          <building choices="Load|Skip" copyable="True" followers="my_dataset,parcel" type="dataset">Load</building>
+          <household choices="Load|Skip" copyable="True" followers="my_dataset,parcel" type="dataset">Load</household>
+          <job choices="Load|Skip" copyable="True" followers="my_dataset,parcel" type="dataset">Load</job>
           <parcel choices="Load|Skip" copyable="True" type="dataset">Load</parcel>
         </datasets_to_preload>
         </estimation_config>

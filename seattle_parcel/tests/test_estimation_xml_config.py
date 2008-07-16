@@ -25,8 +25,16 @@ class TestEstimation(TestXMLConfigSetup):
         estimation_section = xml_config.get_section('model_manager/estimation')
         estimation_config = estimation_section['estimation_config']
         for model_name in estimation_config['models_to_estimate']:
-            er = EstimationRunner(model=model_name, xml_configuration=xml_config, configuration=None)
-            er.estimate()
+            if type(model_name) == dict:
+                for name, group_members in model_name.items():
+                    er = EstimationRunner(model=name, 
+                                          xml_configuration=xml_config, 
+                                          model_group = group_members['group_members'],
+                                          configuration=None)
+                    er.estimate()
+            else:
+                er = EstimationRunner(model=model_name, xml_configuration=xml_config, configuration=None)
+                er.estimate()
        
 if __name__ == "__main__":
     opus_unittest.main()
