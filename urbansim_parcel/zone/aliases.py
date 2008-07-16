@@ -13,7 +13,7 @@
 # 
 
 aliases = [
-   "average_income = zone.aggregate(urbansim_parcel.household.income, function=mean, intermediates=[building, parcel])",
+   "average_income = zone.aggregate(urbansim_parcel.household.income, function=mean)",
    "employment = zone.number_of_agents(job)",
    "number_of_jobs = zone.number_of_agents(job)",
    "number_of_households = zone.number_of_agents(household)",
