@@ -106,7 +106,7 @@ class XMLConfiguration(object):
         else:
             return config
 
-    def get_estimation_specification(self, model_name):
+    def get_estimation_specification(self, model_name, model_group=None):
         estimation_section = self.get_section('model_manager/estimation')
         model = estimation_section[model_name]
         result = {}
@@ -114,8 +114,13 @@ class XMLConfiguration(object):
         vals = self.get_section('general/expression_library').values()
         vals.sort()
         result['_definition_'] = vals
-        for submodel_name in model.keys():
-            submodel = model[submodel_name]
+        if model_group is not None:
+            model_dict = model[model_group]
+            result_group = {model_group:result}
+        else:
+            model_dict = model
+        for submodel_name in model_dict.keys():
+            submodel = model_dict[submodel_name]
             if 'variables' in submodel.keys():
                 result[submodel['submodel_id']] = submodel['variables']
             else: # specification has equations
@@ -124,6 +129,10 @@ class XMLConfiguration(object):
                     if equation_name!='description' and equation_name!='submodel_id':
                         equation_spec = submodel[equation_name]
                         result[submodel['submodel_id']][equation_spec['equation_id']] = equation_spec['variables']
+
+        if model_group is not None:
+            result = result_group
+            
         return result
     
     def save(self):

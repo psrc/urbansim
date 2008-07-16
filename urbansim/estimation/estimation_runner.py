@@ -51,7 +51,7 @@ class EstimationRunner(Estimator):
         
         specification_dict=None
         if self.xml_configuration is not None:
-            specification_dict = self.xml_configuration.get_estimation_specification(model)
+            specification_dict = self.xml_configuration.get_estimation_specification(model, model_group=model_group)
             
         if model_group is None:
             if model in config_changes.keys():

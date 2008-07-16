@@ -42,8 +42,14 @@
       <models_to_estimate followers="model_template,choice_model_with_equations_template" type="selectable_list" setexpanded="True" >
         <real_estate_price_model choices="Estimate|Skip" type="model">Estimate</real_estate_price_model>
         <household_location_choice_model choices="Estimate|Skip" type="model">Skip</household_location_choice_model>
-        <employment_location_choice_model_home_based choices="Estimate|Skip" type="model">Skip</employment_location_choice_model_home_based>
-        <employment_location_choice_model_non_home_based choices="Estimate|Skip" type="model">Skip</employment_location_choice_model_non_home_based>
+        <employment_location_choice_model choices="Estimate|Skip" type="model">Skip<group_members type="string">home_based</group_members>
+        </employment_location_choice_model>
+        <employment_location_choice_model choices="Estimate|Skip" type="model">Estimate<group_members type="string">non_home_based</group_members>
+        </employment_location_choice_model>
+<!--
+        <home_based_employment_location_choice_model choices="Estimate|Skip" type="model">Skip</home_based_employment_location_choice_model>
+        <non_home_based_employment_location_choice_model choices="Estimate|Skip" type="model">Skip</non_home_based_employment_location_choice_model>
+-->
       </models_to_estimate>
       <real_estate_price_model type="dictionary">
         <agriculture type="submodel">
@@ -145,8 +151,31 @@
           <endyear type="integer">2000</endyear>
         </years>
       </estimation_config>
-      <model_parameters type="dictionary">
-        <real_estate_price_model type="dictionary">
+      <household_location_choice_model copyable="True" type="dictionary">
+        <submodel copyable="True" type="submodel">
+          <description type="string">No submodel</description>
+          <submodel_id type="integer">-2</submodel_id>
+          <variables type="variable_list">ln_residential_units</variables>
+        </submodel>
+      </household_location_choice_model>
+      <employment_location_choice_model copyable="True" type="dictionary">
+        <home_based type="dictionary">
+          <submodel copyable="True" type="submodel">
+            <description type="string">No submodel</description>
+            <submodel_id type="integer">-2</submodel_id>
+            <variables type="variable_list">blngcdacbd</variables>
+          </submodel>
+        </home_based>
+        <non_home_based type="dictionary">
+          <submodel copyable="True" type="submodel">
+            <description type="string">No submodel</description>
+            <submodel_id type="integer">-2</submodel_id>
+            <variables type="variable_list">blngcdacbd</variables>
+          </submodel>
+        </non_home_based>
+      </employment_location_choice_model>
+    <model_parameters type="dictionary">
+      <real_estate_price_model type="dictionary">
           <abbreviation type="string">REPM</abbreviation>
           <full_name type="string">real_estate_price_model</full_name>
         </real_estate_price_model>
@@ -154,19 +183,21 @@
           <abbreviation type="string">HLCM</abbreviation>
           <full_name type="string">household_location_choice_model</full_name>
         </household_location_choice_model>
-        <employment_location_choice_model_home_based type="dictionary">
+<!--
+        <home_based_employment_location_choice_model type="dictionary">
           <abbreviation type="string">ELCM</abbreviation>
           <full_name type="string">employment_location_choice_model</full_name>
           <location type="string">home_based</location>
           <add_member_prefix type="boolean">True</add_member_prefix>
-        </employment_location_choice_model_home_based>
-        <employment_location_choice_model_non_home_based type="dictionary">
+        </home_based_employment_location_choice_model>
+        <non_home_based_employment_location_choice_model type="dictionary">
           <abbreviation type="string">ELCM</abbreviation>
           <full_name type="string">employment_location_choice_model</full_name>
           <location type="string">non_home_based</location>
           <add_member_prefix type="boolean">False</add_member_prefix>
-        </employment_location_choice_model_non_home_based>
-      </model_parameters>
+        </non_home_based_employment_location_choice_model>
+-->
+       </model_parameters>
     </estimation>
   </model_manager>
   <scenario_manager>

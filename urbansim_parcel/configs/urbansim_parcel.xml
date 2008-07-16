@@ -18,6 +18,7 @@
           <far type="variable_definition" dataset="parcel" use="model variable" source="expression">far = (urbansim_parcel.parcel.building_sqft/(parcel.parcel_sqft).astype(float32)).astype(float32)</far>
           <ln_invfar type="variable_definition" dataset="parcel" use="model variable" source="expression">ln_invfar = (ln(parcel.parcel_sqft/(urbansim_parcel.parcel.building_sqft).astype(float32))).astype(float32)</ln_invfar>
           <lngcdacbd type="variable_definition" dataset="parcel" use="model variable" source="expression">lngcdacbd = (ln(parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd))).astype(float32)</lngcdacbd>
+          <blngcdacbd type="variable_definition" dataset="parcel" use="model variable" source="expression">blngcdacbd = (ln(building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd))).astype(float32)</blngcdacbd>
           <lnemp30da type="variable_definition" dataset="parcel" use="model variable" source="expression">lnemp30da = (ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))).astype(float32)</lnemp30da>
           <lnemp20da type="variable_definition" dataset="parcel" use="model variable" source="expression">lnemp20da = (ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_20_minutes_travel_time_hbw_am_drive_alone))).astype(float32)</lnemp20da>
           <lnemp10da type="variable_definition" dataset="parcel" use="model variable" source="expression">lnemp10da = (ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone))).astype(float32)</lnemp10da>
@@ -247,7 +248,7 @@
             <portion_to_unplace type="float">0</portion_to_unplace>
             <specification_storage type="string">base_cache_storage</specification_storage>
             <specification_table type="quoted_string">employment_location_choice_model_specification</specification_table>
-            <filter type="string">numpy.logical_and(job.building_id&gt;0, job.disaggregate(building.non_residential_sqft) &gt; 0)</filter>
+            <filter type="quoted_string">numpy.logical_and(job.building_id&gt;0, job.disaggregate(building.non_residential_sqft) &gt; 0)</filter>
           </arguments>
         </prepare_for_estimate>
         <prepare_for_run type="dictionary">
@@ -273,6 +274,8 @@
           </arguments>
         </run>
       </employment_location_choice_model>
+<!-- ## commented out because this will override the elcm estimation configuration for home_based group member 
+     ## (line 229 of opus_core/model_coordinators/model_system.py)
       <home_based_employment_location_choice_model copyable="True" type="dictionary">
         <estimate type="dictionary">
           <arguments type="dictionary">
@@ -324,7 +327,7 @@
             <portion_to_unplace type="float">0</portion_to_unplace>
             <specification_storage type="string">base_cache_storage</specification_storage>
             <specification_table type="quoted_string">employment_location_choice_model_specification</specification_table>
-            <filter type="string">numpy.logical_and(building.residential_units, building.sqft_per_unit)</filter>
+            <filter type="quoted_string">numpy.logical_and(job.building_id&gt;0, job.disaggregate(building.non_residential_sqft) &gt; 0)</filter>
           </arguments>
         </prepare_for_estimate>
         <prepare_for_run type="dictionary">
@@ -350,6 +353,7 @@
           </arguments>
         </run>
       </home_based_employment_location_choice_model>
+-->
       <distribute_unplaced_jobs_model copyable="True" type="dictionary">
         <import flags="hidden" type="dictionary">
           <urbansim_parcel.models.distribute_unplaced_jobs_model type="string">DistributeUnplacedJobsModel</urbansim_parcel.models.distribute_unplaced_jobs_model>
