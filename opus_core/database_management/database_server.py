@@ -52,7 +52,7 @@ class DatabaseServer(object):
         self.show_output = False
 
     def get_connection_string(self):
-        if self.protocol == 'mssql':
+        if self.protocol != 'mssql':
             return '%s://%s:%s@%s'%(self.protocol, self.user_name, self.password, self.host_name) 
         else:
             return '%s://%s:%s@%s/%s'%(self.protocol, self.user_name, self.password, self.host_name, os.environ['MSSQLDEFAULTDB']) 
