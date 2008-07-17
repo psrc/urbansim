@@ -17,6 +17,7 @@ from opus_core.logger import logger
 from sqlalchemy.schema import MetaData
 from sqlalchemy import create_engine
 
+import os
 
 class DatabaseServer(object):
     """
@@ -36,13 +37,10 @@ class DatabaseServer(object):
         
         
         if self.protocol == 'mssql':
-            print str(database_server_configuration)
-            self.engine = create_engine(str(database_server_configuration))
-
-        else:
-            self.engine = create_engine(self.get_connection_string())
-        
-        
+            if 'MSSQLDEFAULTDB' not in os.environ:
+                raise 'To connect to a Microsoft SQL Server, a default database to connect to must be specified in the environment variables under MSSQLDEFAULTDB' 
+        self.engine = create_engine(self.get_connection_string())
+                
         self.metadata = MetaData(
             bind = self.engine
         ) 
@@ -54,8 +52,11 @@ class DatabaseServer(object):
         self.show_output = False
 
     def get_connection_string(self):
-        return '%s://%s:%s@%s'%(self.protocol, self.user_name, self.password, self.host_name) 
-    
+        if self.protocol == 'mssql':
+            return '%s://%s:%s@%s'%(self.protocol, self.user_name, self.password, self.host_name) 
+        else:
+            return '%s://%s:%s@%s/%s'%(self.protocol, self.user_name, self.password, self.host_name, os.environ['MSSQLDEFAULTDB']) 
+
     def log_sql(self, sql_query, show_output=False):
         if show_output == True:
             logger.log_status("SQL: " + sql_query, tags=["database"], verbosity_level=3)            
