@@ -47,7 +47,7 @@ class DatabaseConfiguration(DatabaseServerConfiguration):
         self.database_name = database_name
         
     def __repr__(self):
-        return '%s://%s:%s@%s:%s'%(self.protocol, 
+        return '%s://%s:%s@%s/%s'%(self.protocol, 
                                    self.user_name, 
                                    self.password, 
                                    self.host_name, 

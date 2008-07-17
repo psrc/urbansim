@@ -34,7 +34,15 @@ class DatabaseServer(object):
         self.user_name = database_server_configuration.user_name
         self.password = database_server_configuration.password
         
-        self.engine = create_engine(self.get_connection_string())
+        
+        if self.protocol == 'mssql':
+            print str(database_server_configuration)
+            self.engine = create_engine(str(database_server_configuration))
+
+        else:
+            self.engine = create_engine(self.get_connection_string())
+        
+        
         self.metadata = MetaData(
             bind = self.engine
         ) 
@@ -195,12 +203,13 @@ class Tests(opus_unittest.OpusTestCase):
             self.helper_create_drop_and_has_database(server)
             server.close()
 
-    def skip_test_mssql_create_drop_and_has_database(self):
+    def test_mssql_create_drop_and_has_database(self):
         try:
             import pyodbc
         except:
             pass
         else:
+            print 'here'
             server = self.get_mssql_server()
             self.helper_create_drop_and_has_database(server)
             server.close()
