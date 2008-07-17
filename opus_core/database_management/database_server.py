@@ -35,27 +35,27 @@ class DatabaseServer(object):
         self.user_name = database_server_configuration.user_name
         self.password = database_server_configuration.password
         
+        self.open()
+        self.show_output = False
         
+    def open(self):
+        connect_args = {}
         if self.protocol == 'mssql':
             if 'MSSQLDEFAULTDB' not in os.environ:
                 raise 'To connect to a Microsoft SQL Server, a default database to connect to must be specified in the environment variables under MSSQLDEFAULTDB' 
-        self.engine = create_engine(self.get_connection_string())
+            #connect_args['MARSCONNECTION'] = 'yes'
+        self.engine = create_engine(self.get_connection_string(), connect_args=connect_args)
                 
         self.metadata = MetaData(
             bind = self.engine
         ) 
-        try:
-            self.cursor = self.engine.connect()
-        except Exception, e:
-            logger.log_error('Error connecting to database server using config: %s'%repr(self.config))
-            raise e
-        self.show_output = False
-
+        
     def get_connection_string(self):
         if self.protocol != 'mssql':
             return '%s://%s:%s@%s'%(self.protocol, self.user_name, self.password, self.host_name) 
         else:
-            return '%s://%s:%s@%s/%s'%(self.protocol, self.user_name, self.password, self.host_name, os.environ['MSSQLDEFAULTDB']) 
+            database_name = os.environ['MSSQLDEFAULTDB']
+            return '%s://%s:%s@%s/%s'%(self.protocol, self.user_name, self.password, self.host_name, database_name) 
 
     def log_sql(self, sql_query, show_output=False):
         if show_output == True:
@@ -78,25 +78,32 @@ class DatabaseServer(object):
         """
         Create a database on this database server.
         """
-        if self.protocol in ['mysql', 'mssql']: #mssql is untested
-            self.cursor.execute('''
-                CREATE DATABASE %s;
-            '''%database_name)
-        elif self.protocol == 'postgres': #in postgres, need to end the transaction first
-            self.cursor.execute('''
-                END;
-                CREATE DATABASE %s;
-            '''%database_name)            
+        if not self.has_database(database_name):
+            if self.protocol in ['mysql', 'mssql']: #mssql is untested
+                self.engine.execute('''
+                    CREATE DATABASE %s;
+                '''%database_name)
+            elif self.protocol == 'postgres': #in postgres, need to end the transaction first
+                self.engine.execute('''
+                    END;
+                    CREATE DATABASE %s;
+                '''%database_name)            
 
     def drop_database(self, database_name):
         """
         Drop this database.
-        """
-        # First check if database exists
+        """        
         if self.has_database(database_name):
-            self.cursor.execute('''
-                DROP DATABASE %s
-            '''%database_name)
+            if self.protocol in ['mysql', 'mssql']: #mssql is untested
+                self.engine.execute('''
+                    DROP DATABASE %s;
+                '''%database_name)
+            elif self.protocol == 'postgres': #in postgres, need to end the transaction first
+                self.engine.execute('''
+                    END;
+                    DROP DATABASE %s;
+                '''%database_name)            
+
 
     def get_database(self, database_name):
         """
@@ -111,21 +118,36 @@ class DatabaseServer(object):
         
     def has_database(self, database_name):
         #sqlalchemy doesn't really support database management at the server level...
-        if self.protocol == 'mysql':
-            query = '''
-                SHOW DATABASES LIKE '%s'
-            '''%database_name
-        elif self.protocol == 'postgres':
-            query = '''
-                SELECT datname FROM pg_database;
-            '''
+
+        if self.protocol in ['mysql','postgres']:
+            if self.protocol == 'mysql':
+                query = '''
+                    SHOW DATABASES LIKE '%s'
+                '''%database_name
+            elif self.protocol == 'postgres':
+                query = '''
+                    SELECT datname FROM pg_database;
+                '''
+            result = self.engine.execute(query)
+            dbs = [db[0] for db in result.fetchall()]
+            return database_name in dbs
+
         elif self.protocol == 'mssql': #note: this is untested
-            query = 'sp_databases'
+            import pyodbc
+            conn = 'DRIVER={SQL Server};SERVER=%(server)s;DATABASE=%(database)s;UID=%(UID)s;PWD=%(PWD)s'% \
+                               {'UID':self.user_name, 
+                               'PWD':self.password,
+                               'server':self.host_name, 
+                               'database':os.environ['MSSQLDEFAULTDB']}
+            c = pyodbc.connect(conn)
+            
+            dbs = [d[0] for d in c.execute('EXEC sp_databases').fetchall()]
+            c.close()
+            del c
+            return database_name in dbs
+            
         #TODO: add other protocols
         
-        result = self.cursor.execute(query)
-        dbs = [db[0] for db in result.fetchall()]
-        return database_name in dbs
     
     __type_name_to_string = {
         'string':'text',
@@ -143,7 +165,6 @@ class DatabaseServer(object):
     
     def close(self):
         """Explicitly close the connection, without waiting for object deallocation"""
-        self.cursor.close()
         self.engine.dispose()
         del self.engine
         del self.metadata
@@ -172,8 +193,9 @@ class Tests(opus_unittest.OpusTestCase):
         server_config = DatabaseServerConfiguration(
             protocol = 'mssql',
             test = True)
-        return DatabaseServer(server_config)     
-
+        s = DatabaseServer(server_config)     
+        return s
+        
     def helper_create_drop_and_has_database(self, db_server):
         db_name = 'test_database_server'
         self.assertFalse(db_server.has_database(db_name))
@@ -210,10 +232,12 @@ class Tests(opus_unittest.OpusTestCase):
         except:
             pass
         else:
-            print 'here'
-            server = self.get_mssql_server()
-            self.helper_create_drop_and_has_database(server)
-            server.close()
+            if not 'MSSQLDEFAULTDB' in os.environ:
+                logger.log_warning('MSSQLDEFAULTDB is not set in the environment variables. Skipping test_mssql_create_drop_and_has_database')
+            else:
+                server = self.get_mssql_server()
+                self.helper_create_drop_and_has_database(server)
+                server.close()
                                              
 if __name__ == '__main__':
     opus_unittest.main()
