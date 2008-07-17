@@ -154,6 +154,7 @@ class ToolboxBase(object):
         else:
             print "There was an error removing the old config"
 
+
     def closeXMLTree(self):
         # Try to remove all the old trees...
         generalManagerRemoveSuccess = True
@@ -178,6 +179,7 @@ class ToolboxBase(object):
         if self.dataManagerDBSTree != None:
             dataManagerDBSRemoveSuccess = self.dataManagerDBSTree.removeTree()
 
+
     def emit_default_gui_configuration_file(self, file_name):
         from opus_core.misc import directory_path_from_opus_path
 
@@ -188,3 +190,22 @@ class ToolboxBase(object):
         new_file.write(''.join(default_gui_config.readlines()))
         new_file.close()
         default_gui_config.close()
+        
+        
+    def reemit_reinit_default_gui_configuration_file(self):
+        self.emit_default_gui_configuration_file(file_name = self.gui_configuration_file)
+        self.gui_configuration_doc = QDomDocument()
+        self.gui_configuration_doc.setContent(QFile(self.gui_configuration_file))
+
+
+    def save_gui_configuration_file(self):
+        #updates and saves the gui configuration file
+        from opus_core.misc import directory_path_from_opus_path
+        from xml.etree.cElementTree import ElementTree, tostring
+        import StringIO
+        
+        str_io = StringIO.StringIO(self.gui_configuration_doc.toString(2))
+        etree = ElementTree(file=str_io)
+        etree.write(self.gui_configuration_file)
+        str_io.close()
+        

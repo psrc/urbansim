@@ -5,4 +5,7 @@
 	<application_options>
 	    <application_title>OPUS</application_title>
 	</application_options>
+  	<font_settings>
+    	<size_adjust>0</size_adjust>
+  	</font_settings>
 </gui_configuration>

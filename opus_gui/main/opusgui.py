@@ -20,6 +20,7 @@ from PyQt4.QtGui import *
 # UI specific includes
 from opus_gui.main.opusmain_ui import Ui_MainWindow
 from opus_gui.main.opusabout import UrbansimAboutGui
+from opus_gui.main.opuspreferences import UrbansimPreferencesGui
 
 from opus_gui.util.consolebase import *
 from opus_gui.config.toolboxbase import *
@@ -75,6 +76,19 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.application_title = application_title_dict['application_title']
         self.setWindowTitle(self.application_title)
 
+        # Loading font size adjustment from gui configuration xml file
+        try:
+            font_settings_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('font_settings').item(0)
+            size_adjust_dict = get_child_values(parent = font_settings_node, 
+                                                child_names = ['size_adjust'])
+            temp_font_size_adjust = int(size_adjust_dict['size_adjust'])
+        except:
+            self.toolboxStuff.reemit_reinit_default_gui_configuration_file()
+            font_settings_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('font_settings').item(0)
+            size_adjust_dict = get_child_values(parent = font_settings_node, 
+                                                child_names = ['size_adjust'])
+            temp_font_size_adjust = int(size_adjust_dict['size_adjust'])
+
         self.splitter.setSizes([400,500])
 
         self.actionOpen_Project_2.setShortcut(QString('Ctrl+O'))
@@ -92,7 +106,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         QObject.connect(self.actionExit, SIGNAL("triggered()"), self.close)
         # About
         QObject.connect(self.actionAbout, SIGNAL("triggered()"), self.openAbout)
-
+        # Preferences
+        QObject.connect(self.actionPreferences, SIGNAL("triggered()"), self.openPreferences)
+        
         # Model System menus
         QObject.connect(self.actionEdit_all_variables, SIGNAL("triggered()"), self.editAllVariables)
         self.actionEdit_all_variables.setEnabled(False)
@@ -193,7 +209,11 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         settings = QSettings()
         self.restoreGeometry(settings.value("Geometry").toByteArray())
         
+        self.font_size_adjust = 0
+        self.changeFontSize(temp_font_size_adjust)
+        
         self.setFocus()
+        
 
     def writeOutput(self,result):
         if result == "":
@@ -217,6 +237,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     def openMapTab(self):
         if self.tabWidget.indexOf(self.tab_mapView) == -1:
             self.tab_mapView.show()
+            self.changeWidgetFontSize(self.tab_mapView, self.font_size_adjust)
             self.tabWidget.insertTab(0,self.tab_mapView,
                                      QIcon(":/Images/Images/map.png"),"Map View")
             self.tabWidget.setCurrentWidget(self.tab_mapView)
@@ -224,6 +245,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     def openPythonTab(self):
         if self.tabWidget.indexOf(self.tab_pythonView) == -1:
             self.tab_pythonView.show()
+            self.changeWidgetFontSize(self.tab_pythonView, self.font_size_adjust)
             self.tabWidget.insertTab(0,self.tab_pythonView,
                                      QIcon(":/Images/Images/python_type.png"),"Python Console")
             self.tabWidget.setCurrentWidget(self.tab_pythonView)
@@ -231,6 +253,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     def openEditorTab(self):
         if self.tabWidget.indexOf(self.tab_editorView) == -1:
             self.tab_editorView.show()
+            self.changeWidgetFontSize(self.tab_editorView, self.font_size_adjust)
             self.tabWidget.insertTab(0,self.tab_editorView,
                                      QIcon(":/Images/Images/table.png"),"Editor View")
             self.tabWidget.setCurrentWidget(self.tab_editorView)
@@ -238,14 +261,25 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     def openLogTab(self):
         if self.tabWidget.indexOf(self.tab_logView) == -1:
             self.tab_logView.show()
+            self.changeWidgetFontSize(self.tab_logView, self.font_size_adjust)
             self.tabWidget.insertTab(0,self.tab_logView,
                                      QIcon(":/Images/Images/folder.png"),"Log View")
             self.tabWidget.setCurrentWidget(self.tab_logView)
+
 
     def openAbout(self):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         wnd = UrbansimAboutGui(self,flags)
         wnd.show()
+        self.changeWidgetFontSize(wnd, self.font_size_adjust)
+
+
+    def openPreferences(self):
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        wnd = UrbansimPreferencesGui(self, flags)
+        wnd.show()
+        self.changeWidgetFontSize(wnd, self.font_size_adjust)
+        
 
     def openConfig(self, config=None):
         # config should be a path to an .xml config file
@@ -465,5 +499,59 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.editorStatusLabel.setText(wintitle)
         self.editorDirty = True
         self.editorSaveFileButton.setEnabled(True)
-
         
+    #font_size manipulation functions
+    def changeFontSize(self, amt):
+        self.font_size_adjust += amt
+        self.changeWidgetFontSize( self, amt)
+        
+    def changeWidgetFontSize(self, widget, amt):
+        #get all QWidget Children of the widget
+        widgetChildren = widget.findChildren(QWidget)
+        
+        #local function to be mapped across all the widget children of the main window
+        def _changeChildFont(widgekid):
+            #if the font size isn't measured in points and the font won't be too small...
+            if widgekid.font().pointSize() == -1 and widgekid.font().pixelSize() + amt > 0:
+                widgekid.font().setPixelSize(widgekid.font().pixelSize() + amt)
+                
+            #if the font size isn't measured in pixels and the font won't be too small...
+            elif widgekid.font().pixelSize() == -1 and widgekid.font().pointSize() + amt > 0:
+                widgekid.font().setPointSize(widgekid.font().pointSize() + amt)   
+            
+            #pixel or point size is too small, will not update it
+            else:
+                return
+            
+            widgekid.updateGeometry()
+            widgekid.update()
+        
+        map(_changeChildFont, widgetChildren)
+        
+
+    def saveGuiConfig(self):
+        #get the font settings node from xml
+        font_settings_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('font_settings').item(0)
+        
+        #go through the children of the font settings node and set the text size correctly
+        node = font_settings_node.firstChild()
+        while not node.isNull():
+            if node.isElement() and node.nodeName() == "size_adjust":
+                #we have a match for size_adjust, now we need to find the text node
+                #in its children and set it to the value of font_size_adjust
+                childElement = node.toElement()
+                if childElement.hasChildNodes():
+                    children = childElement.childNodes()
+                    for x in xrange(0,children.count(),1):
+                        if children.item(x).isText():
+                            textNode = children.item(x).toText()
+                            # Finally set the text node value
+                            textNode.setData(QString(str(self.font_size_adjust)))
+                        
+            node = node.nextSibling()
+            try:
+                self.toolboxStuff.save_gui_configuration_file()
+            except:
+                print "Unexpected error:", sys.exc_info()[0]
+                
+            
