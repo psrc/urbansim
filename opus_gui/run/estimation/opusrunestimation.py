@@ -121,6 +121,7 @@ class OpusEstimation(object):
                 estimation_config = estimation_section['estimation_config']
                 self.config = estimation_config
                 # TODO: put save_estimation results etc into config
+                save_results = estimation_section['save_estimation_results']
                 for model_name in estimation_config['models_to_estimate']:
                     # If we've paused the estimation, wait 10 seconds, and see if we are unpaused.  If we've cancelled,
                     # exit the loop.  Note that this is a fairly coarse level of pause/resume/stop (at the level of
@@ -129,7 +130,7 @@ class OpusEstimation(object):
                         time.sleep(10)
                     if self.cancelled:
                         break
-                    self.er = EstimationRunner(model=model_name, xml_configuration=xml_config, configuration=None)
+                    self.er = EstimationRunner(model=model_name, xml_configuration=xml_config, configuration=None, save_estimation_results=save_results)
                     self.running = True
                     self.er.estimate()
                     self.running = False

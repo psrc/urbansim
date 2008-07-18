@@ -51,6 +51,9 @@
         <non_home_based_employment_location_choice_model choices="Estimate|Skip" type="model">Skip</non_home_based_employment_location_choice_model>
 -->
       </models_to_estimate>
+	    
+	  <save_estimation_results choices="True|False" type="boolean">True</save_estimation_results>
+		
       <real_estate_price_model type="dictionary">
         <agriculture type="submodel">
           <submodel_id type="integer">1</submodel_id>
