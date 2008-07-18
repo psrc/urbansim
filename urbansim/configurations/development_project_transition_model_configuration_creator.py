@@ -28,6 +28,9 @@ class DevelopmentProjectTransitionModelConfigurationCreator(object):
             vacancy_table = 'target_vacancy',
             output_results = 'dptm_results',
             vacancy_variables = None):
+        """vacancy_variables is a dictionary with keys equal to the project types and values equal to 
+        the variable names that determine vacancies. If not given, default values are set by the model.
+        """
         self.debuglevel = debuglevel
         self.location_set = location_set
         self.history_table = history_table
