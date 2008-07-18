@@ -283,7 +283,11 @@ class Table(Visualization):
         for name, computed_indicator in computed_indicators.items():
             for year in years:
                 col_name = computed_indicator.get_computed_dataset_column_name(year = year)
-                i_name = computed_indicator.indicator.name
+                try:
+                    i_name = computed_indicator.gui_indicator_name
+                except:
+                    i_name = computed_indicator.indicator.name
+                    
                 if i_name not in name_mapping:
                     name_mapping[i_name] = [col_name]
                 else:

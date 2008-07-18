@@ -101,6 +101,7 @@ class OpusResultVisualizer(object):
             computed_indicator = interface.get_computed_indicator(indicator = indicator, 
                                                                   source_data = source_data, 
                                                                   dataset_name = dataset_name)
+            computed_indicator.gui_indicator_name = indicator_name
             #####################
             #hack to get plausible primary keys...
             cache_directory = source_data.cache_directory
