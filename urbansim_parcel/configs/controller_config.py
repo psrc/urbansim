@@ -595,9 +595,10 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         hlcm_controller = self["models_configuration"]["household_location_choice_model"]["controller"]
         hlcm_controller["init"]["arguments"]["location_set"] = "building"
         hlcm_controller["init"]["arguments"]["location_id_string"] = "'building_id'"
-        #hlcm_controller["init"]["arguments"]["estimation_weight_string"] = "'urbansim_parcel.building.vacant_residential_units'"
-        hlcm_controller["init"]["arguments"]["estimation_weight_string"] = "'has_eg_1_units=building.residential_units>=1'"
-        hlcm_controller["init"]["arguments"]["capacity_string"] = "'has_eg_1_units=building.residential_units>=1'"
+        hlcm_controller["init"]["arguments"]["estimation_weight_string"] = "'urbansim_parcel.building.vacant_residential_units'"
+        hlcm_controller["init"]["arguments"]["capacity_string"] = "'urbansim_parcel.building.vacant_residential_units'"
+        #hlcm_controller["init"]["arguments"]["estimation_weight_string"] = "'has_eg_1_units=building.residential_units>=1'"
+        #hlcm_controller["init"]["arguments"]["capacity_string"] = "'has_eg_1_units=building.residential_units>=1'"
         hlcm_controller["init"]["arguments"]['sample_size_locations']=30
         hlcm_controller["init"]["arguments"]['sampler']="'opus_core.samplers.weighted_sampler'"
         #hlcm_controller["init"]["arguments"]["submodel_string"] = "'urbansim.household.income_category'"
@@ -611,11 +612,11 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         #hlcm_controller["init"]["arguments"]["filter"] = "'numpy.logical_and(building.residential_units, building.sqft_per_unit)'"
         hlcm_controller["init"]["arguments"]["estimate_config"] = "{'wesml_sampling_correction_variable':'psrc_parcel.building.wesml_sampling_correction_variable'}"
         hlcm_controller["prepare_for_estimate"]["arguments"]["agents_for_estimation_table"] = "'households_for_estimation'"
-        hlcm_controller["prepare_for_estimate"]["arguments"]["filter"] = "'numpy.logical_and(household.building_id>0, household.disaggregate(building.sqft_per_unit>0)) * household.move'" # filtering out agents for estimation with valid location
+        hlcm_controller["prepare_for_estimate"]["arguments"]["filter"] = "'numpy.logical_and(household.building_id>1, household.disaggregate(building.sqft_per_unit>0)) * household.move'" # filtering out agents for estimation with valid location
         #hlcm_controller["prepare_for_estimate"]["arguments"]["filter"] = "'household.move==1'" # filtering out agents for estimation with valid location
         hlcm_controller["run"]["arguments"]["chunk_specification"] ="{'records_per_chunk':50000}"
         hlcm_controller["prepare_for_estimate"]["arguments"]["join_datasets"] = True
-        hlcm_controller["prepare_for_estimate"]["arguments"]["index_to_unplace"] = None
+        hlcm_controller["prepare_for_estimate"]["arguments"]["index_to_unplace"] = 'hrm_index'  #None
         # settng estimation procedure
         #hlcm_controller["estimate"]["arguments"]["procedure"] = "'bhhh_wesml_mnl_estimation'"
         hlcm_controller["estimate"]["arguments"]["procedure"] = "'bhhh_mnl_estimation'"

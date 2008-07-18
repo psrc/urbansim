@@ -20,7 +20,7 @@ class ConfigChangesForEstimation(USConfigChangesForEstimation):
         USConfigChangesForEstimation.__init__(self)
         self['household_location_choice_model'] = {'models': [
                                    #{"real_estate_price_model": ["run"]},                          
-                                   #{"household_relocation_model": ["run"]},
+                                   {"household_relocation_model": ["run"]},
                                    #{"tour_schedule_model": ["run"]},
                                    {"household_location_choice_model": ["estimate"]},
                                    ],
