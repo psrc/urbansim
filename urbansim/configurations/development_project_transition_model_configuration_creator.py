@@ -26,12 +26,19 @@ class DevelopmentProjectTransitionModelConfigurationCreator(object):
             location_set = 'gridcell',
             history_table = 'development_event_history',
             vacancy_table = 'target_vacancy',
-            output_results = 'dptm_results'):
+            output_results = 'dptm_results',
+            vacancy_variables = None):
         self.debuglevel = debuglevel
         self.location_set = location_set
         self.history_table = history_table
         self.vacancy_table = vacancy_table
         self.output_results = output_results
+        self.run_config = None
+        if vacancy_variables is not None:
+            self.run_config = "{"
+            for key, value in vacancy_variables.iteritems():
+                self.run_config += "'%s_vacant_variable': '%s'," % (key, value)
+            self.run_config += "}"
         
     def execute(self):        
         return Configuration({
@@ -49,7 +56,8 @@ class DevelopmentProjectTransitionModelConfigurationCreator(object):
                     'model_configuration': 'model_configuration',
                     'resources': 'model_resources',
                     'vacancy_table': self.vacancy_table,
-                    'year': 'year'
+                    'year': 'year',
+                    'resources': self.run_config
                     },
                 'output': self.output_results,
                 }
@@ -84,7 +92,8 @@ class TestDevelopmentProjectTransitionModelConfigurationCreator(opus_unittest.Op
                     'model_configuration': 'model_configuration',
                     'resources': 'model_resources',
                     'vacancy_table': 'target_vacancy',
-                    'year': 'year'
+                    'year': 'year',
+                    'resources': None
                     },
                 'output': 'dptm_results'
                 }
@@ -100,6 +109,8 @@ class TestDevelopmentProjectTransitionModelConfigurationCreator(opus_unittest.Op
             history_table = 'history_table',
             vacancy_table = 'vacancy_table',
             output_results = 'output_results',
+            vacancy_variables = {'commercial': 'gridcell.my_commercial_vacant_var',
+                                'industrial': 'gridcell.my_industrial_vacant_var'}
             )
         
         expected = Configuration({
@@ -117,7 +128,8 @@ class TestDevelopmentProjectTransitionModelConfigurationCreator(opus_unittest.Op
                     'model_configuration': 'model_configuration',
                     'resources': 'model_resources',
                     'vacancy_table': 'vacancy_table',
-                    'year': 'year'
+                    'year': 'year',
+                    'resources': "{'industrial_vacant_variable': 'gridcell.my_industrial_vacant_var','commercial_vacant_variable': 'gridcell.my_commercial_vacant_var',}"
                     },
                 'output': 'output_results'
                 }
