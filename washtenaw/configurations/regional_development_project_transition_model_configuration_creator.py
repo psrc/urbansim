@@ -53,7 +53,8 @@ class TestDevelopmentProjectTransitionModelConfigurationCreator(opus_unittest.Op
                     'model_configuration': 'model_configuration',
                     'resources': 'model_resources',
                     'vacancy_table': 'target_vacancy',
-                    'year': 'year'
+                    'year': 'year',
+                    'resources': None
                     },
                 'output': 'dptm_results'
                 }
