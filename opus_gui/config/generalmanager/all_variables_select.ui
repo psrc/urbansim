@@ -1,13 +1,12 @@
 <ui version="4.0" >
- <author>Aaron Racicot</author>
- <class>AllVariablesGui</class>
- <widget class="QDialog" name="AllVariablesGui" >
+ <class>AllVariablesSelectGui</class>
+ <widget class="QDialog" name="AllVariablesSelectGui" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>931</width>
-    <height>625</height>
+    <width>1000</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -45,26 +44,6 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="addNew" >
-        <property name="enabled" >
-         <bool>true</bool>
-        </property>
-        <property name="text" >
-         <string>Add New Row</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="deleteRow" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-        <property name="text" >
-         <string>Delete Selected Rows</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="Line" name="line" >
         <property name="orientation" >
          <enum>Qt::Vertical</enum>
@@ -72,12 +51,12 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="saveChanges" >
+       <widget class="QPushButton" name="saveSelections" >
         <property name="enabled" >
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="text" >
-         <string>Save Changes</string>
+         <string>Save Selections</string>
         </property>
        </widget>
       </item>

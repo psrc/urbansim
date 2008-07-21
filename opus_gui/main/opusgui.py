@@ -28,7 +28,7 @@ from opus_gui.run.runmanagerbase import *
 from opus_gui.results.resultManagerBase import *
 from opus_gui.results.xml_helper_methods import get_child_values
 
-from opus_gui.config.generalmanager.all_variables import AllVariablesGui
+from opus_gui.config.generalmanager.all_variables import AllVariablesEditGui
 
 # General system includes
 import sys,time,tempfile,os
@@ -222,7 +222,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
 
     def editAllVariables(self):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        self.all_variables = AllVariablesGui(self,flags)
+        self.all_variables = AllVariablesEditGui(self,flags)
         self.all_variables.show()
             
     def closeCurrentTab(self):

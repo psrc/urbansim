@@ -19,13 +19,19 @@ from PyQt4.QtGui import *
 
 from opus_gui.config.xmlmodelview.opusallvariablestablemodel import OpusAllVariablesTableModel
 from opus_gui.config.xmlmodelview.opusallvariablesdelegate import OpusAllVariablesDelegate
-from opus_gui.config.generalmanager.all_variables_ui import Ui_AllVariablesGui
+from opus_gui.config.generalmanager.all_variables_edit_ui import Ui_AllVariablesEditGui
+from opus_gui.config.generalmanager.all_variables_select_ui import Ui_AllVariablesSelectGui
 
 import random
 
-class AllVariablesGui(QDialog, Ui_AllVariablesGui):
+class AllVariablesGui(object):
+    def __init__(self, mainwindow, fl):
+        pass
+
+class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
     def __init__(self, mainwindow, fl):
         QDialog.__init__(self, mainwindow, fl)
+        AllVariablesGui.__init__(self, mainwindow, fl)
         self.setupUi(self)
         self.mainwindow = mainwindow
         self.all_variables_index = None
