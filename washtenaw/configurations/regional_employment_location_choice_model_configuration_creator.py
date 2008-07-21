@@ -69,6 +69,7 @@ class TestEmploymentLocationChoiceModelConfigurationCreator(opus_unittest.OpusTe
                     'sample_size_locations': 30,
                     'capacity_string': "'vacant_SSS_job_space'",
                     'estimation_weight_string': "'total_number_of_possible_SSS_jobs'",
+                    'simulation_weight_string': None,
                     'filter': None,
                     'estimation_size_agents': 1.,
                     'compute_capacity_flag': True,

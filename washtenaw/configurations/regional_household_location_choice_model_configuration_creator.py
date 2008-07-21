@@ -78,6 +78,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'sample_size_locations': 30,
                     'capacity_string': "'vacant_residential_units'",
                     'estimation_weight_string': "'residential_units'",
+                    'simulation_weight_string': None,
                     'number_of_units_string': "'residential_units'",
                     'number_of_agents_string': "'number_of_households'",
                      'location_id_string': None,
