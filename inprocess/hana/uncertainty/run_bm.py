@@ -60,8 +60,8 @@ if __name__ == "__main__":
     #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/1211/run_4491.2007_12_11_13_58"
     #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0123/run_4960.2008_01_23_10_09"
     #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0124/run_4954.2008_01_23_09_59"
-    #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0131/run_5090.2008_01_31_14_45"
-    cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0307/run_5737_point_est"
+    cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0416"
+    #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0307/run_5737_point_est"
     # where the true data (on a zone level) is stored in a table format 
     observed_data_dir = "/Users/hana/bm/observed_data/"
 
@@ -116,12 +116,12 @@ if __name__ == "__main__":
 #                   'transformation': "sqrt",
 #                   }]
         
-    for group in ['mining', 'constr', 'retail', 'manu', 'wtcu', 'fires', 'gov', 'edu']:
-        known_output = known_output + [
-                {'variable_name': "urbansim_parcel.zone.number_of_jobs_of_sector_group_%s" % group,
-                   'filename': "jobs_by_zones_and_groups", 
-                   'transformation': "sqrt",
-                   }]
+#    for group in ['mining', 'constr', 'retail', 'manu', 'wtcu', 'fires', 'gov', 'edu']:
+#        known_output = known_output + [
+#                {'variable_name': "urbansim_parcel.zone.number_of_jobs_of_sector_group_%s" % group,
+#                   'filename': "jobs_by_zones_and_groups", 
+#                   'transformation': "sqrt",
+#                   }]
           
     for quantity in known_output:
         observed_data.add_quantity(**quantity)
@@ -132,9 +132,11 @@ if __name__ == "__main__":
                          observed_data,                        
                          base_year=2000, 
                          #scaling_parents = scaling,
+                         prefix='run_',
                          package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
     weights = bm.compute_weights()
     print weights
+    #bm.plot_boxplot_r('bm_plot.pdf', weight_threshold=0.1)
 #    bm.export_weights_posterior_mean_and_variance([2020], quantity_of_interest="urbansim_parcel.zone.number_of_households",
 #              directory="/Users/hana/bm/psrc_parcel/simulation_results")
 #    bm.export_weights_posterior_mean_and_variance([2020], quantity_of_interest="urbansim_parcel.zone.number_of_jobs",
