@@ -21,19 +21,22 @@ import sys
 import operator
 
 class OpusAllVariablesTableModel(QAbstractTableModel): 
-    def __init__(self, datain, headerdata, parentWidget=None, *args): 
+    def __init__(self, datain, headerdata, parentWidget=None, editable=True, *args): 
         QAbstractTableModel.__init__(self, parentWidget, *args) 
         self.arraydata = datain
         self.headerdata = headerdata
         self.parentWidget = parentWidget
+        self.editable = editable
  
     def flags(self, index):
         if not index.isValid():
             return Qt.ItemIsEnabled
         if index.column() == 0:
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable # | Qt.ItemIsEditable           
-        else:
+        elif self.editable:
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable                
+        else:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
     def rowCount(self, parent): 
         return len(self.arraydata) 
@@ -84,7 +87,7 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         
 
     def checkStateOfCheckBoxes(self,newItemAdded):
-        if newItemAdded:
+        if newItemAdded and self.editable:
             # If we have a check then we enable delete
             self.parentWidget.deleteRow.setEnabled(True)
         # Else now we loop through the items and see if that was the last one removed
@@ -92,7 +95,7 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         for testCase in self.arraydata:
             if testCase[-2]:
                 foundOne = True
-        if not foundOne:
+        if (not foundOne) and self.editable:
             self.parentWidget.deleteRow.setEnabled(False)        
         
     def setData(self,index,value,role):

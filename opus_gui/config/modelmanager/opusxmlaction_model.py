@@ -22,6 +22,7 @@ from opus_gui.run.estimation.opusrunestimation import OpusEstimation
 from opus_gui.config.managerbase.cloneinherited import CloneInheritedGui
 from opus_gui.config.managerbase.clonenode import CloneNodeGui
 
+from opus_gui.config.generalmanager.all_variables import AllVariablesSelectGui
 
 class OpusXMLAction_Model(object):
     def __init__(self, opusXMLAction):
@@ -65,6 +66,18 @@ class OpusXMLAction_Model(object):
         QObject.connect(self.actCloneNode,
                         SIGNAL("triggered()"),
                         self.cloneNode)
+
+        self.actSelectVariables = QAction(self.applicationIcon,
+                                          "Select Variables",
+                                          self.xmlTreeObject.mainwindow)
+        QObject.connect(self.actSelectVariables,
+                        SIGNAL("triggered()"),
+                        self.selectVariables)
+
+    def selectVariables(self):
+        flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
+        self.all_variables = AllVariablesSelectGui(self.mainwindow,flags)
+        self.all_variables.show()
 
     def runEstimationAction(self):
         # First confirm that the project file needs to be saved
@@ -135,6 +148,11 @@ class OpusXMLAction_Model(object):
                                domElement.attribute(QString("copyable")) == QString("True"):
                             self.menu.addSeparator()
                             self.menu.addAction(self.actCloneNode)
+                        elif domElement.hasAttribute(QString("type")) and \
+                               domElement.attribute(QString("type")) == QString("variable_list"):
+                            self.menu.addSeparator()
+                            self.menu.addAction(self.actSelectVariables)
+
                         if domElement and (not domElement.isNull()) and \
                                domElement.hasAttribute(QString("type")) and \
                                ((domElement.attribute(QString("type")) == QString("dictionary")) or \
@@ -146,5 +164,4 @@ class OpusXMLAction_Model(object):
                 if not self.menu.isEmpty():
                     self.menu.exec_(QCursor.pos())
         return
-
 

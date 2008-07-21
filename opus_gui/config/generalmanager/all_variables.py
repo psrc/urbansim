@@ -25,14 +25,11 @@ from opus_gui.config.generalmanager.all_variables_select_ui import Ui_AllVariabl
 import random
 
 class AllVariablesGui(object):
-    def __init__(self, mainwindow, fl):
-        pass
-
-class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
-    def __init__(self, mainwindow, fl):
-        QDialog.__init__(self, mainwindow, fl)
-        AllVariablesGui.__init__(self, mainwindow, fl)
-        self.setupUi(self)
+    def __init__(self, mainwindow, fl, editable):
+        #if edit_select:
+        #    print "Select GUI"
+        #else:
+        #    print "Edit GUI"
         self.mainwindow = mainwindow
         self.all_variables_index = None
         
@@ -44,10 +41,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         delegate = OpusAllVariablesDelegate(tv)
         tv.setItemDelegate(delegate)
         tv.setSortingEnabled(True)
-
-        # For now, disable the save button until we implement the write in the model...
-        self.saveChanges.setEnabled(False)
-
+        
         # So we have a data structure to define the headers for the table...
         # The first element is empty string because it is over the check box
         header = ["","Name","Dataset","Use","Source","Definition"]
@@ -90,7 +84,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         self.originalList = list(tabledata)
         for i,origListItem in enumerate(tabledata):
             self.originalList[i] = list(origListItem)
-        tm = OpusAllVariablesTableModel(tabledata, header, self)
+        tm = OpusAllVariablesTableModel(tabledata, header, self, editable)
         self.tm = tm
         self.tv = tv
         tv.setModel(tm)
@@ -99,6 +93,85 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         tv.horizontalHeader().setStretchLastSection(True)
         tv.setTextElideMode(Qt.ElideNone)
         self.gridlayout.addWidget(tv)
+
+
+class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
+    def __init__(self, mainwindow, fl):
+        QDialog.__init__(self, mainwindow, fl)
+        self.setupUi(self)
+        # Init the super class and let it know that we are an edit GUI
+        # last param - 0=edit mode 1=select mode
+        AllVariablesGui.__init__(self, mainwindow, fl, True)
+
+        # For now, disable the save button until we implement the write in the model...
+        self.saveChanges.setEnabled(False)
+        
+        #self.mainwindow = mainwindow
+        #self.all_variables_index = None
+        #
+        ## Is the tableview dirty?
+        #self.dirty = False
+        #
+        ##Add a default table
+        #tv = QTableView()
+        #delegate = OpusAllVariablesDelegate(tv)
+        #tv.setItemDelegate(delegate)
+        #tv.setSortingEnabled(True)
+        #
+        ## For now, disable the save button until we implement the write in the model...
+        #self.saveChanges.setEnabled(False)
+        #
+        ## So we have a data structure to define the headers for the table...
+        ## The first element is empty string because it is over the check box
+        #header = ["","Name","Dataset","Use","Source","Definition"]
+        #tabledata = []
+        #self.tabledata = tabledata
+        ## Grab the general section...
+        #tree = self.mainwindow.toolboxStuff.generalManagerTree
+        #self.tree = tree
+        #dbxml = tree.model.index(0,0,QModelIndex()).parent()
+        #all_variables_list = tree.model.findElementIndexByName("expression_library",dbxml,True)
+        #for all_variables in all_variables_list:
+        #    # Should just be one all_variables section
+        #    if all_variables.isValid():
+        #        self.all_variables_index = all_variables
+        #        # Now we have to loop through all the variables and create the data grid for the display
+        #        tsindexlist = tree.model.findElementIndexByType("variable_definition",all_variables,True)
+        #        self.tsindexlist = tsindexlist
+        #        for tsindex in tsindexlist:
+        #            if tsindex.isValid():
+        #                # Now we have a valid variable, we fill in the set for display
+        #                tsitem = tsindex.internalPointer()
+        #                tsnode = tsitem.node()
+        #                if tsnode.isElement():
+        #                    tselement = tsnode.toElement()
+        #                    tselement_text = ""
+        #                    if tselement.hasChildNodes():
+        #                        classchildren = tselement.childNodes()
+        #                        for x in xrange(0,classchildren.count(),1):
+        #                            if classchildren.item(x).isText():
+        #                                #print "Found some text in the classification element"
+        #                                tselement_text = classchildren.item(x).nodeValue()
+        #                    tslist = ["",tselement.tagName(),
+        #                              tselement.attribute(QString("dataset")),
+        #                              tselement.attribute(QString("use")),
+        #                              tselement.attribute(QString("source")),
+        #                              tselement_text]
+        #                    # Add on two slots for keeping track of checked and dirty
+        #                    tslist.extend([0,0])
+        #                    tabledata.append(tslist)
+        #self.originalList = list(tabledata)
+        #for i,origListItem in enumerate(tabledata):
+        #    self.originalList[i] = list(origListItem)
+        #tm = OpusAllVariablesTableModel(tabledata, header, self)
+        #self.tm = tm
+        #self.tv = tv
+        #tv.setModel(tm)
+        #tv.setColumnWidth(0,25)
+        ##tv.selectColumn(1)
+        #tv.horizontalHeader().setStretchLastSection(True)
+        #tv.setTextElideMode(Qt.ElideNone)
+        #self.gridlayout.addWidget(tv)
         
 
     def findOriginalNode(self,list):
@@ -222,4 +295,22 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         self.tm.insertRow(0,["",
                              "New_Node","Dataset","Use","Source","Description",
                              0,0])
+
+
+class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
+    def __init__(self, mainwindow, fl):
+        QDialog.__init__(self, mainwindow, fl)
+        self.setupUi(self)
+        # Init the super class and let it know that we are an edit GUI
+        # last param - 0=edit mode 1=select mode
+        AllVariablesGui.__init__(self, mainwindow, fl, False)
+
+        
+    def on_saveSelections_released(self):
+        print "save pressed"
+        self.close()
+
+    def on_cancelWindow_released(self):
+        #print "cancel pressed"
+        self.close()
 
