@@ -37,6 +37,7 @@ class DatabaseServer(object):
         
         self.open()
         self.show_output = False
+        #print self.get_connection_string()
         
     def open(self):
         connect_args = {}
@@ -51,11 +52,17 @@ class DatabaseServer(object):
         ) 
         
     def get_connection_string(self):
-        if self.protocol != 'mssql':
-            return '%s://%s:%s@%s'%(self.protocol, self.user_name, self.password, self.host_name) 
-        else:
-            database_name = os.environ['MSSQLDEFAULTDB']
+        if self.protocol in ['mssql','postgres']:
+            if self.protocol == 'mssql':
+                database_name = os.environ['MSSQLDEFAULTDB']
+            elif self.protocol == 'postgres':
+                database_name = 'postgres'
+                
             return '%s://%s:%s@%s/%s'%(self.protocol, self.user_name, self.password, self.host_name, database_name) 
+
+        else:
+            return '%s://%s:%s@%s'%(self.protocol, self.user_name, self.password, self.host_name) 
+
 
     def log_sql(self, sql_query, show_output=False):
         if show_output == True:
@@ -130,7 +137,6 @@ class DatabaseServer(object):
                 '''
             result = self.engine.execute(query)
             dbs = [db[0] for db in result.fetchall()]
-            return database_name in dbs
 
         elif self.protocol == 'mssql': #note: this is untested
             import pyodbc
@@ -144,7 +150,8 @@ class DatabaseServer(object):
             dbs = [d[0] for d in c.execute('EXEC sp_databases').fetchall()]
             c.close()
             del c
-            return database_name in dbs
+
+        return database_name in dbs
             
         #TODO: add other protocols
         
