@@ -107,7 +107,6 @@ class AgentLocationChoiceModel(LocationChoiceModel):
     def simulate_submodel(self, data, coefficients, submodel):
         """Keeps agent's probabilities."""
         result = LocationChoiceModel.simulate_submodel(self, data, coefficients, submodel)
-        #self.agents_probabilities[submodel] = self.upc_sequence.get_probabilities()
         return result
 
     def get_movers_from_overfilled_locations(self, agent_set, agents_index):
