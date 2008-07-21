@@ -32,6 +32,7 @@ class HouseholdLocationChoiceModelConfigurationCreator(object):
                 choices = 'urbansim.lottery_choices', # module for making choices
                 capacity_string = 'vacant_residential_units', # attribute of location set that determines capacity and weights for sampling in simulation
                 estimation_weight_string = 'residential_units', # attribute of location set that determines weights for sampling in estimation
+                simulation_weight_string = None, # if this is None, weights are proportional to the capacity 
                 sample_size_locations = 30, # how many locations should be sampled into the set of alternatives
                 portion_to_unplace = 1/12.0, # portion of households to be unplaced before estimation
                 nchunks = 12, # in how many chunks should the simulation run
@@ -63,6 +64,7 @@ class HouseholdLocationChoiceModelConfigurationCreator(object):
         self.choices = choices
         self.capacity_string = capacity_string
         self.estimation_weight_string = estimation_weight_string
+        self.simulation_weight_string = simulation_weight_string
         self.sample_size_locations = sample_size_locations
         self.portion_to_unplace = portion_to_unplace
         self.agents_for_estimation_table_name = agents_for_estimation_table_name
@@ -125,6 +127,7 @@ class HouseholdLocationChoiceModelConfigurationCreator(object):
                     'sample_size_locations': self.sample_size_locations,
                     'capacity_string': get_string_or_None(self.capacity_string),
                     'estimation_weight_string': get_string_or_None(self.estimation_weight_string),
+                    'simulation_weight_string': get_string_or_None(self.simulation_weight_string),
                     'number_of_units_string': get_string_or_None(self.number_of_units_string),
                     'number_of_agents_string': get_string_or_None(self.number_of_agents_string),
                     'location_id_string': get_string_or_None(self.location_id_name),
@@ -215,6 +218,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'sample_size_locations': 30,
                     'capacity_string': "'vacant_residential_units'",
                     'estimation_weight_string': "'residential_units'",
+                    'simulation_weight_string': None,
                     'number_of_units_string': "'residential_units'",
                     'number_of_agents_string': "'number_of_households'",
                     'location_id_string': None,
@@ -317,6 +321,7 @@ class TestHouseholdLocationChoiceModelConfiguration(opus_unittest.OpusTestCase):
                     'sample_size_locations': 2000,
                     'capacity_string': "'vacant_residential_units'",
                     'estimation_weight_string': "'residential_units'",
+                    'simulation_weight_string': None,
                     'number_of_units_string': "'residential_units'",
                     'number_of_agents_string': "'number_of_households'",
                     'location_id_string': "'building_id'",

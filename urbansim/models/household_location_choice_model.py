@@ -28,6 +28,7 @@ class HouseholdLocationChoiceModel(AgentLocationChoiceModel):
             estimation = "opus_core.bhhh_mnl_estimation",
             capacity_string = "vacant_residential_units",
             estimation_weight_string = "residential_units", 
+            simulation_weight_string = None, # if this is None, weights are proportional to the capacity 
             number_of_agents_string = "number_of_households",
             number_of_units_string = "residential_units",            
             sample_proportion_locations = None, 
@@ -46,6 +47,7 @@ class HouseholdLocationChoiceModel(AgentLocationChoiceModel):
                     ("capacity_string", capacity_string),
                     ("number_of_agents_string", number_of_agents_string),
                     ("number_of_units_string", number_of_units_string),
+                    ("weights_for_simulation_string", simulation_weight_string),
                     ("demand_string", demand_string)                                                          
                                           ])
         estimate_config = merge_resources_if_not_None(estimate_config, [ 

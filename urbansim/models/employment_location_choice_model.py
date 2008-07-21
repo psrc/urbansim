@@ -27,6 +27,7 @@ class EmploymentLocationChoiceModel(AgentLocationChoiceModelMember):
             estimation = "opus_core.bhhh_mnl_estimation", 
             capacity_string = "vacant_SSS_job_space",
             estimation_weight_string = "total_number_of_possible_SSS_jobs",
+            simulation_weight_string = None, # if this is None, weights are proportional to the capacity 
             number_of_agents_string = "number_of_SSS_jobs",
             number_of_units_string = "total_number_of_possible_SSS_jobs",
             sample_proportion_locations = None, 
@@ -45,6 +46,8 @@ class EmploymentLocationChoiceModel(AgentLocationChoiceModelMember):
             capacity_string = re.sub('SSS', group_member_name, capacity_string)
         if estimation_weight_string:
             estimation_weight_string = re.sub('SSS', group_member_name, estimation_weight_string)
+        if simulation_weight_string:
+            simulation_weight_string = re.sub('SSS', group_member_name, simulation_weight_string)
         if number_of_agents_string:
             number_of_agents_string = re.sub('SSS', group_member_name, number_of_agents_string)
         if number_of_units_string:
@@ -59,6 +62,7 @@ class EmploymentLocationChoiceModel(AgentLocationChoiceModelMember):
             ("capacity_string", capacity_string),
             ("number_of_agents_string", number_of_agents_string),
             ("number_of_units_string", number_of_units_string),
+            ("weights_for_simulation_string", simulation_weight_string),
             ("demand_string", demand_string)                                                  
             ])
         
