@@ -21,58 +21,29 @@ from opus_core.bayesian_melding import ObservedData
 from opus_core.plot_functions import plot_histogram
 from opus_core.misc import unique_values
 from opus_core.storage_factory import StorageFactory
-from opus_core.resources import Resources
-from urbansim.datasets.zone_dataset import ZoneDataset
-from urbansim.datasets.faz_dataset import FazDataset
-from urbansim.datasets.large_area_dataset import LargeAreaDataset
-from opus_core.session_configuration import SessionConfiguration
 from opus_core.datasets.dataset_pool import DatasetPool
 
-def convert_screenline_report_to_dataset(report_name, cache_directory, years):
-    for year in years:
-        dir = os.path.join(cache_directory, str(year))
-        flt_storage = StorageFactory().get_storage('flt_storage',storage_location = dir)
-        pool = DatasetPool(storage=flt_storage, package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim'])
-        scnodes = pool.get_dataset('screenline_node')
-        scnodes.add_primary_attribute(name='traffic_volume_eh', data=zeros(scnodes.size(), dtype='float32'))
-        full_report_name = os.path.join(dir, report_name)
-        file = open(full_report_name, 'r')
-        file_contents = map(str.strip, file.readlines())
-        not_found_counter = 0
-        for line in file_contents[1:len(file_contents)]:
-            node_i, node_j, value, dummy = str.split(line)
-            try:
-                scnodes.set_value_of_attribute_by_id(attribute='traffic_volume_eh', value=float(value), 
-                                                             id=(int(node_i), int(node_j)))
-            except:
-                not_found_counter+=1
-        print "%s nodes not found in year %s" % (not_found_counter, year)
-        scnodes.write_dataset(out_storage=flt_storage)    
 
 if __name__ == "__main__":
     try: import wingdbstub
     except: pass
-    # set true_data_cache if the true data are stored in a cache (in the same way as an urbansim cache)
-    #true_data_cache = "/scratch/urbbuild/urbansim_cache/psrc/uncertainty/run_1364.2006_12_01_10_42"
-
-    # in what directory is the file 'cache_directories'
-    #cache_directory = "/home/hana/urbansim_cache/psrc/parcel/run_3904.2007_10_19_15_01"
-    #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/1211/run_4491.2007_12_11_13_58"
-    #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0123/run_4960.2008_01_23_10_09"
-    #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0124/run_4954.2008_01_23_09_59"
+    # What directory contains the multiple runs'
     cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0416"
-    #cache_directory = "/Users/hana/urbansim_cache/psrc/parcel/bm/0307/run_5737_point_est"
-    # where the true data (on a zone level) is stored in a table format 
+
+    # Where the observed data is stored
     observed_data_dir = "/Users/hana/bm/observed_data/"
 
-    observed_data = ObservedData(observed_data_dir, 2005, 'tab_storage', 
+    observed_data = ObservedData(observed_data_dir, 
+                                 year=2005, # from what year are the observed data 
+                                 storage_type='tab_storage', # in what format
                                  package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
 
     known_output=[
-                  {'variable_name': "urbansim_parcel.zone.number_of_households",
-                   'filename': "PSRC2005TAZDataNew", 
-                   'transformation': "sqrt",
-                   #'filter': "urbansim_parcel.zone.number_of_households",
+                  {'variable_name': "urbansim_parcel.zone.number_of_households", # What variable does the observed data correspond to
+                   'filename': "PSRC2005TAZDataNew", # In what file are values of this variable
+                   'transformation': "sqrt", # What transformation should be performed (can be set to None)
+                   # Other arguments of the class ObservedDataOneQuantity (in bayesian_melding.py) can be set here. See its doc string.
+                   #'filter': "urbansim_parcel.zone.number_of_households", 
                    },
 #                    {'variable_name': "travel_data.am_single_vehicle_to_work_travel_time",
 #                     'filename': "travel_times", 
@@ -126,16 +97,28 @@ if __name__ == "__main__":
     for quantity in known_output:
         observed_data.add_quantity(**quantity)
         
-    #convert_screenline_report_to_dataset('tveham.rpt', cache_directory, [2006, 2011])
-                                         #[2006,2011, 2016, 2021])
     bm = BayesianMelding(cache_directory, 
                          observed_data,                        
                          base_year=2000, 
-                         #scaling_parents = scaling,
-                         prefix='run_',
+                         prefix='run_', # within 'cache_directory' filter only directories with this prefix
                          package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim', 'opus_core'])
+    
     weights = bm.compute_weights()
     print weights
+    
+    variable_list = map(lambda x: x.get_alias(), bm.observed_data.get_variable_names())
+    n = len(variable_list)
+    for index in range(n):
+        name = variable_list[index]
+        print name
+        print "variance: ", bm.get_variance()[index]
+        print "variance mean: ", bm.get_variance()[index].mean(), " sd: ", sqrt(bm.get_variance()[index].var())
+        print "bias:", bm.get_bias()[index] 
+        print "weight components: ", bm.get_weight_components()[index]
+    
+    ####
+    # The code below has not been tested for a while and might not work 
+    ####
     #bm.plot_boxplot_r('bm_plot.pdf', weight_threshold=0.1)
 #    bm.export_weights_posterior_mean_and_variance([2020], quantity_of_interest="urbansim_parcel.zone.number_of_households",
 #              directory="/Users/hana/bm/psrc_parcel/simulation_results")
@@ -163,3 +146,25 @@ if __name__ == "__main__":
     #print std
     #prob = bm.get_probability_interval(0.8)
     #print prob
+    
+def convert_screenline_report_to_dataset(report_name, cache_directory, years):
+    """This is an obsolete function (not used)."""
+    for year in years:
+        dir = os.path.join(cache_directory, str(year))
+        flt_storage = StorageFactory().get_storage('flt_storage',storage_location = dir)
+        pool = DatasetPool(storage=flt_storage, package_order=['psrc_parcel', 'urbansim_parcel', 'urbansim'])
+        scnodes = pool.get_dataset('screenline_node')
+        scnodes.add_primary_attribute(name='traffic_volume_eh', data=zeros(scnodes.size(), dtype='float32'))
+        full_report_name = os.path.join(dir, report_name)
+        file = open(full_report_name, 'r')
+        file_contents = map(str.strip, file.readlines())
+        not_found_counter = 0
+        for line in file_contents[1:len(file_contents)]:
+            node_i, node_j, value, dummy = str.split(line)
+            try:
+                scnodes.set_value_of_attribute_by_id(attribute='traffic_volume_eh', value=float(value), 
+                                                             id=(int(node_i), int(node_j)))
+            except:
+                not_found_counter+=1
+        print "%s nodes not found in year %s" % (not_found_counter, year)
+        scnodes.write_dataset(out_storage=flt_storage)    
