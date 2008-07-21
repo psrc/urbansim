@@ -101,12 +101,8 @@ class AgentLocationChoiceModel(LocationChoiceModel):
         return all_choices
 
     def run_chunk(self, agents_index, agent_set, specification, coefficients):
-        #self.agents_probabilities = {}
         result = LocationChoiceModel.run_chunk(self, agents_index, agent_set, specification, coefficients)
-        #unplaced = self.get_movers_from_overfilled_locations(agent_set, agents_index, data_objects)
-        #if unplaced.size <= 0: # no capacity collisions
         return result
-        # create a probabilities matrix
 
     def simulate_submodel(self, data, coefficients, submodel):
         """Keeps agent's probabilities."""
