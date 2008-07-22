@@ -22,7 +22,7 @@ from opus_gui.config.xmlmodelview.opusallvariablesdelegate import OpusAllVariabl
 from opus_gui.config.generalmanager.all_variables_edit_ui import Ui_AllVariablesEditGui
 from opus_gui.config.generalmanager.all_variables_select_ui import Ui_AllVariablesSelectGui
 
-import random
+import random,pprint,string
 
 class AllVariablesGui(object):
     def __init__(self, mainwindow, fl, editable):
@@ -142,9 +142,9 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
                                 textNode.setData(list[5])
 
     def on_saveChanges_released(self):
-        print "save pressed"
+        #print "save pressed"
         if self.dirty:
-            print "Need to save and patch the original XML"
+            # print "Need to save and patch the original XML"
             #### General scheme ####
             ## Loop through the new list and see:
             ## 1) are there any nodes that where in the original and have modified
@@ -230,16 +230,77 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
 
 
 class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
-    def __init__(self, mainwindow, fl):
+    def __init__(self, mainwindow, fl, nodeToUpdate=None, callback=None):
         QDialog.__init__(self, mainwindow, fl)
         self.setupUi(self)
         # Init the super class and let it know that we are an edit GUI
         # last param - 0=edit mode 1=select mode
         AllVariablesGui.__init__(self, mainwindow, fl, False)
-
+        self.pp = pprint.PrettyPrinter(indent=4)
+        if nodeToUpdate:
+            self.nodeToUpdate = nodeToUpdate
+        else:
+            self.nodeToUpdate = QDomNode()
+        self.callback = callback
+        self.tm.initCheckBoxes(self.getCurrentList(self.nodeToUpdate))
         
+    def getCurrentList(self,node):
+        if not node.isNull():
+            # We only want to check out this node if it is of type "element"
+            if node.isElement():
+                domElement = node.toElement()
+                if not domElement.isNull():
+                    # Only set the text field to be the string representation of the
+                    # python list of selections.
+                    # We need to grab the text node from the element
+                    if domElement.hasChildNodes():
+                        children = domElement.childNodes()
+                        for x in xrange(0,children.count(),1):
+                            if children.item(x).isText():
+                                textNode = children.item(x).toText()
+                                # Finally set the text node value
+                                return str(textNode.data()).split(',')
+        return []
+                                
+    def updateNodeFromListString(self,node,listString):
+        if not node.isNull():
+            # We only want to check out this node if it is of type "element"
+            if node.isElement():
+                domElement = node.toElement()
+                if not domElement.isNull():
+                    # Only set the text field to be the string representation of the
+                    # python list of selections.
+                    # We need to grab the text node from the element
+                    if domElement.hasChildNodes():
+                        children = domElement.childNodes()
+                        for x in xrange(0,children.count(),1):
+                            if children.item(x).isText():
+                                textNode = children.item(x).toText()
+                                # Finally set the text node value
+                                textNode.setData(listString)
+                                # Here we have to manually mark the model as dirty since
+                                # we are changing out the XML DOM under the models nose
+                                self.tree.model.markAsDirty()
+                                self.tree.model.emit(SIGNAL("layoutChanged()"))
+
     def on_saveSelections_released(self):
-        print "save pressed"
+        #print "save pressed"
+        returnList = []
+        # Loop through the list of lists and test the check box... if checked then add to the
+        # Python list that is returned with selected items
+        for i,testCase in enumerate(self.tabledata):
+            if testCase[-2]:
+                # We have one that is checked... push it into the return list
+                returnList.append(str(testCase[1]))
+        #self.pp.pprint(returnList)
+        returnString = string.join(returnList,',')
+        #print returnString
+        if self.nodeToUpdate:
+            # We need to fill in the XML node for the client
+            self.updateNodeFromListString(self.nodeToUpdate,returnString)
+        if self.callback:
+            # The client wants to be nodified... send back the list and string
+            self.callback(returnList, returnString)
         self.close()
 
     def on_cancelWindow_released(self):

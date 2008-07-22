@@ -74,9 +74,14 @@ class OpusXMLAction_Model(object):
                         SIGNAL("triggered()"),
                         self.selectVariables)
 
+    def selectVariablesCallback(self, returnList, returnString):
+        print returnString
+        
     def selectVariables(self):
+        thisNode = self.currentIndex.internalPointer().node()
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
-        self.all_variables = AllVariablesSelectGui(self.mainwindow,flags)
+        self.all_variables = AllVariablesSelectGui(self.mainwindow,flags,callback=self.selectVariablesCallback,
+                                                   nodeToUpdate=thisNode)
         self.all_variables.show()
 
     def runEstimationAction(self):

@@ -98,6 +98,13 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         if (not foundOne) and self.editable:
             self.parentWidget.deleteRow.setEnabled(False)        
         
+    def initCheckBoxes(self,checkList):
+        # Loop through the items and see if it needs a check mark
+        for testCase in self.arraydata:
+            if checkList.count(testCase[1]) > 0:
+                testCase[-2] = 1
+        self.emit(SIGNAL("layoutChanged()"))
+
     def setData(self,index,value,role):
         # print "Set Data Pressed with %s" % (value.toString())
         if not index.isValid():
