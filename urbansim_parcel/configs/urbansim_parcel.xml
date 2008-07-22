@@ -30,7 +30,7 @@
           <lnempden type="variable_definition" dataset="parcel" use="model variable" source="expression">lnempden = (ln(parcel.disaggregate(urbansim_parcel.zone.number_of_jobs_per_acre))).astype(float32)</lnempden>
           <lnpopden type="variable_definition" dataset="parcel" use="model variable" source="expression">lnpopden = (ln(parcel.disaggregate(urbansim_parcel.zone.population_per_acre))).astype(float32)</lnpopden>
           <inugb type="variable_definition" dataset="parcel" use="model variable" source="expression">inugb = parcel.is_inside_urban_growth_boundary==True</inugb>
-          <hbwavgtmda type="variable_definition">hbwavgtmda = parcel.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_drive_alone)</hbwavgtmda>
+          <hbwavgtmda type="variable_definition" dataset="parcel" use="model variable" source="expression">hbwavgtmda = parcel.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_drive_alone)</hbwavgtmda>
           <is_pre_1940 type="variable_definition" dataset="parcel" use="model variable" source="expression">is_pre_1940 = parcel.aggregate(building.year_built * numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, 1),function=mean) &lt; 1940</is_pre_1940>
         </expression_library>
     <advanced parser_action='category'>
