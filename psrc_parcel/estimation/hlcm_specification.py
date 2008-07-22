@@ -13,7 +13,7 @@
 # 
 
 specification = {
-        0:   #submodel_id
+    -2:   #submodel_id
             [
 #             "a_residential_units = (psrc_parcel.building.a - numpy.mean(psrc_parcel.building.a)) / numpy.std(psrc_parcel.building.a)",
 #
