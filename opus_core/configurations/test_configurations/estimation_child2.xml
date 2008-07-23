@@ -2,8 +2,8 @@
   <general>
     <parent type="file">estimate.xml</parent>
     <expression_library type="dictionary" >
-      <tax type="variable_definition" >tax=urbansim_parcel.parcel.tax+300</tax>
-      <extratax type="variable_definition" >extratax=urbansim_parcel.parcel.extratax</extratax>
+      <tax type="variable_definition" >urbansim_parcel.parcel.tax+300</tax>
+      <extratax type="variable_definition" >urbansim_parcel.parcel.extratax</extratax>
     </expression_library>
   </general>
   <model_manager>

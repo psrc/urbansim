@@ -110,10 +110,11 @@ class XMLConfiguration(object):
         estimation_section = self.get_section('model_manager/estimation')
         model = estimation_section[model_name]
         result = {}
+        lib = self.get_section('general/expression_library')
+        all_vars = map(lambda pair: '%s = %s' % pair, lib.items())
         # sort the list of variables to make it easier to test the results
-        vals = self.get_section('general/expression_library').values()
-        vals.sort()
-        result['_definition_'] = vals
+        all_vars.sort()
+        result['_definition_'] = all_vars
         if model_group is not None:
             model_dict = model[model_group]
             result_group = {model_group:result}
@@ -690,9 +691,9 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'estimation_child.xml')
         config = XMLConfiguration(f)
         ln_cost_str = config.find('general/expression_library/ln_cost')
-        self.assertEqual(ln_cost_str.strip(), '<ln_cost type="variable_definition">ln_cost=ln(psrc.parcel.cost+10)</ln_cost>')
+        self.assertEqual(ln_cost_str.strip(), '<ln_cost type="variable_definition">ln(psrc.parcel.cost+10)</ln_cost>')
         unit_price_str = config.find('general/expression_library/unit_price')
-        self.assertEqual(unit_price_str.strip(), '<unit_price inherited="estimate" type="variable_definition">unit_price=urbansim_parcel.parcel.unit_price</unit_price>')
+        self.assertEqual(unit_price_str.strip(), '<unit_price inherited="estimate" type="variable_definition">urbansim_parcel.parcel.unit_price</unit_price>')
         squid_str = config.find('model_manager/estimation/squid')
         self.assertEqual(squid_str, None)
         
@@ -709,7 +710,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_get_estimation_specification(self):
         f = os.path.join(self.test_configs, 'estimate.xml')
         config = XMLConfiguration(f).get_estimation_specification('real_estate_price_model')
-        should_be = {'_definition_': ['ln_cost=ln(psrc.parcel.cost)', 'unit_price=urbansim_parcel.parcel.unit_price'],
+        should_be = {'_definition_': ['ln_cost = ln(psrc.parcel.cost)', 'unit_price = urbansim_parcel.parcel.unit_price'],
           24: ['ln_cost', 'unit_price']}
         self.assertEqual(config, should_be)
         
@@ -723,7 +724,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_get_estimation_specification_of_child(self):
         f = os.path.join(self.test_configs, 'estimation_child.xml')
         config = XMLConfiguration(f).get_estimation_specification('real_estate_price_model')
-        should_be = {'_definition_': ['ln_cost=ln(psrc.parcel.cost+10)', 'tax=urbansim_parcel.parcel.tax', 'unit_price=urbansim_parcel.parcel.unit_price'],
+        should_be = {'_definition_': ['ln_cost = ln(psrc.parcel.cost+10)', 'tax = urbansim_parcel.parcel.tax', 'unit_price = urbansim_parcel.parcel.unit_price'],
           240: ['ln_cost', 'unit_price']}
         self.assertEqual(config, should_be)
         
@@ -778,8 +779,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
               <parent type="file">estimation_child.xml</parent>
               <parent type="file">estimation_child2.xml</parent>
               <expression_library type="dictionary" >
-                <ln_cost type="variable_definition" >ln_cost=ln(psrc.parcel.cost+100)</ln_cost>
-                <tax type="variable_definition" inherited="estimation_child">tax=urbansim_parcel.parcel.tax</tax>
+                <ln_cost type="variable_definition" >ln(psrc.parcel.cost+100)</ln_cost>
+                <tax type="variable_definition" inherited="estimation_child">urbansim_parcel.parcel.tax</tax>
               </expression_library>
             </general>
             <data_manager inherited="someplace">
@@ -805,7 +806,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
               <parent type="file">estimation_child.xml</parent>
               <parent type="file">estimation_child2.xml</parent>
               <expression_library type="dictionary">
-                <ln_cost type="variable_definition">ln_cost=ln(psrc.parcel.cost+100)</ln_cost>
+                <ln_cost type="variable_definition">ln(psrc.parcel.cost+100)</ln_cost>
                </expression_library>
             </general>
             <model_manager>

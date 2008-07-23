@@ -3,35 +3,35 @@
     <description type="string">Refactored Default UrbanSim parcel project</description>
     <parent type="file">urbansim/configs/urbansim.xml</parent>
         <expression_library type="dictionary">
-          <hwy200 type="variable_definition" dataset="parcel" use="model variable" source="expression">hwy200 = psrc.parcel.distance_to_highway_in_gridcell&lt;200</hwy200>
-          <hwy600 type="variable_definition" dataset="parcel" use="model variable" source="expression">hwy600 = psrc.parcel.distance_to_highway_in_gridcell&lt;600</hwy600>
-          <hwy1000 type="variable_definition" dataset="parcel" use="model variable" source="expression">hwy1000 = psrc.parcel.distance_to_highway_in_gridcell&lt;1000</hwy1000>
-          <hwy2000 type="variable_definition" dataset="parcel" use="model variable" source="expression">hwy2000 = psrc.parcel.distance_to_highway_in_gridcell&lt;2000</hwy2000>
-          <art300 type="variable_definition" dataset="parcel" use="model variable" source="expression">art300 = psrc.parcel.distance_to_arterial_in_gridcell&lt;300</art300>
-          <art600 type="variable_definition" dataset="parcel" use="model variable" source="expression">art600 = psrc.parcel.distance_to_arterial_in_gridcell&lt;600</art600>
-          <ln_bldgage type="variable_definition" dataset="parcel" use="model variable" source="expression">ln_bldgage = (ln(parcel.aggregate(urbansim_parcel.building.age_masked, function=mean))).astype(float32)</ln_bldgage>
-          <lnsqft type="variable_definition" dataset="parcel" use="model variable" source="expression">lnsqft = (ln(urbansim_parcel.parcel.building_sqft)).astype(float32)</lnsqft>
-          <lnsqftunit type="variable_definition" dataset="parcel" use="model variable" source="expression">lnsqftunit = (ln(urbansim_parcel.parcel.building_sqft_per_unit)).astype(float32)</lnsqftunit>
-          <lnlotsqft type="variable_definition" dataset="parcel" use="model variable" source="expression">lnlotsqft = (ln(parcel.parcel_sqft)).astype(float32)</lnlotsqft>
-          <lnunits type="variable_definition" dataset="parcel" use="model variable" source="expression">lnunits = (ln(urbansim_parcel.parcel.residential_units)).astype(float32)</lnunits>
-          <lnlotsqftunit type="variable_definition" dataset="parcel" use="model variable" source="expression">lnlotsqftunit = (ln(urbansim_parcel.parcel.parcel_sqft_per_unit)).astype(float32)</lnlotsqftunit>
-          <far type="variable_definition" dataset="parcel" use="model variable" source="expression">far = (urbansim_parcel.parcel.building_sqft/(parcel.parcel_sqft).astype(float32)).astype(float32)</far>
-          <ln_invfar type="variable_definition" dataset="parcel" use="model variable" source="expression">ln_invfar = (ln(parcel.parcel_sqft/(urbansim_parcel.parcel.building_sqft).astype(float32))).astype(float32)</ln_invfar>
-          <lngcdacbd type="variable_definition" dataset="parcel" use="model variable" source="expression">lngcdacbd = (ln(parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd))).astype(float32)</lngcdacbd>
-          <blngcdacbd type="variable_definition" dataset="parcel" use="model variable" source="expression">blngcdacbd = (ln(building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd))).astype(float32)</blngcdacbd>
-          <lnemp30da type="variable_definition" dataset="parcel" use="model variable" source="expression">lnemp30da = (ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))).astype(float32)</lnemp30da>
-          <lnemp20da type="variable_definition" dataset="parcel" use="model variable" source="expression">lnemp20da = (ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_20_minutes_travel_time_hbw_am_drive_alone))).astype(float32)</lnemp20da>
-          <lnemp10da type="variable_definition" dataset="parcel" use="model variable" source="expression">lnemp10da = (ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone))).astype(float32)</lnemp10da>
-          <lnemp30tw type="variable_definition" dataset="parcel" use="model variable" source="expression">lnemp30tw = (ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_transit_walk))).astype(float32)</lnemp30tw>
-          <lnemp20tw type="variable_definition" dataset="parcel" use="model variable" source="expression">lnemp20tw = (ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_20_minutes_travel_time_hbw_am_transit_walk))).astype(float32)</lnemp20tw>
-          <lnemp10wa type="variable_definition" dataset="parcel" use="model variable" source="expression">lnemp10wa = (ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_walk))).astype(float32)</lnemp10wa>
-          <lnemp20wa type="variable_definition" dataset="parcel" use="model variable" source="expression">lnemp20wa = (ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_20_minutes_travel_time_hbw_am_walk))).astype(float32)</lnemp20wa>
-          <lnavginc type="variable_definition" dataset="parcel" use="model variable" source="expression">lnavginc = (ln(parcel.disaggregate(urbansim_parcel.zone.average_income))).astype(float32)</lnavginc>
-          <lnempden type="variable_definition" dataset="parcel" use="model variable" source="expression">lnempden = (ln(parcel.disaggregate(urbansim_parcel.zone.number_of_jobs_per_acre))).astype(float32)</lnempden>
-          <lnpopden type="variable_definition" dataset="parcel" use="model variable" source="expression">lnpopden = (ln(parcel.disaggregate(urbansim_parcel.zone.population_per_acre))).astype(float32)</lnpopden>
-          <inugb type="variable_definition" dataset="parcel" use="model variable" source="expression">inugb = parcel.is_inside_urban_growth_boundary==True</inugb>
-          <hbwavgtmda type="variable_definition" dataset="parcel" use="model variable" source="expression">hbwavgtmda = parcel.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_drive_alone)</hbwavgtmda>
-          <is_pre_1940 type="variable_definition" dataset="parcel" use="model variable" source="expression">is_pre_1940 = parcel.aggregate(building.year_built * numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, 1),function=mean) &lt; 1940</is_pre_1940>
+          <hwy200 type="variable_definition" dataset="parcel" use="model variable" source="expression">psrc.parcel.distance_to_highway_in_gridcell&lt;200</hwy200>
+          <hwy600 type="variable_definition" dataset="parcel" use="model variable" source="expression">psrc.parcel.distance_to_highway_in_gridcell&lt;600</hwy600>
+          <hwy1000 type="variable_definition" dataset="parcel" use="model variable" source="expression">psrc.parcel.distance_to_highway_in_gridcell&lt;1000</hwy1000>
+          <hwy2000 type="variable_definition" dataset="parcel" use="model variable" source="expression">psrc.parcel.distance_to_highway_in_gridcell&lt;2000</hwy2000>
+          <art300 type="variable_definition" dataset="parcel" use="model variable" source="expression">psrc.parcel.distance_to_arterial_in_gridcell&lt;300</art300>
+          <art600 type="variable_definition" dataset="parcel" use="model variable" source="expression">psrc.parcel.distance_to_arterial_in_gridcell&lt;600</art600>
+          <ln_bldgage type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(parcel.aggregate(urbansim_parcel.building.age_masked, function=mean))).astype(float32)</ln_bldgage>
+          <lnsqft type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(urbansim_parcel.parcel.building_sqft)).astype(float32)</lnsqft>
+          <lnsqftunit type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(urbansim_parcel.parcel.building_sqft_per_unit)).astype(float32)</lnsqftunit>
+          <lnlotsqft type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(parcel.parcel_sqft)).astype(float32)</lnlotsqft>
+          <lnunits type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(urbansim_parcel.parcel.residential_units)).astype(float32)</lnunits>
+          <lnlotsqftunit type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(urbansim_parcel.parcel.parcel_sqft_per_unit)).astype(float32)</lnlotsqftunit>
+          <far type="variable_definition" dataset="parcel" use="model variable" source="expression">(urbansim_parcel.parcel.building_sqft/(parcel.parcel_sqft).astype(float32)).astype(float32)</far>
+          <ln_invfar type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(parcel.parcel_sqft/(urbansim_parcel.parcel.building_sqft).astype(float32))).astype(float32)</ln_invfar>
+          <lngcdacbd type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(parcel.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd))).astype(float32)</lngcdacbd>
+          <blngcdacbd type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(building.disaggregate(psrc.zone.generalized_cost_hbw_am_drive_alone_to_cbd))).astype(float32)</blngcdacbd>
+          <lnemp30da type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone))).astype(float32)</lnemp30da>
+          <lnemp20da type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_20_minutes_travel_time_hbw_am_drive_alone))).astype(float32)</lnemp20da>
+          <lnemp10da type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_drive_alone))).astype(float32)</lnemp10da>
+          <lnemp30tw type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_transit_walk))).astype(float32)</lnemp30tw>
+          <lnemp20tw type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_20_minutes_travel_time_hbw_am_transit_walk))).astype(float32)</lnemp20tw>
+          <lnemp10wa type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_10_minutes_travel_time_hbw_am_walk))).astype(float32)</lnemp10wa>
+          <lnemp20wa type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(parcel.disaggregate(urbansim_parcel.zone.employment_within_20_minutes_travel_time_hbw_am_walk))).astype(float32)</lnemp20wa>
+          <lnavginc type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(parcel.disaggregate(urbansim_parcel.zone.average_income))).astype(float32)</lnavginc>
+          <lnempden type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(parcel.disaggregate(urbansim_parcel.zone.number_of_jobs_per_acre))).astype(float32)</lnempden>
+          <lnpopden type="variable_definition" dataset="parcel" use="model variable" source="expression">(ln(parcel.disaggregate(urbansim_parcel.zone.population_per_acre))).astype(float32)</lnpopden>
+          <inugb type="variable_definition" dataset="parcel" use="model variable" source="expression">parcel.is_inside_urban_growth_boundary==True</inugb>
+          <hbwavgtmda type="variable_definition" dataset="parcel" use="model variable" source="expression">parcel.disaggregate(psrc.zone.trip_weighted_average_time_hbw_from_home_am_drive_alone)</hbwavgtmda>
+          <is_pre_1940 type="variable_definition" dataset="parcel" use="model variable" source="expression">parcel.aggregate(building.year_built * numpy.ma.masked_where(urbansim_parcel.building.has_valid_year_built == 0, 1),function=mean) &lt; 1940</is_pre_1940>
         </expression_library>
     <advanced parser_action='category'>
     <dataset_pool_configuration flags="hidden" type="class">
