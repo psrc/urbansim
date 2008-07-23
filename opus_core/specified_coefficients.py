@@ -274,7 +274,7 @@ class SpecifiedCoefficients(object):
     def match_variable_with_coefficient_names(self, coefnames, varnames):
         """The i-th element of the string array 'coefnames' is matched to the i-th element of the string array 'varnames'.
         """
-        ndisteqs = self.specification.get_nequations()
+        ndisteqs = self.nequations()
 
         for ivar in range(self.n):
             matches = ematch(varnames, self.variable_names[ivar].get_alias())
@@ -431,7 +431,7 @@ class SpecifiedCoefficients(object):
         for i in range(mapping[idx].size):
             names[idx[i]] = self.variable_names[mapping[idx[i]]].get_alias()
         return names
-
+    
 class SpecifiedCoefficientsFor1Submodel(SpecifiedCoefficients):
     """Class for dealing with coefficients as 2D arrays, i.e. coefficients for a specific submodel.
     """
@@ -450,9 +450,9 @@ class SpecifiedCoefficientsFor1Submodel(SpecifiedCoefficients):
                 coef_used = coef_used + where(self.parent.coefmap_alt[:,self.submodel_idx] == i)[0].tolist()
         eqs_used = []
         for i in range(self.parent.nequations()):
-            if (sometrue(self.parent.beta[i,:,self.submodel_idx].ravel()<>0.0)) and \
-                sometrue(self.parent.coefmap[i,:,self.submodel_idx].ravel()>=0):
-                eqs_used.append(i)
+        #    if (sometrue(self.parent.beta[i,:,self.submodel_idx].ravel()<>0.0)) and \
+        #        sometrue(self.parent.coefmap[i,:,self.submodel_idx].ravel()>=0):
+            eqs_used.append(i)
         self.used_variables_idx = array(used) #index of variables that are used by this submodel
         self.used_coef_idx = array(coef_used)
         self.used_equations_idx = array(eqs_used)
