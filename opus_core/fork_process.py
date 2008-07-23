@@ -55,7 +55,7 @@ class ForkProcess(object):
                 
         finally:
             if delete_temp_dir and os.path.exists(pickle_dir):
-                #rmtree(pickle_dir)
+                rmtree(pickle_dir)
                 pass
     
     def _assemble_command_line_call(self, module_name, resources, 
