@@ -34,6 +34,28 @@ class OpusAllVariablesDelegate(QItemDelegate):
                 editor.setCheckState(Qt.Checked)
             else:
                 editor.setCheckState(Qt.Unchecked)
+        elif index.column() == 3:
+            # Column 3 is "Use" with options "model variable", "indicator", or "both"
+            editor = QComboBox(parentView)
+            choices = ["model variable", "indicator", "both"]
+            currentIndex = 0
+            for i,choice in enumerate(choices):
+                editor.addItem(choice)
+                if index.model().data(index,Qt.DisplayRole).toString() == choice:
+                    currentIndex = i
+            editor.setCurrentIndex(currentIndex)
+            return editor
+        elif index.column() == 4:
+            # Column 4 is "Source" with options "primary attribute", "expression", "python module"
+            editor = QComboBox(parentView)
+            choices = ["primary attribute","expression","python module"]
+            currentIndex = 0
+            for i,choice in enumerate(choices):
+                editor.addItem(choice)
+                if index.model().data(index,Qt.DisplayRole).toString() == choice:
+                    currentIndex = i
+            editor.setCurrentIndex(currentIndex)
+            return editor
         else:
             editor = QItemDelegate.createEditor(self, parentView, option, index)
             if type(editor) == QLineEdit:
@@ -44,8 +66,14 @@ class OpusAllVariablesDelegate(QItemDelegate):
         pass
 
     def setModelData(self,editor,model,index):
-        QItemDelegate.setModelData(self,editor,model,index)
+        if type(editor) == QComboBox:
+            model.setData(index,QVariant(editor.currentText()),Qt.EditRole)
+        else:
+            QItemDelegate.setModelData(self,editor,model,index)
 
     def updateEditorGeometry(self, editor, option, index):
-        QItemDelegate.updateEditorGeometry(self,editor,option,index)
+        if type(editor) == QComboBox:
+            editor.setGeometry(option.rect)
+        else:
+            QItemDelegate.updateEditorGeometry(self,editor,option,index)
         

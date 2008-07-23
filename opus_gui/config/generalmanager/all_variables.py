@@ -140,6 +140,10 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
                                 textNode = children.item(x).toText()
                                 # Finally set the text node value
                                 textNode.setData(list[5])
+                    # Here we have to manually mark the model as dirty since
+                    # we are changing out the XML DOM under the models nose
+                    self.tree.model.markAsDirty()
+                    self.tree.model.emit(SIGNAL("layoutChanged()"))
 
     def on_saveChanges_released(self):
         #print "save pressed"
