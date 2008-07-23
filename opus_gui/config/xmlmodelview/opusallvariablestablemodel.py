@@ -32,11 +32,14 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         if not index.isValid():
             return Qt.ItemIsEnabled
         if index.column() == 0:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable # | Qt.ItemIsEditable           
+            if (not self.arraydata[index.row()][-3]) or (not self.editable):
+                return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsUserCheckable
+            else:
+                return Qt.ItemIsEnabled
         elif self.editable:
             return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable                
         else:
-            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+            return Qt.ItemIsEnabled
 
     def rowCount(self, parent): 
         return len(self.arraydata) 
@@ -44,8 +47,8 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
     def columnCount(self, parent): 
         if self.rowCount(parent):
             # We store the state of the row (checked and hidden) as
-            # hidden last elements, so subtract 2
-            return len(self.arraydata[0]) - 2
+            # hidden last elements, so subtract 3
+            return len(self.arraydata[0]) - 3
         else:
             return 0
         

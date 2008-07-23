@@ -78,8 +78,12 @@ class AllVariablesGui(object):
                                       tselement.attribute(QString("use")),
                                       tselement.attribute(QString("source")),
                                       tselement_text]
-                            # Add on two slots for keeping track of checked and dirty
-                            tslist.extend([0,0])
+                            # Add on 3 slots for keeping track of:
+                            # inherited,checked,dirty
+                            if tselement.hasAttribute(QString("inherited")):
+                                tslist.extend([1,0,0])
+                            else:
+                                tslist.extend([0,0,0])
                             tabledata.append(tslist)
         self.originalList = list(tabledata)
         for i,origListItem in enumerate(tabledata):
