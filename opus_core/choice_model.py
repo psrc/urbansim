@@ -30,7 +30,7 @@ from opus_core.class_factory import ClassFactory
 from opus_core.model import get_specification_for_estimation, prepare_specification_and_coefficients
 from opus_core.variables.variable_name import VariableName
 from opus_core.logger import logger
-from numpy import where, zeros, array, arange, ones, take, ndarray, resize, concatenate
+from numpy import where, zeros, array, arange, ones, take, ndarray, resize, concatenate, alltrue
 from numpy import int32, compress, float64
 from numpy.random import permutation
 
@@ -175,7 +175,7 @@ class ChoiceModel(ChunkModel):
         self.model_interaction.create_interaction_datasets(agents_index, {0: index})
 
         self.debug.print_debug("Create specified coefficients ...",4)
-        self.model_interaction.create_specified_coefficients(coefficients, specification)
+        self.model_interaction.create_specified_coefficients(coefficients, specification, self.choice_set.get_id_attribute()[index])
         self.run_config.merge({"index":index})
 
         submodels = self.model_interaction.get_submodels()
@@ -328,7 +328,7 @@ class ChoiceModel(ChunkModel):
         
         self.estimate_config.merge({"index":index})
         self.coefficients = create_coefficient_from_specification(specification)
-        self.model_interaction.create_specified_coefficients(self.coefficients, specification)        
+        self.model_interaction.create_specified_coefficients(self.coefficients, specification, self.choice_set.get_id_attribute()[index])        
         #run estimation
         result = self.estimate_step()
         del self.estimate_config["selected_choice"]
@@ -665,13 +665,24 @@ class ModelInteraction:
             return self.data[submodel][0]
         return self.data[submodel]
         
-    def create_specified_coefficients(self, coefficients, specification):
+    def create_specified_coefficients(self, coefficients, specification, choice_ids=None):
+        equation_ids=None
+        if len(choice_ids.shape) > 1:
+            same_ids = True
+            for i in range(choice_ids.shape[1]):
+                if not alltrue(choice_ids[:,i]==choice_ids[0,i]):
+                    same_ids=False
+                    break
+            if same_ids:
+                equation_ids = choice_ids[0,:]
+        else:
+            equation_ids = choice_ids
         for i in range(self.number_of_choice_sets):
             if i == 0:
                 nchoices = self.model.get_choice_set_size()
             else:
                 nchoices = self.choice_sets[i].size()
-            self.specified_coefficients[i] = SpecifiedCoefficients().create(coefficients, specification, neqs=nchoices)
+            self.specified_coefficients[i] = SpecifiedCoefficients().create(coefficients, specification, neqs=nchoices, equation_ids=equation_ids)
             
     def get_specified_coefficients(self):
         if self.number_of_choice_sets == 1:
@@ -905,13 +916,15 @@ if __name__=="__main__":
             self.assertEqual(ma.allclose(a, 2 , rtol=0.00001), True)
 
         def test_estimate_and_simulate_4_mode_model_with_reference_equation(self):
-            """Like test_estimate_and_simulate_4_mode_model, but the reference equation (the first one) does not have any terms."""
+            """Like test_estimate_and_simulate_4_mode_model, but the reference equation (the first one) does not have any terms.
+            Furthermore, the equations have arbitrary ids.
+            """
             storage = StorageFactory().get_storage('dict_storage')
 
             household_data = {
                 'household_id': arange(10000)+1,
                 'is_low_income': array(5000*[0]+5000*[1]),
-                'choice_id':array(1250*[1] + 1250*[2] + 1250*[3] + 1250*[4] + 10*[4] + 2490*[3] + 10*[1] + 2490*[2])
+                'choice_id':array(1250*[3] + 1250*[5] + 1250*[10] + 1250*[25] + 10*[25] + 2490*[10] + 10*[3] + 2490*[5])
                 }
 
             storage.write_table(
@@ -921,13 +934,13 @@ if __name__=="__main__":
             # create households
             households = Dataset(in_storage=storage, in_table_name='households', id_name="household_id", dataset_name="household")
 
-            modes=array([1,2,3,4])
+            modes=array([3,5,10,25])
 
             specification = EquationSpecification(variables=("household.is_low_income", "constant",
                                                              "household.is_low_income", "constant",
                                                              "household.is_low_income", "constant"),
-                                                  coefficients=( "li2", "c2", "li3", "c3", "li4", "c4"),
-                                                  equations=(2,2,3,3,4,4))
+                                                  coefficients=( "li2", "c2", "li4", "c4", "li3", "c3"),
+                                                  equations=(5,5,25,25,10,10))
             cm = ChoiceModel(choice_set=modes, choices = "opus_core.random_choices")
             coef, dummy = cm.estimate(specification, agent_set = households,
                                        procedure="opus_core.bhhh_mnl_estimation", debuglevel=4)

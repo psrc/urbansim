@@ -279,7 +279,7 @@ class EquationSpecification(object):
         
     def get_nequations(self):
         if self.get_equations().size > 0:
-            return self.get_equations().max()
+            return unique_values(self.get_equations()).size
         return 1
 
     def get_number_of_distinct_variables(self):

@@ -71,8 +71,9 @@ class SpecifiedCoefficients(object):
         self.coefmap_alt = None
         self.other_dimensions_values = {}
         self.other_dimensions_mapping = {}
+        self._equation_index_mapping = {}
 
-    def create(self, coefficients, specification, const=1.0, neqs=1):
+    def create(self, coefficients, specification, const=1.0, neqs=1, equation_ids=None):
         """
         Arguments:
             coefficients - an object of class Coefficients
@@ -82,18 +83,23 @@ class SpecifiedCoefficients(object):
         """
         self.specification = specification
         self.coefficients = self.truncate_coefficients(coefficients)
-        self.create_coefficient_arrays(neqs)
+        self.create_coefficient_arrays(neqs, equation_ids)
         self.create_beta_alt()
         self.check_consistency()
         return self
 
-    def create_coefficient_arrays (self, neqs):
+    def create_coefficient_arrays (self, neqs, equation_ids=None):
         self.variable_names = array(map(lambda x: ModelVariableName(x,
                                          self.constant_string, self.reserved_name_prefix),
                                    self.specification.get_distinct_long_variable_names()))
-        equations = self.specification.get_equations()
         submodels = self.coefficients.get_submodels()
-        self.neqs = int(max(self.specification.get_nequations(),neqs))
+        if equation_ids is not None:
+            self.neqs = int(max(self.specification.get_nequations(),len(equation_ids), neqs))   
+            unique_eqs = equation_ids
+            for ieq in range(unique_eqs.size):
+                self._equation_index_mapping[unique_eqs[ieq]] = ieq
+        else:
+            self.neqs = int(max(self.specification.get_nequations(), neqs))
         self.nsubmodels = int(self.specification.get_nsubmodels())
         names = self.coefficients.get_names()
         if names.size > 0:
@@ -292,8 +298,11 @@ class SpecifiedCoefficients(object):
                         submidx = 0
                         if self.nsubmodels > 1:
                             submidx = self.submodels_mapping[self.specification.get_submodels()[matches[i]]]
-                        if ndisteqs > 1:
-                            eqidx = int(self.specification.get_equations()[matches[i]]-1)
+                        if len(self.specification.get_equations()) > 1:
+                            if len(self._equation_index_mapping.keys()) > 0:
+                                eqidx = self._equation_index_mapping[self.specification.get_equations()[matches[i]]]
+                            else:
+                                eqidx = int(self.specification.get_equations()[matches[i]]-1)
                         else:
                             eqidx = range(self.coefmap.shape[0])
                         coefmap_index = [eqidx,ivar,submidx]
