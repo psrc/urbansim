@@ -122,14 +122,20 @@ class sql_storage(Storage):
             old_data = self.load_table(table_name = table_name)
             old_data.update(table_data)
             table_data = old_data
-            
+
         table_length, _ = self._get_column_size_and_names(table_data)
         
         columns = []
-        for column_name, column_data in table_data.iteritems():
+        for column_name, column_data in table_data.items():
             col_type = self._get_sql_alchemy_type_from_numpy_dtype(column_data.dtype)
-            columns.append(Column(column_name, 
-                                  col_type))
+            
+            if column_name.find('_id') > -1:
+                col = Column(column_name,col_type,primary_key = True)
+                columns.insert(0,col)
+            else: 
+                col = Column(column_name,col_type)
+                columns.append(col)
+                
             if column_data.dtype == 'i':
                 table_data[column_name] = [int(cell) for cell in column_data]
             elif column_data.dtype == 'f':
