@@ -91,10 +91,10 @@ class ResultsManagerXMLHelper:
         variables = self._get_node_group(node_value = 'variable_definition', 
                                     node_attribute = 'type', 
                                     child_attributes = child_attributes,
-                                    attributes = attributes + ['use'])   
+                                    attributes = attributes + ['use', 'source'])   
         indicators = []
         for var in variables:
-            if var['use'] != 'model variable':
+            if var['use'] != 'model variable' and var['source'] == 'expression':
                 indicators.append(var)
         return indicators      
     

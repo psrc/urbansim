@@ -59,12 +59,19 @@ class IndicatorFrameworkInterface:
         
     def get_indicator(self, indicator_name, dataset_name):
 
-        _, expression = self.xml_helper.get_element_attributes(
-                   node_name = indicator_name, 
-                   node_type = 'indicator',
-                   child_attributes = ['expression'])
-
-        attribute = str(expression['expression']).replace('DATASET', dataset_name)
+        indicators = self.xml_helper.get_available_indicator_names(
+                   attributes = ['dataset'])
+        expression = None
+        for indicator in indicators:
+            if dataset_name != indicator['dataset'] or \
+                indicator['name'] != indicator_name:
+                continue
+            expression = indicator['value']
+        
+        if expression is None:
+            raise Exception('Could not find an indicator %s for dataset %s'%(indicator_name, dataset_name))
+        
+        attribute = str(expression)
         new_indicator = Indicator(dataset_name = dataset_name,
                               attribute = attribute)
         return new_indicator
