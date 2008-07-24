@@ -57,7 +57,7 @@ class OpusResultVisualizer(object):
                 succeeded = True
             except:
                 succeeded = False
-                errorInfo = formatExceptionInfo(custom_message = 'Unexpected error in the visualizer')
+                errorInfo = formatExceptionInfo(custom_message = 'Unexpected error in the results visualizer')
                 
                 if self.errorCallback is not None:
                     self.errorCallback(errorInfo)
@@ -67,8 +67,6 @@ class OpusResultVisualizer(object):
         else:
             pass
     
-
-        
     def _visualize(self, args, cache_directory = None):
             
         self.visualizations = {}
