@@ -18,6 +18,7 @@ from PyQt4.QtGui import *
 import os, sys, time
 try:
     from opus_core.configurations.xml_configuration import XMLConfiguration
+    from opus_gui import formatExceptionInfo
     from urbansim.estimation.estimation_runner import EstimationRunner
     WithOpus = True
 except ImportError:
@@ -78,17 +79,6 @@ class OpusEstimation(object):
         self.cancelled = False
         self.statusfile = None
 
-    def formatExceptionInfo(self,maxTBlevel=5):
-        import traceback
-        cla, exc, trbk = sys.exc_info()
-        excName = cla.__name__
-        try:
-            excArgs = exc.__dict__["args"]
-        except KeyError:
-            excArgs = "<no args>"
-        excTb = traceback.format_tb(trbk, maxTBlevel)
-        return (excName, excArgs, excTb)
-
     def pause(self):
         self.paused = True
         print "Pause pressed"
@@ -138,10 +128,8 @@ class OpusEstimation(object):
             except:
                 succeeded = False
                 self.running = False
-                errorInfo = self.formatExceptionInfo()
-                errorString = "Unexpected Error From Estimation :: " + str(errorInfo)
-                print errorInfo
-                self.errorCallback(errorString)
+                errorInfo = formatExceptionInfo(custom_message = 'Unexpected Error From Estimation')
+                self.errorCallback(errorInfo)
             if statusfile is not None:
                 os.remove(statusfile)
             self.finishedCallback(succeeded)

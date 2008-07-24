@@ -17,7 +17,7 @@ try:
     WithOpus = True
     from opus_gui.results.indicator_framework.maker.maker import Maker
     from opus_gui.results.gui_result_interface.indicator_framework_interface import IndicatorFrameworkInterface
-    from opus_gui.results.gui_result_interface.opus_gui_thread import formatExceptionInfo
+    from opus_gui import formatExceptionInfo
     from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
 except ImportError:
     WithOpus = False
@@ -63,29 +63,16 @@ class OpusResultGenerator(object):
                 succeeded = True
             except Exception, e:
                 succeeded = False
-                (exception_type, args, trace) = formatExceptionInfo()
-                error_characterization = 'Unexpected Error From Model'
-                error_message = str(e)
-                errorString = '%s :: %s \n%s\n%s%s'%(
-                    error_characterization,
-                    exception_type,
-                    args,
-                    ''.join(trace),
-                    error_message                                   
-                )
-                print errorString
+                errorinfo = formatExceptionInfo(custom_message = 'Unexpected error in the result generator')
                 if self.errorCallback is not None:
-                    self.errorCallback(errorString)
+                    self.errorCallback(errorinfo)
             if self.finishedCallback is not None:
                 self.finishedCallback(succeeded)
         else:
             pass
 
     def _generate_results(self):
-#        try:
-#            import pydevd;pydevd.settrace()
-#        except:
-#            pass
+
         self.computed_indicators = []
         
         if self.cache_directory is not None:            
@@ -105,6 +92,11 @@ class OpusResultGenerator(object):
                                  dataset_name = self.dataset_name)
         
         maker = Maker()
+
+        try:
+            import pydevd;pydevd.settrace()
+        except:
+            pass
 
         computed_indicator = maker.create(indicator = indicator, 
                                           source_data = source_data)

@@ -15,7 +15,7 @@ try:
     WithOpus = True
     from opus_gui.results.gui_result_interface.opus_result_generator import OpusResultGenerator
     from opus_gui.results.gui_result_interface.opus_result_visualizer import OpusResultVisualizer
-    from opus_gui.results.gui_result_interface.opus_gui_thread import formatExceptionInfo
+    from opus_gui import formatExceptionInfo
 except ImportError:
     WithOpus = False
     print "Unable to import opus core libs for opus indicator group processor"
@@ -73,8 +73,7 @@ class BatchProcessor(object):
                 args['fixed_field_format'].insert(0,('id',str(params['id_format'])))   
             elif output_type == 'sql':
                 from opus_core.database_management.database_configuration import DatabaseConfiguration
-                args['storage_location'] = DatabaseConfiguration(database_name = str(params['database_name']),
-                                                                 test = True)
+                args['storage_location'] = DatabaseConfiguration(protocol = 'postgres', database_name = str(params['database_name']))
             elif output_type == 'esri':
                 args['storage_location'] = str(params['storage_location'])
                 
@@ -82,6 +81,10 @@ class BatchProcessor(object):
             
     def run(self, args = {}):
         succeeded = False
+        
+        if self.errorCallback is not None:
+            self.generator.errorCallback = self.errorCallback
+            self.visualizer.errorCallback = self.errorCallback
         
         try:
             import pydevd;pydevd.settrace()
@@ -119,10 +122,8 @@ class BatchProcessor(object):
             succeeded = True
         except:
             succeeded = False
-            errorInfo = formatExceptionInfo()
-            errorString = "Unexpected Error From Model :: " + str(errorInfo)
-            print errorInfo
-            self.errorCallback(errorString)
+            errorInfo = formatExceptionInfo(custom_message = 'Unexpected error in the batch processor')
+            self.errorCallback(errorInfo)
 
         self.finishedCallback(succeeded)
     

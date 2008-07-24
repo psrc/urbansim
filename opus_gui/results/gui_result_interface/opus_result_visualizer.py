@@ -23,7 +23,7 @@ try:
     from opus_gui.results.gui_result_interface.indicator_framework_interface import IndicatorFrameworkInterface
     from opus_gui.results.indicator_framework.visualizer.visualizers.table import Table
     from opus_core.storage_factory import StorageFactory
-    from opus_gui.results.gui_result_interface.opus_gui_thread import formatExceptionInfo
+    from opus_gui import formatExceptionInfo
 
 except ImportError:
     WithOpus = False
@@ -57,11 +57,11 @@ class OpusResultVisualizer(object):
                 succeeded = True
             except:
                 succeeded = False
-                errorInfo = formatExceptionInfo()
-                errorString = "Unexpected Error From Model :: " + str(errorInfo)
-                print errorInfo
+                errorInfo = formatExceptionInfo(custom_message = 'Unexpected error in the visualizer')
+                
                 if self.errorCallback is not None:
-                    self.errorCallback(errorString)
+                    self.errorCallback(errorInfo)
+                    
             if self.finishedCallback is not None:
                 self.finishedCallback(succeeded)
         else:
@@ -70,6 +70,7 @@ class OpusResultVisualizer(object):
 
         
     def _visualize(self, args, cache_directory = None):
+            
         self.visualizations = {}
         indicators_to_visualize = {}
         interface = IndicatorFrameworkInterface(toolboxStuff = self.toolboxStuff)

@@ -12,3 +12,23 @@
 # other acknowledgments.
 # 
 
+
+def formatExceptionInfo(custom_message = 'Unexpected error', maxTBlevel=5):
+    import traceback, sys
+#    cla, exc, trbk = sys.exc_info()
+    
+#    excTb = traceback.format_tb(trbk, maxTBlevel)
+    fExc = traceback.format_exc(limit=maxTBlevel)
+    
+#    excName = cla.__name__
+#    try:
+#        excArgs = exc.__dict__["args"]
+#    except KeyError:
+#        excArgs = "<no args>"
+            
+    print traceback.format_exc()
+        
+#    errorinfo = (excName, excArgs, excTb)
+
+    errorinfo = '<b>%s</b>\n\nDetails:\n%s'%(custom_message, fExc)    
+    return errorinfo

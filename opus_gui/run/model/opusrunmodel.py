@@ -16,7 +16,7 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import os, sys
-
+from opus_gui import formatExceptionInfo
 
 try:
     from opus_core.tools.start_run import StartRunOptionGroup
@@ -136,17 +136,6 @@ class OpusModel(object):
         self.currentLogfileYear = None
         self.currentLogfileKey = None
 
-    def formatExceptionInfo(self,maxTBlevel=5):
-        import traceback
-        cla, exc, trbk = sys.exc_info()
-        excName = cla.__name__
-        try:
-            excArgs = exc.__dict__["args"]
-        except KeyError:
-            excArgs = "<no args>"
-        excTb = traceback.format_tb(trbk, maxTBlevel)
-        return (excName, excArgs, excTb)
-
     def pause(self):
         self.paused = True
         self._write_command_file('pause')
@@ -209,10 +198,8 @@ class OpusModel(object):
             except:
                 self.running = False
                 succeeded = False
-                errorInfo = self.formatExceptionInfo()
-                errorString = "Unexpected Error From Model :: " + str(errorInfo)
-                print errorInfo
-                self.errorCallback(errorString)
+                errorInfo = formatExceptionInfo(custom_message = 'Unexpected Error From Model')
+                self.errorCallback(errorInfo)
             if self.statusfile is not None:
                 os.remove(self.statusfile)
             self.finishedCallback(succeeded)
