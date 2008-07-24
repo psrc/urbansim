@@ -97,6 +97,14 @@ class Baseline(UrbansimParcelConfiguration):
                     "workplace_choice_model_for_resident_coefficients",
                     "workplace_choice_model_for_resident_specification",
                     "development_project_proposals",
+                    ## some attribute coding lookup tables
+                    "education",
+                    "employment_status",
+                    "grade",
+                    "race_names",
+                    "relationship",
+                    "sex",
+                    "student",
                     ],
                 tables_to_cache_nchunks={'parcels': 1},
                 unroll_gridcells = False
