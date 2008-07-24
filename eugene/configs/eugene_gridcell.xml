@@ -45,7 +45,7 @@
     <test_model_config type="string" />
   </model_manager>
   <scenario_manager>
-    <Eugene_baseline copyable="True" executable="True" setexpanded="True" type="scenario">
+    <Eugene_baseline executable="True" copyable="True" setexpanded="True" type="scenario">
       <parent type="scenario_name">default_scenario</parent>
       <base_year type="integer">1980</base_year>
       <years_to_run config_name="years" type="tuple">
@@ -84,7 +84,9 @@
         <Class_name flags="hidden" type="string">CreatingBaseyearCacheConfiguration</Class_name>
         <Class_path flags="hidden" type="string">urbansim.configurations.creating_baseyear_cache_configuration</Class_path>
         <scenario_runs_directory config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">eugene_gridcell/runs</scenario_runs_directory>
-        <cache_directory_root parser_action="prefix_with_opus_data_path" type="directory">eugene_gridcell/runs</cache_directory_root>
+        <scenario_runs_directory config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">seattle_parcel/runs</scenario_runs_directory>
+
+        <cache_directory_root config_name="cache_directory_root" parser_action="prefix_with_opus_data_path" type="directory">eugene_gridcell/runs</cache_directory_root>
         <cache_from_mysql choices="True|False" type="boolean">False</cache_from_mysql>
         <baseyear_cache type="class">
           <Class_name flags="hidden" type="string">BaseyearCacheConfiguration</Class_name>
@@ -170,6 +172,7 @@
     </Eugene_baseline>
   </scenario_manager>
   <results_manager>
+  <!-- 
     <Indicator_libraries setexpanded="True" type="group">
       <model.gridcell type="indicator_library">
         <population type="indicator">
@@ -200,6 +203,7 @@
         </residential_units>
       </my_indicators>
     </Indicator_libraries>
+ -->
     <Indicator_batches setexpanded="True" type="group">
     </Indicator_batches>
     <Simulation_runs setexpanded="True" type="all_source_data">

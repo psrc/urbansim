@@ -586,6 +586,7 @@
       </Seattle_baseline>
   </scenario_manager>
   <results_manager>
+  <!--
     <Indicator_libraries setexpanded="True" type="group">
       <my_indicators append_to="True" type="indicator_library">
         <PostHS_PVT followers="global_population_density" type="indicator">
@@ -638,6 +639,7 @@
         </TAZ2003ID>
         </my_indicators>
     </Indicator_libraries>
+-->
     <Results setexpanded="True" type="selectable_list" />
   </results_manager>
 </opus_project>

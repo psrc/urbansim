@@ -446,6 +446,7 @@
     </estimation>
   </model_manager>
   <results_manager>
+  <!--
     <Indicator_libraries type="group" setexpanded="True" >
       <standard_indicators type="indicator_library" >
         <population type="indicator" >
@@ -457,6 +458,7 @@
       </standard_indicators>
       <my_indicators append_to="True" type="indicator_library" />
     </Indicator_libraries>
+   -->
     <Indicator_batches type="group" setexpanded="True" />
     <Simulation_runs followers="Results" type="all_source_data" setexpanded="True" />
     <Results type="selectable_list" setexpanded="True" />

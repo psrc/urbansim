@@ -87,10 +87,16 @@ class ResultsManagerXMLHelper:
                                     node_attribute = 'type', 
                                     child_attributes = attributes)  
                 
-    def get_available_indicator_names(self, attributes = []):
-        return self._get_node_group(node_value = 'indicator', 
+    def get_available_indicator_names(self, attributes = [],child_attributes = []):
+        variables = self._get_node_group(node_value = 'variable_definition', 
                                     node_attribute = 'type', 
-                                    child_attributes = attributes)         
+                                    child_attributes = child_attributes,
+                                    attributes = attributes + ['use'])   
+        indicators = []
+        for var in variables:
+            if var['use'] != 'model variable':
+                indicators.append(var)
+        return indicators      
     
     def get_available_run_info(self, attributes = []):
         return self._get_node_group(node_value = 'source_data', 
@@ -105,7 +111,8 @@ class ResultsManagerXMLHelper:
     def _get_node_group(self,
                         node_value, 
                         node_attribute = 'type',
-                        child_attributes = []):
+                        child_attributes = [],
+                        attributes = []):
         domDocument = self.toolboxStuff.doc
         node_list = elementsByAttributeValue(
              domDocument = domDocument, 
@@ -115,7 +122,11 @@ class ResultsManagerXMLHelper:
         group = []
         for element, node in node_list:
             item_name = element.nodeName()
-            item_info = {'name' : item_name}
+            item_info = {'name' : item_name,
+                         'value': element.text()}
+            
+            for attribute in attributes:
+                item_info[attribute] = element.attribute(QString(attribute))
 
             if child_attributes != []:
                 attribute_vals = get_child_values(
@@ -189,7 +200,7 @@ class ResultsManagerXMLHelper:
         
         if node_type is None: 
             if int(elements.length()) > 1:
-                raise 'There are multiple xml elements named %s'%str(node_name)
+                raise Exception('There are multiple xml elements named %s'%str(node_name))
             else: 
                 matching_element = elements.item(0)
         else:
@@ -203,12 +214,11 @@ class ResultsManagerXMLHelper:
                         break
 
         if not matching_element: 
-            raise 'Could not find element %s of type %s'%(str(node_name), str(node_type))
+            raise Exception('Could not find element %s of type %s'%(str(node_name), str(node_type)))
 
         child_attributes = get_child_values(parent = matching_element, 
                                  child_names = child_attributes,
                                  all = all)
-
         return matching_element, child_attributes        
         
         
