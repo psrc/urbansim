@@ -39,17 +39,20 @@ class OpusDatabase(object):
         self.database_name = database_name
         self.database_server_config = database_server_configuration
         
+        self.open()
+        self.show_output = False
+
+    def get_connection_string(self):
+        return '%s://%s:%s@%s/%s'%(self.protocol, self.user_name, self.password, self.host_name, self.database_name) 
+    
+    def open(self):
         self.engine = create_engine(self.get_connection_string())
         self.metadata = MetaData(
             bind = self.engine,
             reflect = True
         )  
         
-        self.show_output = False
-
-    def get_connection_string(self):
-        return '%s://%s:%s@%s/%s'%(self.protocol, self.user_name, self.password, self.host_name, self.database_name) 
-    
+        
     def close(self):
         """Explicitly close the connection, without waiting for object deallocation"""
         self.engine.dispose()
@@ -141,6 +144,13 @@ class OpusDatabase(object):
     def get_tables_in_database(self):
         """Returns a list of the tables in this database chain."""
         return self.metadata.tables.keys()
+    
+    def get_primary_keys_for_table(self, table):
+        primary_keys = []
+        for col in table.c:
+            if col.primary_key:
+                primary_keys.append(col)
+        return primary_keys
                                             
 def type_mapper(type_val):
     filter_data = {"INTEGER" : Integer,
