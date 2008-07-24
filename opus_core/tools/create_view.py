@@ -1,5 +1,8 @@
 from opus_core.datasets.dataset_factory import DatasetFactory
 
+#a simple script for creating a view on an indicator table 
+#and the dataset spatial table for processing in postgis
+
 def create_view(database, table_to_link_name, dataset_name):
     df = DatasetFactory()
     spatial_table_name = '%s_shp'%df._table_module_class_names_for_dataset(dataset_name)[0]
