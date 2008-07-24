@@ -97,6 +97,7 @@ class Baseline(UrbansimParcelConfiguration):
                     "workplace_choice_model_for_resident_coefficients",
                     "workplace_choice_model_for_resident_specification",
                     "development_project_proposals",
+                    "tours",
                     ## some attribute coding lookup tables
                     "education",
                     "employment_status",
