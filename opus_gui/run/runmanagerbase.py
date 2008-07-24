@@ -451,7 +451,7 @@ class ModelGuiElement(QWidget):
     def on_indicatorBox(self):
         indicator_name = str(self.diagnostic_indicator_name.currentText())
         if indicator_name == '(select indicator)':
-            raise 'need to select an indicator!!'
+            raise Exception('need to select an indicator!!')
 
         dataset_name = self.diagnostic_dataset_name.currentText()
         year = int(str(self.diagnostic_year.currentText()))
@@ -739,7 +739,10 @@ class ModelGuiElement(QWidget):
         self.running = False
         self.paused = False
         self.pbnStartModel.setText(QString("Start Model..."))
-        QMessageBox.warning(self.mainwindow,"Warning",errorMessage)
+        m = QMessageBox(self.mainwindow)
+        m.setText(errorMessage)
+        m.setIcon(QMessageBox.Warning)
+        m.show()
 
 
 class EstimationGuiElement(QWidget):

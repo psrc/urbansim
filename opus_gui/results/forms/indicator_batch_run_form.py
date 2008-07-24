@@ -201,4 +201,7 @@ class IndicatorBatchRunForm(QDialog):
     
 
     def runErrorFromThread(self,errorMessage):
-        QMessageBox.warning(self.mainwindow,"Warning",errorMessage)
+        m = QMessageBox(self.mainwindow)
+        m.setText(errorMessage)
+        m.setIcon(QMessageBox.Warning)
+        m.show()
