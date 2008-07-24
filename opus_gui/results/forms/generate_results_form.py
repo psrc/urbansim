@@ -298,7 +298,4 @@ class GenerateResultsForm(QDialog):
         self.close()
     
     def runErrorFromThread(self,errorMessage):
-        m = QMessageBox(self.mainwindow)
-        m.setText(errorMessage)
-        m.setIcon(QMessageBox.Warning)
-        m.show()
+        QMessageBox.warning(self.mainwindow, 'Warning', errorMessage)

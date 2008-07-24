@@ -312,8 +312,4 @@ class AdvancedVisualizationForm(QWidget):
 
 
     def runErrorFromThread(self,errorMessage):
-        m = QMessageBox(self.mainwindow)
-        m.setText(errorMessage)
-        m.setIcon(QMessageBox.Warning)
-        print m.textFormat()
-        m.show()
+        QMessageBox.warning(self.mainwindow, 'Warning', errorMessage)

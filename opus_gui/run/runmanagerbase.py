@@ -739,10 +739,7 @@ class ModelGuiElement(QWidget):
         self.running = False
         self.paused = False
         self.pbnStartModel.setText(QString("Start Model..."))
-        m = QMessageBox(self.mainwindow)
-        m.setText(errorMessage)
-        m.setIcon(QMessageBox.Warning)
-        m.show()
+        QMessageBox.warning(self.mainwindow,'Warning', errorMessage)
 
 
 class EstimationGuiElement(QWidget):
