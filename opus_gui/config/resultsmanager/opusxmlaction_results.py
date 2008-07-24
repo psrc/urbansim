@@ -151,12 +151,12 @@ class OpusXMLAction_Results(object):
 
     def editIndicator(self, already_exists = True):
 
-        if self.xmlTreeObject.model.isDirty():
-            # Prompt the user to save...
-            QMessageBox.warning(self.xmlTreeObject.mainwindow,
-                                "Warning",
-                                "Please save changes to project before generating results")               
-            return 
+#        if self.xmlTreeObject.model.isDirty():
+#            # Prompt the user to save...
+#            QMessageBox.warning(self.xmlTreeObject.mainwindow,
+#                                "Warning",
+#                                "Please save changes to project before generating results")               
+#            return 
 
         if already_exists:
             currentIndex = self.currentIndex
@@ -203,12 +203,12 @@ class OpusXMLAction_Results(object):
                                             indicator_name = indicator)
         
     def configureNewBatchIndicatorVisualization(self, viz):
-        if self.xmlTreeObject.model.isDirty():
-            # Prompt the user to save...
-            QMessageBox.warning(self.xmlTreeObject.mainwindow,
-                                "Warning",
-                                "Please save changes to project")               
-            return 
+#        if self.xmlTreeObject.model.isDirty():
+#            # Prompt the user to save...
+#            QMessageBox.warning(self.xmlTreeObject.mainwindow,
+#                                "Warning",
+#                                "Please save changes to project")               
+#            return 
 
         batch_name = self.currentIndex.internalPointer().node().toElement().tagName()
         self.xmlTreeObject.mainwindow.resultManagerStuff.configureNewIndicatorBatchVisualization(
@@ -216,12 +216,12 @@ class OpusXMLAction_Results(object):
             batch_name = batch_name)
         
     def deleteRun(self):
-        if self.xmlTreeObject.model.isDirty():
-            # Prompt the user to save...
-            QMessageBox.warning(self.xmlTreeObject.mainwindow,
-                                "Warning",
-                                "Please save changes to project")               
-            return 
+#        if self.xmlTreeObject.model.isDirty():
+#            # Prompt the user to save...
+#            QMessageBox.warning(self.xmlTreeObject.mainwindow,
+#                                "Warning",
+#                                "Please save changes to project")               
+#            return 
         
         node = self.currentIndex.internalPointer().node()
         vals = get_child_values(parent = node, child_names = ['cache_directory'])
@@ -242,12 +242,12 @@ class OpusXMLAction_Results(object):
         self.removeNode()
         
     def configureExistingBatchIndicatorVisualization(self):
-        if self.xmlTreeObject.model.isDirty():
-            # Prompt the user to save...
-            QMessageBox.warning(self.xmlTreeObject.mainwindow,
-                                "Warning",
-                                "Please save changes to project")               
-            return 
+#        if self.xmlTreeObject.model.isDirty():
+#            # Prompt the user to save...
+#            QMessageBox.warning(self.xmlTreeObject.mainwindow,
+#                                "Warning",
+#                                "Please save changes to project")               
+#            return 
 
         self.xmlTreeObject.mainwindow.resultManagerStuff.configureExistingIndicatorBatchVisualization(
             selected_index = self.currentIndex)      
@@ -273,27 +273,27 @@ class OpusXMLAction_Results(object):
     def indicatorBatchRun(self, simulation_run):
         print "indicatorBatchRun pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
-        if not self.xmlTreeObject.model.isDirty():
-            self.xmlTreeObject.mainwindow.resultManagerStuff.addRunIndicatorBatchForm(
-                batch_name = self.currentIndex.internalPointer().node().toElement().tagName(),
-                simulation_run = simulation_run)
-        else:
-            # Prompt the user to save...
-            QMessageBox.warning(self.xmlTreeObject.mainwindow,
-                                "Warning",
-                                "Please save changes to project before generating results")
+#        if not self.xmlTreeObject.model.isDirty():
+        self.xmlTreeObject.mainwindow.resultManagerStuff.addRunIndicatorBatchForm(
+            batch_name = self.currentIndex.internalPointer().node().toElement().tagName(),
+            simulation_run = simulation_run)
+#        else:
+#            # Prompt the user to save...
+#            QMessageBox.warning(self.xmlTreeObject.mainwindow,
+#                                "Warning",
+#                                "Please save changes to project before generating results")
                       
     def generateResults(self):
         print "generateResults pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())
-        if not self.xmlTreeObject.model.isDirty():
-            self.xmlTreeObject.mainwindow.resultManagerStuff.addGenerateIndicatorForm(
-                selected_item = self.currentIndex.internalPointer().node().toElement().tagName())
-        else:
-            # Prompt the user to save...
-            QMessageBox.warning(self.xmlTreeObject.mainwindow,
-                                "Warning",
-                                "Please save changes to project before generating results")
+#        if not self.xmlTreeObject.model.isDirty():
+        self.xmlTreeObject.mainwindow.resultManagerStuff.addGenerateIndicatorForm(
+            selected_item = self.currentIndex.internalPointer().node().toElement().tagName())
+#        else:
+#            # Prompt the user to save...
+#            QMessageBox.warning(self.xmlTreeObject.mainwindow,
+#                                "Warning",
+#                                "Please save changes to project before generating results")
 
     def getInfoSimulationRuns(self):
         window = GetRunInfo(self,self.currentIndex)
@@ -327,13 +327,13 @@ class OpusXMLAction_Results(object):
     def viewResultsAdvanced(self):
         print "viewResultsAdvanced pressed with column = %s and item = %s" % \
               (self.currentColumn, self.currentIndex.internalPointer().node().toElement().tagName())                  
-        if not self.xmlTreeObject.model.isDirty():
-            self.xmlTreeObject.mainwindow.resultManagerStuff.addAdvancedVisualizationForm()
-        else:
-            # Prompt the user to save...
-            QMessageBox.warning(self.xmlTreeObject.mainwindow,
-                                "Warning",
-                                "Please save changes to project before generating results")
+#        if not self.xmlTreeObject.model.isDirty():
+        self.xmlTreeObject.mainwindow.resultManagerStuff.addAdvancedVisualizationForm()
+#        else:
+#            # Prompt the user to save...
+#            QMessageBox.warning(self.xmlTreeObject.mainwindow,
+#                                "Warning",
+#                                "Please save changes to project before generating results")
 
     def removeNode(self):
         #print "Remove Node Pressed"
