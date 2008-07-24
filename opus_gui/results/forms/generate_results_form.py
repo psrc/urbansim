@@ -233,15 +233,15 @@ class GenerateResultsForm(QDialog):
 
         source_text = QString(self.co_source_data.currentText())
         if str(source_text) == '[select]':
-            raise 'need to select a data source!!'
+            raise Exception('need to select a data source!!')
         
         indicator_text = QString(self.co_indicator_name.currentText())
         if str(indicator_text) == '[select]':
-            raise 'need to select an indicator!!'
+            raise Exception('need to select an indicator!!')
         
         dataset_name = str(self.co_dataset_name.currentText())
         if dataset_name == '[select]':
-            raise 'need to select a dataset!!'
+            raise Exception('need to select a dataset!!')
         
         start_year = int(self.co_start_year.currentText())
         end_year = int(self.co_end_year.currentText())
@@ -298,4 +298,7 @@ class GenerateResultsForm(QDialog):
         self.close()
     
     def runErrorFromThread(self,errorMessage):
-        QMessageBox.warning(self.mainwindow,"Warning",errorMessage)
+        m = QMessageBox(self.mainwindow)
+        m.setText(errorMessage)
+        m.setIcon(QMessageBox.Warning)
+        m.show()

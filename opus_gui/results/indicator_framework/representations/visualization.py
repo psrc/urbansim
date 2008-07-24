@@ -40,4 +40,4 @@ class Visualization(object):
                                 self.table_name + '.' + self.file_extension)
         except:
             if not isinstance(self.storage_location, str):
-                raise 'get_file_path() only works for visualizations with results output to file system.'
+                raise Exception('get_file_path() only works for visualizations with results output to file system.')

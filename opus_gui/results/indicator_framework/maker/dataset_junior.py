@@ -81,10 +81,10 @@ class DatasetJunior(object):
              if one dataset does not have a given primary key'''
         
         if not self.reduced or not dataset.reduced:
-            raise 'cannot join a non-reduced DatasetJunior object'
+            raise Exception('cannot join a non-reduced DatasetJunior object')
             
         if self.primary_keys != dataset.primary_keys:
-            raise 'cannot join the datasets, the primary key columns do not match'
+            raise Exception('cannot join the datasets, the primary key columns do not match')
         
         if join_columns is None: 
             join_columns = self.primary_keys
