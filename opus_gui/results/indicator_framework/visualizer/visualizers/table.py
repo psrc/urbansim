@@ -179,7 +179,8 @@ class Table(Visualization):
                                                       if col not in primary_keys]),
                 computed_indicators = computed_indicators,
                 years = [year],
-                primary_keys = primary_keys)
+                primary_keys = primary_keys,
+                dataset_name = dataset_name)
 
             viz_metadata.append(([name for name, computed_name in attributes],
                                  table_name,
@@ -213,7 +214,8 @@ class Table(Visualization):
                                                      if col not in primary_keys]),
                 computed_indicators = computed_indicators,
                 years = years,
-                primary_keys = primary_keys
+                primary_keys = primary_keys,
+                dataset_name = dataset_name
             )
 
             viz_metadata.append(([name], table_name, years))
@@ -245,7 +247,8 @@ class Table(Visualization):
                                                if col not in primary_keys],
             computed_indicators = computed_indicators,
             years = years,
-            primary_keys = primary_keys
+            primary_keys = primary_keys,
+            dataset_name = dataset_name
         )
         return [([name for name, computed_name in attributes], table_name, years)]
 
@@ -256,7 +259,8 @@ class Table(Visualization):
                           column_names, 
                           computed_indicators,
                           primary_keys,
-                          years):
+                          years,
+                          dataset_name):
         kwargs = {}
         if self.output_type in ['csv','tab']:
             kwargs['fixed_column_order'] = column_names
@@ -276,6 +280,17 @@ class Table(Visualization):
             table_data = table_data,
         #    column_names = column_names,
             **kwargs)
+        
+        if self.output_type == 'sql':
+            try:
+                from opus_core.tools.create_view import create_view
+                create_view(database = self.output_storage._get_db(),
+                table_to_link_name = table_name,
+                dataset_name = dataset_name)
+            except:
+                import traceback
+                traceback.print_exc()
+                
     
     def build_format_string(self, computed_indicators, column_names, years, primary_keys):
         format_list = []
