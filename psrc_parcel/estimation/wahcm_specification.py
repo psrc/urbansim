@@ -32,12 +32,13 @@ specification = {
     #"_definition_": all_variables,                               
     
     -2:{
-        "equation_ids":(1, 2),  # 1:work-at-home; 2:work non-home-based
-        "calibrated_constant=constant+0.0132":(0, "act_2"),
+        "equation_ids":(1, 0),  # 1:work-at-home; 0:work non-home-based
+        "constant":("beta1_asc", 0),
+        #"constant+0.0132":(0, "beta2_asc"),
         #"person.disaggregate(household.persons)":("beta1_hhsize", 0),
         #"person.disaggregate(household.children > 0)":("beta1_haschild", 0),
         #"income=person.disaggregate(household.income)":("beta1_income", 0),
-        "kemp30m=person.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone, intermediates=[household])/1000":(0, "beta2_kemp30m"),
+        "kemp30m=person.disaggregate(urbansim_parcel.zone.employment_within_30_minutes_travel_time_hbw_am_drive_alone, intermediates=[household])/1000":(0, "beta0_kemp30m"),
         #"hlogsum=person.disaggregate(psrc_parcel.household.trip_weighted_average_logsum_hbw_am_from_residence)":(0, "beta2_hlogsum"),        
         #"plogsum1=person.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_1, intermediates=[household])":(0, "beta2_logsum1"),        
         #"plogsum2=person.disaggregate(psrc.zone.trip_weighted_average_logsum_hbw_am_income_2, intermediates=[household])":(0, "beta2_logsum2"),        
