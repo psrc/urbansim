@@ -159,9 +159,15 @@ class OpusAllVariablesTableModel(QAbstractTableModel):
         return returnval
 
     def deleteAllChecked(self):
+        listIndexToRemove = []
         for i,testCase in enumerate(self.arraydata):
             if testCase[-2]:
-                self.removeRow(i)
+                listIndexToRemove.insert(0,i)
+        # List is now reverse so we will be poping items
+        # off the end of the main element list and our
+        # indexes will remain valid... i.e. go big to little index
+        for index in listIndexToRemove:
+            self.removeRow(index)
         self.checkStateOfCheckBoxes(False)
                 
         
