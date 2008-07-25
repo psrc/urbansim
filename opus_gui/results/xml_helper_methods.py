@@ -92,7 +92,7 @@ class ResultsManagerXMLHelper:
                                     attributes = attributes + ['use', 'source'])   
         indicators = []
         for var in variables:
-            if var['use'] != 'model variable' and var['source'] == 'expression':
+            if var['use'] != 'model variable':# and var['source'] == 'expression':
                 indicators.append(var)
         return indicators      
     
