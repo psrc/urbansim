@@ -72,6 +72,9 @@ class IndicatorFrameworkInterface:
             raise Exception('Could not find an indicator %s for dataset %s'%(indicator_name, dataset_name))
         
         attribute = str(expression)
+        if attribute.find('=') == -1:
+            attribute = indicator_name + attribute
+        
         new_indicator = Indicator(dataset_name = dataset_name,
                               attribute = attribute)
         return new_indicator
