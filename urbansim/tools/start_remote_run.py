@@ -129,9 +129,7 @@ class RemoteRun:
         """Configuration is given either as an opus path (configuration_path) or as a Configuration object (config)."""
     
         if run_id is not None:
-            config = self.get_run_manager().get_resources_for_run_id_from_history(services_host_name=self.services_db_config.host_name,
-                                                                                  services_database_name=self.services_db_name,
-                                                                                  run_id=run_id)
+            config = self.get_run_manager().get_resources_for_run_id_from_history(run_id=run_id)
         else:
             if configuration_path is not None:
                 config = get_config_from_opus_path(configuration_path)

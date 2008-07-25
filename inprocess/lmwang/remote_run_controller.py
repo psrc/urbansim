@@ -115,9 +115,7 @@ if __name__ == "__main__":
     if not len(results) > 1:
         raise StandardError, "run_id %s doesn't exist in run_activity table." % run_id
 
-    urbansim_resources = run_manager.get_resources_for_run_id_from_history(services_host_name=options.host_name,
-                                                                           services_database_name=options.database_name,
-                                                                           run_id=run_id)
+    urbansim_resources = run_manager.get_resources_for_run_id_from_history(run_id=run_id)
     #TODO: is this line necessary?
     #urbansim_resources['flt_directory'] = os.path.join(urbansim_resources['cache_directory'], str(restart_year - 1))
     

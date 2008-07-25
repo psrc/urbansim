@@ -20,8 +20,6 @@ from opus_core.services.run_server.run_manager import RunManager as CoreRunManag
 
 class RunManager(CoreRunManager):
     def restart_run(self, history_id, restart_year,
-                    services_host_name,
-                    services_database_name,
                     skip_urbansim=False,
                     skip_travel_model=False,
                     skip_cache_cleanup=False):
@@ -29,10 +27,8 @@ class RunManager(CoreRunManager):
 
         Restart the specified run."""
 
-        run_resources = self.create_run_resources_from_history(services_host_name=services_host_name,
-                                                                   services_database_name=services_database_name,
-                                                                   run_id=history_id,
-                                                                   restart_year=restart_year)
+        run_resources = self.create_run_resources_from_history(run_id=history_id,
+                                                               restart_year=restart_year)
         try:
 
             model_system = run_resources.get('model_system', None)

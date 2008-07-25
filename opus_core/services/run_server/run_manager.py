@@ -33,22 +33,13 @@ class RunManager(object):
         self.history_id = None
         self.ready_to_run = False
 
-    def get_resources_for_run_id_from_history(self, run_id,
-                                          services_host_name='localhost',
-                                          services_database_name='services',
-                                          services_user_name=None,
-                                          services_password=None):
+    def get_resources_for_run_id_from_history(self, run_id):
         """Returns the resources for this run_id, as stored in the run_activity table.
         """
 #        import pdb; pdb.set_trace()
-        db_config = DatabaseServerConfiguration(
-            host_name=services_host_name, 
-            user_name=services_user_name, 
-            password=services_password                                   
-        )
-        db_server = DatabaseServer(db_config)
-        db = db_server.get_database(services_database_name)
-                
+
+        db = self.run_activity.storage
+                        
         run_activity = db.get_table('run_activity')
         query = select(
             columns = [run_activity.c.resources],
@@ -59,16 +50,11 @@ class RunManager(object):
         run_resources = db.engine.execute(query).fetchone()
         
         if not run_resources:
-            raise StandardError("run_id %s doesn't exist host = %s database = %s" % (run_id, services_host_name, services_database_name))
+            raise StandardError("run_id %s doesn't exist host = %s database = %s" % (run_id, db.host_name, db.database_name))
 
-        db.close()
         return Configuration(pickle.loads(run_resources[0]))
 
     def create_run_resources_from_history(self,
-                                          services_host_name='localhost',
-                                          services_database_name='services',
-                                          services_user_name=os.environ.get('MYSQLUSERNAME', None),
-                                          services_password=os.environ.get('MYSQLPASSWORD', None),
                                           run_id=None,
                                           restart_year=None,
                                           end_year=None
@@ -79,11 +65,7 @@ class RunManager(object):
         if not run_id:
             raise StandardError("run_id un-specified")
 
-        resources = self.get_resources_for_run_id_from_history(services_host_name=services_host_name,
-                                                               services_user_name=services_user_name,
-                                                               services_password=services_password,
-                                                               services_database_name=services_database_name,
-                                                               run_id=run_id)
+        resources = self.get_resources_for_run_id_from_history(run_id=run_id)
         if 'cache_variables' not in resources:
             resources['cache_variables'] = False
 
@@ -201,16 +183,12 @@ class RunManager(object):
         
 
     def restart_run(self, history_id, restart_year,
-                    services_host_name,
-                    services_database_name,
                     skip_urbansim=False,
                     create_baseyear_cache_if_not_exists=False,
                     skip_cache_cleanup=False):
         """Restart the specified run."""
 
         run_resources = self.create_run_resources_from_history(
-           services_host_name=services_host_name,
-           services_database_name=services_database_name,
            run_id=history_id,
            restart_year=restart_year)
         try:
@@ -264,16 +242,10 @@ class RunManager(object):
             self.run_activity.add_row_to_history(history_id, run_resources, "failed")
             raise
 
-    def get_processor_name(self,run_id, services_host_name, services_user_name, services_password, services_database_name = "services"):
+    def get_processor_name(self,run_id):
         """ returns the name of the server where these run was processed"""
 
-        db_config = DatabaseServerConfiguration(
-            host_name=services_host_name, 
-            user_name=services_user_name, 
-            password=services_password                                   
-        )
-        db_server = DatabaseServer(db_config)
-        db = db_server.get_database(services_database_name)
+        db = self.run_activity.storage
         
         run_activity = db.get_table('run_activity')
         query = select(
@@ -281,20 +253,14 @@ class RunManager(object):
             whereclause = run_activity.c.run_id==run_id)
         
         results = db.engine.execute(query).fetchone()
-        db.close()
-        db_server.close()
 
         return results[0]
 
-    def get_name_for_id(self,run_id, services_host_name, services_user_name, services_password, services_database_name = "services"):
+    def get_name_for_id(self,run_id):
         """ returns the name given to this scenario run"""
-        db_config = DatabaseServerConfiguration(
-            host_name=services_host_name, 
-            user_name=services_user_name, 
-            password=services_password                                   
-        )
-        db_server = DatabaseServer(db_config)
-        db = db_server.get_database(services_database_name)
+        #this method is never called in the main codebase...
+
+        db = self.run_activity.storage
 
         run_activity = db.get_table('run_activity')
         query = select(
@@ -302,9 +268,6 @@ class RunManager(object):
             whereclause = run_activity.c.run_id==run_id)
         
         results = db.engine.execute(query).fetchone()
-        
-        db.close()
-        db_server.close()
 
         return results[0]
 

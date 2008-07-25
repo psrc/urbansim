@@ -50,8 +50,6 @@ if __name__ == "__main__":
         history_id, year = (int(args[0]), int(args[1]))
         run_manager.restart_run(history_id, 
                                 year, 
-                                services_host_name=options.host_name, 
-                                services_database_name=options.database_name,
                                 skip_urbansim=options.skip_urbansim,
                                 skip_travel_model=options.skip_travel_model,
                                 skip_cache_cleanup=options.skip_cache_cleanup)

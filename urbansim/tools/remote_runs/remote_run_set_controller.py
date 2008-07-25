@@ -169,9 +169,7 @@ class RemoteRunSet(RemoteRun):
                 
             self.set_environment_for_this_run(selected_server, run_id)
             
-            config = self.get_run_manager().get_resources_for_run_id_from_history(services_host_name=self.services_hostname,
-                                                                       services_database_name=self.services_dbname,
-                                                                       run_id=self.run_id)
+            config = self.get_run_manager().get_resources_for_run_id_from_history(run_id=self.run_id)
             self.prepare_for_this_run(config, self.configuration_update.get(selected_server, {}), restart)
             if start_year is None:
                 this_start_year = config['years'][0]
