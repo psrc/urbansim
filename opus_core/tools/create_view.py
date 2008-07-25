@@ -36,6 +36,9 @@ def create_view(database, table_to_link_name, dataset_name):
     cols_from_spatial = [c.name for c in spatial_table.c]
     cols_from_linked = [c.name for c in table_to_link.c if c.name not in cols_from_spatial]
     
+    if table_to_link_primary_keys[0].name not in cols_from_spatial:
+        print 'WARNING: view will not be able to be created because the spatial table does not contain the column %s'%table_to_link_primary_keys[0].name   
+    
     cols = ','.join(['s.%s'%c for c in cols_from_spatial] +  ['l.%s'%c for c in cols_from_linked])
 
     params = {
@@ -43,7 +46,7 @@ def create_view(database, table_to_link_name, dataset_name):
       'to_link':table_to_link,
       'spatial_table':spatial_table_name,
       'cols':cols,
-      'spatial_key':spatial_primary_keys[0].name        
+      'spatial_key':table_to_link_primary_keys[0].name       
     }
     qry = ('''
            CREATE OR REPLACE VIEW %(to_link)s_view 
