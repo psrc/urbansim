@@ -234,7 +234,7 @@ class AllVariablesEditGui(QDialog, Ui_AllVariablesEditGui, AllVariablesGui):
         #print "new pressed"
         self.tm.insertRow(0,["",
                              "New_Node","Dataset","Use","Source","Description",
-                             0,0])
+                             0,0,0])
 
 
 class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
