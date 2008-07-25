@@ -426,8 +426,8 @@ class XMLConfiguration(object):
             return result_list
         
     def _convert_variable_list_to_data(self, node):
-        # node should be a text node with a comma-separated list of variable names
-        return node.text.split(',')
+        # node should be a text node with a comma-separated list of variable names (perhaps with white space as well)
+        return map(lambda s: s.strip(), node.text.split(','))
         
     def _convert_tuple_to_data(self, node):
         r = map(lambda n: self._convert_node_to_data(n), node)

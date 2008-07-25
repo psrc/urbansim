@@ -75,12 +75,10 @@ class ResultsManagerXMLHelper:
     #####################################################
     
     def get_available_datasets(self):        
-        _, available_datasets = self.get_element_attributes(node_name = 'general', 
+        _, available_datasets_dict = self.get_element_attributes(node_name = 'general', 
                                     node_type = None, 
                                     child_attributes = ['available_datasets'])
-        available_datasets = available_datasets['available_datasets']
-        available_datasets = str(available_datasets)[1:-1].replace("'",'').split(',')
-        return available_datasets
+        return eval(str(available_datasets_dict['available_datasets']))
     
     def get_available_batches(self, attributes = []):
         return self._get_node_group(node_value = 'indicator_batch', 

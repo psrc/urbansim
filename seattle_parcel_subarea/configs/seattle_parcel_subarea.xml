@@ -356,80 +356,80 @@
       <real_estate_price_model type="dictionary">
         <agriculture type="submodel">
           <submodel_id type="integer">1</submodel_id>
-          <variables type="variable_list">constant,inugb,lnemp20da,lnsqft</variables>
+          <variables type="variable_list">constant, inugb, lnemp20da, lnsqft</variables>
         </agriculture>
         <civil type="submodel">
           <description type="string">Civil and Quasi-Public</description>
           <submodel_id type="integer">2</submodel_id>
-          <variables type="variable_list">constant,is_pre_1940,ln_invfar,lnemp10wa,lnempden</variables>
+          <variables type="variable_list">constant, is_pre_1940, ln_invfar, lnemp10wa, lnempden</variables>
         </civil>
         <commercial type="submodel">
           <submodel_id type="integer">3</submodel_id>
-          <variables type="variable_list">constant,art600,art300,ln_bldgage,lnsqft,lnlotsqft,lnunits,ln_invfar,lngcdacbd,lnemp20da,lnemp20tw,lnemp10wa,lnempden,inugb,hbwavgtmda</variables>
+          <variables type="variable_list">constant, art600, art300, ln_bldgage, lnsqft, lnlotsqft, lnunits, ln_invfar, lngcdacbd, lnemp20da, lnemp20tw, lnemp10wa, lnempden, inugb, hbwavgtmda</variables>
         </commercial>
         <government type="submodel">
           <submodel_id type="integer">7</submodel_id>
-          <variables type="variable_list">constant,art600,inugb,ln_bldgage,lnemp20tw,lngcdacbd,lnlotsqft,lnsqft</variables>
+          <variables type="variable_list">constant, art600, inugb, ln_bldgage, lnemp20tw, lngcdacbd, lnlotsqft, lnsqft</variables>
         </government>
         <hospital type="submodel">
           <description type="string">Hospital, Convalescent Center</description>
           <submodel_id type="integer">9</submodel_id>
-          <variables type="variable_list">constant,ln_bldgage,lngcdacbd,lnlotsqft,lnsqft</variables>
+          <variables type="variable_list">constant, ln_bldgage, lngcdacbd, lnlotsqft, lnsqft</variables>
         </hospital>
         <industrial type="submodel">
           <submodel_id type="integer">10</submodel_id>
-          <variables type="variable_list">constant,hbwavgtmda,inugb,ln_bldgage,ln_invfar,lnemp20tw,lnemp20wa,lnempden,lngcdacbd,lnsqft</variables>
+          <variables type="variable_list">constant, hbwavgtmda, inugb, ln_bldgage, ln_invfar, lnemp20tw, lnemp20wa, lnempden, lngcdacbd, lnsqft</variables>
         </industrial>
         <mining type="submodel">
           <submodel_id type="integer">12</submodel_id>
-          <variables type="variable_list">constant,lnavginc</variables>
+          <variables type="variable_list">constant, lnavginc</variables>
         </mining>
         <mobile_home_park type="submodel">
           <submodel_id type="integer">13</submodel_id>
-          <variables type="variable_list">constant,art600,ln_bldgage,lnsqft,ln_invfar,lngcdacbd,lnemp30da,lnemp20da,lnemp30tw,lnemp20tw,lnavginc,lnempden,inugb,hbwavgtmda,is_pre_1940</variables>
+          <variables type="variable_list">constant, art600, ln_bldgage, lnsqft, ln_invfar, lngcdacbd, lnemp30da, lnemp20da, lnemp30tw, lnemp20tw, lnavginc, lnempden, inugb, hbwavgtmda, is_pre_1940</variables>
         </mobile_home_park>
         <apartment type="submodel">
           <description type="string">Multi-Family Residential (Apartment)</description>
           <submodel_id type="integer">14</submodel_id>
-          <variables type="variable_list">constant,art300,hwy200,ln_bldgage,lnsqft,lnunits,ln_invfar,lngcdacbd,lnemp20da,lnemp10da,lnemp30tw,lnemp20tw,lnemp10wa,lnemp20wa,lnavginc,lnempden,lnpopden,inugb,hbwavgtmda,is_pre_1940</variables>
+          <variables type="variable_list">constant, art300, hwy200, ln_bldgage, lnsqft, lnunits, ln_invfar, lngcdacbd, lnemp20da, lnemp10da, lnemp30tw, lnemp20tw, lnemp10wa, lnemp20wa, lnavginc, lnempden, lnpopden, inugb, hbwavgtmda, is_pre_1940</variables>
         </apartment>
         <condominium type="submodel">
           <description type="string">Condominium Residential</description>
           <submodel_id type="integer">15</submodel_id>
-          <variables type="variable_list">constant,hwy2000,art600,ln_bldgage,lnsqft,lnlotsqft,lnunits,ln_invfar,lngcdacbd,lnemp30da,lnemp20da,lnemp10da,lnavginc,lnempden,lnpopden</variables>
+          <variables type="variable_list">constant, hwy2000, art600, ln_bldgage, lnsqft, lnlotsqft, lnunits, ln_invfar, lngcdacbd, lnemp30da, lnemp20da, lnemp10da, lnavginc, lnempden, lnpopden</variables>
         </condominium>
         <office type="submodel">
           <submodel_id type="integer">18</submodel_id>
-          <variables type="variable_list">constant,art600,ln_bldgage,lnlotsqft,lnunits,ln_invfar,lngcdacbd,lnemp30da,lnemp10da,lnemp10wa,lnavginc,lnempden,inugb,hbwavgtmda</variables>
+          <variables type="variable_list">constant, art600, ln_bldgage, lnlotsqft, lnunits, ln_invfar, lngcdacbd, lnemp30da, lnemp10da, lnemp10wa, lnavginc, lnempden, inugb, hbwavgtmda</variables>
         </office>
         <park_and_open_space type="submodel">
           <submodel_id type="integer">19</submodel_id>
-          <variables type="variable_list">constant,art300,ln_invfar</variables>
+          <variables type="variable_list">constant, art300, ln_invfar</variables>
         </park_and_open_space>
         <parking type="submodel">
           <submodel_id type="integer">20</submodel_id>
-          <variables type="variable_list">constant,hwy200,ln_invfar,lnemp30da,lnempden</variables>
+          <variables type="variable_list">constant, hwy200, ln_invfar, lnemp30da, lnempden</variables>
         </parking>
         <single_family_residential type="submodel">
           <submodel_id type="integer">24</submodel_id>
-          <variables type="variable_list">constant,hwy2000,art300,art600,ln_bldgage,lnsqft,lnunits,ln_invfar,lngcdacbd,lnemp30da,lnemp20da,lnemp10da,lnavginc,lnpopden,inugb,hbwavgtmda,is_pre_1940</variables>
+          <variables type="variable_list">constant, hwy2000, art300, art600, ln_bldgage, lnsqft, lnunits, ln_invfar, lngcdacbd, lnemp30da, lnemp20da, lnemp10da, lnavginc, lnpopden, inugb, hbwavgtmda, is_pre_1940</variables>
         </single_family_residential>
         <transportation type="submodel">
           <description type="string">Transportation, Communication, Public Utilities</description>
           <submodel_id type="integer">25</submodel_id>
-          <variables type="variable_list">constant,inugb,ln_invfar,lnemp30tw,lngcdacbd,lnlotsqft</variables>
+          <variables type="variable_list">constant, inugb, ln_invfar, lnemp30tw, lngcdacbd, lnlotsqft</variables>
         </transportation>
         <vacant_developable type="submodel">
           <submodel_id type="integer">26</submodel_id>
-          <variables type="variable_list">constant,hwy2000,art300,lnavginc,lnemp10da,lnemp10wa,lnempden,lngcdacbd</variables>
+          <variables type="variable_list">constant, hwy2000, art300, lnavginc, lnemp10da, lnemp10wa, lnempden, lngcdacbd</variables>
         </vacant_developable>
         <warehousing type="submodel">
           <submodel_id type="integer">28</submodel_id>
-          <variables type="variable_list">constant,lnempden,lngcdacbd</variables>
+          <variables type="variable_list">constant, lnempden, lngcdacbd</variables>
         </warehousing>
         <mixed_use type="submodel">
           <submodel_id type="integer">30</submodel_id>
-          <variables type="variable_list">constant,ln_bldgage,lnsqft,lnlotsqft,lnunits,ln_invfar,lngcdacbd,lnemp30da,lnemp20tw,inugb,hbwavgtmda</variables>
+          <variables type="variable_list">constant, ln_bldgage, lnsqft, lnlotsqft, lnunits, ln_invfar, lngcdacbd, lnemp30da, lnemp20tw, inugb, hbwavgtmda</variables>
         </mixed_use>
       </real_estate_price_model>
       <estimation_config type="dictionary">
@@ -442,7 +442,7 @@
         <dataset_pool_configuration type="class">
           <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>
           <Class_path flags="hidden" type="string">opus_core.configurations.dataset_pool_configuration</Class_path>
-          <package_order type="list">['seattle_parcel','urbansim_parcel','urbansim']</package_order>
+          <package_order type="list">['seattle_parcel', 'urbansim_parcel', 'urbansim']</package_order>
           <package_order_exceptions type="dictionary" />
         </dataset_pool_configuration>
         <datasets_to_cache_after_each_model type="list">[]</datasets_to_cache_after_each_model>
@@ -575,8 +575,8 @@
       <flush_dataset_to_cache_after_each_model type="boolean">False</flush_dataset_to_cache_after_each_model>
       <flush_variables type="boolean">False</flush_variables>
       <low_memory_run type="boolean">False</low_memory_run>
-      <datasets_to_cache_after_each_model type="list">['parcel', 'building', 'household', 'job',
-                                                      'development_project_proposal_component',
+      <datasets_to_cache_after_each_model type="list">['parcel', 'building', 'household', 'job', 
+                                                      'development_project_proposal_component', 
                                                       'development_project_proposal', 'travel_data']</datasets_to_cache_after_each_model>
       <unroll_gridcells flags="hidden" type="boolean">False</unroll_gridcells>
       <datasets_to_preload parser_action="list_to_dictionary" type="selectable_list">

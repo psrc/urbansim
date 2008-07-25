@@ -301,7 +301,7 @@ class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
                 # We have one that is checked... push it into the return list
                 returnList.append(str(testCase[1]))
         #self.pp.pprint(returnList)
-        returnString = string.join(returnList,',')
+        returnString = string.join(returnList,', ')
         #print returnString
         if self.nodeToUpdate:
             # We need to fill in the XML node for the client
