@@ -95,6 +95,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                                               child_names = ['menu_font_size'])['menu_font_size'])
             self.main_tabs_font_size = int(get_child_values(parent = font_settings_node,
                                               child_names = ['main_tabs_font_size'])['main_tabs_font_size'])
+            self.general_text_font_size = int(get_child_values(parent = font_settings_node,
+                                              child_names = ['general_text_font_size'])['general_text_font_size'])
 
         self.splitter.setSizes([400,500])
 
