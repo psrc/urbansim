@@ -171,7 +171,7 @@ class Table(Visualization):
                 dataset_name = dataset_name,
                 years = [year],
                 attribute_names = [name for name, computed_name in attributes])
-
+            print 'output per year:%s'%table_name
             self._write_to_storage(
                 table_name = table_name,
                 table_data = data_subset,
@@ -261,6 +261,8 @@ class Table(Visualization):
                           primary_keys,
                           years,
                           dataset_name):
+
+        print 'write to storage: '%table_name
         kwargs = {}
         if self.output_type in ['csv','tab']:
             kwargs['fixed_column_order'] = column_names

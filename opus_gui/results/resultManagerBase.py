@@ -84,10 +84,12 @@ class ResultManagerBase(AbstractManagerBase):
             
             scenario_name = os.path.basename(cache_root)
             path = os.path.join(os.environ.get('OPUS_DATA_PATH'), cache_root)
+            print path
             if not os.path.exists(path): return
             
             for run_name in os.listdir(path):
                 try:
+                    print run_name
                     cache_directory = os.path.join(path,run_name)
                     years = []
                     if not os.path.isdir(cache_directory) or \
@@ -104,7 +106,10 @@ class ResultManagerBase(AbstractManagerBase):
                                                      run_name,
                                                      start_year, end_year,
                                                      temporary = True)
-                except: pass
+                except: 
+                        import traceback
+                        traceback.print_exc()
+			pass
 
     def addAdvancedVisualizationForm(self):
         new_form = AdvancedVisualizationForm(mainwindow = self.mainwindow,
