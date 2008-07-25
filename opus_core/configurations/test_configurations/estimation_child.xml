@@ -2,8 +2,8 @@
   <general>
     <parent type="file">estimate.xml</parent>
    <expression_library type="dictionary">
-     <ln_cost type="variable_definition" >ln(psrc.parcel.cost+10)</ln_cost>
-     <tax type="variable_definition" >urbansim_parcel.parcel.tax</tax>
+     <ln_cost type="variable_definition" dataset="parcel" use="model variable" source="expression">ln(psrc.parcel.cost)+10</ln_cost>
+     <tax type="variable_definition" dataset="parcel" use="model variable" source="Python class">urbansim_parcel.parcel.tax</tax>
    </expression_library>
   </general>
   <model_manager>

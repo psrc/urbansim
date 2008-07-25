@@ -2,6 +2,10 @@
   <general>
     <description type="string">Base UrbanSim gridcell project</description>
     <parent type="file">urbansim/configs/urbansim.xml</parent>
+    <expression_library type="dictionary">
+      <population type="variable_definition" dataset="gridcell" use="both" source="Python class">urbansim.gridcell.population</population>
+      <population_density type="variable_definition" dataset="gridcell" use="both" source="Python class">urbansim.gridcell.population_density</population_density>
+    </expression_library>
     <available_datasets type="list">['gridcell','zone','faz','large_area','city','county','alldata']</available_datasets>
     <dataset_pool_configuration type="class">
       <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>

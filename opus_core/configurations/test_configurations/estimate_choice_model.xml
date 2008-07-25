@@ -1,7 +1,7 @@
 <opus_project>
   <general>
    <expression_library type="dictionary">
-     <var1 type="variable_definition" copyable='True'>package.dataset.some_variable_or_expression</var1>
+     <var1 type="variable_definition" dataset="dataset" use="model variable" source="expression" copyable="True">package.dataset.some_variable_or_expression</var1>
    </expression_library>
   </general>
   <model_manager>

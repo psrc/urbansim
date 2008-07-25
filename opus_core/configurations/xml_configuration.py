@@ -107,13 +107,21 @@ class XMLConfiguration(object):
             return config
 
     def get_estimation_specification(self, model_name, model_group=None):
+        """get the estimation specification for the given model and return it as a dictionary"""
+        # all_vars is the list of variables from the expression library
+        all_vars = []
+        lib_node = self._find_node('general/expression_library')
+        for v in lib_node:
+            # if the variable is defined as an expression, make an alias; otherwise it's a Python class - just use as is
+            if v.get('source')=='expression':
+                all_vars.append('%s = %s' % (v.tag, v.text))
+            else:
+                all_vars.append(v.text)
+        # sort the list of variables to make it easier to test the results
+        all_vars.sort()    
         estimation_section = self.get_section('model_manager/estimation')
         model = estimation_section[model_name]
         result = {}
-        lib = self.get_section('general/expression_library')
-        all_vars = map(lambda pair: '%s = %s' % pair, lib.items())
-        # sort the list of variables to make it easier to test the results
-        all_vars.sort()
         result['_definition_'] = all_vars
         if model_group is not None:
             model_dict = model[model_group]
@@ -641,7 +649,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config = XMLConfiguration(f).get_section('model_manager/estimation')
         should_be = {
           'real_estate_price_model': {
-            'single_family_residential': {'submodel_id': 24, 'variables': ['ln_cost', 'unit_price']}},
+            'single_family_residential': {'submodel_id': 24, 'variables': ['ln_cost', 'existing_units']}},
           'models_to_estimate': ['real_estate_price_model']}
         self.assertEqual(config, should_be)
         
@@ -650,7 +658,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         config = XMLConfiguration(f).get_section('model_manager/estimation')
         should_be = {
           'real_estate_price_model': {
-            'single_family_residential': {'submodel_id': 240, 'variables': ['ln_cost', 'unit_price']}},
+            'single_family_residential': {'submodel_id': 240, 'variables': ['ln_cost', 'existing_units']}},
           'models_to_estimate': ['real_estate_price_model', 'household_location_choice_model']}
         self.assertEqual(config, should_be)
         
@@ -664,9 +672,9 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # the tax variable is new, so also shouldn't have the 'inherited' attribute
         tax_node = expression_library_node.find('tax')
         self.assertEqual(tax_node.get('inherited'), None)
-        # the unit_price variable is inherited and not overridden, so it should have 'inherited' set to the name of the parent
-        unit_price_node = expression_library_node.find('unit_price')
-        self.assertEqual(unit_price_node.get('inherited'), 'estimate')
+        # the existing_units variable is inherited and not overridden, so it should have 'inherited' set to the name of the parent
+        existing_units_node = expression_library_node.find('existing_units')
+        self.assertEqual(existing_units_node.get('inherited'), 'estimate')
         
     def test_grandchild_inherited_attributes(self):
         # test two levels of inheritance, with multiple inheritance as well
@@ -682,18 +690,20 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # the extratax variable is inherited from estimation_child2
         extratax_node = expression_library_node.find('extratax')
         self.assertEqual(extratax_node.get('inherited'), 'estimation_child2')
-        # the unit_price variable is inherited from estimate
-        unit_price_node = expression_library_node.find('unit_price')
-        self.assertEqual(unit_price_node.get('inherited'), 'estimate')
+        # the existing_units variable is inherited from estimate
+        existing_units_node = expression_library_node.find('existing_units')
+        self.assertEqual(existing_units_node.get('inherited'), 'estimate')
         
     def test_find(self):
         # test the 'find' method on inherited and non-inherited nodes
         f = os.path.join(self.test_configs, 'estimation_child.xml')
         config = XMLConfiguration(f)
         ln_cost_str = config.find('general/expression_library/ln_cost')
-        self.assertEqual(ln_cost_str.strip(), '<ln_cost type="variable_definition">ln(psrc.parcel.cost+10)</ln_cost>')
-        unit_price_str = config.find('general/expression_library/unit_price')
-        self.assertEqual(unit_price_str.strip(), '<unit_price inherited="estimate" type="variable_definition">urbansim_parcel.parcel.unit_price</unit_price>')
+        should_be = '<ln_cost dataset="parcel" source="expression" type="variable_definition" use="model variable">ln(psrc.parcel.cost)+10</ln_cost>'
+        self.assertEqual(ln_cost_str.strip(), should_be)
+        existing_units_str = config.find('general/expression_library/existing_units')
+        expected = '<existing_units dataset="parcel" inherited="estimate" source="Python class" type="variable_definition" use="model variable">urbansim_parcel.parcel.existing_units</existing_units>'
+        self.assertEqual(existing_units_str.strip(), expected)
         squid_str = config.find('model_manager/estimation/squid')
         self.assertEqual(squid_str, None)
         
@@ -708,10 +718,12 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(config, should_be)
         
     def test_get_estimation_specification(self):
+        # test getting the estimation specification.  This also tests the expression library, which contains an expression
+        # for ln_cost and a variable defined as a Python class 
         f = os.path.join(self.test_configs, 'estimate.xml')
         config = XMLConfiguration(f).get_estimation_specification('real_estate_price_model')
-        should_be = {'_definition_': ['ln_cost = ln(psrc.parcel.cost)', 'unit_price = urbansim_parcel.parcel.unit_price'],
-          24: ['ln_cost', 'unit_price']}
+        should_be = {'_definition_': ['ln_cost = ln(psrc.parcel.cost)', 'urbansim_parcel.parcel.existing_units'],
+          24: ['ln_cost', 'existing_units']}
         self.assertEqual(config, should_be)
         
     def test_get_estimation_specification_with_equation(self):
@@ -724,8 +736,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_get_estimation_specification_of_child(self):
         f = os.path.join(self.test_configs, 'estimation_child.xml')
         config = XMLConfiguration(f).get_estimation_specification('real_estate_price_model')
-        should_be = {'_definition_': ['ln_cost = ln(psrc.parcel.cost+10)', 'tax = urbansim_parcel.parcel.tax', 'unit_price = urbansim_parcel.parcel.unit_price'],
-          240: ['ln_cost', 'unit_price']}
+        should_be = {'_definition_': ['ln_cost = ln(psrc.parcel.cost)+10', 'urbansim_parcel.parcel.existing_units', 'urbansim_parcel.parcel.tax'],
+          240: ['ln_cost', 'existing_units']}
         self.assertEqual(config, should_be)
         
     def test_save_as(self):
@@ -768,7 +780,7 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         self.assertEqual(section3, None)
         # no model_manager section in the updated configuration
         section4 = config.get_section('model_manager/estimation')
-        self.assertEqual(section4['real_estate_price_model']['single_family_residential']['variables'], ['ln_cost', 'unit_price'])
+        self.assertEqual(section4['real_estate_price_model']['single_family_residential']['variables'], ['ln_cost', 'existing_units'])
 
     def test_update_and_save(self):
         # make sure nodes marked as temporary or inherited are filtered out when doing an update and a save
