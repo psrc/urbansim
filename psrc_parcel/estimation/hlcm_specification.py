@@ -272,7 +272,7 @@ specification = {
                 #"p_young_x_young_HH",
              "E_max_logsum_hbw_am_from_home_to_work",
              "E_max_network_distance_from_home_to_work",
-	         "q_0workers_x_avg_work_logsum",
+             "q_0workers_x_avg_work_logsum",
                 #"q_avg_work_logsum",
              "r_neigh_shopping",
                 #"s_work_travel_time",
