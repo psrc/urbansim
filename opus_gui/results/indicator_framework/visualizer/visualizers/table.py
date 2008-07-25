@@ -167,11 +167,14 @@ class Table(Visualization):
 
         viz_metadata = []
         for year, data_subset in per_year_data.items():
-            table_name = self.get_name(
-                dataset_name = dataset_name,
-                years = [year],
-                attribute_names = [name for name, computed_name in attributes])
-            print 'output per year:%s'%table_name
+            if self.name is not None:
+                table_name = self.name + '_%i'%year
+            else:
+                table_name = self.get_name(
+                    dataset_name = dataset_name,
+                    years = [year],
+                    attribute_names = [name for name, computed_name in attributes])
+            
             self._write_to_storage(
                 table_name = table_name,
                 table_data = data_subset,
@@ -261,8 +264,6 @@ class Table(Visualization):
                           primary_keys,
                           years,
                           dataset_name):
-
-        print 'write to storage: '%table_name
         kwargs = {}
         if self.output_type in ['csv','tab']:
             kwargs['fixed_column_order'] = column_names
