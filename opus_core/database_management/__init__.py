@@ -11,3 +11,22 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 # 
+
+
+try: 
+    from sqlalchemy.databases import postgres
+    
+    class PGCascadeSchemaDropper(postgres.PGSchemaDropper):
+        def visit_table(self, table):
+            for column in table.columns:
+                if column.default is not None:
+                    self.traverse_single(column.default)
+            self.append("\nDROP TABLE " +
+                        self.preparer.format_table(table) +
+                        " CASCADE")
+            self.execute()
+    
+    postgres.dialect.schemadropper = PGCascadeSchemaDropper
+
+except:
+    pass
