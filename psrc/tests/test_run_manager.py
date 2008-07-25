@@ -134,8 +134,6 @@ if does_database_server_exist_for_this_hostname(
             
             runs_manager.restart_run(history_id,
                                      restart_year=2001,
-                                     services_host_name= db_config.host_name,
-                                     services_database_name='services_test',
                                      skip_urbansim=False)
             
             statuses = run_activity.storage.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
@@ -152,8 +150,6 @@ if does_database_server_exist_for_this_hostname(
             # TODO: test that no models are run this time.
             runs_manager.restart_run(history_id,
                                      restart_year=2002,
-                                     services_host_name=db_config.host_name,
-                                     services_database_name='services_test',
                                      skip_urbansim=True)
             statuses = run_activity.storage.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
                                                            % history_id)[1:]
