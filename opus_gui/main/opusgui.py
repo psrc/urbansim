@@ -79,15 +79,22 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # Loading font size adjustment from gui configuration xml file
         try:
             font_settings_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('font_settings').item(0)
-            size_adjust_dict = get_child_values(parent = font_settings_node, 
-                                                child_names = ['size_adjust'])
-            temp_font_size_adjust = int(size_adjust_dict['size_adjust'])
+            
+            self.menu_font_size = int(get_child_values(parent = font_settings_node,
+                                              child_names = ['menu_font_size'])['menu_font_size'])
+            self.main_tabs_font_size = int(get_child_values(parent = font_settings_node,
+                                              child_names = ['main_tabs_font_size'])['main_tabs_font_size'])
+            self.general_text_font_size = int(get_child_values(parent = font_settings_node,
+                                              child_names = ['general_text_font_size'])['general_text_font_size'])
+            
         except:
             self.toolboxStuff.reemit_reinit_default_gui_configuration_file()
             font_settings_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('font_settings').item(0)
-            size_adjust_dict = get_child_values(parent = font_settings_node, 
-                                                child_names = ['size_adjust'])
-            temp_font_size_adjust = int(size_adjust_dict['size_adjust'])
+            
+            self.menu_font_size = int(get_child_values(parent = font_settings_node,
+                                              child_names = ['menu_font_size'])['menu_font_size'])
+            self.main_tabs_font_size = int(get_child_values(parent = font_settings_node,
+                                              child_names = ['main_tabs_font_size'])['main_tabs_font_size'])
 
         self.splitter.setSizes([400,500])
 
@@ -208,10 +215,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         # Restoring application geometry from last shut down
         settings = QSettings()
         self.restoreGeometry(settings.value("Geometry").toByteArray())
-        
-        self.font_size_adjust = 0
-        self.changeFontSize(temp_font_size_adjust)
-        
+        self.changeFontSize()
         self.setFocus()
         
 
@@ -271,14 +275,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         wnd = UrbansimAboutGui(self,flags)
         wnd.show()
-        self.changeWidgetFontSize(wnd, self.font_size_adjust)
-
+        self.changeFontSize()
 
     def openPreferences(self):
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMaximizeButtonHint
         wnd = UrbansimPreferencesGui(self, flags)
         wnd.show()
-        self.changeWidgetFontSize(wnd, self.font_size_adjust)
+        self.changeFontSize()
         
 
     def openConfig(self, config=None):
@@ -499,44 +502,77 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.editorStatusLabel.setText(wintitle)
         self.editorDirty = True
         self.editorSaveFileButton.setEnabled(True)
+    
+    
+    def changeFontSize(self):
+        #menubar...
+        menuFontSizeFamily = self.menubar.findChildren(QMenu)
+        menuFontSizeFamily.append(self.menubar)
+        menuActionFontSizeFamily = self.menubar.findChildren(QAction)
         
-    #font_size manipulation functions
-    def changeFontSize(self, amt):
-        self.font_size_adjust += amt
-        self.changeWidgetFontSize( self, amt)
+        #main tabs...
+        regexp = QRegExp(".*tabbar$")
+        toolbox = self.findChild(QWidget, "toolBox")
+        tabwidget = self.findChild(QWidget, "tabWidget")
         
-    def changeWidgetFontSize(self, widget, amt):
-        #get all QWidget Children of the widget
-        widgetChildren = widget.findChildren(QWidget)
+        mainTabsFontSizeFamily = [toolbox.findChildren(QWidget, regexp)[1],
+                                  tabwidget.findChildren(QWidget, regexp)[0]]
         
-        #local function to be mapped across all the widget children of the main window
-        def _changeChildFont(widgekid):
-            #if the font size isn't measured in points and the font won't be too small...
-            if widgekid.font().pointSize() == -1 and widgekid.font().pixelSize() + amt > 0:
-                widgekid.font().setPixelSize(widgekid.font().pixelSize() + amt)
-                
-            #if the font size isn't measured in pixels and the font won't be too small...
-            elif widgekid.font().pixelSize() == -1 and widgekid.font().pointSize() + amt > 0:
-                widgekid.font().setPointSize(widgekid.font().pointSize() + amt)   
+        #subtabs...
+        subtabFontSizeFamily = [toolbox.findChildren(QWidget, regexp)[0]]
+        
+        widgetChildren = self.findChildren(QWidget)
+        filter(lambda widge: widge not in menuActionFontSizeFamily and
+                widge not in menuFontSizeFamily and
+                widge not in mainTabsFontSizeFamily,
+                widgetChildren)
             
-            #pixel or point size is too small, will not update it
-            else:
+        def fontSizeChange(qw, fontsize):
+            qw.font().setPointSize(fontsize)
+            try:
+                qw.update()
+            except:
                 return
-            
-            widgekid.updateGeometry()
-            widgekid.update()
         
-        map(_changeChildFont, widgetChildren)
-        
+        map(lambda qw: fontSizeChange(qw,self.general_text_font_size),
+            widgetChildren)
+        map(lambda qw: fontSizeChange(qw,self.menu_font_size),
+            menuFontSizeFamily)
+        map(lambda qw: fontSizeChange(qw,self.main_tabs_font_size),
+            menuActionFontSizeFamily)
+        map(lambda qw: fontSizeChange(qw,self.main_tabs_font_size),
+            mainTabsFontSizeFamily)
+        self.update()
+    
+    def getMenuFontSize(self):
+        return self.menu_font_size
+     
+    def setMenuFontSize(self, pointSize):
+        self.menu_font_size = pointSize 
+    
+    def getMainTabsFontSize(self):
+        return self.main_tabs_font_size
+    
+    def setMainTabsFontSize(self, pointSize):
+        self.main_tabs_font_size = pointSize
+
+    def getGeneralTextFontSize(self):
+        return self.general_text_font_size
+
+    def setGeneralTextFontSize(self, pointSize):
+        self.general_text_font_size = pointSize
 
     def saveGuiConfig(self):
         #get the font settings node from xml
         font_settings_node = self.toolboxStuff.gui_configuration_doc.elementsByTagName('font_settings').item(0)
-        
+        nodesToSave = {"menu_font_size":self.menu_font_size,
+                       "main_tabs_font_size":self.main_tabs_font_size,
+                       "general_text_font_size":self.general_text_font_size}
         #go through the children of the font settings node and set the text size correctly
         node = font_settings_node.firstChild()
         while not node.isNull():
-            if node.isElement() and node.nodeName() == "size_adjust":
+            if node.isElement() and str(node.nodeName()) in nodesToSave:
+
                 #we have a match for size_adjust, now we need to find the text node
                 #in its children and set it to the value of font_size_adjust
                 childElement = node.toElement()
@@ -546,7 +582,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
                         if children.item(x).isText():
                             textNode = children.item(x).toText()
                             # Finally set the text node value
-                            textNode.setData(QString(str(self.font_size_adjust)))
+                            textNode.setData(QString(str(nodesToSave[str(node.nodeName())])))
                         
             node = node.nextSibling()
             try:

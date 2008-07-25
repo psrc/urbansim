@@ -6,6 +6,8 @@
 	    <application_title>OPUS</application_title>
 	</application_options>
   	<font_settings>
-    	<size_adjust>0</size_adjust>
+    	<menu_font_size>10</menu_font_size>
+    	<main_tabs_font_size>12</main_tabs_font_size>
+    	<general_text_font_size>11</general_text_font_size>
   	</font_settings>
 </gui_configuration>

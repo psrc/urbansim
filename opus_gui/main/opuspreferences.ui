@@ -5,109 +5,167 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>390</width>
-    <height>155</height>
+    <width>475</width>
+    <height>278</height>
    </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle" >
    <string>Preferences</string>
   </property>
-  <widget class="QGroupBox" name="fontGroupBox" >
-   <property name="geometry" >
-    <rect>
-     <x>10</x>
-     <y>20</y>
-     <width>361</width>
-     <height>71</height>
-    </rect>
-   </property>
-   <property name="title" >
-    <string>Font Preferences</string>
-   </property>
-   <widget class="QLabel" name="fontSizeAdjustLabel" >
-    <property name="geometry" >
-     <rect>
-      <x>20</x>
-      <y>20</y>
-      <width>111</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>Font Size Adjustment</string>
-    </property>
-   </widget>
-   <widget class="QSlider" name="fontSizeAdjustSlider" >
-    <property name="geometry" >
-     <rect>
-      <x>150</x>
-      <y>30</y>
-      <width>191</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="sizePolicy" >
-     <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="minimum" >
-     <number>-5</number>
-    </property>
-    <property name="maximum" >
-     <number>10</number>
-    </property>
-    <property name="orientation" >
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QPushButton" name="cancelButton" >
-   <property name="geometry" >
-    <rect>
-     <x>290</x>
-     <y>110</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Cancel</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="okButton" >
-   <property name="geometry" >
-    <rect>
-     <x>130</x>
-     <y>110</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>OK</string>
-   </property>
-   <property name="autoDefault" >
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="applyButton" >
-   <property name="geometry" >
-    <rect>
-     <x>210</x>
-     <y>110</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Apply</string>
-   </property>
-   <property name="autoDefault" >
-    <bool>true</bool>
-   </property>
-  </widget>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <widget class="QGroupBox" name="fontGroupBox" >
+     <property name="title" >
+      <string>Font Preferences</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+     <layout class="QGridLayout" name="gridLayout" >
+      <item row="0" column="0" >
+       <widget class="QLabel" name="menuFontSizeLabel" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize" >
+         <size>
+          <width>200</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text" >
+         <string>Menu Bar Font Size</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QSpinBox" name="menuFontSizeSpinBox" >
+        <property name="maximumSize" >
+         <size>
+          <width>42</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="mainTabsFontSizeLabel" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize" >
+         <size>
+          <width>200</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text" >
+         <string>Main Tab Font Size</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QSpinBox" name="mainTabsFontSizeSpinBox" >
+        <property name="maximumSize" >
+         <size>
+          <width>42</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="label" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize" >
+         <size>
+          <width>200</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text" >
+         <string>General Text Font Size</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <widget class="QSpinBox" name="generalTextFontSizeSpinBox" >
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2" >
+     <item>
+      <spacer name="horizontalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="applyButton" >
+       <property name="text" >
+        <string>Apply</string>
+       </property>
+       <property name="autoDefault" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="okButton" >
+       <property name="text" >
+        <string>OK</string>
+       </property>
+       <property name="autoDefault" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancelButton" >
+       <property name="text" >
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

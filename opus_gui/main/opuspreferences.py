@@ -23,7 +23,7 @@ class UrbansimPreferencesGui(QDialog, Ui_PreferencesDialog):
         QDialog.__init__(self, mainwindow, fl)
         self.setupUi(self)
         self.mainwindow = mainwindow
-        self._initslider()
+        self._initSpinBoxes()
         
         #hook up the buttons
         QObject.connect(self.okButton, SIGNAL("released()"), self.okay)
@@ -34,16 +34,24 @@ class UrbansimPreferencesGui(QDialog, Ui_PreferencesDialog):
         #this only needs to happen on init, once the window is a child of
         #the main window it's font will be changed through the main window
         #self.changeFontSize(self.mainwindow.font_size_adjust)
+        
+    def _initSpinBoxes(self):
+        self.menuFontSizeSpinBox.setValue(self.mainwindow.getMenuFontSize())
+        self.mainTabsFontSizeSpinBox.setValue(self.mainwindow.getMainTabsFontSize())
+        self.generalTextFontSizeSpinBox.setValue(self.mainwindow.getGeneralTextFontSize())
 
-    def _initslider(self):
-        self.fontSizeAdjustSlider.setValue(self.mainwindow.font_size_adjust)
-        self.fontSizeAdjustSlider.update()
-
+    
     def apply(self):
         #apply font change
-        fontSizeChange = self.fontSizeAdjustSlider.value() - self.mainwindow.font_size_adjust
-        self.mainwindow.changeFontSize(fontSizeChange)
+        self.mainwindow.setMenuFontSize(self.menuFontSizeSpinBox.value())
+        self.mainwindow.setMainTabsFontSize(self.mainTabsFontSizeSpinBox.value())
+        self.mainwindow.setGeneralTextFontSize(self.generalTextFontSizeSpinBox.value())
+        self.mainwindow.changeFontSize()
+        
         self.mainwindow.saveGuiConfig()
+        
+        
+
 
     def okay(self):
         self.apply()
