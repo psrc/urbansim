@@ -241,34 +241,38 @@ class OpusGui(QMainWindow, Ui_MainWindow):
     def openMapTab(self):
         if self.tabWidget.indexOf(self.tab_mapView) == -1:
             self.tab_mapView.show()
-            self.changeWidgetFontSize(self.tab_mapView, self.font_size_adjust)
+            self.changeFontSize()
             self.tabWidget.insertTab(0,self.tab_mapView,
                                      QIcon(":/Images/Images/map.png"),"Map View")
             self.tabWidget.setCurrentWidget(self.tab_mapView)
 
+
     def openPythonTab(self):
         if self.tabWidget.indexOf(self.tab_pythonView) == -1:
             self.tab_pythonView.show()
-            self.changeWidgetFontSize(self.tab_pythonView, self.font_size_adjust)
+            self.changeFontSize()
             self.tabWidget.insertTab(0,self.tab_pythonView,
                                      QIcon(":/Images/Images/python_type.png"),"Python Console")
             self.tabWidget.setCurrentWidget(self.tab_pythonView)
 
+
     def openEditorTab(self):
         if self.tabWidget.indexOf(self.tab_editorView) == -1:
             self.tab_editorView.show()
-            self.changeWidgetFontSize(self.tab_editorView, self.font_size_adjust)
+            self.changeFontSize()
             self.tabWidget.insertTab(0,self.tab_editorView,
                                      QIcon(":/Images/Images/table.png"),"Editor View")
             self.tabWidget.setCurrentWidget(self.tab_editorView)
+        
 
     def openLogTab(self):
         if self.tabWidget.indexOf(self.tab_logView) == -1:
             self.tab_logView.show()
-            self.changeWidgetFontSize(self.tab_logView, self.font_size_adjust)
+            self.changeFontSize()
             self.tabWidget.insertTab(0,self.tab_logView,
                                      QIcon(":/Images/Images/folder.png"),"Log View")
             self.tabWidget.setCurrentWidget(self.tab_logView)
+        
 
 
     def openAbout(self):
@@ -317,6 +321,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.toolboxbase.xml_file).filePath())
             self.resultManagerStuff.scanForRuns()
         self.actionEdit_all_variables.setEnabled(True)
+        self.changeFontSize()
 
     def saveConfig(self):
         try:
@@ -521,6 +526,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         #subtabs...
         subtabFontSizeFamily = [toolbox.findChildren(QWidget, regexp)[0]]
         
+        #set of widgets that shouldn't have their font changed
+        omit = self.findChildren(QSpinBox)
+        omit2 = []
+        for omition in omit:
+            omit2.extend(omition.findChildren(QWidget))
+        omit.extend(omit2)
+        
         widgetChildren = self.findChildren(QWidget)
         filter(lambda widge: widge not in menuActionFontSizeFamily and
                 widge not in menuFontSizeFamily and
@@ -530,6 +542,7 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         def fontSizeChange(qw, fontsize):
             qw.font().setPointSize(fontsize)
             try:
+                qw.updateGeometry()
                 qw.update()
             except:
                 return
@@ -542,7 +555,9 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             menuActionFontSizeFamily)
         map(lambda qw: fontSizeChange(qw,self.main_tabs_font_size),
             mainTabsFontSizeFamily)
+        self.updateGeometry()
         self.update()
+
     
     def getMenuFontSize(self):
         return self.menu_font_size
