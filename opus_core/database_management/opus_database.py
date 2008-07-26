@@ -36,6 +36,9 @@ class OpusDatabase(object):
         self.host_name = database_server_configuration.host_name
         self.user_name = database_server_configuration.user_name
         self.password = database_server_configuration.password
+        
+        if self.protocol == 'postgres':
+            database_name = database_name.lower()
         self.database_name = database_name
         self.database_server_config = database_server_configuration
         
@@ -43,7 +46,13 @@ class OpusDatabase(object):
         self.show_output = False
 
     def get_connection_string(self):
-        return '%s://%s:%s@%s/%s'%(self.protocol, self.user_name, self.password, self.host_name, self.database_name) 
+        if self.protocol in ['mssql','postgres','mysql']:
+            connect_string = '%s://%s:%s@%s/%s'%(self.protocol, self.user_name, self.password, self.host_name, self.database_name) 
+        elif self.protocol == 'sqlite':
+            self.database_path = os.path.join(os.environ['OPUS_HOME'],'local_databases',self.database_name + '.txt')
+            connect_string = 'sqlite:////%s'%self.database_path
+            
+        return connect_string
     
     def open(self):
         self.engine = create_engine(self.get_connection_string())
@@ -239,19 +248,62 @@ from opus_core.database_management.database_server import DatabaseServer
 class OpusDatabaseTest(opus_unittest.OpusTestCase):
     def setUp(self):
         
-        config = DatabaseServerConfiguration(protocol = 'mysql',
-                                             test = True)
-        self.test_db = 'OpusDatabaseTestDatabase'
-        self.server = DatabaseServer(config)
-        if self.server.has_database(self.test_db):
-            self.server.drop_database(self.test_db)
-        self.server.create_database(self.test_db)
-        self.db = OpusDatabase(database_server_configuration = config, 
-                               database_name = self.test_db)
+        db_configs = []
+        try:
+            import sqlite3
+            config = DatabaseServerConfiguration(protocol = 'sqlite')
+            db_configs.append(config)
+        except:
+            print 'WARNING: cannot import sqlite3; not testing'
         
+        try:
+            import MySQLdb
+            config = DatabaseServerConfiguration(protocol = 'mysql',
+                                                 test = True)
+            db_configs.append(config)
+        except:
+            print 'WARNING: cannot import MySQLdb; not testing'        
+
+        try:
+            import psycopg2
+            config = DatabaseServerConfiguration(protocol = 'postgres',
+                                                 test = True)
+            db_configs.append(config)
+        except:
+            print 'WARNING: cannot import psycopg2; not testing'
+                    
+        try:
+            import pyodbc
+            config = DatabaseServerConfiguration(protocol = 'mssql',
+                                                 test = True)
+            db_configs.append(config)
+        except:
+            print 'WARNING: cannot import pyodbc; not testing'        
+        
+        self.test_db = 'OpusDatabaseTestDatabase'
+
+        self.dbs = []
+        for config in db_configs:
+            try:
+                server = DatabaseServer(config)
+                if server.has_database(self.test_db):
+                    server.drop_database(self.test_db)
+                server.create_database(self.test_db)
+            
+                db = OpusDatabase(database_server_configuration = config, 
+                                   database_name = self.test_db)
+                self.dbs.append((db,server))
+            except:
+                import traceback
+                traceback.print_exc()
+                
+                print 'WARNING: could not start server for protocol %s'%config.protocol
+                
     def tearDown(self):
-        self.server.drop_database(self.test_db)
-        self.server.close()
+        for db, server in self.dbs:
+            db.close()
+            server.drop_database(self.test_db)
+            server.close()
     
     def test_create_drop_and_has_table(self):        
         test_table_schema = {
@@ -260,26 +312,36 @@ class OpusDatabaseTest(opus_unittest.OpusTestCase):
         }
         test_table = 'test_table'
         
-        self.assertFalse(self.db.table_exists(test_table))
-        
-        self.db.create_table(test_table, test_table_schema)
-        self.assertTrue(self.db.table_exists(test_table))
-        
-        self.db.drop_table(test_table)
-        self.assertFalse(self.db.table_exists(test_table))
-
+        for db, server in self.dbs:
+            try:
+                self.assertFalse(db.table_exists(test_table))
+                
+                db.create_table(test_table, test_table_schema)
+                self.assertTrue(db.table_exists(test_table))
+                
+                db.drop_table(test_table)
+                self.assertFalse(db.table_exists(test_table))
+            except:
+                print 'ERROR: protocol %s'%server.config.protocol
+                raise
     def test_get_table(self):
         test_table_schema = {
             'col1':"INTEGER",
             'col2':"FLOAT"                     
         }
         test_table = 'test_table'
-        self.assertFalse(self.db.table_exists(test_table))
-        self.db.create_table(test_table, test_table_schema)
-        t = self.db.get_table(test_table)
-        self.assertTrue(isinstance(t,Table))
-        self.assertTrue(t.name == test_table)
-            
+        
+        for db, server in self.dbs:
+            try:
+                self.assertFalse(db.table_exists(test_table))
+                db.create_table(test_table, test_table_schema)
+                t = db.get_table(test_table)
+                self.assertTrue(isinstance(t,Table))
+                self.assertTrue(t.name == test_table)
+            except:
+                print 'ERROR: protocol %s'%server.config.protocol
+                raise
+                        
     def test_get_schema_from_table(self):
         
         test_table_schema = {
@@ -293,15 +355,21 @@ class OpusDatabaseTest(opus_unittest.OpusTestCase):
         }
         
         test_table = 'test_table'
-        self.assertFalse(self.db.table_exists(test_table))
-        self.db.create_table(test_table, test_table_schema)
-        new_schema = self.db.get_schema_from_table(test_table)
-        self.assertEqual(test_table_schema, new_schema)
-
-    def test_GetResultsFromQuery(self):
+        
+        for db,server in self.dbs:
+            try:
+                self.assertFalse(db.table_exists(test_table))
+                db.create_table(test_table, test_table_schema)
+                new_schema = db.get_schema_from_table(test_table)
+                self.assertEqual(test_table_schema, new_schema)
+            except:
+                print 'ERROR: protocol %s'%server.config.protocol
+                raise
+            
+    def skip_test_GetResultsFromQuery(self):
         pass
     
-    def test_DoQuery(self):
+    def skip_test_DoQuery(self):
         pass
 
     

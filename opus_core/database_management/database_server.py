@@ -19,6 +19,7 @@ from sqlalchemy import create_engine
 
 import os
 
+
 class DatabaseServer(object):
     """
     Handles all non-transactional queries to the database server. 
@@ -51,6 +52,11 @@ class DatabaseServer(object):
             bind = self.engine
         ) 
         
+        if self.protocol == 'sqlite':
+            self.server_path = os.path.join(os.environ['OPUS_HOME'],'local_databases')
+            if not os.path.exists(self.server_path):
+                os.mkdir(self.server_path)
+        
     def get_connection_string(self):
         if self.protocol in ['mssql','postgres']:
             if self.protocol == 'mssql':
@@ -60,9 +66,11 @@ class DatabaseServer(object):
                 
             return '%s://%s:%s@%s/%s'%(self.protocol, self.user_name, self.password, self.host_name, database_name) 
 
-        else:
+        elif self.protocol == 'mysql':
             return '%s://%s:%s@%s'%(self.protocol, self.user_name, self.password, self.host_name) 
 
+        elif self.protocol == 'sqlite': 
+            return 'sqlite://'
 
     def log_sql(self, sql_query, show_output=False):
         if show_output == True:
@@ -94,7 +102,12 @@ class DatabaseServer(object):
                 self.engine.execute('''
                     END;
                     CREATE DATABASE %s;
-                '''%database_name)            
+                '''%database_name.lower())     
+            elif self.protocol == 'sqlite':
+                f = open(os.path.join(self.server_path,database_name+'.txt'),'w')
+                f.write('')
+                f.close()
+                       
 
     def drop_database(self, database_name):
         """
@@ -109,7 +122,9 @@ class DatabaseServer(object):
                 self.engine.execute('''
                     END;
                     DROP DATABASE %s;
-                '''%database_name)            
+                '''%database_name.lower())         
+            elif self.protocol == 'sqlite':
+                os.remove(os.path.join(self.server_path,database_name+'.txt'))   
 
 
     def get_database(self, database_name):
@@ -138,7 +153,7 @@ class DatabaseServer(object):
             result = self.engine.execute(query)
             dbs = [db[0] for db in result.fetchall()]
 
-        elif self.protocol == 'mssql': #note: this is untested
+        elif self.protocol == 'mssql':
             import pyodbc
             conn = 'DRIVER={SQL Server};SERVER=%(server)s;DATABASE=%(database)s;UID=%(UID)s;PWD=%(PWD)s'% \
                                {'UID':self.user_name, 
@@ -150,11 +165,15 @@ class DatabaseServer(object):
             dbs = [d[0] for d in c.execute('EXEC sp_databases').fetchall()]
             c.close()
             del c
-
-        return database_name in dbs
             
-        #TODO: add other protocols
-        
+        elif self.protocol == 'sqlite':
+            import fnmatch
+            dbs = [f[:-4] for f in os.listdir(self.server_path) if fnmatch.fnmatch(f,'*.txt')]
+
+        if self.protocol == 'postgres':
+            return database_name.lower() in [db.lower() for db in dbs]
+        else:
+            return database_name in dbs        
     
     __type_name_to_string = {
         'string':'text',
@@ -202,7 +221,14 @@ class Tests(opus_unittest.OpusTestCase):
             test = True)
         s = DatabaseServer(server_config)     
         return s
-        
+
+    def get_sqlite_server(self):
+        server_config = DatabaseServerConfiguration(
+            protocol = 'sqlite',
+            test = True)
+        s = DatabaseServer(server_config)     
+        return s
+            
     def helper_create_drop_and_has_database(self, db_server):
         db_name = 'test_database_server'
         self.assertFalse(db_server.has_database(db_name))
@@ -245,6 +271,16 @@ class Tests(opus_unittest.OpusTestCase):
                 server = self.get_mssql_server()
                 self.helper_create_drop_and_has_database(server)
                 server.close()
-                                             
+
+    def test_sqlite_create_drop_and_has_database(self):
+        try:
+            import sqlite3
+        except:
+            pass
+        else:
+            server = self.get_sqlite_server()
+            self.helper_create_drop_and_has_database(server)
+            server.close()
+                                                             
 if __name__ == '__main__':
     opus_unittest.main()
