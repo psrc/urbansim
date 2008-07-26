@@ -73,7 +73,7 @@ class IndicatorFrameworkInterface:
         
         attribute = str(expression)
         if attribute.find('=') == -1:
-            attribute = indicator_name + '='+ attribute
+            attribute = str(indicator_name) + '='+ attribute
         
         new_indicator = Indicator(dataset_name = dataset_name,
                               attribute = attribute)
