@@ -49,23 +49,20 @@ class OpusResultVisualizer(object):
         self.kwargs = kwargs
         
     def run(self, args, cache_directory = None):
-        if WithOpus:
+        succeeded = False
+        try:
+            # find the directory containing the eugene xml configurations
+            self._visualize(args, cache_directory = cache_directory)
+            succeeded = True
+        except:
             succeeded = False
-            try:
-                # find the directory containing the eugene xml configurations
-                self._visualize(args, cache_directory = cache_directory)
-                succeeded = True
-            except:
-                succeeded = False
-                errorInfo = formatExceptionInfo(custom_message = 'Unexpected error in the results visualizer')
+            errorInfo = formatExceptionInfo(custom_message = 'Unexpected error in the results visualizer')
+            
+            if self.errorCallback is not None:
+                self.errorCallback(errorInfo)
                 
-                if self.errorCallback is not None:
-                    self.errorCallback(errorInfo)
-                    
-            if self.finishedCallback is not None:
-                self.finishedCallback(succeeded)
-        else:
-            pass
+        if self.finishedCallback is not None:
+            self.finishedCallback(succeeded)
     
     def _visualize(self, args, cache_directory = None):
             
