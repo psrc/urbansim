@@ -30,6 +30,8 @@
         <employment_location_choice_model_home_based type="model" choices="Estimate|Skip" >Skip</employment_location_choice_model_home_based>
         <employment_location_choice_model_non_home_based type="model" choices="Estimate|Skip" >Skip</employment_location_choice_model_non_home_based>
       </models_to_estimate>
+      <estimation_config type="dictionary">
+      </estimation_config>
     </estimation>
   </model_manager>
   <scenario_manager/>

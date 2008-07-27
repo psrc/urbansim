@@ -80,15 +80,31 @@ class XMLConfiguration(object):
             return None
         else:
             return Configuration(self._node_to_config(x))
+        
+    def get_expression_library(self):
+        """Return a dictionary of variables defined in the expression library for this configuration.  The keys in the
+        dictionary are pairs (dataset_name, variable_name) and the values are the corresponding expressions."""
+        result = {}
+        node = self._find_node('general/expression_library')
+        if node is not None:
+            for v in node:
+                # if the variable is defined as an expression, add it to the dictionary.  Otherwise it's a Python class - skip it
+                if v.get('source')=='expression':
+                    name = v.tag
+                    dataset = v.get('dataset')
+                    result[(dataset,name)] = v.text
+        return result  
 
     def get_run_configuration(self, name, merge_controllers=True):
         """Extract the run configuration named 'name' from this xml project and return it.
         Note that one run configuration can inherit from another (in addition to the usual
         project-wide inheritance).  If merge_controllers is True, merge in the controller
-        section into the run configuration."""
+        section into the run configuration.  If the configuration has an expression library, add
+        that to the configuration under the key 'expression_library' """
         config = self.get_section('scenario_manager/%s' % name)
         if config is None:
             raise ValueError, "didn't find a scenario named %s" % name
+        self._insert_expression_library(config)
         if merge_controllers:
             # merge in the controllers in the model_manager/model_system portion of the project (if any)
             self._merge_controllers(config)
@@ -106,8 +122,17 @@ class XMLConfiguration(object):
         else:
             return config
 
+    def get_estimation_configuration(self):
+        """Extract an estimation configuration from this xml project and return it.
+        If the configuration has an expression library, add
+        that to the configuration under the key 'expression_library' """
+        config = self.get_section('model_manager/estimation')['estimation_config']
+        self._merge_controllers(config)
+        self._insert_expression_library(config)
+        return config
+
     def get_estimation_specification(self, model_name, model_group=None):
-        """get the estimation specification for the given model and return it as a dictionary"""
+        """Get the estimation specification for the given model and return it as a dictionary."""
         # all_vars is the list of variables from the expression library
         all_vars = []
         lib_node = self._find_node('general/expression_library')
@@ -494,9 +519,19 @@ class XMLConfiguration(object):
                 self._add_to_dict(child, subdict)
             return {name: subdict}
 
+    def _insert_expression_library(self, config):
+        # insert the expression library into config, if it isn't empty
+        lib = self.get_expression_library()
+        if len(lib)>0:
+            config['expression_library'] = lib
+
 from numpy import ma
 import StringIO
 from opus_core.tests import opus_unittest
+from opus_core.datasets.dataset import Dataset
+from opus_core.storage_factory import StorageFactory
+from opus_core.variables.variable_factory import VariableFactory
+
 class XMLConfigurationTests(opus_unittest.OpusTestCase):
 
     def setUp(self):
@@ -650,7 +685,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         should_be = {
           'real_estate_price_model': {
             'single_family_residential': {'submodel_id': 24, 'variables': ['ln_cost', 'existing_units']}},
-          'models_to_estimate': ['real_estate_price_model']}
+          'models_to_estimate': ['real_estate_price_model'],
+          'estimation_config': {}}
         self.assertEqual(config, should_be)
         
     def test_get_section_of_child(self):
@@ -659,7 +695,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         should_be = {
           'real_estate_price_model': {
             'single_family_residential': {'submodel_id': 240, 'variables': ['ln_cost', 'existing_units']}},
-          'models_to_estimate': ['real_estate_price_model', 'household_location_choice_model']}
+          'models_to_estimate': ['real_estate_price_model', 'household_location_choice_model'],
+          'estimation_config': {}}
         self.assertEqual(config, should_be)
         
     def test_inherited_attributes(self):
@@ -739,6 +776,40 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         should_be = {'_definition_': ['ln_cost = ln(psrc.parcel.cost)+10', 'urbansim_parcel.parcel.existing_units', 'urbansim_parcel.parcel.tax'],
           240: ['ln_cost', 'existing_units']}
         self.assertEqual(config, should_be)
+        
+    def test_get_expression_library(self):
+        f = os.path.join(self.test_configs, 'expression_library_test.xml')
+        lib = XMLConfiguration(f).get_expression_library()
+        should_be = {('test_agent', 'income_times_10'): '5*opus_core.test_agent.income_times_2', ('parcel', 'ln_cost'): 'ln(psrc.parcel.cost)'}
+        self.assertEqual(lib, should_be)
+        # Now test that computing the value of this variable gives the correct answer.  This involves
+        # setting the expression library in VariableFactory -- when actually estimating a model or running
+        # a simulation, that gets done by a call in ModelSystem.run.
+        VariableFactory().set_expression_library(lib)
+        expr = "opus_core.test_agent.income_times_10"
+        storage = StorageFactory().get_storage('dict_storage')
+        storage.write_table(
+            table_name='test_agents',
+            table_data={
+                "income":array([1,5,10]),
+                "id":array([1,3,4])
+                }
+            )
+        dataset = Dataset(in_storage=storage, in_table_name='test_agents', id_name="id", dataset_name="test_agent")
+        result = dataset.compute_variables([expr])
+        should_be = array([10, 50, 100])
+        self.assert_(ma.allclose(result, should_be, rtol=1e-6), "Error in test_fully_qualified_variable")
+        
+    def test_expression_library_in_config(self):
+        # test that the expression library is set correctly for estimation and run configurations 
+        should_be = {('test_agent', 'income_times_10'): '5*opus_core.test_agent.income_times_2', ('parcel', 'ln_cost'): 'ln(psrc.parcel.cost)'}
+        f = os.path.join(self.test_configs, 'expression_library_test.xml')
+        config = XMLConfiguration(f)
+        est = config.get_estimation_configuration()
+        self.assertEqual(est['expression_library'], should_be)
+        run = config.get_run_configuration('test_scenario')
+        self.assertEqual(run['expression_library'], should_be)
+
         
     def test_save_as(self):
         # test saving as a new file name - this should also test save()

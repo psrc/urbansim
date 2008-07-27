@@ -31,7 +31,9 @@ class EstimationRunner(Estimator):
         It can contain an entry 'config_changes_for_estimation' which is a dictionary
         where keys are model names and values are controller changes for that model.
         If 'configuration' is None, it is taken from 'xml_configuration'.
-        If save_estimation_results is True, the estimation results are saved in the oputput configuration 
+        If xml_configuration is used, and if it has a non-empty expression library, the dictionary representing
+        the expression library is added to the configuration under the key 'expression_library'.
+        If save_estimation_results is True, the estimation results are saved in the output configuration 
         (if given in 'configuration') and in the cache.
         """
         self.specification_module = specification_module
@@ -42,9 +44,7 @@ class EstimationRunner(Estimator):
         if configuration is None:
             if self.xml_configuration is None:
                 raise StandardError, "Either dictionary based or XML based configuration must be given."
-            estimation_section = self.xml_configuration.get_section('model_manager/estimation')
-            config = estimation_section['estimation_config']
-            self.xml_configuration._merge_controllers(config)
+            config = self.xml_configuration.get_estimation_configuration()
         else:
             config = Configuration(configuration)
         config_changes = config.get('config_changes_for_estimation', {})

@@ -42,6 +42,9 @@ class AutogenVariableFactory(object):
     _named_constants = ["True", "False", "bool8", "int8", "uint8", "int16", "uint16", "int32", 
         "uint32", "int64", "uint64", "float32", "float64", "complex64", "complex128", "longlong"]
     
+    # counter for automatically-generated class names
+    _autogen_counter = 0
+    
     def __init__(self, expr):
         # expr is a string that is the expression being compiled into a variable
         self._expr = expr
@@ -176,14 +179,8 @@ class AutogenVariableFactory(object):
     def _generate_new_variable(self):
         self._analyze_tree(self._expr_parsetree)
         self._analyze_dataset_names()
-        # keep the counter for classes in a class variable _autogen_counter
-        if hasattr(AutogenVariableFactory, '_autogen_counter'):
-            counter = getattr(AutogenVariableFactory, '_autogen_counter')
-        else:
-            counter = 0
-        classname = autogenvar_prefix + str(counter)
-        counter = counter+1
-        setattr(AutogenVariableFactory, '_autogen_counter', counter)
+        classname = autogenvar_prefix + str(self._autogen_counter)
+        AutogenVariableFactory._autogen_counter = self._autogen_counter+1
         # now build up a string 'classexpr' that will be used to define the new class
         classexpr = 'class %s (Variable): \n%s%s%s' % \
             (classname, self._generate_dependencies_method(), self._generate_name_method(), self._generate_compute_method())

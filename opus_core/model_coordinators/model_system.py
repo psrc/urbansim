@@ -36,6 +36,7 @@ from opus_core.store.attribute_cache import AttributeCache
 from opus_core.simulation_state import SimulationState
 from opus_core.file_utilities import get_resources_from_file
 from opus_core.session_configuration import SessionConfiguration
+from opus_core.variables.variable_factory import VariableFactory
 
 class ModelSystem(object):
     """
@@ -48,6 +49,10 @@ class ModelSystem(object):
                            must correspond to the name of the module/class of that model. Default(object): None
                years - a tuple (start year, end year)
                debuglevel - an integer. The higher the more output will be printed. Default: 0
+               expression_library - a dictionary.  The keys in the dictionary are pairs (dataset_name, variable_name) 
+               and the values are the corresponding expressions.  The model system needs to set the expression library
+               (if it isn't None) in DatasetFactory for DatasetFactory to know about variables defined as expressions
+               in the xml expression library.  Default: None
         This method is called both to start up the simulation for all years, and also for each year 
         when running with one process per year.  In the latter case, 'years' consists of just
         (current_year, current_year) rather than the real start and end years for the simulation.
@@ -64,6 +69,9 @@ class ModelSystem(object):
         
         if resources['cache_directory'] is not None:
             self.simulation_state.set_cache_directory(resources['cache_directory'])
+            
+        if 'expression_library' in resources:
+            VariableFactory().set_expression_library(resources['expression_library'])            
 
         cache_directory = self.simulation_state.get_cache_directory()
         log_file = os.path.join(cache_directory, log_file_name)

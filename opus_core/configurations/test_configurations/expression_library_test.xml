@@ -1,0 +1,13 @@
+<opus_project>
+  <general>
+    <parent type="file">estimate.xml</parent>
+    <expression_library type="dictionary">
+      <income_times_10 type="variable_definition" dataset="test_agent" use="model variable" source="expression">5*opus_core.test_agent.income_times_2</income_times_10>
+    </expression_library>
+  </general>
+  <scenario_manager>
+    <test_scenario type="scenario">
+      <year type="integer">1980</year>
+    </test_scenario>
+  </scenario_manager>
+</opus_project>

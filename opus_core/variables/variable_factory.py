@@ -12,9 +12,6 @@
 # other acknowledgments.
 # 
 
-import re
-import string
-
 from opus_core.variables.variable_family_name_translator import VariableFamilyNameTranslator
 from opus_core.variables.variable_name import VariableName
 from opus_core.misc import DebugPrinter
@@ -29,7 +26,14 @@ class VariableFactory(object):
       - an alias that has a corresponding expression in the aliases.py file in the variables directory for that dataset
     Beware: the methods of this class are class methods, not object methods.
     """
-          
+    
+    # Class dictionary holding the expression library.  The keys in the dictionary are pairs 
+    # (dataset_name, variable_name) and the values are the corresponding expressions.
+    # This starts out as an empty dictionary, and can be set using the set_expression_library method.
+    _expression_library = {}
+    def set_expression_library(self, lib):
+        VariableFactory._expression_library = lib
+
     def get_variable(self, variable_name, dataset, quiet=False, debug=0, index_name=None):
         """Returns an instance of class Variable. 
         'variable_name' is an instance of class VariableName. 
@@ -41,7 +45,6 @@ class VariableFactory(object):
         """
         lag_attribute_name = None
         lag_offset = 0
-        lag_variable = False
             
         if not isinstance(debug, DebugPrinter):
             debug = DebugPrinter(debug)
@@ -57,7 +60,13 @@ class VariableFactory(object):
             dataset_name = variable_name.get_dataset_name()
             package_name = variable_name.get_package_name()
             
-            # first look in the appropriate 'aliases' file, if one is present
+            # first look in the expression library
+            e = VariableFactory._expression_library.get( (dataset_name,short_name), None)
+            if e is not None:
+                v = VariableName(e)
+                return VariableFactory().get_variable(v, dataset, quiet=quiet, debug=debug)
+            
+            # next look in the appropriate 'aliases' file, if one is present
             try:
                 stmt = 'from %s.%s.aliases import aliases' % (package_name, dataset_name)
                 exec(stmt)
@@ -69,11 +78,10 @@ class VariableFactory(object):
                 v = VariableName(a)
                 if v.get_alias() == short_name:
                     return VariableFactory().get_variable(v, dataset, quiet=quiet, debug=debug)
-                
+
             lag_variable_parser = LagVariableParser()
             if lag_variable_parser.is_short_name_for_lag_variable(short_name):
                 lag_attribute_name, lag_offset = lag_variable_parser.parse_lag_variable_short_name(short_name)
-                lag_variable = True
                 true_short_name = "VVV_lagLLL"
                 substrings = (package_name, lag_attribute_name, lag_offset, dataset_name, index_name)
                 directory_path = 'opus_core.variables'
