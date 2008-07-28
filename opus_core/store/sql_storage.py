@@ -129,7 +129,7 @@ class sql_storage(Storage):
         for column_name, column_data in table_data.items():
             col_type = self._get_sql_alchemy_type_from_numpy_dtype(column_data.dtype)
             
-            if column_name.find('_id') > -1:
+            if column_name.find('_id') > -1 and len(column_data) == len(set(column_data)):
                 col = Column(column_name,col_type,primary_key = True)
                 columns.insert(0,col)
             else: 
