@@ -616,7 +616,7 @@ class ModelGuiElement(QWidget):
         if success:
             self.simprogressGroupBox.setTitle(QString("Model Finished Successfully"))
         else:
-            self.simprogressGroupBox.setTitle(QString("Model Unsuccessfully!"))
+            self.simprogressGroupBox.setTitle(QString("Model Error!"))
 
         self.timer.stop()
         # Get the final logfile update after model finishes...
