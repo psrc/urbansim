@@ -60,7 +60,7 @@ class IndicatorFrameworkInterface:
     def get_indicator(self, indicator_name, dataset_name):
 
         indicators = self.xml_helper.get_available_indicator_names(
-                   attributes = ['dataset'])
+                   attributes = ['dataset', 'source'])
         expression = None
         for indicator in indicators:
             if dataset_name != indicator['dataset'] or \
@@ -72,7 +72,7 @@ class IndicatorFrameworkInterface:
             raise Exception('Could not find an indicator %s for dataset %s'%(indicator_name, dataset_name))
         
         attribute = str(expression)
-        if attribute.find('=') == -1:
+        if attribute.find('=') == -1 and indicator['source'] == 'expression':
             attribute = str(indicator_name) + '='+ attribute
         
         new_indicator = Indicator(dataset_name = dataset_name,
