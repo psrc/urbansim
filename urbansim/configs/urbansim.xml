@@ -30,6 +30,15 @@
   <data_manager>
     <Tool_Library type="tool_library" setexpanded="True" >
       <tool_path flags="hidden" type="tool_path" >tools</tool_path>
+      <shapefile_to_postgis type="tool_file">
+        <name type="tool_name">shapefile_to_postgis</name>
+        <params type="param_template">
+          <dbname choices="Required|Optional" type="string">Required</dbname>
+          <schema_name choices="Required|Optional" type="string">Required</schema_name>
+          <shapefile_path choices="Required|Optional" type="string">Required</shapefile_path>
+          <output_table_name choices="Required|Optional" type="string">Required</output_table_name>
+        </params>
+      </shapefile_to_postgis>
       <sql_data_to_opus_tool type="tool_file" >
         <name type="tool_name" >sql_data_to_opus</name>
         <params type="param_template" >

@@ -19,27 +19,21 @@ def opusRun(progressCB,logCB,params):
     for key, val in params.iteritems():
         my_dict[str(key)] = str(val)
     
-    dbname = my_dict['Database Name']
-    schema = my_dict['Schema Name']
-    shapefile = my_dict['Shapefile Path']
-    table_name = my_dict['Table Name']
-    host = os.environ['POSTGRESHOSTNAME'] #'trondheim.cs.washington.edu'
-    user = os.environ['POSTGRESUSERNAME'] #'urbansim'
-    password = os.environ['POSTGRESPASSWORD'] #'Urbo**sauR' 
-    overwrite = my_dict['Overwrite']
+    dbname = my_dict['dbname']
+    schema = my_dict['schema_name']
+    shapefile = my_dict['shapefile_path']
+    table_name = my_dict['output_table_name']
+    host = os.environ['POSTGRESHOSTNAME']
+    user = os.environ['POSTGRESUSERNAME']
+    password = os.environ['POSTGRESPASSWORD']
+    ogr2ogr_cmd = 'ogr2ogr -f PostgreSQL PG:"host=%s user=%s dbname=%s password=%s" %s -lco PRECISION=NO -nln %s.%s' \
+                    % (host, user, dbname, password, shapefile, schema, table_name)
+    print ogr2ogr_cmd
 
-    if overwrite:
-        overwrite_option = '-overwrite'
-    else:
-        overwrite_option = ''
-
-    ogr2ogr_cmd = 'ogr2ogr -f PostgreSQL PG:"host=%s user=%s dbname=%s password=%s" %s -lco PRECISION=NO SCHEMA=%s %s -nln %s' \
-                    % (host, user, dbname, password, shapefile, schema, overwrite_option, table_name)
     p = subprocess.Popen((ogr2ogr_cmd),
                           stdin=subprocess.PIPE,
                           stdout=subprocess.PIPE,
                           stderr=subprocess.PIPE)
-
     stdout_text, stderr_text = p.communicate()
 
     print stdout_text
