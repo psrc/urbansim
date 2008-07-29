@@ -16,7 +16,7 @@ from numpy import array, dtype
 
 try:
     import sqlalchemy
-    from sqlalchemy import Table, Column, select
+    from sqlalchemy import Table, Column, select, insert
     from sqlalchemy.types import Integer, Numeric, Text, Float, Boolean    
 except ImportError:
     sqlalchemy = None
@@ -29,7 +29,6 @@ except:
     
 
 from opus_core.store.storage import Storage
-from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.opus_database import OpusDatabase
 
 class sql_storage(Storage):
@@ -303,44 +302,26 @@ else:
 
        
         def test_write_table_creates_a_table_with_the_given_table_name_and_data(self):
-            from MySQLdb import ProgrammingError, OperationalError
-                   
             self.storage.write_table(
                 table_name = 'test_write_table', 
                 table_data = {
-                    'id': array([1,2,3]),
+                    'my_id': array([1,2,3]),
                     'a': array([4,5,6]),
                     }
                 )
                 
-            expected_results = [['id', 'a'], [1,4], [2,5], [3,6]]
+            expected_results = [(long(1),long(4)), (long(2),long(5)), (long(3),long(6))]
             
-            #Verify the data through a DatabaseServer database connection
             db = self.db_server.get_database(self.database_name)
             
-            try:
-                db.DoQuery('SELECT * FROM test_write_table')
-                
-            except ProgrammingError, (error_code, _):
-                if error_code == 1146:
-                    self.fail('write_table() did not create a table with the expected name (test_write_table).')
-                else:
-                    raise
-                
-            try:
-                results = db.GetResultsFromQuery('SELECT id, a FROM test_write_table ORDER BY id')
-                
-            except OperationalError, (error_code, error_message):
-                if error_code == 1054:
-                    self.fail('write_table() did not create all of the expected columns: %s' % error_message)
-                else:
-                    raise
-                
+            tbl = db.get_table('test_write_table')
+            s = select([tbl.c.my_id, tbl.c.a], order_by = tbl.c.my_id)
+            results = db.engine.execute(s).fetchall()
+
             self.assertEqual(expected_results, results)
         
         def test_write_table_creates_a_table_with_the_given_table_name_and_data_of_different_types(self):
-            from MySQLdb import ProgrammingError, OperationalError
-                   
+            
             self.storage.write_table(
                 table_name = 'test_write_table', 
                 table_data = {
@@ -350,34 +331,43 @@ else:
                     }
                 )
                 
-            expected_results = [['int_data', 'float_data', 'string_data'], [1,1.1,'bar'], [2,2.2,'foo']]
+                            
+            expected_results = [(long(1),1.1,'bar'), (long(2),2.2,'foo')]
             
             # Verify the data through a DatabaseServer database connection
             db = self.db_server.get_database(self.database_name)
-            
-            try:
-                db.DoQuery('SELECT * FROM test_write_table')
-                
-            except ProgrammingError, (error_code, _):
-                if error_code == 1146:
-                    self.fail('write_table() did not create a table with the expected name (test_write_table).')
-                else:
-                    raise
-                
-            try:
-                results = db.GetResultsFromQuery('SELECT int_data, float_data, string_data FROM test_write_table ORDER BY int_data')
-                
-            except OperationalError, (error_code, error_message):
-                if error_code == 1054:
-                    self.fail('write_table() did not create all of the expected columns: %s' % error_message)
-                else:
-                    raise
-                
+
+            tbl = db.get_table('test_write_table')
+            s = select([tbl.c.int_data, tbl.c.float_data, tbl.c.string_data], order_by = tbl.c.int_data)
+            results = db.engine.execute(s).fetchall()
+
             self.assertEqual(expected_results, results)
 
-        def test_write_table_overwrite(self):
-            from MySQLdb import ProgrammingError, OperationalError
-                   
+        def test_write_table_properly_creates_primary_key(self):                   
+            self.storage.write_table(
+                table_name = 'test_write_table', 
+                table_data = {
+                    'my_id': array([1,2,3]),
+                    'a': array([4,5,6]),
+                    }
+                )
+            
+            db = self.db_server.get_database(self.database_name)
+            tbl = db.get_table('test_write_table')
+            self.assertTrue(tbl.c.my_id.primary_key)
+            
+            self.storage.write_table(
+                table_name = 'test_write_table', 
+                table_data = {
+                    'my_id': array([1,1,2,3]),
+                    'a': array([4,5,6,7]),
+                    }
+                )
+            
+            db = self.db_server.get_database(self.database_name)
+            tbl = db.get_table('test_write_table')
+            self.assertFalse(tbl.c.my_id.primary_key)
+
             self.storage.write_table(
                 table_name = 'test_write_table', 
                 table_data = {
@@ -385,37 +375,38 @@ else:
                     'a': array([4,5,6]),
                     }
                 )
+            
+            db = self.db_server.get_database(self.database_name)
+            tbl = db.get_table('test_write_table')
+            self.assertFalse(tbl.c.id.primary_key)
+
+
+        def test_write_table_overwrite(self):
+                   
+            self.storage.write_table(
+                table_name = 'test_write_table', 
+                table_data = {
+                    'my_id': array([1,2,3]),
+                    'a': array([4,5,6]),
+                    }
+                )
 
             self.storage.write_table(
                 table_name = 'test_write_table', 
                 table_data = {
-                    'id': array([1,2,3]),
+                    'my_id': array([1,2,3]),
                     'a': array([4,5,6]),
                     }
                 )                
-            expected_results = [['id', 'a'], [1,4], [2,5], [3,6]]
+            expected_results = [(long(1),long(4)), (long(2),long(5)), (long(3),long(6))]
             
             #Verify the data through a DatabaseServer database connection
             db = self.db_server.get_database(self.database_name)
             
-            try:
-                db.DoQuery('SELECT * FROM test_write_table')
-                
-            except ProgrammingError, (error_code, _):
-                if error_code == 1146:
-                    self.fail('write_table() did not create a table with the expected name (test_write_table).')
-                else:
-                    raise
-                
-            try:
-                results = db.GetResultsFromQuery('SELECT id, a FROM test_write_table ORDER BY id')
-                
-            except OperationalError, (error_code, error_message):
-                if error_code == 1054:
-                    self.fail('write_table() did not create all of the expected columns: %s' % error_message)
-                else:
-                    raise
-                
+            tbl = db.get_table('test_write_table')
+            s = select([tbl.c.my_id, tbl.c.a], order_by = tbl.c.my_id)
+            results = db.engine.execute(s).fetchall()
+
             self.assertEqual(expected_results, results)
                         
         def test_get_sql_alchemy_type_from_numpy_dtype(self):
@@ -456,24 +447,6 @@ else:
             self.assertEqual(Set(expected_table_names), Set(actual_table_names))
             self.assertEqual(len(expected_table_names), len(actual_table_names))
             
-#        def test_get_table_names_already_in_database(self):
-#            db = self.db_server.get_database(self.database_name)
-#            
-#            db.DoQuery('CREATE TABLE foo (a INT)')
-#            db.DoQuery('INSERT INTO foo (a) VALUES (1)')
-#            
-#            db.DoQuery('CREATE TABLE bar (a INT)')
-#            db.DoQuery('INSERT INTO bar (a) VALUES (1)')
-#            
-#            db.DoQuery('CREATE TABLE baz (a INT)')
-#            db.DoQuery('INSERT INTO baz (a) VALUES (1)')
-#                
-#            expected_table_names = ['baz', 'bar', 'foo']
-#            actual_table_names = self.storage.get_table_names()
-#                
-#            self.assertEqual(Set(expected_table_names), Set(actual_table_names))
-#            self.assertEqual(len(expected_table_names), len(actual_table_names))
-            
         def test_get_column_names(self):
             self.storage.write_table(
                 table_name = 'foo', 
@@ -486,8 +459,11 @@ else:
             
             db = self.db_server.get_database(self.database_name)
             
-            db.DoQuery('CREATE TABLE bar (foo INT, boo INT, fooboobar INT)')
-            db.DoQuery('INSERT INTO bar (foo, boo, fooboobar) VALUES (1,1,1)')
+            db.engine.execute('CREATE TABLE bar (foo INT, boo INT, fooboobar INT)')
+            
+            tbl = db.get_table('bar')        
+            i = tbl.insert(values = {'foo':1, 'boo':1, 'fooboobar':1})
+            db.engine.execute(i)
                 
             expected_table_names = ['bee', 'baz', 'foobeebaz']
             actual_table_names = self.storage.get_column_names('foo')
@@ -504,9 +480,12 @@ else:
         def test_load_table_returns_a_table_with_the_given_table_name_and_data(self):
             db = self.db_server.get_database(self.database_name)
             
-            db.DoQuery('CREATE TABLE foo (a INT, b INT, c INT)')
-            db.DoQuery('INSERT INTO foo (a, b, c) VALUES (1,2,3)')
-            
+            db.engine.execute('CREATE TABLE foo (a INT, b INT, c INT)')
+                        
+            tbl = db.get_table('foo')        
+            i = tbl.insert(values = {'a':1, 'b':2, 'c':3})
+            db.engine.execute(i)
+
             expected_data = {
                 'a': array([1], dtype='i'),
                 'b': array([2], dtype='i'),
@@ -520,9 +499,12 @@ else:
         def test_load_table_returns_a_table_with_different_table_name_and_data(self):
             db = self.db_server.get_database(self.database_name)
             
-            db.DoQuery('CREATE TABLE bar (d INT, e FLOAT, f TEXT)')
-            db.DoQuery('INSERT INTO bar (d, e, f) VALUES (4,5.5,"6")')
-            
+            db.engine.execute('CREATE TABLE bar (d INT, e FLOAT, f TEXT)')
+
+            tbl = db.get_table('bar')        
+            i = tbl.insert(values = {'d':4, 'e':5.5, 'f':"6"})
+            db.engine.execute(i)
+                  
             expected_data = {
                 'd': array([4], dtype='i'),
                 'e': array([5.5], dtype='f'),
@@ -536,9 +518,12 @@ else:
         def test_load_table_returns_nothing_when_no_cols_specified(self):
             db = self.db_server.get_database(self.database_name)
             
-            db.DoQuery('CREATE TABLE bar (d INT, e FLOAT, f TEXT)')
-            db.DoQuery('INSERT INTO bar (d, e, f) VALUES (4,5.5,"6")')
+            db.engine.execute('CREATE TABLE bar (d INT, e FLOAT, f TEXT)')
             
+            tbl = db.get_table('bar')        
+            i = tbl.insert(values = {'d':4, 'e':5.5, 'f':"6"})
+            db.engine.execute(i)
+
             expected_data = {}
             
             actual_data = self.storage.load_table('bar', column_names = [])
