@@ -120,10 +120,21 @@ class OpusEstimation(object):
                         time.sleep(10)
                     if self.cancelled:
                         break
-                    self.er = EstimationRunner(model=model_name, xml_configuration=xml_config, configuration=None, save_estimation_results=save_results)
-                    self.running = True
-                    self.er.estimate()
-                    self.running = False
+                    if type(model_name) == dict:
+                        for name, group_members in model_name.items():
+                            self.__class__.er = EstimationRunner(model=name, 
+                                                  xml_configuration=xml_config, 
+                                                  model_group = group_members['group_members'],
+                                                  configuration=None, 
+                                                  save_estimation_results=save_results)
+                        self.running = True
+                        self.er.estimate()
+                        self.running = False
+                    else:
+                        self.er = EstimationRunner(model=model_name, xml_configuration=xml_config, configuration=None, save_estimation_results=save_results)
+                        self.running = True
+                        self.er.estimate()
+                        self.running = False
                 succeeded = True
             except:
                 succeeded = False
