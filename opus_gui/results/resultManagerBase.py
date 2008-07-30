@@ -89,8 +89,14 @@ class ResultManagerBase(AbstractManagerBase):
         cache_root = str(vals['scenario_runs_directory'])
         
         scenario_name = os.path.basename(cache_root)
-        data_directory = os.path.join(os.environ.get('OPUS_DATA_PATH',''), cache_root)
-        baseyear_directory = os.path.join(os.environ.get('OPUS_DATA_PATH',''), os.path.split(cache_root)[0], 'base_year_data')
+        # set 'datapath' to the path to the opus_data directory.  This is found in the environment variable
+        # OPUS_DATA_PATH, or if that environment variable doesn't exist, as the contents of the environment 
+        # variable OPUS_HOME followed by 'data'
+        datapath = os.environ.get('OPUS_DATA_PATH')
+        if datapath is None:
+            datapath = os.path.join(os.environ.get('OPUS_HOME'), 'data')
+        data_directory = os.path.join(datapath, cache_root)
+        baseyear_directory = os.path.join(datapath, os.path.split(cache_root)[0], 'base_year_data')
 
         #get runs logged from this processor to the run activity table
 #        option_group = StartRunOptionGroup()
