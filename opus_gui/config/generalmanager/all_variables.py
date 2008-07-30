@@ -267,7 +267,7 @@ class AllVariablesSelectGui(QDialog, Ui_AllVariablesSelectGui, AllVariablesGui):
                             if children.item(x).isText():
                                 textNode = children.item(x).toText()
                                 # Finally set the text node value
-                                return str(textNode.data()).split(',')
+                                return map(lambda s: s.strip(), str(textNode.data()).split(','))
         return []
                                 
     def updateNodeFromListString(self,node,listString):
