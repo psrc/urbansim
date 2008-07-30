@@ -25,7 +25,7 @@ class cummulative_amount_of_development(Variable):
     def dependencies(self):
         return [
                 "_start_year = development_project_proposal_component.disaggregate(development_project_proposal.start_year)",
-                "_velocity = development_project_proposal_component.disaggregate(velocity_function.annual_construction_schedule, intermediates=[development_template_component])"
+                "_velocity = development_project_proposal_component.disaggregate(velocity_function.annual_construction_schedule)"
                 ]
         
     def compute(self, dataset_pool):
@@ -64,6 +64,40 @@ class Tests(opus_unittest.OpusTestCase):
                  "proposal_id":           array([3, 3, 5, 2, 5, 1, 3, 1]),
                  "velocity_function_id":  array([1, 2, 3, 1, 3, 2, 1, 3])
              },
+            'velocity_function':
+            {
+                 "velocity_function_id": arange(3)+1,
+                 "annual_construction_schedule": array(["[0, 50, 100]", "[100]", "[25, 50, 75, 100]"])
+        
+            }
+        })
+        SimulationState().set_current_time(2007)
+        should_be = array([100, 100,  50,  0, 50, 100, 100, 75])
+
+        tester.test_is_equal_for_variable_defined_by_this_module(self, should_be)
+        
+    def test_my_inputs2(self):
+        tester = VariableTester(
+            __file__,
+            package_order=['urbansim_parcel', 'urbansim'],
+            test_data={
+            'development_project_proposal':
+            {
+                "proposal_id":    array([1,  2,    3,  4, 5]),
+                "start_year": array([2005, 2007, 2005, 2006, 2006])
+            },
+            'development_project_proposal_component':
+            {
+                "proposal_component_id": arange(8)+1,
+                 "proposal_id":           array([3, 3, 5, 2, 5, 1, 3, 1]),
+                 "component_id":          array([3, 1, 4, 2, 4, 1, 3, 4]),
+                 #"velocity_function_id": array([1, 2, 3, 1, 3, 2, 1, 3])
+             },
+            'development_template_component':
+            {
+                "component_id":          array([1, 2, 3, 4]),
+                "velocity_function_id":  array([2, 1, 1, 3])
+             },            
             'velocity_function':
             {
                  "velocity_function_id": arange(3)+1,
