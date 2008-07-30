@@ -16,6 +16,7 @@ import copy, os, pprint
 from numpy import array
 from xml.etree.cElementTree import ElementTree, tostring
 from opus_core.configuration import Configuration
+from opus_core.variables.variable_name import VariableName
 
 class XMLConfiguration(object):
     """
@@ -93,7 +94,30 @@ class XMLConfiguration(object):
                     name = v.tag
                     dataset = v.get('dataset')
                     result[(dataset,name)] = v.text
-        return result  
+        return result
+    
+    def check_expression_library(self, variables=[], check_all=False):
+        """Check the expressions identified in variables, or else all of the expressions, in the expression library.
+        Right now this just involves checking the syntax of the expression (by making a new instance of VariableName for it).
+        Later do this by calling compute_variables on the dataset referenced by this configuration.
+        variables is a list of pairs (dataset_name, variable_name)
+        check_all is a boolean -- if true, ignore 'variables' and check all of the variables in the expression library."""
+        lib = self.get_expression_library()
+        if check_all:
+            vars_to_check = lib.keys()
+        else:
+            vars_to_check = variables
+        errors = []
+        for (dataset_name, var_name) in vars_to_check:
+            expr = lib[(dataset_name, var_name)]
+            try:
+                VariableName(expr)
+            except SyntaxError, e:
+                errors.append("(%s, %s): %s" % (dataset_name, var_name, str(e)))
+            # later use this code:
+            # dataset = .... (code to get the dataset given the xml specification)
+            # dataset.compute_variables([expr])
+        return errors
 
     def get_run_configuration(self, name, merge_controllers=True):
         """Extract the run configuration named 'name' from this xml project and return it.
@@ -810,7 +834,25 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         run = config.get_run_configuration('test_scenario')
         self.assertEqual(run['expression_library'], should_be)
 
-        
+    def test_check_expression_library(self):
+        # test the check_expression_library method
+        f = os.path.join(self.test_configs, 'bad_expression_library_test.xml')
+        config = XMLConfiguration(f)
+        # the variables 'income_times_10' (which is inherited) and 'good_income' (defined in bad_expression_library_test.xml) 
+        # should both work OK
+        result1 = config.check_expression_library([('test_agent', 'income_times_10'), ('test_agent', 'good_income')])
+        self.assertEqual(result1, [])
+        # check that the bad variables raise the appropriate errors
+        result2 = config.check_expression_library([('test_agent', 'bad_income_syntax_error')])
+        # check that a bad variable is detected
+        self.assertEqual(len(result2), 1)
+        self.assert_(result2[0].startswith('(test_agent, bad_income_syntax_error)'))
+        # check the check_all option
+        result3 = config.check_expression_library(check_all=True)
+        # once semantic checking is on the variable 'bad_income_semantic_error' should also have an error
+        self.assertEqual(len(result3), 1)
+        self.assert_(result3[0].startswith('(test_agent, bad_income_syntax_error)'))
+
     def test_save_as(self):
         # test saving as a new file name - this should also test save()
         f = os.path.join(self.test_configs, 'estimation_grandchild.xml')
