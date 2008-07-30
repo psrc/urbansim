@@ -90,7 +90,7 @@ class RemoteRun:
     
     # default name of remote host and the user name (user will be prompted for those and can overwrite the default values) 
     #default_hostname = "aalborg"
-    default_hostname = "faloorum6.csss.washington.edu"
+    default_hostname = "faloorum5.csss.washington.edu"
     default_username = getpass.getuser()
 
     # opus python path on the remote host (where opus projects live) 
@@ -325,7 +325,7 @@ class RemoteRun:
 
                 max_zone_id = 0
                 if travel_model_resources['travel_model_configuration'].has_key(this_end_year):
-                    tm = AbstractEmme2TravelModel()
+                    tm = AbstractEmme2TravelModel(travel_model_resources)
                     for full_model_path in travel_model_resources['travel_model_configuration'][this_end_year].get('models'):
                         if full_model_path in self.remote_travel_models:
                             # run this model remotely
@@ -333,7 +333,7 @@ class RemoteRun:
                                                            '-y %d -d %s' % (this_end_year, self.remote_communication_path),
                                                            config=travel_model_resources,
                                                            is_opus_path=True)
-                            tripgen_dir = tm.get_emme2_dir(travel_model_resources, this_end_year, 'tripgen')
+                            tripgen_dir = tm.get_emme2_dir(this_end_year, 'tripgen')
                             max_zone_id = self.copy_file_from_remote_host_and_get_max_zone('TAZDATA.MA2', '%s/inputtg' % tripgen_dir)
                         else:
                             optional_args='-y %d' % this_end_year
@@ -347,7 +347,7 @@ class RemoteRun:
                                                            travel_model_resources, optional_args=optional_args)
                     reports = travel_model_resources['travel_model_configuration'].get('reports_to_copy', [])
                     for x in self.banks:
-                        bank_dir = tm.get_emme2_dir(travel_model_resources, this_end_year, "bank%i" % x)
+                        bank_dir = tm.get_emme2_dir(this_end_year, "bank%i" % x)
                         self.copy_file_to_remote_host("%s/*_one_matrix.txt" % bank_dir, subdirectory="bank%i" % x)
                         node_map = travel_model_resources['travel_model_configuration'].get('node_matrix_variable_map', {})
                         node_files = []
