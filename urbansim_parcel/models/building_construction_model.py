@@ -40,7 +40,7 @@ class BuildingConstructionModel(Model):
         
         # load velocity function dataset
         try:
-            velocity_function_set = dataset_pool.get_dataset("velocity_function_dataset")
+            velocity_function_set = dataset_pool.get_dataset("velocity_function")
         except:
             velocity_function_set = None
                 

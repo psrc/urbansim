@@ -145,13 +145,12 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                            self.proposal_set.get_attribute("start_year")==current_year )
         ## handle planned proposals: all proposals with status_id == is_planned 
         ## and start_year == current_year are accepted
-        self.accepted_proposals += list(where(
-                                              logical_and(
+        planned_proposal_indexes = where(logical_and(
                                                   self.proposal_set.get_attribute("status_id") == self.proposal_set.id_planned, 
                                                   self.proposal_set.get_attribute("start_year") == current_year ) 
-                                              )[0] 
-                                          )
-        
+                                        )[0] 
+                                   
+        self.consider_proposals(planned_proposal_indexes, force_accepting=True)
         # consider proposals (in this order: planned, proposed, tentative)
         for status in [self.proposal_set.id_proposed, self.proposal_set.id_tentative]:
             idx = where(logical_and(self.proposal_set.get_attribute("status_id") == status, is_proposal_eligible))[0]
@@ -170,9 +169,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
                                                                 #*occurence_frequency[idx]
                                                                 ,
                                                 exclude_index=None, return_indices=True)
-                self.consider_proposals(arange(self.proposal_set.size())[idx[sampled_proposal_indexes]],
-                                        current_target_vacancy
-                                       )
+                self.consider_proposals(arange(self.proposal_set.size())[idx[sampled_proposal_indexes]])
                 self.weight[idx[sampled_proposal_indexes]] = 0
 
         # set status of accepted proposals to 'active'
@@ -217,7 +214,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
             if vr < target:
                 self.accepting_proposals[type_id] = True
 
-    def consider_proposals(self, proposal_indexes, target_vacancy):
+    def consider_proposals(self, proposal_indexes, force_accepting=False):
 
         proposals_parcel_ids = self.proposal_set.get_attribute("parcel_id")
         
@@ -269,7 +266,7 @@ class DevelopmentProjectProposalSamplingModel(Model):
 #                self.occupied_units[type_id] = buildings.get_attribute("occupied_%s" % unit_name)[is_matched_type].astype("float32").sum()          
                 
             for itype_id in range(component_types.size): #
-                # this loop is only needed when a proposal could provide units from more than 1 generic building types
+                # this loop is only needed when a proposal could provide units of more than 1 generic building types
                 type_id = component_types[itype_id]
    
                 if is_this_component_residential[itype_id]:
@@ -277,32 +274,35 @@ class DevelopmentProjectProposalSamplingModel(Model):
                 else: # translate from building_sqft to number of job spaces
                     self.proposed_units[type_id] += units_proposed[itype_id] / \
                                                     self.building_sqft_per_job_table[zones_of_proposals[proposal_indexes[i]], type_id]
-                                
-                units_stock = self.existing_units[type_id] - self.demolished_units[type_id] + self.proposed_units[type_id]
-                vr = (units_stock - self.occupied_units[type_id]) / float(units_stock)
-                if vr >= self.target_vacancies[type_id]:
-                    self.accepting_proposals[type_id] = False
-                    # reject all proposals that have one of the components of this type
-                    consider_idx = proposal_indexes[(i+1):proposal_indexes.size] # consider only proposals to be processed
-                    if consider_idx.size > 0:
-                        is_accepted_type = self.accepting_proposals[components_building_type_ids]
-                        sum_is_accepted_type_over_proposals = array(ndimage.sum(is_accepted_type, 
-                                                                            labels = proposal_ids_in_component_set, 
-                                                          index = proposal_ids[consider_idx]))                   
-                        is_rejected_indices = where(sum_is_accepted_type_over_proposals < 
-                                                number_of_components_in_proposals[consider_idx])[0]
-                        is_proposal_rejected[arange((i+1),proposal_indexes.size)[is_rejected_indices]] = True
-                        self.weight[consider_idx[is_rejected_indices]] = 0.0
+                if not force_accepting:                                
+                    ## consider whether target vacancy rates have been achieved if not force_accepting
+                    units_stock = self.existing_units[type_id] - self.demolished_units[type_id] + self.proposed_units[type_id]
+                    vr = (units_stock - self.occupied_units[type_id]) / float(units_stock)
+                    if vr >= self.target_vacancies[type_id]:
+                        ## not accepting proposals of this type
+                        self.accepting_proposals[type_id] = False
+                        ## reject all proposals to be processed that have one of the components of this type
+                        consider_idx = proposal_indexes[(i+1):proposal_indexes.size]
+                        if consider_idx.size > 0:
+                            is_accepted_type = self.accepting_proposals[components_building_type_ids]
+                            sum_is_accepted_type_over_proposals = array(ndimage.sum(is_accepted_type, 
+                                                                                labels = proposal_ids_in_component_set, 
+                                                              index = proposal_ids[consider_idx]))                   
+                            is_rejected_indices = where(sum_is_accepted_type_over_proposals < 
+                                                    number_of_components_in_proposals[consider_idx])[0]
+                            is_proposal_rejected[arange((i+1),proposal_indexes.size)[is_rejected_indices]] = True
+                            self.weight[consider_idx[is_rejected_indices]] = 0.0
 
             if not is_proposal_rejected[i]:
                 # proposal accepted
                 self.accepted_proposals.append(proposal_index)
-            # reject all pending proposals for this site
+            # reject all pending proposals for this site (1 site can accept only 1 proposal at any 1 given year)
             is_proposal_rejected[proposal_site == this_site] = True
+            # don't consider proposals for this site in future sampling (in this year's developer model)
+            self.weight[proposals_parcel_ids == this_site] = 0.0
+            # if all proposals in proposal_indexes have being rejected, return 
             if is_proposal_rejected.sum() == is_proposal_rejected.size:
                 return
-            # don't consider proposed projects for this site in the future (i.e. in further sampling)
-            self.weight[proposals_parcel_ids == this_site] = 0.0
 
 
     def schedule_accepted_proposals(self):

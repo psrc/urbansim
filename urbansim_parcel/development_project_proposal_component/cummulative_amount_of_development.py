@@ -25,7 +25,7 @@ class cummulative_amount_of_development(Variable):
     def dependencies(self):
         return [
                 "_start_year = development_project_proposal_component.disaggregate(development_project_proposal.start_year)",
-                "_velocity = development_project_proposal_component.disaggregate(velocity_function.annual_construction_schedule)"
+                "_velocity = development_project_proposal_component.disaggregate(velocity_function.annual_construction_schedule, intermediates=[development_template_component])"
                 ]
         
     def compute(self, dataset_pool):
