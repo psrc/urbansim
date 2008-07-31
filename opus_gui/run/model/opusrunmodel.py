@@ -16,7 +16,7 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import os, sys
-from opus_gui import formatExceptionInfo
+from opus_gui.exceptions.formatter import formatExceptionInfo
 
 try:
     from opus_core.tools.start_run import StartRunOptionGroup

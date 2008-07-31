@@ -11,25 +11,3 @@
 # and licensing information, and the file ACKNOWLEDGMENTS.html for funding and
 # other acknowledgments.
 # 
-
-
-def formatExceptionInfo(custom_message = 'Unexpected error', maxTBlevel=5):
-    import traceback, sys
-
-#    cla, exc, trbk = sys.exc_info()
-    
-#    excTb = traceback.format_tb(trbk, maxTBlevel)
-    fExc = traceback.format_exc(limit=maxTBlevel)
-    
-#    excName = cla.__name__
-#    try:
-#        excArgs = exc.__dict__["args"]
-#    except KeyError:
-#        excArgs = "<no args>"
-            
-#    errorinfo = (excName, excArgs, excTb)
-
-    fExc = fExc.replace('\t','   ').replace('\n','<br>').replace(' ', '&nbsp;')
-    errorinfo = ('''<qt>%s<br><br>Details:<br><br><small>%s</small></qt>
-                 '''%(custom_message, fExc))    
-    return errorinfo

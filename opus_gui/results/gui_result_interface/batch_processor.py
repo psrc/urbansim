@@ -15,7 +15,7 @@ try:
     WithOpus = True
     from opus_gui.results.gui_result_interface.opus_result_generator import OpusResultGenerator
     from opus_gui.results.gui_result_interface.opus_result_visualizer import OpusResultVisualizer
-    from opus_gui import formatExceptionInfo
+    from opus_gui.exceptions.formatter import formatExceptionInfo
 except ImportError:
     WithOpus = False
     print "Unable to import opus core libs for opus indicator group processor"

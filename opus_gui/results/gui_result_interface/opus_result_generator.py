@@ -11,13 +11,13 @@
 # other acknowledgments.
 # 
 
-import os, sys
+import os
 
 try:
     WithOpus = True
     from opus_gui.results.indicator_framework.maker.maker import Maker
     from opus_gui.results.gui_result_interface.indicator_framework_interface import IndicatorFrameworkInterface
-    from opus_gui import formatExceptionInfo
+    from opus_gui.exceptions.formatter import formatExceptionInfo
     from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
 except ImportError:
     WithOpus = False

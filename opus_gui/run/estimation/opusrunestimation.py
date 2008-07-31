@@ -18,7 +18,7 @@ from PyQt4.QtGui import *
 import os, sys, time
 try:
     from opus_core.configurations.xml_configuration import XMLConfiguration
-    from opus_gui import formatExceptionInfo
+    from opus_gui.exceptions.formatter import formatExceptionInfo
     from urbansim.estimation.estimation_runner import EstimationRunner
     WithOpus = True
 except ImportError:

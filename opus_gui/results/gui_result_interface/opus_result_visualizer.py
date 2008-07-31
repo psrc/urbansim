@@ -23,7 +23,7 @@ try:
     from opus_gui.results.gui_result_interface.indicator_framework_interface import IndicatorFrameworkInterface
     from opus_gui.results.indicator_framework.visualizer.visualizers.table import Table
     from opus_core.storage_factory import StorageFactory
-    from opus_gui import formatExceptionInfo
+    from opus_gui.exceptions.formatter import formatExceptionInfo
 
 except ImportError:
     WithOpus = False
