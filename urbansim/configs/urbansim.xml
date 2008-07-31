@@ -37,6 +37,7 @@
           <schema_name choices="Required|Optional" type="string">Required</schema_name>
           <shapefile_path choices="Required|Optional" type="string">Required</shapefile_path>
           <output_table_name choices="Required|Optional" type="string">Required</output_table_name>
+          <geometry_type choices="Required|Optional" type="string">Optional</geometry_type> 
         </params>
       </shapefile_to_postgis>
       <sql_data_to_opus_tool type="tool_file" >

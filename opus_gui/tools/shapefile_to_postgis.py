@@ -26,18 +26,24 @@ def opusRun(progressCB,logCB,params):
     host = os.environ['POSTGRESHOSTNAME']
     user = os.environ['POSTGRESUSERNAME']
     password = os.environ['POSTGRESPASSWORD']
-    ogr2ogr_cmd = 'ogr2ogr -f PostgreSQL PG:"host=%s user=%s dbname=%s password=%s" %s -lco PRECISION=NO -nln %s.%s' \
-                    % (host, user, dbname, password, shapefile, schema, table_name)
+    geometry_type = my_dict['geometry_type']
+
+    ogr2ogr_cmd = 'ogr2ogr -f PostgreSQL PG:"host=%s user=%s dbname=%s password=%s" %s -lco PRECISION=NO -nln %s.%s -nlt %s' \
+                    % (host, user, dbname, password, shapefile, schema, table_name, geometry_type)
+    
+    print '------------'                
     print ogr2ogr_cmd
+    print '------------'
 
     p = subprocess.Popen((ogr2ogr_cmd),
                           stdin=subprocess.PIPE,
                           stdout=subprocess.PIPE,
                           stderr=subprocess.PIPE)
     stdout_text, stderr_text = p.communicate()
-
+    
+    print 'stdout from ogr2ogr:'
     print stdout_text
-    print '================================'
+    print 'stderr from ogr2ogr:'
     print stderr_text    
 
     
