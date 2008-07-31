@@ -3,6 +3,7 @@
     <description type="string">Refactored Default UrbanSim parcel project</description>
     <parent type="file">urbansim/configs/urbansim.xml</parent>
         <expression_library type="dictionary">
+          <constant type="variable_definition" dataset="parcel" use="model variable" source="built-in">constant</constant>
           <hwy200 type="variable_definition" dataset="parcel" use="model variable" source="expression">psrc.parcel.distance_to_highway_in_gridcell&lt;200</hwy200>
           <hwy600 type="variable_definition" dataset="parcel" use="model variable" source="expression">psrc.parcel.distance_to_highway_in_gridcell&lt;600</hwy600>
           <hwy1000 type="variable_definition" dataset="parcel" use="model variable" source="expression">psrc.parcel.distance_to_highway_in_gridcell&lt;1000</hwy1000>
