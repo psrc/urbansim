@@ -198,7 +198,7 @@ class DatabaseServer(object):
 
 from opus_core.tests import opus_unittest
 from opus_core.database_management.database_server_configuration \
-    import DatabaseServerConfiguration
+    import DatabaseServerConfiguration, _get_installed_database_engines
 
 class Tests(opus_unittest.OpusTestCase):
         
@@ -240,31 +240,19 @@ class Tests(opus_unittest.OpusTestCase):
         self.assertFalse(db_server.has_database(db_name))
                 
     def test_mysql_create_drop_and_has_database(self):
-        try:
-            import MySQLdb
-        except:
-            pass
-        else:
+        if 'mysql' in _get_installed_database_engines():
             server = self.get_mysql_server()
             self.helper_create_drop_and_has_database(server)
             server.close()
         
     def test_postgres_create_drop_and_has_database(self):
-        try:
-            import psycopg2
-        except:
-            pass
-        else:
+        if 'postgres' in _get_installed_database_engines():
             server = self.get_postgres_server()
             self.helper_create_drop_and_has_database(server)
             server.close()
 
     def test_mssql_create_drop_and_has_database(self):
-        try:
-            import pyodbc
-        except:
-            pass
-        else:
+        if 'mssql' in _get_installed_database_engines():
             if not 'MSSQLDEFAULTDB' in os.environ:
                 logger.log_warning('MSSQLDEFAULTDB is not set in the environment variables. Skipping test_mssql_create_drop_and_has_database')
             else:
@@ -273,11 +261,7 @@ class Tests(opus_unittest.OpusTestCase):
                 server.close()
 
     def test_sqlite_create_drop_and_has_database(self):
-        try:
-            import sqlite3
-        except:
-            pass
-        else:
+        if 'sqlite' in _get_installed_database_engines():
             server = self.get_sqlite_server()
             self.helper_create_drop_and_has_database(server)
             server.close()

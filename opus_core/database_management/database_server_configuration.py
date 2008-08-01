@@ -14,6 +14,34 @@
 
 import os
 
+def _get_installed_database_engines():
+    engines = []
+    try:
+        import MySQLdb
+        engines.append('mysql')
+    except:
+        pass
+
+    try:
+        import psycopg2
+        engines.append('postgres')
+    except:
+        pass
+
+    try:
+        import pyodbc
+        engines.append('mssql')
+    except:
+        pass
+
+    try:
+        import sqlite3
+        engines.append('sqlite')
+    except:
+        pass
+    
+    return engines
+
 class DatabaseServerConfiguration(object):
     """A DatabaseServerConfiguration provides the connection information 
     for a sql database server.  If use_environment_variables is True, the
@@ -32,7 +60,19 @@ class DatabaseServerConfiguration(object):
                  test = False,
                  use_environment_variables = None):
         if use_environment_variables is True:
-            self.protocol = os.environ.get('DEFAULT_URBANSIM_DB_ENGINE', 'mysql').lower()
+            self.protocol = os.environ.get('DEFAULT_URBANSIM_DB_ENGINE', None)
+            if self.protocol is None:
+                installed_dbs = _get_installed_database_engines()
+                if 'sqlite' in installed_dbs:
+                    self.protocol = 'sqlite'
+                elif 'mysql' in installed_dbs:
+                    self.protocol = 'mysql'
+                elif 'postgres' in installed_dbs:
+                    self.protocol = 'postgres'
+                elif 'mssql' in installed_dbs:
+                    self.protocol = 'mssql'
+                else:
+                    raise Exception('Cannot find an appropriate database management system to use')
             if test:
                 self.host_name = os.environ.get('%sHOSTNAMEFORTESTS'%self.protocol.upper(),'localhost')
             else:
