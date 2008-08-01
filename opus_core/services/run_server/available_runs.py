@@ -15,25 +15,124 @@ import os, pickle, shutil, sys
 
 from opus_core.logger import logger
 from opus_core.services.run_server.run_state import RunState
+from sqlalchemy.sql import select
+from opus_core.general_resources import GeneralResources
+from opus_core.configuration import Configuration
 
+
+#TODO: eliminate hard coded drive labels 
+def _get_full_cache_dirname(cache_directory, processor_name):
+    """ returns the full path for this indicators directory (e.g.\\server_name\cache_dir_name\run_name)"""
+    
+    indicator_cache = cache_directory
+    if indicator_cache.startswith("d:/"):
+        indicator_cache =  indicator_cache.replace("d:/",'\\\%s\\d_' %processor_name)
+    elif indicator_cache.startswith("c:/") or indicator_cache.startswith("C:/"):
+        indicator_cache =  indicator_cache.replace("c:/",'\\\%s\\c_' % processor_name)
+        indicator_cache =  indicator_cache.replace("C:/",'\\\%s\\c_' % processor_name)           
+    return indicator_cache
+
+    
 class AvailableRuns(object):
     """ keeps a list of available runs. Available runs means that the simulation
     has completed and there's data about the run in the cache"""
     
     def __init__(self, storage):
-        self.storage = storage
-        self.run_state = RunState(self.storage)
-    
-    def close_connection(self):
-        self.storage.close()
+        self.services_database = storage
+        self.run_state = RunState(self.services_database)
+        self.resources = GeneralResources()
         
-    def add_run(self,run_id,info,status):
+    def close_connection(self):
+        self.services_database.close()
+        
+    def add_run(self, run_id, info, status):
         """ adds this information to the available_runs table (or updates info if something with same
             run_id is already there)"""
+
+        """ add row to available_runs """
+        db_name = ''
+        host_name = ''
+
+        if 'input_configuration' in info.keys():
+            db_name = info['input_configuration'].database_name
+            host_name = info['input_configuration'].host_name
+            
+        resources = {'config' : info,
+                    'status' :status,
+                    'run_id' : run_id,
+                    'models' :info.get('models',[]),
+                    'db_input_database': db_name,
+                    'db_host_name' : host_name,
+                    'base_year': info['base_year']}
+
+        resources['years'] = info.get('years_run', [])
+        resources['end_year'] = info.get('end_year', None)
+             
+        run_activity = self.database.get_table('run_activity')
+        query = select(
+            columns = [run_activity.c.processor_name,
+                       run_activity.c.run_name],
+            whereclause = run_activity.c.run_id==run_id               
+        )
+        results = self.database.engine.execute(query).fetchone()
+        resources['processor_name'] = results[0]
+        resources['run_name'] = results[1]        
+        resources['full_cache_dirname'] = _get_full_cache_dirname(
+            info['cache_directory'],
+            resources['processor_name'])    
+
+        self.status = status
         
-        self.run_state.set_run_state(run_id,info,status)
+        pickled_info = pickle.dumps(resources)
+        self.resources.update(resources)  
         
-    def delete_everything_for_this_run(self,run_id):
+        available_runs = self.database.get_table('available_runs')
+                
+        query = select(
+            columns = [available_runs.c.run_id],
+            whereclause = available_runs.c.run_id==int(self.run_id))
+
+        exists = self.database.engine.execute(query).fetchone() is not None
+        
+        if exists:
+            values = {
+                available_runs.c.info: pickled_info,
+                available_runs.c.status: self.status
+            }
+            
+            query = available_runs.update(
+                whereclause = available_runs.c.run_id == int(self.run_id),
+            )
+
+        else:
+            values = {
+                available_runs.c.run_id: run_id,
+                available_runs.c.info: pickled_info,
+                available_runs.c.status: self.status
+            }
+            query = available_runs.insert()
+            
+        try:
+            import pydevd;pydevd.settrace()
+        except:
+            pass
+        
+        print self.database, self.database.get_connection_string()
+        self.database.engine.execute(query, values = values)
+
+    def get_run_state(self, run_id):
+        """ get row from available runs """
+        
+        available_runs = self.database.get_table('available_runs')
+        query = select(
+            columns = [available_runs.c.info,
+                       available_runs.c.status],
+            whereclause = available_runs.c.run_id==int(run_id))
+        
+        info, self.status = self.database.engine.execute(query).fetchone()
+        self.resources.update(Configuration(pickle.loads(info)))
+           
+    def delete_everything_for_this_run(self, run_id):
         """ removes the entire tree structure along with information """
         self.run_state.get_run_state(run_id)
         
@@ -43,9 +142,9 @@ class AvailableRuns(object):
         while os.path.exists(cache_dirname):
             shutil.rmtree(cache_dirname)
         
-        available_runs = self.storage.get_table('available_runs')
+        available_runs = self.services_database.get_table('available_runs')
         query = available_runs.delete(available_runs.c.run_id==int(run_id))
-        self.storage.engine.execute(query)
+        self.services_database.engine.execute(query)
            
     def delete_year_dirs_in_cache(self, run_id, years_to_delete=None):
         """ only removes the years cache and leaves the indicator, changes status to partial"""
@@ -60,9 +159,31 @@ class AvailableRuns(object):
                 shutil.rmtree(year_dir, onerror=self._handle_deletion_errors)
 
         years_cached = [year for year in self.run_state['years'] if year not in years_to_delete]
-        self.run_state.change_years_cached(years_cached, run_id)
-    
-    def _handle_deletion_errors(self,function,path,info):
+        self._update_years_cached(years_cached, run_id)
+
+    def _update_years_cached(self, years_cached, run_id):
+        """Changes set of years cached, and sets status to 'partial'.
+        """
+        self.status = "partial"
+        self['years']  = years_cached
+        copy  =self.copy()
+        pickled_info = pickle.dumps(copy)  
+        
+        available_runs = self.database.get_table('available_runs')
+
+        values = {
+            available_runs.c.info: pickled_info,
+            available_runs.c.status: self.status
+        }
+        
+        query = available_runs.update(
+            whereclause = available_runs.c.run_id == int(run_id),
+            values = values
+        )
+        
+        self.services_database.engine.execute(query)
+                                         
+    def _handle_deletion_errors(self, function, path, info):
         """try to close the file if it's a file """
         logger.log_warning("in AvailableRuns._handle_deletion_errors: Trying  to delete %s error from function %s: \n %s" % (path,function.__name__,info[1]))
         if function.__name__ == 'remove':
@@ -75,42 +196,36 @@ class AvailableRuns(object):
                 logger.log_warning("in AvailableRuns._handle_deletion_errors:unable to delete %s error from function %s: \n %s" % (path,function.__name__,info[1]))
         else:
             logger.log_warning("in AvailableRuns._handle_deletion_errors:unable to delete %s error from function %s: \n %s" % (path,function.__name__,info[1]))
-    
-    def get_status_of_run_id(self,run_id):
-        """ retrieve status of this run"""
-        state = self.run_state.get_run_state(run_id)
-        return state.status
 
-    def has_run(self,run_id):
+    def has_run(self, run_id):
         """ return True iff this run is available"""
-        from sqlalchemy.sql import select
-        available_runs = self.storage.get_table('available_runs')
+        available_runs = self.services_database.get_table('available_runs')
                 
         query = select(
             columns = [available_runs.c.run_id],
             whereclause = available_runs.c.run_id==int(run_id))
 
-        exists = len(self.storage.engine.execute(query).fetchall()) > 1
+        exists = self.services_database.engine.execute(query).fetchone() is not None
         
         return exists
 
     def get_all_runs(self):
         """Return all run_ids in available runs."""
         from sqlalchemy.sql import select
-        available_runs = self.storage.get_table('available_runs')
+        available_runs = self.services_database.get_table('available_runs')
                 
         query = select(
             columns = [available_runs.c.run_id])
-        return self.storage.engine.execute(query).fetchall()
+        return self.services_database.engine.execute(query).fetchall()
     
-    def update_status_for_run(self,run_id,status):
+    def update_status_for_run(self, run_id, status):
         """ updates status on the database"""
-        available_runs = self.storage.get_table('available_runs')
+        available_runs = self.services_database.get_table('available_runs')
         values = {available_runs.c.status:status}
         query = available_runs.update(
             available_runs.c.run_id==int(run_id),
             values = values)
-        self.storage.engine.execute(query)        
+        self.services_database.engine.execute(query)        
 
 from opus_core.tests import opus_unittest
 

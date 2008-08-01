@@ -271,7 +271,7 @@ class RunManager(object):
 
         result = {}    
         for id in run_ids:
-            status = available_runs.get_status_of_run_id(id)
+            status = available_runs.get_run_state(id).status
             if status not in result.keys():
                 result[status] = []
             result[status].append(id)
