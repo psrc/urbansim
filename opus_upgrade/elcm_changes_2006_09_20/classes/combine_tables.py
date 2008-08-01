@@ -117,7 +117,7 @@ class TestCombineTables(opus_unittest.OpusTestCase):
         
     
     def test_create_table(self):
-        CombineTables().combine_tables(DatabaseServerConfiguration(), self.db_name, 
+        CombineTables().combine_tables(DatabaseServerConfiguration(protocol='mysql'), self.db_name, 
             [i[0] for i in self.from_tables], 
             self.to_table)
         
@@ -128,7 +128,7 @@ class TestCombineTables(opus_unittest.OpusTestCase):
         
     
     def test_combine_tables(self):
-        CombineTables().combine_tables(DatabaseServerConfiguration(), self.db_name, 
+        CombineTables().combine_tables(DatabaseServerConfiguration(protocol='mysql'), self.db_name, 
             [i[0] for i in self.from_tables], 
             self.to_table)
         

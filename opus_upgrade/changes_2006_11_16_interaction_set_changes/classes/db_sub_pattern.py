@@ -279,7 +279,7 @@ class TestDBSubPattern(opus_unittest.OpusTestCase):
 
                                
     def test_convert_databases(self):
-        DBSubPattern().convert_databases(DatabaseServerConfiguration(), 
+        DBSubPattern().convert_databases(DatabaseServerConfiguration(protocol='mysql'), 
             self.config['databases'], self.config['tables'], self.patterns)
         
         for db_name in self.config['databases']:

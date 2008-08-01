@@ -268,7 +268,7 @@ class TestConvertDatabases(opus_unittest.OpusTestCase):
 
                                
     def test_convert_databases(self):
-        ConvertDatabase().convert_databases(DatabaseServerConfiguration(), self.config)
+        ConvertDatabase().convert_databases(DatabaseServerConfiguration(protocol='mysql'), self.config)
         
         for db_name in self.config['databases']:
             db = self.db_server.get_database(db_name)
