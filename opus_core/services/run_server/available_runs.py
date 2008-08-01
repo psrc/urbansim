@@ -49,7 +49,6 @@ class AvailableRuns(object):
         """ adds this information to the available_runs table (or updates info if something with same
             run_id is already there)"""
 
-        """ add row to available_runs """
         db_name = ''
         host_name = ''
 
@@ -68,13 +67,13 @@ class AvailableRuns(object):
         resources['years'] = info.get('years_run', [])
         resources['end_year'] = info.get('end_year', None)
              
-        run_activity = self.database.get_table('run_activity')
+        run_activity = self.services_database.get_table('run_activity')
         query = select(
             columns = [run_activity.c.processor_name,
                        run_activity.c.run_name],
             whereclause = run_activity.c.run_id==run_id               
         )
-        results = self.database.engine.execute(query).fetchone()
+        results = self.services_database.engine.execute(query).fetchone()
         resources['processor_name'] = results[0]
         resources['run_name'] = results[1]        
         resources['full_cache_dirname'] = _get_full_cache_dirname(
@@ -86,13 +85,13 @@ class AvailableRuns(object):
         pickled_info = pickle.dumps(resources)
         self.resources.update(resources)  
         
-        available_runs = self.database.get_table('available_runs')
+        available_runs = self.services_database.get_table('available_runs')
                 
         query = select(
             columns = [available_runs.c.run_id],
             whereclause = available_runs.c.run_id==int(self.run_id))
 
-        exists = self.database.engine.execute(query).fetchone() is not None
+        exists = self.services_database.engine.execute(query).fetchone() is not None
         
         if exists:
             values = {
@@ -117,19 +116,19 @@ class AvailableRuns(object):
         except:
             pass
         
-        print self.database, self.database.get_connection_string()
-        self.database.engine.execute(query, values = values)
+        print self.services_database, self.services_database.get_connection_string()
+        self.services_database.engine.execute(query, values = values)
 
     def get_run_state(self, run_id):
         """ get row from available runs """
         
-        available_runs = self.database.get_table('available_runs')
+        available_runs = self.services_database.get_table('available_runs')
         query = select(
             columns = [available_runs.c.info,
                        available_runs.c.status],
             whereclause = available_runs.c.run_id==int(run_id))
         
-        info, self.status = self.database.engine.execute(query).fetchone()
+        info, self.status = self.services_database.engine.execute(query).fetchone()
         self.resources.update(Configuration(pickle.loads(info)))
            
     def delete_everything_for_this_run(self, run_id):
@@ -169,7 +168,7 @@ class AvailableRuns(object):
         copy  =self.copy()
         pickled_info = pickle.dumps(copy)  
         
-        available_runs = self.database.get_table('available_runs')
+        available_runs = self.services_database.get_table('available_runs')
 
         values = {
             available_runs.c.info: pickled_info,
