@@ -133,7 +133,7 @@ class DatabaseServerConfigurationTests(opus_unittest.OpusTestCase):
         
         c2 = DatabaseServerConfiguration(protocol='MYSQL', host_name='h', user_name='fred', 
             password='secret', test=False, use_environment_variables=True)
-        self.assertEqual(c2.protocol, 'sqlite')
+        self.assertEqual(c2.protocol, 'mysql')
 #        self.assertEqual(c2.host_name, os.environ['MYSQLHOSTNAME'])
 #        self.assertEqual(c2.user_name, os.environ['MYSQLUSERNAME'])
 #        self.assertEqual(c2.password, os.environ['MYSQLPASSWORD'])
