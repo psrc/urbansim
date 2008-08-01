@@ -20,9 +20,8 @@ from opus_core.configuration import Configuration
 from opus_core.store.utils.cache_flt_data import CacheFltData
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
-from sqlalchemy.sql import select, and_
+from sqlalchemy.sql import select, and_, func, insert
 from opus_core.services.run_server.available_runs import AvailableRuns
-from sqlalchemy.sql import insert, func, select
 from opus_core.misc import get_host_name
 from opus_core.database_management.table_type_schema import TableTypeSchema
 

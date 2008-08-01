@@ -23,7 +23,7 @@ class RunState(GeneralResources):
         """ initialize a run state object with the given run_id and info resources"""
         self.database = database
         
-    def set_run_state(self,run_id,info,status):
+    def set_run_state(self, run_id, info, status):
         """ add row to available_runs """
         if 'input_configuration' in info.keys():
             db_name = info['input_configuration'].database_name
@@ -57,12 +57,11 @@ class RunState(GeneralResources):
         results = self.database.engine.execute(query).fetchone()
         resources['processor_name'] = results[0]
         resources['run_name'] = results[1]        
-        resources['full_cache_dirname'] = self.get_full_cache_dirname(
+        resources['full_cache_dirname'] = self._get_full_cache_dirname(
             info['cache_directory'],
             resources['processor_name'])    
 
         self.status = status
-        self.run_id = run_id
         
         pickled_info = pickle.dumps(resources)
         self.update(resources)  
@@ -101,7 +100,7 @@ class RunState(GeneralResources):
         print self.database, self.database.get_connection_string()
         self.database.engine.execute(query, values = values)
 
-    def get_run_state(self,run_id):
+    def get_run_state(self, run_id):
         """ get row from available runs """
         
         available_runs = self.database.get_table('available_runs')
@@ -111,10 +110,9 @@ class RunState(GeneralResources):
             whereclause = available_runs.c.run_id==int(run_id))
         
         info, self.status = self.database.engine.execute(query).fetchone()
-        self.run_id = run_id
         self.update(Configuration(pickle.loads(info)))
 
-    def change_years_cached(self,years_cached):
+    def change_years_cached(self, years_cached, run_id):
         """Changes set of years cached, and sets status to 'partial'.
         """
         self.status = "partial"
@@ -130,24 +128,24 @@ class RunState(GeneralResources):
         }
         
         query = available_runs.update(
-            whereclause = available_runs.c.run_id == int(self.run_id),
+            whereclause = available_runs.c.run_id == int(run_id),
             values = values
         )
         
         self.database.engine.execute(query)
         
-    def _get_years_available_in_cache(self,years,cache_dirname,processor_name):    
+    def _get_years_available_in_cache(self, years, cache_dirname, processor_name):    
         """ Returns the subset of these years that actually have a directory in their respective
             indicator caches
         """
         
-        dir = self.get_full_cache_dirname(cache_dirname,processor_name)
+        dir = self._get_full_cache_dirname(cache_dirname, processor_name)
         # add base year
         years.append(years[0] -1)
         final_years = [year for year in sorted(years) if os.path.exists(os.path.join(dir,str(year)))]
         return final_years
  
-    def get_full_cache_dirname(self,cache_directory,processor_name):
+    def _get_full_cache_dirname(self, cache_directory, processor_name):
         """ returns the full path for this indicators directory (e.g.\\server_name\cache_dir_name\run_name)"""
         
         indicator_cache = cache_directory

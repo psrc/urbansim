@@ -60,7 +60,7 @@ class AvailableRuns(object):
                 shutil.rmtree(year_dir, onerror=self._handle_deletion_errors)
 
         years_cached = [year for year in self.run_state['years'] if year not in years_to_delete]
-        self.run_state.change_years_cached(years_cached)
+        self.run_state.change_years_cached(years_cached, run_id)
     
     def _handle_deletion_errors(self,function,path,info):
         """try to close the file if it's a file """
