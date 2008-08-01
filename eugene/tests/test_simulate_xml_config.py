@@ -21,6 +21,7 @@ from shutil import rmtree
 from opus_core.tools.start_run import StartRunOptionGroup
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.configurations.xml_configuration import XMLConfiguration
+from opus_core.services.run_server.run_manager import RunManager
 
 # This is a template for an xml configuration for running the test -- it runs for 2 years 
 # instead of the default of 1 year, and there is a bit in it where we will substitute the 
@@ -65,7 +66,7 @@ class SimulationTest(opus_unittest.OpusIntegrationTestCase):
         parser = option_group.parser
         # simulate 0 command line arguments by passing in []
         (options, _) = parser.parse_args([])
-        run_manager = option_group.get_run_manager(options)
+        run_manager = RunManager(options)
         config = XMLConfiguration(config_path).get_run_configuration('Eugene_baseline')
         insert_auto_generated_cache_directory_if_needed(config)
         run_manager.setup_new_run(run_name = config['cache_directory'])

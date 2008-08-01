@@ -21,6 +21,9 @@ from opus_core.store.utils.cache_flt_data import CacheFltData
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 from sqlalchemy.sql import select, and_
+from opus_core.services.run_server.available_runs import AvailableRuns
+from sqlalchemy.sql import insert, func, select
+from opus_core.misc import get_host_name
 
 class RunManager(object):
     """An abstraction representing a simulation manager that automatically logs
@@ -28,26 +31,33 @@ class RunManager(object):
     creates resources for runs, and can run simulations.
     """
     #TODO: some preconditions should be checked!
-    def __init__(self, run_activity=None):
-        self.run_activity = run_activity
+    def __init__(self, options):
+        self.services_db = self.create_storage(options)
+        self.available_runs = AvailableRuns(self.services_db)
         self.history_id = None
         self.ready_to_run = False
 
+    def create_baseyear_cache(self, resources):
+        if resources['creating_baseyear_cache_configuration'].cache_from_mysql:
+            ForkProcess().fork_new_process(
+                resources['creating_baseyear_cache_configuration'].cache_scenario_database, resources)
+        else:
+            CacheFltData().run(resources)
+            
     def get_resources_for_run_id_from_history(self, run_id):
         """Returns the resources for this run_id, as stored in the run_activity table.
         """
-#        import pdb; pdb.set_trace()
-
-        db = self.run_activity.storage
-                        
-        run_activity = db.get_table('run_activity')
+        if self.services_db is None: 
+            raise Exception('Cannot get resources from history because there is no services database')
+        
+        run_activity = self.services_db.get_table('run_activity')
         query = select(
             columns = [run_activity.c.resources],
             whereclause = and_(
                             run_activity.c.status=='started',
                             run_activity.c.run_id==int(run_id)))
         
-        run_resources = db.engine.execute(query).fetchone()
+        run_resources = self.services_db.engine.execute(query).fetchone()
         
         if not run_resources:
             raise StandardError("run_id %s doesn't exist host = %s database = %s" % (run_id, db.host_name, db.database_name))
@@ -87,14 +97,11 @@ class RunManager(object):
     
     def setup_new_run(self, run_name):
         run_descr = run_name
-        if self.run_activity is not None:
-            self.history_id = self.run_activity.get_new_history_id()
-            #compose unique cache directory based on the history_id
-            head, tail = os.path.split(run_name)
-            unique_cache_directory = os.path.join(head, 'run_' +str(self.history_id)+'.'+tail)
-            run_descr = self.history_id
-        else:
-            unique_cache_directory = run_name 
+        self.history_id = self._get_new_history_id()
+        #compose unique cache directory based on the history_id
+        head, tail = os.path.split(run_name)
+        unique_cache_directory = os.path.join(head, 'run_' +str(self.history_id)+'.'+tail)
+        run_descr = self.history_id
                
         self.current_cache_directory = unique_cache_directory
         self.ready_to_run = True
@@ -126,8 +133,7 @@ class RunManager(object):
 #        if not os.path.exists(cache_directory):
 #            os.makedirs(cache_directory)
 
-        if self.run_activity is not None:
-            self.run_activity.add_row_to_history(self.history_id, run_resources, "started")
+        self.add_row_to_history(self.history_id, run_resources, "started")
 
         try:
             # Test pre-conditions
@@ -146,7 +152,13 @@ class RunManager(object):
                 
             # Create brand-new output database (deletes any prior contents)
             if 'output_configuration' in run_resources:
+                try:
+                    protocol = run_resources['output_configuration'].protocol
+                except:
+                    protocol = None
+                    
                 db_config = DatabaseServerConfiguration(
+                    protocol = protocol,
                     host_name = run_resources['output_configuration'].host_name,
                     user_name = run_resources['output_configuration'].user_name,
                     password = run_resources['output_configuration'].password                                        
@@ -170,12 +182,10 @@ class RunManager(object):
             else:
                 model_system.run_in_one_process(run_resources, run_in_background=run_in_background, class_path=model_system_class_path)
             
-            if self.run_activity is not None:
-                self.run_activity.add_row_to_history(self.history_id, run_resources, "done")
+            self.add_row_to_history(self.history_id, run_resources, "done")
 
         except:
-            if self.run_activity is not None:
-                self.run_activity.add_row_to_history(self.history_id, run_resources, "failed")
+            self.add_row_to_history(self.history_id, run_resources, "failed")
             self.ready_to_run = False
             raise # This re-raises the last exception
         
@@ -222,7 +232,7 @@ class RunManager(object):
                             break
 
             run_resources["skip_urbansim"] = skip_urbansim
-            self.run_activity.add_row_to_history(history_id, run_resources, "restarted in %d" % run_resources['years'][0])
+            self.add_row_to_history(history_id, run_resources, "restarted in %d" % run_resources['years'][0])
 
             exec('from %s import ModelSystem' % model_system)
 
@@ -236,59 +246,39 @@ class RunManager(object):
             
             model_system.run_multiprocess(run_resources)
 
-            self.run_activity.add_row_to_history(history_id, run_resources, "done")
+            self.add_row_to_history(history_id, run_resources, "done")
 
         except:
-            self.run_activity.add_row_to_history(history_id, run_resources, "failed")
+            self.add_row_to_history(history_id, run_resources, "failed")
             raise
 
-    def get_processor_name(self,run_id):
-        """ returns the name of the server where these run was processed"""
+    ######## DATABASE OPERATIONS ###########
+    def get_run_info(self,run_id):
+        """ returns the name of the server where this run was processed"""
 
-        db = self.run_activity.storage
-        
-        run_activity = db.get_table('run_activity')
+        #note: this method is never used in the codebase         
+        run_activity = self.services_db.get_table('run_activity')
         query = select(
-            columns = [run_activity.c.processor_name],
+            columns = [run_activity.c.run_name, 
+                       run_activity.c.processor_name],
             whereclause = run_activity.c.run_id==run_id)
         
-        results = db.engine.execute(query).fetchone()
+        results = self.services_db.engine.execute(query).fetchone()
 
-        return results[0]
+        return results
 
-    def get_name_for_id(self,run_id):
-        """ returns the name given to this scenario run"""
-        #this method is never called in the main codebase...
-
-        db = self.run_activity.storage
-
-        run_activity = db.get_table('run_activity')
-        query = select(
-            columns = [run_activity.c.run_name],
-            whereclause = run_activity.c.run_id==run_id)
-        
-        results = db.engine.execute(query).fetchone()
-
-        return results[0]
-
-    def create_baseyear_cache(self, resources):
-        if resources['creating_baseyear_cache_configuration'].cache_from_mysql:
-            ForkProcess().fork_new_process(
-                resources['creating_baseyear_cache_configuration'].cache_scenario_database, resources)
-        else:
-            CacheFltData().run(resources)
-            
+    def get_available_runs(self):
+        return self.available_runs
+    
     def get_runs_by_status(self, run_ids):
         """Returns a dictionary where keys are the status (e.g. 'started', 'done', 'failed').
         If run_ids is None, all runs from available runs are considered, otherwise only ids 
         given by the run_ids list.
         """
-        available_runs = self.run_activity.get_available_runs()
+        available_runs = self.get_available_runs()
         if run_ids is None:
             run_ids = available_runs.get_all_runs()
-        started = []
-        finished = []
-        failed = []
+
         result = {}    
         for id in run_ids:
             status = available_runs.get_status_of_run_id(id)
@@ -296,7 +286,78 @@ class RunManager(object):
                 result[status] = []
             result[status].append(id)
         return result
+
+    def _get_new_history_id(self):
+        """Returns a unique run_id for a new run_activity trail."""
+        if self.services_db is None: 
+            raise Exception('Cannot get a new history id because there is no services database')
+
+        run_activity = self.services_db.get_table('run_activity')
+        query = select(
+            columns = [func.max(run_activity.c.run_id),
+                       func.count(run_activity.c.run_id)]
+        )
+        last_id, cnt = self.services_db.engine.execute(query).fetchone()
         
+        if cnt > 0:
+            run_id = last_id + 1
+        else:
+            run_id = 1
+
+        return run_id
+
+    def add_row_to_history(self, history_id, resources, status):
+        """update the run history table to indicate changes to the state of this run history trail."""
+
+        if self.services_db is None: 
+            return
+
+        if not status:
+            raise Exception("un-specified status")
+        
+        resources['run_id'] = history_id
+        
+        pickled_resources = 'NULL'
+        if resources is not None:
+            pickled_resources = pickle.dumps(resources)
+        
+        values = {"run_id":history_id, 
+             "run_name":'%s' % resources.get('description', "No description"),
+             "status":'%s' % status,
+             "processor_name":'%s' % get_host_name(), 
+             "date_time":strftime('%Y-%m-%d %H:%M:%S', localtime()),
+             "resources":'%s' % pickled_resources,
+             }        
+
+        run_activity_table = self.services_db.get_table('run_activity')
+        qry = run_activity_table.insert(values = values)
+        self.services_db.engine.execute(qry)
+    
+        if self.available_runs.has_run(history_id):
+            self.available_runs.update_status_for_run(history_id,status)
+        else:
+            self.available_runs.add_run(history_id,resources,status)
+
+    def create_storage(self, options):
+
+        try:
+            database_name = options.database_name
+        except:
+            database_name = 'services'
+        try:
+            config = DatabaseServerConfiguration(
+                         host_name = options.host_name,
+                         user_name = options.user_name,
+                         protocol = options.protocol,
+                         password = options.password
+                     )
+            server = DatabaseServer(config)
+            services_db = server.get_database(database_name)
+        except:
+            raise Exception('Cannot connect to a services database')
+        
+        return services_db
+            
 class SimulationRunError(Exception):
     """exception to be raised if the simulation fails at runtime"""
     pass

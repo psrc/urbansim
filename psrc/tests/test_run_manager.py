@@ -22,9 +22,9 @@ from opus_core.tests import opus_unittest
 from opus_core.database_management.table_type_schema import TableTypeSchema
 from opus_core.services.run_server.run_manager import RunManager
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
-from opus_core.services.run_server.run_activity import RunActivity
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.misc import does_database_server_exist_for_this_hostname
 from opus_core.session_configuration import SessionConfiguration
@@ -40,7 +40,9 @@ def _create_services_test_database():
     """Creates the 'services_test' database on localhost.
     Returns database.
     """
-    db_server = DatabaseServer(DatabaseServerConfiguration())
+    config = DatabaseConfiguration(database_name = 'services_test')
+    
+    db_server = DatabaseServer(config)
     db_server.drop_database('services_test')
     db_server.create_database('services_test')
     services_database = db_server.get_database('services_test')
@@ -48,7 +50,9 @@ def _create_services_test_database():
     tt_schema = TableTypeSchema();
     services_database.create_table("run_activity",
                                    tt_schema.get_table_schema("run_activity"))
-    return services_database
+    
+    
+    return config
 
 def _drop_services_test_database():
     """Drops the 'services_test' database on localhost.
@@ -56,12 +60,11 @@ def _drop_services_test_database():
     db_server = DatabaseServer(DatabaseServerConfiguration())
     db_server.drop_database('services_test')
     
-def _do_run_simple_test_run(caller, temp_dir, services_database, end_year=None):
+def _do_run_simple_test_run(caller, temp_dir, config, end_year=None):
     """Runs model system with a single model (for speed).
     Sets the .resources property of the caller before starting the run.
     """
-    run_activity = RunActivity(services_database)
-    runs_manager = RunManager(run_activity)
+    runs_manager = RunManager(config)
 
     run_configuration = SubsetConfiguration()
     run_configuration['creating_baseyear_cache_configuration'].cache_directory_root = temp_dir
@@ -88,7 +91,7 @@ if does_database_server_exist_for_this_hostname(
         ###       _do_run_simple_test_run() is no longer dependent on psrc.
     
         def setUp(self):
-            self.services_database = _create_services_test_database()
+            self.services_db_config = _create_services_test_database()
             self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
     
         def tearDown(self):
@@ -106,8 +109,9 @@ if does_database_server_exist_for_this_hostname(
         def test_setup_run(self):
             base_directory = self.temp_dir
             run_name = 'test_scenario_name'
-            run_activity = RunActivity(self.services_database)
-            run_manager = RunManager(run_activity)
+            print self.services_db_config
+            run_manager = RunManager(self.services_db_config)
+            
             run_manager.setup_new_run(run_name = os.path.join(base_directory, run_name))
             resulting_cache_directory = run_manager.get_current_cache_directory()
             self.assertTrue(resulting_cache_directory.find(run_name)>-1)
@@ -116,11 +120,10 @@ if does_database_server_exist_for_this_hostname(
             self.assertTrue(not os.path.exists(resulting_cache_directory))
             
         def test_restart_simple_run(self):
-            _do_run_simple_test_run(self, self.temp_dir, self.services_database)
-            run_activity = RunActivity(self.services_database)
-            runs_manager = RunManager(run_activity)
-            history_id = run_activity.storage.GetResultsFromQuery("SELECT max(run_id) FROM run_activity")[1][0]
-            statuses = run_activity.storage.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
+            _do_run_simple_test_run(self, self.temp_dir, self.services_db_config)
+            runs_manager = RunManager(self.services_db_config)
+            history_id = runs_manager.storage.GetResultsFromQuery("SELECT max(run_id) FROM run_activity")[1][0]
+            statuses = runs_manager.storage.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
                                                            % history_id)[1:]
                                                            
             expected = [['started'], ['done']]
@@ -129,14 +132,12 @@ if does_database_server_exist_for_this_hostname(
                 self.assertTrue(i in statuses)
                 
             self.assertEqual(len(statuses), len(expected))
-                
-            db_config = DatabaseServerConfiguration()
-            
+                            
             runs_manager.restart_run(history_id,
                                      restart_year=2001,
                                      skip_urbansim=False)
             
-            statuses = run_activity.storage.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
+            statuses = runs_manager.storage.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
                                                            % history_id)[1:]
                                                            
             expected = [['started'], ['done'], ['restarted in 2001'], ['done']]
@@ -151,7 +152,7 @@ if does_database_server_exist_for_this_hostname(
             runs_manager.restart_run(history_id,
                                      restart_year=2002,
                                      skip_urbansim=True)
-            statuses = run_activity.storage.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
+            statuses = runs_manager.storage.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
                                                            % history_id)[1:]
                                                            
             expected = [['started'], ['done'], ['restarted in 2001'], ['done'], ['restarted in 2002'], ['done']]       

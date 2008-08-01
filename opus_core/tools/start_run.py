@@ -19,6 +19,7 @@ from opus_core.services.run_server.generic_option_group import GenericOptionGrou
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.configurations.xml_configuration import XMLConfiguration
+from opus_core.services.run_server.run_manager import RunManager
 
 
 class StartRunOptionGroup(GenericOptionGroup):
@@ -50,7 +51,7 @@ if __name__ == "__main__":
     parser = option_group.parser
     (options, args) = parser.parse_args()
 
-    run_manager = option_group.get_run_manager(options)
+    run_manager = RunManager(options)
     run_as_multiprocess = not options.run_as_single_process
     
     if options.pickled_resource_file is not None:

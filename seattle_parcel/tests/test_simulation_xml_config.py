@@ -18,6 +18,7 @@ from opus_core.tests import opus_unittest
 from opus_core.tools.start_run import StartRunOptionGroup
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from seattle_parcel.tests.test_xml_config_setup import TestXMLConfigSetup
+from opus_core.services.run_server.run_manager import RunManager
 
 class TestSimulation(TestXMLConfigSetup):
            
@@ -28,7 +29,7 @@ class TestSimulation(TestXMLConfigSetup):
         parser = option_group.parser
         # simulate 0 command line arguments by passing in []
         (options, _) = parser.parse_args([])
-        run_manager = option_group.get_run_manager(options)
+        run_manager = RunManager(options)
         run_section = xml_config.get_run_configuration('Seattle_baseline')
         insert_auto_generated_cache_directory_if_needed(run_section)
         run_manager.setup_new_run(run_name = run_section['cache_directory'])

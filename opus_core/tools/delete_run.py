@@ -12,7 +12,7 @@
 # other acknowledgments.
 #
 
-from opus_core.services.run_server.available_runs import AvailableRuns
+from opus_core.services.run_server.run_manager import RunManager
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
 
 class StartRunOptionGroup(GenericOptionGroup):
@@ -33,9 +33,8 @@ if __name__ == "__main__":
     parser = option_group.parser
     (options, args) = parser.parse_args()
 
-    db = option_group.get_services_database(options)
     
-    available_runs = AvailableRuns(db)
+    available_runs = RunManager(options).get_available_runs()
 
     if options.run_id is None:
         parser.print_help()

@@ -19,7 +19,6 @@ import getpass
 from opus_core.misc import get_config_from_opus_path
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
-from opus_core.services.run_server.run_activity import RunActivity
 from urbansim.tools.run_manager import RunManager
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.misc import module_path_from_opus_path
@@ -79,12 +78,7 @@ if __name__ == "__main__":
     #this line will be executed in shell and return the absolute path for restart_run.py
     restart_run_py = r"`python -c \"from opus_core.misc import module_path_from_opus_path; print module_path_from_opus_path('urbansim.tools.restart_run')\"`"
 
-    db = option_group.get_services_database(options)
-    if db is None:
-        run_manager = RunManager()
-    else:
-        run_activity = RunActivity(db)
-        run_manager = RunManager(run_activity)
+    run_manager = RunManager(options)
 
     if options.run_id is not None:
         run_id = options.run_id
@@ -111,7 +105,7 @@ if __name__ == "__main__":
         run_id = run_manager.prepare_for_run(config)
 
     #check that run_id must exist
-    results = run_manager.run_activity.storage.GetResultsFromQuery("SELECT * from run_activity WHERE run_id = %s " % run_id)
+    results = run_manager.storage.GetResultsFromQuery("SELECT * from run_activity WHERE run_id = %s " % run_id)
     if not len(results) > 1:
         raise StandardError, "run_id %s doesn't exist in run_activity table." % run_id
 
@@ -151,8 +145,8 @@ if __name__ == "__main__":
                 this_end_year = end_year
         urbansim_resources['years'] = (this_start_year, this_end_year)
             
-        run_manager.run_activity.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % run_id)        
-        run_manager.run_activity.add_row_to_history(run_id, urbansim_resources, "started")
+        run_manager.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % run_id)        
+        run_manager.add_row_to_history(run_id, urbansim_resources, "started")
         
         try:
             os.system("%s -ssh -l %s -pw %s %s python %s %s %s --skip-cache-cleanup --skip-travel-model" % \

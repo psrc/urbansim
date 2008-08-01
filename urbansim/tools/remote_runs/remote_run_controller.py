@@ -125,10 +125,11 @@ class RemoteRun:
         self.remote_communication_path = None
         self.skip_travel_model = skip_travel_model
         self.skip_urbansim = skip_urbansim
-        self.services_db_config = DatabaseServerConfiguration(
+        self.services_db_config = DatabaseConfiguration(
                                         host_name = services_database.host_name, 
                                         user_name = services_database.user_name, 
-                                        password = services_database.password 
+                                        password = services_database.password,
+                                        database_name = services_dbname
                                         )
         self._run_manager = None
         if run_manager:
@@ -150,7 +151,7 @@ class RemoteRun:
                     raise StandardError, "Either configuration_path, config or run_id must be given."
             insert_auto_generated_cache_directory_if_needed(config)
     
-            self.run_id = self.get_run_manager().run_activity.get_new_history_id()
+            self.run_id = self.get_run_manager().get_new_history_id()
             head, tail = os.path.split(config['cache_directory'])
             config['cache_directory'] =  '%s/run_%s.%s' % (head, self.run_id, tail)
             self.remote_communication_path = '%s/%s' % (self.remote_communication_path_root, self.run_id)
@@ -158,10 +159,10 @@ class RemoteRun:
             if not self.skip_urbansim and prepare_cache:
                 self.prepare_cache_and_communication_path(config)
 
-            self.get_run_manager().run_activity.add_row_to_history(self.run_id, config, "started")
+            self.get_run_manager().add_row_to_history(self.run_id, config, "started")
             
             #check that run_id must exist
-            results = self.get_run_manager().run_activity.storage.GetResultsFromQuery(
+            results = self.get_run_manager().storage.GetResultsFromQuery(
                                                             "SELECT * from run_activity WHERE run_id = %s " % self.run_id)
             if not len(results) > 1:
                 raise StandardError, "run_id %s doesn't exist in run_activity table." % self.run_id
@@ -300,8 +301,8 @@ class RemoteRun:
             if this_start_year <= this_end_year:
                 urbansim_resources['years'] = (this_start_year, this_end_year)
                     
-                self.get_run_manager().run_activity.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % self.run_id)        
-                self.get_run_manager().run_activity.add_row_to_history(self.run_id, urbansim_resources, "started")
+                self.get_run_manager().storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % self.run_id)        
+                self.get_run_manager().add_row_to_history(self.run_id, urbansim_resources, "started")
                 
                 if not self.skip_urbansim:
                     self.run_remote_python_process("%s/urbansim/tools/restart_run.py" % self.remote_opus_path, 
@@ -369,11 +370,9 @@ class RemoteRun:
         """in case the connection to services timeout, reconnect
         """
         try:
-            self._run_manager.run_activity.storage.table_exists('run_activity')
+            self._run_manager.storage.table_exists('run_activity')
         except:  #connection has gone away, re-create run_manager
-            db_server = DatabaseServer(self.services_db_config)
-            services_db = db_server.get_database(self.services_dbname)
-            self._run_manager = RunManager( RunActivity(services_db) )
+            self._run_manager = RunManager( self.services_db_config)
         return self._run_manager
     
 if __name__ == "__main__":
@@ -401,7 +400,6 @@ if __name__ == "__main__":
 
     try: import wingdbstub
     except: pass
-    db = option_group.get_services_database(options)
     run_manager = option_group.get_run_manager(options)
     run = RemoteRun(hostname, username, password, options.host_name, options.database_name, db,
                     options.skip_travel_model, options.skip_urbansim, run_manager)

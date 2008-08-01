@@ -21,8 +21,7 @@ from opus_core.misc import get_config_from_opus_path
 from opus_core.misc import module_path_from_opus_path, get_host_name
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
-from opus_core.services.run_server.run_activity import RunActivity
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 from opus_core.services.run_server.run_manager import RunManager, insert_auto_generated_cache_directory_if_needed
 from opus_core.fork_process import ForkProcess
 from opus_core.logger import logger
@@ -112,11 +111,12 @@ class RemoteRun:
         if not self.is_localhost(self.travelmodel_server_config['hostname']):
             self.ssh['travelmodel_server'] = self.get_ssh_client(None, self.travelmodel_server_config)
             
-        self.services_db_config = DatabaseServerConfiguration(
-                                            host_name=services_db_config['hostname'], 
-                                            user_name=services_db_config['username'],
-                                            password=services_db_config['password'])
-        self.services_db_name = services_db_config['database_name']
+        self.services_db_config = DatabaseConfiguration(
+                                        host_name=services_db_config['hostname'], 
+                                        user_name=services_db_config['username'],
+                                        password=services_db_config['password'],
+                                        database_name = services_db_config['database_name']
+                                        )
         self._run_manager = None
         if run_manager:
             self._run_manager = run_manager
@@ -140,10 +140,10 @@ class RemoteRun:
             run_id = self.get_run_manager().history_id            
             config['cache_directory'] = pathname2url(self.get_run_manager().get_current_cache_directory())
             ## pathname2url converts '\' or '\\' to '/'; it is necessary when this script is invoked from a nt os
-            self.get_run_manager().run_activity.add_row_to_history(run_id, config, "started")
+            self.get_run_manager().add_row_to_history(run_id, config, "started")
             
             #verify run_id has been added to services db
-            results = self.get_run_manager().run_activity.storage.GetResultsFromQuery(
+            results = self.get_run_manager().storage.GetResultsFromQuery(
                                                             "SELECT * from run_activity WHERE run_id = %s " % run_id)
             if not len(results) > 1:
                 raise StandardError, "run_id %s doesn't exist in run_activity table." % run_id
@@ -202,7 +202,7 @@ class RemoteRun:
             ## delete travel_model_configuration, so travel model won't run on urbansim_server
             if config.has_key('travel_model_configuration'):
                 del config['travel_model_configuration']
-            self.update_services_database(self.get_run_manager().run_activity, run_id, config)
+            self.update_services_database(self.get_run_manager(), run_id, config)
             
             if not self.is_localhost(self.urbansim_server_config['hostname']):
                 logger.start_block("Start UrbanSim Simulation on %s from %s to %s" % (self.urbansim_server_config['hostname'],
@@ -243,7 +243,7 @@ class RemoteRun:
             if travel_model_resources is not None:
                 if travel_model_resources['travel_model_configuration'].has_key(this_end_year):
                     travel_model_resources['years'] = (this_end_year, this_end_year)
-                    self.update_services_database(self.get_run_manager().run_activity, run_id, travel_model_resources)
+                    self.update_services_database(self.get_run_manager(), run_id, travel_model_resources)
 
                     if not self.is_localhost(self.travelmodel_server_config['hostname']):
                         logger.start_block("Start Travel Model on %s from %s to %s" % (self.travelmodel_server_config['hostname'],
@@ -310,9 +310,9 @@ class RemoteRun:
             time.sleep(60)
 
         
-    def update_services_database(self, run_activity, run_id, config):
-        run_activity.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % run_id)
-        run_activity.add_row_to_history(run_id, config, "started")
+    def update_services_database(self, run_manager, run_id, config):
+        run_manager.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % run_id)
+        run_manager.add_row_to_history(run_id, config, "started")
 
     def remote_module_path_from_opus_path(self, ssh, opus_path):
         cmdline = 'python -c "import %s; print %s.__file__"' % (opus_path, opus_path)
@@ -349,24 +349,23 @@ class RemoteRun:
         """in case the connection to services timeout, reconnect
         """
         try:
-            self._run_manager.run_activity.storage.table_exists('run_activity')
+            self._run_manager.storage.table_exists('run_activity')
         except:  #connection has gone away, re-create run_manager
-            db_server = DatabaseServer(self.services_db_config)
-            services_db = db_server.get_database(self.services_db_name)
-            self._run_manager = RunManager( RunActivity(services_db) )
+            self._run_manager = RunManager( self.services_db_config )
         return self._run_manager
 
 if __name__ == "__main__":
+    from opus_core.services.run_server.run_manager import RunManager
+
     try: import wingdbstub
     except: pass
     option_group = OptionGroup()
     parser = option_group.parser
     (options, args) = parser.parse_args()
 
-    services_db = option_group.get_services_database(options)
-    if not services_db:
+    run_manager = RunManager(options)
+    if not run_manager.services_db:
         raise RuntimeError, "services database must exist; use --hostname argument to specify the database server containing services database."
-    run_manager = option_group.get_run_manager(options)
     
     urbansim_server = options.urbansim_server or os.environ.get('URBANSIMHOSTNAME', 'localhost')
     urbansim_user = options.runserver_username or os.environ.get('URBANSIMUSERNAME', None)
@@ -381,7 +380,7 @@ if __name__ == "__main__":
 
     run = RemoteRun({'hostname':urbansim_server, 'username':urbansim_user, 'password':urbansim_password}, 
                     {'hostname':travelmodel_server, 'username':travelmodel_user, 'password':travelmodel_password}, 
-                    {'hostname':services_db.host_name, 'username':services_db.user_name, 'password':services_db.password, 
+                    {'hostname':options.host_name, 'username':options.user_name, 'password':options.password, 
                      'database_name':options.database_name},
                     run_manager)
     run.run(configuration_path=options.configuration_path, run_id=options.run_id, 

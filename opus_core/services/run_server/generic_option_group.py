@@ -17,62 +17,35 @@ import os
 from optparse import OptionParser, OptionGroup
 
 from opus_core.services.run_server.run_manager import RunManager
-from opus_core.services.run_server.run_activity import RunActivity
-from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+
 
 class GenericOptionGroup:
     def __init__(self, usage="python %prog [options]", description=""):
             
-        self.parser = OptionParser(usage=usage, description=description)
-        
-        self.parser.add_option("--hostname", dest="host_name", default = None,
+        self.parser = OptionParser(usage=usage, description=description)                     
+                     
+        self.parser.add_option("--hostname", dest="host_name", default = os.environ.get('OPUS_SERVICES_HOSTNAME', None),
                                action="store", help="Name of host running services database server")
-        self.parser.add_option("--username", dest="user_name", default = None,
+        self.parser.add_option("--username", dest="user_name", default = os.environ.get('OPUS_SERVICES_USERNAME', None),
                                action="store", help="Username for host running services database server")
-        self.parser.add_option("--password", dest="password", default = None, 
+        self.parser.add_option("--password", dest="password", default = os.environ.get('OPUS_SERVICES_PASSWORD', None), 
                                action="store", help="Name of host running services database server")
         self.parser.add_option("--database", dest="database_name", default="services", 
                                action="store", help="Name of services database")
-        
-    def get_run_manager(self, options):
-        """Returns a RunManager object.
-        
-        RunManager will have access to run activity info, if its database exists."""
-        db = self.get_services_database(options)
-    
-        if db is None:
-            return RunManager()
-        
-        run_activity = RunActivity(db)
-        return RunManager(run_activity)
-        
+        self.parser.add_option("--protocol", dest="protocol", default=os.environ.get('OPUS_SERVICES_DB_ENGINE', 'sqlite'), 
+                               action="store", help="Name of database engine running the database management system hosting the services database.")
 
-    def get_services_database(self, options):
-        """Gets services database from the specified database."""
-        
-        db_server = self.get_database_server(options)
-        
-        if db_server is None:
-            return None
-        
-        if db_server.has_database(options.database_name):
-            return db_server.get_database(options.database_name)
-        else:
-            return None
-        
-    def get_database_server(self, options):
-        """Gets database server for the specified db connection."""
-        
-        config = DatabaseServerConfiguration(
-            host_name = options.host_name,
-            user_name = options.user_name,
-            password = options.password
-            )
-        try:
-            db_server = DatabaseServer(config)
-            return db_server
-        except:
-            # Cannot connect to database server
-            return None
+#    def get_services_database(self, options):
+#        """Gets services database from the specified database."""
+#        
+#        db_server = self.get_database_server(options)
+#        
+#        if db_server is None:
+#            return None
+#        
+#        if db_server.has_database(options.database_name):
+#            return db_server.get_database(options.database_name)
+#        else:
+#            return None
+    
         

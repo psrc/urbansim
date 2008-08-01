@@ -13,7 +13,6 @@
 #
 
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
-from opus_core.services.run_server.run_activity import RunActivity
 from urbansim.tools.run_manager import RunManager
 
 class RestartRunOptionGroup(GenericOptionGroup):
@@ -37,12 +36,7 @@ if __name__ == "__main__":
     parser = option_group.parser
     (options, args) = parser.parse_args()
     
-    db = option_group.get_services_database(options)
-    if db is None:
-        run_manager = RunManager()
-    else:
-        run_activity = RunActivity(db)
-        run_manager = RunManager(run_activity)
+    run_manager = RunManager(options)
 
     if len(args) < 2:
         parser.print_help()

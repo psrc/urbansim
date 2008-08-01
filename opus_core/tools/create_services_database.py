@@ -17,6 +17,8 @@ import sys
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
 from opus_core.database_management.table_type_schema import TableTypeSchema
 from opus_core.logger import logger
+from opus_core.database_management.database_server import DatabaseServer
+from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 
 class CreateServicesDBOptionGroup(GenericOptionGroup):
     def __init__(self):
@@ -36,6 +38,20 @@ if __name__ == "__main__":
         sys.exit(1)
     
     db_server = option_group.get_database_server(options)
+    
+    config = DatabaseServerConfiguration(
+        protocol = options.protocol,
+        host_name = options.host_name,
+        user_name = options.user_name,
+        password = options.password
+        )
+    try:
+        db_server = DatabaseServer(config)
+    except:
+        # Cannot connect to database server
+        db_server = None
+
+
     if db_server is None:
         print "unable to find the database server"
         sys.exit(1)

@@ -52,7 +52,7 @@ class RunManager(CoreRunManager):
 
             run_resources["skip_urbansim"] = skip_urbansim
             run_resources["skip_travel_model"] = skip_travel_model
-            self.run_activity.add_row_to_history(history_id, run_resources, "restarted in %d" % run_resources['years'][0])
+            self.add_row_to_history(history_id, run_resources, "restarted in %d" % run_resources['years'][0])
 
             exec('from %s import ModelSystem' % model_system)
 
@@ -64,8 +64,8 @@ class RunManager(CoreRunManager):
 
             model_system.run_multiprocess(run_resources)
 
-            self.run_activity.add_row_to_history(history_id, run_resources, "done")
+            self.add_row_to_history(history_id, run_resources, "done")
 
         except:
-            self.run_activity.add_row_to_history(history_id, run_resources, "failed")
+            self.add_row_to_history(history_id, run_resources, "failed")
             raise

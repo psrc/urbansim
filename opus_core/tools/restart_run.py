@@ -13,6 +13,7 @@
 #
 
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
+from opus_core.services.run_server.run_manager import RunManager
 
 class RestartRunOptionGroup(GenericOptionGroup):
     def __init__(self):
@@ -33,7 +34,7 @@ if __name__ == "__main__":
     parser = option_group.parser
     (options, args) = parser.parse_args()
 
-    run_manager = option_group.get_run_manager(options)
+    run_manager = RunManager(options)=
 
     if len(args) < 2:
         parser.print_help()

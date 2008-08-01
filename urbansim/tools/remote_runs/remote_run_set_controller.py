@@ -22,8 +22,6 @@ from opus_core.misc import get_config_from_opus_path
 from opus_core.logger import logger
 from remote_run_controller import RemoteRunOptionGroup
 from remote_run_controller import RemoteRun
-from opus_core.services.run_server.run_activity import RunActivity
-from urbansim.tools.run_manager import RunManager
 
 class RemoteRunSetOptionGroup(RemoteRunOptionGroup):
     def __init__(self):
@@ -59,8 +57,7 @@ class RemoteRunSet(RemoteRun):
         configuration_update["faloorum%s.csss.washington.edu" % i] = {
                                                             'cache_directory_root': '/homes/scratch/hana/urbansim_cache/psrc/parcel/bm/0416',
                                                             'existing_cache_to_copy': '/homes/scratch/hana/urbansim_cache/psrc/cache_source_parcel'
-                                                              }
-    
+                                                              }    
     def __init__(self, server_file, hostname, username, password, *args, **kwargs):
         self.servers_info = {}
         if server_file is not None: # read hostname-file
@@ -184,8 +181,8 @@ class RemoteRunSet(RemoteRun):
             config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy = config_update.get('existing_cache_to_copy', 
                                                                 config['creating_baseyear_cache_configuration'].baseyear_cache.existing_cache_to_copy)
         self.prepare_cache_and_communication_path(config)
-        self.get_run_manager().run_activity.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % self.run_id)        
-        self.get_run_manager().run_activity.add_row_to_history(self.run_id, config, "started")
+        self.get_run_manager().storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % self.run_id)        
+        self.get_run_manager().add_row_to_history(self.run_id, config, "started")
         
     def set_environment_for_this_run(self, server, run_id):
         self.run_id = run_id
@@ -230,6 +227,8 @@ class RemoteRunSet(RemoteRun):
         self.write_into_run_id_file()
         
 if __name__ == "__main__":
+    from opus_core.services.run_server.run_manager import RunManager
+
     option_group = RemoteRunSetOptionGroup()
     parser = option_group.parser
     (options, args) = parser.parse_args()
@@ -255,9 +254,13 @@ if __name__ == "__main__":
 
     #try: import wingdbstub
     #except: pass
-    db = option_group.get_services_database(options)
-    run_manager = option_group.get_run_manager(options)
+    run_manager = RunManager(options)
     run = RemoteRunSet(options.server_file, hostname, username, password, options.host_name, options.database_name, db,
                        options.skip_travel_model, options.skip_urbansim, run_manager)
     run.run(options.start_year, options.end_year, options.configuration_path, options.run_id_file)
+            python_commands = {"snickers2.stat.washington.edu": "python",
+                            "localhost": {'cache_directory_root': '/Users/hana/urbansim_cache/psrc/parcel/bm/0416',
+    for i in range(1,13):
+        configuration_update["faloorum%s.csss.washington.edu" % i] = {
+                                                            'cache_directory_root': '/homes/scratch/hana/urbansim_cache/psrc/parcel/bm/0416',
         

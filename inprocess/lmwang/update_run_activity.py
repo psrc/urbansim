@@ -19,6 +19,7 @@ from opus_core.misc import get_config_from_opus_path
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
 from opus_core.configurations.baseyear_cache_configuration import BaseyearCacheConfiguration
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
+from opus_core.services.run_server.run_manager import RunManager
 
 class OptionGroup(GenericOptionGroup):
     def __init__(self):
@@ -42,7 +43,7 @@ if __name__ == "__main__":
     parser = option_group.parser
     (options, args) = parser.parse_args()
 
-    run_manager = option_group.get_run_manager(options)
+    run_manager = RunManager(options)
 
     if options.configuration_path is not None:
         opus_path = options.configuration_path
@@ -53,14 +54,14 @@ if __name__ == "__main__":
             exec(import_stmt)
     config['cache_directory'] = options.cache_directory
     
-    results = run_manager.run_activity.storage.GetResultsFromQuery("SELECT * from run_activity WHERE run_id = %s " % options.run_id)
+    results = run_manager.storage.GetResultsFromQuery("SELECT * from run_activity WHERE run_id = %s " % options.run_id)
 
     if len(results) > 1 and not options.force:
         print "WARNING: run_id %s exists in run_activity. Use --force to override." % options.run_id
         sys.exit()
     elif options.force:
-        run_manager.run_activity.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % options.run_id)
+        run_manager.storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % options.run_id)
     
-    run_manager.run_activity.add_row_to_history(options.run_id, config, "started")
+    run_manager.add_row_to_history(options.run_id, config, "started")
     
     

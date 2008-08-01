@@ -25,6 +25,7 @@ try:
     from opus_core.configurations.xml_configuration import XMLConfiguration
     from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
     from opus_gui.results.gui_result_interface.batch_processor import BatchProcessor
+    from opus_core.services.run_server.run_manager import RunManager
 
     WithOpus = True
 except ImportError:
@@ -163,7 +164,7 @@ class OpusModel(object):
                 parser = option_group.parser
                 # simulate 0 command line arguments by passing in []
                 (options, args) = parser.parse_args([])
-                self.run_manager = option_group.get_run_manager(options)
+                self.run_manager = RunManager(options)
                 # find the directory containing the eugene xml configurations
                 fileNameInfo = QFileInfo(self.xml_path)
                 fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
