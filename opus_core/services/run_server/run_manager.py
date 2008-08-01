@@ -43,24 +43,6 @@ class RunManager(object):
                 resources['creating_baseyear_cache_configuration'].cache_scenario_database, resources)
         else:
             CacheFltData().run(resources)
-            
-    def get_resources_for_run_id_from_history(self, run_id):
-        """Returns the resources for this run_id, as stored in the run_activity table.
-        """
-
-        run_activity = self.services_db.get_table('run_activity')
-        query = select(
-            columns = [run_activity.c.resources],
-            whereclause = and_(
-                            run_activity.c.status=='started',
-                            run_activity.c.run_id==int(run_id)))
-        
-        run_resources = self.services_db.engine.execute(query).fetchone()
-        
-        if not run_resources:
-            raise StandardError("run_id %s doesn't exist host = %s database = %s" % (run_id, db.host_name, db.database_name))
-
-        return Configuration(pickle.loads(run_resources[0]))
 
     def create_run_resources_from_history(self,
                                           run_id=None,
@@ -97,7 +79,7 @@ class RunManager(object):
         self.run_id = self._get_new_run_id()
         #compose unique cache directory based on the history_id
         head, tail = os.path.split(run_name)
-        unique_cache_directory = os.path.join(head, 'run_' +str(self.run_id)+'.'+tail)
+        unique_cache_directory = os.path.join(head, 'run_%s.%s'%(self.run_id, tail))
         run_descr = self.run_id
                
         self.current_cache_directory = unique_cache_directory
@@ -243,6 +225,25 @@ class RunManager(object):
             raise
 
     ######## DATABASE OPERATIONS ###########
+    
+    def get_resources_for_run_id_from_history(self, run_id):
+        """Returns the resources for this run_id, as stored in the run_activity table.
+        """
+
+        run_activity = self.services_db.get_table('run_activity')
+        query = select(
+            columns = [run_activity.c.resources],
+            whereclause = and_(
+                            run_activity.c.status=='started',
+                            run_activity.c.run_id==int(run_id)))
+        
+        run_resources = self.services_db.engine.execute(query).fetchone()
+        
+        if not run_resources:
+            raise StandardError("run_id %s doesn't exist host = %s database = %s" % (run_id, db.host_name, db.database_name))
+
+        return Configuration(pickle.loads(run_resources[0]))
+    
     def get_run_info(self,run_id):
         """ returns the name of the server where this run was processed"""
 
@@ -304,10 +305,8 @@ class RunManager(object):
             raise Exception("un-specified status")
         
         resources['run_id'] = run_id
-        
         pickled_resources = 'NULL'
-        if resources is not None:
-            pickled_resources = pickle.dumps(resources)
+        pickled_resources = pickle.dumps(resources)
         
         values = {"run_id":run_id, 
              "run_name":'%s' % resources.get('description', "No description"),

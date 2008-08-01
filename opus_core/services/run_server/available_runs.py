@@ -14,7 +14,6 @@
 import os, pickle, shutil, sys
 
 from opus_core.logger import logger
-from opus_core.services.run_server.run_state import RunState
 from sqlalchemy.sql import select
 from opus_core.general_resources import GeneralResources
 from opus_core.configuration import Configuration
@@ -39,15 +38,22 @@ class AvailableRuns(object):
     
     def __init__(self, storage):
         self.services_database = storage
-        self.run_state = RunState(self.services_database)
         self.resources = GeneralResources()
         
     def close_connection(self):
         self.services_database.close()
         
+    def update_status_for_run(self, run_id, status):
+        """ updates status on the database"""
+        available_runs = self.services_database.get_table('available_runs')
+        values = {available_runs.c.status:status}
+        query = available_runs.update(
+            available_runs.c.run_id==int(run_id),
+            values = values)
+        self.services_database.engine.execute(query)   
+        
     def add_run(self, run_id, info, status):
-        """ adds this information to the available_runs table (or updates info if something with same
-            run_id is already there)"""
+        """ adds this information to the available_runs table"""
 
         db_name = ''
         host_name = ''
@@ -87,29 +93,12 @@ class AvailableRuns(object):
         
         available_runs = self.services_database.get_table('available_runs')
                 
-        query = select(
-            columns = [available_runs.c.run_id],
-            whereclause = available_runs.c.run_id==int(self.run_id))
-
-        exists = self.services_database.engine.execute(query).fetchone() is not None
-        
-        if exists:
-            values = {
-                available_runs.c.info: pickled_info,
-                available_runs.c.status: self.status
-            }
-            
-            query = available_runs.update(
-                whereclause = available_runs.c.run_id == int(self.run_id),
-            )
-
-        else:
-            values = {
-                available_runs.c.run_id: run_id,
-                available_runs.c.info: pickled_info,
-                available_runs.c.status: self.status
-            }
-            query = available_runs.insert()
+        values = {
+            available_runs.c.run_id: run_id,
+            available_runs.c.info: pickled_info,
+            available_runs.c.status: self.status
+        }
+        query = available_runs.insert()
             
         try:
             import pydevd;pydevd.settrace()
@@ -217,14 +206,7 @@ class AvailableRuns(object):
             columns = [available_runs.c.run_id])
         return self.services_database.engine.execute(query).fetchall()
     
-    def update_status_for_run(self, run_id, status):
-        """ updates status on the database"""
-        available_runs = self.services_database.get_table('available_runs')
-        values = {available_runs.c.status:status}
-        query = available_runs.update(
-            available_runs.c.run_id==int(run_id),
-            values = values)
-        self.services_database.engine.execute(query)        
+     
 
 from opus_core.tests import opus_unittest
 
