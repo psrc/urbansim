@@ -151,7 +151,7 @@ class RemoteRun:
                     raise StandardError, "Either configuration_path, config or run_id must be given."
             insert_auto_generated_cache_directory_if_needed(config)
     
-            self.run_id = self.get_run_manager().get_new_history_id()
+            self.run_id = self.get_run_manager()._get_new_run_id()
             head, tail = os.path.split(config['cache_directory'])
             config['cache_directory'] =  '%s/run_%s.%s' % (head, self.run_id, tail)
             self.remote_communication_path = '%s/%s' % (self.remote_communication_path_root, self.run_id)

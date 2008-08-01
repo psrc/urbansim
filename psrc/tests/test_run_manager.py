@@ -84,9 +84,9 @@ if does_database_server_exist_for_this_hostname(
         def test_restart_simple_run(self):
             _do_run_simple_test_run(self, self.temp_dir, self.config)
             runs_manager = RunManager(self.config)
-            history_id = runs_manager.storage.GetResultsFromQuery("SELECT max(run_id) FROM run_activity")[1][0]
+            run_id = runs_manager.storage.GetResultsFromQuery("SELECT max(run_id) FROM run_activity")[1][0]
             statuses = runs_manager.storage.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
-                                                           % history_id)[1:]
+                                                           % run_id)[1:]
                                                            
             expected = [['started'], ['done']]
             
@@ -95,12 +95,12 @@ if does_database_server_exist_for_this_hostname(
                 
             self.assertEqual(len(statuses), len(expected))
                             
-            runs_manager.restart_run(history_id,
+            runs_manager.restart_run(run_id,
                                      restart_year=2001,
                                      skip_urbansim=False)
             
             statuses = runs_manager.storage.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
-                                                           % history_id)[1:]
+                                                           % run_id)[1:]
                                                            
             expected = [['started'], ['done'], ['restarted in 2001'], ['done']]
             
@@ -111,11 +111,11 @@ if does_database_server_exist_for_this_hostname(
     
             # Restaring without running urbansim should not re-run that year.
             # TODO: test that no models are run this time.
-            runs_manager.restart_run(history_id,
+            runs_manager.restart_run(run_id,
                                      restart_year=2002,
                                      skip_urbansim=True)
             statuses = runs_manager.storage.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
-                                                           % history_id)[1:]
+                                                           % run_id)[1:]
                                                            
             expected = [['started'], ['done'], ['restarted in 2001'], ['done'], ['restarted in 2002'], ['done']]       
 

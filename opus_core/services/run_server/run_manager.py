@@ -34,7 +34,7 @@ class RunManager(object):
     def __init__(self, options):
         self.services_db = self.create_storage(options)
         self.available_runs = AvailableRuns(self.services_db)
-        self.history_id = None
+        self.run_id = None
         self.ready_to_run = False
 
     def create_baseyear_cache(self, resources):
@@ -94,11 +94,11 @@ class RunManager(object):
         return resources
     
     def setup_new_run(self, run_name):
-        self.history_id = self._get_new_history_id()
+        self.run_id = self._get_new_run_id()
         #compose unique cache directory based on the history_id
         head, tail = os.path.split(run_name)
-        unique_cache_directory = os.path.join(head, 'run_' +str(self.history_id)+'.'+tail)
-        run_descr = self.history_id
+        unique_cache_directory = os.path.join(head, 'run_' +str(self.run_id)+'.'+tail)
+        run_descr = self.run_id
                
         self.current_cache_directory = unique_cache_directory
         self.ready_to_run = True
@@ -123,7 +123,7 @@ class RunManager(object):
             run_resources['cache_directory'] = self.current_cache_directory
             #raise 'The configuration and the RunManager conflict on the proper cache_directory'
 
-        self.add_row_to_history(self.history_id, run_resources, "started")
+        self.add_row_to_history(self.run_id, run_resources, "started")
 
         try:
             # Test pre-conditions
@@ -173,23 +173,23 @@ class RunManager(object):
                 model_system.run_in_one_process(run_resources, run_in_background=run_in_background, class_path=model_system_class_path)
 
         except:
-            self.add_row_to_history(self.history_id, run_resources, "failed")
+            self.add_row_to_history(self.run_id, run_resources, "failed")
             self.ready_to_run = False
             raise # This re-raises the last exception
         else:
-            self.add_row_to_history(self.history_id, run_resources, "done")
+            self.add_row_to_history(self.run_id, run_resources, "done")
             
         self.ready_to_run = False
         
 
-    def restart_run(self, history_id, restart_year,
+    def restart_run(self, run_id, restart_year,
                     skip_urbansim=False,
                     create_baseyear_cache_if_not_exists=False,
                     skip_cache_cleanup=False):
         """Restart the specified run."""
 
         run_resources = self.create_run_resources_from_history(
-           run_id=history_id,
+           run_id=run_id,
            restart_year=restart_year)
         try:
             if create_baseyear_cache_if_not_exists:
@@ -222,7 +222,7 @@ class RunManager(object):
                             break
 
             run_resources["skip_urbansim"] = skip_urbansim
-            self.add_row_to_history(history_id, run_resources, "restarted in %d" % run_resources['years'][0])
+            self.add_row_to_history(run_id, run_resources, "restarted in %d" % run_resources['years'][0])
 
             exec('from %s import ModelSystem' % model_system)
 
@@ -236,10 +236,10 @@ class RunManager(object):
             
             model_system.run_multiprocess(run_resources)
 
-            self.add_row_to_history(history_id, run_resources, "done")
+            self.add_row_to_history(run_id, run_resources, "done")
 
         except:
-            self.add_row_to_history(history_id, run_resources, "failed")
+            self.add_row_to_history(run_id, run_resources, "failed")
             raise
 
     ######## DATABASE OPERATIONS ###########
@@ -277,7 +277,7 @@ class RunManager(object):
             result[status].append(id)
         return result
 
-    def _get_new_history_id(self):
+    def _get_new_run_id(self):
         """Returns a unique run_id for a new run_activity trail."""
         
         run_activity = self.services_db.get_table('run_activity')
@@ -294,7 +294,7 @@ class RunManager(object):
 
         return run_id
 
-    def add_row_to_history(self, history_id, resources, status):
+    def add_row_to_history(self, run_id, resources, status):
         """update the run history table to indicate changes to the state of this run history trail."""
 
         if self.services_db is None: 
@@ -303,13 +303,13 @@ class RunManager(object):
         if not status:
             raise Exception("un-specified status")
         
-        resources['run_id'] = history_id
+        resources['run_id'] = run_id
         
         pickled_resources = 'NULL'
         if resources is not None:
             pickled_resources = pickle.dumps(resources)
         
-        values = {"run_id":history_id, 
+        values = {"run_id":run_id, 
              "run_name":'%s' % resources.get('description', "No description"),
              "status":'%s' % status,
              "processor_name":'%s' % get_host_name(), 
@@ -321,10 +321,10 @@ class RunManager(object):
         qry = run_activity_table.insert(values = values)
         self.services_db.engine.execute(qry)
     
-        if self.available_runs.has_run(history_id):
-            self.available_runs.update_status_for_run(history_id,status)
+        if self.available_runs.has_run(run_id):
+            self.available_runs.update_status_for_run(run_id,status)
         else:
-            self.available_runs.add_run(history_id,resources,status)
+            self.available_runs.add_run(run_id,resources,status)
 
     def create_storage(self, options):
 

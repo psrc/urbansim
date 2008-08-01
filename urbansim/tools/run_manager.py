@@ -19,7 +19,7 @@ from opus_core.store.utils.cache_flt_data import CacheFltData
 from opus_core.services.run_server.run_manager import RunManager as CoreRunManager
 
 class RunManager(CoreRunManager):
-    def restart_run(self, history_id, restart_year,
+    def restart_run(self, run_id, restart_year,
                     skip_urbansim=False,
                     skip_travel_model=False,
                     skip_cache_cleanup=False):
@@ -27,7 +27,7 @@ class RunManager(CoreRunManager):
 
         Restart the specified run."""
 
-        run_resources = self.create_run_resources_from_history(run_id=history_id,
+        run_resources = self.create_run_resources_from_history(run_id=run_id,
                                                                restart_year=restart_year)
         try:
 
@@ -52,7 +52,7 @@ class RunManager(CoreRunManager):
 
             run_resources["skip_urbansim"] = skip_urbansim
             run_resources["skip_travel_model"] = skip_travel_model
-            self.add_row_to_history(history_id, run_resources, "restarted in %d" % run_resources['years'][0])
+            self.add_row_to_history(run_id, run_resources, "restarted in %d" % run_resources['years'][0])
 
             exec('from %s import ModelSystem' % model_system)
 
@@ -64,8 +64,8 @@ class RunManager(CoreRunManager):
 
             model_system.run_multiprocess(run_resources)
 
-            self.add_row_to_history(history_id, run_resources, "done")
+            self.add_row_to_history(run_id, run_resources, "done")
 
         except:
-            self.add_row_to_history(history_id, run_resources, "failed")
+            self.add_row_to_history(run_id, run_resources, "failed")
             raise

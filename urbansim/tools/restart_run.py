@@ -41,8 +41,8 @@ if __name__ == "__main__":
     if len(args) < 2:
         parser.print_help()
     else:
-        history_id, year = (int(args[0]), int(args[1]))
-        run_manager.restart_run(history_id, 
+        run_id, year = (int(args[0]), int(args[1]))
+        run_manager.restart_run(run_id, 
                                 year, 
                                 skip_urbansim=options.skip_urbansim,
                                 skip_travel_model=options.skip_travel_model,

@@ -137,7 +137,7 @@ class RemoteRun:
                     raise StandardError, "Either configuration_path, config or run_id must be given."
             insert_auto_generated_cache_directory_if_needed(config)
             self.get_run_manager().setup_new_run(run_name = config['cache_directory'])
-            run_id = self.get_run_manager().history_id            
+            run_id = self.get_run_manager().run_id            
             config['cache_directory'] = pathname2url(self.get_run_manager().get_current_cache_directory())
             ## pathname2url converts '\' or '\\' to '/'; it is necessary when this script is invoked from a nt os
             self.get_run_manager().add_row_to_history(run_id, config, "started")
