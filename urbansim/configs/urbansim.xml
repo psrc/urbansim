@@ -37,7 +37,8 @@
           <schema_name choices="Required|Optional" type="string">Required</schema_name>
           <shapefile_path choices="Required|Optional" type="string">Required</shapefile_path>
           <output_table_name choices="Required|Optional" type="string">Required</output_table_name>
-          <geometry_type choices="Required|Optional" type="string">Optional</geometry_type> 
+          <geometry_type choices="Required|Optional" type="string">Optional</geometry_type>
+          <overwrite choices="YES|NO" type="string">NO</overwrite>
         </params>
       </shapefile_to_postgis>
       <sql_data_to_opus_tool type="tool_file" >
@@ -94,7 +95,7 @@
         </params>
       </esri_buffer_tool>
     </Tool_Library>
-    <Tool_Sets type="tool_sets" >
+    <Tool_Sets type="tool_sets" setexpanded="True">
       <sample_tool_set type="tool_set" />
       <opus_database_to_sql type="tool_set" setexpanded="False" >
         <classification flags="hidden" type="classification" >database</classification>
