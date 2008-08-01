@@ -17,7 +17,7 @@ from numpy import array, dtype
 try:
     import sqlalchemy
     from sqlalchemy import Table, Column, select, insert
-    from sqlalchemy.types import Integer, Numeric, Text, Float, Boolean    
+    from sqlalchemy.types import Integer, Numeric, Text, Float, Boolean
 except ImportError:
     sqlalchemy = None
     
@@ -271,7 +271,7 @@ else:
             self.database_name = 'test_database'
             self.protocol = 'mysql'
             
-            config = DatabaseServerConfiguration()
+            config = DatabaseServerConfiguration(protocol = self.protocol)
             self.username = config.user_name
             self.hostname = config.host_name
             self.password = config.password 
