@@ -94,11 +94,11 @@ class AvailableRuns(object):
         available_runs = self.services_database.get_table('available_runs')
                 
         values = {
-            available_runs.c.run_id: run_id,
-            available_runs.c.info: pickled_info,
-            available_runs.c.status: self.status
+            'run_id': run_id,
+            'info': pickled_info,
+            'status': self.status
         }
-        query = available_runs.insert()
+        query = available_runs.insert(values)
             
         try:
             import pydevd;pydevd.settrace()
@@ -106,7 +106,7 @@ class AvailableRuns(object):
             pass
         
         print self.services_database, self.services_database.get_connection_string()
-        self.services_database.engine.execute(query, values = values)
+        self.services_database.engine.execute(query)
 
     def get_run_state(self, run_id):
         """ get row from available runs """
