@@ -73,7 +73,7 @@ class RunState(GeneralResources):
             columns = [available_runs.c.run_id],
             whereclause = available_runs.c.run_id==int(self.run_id))
 
-        exists = len(self.database.engine.execute(query).fetchall()) > 1
+        exists = self.database.engine.execute(query).fetchone() is not None
         
         if exists:
             values = {
@@ -83,7 +83,6 @@ class RunState(GeneralResources):
             
             query = available_runs.update(
                 whereclause = available_runs.c.run_id == int(self.run_id),
-                values = values
             )
 
         else:
@@ -92,14 +91,15 @@ class RunState(GeneralResources):
                 available_runs.c.info: pickled_info,
                 available_runs.c.status: self.status
             }
-            query = available_runs.insert(
-                values = values           
-            )
+            query = available_runs.insert()
             
-        self.database.engine.execute(query)
-
-        #TODO: return self? this doesn't make too much sense...
-        return self
+        try:
+            import pydevd;pydevd.settrace()
+        except:
+            pass
+        
+        print self.database, self.database.get_connection_string()
+        self.database.engine.execute(query, values = values)
 
     def get_run_state(self,run_id):
         """ get row from available runs """
@@ -113,7 +113,6 @@ class RunState(GeneralResources):
         info, self.status = self.database.engine.execute(query).fetchone()
         self.run_id = run_id
         self.update(Configuration(pickle.loads(info)))
-        return self
 
     def change_years_cached(self,years_cached):
         """Changes set of years cached, and sets status to 'partial'.
@@ -143,13 +142,9 @@ class RunState(GeneralResources):
         """
         
         dir = self.get_full_cache_dirname(cache_dirname,processor_name)
-        final_years = []
-        years.sort()
         # add base year
-        years.insert(0,years[0] -1)
-        for year in years:
-            if os.path.exists(os.path.join(dir,str(year))):
-                final_years.append(year)
+        years.append(years[0] -1)
+        final_years = [year for year in sorted(years) if os.path.exists(os.path.join(dir,str(year)))]
         return final_years
  
     def get_full_cache_dirname(self,cache_directory,processor_name):

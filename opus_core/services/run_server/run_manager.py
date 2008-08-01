@@ -24,13 +24,14 @@ from sqlalchemy.sql import select, and_
 from opus_core.services.run_server.available_runs import AvailableRuns
 from sqlalchemy.sql import insert, func, select
 from opus_core.misc import get_host_name
+from opus_core.database_management.table_type_schema import TableTypeSchema
 
 class RunManager(object):
     """An abstraction representing a simulation manager that automatically logs
     runs (and their status) to a database (run_activity),
     creates resources for runs, and can run simulations.
     """
-    #TODO: some preconditions should be checked!
+
     def __init__(self, options):
         self.services_db = self.create_storage(options)
         self.available_runs = AvailableRuns(self.services_db)
@@ -47,9 +48,7 @@ class RunManager(object):
     def get_resources_for_run_id_from_history(self, run_id):
         """Returns the resources for this run_id, as stored in the run_activity table.
         """
-        if self.services_db is None: 
-            raise Exception('Cannot get resources from history because there is no services database')
-        
+
         run_activity = self.services_db.get_table('run_activity')
         query = select(
             columns = [run_activity.c.resources],
@@ -96,7 +95,6 @@ class RunManager(object):
         return resources
     
     def setup_new_run(self, run_name):
-        run_descr = run_name
         self.history_id = self._get_new_history_id()
         #compose unique cache directory based on the history_id
         head, tail = os.path.split(run_name)
@@ -125,13 +123,6 @@ class RunManager(object):
             #TODO: do not change the configuration en route
             run_resources['cache_directory'] = self.current_cache_directory
             #raise 'The configuration and the RunManager conflict on the proper cache_directory'
-
-## This is handled by self.create_baseyear_cache        
-#        cache_directory = self.current_cache_directory
-#            
-#        # Make the cache_directory if it doesn't exist (doesn't include per-year directories).
-#        if not os.path.exists(cache_directory):
-#            os.makedirs(cache_directory)
 
         self.add_row_to_history(self.history_id, run_resources, "started")
 
@@ -181,14 +172,14 @@ class RunManager(object):
                 model_system.run_multiprocess(run_resources)
             else:
                 model_system.run_in_one_process(run_resources, run_in_background=run_in_background, class_path=model_system_class_path)
-            
-            self.add_row_to_history(self.history_id, run_resources, "done")
 
         except:
             self.add_row_to_history(self.history_id, run_resources, "failed")
             self.ready_to_run = False
             raise # This re-raises the last exception
-        
+        else:
+            self.add_row_to_history(self.history_id, run_resources, "done")
+            
         self.ready_to_run = False
         
 
@@ -289,9 +280,7 @@ class RunManager(object):
 
     def _get_new_history_id(self):
         """Returns a unique run_id for a new run_activity trail."""
-        if self.services_db is None: 
-            raise Exception('Cannot get a new history id because there is no services database')
-
+        
         run_activity = self.services_db.get_table('run_activity')
         query = select(
             columns = [func.max(run_activity.c.run_id),
@@ -344,17 +333,45 @@ class RunManager(object):
             database_name = options.database_name
         except:
             database_name = 'services'
+
+        config = DatabaseServerConfiguration(
+                     host_name = options.host_name,
+                     user_name = options.user_name,
+                     protocol = options.protocol,
+                     password = options.password
+                 )
         try:
-            config = DatabaseServerConfiguration(
-                         host_name = options.host_name,
-                         user_name = options.user_name,
-                         protocol = options.protocol,
-                         password = options.password
-                     )
             server = DatabaseServer(config)
+        except:
+            raise Exception('Cannot connect to the database server that the services database is hosted on')
+        
+        
+        if not server.has_database(database_name):
+            server.create_database(database_name)
+
+        try:
             services_db = server.get_database(database_name)
         except:
             raise Exception('Cannot connect to a services database')
+        
+        if not services_db.table_exists('run_activity'):
+            tt_schema = TableTypeSchema()
+            try:
+                services_db.create_table(
+                     "run_activity", 
+                     tt_schema.get_table_schema("run_activity"))
+            except:
+                raise Exception('Cannot create the run_activity table in the services database')
+
+        if not services_db.table_exists("available_runs"):
+            tt_schema = TableTypeSchema()
+            try:
+                services_db.create_table(
+                    "available_runs", 
+                    tt_schema.get_table_schema("available_runs"))
+            except:
+                raise Exception('Cannot create the available_runs table in the services database')
+        
         
         return services_db
             
@@ -370,3 +387,40 @@ def insert_auto_generated_cache_directory_if_needed(config):
     
 def get_date_time_string():
     return strftime('%Y_%m_%d_%H_%M', localtime())
+
+
+from opus_core.tests import opus_unittest
+from opus_core.database_management.database_configuration import DatabaseConfiguration
+
+class RunManagerTests(opus_unittest.OpusTestCase):
+    def setUp(self):
+        self.database_name = 'test_services_database'
+        self.config = DatabaseConfiguration(test = True, database_name = self.database_name)
+        self.db_server = DatabaseServer(self.config)
+    
+    def tearDown(self):
+        self.db_server.drop_database(self.database_name)
+        self.db_server.close()
+        
+    def test_create_when_already_exists(self):
+        """Shouldn't do anything if the database already exists."""
+        self.db_server.create_database(self.database_name)
+        db = self.db_server.get_database(self.database_name)
+        self.assertFalse(db.table_exists('run_activity'))
+        self.assertFalse(db.table_exists('available_runs'))
+        
+        run_manager = RunManager(self.config)
+        
+        self.assertTrue(db.table_exists('run_activity'))
+        self.assertTrue(db.table_exists('available_runs'))
+
+    def test_create(self):
+        """Should create run_activity table if the database doesn't exist."""
+        run_manager = RunManager(self.config)
+        
+        self.assertTrue(self.db_server.has_database(self.database_name))
+        db = self.db_server.get_database(self.database_name)
+        self.assertTrue(db.table_exists('run_activity'))    
+    
+if __name__ == "__main__":
+    opus_unittest.main()

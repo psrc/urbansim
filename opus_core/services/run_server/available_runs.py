@@ -14,7 +14,6 @@
 import os, pickle, shutil, sys
 
 from opus_core.logger import logger
-from opus_core.database_management.table_type_schema import TableTypeSchema
 from opus_core.services.run_server.run_state import RunState
 
 class AvailableRuns(object):
@@ -23,11 +22,7 @@ class AvailableRuns(object):
     
     def __init__(self, storage):
         self.storage = storage
-        if not self.storage.table_exists("available_runs"):
-            tt_schema = TableTypeSchema()
-            self.storage.create_table(
-                "available_runs", 
-                tt_schema.get_table_schema("available_runs"))
+        self.run_state = RunState(self.storage)
     
     def close_connection(self):
         self.storage.close()
@@ -36,13 +31,13 @@ class AvailableRuns(object):
         """ adds this information to the available_runs table (or updates info if something with same
             run_id is already there)"""
         
-        run_state = RunState(self.storage).set_run_state(run_id,info,status)
+        self.run_state.set_run_state(run_id,info,status)
         
     def delete_everything_for_this_run(self,run_id):
         """ removes the entire tree structure along with information """
-        run_state = RunState(self.storage).get_run_state(run_id)
+        self.run_state.get_run_state(run_id)
         
-        cache_dirname = run_state['full_cache_dirname']
+        cache_dirname = self.run_state['full_cache_dirname']
         shutil.rmtree(cache_dirname,onerror = self._handle_deletion_errors)
         
         while os.path.exists(cache_dirname):
@@ -54,18 +49,18 @@ class AvailableRuns(object):
            
     def delete_year_dirs_in_cache(self, run_id, years_to_delete=None):
         """ only removes the years cache and leaves the indicator, changes status to partial"""
-        run_state = RunState(self.storage).get_run_state(run_id)
-        cache_dirname = run_state['full_cache_dirname']
+        self.run_state.get_run_state(run_id)
+        cache_dirname = self.run_state['full_cache_dirname']
         if years_to_delete is None:
-            years_to_delete = run_state['years']
+            years_to_delete = self.run_state['years']
             
         for year in years_to_delete:            
             year_dir = os.path.join(cache_dirname, str(year))
             while os.path.exists(year_dir ):
                 shutil.rmtree(year_dir, onerror=self._handle_deletion_errors)
-        import sets
-        years_cached = list(sets.Set(run_state['years']).difference(years_to_delete))
-        run_state.change_years_cached(years_cached)
+
+        years_cached = [year for year in self.run_state['years'] if year not in years_to_delete]
+        self.run_state.change_years_cached(years_cached)
     
     def _handle_deletion_errors(self,function,path,info):
         """try to close the file if it's a file """
@@ -80,15 +75,10 @@ class AvailableRuns(object):
                 logger.log_warning("in AvailableRuns._handle_deletion_errors:unable to delete %s error from function %s: \n %s" % (path,function.__name__,info[1]))
         else:
             logger.log_warning("in AvailableRuns._handle_deletion_errors:unable to delete %s error from function %s: \n %s" % (path,function.__name__,info[1]))
-
-        
-    def get_run_with_run_id(self,run_id):
-        """ retrieve this scenario from cache"""
-        return RunState(self.storage).get_run_state(run_id)
     
     def get_status_of_run_id(self,run_id):
         """ retrieve status of this run"""
-        state = RunState(self.storage).get_run_state(run_id)
+        state = self.run_state.get_run_state(run_id)
         return state.status
 
     def has_run(self,run_id):
