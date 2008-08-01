@@ -22,6 +22,7 @@ class TableCreator(object):
     """
     def _get_db(self, db_config, db_name):
         dbconfig = DatabaseServerConfiguration(
+            protocol = 'mysql',
             host_name = db_config.host_name,
             user_name = db_config.user_name,
             password = db_config.password                                       
@@ -56,7 +57,7 @@ class Tests(opus_unittest.OpusTestCase):
     def setUp(self):
         self.db_name = 'test_create_table'
         
-        self.db_server = DatabaseServer(DatabaseServerConfiguration())
+        self.db_server = DatabaseServer(DatabaseServerConfiguration(protocol = 'mysql'))
         
         self.db_server.drop_database(self.db_name)
         self.db_server.create_database(self.db_name)
@@ -77,7 +78,7 @@ class Tests(opus_unittest.OpusTestCase):
         
     def test_create_table(self):
         creator = TableCreator()
-        db = creator._get_db(DatabaseServerConfiguration(), self.db_name)
+        db = creator._get_db(DatabaseServerConfiguration(protocol = 'mysql'), self.db_name)
         self.assert_(not db.table_exists('test_table'))
         self.assert_(not db.table_exists('test_table_bak'))
         

@@ -89,6 +89,7 @@ def main():
     
     
     db_config = DatabaseServerConfiguration(
+        protocol = 'mysql',
         host_name = options.host,
         user_name = options.username,
         password = options.password,
@@ -102,6 +103,7 @@ def main():
     elif len(options.tables) > 1:
         print "Converting tables in database %s on host %s" % (options.databases[0], options.host)
         dbconfig = DatabaseServerConfiguration(
+            protocol = 'mysql',
             host_name = db_config.host_name,
             user_name = db_config.user_name,
             password = db_config.password                                       
@@ -118,6 +120,7 @@ def main():
         dbconfig = DatabaseServerConfiguration(
             host_name = db_config.host_name,
             user_name = db_config.user_name,
+            protocol = 'mysql',
             password = db_config.password                                       
         )        
         db_server = DatabaseServer(dbconfig)

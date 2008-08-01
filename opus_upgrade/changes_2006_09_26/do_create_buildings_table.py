@@ -43,6 +43,7 @@ if options.database == None:
         sys.exit(1)
     
 config = DatabaseServerConfiguration(
+    protocol = 'mysql',
     host_name = options.host,
     user_name = options.username,
     password = options.password,

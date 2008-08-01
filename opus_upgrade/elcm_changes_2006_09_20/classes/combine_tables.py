@@ -22,6 +22,7 @@ class CombineTables(object):
     def combine_tables(self, db_config, db_name, from_tables_names, to_table_name):
         dbconfig = DatabaseServerConfiguration(
             host_name = db_config.host_name,
+            protocol = 'mysql',
             user_name = db_config.user_name,
             password = db_config.password                                       
         )
@@ -50,12 +51,10 @@ class CombineTables(object):
 import os    
 from opus_core.tests import opus_unittest
 
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
-
 
 class TestCombineTables(opus_unittest.OpusTestCase):
     def setUp(self):
-        self.db_server = DatabaseServer(DatabaseServerConfiguration())
+        self.db_server = DatabaseServer(DatabaseServerConfiguration(protocol = 'mysql'))
         self.db_name = 'test_combine_tables'
         self.db_server.drop_database(self.db_name)
         self.db_server.create_database(self.db_name)

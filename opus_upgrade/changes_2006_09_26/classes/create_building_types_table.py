@@ -53,7 +53,7 @@ class Tests(opus_unittest.OpusTestCase):
     def setUp(self):
         self.db_name = 'test_create_table'
         
-        self.db_server = DatabaseServer(DatabaseServerConfiguration())
+        self.db_server = DatabaseServer(DatabaseServerConfiguration(protocol = 'mysql'))
         self.db_server.drop_database(self.db_name)
         self.db_server.create_database(self.db_name)
         self.db = self.db_server.get_database(self.db_name)
@@ -71,7 +71,7 @@ class Tests(opus_unittest.OpusTestCase):
         
     def test_create_table(self):
         CreateBuildingTypesTable().create_building_types_table(
-            DatabaseServerConfiguration(), self.db_name)
+            DatabaseServerConfiguration(protocol = 'mysql'), self.db_name)
         
         self.assert_(self.db.table_exists('building_types'))
     

@@ -51,6 +51,7 @@ if options.database == None:
     
 config = DatabaseServerConfiguration(
     host_name = options.host,
+    protocol = 'mysql',
     user_name = options.username,
     password = options.password,
     )

@@ -25,6 +25,7 @@ class CreateJobBuildingTypesTable(object):
         dbconfig = DatabaseServerConfiguration(
             host_name = db_config.host_name,
             user_name = db_config.user_name,
+            protocol = 'mysql',
             password = db_config.password                                       
         )
         db_server = DatabaseServer(dbconfig)
@@ -59,7 +60,7 @@ class TestCreateJobBuildingTypesTable(opus_unittest.OpusTestCase):
     def setUp(self):
         self.db_name = 'test_create_table'
         
-        self.db_server = DatabaseServer(DatabaseServerConfiguration())
+        self.db_server = DatabaseServer(DatabaseServerConfiguration(protocol = 'mysql',))
         
         self.db_server.drop_database(self.db_name)
         self.db_server.create_database(self.db_name)
@@ -81,7 +82,7 @@ class TestCreateJobBuildingTypesTable(opus_unittest.OpusTestCase):
         
     def test_create_table(self):
         CreateJobBuildingTypesTable().create_building_types_table(
-            DatabaseServerConfiguration(), self.db_name)
+            DatabaseServerConfiguration(protocol = 'mysql'), self.db_name)
         
         try:
             self.db.DoQuery('select * from job_building_types;')
@@ -91,7 +92,7 @@ class TestCreateJobBuildingTypesTable(opus_unittest.OpusTestCase):
             
     def test_values(self):
         CreateJobBuildingTypesTable().create_building_types_table(
-            DatabaseServerConfiguration(), self.db_name)
+            DatabaseServerConfiguration(protocol = 'mysql'), self.db_name)
         
         expected_results = [
             ['id', 'name', 'home_based'],

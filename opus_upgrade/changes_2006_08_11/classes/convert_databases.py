@@ -29,6 +29,7 @@ class ConvertDatabase(object):
         except KeyError: backup_postfix = '_old'
         
         dbconfig = DatabaseServerConfiguration(
+            protocol = 'mysql',
             host_name = db_config.host_name,
             user_name = db_config.user_name,
             password = db_config.password                                       
@@ -151,7 +152,7 @@ class TestConvertDatabases(opus_unittest.OpusTestCase):
             }
             
             
-        self.db_server = DatabaseServer(DatabaseServerConfiguration())
+        self.db_server = DatabaseServer(DatabaseServerConfiguration(protocol = 'mysql'))
         
         self.dbs = []
         for db_name in self.test_db_names:
