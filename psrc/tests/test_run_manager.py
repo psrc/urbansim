@@ -19,11 +19,9 @@ from shutil import rmtree
 
 from opus_core.logger import logger
 from opus_core.tests import opus_unittest
-from opus_core.database_management.table_type_schema import TableTypeSchema
 from opus_core.services.run_server.run_manager import RunManager
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 from opus_core.database_management.database_configuration import DatabaseConfiguration
 from opus_core.store.attribute_cache import AttributeCache
 from opus_core.misc import does_database_server_exist_for_this_hostname
@@ -34,31 +32,6 @@ from opus_core.session_configuration import SessionConfiguration
 ###       Once this has been done, move everything from this file and
 ###       delete_run_tests back into opus_core.
 from psrc.configs.subset_configuration import SubsetConfiguration
-
-
-def _create_services_test_database():
-    """Creates the 'services_test' database on localhost.
-    Returns database.
-    """
-    config = DatabaseConfiguration(database_name = 'services_test')
-    
-    db_server = DatabaseServer(config)
-    db_server.drop_database('services_test')
-    db_server.create_database('services_test')
-    services_database = db_server.get_database('services_test')
-
-    tt_schema = TableTypeSchema();
-    services_database.create_table("run_activity",
-                                   tt_schema.get_table_schema("run_activity"))
-    
-    
-    return config
-
-def _drop_services_test_database():
-    """Drops the 'services_test' database on localhost.
-    """
-    db_server = DatabaseServer(DatabaseServerConfiguration())
-    db_server.drop_database('services_test')
     
 def _do_run_simple_test_run(caller, temp_dir, config, end_year=None):
     """Runs model system with a single model (for speed).
@@ -91,13 +64,15 @@ if does_database_server_exist_for_this_hostname(
         ###       _do_run_simple_test_run() is no longer dependent on psrc.
     
         def setUp(self):
-            self.services_db_config = _create_services_test_database()
+            self.config = DatabaseConfiguration(database_name = 'services_test')
             self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
     
         def tearDown(self):
             # Turn off the logger, so we can delete the cache directory.
             logger.disable_all_file_logging()
-            _drop_services_test_database()
+            db_server = DatabaseServer(self.config)
+            db_server.drop_database('services_test')
+            db_server.close()
 
         def cleanup_test_run(self):
             cache_dir = self.resources['cache_directory']
@@ -106,22 +81,9 @@ if does_database_server_exist_for_this_hostname(
             if os.path.exists(self.temp_dir):
                 rmtree(self.temp_dir)
             
-        def test_setup_run(self):
-            base_directory = self.temp_dir
-            run_name = 'test_scenario_name'
-            print self.services_db_config
-            run_manager = RunManager(self.services_db_config)
-            
-            run_manager.setup_new_run(run_name = os.path.join(base_directory, run_name))
-            resulting_cache_directory = run_manager.get_current_cache_directory()
-            self.assertTrue(resulting_cache_directory.find(run_name)>-1)
-            self.assertEquals(os.path.dirname(resulting_cache_directory), base_directory)
-            self.assertTrue(run_manager.ready_to_run)
-            self.assertTrue(not os.path.exists(resulting_cache_directory))
-            
         def test_restart_simple_run(self):
-            _do_run_simple_test_run(self, self.temp_dir, self.services_db_config)
-            runs_manager = RunManager(self.services_db_config)
+            _do_run_simple_test_run(self, self.temp_dir, self.config)
+            runs_manager = RunManager(self.config)
             history_id = runs_manager.storage.GetResultsFromQuery("SELECT max(run_id) FROM run_activity")[1][0]
             statuses = runs_manager.storage.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
                                                            % history_id)[1:]
@@ -165,6 +127,4 @@ if does_database_server_exist_for_this_hostname(
             self.cleanup_test_run()
 
 if __name__ == "__main__":
-    try: import wingdbstub
-    except: pass
     opus_unittest.main()

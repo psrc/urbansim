@@ -391,6 +391,7 @@ def get_date_time_string():
 
 from opus_core.tests import opus_unittest
 from opus_core.database_management.database_configuration import DatabaseConfiguration
+import tempfile 
 
 class RunManagerTests(opus_unittest.OpusTestCase):
     def setUp(self):
@@ -421,6 +422,19 @@ class RunManagerTests(opus_unittest.OpusTestCase):
         self.assertTrue(self.db_server.has_database(self.database_name))
         db = self.db_server.get_database(self.database_name)
         self.assertTrue(db.table_exists('run_activity'))    
-    
+
+    def test_setup_run(self):
+        base_directory = tempfile.mkdtemp(prefix='opus_tmp')
+        run_name = 'test_scenario_name'
+        run_manager = RunManager(self.config)
+        
+        run_manager.setup_new_run(run_name = os.path.join(base_directory, run_name))
+        resulting_cache_directory = run_manager.get_current_cache_directory()
+        self.assertTrue(resulting_cache_directory.find(run_name)>-1)
+        self.assertEquals(os.path.dirname(resulting_cache_directory), base_directory)
+        self.assertTrue(run_manager.ready_to_run)
+        self.assertTrue(not os.path.exists(resulting_cache_directory))
+        os.rmdir(base_directory)
+            
 if __name__ == "__main__":
     opus_unittest.main()
