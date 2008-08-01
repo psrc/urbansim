@@ -100,10 +100,10 @@ class DatabaseServerConfiguration(object):
         
     def _get_default_database_engine(self):
         installed_dbs = _get_installed_database_engines()
-        if 'sqlite' in installed_dbs:
-            return 'sqlite'
-        elif 'mysql' in installed_dbs:
+        if 'mysql' in installed_dbs:
             return 'mysql'
+        elif 'sqlite' in installed_dbs:
+            return 'sqlite'
         elif 'postgres' in installed_dbs:
             return 'postgres'
         elif 'mssql' in installed_dbs:
