@@ -297,15 +297,8 @@ class RunManager(object):
 
     def add_row_to_history(self, run_id, resources, status):
         """update the run history table to indicate changes to the state of this run history trail."""
-
-        if self.services_db is None: 
-            return
-
-        if not status:
-            raise Exception("un-specified status")
         
         resources['run_id'] = run_id
-        pickled_resources = 'NULL'
         pickled_resources = pickle.dumps(resources)
         
         values = {"run_id":run_id, 
@@ -321,9 +314,9 @@ class RunManager(object):
         self.services_db.engine.execute(qry)
     
         if self.available_runs.has_run(run_id):
-            self.available_runs.update_status_for_run(run_id,status)
+            self.available_runs.update_status_for_run(run_id, status)
         else:
-            self.available_runs.add_run(run_id,resources,status)
+            self.available_runs.add_run(run_id, resources, status)
 
     def create_storage(self, options):
 
@@ -394,7 +387,9 @@ import tempfile
 class RunManagerTests(opus_unittest.OpusTestCase):
     def setUp(self):
         self.database_name = 'test_services_database'
-        self.config = DatabaseConfiguration(test = True, database_name = self.database_name)
+        self.config = DatabaseConfiguration(protocol = 'sqlite',
+                                            test = True, 
+                                            database_name = self.database_name)
         self.db_server = DatabaseServer(self.config)
     
     def tearDown(self):
@@ -433,6 +428,36 @@ class RunManagerTests(opus_unittest.OpusTestCase):
         self.assertTrue(run_manager.ready_to_run)
         self.assertTrue(not os.path.exists(resulting_cache_directory))
         os.rmdir(base_directory)
+        
+    def test_add_row_to_history(self):
+        run_manager = RunManager(self.config)
+        cache_directory = tempfile.mkdtemp(prefix='opus_tmp')
+        resources = {'cache_directory':cache_directory,
+                     'description':'test_run',
+                     'base_year':2000}
+        
+        run_manager.add_row_to_history(run_id = 1, 
+                                       resources = resources, 
+                                       status = 'completed')
+        
+        db = self.db_server.get_database(self.database_name)
+        run_activity_table = db.get_table('run_activity')
+        available_runs_table = db.get_table('available_runs')
+        
+        s = select([run_activity_table.c.run_name,
+                    available_runs_table.c.status],
+                    whereclause = and_(run_activity_table.c.run_id == 1,
+                                      run_activity_table.c.run_id == available_runs_table.c.run_id))
+
+        results = db.engine.execute(s).fetchall()
+        self.assertEqual(len(results), 1)
+        
+        run_name, status = results[0]
+        self.assertEqual(status, 'completed')
+        self.assertEqual(run_name, 'test_run')
+        
+        os.rmdir(cache_directory)
+                
             
 if __name__ == "__main__":
     opus_unittest.main()
