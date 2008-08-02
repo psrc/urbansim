@@ -248,17 +248,35 @@ class RunManager(object):
 
         return Configuration(pickle.loads(run_resources[0]))
     
-    def get_run_info(self,run_id):
+    def get_run_info(self, run_ids = None, resources = False, status = None):
         """ returns the name of the server where this run was processed"""
 
         #note: this method is never used in the codebase         
         run_activity = self.services_db.get_table('run_activity')
-        query = select(
-            columns = [run_activity.c.run_name, 
-                       run_activity.c.processor_name],
-            whereclause = run_activity.c.run_id==run_id)
         
-        results = self.services_db.engine.execute(query).fetchone()
+        cols = [run_activity.c.run_id,
+                run_activity.c.run_name, 
+                run_activity.c.processor_name]
+        
+        if resources:
+            cols.append(run_activity.c.resources)
+ 
+        query = select(columns = cols)
+        if run_ids is not None:
+            query = query.where(run_activity.c.run_id in run_ids)
+            
+        if status is not None:
+            query = query.where(run_activity.c.status == status)
+                        
+        if resources:
+            results = [(run_id, run_name, processor_name, Configuration(pickle.loads(str(run_resources)))) for \
+                        run_id, run_name, processor_name, run_resources in \
+                        self.services_db.engine.execute(query).fetchall() ]       
+
+        else:
+            results = [(run_id, run_name, processor_name) for \
+                        run_id, run_name, processor_name in \
+                        self.services_db.engine.execute(query).fetchall() ]       
 
         return results
     
@@ -368,20 +386,30 @@ class RunManager(object):
         resources = self.get_resources_for_run_id_from_history(run_id, filter_by_status = False)
         return resources['cache_directory']
         
+    def get_years_run(self, cache_directory):
+        years = []
+        if os.path.exists(cache_directory):
+            for dir in os.listdir(cache_directory):
+                if len(dir) == 4 and dir.isdigit():
+                    years.append(int(dir))
+        else:
+            return years
+        
     def delete_year_dirs_in_cache(self, run_id, years_to_delete=None):
         """ only removes the years cache and leaves the indicator, changes status to partial"""
-        cache_directory = self.get_cache_directory(run_id)
         resources = self.get_resources_for_run_id_from_history(run_id, filter_by_status = False)
+        cache_directory = resources['cache_directory']
+        years_run = self.get_years_run(cache_directory)
         
         if years_to_delete is None:
-            years_to_delete = resources['years_run']
+            years_to_delete = years_run
             
         for year in years_to_delete:            
             year_dir = os.path.join(cache_directory, str(year))
             while os.path.exists(year_dir ):
                 shutil.rmtree(year_dir, onerror=self._handle_deletion_errors)
 
-        years_cached = [year for year in resources['years_run'] if year not in years_to_delete]
+        years_cached = [year for year in years_run if year not in years_to_delete]
 
         resources['years_run'] = years_cached
         
@@ -485,7 +513,7 @@ class RunManagerTests(opus_unittest.OpusTestCase):
         
         run_manager.add_row_to_history(run_id = 1, 
                                        resources = resources, 
-                                       status = 'completed')
+                                       status = 'done')
         
         db = self.db_server.get_database(self.database_name)
         run_activity_table = db.get_table('run_activity')
@@ -498,7 +526,7 @@ class RunManagerTests(opus_unittest.OpusTestCase):
         self.assertEqual(len(results), 1)
         
         run_name, status = results[0]
-        self.assertEqual(status, 'completed')
+        self.assertEqual(status, 'done')
         self.assertEqual(run_name, 'test_run')
         
         os.rmdir(cache_directory)
