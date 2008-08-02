@@ -29,6 +29,7 @@ def formatExceptionInfo(custom_message = 'Unexpected error', maxTBlevel=5):
             
 #    errorinfo = (excName, excArgs, excTb)
 
+    print traceback.format_exc()
     fExc = fExc.replace('\t','   ').replace('\n','<br>').replace(' ', '&nbsp;')
     errorinfo = ('''<qt>%s<br><br>Details:<br><br><small>%s</small></qt>
                  '''%(custom_message, fExc))    
