@@ -21,7 +21,6 @@ from opus_core.store.utils.cache_flt_data import CacheFltData
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
 from sqlalchemy.sql import select, and_, func, insert
-from opus_core.services.run_server.available_runs import AvailableRuns
 from opus_core.misc import get_host_name
 from opus_core.database_management.table_type_schema import TableTypeSchema
 
@@ -33,7 +32,6 @@ class RunManager(object):
 
     def __init__(self, options):
         self.services_db = self.create_storage(options)
-        self.available_runs = AvailableRuns(self.services_db)
         self.run_id = None
         self.ready_to_run = False
 
@@ -226,21 +224,27 @@ class RunManager(object):
 
     ######## DATABASE OPERATIONS ###########
     
-    def get_resources_for_run_id_from_history(self, run_id):
+    def get_resources_for_run_id_from_history(self, run_id, filter_by_status = True):
         """Returns the resources for this run_id, as stored in the run_activity table.
         """
 
         run_activity = self.services_db.get_table('run_activity')
+        
+        if filter_by_status:
+            whereclause = and_(
+                        run_activity.c.status=='started',
+                        run_activity.c.run_id==int(run_id))
+        else:
+            whereclause = run_activity.c.run_id==int(run_id)
+            
         query = select(
             columns = [run_activity.c.resources],
-            whereclause = and_(
-                            run_activity.c.status=='started',
-                            run_activity.c.run_id==int(run_id)))
+            whereclause = whereclause)
         
         run_resources = self.services_db.engine.execute(query).fetchone()
         
         if not run_resources:
-            raise StandardError("run_id %s doesn't exist host = %s database = %s" % (run_id, db.host_name, db.database_name))
+            raise StandardError("run_id %s doesn't exist" % (run_id))
 
         return Configuration(pickle.loads(run_resources[0]))
     
@@ -257,27 +261,23 @@ class RunManager(object):
         results = self.services_db.engine.execute(query).fetchone()
 
         return results
-
-    def get_available_runs(self):
-        return self.available_runs
     
     def get_runs_by_status(self, run_ids):
         """Returns a dictionary where keys are the status (e.g. 'started', 'done', 'failed').
         If run_ids is None, all runs from available runs are considered, otherwise only ids 
         given by the run_ids list.
         """
-        available_runs = self.get_available_runs()
-        if run_ids is None:
-            run_ids = available_runs.get_all_runs()
-
-        result = {}    
-        for id in run_ids:
-            status = available_runs.get_run_state(id).status
-            if status not in result.keys():
-                result[status] = []
-            result[status].append(id)
-        return result
-
+        map = {}
+        run_activity_table = self.services_db.get_table('run_activity')
+        s = select([run_activity_table.c.run_id, run_activity_table.c.status])
+        for run_id, status in self.services_db.engine.execute(s).fetchall():
+            if status in map:
+                map[status].append(run_id)
+            else:
+                map[status] = [run_id]
+        
+        return map
+    
     def _get_new_run_id(self):
         """Returns a unique run_id for a new run_activity trail."""
         
@@ -312,11 +312,6 @@ class RunManager(object):
         run_activity_table = self.services_db.get_table('run_activity')
         qry = run_activity_table.insert(values = values)
         self.services_db.engine.execute(qry)
-    
-        if self.available_runs.has_run(run_id):
-            self.available_runs.update_status_for_run(run_id, status)
-        else:
-            self.available_runs.add_run(run_id, resources, status)
 
     def create_storage(self, options):
 
@@ -329,13 +324,11 @@ class RunManager(object):
                      host_name = options.host_name,
                      user_name = options.user_name,
                      protocol = options.protocol,
-                     password = options.password
-                 )
+                     password = options.password)
         try:
             server = DatabaseServer(config)
         except:
             raise Exception('Cannot connect to the database server that the services database is hosted on')
-        
         
         if not server.has_database(database_name):
             server.create_database(database_name)
@@ -353,19 +346,75 @@ class RunManager(object):
                      tt_schema.get_table_schema("run_activity"))
             except:
                 raise Exception('Cannot create the run_activity table in the services database')
-
-        if not services_db.table_exists("available_runs"):
-            tt_schema = TableTypeSchema()
-            try:
-                services_db.create_table(
-                    "available_runs", 
-                    tt_schema.get_table_schema("available_runs"))
-            except:
-                raise Exception('Cannot create the available_runs table in the services database')
-        
         
         return services_db
             
+############## RUN REMOVAL ####################
+
+    def delete_everything_for_this_run(self, run_id):
+        """ removes the entire tree structure along with information """
+        cache_directory = self.get_cache_directory(run_id)
+        shutil.rmtree(cache_directory,onerror = self._handle_deletion_errors)
+        
+        while os.path.exists(cache_directory):
+            shutil.rmtree(cache_directory)
+        
+        run_activity_table = self.services_database.get_table('run_activity')
+        
+        query = run_activity_table.delete(run_activity_table.c.run_id==int(run_id))
+        self.services_database.engine.execute(query)
+           
+    def get_cache_directory(self, run_id):
+        resources = self.get_resources_for_run_id_from_history(run_id, filter_by_status = False)
+        return resources['cache_directory']
+        
+    def delete_year_dirs_in_cache(self, run_id, years_to_delete=None):
+        """ only removes the years cache and leaves the indicator, changes status to partial"""
+        cache_directory = self.get_cache_directory(run_id)
+        resources = self.get_resources_for_run_id_from_history(run_id, filter_by_status = False)
+        
+        if years_to_delete is None:
+            years_to_delete = resources['years_run']
+            
+        for year in years_to_delete:            
+            year_dir = os.path.join(cache_directory, str(year))
+            while os.path.exists(year_dir ):
+                shutil.rmtree(year_dir, onerror=self._handle_deletion_errors)
+
+        years_cached = [year for year in self.resources['years'] if year not in years_to_delete]
+
+        resources['years_run'] = years_cached
+        
+        values = {
+                'resources':pickle.dumps(resources),
+                'status':'partial'
+        }
+
+        run_activity = self.services_db.get_table('run_activity')
+
+        query = run_activity.update(
+            whereclause = run_activity.c.run_id == int(run_id),
+            values = values
+        )
+        
+        self.services_database.engine.execute(query)
+                                         
+    def _handle_deletion_errors(self, function, path, info):
+        """try to close the file if it's a file """
+        logger.log_warning("in run_manager._handle_deletion_errors: Trying  to delete %s error from function %s: \n %s" % (path,function.__name__,info[1]))
+        if function.__name__ == 'remove':
+            try:
+                logger.disable_all_file_logging()
+                file = open(path)
+                file.close()
+                os.remove(path)
+            except:
+                logger.log_warning("in run_manager._handle_deletion_errors:unable to delete %s error from function %s: \n %s" % (path,function.__name__,info[1]))
+        else:
+            logger.log_warning("in run_manager._handle_deletion_errors:unable to delete %s error from function %s: \n %s" % (path,function.__name__,info[1]))
+
+
+
 class SimulationRunError(Exception):
     """exception to be raised if the simulation fails at runtime"""
     pass
@@ -401,12 +450,10 @@ class RunManagerTests(opus_unittest.OpusTestCase):
         self.db_server.create_database(self.database_name)
         db = self.db_server.get_database(self.database_name)
         self.assertFalse(db.table_exists('run_activity'))
-        self.assertFalse(db.table_exists('available_runs'))
         
         run_manager = RunManager(self.config)
         
         self.assertTrue(db.table_exists('run_activity'))
-        self.assertTrue(db.table_exists('available_runs'))
 
     def test_create(self):
         """Should create run_activity table if the database doesn't exist."""
@@ -442,12 +489,10 @@ class RunManagerTests(opus_unittest.OpusTestCase):
         
         db = self.db_server.get_database(self.database_name)
         run_activity_table = db.get_table('run_activity')
-        available_runs_table = db.get_table('available_runs')
         
         s = select([run_activity_table.c.run_name,
-                    available_runs_table.c.status],
-                    whereclause = and_(run_activity_table.c.run_id == 1,
-                                      run_activity_table.c.run_id == available_runs_table.c.run_id))
+                    run_activity_table.c.status],
+                    whereclause = run_activity_table.c.run_id == 1)
 
         results = db.engine.execute(s).fetchall()
         self.assertEqual(len(results), 1)

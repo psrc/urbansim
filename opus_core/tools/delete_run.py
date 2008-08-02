@@ -34,7 +34,7 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     
-    available_runs = RunManager(options).get_available_runs()
+    run_manager = RunManager(options)
 
     if options.run_id is None:
         parser.print_help()
@@ -42,7 +42,7 @@ if __name__ == "__main__":
         years_to_delete = eval(options.years_to_delete)
         if not isinstance(years_to_delete, list):
             years_to_delete = [years_to_delete]
-        available_runs.delete_year_dirs_in_cache(options.run_id, 
+        run_manager.delete_year_dirs_in_cache(options.run_id, 
                                                  years_to_delete=years_to_delete)
     else:
-        available_runs.delete_everything_for_this_run(options.run_id)
+        run_manager.delete_everything_for_this_run(options.run_id)
