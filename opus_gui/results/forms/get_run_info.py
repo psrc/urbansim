@@ -42,6 +42,9 @@ class GetRunInfo(QDialog, Ui_dlgGetRunInfo):
             self.lblCache_directory.setText(cur_vals['cache_directory'])
             if 'run_id' in cur_vals:
                 self.lblRunId.setText(cur_vals['run_id'])
+            else:
+                self.lblRunId.setText(QString('not available'))
+            
         
     def on_btnDone_released(self):
         self.close()
