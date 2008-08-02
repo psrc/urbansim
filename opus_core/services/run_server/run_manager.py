@@ -246,7 +246,7 @@ class RunManager(object):
         if not run_resources:
             raise StandardError("run_id %s doesn't exist" % (run_id))
 
-        return Configuration(pickle.loads(run_resources[0]))
+        return Configuration(pickle.loads(str(run_resources[0])))
     
     def get_run_info(self, run_ids = None, resources = False, status = None):
         """ returns the name of the server where this run was processed"""
@@ -328,9 +328,19 @@ class RunManager(object):
              }        
 
         run_activity_table = self.services_db.get_table('run_activity')
-        qry = run_activity_table.insert(values = values)
+        if self.has_run(run_id):
+            qry = run_activity_table.update(values = values,
+                                            whereclause = run_activity_table.c.run_id == run_id)
+        else:
+            qry = run_activity_table.insert(values = values)
+
         self.services_db.engine.execute(qry)
 
+    def has_run(self, run_id):
+        run_activity_table = self.services_db.get_table('run_activity')
+        qry = run_activity_table.select(whereclause=run_activity_table.c.run_id==run_id)
+        return self.services_db.engine.execute(qry).fetchone() is not None
+        
     def create_storage(self, options):
 
         try:
