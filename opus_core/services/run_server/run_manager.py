@@ -400,10 +400,10 @@ class RunManager(object):
         except:
             pass
         
-        run_activity_table = self.services_database.get_table('run_activity')
+        run_activity_table = self.services_db.get_table('run_activity')
         
         query = run_activity_table.delete(run_activity_table.c.run_id==int(run_id))
-        self.services_database.engine.execute(query)
+        self.services_db.engine.execute(query)
            
 
         
@@ -437,7 +437,7 @@ class RunManager(object):
             values = values
         )
         
-        self.services_database.engine.execute(query)
+        self.services_db.engine.execute(query)
                                          
     def _handle_deletion_errors(self, function, path, info):
         """try to close the file if it's a file """
