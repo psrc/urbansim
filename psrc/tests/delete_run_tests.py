@@ -69,14 +69,15 @@ if does_database_server_exist_for_this_hostname(
             self.assert_(os.path.exists(os.path.join(cache_dir, '2000')))
             path = module_path_from_opus_path('opus_core.tools.delete_run')
             
-            cmd_template = sys.executable + ' %(path)s --run-id=%(run_id)d --years-to-delete=%(years_to_delete)s --database=services_test --hostname=%(host_name)s'
+            cmd_template = sys.executable + ' %(path)s --protocol=%(protocol)s --run-id=%(run_id)d --years-to-delete=%(years_to_delete)s --database=services_test --hostname=%(host_name)s'
             
             # First just delete 2 years of data.
             python_cmd = cmd_template % {
                 'path':path,
                 'run_id':self.resources['run_id'],
                 'years_to_delete':'[2001,2002]',
-                'host_name':db_config.host_name}
+                'host_name':db_config.host_name,
+                'protocol':db_config.protocol}
             
             # Close all log files so we can delete the cache.
             logger.disable_all_file_logging()
@@ -93,7 +94,8 @@ if does_database_server_exist_for_this_hostname(
                 'path':path,
                 'run_id':self.resources['run_id'],
                 'years_to_delete':'2003',
-                'host_name':db_config.host_name}
+                'host_name':db_config.host_name,
+                'protocol':db_config.protocol}
             # Close all log files so we can delete the cache.
             logger.disable_all_file_logging()
             self.do_cmd(python_cmd)
@@ -109,7 +111,8 @@ if does_database_server_exist_for_this_hostname(
                 'path':path,
                 'run_id':self.resources['run_id'],
                 'years_to_delete':'1997',
-                'host_name':db_config.host_name}
+                'host_name':db_config.host_name,
+                'protocol':db_config.protocol}
             # Close all log files so we can delete the cache.
             logger.disable_all_file_logging()
             self.do_cmd(python_cmd)
@@ -125,7 +128,8 @@ if does_database_server_exist_for_this_hostname(
                 'executable':sys.executable,
                 'path':path,
                 'run_id':self.resources['run_id'],
-                'host_name':db_config.host_name}
+                'host_name':db_config.host_name,
+                'protocol':db_config.protocol}
             # Close all log files so we can delete the cache.
             logger.disable_all_file_logging()
             self.do_cmd(python_cmd)
