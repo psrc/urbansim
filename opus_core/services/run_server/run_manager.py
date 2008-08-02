@@ -387,8 +387,7 @@ class RunManager(object):
             for dir in os.listdir(cache_directory):
                 if len(dir) == 4 and dir.isdigit():
                     years.append(int(dir))
-        else:
-            return years
+        return years
         
 ############## RUN REMOVAL ####################
 
