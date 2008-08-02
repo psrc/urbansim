@@ -20,7 +20,7 @@ from opus_core.configuration import Configuration
 from opus_core.store.utils.cache_flt_data import CacheFltData
 from opus_core.database_management.database_server import DatabaseServer
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
-from sqlalchemy.sql import select, and_, func, insert
+from sqlalchemy.sql import select, and_, func
 from opus_core.misc import get_host_name
 from opus_core.database_management.table_type_schema import TableTypeSchema
 
@@ -41,37 +41,6 @@ class RunManager(object):
                 resources['creating_baseyear_cache_configuration'].cache_scenario_database, resources)
         else:
             CacheFltData().run(resources)
-
-    def create_run_resources_from_history(self,
-                                          run_id=None,
-                                          restart_year=None,
-                                          end_year=None
-                                          ):
-        """Re-creates and returns a resources dictionary given a specific entry in run_activity.
-        Entirely based on the pickled "resources" field for that entry, which also
-        contains a pickled version of the "run request" (a dictionary) associated with that entry."""
-        if not run_id:
-            raise StandardError("run_id un-specified")
-
-        resources = self.get_resources_for_run_id_from_history(run_id=run_id)
-        if 'cache_variables' not in resources:
-            resources['cache_variables'] = False
-
-        if not restart_year:
-            raise StandardError("restart year un-specified")
-        if restart_year < resources["years"][0]:
-            raise StandardError("restart year cannot be less than %s" % resources["years"][0])
-
-        #if no end_year is specified, it will default to the current end_year in "years" entry in resources
-        if not end_year:
-            end_year = resources["years"][-1]
-        if 'base_year' not in resources:
-            resources['base_year'] = resources['years'][0] - 1
-
-        #set up resources for restarting the simulation
-        resources["years"] = (restart_year, end_year)
-
-        return resources
     
     def setup_new_run(self, run_name):
         self.run_id = self._get_new_run_id()
@@ -222,6 +191,37 @@ class RunManager(object):
             self.add_row_to_history(run_id, run_resources, "failed")
             raise
 
+    def create_run_resources_from_history(self,
+                                          run_id=None,
+                                          restart_year=None,
+                                          end_year=None
+                                          ):
+        """Re-creates and returns a resources dictionary given a specific entry in run_activity.
+        Entirely based on the pickled "resources" field for that entry, which also
+        contains a pickled version of the "run request" (a dictionary) associated with that entry."""
+        if not run_id:
+            raise StandardError("run_id un-specified")
+
+        resources = self.get_resources_for_run_id_from_history(run_id=run_id)
+        if 'cache_variables' not in resources:
+            resources['cache_variables'] = False
+
+        if not restart_year:
+            raise StandardError("restart year un-specified")
+        if restart_year < resources["years"][0]:
+            raise StandardError("restart year cannot be less than %s" % resources["years"][0])
+
+        #if no end_year is specified, it will default to the current end_year in "years" entry in resources
+        if not end_year:
+            end_year = resources["years"][-1]
+        if 'base_year' not in resources:
+            resources['base_year'] = resources['years'][0] - 1
+
+        #set up resources for restarting the simulation
+        resources["years"] = (restart_year, end_year)
+
+        return resources
+    
     ######## DATABASE OPERATIONS ###########
     
     def get_resources_for_run_id_from_history(self, run_id, filter_by_status = True):
@@ -301,12 +301,12 @@ class RunManager(object):
         resources['run_id'] = run_id
         pickled_resources = pickle.dumps(resources)
         
-        values = {"run_id":run_id, 
-             "run_name":'%s' % resources.get('description', "No description"),
-             "status":'%s' % status,
-             "processor_name":'%s' % get_host_name(), 
-             "date_time":strftime('%Y-%m-%d %H:%M:%S', localtime()),
-             "resources":'%s' % pickled_resources,
+        values = {'run_id':run_id, 
+             'run_name':'%s' % resources.get('description', 'No description'),
+             'status':'%s' % status,
+             'processor_name':'%s' % get_host_name(), 
+             'date_time':strftime('%Y-%m-%d %H:%M:%S', localtime()),
+             'resources':'%s' % pickled_resources,
              }        
 
         run_activity_table = self.services_db.get_table('run_activity')
@@ -342,8 +342,8 @@ class RunManager(object):
             tt_schema = TableTypeSchema()
             try:
                 services_db.create_table(
-                     "run_activity", 
-                     tt_schema.get_table_schema("run_activity"))
+                     'run_activity', 
+                     tt_schema.get_table_schema('run_activity'))
             except:
                 raise Exception('Cannot create the run_activity table in the services database')
         
@@ -381,7 +381,7 @@ class RunManager(object):
             while os.path.exists(year_dir ):
                 shutil.rmtree(year_dir, onerror=self._handle_deletion_errors)
 
-        years_cached = [year for year in self.resources['years'] if year not in years_to_delete]
+        years_cached = [year for year in resources['years_run'] if year not in years_to_delete]
 
         resources['years_run'] = years_cached
         
@@ -401,7 +401,7 @@ class RunManager(object):
                                          
     def _handle_deletion_errors(self, function, path, info):
         """try to close the file if it's a file """
-        logger.log_warning("in run_manager._handle_deletion_errors: Trying  to delete %s error from function %s: \n %s" % (path,function.__name__,info[1]))
+        logger.log_warning('in run_manager._handle_deletion_errors: Trying  to delete %s error from function %s: \n %s' % (path,function.__name__,info[1]))
         if function.__name__ == 'remove':
             try:
                 logger.disable_all_file_logging()
@@ -409,9 +409,9 @@ class RunManager(object):
                 file.close()
                 os.remove(path)
             except:
-                logger.log_warning("in run_manager._handle_deletion_errors:unable to delete %s error from function %s: \n %s" % (path,function.__name__,info[1]))
+                logger.log_warning('in run_manager._handle_deletion_errors:unable to delete %s error from function %s: \n %s' % (path,function.__name__,info[1]))
         else:
-            logger.log_warning("in run_manager._handle_deletion_errors:unable to delete %s error from function %s: \n %s" % (path,function.__name__,info[1]))
+            logger.log_warning('in run_manager._handle_deletion_errors:unable to delete %s error from function %s: \n %s' % (path,function.__name__,info[1]))
 
 
 
