@@ -84,8 +84,8 @@ if does_database_server_exist_for_this_hostname(
         def test_restart_simple_run(self):
             _do_run_simple_test_run(self, self.temp_dir, self.config)
             runs_manager = RunManager(self.config)
-            run_id = runs_manager.services_database.GetResultsFromQuery("SELECT max(run_id) FROM run_activity")[1][0]
-            statuses = runs_manager.services_database.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
+            run_id = runs_manager.services_db.GetResultsFromQuery("SELECT max(run_id) FROM run_activity")[1][0]
+            statuses = runs_manager.services_db.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
                                                            % run_id)[1:]
                                                            
             expected = [['started'], ['done']]
@@ -99,7 +99,7 @@ if does_database_server_exist_for_this_hostname(
                                      restart_year=2001,
                                      skip_urbansim=False)
             
-            statuses = runs_manager.services_database.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
+            statuses = runs_manager.services_db.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
                                                            % run_id)[1:]
                                                            
             expected = [['started'], ['done'], ['restarted in 2001'], ['done']]
@@ -114,7 +114,7 @@ if does_database_server_exist_for_this_hostname(
             runs_manager.restart_run(run_id,
                                      restart_year=2002,
                                      skip_urbansim=True)
-            statuses = runs_manager.services_database.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
+            statuses = runs_manager.services_db.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
                                                            % run_id)[1:]
                                                            
             expected = [['started'], ['done'], ['restarted in 2001'], ['done'], ['restarted in 2002'], ['done']]       
