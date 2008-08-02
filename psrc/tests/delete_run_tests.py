@@ -22,9 +22,9 @@ from opus_core.misc import does_database_server_exist_for_this_hostname
 
 from psrc.configs.subset_configuration import SubsetConfiguration
 from psrc.tests.test_run_manager import _do_run_simple_test_run
-from psrc.tests.test_run_manager import _create_services_test_database
-from psrc.tests.test_run_manager import _drop_services_test_database
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
+from opus_core.database_management.database_server import DatabaseServer
 
 if does_database_server_exist_for_this_hostname(
         module_name = __name__, 
@@ -40,13 +40,14 @@ if does_database_server_exist_for_this_hostname(
             os.system(cmd)
             
         def setUp(self):
-            self.services_database = _create_services_test_database()
+            self.services_database = DatabaseConfiguration(database_name='services_test')
             self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
             _do_run_simple_test_run(self, self.temp_dir, self.services_database, end_year=2004)
     
         def tearDown(self):
             rmtree(self.temp_dir)
-            _drop_services_test_database()
+            server = DatabaseServer(DatabaseServerConfiguration())
+            server.drop_database('services_test')
             
         #def test_delete_all_years(self):
             #cache_dir = self.resources['cache_directory']
