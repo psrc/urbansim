@@ -24,15 +24,10 @@ from opus_gui.config.xmlmodelview.opusdatamodel import OpusDataModel
 from opus_gui.config.xmlmodelview.opusdatadelegate import OpusDataDelegate
 from opus_gui.results.forms.view_image_form import ViewImageForm
 from opus_gui.results.forms.view_table_form import ViewTableForm
-from opus_gui.results.xml_helper_methods import ResultsManagerXMLHelper
 from opus_gui.run.overwrite_run_dialog import Ui_dlgOverwriteRun
 
-# General system includes
-import os, sys, time, tempfile, shutil, string
-
-from opus_gui.results.xml_helper_methods import elementsByAttributeValue
 from opus_gui.results.gui_result_interface.opus_gui_thread import OpusGuiThread
-from opus_gui.results.gui_result_interface.opus_result_visualizer import OpusResultVisualizer
+
 # Main Run manager class
 class RunManagerBase(object):
     def __init__(self, mainwindow):
@@ -523,10 +518,12 @@ class ModelGuiElement(QWidget):
             run_name = None
         else:
             duplicate = False
-            for run in self.xml_helper.get_available_run_info():
+            run_id = None
+            for run in self.xml_helper.get_available_run_info(attributes = ['run_id']):
                 existing_run_name = run['name']
                 if run_name == existing_run_name:
                     duplicate = True
+                    if 'run_id' in run: run_id = int(run['run_id'])
                     break
             if duplicate:
                 dlg_dup = OverwriteRunDialog(self)
@@ -578,7 +575,9 @@ class ModelGuiElement(QWidget):
                                             self.xml_path,
                                             batch_name,
                                             run_name)
-
+            
+            if duplicate and run_id is not None:
+                self.model.run_manager.delete_everything_for_this_run(run_id = run_id)
             
             # Use this signal from the thread if it is capable of producing its own status signal
             QObject.connect(self.runThread, SIGNAL("runFinished(PyQt_PyObject)"),

@@ -12,6 +12,11 @@
 # 
 
 from PyQt4.QtCore import QString, QModelIndex, SIGNAL
+from opus_core.services.run_server.generic_option_group import GenericOptionGroup
+from sqlalchemy.sql import select
+from opus_core.misc import get_host_name
+from opus_core.services.run_server.run_manager import RunManager
+import os
 
 def elementsByAttributeValue(domDocument,
                              attribute,
@@ -68,7 +73,8 @@ class ResultsManagerXMLHelper:
     
     def __init__(self, toolboxStuff):
         self.toolboxStuff = toolboxStuff
-
+        config = GenericOptionGroup().parser.parse_args()[0]
+        self.run_manager = RunManager(config)
         
     #####################################################
     #########    XML GET CONVENIENCE METHODS     ########
@@ -96,7 +102,9 @@ class ResultsManagerXMLHelper:
                 indicators.append(var)
         return indicators      
     
-    def get_available_run_info(self, attributes = []):
+    def get_available_run_info(self, attributes = [], update = True):
+        if update:
+            self.update_available_runs()
         return self._get_node_group(node_value = 'source_data', 
                                     node_attribute = 'type', 
                                     child_attributes = attributes)        
@@ -232,10 +240,17 @@ class ResultsManagerXMLHelper:
     def add_run_to_run_manager_xml(self, cache_directory, 
                                     scenario_name, run_name, 
                                     start_year, end_year,
+                                    run_id,
                                     temporary = False):
                 
         head_node_args = {'type':'source_data',
                           'value':''}
+
+        run_id_def = {
+            'name':'run_id',
+            'type':'integer',
+            'value':str(run_id),
+        }
         
         scenario_def = {
             'name':'scenario_name',
@@ -262,7 +277,7 @@ class ResultsManagerXMLHelper:
             'type':'integer',
             'value':str(end_year),
         }        
-        child_defs = [scenario_def, run_def, cache_dir_def, start_year_def, end_year_def]
+        child_defs = [run_id_def, scenario_def, run_def, cache_dir_def, start_year_def, end_year_def]
         
         self._add_new_xml_tree(head_node_name = run_name, 
                                head_node_args = head_node_args, 
@@ -516,5 +531,103 @@ class ResultsManagerXMLHelper:
         return node_vals
         
         
+    def update_available_runs(self):
+        #get existing cache directories, use as primary key to check for duplicates
+        available_runs = self.get_available_run_info(attributes = ['cache_directory'], update = False)
+        model = self.toolboxStuff.resultsManagerTree.model
+        existing_cache_directories = {}
+        for run in available_runs:
+            cache_directory = str(run['cache_directory'])
+            
+            if not os.path.exists(cache_directory):
+                parentIndex = model.index(0,0,QModelIndex()).parent()
+                indexes = model.findElementIndexByName(run['name'], parentIndex)
+                for index in indexes:
+                    base_node = index.internalPointer().node()
+                    attribute_vals = get_child_values(
+                                        parent = base_node,
+                                        child_names = ['cache_directory']
+                                    )
+                    if attribute_vals['cache_directory'] == cache_directory:
+                            index.model().removeRow(index.internalPointer().row(),
+                                        index.model().parent(index))
+                            index.model().emit(SIGNAL("layoutChanged()"))
+                
+            else:
+                existing_cache_directories[cache_directory] = 1
+            
+        #get data directory for this project
+        _, vals = self.get_element_attributes(node_name = 'creating_baseyear_cache_configuration', 
+                                               child_attributes = ['scenario_runs_directory'], 
+                                               node_type = 'class')
+        if 'scenario_runs_directory' not in vals: return
+        cache_root = str(vals['scenario_runs_directory'])
         
+        scenario_name = os.path.basename(cache_root)
+        # set 'datapath' to the path to the opus_data directory.  This is found in the environment variable
+        # OPUS_DATA_PATH, or if that environment variable doesn't exist, as the contents of the environment 
+        # variable OPUS_HOME followed by 'data'
+        datapath = os.environ.get('OPUS_DATA_PATH')
+        if datapath is None:
+            datapath = os.path.join(os.environ.get('OPUS_HOME'), 'data')
+        data_directory = os.path.join(datapath, cache_root)
+        baseyear_directory = os.path.join(datapath, os.path.split(cache_root)[0], 'base_year_data')
+
+        #get runs logged from this processor to the run activity table
+
+
+        runs = self.run_manager.get_run_info(resources = True, status = 'done')
+
+        for run_id, run_name, processor_name, run_resources in runs:
+            cache_directory = run_resources['cache_directory']
+            if cache_directory.find(data_directory) == -1 or \
+                cache_directory in existing_cache_directories: continue
+            if run_name == 'No description':
+                run_name = os.path.basename(cache_directory)
+            start_year, end_year = run_resources['years']
+            self.add_run_to_run_manager_xml( cache_directory = cache_directory,
+                                             scenario_name = scenario_name,
+                                             run_name = run_name,
+                                             start_year = start_year, 
+                                             end_year = end_year,
+                                             run_id = run_id,
+                                             temporary = False)
+            existing_cache_directories[cache_directory] = 1
+            
+
+        years = []
+        if not baseyear_directory in existing_cache_directories:
+            for dir in os.listdir(baseyear_directory):
+                if len(dir) == 4 and dir.isdigit():
+                    years.append(int(dir))
+            start_year = min(years)
+            end_year = max(years)
+            self.add_run_to_run_manager_xml( cache_directory = baseyear_directory,
+                                             scenario_name = scenario_name,
+                                             run_name = 'base_year_data',
+                                             start_year = start_year, 
+                                             end_year = end_year,
+                                             run_id = -1,
+                                             temporary = False)
+                                
+        if not os.path.exists(data_directory): return
+        
+#        for run_name in os.listdir(data_directory):
+#            try:
+#                cache_directory = os.path.join(data_directory,run_name)
+#                years = []
+#                if not os.path.isdir(cache_directory) or \
+#                    cache_directory in existing_cache_directories: continue
+#                for dir in os.listdir(cache_directory):
+#                    if len(dir) == 4 and dir.isdigit():
+#                        years.append(int(dir))
+#                start_year = min(years)
+#                end_year = max(years)
+#                self.add_run_to_run_manager_xml(
+#                                                 cache_directory,
+#                                                 scenario_name,
+#                                                 run_name,
+#                                                 start_year, end_year,
+#                                                 temporary = True)
+#            except: pass
         

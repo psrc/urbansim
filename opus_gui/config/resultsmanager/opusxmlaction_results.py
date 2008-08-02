@@ -216,30 +216,16 @@ class OpusXMLAction_Results(object):
             batch_name = batch_name)
         
     def deleteRun(self):
-#        if self.xmlTreeObject.model.isDirty():
-#            # Prompt the user to save...
-#            QMessageBox.warning(self.xmlTreeObject.mainwindow,
-#                                "Warning",
-#                                "Please save changes to project")               
-#            return 
-        
         node = self.currentIndex.internalPointer().node()
-        vals = get_child_values(parent = node, child_names = ['cache_directory'])
+        vals = get_child_values(parent = node, child_names = ['cache_directory', 'run_id'])
         cache_directory = str(vals['cache_directory'])
-
-        if os.environ['OPUS_DATA_PATH'] not in cache_directory:
-            print 'Not deleting the directory because the cache directory might be corrupted'
-            return
-        
-        if os.path.exists(cache_directory):
-            print 'Deleting ', cache_directory
-            for root, dirs, files in os.walk(cache_directory, topdown=False):
-                for name in files:
-                    os.remove(os.path.join(root, name))
-                for name in dirs:
-                    os.rmdir(os.path.join(root, name))
-        
-        self.removeNode()
+        if cache_directory.find('base_year') == -1:
+            run_id = vals.get('run_id', None)
+            if run_id is not None:
+                run_id = int(run_id)
+                self.xml_helper.run_manager.delete_everything_for_this_run(run_id, cache_directory = cache_directory)
+            
+            self.removeNode()
         
     def configureExistingBatchIndicatorVisualization(self):
 #        if self.xmlTreeObject.model.isDirty():
@@ -378,19 +364,19 @@ class OpusXMLAction_Results(object):
                 selected_type = domElement.attribute(QString("type"))
                 
                 self.menu = QMenu(self.xmlTreeObject.mainwindow)
-                if selected_type == QString("indicator_library") and \
-                       domElement.attribute(QString("append_to")) == QString("True"):
-                    self.menu.addAction(self.actAddNewIndicator)
-                elif selected_type == QString("source_data"):
+#                if selected_type == QString("indicator_library") and \
+#                       domElement.attribute(QString("append_to")) == QString("True"):
+#                    self.menu.addAction(self.actAddNewIndicator)
+                if selected_type == QString("source_data"):
                     self.menu.addAction(self.actGenerateResults)
                     self.menu.addAction(self.actGetInfoSimulationRuns)
                     self.menu.addAction(self.actDeleteRun)
                 elif domElement.tagName() == QString("Indicator_batches"):
                     self.menu.addAction(self.actAddNewIndicatorBatch)
-                elif selected_type == QString("indicator"):
-#                    self.menu.addAction(self.actViewDocumentation)
-                    self.menu.addAction(self.actEditIndicator)
-                    self.menu.addAction(self.actGenerateResults)
+#                elif selected_type == QString("indicator"):
+##                    self.menu.addAction(self.actViewDocumentation)
+#                    self.menu.addAction(self.actEditIndicator)
+#                    self.menu.addAction(self.actGenerateResults)
                 elif selected_type == QString("indicator_result"):
                     visualization_menu = QMenu(self.xmlTreeObject.mainwindow)
                     visualization_menu.setTitle(QString("View result as..."))

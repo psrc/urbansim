@@ -37,6 +37,7 @@ class RunModelThread(QThread):
         QThread.__init__(self, mainwindow)
         self.run_name = run_name
         self.modelguielement = modelguielement
+        self.modelguielement.model.run_name = run_name
         self.xml_file = xml_file
         self.batch_name = batch_name
         self.toolboxStuff = self.modelguielement.mainwindow.toolboxStuff
@@ -73,17 +74,7 @@ class RunModelThread(QThread):
 
     def add_run_to_run_manager_xml(self):
         '''add this completed run to the run manager section of the results manager'''
-
-        cache_directory = self.modelguielement.model.config['cache_directory']
-        scenario_name = str(self.modelguielement.model.modeltorun)
-        run_name = self.get_run_name()
-        (start_year, end_year) = self.get_years()        
-
-        self.xml_helper.add_run_to_run_manager_xml(
-                                         cache_directory,
-                                         scenario_name,
-                                         run_name,
-                                         start_year, end_year)
+        self.xml_helper.update_available_runs()
         
     def get_run_name(self):
         if self.run_name is None:
@@ -123,7 +114,6 @@ class OpusModel(object):
         self.xmltreeobject = xmltreeobject
         self.xml_path = xml_path
         self.modeltorun = modeltorun
-        self.run_manager = None
         self.progressCallback = None
         self.finishedCallback = None
         self.errorCallback = None
@@ -136,7 +126,13 @@ class OpusModel(object):
         self.start_year = None
         self.currentLogfileYear = None
         self.currentLogfileKey = None
-
+        option_group = StartRunOptionGroup()
+        parser = option_group.parser
+        # simulate 0 command line arguments by passing in []
+        (options, args) = parser.parse_args([])
+        
+        self.run_manager = RunManager(options)
+        
     def pause(self):
         self.paused = True
         self._write_command_file('pause')
@@ -159,19 +155,15 @@ class OpusModel(object):
             statusdir = None
             succeeded = False
             try:
-                
-                option_group = StartRunOptionGroup()
-                parser = option_group.parser
-                # simulate 0 command line arguments by passing in []
-                (options, args) = parser.parse_args([])
-                self.run_manager = RunManager(options)
                 # find the directory containing the eugene xml configurations
                 fileNameInfo = QFileInfo(self.xml_path)
                 fileNameAbsolute = fileNameInfo.absoluteFilePath().trimmed()
                 #print fileNameAbsolute
                 #print self.modeltorun
                 config = XMLConfiguration(str(fileNameAbsolute)).get_run_configuration(str(self.modeltorun))
-
+                if self.run_name is not None:
+                    config['description'] = self.run_name
+                    
                 insert_auto_generated_cache_directory_if_needed(config)
                 (self.start_year, self.end_year) = config['years']
 
