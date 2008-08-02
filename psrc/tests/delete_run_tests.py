@@ -40,9 +40,9 @@ if does_database_server_exist_for_this_hostname(
             os.system(cmd)
             
         def setUp(self):
-            self.services_database = DatabaseConfiguration(database_name='services_test')
+            self.config = DatabaseConfiguration(database_name='services_test')
             self.temp_dir = tempfile.mkdtemp(prefix='opus_tmp')
-            _do_run_simple_test_run(self, self.temp_dir, self.services_database, end_year=2004)
+            _do_run_simple_test_run(self, self.temp_dir, self.config, end_year=2004)
     
         def tearDown(self):
             rmtree(self.temp_dir)
@@ -61,9 +61,7 @@ if does_database_server_exist_for_this_hostname(
             #os.system(python_cmd)
             #self.assert_(not os.path.exists(cache_dir))
         
-        def test_delete_some_years(self):
-            db_config = DatabaseServerConfiguration()
-            
+        def test_delete_some_years(self):            
             cache_dir = self.resources['cache_directory']
             self.assert_(os.path.exists(cache_dir))
             self.assert_(os.path.exists(os.path.join(cache_dir, '2000')))
@@ -76,8 +74,8 @@ if does_database_server_exist_for_this_hostname(
                 'path':path,
                 'run_id':self.resources['run_id'],
                 'years_to_delete':'[2001,2002]',
-                'host_name':db_config.host_name,
-                'protocol':db_config.protocol}
+                'host_name':self.config.host_name,
+                'protocol':self.config.protocol}
             
             # Close all log files so we can delete the cache.
             logger.disable_all_file_logging()
@@ -94,8 +92,8 @@ if does_database_server_exist_for_this_hostname(
                 'path':path,
                 'run_id':self.resources['run_id'],
                 'years_to_delete':'2003',
-                'host_name':db_config.host_name,
-                'protocol':db_config.protocol}
+                'host_name':self.config.host_name,
+                'protocol':self.config.protocol}
             # Close all log files so we can delete the cache.
             logger.disable_all_file_logging()
             self.do_cmd(python_cmd)
@@ -111,8 +109,8 @@ if does_database_server_exist_for_this_hostname(
                 'path':path,
                 'run_id':self.resources['run_id'],
                 'years_to_delete':'1997',
-                'host_name':db_config.host_name,
-                'protocol':db_config.protocol}
+                'host_name':self.config.host_name,
+                'protocol':self.config.protocol}
             # Close all log files so we can delete the cache.
             logger.disable_all_file_logging()
             self.do_cmd(python_cmd)
@@ -128,8 +126,8 @@ if does_database_server_exist_for_this_hostname(
                 'executable':sys.executable,
                 'path':path,
                 'run_id':self.resources['run_id'],
-                'host_name':db_config.host_name,
-                'protocol':db_config.protocol}
+                'host_name':self.config.host_name,
+                'protocol':self.config.protocol}
             # Close all log files so we can delete the cache.
             logger.disable_all_file_logging()
             self.do_cmd(python_cmd)

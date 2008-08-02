@@ -88,7 +88,7 @@ if does_database_server_exist_for_this_hostname(
             statuses = runs_manager.services_db.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
                                                            % run_id)[1:]
                                                            
-            expected = [['started'], ['done']]
+            expected = [['done']]
             
             for i in expected:
                 self.assertTrue(i in statuses)
@@ -102,7 +102,7 @@ if does_database_server_exist_for_this_hostname(
             statuses = runs_manager.services_db.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
                                                            % run_id)[1:]
                                                            
-            expected = [['started'], ['done'], ['restarted in 2001'], ['done']]
+            expected = [['done']]
             
             for i in expected:
                 self.assertTrue(i in statuses)
@@ -117,7 +117,7 @@ if does_database_server_exist_for_this_hostname(
             statuses = runs_manager.services_db.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
                                                            % run_id)[1:]
                                                            
-            expected = [['started'], ['done'], ['restarted in 2001'], ['done'], ['restarted in 2002'], ['done']]       
+            expected = [['done']]       
 
             for i in expected:
                 self.assertTrue(i in statuses)
