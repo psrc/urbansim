@@ -367,21 +367,6 @@ class RunManager(object):
         
         return services_db
             
-############## RUN REMOVAL ####################
-
-    def delete_everything_for_this_run(self, run_id):
-        """ removes the entire tree structure along with information """
-        cache_directory = self.get_cache_directory(run_id)
-        shutil.rmtree(cache_directory,onerror = self._handle_deletion_errors)
-        
-        while os.path.exists(cache_directory):
-            shutil.rmtree(cache_directory)
-        
-        run_activity_table = self.services_database.get_table('run_activity')
-        
-        query = run_activity_table.delete(run_activity_table.c.run_id==int(run_id))
-        self.services_database.engine.execute(query)
-           
     def get_cache_directory(self, run_id):
         resources = self.get_resources_for_run_id_from_history(run_id, filter_by_status = False)
         return resources['cache_directory']
@@ -394,6 +379,33 @@ class RunManager(object):
                     years.append(int(dir))
         else:
             return years
+        
+############## RUN REMOVAL ####################
+
+    def clean_runs(self):
+        for run_id, run_name, processor_name, resources in self.get_run_info(resources = True):
+            if processor_name == get_host_name() and not os.path.exists(resources['cache_directory']):
+                self.delete_everything_for_this_run(run_id, cache_directory = resources['cache_directory'])
+        
+    def delete_everything_for_this_run(self, run_id, cache_directory = None):
+        """ removes the entire tree structure along with information """
+        if cache_directory is None:
+            cache_directory = self.get_cache_directory(run_id)
+            
+        try:
+            shutil.rmtree(cache_directory,onerror = self._handle_deletion_errors)
+            
+            while os.path.exists(cache_directory):
+                shutil.rmtree(cache_directory)
+        except:
+            pass
+        
+        run_activity_table = self.services_database.get_table('run_activity')
+        
+        query = run_activity_table.delete(run_activity_table.c.run_id==int(run_id))
+        self.services_database.engine.execute(query)
+           
+
         
     def delete_year_dirs_in_cache(self, run_id, years_to_delete=None):
         """ only removes the years cache and leaves the indicator, changes status to partial"""
