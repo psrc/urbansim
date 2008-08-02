@@ -33,13 +33,15 @@ class GetRunInfo(QDialog, Ui_dlgGetRunInfo):
             cur_vals = get_child_values(parent = base_node,
                                         child_names = ['run_name','end_year',
                                                        'start_year', 'cache_directory',
-                                                       'scenario_name'])
+                                                       'scenario_name', 'run_id'])
             
             self.lblRun_name.setText(cur_vals['run_name'])
             self.lblYears_run.setText(
                   QString('%s - %s'%(str(cur_vals['start_year']),str(cur_vals['end_year']))))
             self.lblScenario_name.setText(cur_vals['scenario_name'])
             self.lblCache_directory.setText(cur_vals['cache_directory'])
+            if 'run_id' in cur_vals:
+                self.lblRunId.setText(cur_vals['run_id'])
         
     def on_btnDone_released(self):
         self.close()
