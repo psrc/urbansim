@@ -27,6 +27,7 @@ from opus_gui.config.toolboxbase import *
 from opus_gui.run.runmanagerbase import *
 from opus_gui.results.resultManagerBase import *
 from opus_gui.results.xml_helper_methods import get_child_values
+from opus_gui.exceptions.formatter import formatExceptionInfo
 
 from opus_gui.config.generalmanager.all_variables import AllVariablesEditGui
 
@@ -330,7 +331,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             domDocument = self.toolboxStuff.doc
             opusXMLTree = self.toolboxStuff.opusXMLTree
             indentSize = 2
-            opusXMLTree.update(str(domDocument.toString(indentSize)))
+            
+            data = str(domDocument.toString(indentSize))
+            f = open('/Users/travis/Desktop/tmp', 'w')
+            f.write(data)
+            f.close()
+
+            opusXMLTree.update(data)
             opusXMLTree.save()
             self.toolboxStuff.runManagerTree.model.markAsClean()
             self.toolboxStuff.dataManagerTree.model.markAsClean()
@@ -340,7 +347,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.toolboxStuff.resultsManagerTree.model.markAsClean()
             self.toolboxStuff.generalManagerTree.model.markAsClean()
         except:
-            print "Unexpected error:", sys.exc_info()[0]
+            errorMessage = formatExceptionInfo(custom_message = 'Unexpected error saving config')
+            QMessageBox.warning(self, 'Warning', errorMessage) 
 
     def saveConfigAs(self):
         try:
@@ -369,7 +377,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             self.toolboxStuff.resultsManagerTree.model.markAsClean()
             self.toolboxStuff.generalManagerTree.model.markAsClean()
         except:
-            print "Unexpected error:", sys.exc_info()[0]
+            errorMessage = formatExceptionInfo(custom_message = 'Unexpected error saving config')
+            QMessageBox.warning(self, 'Warning', errorMessage) 
 
     def _saveOrDiscardChanges(self):
         """
@@ -427,7 +436,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         try:
             configFile = self.toolboxStuff.runManagerTree.model.configFile
         except:
-            pass
+            errorMessage = formatExceptionInfo(custom_message = 'Unexpected error closing config')
+            QMessageBox.warning(self, 'Warning', errorMessage) 
 
         # Check to see if there are changes to the current project, if a project is open
         self._saveOrDiscardChanges()
