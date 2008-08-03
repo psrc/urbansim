@@ -225,10 +225,7 @@ class RunManager(object):
         """
 
         run_activity = self.services_db.get_table('run_activity')
-        
-        
-        print self.get_runs_by_status()
-        
+                
         if filter_by_status:
             whereclause = and_(
                         run_activity.c.status=='started',
