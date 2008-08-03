@@ -221,7 +221,7 @@ class fixed_field_storage(Storage):
             if lowercase:
                 column_names.append(field_et.get('name').lower())
             else:
-                column_name.append(field_et.get('name'))
+                column_names.append(field_et.get('name'))
         
         # Done
         return column_names
