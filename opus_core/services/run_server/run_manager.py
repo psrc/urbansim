@@ -224,7 +224,7 @@ class RunManager(object):
     
     ######## DATABASE OPERATIONS ###########
     
-    def get_resources_for_run_id_from_history(self, run_id, filter_by_status = True):
+    def get_resources_for_run_id_from_history(self, run_id, filter_by_status = False):
         """Returns the resources for this run_id, as stored in the run_activity table.
         """
 
