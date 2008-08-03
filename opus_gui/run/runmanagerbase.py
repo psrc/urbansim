@@ -512,12 +512,12 @@ class ModelGuiElement(QWidget):
 
     def on_pbnStartModel_released(self):
         proceed = True
-
+        duplicate = False
+        
         run_name = str(self.leRunName.text())
         if run_name == '':
             run_name = None
         else:
-            duplicate = False
             run_id = None
             for run in self.xml_helper.get_available_run_info(attributes = ['run_id']):
                 existing_run_name = run['name']
