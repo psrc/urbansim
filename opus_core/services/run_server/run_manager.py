@@ -192,22 +192,18 @@ class RunManager(object):
             raise
 
     def create_run_resources_from_history(self,
-                                          run_id=None,
-                                          restart_year=None,
+                                          run_id,
+                                          restart_year,
                                           end_year=None
                                           ):
         """Re-creates and returns a resources dictionary given a specific entry in run_activity.
         Entirely based on the pickled "resources" field for that entry, which also
         contains a pickled version of the "run request" (a dictionary) associated with that entry."""
-        if not run_id:
-            raise StandardError("run_id un-specified")
 
         resources = self.get_resources_for_run_id_from_history(run_id=run_id)
         if 'cache_variables' not in resources:
             resources['cache_variables'] = False
 
-        if not restart_year:
-            raise StandardError("restart year un-specified")
         if restart_year < resources["years"][0]:
             raise StandardError("restart year cannot be less than %s" % resources["years"][0])
 
@@ -229,6 +225,9 @@ class RunManager(object):
         """
 
         run_activity = self.services_db.get_table('run_activity')
+        
+        
+        print self.get_runs_by_status()
         
         if filter_by_status:
             whereclause = and_(
@@ -280,7 +279,7 @@ class RunManager(object):
 
         return results
     
-    def get_runs_by_status(self, run_ids):
+    def get_runs_by_status(self, run_ids = None):
         """Returns a dictionary where keys are the status (e.g. 'started', 'done', 'failed').
         If run_ids is None, all runs from available runs are considered, otherwise only ids 
         given by the run_ids list.
@@ -289,10 +288,11 @@ class RunManager(object):
         run_activity_table = self.services_db.get_table('run_activity')
         s = select([run_activity_table.c.run_id, run_activity_table.c.status])
         for run_id, status in self.services_db.engine.execute(s).fetchall():
-            if status in map:
-                map[status].append(run_id)
-            else:
-                map[status] = [run_id]
+            if run_ids is None or run_id in run_ids:
+                if status in map:
+                    map[status].append(run_id)
+                else:
+                    map[status] = [run_id]
         
         return map
     
