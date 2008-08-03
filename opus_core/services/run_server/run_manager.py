@@ -244,7 +244,7 @@ class RunManager(object):
         run_resources = self.services_db.engine.execute(query).fetchone()
         
         if not run_resources:
-            raise StandardError("run_id %s doesn't exist on server %s" % (run_id, self.services_db.get_connection_string()))
+            raise StandardError("run_id %s doesn't exist on server %s" % (run_id, self.services_db.get_connection_string(scrub = True)))
 
         return Configuration(pickle.loads(str(run_resources[0])))
     

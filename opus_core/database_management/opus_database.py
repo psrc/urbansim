@@ -45,9 +45,13 @@ class OpusDatabase(object):
         self.open()
         self.show_output = False
 
-    def get_connection_string(self):
+    def get_connection_string(self, scrub = False):
+        if scrub:
+            password = '**********'
+        else:
+            password = self.password
         if self.protocol in ['mssql','postgres','mysql']:
-            connect_string = '%s://%s:%s@%s/%s'%(self.protocol, self.user_name, self.password, self.host_name, self.database_name) 
+            connect_string = '%s://%s:%s@%s/%s'%(self.protocol, self.user_name, password, self.host_name, self.database_name) 
         elif self.protocol == 'sqlite':
             self.database_path = os.path.join(os.environ['OPUS_HOME'],'local_databases',self.database_name + '.txt')
             connect_string = 'sqlite:////%s'%self.database_path
