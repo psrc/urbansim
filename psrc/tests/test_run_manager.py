@@ -27,6 +27,8 @@ from opus_core.store.attribute_cache import AttributeCache
 from opus_core.misc import does_database_server_exist_for_this_hostname
 from opus_core.session_configuration import SessionConfiguration
 
+from sqlalchemy.sql import select, func
+
 ### TODO: This should be re-written so that there is no psrc/urbansim 
 ###       dependency!
 ###       Once this has been done, move everything from this file and
@@ -84,46 +86,41 @@ if does_database_server_exist_for_this_hostname(
         def test_restart_simple_run(self):
             _do_run_simple_test_run(self, self.temp_dir, self.config)
             runs_manager = RunManager(self.config)
-            run_id = runs_manager.services_db.GetResultsFromQuery("SELECT max(run_id) FROM run_activity")[1][0]
-            statuses = runs_manager.services_db.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
-                                                           % run_id)[1:]
-                                                           
-            expected = [['done']]
             
-            for i in expected:
-                self.assertTrue(i in statuses)
-                
-            self.assertEqual(len(statuses), len(expected))
+            run_activity = runs_manager.services_db.get_table('run_activity')
+            s = select([func.max(run_activity.c.run_id)])
+            run_id = runs_manager.services_db.engine.execute(s).fetchone()[0]
+            
+            s = select([run_activity.c.status],
+                       whereclause = run_activity.c.run_id == run_id)
+            status = runs_manager.services_db.engine.execute(s).fetchone()[0]
+                                                                       
+            expected = 'done'
+            self.assertEqual(status, expected)
                             
             runs_manager.restart_run(run_id,
                                      restart_year=2001,
                                      skip_urbansim=False)
             
-            statuses = runs_manager.services_db.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
-                                                           % run_id)[1:]
+            s = select([run_activity.c.status],
+                       whereclause = run_activity.c.run_id == run_id)
+            status = runs_manager.services_db.engine.execute(s).fetchone()[0]
                                                            
-            expected = [['done']]
-            
-            for i in expected:
-                self.assertTrue(i in statuses)
-                
-            self.assertEqual(len(statuses), len(expected))
-    
+            expected = 'done'
+            self.assertEqual(status, expected)
+               
             # Restaring without running urbansim should not re-run that year.
             # TODO: test that no models are run this time.
             runs_manager.restart_run(run_id,
                                      restart_year=2002,
                                      skip_urbansim=True)
-            statuses = runs_manager.services_db.GetResultsFromQuery("select status from run_activity where run_id=%d order by date_time"
-                                                           % run_id)[1:]
-                                                           
-            expected = [['done']]       
-
-            for i in expected:
-                self.assertTrue(i in statuses)
-                
-            self.assertEqual(len(statuses), len(expected))
-            
+            s = select([run_activity.c.status],
+                       whereclause = run_activity.c.run_id == run_id)
+            status = runs_manager.services_db.engine.execute(s).fetchone()[0]
+                                                                       
+            expected = 'done'
+            self.assertEqual(status, expected)
+                        
             self.cleanup_test_run()
 
 if __name__ == "__main__":
