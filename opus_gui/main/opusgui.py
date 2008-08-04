@@ -333,9 +333,6 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             indentSize = 2
             
             data = str(domDocument.toString(indentSize))
-            f = open('/Users/travis/Desktop/tmp', 'w')
-            f.write(data)
-            f.close()
 
             opusXMLTree.update(data)
             opusXMLTree.save()
