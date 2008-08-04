@@ -498,16 +498,17 @@ class RunManagerTests(opus_unittest.OpusTestCase):
         self.assertFalse(db.table_exists('run_activity'))
         
         run_manager = RunManager(self.config)
-        
+        run_manager.services_db.close()
         self.assertTrue(db.table_exists('run_activity'))
 
     def test_create(self):
         """Should create run_activity table if the database doesn't exist."""
         run_manager = RunManager(self.config)
+        run_manager.services_db.close()
         
         self.assertTrue(self.db_server.has_database(self.database_name))
         db = self.db_server.get_database(self.database_name)
-        self.assertTrue(db.table_exists('run_activity'))    
+        self.assertTrue(db.table_exists('run_activity'))  
 
     def test_setup_run(self):
         base_directory = tempfile.mkdtemp(prefix='opus_tmp')
@@ -520,6 +521,7 @@ class RunManagerTests(opus_unittest.OpusTestCase):
         self.assertEquals(os.path.dirname(resulting_cache_directory), base_directory)
         self.assertTrue(run_manager.ready_to_run)
         self.assertTrue(not os.path.exists(resulting_cache_directory))
+        run_manager.services_db.close()
         os.rmdir(base_directory)
         
     def test_add_row_to_history(self):
@@ -547,6 +549,7 @@ class RunManagerTests(opus_unittest.OpusTestCase):
         self.assertEqual(status, 'done')
         self.assertEqual(run_name, 'test_run')
         
+        run_manager.services_db.close()
         os.rmdir(cache_directory)
                 
             
