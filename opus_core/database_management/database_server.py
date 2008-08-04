@@ -52,6 +52,8 @@ class DatabaseServer(object):
             
         self.open()
         self.show_output = False
+        self.open_databases = {}
+        
         #print self.get_connection_string()
         
     def open(self):
@@ -98,6 +100,9 @@ class DatabaseServer(object):
         Drop this database.
         """        
         if self.has_database(database_name):
+            if database_name in self.open_databases:
+                for db in self.open_databases['database_name']:
+                    db.close()
             self.protocol_manager.drop_database(server = self,
                                                 database_name = database_name)
 
@@ -111,6 +116,11 @@ class DatabaseServer(object):
                 database_server_configuration = self.config,
                 database_name=database_name)
         
+        if 'database_name' in self.open_databases:
+            self.open_databases['database_name'].append(database)
+        else:
+            self.open_databases['database_name'] = [database]
+            
         return database
         
     def has_database(self, database_name):
@@ -134,6 +144,10 @@ class DatabaseServer(object):
     
     def close(self):
         """Explicitly close the connection, without waiting for object deallocation"""
+        for database_name, dbs in self.open_databases.items():
+            for db in dbs:
+                db.close()
+                
         self.engine.dispose()
         del self.engine
         del self.metadata
@@ -174,6 +188,7 @@ class Tests(opus_unittest.OpusTestCase):
             
     def helper_create_drop_and_has_database(self, db_server):
         db_name = 'test_database_server'
+        db_server.drop_database(db_name)
         self.assertFalse(db_server.has_database(db_name))
         
         db_server.create_database(db_name)
