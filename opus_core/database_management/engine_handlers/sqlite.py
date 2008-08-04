@@ -20,6 +20,12 @@ class SqliteServerManager(AbstractDatabaseEngineManager):
     def __init__(self):
         self.server_path = os.path.join(os.environ['OPUS_HOME'], 'local_databases')
         self.schema_path = os.path.join(self.server_path, self._get_default_database())
+        self.os = None
+        try:
+            self.os = os.uname[0]
+        except:
+            self.os = 'Windows'
+        
         
     def _get_default_database(self):
         if 'OPUSPROJECTNAME' not in os.environ:
@@ -38,8 +44,13 @@ class SqliteServerManager(AbstractDatabaseEngineManager):
         if not database_name:
             connect_string = 'sqlite://'
         else:
-            database_path = self._get_database_path(database_name = database_name)            
-            connect_string = 'sqlite:////%s'%database_path
+            database_path = self._get_database_path(database_name = database_name)      
+            if self.os in ['Darwin']:
+                slashes = '////'
+            elif self.os in ['Linux', 'Windows']:
+                slashes = '///'
+                      
+            connect_string = 'sqlite:%s%s'%(slashes, database_path)
         
         return connect_string
     
