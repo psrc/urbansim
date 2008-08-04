@@ -16,8 +16,7 @@ import os
 
 from optparse import OptionParser, OptionGroup
 
-from opus_core.services.run_server.run_manager import RunManager
-
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 
 class GenericOptionGroup:
     def __init__(self, usage="python %prog [options]", description=""):
@@ -32,20 +31,25 @@ class GenericOptionGroup:
                                action="store", help="Name of host running services database server")
         self.parser.add_option("--database", dest="database_name", default="services", 
                                action="store", help="Name of services database")
-        self.parser.add_option("--protocol", dest="protocol", default=os.environ.get('OPUS_SERVICES_DB_ENGINE', 'sqlite'), 
+        self.parser.add_option("--protocol", dest="protocol", default=self.get_default_run_manager_database_engine(), 
                                action="store", help="Name of database engine running the database management system hosting the services database.")
-
-#    def get_services_database(self, options):
-#        """Gets services database from the specified database."""
-#        
-#        db_server = self.get_database_server(options)
-#        
-#        if db_server is None:
-#            return None
-#        
-#        if db_server.has_database(options.database_name):
-#            return db_server.get_database(options.database_name)
-#        else:
-#            return None
-    
+        
+    def _get_default_run_manager_database_engine(self):
+        from opus_core.database_management.database_server_configuration import _get_installed_database_engines
+        engines = _get_installed_database_engines()
+        if 'sqlite' in engines:
+            default = 'sqlite'
+        else:
+            default = DatabaseConfiguration()._get_default_database_engine()
+            
+        os.environ.get('OPUS_SERVICES_DB_ENGINE', default)
+        
+    def parse(self):
+        (options, args) = self.parser.parse_args()
+        config = DatabaseConfiguration(host_name = options.host_name,
+                                             user_name = options.user_name,
+                                             protocol = options.protocol,
+                                             password = options.password,
+                                             database = options.database)
+        return (options,args)
         
