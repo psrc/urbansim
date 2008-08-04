@@ -97,7 +97,8 @@ class DatabaseServerConfiguration(object):
                 self.password = password
         else:
             raise ValueError, 'unexpected type for use_environment_variables'
-        
+
+            
     def _get_default_database_engine(self):
         installed_dbs = _get_installed_database_engines()
         if 'mysql' in installed_dbs:

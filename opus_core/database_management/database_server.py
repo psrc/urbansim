@@ -17,6 +17,11 @@ from opus_core.logger import logger
 from sqlalchemy.schema import MetaData
 from sqlalchemy import create_engine
 
+from opus_core.database_management.engine_handlers.mssql import MSSQLServerManager
+from opus_core.database_management.engine_handlers.mysql import MySQLServerManager
+from opus_core.database_management.engine_handlers.postgres import PostgresServerManager
+from opus_core.database_management.engine_handlers.sqlite import SqliteServerManager
+
 import os
 
 
@@ -36,41 +41,31 @@ class DatabaseServer(object):
         self.user_name = database_server_configuration.user_name
         self.password = database_server_configuration.password
         
+        if self.protocol == 'postgres':
+            self.protocol_manager = PostgresServerManager()
+        elif self.protocol == 'mysql':
+            self.protocol_manager = MySQLServerManager()
+        elif self.protocol == 'sqlite':
+            self.protocol_manager = SqliteServerManager()
+        elif self.protocol == 'mssql':
+            self.protocol_manager = MSSQLServerManager()
+            
         self.open()
         self.show_output = False
         #print self.get_connection_string()
         
     def open(self):
-        connect_args = {}
-        if self.protocol == 'mssql':
-            if 'MSSQLDEFAULTDB' not in os.environ:
-                raise 'To connect to a Microsoft SQL Server, a default database to connect to must be specified in the environment variables under MSSQLDEFAULTDB' 
-            #connect_args['MARSCONNECTION'] = 'yes'
-        self.engine = create_engine(self.get_connection_string(), connect_args=connect_args)
-                
+
+        self.protocol_manager.create_default_database_if_absent(self.config)
+        
+        self.engine = create_engine(self.get_connection_string(), connect_args={})
         self.metadata = MetaData(
             bind = self.engine
         ) 
         
-        if self.protocol == 'sqlite':
-            self.server_path = os.path.join(os.environ['OPUS_HOME'],'local_databases')
-            if not os.path.exists(self.server_path):
-                os.mkdir(self.server_path)
-        
-    def get_connection_string(self):
-        if self.protocol in ['mssql','postgres']:
-            if self.protocol == 'mssql':
-                database_name = os.environ['MSSQLDEFAULTDB']
-            elif self.protocol == 'postgres':
-                database_name = 'postgres'
-                
-            return '%s://%s:%s@%s/%s'%(self.protocol, self.user_name, self.password, self.host_name, database_name) 
-
-        elif self.protocol == 'mysql':
-            return '%s://%s:%s@%s'%(self.protocol, self.user_name, self.password, self.host_name) 
-
-        elif self.protocol == 'sqlite': 
-            return 'sqlite://'
+    def get_connection_string(self, scrub = False):
+        return self.protocol_manager.get_connection_string(server_config = self.config,
+                                                           scrub = scrub)
 
     def log_sql(self, sql_query, show_output=False):
         if show_output == True:
@@ -94,19 +89,8 @@ class DatabaseServer(object):
         Create a database on this database server.
         """
         if not self.has_database(database_name):
-            if self.protocol in ['mysql', 'mssql']: #mssql is untested
-                self.engine.execute('''
-                    CREATE DATABASE %s;
-                '''%database_name)
-            elif self.protocol == 'postgres': #in postgres, need to end the transaction first
-                self.engine.execute('''
-                    END;
-                    CREATE DATABASE %s;
-                '''%database_name.lower())     
-            elif self.protocol == 'sqlite':
-                f = open(os.path.join(self.server_path,database_name+'.txt'),'w')
-                f.write('')
-                f.close()
+            self.protocol_manager.create_database(server = self,
+                                                  database_name = database_name)
                        
 
     def drop_database(self, database_name):
@@ -114,17 +98,8 @@ class DatabaseServer(object):
         Drop this database.
         """        
         if self.has_database(database_name):
-            if self.protocol in ['mysql', 'mssql']: #mssql is untested
-                self.engine.execute('''
-                    DROP DATABASE %s;
-                '''%database_name)
-            elif self.protocol == 'postgres': #in postgres, need to end the transaction first
-                self.engine.execute('''
-                    END;
-                    DROP DATABASE %s;
-                '''%database_name.lower())         
-            elif self.protocol == 'sqlite':
-                os.remove(os.path.join(self.server_path,database_name+'.txt'))   
+            self.protocol_manager.drop_database(server = self,
+                                                database_name = database_name)
 
 
     def get_database(self, database_name):
@@ -139,41 +114,9 @@ class DatabaseServer(object):
         return database
         
     def has_database(self, database_name):
-        #sqlalchemy doesn't really support database management at the server level...
-
-        if self.protocol in ['mysql','postgres']:
-            if self.protocol == 'mysql':
-                query = '''
-                    SHOW DATABASES LIKE '%s'
-                '''%database_name
-            elif self.protocol == 'postgres':
-                query = '''
-                    SELECT datname FROM pg_database;
-                '''
-            result = self.engine.execute(query)
-            dbs = [db[0] for db in result.fetchall()]
-
-        elif self.protocol == 'mssql':
-            import pyodbc
-            conn = 'DRIVER={SQL Server};SERVER=%(server)s;DATABASE=%(database)s;UID=%(UID)s;PWD=%(PWD)s'% \
-                               {'UID':self.user_name, 
-                               'PWD':self.password,
-                               'server':self.host_name, 
-                               'database':os.environ['MSSQLDEFAULTDB']}
-            c = pyodbc.connect(conn)
-            
-            dbs = [d[0] for d in c.execute('EXEC sp_databases').fetchall()]
-            c.close()
-            del c
-            
-        elif self.protocol == 'sqlite':
-            import fnmatch
-            dbs = [f[:-4] for f in os.listdir(self.server_path) if fnmatch.fnmatch(f,'*.txt')]
-
-        if self.protocol == 'postgres':
-            return database_name.lower() in [db.lower() for db in dbs]
-        else:
-            return database_name in dbs        
+        return self.protocol_manager.has_database(server = self,
+                                           database_name = database_name)
+       
     
     __type_name_to_string = {
         'string':'text',

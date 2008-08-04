@@ -15,6 +15,12 @@
 import sys
 
 from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration 
+from opus_core.database_management.engine_handlers.mssql import MSSQLServerManager
+from opus_core.database_management.engine_handlers.mysql import MySQLServerManager
+from opus_core.database_management.engine_handlers.postgres import PostgresServerManager
+from opus_core.database_management.engine_handlers.sqlite import SqliteServerManager
+
+
 
 from sqlalchemy.schema import MetaData, Column, Table
 from sqlalchemy.types import Integer, SmallInteger, \
@@ -39,6 +45,14 @@ class OpusDatabase(object):
         
         if self.protocol == 'postgres':
             database_name = database_name.lower()
+            self.protocol_manager = PostgresServerManager()
+        elif self.protocol == 'mysql':
+            self.protocol_manager = MySQLServerManager()
+        elif self.protocol == 'sqlite':
+            self.protocol_manager = SqliteServerManager()
+        elif self.protocol == 'mssql':
+            self.protocol_manager = MSSQLServerManager()
+            
         self.database_name = database_name
         self.database_server_config = database_server_configuration
         
@@ -46,17 +60,9 @@ class OpusDatabase(object):
         self.show_output = False
 
     def get_connection_string(self, scrub = False):
-        if scrub:
-            password = '**********'
-        else:
-            password = self.password
-        if self.protocol in ['mssql','postgres','mysql']:
-            connect_string = '%s://%s:%s@%s/%s'%(self.protocol, self.user_name, password, self.host_name, self.database_name) 
-        elif self.protocol == 'sqlite':
-            self.database_path = os.path.join(os.environ['OPUS_HOME'],'local_databases',self.database_name + '.txt')
-            connect_string = 'sqlite:////%s'%self.database_path
-            
-        return connect_string
+        return self.protocol_manager.get_connection_string(server_config = self.database_server_config,
+                                                           database_name = self.database_name,
+                                                           scrub = scrub)
     
     def open(self):
         self.engine = create_engine(self.get_connection_string())
@@ -248,41 +254,15 @@ from opus_core.logger import logger
 
 
 from opus_core.database_management.database_server import DatabaseServer
-
+from opus_core.database_management.database_server_configuration import _get_installed_database_engines
 class OpusDatabaseTest(opus_unittest.OpusTestCase):
     def setUp(self):
         
         db_configs = []
-        try:
-            import sqlite3
-            config = DatabaseServerConfiguration(protocol = 'sqlite')
-            db_configs.append(config)
-        except:
-            print 'WARNING: cannot import sqlite3; not testing'
-        
-        try:
-            import MySQLdb
-            config = DatabaseServerConfiguration(protocol = 'mysql',
+        for engine in _get_installed_database_engines():
+            config = DatabaseServerConfiguration(protocol = engine,
                                                  test = True)
             db_configs.append(config)
-        except:
-            print 'WARNING: cannot import MySQLdb; not testing'        
-
-        try:
-            import psycopg2
-            config = DatabaseServerConfiguration(protocol = 'postgres',
-                                                 test = True)
-            db_configs.append(config)
-        except:
-            print 'WARNING: cannot import psycopg2; not testing'
-                    
-        try:
-            import pyodbc
-            config = DatabaseServerConfiguration(protocol = 'mssql',
-                                                 test = True)
-            db_configs.append(config)
-        except:
-            print 'WARNING: cannot import pyodbc; not testing'        
         
         self.test_db = 'OpusDatabaseTestDatabase'
 
