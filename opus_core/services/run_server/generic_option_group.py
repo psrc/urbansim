@@ -31,7 +31,7 @@ class GenericOptionGroup:
                                action="store", help="Name of host running services database server")
         self.parser.add_option("--database", dest="database_name", default="services", 
                                action="store", help="Name of services database")
-        self.parser.add_option("--protocol", dest="protocol", default=self.get_default_run_manager_database_engine(), 
+        self.parser.add_option("--protocol", dest="protocol", default=self._get_default_run_manager_database_engine(), 
                                action="store", help="Name of database engine running the database management system hosting the services database.")
         
     def _get_default_run_manager_database_engine(self):
