@@ -555,46 +555,23 @@ class ResultsManagerXMLHelper:
                 
             else:
                 existing_cache_directories[cache_directory] = 1
-            
+
         #get data directory for this project
-        _, vals = self.get_element_attributes(node_name = 'creating_baseyear_cache_configuration', 
-                                               child_attributes = ['scenario_runs_directory'], 
-                                               node_type = 'class')
+        _, vals = self.get_element_attributes(node_name = 'general', 
+                                               child_attributes = ['project_name'])
         if 'scenario_runs_directory' not in vals: return
-        cache_root = str(vals['scenario_runs_directory'])
+        project_name = str(vals['project_name'])
         
-        scenario_name = os.path.basename(cache_root)
         # set 'datapath' to the path to the opus_data directory.  This is found in the environment variable
         # OPUS_DATA_PATH, or if that environment variable doesn't exist, as the contents of the environment 
         # variable OPUS_HOME followed by 'data'
         datapath = os.environ.get('OPUS_DATA_PATH')
         if datapath is None:
             datapath = os.path.join(os.environ.get('OPUS_HOME'), 'data')
-        data_directory = os.path.join(datapath, cache_root)
-        baseyear_directory = os.path.join(datapath, os.path.split(cache_root)[0], 'base_year_data')
-
-        #get runs logged from this processor to the run activity table
-
-
-        runs = self.run_manager.get_run_info(resources = True, status = 'done')
-
-        for run_id, run_name, processor_name, run_resources in runs:
-            cache_directory = run_resources['cache_directory']
-            if cache_directory.find(data_directory) == -1 or \
-                cache_directory in existing_cache_directories: continue
-            if run_name == 'No description':
-                run_name = os.path.basename(cache_directory)
-            start_year, end_year = run_resources['years']
-            self.add_run_to_run_manager_xml( cache_directory = cache_directory,
-                                             scenario_name = scenario_name,
-                                             run_name = run_name,
-                                             start_year = start_year, 
-                                             end_year = end_year,
-                                             run_id = run_id,
-                                             temporary = False)
-            existing_cache_directories[cache_directory] = 1
-            
-
+        data_directory = os.path.join(datapath, project_name)
+        if not os.path.exists(data_directory): return
+        baseyear_directory = os.path.join(data_directory, 'base_year_data')
+        
         years = []
         if not baseyear_directory in existing_cache_directories:
             for dir in os.listdir(baseyear_directory):
@@ -603,15 +580,33 @@ class ResultsManagerXMLHelper:
             start_year = min(years)
             end_year = max(years)
             self.add_run_to_run_manager_xml( cache_directory = baseyear_directory,
-                                             scenario_name = scenario_name,
+                                             scenario_name = project_name,
                                              run_name = 'base_year_data',
                                              start_year = start_year, 
                                              end_year = end_year,
                                              run_id = -1,
                                              temporary = False)
-                                
-        if not os.path.exists(data_directory): return
-        
+            
+        #get runs logged from this processor to the run activity table
+        runs = self.run_manager.get_run_info(resources = True, status = 'done')
+
+        for run_id, run_name, processor_name, run_resources in runs:
+            cache_directory = run_resources['cache_directory']
+            if cache_directory in existing_cache_directories: continue
+            if run_name == 'No description':
+                run_name = os.path.basename(cache_directory)
+            start_year, end_year = run_resources['years']
+            self.add_run_to_run_manager_xml( cache_directory = cache_directory,
+                                             scenario_name = project_name,
+                                             run_name = run_name,
+                                             start_year = start_year, 
+                                             end_year = end_year,
+                                             run_id = run_id,
+                                             temporary = False)
+            existing_cache_directories[cache_directory] = 1
+            
+
+                                        
 #        for run_name in os.listdir(data_directory):
 #            try:
 #                cache_directory = os.path.join(data_directory,run_name)
