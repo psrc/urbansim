@@ -101,8 +101,9 @@ class DatabaseServer(object):
         """        
         if self.has_database(database_name):
             if database_name in self.open_databases:
-                for db in self.open_databases['database_name']:
+                for db in self.open_databases[database_name]:
                     db.close()
+                    
             self.protocol_manager.drop_database(server = self,
                                                 database_name = database_name)
 
@@ -116,10 +117,10 @@ class DatabaseServer(object):
                 database_server_configuration = self.config,
                 database_name=database_name)
         
-        if 'database_name' in self.open_databases:
-            self.open_databases['database_name'].append(database)
+        if database_name in self.open_databases:
+            self.open_databases[database_name].append(database)
         else:
-            self.open_databases['database_name'] = [database]
+            self.open_databases[database_name] = [database]
             
         return database
         
@@ -146,8 +147,10 @@ class DatabaseServer(object):
         """Explicitly close the connection, without waiting for object deallocation"""
         for database_name, dbs in self.open_databases.items():
             for db in dbs:
-                db.close()
-                
+                try:
+                    db.close()
+                except:
+                    pass
         self.engine.dispose()
         del self.engine
         del self.metadata
