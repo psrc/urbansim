@@ -1,6 +1,7 @@
 <opus_project>
   <general>
     <description type="string">Base UrbanSim gridcell project</description>
+    <project_name type="string" flags="hidden">urbansim_gridcell</project_name>
     <parent type="file">urbansim/configs/urbansim.xml</parent>
     <expression_library type="dictionary">
       <population type="variable_definition" dataset="gridcell" use="both" source="Python class">urbansim.gridcell.population</population>

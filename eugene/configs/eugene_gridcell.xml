@@ -1,6 +1,7 @@
 <opus_project>
   <general>
     <description type="string">Sample Eugene project</description>
+    <project_name type="string" flags="hidden">eugene_gridcell</project_name>
     <parent type="file">urbansim_gridcell/configs/urbansim_gridcell.xml</parent>
     <dataset_pool_configuration type="class">
       <Class_name flags="hidden" type="string">DatasetPoolConfiguration</Class_name>

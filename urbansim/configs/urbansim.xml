@@ -1,6 +1,7 @@
 <opus_project>
   <general>
     <description type="string" >Base UrbanSim project</description>
+    <project_name type="string" flags="hidden">urbansim</project_name>
   </general>
   <data_manager_dbstree>
     <database_templates type="db_templates" setexpanded="True" >

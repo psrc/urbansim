@@ -1,6 +1,7 @@
 <opus_project>
   <general>
     <description type="string">Refactored Default UrbanSim parcel project</description>
+    <project_name type="string" flags="hidden">urbansim_parcel</project_name>
     <parent type="file">urbansim/configs/urbansim.xml</parent>
         <expression_library type="dictionary">
           <constant type="variable_definition" dataset="parcel" use="model variable" source="built-in">constant</constant>

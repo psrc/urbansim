@@ -1,6 +1,7 @@
 <opus_project>
   <general>
     <description followers="all_variables,advanced,available_datasets" type="string">MAG Parcel Project</description>
+    <project_name type="string" flags="hidden">mag_parcel</project_name>
     <parent followers="all_variables,advanced,available_datasets" type="file">seattle_parcel/configs/seattle_parcel.xml</parent>
     <available_datasets type="list">['parcel','zone','faz','large_area','city','county','mh_rv','transient','tazi03','group_quarter','posths_asu','posths_cc','posths_pvt','skyharbor','williamsgateway','alldata']</available_datasets>
   </general>
