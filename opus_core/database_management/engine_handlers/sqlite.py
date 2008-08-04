@@ -49,7 +49,9 @@ class SqliteServerManager(AbstractDatabaseEngineManager):
                 slashes = '////'
             elif self.os in ['Linux', 'Windows']:
                 slashes = '///'
-                      
+            else:
+                slashes = '///'
+                
             connect_string = 'sqlite:%s%s'%(slashes, database_path)
         
         return connect_string
