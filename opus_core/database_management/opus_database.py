@@ -76,7 +76,10 @@ class OpusDatabase(object):
         
     def close(self):
         """Explicitly close the connection, without waiting for object deallocation"""
-        self.engine.dispose()
+        try:
+            self.engine.dispose()
+        except:
+            pass
         self.engine = None
         self.metadata = None
         
