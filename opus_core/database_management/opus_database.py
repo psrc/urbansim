@@ -65,6 +65,8 @@ class OpusDatabase(object):
                                                            scrub = scrub)
     
     def open(self):
+        self.protocol_manager.create_default_database_if_absent(self.database_server_config)
+
         self.engine = create_engine(self.get_connection_string())
         self.metadata = MetaData(
             bind = self.engine,
