@@ -41,11 +41,15 @@ class PostgresServerManager(AbstractDatabaseEngineManager):
         return connect_string            
     
     def create_database(self, server, database_name):
-        qry = 'END;CREATE DATABASE %s;'%database_name.lower()     
+        from psycopg2 import extensions
+        server.engine.raw_connection().set_isolation_level(extensions.ISOLATION_LEVEL_AUTOCOMMIT) 
+        qry = 'CREATE DATABASE %s;'%database_name.lower()     
         server.engine.execute(qry)
         
     def drop_database(self, server, database_name):
-        qry = 'END;DROP DATABASE %s;'%database_name.lower()     
+        from psycopg2 import extensions
+        server.engine.raw_connection().set_isolation_level(extensions.ISOLATION_LEVEL_AUTOCOMMIT) 
+        qry = 'DROP DATABASE %s;'%database_name.lower()     
         server.engine.execute(qry)
 
     def has_database(self, server, database_name):
