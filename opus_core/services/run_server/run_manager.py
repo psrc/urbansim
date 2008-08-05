@@ -252,9 +252,14 @@ class RunManager(object):
         if not run_resources:
             raise StandardError("run_id %s doesn't exist on server %s" % (run_id, self.services_db.get_connection_string(scrub = True)))
 
-        return Configuration(pickle.loads(str(run_resources[0])))
+        try:
+            config = Configuration(pickle.loads(str(run_resources[0])))
+        except:
+            raise Exception('Could not create the configuration file for run %i'%run_id)
+
+        return config
     
-    def get_run_info(self, run_ids = None, resources = False, status = None):
+    def get_run_info(self, run_ids = None, resources = False, status = None, soft_fail = True):
         """ returns the name of the server where this run was processed"""
 
         #note: this method is never used in the codebase         
@@ -275,9 +280,13 @@ class RunManager(object):
             query = query.where(run_activity.c.status == status)
                         
         if resources:
-            results = [(run_id, run_name, processor_name, Configuration(pickle.loads(str(run_resources)))) for \
-                        run_id, run_name, processor_name, run_resources in \
-                        self.services_db.engine.execute(query).fetchall() ]       
+            results = []
+            for run_id, run_name, processor_name, run_resources in self.services_db.engine.execute(query).fetchall():
+                try:
+                    config = pickle.loads(str(run_resources))
+                    results.append((run_id, run_name, processor_name,config))
+                except:
+                    if not soft_fail: raise   
 
         else:
             results = [(run_id, run_name, processor_name) for \
