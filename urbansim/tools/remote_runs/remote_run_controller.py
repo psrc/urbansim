@@ -22,9 +22,8 @@ import time
 from opus_core.misc import get_config_from_opus_path
 from opus_core.misc import load_from_text_file, get_host_name
 from opus_core.services.run_server.generic_option_group import GenericOptionGroup
-from opus_core.services.run_server.run_activity import RunActivity
 from opus_core.database_management.database_server import DatabaseServer
-from opus_core.database_management.database_server_configuration import DatabaseServerConfiguration
+from opus_core.database_management.database_configuration import DatabaseConfiguration
 from opus_core.configuration import Configuration
 from urbansim.tools.run_manager import RunManager
 from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed
@@ -114,21 +113,20 @@ class RemoteRun:
     script_path = 'urbansim/tools/remote_runs'
     remote_travel_models = ['opus_emme2.models.get_cache_data_into_emme2']
     
-    def __init__(self, hostname, username, password, services_hostname, services_dbname, services_database,
+    def __init__(self, hostname, username, password, services_hostname, services_dbname,
                  skip_travel_model=False, skip_urbansim=False, run_manager=None):
         self.hostname = hostname
         self.username = username
         self.password = password
         self.services_hostname = services_hostname
-        self.services_database = services_database
         self.services_dbname = services_dbname
         self.remote_communication_path = None
         self.skip_travel_model = skip_travel_model
         self.skip_urbansim = skip_urbansim
         self.services_db_config = DatabaseConfiguration(
-                                        host_name = services_database.host_name, 
-                                        user_name = services_database.user_name, 
-                                        password = services_database.password,
+                                        host_name = services_hostname, 
+                                        user_name = username, 
+                                        password = password,
                                         database_name = services_dbname
                                         )
         self._run_manager = None
@@ -401,7 +399,7 @@ if __name__ == "__main__":
     try: import wingdbstub
     except: pass
     run_manager = option_group.get_run_manager(options)
-    run = RemoteRun(hostname, username, password, options.host_name, options.database_name, db,
+    run = RemoteRun(hostname, username, password, options.host_name, options.database_name,
                     options.skip_travel_model, options.skip_urbansim, run_manager)
     run.run(options.start_year, options.end_year, options.configuration_path, options.run_id)
  
