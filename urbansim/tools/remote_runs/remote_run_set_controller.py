@@ -46,16 +46,18 @@ class RemoteRunSet(RemoteRun):
         For restarting a simulation, pass this file to the option --run-id-file. 
     """
     default_run_id_file = 'run_ids'
-    python_commands = {"snickers2.stat.washington.edu": "python",
-                       "localhost": "python"}
+    python_commands = {"localhost": "python"}
     configuration_update = {
-                            "localhost": {'cache_directory_root': '/Users/hana/urbansim_cache/psrc/parcel/bm/0416',
+                            "localhost": {'cache_directory_root': '/Users/hana/urbansim_cache/psrc/parcel/test',
                                           'existing_cache_to_copy': '/Users/hana/urbansim_cache/psrc/cache_source_parcel'
+                                          },
+                            "128.208.52.233": {'cache_directory_root': '/urbansim_cache/psrc_parcel_hana/runs', #paris
+                                               'existing_cache_to_copy': '/urbansim_cache/psrc_parcel_hana/base_year_data'
                                           }
                             }
     for i in range(1,13):
         configuration_update["faloorum%s.csss.washington.edu" % i] = {
-                                                            'cache_directory_root': '/homes/scratch/hana/urbansim_cache/psrc/parcel/bm/0416',
+                                                            'cache_directory_root': '/homes/scratch/hana/urbansim_cache/psrc/parcel/test',
                                                             'existing_cache_to_copy': '/homes/scratch/hana/urbansim_cache/psrc/cache_source_parcel'
                                                               }    
     def __init__(self, server_file, hostname, username, password, *args, **kwargs):
@@ -258,9 +260,4 @@ if __name__ == "__main__":
     run = RemoteRunSet(options.server_file, hostname, username, password, options.host_name, options.database_name, db,
                        options.skip_travel_model, options.skip_urbansim, run_manager)
     run.run(options.start_year, options.end_year, options.configuration_path, options.run_id_file)
-            python_commands = {"snickers2.stat.washington.edu": "python",
-                            "localhost": {'cache_directory_root': '/Users/hana/urbansim_cache/psrc/parcel/bm/0416',
-    for i in range(1,13):
-        configuration_update["faloorum%s.csss.washington.edu" % i] = {
-                                                            'cache_directory_root': '/homes/scratch/hana/urbansim_cache/psrc/parcel/bm/0416',
-        
+
