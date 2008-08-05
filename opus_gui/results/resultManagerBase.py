@@ -69,9 +69,6 @@ class ResultManagerBase(AbstractManagerBase):
         run_manager = self._get_run_manager()
         run_manager.clean_runs()
         run_manager.close()
-        
-        for k,v in os.environ.items():
-            print k,v
             
         self.xml_helper.update_available_runs()
                 
