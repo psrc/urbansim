@@ -111,10 +111,10 @@ class OpusResultVisualizer(object):
                            storage_location = _storage_location)
             cols = storage.get_column_names(
                         table_name = dataset_name)
-            ##################
             
             primary_keys = [col for col in cols if col.find('_id') != -1]
             computed_indicator.primary_keys = primary_keys
+            ##################
             
             name = computed_indicator.get_file_name(
                 suppress_extension_addition = True)

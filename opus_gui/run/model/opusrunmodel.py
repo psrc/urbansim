@@ -19,7 +19,7 @@ import os, sys
 from opus_gui.exceptions.formatter import formatExceptionInfo
 
 try:
-    from opus_core.tools.start_run import StartRunOptionGroup
+    from opus_core.services.run_server.generic_option_group import GenericOptionGroup
     from opus_core.services.run_server.run_manager import insert_auto_generated_cache_directory_if_needed, SimulationRunError
     #from opus_gui.configurations.xml_configuration import XMLConfiguration
     from opus_core.configurations.xml_configuration import XMLConfiguration
@@ -126,12 +126,8 @@ class OpusModel(object):
         self.start_year = None
         self.currentLogfileYear = None
         self.currentLogfileKey = None
-        option_group = StartRunOptionGroup()
-        parser = option_group.parser
         # simulate 0 command line arguments by passing in []
-        (options, args) = parser.parse_args([])
-        
-        self.run_manager = RunManager(options)
+
         
     def pause(self):
         self.paused = True
@@ -154,6 +150,7 @@ class OpusModel(object):
             # regarding the progress of the simulation - the progress bar reads this file
             statusdir = None
             succeeded = False
+            
             try:
                 # find the directory containing the eugene xml configurations
                 fileNameInfo = QFileInfo(self.xml_path)
@@ -167,10 +164,13 @@ class OpusModel(object):
                 insert_auto_generated_cache_directory_if_needed(config)
                 (self.start_year, self.end_year) = config['years']
 
-                self.run_manager.setup_new_run(run_name = config['cache_directory'])
+                server_config = GenericOptionGroup().parser.parse_args()[0]
+                run_manager = RunManager(server_config)
+        
+                run_manager.setup_new_run(run_name = config['cache_directory'])
 
                 #statusdir = tempfile.mkdtemp()
-                statusdir = self.run_manager.get_current_cache_directory()
+                statusdir = run_manager.get_current_cache_directory()
                 self.statusfile = os.path.join(statusdir, 'status.txt')
                 #print self.statusfile
                 self.currentLogfileYear = self.start_year
@@ -182,9 +182,10 @@ class OpusModel(object):
                 # To test delay in writing the first log file entry...
                 # time.sleep(5)
                 self.running = True
-                self.run_manager.run_run(config)
+                run_manager.run_run(config)
                 self.running = False
                 succeeded = True
+                run_manager.close()
             except SimulationRunError:
                 self.running = False
                 succeeded = False

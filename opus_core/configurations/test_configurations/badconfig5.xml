@@ -1,5 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <opus_project>
+  <general>
+    <project_name type="string">test_project</project_name>
+  </general>
   <scenario_manager>
     <test_scenario5 type="scenario">
       <k type="integer">3</k>

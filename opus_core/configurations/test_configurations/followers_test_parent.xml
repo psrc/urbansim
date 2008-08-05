@@ -7,5 +7,6 @@
       <c type="string">ctest</c>
       <d type="string">dtest</d>
     </mydict>
+    <project_name type="string">test_project</project_name>
   </general>
 </opus_project>

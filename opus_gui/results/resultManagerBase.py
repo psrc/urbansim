@@ -55,6 +55,9 @@ class AbstractManagerBase(object):
         self.gui = gui
     
 # Main Run manager class
+from opus_core.services.run_server.generic_option_group import GenericOptionGroup
+from opus_core.services.run_server.run_manager import RunManager
+
 class ResultManagerBase(AbstractManagerBase):  
     
     def __init__(self, mainwindow):
@@ -63,9 +66,25 @@ class ResultManagerBase(AbstractManagerBase):
         self.xml_helper = ResultsManagerXMLHelper(toolboxStuff = self.toolboxStuff)
 
     def scanForRuns(self):
-        self.xml_helper.run_manager.clean_runs()
+        run_manager = self._get_run_manager()
+        run_manager.clean_runs()
+        run_manager.close()
+        
+        for k,v in os.environ.items():
+            print k,v
+            
         self.xml_helper.update_available_runs()
                 
+    def _get_run_manager(self):
+        config = GenericOptionGroup().parser.parse_args()[0]
+        run_manager = RunManager(config)
+        return run_manager
+
+    def deleteRun(self, run_id, cache_directory):
+        run_manager = self._get_run_manager()
+        run_manager.delete_everything_for_this_run(run_id, cache_directory = cache_directory)
+        run_manager.close()
+
     def addAdvancedVisualizationForm(self):
         new_form = AdvancedVisualizationForm(mainwindow = self.mainwindow,
                                              result_manager = self)

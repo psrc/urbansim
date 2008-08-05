@@ -26,6 +26,7 @@ from opus_core.configurations.xml_configuration import XMLConfiguration
 config_template = """<opus_project>
   <general>
     <parent type="file">seattle_parcel/configs/seattle_parcel.xml</parent>
+    <project_name type="string" flags="hidden">seattle_parcel</project_name>
     </general>
   <scenario_manager>
     <Seattle_baseline copyable="True" executable="True" setexpanded="True" type="scenario">

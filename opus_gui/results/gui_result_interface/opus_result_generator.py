@@ -117,9 +117,6 @@ class OpusResultGenerator(object):
                                               years = self.years)
 
         self.last_added_indicator_result_name = name
-        
-    def get_computed_indicators(self):
-        return self.computed_indicators
                 
     def _get_current_log(self, key):
         newKey = key

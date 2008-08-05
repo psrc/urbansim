@@ -321,8 +321,13 @@ class OpusGui(QMainWindow, Ui_MainWindow):
             # Open the file and add to the Run tab...
             self.toolboxStuff.openXMLTree(fileName)
             # Add the project file's path to the title bar
-            self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.toolboxbase.xml_file).filePath())
+            
+            title = self.resultManagerStuff.xml_helper.get_project_title()
+            os.environ['OPUSPROJECTNAME'] = title
             self.resultManagerStuff.scanForRuns()
+
+            #self.setWindowTitle(self.application_title + " - " + QFileInfo(self.toolboxStuff.runManagerTree.toolboxbase.xml_file).filePath())
+            self.setWindowTitle(self.application_title + " - " + QString(title))
         self.actionEdit_all_variables.setEnabled(True)
         self.changeFontSize()
 
@@ -441,6 +446,8 @@ class OpusGui(QMainWindow, Ui_MainWindow):
         self.toolboxStuff.closeXMLTree()
         self.setWindowTitle(self.application_title)
         self.actionEdit_all_variables.setEnabled(False)
+        os.environ['OPUSPROJECTNAME'] = 'misc'
+
 
     def closeEvent(self, event):
         # Check to see if there are changes to the current project, if a project is open

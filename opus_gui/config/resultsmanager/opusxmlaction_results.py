@@ -216,6 +216,7 @@ class OpusXMLAction_Results(object):
             batch_name = batch_name)
         
     def deleteRun(self):
+
         node = self.currentIndex.internalPointer().node()
         vals = get_child_values(parent = node, child_names = ['cache_directory', 'run_id'])
         cache_directory = str(vals['cache_directory'])
@@ -223,9 +224,11 @@ class OpusXMLAction_Results(object):
             run_id = vals.get('run_id', None)
             if run_id is not None:
                 run_id = int(run_id)
-                self.xml_helper.run_manager.delete_everything_for_this_run(run_id, cache_directory = cache_directory)
+                self.xmlTreeObject.mainwindow.resultManagerStuff.deleteRun(
+                    run_id = int(run_id), cache_directory = cache_directory)    
             
             self.removeNode()
+        
         
     def configureExistingBatchIndicatorVisualization(self):
 #        if self.xmlTreeObject.model.isDirty():

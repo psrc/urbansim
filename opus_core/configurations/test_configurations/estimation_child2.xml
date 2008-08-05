@@ -5,6 +5,7 @@
       <tax type="variable_definition" dataset="parcel" use="model variable" source="expression">urbansim_parcel.parcel.tax+300</tax>
       <extratax type="variable_definition" dataset="parcel" use="model variable" source="expression">urbansim_parcel.parcel.extratax</extratax>
     </expression_library>
+    <project_name type="string">test_project</project_name>
   </general>
   <model_manager>
     <estimation type="dictionary" >

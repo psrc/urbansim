@@ -29,6 +29,8 @@ class RunManager(CoreRunManager):
 
         run_resources = self.create_run_resources_from_history(run_id=run_id,
                                                                restart_year=restart_year)
+        self.update_environment_variables(run_resources)
+
         try:
 
             model_system = run_resources.get('model_system', None)

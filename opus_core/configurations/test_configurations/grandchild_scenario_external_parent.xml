@@ -2,7 +2,8 @@
 <opus_project>
   <general>
     <parent type="file">child_scenarios.xml</parent>
-  </general>
+    <project_name type="string">test_project</project_name>
+  </general>  
   <scenario_manager>
     <grandchild type="scenario">
       <parent type="scenario_name">child_scenario</parent>

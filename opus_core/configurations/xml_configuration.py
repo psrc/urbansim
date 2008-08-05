@@ -125,6 +125,8 @@ class XMLConfiguration(object):
         project-wide inheritance).  If merge_controllers is True, merge in the controller
         section into the run configuration.  If the configuration has an expression library, add
         that to the configuration under the key 'expression_library' """
+        general_section = self.get_section('general')
+        project_name = general_section['project_name']
         config = self.get_section('scenario_manager/%s' % name)
         if config is None:
             raise ValueError, "didn't find a scenario named %s" % name
@@ -136,16 +138,17 @@ class XMLConfiguration(object):
             parent_config = self.get_run_configuration(config['parent'], merge_controllers=False)
             del config['parent']
             parent_config.merge(config)
-            return parent_config
+            config = parent_config
         elif 'parent_old_format' in config:
             d = config['parent_old_format']
             parent_config = self._make_instance(d['Class_name'], d['Class_path'])
             del config['parent_old_format']
             parent_config.merge(config)
-            return parent_config
-        else:
-            return config
-
+            config = parent_config
+        
+        config['project_name'] = project_name
+        return config
+    
     def get_estimation_configuration(self):
         """Extract an estimation configuration from this xml project and return it.
         If the configuration has an expression library, add
@@ -567,7 +570,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'manytypes.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         self.assertEqual(config, 
-                         {'description': 'a test configuration',
+                         {'project_name':'test_project',
+                          'description': 'a test configuration',
                           'quotedthing': r"'test\test'",
                           'empty1': '',
                           'empty2': None,
@@ -591,7 +595,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
     def test_whitespace_and_comments(self):
         f = os.path.join(self.test_configs, 'whitespace.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
-        self.assertEqual(config, {'description': 'a test configuration'})
+        self.assertEqual(config, {'project_name':'test_project',
+                          'description': 'a test configuration'})
         
     def test_str_and_unicode(self):
         # check that the keys in the config dictionary are str, and that
@@ -620,7 +625,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         x = XMLConfiguration(f)
         config = x.get_run_configuration('test_scenario')
         prefix = x.get_opus_data_path()
-        self.assertEqual(config, {'file1': 'testfile', 
+        self.assertEqual(config, {'project_name':'test_project',
+                                  'file1': 'testfile', 
                                   'file2': os.path.join(prefix, 'testfile'),
                                   'dir1': 'testdir', 
                                   'dir2': os.path.join(prefix, 'testdir')})
@@ -630,14 +636,14 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'child_scenarios.xml')
         config = XMLConfiguration(f).get_run_configuration('child_scenario')
         self.assertEqual(config, 
-            {'description': 'this is the child', 'year': 2000, 'modelname': 'widgetmodel'})
+            {'project_name':'test_project','description': 'this is the child', 'year': 2000, 'modelname': 'widgetmodel'})
             
     def test_scenario_inheritance_external_parent(self):
         # test inheritance of scenarios with an external_parent (one with original name, one renamed)
         f = os.path.join(self.test_configs, 'grandchild_scenario_external_parent.xml')
         config1 = XMLConfiguration(f).get_run_configuration('grandchild')
         self.assertEqual(config1, 
-            {'description': 'this is the grandchild', 'year': 2000, 'modelname': 'widgetmodel'})
+            {'project_name':'test_project','description': 'this is the grandchild', 'year': 2000, 'modelname': 'widgetmodel'})
             
     def test_old_config_inheritance(self):
         # test inheriting from an old-style configuration 
@@ -656,7 +662,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'categories.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         self.assertEqual(config, 
-                         {'description': 'category test',
+                         {'project_name':'test_project',
+                          'description': 'category test',
                           'real_name': 'config name test',
                           'precache': True,
                           'chunksize': 12,
@@ -668,13 +675,15 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         f = os.path.join(self.test_configs, 'list_to_dict.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         self.assertEqual(config, 
-                         {'datasets_to_preload': {'job': {}, 'gridcell': {'nchunks': 4}}})
+                         {'project_name':'test_project',
+                          'datasets_to_preload': {'job': {}, 'gridcell': {'nchunks': 4}}})
 
     def test_include(self):
         f = os.path.join(self.test_configs, 'include_test.xml')
         config = XMLConfiguration(f).get_run_configuration('test_scenario')
         self.assertEqual(config, 
-                         {'description': 'a test scenario',
+                         {'project_name':'test_project',
+                          'description': 'a test scenario',
                           'startyear': 2000,
                           'endyear': 2020,
                           'x': 10,
@@ -772,7 +781,8 @@ class XMLConfigurationTests(opus_unittest.OpusTestCase):
         # test getting a run specification that includes a controller in the xml
         f = os.path.join(self.test_configs, 'controller_test.xml')
         config = XMLConfiguration(f).get_run_configuration('baseline')
-        should_be = {'models_configuration': {'real_estate_price_model': {'controller': {'prepare_for_run': {
+        should_be = {'project_name':'test_project',
+                    'models_configuration': {'real_estate_price_model': {'controller': {'prepare_for_run': {
           'name': 'prepare_for_run', 
           'arguments': {'specification_storage': 'base_cache_storage', 'specification_table': 'real_estate_price_model_specification'}
           }}}}}

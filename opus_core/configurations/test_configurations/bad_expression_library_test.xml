@@ -6,5 +6,6 @@
       <bad_income_syntax_error type="variable_definition" dataset="test_agent" use="model variable" source="expression">test_agent.income_times_10 100</bad_income_syntax_error>
       <bad_income_semantic_error type="variable_definition" dataset="test_agent" use="model variable" source="expression">test_agent.income_times_blip + 100</bad_income_semantic_error>
     </expression_library>
+    <project_name type="string">test_project</project_name>
   </general>
 </opus_project>

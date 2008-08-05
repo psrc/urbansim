@@ -6,6 +6,11 @@
    
 <opus_project>
 
+
+  <general>
+    <project_name type="string">test_project</project_name>
+  </general>
+  
 <scenario_manager>
 <test_scenario type="scenario">
    

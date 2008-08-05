@@ -5,5 +5,5 @@
     <mydict type="dictionary">
       <x type="string" followers="c,d">xtest</x>
     </mydict>
-  </general>
-</opus_project>
+    <project_name type="string">test_project</project_name>
+  </general></opus_project>

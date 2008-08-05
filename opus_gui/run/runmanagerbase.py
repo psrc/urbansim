@@ -577,7 +577,12 @@ class ModelGuiElement(QWidget):
                                             run_name)
             
             if duplicate and run_id is not None:
-                self.model.run_manager.delete_everything_for_this_run(run_id = run_id)
+                from opus_core.services.run_server.generic_option_group import GenericOptionGroup
+                from opus_core.services.run_server.run_manager import RunManager as ServicesRunManager
+                run_manager = ServicesRunManager(GenericOptionGroup.parser.parse_args([]))[0]
+                run_manager.delete_everything_for_this_run(run_id = run_id)
+                run_manager.close()
+                
             
             # Use this signal from the thread if it is capable of producing its own status signal
             QObject.connect(self.runThread, SIGNAL("runFinished(PyQt_PyObject)"),

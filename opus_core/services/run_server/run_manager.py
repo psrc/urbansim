@@ -32,6 +32,7 @@ class RunManager(object):
 
     def __init__(self, options):
         self.services_db = self.create_storage(options)
+        self.server_config = options
         self.run_id = None
         self.ready_to_run = False
 
@@ -59,12 +60,19 @@ class RunManager(object):
             raise 'The RunManager has not been setup to run a new yet.'
         return self.current_cache_directory 
                 
+    def update_environment_variables(self, run_resources):
+        if 'project_name' in run_resources:
+            os.environ['OPUSPROJECTNAME'] = run_resources['project_name']
+            self.services_db.close()
+            self.services_db = self.create_storage(self.server_config)
+        
     def run_run(self, run_resources, run_as_multiprocess=True, run_in_background=False):
         """check run hasn't already been marked running
            log it in to run_activity
            run simulation
            mark run as done/failed
            """
+        self.update_environment_variables(run_resources)
         if not self.ready_to_run:
             raise 'RunManager.setup_new_run must be execute before RunManager.run_run'
         if run_resources['cache_directory'] != self.current_cache_directory:
@@ -140,6 +148,8 @@ class RunManager(object):
         run_resources = self.create_run_resources_from_history(
            run_id=run_id,
            restart_year=restart_year)
+        
+        self.update_environment_variables(run_resources)
         try:
             if create_baseyear_cache_if_not_exists:
                 cache_directory = run_resources['cache_directory']
@@ -361,7 +371,7 @@ class RunManager(object):
         try:
             services_db = server.get_database(database_name)
         except:
-            raise Exception('Cannot connect to a services database')
+            raise Exception('Cannot connect to a services database on %s'%server.get_connection_string(scrub = True))
         
         if not services_db.table_exists('run_activity'):
             tt_schema = TableTypeSchema()
@@ -459,7 +469,8 @@ class RunManager(object):
         else:
             logger.log_warning('in run_manager._handle_deletion_errors:unable to delete %s error from function %s: \n %s' % (path,function.__name__,info[1]))
 
-
+    def close(self):
+        self.services_db.close()
 
 class SimulationRunError(Exception):
     """exception to be raised if the simulation fails at runtime"""

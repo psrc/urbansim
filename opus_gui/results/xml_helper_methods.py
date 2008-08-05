@@ -73,8 +73,7 @@ class ResultsManagerXMLHelper:
     
     def __init__(self, toolboxStuff):
         self.toolboxStuff = toolboxStuff
-        config = GenericOptionGroup().parser.parse_args()[0]
-        self.run_manager = RunManager(config)
+
         
     #####################################################
     #########    XML GET CONVENIENCE METHODS     ########
@@ -531,6 +530,14 @@ class ResultsManagerXMLHelper:
         return node_vals
         
         
+    def get_project_title(self):
+        _, vals = self.get_element_attributes(node_name = 'general', 
+                                               child_attributes = ['project_name'])
+        if 'project_name' not in vals: return 'No name'
+        project_name = str(vals['project_name'])
+        return project_name
+        
+        
     def update_available_runs(self):
         #get existing cache directories, use as primary key to check for duplicates
         available_runs = self.get_available_run_info(attributes = ['cache_directory'], update = False)
@@ -556,11 +563,7 @@ class ResultsManagerXMLHelper:
             else:
                 existing_cache_directories[cache_directory] = 1
 
-        #get data directory for this project
-        _, vals = self.get_element_attributes(node_name = 'general', 
-                                               child_attributes = ['project_name'])
-        if 'scenario_runs_directory' not in vals: return
-        project_name = str(vals['project_name'])
+        project_name = self.get_project_title()
         
         # set 'datapath' to the path to the opus_data directory.  This is found in the environment variable
         # OPUS_DATA_PATH, or if that environment variable doesn't exist, as the contents of the environment 
@@ -588,7 +591,11 @@ class ResultsManagerXMLHelper:
                                              temporary = False)
             
         #get runs logged from this processor to the run activity table
-        runs = self.run_manager.get_run_info(resources = True, status = 'done')
+        server_config = GenericOptionGroup().parser.parse_args()[0]
+        run_manager = RunManager(server_config)
+        runs = run_manager.get_run_info(resources = True, status = 'done')
+        run_manager.close()
+
 
         for run_id, run_name, processor_name, run_resources in runs:
             cache_directory = run_resources['cache_directory']
