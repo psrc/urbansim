@@ -160,7 +160,7 @@ class RemoteRun:
             self.get_run_manager().add_row_to_history(self.run_id, config, "started")
             
             #check that run_id must exist
-            results = self.get_run_manager().storage.GetResultsFromQuery(
+            results = self.get_run_manager().services_db.GetResultsFromQuery(
                                                             "SELECT * from run_activity WHERE run_id = %s " % self.run_id)
             if not len(results) > 1:
                 raise StandardError, "run_id %s doesn't exist in run_activity table." % self.run_id
@@ -299,7 +299,7 @@ class RemoteRun:
             if this_start_year <= this_end_year:
                 urbansim_resources['years'] = (this_start_year, this_end_year)
                     
-                self.get_run_manager().storage.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % self.run_id)        
+                self.get_run_manager().services_db.DoQuery("DELETE FROM run_activity WHERE run_id = %s" % self.run_id)        
                 self.get_run_manager().add_row_to_history(self.run_id, urbansim_resources, "started")
                 
                 if not self.skip_urbansim:
@@ -368,7 +368,7 @@ class RemoteRun:
         """in case the connection to services timeout, reconnect
         """
         try:
-            self._run_manager.storage.table_exists('run_activity')
+            self._run_manager.services_db.table_exists('run_activity')
         except:  #connection has gone away, re-create run_manager
             self._run_manager = RunManager( self.services_db_config)
         return self._run_manager
