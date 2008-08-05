@@ -124,14 +124,14 @@ class AgentLocationChoiceModel(LocationChoiceModel):
         return concatenate((movers, where(agents_locations <= 0)[0]))
 
     def get_locations_vacancy(self, agent_set):
-       if (self.number_of_units_string is not None) and (self.number_of_agents_string is not None):
+        if (self.number_of_units_string is not None) and (self.number_of_agents_string is not None):
             self.dataset_pool.add_datasets_if_not_included({agent_set.get_dataset_name():agent_set})
             self.choice_set.compute_variables([self.number_of_agents_string, self.number_of_units_string],
                                       dataset_pool=self.dataset_pool)
             number_of_agents = self.choice_set.get_attribute(self.number_of_agents_string)
             number_of_units = self.choice_set.get_attribute(self.number_of_units_string)
             return number_of_units - number_of_agents
-       return None
+        return None
         
         
     def choose_agents_to_move_from_overfilled_locations(self, capacity,
