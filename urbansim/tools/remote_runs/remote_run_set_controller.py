@@ -215,9 +215,7 @@ class RemoteRunSet(RemoteRun):
         for run_id in finished_runs+failed_runs:
             server = self.run_ids_dict[run_id][1]
             self.servers_info[server]['running'] -= 1
-            config = self.get_run_manager().get_resources_for_run_id_from_history(services_host_name=self.services_hostname,
-                                                                       services_database_name=self.services_dbname,
-                                                                       run_id=run_id)
+            config = self.get_run_manager().get_resources_for_run_id_from_history(run_id=run_id)
             if run_id in finished_runs:
                 self.run_ids_dict[run_id] = (config['years'][1], server)
             else:
