@@ -304,7 +304,7 @@ class RemoteRun:
                 
                 if not self.skip_urbansim:
                     self.run_remote_python_process("%s/urbansim/tools/restart_run.py" % self.remote_opus_path, 
-                                               "%s %s --skip-cache-cleanup --skip-travel-model %s" % (
+                                               "%s %s --skip-cache-cleanup --skip-travel-model --protocol=mysql %s" % (
                                                          self.run_id, this_start_year, bg),
                                                    )
                     if not background:               
