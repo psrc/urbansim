@@ -599,7 +599,8 @@ class ResultsManagerXMLHelper:
 
         for run_id, run_name, processor_name, run_resources in runs:
             cache_directory = run_resources['cache_directory']
-            if cache_directory in existing_cache_directories: continue
+            if cache_directory in existing_cache_directories or \
+               not os.path.exists(cache_directory): continue
             if run_name == 'No description':
                 run_name = os.path.basename(cache_directory)
             start_year, end_year = run_resources['years']
