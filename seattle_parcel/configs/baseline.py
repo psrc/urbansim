@@ -31,6 +31,7 @@ class Baseline(UrbansimParcelConfiguration):
         opus_home = os.environ['OPUS_HOME']
         config = UrbansimParcelConfiguration()
         config_changes = {
+            'project_name':'seattle_parcel',
             'description':'Seattle parcel baseline',
             'cache_directory':  os.path.join(opus_home, 'data/seattle_parcel/base_year_data'),
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(

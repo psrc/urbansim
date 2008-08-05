@@ -29,7 +29,8 @@ class Baseline(GeneralConfiguration):
         config = AbstractUrbansimConfiguration()
 
         config_changes = {
-            'description':'PSRC parcel baseline',
+            'project_name':'pag_parcel',
+            'description':'PAG parcel baseline',
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(
                 cache_directory_root = r'/Users/hana/urbansim_cache/psrc/parcel',

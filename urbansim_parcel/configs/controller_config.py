@@ -31,6 +31,7 @@ class UrbansimParcelConfiguration(AbstractUrbansimConfiguration):
         AbstractUrbansimConfiguration.__init__(self)
         models_configuration = self['models_configuration']
         
+        self['project_name'] = 'urbansim_parcel'
         ## employment_location_choice_model is defined for gridcells at urbansim package 
         if "home_based_employment_location_choice_model" in models_configuration:
             del models_configuration["home_based_employment_location_choice_model"]

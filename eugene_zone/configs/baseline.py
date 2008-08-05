@@ -28,6 +28,7 @@ class Baseline(UrbansimZoneConfiguration):
         UrbansimZoneConfiguration.__init__(self)
         
         config_changes = {
+            'project_name':'eugene_zone',
             'description':'Eugene zone baseline',
             'base_year':1980,
             'years':(1981, 1982),

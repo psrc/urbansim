@@ -108,6 +108,7 @@ class Baseline(GeneralConfiguration):
         config = AbstractUrbansimConfiguration()
         
         config_changes = {
+            'project_name':'washtenaw',
             'description':'Region Pilot Baseline',
             'input_configuration': DatabaseConfiguration(
                 database_name = 'washtenaw_class',

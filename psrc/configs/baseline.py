@@ -31,6 +31,7 @@ class Baseline(GeneralConfiguration):
         config = AbstractUrbansimConfiguration()
         
         config_changes = {
+            'project_name':'psrc',
             'description':'baseline with travel model',
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             'creating_baseyear_cache_configuration':CreatingBaseyearCacheConfiguration(

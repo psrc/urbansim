@@ -30,6 +30,7 @@ class Baseline(UrbansimParcelConfiguration):
     def __init__(self):
         config = UrbansimParcelConfiguration()
         config_changes = {
+            'project_name':'psrc_parcel',
             'description':'PSRC parcel baseline',
             'cache_directory':None, ### TODO: Set this cache_directory to something useful.
             #'cache_directory':r'/Users/hana/urbansim_cache/psrc/cache_source_parcel', 

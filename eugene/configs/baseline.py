@@ -28,6 +28,7 @@ class Baseline(AbstractUrbansimConfiguration):
         AbstractUrbansimConfiguration.__init__(self)
         
         config_changes = {
+            'project_name':'eugene_gridcell',
             'description':'Eugene baseline',
             'base_year':1980,
             'years':(1981, 1982),
