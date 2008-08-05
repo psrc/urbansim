@@ -42,7 +42,7 @@ class GenericOptionGroup:
         else:
             default = DatabaseConfiguration()._get_default_database_engine()
             
-        os.environ.get('OPUS_SERVICES_DB_ENGINE', default)
+        return os.environ.get('OPUS_SERVICES_DB_ENGINE', default)
         
     def parse(self):
         (options, args) = self.parser.parse_args()
