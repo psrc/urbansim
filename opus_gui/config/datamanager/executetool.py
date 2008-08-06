@@ -96,10 +96,6 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             newChild.appendChild(newText)
             newNode.appendChild(newChild)
         self.opusXMLAction_xxx.execToolConfigGen(newNode)
-        #self.opusXMLAction_xxx.currentIndex.model().insertRow(self.opusXMLAction_xxx.currentIndex.model().rowCount(self.opusXMLAction_xxx.currentIndex),
-        #                                           self.opusXMLAction_xxx.currentIndex,
-        #                                           newNode)
-        #self.opusXMLAction_xxx.currentIndex.model().emit(SIGNAL("layoutChanged()"))
         self.close()
 
     def on_cancelExec_released(self):
@@ -109,18 +105,6 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
     def toolTypeSelected(self):
         #print "Got a new selection"
         #print self.comboBox.itemText(index)
-
-        #self.typeSelection = self.comboBox.itemText(index)
-        #for testw in self.test_widget:
-        #    self.vboxlayout.removeWidget(testw)
-        #    testw.hide()
-        #del self.tooltypearray[:]
-        #del self.test_widget[:]
-        #del self.test_text[:]
-        #del self.test_line[:]
-
-        # The tool_config will always have tool_config name
-        #self.tooltypearray.append([QString("Tool Config Name"),QString("tool_config"),QString("Custom Tool Config")])
 
         # Now look up the selected connection type and present to the user...
         # First we start at the Tool_Library
@@ -151,22 +135,30 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
                                                 param = params.item(xxx).toElement()
                                                 tagName = param.tagName()
                                                 typeName = QString('')
-                                                typeName = param.attribute(QString("type"))
                                                 nodeVal = QString('')
+                                                # Now we look inside to find the discriptions of the params
                                                 if param.hasChildNodes():
-                                                    textSearch = param.childNodes()
-                                                    for xxxx in xrange(0,textSearch.count(),1):
-                                                        if textSearch.item(xxxx).isText():
-                                                            nodeVal = textSearch.item(xxxx).nodeValue()
-                                                            self.tooltypearray.append([tagName,typeName,nodeVal])
+                                                    desc = param.childNodes()
+                                                    # Here we loop through the desc's
+                                                    for xxxx in xrange(0,desc.count(),1):
+                                                        if desc.item(xxxx).isElement():
+                                                            desc_el = desc.item(xxxx).toElement()
+                                                            if desc_el.tagName() == QString('type'):
+                                                                # We have a type
+                                                                if desc_el.hasChildNodes():
+                                                                    textSearch = desc_el.childNodes()
+                                                                    for xxxxx in xrange(0,textSearch.count(),1):
+                                                                        if textSearch.item(xxxxx).isText():
+                                                                            typeName = textSearch.item(xxxxx).nodeValue()
+                                                            if desc_el.tagName() == QString('default'):
+                                                                if desc_el.hasChildNodes():
+                                                                    textSearch = desc_el.childNodes()
+                                                                    for xxxxx in xrange(0,textSearch.count(),1):
+                                                                        if textSearch.item(xxxxx).isText():
+                                                                            nodeVal = textSearch.item(xxxxx).nodeValue()
+                                                self.tooltypearray.append([tagName,typeName,nodeVal])
         for i,param in enumerate(self.tooltypearray):
             # print "Key: %s , Val: %s" % (param[0],param[1])
-            #if (i==0):
-            #    widgetTemp = QFrame(self.variableBox)
-            #    widgetTemp.setFrameStyle(QFrame.Panel | QFrame.Raised)
-            #    widgetTemp.setLineWidth(2)
-            #else:
-            #    widgetTemp = QWidget(self.variableBox)
             widgetTemp = QWidget(self.variableBox)
             widgetTemp.setObjectName(QString("test_widget").append(QString(i)))
             self.test_widget.append(widgetTemp)
@@ -196,6 +188,6 @@ class ExecuteToolGui(QDialog, Ui_ExecuteToolGui):
             test_line.setEnabled(True)
             test_line.setMinimumSize(QSize(200,0))
             test_line.setObjectName(QString("test_line").append(QString(i)))
-            test_line.setText(QString(""))
+            test_line.setText(QString(param[2]))
             hlayout.addWidget(test_line)
             self.vboxlayout.addWidget(widgetTemp)

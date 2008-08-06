@@ -52,10 +52,26 @@
       <make_buildout_indicators type="tool_file">
         <name type="tool_name">make_buildout_indicators</name>
         <params type="param_template">
-          <output_type choices="Required|Optional" type="string">Required</output_type>
-          <storage_location choices="Required|Optional" type="dir_path">Required</storage_location>
-          <cache_directory choices="Required|Optional" type="dir_path">Required</cache_directory>
-          <year choices="Required|Optional" type="string">Required</year>
+          <output_type>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default type="string" />
+          </output_type>
+          <storage_location>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="dir_path" type="string">dir_path</type>
+            <default type="dir_path" />
+          </storage_location>
+          <cache_directory>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="dir_path" type="string">dir_path</type>
+            <default type="dir_path" />
+          </cache_directory>
+          <year>
+            <required choices="Required|Optional" type="string">Required</required>
+            <type choices="string" type="string">string</type>
+            <default type="string" />
+          </year>
         </params>
       </make_buildout_indicators>
     </Tool_Library>

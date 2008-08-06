@@ -34,65 +34,181 @@
       <shapefile_to_postgis type="tool_file">
         <name type="tool_name">shapefile_to_postgis</name>
         <params type="param_template">
-          <dbname choices="Required|Optional" type="string">Required</dbname>
-          <schema_name choices="Required|Optional" type="string">Required</schema_name>
-          <shapefile_path choices="Required|Optional" type="string">Required</shapefile_path>
-          <output_table_name choices="Required|Optional" type="string">Required</output_table_name>
-          <geometry_type choices="Required|Optional" type="string">Optional</geometry_type>
-          <overwrite choices="YES|NO" type="string">NO</overwrite>
+          <dbname type="string">
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string"></default>
+	  </dbname>
+          <schema_name>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string"></default>
+	  </schema_name>
+          <shapefile_path>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="file_path" type="string">file_path</type>
+	    <default type="file_path"></default>
+	  </shapefile_path>
+          <output_table_name>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string"></default>
+	  </output_table_name>
+          <geometry_type>
+	    <required choices="Required|Optional" type="string">Optional</required>
+	    <type choices="string" type="string">string</type>
+	    <default choices="NONE|GEOMETRY|POINT|LINESTRING|POLYGON|GEOMETRYCOLLECTION|MULTIPOINT|MULTILINE|MULTIPOLYGON|MULTILINESTRING" type="string">NONE</default>
+	  </geometry_type>
+          <overwrite>
+	    <required choices="Required|Optional" type="string">Optional</required>
+	    <type choices="string" type="string">string</type>
+	    <default choices="YES|NO" type="string">NO</default>
+	  </overwrite>
         </params>
       </shapefile_to_postgis>
       <sql_data_to_opus_tool type="tool_file" >
         <name type="tool_name" >sql_data_to_opus</name>
         <params type="param_template" >
-          <sql_db_name type="string" choices="Required|Optional" >Required</sql_db_name>
-          <table_name type="string" choices="Required|Optional" >Required</table_name>
-          <opus_data_directory type="dir_path" choices="Required|Optional" >Required</opus_data_directory>
-          <opus_data_year type="string" choices="Required|Optional" >Required</opus_data_year>
+          <sql_db_name>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string"></default>
+	  </sql_db_name>
+          <table_name>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string">ALL</default>
+	  </table_name>
+          <opus_data_directory>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="dir_path" type="string">dir_path</type>
+	    <default type="dir_path"></default>
+	  </opus_data_directory>
+          <opus_data_year>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string">ALL</default>
+	  </opus_data_year>
         </params>
       </sql_data_to_opus_tool>
       <opus_database_to_sql_tool type="tool_file" >
         <name type="tool_name" >opus_database_to_sql</name>
         <params type="param_template" >
-          <sql_db_name type="string" choices="Required|Optional" >Required</sql_db_name>
-          <opus_data_directory type="dir_path" choices="Required|Optional" >Required</opus_data_directory>
-          <opus_data_year type="string" choices="Required|Optional" >Required</opus_data_year>
-          <opus_table_name type="string" choices="Required|Optional" >Required</opus_table_name>
+          <sql_db_name>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string"></default>
+	  </sql_db_name>
+          <opus_data_directory>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="dir_path" type="string">dir_path</type>
+	    <default type="dir_path"></default>
+	  </opus_data_directory>
+          <opus_data_year>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string">ALL</default>
+	  </opus_data_year>
+          <opus_table_name>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string">ALL</default>
+	  </opus_table_name>
         </params>
       </opus_database_to_sql_tool>
       <opus_database_to_esri_tool type="tool_file" >
         <name type="tool_name" >opus_database_to_esri</name>
         <params type="param_template" >
-          <esri_data_path type="string" choices="Required|Optional" >Required</esri_data_path>
-          <opus_data_directory type="dir_path" choices="Required|Optional" >Required</opus_data_directory>
-          <opus_data_year type="string" choices="Required|Optional" >Required</opus_data_year>
-          <opus_table_name type="string" choices="Required|Optional" >Required</opus_table_name>
+          <esri_data_path>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="dir_path" type="string">dir_path</type>
+	    <default type="dir_path"></default>
+	  </esri_data_path>
+          <opus_data_directory>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="dir_path" type="string">dir_path</type>
+	    <default type="dir_path"></default>
+	  </opus_data_directory>
+          <opus_data_year>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string">ALL</default>
+	  </opus_data_year>
+          <opus_table_name>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string">ALL</default>
+	  </opus_table_name>
         </params>
       </opus_database_to_esri_tool>
       <opus_dataset_to_sql_tool type="tool_file" >
         <name type="tool_name" >opus_dataset_to_sql</name>
         <params type="param_template" >
-          <sql_db_name type="string" choices="Required|Optional" >Required</sql_db_name>
-          <opus_data_directory type="dir_path" choices="Required|Optional" >Required</opus_data_directory>
-          <opus_data_year type="string" choices="Required|Optional" >Required</opus_data_year>
-          <opus_table_name type="string" choices="Required|Optional" >Required</opus_table_name>
+          <sql_db_name>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string"></default>
+	  </sql_db_name>
+          <opus_data_directory>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="dir_path" type="string">dir_path</type>
+	    <default type="dir_path"></default>
+	  </opus_data_directory>
+          <opus_data_year>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string">ALL</default>
+	  </opus_data_year>
+          <opus_table_name>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string">ALL</default>
+	  </opus_table_name>
         </params>
       </opus_dataset_to_sql_tool>
       <opus_dataset_to_esri_tool type="tool_file" >
         <name type="tool_name" >opus_dataset_to_esri</name>
         <params type="param_template" >
-          <esri_data_path type="dir_path" choices="Required|Optional" >Required</esri_data_path>
-          <opus_data_directory type="dir_path" choices="Required|Optional" >Required</opus_data_directory>
-          <opus_data_year type="string" choices="Required|Optional" >Required</opus_data_year>
-          <opus_table_name type="string" choices="Required|Optional" >Required</opus_table_name>
+          <esri_data_path>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="dir_path" type="string">dir_path</type>
+	    <default type="dir_path"></default>
+	  </esri_data_path>
+          <opus_data_directory>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="dir_path" type="string">dir_path</type>
+	    <default type="dir_path"></default>
+	  </opus_data_directory>
+          <opus_data_year>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string">ALL</default>
+	  </opus_data_year>
+          <opus_table_name>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string">ALL</default>
+	  </opus_table_name>
         </params>
       </opus_dataset_to_esri_tool>
       <esri_buffer_tool type="tool_file" >
         <name type="tool_name" >esri_buffer</name>
         <params type="param_template" >
-          <input_shapefile type="dir_path" choices="Required|Optional" >Required</input_shapefile>
-          <output_shapefile type="dir_path" choices="Required|Optional" >Required</output_shapefile>
-          <buffer_size type="string" choices="Required|Optional" >Required</buffer_size>
+          <input_shapefile>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="file_path" type="string">file_path</type>
+	    <default type="file_path"></default>
+	  </input_shapefile>
+          <output_shapefile>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="file_path" type="string">file_path</type>
+	    <default type="file_path"></default>
+	  </output_shapefile>
+          <buffer_size>
+	    <required choices="Required|Optional" type="string">Required</required>
+	    <type choices="string" type="string">string</type>
+	    <default type="string">10</default>
+	  </buffer_size>
         </params>
       </esri_buffer_tool>
     </Tool_Library>
@@ -112,7 +228,7 @@
         <classification flags="hidden" type="classification" >database</classification>
         <opus_database_to_esri_config type="tool_config" >
           <tool_hook flags="hidden" type="tool_library_ref" >opus_database_to_esri_tool</tool_hook>
-          <esri_data_path type="string" >c:\opus\data\seattle_parcel\output_geodb.gdb</esri_data_path>
+          <esri_data_path type="file_path" >c:\opus\data\seattle_parcel\output_geodb.gdb</esri_data_path>
           <opus_data_directory type="dir_path" />
           <opus_data_year type="string" >ALL</opus_data_year>
           <opus_table_name type="string" >ALL</opus_table_name>
@@ -132,7 +248,7 @@
         <classification flags="hidden" type="classification" >dataset</classification>
         <opus_dataset_to_esri_config type="tool_config" >
           <tool_hook flags="hidden" type="tool_library_ref" >opus_database_to_esri_tool</tool_hook>
-          <esri_data_path type="dir_path" >c:\opus\data\seattle_parcel\output_geodb.gdb</esri_data_path>
+          <esri_data_path type="file_path" >c:\opus\data\seattle_parcel\output_geodb.gdb</esri_data_path>
           <opus_data_directory type="dir_path" />
           <opus_data_year type="integer" ></opus_data_year>
           <opus_table_name type="integer" ></opus_table_name>

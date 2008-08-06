@@ -140,16 +140,41 @@ class ConfigureToolGui(QDialog, Ui_ConfigureToolGui):
                                         for xxx in xrange(0,params.count(),1):
                                             if params.item(xxx).isElement():
                                                 param = params.item(xxx).toElement()
+
                                                 tagName = param.tagName()
                                                 typeName = QString('')
-                                                typeName = param.attribute(QString("type"))
                                                 nodeVal = QString('')
+                                                # Now we look inside to find the discriptions of the params
                                                 if param.hasChildNodes():
-                                                    textSearch = param.childNodes()
-                                                    for xxxx in xrange(0,textSearch.count(),1):
-                                                        if textSearch.item(xxxx).isText():
-                                                            nodeVal = textSearch.item(xxxx).nodeValue()
-                                                            self.tooltypearray.append([tagName,typeName,nodeVal])
+                                                    desc = param.childNodes()
+                                                    # Here we loop through the desc's
+                                                    for xxxx in xrange(0,desc.count(),1):
+                                                        if desc.item(xxxx).isElement():
+                                                            desc_el = desc.item(xxxx).toElement()
+                                                            if desc_el.tagName() == QString('type'):
+                                                                # We have a type
+                                                                if desc_el.hasChildNodes():
+                                                                    textSearch = desc_el.childNodes()
+                                                                    for xxxxx in xrange(0,textSearch.count(),1):
+                                                                        if textSearch.item(xxxxx).isText():
+                                                                            typeName = textSearch.item(xxxxx).nodeValue()
+                                                            if desc_el.tagName() == QString('default'):
+                                                                if desc_el.hasChildNodes():
+                                                                    textSearch = desc_el.childNodes()
+                                                                    for xxxxx in xrange(0,textSearch.count(),1):
+                                                                        if textSearch.item(xxxxx).isText():
+                                                                            nodeVal = textSearch.item(xxxxx).nodeValue()
+                                                self.tooltypearray.append([tagName,typeName,nodeVal])
+                                                #tagName = param.tagName()
+                                                #typeName = QString('')
+                                                #typeName = param.attribute(QString("type"))
+                                                #nodeVal = QString('')
+                                                #if param.hasChildNodes():
+                                                #    textSearch = param.childNodes()
+                                                #    for xxxx in xrange(0,textSearch.count(),1):
+                                                #        if textSearch.item(xxxx).isText():
+                                                #            nodeVal = textSearch.item(xxxx).nodeValue()
+                                                #            self.tooltypearray.append([tagName,typeName,nodeVal])
         for i,param in enumerate(self.tooltypearray):
             # print "Key: %s , Val: %s" % (param[0],param[1])
             if (i==0):
