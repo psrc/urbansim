@@ -385,7 +385,7 @@ class RunManager(object):
         if not services_db.table_exists('run_activity'):
             tt_schema = TableTypeSchema()
             try:
-                services_db.create_table(
+                services_db.create_table_from_schema(
                      'run_activity', 
                      tt_schema.get_table_schema('run_activity'))
             except:
